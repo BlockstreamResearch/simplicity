@@ -1,0 +1,21 @@
+name:                Simplicity
+version:             0.0.0
+-- synopsis:            
+-- description:         
+license:             AllRightsReserved
+-- license-file:        LICENSE
+author:              Russell O'Connor
+maintainer:          roconnor@blockstream.io
+-- copyright:           
+category:            Language
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  exposed-modules:     Simplicity.Bit, Simplicity.Generic, Simplicity.Arith, Simplicity.Ty, Simplicity.Term
+  -- other-modules:       
+  other-extensions:    GADTs, TypeOperators, DeriveTraversable
+  build-depends:       base >=4.9 && <4.10, unification-fd >=0.10 && <0.11
+  hs-source-dirs:      Haskell
+  default-language:    Haskell2010
