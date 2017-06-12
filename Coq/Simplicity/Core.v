@@ -1,4 +1,4 @@
-Require Import Ty.
+Require Import Simplicity.Ty.
 
 Inductive Term : Ty -> Ty -> Set :=
 | iden : forall {A : Ty}, Term A A
