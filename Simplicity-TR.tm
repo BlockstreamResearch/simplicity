@@ -497,28 +497,27 @@
     <\verbatim>
       <strong|Inductive> Term : Ty -\<gtr\> Ty -\<gtr\> Set :=
 
-      \| iden : forall {A : Ty}, Term A A
+      \| iden : forall {A}, Term A A
 
-      \| comp : forall {A B C : Ty}, Term A B -\<gtr\> Term B C -\<gtr\> Term
-      A C
+      \| comp : forall {A B C}, Term A B -\<gtr\> Term B C -\<gtr\> Term A C
 
-      \| unit : forall {A : Ty}, Term A Unit
+      \| unit : forall {A}, Term A Unit
 
-      \| injl : forall {A B C : Ty}, Term A B -\<gtr\> Term A (Sum B C)
+      \| injl : forall {A B C}, Term A B -\<gtr\> Term A (Sum B C)
 
-      \| injr : forall {A B C : Ty}, Term A C -\<gtr\> Term A (Sum B C)
+      \| injr : forall {A B C}, Term A C -\<gtr\> Term A (Sum B C)
 
-      \| case : forall {A B C D : Ty},
+      \| case : forall {A B C D},
 
       \ \ \ \ Term (Prod A C) D -\<gtr\> Term (Prod B C) D -\<gtr\> Term
       (Prod (Sum A B) C) D
 
-      \| pair : forall {A B C : Ty}, Term A B -\<gtr\> Term A C -\<gtr\> Term
-      A (Prod B C)
+      \| pair : forall {A B C}, Term A B -\<gtr\> Term A C -\<gtr\> Term A
+      (Prod B C)
 
-      \| take : forall {A B C : Ty}, Term A C -\<gtr\> Term (Prod A B) C
+      \| take : forall {A B C}, Term A C -\<gtr\> Term (Prod A B) C
 
-      \| drop : forall {A B C : Ty}, Term B C -\<gtr\> Term (Prod A B) C.
+      \| drop : forall {A B C}, Term B C -\<gtr\> Term (Prod A B) C.
     </verbatim>
   </render-code>
 
@@ -527,7 +526,7 @@
   \;
 
   <\verbatim>
-    Fixpoint eval {A B : Ty} (x : Term A B) : tySem A -\<gtr\> tySem B :=
+    Fixpoint eval {A B} (x : Term A B) : tySem A -\<gtr\> tySem B :=
 
     match x in Term A B return tySem A -\<gtr\> tySem B with
 
