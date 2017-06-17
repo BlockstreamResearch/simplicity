@@ -52,47 +52,44 @@ fromWord32 = fromWord word32
 
 adder :: Core term => Word a -> term (a, a) (Bit, a)
 adder BitW = cond (iden &&& not iden) (false &&& iden)
-adder (DoubleW w) = (take (take iden) &&& drop (take iden))
-                &&& (take (drop iden) &&& drop (drop iden) >>> rec)
-                >>> (take iden &&& drop (take iden) >>> fa) &&& drop (drop iden)
-                >>> take (take iden) &&& (take (drop iden) &&& drop iden)
+adder (DoubleW w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
+                >>> (oh &&& ioh >>> fa) &&& iih
+                >>> ooh &&& (oih &&& ih)
  where
   rec = adder w
   fa = fullAdder w
 
 fullAdder :: Core term => Word a -> term ((a, a), Bit) (Bit, a)
-fullAdder BitW = take add &&& drop iden
-             >>> take (take iden) &&& (take (drop iden) &&& drop iden >>> add)
-             >>> cond true (take iden) &&& drop (drop iden)
+fullAdder BitW = take add &&& ih
+             >>> ooh &&& (oih &&& ih >>> add)
+             >>> cond true oh &&& iih
  where
   add = adder BitW
-fullAdder (DoubleW w) = take (take (take iden) &&& drop (take iden))
-                    &&& (take (take (drop iden) &&& drop (drop iden)) &&& drop iden >>> rec)
-                    >>> (take iden &&& drop (take iden) >>> rec) &&& drop (drop iden)
-                    >>> take (take iden) &&& (take (drop iden) &&& drop iden)
+fullAdder (DoubleW w) = take (ooh &&& ioh) &&& (take (oih &&& iih) &&& ih >>> rec)
+                    >>> (oh &&& ioh >>> rec) &&& iih
+                    >>> ooh &&& (oih &&& ih)
  where
   rec = fullAdder w
 
 fullMultiplier :: Core term => Word a -> term ((a, a), (a, a)) (a, a)
-fullMultiplier BitW = drop iden &&& take (cond iden false)
+fullMultiplier BitW = ih &&& take (cond iden false)
                   >>> fullAdder BitW
-fullMultiplier (DoubleW w) = take ((take (take iden) &&& drop (take iden)) &&& take (drop iden))
-                         &&& ((take (take (take iden) &&& drop (drop iden)) &&& drop (take (take iden) &&& drop (take iden)) >>> rec)
-                         &&& (take (take (drop iden) &&& drop (drop iden)) &&& drop (take (drop iden) &&& drop (drop iden)) >>> rec))
-                         >>> (take (take iden) &&& (take (take (drop iden) &&& drop iden) &&& drop (take (drop iden) &&& drop (take iden)) >>> rec))
-                         &&& (drop (take (take iden) &&& drop (drop iden)))
-                         >>> (take (take iden) &&& (take (drop (take iden)) &&& drop (take iden)) >>> rec) &&& (take (drop (drop iden)) &&& drop (drop iden))
+fullMultiplier (DoubleW w) = take ((ooh &&& ioh) &&& oih)
+                         &&& ((take (ooh &&& iih) &&& drop (ooh &&& ioh) >>> rec)
+                          &&& (take (oih &&& iih) &&& drop (oih &&& iih) >>> rec))
+                         >>> (ooh &&& (take (oih &&& ih) &&& drop (oih &&& ioh) >>> rec))
+                         &&& drop (ooh &&& iih)
+                         >>> (ooh &&& (oioh &&& ioh) >>> rec) &&& (oiih &&& iih)
  where
   rec = fullMultiplier w
 
 multiplier :: Core term => Word a -> term (a, a) (a, a)
 multiplier BitW = false &&& cond iden false
-multiplier (DoubleW w) = ((take (take iden) &&& drop (take iden)) &&& take (drop iden))
-                     &&& ((take (take iden) &&& drop (drop iden) >>> rec)
-                     &&& (take (drop iden) &&& drop (drop iden) >>> rec))
-                     >>> (take (take iden) &&& (take (take (drop iden) &&& drop iden) &&& drop (take (drop iden) &&& drop (take iden)) >>> fmul))
-                     &&& (drop (take (take iden) &&& drop (drop iden)))
-                     >>> (take (take iden) &&& (take (drop (take iden)) &&& drop (take iden)) >>> fmul) &&& (take (drop (drop iden)) &&& drop (drop iden))
+multiplier (DoubleW w) = ((ooh &&& ioh) &&& oih)
+                     &&& ((ooh &&& iih >>> rec) &&& (oih &&& iih >>> rec))
+                     >>> (ooh &&& (take (oih &&& ih) &&& drop (oih &&& ioh) >>> fm))
+                     &&& drop (ooh &&& iih)
+                     >>> (ooh &&& (oioh &&& ioh) >>> fm) &&& (oiih &&& iih)
  where
   rec = multiplier w
-  fmul = fullMultiplier w
+  fm = fullMultiplier w

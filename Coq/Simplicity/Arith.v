@@ -70,14 +70,14 @@ end.
 Definition multiplierBit {term : Core.type} : term (Bit * Bit) (Bit * Bit) :=
     false &&& cond iden false.
 
-Definition buildMultiplier {W} {term : Core.type} (fmul : term ((W * W) * (W * W)) (W * W)) (rec : term (W * W) (W * W)) :
+Definition buildMultiplier {W} {term : Core.type} (fm : term ((W * W) * (W * W)) (W * W)) (rec : term (W * W) (W * W)) :
   term ((W * W) * (W * W)) ((W * W) * (W * W)) :=
     ((take (take iden) &&& drop (take iden)) &&& take (drop iden))
 &&& ((take (take iden) &&& drop (drop iden) >>> rec)
 &&& (take (drop iden) &&& drop (drop iden) >>> rec))
->>> (take (take iden) &&& (take (take (drop iden) &&& drop iden) &&& drop (take (drop iden) &&& drop (take iden)) >>> fmul))
+>>> (take (take iden) &&& (take (take (drop iden) &&& drop iden) &&& drop (take (drop iden) &&& drop (take iden)) >>> fm))
 &&& (drop (take (take iden) &&& drop (drop iden)))
->>> (take (take iden) &&& (take (drop (take iden)) &&& drop (take iden)) >>> fmul) &&& (take (drop (drop iden)) &&& drop (drop iden)).
+>>> (take (take iden) &&& (take (drop (take iden)) &&& drop (take iden)) >>> fm) &&& (take (drop (drop iden)) &&& drop (drop iden)).
 
 Fixpoint multiplier {n : nat} {term : Core.type} : term (Word n * Word n) (Word n * Word n) :=
 match n with

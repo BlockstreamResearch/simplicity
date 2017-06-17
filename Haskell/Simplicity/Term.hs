@@ -1,6 +1,9 @@
+{-# LANGUAGE NoMonomorphismRestriction #-}
 module Simplicity.Term
- ( Category, iden, comp, (>>>), (&&&)
+ ( Category, iden, comp, (>>>)
  , Core, unit, injl, injr, match, pair, take, drop
+ , (&&&)
+ , oh, ih, ooh, oih, ioh, iih, oooh, iooh, ooih, ioih, oioh, iioh, oiih, iiih
  ) where
 
 import Control.Category (Category, (>>>))
@@ -25,8 +28,21 @@ class Category term => Core term where
   take :: term a c -> term (a, b) c
   drop :: term b c -> term (a, b) c
 
-(&&&) :: Core term => term a b -> term a c -> term a (b, c)
 (&&&) = pair
+oh = take iden
+ih = drop iden
+ooh = take oh 
+ioh = drop oh
+oih = take ih
+iih = drop ih        
+oooh = take ooh      
+iooh = drop ooh      
+oioh = take ioh      
+iioh = drop ioh      
+ooih = take oih
+ioih = drop oih
+oiih = take iih
+iiih = drop iih
 
 instance Core (->) where
   unit = const ()
