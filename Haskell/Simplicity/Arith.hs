@@ -53,8 +53,8 @@ fromWord32 = fromWord word32
 adder :: Core term => Word a -> term (a, a) (Bit, a)
 adder BitW = cond (iden &&& not iden) (false &&& iden)
 adder (DoubleW w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
-                >>> (oh &&& ioh >>> fa) &&& iih
-                >>> ooh &&& (oih &&& ih)
+                >>> iih &&& (oh &&& ioh >>> fa)
+                >>> ioh &&& (iih &&& oh)
  where
   rec = adder w
   fa = fullAdder w
@@ -66,30 +66,30 @@ fullAdder BitW = take add &&& ih
  where
   add = adder BitW
 fullAdder (DoubleW w) = take (ooh &&& ioh) &&& (take (oih &&& iih) &&& ih >>> rec)
-                    >>> (oh &&& ioh >>> rec) &&& iih
-                    >>> ooh &&& (oih &&& ih)
+                    >>> iih &&& (oh &&& ioh >>> rec)
+                    >>> ioh &&& (iih &&& oh)
  where
   rec = fullAdder w
 
 fullMultiplier :: Core term => Word a -> term ((a, a), (a, a)) (a, a)
 fullMultiplier BitW = ih &&& take (cond iden false)
                   >>> fullAdder BitW
-fullMultiplier (DoubleW w) = take ((ooh &&& ioh) &&& oih)
+fullMultiplier (DoubleW w) = take (ooh &&& (ioh &&& oih))
                          &&& ((take (ooh &&& iih) &&& drop (ooh &&& ioh) >>> rec)
-                          &&& (take (oih &&& iih) &&& drop (oih &&& iih) >>> rec))
-                         >>> (ooh &&& (take (oih &&& ih) &&& drop (oih &&& ioh) >>> rec))
-                         &&& drop (ooh &&& iih)
-                         >>> (ooh &&& (oioh &&& ioh) >>> rec) &&& (oiih &&& iih)
+                         &&& (take (oih &&& iih) &&& drop (oih &&& iih) >>> rec))
+                         >>> take (oh &&& ioh)
+                         &&& (drop (ooh &&& iih) &&& (oih &&& drop (oih &&& ioh) >>> rec))
+                         >>> (oh &&& drop (ioh &&& ooh) >>> rec) &&& drop (iih &&& oih)
  where
   rec = fullMultiplier w
 
 multiplier :: Core term => Word a -> term (a, a) (a, a)
 multiplier BitW = false &&& cond iden false
-multiplier (DoubleW w) = ((ooh &&& ioh) &&& oih)
+multiplier (DoubleW w) = (ooh &&& (ioh &&& oih))
                      &&& ((ooh &&& iih >>> rec) &&& (oih &&& iih >>> rec))
-                     >>> (ooh &&& (take (oih &&& ih) &&& drop (oih &&& ioh) >>> fm))
-                     &&& drop (ooh &&& iih)
-                     >>> (ooh &&& (oioh &&& ioh) >>> fm) &&& (oiih &&& iih)
+                     >>> take (oh &&& ioh)
+                     &&& (drop (ooh &&& iih) &&& (oih &&& drop (oih &&& ioh) >>> fm))
+                     >>> (oh &&& drop (ioh &&& ooh) >>> fm) &&& drop (iih &&& oih)
  where
   rec = multiplier w
   fm = fullMultiplier w

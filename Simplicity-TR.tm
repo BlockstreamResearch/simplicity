@@ -797,16 +797,16 @@
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-adder><rsub|2n>>>|<cell|:=>|<cell|<math|<math-ss|take>
     <around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><around*|(|<math-ss|take>
     <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\> <math-ss|IH>
-    ;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<around*|(|<math-ss|OH>\<times\><math-ss|IOH>
-    ;<math-ss|full-adder><rsub|n>|)>\<times\><math-ss|IIH>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|OOH>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|IH>|)>>>>>>>>>>>>
+    ;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>
+    ;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
     <math|<math-ss|adder><rsub|2n> :<math-bf|Word2<em|n>>\<times\><math-bf|Word2<em|n>>\<vdash\><2>\<times\><math-bf|Word2<em|n>>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|adder><rsub|2n>>>|<cell|:=>|<cell|<math|<around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|IIH>
-    ;<math-ss|adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<around*|(|<math-ss|OH>\<times\><math-ss|IOH>
-    ;<math-ss|full-adder><rsub|n>|)>\<times\><math-ss|IIH>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|OOH>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|IH>|)>>>>>>>>>>>>
+    ;<math-ss|adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>
+    ;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>>>>>>>>>>>>
   </render-code>
 
   We generalize the specification for the single bit adders and full adders
@@ -833,18 +833,20 @@
     :<around*|(|<math-bf|Word2<em|n>>\<times\><math-bf|Word2<em|n>>|)>\<times\><around*|(|<math-bf|Word2<em|n>>\<times\><math-bf|Word2<em|n>>|)>\<vdash\><math|<math-bf|Word4<em|n>>>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiplier><rsub|2n>>>|<cell|:=>|<cell|<math|<math-ss|take>
-    <around*|(|<around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><math-ss|OIH>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|(<math|<around*|(|<math-ss|take>
+    <around*|(|<math-ss|OOH>\<times\><around*|(|<math-ss|IOH>\<times\><math-ss|OIH>|)>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|(<math|<around*|(|<math-ss|take>
     <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>\<times\><math-ss|drop>
     <around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>
     ;<math-ss|full-multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|take>
     <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\><math-ss|drop>
     <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>
-    ;<math-ss|full-multiplier><rsub|n>|)>>)>>|<row|<cell|>|<cell|<math|;>>|<cell|<math-ss|OOH>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<around*|(|<math-ss|take>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IH>|)>\<times\><math-ss|drop>
+    ;<math-ss|full-multiplier><rsub|n>|)>>)>>|<row|<cell|>|<cell|<math|;>>|<cell|<math|<math-ss|take>
+    <around*|(|<math-ss|OH>\<times\><math-ss|IOH>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|drop>
+    <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|drop>
     <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>
+    ;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|<math|;>>|<cell|<math|<around*|(|<math-ss|OH>\<times\><math-ss|drop>
+    <around*|(|<math-ss|IOH>\<times\><math-ss|OOH>|)>
     ;<math-ss|full-multiplier><rsub|n>|)>\<times\><math-ss|drop>
-    <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>|)>>>>|<row|<cell|>|<cell|<math|;>>|<cell|<math|<around*|(|<math-ss|OOH>\<times\><around*|(|<math-ss|OIOH>\<times\><math-ss|IOH>|)>
-    ;<math-ss|full-multiplier><rsub|n>|)>\<times\><around*|(|<math-ss|OIIH>\<times\><math-ss|IIH>|)>>>>>>>>>>>>
+    <around*|(|<math-ss|IIH>\<times\><math-ss|OIH>|)>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
@@ -857,15 +859,17 @@
   <\render-code>
     <math|<math-ss|multiplier><rsub|2n> :<math-bf|Word2<em|n>>\<times\><math-bf|Word2<em|n>>\<vdash\><math|<math-bf|Word4<em|n>>>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|2n>>>|<cell|:=>|<cell|<math|
-    <around*|(|<around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><math-ss|OIH>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|><around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|3|5|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|2n>>>|<cell|:=>|<cell|<math|
+    <around*|(|<math-ss|OOH>\<times\><around*|(|<math-ss|IOH>\<times\><math-ss|OIH>|)>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|><around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>
     ;<math-ss|multiplier><rsub|n>|)>\<times\><around*|(|<around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>
-    ;<math-ss|multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|<math|;>>|<cell|<math-ss|OOH>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<around*|(|<math-ss|take>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IH>|)>\<times\><math-ss|drop>
+    ;<math-ss|multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|<math|;>>|<cell|<math|<math-ss|take>
+    <around*|(|<math-ss|OH>\<times\><math-ss|IOH>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|drop>
+    <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|drop>
     <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>
+    ;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|<math|;>>|<cell|<math|<around*|(|<math-ss|OH>\<times\><math-ss|drop>
+    <around*|(|<math-ss|IOH>\<times\><math-ss|OOH>|)>
     ;<math-ss|full-multiplier><rsub|n>|)>\<times\><math-ss|drop>
-    <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>|)>>>>|<row|<cell|>|<cell|<math|;>>|<cell|<math|<around*|(|<math-ss|OOH>\<times\><around*|(|<math-ss|OIOH>\<times\><math-ss|IOH>|)>
-    ;<math-ss|full-multiplier><rsub|n>|)>\<times\><around*|(|<math-ss|OIIH>\<times\><math-ss|IIH>|)>>>>>>>>>>>>
+    <around*|(|<math-ss|IIH>\<times\><math-ss|OIH>|)>>>>>>>>>>>>
   </render-code>
 
   We can prove that the multipliers and full multipliers meet the following

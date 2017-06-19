@@ -7,7 +7,7 @@ Local Open Scope term_scope.
 
 Fixpoint Word (n : nat) :=
 match n with
-| O => Bit
+| 0 => Bit
 | S n => let rec := Word n in Prod rec rec
 end.
 
@@ -18,33 +18,32 @@ Definition adderBit {term : Core.type} : term (Bit * Bit) (Bit * Bit) :=
 
 Definition fullAdderBit {term : Core.type} : term ((Bit * Bit) * Bit) (Bit * Bit) :=
   let add := adderBit in
-    take add &&& drop iden
->>> take (take iden) &&& (take (drop iden) &&& drop iden >>> add)
->>> cond true (take iden) &&& drop (drop iden).
+    take add &&& I H
+>>> O O H &&& (O I H &&& I H >>> add)
+>>> cond true O H &&& I I H.
 
 Definition buildFullAdder {W} {term : Core.type} (rec : term ((W * W) * Bit) (Bit * W)) :
   term (((W * W) * (W * W)) * Bit) (Bit * (W * W)) :=
-    take (take (take iden) &&& drop (take iden))
-&&& (take (take (drop iden) &&& drop (drop iden)) &&& drop iden >>> rec)
->>> (take iden &&& drop (take iden) >>> rec) &&& drop (drop iden)
->>> take (take iden) &&& (take (drop iden) &&& drop iden).
+    take (O O H &&& I O H) &&& (take (O I H &&& I I H) &&& I H >>> rec)
+>>> I I H &&& (O H &&& I O H >>> rec)
+>>> I O H &&& (I I H &&& O H).
 
 Fixpoint fullAdder {n : nat} {term : Core.type} : term ((Word n * Word n) * Bit) (Bit * Word n) :=
 match n with
-| O => fullAdderBit
+| 0 => fullAdderBit
 | S n => buildFullAdder fullAdder
 end.
 
 Definition buildAdder {W} {term : Core.type} (fa : term ((W * W) * Bit) (Bit * W)) (rec : term (W * W) (Bit * W)) :
   term ((W * W) * (W * W)) (Bit * (W * W)) :=
-    (take (take iden) &&& drop (take iden))
-&&& (take (drop iden) &&& drop (drop iden) >>> rec)
->>> (take iden &&& drop (take iden) >>> fa) &&& drop (drop iden)
->>> take (take iden) &&& (take (drop iden) &&& drop iden).
+    (O O H &&& I O H)
+&&& (O I H &&& I I H >>> rec)
+>>> I I H &&& (O H &&& I O H >>> fa)
+>>> I O H &&& (I I H &&& O H).
 
 Fixpoint adder {n : nat} {term : Core.type} : term (Word n * Word n) (Bit * Word n) :=
 match n with
-| O => adderBit
+| 0 => adderBit
 | S n => buildAdder fullAdder adder
 end.
 
@@ -54,16 +53,16 @@ Definition fullMultiplierBit {term : Core.type} : term ((Bit * Bit) * (Bit * Bit
 
 Definition buildFullMultiplier {W} {term : Core.type} (rec : term ((W * W) * (W * W)) (W * W)) :
   term (((W * W) * (W * W)) * ((W * W) * (W * W))) (((W * W) * (W * W))) :=
-    take ((take (take iden) &&& drop (take iden)) &&& take (drop iden))
-&&& ((take (take (take iden) &&& drop (drop iden)) &&& drop (take (take iden) &&& drop (take iden)) >>> rec)
-&&& (take (take (drop iden) &&& drop (drop iden)) &&& drop (take (drop iden) &&& drop (drop iden)) >>> rec))
->>> (take (take iden) &&& (take (take (drop iden) &&& drop iden) &&& drop (take (drop iden) &&& drop (take iden)) >>> rec))
-&&& (drop (take (take iden) &&& drop (drop iden)))
->>> (take (take iden) &&& (take (drop (take iden)) &&& drop (take iden)) >>> rec) &&& (take (drop (drop iden)) &&& drop (drop iden)).
+    take (O O H &&& (I O H &&& O I H))
+&&& ((take (O O H &&& I I H) &&& drop (O O H &&& I O H) >>> rec)
+&&& (take (O I H &&& I I H) &&& drop (O I H &&& I I H) >>> rec))
+>>> take (O H &&& I O H)
+&&& (drop (O O H &&& I I H) &&& (O I H &&& drop (O I H &&& I O H) >>> rec))
+>>> (O H &&& drop (I O H &&& O O H) >>> rec) &&& drop (I I H &&& O I H).
 
 Fixpoint fullMultiplier {n : nat} {term : Core.type} : term ((Word n * Word n) * (Word n * Word n)) (Word n * Word n) :=
 match n with
-| O => fullMultiplierBit
+| 0 => fullMultiplierBit
 | S n => buildFullMultiplier fullMultiplier
 end.
 
@@ -72,16 +71,15 @@ Definition multiplierBit {term : Core.type} : term (Bit * Bit) (Bit * Bit) :=
 
 Definition buildMultiplier {W} {term : Core.type} (fm : term ((W * W) * (W * W)) (W * W)) (rec : term (W * W) (W * W)) :
   term ((W * W) * (W * W)) ((W * W) * (W * W)) :=
-    ((take (take iden) &&& drop (take iden)) &&& take (drop iden))
-&&& ((take (take iden) &&& drop (drop iden) >>> rec)
-&&& (take (drop iden) &&& drop (drop iden) >>> rec))
->>> (take (take iden) &&& (take (take (drop iden) &&& drop iden) &&& drop (take (drop iden) &&& drop (take iden)) >>> fm))
-&&& (drop (take (take iden) &&& drop (drop iden)))
->>> (take (take iden) &&& (take (drop (take iden)) &&& drop (take iden)) >>> fm) &&& (take (drop (drop iden)) &&& drop (drop iden)).
+    (O O H &&& (I O H &&& O I H))
+&&& ((O O H &&& I I H >>> rec) &&& (O I H &&& I I H >>> rec))
+>>> take (O H &&& I O H)
+&&& (drop (O O H &&& I I H) &&& (O I H &&& drop (O I H &&& I O H) >>> fm))
+>>> (O H &&& drop (I O H &&& O O H) >>> fm) &&& drop (I I H &&& O I H).
 
 Fixpoint multiplier {n : nat} {term : Core.type} : term (Word n * Word n) (Word n * Word n) :=
 match n with
-| O => multiplierBit
+| 0 => multiplierBit
 | S n => buildMultiplier fullMultiplier multiplier
 end.
 

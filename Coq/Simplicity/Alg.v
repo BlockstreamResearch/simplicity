@@ -193,6 +193,10 @@ Hint Resolve drop_Parametric : parametricity.
 Notation "s &&& t" := (pair s t) (at level 70, right associativity) : term_scope.
 Notation "s >>> t" := (comp s t) (at level 90, right associativity) : term_scope.
 
+Notation "'H'" := iden : term_scope.
+Notation "'O' x" := (take x) (at level 0, right associativity) : term_scope.
+Notation "'I' x" := (drop x) (at level 0, right associativity) : term_scope.
+
 Section CoreSem.
 
 Definition CoreSem : Core.type := Core.Pack (Core.Class.Class (fun A B => A -> B)
