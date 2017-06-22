@@ -783,11 +783,36 @@
     <math-ss|true> <math-ss|OH>\<times\><math-ss|IIH>>>>>>>>>>>>>>
   </render-code>
 
-  We can prove that these two adders meet the following specification.
+  These two adders meet the following specification.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|adder><rsub|1>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rfloor\>><rsub|2>>|<cell|=>|<cell|<around*|\<lfloor\>|a|\<rfloor\>><rsub|1>+<around*|\<lfloor\>|b|\<rfloor\>><rsub|1>>>|<row|<cell|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|1>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,c|\<rangle\>>|\<rfloor\>><rsub|2>>|<cell|=>|<cell|<around*|\<lfloor\>|a|\<rfloor\>><rsub|1>+<around*|\<lfloor\>|b|\<rfloor\>><rsub|1>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>>>>>
   </eqnarray*>
+
+  It is easy to exhaustively check the above equations because there are only
+  a small finite number of possible inputs to consider (four inputs for
+  <math|<math-ss|adder><rsub|1>> and eight inputs for
+  <math|<math-ss|full-adder><rsub|1>>). \ We will illustrate this for a
+  single case for <math|<math-ss|adder><rsub|1>> where <math|a=1<rsub|<2>>>
+  and <math|b=0<rsub|<2>>>.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|adder><rsub|1>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rfloor\>><rsub|2>>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|cond>
+    <around*|(|<math-ss|iden>\<times\><math-ss|not> <math-ss|iden>|)>
+    <around*|(|<math-ss|false>\<times\><math-ss|iden>|)>|\<rrbracket\>><around*|\<langle\>|1<rsub|<2>>,0<rsub|<2>>|\<rangle\>>|\<rfloor\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|iden>\<times\><math-ss|not>
+    <math-ss|iden>|\<rrbracket\>><around*|(|0<rsub|<2>>|)>|\<rfloor\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<langle\>|<around*|\<llbracket\>|<math-ss|iden>|\<rrbracket\>><around*|(|0<rsub|<2>>|)>,<around*|\<llbracket\>|<math-ss|not>
+    <math-ss|iden>|\<rrbracket\>><around*|(|0<rsub|<2>>|)>|\<rangle\>>|\<rfloor\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<langle\>|0<rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|pair>
+    <math-ss|iden> <math-ss|unit>|)>; <around*|(|<math-ss|cond>
+    <math-ss|false> <math-ss|true>|)>|\<rrbracket\>><around*|(|0<rsub|<2>>|)>|\<rangle\>>|\<rfloor\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<langle\>|0<rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|cond>
+    <math-ss|false> <math-ss|true>|)>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<around*|(|<math-ss|pair>
+    <math-ss|iden> <math-ss|unit>|)>|\<rrbracket\>><around*|(|0<rsub|<2>>|)>|\<rangle\>>|\<rfloor\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<langle\>|0<rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|cond>
+    <math-ss|false> <math-ss|true>|)>|\<rrbracket\>><around*|\<langle\>|<around*|\<llbracket\>|<math-ss|iden>|\<rrbracket\>><around*|(|0<rsub|<2>>|)>,<around*|\<llbracket\>|<math-ss|unit>|\<rrbracket\>><around*|(|0<rsub|<2>>|)>|\<rangle\>>|\<rangle\>>|\<rfloor\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<langle\>|0<rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|cond>
+    <math-ss|false> <math-ss|true>|)>|\<rrbracket\>><around*|\<langle\>|0<rsub|<2>>,<around*|\<langle\>||\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rfloor\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<langle\>|0<rsub|<2>>,<around*|\<llbracket\>|<math-ss|true>|\<rrbracket\>><around*|\<langle\>||\<rangle\>>|\<rangle\>>|\<rfloor\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<langle\>|0<rsub|<2>>,1<rsub|<2>>|\<rangle\>>|\<rfloor\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|0<rsub|2>|\<rfloor\>><rsub|1>\<cdot\>2<rsup|1>+<around*|\<lfloor\>|1<rsub|2>|\<rfloor\>><rsub|1>>>|<row|<cell|>|<cell|=>|<cell|0\<cdot\>2+1>>|<row|<cell|>|<cell|=>|<cell|1>>|<row|<cell|>|<cell|=>|<cell|1+0>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|1<rsub|2>|\<rfloor\>><rsub|1>+<around*|\<lfloor\>|0<rsub|2>|\<rfloor\>><rsub|1>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|a|\<rfloor\>><rsub|1>+<around*|\<lfloor\>|b|\<rfloor\>><rsub|1>>>>>
+  </eqnarray*>
+
+  The calculations for the other cases are similar.
+
+  <math|>
 
   Next we recursively build adders and full adders for any word size.
 
@@ -815,6 +840,97 @@
   <\eqnarray*>
     <tformat|<table|<row|<cell|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rfloor\>><rsub|1,n>>|<cell|=>|<cell|<around*|\<lfloor\>|a|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b|\<rfloor\>><rsub|n>>>|<row|<cell|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,c|\<rangle\>>|\<rfloor\>><rsub|1,n>>|<cell|=>|<cell|<around*|\<lfloor\>|a|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>>>>>
   </eqnarray*>
+
+  <\theorem>
+    For all <math|n> which is a power of 2, and for all
+    <math|a:<math-bf|Word<em|n>>>, <math|b :<math-bf|Word<em|n>>>, and
+    <math|c :<math-bf|Bit>>, we have that
+    <math|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,c|\<rangle\>>|\<rfloor\>><rsub|1,n>=<around*|\<lfloor\>|a|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>>.
+  </theorem>
+
+  <\proof>
+    We prove <math|<math-ss|full-adder><rsub|n>> meets its specification by
+    induction on <math|n>. \ As mentioned before,
+    <math|<math-ss|full-adder><rsub|1>> case is easily checked by verifying
+    all eight possible inputs. Next we prove that
+    <math|<math-ss|full-adder><rsub|2n>> meets its specification under the
+    assumption that <math|<math-ss|full-adder><rsub|n>> does. \ Specifically
+    we want to show that
+
+    \;
+
+    <\equation>
+      <around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>|\<rfloor\>><rsub|1,2*n>=<around*|\<lfloor\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1><label|full-adder-spec>
+    </equation>
+
+    Let us first consider the right hand side of equation
+    <reference|full-adder-spec>. By the definition of our value function we
+    have that\ 
+
+    <\eqnarray*>
+      <tformat|<table|<row|<cell|<around*|\<lfloor\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>>|<cell|=>|<cell|<around*|\<lfloor\>|a<rsub|1>|\<rfloor\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|a<rsub|2>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|1>|\<rfloor\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|b<rsub|2>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lfloor\>|a<rsub|1>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|1>|\<rfloor\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|a<rsub|2>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|2>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>>>>>
+    </eqnarray*>
+
+    By our inductive hypothesis, we have that
+    <math|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>|\<rfloor\>><rsub|1,n>=<around*|\<lfloor\>|a<rsub|2>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|2>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>>,
+    so we know that
+
+    <\equation*>
+      <around*|\<lfloor\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>=<around*|(|<around*|\<lfloor\>|a<rsub|1>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|1>|\<rfloor\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>|\<rfloor\>><rsub|1,n>
+    </equation*>
+
+    Let us define <math|c<rsub|0>> and <math|r<rsub|2>> such that
+    <math|<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>\<assign\>><math|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>>.
+    Thus we have that
+
+    <\eqnarray*>
+      <tformat|<table|<row|<cell|<around*|\<lfloor\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>>|<cell|=>|<cell|<around*|(|<around*|\<lfloor\>|a<rsub|1>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|1>|\<rfloor\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|1,n>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lfloor\>|a<rsub|1>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|1>|\<rfloor\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|c<rsub|0>|\<rfloor\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|r<rsub|2>|\<rfloor\>><rsub|n>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lfloor\>|a<rsub|1>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|1>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|c<rsub|0>|\<rfloor\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|r<rsub|2>|\<rfloor\>><rsub|n>>>>>
+    </eqnarray*>
+
+    Again, by our inductive hypothesis, we have that
+
+    <\equation*>
+      <around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>|\<rfloor\>><rsub|1,n>=<around*|\<lfloor\>|a<rsub|1>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|1>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|c<rsub|0>|\<rfloor\>><rsub|1>
+    </equation*>
+
+    therefore we have that
+
+    <\equation*>
+      <around*|\<lfloor\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>=<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>|\<rfloor\>><rsub|1,n>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|r<rsub|2>|\<rfloor\>><rsub|n>
+    </equation*>
+
+    Let us define <math|c<rsub|1>> and <math|r<rsub|1>> such that
+    <math|<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>\<assign\>><math|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>>.
+    Thus we have that
+
+    <\eqnarray*>
+      <tformat|<table|<row|<cell|<around*|\<lfloor\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>|\<rfloor\>><rsub|1,n>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|r<rsub|2>|\<rfloor\>><rsub|n>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lfloor\>|c<rsub|1>|\<rfloor\>><rsub|1>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|r<rsub|1>|\<rfloor\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|r<rsub|2>|\<rfloor\>><rsub|n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|c<rsub|1>|\<rfloor\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lfloor\>|r<rsub|1>|\<rfloor\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|r<rsub|2>|\<rfloor\>><rsub|n><eq-number><label|full-adder-RHS>>>>>
+    </eqnarray*>
+
+    Now let us consider the left hand side of equation
+    <reference|full-adder-spec>. By the definition and semantics of
+    <math|<math-ss|full-adder><rsub|2n>> we have that
+
+    <\eqnarray*>
+      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>
+      ;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|take>
+      <around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><around*|(|<math-ss|take>
+      <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\> <math-ss|IH>
+      ;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>
+      ;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>
+      ;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>>>
+    </eqnarray*>
+
+    Therefore we have that
+
+    <\eqnarray*>
+      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>|\<rfloor\>><rsub|1,2*n>>|<cell|=>|<cell|<around*|\<lfloor\>|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rangle\>>|\<rfloor\>><rsub|1,2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|c<rsub|1>|\<rfloor\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lfloor\>|<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rfloor\>><rsub|2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lfloor\>|c<rsub|1>|\<rfloor\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lfloor\>|r<rsub|1>|\<rfloor\>><rsub|*n>\<cdot\>2<rsup|n>+<around*|\<lfloor\>|r<rsub|2>|\<rfloor\>><rsub|n><eq-number><label|full-adder-LHS>>>>>
+    </eqnarray*>
+
+    Together equations <math|><reference|full-adder-RHS> and
+    <reference|full-adder-LHS> show that the right hand side and left hand
+    side of equation <reference|full-adder-spec> are equal, as required.
+  </proof>
 
   With a full adder we can recursively build multipliers and full multiplier
   in a similar way.
@@ -1021,6 +1137,9 @@
     <associate|auto-7|<tuple|2.1.2|7>>
     <associate|auto-8|<tuple|2.1.2.1|8>>
     <associate|auto-9|<tuple|2.2|8>>
+    <associate|full-adder-LHS|<tuple|2.3|?>>
+    <associate|full-adder-RHS|<tuple|2.2|?>>
+    <associate|full-adder-spec|<tuple|2.1|?>>
   </collection>
 </references>
 

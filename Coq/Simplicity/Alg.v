@@ -221,3 +221,5 @@ induction x; simpl; try first [rewrite IHx | rewrite IHx1, IHx2]; reflexivity.
 Qed.
 
 End CoreSem.
+
+Notation "|[ x ]|" := (x : Core.carrier CoreSem _ _) : core_alg_scope.
