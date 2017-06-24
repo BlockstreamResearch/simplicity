@@ -5,6 +5,8 @@ Local Open Scope ty_scope.
 Local Open Scope term_scope.
 
 Notation Bit := (Unit + Unit).
+Notation "'Bit.zero'" := (inl tt).
+Notation "'Bit.one'" := (inr tt).
 
 Section Definitions.
 
