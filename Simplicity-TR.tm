@@ -872,7 +872,11 @@
     </eqnarray*>
 
     By our inductive hypothesis, we have that
-    <math|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>|\<rfloor\>><rsub|1,n>=<around*|\<lfloor\>|a<rsub|2>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|2>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>>,
+
+    <\equation*>
+      <around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>|\<rfloor\>><rsub|1,n>=<around*|\<lfloor\>|a<rsub|2>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b<rsub|2>|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|c|\<rfloor\>><rsub|1>
+    </equation*>
+
     so we know that
 
     <\equation*>
@@ -931,6 +935,10 @@
     <reference|full-adder-LHS> show that the right hand side and left hand
     side of equation <reference|full-adder-spec> are equal, as required.
   </proof>
+
+  The proof that <math|<around*|\<lfloor\>|<around*|\<llbracket\>|<math-ss|adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rfloor\>><rsub|1,n>=<around*|\<lfloor\>|a|\<rfloor\>><rsub|n>+<around*|\<lfloor\>|b|\<rfloor\>><rsub|n>>
+  is done in a similar manner. Computered verified versions of theses proofs
+  can be found in the Coq library (see Section<nbsp><with|color|red|TODO>).
 
   With a full adder we can recursively build multipliers and full multiplier
   in a similar way.
@@ -1008,6 +1016,40 @@
   <subsection|Elliptic Curve Operations>
 
   <section|Completeness Theorem>
+
+  General purpose programming languages are famously incomplete because there
+  are functions that are uncomputable, the halting problem being the most
+  famous of these. Core Simplicity is even more limited that these general
+  purpose programming languages because the denotational semantics are
+  limited to functions from finite types to finite types.
+
+  However, we can ask the question, is every function from a finite type to a
+  finite type expressible in Core Simplicity? This question is answered by
+  the completeness theorem as yes.
+
+  <\theorem>
+    Core Simplicity Completeness Theorem. For any (Simplicity) types <math|A>
+    and <math|B> and any function <math|f:A\<rightarrow\>B>, there exists
+    some Core Simplicity term <math|t> such that for all <math|a:A>,
+
+    <\equation*>
+      <around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>=f<around*|(|a|)>
+    </equation*>
+  </theorem>
+
+  This result is possible because these functions are all finitary and can
+  be, in principle, expressed as a large lookup table. \ It is possible to
+  encode these lookup tables as Simplicity expressions. \ The formal proof of
+  this theorem can be found in the Coq library (see
+  Section<nbsp><with|color|red|TODO>).
+
+  It is worth emphasizing that this result is a purely theoretical result
+  that show that Core Simplicity is fully expressive for it's domain; it is
+  completely impractical to generate Simplicity expressions this way as many
+  expressions would be astronomical in size. Thus we can see Simplicity
+  programming as an exercise in compression: how can we take advantage of the
+  structure within computations to expression our required functions
+  succinctly to avoid expressing functions as a large lookup table.
 
   <section|Operational Semantics>
 
