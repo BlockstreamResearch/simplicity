@@ -7,14 +7,13 @@ module Simplicity.Arith
   ) where
 
 import Simplicity.Bit
-import Simplicity.Ty
 import Simplicity.Term
 
 import Prelude hiding (Word, drop, take, not, or)
 
 data Word a where
   BitW :: Word Bit
-  DoubleW :: Word a -> Word (a,a)
+  DoubleW :: TyC a => Word a -> Word (a,a)
 
 word8 = DoubleW . DoubleW . DoubleW $ BitW
 word16 = DoubleW word8
