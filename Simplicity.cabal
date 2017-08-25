@@ -13,11 +13,14 @@ extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     Simplicity.Bit, Simplicity.Generic, Simplicity.Arith, Simplicity.Ty, Simplicity.Term
+  exposed-modules:     Simplicity.Bit, Simplicity.Generic, Simplicity.Arith, Simplicity.Ty, Simplicity.Term,
+                       Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty, Simplicity.BitMachine.Translate
   -- other-modules:       
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   build-depends:       base >=4.9 && <4.10,
-                       unification-fd >=0.10 && <0.11
+                       lens-family >=1.2 && <1.3,
+                       unification-fd >=0.10 && <0.11,
+                       vector >=0.12 && <0.13
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
 
@@ -26,7 +29,9 @@ Test-Suite Simplicity-testsuite
   main-is:             Tests.hs
   hs-source-dirs:      Haskell
   build-depends:       base >=4.9 && <4.10,
+                       lens-family >=1.2 && <1.3,
                        unification-fd >=0.10 && <0.11,
+                       vector >=0.12 && <0.13,
                        QuickCheck >=2.9 && <2.10,
                        tasty >=0.11 && <0.12,
                        tasty-quickcheck >=0.8 && <0.9

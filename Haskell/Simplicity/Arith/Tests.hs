@@ -1,13 +1,11 @@
-{-# LANGUAGE GADTs #-}
-module Simplicity.Arith.Tests where
+module Simplicity.Arith.Tests (tests) where
 
-import Simplicity.Bit
-import Simplicity.Ty
-import Simplicity.Term
 import Simplicity.Arith
+import Simplicity.Bit
+import Simplicity.Term
 
-import Test.Tasty
-import Test.Tasty.QuickCheck
+import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.QuickCheck (testProperty)
 
 tests :: TestTree
 tests = testGroup "Arith"

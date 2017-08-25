@@ -14,7 +14,7 @@ import Data.Type.Equality ((:~:)(Refl))
 import Prelude hiding (sum, prod)
 
 -- By not exporting the reify_ method, TyC becomes a "closed class" and no further instances can be made.
-class TyC a where
+class (Eq a, Ord a, Read a, Show a) => TyC a where
   reify_ :: TyReflect a
 
 instance TyC () where
