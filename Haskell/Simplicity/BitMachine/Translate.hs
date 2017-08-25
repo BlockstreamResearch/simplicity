@@ -32,7 +32,7 @@ instance Core Translation where
    where
     b = reifyProxy arrS
 
-  unit = Translation id
+  unit = Translation nop
 
   injl (Translation t) = result
    where

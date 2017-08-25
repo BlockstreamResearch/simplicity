@@ -14,7 +14,7 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:     Simplicity.Bit, Simplicity.Generic, Simplicity.Arith, Simplicity.Ty, Simplicity.Term,
-                       Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty, Simplicity.BitMachine.Translate
+                       Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty, Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO
   -- other-modules:       
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   build-depends:       base >=4.9 && <4.10,

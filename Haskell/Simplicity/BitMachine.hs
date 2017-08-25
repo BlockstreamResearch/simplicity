@@ -3,7 +3,7 @@ module Simplicity.BitMachine
  ( Cell
  , MachineCodeF(..), MachineCode
  , end, crash, write, copy, skip, fwd, bwd, newFrame, moveFrame, dropFrame, read
- , bump
+ , bump, nop
  ) where
 
 import Prelude hiding (read)
@@ -41,3 +41,6 @@ dropFrame x = Fix (DropFrame x)
 read x y = Fix (Read x y)
 
 bump i f = fwd i . f . bwd i
+
+nop :: MachineCode -> MachineCode
+nop x = x
