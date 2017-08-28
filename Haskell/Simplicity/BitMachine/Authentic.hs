@@ -10,7 +10,7 @@ import qualified Data.Vector as V
 import qualified Data.Vector.Mutable as VM
 import Lens.Family2 ((^.), to)
 
-import Simplicity.BitMachine (Cell, MachineCodeF(..), MachineCode)
+import Simplicity.BitMachine (Cell, MachineCodeF(..), MachineCode, Interpreter)
 
 data Frame = Frame { fData :: !(V.Vector Cell)
                    , fOffset :: !Int
@@ -113,6 +113,6 @@ finalState :: State -> Maybe [Cell]
 finalState (State [] (Active _ output) []) = Just (V.toList (fData output))
 finalState _ = Nothing
 
-runMachine :: MachineCode -> [Cell] -> Int -> Maybe [Cell]
+runMachine :: MachineCode -> Interpreter
 runMachine code input outputSize = cata runMachineF code (initialState input outputSize)
                                >>= finalState

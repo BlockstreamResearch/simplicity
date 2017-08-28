@@ -4,7 +4,8 @@ module Simplicity.BitMachine
  , end, crash, write, copy, skip, fwd, bwd, newFrame, moveFrame, dropFrame, read
  , bump, nop
  , Cell
- , encode, decode, executeUsing
+ , encode, decode
+ , Interpreter, executeUsing
  ) where
 
 import Prelude hiding (read)
@@ -78,7 +79,9 @@ decode = decodeR reify
     (,) <$> decodeR a l0 <*> decodeR b l1
   decodeR _ _ = Nothing
 
-executeUsing :: (TyC a, TyC b) => (arr a b -> [Cell] -> Int -> Maybe [Cell]) -> arr a b -> a -> Maybe b
-executeUsing make program input = result
+type Interpreter = [Cell] -> Int -> Maybe [Cell]
+
+executeUsing :: (TyC a, TyC b) => (arr a b -> Interpreter) -> arr a b -> a -> Maybe b
+executeUsing interpreter program input = result
  where
-  result = make program (encode input) (bitSizeR (reifyProxy result)) >>= decode
+  result = interpreter program (encode input) (bitSizeR (reifyProxy result)) >>= decode
