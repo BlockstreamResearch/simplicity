@@ -1,17 +1,18 @@
-{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE DeriveTraversable, GADTs #-}
 module Simplicity.BitMachine
- ( Cell
- , MachineCodeF(..), MachineCode
+ ( MachineCodeF(..), MachineCode
  , end, crash, write, copy, skip, fwd, bwd, newFrame, moveFrame, dropFrame, read
  , bump, nop
+ , Cell
+ , encode, decode, executeUsing
  ) where
 
 import Prelude hiding (read)
+import Control.Monad (guard)
 import Data.Functor.Fixedpoint (Fix(..), cata)
 
 import Simplicity.Ty
-
-type Cell = Maybe Bool
+import Simplicity.BitMachine.Ty
 
 data MachineCodeF a = End
                     | Crash
@@ -44,3 +45,40 @@ bump i f = fwd i . f . bwd i
 
 nop :: MachineCode -> MachineCode
 nop x = x
+
+type Cell = Maybe Bool
+
+safeSplitAt :: Int -> [a] -> Maybe ([a], [a])
+safeSplitAt n l = do
+  guard $ 0 <= n && n <= length l
+  return (splitAt n l)
+
+encode :: TyC a => a -> [Cell]
+encode x = encodeR reify x []
+ where
+  encodeR :: TyReflect a -> a -> [Cell] -> [Cell]
+  encodeR OneR () = id
+  encodeR (SumR a b) (Left x) = ([Just False] ++) . (replicate (padLR a b) Nothing ++) . encodeR a x
+  encodeR (SumR a b) (Right y) = ([Just True] ++) . (replicate (padRR a b) Nothing ++) . encodeR b y
+  encodeR (ProdR a b) (x, y) = encodeR a x . encodeR b y
+
+decode :: TyC a => [Cell] -> Maybe a
+decode = decodeR reify
+ where
+  decodeR :: TyReflect a -> [Cell] -> Maybe a
+  decodeR OneR [] = Just ()
+  decodeR (SumR a b) (Just v:l) = do
+    (l0, l1) <- safeSplitAt (pad a b) l
+    guard (all (==Nothing) l0)
+    if v then Right <$> decodeR b l1 else Left <$> decodeR a l1
+   where
+    pad = if v then padRR else padLR
+  decodeR (ProdR a b) l = do
+    (l0, l1) <- safeSplitAt (bitSizeR a) l
+    (,) <$> decodeR a l0 <*> decodeR b l1
+  decodeR _ _ = Nothing
+
+executeUsing :: (TyC a, TyC b) => (arr a b -> [Cell] -> Int -> Maybe [Cell]) -> arr a b -> a -> Maybe b
+executeUsing make program input = result
+ where
+  result = make program (encode input) (bitSizeR (reifyProxy result)) >>= decode
