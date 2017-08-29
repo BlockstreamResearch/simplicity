@@ -1,9 +1,13 @@
 module Simplicity.BitMachine.Authentic
  ( State, StateTrans
  , runMachine
+ , Stats(..)
+ , instrumentMachine
  ) where
 
-import Control.Monad ((>=>), guard, join)
+import Control.Monad ((>=>), guard, unless)
+import Control.Monad.Fail (MonadFail)
+import Control.Monad.Trans.Writer (WriterT, tell)
 import Data.Functor.Fixedpoint (cata)
 import Data.Vector ((//), (!?))
 import qualified Data.Vector as V
@@ -20,23 +24,23 @@ fInit cells = Frame (V.fromList cells) 0
 
 fNew n | 0 <= n = Frame (V.replicate n Nothing) 0
 
-fReset fm = guard (fOffset fm == length (fData fm))
+fReset fm = unless (fOffset fm == length (fData fm)) (fail "fReset: offset not at end of frame")
          >> return (fm {fOffset = 0})
 
-fRead = to (\fr -> fData fr !? fOffset fr)
+fRead fr = maybe (fail "fRead: offset out of range") return (fData fr !? fOffset fr)
 
 fSlice n = to go
  where
-  go (Frame dt os) | os + n <= V.length dt = Just (V.slice os n dt)
-                   | otherwise = Nothing
+  go (Frame dt os) | os + n <= V.length dt = return $ V.slice os n dt
+                   | otherwise = fail "fSlice: slice too large"
 
-fWrite v (Frame dt os) | os < V.length dt = Just $ Frame dt' os'
-                       | otherwise = Nothing
+fWrite v (Frame dt os) | os < V.length dt = return $ Frame dt' os'
+                       | otherwise = fail "fWrite: data too large"
  where
   dt' = dt // [(os, v)]
   os' = os+1
 
-fFill v (Frame dt os) | os + n <= V.length dt = Just $ Frame dt' os'
+fFill v (Frame dt os) | os + n <= V.length dt = return $ Frame dt' os'
  where
   n = V.length v
   dt' = V.modify go dt
@@ -44,10 +48,12 @@ fFill v (Frame dt os) | os + n <= V.length dt = Just $ Frame dt' os'
     go mv = V.copy (VM.slice os n mv) v
   os' = os + n
 
-fMove n (Frame dt os) | 0 <= os' && os' <= length dt = Just $ Frame dt os'
-                      | otherwise = Nothing
+fMove n (Frame dt os) | 0 <= os' && os' <= length dt = return $ Frame dt os'
+                      | otherwise = fail "fMove: index out of range"
  where
   os' = os+n
+
+fSize (Frame dt _) = V.length dt
 
 data Active = Active { activeReadFrame :: !Frame
                      , activeWriteFrame :: !Frame
@@ -62,57 +68,99 @@ data State = State { inactiveReadFrames :: [Frame]
                    }
 act f x = (\y -> x { activeFrames = y }) <$> f (activeFrames x)
 
-type StateTrans = State -> Maybe State
+type StateTrans m = State -> m State
 
-crash :: StateTrans
-crash = const Nothing
+crash :: MonadFail m => StateTrans m
+crash = fail "explicit crash"
 
-copy :: Int -> StateTrans
+copy :: MonadFail m => Int -> StateTrans m
 copy n st = do
   v <- st^.act.rf.fSlice n
   (act.wf) (fFill v) st
 
-newFrame :: Int -> StateTrans
+newFrame :: MonadFail m => Int -> StateTrans m
 newFrame n (State irf (Active rf wf) iwf) = do
-  guard $ 0 <= n
+  unless (0 <= n) (fail "newFrame: negative size")
   return $ State irf (Active rf (fNew n)) (wf:iwf)
 
-moveFrame :: StateTrans
+moveFrame :: MonadFail m => StateTrans m
 moveFrame (State irf (Active rf wf) (iwf0:iwf)) = do
   nrf <- fReset wf
   return $ State (rf:irf) (Active nrf iwf0) iwf
-moveFrame _ = Nothing
+moveFrame _ = fail "moveFrame: empty write frame stack"
 
 dropFrame (State (irf0:irf) (Active _ wf) iwf) =
   return $ State irf (Active irf0 wf) iwf
-dropFrame _ = Nothing
+dropFrame _ = fail "dropFrame: empty read frame stack"
 
-runMachineF :: MachineCodeF StateTrans -> StateTrans
+runMachineF :: MonadFail m => MachineCodeF (StateTrans m) -> StateTrans m
 runMachineF End = return
 runMachineF Crash = crash
 runMachineF (Write b k) = (act.wf) (fWrite (Just b)) >=> k
 runMachineF (Copy n k) | 0 <= n = copy n >=> k
-                       | otherwise = crash
+                       | otherwise = fail "runMachineF Copy: negative index"
 runMachineF (Skip n k) | 0 <= n = (act.wf) (fMove n) >=> k
-                       | otherwise = crash
+                       | otherwise = fail "runMachineF Skip: negative index"
 runMachineF (Fwd n k) | 0 <= n = (act.rf) (fMove n) >=> k
-                      | otherwise = crash
+                      | otherwise = fail "runMachineF Fwd: negative index"
 runMachineF (Bwd n k) | 0 <= n = (act.rf) (fMove (-n)) >=> k
-                      | otherwise = crash
+                      | otherwise = fail "runMachineF Bwd: negative index"
 runMachineF (NewFrame n k) = newFrame n >=> k
 runMachineF (MoveFrame k) = moveFrame >=> k
 runMachineF (DropFrame k) = dropFrame >=> k
 runMachineF (Read k0 k1) = \st -> do
-  b <- join (st^.act.rf.fRead)
+  v <- fRead (st^.act.rf)
+  b <- maybe (fail "runMachine Read: cell value undefined") return v
   if b then k1 st else k0 st
 
 initialState :: [Cell] -> Int -> State
 initialState input outLength = State [] (Active (fInit input) (fNew outLength)) []
 
-finalState :: State -> Maybe [Cell]
-finalState (State [] (Active _ output) []) = Just (V.toList (fData output))
-finalState _ = Nothing
+finalState :: MonadFail m => State -> m [Cell]
+finalState (State [] (Active _ output) []) = return $ V.toList (fData output)
+finalState _ = fail "finalState: invalid final state"
 
-runMachine :: MachineCode -> Interpreter
+runMachine :: MonadFail m => MachineCode -> Interpreter m
 runMachine code input outputSize = cata runMachineF code (initialState input outputSize)
                                >>= finalState
+
+actReadFrameSize :: State -> Int
+actReadFrameSize st = fSize (st^.act.rf)
+
+actWriteFrameSize :: State -> Int
+actWriteFrameSize st = fSize (st^.act.wf)
+
+inactReadFrameSizes :: State -> [Int]
+inactReadFrameSizes st = fSize <$> inactiveReadFrames st
+
+inactWriteFrameSizes :: State -> [Int]
+inactWriteFrameSizes st = fSize <$> inactiveWriteFrames st
+
+data Stats = Stats { memSize :: !Int
+                   , stackSize :: !Int
+                   } deriving Show
+
+instance Monoid Stats where
+  mempty = Stats { memSize = 0
+                 , stackSize = 0
+                 }
+  a `mappend` b = Stats { memSize = max (memSize a) (memSize b)
+                        , stackSize = max (stackSize a) (stackSize b)
+                        }
+
+profile :: State -> Stats
+profile st = Stats { memSize = sum readStackStats + sum writeStackStats + actReadFrameSize st + actWriteFrameSize st
+                   , stackSize = length readStackStats + length writeStackStats
+                   }
+ where
+  readStackStats = inactReadFrameSizes st
+  writeStackStats = inactWriteFrameSizes st
+
+instrument st = tell (profile st) >> return st
+
+instrumentMachine :: MonadFail m => MachineCode -> Interpreter (WriterT Stats m)
+instrumentMachine code input outputSize = interpreter (initialState input outputSize)
+                                      >>= finalState
+ where
+  interpreter = cata instrumentMachineF code >=> instrument
+  instrumentMachineF f = instrument >=> runMachineF f

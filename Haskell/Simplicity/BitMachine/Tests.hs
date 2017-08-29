@@ -2,12 +2,10 @@
 module Simplicity.BitMachine.Tests (tests) where
 
 import Simplicity.Arith
-import Simplicity.Bit
 import Simplicity.BitMachine
 import Simplicity.BitMachine.Authentic
 import Simplicity.BitMachine.Translate as Translate
 import Simplicity.BitMachine.Translate.TCO as TCO
-import Simplicity.BitMachine.Ty
 import Simplicity.Term
 
 import Test.Tasty (TestTree, testGroup)
