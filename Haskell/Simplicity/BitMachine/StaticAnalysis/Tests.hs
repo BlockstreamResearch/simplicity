@@ -27,14 +27,11 @@ tests = testGroup "StaticAnalysis"
       ]
 
 testSquare :: (Arbitrary a, TyC a, TyC b) => String -> (forall term. (Core term) => term a b) -> TestTree
-testSquare name program = testGroup name
-                [ testCase "Static TCO <= Static Trans" (assert $ staticMemTCO <= staticMem)
-                , testProperty "Dynamic TCO <= Dynamic Trans" (\i -> ((<=) <$> dynamicMemTCO i <*> dynamicMem i) == Just True)
-                , testProperty "Dynamic Trans <= Static Trans" (\i -> ((<= staticMem) <$> dynamicMem i) == Just True)
-                , testProperty "Dynamic TCO <= Static TCO" (\i -> ((<= staticMemTCO) <$> dynamicMemTCO i) == Just True)
-                ]
+testSquare name program = testProperty name assertion
  where
   staticMem = Analysis.cellsBnd program
   staticMemTCO = AnalysisTCO.cellsBnd program
   dynamicMem i = memSize <$> execWriterT (executeUsing (instrumentMachine . Translate.compile) program i)
   dynamicMemTCO i = memSize <$> execWriterT (executeUsing (instrumentMachine . TranslateTCO.compile) program i)
+  square a b c d = a <= b && a <= c && b <=d && c <= d
+  assertion i = Just True == (square <$> dynamicMemTCO i <*> dynamicMem i <*> pure staticMemTCO <*> pure staticMem)
