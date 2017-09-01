@@ -37,6 +37,12 @@ Test-Suite Simplicity-testsuite
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
   ghc-options:         -O2
+  other-modules:       Simplicity.Bit, Simplicity.Generic, Simplicity.Arith, Simplicity.Ty, Simplicity.Term,
+                       Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
+                       Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
+                       Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO
+                       Simplicity.Programs.Sha256
+                       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests
   build-depends:       base >=4.9 && <4.11,
                        bytestring >=0.10 && <0.11,
                        cryptohash-sha256 >=0.11 && <0.12,
