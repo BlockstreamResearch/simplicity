@@ -37,15 +37,14 @@ hashBlock = oh &&& compression >>>
   step = round &&& (drop (drop schedule))
   scribe32 :: TyC a => Integer -> term a Word32
   scribe32 = scribe . toWord32
-  -- TODO: hand optimize round by lifting drops and takes.
   round = part1 >>> part2
    where
-    part1 = ((t1 &&& io oooh) &&& (io ooih &&& io oioh))
-        &&& ((io oiih &&& io iooh) &&& (io ioih &&& io iioh))
-    part2 = ((t12 &&& ooih) &&& (oioh &&& oiih))
-        &&& ((t1d &&& ioih) &&& (iioh &&& iiih))
-    t1 = (oh &&& iio oooh >>> add32) &&& (io iiih &&& ((io iooh >>> bigSigma1) &&& (io iooh &&& io ioih &&& io iioh >>> chWord32) >>> add32) >>> add32) >>> add32
-    t12 = oooh &&& ((ooih >>> bigSigma0) &&& (ooih &&& oioh &&& oiih >>> majWord32) >>> add32) >>> add32
+    part1 = ((t1 &&& io oooh) &&& io odiag)
+        &&& io (bigDiag &&& idiag)
+    part2 = ((t12 &&& ooih) &&& oih)
+        &&& ((t1d &&& ioih) &&& iih)
+    t1 = (oh &&& iio oooh >>> add32) &&& io (drop (iih &&& ((ooh >>> bigSigma1) &&& (ooh &&& diag >>> chWord32) >>> add32)) >>> add32) >>> add32
+    t12 = take ((oih &&& ih >>> majWord32) &&& (take (oh &&& (ih >>> bigSigma0)) >>> add32)) >>> add32
     t1d = oooh &&& iooh >>> add32
     bigSigma0 = rotate word32 (-2) &&& rotate word32 (-13) &&& rotate word32 (-22) >>> xor3Word32
     bigSigma1 = rotate word32 (-6) &&& rotate word32 (-11) &&& rotate word32 (-25) >>> xor3Word32
@@ -54,13 +53,16 @@ hashBlock = oh &&& compression >>>
   schedule = (take part1 &&& (take idiag &&& (take iiih &&& drop oooh)))
          &&& (drop part1 &&& (drop idiag &&& (drop iiih &&& smallSigma)))
    where
-    part1 = take diag &&& (oiih &&& iooh)
-    smallSigma = (take (oooh &&& (ooih >>> smallSigma0)) >>> add32) &&& (drop (ooih &&& (iioh >>> smallSigma1)) >>> add32) >>> add32
+    part1 = odiag &&& bigDiag
+    smallSigma = (take (oo (oh &&& (ih >>> smallSigma0))) >>> add32) &&& (drop (ooih &&& (iioh >>> smallSigma1)) >>> add32) >>> add32
     smallSigma0 = rotate word32 (-7)  &&& rotate word32 (-18) &&& shift word32 (-3)  >>> xor3Word32
     smallSigma1 = rotate word32 (-17) &&& rotate word32 (-19) &&& shift word32 (-10) >>> xor3Word32
+  oo x = take (take x)
   io x = drop (take x)
   iio x = drop (io x)
   diag = oih &&& ioh
+  odiag = take diag
   idiag = drop diag
+  bigDiag = oiih &&& iooh
   add32 = adder word32 >>> ih
   xor3Word32 = bitwiseTri xor3 word32
