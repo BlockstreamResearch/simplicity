@@ -7,9 +7,9 @@ import qualified Data.Word as W
 import qualified Data.ByteString as BS
 import qualified Crypto.Hash.SHA256 as SHA256
 
-import Simplicity.Arith
-import Simplicity.Bit
 import Simplicity.Term
+import Simplicity.Programs.Arith
+import Simplicity.Programs.Bit
 import Simplicity.Programs.Sha256
 
 import Test.Tasty (TestTree, testGroup)

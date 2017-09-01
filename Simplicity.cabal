@@ -14,11 +14,11 @@ cabal-version:       >=1.10
 tested-with:         GHC ==8.2.1
 
 library
-  exposed-modules:     Simplicity.Bit, Simplicity.Generic, Simplicity.Arith, Simplicity.Ty, Simplicity.Term,
+  exposed-modules:     Simplicity.Ty, Simplicity.Term,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO
-                       Simplicity.Programs.Sha256
+                       Simplicity.Programs.Arith Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256
   -- other-modules:       
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   hs-source-dirs:      Haskell
@@ -37,11 +37,11 @@ Test-Suite Simplicity-testsuite
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
   ghc-options:         -O2 -fsimpl-tick-factor=107
-  other-modules:       Simplicity.Bit, Simplicity.Generic, Simplicity.Arith, Simplicity.Ty, Simplicity.Term,
+  other-modules:       Simplicity.Ty, Simplicity.Term,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO
-                       Simplicity.Programs.Sha256
+                       Simplicity.Programs.Arith Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests
   build-depends:       base >=4.9 && <4.11,
                        bytestring >=0.10 && <0.11,

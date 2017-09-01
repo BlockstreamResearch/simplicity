@@ -3,13 +3,13 @@ module Simplicity.BitMachine.StaticAnalysis.Tests (tests) where
 
 import Control.Monad.Trans.Writer (execWriterT)
 
-import Simplicity.Arith
 import Simplicity.BitMachine
 import Simplicity.BitMachine.Authentic
 import Simplicity.BitMachine.StaticAnalysis as Analysis
 import Simplicity.BitMachine.StaticAnalysis.TCO as AnalysisTCO
 import Simplicity.BitMachine.Translate as Translate
 import Simplicity.BitMachine.Translate.TCO as TranslateTCO
+import Simplicity.Programs.Arith
 import Simplicity.Term
 
 import Test.Tasty (TestTree, testGroup)

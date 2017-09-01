@@ -1,4 +1,4 @@
-module Simplicity.Bit 
+module Simplicity.Programs.Bit
  ( Bit, fromBit, toBit
  , false, true, cond, not, and, or
  , xor3, ch, maj

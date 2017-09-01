@@ -1,12 +1,12 @@
 {-# LANGUAGE GADTs #-}
-module Simplicity.Generic
+module Simplicity.Programs.Generic
   ( scribe
   , eq
   ) where
 
 import Prelude hiding (drop, take)
 
-import Simplicity.Bit
+import Simplicity.Programs.Bit
 import Simplicity.Term
 
 scribe :: (TyC a, TyC b, Core term) => b -> term a b

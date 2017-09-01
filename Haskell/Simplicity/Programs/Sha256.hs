@@ -6,10 +6,10 @@ module Simplicity.Programs.Sha256
 
 import Prelude hiding (Word, drop, not, take)
 
-import Simplicity.Arith
-import Simplicity.Bit
-import Simplicity.Generic
 import Simplicity.Term
+import Simplicity.Programs.Arith
+import Simplicity.Programs.Bit
+import Simplicity.Programs.Generic
 
 type Block = (Word256, Word256)
 type Hash = Word256

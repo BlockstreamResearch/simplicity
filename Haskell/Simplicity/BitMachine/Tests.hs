@@ -1,11 +1,11 @@
 {-# LANGUAGE RankNTypes #-}
 module Simplicity.BitMachine.Tests (tests) where
 
-import Simplicity.Arith
 import Simplicity.BitMachine
 import Simplicity.BitMachine.Authentic
 import Simplicity.BitMachine.Translate as Translate
 import Simplicity.BitMachine.Translate.TCO as TCO
+import Simplicity.Programs.Arith
 import Simplicity.Programs.Sha256
 import Simplicity.Term
 

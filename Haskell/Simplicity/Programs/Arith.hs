@@ -1,5 +1,5 @@
 {-# LANGUAGE GADTs, ScopedTypeVariables, TypeOperators #-}
-module Simplicity.Arith
+module Simplicity.Programs.Arith
   ( Word(..), wordTy, fromWord, toWord
   , Word8, word8, fromWord8, toWord8
   , Word16, word16, fromWord16, toWord16
@@ -18,8 +18,8 @@ import Prelude hiding (Word, drop, take, not, or)
 import Control.Monad.Trans.State (State, evalState, get, put)
 import Data.Type.Equality ((:~:)(Refl))
 
-import Simplicity.Bit
 import Simplicity.Term
+import Simplicity.Programs.Bit
 
 data Word a where
   BitW :: Word Bit
