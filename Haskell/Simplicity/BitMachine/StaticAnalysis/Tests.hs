@@ -23,6 +23,7 @@ tests = testGroup "StaticAnalysis"
         , testSquare "adder word8" (adder word8)
         , testSquare "fullMultiplier word8" (fullMultiplier word8)
         , testSquare "multiplier word8" (multiplier word8)
+        -- TODO: after QuickCheck 2.10 we perhaps add: , testSquareAdj (withMaxSuccess 10) "hashBlock" hashBlock
         ]
       ]
 

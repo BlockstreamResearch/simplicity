@@ -6,6 +6,7 @@ import Simplicity.BitMachine
 import Simplicity.BitMachine.Authentic
 import Simplicity.BitMachine.Translate as Translate
 import Simplicity.BitMachine.Translate.TCO as TCO
+import Simplicity.Programs.Sha256
 import Simplicity.Term
 
 import Test.Tasty (TestTree, testGroup)
@@ -26,4 +27,5 @@ testCompiler name compiler = testGroup name
                   , testProperty "adder word8" (testUsing compiler (adder word8))
                   , testProperty "fullMultiplier word8" (testUsing compiler (fullMultiplier word8))
                   , testProperty "multiplier word8" (testUsing compiler (multiplier word8))
+                  , testProperty "hashBlock" (testUsing compiler hashBlock)
                   ]

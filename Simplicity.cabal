@@ -36,7 +36,7 @@ Test-Suite Simplicity-testsuite
   main-is:             Tests.hs
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
-  ghc-options:         -O2
+  ghc-options:         -O2 -fsimpl-tick-factor=107
   other-modules:       Simplicity.Bit, Simplicity.Generic, Simplicity.Arith, Simplicity.Ty, Simplicity.Term,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
