@@ -91,13 +91,12 @@ unfold State.newFrame, option_bind at 4, newWriteFrame.
 simpl (option_join _).
 rewrite <- (Plus.plus_0_r (bitSize B)).
 pose (ctx1 := {| inactiveReadFrames := inactiveReadFrames ctx
-               ; activeFrames :=
-                 {| readFrame := readFrame (activeFrames ctx)
-                  ; writeFrame := newWriteFrame 0
-                  |}
-               ; inactiveWriteFrames := {| writeData := writeData (writeFrame (activeFrames ctx))
-                                         ; writeEmpty := bitSize C + writeEmpty (writeFrame (activeFrames ctx))
-                                         |} :: inactiveWriteFrames ctx
+               ; activeReadFrame := activeReadFrame ctx
+               ; activeWriteFrame := newWriteFrame 0
+               ; inactiveWriteFrames :=
+                 {| writeData := writeData (activeWriteFrame ctx)
+                  ; writeEmpty := bitSize C + writeEmpty (activeWriteFrame ctx)
+                  |} :: inactiveWriteFrames ctx
                |}).
 change (runMachine ps _) with (runMachine ps (fillContext ctx1 (LocalStateBegin s a))).
 rewrite Hs.
@@ -105,13 +104,12 @@ rewrite Hs.
 unfold option_bind at 2.
 simpl (option_join _); clear ctx1.
 rewrite app_nil_r, rev_involutive, <- (app_nil_r (encode (_ a))).
-pose (ctx1 := {| inactiveReadFrames := {| prevData := prevData (readFrame (activeFrames ctx))
-                                        ; nextData := encode a ++ nextData (readFrame (activeFrames ctx))
-                                        |} :: inactiveReadFrames ctx
-               ; activeFrames :=
-                 {| readFrame := {| prevData := nil; nextData := nil; |}
-                  ; writeFrame := writeFrame (activeFrames ctx)
-                  |}
+pose (ctx1 := {| inactiveReadFrames :=
+                 {| prevData := prevData (activeReadFrame ctx)
+                  ; nextData := encode a ++ nextData (activeReadFrame ctx)
+                  |} :: inactiveReadFrames ctx
+               ; activeReadFrame := {| prevData := nil; nextData := nil; |}
+               ; activeWriteFrame := activeWriteFrame ctx
                ; inactiveWriteFrames := inactiveWriteFrames ctx
                |}).
 change (runMachine pt _) with (runMachine pt (fillContext ctx1 (LocalStateBegin t (eval s a)))).

@@ -1,5 +1,5 @@
 Require Import PeanoNat.
-Require Import List.
+Require Import Util.List.
 Require Import Util.Option.
 
 Definition Cell := option bool.
@@ -171,42 +171,39 @@ Qed.
 
 Definition readFromFrame f := hd None (nextData f).
 
-Record ActiveFrames :=
- { readFrame : ReadFrame
- ; writeFrame : WriteFrame
- }.
-
-Definition activeSize af := readSize (readFrame af) + writeSize (writeFrame af).
-
-Definition oModReadFrame f act : option ActiveFrames :=
-  option_map (fun x => {| readFrame := x; writeFrame := writeFrame act |})
-       (f (readFrame act)).
-
-Definition oModWriteFrame f act : option ActiveFrames :=
-  option_map (fun x => {| readFrame := readFrame act; writeFrame := x |})
-       (f (writeFrame act)).
-
 (* The full state of the Bit Machine is captured by a list of inactive
  * read-only and write-only frames.  The top of the two stacks are held in the
- * activeFrames.  This ensures that both stacks are non-empty.
+ * activeReadFrame and activeWriteFrame.  This ensures that both stacks are
+ * non-empty.
  *)
 Record State :=
  { inactiveReadFrames : list ReadFrame
- ; activeFrames : ActiveFrames
+ ; activeReadFrame : ReadFrame
+ ; activeWriteFrame : WriteFrame
  ; inactiveWriteFrames : list WriteFrame
  }.
 
 Definition stateSize s :=
   fold_right plus 0 (map readSize (inactiveReadFrames s)) +
-  activeSize (activeFrames s) +
+  readSize (activeReadFrame s) +
+  writeSize (activeWriteFrame s) +
   fold_right plus 0 (map writeSize (inactiveWriteFrames s)).
 
-Definition oModActive f s : option State :=
-  option_map (fun x => {| inactiveReadFrames := inactiveReadFrames s
-                        ; activeFrames := x
-                        ; inactiveWriteFrames := inactiveWriteFrames s
-                        |})
-       (f (activeFrames s)).
+Definition oModActiveReadFrame f s : option State :=
+  option_map (fun x =>
+    {| inactiveReadFrames := inactiveReadFrames s
+     ; activeReadFrame := x
+     ; activeWriteFrame := activeWriteFrame s
+     ; inactiveWriteFrames := inactiveWriteFrames s
+     |}) (f (activeReadFrame s)).
+
+Definition oModActiveWriteFrame f s : option State :=
+  option_map (fun x =>
+    {| inactiveReadFrames := inactiveReadFrames s
+     ; activeReadFrame := activeReadFrame s
+     ; activeWriteFrame := x
+     ; inactiveWriteFrames := inactiveWriteFrames s
+     |}) (f (activeWriteFrame s)).
 
 (* Logically, the state of the Bit Machine is commonly divided between the part
  * of the state that we are focused on and the rest of state.  The focused part
@@ -224,10 +221,8 @@ Definition Context := State.
 
 Definition emptyCtx : Context :=
  {| inactiveReadFrames := nil
-  ; activeFrames :=
-    {| readFrame := setFrame nil
-     ; writeFrame := newWriteFrame 0
-     |}
+  ; activeReadFrame := setFrame nil
+  ; activeWriteFrame := newWriteFrame 0
   ; inactiveWriteFrames := nil
   |}.
 
@@ -238,16 +233,14 @@ Record LocalState :=
 
 Definition fillContext (ctx : Context) (h : LocalState) : State :=
  {| inactiveReadFrames := inactiveReadFrames ctx
-  ; activeFrames :=
-    {| readFrame :=
-      {| prevData := prevData (readFrame (activeFrames ctx))
-       ; nextData := readLocalState h ++ nextData (readFrame (activeFrames ctx))
+  ; activeReadFrame :=
+      {| prevData := prevData (activeReadFrame ctx)
+       ; nextData := readLocalState h ++ nextData (activeReadFrame ctx)
        |}
-     ; writeFrame :=
-      {| writeData := writeData (writeLocalState h) ++ writeData (writeFrame (activeFrames ctx))
-       ; writeEmpty := writeEmpty (writeLocalState h) + writeEmpty (writeFrame (activeFrames ctx))
+  ; activeWriteFrame :=
+      {| writeData := writeData (writeLocalState h) ++ writeData (activeWriteFrame ctx)
+       ; writeEmpty := writeEmpty (writeLocalState h) + writeEmpty (activeWriteFrame ctx)
        |}
-     |}
   ; inactiveWriteFrames := inactiveWriteFrames ctx
   |}.
 
@@ -284,40 +277,36 @@ Qed.
 Module State.
 
 Definition write b :=
-  oModActive (oModWriteFrame (writeToFrame (Some b))).
+  oModActiveWriteFrame (writeToFrame (Some b)).
 
-Definition copy n :=
-  oModActive (fun act => option_bind (fun l => oModWriteFrame (writeListFrame l) act) (sliceFrame n (readFrame act))).
+Definition copy n s :=
+  oModActiveWriteFrame (fun wf => option_bind (fun l => writeListFrame l wf) (sliceFrame n (activeReadFrame s))) s.
 
 Definition skip n :=
-  oModActive (oModWriteFrame (writeListFrame (repeat None n))).
+  oModActiveWriteFrame (writeListFrame (repeat None n)).
 
 Definition fwd n :=
-  oModActive (oModReadFrame (fwdFrame n)).
+  oModActiveReadFrame (fwdFrame n).
 
 Definition bwd n :=
-  oModActive (oModReadFrame (bwdFrame n)).
+  oModActiveReadFrame (bwdFrame n).
 
 Definition newFrame n s :=
   Some {| inactiveReadFrames := inactiveReadFrames s
-        ; activeFrames :=
-          {| readFrame := readFrame (activeFrames s)
-           ; writeFrame := newWriteFrame n
-           |}
-        ; inactiveWriteFrames := writeFrame (activeFrames s) :: inactiveWriteFrames s
+        ; activeReadFrame := activeReadFrame s
+        ; activeWriteFrame := newWriteFrame n
+        ; inactiveWriteFrames := activeWriteFrame s :: inactiveWriteFrames s
         |}.
 
 Definition moveFrame s :=
 match inactiveWriteFrames s with
 | nil => None
 | hd :: tl => option_map (fun x =>
-  {| inactiveReadFrames := readFrame (activeFrames s) :: inactiveReadFrames s
-   ; activeFrames :=
-     {| readFrame := x
-      ; writeFrame := hd
-      |}
+  {| inactiveReadFrames := activeReadFrame s :: inactiveReadFrames s
+   ; activeReadFrame := x
+   ; activeWriteFrame := hd
    ; inactiveWriteFrames := tl
-   |}) (resetFrame (writeFrame (activeFrames s)))
+   |}) (resetFrame (activeWriteFrame s))
 end.
 
 Definition dropFrame s :=
@@ -325,25 +314,31 @@ match inactiveReadFrames s with
 | nil => None
 | hd :: tl => Some
   {| inactiveReadFrames := tl
-   ; activeFrames :=
-     {| readFrame := hd
-      ; writeFrame := writeFrame (activeFrames s)
-      |}
+   ; activeReadFrame := hd
+   ; activeWriteFrame := activeWriteFrame s
    ; inactiveWriteFrames := inactiveWriteFrames s
    |}
 end.
 
 Lemma skip_correct n m l0 l1 (ctx : Context) :
-  skip n (fillContext ctx {| readLocalState := l0; writeLocalState := {| writeData := l1; writeEmpty := n + m |} |})
-= Some (fillContext ctx {| readLocalState := l0; writeLocalState := {| writeData := repeat None n ++ l1; writeEmpty := m |} |}).
+  skip n (fillContext ctx {| readLocalState := l0
+                           ; writeLocalState :=
+                             {| writeData := l1
+                              ; writeEmpty := n + m
+                           |} |})
+= Some (fillContext ctx {| readLocalState := l0
+                         ; writeLocalState :=
+                           {| writeData := repeat None n ++ l1
+                            ; writeEmpty := m
+                         |} |}).
 Proof.
-unfold skip, fillContext, oModActive, oModWriteFrame.
+unfold skip, fillContext, oModActiveWriteFrame.
 cbn.
 revert l1.
 induction n;[reflexivity|].
 intros l1.
 cbn.
-set (wd := writeData (writeFrame (activeFrames ctx))).
+set (wd := writeData (activeWriteFrame ctx)).
 change (None :: (repeat None n ++ l1) ++ wd) with ((repeat None (S n) ++ l1) ++ wd).
 rewrite <- repeat_S_tail.
 rewrite <- (app_assoc _ _ l1).
@@ -351,10 +346,14 @@ apply (IHn (None :: l1)).
 Qed.
 
 Lemma copy_correct (l : list Cell) (ctx : Context) :
-  copy (length l) (fillContext ctx {| readLocalState := l; writeLocalState := newWriteFrame (length l) |})
-= Some (fillContext ctx {| readLocalState := l; writeLocalState := fullWriteFrame l |}).
+  copy (length l) (fillContext ctx {| readLocalState := l
+                                    ; writeLocalState := newWriteFrame (length l)
+                                    |})
+= Some (fillContext ctx {| readLocalState := l
+                         ; writeLocalState := fullWriteFrame l
+                         |}).
 Proof.
-unfold copy, fillContext, oModActive, oModWriteFrame; cbn.
+unfold copy, fillContext, oModActiveWriteFrame; cbn.
 rewrite sliceFrame_correct; cbn.
 set (rf := (Build_ReadFrame _ _)); clearbody rf.
 set (wd := writeData _); clearbody wd; revert wd.
@@ -379,7 +378,7 @@ match p with
 | MachineCode.DropFrame k => option_bind (runMachine k) (State.dropFrame s)
 | MachineCode.Read k0 k1 => option_bind
   (fun b : bool => if b then runMachine k1 s else runMachine k0 s)
-  (readFromFrame (readFrame (activeFrames s)))
+  (readFromFrame (activeReadFrame s))
 end.
 
 Lemma runMachine_append p q s :
@@ -392,13 +391,11 @@ Qed.
 
 Definition bumpContext (ctx : Context) l : Context :=
  {| inactiveReadFrames := inactiveReadFrames ctx
-  ; activeFrames :=
-         {| readFrame :=
-            {| prevData := rev l ++ prevData (readFrame (activeFrames ctx))
-             ; nextData := nextData (readFrame (activeFrames ctx))
-             |}
-          ; writeFrame := writeFrame (activeFrames ctx)
-          |}
+  ; activeReadFrame :=
+    {| prevData := rev l ++ prevData (activeReadFrame ctx)
+     ; nextData := nextData (activeReadFrame ctx)
+     |}
+  ; activeWriteFrame := activeWriteFrame ctx
   ; inactiveWriteFrames := inactiveWriteFrames ctx
   |}.
 
@@ -414,14 +411,14 @@ unfold bump.
 repeat rewrite runMachine_append.
 unfold fillContext.
 simpl (runMachine (fwd _) _).
-unfold State.fwd, oModActive, oModReadFrame.
+unfold State.fwd, oModActiveReadFrame.
 simpl (option_map _ _).
 rewrite <- app_assoc, fwdFrame_correct.
 unfold option_bind at 2; simpl (option_join _).
 change (runMachine p _) with (runMachine p (fillContext (bumpContext ctx l) ls1)).
 rewrite Hp.
 unfold option_bind; cbn.
-unfold State.bwd, oModActive, oModReadFrame; cbn.
+unfold State.bwd, oModActiveReadFrame; cbn.
 rewrite <- rev_length, bwdFrame_correct, rev_involutive, <- app_assoc.
 reflexivity.
 Qed.
