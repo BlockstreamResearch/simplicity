@@ -1,29 +1,11 @@
 Require Import PeanoNat.
-Require Import List.
+Require Import Util.List.
+Require Import Util.Option.
 
 Require Import Simplicity.Alg.
 Require Import Simplicity.Core.
 Require Import Simplicity.BitMachine.
 Require Import Simplicity.Ty.
-
-Lemma rev_S_tail {A} : forall (a : A) n, repeat a n ++ (a :: nil) = repeat a (S n).
-Proof.
-intros a.
-induction n;[reflexivity|].
-simpl.
-rewrite IHn.
-reflexivity.
-Qed.
-
-Lemma rev_repeat {A} : forall (a : A) n, rev (repeat a n) = repeat a n.
-Proof.
-intros a.
-induction n;[reflexivity|].
-simpl.
-rewrite IHn.
-rewrite rev_S_tail.
-reflexivity.
-Qed.
 
 Local Open Scope ty_scope.
 Local Open Scope mc_scope.
@@ -67,41 +49,47 @@ end.
 Lemma encode_length {X : Ty} : forall x : X, length (encode x) = bitSize X.
 Proof.
 induction X.
-- intros [].
-  reflexivity.
-- intros [a|b]; simpl; rewrite app_length, repeat_length;
+- reflexivity.
+- intros [a|b]; cbn; rewrite app_length, repeat_length;
   [rewrite IHX1, padL_bitSize | rewrite IHX2, padR_bitSize];
   reflexivity.
-- intros [a b]; simpl.
+- intros [a b]; cbn.
   rewrite app_length, IHX1, IHX2.
   reflexivity.
 Qed.
 
+Definition LocalStateBegin {A B : Ty} (t : Term A B) (a : A) :=
+  {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |}.
+
+Definition LocalStateEnd {A B : Ty} (t : Term A B) (a : A) :=
+  {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (eval t a)) |}.
+
 Definition spec {A B : Ty} (f : State -> option State) (t : Term A B)  :=
-  forall a ctx, f (fillContext ctx {| readHole := encode a; writeHole := newWriteFrame (bitSize B) |})
-  = Some (fillContext ctx {| readHole := encode a; writeHole := fullWriteFrame (encode (eval t a)) |}).
+  forall a ctx, f (fillContext ctx (LocalStateBegin t a))
+  = Some (fillContext ctx (LocalStateEnd t a)).
 
 Module Naive.
 
 Lemma iden_spec {A : Ty} : spec (runMachine (copy (bitSize A))) (@iden A).
 Proof.
 intros a ctx.
-simpl.
+unfold LocalStateBegin.
+cbn.
 rewrite <- (encode_length a), State.copy_correct.
 reflexivity.
 Qed.
 
-Lemma comp_spec {A B C : Ty} (s : Term A B) (t : Term B C)
- ps pt : spec (runMachine ps) s -> spec (runMachine pt) t
-      -> spec (runMachine (newFrame (bitSize B) ;; ps ;; moveFrame ;; pt ;; dropFrame)) (comp s t) .
+Lemma comp_spec {A B C : Ty} (s : Term A B) (t : Term B C) ps pt :
+ spec (runMachine ps) s -> spec (runMachine pt) t ->
+ spec (runMachine (newFrame (bitSize B) ;; ps ;; moveFrame ;; pt ;; dropFrame)) (comp s t) .
 Proof.
 intros Hs Ht a ctx.
 repeat rewrite runMachine_append.
 unfold fillContext at 1.
 simpl (runMachine _ _).
-unfold State.newFrame.
-unfold option_bind at 4.
+unfold State.newFrame, option_bind at 4, newWriteFrame.
 simpl (option_join _).
+rewrite <- (Plus.plus_0_r (bitSize B)).
 pose (ctx1 := {| inactiveReadFrames := inactiveReadFrames ctx
                ; activeFrames :=
                  {| readFrame := readFrame (activeFrames ctx)
@@ -111,15 +99,12 @@ pose (ctx1 := {| inactiveReadFrames := inactiveReadFrames ctx
                                          ; writeEmpty := bitSize C + writeEmpty (writeFrame (activeFrames ctx))
                                          |} :: inactiveWriteFrames ctx
                |}).
-pose (h1 := {| readHole := encode a; writeHole := newWriteFrame (bitSize B) |}).
-unfold newWriteFrame.
-rewrite <- (Plus.plus_0_r (bitSize B)).
-change (runMachine ps _) with (runMachine ps (fillContext ctx1 h1)).
-unfold h1; rewrite Hs.
+change (runMachine ps _) with (runMachine ps (fillContext ctx1 (LocalStateBegin s a))).
+rewrite Hs.
 
 unfold option_bind at 2.
-simpl (option_join _); clear ctx1 h1.
-rewrite app_nil_r, rev_involutive.
+simpl (option_join _); clear ctx1.
+rewrite app_nil_r, rev_involutive, <- (app_nil_r (encode (_ a))).
 pose (ctx1 := {| inactiveReadFrames := {| prevData := prevData (readFrame (activeFrames ctx))
                                         ; nextData := encode a ++ nextData (readFrame (activeFrames ctx))
                                         |} :: inactiveReadFrames ctx
@@ -129,10 +114,8 @@ pose (ctx1 := {| inactiveReadFrames := {| prevData := prevData (readFrame (activ
                   |}
                ; inactiveWriteFrames := inactiveWriteFrames ctx
                |}).
-pose (h1 := {| readHole := encode (eval s a); writeHole := newWriteFrame (bitSize C) |}).
-rewrite <- (app_nil_r (encode (_ a))).
-change (runMachine pt _) with (runMachine pt (fillContext ctx1 h1)).
-unfold h1; rewrite Ht.
+change (runMachine pt _) with (runMachine pt (fillContext ctx1 (LocalStateBegin t (eval s a)))).
+rewrite Ht.
 reflexivity.
 Qed.
 
@@ -142,86 +125,72 @@ intros a ctx.
 reflexivity.
 Qed.
 
-Lemma injl_spec {A B C : Ty} (t : Term A B)
- pt : spec (runMachine pt) t
-      -> spec (runMachine (write false ;; skip (padL B C) ;; pt)) (@injl A B C t).
+Lemma injl_spec {A B C : Ty} (t : Term A B) pt :
+ spec (runMachine pt) t ->
+ spec (runMachine (write false ;; skip (padL B C) ;; pt)) (@injl A B C t).
 Proof.
 intros Ht a ctx.
 repeat rewrite runMachine_append.
-unfold newWriteFrame.
-simpl (bitSize _).
+unfold LocalStateBegin, newWriteFrame, option_bind at 2.
+simpl (option_join _).
 rewrite <- padL_bitSize.
-unfold option_bind at 2.
-simpl (option_join _).
-change (State.skip (padL B C) _) with
- (State.skip (padL B C) (fillContext ctx {| readHole := encode a; writeHole :=
-   {| writeData := Some false :: nil; writeEmpty := padL B C + bitSize B |} |})).
-rewrite State.skip_correct.
-rewrite <- (rev_repeat _ (padL B C)).
-pose (h0 := {| readHole := nil; writeHole := fullWriteFrame (Some false :: repeat None (padL B C)) |}).
-pose (h1 := {| readHole := encode a; writeHole := newWriteFrame (bitSize B) |}).
-rewrite <- (app_nil_r (encode a)).
-rewrite <- (Plus.plus_0_r (bitSize B)).
-change (fillContext ctx _) at 1 with (fillContext ctx (appendHole h0 h1)).
-rewrite <- context_action.
-unfold h1, option_bind; simpl.
-rewrite Ht.
-rewrite context_action.
-unfold h0, appendHole.
-simpl.
-rewrite app_nil_r.
-rewrite app_assoc.
-rewrite <- rev_app_distr.
+change (State.skip _ _) with
+ (State.skip (padL B C) (fillContext ctx
+   {| readLocalState := encode a
+    ; writeLocalState :=
+      {| writeData := Some false :: nil; writeEmpty := padL B C + bitSize B |}
+    |})).
+rewrite State.skip_correct, <- (rev_repeat _ (padL B C)),
+        <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize B)).
+pose (h0 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some false :: repeat None (padL B C)) |}).
+change (fillContext ctx _) at 1 with (fillContext ctx (appendLocalState h0 (LocalStateBegin t a))).
+rewrite <- context_action; cbn.
+rewrite Ht, context_action.
+unfold h0, appendLocalState; cbn.
+rewrite app_nil_r, app_assoc, <- rev_app_distr.
 reflexivity.
 Qed.
 
-Lemma injr_spec {A B C : Ty} (t : Term A C)
- pt : spec (runMachine pt) t
-      -> spec (runMachine (write true ;; skip (padR B C) ;; pt)) (@injr A B C t) .
+Lemma injr_spec {A B C : Ty} (t : Term A C) pt :
+ spec (runMachine pt) t ->
+ spec (runMachine (write true ;; skip (padR B C) ;; pt)) (@injr A B C t) .
 Proof.
 intros Ht a ctx.
 repeat rewrite runMachine_append.
-unfold newWriteFrame.
-simpl (bitSize _).
-rewrite <- padR_bitSize.
-unfold option_bind at 2.
+unfold LocalStateBegin, newWriteFrame, option_bind at 2.
 simpl (option_join _).
-change (State.skip (padR B C) _) with
- (State.skip (padR B C) (fillContext ctx {| readHole := encode a; writeHole :=
-   {| writeData := Some true :: nil; writeEmpty := padR B C + bitSize C |} |})).
-rewrite State.skip_correct.
-rewrite <- (rev_repeat _ (padR B C)).
-pose (h0 := {| readHole := nil; writeHole := fullWriteFrame (Some true :: repeat None (padR B C)) |}).
-pose (h1 := {| readHole := encode a; writeHole := newWriteFrame (bitSize C) |}).
-rewrite <- (app_nil_r (encode a)).
-rewrite <- (Plus.plus_0_r (bitSize C)).
-change (fillContext ctx _) at 1 with (fillContext ctx (appendHole h0 h1)).
-rewrite <- context_action.
-unfold h1, option_bind; simpl.
-rewrite Ht.
-rewrite context_action.
-unfold h0, appendHole.
-simpl.
-rewrite app_nil_r.
-rewrite app_assoc.
-rewrite <- rev_app_distr.
+rewrite <- padR_bitSize.
+change (State.skip _ _) with
+ (State.skip (padR B C) (fillContext ctx
+   {| readLocalState := encode a
+    ; writeLocalState :=
+      {| writeData := Some true :: nil; writeEmpty := padR B C + bitSize C |}
+    |})).
+rewrite State.skip_correct, <- (rev_repeat _ (padR B C)),
+        <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize C)).
+pose (h0 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some true :: repeat None (padR B C)) |}).
+change (fillContext ctx _) at 1 with (fillContext ctx (appendLocalState h0 (LocalStateBegin t a))).
+rewrite <- context_action; cbn.
+rewrite Ht, context_action.
+unfold h0, appendLocalState; cbn.
+rewrite app_nil_r, app_assoc, <- rev_app_distr.
 reflexivity.
 Qed.
 
-Lemma case_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D)
- ps pt : spec (runMachine ps) s -> spec (runMachine pt) t
-      -> spec (runMachine (read (bump (1 + padL A B) ps) (bump (1 + padR A B) pt))) (case s t).
+Lemma case_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D) ps pt :
+ spec (runMachine ps) s -> spec (runMachine pt) t ->
+ spec (runMachine (read (bump (1 + padL A B) ps) (bump (1 + padR A B) pt))) (case s t).
 Proof.
 intros Hs Ht [[a|b] c] ctx;
-cbn -[bump]; rewrite <- app_assoc.
+unfold LocalStateBegin, LocalStateEnd; cbn -[bump]; rewrite <- app_assoc.
 - set (ac := (a, c) : tySem (A * C)).
   change (encode a ++ _) with (encode ac).
   pose (l := Some false :: repeat None (padL A B)).
-  pose (h0 := bumpHole l).
-  pose (h1 := {| readHole := encode ac; writeHole := newWriteFrame (bitSize D) |}).
-  pose (h1' := {| readHole := encode ac; writeHole := fullWriteFrame (encode (eval s (a, c))) |}).
-  change (fillContext ctx _) at 1 with (fillContext ctx (appendHole h1 h0)).
-  change (fillContext ctx _) at 2 with (fillContext ctx (appendHole h1' h0)).
+  pose (h0 := bumpLocalState l).
+  pose (ls1 := LocalStateBegin s ac).
+  pose (ls1' := LocalStateEnd s ac).
+  change (fillContext ctx _) at 1 with (fillContext ctx (appendLocalState ls1 h0)).
+  change (fillContext ctx _) at 2 with (fillContext ctx (appendLocalState ls1' h0)).
   rewrite <- (repeat_length (@None bool) (padL A B)).
   change (bump _) with (bump (length l)).
   apply runMachine_bump.
@@ -229,79 +198,65 @@ cbn -[bump]; rewrite <- app_assoc.
 - set (bc := (b, c) : tySem (B * C)).
   change (encode b ++ _) with (encode bc).
   pose (l := Some true :: repeat None (padR A B)).
-  pose (h0 := bumpHole l).
-  pose (h1 := {| readHole := encode bc; writeHole := newWriteFrame (bitSize D) |}).
-  pose (h1' := {| readHole := encode bc; writeHole := fullWriteFrame (encode (eval t (b, c))) |}).
-  change (fillContext ctx _) at 1 with (fillContext ctx (appendHole h1 h0)).
-  change (fillContext ctx _) at 2 with (fillContext ctx (appendHole h1' h0)).
+  pose (h0 := bumpLocalState l).
+  pose (ls1 := LocalStateBegin t bc).
+  pose (ls1' := LocalStateEnd t bc).
+  change (fillContext ctx _) at 1 with (fillContext ctx (appendLocalState ls1 h0)).
+  change (fillContext ctx _) at 2 with (fillContext ctx (appendLocalState ls1' h0)).
   rewrite <- (repeat_length (@None bool) (padR A B)).
   change (bump _) with (bump (length l)).
   apply runMachine_bump.
   apply Ht.
 Qed.
 
-Lemma pair_spec {A B C : Ty} (s : Term A B) (t : Term A C)
- ps pt : spec (runMachine ps) s -> spec (runMachine pt) t
-      -> spec (runMachine (ps ;; pt)) (pair s t).
+Lemma pair_spec {A B C : Ty} (s : Term A B) (t : Term A C) ps pt :
+ spec (runMachine ps) s -> spec (runMachine pt) t ->
+ spec (runMachine (ps ;; pt)) (pair s t).
 Proof.
 intros Hs Ht a ctx.
 rewrite runMachine_append.
-unfold fullWriteFrame, newWriteFrame.
-simpl.
+unfold LocalStateBegin, fullWriteFrame, newWriteFrame; cbn.
 
-pose (h1 := {| readHole := nil; writeHole := newWriteFrame (bitSize C) |}).
-pose (h2 := {| readHole := encode a; writeHole := newWriteFrame (bitSize B) |}).
 rewrite <- (app_nil_r (encode a)) at 1.
-change (fillContext _ _) at 1 with (fillContext ctx (appendHole h1 h2)).
-rewrite <- context_action.
-unfold h2.
-rewrite Hs.
-rewrite context_action.
-unfold appendHole, option_bind.
-simpl; clear h1 h2.
+pose (ls1 := {| readLocalState := nil; writeLocalState := newWriteFrame (bitSize C) |}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin s a))).
+rewrite <- context_action, Hs, context_action.
+unfold appendLocalState; cbn; clear ls1.
 
-pose (h1 := {| readHole := nil; writeHole := fullWriteFrame (encode (eval s a)) |}).
-pose (h2 := {| readHole := encode a; writeHole := newWriteFrame (bitSize C) |}).
-rewrite (app_nil_r (rev _)).
-rewrite <- (Plus.plus_0_r (bitSize C)).
-change (fillContext _ _) at 1 with (fillContext ctx (appendHole h1 h2)).
-rewrite <- context_action.
-unfold h2.
-rewrite Ht, context_action.
-unfold appendHole.
-simpl; clear h1 h2.
-rewrite app_nil_r, rev_app_distr.
+rewrite (app_nil_r (rev _)), <- (Plus.plus_0_r (bitSize C)).
+pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (encode (eval s a)) |}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
+rewrite <- context_action, Ht, context_action.
+unfold appendLocalState; cbn; clear ls1.
+
+rewrite app_nil_r, <- rev_app_distr.
 reflexivity.
 Qed.
 
-Lemma take_spec {A B C : Ty} (t : Term A C)
- pt : spec (runMachine pt) t
-      -> spec (runMachine pt) (@take A B C t).
+Lemma take_spec {A B C : Ty} (t : Term A C) pt :
+ spec (runMachine pt) t ->
+ spec (runMachine pt) (@take A B C t).
 Proof.
 intros Ht [a b] ctx.
-simpl.
-pose (h1 := {| readHole := encode b; writeHole := newWriteFrame 0 |}).
-pose (h2 := {| readHole := encode a; writeHole := newWriteFrame (bitSize C) |}).
+unfold LocalStateBegin; cbn.
 rewrite <- (Plus.plus_0_r (bitSize C)).
-change (fillContext _ _) at 1 with (fillContext ctx (appendHole h1 h2)).
-rewrite <- context_action.
-unfold h2.
-rewrite Ht, context_action.
-unfold appendHole;simpl.
+pose (ls1 := {| readLocalState := encode b; writeLocalState := newWriteFrame 0 |}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
+rewrite <- context_action, Ht, context_action.
+unfold appendLocalState; cbn.
 rewrite app_nil_r.
 reflexivity.
 Qed.
 
-Lemma drop_spec {A B C : Ty} (t : Term B C)
- pt : spec (runMachine pt) t
-      -> spec (runMachine (bump (bitSize A) pt)) (@drop A B C t).
+Lemma drop_spec {A B C : Ty} (t : Term B C) pt :
+ spec (runMachine pt) t ->
+ spec (runMachine (bump (bitSize A) pt)) (@drop A B C t).
 Proof.
 intros Ht [a b] ctx.
-pose (h1 := {| readHole := encode b; writeHole := newWriteFrame (bitSize C) |}).
-pose (h1' := {| readHole := encode b; writeHole := fullWriteFrame (encode (eval t b)) |}).
-pose (h2 := {| readHole := encode a; writeHole := newWriteFrame 0 |}).
-change (fillContext _ _) at 1 with (fillContext ctx (appendHole h1 h2)).
-change (fillContext _ _) at 2 with (fillContext ctx (appendHole h1' h2)).
+pose (ls1 := LocalStateBegin t b).
+pose (ls1' := LocalStateEnd t b).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (bumpLocalState (encode a)))).
+change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState ls1' (bumpLocalState (encode a)))).
 rewrite <- (encode_length a).
 apply runMachine_bump.
 apply Ht.
@@ -319,8 +274,8 @@ Definition translate : Core.type := Core.Pack (Core.Class.Class (fun A B => Mach
   (fun A B C pt => bump (bitSize A) pt)
 ).
 
-Lemma translate_spec {A B : Ty} (t : Term A B)
- : spec (runMachine (@Core.eval _ _ t translate)) t.
+Lemma translate_spec {A B : Ty} (t : Term A B) :
+ spec (runMachine (@Core.eval _ _ t translate)) t.
 Proof.
 induction t.
 - apply iden_spec.
@@ -337,8 +292,8 @@ Qed.
 Local Open Scope core_alg_scope.
 
 Lemma translate_spec_parametric {A B : Ty} (t : forall {term : Core.type}, term A B) (Ht : Core.Parametric (@t)):
-  forall a ctx, runMachine (@t translate) (fillContext ctx {| readHole := encode a; writeHole := newWriteFrame (bitSize B) |})
-  = Some (fillContext ctx {| readHole := encode a; writeHole := fullWriteFrame (encode (|[ t ]| a)) |}).
+  forall a ctx, runMachine (@t translate) (fillContext ctx {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |})
+  = Some (fillContext ctx {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (|[ t ]| a)) |}).
 Proof.
 intros a.
 pose (t0 := t Core.Term : Term A B).
