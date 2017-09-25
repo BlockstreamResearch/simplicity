@@ -123,7 +123,7 @@
     2.5<space|2spc>Operational Semantics <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-29>
 
-    <with|par-left|1tab|2.5.1<space|2spc>Repesenting Values as Bit Strings
+    <with|par-left|1tab|2.5.1<space|2spc>Repesenting Values as Cell Arrays
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-30>>
 
@@ -705,7 +705,7 @@
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|s\<times\>t>|<cell|\<assign\>>|<cell|<math-ss|pair>
-    s t>>|<row|<cell|s;t>|<cell|\<assign\>>|<cell|<math-ss|cut> s t>>>>
+    s t>>|<row|<cell|s;t>|<cell|\<assign\>>|<cell|<math-ss|comp> s t>>>>
   </eqnarray*>
 
   with the <math|\<times\>> operator having higher precidence than the
@@ -716,7 +716,7 @@
   make this more concise we will use the following notation.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<math-ss|H>>|<cell|\<assign\>>|<cell|<math-ss|ident>>>|<row|<cell|<math-ss|O>s<math-ss|>>|<cell|\<assign\>>|<cell|<math-ss|take>
+    <tformat|<table|<row|<cell|<math-ss|H>>|<cell|\<assign\>>|<cell|<math-ss|iden>>>|<row|<cell|<math-ss|O>s<math-ss|>>|<cell|\<assign\>>|<cell|<math-ss|take>
     s>>|<row|<cell|<math-ss|I>s<math-ss|>*>|<cell|\<assign\>>|<cell|<math-ss|drop>
     s>>>>
   </eqnarray*>
@@ -724,7 +724,8 @@
   where <math|s> is a string of <samp|I>'s and <samp|O>'s that ends with
   <samp|H>.
 
-  For completely formal definitions please refer to the Coq library.
+  For completely formal definitions of Simplicity expressions, please refer
+  to the Coq library.
 
   By repeatedly taking products of bit types we can build types for
   <math|2<rsup|n>> bit words of any size we want.
@@ -733,7 +734,7 @@
     <tformat|<table|<row|<cell|<2><rsup|1>>|<cell|\<assign\>>|<cell|<2>>>|<row|<cell|<2><rsup|2>>|<cell|\<assign\>>|<cell|<2><rsup|1>
     \<times\><2><rsup|1>>>|<row|<cell|<2><rsup|4>>|<cell|\<assign\>>|<cell|<2><rsup|2>
     \<times\><2><rsup|2>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>|<row|<cell|<2><rsup|2n>>|<cell|\<assign\>>|<cell|<2><rsup|n>
-    \<times\><2><rsup|n>>>>>
+    \<times\><2><rsup|n>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>>>
   </eqnarray*>
 
   We chose to represent values in big endian format meaning that given a pair
@@ -1049,11 +1050,368 @@
 
   <section|Operational Semantics>
 
-  <subsection|Repesenting Values as Bit Strings>
+  The denotational semantics of Simplicity determine the functional behaviour
+  of expressions. \ However, they are not suitable for determining the
+  computation resources needed to evaluate expressions. \ For this reason we
+  define an operational semantics for Simplicity via an abstract machine we
+  call the <dfn|Bit Machine>.
+
+  <subsection|Repesenting Values as Cell Arrays>
+
+  <assign|carr|<macro|x|<verbatim|[<arg|x>]>>><assign|cearr|<macro|x|<verbatim|[<arg|x><underline|]>>>><assign|rep|<macro|x|y|<math|\<ulcorner\><arg|x>\<urcorner\><rsub|<arg|y>>>>>Values
+  in the Bit Machine are represented by arrays of cells where each cell
+  contains one of three values: a <verbatim|0> value, a <verbatim|1> value,
+  or a <verbatim|?> value which we call an undefined value. \ We write an
+  array of cell by enclosing a sequence of cells with square brackets (e.g.
+  <carr|1?0>). \ We denote the length of an array using
+  <math|<around*|\||\<cdummy\>|\|>>. \ For example,
+  <math|<around*|\||<carr|1?0>|\|>=3>. The concatenation of two arrays,
+  <math|a> and <math|b> is denoted by <math|a\<cdummy\>b>, and replication of
+  an array <math|n> times is denoted by expontiation, <math|a<rsup|n>>.
+  \ Sometime we will omit the dot whed performing concatenation.
+
+  For any given type, we define the number of cells needed to hold values of
+  that type by the following <math|bitSize> function.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|bitSize<around*|(|<value|1>|)>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|bitSize<around*|(|A+B|)>>|<cell|\<assign\>>|<cell|1+max<around*|(|bitSize<around*|(|A|)>,bitSize<around*|(|B|)>|)>>>|<row|<cell|bitSize<around*|(|A\<times\>B|)>>|<cell|\<assign\>>|<cell|bitSize<around*|(|A|)>+bitSize<around*|(|B|)>>>>>
+  </eqnarray*>
+
+  We define a represenation of values of Simplicity types as arrays of cells
+  as follows.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<rep|<around*|\<langle\>||\<rangle\>>|<value|1>>>|<cell|\<assign\>>|<cell|<carr|>>>|<row|<cell|<rep|<injl-long|A|B|<around*|(|a|)>>|A+B>>|<cell|\<assign\>>|<cell|<carr|0><carr|?><rsup|padL<around*|(|A,B|)>>\<cdummy\><rep|a|A>>>|<row|<cell|<rep|<injr-long|A|B|<around*|(|b|)>>|A+B>>|<cell|\<assign\>>|<cell|<carr|1><carr|?><rsup|padR<around*|(|A,B|)>>\<cdummy\><rep|b|B>>>|<row|<cell|<rep|<around*|\<langle\>|a,b|\<rangle\>>|A\<times\>B>>|<cell|\<assign\>>|<cell|<rep|a|A>\<cdummy\><rep|b|B>>>>>
+  </eqnarray*>
+
+  The representation of values of a sum type are padded with undefined cells
+  so that the representation has the proper length.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|padL<around*|(|A,B|)>>|<cell|\<assign\>>|<cell|max<around*|(|bitSize<around*|(|A|)>,bitSize<around*|(|B|)>|)>-bitSize<around*|(|A|)>>>|<row|<cell|padR<around*|(|A,B|)>>|<cell|\<assign\>>|<cell|max<around*|(|bitSize<around*|(|A|)>,bitSize<around*|(|B|)>|)>-bitSize<around*|(|B|)>>>>>
+  </eqnarray*>
+
+  <\theorem>
+    Given any value of some Simplicity type, <math|a:A>, we have
+    <math|<around*|\||<rep|a|A>|\|>=bitSize<around*|(|A|)>>.
+  </theorem>
 
   <subsection|Bit Machine>
 
-  <subsection|Tail Composition Optimisation (TCO)>
+  A frame is a, possibly empty, cell array with a cursor referencing a cell
+  in the array, which we denote using an underscore.
+
+  <\equation*>
+    <carr|0<underline|1>?10>
+  </equation*>
+
+  The cursor may also reference the end of the array, which we denote by
+  marking the end of the array with an underscore.
+
+  <\equation*>
+    <cearr|01?10>
+  </equation*>
+
+  Frames can be concatenated with cell arrays either on the left or on the
+  right without moving the cursor. Note that when concatenating a non-empty
+  cell array onto the right hand side of a frame whose cursor is at the end
+  of the frame, the cursor ends up pointing to the first cell of the added
+  cell array.
+
+  <\equation*>
+    <cearr|01?10><carr|111??>=<carr|01?10<wide*|1|\<bar\>>11??>
+  </equation*>
+
+  <assign|emptyFrame|<math|<tiny|\<wedge\>>>>We will sometimes denote the
+  empty frame, <math|<cearr|>>, with a small cursor, <value|emptyFrame>.
+
+  The state of the Bit Machine consistes of two non-empty stacks of frames: a
+  read-frame stack and a write-frame stack. \ The top elements of the two
+  stacks are called the <dfn|active read frame> and the <dfn|active write
+  frame> respectively. \ The other frames are called inactive read-frames or
+  inactive write-frames.
+
+  <big-figure|<tabular|<tformat|<cwith|1|1|1|-1|cell-tborder|2px>|<cwith|5|5|1|-1|cell-bborder|2px>|<cwith|1|1|1|-1|cell-bborder|1px>|<table|<row|<cell|read
+  frame stack>|<cell|write frame stack>>|<row|<cell|<carr|100<underline|1>1??110101000>>|<cell|<cearr|11??1101>>>|<row|<cell|<carr|<underline|0>000>>|<cell|<carr|111<underline|?>?>>>|<row|<cell|<cearr|>>|<cell|>>|<row|<cell|<carr|<underline|1>0>>|<cell|>>>>>|Example
+  state of the Bit Machine.>
+
+  Notationally we will write a stack of read frames as
+  <math|r<rsub|n>\<vartriangleright\>\<ldots\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0>>,
+  with <math|r<rsub|0>> as the active read frame. We will write a stack of
+  write frames in the opposite order, as <math|w<rsub|0>\<vartriangleleft\>w<rsub|1>\<vartriangleleft\>\<ldots\>\<vartriangleleft\>w<rsub|m>>
+  with <math|w<rsub|0><rsub|>> as the active write frame. In both cases we
+  denote an empty stack as <math|\<varnothing\>>. We write a state of the Bit
+  Machine as <math|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>>
+  where <math|\<Theta\>> is a read frame stack and <math|\<Xi\>> is a write
+  frame stack and <math|r<rsub|0>> is the active read frame and
+  <math|w<rsub|0>> is the active write frame.<\footnote>
+    The notation for the Bit Machine's state is intended to mimic the gap
+    buffer used in our C implemenation of the Bit Machine (see
+    <with|color|red|TODO>).
+  </footnote>
+
+  The Bit Machine has nine basic operations that transform the Bit Machine's
+  state. \ We denote these basic operations as
+  <math|o:S<rsub|i>\<rightsquigarrow\>S<rsub|f>>, where <math|o> is the
+  operataion's name, <math|S<rsub|i>> is a state of the Bit Machine prior to
+  the operation, and <math|S<rsub|f>> is the state of the machine after the
+  successful execution of the operation.
+
+  <subsubsection|Frame operations>
+
+  Our first three basic operations, create, move, and delete active frames.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|newFrame<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
+    \<rightsquigarrow\><around*|[|\<Theta\>\|<emptyFrame><carr|?><rsup|n>\<vartriangleleft\>w<rsub|0>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|moveFrame>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0><emptyFrame>\<vartriangleleft\>w<rsub|1>\<vartriangleleft\>\<Xi\>|]>
+    \<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<vartriangleright\><emptyFrame>w<rsub|0>\|w<rsub|1>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|dropFrame>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0>\|\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\|\<Xi\>|]>>>>>
+  </eqnarray*>
+
+  The <math|newFrame<around*|(|n|)>> operation pushes a new frame of length
+  <math|n> onto the write frame stack. \ This new frame has its cursor at the
+  beginning of the frame and the entire frame is filled with undefined
+  values. It is legal for the new frame to have length 0.
+
+  The <math|moveFrame> operation moves the top frame of the write frame stack
+  to the read frame stack. \ This operation is only valid when the cursor of
+  the active write frame is at the end of the frame. \ The cursor is reset to
+  the beginning of the frame when it is placed onto the read frame stack.
+
+  The <math|dropFrame> operation removes the top frame of the read frame
+  stack.
+
+  <subsubsection|Active Write Frame operations>
+
+  Our next three operations write data to the active write frame.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|write<around*|(|0|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|<wide*|?|\<bar\>>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><cearr|0><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|write<around*|(|1|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|<wide*|?|\<bar\>>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><cearr|1><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|skip<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0><emptyFrame><carr|?><rsup|n+m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|?><rsup|n><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|copy<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|n+m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><cearr|c<rsub|1>\<cdots\>c<rsub|n>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>>>
+  </eqnarray*>
+
+  The <math|write<around*|(|b|)>> opertation writes a 0 or 1 to the active
+  write frame and advances its cursor. Writing an undefined value with this
+  command is not allowed. The cursor cannot be at the end of the frame.
+
+  The <math|skip<around*|(|n|)>> operation advances the active write frame's
+  cursor without writing any data. \ There must be sufficent number of cells
+  after the cursor. The trivial command <math|skip<around*|(|0|)>> is legal
+  and is effectively a nop.
+
+  The <math|copy<around*|(|n|)>> operation copies the values of the <math|n>
+  cells after the active read frame's cursor into the active write frame,
+  advancing the write frame's cursor. \ The must be a sufficent number of
+  cells after both the active read frame and active write frame's cursors.
+  \ Note that undefined cell values are legal to copy. The trivial command
+  <math|copy<around*|(|0|)>> is legal and is effectively a nop.
+
+  <subsubsection|Active Read Frame operations>
+
+  <\equation*>
+    fwd<around*|(|n|)>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><cearr|c<rsub|1>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
+  </equation*>
+
+  <\equation*>
+    bwd<around*|(|n|)>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><cearr|c<rsub|1>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
+  </equation*>
+
+  The <math|fwd<around*|(|n|)>> operation moves the cursor on the active read
+  frame forward, and the <math|bwd<around*|(|n|)>> moves the cursor
+  backwards. \ In both cases there must be sufficent number of cells before
+  or after the cursor. \ The trivial commands <math|fwd<around*|(|0|)>> and
+  <math|bwd<around*|(|0|)>> are legal and are effective nops.
+
+  <subsubsection|Crashing the Bit Machine>
+
+  All of the above operations can only be performed in a state that matches
+  the pattern of the input state shown. If the operation is performed in any
+  other state, the Bit Machine crashes instead.
+
+  The ninth and final basic operataion is called <math|crash>, and it always
+  crashes the Bit Machine, regardless of what state the machine is in. \ The
+  <math|crash> operation has no corresponding rule because there is no state
+  that it can execute successfully in.\ 
+
+  <subsubsection|Bit Machine programs>
+
+  The basic operations of the Bit Machine are combined to produce programs
+  that take the Bit Machine through a sequence of states. \ We write
+  <math|S<rsub|i>\<twoheadrightarrow\>S<rsub|f>> to indicate a sequence of
+  state that start from <math|S<rsub|i>> and ends in <math|S<rsub|f>>. \ We
+  write <math|k:S<rsub|i>\<twoheadrightarrow\>S<rsub|f>> for a program that,
+  through a sequence of basic operations, transfroms an initial state
+  <math|S<rsub|i>> to the final state <math|S<rsub|f>>.
+
+  <\equation*>
+    nop:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
+  </equation*>
+
+  We write <math|nop> for the trival program with no basic operations. \ The
+  inital and final states are identical in this case.
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|o:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>>|<row|<cell|<math|o<rsub|>:
+    <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>>>>>
+  </with>
+
+  Every basic operation is a program that whose intial and final states match
+  those of the basic operation.
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|k<rsub|0>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>|<cell|<math|k<rsub|1>
+    : <around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>>>|<row|<cell|<math|k<rsub|0>;k<rsub|1>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>
+  </with>
+
+  \;
+
+  We write <math|k<rsub|0>;k<rsub|1>> for a sequence of two programs,
+  <math|k<rsub|0>> and <math|k<rsub|1>>, when the final state of
+  <math|k<rsub|0>> matches an inital state of <math|k<rsub|1>>.
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|k<rsub|0>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>|<row|<cell|<math|k<rsub|0><around*|\|||\|>k<rsub|1><rsub|>:
+    <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|k<rsub|1>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>|<row|<cell|<math|k<rsub|0><around*|\|||\|>k<rsub|1><rsub|>:
+    <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>
+  </with>
+
+  Lastly, we define <math|k<rsub|0><around*|\|||\|>k<rsub|1>> as a
+  deterministic choice between two programs, <math|k<rsub|0>> and
+  <math|k<rsub|1>>. \ The value under the active read frame's cursor decides
+  which one of the two programs are executed. \ When encountering a
+  determinisitc choice, the active read frame's cursor must not be at the end
+  of its array and the cell under the cursor cannot be an undefined value,
+  otherwise the machine crashes.
+
+  <\equation*>
+    n\<star\>k\<assign\>fwd<around*|(|n|)>;k;bwd<around*|(|n|)>
+  </equation*>
+
+  The <math|n\<star\>k> notation is for a program that temporarily advances
+  the active read frame's cursor when executing <math|k>.
+
+  <subsection|Executing Simplicity>
+
+  We recursively translate a Core Simplicity program, <math|t : A
+  \<vdash\>B>, into a program for the Bit Machine,
+  <math|<around*|\<llangle\>|t|\<rrangle\>>>, called the naive translation:
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<llangle\>|<math-ss|iden><rsub|A>|\<rrangle\>>>|<cell|\<assign\>>|<cell|copy<around*|(|bitSize<around*|(|A|)>|)>>>|<row|<cell|<around*|\<llangle\>|<math-ss|comp><rsub|A,B,C>
+    s t|\<rrangle\>>>|<cell|\<assign\>>|<cell|newFrame<around*|(|bitSize<around*|(|B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<around*|\<llangle\>|s|\<rrangle\>>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|<around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|>|<cell|;>|<cell|dropFrame>>|<row|<cell|<around*|\<llangle\>|<math-ss|unit><rsub|A>|\<rrangle\>>>|<cell|\<assign\>>|<cell|nop>>|<row|<cell|<around*|\<llangle\>|<math-ss|injl><rsub|A,B,C>
+    t|\<rrangle\>>>|<cell|\<assign\>>|<cell|write<around*|(|0|)>>>|<row|<cell|>|<cell|;>|<cell|skip<around*|(|padL<around*|(|A,B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|injr><rsub|A,B,C>
+    t|\<rrangle\>>>|<cell|\<assign\>>|<cell|write<around*|(|1|)>>>|<row|<cell|>|<cell|;>|<cell|skip<around*|(|padR<around*|(|A,B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|case><rsub|A,B,C,D>
+    s t|\<rrangle\>>>|<cell|\<assign\>>|<cell|<around*|(|1+padL<around*|(|A,B|)>|)>\<star\><around*|\<llangle\>|s|\<rrangle\>>>>|<row|<cell|>|<cell|<around*|\|||\|>>|<cell|<around*|(|1+padR<around*|(|A,B|)>|)>\<star\><around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|pair><rsub|A,B,C>
+    s t|\<rrangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llangle\>|s|\<rrangle\>>>>|<row|<cell|>|<cell|;>|<cell|<around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|take><rsub|A,B,C>
+    t|\<rrangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|drop><rsub|A,B,C>
+    t|\<rrangle\>>>|<cell|\<assign\>>|<cell|bitSize<around*|(|A|)>\<star\><around*|\<llangle\>|t|\<rrangle\>>>>>>
+  </eqnarray*>
+
+  <\theorem>
+    Given a well-typed core Simplicity program <math|t:A\<vdash\>B> and an
+    input <math|a:A>, then
+
+    <\equation*>
+      <around*|\<llangle\>|t|\<rrangle\>>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>
+    </equation*>
+
+    for any cell arrays <math|r<rsub|0>>, <math|r<rsub|0><rprime|'>>,
+    <math|w<rsub|0>>, any stacks <math|><math|\<Theta\>>, <math|\<Xi\>>, and
+    any natural number <math|m>.
+  </theorem>
+
+  In particular, for a well-typed core Simplicity program
+  <math|t:A\<vdash\>B>, we have\ 
+
+  <\equation*>
+    <around*|\<llangle\>|t|\<rrangle\>>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
+  </equation*>
+
+  which means we if we start the Bit Machine with only the input represented
+  on the read stack, and enough space for the output on the write stack, the
+  Bit Machine will compute the representation of the value
+  <math|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>>.
+
+  <subsubsection|Tail Composition Optimisation (TCO)>
+
+  <assign|TCOon|<macro|x|<math|<around*|\<llangle\>|<arg|x>|\<rrangle\>><rsup|TCO><rsub|on>>>><assign|TCOoff|<macro|x|<math|<around*|\<llangle\>|<arg|x>|\<rrangle\>><rsup|TCO><rsub|off>>>>Traditional
+  imperative language implementations often make use of tail call
+  optimization that occurs when the last command of a procedure is a call to
+  a second procedure. \ Normally the first procedure's stack frame would be
+  free after the second procedure returns. The tail call optimization instead
+  frees the first procedure's stack frame prior to the call to the second
+  procedure instead. \ This can reduce the overall memory use of the program.
+
+  The composition combinator, <math|<math-ss|comp>>, in Simplicity plays a
+  role similar to a procedure call. We can perform a tail composition
+  optimization that moves the <math|dropFrame> operation earlier to reduce
+  the overall memory use of the Bit Machine. We define an alternate
+  translation of Simplicity programs to Bit Machine programs via two mutually
+  recursively defined functions, <math|<TCOoff|\<cdummy\>>> and
+  <TCOon|\<cdummy\>>:
+
+  \;
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|20|38|2|2|cell-halign|r>|<table|<row|<cell|<TCOoff|<math-ss|iden><rsub|A>>>|<cell|\<assign\>>|<cell|copy<around*|(|bitSize<around*|(|A|)>|)>>>|<row|<cell|<TCOoff|<math-ss|comp><rsub|A,B,C>
+    s t>>|<cell|\<assign\>>|<cell|newFrame<around*|(|bitSize<around*|(|B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<TCOoff|s>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|<TCOon|t>>>|<row|<cell|<TCOoff|<math-ss|unit><rsub|A>>>|<cell|\<assign\>>|<cell|nop>>|<row|<cell|<TCOoff|<math-ss|injl><rsub|A,B,C>
+    t>>|<cell|\<assign\>>|<cell|write<around*|(|0|)>>>|<row|<cell|>|<cell|;>|<cell|skip<around*|(|padL<around*|(|A,B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|injr><rsub|A,B,C>
+    t>>|<cell|\<assign\>>|<cell|write<around*|(|1|)>>>|<row|<cell|>|<cell|;>|<cell|skip<around*|(|padR<around*|(|A,B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|case><rsub|A,B,C,D>
+    s t>>|<cell|\<assign\>>|<cell|<around*|(|1+padL<around*|(|A,B|)>|)>\<star\><TCOoff|s>>>|<row|<cell|>|<cell|<around*|\|||\|>>|<cell|<around*|(|1+padR<around*|(|A,B|)>|)>\<star\><TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|pair><rsub|A,B,C>
+    s t>>|<cell|\<assign\>>|<cell|<TCOoff|s>>>|<row|<cell|>|<cell|;>|<cell|<TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|take><rsub|A,B,C>
+    t>>|<cell|\<assign\>>|<cell|<TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|drop><rsub|A,B,C>
+    t>>|<cell|\<assign\>>|<cell|bitSize<around*|(|A|)>\<star\><TCOoff|t>>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<TCOon|<math-ss|iden><rsub|A>>>|<cell|\<assign\>>|<cell|copy<around*|(|bitSize<around*|(|A|)>|)>>>|<row|<cell|>|<cell|;>|<cell|dropFrame>>|<row|<cell|<TCOon|<math-ss|comp><rsub|A,B,C>
+    s t>>|<cell|\<assign\>>|<cell|newFrame<around*|(|bitSize<around*|(|B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<TCOon|s>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|unit><rsub|A>>>|<cell|\<assign\>>|<cell|dropFrame>>|<row|<cell|<TCOon|<math-ss|injl><rsub|A,B,C>
+    t>>|<cell|\<assign\>>|<cell|write<around*|(|0|)>>>|<row|<cell|>|<cell|;>|<cell|skip<around*|(|padL<around*|(|A,B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|injr><rsub|A,B,C>
+    t>>|<cell|\<assign\>>|<cell|write<around*|(|1|)>>>|<row|<cell|>|<cell|;>|<cell|skip<around*|(|padR<around*|(|A,B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|case><rsub|A,B,C,D>
+    s t>>|<cell|\<assign\>>|<cell|fwd<around*|(|1+padL<around*|(|A,B|)>|)>;<TCOon|s>>>|<row|<cell|>|<cell|<around*|\|||\|>>|<cell|fwd<around*|(|1+padR<around*|(|A,B|)>|)>;<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|pair><rsub|A,B,C>
+    s t>>|<cell|\<assign\>>|<cell|<TCOoff|s>>>|<row|<cell|>|<cell|;>|<cell|<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|take><rsub|A,B,C>
+    t>>|<cell|\<assign\>>|<cell|<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|drop><rsub|A,B,C>
+    t>>|<cell|\<assign\>>|<cell|fwd<around*|(|bitSize<around*|(|A|)>|)>;<TCOon|t>>>>>
+  </eqnarray*>
+
+  The definition of the <math|<TCOoff|\<cdummy\>>> translation is very
+  similar to the naive one, except the dropFrame operation at the end of the
+  translation of the composition combinator is replaced by making a recursive
+  call to <math|<TCOon|\<cdummy\>>> instead. \ The definition of
+  <math|<TCOon|\<cdummy\>>> makes calls to dropFrame in the translations of
+  <math|<math-ss|iden>> and <math|<math-ss|unit>>. The <math|bwd> operations
+  are removed from the translations of <math|<math-ss|case>> and
+  <math|<math-ss|drop>>. \ Lastly notice that the first recursive call in the
+  translation of <math|<math-ss|pair>> is to <TCOoff|\<cdummy\>>.
+
+  <\theorem>
+    Given a well-typed core Simplicity program <math|t:A\<vdash\>B> and an
+    input <math|a:A>, then
+
+    <\equation*>
+      <TCOoff|t>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>
+    </equation*>
+
+    and
+
+    <\equation*>
+      <TCOon|t>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>
+    </equation*>
+
+    for any cell arrays <math|r<rsub|0>>, <math|r<rsub|0><rprime|'>>,
+    <math|w<rsub|0>>, any frame <math|r<rsub|1>>, any stacks
+    <math|><math|\<Theta\>>, <math|\<Xi\>>, and any natural number <math|m>.
+  </theorem>
 
   <section|Static Analysis>
 
@@ -1141,40 +1499,49 @@
     <associate|auto-3|<tuple|2|7>>
     <associate|auto-30|<tuple|2.5.1|13>>
     <associate|auto-31|<tuple|2.5.2|13>>
-    <associate|auto-32|<tuple|2.5.3|13>>
-    <associate|auto-33|<tuple|2.6|13>>
-    <associate|auto-34|<tuple|2.6.1|13>>
-    <associate|auto-35|<tuple|2.6.2|13>>
-    <associate|auto-36|<tuple|2.6.3|13>>
-    <associate|auto-37|<tuple|2.7|13>>
-    <associate|auto-38|<tuple|2.7.1|13>>
-    <associate|auto-39|<tuple|3|15>>
+    <associate|auto-32|<tuple|2.1|13>>
+    <associate|auto-33|<tuple|2.5.2.1|13>>
+    <associate|auto-34|<tuple|2.5.2.2|13>>
+    <associate|auto-35|<tuple|2.5.2.3|13>>
+    <associate|auto-36|<tuple|2.5.2.4|13>>
+    <associate|auto-37|<tuple|2.5.2.5|13>>
+    <associate|auto-38|<tuple|2.5.3|13>>
+    <associate|auto-39|<tuple|2.5.3.1|15>>
     <associate|auto-4|<tuple|2.1|7>>
-    <associate|auto-40|<tuple|3.1|15>>
-    <associate|auto-41|<tuple|3.1.1|15>>
-    <associate|auto-42|<tuple|3.2|15>>
-    <associate|auto-43|<tuple|3.3|15>>
-    <associate|auto-44|<tuple|3.3.1|15>>
-    <associate|auto-45|<tuple|3.3.2|15>>
-    <associate|auto-46|<tuple|3.3.3|15>>
-    <associate|auto-47|<tuple|3.4|15>>
-    <associate|auto-48|<tuple|3.4.1|15>>
-    <associate|auto-49|<tuple|3.4.2|15>>
+    <associate|auto-40|<tuple|2.6|15>>
+    <associate|auto-41|<tuple|2.6.1|15>>
+    <associate|auto-42|<tuple|2.6.2|15>>
+    <associate|auto-43|<tuple|2.6.3|15>>
+    <associate|auto-44|<tuple|2.7|15>>
+    <associate|auto-45|<tuple|2.7.1|15>>
+    <associate|auto-46|<tuple|3|15>>
+    <associate|auto-47|<tuple|3.1|15>>
+    <associate|auto-48|<tuple|3.1.1|15>>
+    <associate|auto-49|<tuple|3.2|15>>
     <associate|auto-5|<tuple|2.1.1|7>>
-    <associate|auto-50|<tuple|3.5|15>>
-    <associate|auto-51|<tuple|3.5.1|15>>
-    <associate|auto-52|<tuple|4|17>>
-    <associate|auto-53|<tuple|4.1|17>>
-    <associate|auto-54|<tuple|5|19>>
-    <associate|auto-55|<tuple|5.1|19>>
-    <associate|auto-56|<tuple|6|21>>
-    <associate|auto-57|<tuple|7|23>>
-    <associate|auto-58|<tuple|8|25>>
-    <associate|auto-59|<tuple|8|?>>
+    <associate|auto-50|<tuple|3.3|15>>
+    <associate|auto-51|<tuple|3.3.1|15>>
+    <associate|auto-52|<tuple|3.3.2|17>>
+    <associate|auto-53|<tuple|3.3.3|17>>
+    <associate|auto-54|<tuple|3.4|19>>
+    <associate|auto-55|<tuple|3.4.1|19>>
+    <associate|auto-56|<tuple|3.4.2|21>>
+    <associate|auto-57|<tuple|3.5|23>>
+    <associate|auto-58|<tuple|3.5.1|25>>
+    <associate|auto-59|<tuple|4|?>>
     <associate|auto-6|<tuple|2.1.1.1|7>>
+    <associate|auto-60|<tuple|4.1|?>>
+    <associate|auto-61|<tuple|5|?>>
+    <associate|auto-62|<tuple|5.1|?>>
+    <associate|auto-63|<tuple|6|?>>
+    <associate|auto-64|<tuple|7|?>>
+    <associate|auto-65|<tuple|8|?>>
     <associate|auto-7|<tuple|2.1.2|7>>
     <associate|auto-8|<tuple|2.1.2.1|8>>
     <associate|auto-9|<tuple|2.2|8>>
+    <associate|footnote-1|<tuple|1|?>>
+    <associate|footnote-2.1|<tuple|2.1|?>>
+    <associate|footnr-2.1|<tuple|2.1|?>>
     <associate|full-adder-LHS|<tuple|2.3|?>>
     <associate|full-adder-RHS|<tuple|2.2|?>>
     <associate|full-adder-spec|<tuple|2.1|?>>
@@ -1183,6 +1550,9 @@
 
 <\auxiliary>
   <\collection>
+    <\associate|figure>
+      <tuple|normal|Example state of the Bit Machine.|<pageref|auto-32>>
+    </associate>
     <\associate|toc>
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Introduction>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
@@ -1296,114 +1666,130 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-29>
 
-      <with|par-left|<quote|1tab>|2.5.1<space|2spc>Repesenting Values as Bit
-      Strings <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|2.5.1<space|2spc>Repesenting Values as Cell
+      Arrays <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-30>>
 
       <with|par-left|<quote|1tab>|2.5.2<space|2spc>Bit Machine
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-31>>
 
-      <with|par-left|<quote|1tab>|2.5.3<space|2spc>Tail Composition
-      Optimisation (TCO) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-32>>
-
-      2.6<space|2spc>Static Analysis <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-33>
-
-      <with|par-left|<quote|1tab>|2.6.1<space|2spc>Commitment Merkle Root
+      <with|par-left|<quote|2tab>|2.5.2.1<space|2spc>Frame operations
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-33>>
+
+      <with|par-left|<quote|2tab>|2.5.2.2<space|2spc>Active Write Frame
+      operations <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-34>>
 
-      <with|par-left|<quote|1tab>|2.6.2<space|2spc>Space Resources
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|2tab>|2.5.2.3<space|2spc>Active Read Frame
+      operations <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-35>>
 
-      <with|par-left|<quote|1tab>|2.6.3<space|2spc>Time Resources
+      <with|par-left|<quote|1tab>|2.5.3<space|2spc>Executing Simplicity
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-36>>
 
-      2.7<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-37>
+      <with|par-left|<quote|1tab>|2.5.4<space|2spc>Tail Composition
+      Optimisation (TCO) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-37>>
 
-      <with|par-left|<quote|1tab>|2.7.1<space|2spc>Type Inference
+      2.6<space|2spc>Static Analysis <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-38>
+
+      <with|par-left|<quote|1tab>|2.6.1<space|2spc>Commitment Merkle Root
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-38>>
+      <no-break><pageref|auto-39>>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Full
-      Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-39><vspace|0.5fn>
+      <with|par-left|<quote|1tab>|2.6.2<space|2spc>Space Resources
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-40>>
 
-      3.1<space|2spc>Assertions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-40>
-
-      <with|par-left|<quote|1tab>|3.1.1<space|2spc>Salted Expressions
+      <with|par-left|<quote|1tab>|2.6.3<space|2spc>Time Resources
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-41>>
 
-      3.2<space|2spc>Witness Merkle Root <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      2.7<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-42>
 
+      <with|par-left|<quote|1tab>|2.7.1<space|2spc>Type Inference
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-43>>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Full
+      Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-44><vspace|0.5fn>
+
+      3.1<space|2spc>Assertions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-45>
+
+      <with|par-left|<quote|1tab>|3.1.1<space|2spc>Salted Expressions
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-46>>
+
+      3.2<space|2spc>Witness Merkle Root <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-47>
+
       3.3<space|2spc>Oracles <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-43>
+      <no-break><pageref|auto-48>
 
       <with|par-left|<quote|1tab>|3.3.1<space|2spc>Hidden Salted Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-44>>
+      <no-break><pageref|auto-49>>
 
       <with|par-left|<quote|1tab>|3.3.2<space|2spc>Serialization with Oracles
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-45>>
+      <no-break><pageref|auto-50>>
 
       <with|par-left|<quote|1tab>|3.3.3<space|2spc>Type Inference with
       Oracles <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-46>>
+      <no-break><pageref|auto-51>>
 
       3.4<space|2spc>Blockchain Primitives
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-47>
+      <no-break><pageref|auto-52>
 
       <with|par-left|<quote|1tab>|3.4.1<space|2spc>Bitcoin Transactions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-48>>
+      <no-break><pageref|auto-53>>
 
       <with|par-left|<quote|1tab>|3.4.2<space|2spc>Schnorr Signature
       Aggregation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-49>>
+      <no-break><pageref|auto-54>>
 
       3.5<space|2spc>Malleability <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-50>
+      <no-break><pageref|auto-55>
 
       <with|par-left|<quote|1tab>|3.5.1<space|2spc>Transaction Weight
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-51>>
+      <no-break><pageref|auto-56>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|4<space|2spc>Jetted
       Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-52><vspace|0.5fn>
+      <no-break><pageref|auto-57><vspace|0.5fn>
 
       4.1<space|2spc>Example: The Standard Single Signature
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-53>
+      <no-break><pageref|auto-58>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|5<space|2spc>Extended
       Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-54><vspace|0.5fn>
+      <no-break><pageref|auto-59><vspace|0.5fn>
 
       5.1<space|2spc>Disconnect <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-55>
+      <no-break><pageref|auto-60>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|6<space|2spc>Coq
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-56><vspace|0.5fn>
+      <no-break><pageref|auto-61><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|7<space|2spc>Haskell
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-57><vspace|0.5fn>
+      <no-break><pageref|auto-62><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-58><vspace|0.5fn>
+      <no-break><pageref|auto-63><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
