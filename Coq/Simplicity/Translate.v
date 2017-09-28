@@ -1,6 +1,7 @@
 Require Import PeanoNat.
 Require Import Util.List.
 Require Import Util.Option.
+Require Import Util.Thrist.
 
 Require Import Simplicity.Alg.
 Require Import Simplicity.Core.
@@ -64,31 +65,26 @@ Definition LocalStateBegin {A B : Ty} (t : Term A B) (a : A) :=
 Definition LocalStateEnd {A B : Ty} (t : Term A B) (a : A) :=
   {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (eval t a)) |}.
 
-Definition spec {A B : Ty} (f : State -> option State) (t : Term A B)  :=
-  forall a ctx, f (fillContext ctx (LocalStateBegin t a))
-  = Some (fillContext ctx (LocalStateEnd t a)).
+Definition spec {A B : Ty} (p : Program) (t : Term A B)  :=
+  forall a ctx, runMachine p (fillContext ctx (LocalStateBegin t a)) = Some (fillContext ctx (LocalStateEnd t a)).
 
 Module Naive.
 
-Lemma iden_spec {A : Ty} : spec (runMachine (copy (bitSize A))) (@iden A).
+Lemma iden_spec {A : Ty} : spec (copy (bitSize A)) (@iden A).
 Proof.
 intros a ctx.
-unfold LocalStateBegin.
-cbn.
-rewrite <- (encode_length a), State.copy_correct.
+unfold LocalStateBegin, runMachine.
+rewrite <- (encode_length a), copy_correct.
 reflexivity.
 Qed.
 
 Lemma comp_spec {A B C : Ty} (s : Term A B) (t : Term B C) ps pt :
- spec (runMachine ps) s -> spec (runMachine pt) t ->
- spec (runMachine (newFrame (bitSize B) ;; ps ;; moveFrame ;; pt ;; dropFrame)) (comp s t) .
+ spec ps s -> spec pt t ->
+ spec (newFrame (bitSize B) ;;; ps ;;; moveFrame ;;; pt ;;; dropFrame) (comp s t) .
 Proof.
 intros Hs Ht a ctx.
-repeat rewrite runMachine_append.
-unfold fillContext at 1.
-simpl (runMachine _ _).
-unfold State.newFrame, option_bind at 4, newWriteFrame.
-simpl (option_join _).
+repeat rewrite runMachine_seq.
+unfold runMachine at 5; cbn.
 rewrite <- (Plus.plus_0_r (bitSize B)).
 pose (ctx1 := {| inactiveReadFrames := inactiveReadFrames ctx
                ; activeReadFrame := activeReadFrame ctx
@@ -99,10 +95,7 @@ pose (ctx1 := {| inactiveReadFrames := inactiveReadFrames ctx
                   |} :: inactiveWriteFrames ctx
                |}).
 change (runMachine ps _) with (runMachine ps (fillContext ctx1 (LocalStateBegin s a))).
-rewrite Hs.
-
-unfold option_bind at 2.
-simpl (option_join _); clear ctx1.
+rewrite Hs; cbn; clear ctx1.
 rewrite app_nil_r, rev_involutive, <- (app_nil_r (encode (_ a))).
 pose (ctx1 := {| inactiveReadFrames :=
                  {| prevData := prevData (activeReadFrame ctx)
@@ -117,123 +110,150 @@ rewrite Ht.
 reflexivity.
 Qed.
 
-Lemma unit_spec {A : Ty} : spec (runMachine nop) (@unit A).
+Lemma unit_spec {A : Ty} : spec nop (@unit A).
 Proof.
 intros a ctx.
 reflexivity.
 Qed.
 
 Lemma injl_spec {A B C : Ty} (t : Term A B) pt :
- spec (runMachine pt) t ->
- spec (runMachine (write false ;; skip (padL B C) ;; pt)) (@injl A B C t).
+ spec pt t ->
+ spec (write false ;;; skip (padL B C) ;;; pt) (@injl A B C t).
 Proof.
 intros Ht a ctx.
-repeat rewrite runMachine_append.
-unfold LocalStateBegin, newWriteFrame, option_bind at 2.
-simpl (option_join _).
+repeat rewrite runMachine_seq.
+unfold LocalStateBegin.
+simpl (newWriteFrame _).
+pose (ls1 := {| readLocalState := encode a; writeLocalState := newWriteFrame (max (bitSize B) (bitSize C)) |}).
+pose (ls2 := {| readLocalState := nil; writeLocalState := newWriteFrame 1 |}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
+unfold runMachine at 3.
+rewrite <- context_action, write_correct; cbn; rewrite context_action.
+unfold appendLocalState; cbn; clear ls1 ls2.
 rewrite <- padL_bitSize.
-change (State.skip _ _) with
- (State.skip (padL B C) (fillContext ctx
-   {| readLocalState := encode a
-    ; writeLocalState :=
-      {| writeData := Some false :: nil; writeEmpty := padL B C + bitSize B |}
-    |})).
-rewrite State.skip_correct, <- (rev_repeat _ (padL B C)),
-        <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize B)).
-pose (h0 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some false :: repeat None (padL B C)) |}).
-change (fillContext ctx _) at 1 with (fillContext ctx (appendLocalState h0 (LocalStateBegin t a))).
-rewrite <- context_action; cbn.
-rewrite Ht, context_action.
-unfold h0, appendLocalState; cbn.
-rewrite app_nil_r, app_assoc, <- rev_app_distr.
+pose (ls1 := {| readLocalState := encode a; writeLocalState := {| writeData := Some false :: nil; writeEmpty := bitSize B |}|}).
+pose (ls2 := {| readLocalState := nil; writeLocalState := newWriteFrame (padL B C)|}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
+unfold runMachine at 2.
+rewrite <- context_action, skip_correct; cbn; rewrite context_action.
+unfold appendLocalState; cbn; clear ls1 ls2.
+change (rev _ ++ _) with (rev (Some false :: repeat None (padL B C))).
+rewrite <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize B)).
+pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some false :: repeat None (padL B C))|}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
+rewrite <- context_action, Ht, context_action.
+unfold appendLocalState; cbn -[rev]; clear ls1.
+rewrite <- rev_app_distr, app_nil_r.
 reflexivity.
 Qed.
 
 Lemma injr_spec {A B C : Ty} (t : Term A C) pt :
- spec (runMachine pt) t ->
- spec (runMachine (write true ;; skip (padR B C) ;; pt)) (@injr A B C t) .
+ spec pt t ->
+ spec (write true ;;; skip (padR B C) ;;; pt) (@injr A B C t).
 Proof.
 intros Ht a ctx.
-repeat rewrite runMachine_append.
-unfold LocalStateBegin, newWriteFrame, option_bind at 2.
-simpl (option_join _).
+repeat rewrite runMachine_seq.
+unfold LocalStateBegin.
+simpl (newWriteFrame _).
+pose (ls1 := {| readLocalState := encode a; writeLocalState := newWriteFrame (max (bitSize B) (bitSize C)) |}).
+pose (ls2 := {| readLocalState := nil; writeLocalState := newWriteFrame 1 |}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
+unfold runMachine at 3.
+rewrite <- context_action, write_correct; cbn; rewrite context_action.
+unfold appendLocalState; cbn; clear ls1 ls2.
 rewrite <- padR_bitSize.
-change (State.skip _ _) with
- (State.skip (padR B C) (fillContext ctx
-   {| readLocalState := encode a
-    ; writeLocalState :=
-      {| writeData := Some true :: nil; writeEmpty := padR B C + bitSize C |}
-    |})).
-rewrite State.skip_correct, <- (rev_repeat _ (padR B C)),
-        <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize C)).
-pose (h0 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some true :: repeat None (padR B C)) |}).
-change (fillContext ctx _) at 1 with (fillContext ctx (appendLocalState h0 (LocalStateBegin t a))).
-rewrite <- context_action; cbn.
-rewrite Ht, context_action.
-unfold h0, appendLocalState; cbn.
-rewrite app_nil_r, app_assoc, <- rev_app_distr.
+pose (ls1 := {| readLocalState := encode a; writeLocalState := {| writeData := Some true :: nil; writeEmpty := bitSize C |}|}).
+pose (ls2 := {| readLocalState := nil; writeLocalState := newWriteFrame (padR B C)|}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
+unfold runMachine at 2.
+rewrite <- context_action, skip_correct; cbn; rewrite context_action.
+unfold appendLocalState; cbn; clear ls1 ls2.
+change (rev _ ++ _) with (rev (Some true :: repeat None (padR B C))).
+change (Some false :: nil) with (rev (Some false :: nil)).
+rewrite <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize C)).
+pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some true :: repeat None (padR B C))|}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
+rewrite <- context_action, Ht, context_action.
+unfold appendLocalState; cbn -[rev]; clear ls1.
+rewrite <- rev_app_distr, app_nil_r.
 reflexivity.
 Qed.
 
-Lemma case_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D) ps pt :
- spec (runMachine ps) s -> spec (runMachine pt) t ->
- spec (runMachine (read (bump (1 + padL A B) ps) (bump (1 + padR A B) pt))) (case s t).
+Lemma caseL_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D) ps pt :
+ spec ps s ->
+ forall a c ctx,
+  runMachine (bump (1 + padL A B) ps ||| bump (1 + padR A B) pt)
+    (fillContext ctx (LocalStateBegin (case s t) (inl a, c))) =
+  Some (fillContext ctx (LocalStateEnd (case s t) (inl a, c))).
 Proof.
-intros Hs Ht [[a|b] c] ctx;
-unfold LocalStateBegin, LocalStateEnd; cbn -[bump]; rewrite <- app_assoc.
-- set (ac := (a, c) : tySem (A * C)).
-  change (encode a ++ _) with (encode ac).
-  pose (l := Some false :: repeat None (padL A B)).
-  pose (h0 := bumpLocalState l).
-  pose (ls1 := LocalStateBegin s ac).
-  pose (ls1' := LocalStateEnd s ac).
-  change (fillContext ctx _) at 1 with (fillContext ctx (appendLocalState ls1 h0)).
-  change (fillContext ctx _) at 2 with (fillContext ctx (appendLocalState ls1' h0)).
-  rewrite <- (repeat_length (@None bool) (padL A B)).
-  change (bump _) with (bump (length l)).
-  apply runMachine_bump.
-  apply Hs.
-- set (bc := (b, c) : tySem (B * C)).
-  change (encode b ++ _) with (encode bc).
-  pose (l := Some true :: repeat None (padR A B)).
-  pose (h0 := bumpLocalState l).
-  pose (ls1 := LocalStateBegin t bc).
-  pose (ls1' := LocalStateEnd t bc).
-  change (fillContext ctx _) at 1 with (fillContext ctx (appendLocalState ls1 h0)).
-  change (fillContext ctx _) at 2 with (fillContext ctx (appendLocalState ls1' h0)).
-  rewrite <- (repeat_length (@None bool) (padR A B)).
-  change (bump _) with (bump (length l)).
-  apply runMachine_bump.
-  apply Ht.
+intros Hs a c ctx.
+rewrite runMachine_choice; unfold LocalStateBegin, LocalStateEnd; cbn.
+rewrite <- app_assoc.
+rewrite <- (@repeat_length Cell None (padL A B)) at 1.
+set (prefix := Some false :: repeat None (padL A B)).
+pose (ls2 := {| readLocalState := prefix; writeLocalState := newWriteFrame 0 |}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState (LocalStateBegin s (a,c)) ls2)).
+change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState (LocalStateEnd s (a,c)) ls2)).
+repeat rewrite <- context_action.
+change (fillContext _ _) at 1 with (fillReadFrame (fillContext ctx (LocalStateBegin s (a,c))) {| prevData := nil; nextData := prefix |}).
+apply runMachine_bump.
+apply (Hs _ (fillReadFrame ctx {| prevData := rev (prefix); nextData := nil |})).
+Qed.
+
+Lemma caseR_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D) ps pt :
+ spec pt t ->
+ forall b c ctx,
+  runMachine (bump (1 + padL A B) ps ||| bump (1 + padR A B) pt)
+    (fillContext ctx (LocalStateBegin (case s t) (inr b, c))) =
+  Some (fillContext ctx (LocalStateEnd (case s t) (inr b, c))).
+Proof.
+intros Ht b c ctx.
+rewrite runMachine_choice; unfold LocalStateBegin, LocalStateEnd; cbn.
+rewrite <- app_assoc.
+rewrite <- (@repeat_length Cell None (padR A B)) at 1.
+set (prefix := Some true :: repeat None (padR A B)).
+pose (ls2 := {| readLocalState := prefix; writeLocalState := newWriteFrame 0 |}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState (LocalStateBegin t (b,c)) ls2)).
+change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState (LocalStateEnd t (b,c)) ls2)).
+repeat rewrite <- context_action.
+change (fillContext _ _) at 1 with (fillReadFrame (fillContext ctx (LocalStateBegin t (b,c))) {| prevData := nil; nextData := prefix |}).
+apply runMachine_bump.
+apply (Ht _ (fillReadFrame ctx {| prevData := rev (prefix); nextData := nil |})).
+Qed.
+
+Lemma case_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D) ps pt :
+ spec ps s -> spec pt t ->
+ spec (bump (1 + padL A B) ps ||| bump (1 + padR A B) pt) (case s t).
+Proof.
+intros Hs Ht [[a|b] c] ctx.
+- apply caseL_spec; assumption.
+- apply caseR_spec; assumption.
 Qed.
 
 Lemma pair_spec {A B C : Ty} (s : Term A B) (t : Term A C) ps pt :
- spec (runMachine ps) s -> spec (runMachine pt) t ->
- spec (runMachine (ps ;; pt)) (pair s t).
+ spec ps s -> spec pt t ->
+ spec (ps ;;; pt) (pair s t).
 Proof.
 intros Hs Ht a ctx.
-rewrite runMachine_append.
-unfold LocalStateBegin, fullWriteFrame, newWriteFrame; cbn.
-
+rewrite runMachine_seq.
+unfold LocalStateBegin.
 rewrite <- (app_nil_r (encode a)) at 1.
 pose (ls1 := {| readLocalState := nil; writeLocalState := newWriteFrame (bitSize C) |}).
 change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin s a))).
-rewrite <- context_action, Hs, context_action.
+rewrite <- context_action, Hs, context_action; cbn.
 unfold appendLocalState; cbn; clear ls1.
-
 rewrite (app_nil_r (rev _)), <- (Plus.plus_0_r (bitSize C)).
 pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (encode (eval s a)) |}).
 change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
 rewrite <- context_action, Ht, context_action.
 unfold appendLocalState; cbn; clear ls1.
-
 rewrite app_nil_r, <- rev_app_distr.
 reflexivity.
 Qed.
 
 Lemma take_spec {A B C : Ty} (t : Term A C) pt :
- spec (runMachine pt) t ->
- spec (runMachine pt) (@take A B C t).
+ spec pt t ->
+ spec pt (@take A B C t).
 Proof.
 intros Ht [a b] ctx.
 unfold LocalStateBegin; cbn.
@@ -247,33 +267,34 @@ reflexivity.
 Qed.
 
 Lemma drop_spec {A B C : Ty} (t : Term B C) pt :
- spec (runMachine pt) t ->
- spec (runMachine (bump (bitSize A) pt)) (@drop A B C t).
+ spec pt t ->
+ spec (bump (bitSize A) pt) (@drop A B C t).
 Proof.
 intros Ht [a b] ctx.
-pose (ls1 := LocalStateBegin t b).
-pose (ls1' := LocalStateEnd t b).
-change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (bumpLocalState (encode a)))).
-change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState ls1' (bumpLocalState (encode a)))).
+pose (ls2 := {| readLocalState := encode a; writeLocalState := newWriteFrame 0 |}).
+change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState (LocalStateBegin t b) ls2)).
+change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState (LocalStateEnd t b) ls2)).
+repeat rewrite <- context_action.
+change (fillContext _ _) at 1 with (fillReadFrame (fillContext ctx (LocalStateBegin t b)) {| prevData := nil; nextData := encode a |}).
 rewrite <- (encode_length a).
 apply runMachine_bump.
-apply Ht.
+apply (Ht _ (fillReadFrame ctx {| prevData := rev (encode a); nextData := nil |})).
 Qed.
 
-Definition translate : Core.type := Core.Pack (Core.Class.Class (fun A B => MachineCode.T)
+Definition translate : Core.type := Core.Pack (Core.Class.Class (fun A B => Program)
   (fun A => copy (bitSize A))
-  (fun A B C ps pt => newFrame (bitSize B) ;; ps ;; moveFrame ;; pt ;; dropFrame)
+  (fun A B C ps pt => newFrame (bitSize B) ;;; ps ;;; moveFrame ;;; pt ;;; dropFrame)
   (fun A => nop)
-  (fun A B C pt => write false ;; skip (padL B C) ;; pt)
-  (fun A B C pt => write true ;; skip (padR B C) ;; pt)
-  (fun A B C D ps pt => read (bump (1 + padL A B) ps) (bump (1 + padR A B) pt))
-  (fun A B C ps pt => ps ;; pt)
+  (fun A B C pt => write false ;;; skip (padL B C) ;;; pt)
+  (fun A B C pt => write true ;;; skip (padR B C) ;;; pt)
+  (fun A B C D ps pt => bump (1 + padL A B) ps ||| bump (1 + padR A B) pt)
+  (fun A B C ps pt => ps ;;; pt)
   (fun A B C pt => pt)
   (fun A B C pt => bump (bitSize A) pt)
 ).
 
 Lemma translate_spec {A B : Ty} (t : Term A B) :
- spec (runMachine (@Core.eval _ _ t translate)) t.
+ spec (@Core.eval _ _ t translate) t.
 Proof.
 induction t.
 - apply iden_spec.
@@ -287,18 +308,53 @@ induction t.
 - apply drop_spec; assumption.
 Qed.
 
+Local Open Scope thrist_scope.
+
+Theorem translate_correct {A B : Ty} (t : Term A B) a ctx :
+ { thr : fillContext ctx (LocalStateBegin t a)
+     ->> fillContext ctx (LocalStateEnd t a)
+ | @Core.eval _ _ t translate (fillContext ctx (LocalStateBegin t a)) = Some (existT _ _ thr)
+ }.
+generalize (translate_spec t a ctx).
+unfold runMachine.
+destruct (Core.eval _) as [[y thr] |];[|abstract discriminate].
+cbn; intros Hy.
+assert (Hy' : y = fillContext ctx (LocalStateEnd t a)).
+ abstract (injection Hy; auto).
+refine (exist _ (thr |><| eq_nil Hy') _).
+abstract
+(f_equal
+;destruct Hy'
+;cbn
+;rewrite thrist_app_nil
+;reflexivity
+).
+Defined.
+
 Local Open Scope core_alg_scope.
 
-Lemma translate_spec_parametric {A B : Ty} (t : forall {term : Core.type}, term A B) (Ht : Core.Parametric (@t)):
-  forall a ctx, runMachine (@t translate) (fillContext ctx {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |})
-  = Some (fillContext ctx {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (|[ t ]| a)) |}).
-Proof.
-intros a.
-pose (t0 := t Core.Term : Term A B).
-rewrite (Core.term_eval Ht).
-rewrite (Core.term_eval Ht CoreSem).
-rewrite <- CoreSem_correct.
-apply translate_spec.
-Qed.
+Theorem translate_correct_parametric {A B : Ty} (t : forall {term : Core.type}, term A B) (Ht : Core.Parametric (@t)) a ctx :
+ { thr : fillContext ctx {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |}
+     ->> fillContext ctx {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (|[ t ]| a)) |}
+ | @t translate (fillContext ctx {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |}) = Some (existT _ _ thr)
+ }.
+set (ctxB := fillContext ctx _).
+set (ctxA := fillContext ctx _).
+set (t0 := t Core.Term : Term A B) in *.
+assert (H0 : option_map (projT1 (P:=fun y0 : State => ctxA ->> y0)) (t translate ctxA) =
+        Some (fillContext ctx (LocalStateEnd t0 a))) by
+  abstract (rewrite (Core.term_eval Ht); apply (translate_spec t0 a ctx)).
+destruct (t translate ctxA) as [[y thr] |]; cbn in H0;[|abstract discriminate].
+enough (y = ctxB) as Hy.
+ refine (exist _ (thr |><| eq_nil Hy) _).
+ abstract (destruct Hy; cbn; rewrite thrist_app_nil; reflexivity).
+abstract
+(injection H0; clear H0
+;intros ->
+;unfold ctxB
+;rewrite (Core.term_eval Ht), <- CoreSem_correct
+;reflexivity
+).
+Defined.
 
 End Naive.
