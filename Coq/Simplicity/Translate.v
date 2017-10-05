@@ -18,21 +18,28 @@ match X with
 | Prod A B => bitSize A + bitSize B
 end.
 
-Definition padL (X Y : Ty) : nat := max (bitSize X) (bitSize Y) - bitSize X.
-Definition padR (X Y : Ty) : nat := max (bitSize X) (bitSize Y) - bitSize Y.
+(* We take advantage that x - y = 0 when x <= y for natural numbers. *)
+Definition padL (X Y : Ty) : nat := bitSize Y - bitSize X.
+Definition padR (X Y : Ty) : nat := bitSize X - bitSize Y.
 
 Lemma padL_bitSize (X Y : Ty) : (padL X Y + bitSize X = max (bitSize X) (bitSize Y))%nat.
 Proof.
 unfold padL.
-apply Nat.sub_add.
-apply Nat.le_max_l.
+apply Nat.max_case_strong; intros HXY.
+- rewrite <- Nat.sub_0_le in HXY.
+  rewrite HXY.
+  reflexivity.
+- rewrite Nat.sub_add; auto.
 Qed.
 
 Lemma padR_bitSize (X Y : Ty) : (padR X Y + bitSize Y = max (bitSize X) (bitSize Y))%nat.
 Proof.
-unfold padL.
-apply Nat.sub_add.
-apply Nat.le_max_r.
+unfold padR.
+apply Nat.max_case_strong; intros HXY.
+- rewrite Nat.sub_add; auto.
+- rewrite <- Nat.sub_0_le in HXY.
+  rewrite HXY.
+  reflexivity.
 Qed.
 
 Fixpoint encode {X : Ty} : X -> list Cell :=
@@ -122,8 +129,6 @@ Lemma injl_spec {A B C : Ty} (t : Term A B) pt :
 Proof.
 intros Ht a ctx.
 repeat rewrite runMachine_seq.
-unfold LocalStateBegin.
-simpl (newWriteFrame _).
 pose (ls1 := {| readLocalState := encode a; writeLocalState := newWriteFrame (max (bitSize B) (bitSize C)) |}).
 pose (ls2 := {| readLocalState := nil; writeLocalState := newWriteFrame 1 |}).
 change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
@@ -137,7 +142,6 @@ change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
 unfold runMachine at 2.
 rewrite <- context_action, skip_correct; cbn; rewrite context_action.
 unfold appendLocalState; cbn; clear ls1 ls2.
-change (rev _ ++ _) with (rev (Some false :: repeat None (padL B C))).
 rewrite <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize B)).
 pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some false :: repeat None (padL B C))|}).
 change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
@@ -153,8 +157,6 @@ Lemma injr_spec {A B C : Ty} (t : Term A C) pt :
 Proof.
 intros Ht a ctx.
 repeat rewrite runMachine_seq.
-unfold LocalStateBegin.
-simpl (newWriteFrame _).
 pose (ls1 := {| readLocalState := encode a; writeLocalState := newWriteFrame (max (bitSize B) (bitSize C)) |}).
 pose (ls2 := {| readLocalState := nil; writeLocalState := newWriteFrame 1 |}).
 change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
@@ -168,8 +170,6 @@ change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
 unfold runMachine at 2.
 rewrite <- context_action, skip_correct; cbn; rewrite context_action.
 unfold appendLocalState; cbn; clear ls1 ls2.
-change (rev _ ++ _) with (rev (Some true :: repeat None (padR B C))).
-change (Some false :: nil) with (rev (Some false :: nil)).
 rewrite <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize C)).
 pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some true :: repeat None (padR B C))|}).
 change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
