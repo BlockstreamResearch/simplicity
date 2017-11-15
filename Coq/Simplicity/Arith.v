@@ -222,7 +222,7 @@ match n with
 | S n => buildAdder fullAdder adder
 end.
 
-Definition fullMultiplierBit {term : Core.type} : term ((Bit * Bit) * (Bit * Bit)) (Bit * Bit) :=
+Definition fullMultiplierBit {term : Core.type} : term ((Bit * Bit) * (Bit * Bit)) (Word 1) :=
     drop iden &&& take (cond iden false)
 >>> fullAdderBit.
 
@@ -235,13 +235,13 @@ Definition buildFullMultiplier {W} {term : Core.type} (rec : term ((W * W) * (W 
 &&& (drop (O O H &&& I I H) &&& (O I H &&& drop (O I H &&& I O H) >>> rec))
 >>> (O H &&& drop (I O H &&& O O H) >>> rec) &&& drop (I I H &&& O I H).
 
-Fixpoint fullMultiplier {n : nat} {term : Core.type} : term ((Word n * Word n) * (Word n * Word n)) (Word n * Word n) :=
+Fixpoint fullMultiplier {n : nat} {term : Core.type} : term ((Word n * Word n) * (Word n * Word n)) (Word (S n)) :=
 match n with
 | 0 => fullMultiplierBit
 | S n => buildFullMultiplier fullMultiplier
 end.
 
-Definition multiplierBit {term : Core.type} : term (Bit * Bit) (Bit * Bit) :=
+Definition multiplierBit {term : Core.type} : term (Bit * Bit) (Word 1) :=
     false &&& cond iden false.
 
 Definition buildMultiplier {W} {term : Core.type} (fm : term ((W * W) * (W * W)) (W * W)) (rec : term (W * W) (W * W)) :
@@ -252,7 +252,7 @@ Definition buildMultiplier {W} {term : Core.type} (fm : term ((W * W) * (W * W))
 &&& (drop (O O H &&& I I H) &&& (O I H &&& drop (O I H &&& I O H) >>> fm))
 >>> (O H &&& drop (I O H &&& O O H) >>> fm) &&& drop (I I H &&& O I H).
 
-Fixpoint multiplier {n : nat} {term : Core.type} : term (Word n * Word n) (Word n * Word n) :=
+Fixpoint multiplier {n : nat} {term : Core.type} : term (Word n * Word n) (Word (S n)) :=
 match n with
 | 0 => multiplierBit
 | S n => buildMultiplier fullMultiplier multiplier
@@ -338,7 +338,7 @@ transitivity ((toZ ahi * toZ bhi + toZ c3 + toZ c1) * C * C + toZ rOI * C + toZ 
  [|ring].
 rewrite <- IHn.
 destruct (|[fullMultiplier]| ((ahi, bhi), (c3, c1))) as [rII rIO]; clear c3 c1 ahi bhi.
-rewrite toZ_Pair, (toZ_Pair rOI rOO); fold C.
+rewrite (@toZ_Pair (WordToZ (S n)) (WordToZ (S n))), (toZ_Pair rOI rOO); fold C.
 rewrite (bitSize_Pair (WordToZ n) (WordToZ n)).
 rewrite two_power_nat_correct, Zpower_nat_is_exp, <- two_power_nat_correct; fold C.
 set (X := toZ _); ring.
@@ -371,7 +371,7 @@ transitivity ((toZ ahi * toZ bhi + toZ c3 + toZ c1) * C * C + toZ rOI * C + toZ 
  [|ring].
 rewrite <- fullMultiplier_correct.
 destruct (|[fullMultiplier]| ((ahi, bhi), (c3, c1))) as [rII rIO]; clear c3 c1 ahi bhi.
-rewrite toZ_Pair, (toZ_Pair rOI rOO); fold C.
+rewrite (@toZ_Pair (WordToZ (S n)) (WordToZ (S n))), (toZ_Pair rOI rOO); fold C.
 rewrite (bitSize_Pair (WordToZ n) (WordToZ n)).
 rewrite two_power_nat_correct, Zpower_nat_is_exp, <- two_power_nat_correct; fold C.
 set (X := toZ _); ring.
@@ -437,7 +437,7 @@ Qed.
 Hint Resolve buildFullMultiplier_Parametric : parametricity.
 
 Lemma fullMultiplier_Parametric {term1 term2 : Core.type} (R : Core.ReynoldsRel term1 term2)
-  {n} : R _ _ fullMultiplier (@fullMultiplier n _).
+  {n} : R _ (Word n * Word n) fullMultiplier (@fullMultiplier n _).
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
@@ -445,6 +445,7 @@ Hint Resolve fullMultiplier_Parametric : parametricity.
 
 Lemma multiplierBit_Parametric {term1 term2 : Core.type} (R : Core.ReynoldsRel term1 term2) : R _ _ multiplierBit multiplierBit.
 Proof.
+simpl.
 unfold multiplierBit.
 auto with parametricity.
 Qed.
@@ -461,6 +462,6 @@ Hint Resolve buildMultiplier_Parametric : parametricity.
 Lemma multiplier_Parametric {term1 term2 : Core.type} (R : Core.ReynoldsRel term1 term2)
   {n} : R _ _ multiplier (@multiplier n _).
 Proof.
-induction n; simpl; auto with parametricity.
+induction n; simpl; auto 20 with parametricity.
 Qed.
 Hint Resolve multiplier_Parametric : parametricity.

@@ -131,105 +131,186 @@
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-31>>
 
-    <with|par-left|1tab|2.5.3<space|2spc>Tail Composition Optimisation (TCO)
+    <with|par-left|2tab|2.5.2.1<space|2spc>Frame operations
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-32>>
+    <no-break><pageref|auto-33>>
 
-    2.6<space|2spc>Static Analysis <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-33>
-
-    <with|par-left|1tab|2.6.1<space|2spc>Commitment Merkle Root
+    <with|par-left|2tab|2.5.2.2<space|2spc>Active Write Frame operations
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-34>>
 
-    <with|par-left|1tab|2.6.2<space|2spc>Space Resources
+    <with|par-left|2tab|2.5.2.3<space|2spc>Active Read Frame operations
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-35>>
 
-    <with|par-left|1tab|2.6.3<space|2spc>Time Resources
+    <with|par-left|2tab|2.5.2.4<space|2spc>Crashing the Bit Machine
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-36>>
 
-    2.7<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-37>
+    <with|par-left|2tab|2.5.2.5<space|2spc>Bit Machine programs
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-37>>
 
-    <with|par-left|1tab|2.7.1<space|2spc>Type Inference
+    <with|par-left|1tab|2.5.3<space|2spc>Executing Simplicity
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-38>>
 
-    <vspace*|1fn><with|font-series|bold|math-font-series|bold|3<space|2spc>Full
-    Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-39><vspace|0.5fn>
+    <with|par-left|2tab|2.5.3.1<space|2spc>Tail Composition Optimisation
+    (TCO) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-39>>
 
-    3.1<space|2spc>Assertions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    2.6<space|2spc>Static Analysis <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-40>
 
-    <with|par-left|1tab|3.1.1<space|2spc>Salted Expressions
+    <with|par-left|1tab|2.6.1<space|2spc>Space Resources
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-41>>
 
-    3.2<space|2spc>Witness Merkle Root <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-42>
-
-    3.3<space|2spc>Oracles <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-43>
-
-    <with|par-left|1tab|3.3.1<space|2spc>Hidden Salted Expressions
+    <with|par-left|1tab|2.6.2<space|2spc>Time Resources
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-44>>
+    <no-break><pageref|auto-42>>
 
-    <with|par-left|1tab|3.3.2<space|2spc>Serialization with Oracles
+    <with|par-left|1tab|2.6.3<space|2spc>Commitment Merkle Root
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-43>>
+
+    2.7<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-44>
+
+    <with|par-left|1tab|2.7.1<space|2spc>Type Inference
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-45>>
 
-    <with|par-left|1tab|3.3.3<space|2spc>Type Inference with Oracles
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-46>>
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|3<space|2spc>Full
+    Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-46><vspace|0.5fn>
 
-    3.4<space|2spc>Blockchain Primitives <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    3.1<space|2spc>Assertions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-47>
 
-    <with|par-left|1tab|3.4.1<space|2spc>Bitcoin Transactions
+    <with|par-left|1tab|3.1.1<space|2spc>Salted Expressions
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-48>>
 
-    <with|par-left|1tab|3.4.2<space|2spc>Schnorr Signature Aggregation
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-49>>
+    3.2<space|2spc>Witness Merkle Root <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-49>
 
-    3.5<space|2spc>Malleability <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    3.3<space|2spc>Oracles <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-50>
 
-    <with|par-left|1tab|3.5.1<space|2spc>Transaction Weight
+    <with|par-left|1tab|3.3.1<space|2spc>Hidden Salted Expressions
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-51>>
 
+    <with|par-left|1tab|3.3.2<space|2spc>Serialization with Oracles
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-52>>
+
+    <with|par-left|1tab|3.3.3<space|2spc>Type Inference with Oracles
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-53>>
+
+    3.4<space|2spc>Blockchain Primitives <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-54>
+
+    <with|par-left|1tab|3.4.1<space|2spc>Bitcoin Transactions
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-55>>
+
+    <with|par-left|1tab|3.4.2<space|2spc>Schnorr Signature Aggregation
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-56>>
+
+    3.5<space|2spc>Malleability <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-57>
+
+    <with|par-left|1tab|3.5.1<space|2spc>Transaction Weight
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-58>>
+
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|4<space|2spc>Jetted
     Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-52><vspace|0.5fn>
+    <no-break><pageref|auto-59><vspace|0.5fn>
 
     4.1<space|2spc>Example: The Standard Single Signature
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-53>
+    <no-break><pageref|auto-60>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|5<space|2spc>Extended
     Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-54><vspace|0.5fn>
+    <no-break><pageref|auto-61><vspace|0.5fn>
 
     5.1<space|2spc>Disconnect <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-55>
+    <no-break><pageref|auto-62>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|6<space|2spc>Coq
     Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-56><vspace|0.5fn>
+    <no-break><pageref|auto-63><vspace|0.5fn>
+
+    6.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-64>
+
+    6.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-65>
+
+    <with|par-left|1tab|6.2.1<space|2spc>The ``Initial'' Representation of
+    Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-66>>
+
+    <with|par-left|1tab|6.2.2<space|2spc>The ``Final'' Representation of
+    Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-67>>
+
+    <with|par-left|2tab|6.2.2.1<space|2spc>Simplicity Algebras
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-68>>
+
+    <with|par-left|2tab|6.2.2.2<space|2spc>The ``Final'' Representation
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-69>>
+
+    <with|par-left|2tab|6.2.2.3<space|2spc>Constructing ``Final'' Terms
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-70>>
+
+    <with|par-left|1tab|6.2.3<space|2spc>Why two representations of Terms?
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-71>>
+
+    6.3<space|2spc>Example Simplicity Expressions
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-72>
+
+    <with|par-left|1tab|6.3.1<space|2spc>Bits
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-73>>
+
+    <with|par-left|1tab|6.3.2<space|2spc>Arithmetic
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-74>>
+
+    6.4<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-75>
+
+    <with|par-left|1tab|6.4.1<space|2spc>Bit Machine Code
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-76>>
+
+    <with|par-left|2tab|6.4.1.1<space|2spc>Bit Machine Programs
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-77>>
+
+    6.5<space|2spc>Translating Simplicity to the Bit Machine
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-78>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|7<space|2spc>Haskell
     Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-57><vspace|0.5fn>
+    <no-break><pageref|auto-79><vspace|0.5fn>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|8<space|2spc>C
     Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-58><vspace|0.5fn>
+    <no-break><pageref|auto-80><vspace|0.5fn>
   </table-of-contents>
 
   <chapter|Introduction>
@@ -1025,9 +1106,10 @@
   the completeness theorem as yes.
 
   <\theorem>
-    Core Simplicity Completeness Theorem. For any (Simplicity) types <math|A>
-    and <math|B> and any function <math|f:A\<rightarrow\>B>, there exists
-    some Core Simplicity term <math|t> such that for all <math|a:A>,
+    <label|thm:CSCT>Core Simplicity Completeness Theorem. For any
+    (Simplicity) types <math|A> and <math|B> and any function
+    <math|f:A\<rightarrow\>B>, there exists some Core Simplicity term
+    <math|t> such that for all <math|a:A>,
 
     <\equation*>
       <around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>=f<around*|(|a|)>
@@ -1066,7 +1148,7 @@
   <carr|1?0>). \ We denote the length of an array using
   <math|<around*|\||\<cdummy\>|\|>>. \ For example,
   <math|<around*|\||<carr|1?0>|\|>=3>. The concatenation of two arrays,
-  <math|a> and <math|b> is denoted by <math|a\<cdummy\>b>, and replication of
+  <math|a> and <math|b> is denoted by <math|a\<cdot\>b>, and replication of
   an array <math|n> times is denoted by expontiation, <math|a<rsup|n>>.
   \ Sometime we will omit the dot whed performing concatenation.
 
@@ -1081,7 +1163,7 @@
   as follows.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<rep|<around*|\<langle\>||\<rangle\>>|<value|1>>>|<cell|\<assign\>>|<cell|<carr|>>>|<row|<cell|<rep|<injl-long|A|B|<around*|(|a|)>>|A+B>>|<cell|\<assign\>>|<cell|<carr|0><carr|?><rsup|padL<around*|(|A,B|)>>\<cdummy\><rep|a|A>>>|<row|<cell|<rep|<injr-long|A|B|<around*|(|b|)>>|A+B>>|<cell|\<assign\>>|<cell|<carr|1><carr|?><rsup|padR<around*|(|A,B|)>>\<cdummy\><rep|b|B>>>|<row|<cell|<rep|<around*|\<langle\>|a,b|\<rangle\>>|A\<times\>B>>|<cell|\<assign\>>|<cell|<rep|a|A>\<cdummy\><rep|b|B>>>>>
+    <tformat|<table|<row|<cell|<rep|<around*|\<langle\>||\<rangle\>>|<value|1>>>|<cell|\<assign\>>|<cell|<carr|>>>|<row|<cell|<rep|<injl-long|A|B|<around*|(|a|)>>|A+B>>|<cell|\<assign\>>|<cell|<carr|0>\<cdot\><carr|?><rsup|padL<around*|(|A,B|)>>\<cdot\><rep|a|A>>>|<row|<cell|<rep|<injr-long|A|B|<around*|(|b|)>>|A+B>>|<cell|\<assign\>>|<cell|<carr|1>\<cdot\><carr|?><rsup|padR<around*|(|A,B|)>>\<cdot\><rep|b|B>>>|<row|<cell|<rep|<around*|\<langle\>|a,b|\<rangle\>>|A\<times\>B>>|<cell|\<assign\>>|<cell|<rep|a|A>\<cdot\><rep|b|B>>>>>
   </eqnarray*>
 
   The representation of values of a sum type are padded with undefined cells
@@ -1490,7 +1572,449 @@
 
   <chapter|Coq Library Guide>
 
-  <chapter|Haskell Library Guide>
+  The Coq development for Simplicity is found in the <verbatim|Coq/>
+  directory. \ There are two subdirectories, <verbatim|Simplicity/> contains
+  modules releated to Simplicity, and the <verbatim|Util/> directory has a
+  few modules dedicated to other structures that are not specific to
+  Simplicity, but that we will make use of in the Simplicity development.
+  \ We will focus on the contents of the <verbatim|Simplicity/> directory.
+
+  <section|Simplicity Types>
+
+  The Coq development for Simplicity begins with the
+  <verbatim|Simplicity/Ty.v> file. \ This contain the inductive definition of
+  <verbatim|Ty> which defines Simplicity's type expressions. \ The
+  <verbatim|tySem> function interprets Simplicity types as Coq types, and it
+  is declared as coercion. \ The module also provides standard arithmetic
+  notation for Simplicity's sum and product types.
+
+  <section|Simplicity Terms>
+
+  There are two different representations of Simplicity terms defined in Coq.
+  \ One representation is an ``inital'' representation, as an inductive
+  types. \ The other representation is a ``final'' representation, as beased
+  on algebras (see <hlink|F-algebra|https://en.wikipedia.org/wiki/F-algebra>)
+  for Simplicity.
+
+  Generally speaking we use the ``initial'' representation when reasoning
+  about Simplicity programs to prove properties about them, and we use the
+  ``final'' representation when creating specific Simplicity programs.
+
+  We begin with the ``initial'' represetation, which will most readers will
+  find more familiar.
+
+  <subsection|The ``Initial'' Representation of Terms>
+
+  The <verbatim|Simplicity/Core.v> module defines an inductive family,
+  <verbatim|Term A B>, for the well-typed core Simplicity language. \ The
+  core language is the pure fragment of Simplicity that has no effects such
+  as failure or read access to the transaction environment. \ The
+  <verbatim|eval> function provides denotational semantics and interprets
+  terms as Coq functions over the corresponding Coq types.
+
+  This module also establishes the Core Simplicity completeness theorem
+  (Theorem <reference|thm:CSCT>) as the <verbatim|Simplicity_Completeness>
+  theorem. \ The proof is built from <verbatim|scribe>, a function to produce
+  Simplicity terms representing constant functions, and <verbatim|reify>
+  which transforms Coq functions over Simplicity types into Simplicity terms
+  representing those functions.
+
+  <with|color|red|TODO: non-core Simplicity terms>
+
+  <subsection|The ``Final'' Representation of Terms>
+
+  To explain the ``final'' representation of terms it is first neccessary to
+  understand what an algebra for Simplicity is. We can understand this by way
+  of a mathematical analogy with ring theory. A ring is a mathematical
+  structure consiting of a domain along with constants from that domain that
+  correspond to 0 and 1, and binary functions over that domain that
+  correspond to <math|\<noplus\>+> and <math|\<times\>> operations that
+  satify certain ring laws. \ A term from the language of rings is an
+  expression made out of <math|0>, <math|1>, <math|+>, and <math|\<times\>>.
+  \ Given a ring and a term from the langauge of rings, we can intepret that
+  term in the given ring and compute an element of the domain that the term
+  represents. \ There are many different rings structures, such as the ring
+  of integers, and the ring of integers modulo <math|n> for any positive
+  number <math|n>. \ A given term can be interpreted as some value for any
+  ring. It turns out that an alternative way to represent terms is as a
+  function that given any ring returns a value from its domain and does so in
+  a ``uniform'' way. \ This would be the ``final'' representation for terms
+  in the langauge of rings.
+
+  <subsubsection|Simplicity Algebras>
+
+  An algebra for Simplicity is an analgous structure to a ring. \ An algebra
+  for Simplicity consists of a domain, along with constants from that domain
+  that correspond to <math|<math-ss|iden>> and <math|<math-ss|unit>> and
+  functions over that domain that correspond the other combinators from
+  Simplicity. \ Unlike the case for rings, the domain of a Simplicity algebra
+  is indexed by a pair of Simplicity types, and naturally the constants and
+  functions that interpret Simplicity combinators must respect these types
+  (and unlike rings, we are not going to impose any extra laws, making it a
+  free-algebra).
+
+  Simplicity algebras are formalized in the <verbatim|Simplicity/Alg.v> file.
+  \ The <verbatim|Core.Class.class> record captures the interpretation of
+  constants and combinators for core Simplicity over a given domain. \ The
+  <verbatim|Core.type> structure is the type of Simplicity algebras,
+  containing a type for the domain, and an instance of the
+  <verbatim|Core.Class.class> record for interpretations.
+
+  Given any Simplicity algebra and a well-typed term (from the ``initial''
+  representation) we can interpret that term in the algebra to get out a
+  value from the domain (that has a type corresponding to the type of the
+  term). \ The <verbatim|Core.eval> function performs this interpretation by
+  recursively evaluating the interpretation of the core Simplicity
+  combinators from the algebra.
+
+  What sort of Simplicity algebras are there? The most obvious one is the
+  functional semantics of Simplicity. \ The domain of this algebra is the
+  functions between Simplicity types. \ This domain is indexed by the input
+  and output Simplicity types. \ The interpretation of the
+  <math|<math-ss|iden>> and <math|<math-ss|unit>> constants are the idenity
+  and constant-unit functions respectively and the intepretation of the other
+  core Simplicity combinators is also in accordance with Simplicity's
+  denotational semantics. \ This algebra is defined in the <verbatim|CoreSem>
+  structure and the <verbatim|CorSem_correct> lemma proves that the
+  interpretation of terms in the ``initial'' representation into this algebra
+  results in the same function that the <verbatim|eval> function from
+  <verbatim|Simplicity/Core.v> produces. \ The <verbatim|"\|[ x ]\|">
+  notation denotes this denotation semantics using the <verbatim|CoreSem>
+  domain.
+
+  Another example of a Simplicity algebra is the ``initial'' reprsentation of
+  terms themselves, which form a trivial algebra. \ This domain of Simplicity
+  terms is also indexed by input and output Simplicity types and the
+  constants and combinators are interpreted as themselves. \ This algebra is
+  defined in the <verbatim|Core.Term> structure and the
+  <verbatim|Core.eval_Term> lemma proves that the interpretation of any term
+  in this algebra returns the original term back.
+
+  There are several other Simplicity algebras. Programs for the Bit Machine
+  form a Simplicity algebra with the translation from Simplicity to Bit
+  Machine code defining the interpreptation of core Simplicity combinators.
+  \ Also 256-bit hashes are a Simplicity algebra with the merkle root
+  computation defining the interpretation of core Simplicity combinators.
+  \ Static analysis of resource usage for Simplicity expressions will for yet
+  another set of Simplicity algebras.
+
+  <subsubsection|The ``Final'' Representation>
+
+  The ``final'' representation of a Simplicity term is as a function that
+  selects a value out of any Simplicity algebra and does so in a ``uniform''
+  manner. \ A ``uniform'' manner means a function that satifies the
+  <verbatim|Core.Parametric> property which effectively says that that the
+  values choosen by the function from two domains must each be constructed
+  from a composition of the intepretation of combinators in the two domains
+  in the same way. \ In other words, the function must act the the
+  intepretation of some ``inital'' represented term under
+  <verbatim|Core.eval> for any domain.
+
+  Terms in the ``inital'' representation can be converted to the ``final''
+  representation by parital application of <verbatim|Core.eval>. \ The
+  <verbatim|Core.eval_Parametric> lemma proves that the resulting ``final''
+  representation resulting from <verbatim|Core.eval> satisfies the
+  <verbatim|Core.Parametric> property.
+
+  Terms in the ``final'' representation can be converted into the ``initial''
+  representation by applying the function to the <verbatim|Core.Term>
+  Simplicity algebra. \ The <verbatim|Core.eval_Term> lemma shows that
+  converting from the ``initial'' representation to the ``final''
+  representation and back to the ``initial'' representation returns the
+  original value. \ The <verbatim|Core.term_eval> lemma shows that starting
+  from any term in the ``final'' representation that satsifies the
+  <verbatim|Core.Parametric> property and converting it to the ``initial''
+  representation and back to the ``final'' representation results in an
+  equivalent term. This completes the proof at the two representations are
+  isomorphic.
+
+  <subsubsection|Constructing ``Final'' Terms>
+
+  To faciliate the construction of expression in the ``final''
+  representaiton, the nine core combinators are defined as functions
+  parameterized over all Simplicity algebras, and each combinator is proven
+  to be parameteric or to preserve parametericity. For the most part, these
+  combinators can be used to write Simplicity expressions in the ``final''
+  representation in the same way one would use constructors to write
+  Simplicity expressions in the ``initial'' representation. On top of this,
+  notation <verbatim|"s &&& t"> is defined for the pair combinator, and
+  <verbatim|"s \<gtr\>\<gtr\>\<gtr\> t"> is defined for the composition
+  combinator. Also the <verbatim|'H'>, <verbatim|'O'>, and <verbatim|'I'>
+  notations for sequences of takes and drops over the identity combinator is
+  also defined.
+
+  For every expression built in the ``final'' representation, it is necessary
+  to prove that the result sastifies the paramatricity property. A
+  <verbatim|parametricity> hint database is provided to faciliate automatic
+  proofs of these results. Users should add their own parametricity lemmas to
+  the hint database as they create new Simplicity expressions. \ Some
+  examplesa of this can be found in the <verbatim|Simplicity/Arith.v> module.
+
+  <subsection|Why two representations of Terms?>
+
+  The ``initial'' inductive representation is the traditional definition one
+  expects for terms and is easy to reason inductively about. \ This is the
+  representation we will typically use in proofs. \ The problem with this
+  representation is that, due to lack of sharing between sub-expressions, it
+  is expensive to evaluate with these terms inside Coq itself. \ For example,
+  one cannot compute Merkle roots of anything but the most trivial of
+  expressions.
+
+  The ``final'' algebra representation solves this problem by allowing
+  transparent sharing of expressions. In the ``final'' representation, terms
+  are really values of a Simplicity algebra. When these values are shared
+  using in Coq's let expressions, or shared via some function argument in
+  Coq, those values of the algebra are shared during computation within Coq.
+  This representation makes it feasable to acutally compute Merkle roots for
+  Simplicity expressions directly inside Coq.
+
+  Both representations are used throughout the Simplicity Coq library. \ The
+  ``final'' representation is used when building concrete Simplicity
+  expressions. \ The ``initial'' representation is used when reasoning about
+  functions of Simplicity expressions. \ The isomorphism between the two
+  representations is used to transport theorems between them.
+
+  <section|Example Simplicity Expressions>
+
+  <subsection|Bits>
+
+  The <verbatim|Simplicity/Bit.v> file defines notation for the Simplicity
+  type for bits, and notation for their two values <verbatim|'Bit.zero'> and
+  <verbatim|'Bit.one'>. \ The Simplicity expressions <verbatim|false> and
+  <verbatim|true> are defined to be the constant functions that return the
+  zero and one bit respectively. A few logical combinators are defined for
+  bits, including the <verbatim|cond <em|thn> <em|els>> combinator which does
+  case analysis on one bit of input, and executes <verbatim|<em|thn>> or
+  <verbatim|<em|els>> expressions according to whether the bit represented
+  true or false.
+
+  All the combinators and Simplicity expressions are given in the ``final''
+  representation and parametricity lemmas are provided.
+
+  <subsection|Arithmetic>
+
+  The <verbatim|Simplicity/Arith.v> file defines types for multi-bit words
+  and defines Simplicity expressions for addition and multiplication on those
+  words. <verbatim|Word <em|n>> is a Simplicity type of a
+  <math|2<rsup|n>>-bit word. The <verbatim|ToZ> module defines a class of
+  types of finite words. \ The class provides <verbatim|toZ> and
+  <verbatim|fromZ> operations that convert between standard Coq integers and
+  these types of finite words along with proofs that the conversion functions
+  are inverses modulo the word size. \ <verbatim|Canonical Structure>
+  declarations provide implementations for the <verbatim|Bit> and
+  <verbatim|Word <em|n>> types and for pairs of of such types.
+
+  The <verbatim|Simplicity/Arith.v> file also defines the following
+  Simplicity expressions:
+
+  <\itemize-dot>
+    <item><verbatim|adder : forall n term, term (Word n * Word n) (Bit * Word
+    n)>
+
+    <item><verbatim|fullAdder : forall n term, term ((Word n * Word n) * Bit)
+    (Bit * Word n)>
+
+    <item><verbatim|multiplier : forall n term, term (Word n * Word n) (Word
+    (S n))>
+
+    <item><verbatim|fullMultiplier : forall n term,<next-line>term ((Word n *
+    Word n) * (Word n * Word n)) (Word (S n))>\ 
+  </itemize-dot>
+
+  The <verbatim|adder> expression defines the sum of two <math|2<rsup|n>>-bit
+  word, returning a carry bit and a <math|2<rsup|n>>-bit word result. The
+  <verbatim|fullAdder> expression defines the sum of two <math|2<rsup|n>>-bit
+  word and one (carry input) bit, returning a carry bit and a
+  <math|2<rsup|n>>-bit word result. \ The <verbatim|multiplier> expression
+  defines the product of two <math|2<rsup|n>>-bit word and returns a
+  <math|2<rsup|n+1>>-bit word. \ The <verbatim|fullMultiplier> expression
+  takes a quadruple, <math|<around*|(|<around*|(|a,b|)>,<around*|(|c,d|)>|)>>
+  of <math|2<rsup|n>>-bit words and returns <math|a\<cdot\>b+c+d> as a
+  <math|2<rsup|n+1>>-bit word.
+
+  Each of these expressions has an associated correctness lemma. \ These
+  expressions are all defined in the ``final'' representation and there are
+  parametricity lemmas for each expression.
+
+  <section|The Bit Machine>
+
+  The <verbatim|Simplicity/BitMachine.v> file provides the primary definition
+  of the abstract Bit Machine. This definition, and hence this file, is
+  independent of the rest of the Simplicity language.
+
+  The <verbatim|Cell> type explicity tracks cell values in the bit machien as
+  being one of <verbatim|0>, <verbatim|1>, and undefined. \ <verbatim|None>
+  represents the undefined value and <verbatim|Some false> and <verbatim|Some
+  true> represent <verbatim|0> and <verbatim|1> respectively.
+
+  The <verbatim|ReadFrame> record represents read frames. \ It uses a zipper
+  representation of a list with a cursor: The elements of the list in front
+  of the cursor are in the <verbatim|nextData> field and the elements of the
+  list behind the cursor are in the <verbatim|prevData> field stored in
+  <em|reverse order>. \ The <verbatim|setFrame> function builds a read frame
+  from a list with the cursor set to the beginning of the frame.
+
+  The <verbatim|WriteFrame> record represents write frames. \ It uses a
+  similar zipper representation where the <verbatim|writeData> field holds
+  the elements behind the cursor in <em|reverse order>. \ Because write
+  frames are append only, every cell in front of the cursor must be an
+  undefined value. For this reason we only store the number of cells in front
+  of the cursor in the <verbatim|writeEmpty> field. \ The
+  <verbatim|newWriteFrame> function builds an empty write frame of a given
+  size and the <verbatim|fullWriteFrame> function builds an filled write
+  frame from a list.
+
+  The <verbatim|State> record represents the state of the Bit Machine. \ It
+  consists of
+
+  <\itemize-dot>
+    <item><verbatim|inactiveReadFrames>: a list of inactive read frames, with
+    the bottom of the stack at the end of the list.
+
+    <item><verbatim|activeReadFrame>: the active read frame, which is the top
+    value of the non-empty stack of read frames.
+
+    <item><verbatim|activeWriteFrame>: the active write frame, which is the
+    top value of the non-empty stack of write frames.
+
+    <item><verbatim|inactiveWriteFrames>: a list of inactive write frames,
+    with the bottom of the stack at the end of the list.
+  </itemize-dot>
+
+  It is sometimes useful to decompose the Bit Machine's state as\ 
+
+  <\equation*>
+    <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n<rsub|0>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><cearr|c<rsub|1>\<cdots\>c<rsub|n<rsub|1>>><carr|?><rsup|n<rsub|2>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>
+  </equation*>
+
+  where we are locally interested in what is immediately in front of the
+  active read frame's cursor, <math|<carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n<rsub|0>>>>,
+  and what is immediately surrounding the active write frame's cursor,
+  <math|<cearr|c<rsub|1>\<cdots\>c<rsub|n<rsub|1>>><carr|?><rsup|n<rsub|2>>>.
+  \ This is captured by the <verbatim|LocalState> type, noting that the data
+  immediately surrounding the active write frame's cursor is captured by the
+  <verbatim|WriteFrame> type. \ The remainder of the state, consisting of
+  <math|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|>\<bullet\>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\>\<bullet\>\<cdummy\><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
+  is captured by the <verbatim|Context> type, which happens to be isomorphic
+  to the <verbatim|State> type. \ The <verbatim|fillContext> function
+  combines a <verbatim|Context> value and a <verbatim|LocalState> value to
+  build a complete <verbatim|State> value.
+
+  Sometimes we are intersted in of some <verbatim|LocalState> within another
+  <verbatim|LocalState>. \ The context of such a decomposition is isomorphic
+  to <verbatim|LocalState> and we don't even both giving a type alias to
+  this. The <verbatim|appendLocalState> funciton combines a context,
+  <verbatim|ls1>, with a <verbatim|LocalState>, <verbatim|ls2>, to build a
+  combined <verbatim|LocalState>. <verbatim|appendLocalState> makes
+  <verbatim|<verbatim|LocalState>> into a monoid and <verbatim|fillContext>
+  becomes a monoid action on <verbatim|Context>s with respect to this monoid.
+  This theory isn't fully developed in Coq, but will be if it is needed. The
+  <verbatim|context_action> lemma proves the monoid action property, which is
+  the only theorem needed so far.
+
+  <subsection|Bit Machine Code>
+
+  The <verbatim|MachineCode.T <em|S1> <em|S2>> type is an enumeration of the
+  nine primary instructions of the Bit Machine. The type of these
+  instructions are parameterized by the legal states that the instructions
+  can successfully operate in, <verbatim|<em|S1>>, and the resulting state
+  after execution of the instruction, <verbatim|<em|S2>>. In this way, the
+  <verbatim|MachineCode.T> type family represents a precategory (also known
+  as a directed graph) that captures the machine instructions and their
+  semantics. \ There is an objects (a.k.a. node) for every possible state of
+  the Bit Machine. \ There is an arrow (a.k.a. edge) between two states if
+  there is an instruction of the Bit Machine that successfully transitions
+  from the source state to the target state, and that arrow (a.k.a. edge) is
+  labled with the name of the instruction. The specific type
+  <verbatim|MachineCode.T <em|S1> <em|S2>> is the type of all instructions
+  that transition from state <verbatim|<em|S1>> to state <verbatim|<em|S2>>.
+  The <verbatim|crash> instruction is never successful, and thus never
+  appears in the precategory (a.k.a. directed graph). This is why it doesn't
+  occur in the <verbatim|MachineCode.T> type family.
+
+  A thrist of <verbatim|MachineCode.T> is the free category generated from
+  the precategory <verbatim|MachineCode.T>. This free category can also be
+  understood as a collection of all paths through the directed graph of all
+  machine instructions and their associated state transitions. The specific
+  type <verbatim|Thrst MachineCode.T <em|S1> <em|S2>> is the type of all
+  sequences of instructions that transition from state <verbatim|<em|S1>> to
+  state <verbatim|<em|S2>>. \ This type captures the semantics of sequences
+  of machine instructions.
+
+  The notation <verbatim|"<em|S1> ~~\<gtr\> <em|S2>"> denotes the
+  <verbatim|MachineCode.T <em|S1> <em|S2>> type of single step transitions,
+  which corresponds to <math|S<rsub|1>\<rightsquigarrow\>S<rsub|2>>. \ The
+  notation <verbatim|"<em|S1> -\<gtr\>\<gtr\> <em|S2>"> denotes the
+  <verbatim|Thrst MachineCode.T <em|S1> <em|S2>> type of multi-step
+  (including 0 step) transitions between states <verbatim|<em|S1>> and
+  <verbatim|S2> and the trace of the instructions used, which corresponds to
+  <math|S<rsub|1>\<twoheadrightarrow\> S<rsub|2>>.
+
+  <subsubsection|Bit Machine Programs>
+
+  We interpret a Bit Machine <verbatim|Program> as a function taking an
+  initial machine state and, if successful, returning a final machine state
+  along with a thrist of machine instructions that connect the initial state
+  to the final state. For each machine instruction, we define a simple
+  <verbatim|Program> that tries to execute that single instruction once and
+  returns that state transition. \ If the initial state given to these single
+  instruction programs isn't valid for their instruction, the program fails
+  by returning <verbatim|None>. \ Most of these single instruction programs
+  have an associated correctness lemma that proves they run successfully when
+  run from an initial state valid for their instruction. \ We also define a
+  <verbatim|crash> program, which always fails, and the trivial
+  <verbatim|nop> program that contains no instructions.
+
+  These single instruction programs can be combined into more complex
+  programs using the <verbatim|seq> and <verbatim|choice> combinators. \ The
+  <verbatim|seq> combinator sequences two programs, running the second
+  program starting from the final state of the first program and combines
+  their thrists. The sequence fails if either program fails. The
+  <verbatim|choice> combinator picks between running two programs by peeking
+  at the cell immedately after the active read frame's cursor from the
+  initial state and running either the first or second program depending on
+  whether the cell holds a <verbatim|0> or <verbatim|1> value. If the cell
+  holds an undefined value, or if the active read frame's cursor is at the
+  end of the frame, the <verbatim|choice> combinator fails. \ The notations
+  <verbatim|<em|k0> ;;; <em|k1>> and <verbatim|<em|k0> \|\|\| <em|k1>> denote
+  the sequence and choice combinations respectively of two programs and
+  correspond to <math|k<rsub|0>;k<rsub|1>> and
+  <math|k<rsub|0><around*|\|||\|>k<rsub|1>>. We also define the combinator
+  <verbatim|bump <em|n> <em|k>> which corresponds to <math|n\<star\>k>.
+
+  The <verbatim|runMachine> function takes a <verbatim|Program> and an
+  initial <verbatim|State> and extracts the resulting final <verbatim|State>
+  if the program is sucessful. For denotational semantics we only care about
+  the resulting final state. For operational semantics we will care how we
+  got there. \ A few lemmas are provided to help reason about the behaviour
+  of <verbatim|runMachine> when running the program combinators.
+
+  <section|Translating Simplicity to the Bit Machine>
+
+  The <verbatim|Simplicity/Bit.v> file defines how to transform Simplicity
+  programs into Bit Machine programs that perform the same computation. The
+  <verbatim|bitSize> and <verbatim|encode> functions implement
+  <math|bitSize<around*|(|A|)>> and <math|<rep|a|A>> respectively.
+
+  The <verbatim|Naive.translate> structure provides a Simplicity algebra for
+  Bit Machine <verbatim|Progam>s that interprets Simplicity terms according
+  to the naive translation. The <verbatim|Naive.translate_correct> theorem is
+  actually a function that produces a thrist of Bit Machine instructions that
+  transform suitable initial machine states that contain an encoding of
+  Simplicity function's input to suitable final machine states that contain
+  an encoding of Simplicity function's output (and input). The
+  <verbatim|translate_correct> theorem also proves that this thrist is the
+  ouput of evaluating the <verbatim|Program> generated by the
+  <verbatim|Naive.translate> Simplicity algebra. The <verbatim|spec> property
+  defines an inductive hypothesis that is used by
+  <verbatim|Naive.translate_spec> that makes up the heart of this proof.
+
+  The <verbatim|Naive.translate_correct_parametric> theorem is a variation of
+  the <verbatim|Naive.translate_correct> theorem. \ The
+  <verbatim|Naive.translate_correct> operates on Simplicity term in the
+  ``initial'' representaiton whereas the <verbatim|Naive.translate_correct_parametric>
+  theorem operates on Simplicity terms in the ``final''
+  representation.<chapter|Haskell Library Guide>
 
   <chapter|C Library Guide>
 </body>
@@ -1503,77 +2027,103 @@
 
 <\references>
   <\collection>
+    <associate|LC218|<tuple|6.2.2|?>>
+    <associate|LC219|<tuple|<with|mode|<quote|math>|\<bullet\>>|?>>
+    <associate|LC313|<tuple|6.5|?>>
+    <associate|LC98|<tuple|6.2.2|?>>
     <associate|auto-1|<tuple|1|5>>
     <associate|auto-10|<tuple|2.2.1|8>>
     <associate|auto-11|<tuple|2.2.2|8>>
     <associate|auto-12|<tuple|2.2.3|8>>
-    <associate|auto-13|<tuple|2.2.4|8>>
+    <associate|auto-13|<tuple|2.2.4|9>>
     <associate|auto-14|<tuple|2.2.5|9>>
     <associate|auto-15|<tuple|2.2.6|9>>
     <associate|auto-16|<tuple|2.2.7|9>>
     <associate|auto-17|<tuple|2.2.8|9>>
     <associate|auto-18|<tuple|2.2.9|9>>
-    <associate|auto-19|<tuple|2.2.10|9>>
+    <associate|auto-19|<tuple|2.2.10|10>>
     <associate|auto-2|<tuple|1.1|5>>
     <associate|auto-20|<tuple|2.2.11|10>>
     <associate|auto-21|<tuple|2.3|10>>
     <associate|auto-22|<tuple|2.3.1|10>>
     <associate|auto-23|<tuple|2.3.2|11>>
-    <associate|auto-24|<tuple|2.3.3|13>>
-    <associate|auto-25|<tuple|2.3.4|13>>
-    <associate|auto-26|<tuple|2.3.5|13>>
-    <associate|auto-27|<tuple|2.3.6|13>>
-    <associate|auto-28|<tuple|2.4|13>>
-    <associate|auto-29|<tuple|2.5|13>>
+    <associate|auto-24|<tuple|2.3.3|15>>
+    <associate|auto-25|<tuple|2.3.4|15>>
+    <associate|auto-26|<tuple|2.3.5|15>>
+    <associate|auto-27|<tuple|2.3.6|15>>
+    <associate|auto-28|<tuple|2.4|15>>
+    <associate|auto-29|<tuple|2.5|16>>
     <associate|auto-3|<tuple|2|7>>
-    <associate|auto-30|<tuple|2.5.1|13>>
-    <associate|auto-31|<tuple|2.5.2|13>>
-    <associate|auto-32|<tuple|2.1|13>>
-    <associate|auto-33|<tuple|2.5.2.1|13>>
-    <associate|auto-34|<tuple|2.5.2.2|13>>
-    <associate|auto-35|<tuple|2.5.2.3|13>>
-    <associate|auto-36|<tuple|2.5.2.4|13>>
-    <associate|auto-37|<tuple|2.5.2.5|13>>
-    <associate|auto-38|<tuple|2.5.3|13>>
-    <associate|auto-39|<tuple|2.5.3.1|15>>
+    <associate|auto-30|<tuple|2.5.1|16>>
+    <associate|auto-31|<tuple|2.5.2|16>>
+    <associate|auto-32|<tuple|2.1|17>>
+    <associate|auto-33|<tuple|2.5.2.1|17>>
+    <associate|auto-34|<tuple|2.5.2.2|17>>
+    <associate|auto-35|<tuple|2.5.2.3|18>>
+    <associate|auto-36|<tuple|2.5.2.4|18>>
+    <associate|auto-37|<tuple|2.5.2.5|18>>
+    <associate|auto-38|<tuple|2.5.3|19>>
+    <associate|auto-39|<tuple|2.5.3.1|19>>
     <associate|auto-4|<tuple|2.1|7>>
-    <associate|auto-40|<tuple|2.6|15>>
-    <associate|auto-41|<tuple|2.6.1|15>>
-    <associate|auto-42|<tuple|2.6.2|15>>
-    <associate|auto-43|<tuple|2.6.3|15>>
-    <associate|auto-44|<tuple|2.7|15>>
-    <associate|auto-45|<tuple|2.7.1|15>>
-    <associate|auto-46|<tuple|3|15>>
-    <associate|auto-47|<tuple|3.1|15>>
-    <associate|auto-48|<tuple|3.1.1|15>>
-    <associate|auto-49|<tuple|3.2|15>>
+    <associate|auto-40|<tuple|2.6|21>>
+    <associate|auto-41|<tuple|2.6.1|21>>
+    <associate|auto-42|<tuple|2.6.2|21>>
+    <associate|auto-43|<tuple|2.6.3|21>>
+    <associate|auto-44|<tuple|2.7|21>>
+    <associate|auto-45|<tuple|2.7.1|21>>
+    <associate|auto-46|<tuple|3|23>>
+    <associate|auto-47|<tuple|3.1|23>>
+    <associate|auto-48|<tuple|3.1.1|23>>
+    <associate|auto-49|<tuple|3.2|23>>
     <associate|auto-5|<tuple|2.1.1|7>>
-    <associate|auto-50|<tuple|3.3|15>>
-    <associate|auto-51|<tuple|3.3.1|15>>
-    <associate|auto-52|<tuple|3.3.2|17>>
-    <associate|auto-53|<tuple|3.3.3|17>>
-    <associate|auto-54|<tuple|3.4|19>>
-    <associate|auto-55|<tuple|3.4.1|19>>
-    <associate|auto-56|<tuple|3.4.2|21>>
+    <associate|auto-50|<tuple|3.3|23>>
+    <associate|auto-51|<tuple|3.3.1|23>>
+    <associate|auto-52|<tuple|3.3.2|23>>
+    <associate|auto-53|<tuple|3.3.3|23>>
+    <associate|auto-54|<tuple|3.4|23>>
+    <associate|auto-55|<tuple|3.4.1|23>>
+    <associate|auto-56|<tuple|3.4.2|23>>
     <associate|auto-57|<tuple|3.5|23>>
-    <associate|auto-58|<tuple|3.5.1|25>>
-    <associate|auto-59|<tuple|4|?>>
+    <associate|auto-58|<tuple|3.5.1|23>>
+    <associate|auto-59|<tuple|4|25>>
     <associate|auto-6|<tuple|2.1.1.1|7>>
-    <associate|auto-60|<tuple|4.1|?>>
-    <associate|auto-61|<tuple|5|?>>
-    <associate|auto-62|<tuple|5.1|?>>
-    <associate|auto-63|<tuple|6|?>>
-    <associate|auto-64|<tuple|7|?>>
-    <associate|auto-65|<tuple|8|?>>
+    <associate|auto-60|<tuple|4.1|25>>
+    <associate|auto-61|<tuple|5|27>>
+    <associate|auto-62|<tuple|5.1|27>>
+    <associate|auto-63|<tuple|6|29>>
+    <associate|auto-64|<tuple|6.1|29>>
+    <associate|auto-65|<tuple|6.2|29>>
+    <associate|auto-66|<tuple|6.2.1|29>>
+    <associate|auto-67|<tuple|6.2.2|29>>
+    <associate|auto-68|<tuple|6.2.2.1|30>>
+    <associate|auto-69|<tuple|6.2.2.2|30>>
     <associate|auto-7|<tuple|2.1.2|7>>
+    <associate|auto-70|<tuple|6.2.2.3|31>>
+    <associate|auto-71|<tuple|6.2.3|31>>
+    <associate|auto-72|<tuple|6.3|31>>
+    <associate|auto-73|<tuple|6.3.1|31>>
+    <associate|auto-74|<tuple|6.3.2|31>>
+    <associate|auto-75|<tuple|6.4|32>>
+    <associate|auto-76|<tuple|6.4.1|33>>
+    <associate|auto-77|<tuple|6.4.1.1|33>>
+    <associate|auto-78|<tuple|6.5|33>>
+    <associate|auto-79|<tuple|7|35>>
     <associate|auto-8|<tuple|2.1.2.1|8>>
+    <associate|auto-80|<tuple|8|37>>
+    <associate|auto-81|<tuple|7|?>>
+    <associate|auto-82|<tuple|8|?>>
+    <associate|auto-83|<tuple|7|?>>
+    <associate|auto-84|<tuple|8|?>>
+    <associate|auto-85|<tuple|7|?>>
+    <associate|auto-86|<tuple|8|?>>
     <associate|auto-9|<tuple|2.2|8>>
     <associate|footnote-1|<tuple|1|?>>
-    <associate|footnote-2.1|<tuple|2.1|?>>
-    <associate|footnr-2.1|<tuple|2.1|?>>
-    <associate|full-adder-LHS|<tuple|2.3|?>>
-    <associate|full-adder-RHS|<tuple|2.2|?>>
-    <associate|full-adder-spec|<tuple|2.1|?>>
+    <associate|footnote-2.1|<tuple|2.1|17>>
+    <associate|footnr-2.1|<tuple|2.1|17>>
+    <associate|full-adder-LHS|<tuple|2.3|14>>
+    <associate|full-adder-RHS|<tuple|2.2|14>>
+    <associate|full-adder-spec|<tuple|2.1|13>>
+    <associate|thm:CSCT|<tuple|2.2|15>>
   </collection>
 </references>
 
@@ -1820,13 +2370,70 @@
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-63><vspace|0.5fn>
 
+      6.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-64>
+
+      6.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-65>
+
+      <with|par-left|<quote|1tab>|6.2.1<space|2spc>The ``Initial''
+      Representation of Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-66>>
+
+      <with|par-left|<quote|1tab>|6.2.2<space|2spc>The ``Final''
+      Representation of Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-67>>
+
+      <with|par-left|<quote|2tab>|6.2.2.1<space|2spc>Simplicity Algebras
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-68>>
+
+      <with|par-left|<quote|2tab>|6.2.2.2<space|2spc>The ``Final''
+      Representation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-69>>
+
+      <with|par-left|<quote|2tab>|6.2.2.3<space|2spc>Constructing ``Final''
+      Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-70>>
+
+      <with|par-left|<quote|1tab>|6.2.3<space|2spc>Why two representations of
+      Terms? <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-71>>
+
+      6.3<space|2spc>Example Simplicity Expressions
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-72>
+
+      <with|par-left|<quote|1tab>|6.3.1<space|2spc>Bits
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-73>>
+
+      <with|par-left|<quote|1tab>|6.3.2<space|2spc>Arithmetic
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-74>>
+
+      6.4<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-75>
+
+      <with|par-left|<quote|1tab>|6.4.1<space|2spc>Bit Machine Code
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-76>>
+
+      <with|par-left|<quote|2tab>|6.4.1.1<space|2spc>Bit Machine Programs
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-77>>
+
+      6.5<space|2spc>Translating Simplicity to the Bit Machine
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-78>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|7<space|2spc>Haskell
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-64><vspace|0.5fn>
+      <no-break><pageref|auto-79><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-65><vspace|0.5fn>
+      <no-break><pageref|auto-80><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
