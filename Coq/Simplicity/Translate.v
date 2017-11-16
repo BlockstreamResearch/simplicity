@@ -281,7 +281,7 @@ apply runMachine_bump.
 apply (Ht _ (fillReadFrame ctx {| prevData := rev (encode a); nextData := nil |})).
 Qed.
 
-Definition translate : Core.type := Core.Pack (Core.Class.Class (fun A B => Program)
+Definition translate : Core.Algebra := Core.Pack (Core.Class.Class (fun A B => Program)
   (fun A => copy (bitSize A))
   (fun A B C ps pt => newFrame (bitSize B) ;;; ps ;;; moveFrame ;;; pt ;;; dropFrame)
   (fun A => nop)
@@ -333,7 +333,7 @@ Defined.
 
 Local Open Scope core_alg_scope.
 
-Theorem translate_correct_parametric {A B : Ty} (t : forall {term : Core.type}, term A B) (Ht : Core.Parametric (@t)) a ctx :
+Theorem translate_correct_parametric {A B : Ty} (t : forall {term : Core.Algebra}, term A B) (Ht : Core.Parametric (@t)) a ctx :
  { thr : fillContext ctx {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |}
      ->> fillContext ctx {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (|[ t ]| a)) |}
  | @t translate (fillContext ctx {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |}) = Some (existT _ _ thr)

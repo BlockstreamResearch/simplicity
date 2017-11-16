@@ -1592,7 +1592,7 @@
 
   There are two different representations of Simplicity terms defined in Coq.
   \ One representation is an ``inital'' representation, as an inductive
-  types. \ The other representation is a ``final'' representation, as beased
+  types. \ The other representation is a ``final'' representation, as based
   on algebras (see <hlink|F-algebra|https://en.wikipedia.org/wiki/F-algebra>)
   for Simplicity.
 
@@ -1656,8 +1656,8 @@
   Simplicity algebras are formalized in the <verbatim|Simplicity/Alg.v> file.
   \ The <verbatim|Core.Class.class> record captures the interpretation of
   constants and combinators for core Simplicity over a given domain. \ The
-  <verbatim|Core.type> structure is the type of Simplicity algebras,
-  containing a type for the domain, and an instance of the
+  <verbatim|Core.Algebra> structure is the type of Simplicity algebras,
+  containing a type family for the domain, and an instance of the
   <verbatim|Core.Class.class> record for interpretations.
 
   Given any Simplicity algebra and a well-typed term (from the ``initial''
@@ -1678,9 +1678,8 @@
   structure and the <verbatim|CorSem_correct> lemma proves that the
   interpretation of terms in the ``initial'' representation into this algebra
   results in the same function that the <verbatim|eval> function from
-  <verbatim|Simplicity/Core.v> produces. \ The <verbatim|"\|[ x ]\|">
-  notation denotes this denotation semantics using the <verbatim|CoreSem>
-  domain.
+  <verbatim|Simplicity/Core.v> produces. \ The <verbatim|\|[ x ]\|> notation
+  denotes this denotation semantics using the <verbatim|CoreSem> domain.
 
   Another example of a Simplicity algebra is the ``initial'' reprsentation of
   terms themselves, which form a trivial algebra. \ This domain of Simplicity
@@ -1737,8 +1736,8 @@
   combinators can be used to write Simplicity expressions in the ``final''
   representation in the same way one would use constructors to write
   Simplicity expressions in the ``initial'' representation. On top of this,
-  notation <verbatim|"s &&& t"> is defined for the pair combinator, and
-  <verbatim|"s \<gtr\>\<gtr\>\<gtr\> t"> is defined for the composition
+  notation <verbatim|s &&& t> is defined for the pair combinator, and
+  <verbatim|s \<gtr\>\<gtr\>\<gtr\> t> is defined for the composition
   combinator. Also the <verbatim|'H'>, <verbatim|'O'>, and <verbatim|'I'>
   notations for sequences of takes and drops over the identity combinator is
   also defined.
@@ -1748,7 +1747,7 @@
   <verbatim|parametricity> hint database is provided to faciliate automatic
   proofs of these results. Users should add their own parametricity lemmas to
   the hint database as they create new Simplicity expressions. \ Some
-  examplesa of this can be found in the <verbatim|Simplicity/Arith.v> module.
+  examples of this can be found in the <verbatim|Simplicity/Arith.v> module.
 
   <subsection|Why two representations of Terms?>
 
@@ -1773,6 +1772,12 @@
   expressions. \ The ``initial'' representation is used when reasoning about
   functions of Simplicity expressions. \ The isomorphism between the two
   representations is used to transport theorems between them.
+
+  You will find that I typically use <verbatim|term : Core.Algebra> as the
+  variable name for an abstract Simplicity algebra. I use this variable name
+  because <verbatim|Core.Term> are the most generic type of Simplicity
+  algebra (formally knowns as an initial algebra) so it makes sense to think
+  of generic Simplicity algebras as if they are term algebras.
 
   <section|Example Simplicity Expressions>
 
@@ -1941,10 +1946,10 @@
   state <verbatim|<em|S2>>. \ This type captures the semantics of sequences
   of machine instructions.
 
-  The notation <verbatim|"<em|S1> ~~\<gtr\> <em|S2>"> denotes the
+  The notation <verbatim|<em|S1> ~~\<gtr\> <em|S2>> denotes the
   <verbatim|MachineCode.T <em|S1> <em|S2>> type of single step transitions,
   which corresponds to <math|S<rsub|1>\<rightsquigarrow\>S<rsub|2>>. \ The
-  notation <verbatim|"<em|S1> -\<gtr\>\<gtr\> <em|S2>"> denotes the
+  notation <verbatim|<em|S1> -\<gtr\>\<gtr\> <em|S2>> denotes the
   <verbatim|Thrst MachineCode.T <em|S1> <em|S2>> type of multi-step
   (including 0 step) transitions between states <verbatim|<em|S1>> and
   <verbatim|S2> and the trace of the instructions used, which corresponds to
