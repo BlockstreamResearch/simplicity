@@ -2021,6 +2021,303 @@
   theorem operates on Simplicity terms in the ``final''
   representation.<chapter|Haskell Library Guide>
 
+  WARNING: \ None of the Haskell library development is normative. \ There is
+  no formalized connecton between any of the Haskell library and Simplicity's
+  formal semantics and development in Coq. There could be errors in the
+  Haskell library that cause it to disagree with the formal development
+  defined in Coq. \ This library is intended to be used for experimental,
+  exporitory and rapid development of Simplicity related work, but should not
+  be relied upon for production development. \ For production development,
+  formal developments in Coq should be done.
+
+  The Haskell development for Simplicity is found in the <verbatim|Haskell>
+  directory. \ The <verbatim|Haskell/Tests.hs> file imports the various test
+  modules throught the development to build a testing executable to run them
+  all.
+
+  <section|Simplicity Types>
+
+  The <verbatim|Simplicity/Ty.hs> file contains the development of Simplicity
+  types. \ There are three different ways that Simplicity types are captured
+  in Haskell.
+
+  The primary way Simplicity types are captured is by the <verbatim|TyC>
+  class which only has instances for the Haskell types that correspond to the
+  Simplicity types:
+
+  <\itemize-dot>
+    <item><verbatim|instance TyC ()>
+
+    <item><verbatim|instance (TyC a, TyC b) =\<gtr\> TyC (Either a b)>
+
+    <item><verbatim|instance (TyC a, TyC b) =\<gtr\> TyC (a, b)>
+  </itemize-dot>
+
+  \ The <verbatim|TyC> class is crafted so that is methods are not exported.
+  \ This prevents anyone from adding further instances to the <verbatim|TyC>
+  class.
+
+  The second way Simplicity types are captured is by the <verbatim|TyReflect>
+  GADT:
+
+  <\code>
+    data TyReflect a where
+
+    \ \ OneR \ :: TyReflect ()
+
+    \ \ SumR \ :: (TyC a, TyC b) =\<gtr\> TyReflect a -\<gtr\> TyReflect b
+    -\<gtr\> TyReflect (Either a b)
+
+    \ \ ProdR :: (TyC a, TyC b) =\<gtr\> TyReflect a -\<gtr\> TyReflect b
+    -\<gtr\> TyReflect (a, b)\ 
+  </code>
+
+  This data type provides a concrete, value-level representation of
+  Simplicity types that are tied to the type-level representation of types.
+  \ For each Haskell type corresponding to a Simplicity type, <verbatim|a>
+  the <verbatim|TyReflect a> type has exactly one value that is built up out
+  of other values of type <verbatim|TyReflect> corresponding to the
+  Simplicity type sub-expression. \ For example the value of type
+  <verbatim|TyReflect (Either () ())> is <verbatim|SumR OneR OneR>.
+
+  The <verbatim|reify :: TyC a =\<gtr\> TyReflect a> uses the one method of
+  the <verbatim|TyC> class to produce the value of the <verbatim|TyReflect>
+  GADT that corresponds to the type constrained by the <verbatim|TyC>
+  constraint. When users have a Haskell type constrained by <verbatim|TyC>
+  they can use <verbatim|reify> to get the corresponding concrete value of
+  the <verbatim|TyReflect> GADT which can then be further processed. \ The
+  <verbatim|reifyProxy> and <verbatim|reifyArrow> functions are helper
+  functions for <verbatim|refiy> that let you pass types via a proxy.
+
+  The third way Simplicity types are captured is by the <verbatim|Ty> type
+  alias, which is the fixed point of the <verbatim|TyF> functor. \ This is a
+  representation of Simplicity types as a data type. \ The <verbatim|one>,
+  <verbatim|sum>, and <verbatim|prod> functions provide smart-constructors
+  that handle the explicit fixpoint constructor.
+
+  Generally speaking, we will use <verbatim|TyC> to constrain Haskell types
+  to Simplicity types when creating Simplicity expressions. \ This way
+  Simplicty type errors are also Haskell type errors and can be caught by the
+  Haskell compiler. \ We use the <verbatim|Ty> type when doing compuation
+  like deserializing Simplicity expressions and performing unification for
+  Simplicity's type inference. The <verbatim|TyReflect> GADT links these two
+  representations. \ For example, the <verbatim|equalTyReflect> function can
+  test if two Simplicity types are equal or not, and if they are equal then
+  it can unify the Haskell type variables that represent the two Simplicity
+  types. \ The <verbatim|unreflect> function turns a <verbatim|TyReflect>
+  value into a <verbatim|Ty> value by forgetting about the type parameter.
+
+  <section|Simplicity Terms>
+
+  The <verbatim|Simplicity/Term.hs> file contains the development of
+  Simplicity terms. \ We do not provide a data type represenation of terms.
+  \ Instead terms are represented in tagless-final
+  style<inactive|<cite|<with|color|red|TODO>>>. This style is analgous to the
+  ``final'' represention of terms that is defined in the Coq library. \ The
+  <verbatim|Core> type class captures Simplicity algebras for core Simplicity
+  expressions. \ Core Simplicity expressions are represented in Haskell by
+  expressions of type <verbatim|Core term =\<gtr\> term a b> which are
+  expressions that hold for all Simplicity algebras. \ Haskell's
+  parametricity implicity implies the parametricity conditions that is
+  explicitly required in the Coq development's ``final'' representation.
+
+  The primary purpose of using tagless-final style is to support transparent
+  sharing of subexpressions in Simplicity. While subexpressions can be shared
+  if we used a GADT to represent Simplicity terms, any recursive function
+  that consumes such a GADT cannot take advantage of that sharing. Sharing
+  results of static analysis between shared sub-experssions is critical to
+  making static analysis practical. Adding explicit sharing to the Simplicity
+  language would make the langauge more complex and would risk incorrectly
+  implementing the sharing combinator. \ Explicitly building memoization
+  tables could work, but will have overhead. \ The solution of using
+  tagless-final style lets us write terms in a natural manner and we get
+  sharing for Simplicity expressions at exactly the points where we have
+  sharing in the Haskell representation of Simplicity.
+
+  This module provides infix operators, <verbatim|(\<gtr\>\<gtr\>\<gtr\>)>
+  and <verbatim|(&&&)>, for the <verbatim|comp> and <verbatim|pair>
+  Simplicity combinators respectively. \ It also provides notation for short
+  sequences of string of <samp|I>'s, <samp|O>'s and <samp|H>'s. Examples of
+  building Simplicity expressions can be found in the next section.
+
+  This module provides a <verbatim|Core (-\<gtr\>)> instance that provides
+  the denotational semantics of Simplicity expressions; one can take core
+  Simplicity term and directly use them as functions.
+
+  <section|Example Simplicity Expressions>
+
+  The <verbatim|Simplicity/Programs> directory contains various developments
+  of Simplicity expressions in Haskell. \ The
+  <verbatim|Simplicity/Programs/Tests.hs> has some Quickcheck properties that
+  provide randomized testing for some of the programs defined in this
+  section.
+
+  <subsection|Bits>
+
+  The <verbatim|Simplicity/Programs/Bit.hs> file has Simplicity expressions
+  for bit manipulation. In Simplicity the <verbatim|Bit> type is represented
+  as <verbatim|Either () ()>, while in Haskell we usually use the
+  <verbatim|Bool> type. \ The <verbatim|fromBit> and <verbatim|toBit>
+  functions provide the canonical isomorphisms between these two types.
+  \ <verbatim|false> and <verbatim|true> are Simplicity expressions for the
+  constant functions of those types and <verbatim|cond> provides case
+  analysis combinator for a single bit. \ There are combinators for various
+  logical operators. These logical operators are short-circuted where
+  possible. \ There are also a few trinary boolean Simplicity expressions
+  that are used in hash functions such as SHA-256.
+
+  <subsection|Multi-bit Words>
+
+  The <verbatim|Simplicity/Programs/Arith.hs> file provides support for
+  multi-bit word Simplicity types and basic arithemetic Simplicity
+  expressions for those words.
+
+  The <verbatim|Word> GADT describes Simplicity types for multi-bit words.
+  It's type parameter is restricted to either be a single <verbatim|Bit> word
+  type or a product that doubles the size of a previous word type. \ The
+  <verbatim|wordTy> functions transforms a <verbatim|Word> GADT to the
+  corresponding <verbatim|TyReflect> GADT. \ The <verbatim|wordSize> returns
+  the number of bits a word has. \ The <verbatim|fromWord> and
+  <verbatim|toWord> functions convert values of Simplicity words types to and
+  from Haskell <verbatim|Integer>s (modulo the size of the word). \ The file
+  also provides specializations of these various functions for popular word
+  sizes between 8 and 256 bits.
+
+  <subsubsection|Arithmetic operations>
+
+  The <verbatim|Simplicity/Programs/Arith.hs> file also provides the standard
+  implemenations of the <verbatim|zero>, <verbatim|adder>,
+  <verbatim|fullAdder>, <verbatim|multiplier>, and <verbatim|fullMultiplier>
+  Simplicity expressions. Notice that the implementation of these functions
+  is careful to use explicit sharing of Simplicity sub-expressions where
+  possible through the <verbatim|where> clauses.
+
+  <subsubsection|Bit-wise operations>
+
+  The <verbatim|shift> and <verbatim|rotate> functions create Simplicity
+  expressions that do left shifts and rotates of multi-bit words by any
+  constant amount. \ Right (unsigned) shifts and rotates can be made by
+  passing a negative value for the shift/rotate amount.
+
+  The <verbatim|bitwise> combinator takes a Simplicity expression for a
+  binary bit operation and lifts it to a Simplicity expression for a binary
+  operation on arbitrary sized words that performs the bit operation
+  bit-wise. \ There is also a variant, called <verbatim|bitwiseTri> the does
+  the same thing for trinary bit operations.
+
+  <subsection|Generic>
+
+  The <verbatim|Simplicity/Programs/Generic.hs> file provides some Simplicity
+  expressions that can apply to any Simplicity type.
+
+  The <verbatim|scribe> function produces a Simplicity expression denoting a
+  constant function for any value for any Simplicity type. \ The
+  <verbatim|eq> Simplicity expression compares any two values of the same
+  Simplicity type and deicides if they are equal or not.
+
+  <subsection|SHA-256>
+
+  The <verbatim|Simplicity/Programs/Sha256.hs> files provides Simplicity
+  expressions to help compute SHA-256 hashes. \ The <verbatim|iv> Simplicity
+  expression is a constant function the returns the initial value to begin a
+  SHA-256 computation. \ The <verbatim|hashBlock> Simplicity expression
+  computes the SHA-256 compression function on a single block of data. To
+  compress multiple blocks, multiple calls to the <verbatim|hashBlock>
+  function can be chained together.
+
+  <section|The Bit Machine>
+
+  The <verbatim|Simplicity/BitMachine/> directory has modules related to the
+  Bit Machine and evaluation of Simplicity via the Bit Machine.
+
+  The <verbatim|Simplicity/BitMachine/Ty.hs> file defines <verbatim|bitSize>,
+  <verbatim|padL>, and <verbatim|padR>, which define the <math|bitSize>,
+  <math|padR> and <math|padL> functions from
+  Section<nbsp><with|color|red|TODO>. \ They operate on the <verbatim|Ty>
+  type. \ The file also defines variants of these three function that operate
+  on the <verbatim|TyReflect> GADT instead.
+
+  The <verbatim|Simplicity/BitMachine.hs> file (technically not in the
+  <verbatim|Simplicity/BitMachine/> directory) defines the canonical type of
+  a <verbatim|Cell> to be a <verbatim|Maybe Bool>, with the
+  <verbatim|Nothing> value representing undefined cell values. \ The
+  <verbatim|encode> and <verbatim|decode> functions transform a value of a
+  Simplicity type to and from a list of <verbatim|Cell>s that represent the
+  value. \ The <verbatim|executeUsing> combinator captures a common pattern
+  of running a Simplicity program through an implementation of the Bit
+  Machine by encoding program inputs and decoding the results. \ Since there
+  is more than one way to compile and run Simplicity program on the Bit
+  Machine (for example, see naive translation versus TCO translation), this
+  abstraction is used is multiple places.
+
+  The <verbatim|MachineCode> type alias captures canonical forms of programs
+  for the Bit Machine, which is the explicit fixed point of the
+  <verbatim|MachineCodeF> functor. \ Usually programs are built in
+  continuation passing style (analogous to using difference lists to build
+  lists), making use of the <verbatim|MachineCodeK> type alias. There are
+  smart-constructors for each machine code that make single instruction
+  <verbatim|MachineCodeK> programs. \ Programs are composed sequentually
+  using ordinary function compostion, <verbatim|(.)>. \ Determinic choice
+  between two programs is provided by the <verbatim|(\|\|\|)> operator. \ The
+  <verbatim|nop> program is an alias for the identity function.
+
+  The <verbatim|Simplicity/BitMachine/Authentic.hs> file is an implementation
+  of the Bit Machine that follows the formal definition of the Bit Machine
+  and fully tracks undefined values. \ The <verbatim|Frame> type is used for
+  both read frames and write frames. \ The <verbatim|Active> type is captures
+  the pair of active read and write frames, and the <verbatim|State> type
+  captures the entire state of the Bit Machine. \ Lenses are used to access
+  the components of the State.
+
+  The <verbatim|runMachine> function interprets <verbatim|MachineCode> in
+  accorance with the semantics of the Bit Machine, and transforms an initial
+  state into a final state (possibly crashing during execution). \ It is
+  meant to be used, in conjunction with a Simplicity translator, with
+  <verbatim|executeUsing>. \ The <verbatim|instrumentMachine> function is a
+  variant of <verbatim|runMachine> that logs statistics about memory usage
+  during the execution. \ It is used as part of the testing for static
+  analysis.
+
+  <subsection|Translating Simplicity to the Bit Machine>
+
+  The <verbatim|Simplicity/BitMachine/Translate.hs> file defines the naive
+  translation from Simplicity to the Bit Machine. \ The
+  <verbatim|Translation> type wraps the <verbatim|MachineCodeK> type with
+  phantom type parameters in order to make an instance suitable for a
+  Simplicity Algebra. \ The <verbatim|compile> function translates Simplicity
+  terms to Machine Code via the <verbatim|Translation> Algebra (recall that a
+  Simplicity term in tagless final form is a polymorphic value that can
+  become any Simplicity Algebra). The <verbatim|Simplicity/BitMachine/Translate/TCO.hs>
+  file provides a similar <verbatim|Translation> Simplicity Algebra and
+  <verbatim|compile> functions, but this translating using tail composition
+  optimization.
+
+  The <verbatim|Simplicity/BitMachine/Tests.hs> runs a few of the example
+  Simplicity expressions through the Bit Machine implementation to test that
+  the value computed by the Bit Machine matches that direct interpretation of
+  the same Simplicity expressions. \ In this file you can see an example of
+  how <verbatim|executeUsing (runMachine . compiler) program> is used.
+
+  <subsection|Static Analysis>
+
+  The <verbatim|Simplicity/BitMachine/StaticAnalysis.hs> file performs the
+  static analysis for bounding the maximum number of cells used by the Bit
+  Machine when executing the naive translation of Simplicity expressions.
+  \ The <verbatim|ExtraCellsBnd> type wraps the data needed for the static
+  analysis with phantom type parameters in order ot make an instance suitable
+  for a Simplicity Algebra. \ The <verbatim|cellsBnd> function computes the
+  bound on cell use from Simplicity terms via the <verbatim|ExtraCellsBnd>
+  Algebra. The <verbatim|Simplicity/BitMachine/StaticAnalysis/TCO.hs> file
+  provides a similar static analysis that bounds the maximum number of cells
+  used by the Bit Machine when executing the TCO translation of Simplicity
+  expressions.
+
+  The <verbatim|Simplicity/BitMachine/StaticAnalysis/Tests.hs> runs a few of
+  the example Simplicity expressions through the static analysis and compares
+  the result with the maximum cell count of executing the Bit Machine on
+  various inputs. In this file you can see an example of how
+  <verbatim|executeUsing (instrumentMachine . compiler) program> is used.
+
   <chapter|C Library Guide>
 </body>
 
@@ -2114,14 +2411,20 @@
     <associate|auto-78|<tuple|6.5|33>>
     <associate|auto-79|<tuple|7|35>>
     <associate|auto-8|<tuple|2.1.2.1|8>>
-    <associate|auto-80|<tuple|8|37>>
-    <associate|auto-81|<tuple|7|?>>
-    <associate|auto-82|<tuple|8|?>>
-    <associate|auto-83|<tuple|7|?>>
-    <associate|auto-84|<tuple|8|?>>
-    <associate|auto-85|<tuple|7|?>>
-    <associate|auto-86|<tuple|8|?>>
+    <associate|auto-80|<tuple|7.1|37>>
+    <associate|auto-81|<tuple|7.2|?>>
+    <associate|auto-82|<tuple|7.3|?>>
+    <associate|auto-83|<tuple|7.3.1|?>>
+    <associate|auto-84|<tuple|7.3.2|?>>
+    <associate|auto-85|<tuple|7.3.2.1|?>>
+    <associate|auto-86|<tuple|7.3.2.2|?>>
+    <associate|auto-87|<tuple|7.3.3|?>>
+    <associate|auto-88|<tuple|7.3.4|?>>
+    <associate|auto-89|<tuple|7.4|?>>
     <associate|auto-9|<tuple|2.2|8>>
+    <associate|auto-90|<tuple|7.4.1|?>>
+    <associate|auto-91|<tuple|7.4.2|?>>
+    <associate|auto-92|<tuple|8|?>>
     <associate|footnote-1|<tuple|1|?>>
     <associate|footnote-2.1|<tuple|2.1|17>>
     <associate|footnr-2.1|<tuple|2.1|17>>
@@ -2436,9 +2739,12 @@
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-79><vspace|0.5fn>
 
+      7.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-80>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-80><vspace|0.5fn>
+      <no-break><pageref|auto-81><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

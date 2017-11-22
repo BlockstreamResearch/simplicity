@@ -3,15 +3,14 @@ module Simplicity.BitMachine.Translate.TCO
  , compile
  ) where
 
-import Prelude hiding (read)
 import Data.Proxy (Proxy(..))
 
 import Simplicity.BitMachine
 import Simplicity.BitMachine.Ty
 import Simplicity.Term
 
-data Translation a b = Translation { tcoOn :: MachineCode -> MachineCode
-                                   , tcoOff :: MachineCode -> MachineCode
+data Translation a b = Translation { tcoOn :: MachineCodeK
+                                   , tcoOff :: MachineCodeK
                                    }
 
 compile :: Translation a b -> MachineCode
@@ -79,8 +78,8 @@ instance Core Translation where
            }
 
   match s t = Translation
-            { tcoOn  = \k -> read (fwd padl $ tcoOn s k) (fwd padr $ tcoOn t k)
-            , tcoOff = \k -> read (bump padl (tcoOff s) k) (bump padr (tcoOff t) k)
+            { tcoOn  = (fwd padl . tcoOn s) ||| (fwd padr . tcoOn t)
+            , tcoOff = bump padl (tcoOff s) ||| bump padr (tcoOff t)
             }
    where
     proxy :: arr (a,b) d -> Proxy b

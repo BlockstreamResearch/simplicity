@@ -3,14 +3,13 @@ module Simplicity.BitMachine.Translate
  , compile
  ) where
 
-import Prelude hiding (read)
 import Data.Proxy (Proxy(..))
 
 import Simplicity.BitMachine
 import Simplicity.BitMachine.Ty
 import Simplicity.Term
 
-newtype Translation a b = Translation (MachineCode -> MachineCode)
+newtype Translation a b = Translation MachineCodeK
 
 compile :: Translation a b -> MachineCode
 compile (Translation f) = f end
@@ -59,8 +58,7 @@ instance Core Translation where
            . t
 
   match arrS@(Translation s) arrT@(Translation t) =
-    Translation $ \k ->
-      read (bump padl s k) (bump padr t k)
+    Translation $ bump padl s ||| bump padr t
    where
     proxy :: arr (a,b) d -> Proxy b
     proxy _ = Proxy

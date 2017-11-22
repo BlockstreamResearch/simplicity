@@ -1,14 +1,13 @@
 {-# LANGUAGE DeriveTraversable, GADTs #-}
 module Simplicity.BitMachine
- ( MachineCodeF(..), MachineCode
- , end, crash, write, copy, skip, fwd, bwd, newFrame, moveFrame, dropFrame, read
+ ( MachineCodeF(..), MachineCode, MachineCodeK
+ , end, crash, write, copy, skip, fwd, bwd, newFrame, moveFrame, dropFrame, (|||)
  , bump, nop
  , Cell
  , encode, decode
  , Interpreter, executeUsing
  ) where
 
-import Prelude hiding (read)
 import Control.Monad (unless)
 import Control.Monad.Fail (MonadFail)
 import Data.Functor.Fixedpoint (Fix(..), cata)
@@ -30,22 +29,45 @@ data MachineCodeF a = End
                     deriving (Functor, Show)
 
 type MachineCode = Fix MachineCodeF
+type MachineCodeK = MachineCode -> MachineCode
 
+end :: MachineCode
 end = Fix End
-crash = Fix Crash
-write b x = Fix (Write b x)
-copy i x = Fix (Copy i x)
-skip i x = Fix (Skip i x)
-fwd i x = Fix (Fwd i x)
-bwd i x = Fix (Bwd i x)
-newFrame i x = Fix (NewFrame i x)
-moveFrame x = Fix (MoveFrame x)
-dropFrame x = Fix (DropFrame x)
-read x y = Fix (Read x y)
 
+crash :: MachineCode
+crash = Fix Crash
+
+write :: Bool -> MachineCodeK
+write b x = Fix (Write b x)
+
+copy :: Int -> MachineCodeK
+copy i x = Fix (Copy i x)
+
+skip :: Int -> MachineCodeK
+skip i x = Fix (Skip i x)
+
+fwd :: Int -> MachineCodeK
+fwd i x = Fix (Fwd i x)
+
+bwd :: Int -> MachineCodeK
+bwd i x = Fix (Bwd i x)
+
+newFrame :: Int -> MachineCodeK
+newFrame i x = Fix (NewFrame i x)
+
+moveFrame :: MachineCodeK
+moveFrame x = Fix (MoveFrame x)
+
+dropFrame :: MachineCodeK
+dropFrame x = Fix (DropFrame x)
+
+(|||) :: MachineCodeK -> MachineCodeK -> MachineCodeK
+x ||| y = \k -> Fix (Read (x k) (y k))
+
+bump :: Int -> MachineCodeK -> MachineCodeK
 bump i f = fwd i . f . bwd i
 
-nop :: MachineCode -> MachineCode
+nop :: MachineCodeK
 nop x = x
 
 type Cell = Maybe Bool
