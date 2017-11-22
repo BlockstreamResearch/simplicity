@@ -2168,12 +2168,12 @@
 
   <subsection|Multi-bit Words>
 
-  The <verbatim|Simplicity/Programs/Arith.hs> file provides support for
-  multi-bit word Simplicity types and basic arithemetic Simplicity
-  expressions for those words.
+  The <verbatim|Simplicity/Programs/Word.hs> file provides support for
+  multi-bit word Simplicity types and Simplicity expressions that operate on
+  these word types.
 
   The <verbatim|Word> GADT describes Simplicity types for multi-bit words.
-  It's type parameter is restricted to either be a single <verbatim|Bit> word
+  Its type parameter is restricted to either be a single <verbatim|Bit> word
   type or a product that doubles the size of a previous word type. \ The
   <verbatim|wordTy> functions transforms a <verbatim|Word> GADT to the
   corresponding <verbatim|TyReflect> GADT. \ The <verbatim|wordSize> returns
@@ -2185,7 +2185,7 @@
 
   <subsubsection|Arithmetic operations>
 
-  The <verbatim|Simplicity/Programs/Arith.hs> file also provides the standard
+  The <verbatim|Simplicity/Programs/Word.hs> file also provides the standard
   implemenations of the <verbatim|zero>, <verbatim|adder>,
   <verbatim|fullAdder>, <verbatim|multiplier>, and <verbatim|fullMultiplier>
   Simplicity expressions. Notice that the implementation of these functions
@@ -2408,23 +2408,23 @@
     <associate|auto-75|<tuple|6.4|32>>
     <associate|auto-76|<tuple|6.4.1|33>>
     <associate|auto-77|<tuple|6.4.1.1|33>>
-    <associate|auto-78|<tuple|6.5|33>>
+    <associate|auto-78|<tuple|6.5|34>>
     <associate|auto-79|<tuple|7|35>>
     <associate|auto-8|<tuple|2.1.2.1|8>>
-    <associate|auto-80|<tuple|7.1|37>>
-    <associate|auto-81|<tuple|7.2|?>>
-    <associate|auto-82|<tuple|7.3|?>>
-    <associate|auto-83|<tuple|7.3.1|?>>
-    <associate|auto-84|<tuple|7.3.2|?>>
-    <associate|auto-85|<tuple|7.3.2.1|?>>
-    <associate|auto-86|<tuple|7.3.2.2|?>>
-    <associate|auto-87|<tuple|7.3.3|?>>
-    <associate|auto-88|<tuple|7.3.4|?>>
-    <associate|auto-89|<tuple|7.4|?>>
+    <associate|auto-80|<tuple|7.1|35>>
+    <associate|auto-81|<tuple|7.2|36>>
+    <associate|auto-82|<tuple|7.3|36>>
+    <associate|auto-83|<tuple|7.3.1|36>>
+    <associate|auto-84|<tuple|7.3.2|36>>
+    <associate|auto-85|<tuple|7.3.2.1|37>>
+    <associate|auto-86|<tuple|7.3.2.2|37>>
+    <associate|auto-87|<tuple|7.3.3|37>>
+    <associate|auto-88|<tuple|7.3.4|37>>
+    <associate|auto-89|<tuple|7.4|37>>
     <associate|auto-9|<tuple|2.2|8>>
-    <associate|auto-90|<tuple|7.4.1|?>>
-    <associate|auto-91|<tuple|7.4.2|?>>
-    <associate|auto-92|<tuple|8|?>>
+    <associate|auto-90|<tuple|7.4.1|38>>
+    <associate|auto-91|<tuple|7.4.2|38>>
+    <associate|auto-92|<tuple|8|39>>
     <associate|footnote-1|<tuple|1|?>>
     <associate|footnote-2.1|<tuple|2.1|17>>
     <associate|footnr-2.1|<tuple|2.1|17>>
@@ -2742,9 +2742,51 @@
       7.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-80>
 
+      7.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-81>
+
+      7.3<space|2spc>Example Simplicity Expressions
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-82>
+
+      <with|par-left|<quote|1tab>|7.3.1<space|2spc>Bits
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-83>>
+
+      <with|par-left|<quote|1tab>|7.3.2<space|2spc>Multi-bit Words
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-84>>
+
+      <with|par-left|<quote|2tab>|7.3.2.1<space|2spc>Arithmetic operations
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-85>>
+
+      <with|par-left|<quote|2tab>|7.3.2.2<space|2spc>Bit-wise operations
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-86>>
+
+      <with|par-left|<quote|1tab>|7.3.3<space|2spc>Generic
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-87>>
+
+      <with|par-left|<quote|1tab>|7.3.4<space|2spc>SHA-256
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-88>>
+
+      7.4<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-89>
+
+      <with|par-left|<quote|1tab>|7.4.1<space|2spc>Translating Simplicity to
+      the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-90>>
+
+      <with|par-left|<quote|1tab>|7.4.2<space|2spc>Static Analysis
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-91>>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-81><vspace|0.5fn>
+      <no-break><pageref|auto-92><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

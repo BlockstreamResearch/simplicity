@@ -7,9 +7,9 @@ module Simplicity.Programs.Sha256
 import Prelude hiding (Word, drop, not, take)
 
 import Simplicity.Term
-import Simplicity.Programs.Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
+import Simplicity.Programs.Word
 
 type Block = (Word256, Word256)
 type Hash = Word256

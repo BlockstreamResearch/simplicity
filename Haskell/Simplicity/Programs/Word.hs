@@ -1,5 +1,5 @@
 {-# LANGUAGE GADTs, ScopedTypeVariables, TypeOperators #-}
-module Simplicity.Programs.Arith
+module Simplicity.Programs.Word
   ( Word(..), wordTy, fromWord, toWord
   , Word8, word8, fromWord8, toWord8
   , Word16, word16, fromWord16, toWord16

@@ -5,9 +5,9 @@ import Simplicity.BitMachine
 import Simplicity.BitMachine.Authentic
 import Simplicity.BitMachine.Translate as Translate
 import Simplicity.BitMachine.Translate.TCO as TCO
-import Simplicity.Programs.Arith
 import Simplicity.Programs.Sha256
 import Simplicity.Term
+import Simplicity.Programs.Word
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.QuickCheck (testProperty)

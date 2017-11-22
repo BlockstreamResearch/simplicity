@@ -18,7 +18,7 @@ library
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO
-                       Simplicity.Programs.Arith Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256
+                       Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256
   -- other-modules:       
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   hs-source-dirs:      Haskell
@@ -41,7 +41,7 @@ Test-Suite Simplicity-testsuite
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO
-                       Simplicity.Programs.Arith Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256
+                       Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests
   build-depends:       base >=4.9 && <4.11,
                        bytestring >=0.10 && <0.11,

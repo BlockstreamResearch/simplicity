@@ -8,9 +8,9 @@ import qualified Data.ByteString as BS
 import qualified Crypto.Hash.SHA256 as SHA256
 
 import Simplicity.Term
-import Simplicity.Programs.Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Sha256
+import Simplicity.Programs.Word
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.QuickCheck (Property, elements, forAll, testProperty)
