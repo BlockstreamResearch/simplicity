@@ -7,8 +7,7 @@
 module Simplicity.Ty
  ( TyC
  , TyReflect(..)
- , reify
- , reifyProxy, reifyArrow
+ , reify, reifyProxy, reifyArrow
  , equalTyReflect
  , Ty, TyF(..)
  , one, sum, prod
@@ -22,18 +21,23 @@ import Prelude hiding (sum, prod)
 
 -- | 'TyC' is a type class for those Haskell types that correspond to Simplicity types;
 -- specifically those composed from @()@, @'Either' a b@, and @(a, b)@.
--- The members of this class are not exported so no further instances can be added.
-class (Eq a, Ord a, Read a, Show a) => TyC a where
--- By not exporting the reify_ method, TyC becomes a "closed class" and no further instances can be made.
+-- The 'ClosedClass_' superclass isn't exported preventing further instances of 'TyC'.
+class (ClosedClass_ a, Eq a, Ord a, Read a, Show a) => TyC a where
+
+-- This class isn't exported, so subclasses of it cannot be instantiated outside this module.
+class ClosedClass_ a where
   reify_ :: TyReflect a
 
 instance TyC () where
+instance ClosedClass_ () where
   reify_ = OneR
 
 instance (TyC a, TyC b) => TyC (Either a b) where
+instance (TyC a, TyC b) => ClosedClass_ (Either a b) where
   reify_ = SumR reify_ reify_
 
 instance (TyC a, TyC b) => TyC (a, b) where
+instance (TyC a, TyC b) => ClosedClass_ (a, b) where
   reify_ = ProdR reify_ reify_
 
 -- | The 'TyReflect' GADT provides a link between Haskell types correspondng to Simplicity types (i.e. members of the 'TyC' class) and values that can be manipulated by Haskell programs.
