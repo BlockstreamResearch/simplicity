@@ -3,6 +3,7 @@ Require Import Util.List.
 Require Import Util.Option.
 Require Import Util.Thrist.
 Require Import Eqdep_dec.
+Require Import Omega.
 
 Definition Cell := option bool.
 
@@ -26,6 +27,13 @@ Definition newWriteFrame n : WriteFrame := {| writeData := nil; writeEmpty := n 
  * transforms it into the reverse representation.
  *)
 Definition fullWriteFrame l : WriteFrame := {| writeData := rev l; writeEmpty := 0 |}.
+
+Lemma fullWriteFrame_size l : writeSize (fullWriteFrame l) = length l.
+Proof.
+cbn.
+rewrite rev_length.
+auto with arith.
+Qed.
 
 (* Read-only frames are represented in zipper format.  The cells before the
  * cursor are stored in prevData in reverse order.  The cells after the cursor
@@ -57,11 +65,27 @@ Proof.
 repeat (decide equality).
 Qed.
 
-Definition stateSize s :=
-  nat_sum (map readSize (inactiveReadFrames s)) +
-  readSize (activeReadFrame s) +
-  writeSize (activeWriteFrame s) +
-  nat_sum (map writeSize (inactiveWriteFrames s)).
+Record StateShape :=
+ { inactiveReadFrameSizes : list nat
+ ; activeReadFrameSize : nat
+ ; activeWriteFrameSize : nat
+ ; inactiveWriteFrameSizes : list nat
+ }.
+
+Definition stateShape s :=
+ {| inactiveReadFrameSizes := map readSize (inactiveReadFrames s)
+  ; activeReadFrameSize := readSize (activeReadFrame s)
+  ; activeWriteFrameSize := writeSize (activeWriteFrame s)
+  ; inactiveWriteFrameSizes := map writeSize (inactiveWriteFrames s)
+  |}.
+
+Definition stateShapeSize s :=
+  nat_sum (inactiveReadFrameSizes s) +
+  activeReadFrameSize s +
+  activeWriteFrameSize s +
+  nat_sum (inactiveWriteFrameSizes s).
+
+Definition stateSize s := stateShapeSize (stateShape s).
 
 (* Logically, the state of the Bit Machine is commonly divided between the part
  * of the state that we are focused on and the rest of state.  The focused part
@@ -89,6 +113,22 @@ Record LocalState :=
  ; writeLocalState : WriteFrame
  }.
 
+Record LocalStateShape :=
+ { readLocalStateSize : nat
+ ; writeLocalStateSize : nat
+ }.
+
+Definition localStateShape ls :=
+ {| readLocalStateSize := length (readLocalState ls)
+  ; writeLocalStateSize := writeSize (writeLocalState ls)
+  |}.
+
+Definition localStateShapeSize ls :=
+  readLocalStateSize ls +
+  writeLocalStateSize ls.
+
+Definition localStateSize ls := localStateShapeSize (localStateShape ls).
+
 Definition fillContext (ctx : Context) (h : LocalState) : State :=
  {| inactiveReadFrames := inactiveReadFrames ctx
   ; activeReadFrame :=
@@ -101,6 +141,23 @@ Definition fillContext (ctx : Context) (h : LocalState) : State :=
        |}
   ; inactiveWriteFrames := inactiveWriteFrames ctx
   |}.
+
+Definition fillContextShape (ctx : StateShape) (h : LocalStateShape) : StateShape :=
+ {| inactiveReadFrameSizes := inactiveReadFrameSizes ctx
+  ; activeReadFrameSize := activeReadFrameSize ctx + readLocalStateSize h
+  ; activeWriteFrameSize := activeWriteFrameSize ctx + writeLocalStateSize h
+  ; inactiveWriteFrameSizes := inactiveWriteFrameSizes ctx
+  |}.
+
+Lemma fillContextShape_correct ctx h :
+  stateShape (fillContext ctx h) = fillContextShape (stateShape ctx) (localStateShape h).
+Proof.
+destruct ctx as [irf [prf nrf] awf iwf].
+destruct h as [rl wl].
+unfold stateShape, fillContextShape; simpl.
+f_equal;[unfold readSize|unfold writeSize]; simpl;
+rewrite app_length; omega.
+Qed.
 
 (* Sometimes we need to focus in on part of the LocalState.  We can divide the
  * LocalState into a localer state and its (relative) context.  Both the
@@ -141,6 +198,24 @@ Definition fillReadFrame (ctx : Context) (h : ReadFrame) : State :=
   ; activeWriteFrame := activeWriteFrame ctx
   ; inactiveWriteFrames := inactiveWriteFrames ctx
   |}.
+
+Definition fillReadFrameShape (ctx : StateShape) (h : nat) : StateShape :=
+ {| inactiveReadFrameSizes := inactiveReadFrameSizes ctx
+  ; activeReadFrameSize := activeReadFrameSize ctx + h
+  ; activeWriteFrameSize := activeWriteFrameSize ctx
+  ; inactiveWriteFrameSizes := inactiveWriteFrameSizes ctx
+  |}.
+
+Lemma fillReadFrameShape_correct ctx h :
+  stateShape (fillReadFrame ctx h) = fillReadFrameShape (stateShape ctx) (readSize h).
+Proof.
+destruct ctx as [irf [prf nrf] awf iwf].
+destruct h as [rl wl].
+unfold stateShape, fillReadFrameShape; simpl.
+f_equal.
+unfold readSize; simpl.
+repeat rewrite app_length; omega.
+Qed.
 
 Module MachineCode.
 
