@@ -1,3 +1,4 @@
+-- The main test module that gathers and runs the tests in the Simplicity Haskell project.
 module Main (main) where
 
 import Test.Tasty

@@ -1,4 +1,6 @@
 {-# LANGUAGE GADTs #-}
+-- | This module is a collection of Simplicity expressions that are generic over a collection of Simplicity types.
+-- 'TyReflect'ion is used to analyse the Simplicity type of arguments and generate different Simplicity expressions based on the required types.
 module Simplicity.Programs.Generic
   ( scribe
   , eq
@@ -9,16 +11,20 @@ import Prelude hiding (drop, take)
 import Simplicity.Programs.Bit
 import Simplicity.Term
 
-scribe :: (TyC a, TyC b, Core term) => b -> term a b
+-- | For any Simplicity value, a Simplicity expression for a constant function returning that value.
+-- 
+-- @'scribe' v _ = v@
+scribe :: (Core term, TyC a, TyC b) => b -> term a b
 scribe = go reify
  where
-  go :: (TyC a, TyC b, Core term) => TyReflect b -> b -> term a b
+  go :: (Core term, TyC a, TyC b) => TyReflect b -> b -> term a b
   go OneR          ()        = unit
   go (SumR l _)    (Left v)  = injl (go l v)
   go (SumR _ r)    (Right v) = injr (go r v)
   go (ProdR b1 b2) (v1, v2)  = pair (go b1 v1) (go b2 v2)
 
-eq :: (TyC a, Core term) => term (a, a) Bit
+-- | Simplicity expression to compare a pair of inputs for equality.
+eq :: (Core term, TyC a) => term (a, a) Bit
 eq = go reify
  where
   go :: (TyC a, Core term) => TyReflect a -> term (a, a) Bit

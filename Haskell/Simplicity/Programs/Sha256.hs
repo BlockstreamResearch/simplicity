@@ -1,4 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+-- | This module defines Simplicity expression and types that can be used for computing SHA-256 hashes.
+-- Be aware that SHA-256 padding isn't provided and messages should be manually padded.
 module Simplicity.Programs.Sha256
  ( Block, Hash
  , iv, hashBlock
@@ -11,12 +13,17 @@ import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Word
 
+-- | In SHA-256, each block of data passed to the compression function is a 512-bit 'Word'.
 type Block = (Word256, Word256)
+
+-- | In SHA-256, the inital vector and hash value are 256-bit 'Word's.
 type Hash = Word256
 
+-- | Simplicity expression for the constant function that returns the SHA-256 initial vector.
 iv :: (Core term, TyC a) => term a Hash
 iv = scribe . toWord256 $ 0x6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19
 
+-- | Simplicity expression for the SHA-256 compression function which takes a midstate (or initial vector) and a message block and outputs a hash value (which is used as a midstate if there are further message blocks).
 hashBlock :: forall term. Core term => term (Hash, Block) Hash
 hashBlock = oh &&& compression >>>
             ((collate oooh &&& collate ooih)

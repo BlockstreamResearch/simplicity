@@ -1,6 +1,7 @@
+-- | This module implements tail call optimized translation of Simplicity terms to Bit Machine 'MachineCode'.
 module Simplicity.BitMachine.Translate.TCO
  ( Translation
- , compile
+ , translate
  ) where
 
 import Data.Proxy (Proxy(..))
@@ -9,13 +10,20 @@ import Simplicity.BitMachine
 import Simplicity.BitMachine.Ty
 import Simplicity.Term
 
+-- | @'Translation' a b@ is the data type for the Simplicity algebra used for translating terms to 'MachineCode'
 data Translation a b = Translation { tcoOn :: MachineCodeK
                                    , tcoOff :: MachineCodeK
                                    }
 
-compile :: Translation a b -> MachineCode
-compile trans = tcoOff trans end
+-- | 'translate' coverts a Simplicity term to the Bit Machine's 'MachineCode' with tail call optimization.
+--
+-- Simplicity terms are represented in tagless-final style, so any Simplicity term can be instantiated as @'Translation' a b@ and can be passed to the 'translate' function.
+translate :: Translation a b -> MachineCode
+translate trans = tcoOff trans end
 
+-- Below is the Simplicity algebra that implements TCO translation to 'MachineCodeK'.
+-- Every term has two translations, one with TCO-on and one with TOC-off.
+-- The two translations are mutually recursive, which is why the are computed together in this Simplicity algebra.
 instance Core Translation where
   iden = result
    where

@@ -1,9 +1,16 @@
 {-# LANGUAGE GADTs, TypeOperators, DeriveTraversable #-}
+-- | This module provides representations of Simplicity types in Haskell.
+--
+-- The 'TyC' class captures those Haskell types that correspond to Simplicity types.
+-- The 'Ty' data type is a value-level representation of Simplicity types.
+-- The 'TyReflect' GADT links a value-level representation of Simplicity types with corresponding Haskell types.
 module Simplicity.Ty
- ( TyC, reify, reifyProxy, reifyArrow
+ ( TyC
  , TyReflect(..)
+ , reify
+ , reifyProxy, reifyArrow
  , equalTyReflect
- , TyF(..), Ty
+ , Ty, TyF(..)
  , one, sum, prod
  , unreflect
  ) where
@@ -13,8 +20,11 @@ import Data.Functor.Fixedpoint (Fix(..))
 import Data.Type.Equality ((:~:)(Refl))
 import Prelude hiding (sum, prod)
 
--- By not exporting the reify_ method, TyC becomes a "closed class" and no further instances can be made.
+-- | 'TyC' is a type class for those Haskell types that correspond to Simplicity types;
+-- specifically those composed from @()@, @'Either' a b@, and @(a, b)@.
+-- The members of this class are not exported so no further instances can be added.
 class (Eq a, Ord a, Read a, Show a) => TyC a where
+-- By not exporting the reify_ method, TyC becomes a "closed class" and no further instances can be made.
   reify_ :: TyReflect a
 
 instance TyC () where
@@ -26,20 +36,29 @@ instance (TyC a, TyC b) => TyC (Either a b) where
 instance (TyC a, TyC b) => TyC (a, b) where
   reify_ = ProdR reify_ reify_
 
-reify :: TyC a => TyReflect a
-reify = reify_
-
-reifyProxy :: TyC a => proxy a -> TyReflect a
-reifyProxy _ = reify
-
-reifyArrow :: (TyC a, TyC b) => proxy a b -> (TyReflect a, TyReflect b)
-reifyArrow _ = (reify, reify)
-
+-- | The 'TyReflect' GADT provides a link between Haskell types correspondng to Simplicity types (i.e. members of the 'TyC' class) and values that can be manipulated by Haskell programs.
+--
+-- There is a unique value of @'TyReflect' a@ for every @a@ that corresponds to a Simplicity type.
+-- This value can be decomposed by pattern matching to get the (unique) values of 'TyRefect' that correspond to the components of the Simplicity type.
+-- For example, the unique value of @'TyReflect' ('Either' () (), ())@ is @'ProdR' ('SumR' 'OneR' 'OneR') 'OneR'@.
 data TyReflect a where
   OneR :: TyReflect ()
   SumR  :: (TyC a, TyC b) => TyReflect a -> TyReflect b -> TyReflect (Either a b)
   ProdR :: (TyC a, TyC b) => TyReflect a -> TyReflect b -> TyReflect (a, b)
 
+-- | The unique 'TyReflect' value for any given 'TyC' type.
+reify :: TyC a => TyReflect a
+reify = reify_
+
+-- | A helper function that use a proxy argument to help control the type infered for 'reify'.
+reifyProxy :: TyC a => proxy a -> TyReflect a
+reifyProxy _ = reify
+
+-- | A helper function that use a proxy argument to help control the types infered for 'reify'.
+reifyArrow :: (TyC a, TyC b) => proxy a b -> (TyReflect a, TyReflect b)
+reifyArrow _ = (reify, reify)
+
+-- | Decide if two 'TyReflect' values are equal or not, and if they are equal then unify their type variables.
 equalTyReflect :: TyReflect a -> TyReflect b -> Maybe (a :~: b)
 equalTyReflect OneR OneR = return Refl
 equalTyReflect (SumR a1 b1) (SumR a2 b2) = do
@@ -52,29 +71,36 @@ equalTyReflect (ProdR a1 b1) (ProdR a2 b2) = do
   return Refl
 equalTyReflect _ _ = Nothing
 
+-- | A Haskell data type for representing Simplicity types.
+-- It uses an explicit 'Fix'edpoint of the 'TyF' functor.
+type Ty = Fix TyF
+
+-- | The functor used to define 'Ty' type.
 data TyF a = One
            | Sum a a
            | Prod a a 
            deriving (Eq, Functor, Foldable, Traversable)
-
-type Ty = Fix TyF
-
-one :: Ty
-one = Fix One
-
-sum :: Ty -> Ty -> Ty
-sum a b = Fix $ Sum a b
-
-prod :: Ty -> Ty -> Ty
-prod a b = Fix $ Prod a b
-
-unreflect :: TyReflect a -> Ty
-unreflect OneR = one
-unreflect (SumR a b) = sum (unreflect a) (unreflect b)
-unreflect (ProdR a b) = prod (unreflect a) (unreflect b)
 
 instance Unifiable TyF where
   zipMatch One One = Just One
   zipMatch (Sum a1 b1) (Sum a2 b2) = Just (Sum (Right (a1, a2)) (Right (b1, b2)))
   zipMatch (Prod a1 b1) (Prod a2 b2) = Just (Prod (Right (a1, a2)) (Right (b1, b2)))
   zipMatch _ _ = Nothing
+
+-- | Construct the unit 'Ty' of Simplicity.
+one :: Ty
+one = Fix One
+
+-- | Construct the sum 'Ty' of two 'Ty's.
+sum :: Ty -> Ty -> Ty
+sum a b = Fix $ Sum a b
+
+-- | Construct the product 'Ty' of two 'Ty's.
+prod :: Ty -> Ty -> Ty
+prod a b = Fix $ Prod a b
+
+-- | Covert a 'TyReflect' value the corresponding 'Ty' value.
+unreflect :: TyReflect a -> Ty
+unreflect OneR = one
+unreflect (SumR a b) = sum (unreflect a) (unreflect b)
+unreflect (ProdR a b) = prod (unreflect a) (unreflect b)

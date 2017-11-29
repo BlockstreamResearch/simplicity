@@ -2137,7 +2137,9 @@
   This module provides infix operators, <verbatim|(\<gtr\>\<gtr\>\<gtr\>)>
   and <verbatim|(&&&)>, for the <verbatim|comp> and <verbatim|pair>
   Simplicity combinators respectively. \ It also provides notation for short
-  sequences of string of <samp|I>'s, <samp|O>'s and <samp|H>'s. Examples of
+  sequences of string of <samp|I>'s, <samp|O>'s and <samp|H>'s. Note that
+  because <verbatim|case> is a reserved word in Haskell we use
+  <verbatim|match> for Simplicty's <samp|case> combinator. Examples of
   building Simplicity expressions can be found in the next section.
 
   This module provides a <verbatim|Core (-\<gtr\>)> instance that provides
@@ -2284,19 +2286,19 @@
   translation from Simplicity to the Bit Machine. \ The
   <verbatim|Translation> type wraps the <verbatim|MachineCodeK> type with
   phantom type parameters in order to make an instance suitable for a
-  Simplicity Algebra. \ The <verbatim|compile> function translates Simplicity
-  terms to Machine Code via the <verbatim|Translation> Algebra (recall that a
-  Simplicity term in tagless final form is a polymorphic value that can
-  become any Simplicity Algebra). The <verbatim|Simplicity/BitMachine/Translate/TCO.hs>
-  file provides a similar <verbatim|Translation> Simplicity Algebra and
-  <verbatim|compile> functions, but this translating using tail composition
-  optimization.
+  Simplicity Algebra. \ The <verbatim|translate> function translates
+  Simplicity terms to Machine Code via the <verbatim|Translation> Algebra
+  (recall that a Simplicity term in tagless final form is a polymorphic value
+  that can become any Simplicity Algebra). The
+  <verbatim|Simplicity/BitMachine/Translate/TCO.hs> file provides a similar
+  <verbatim|Translation> Simplicity Algebra and <verbatim|translate>
+  functions, but this translating using tail composition optimization.
 
   The <verbatim|Simplicity/BitMachine/Tests.hs> runs a few of the example
   Simplicity expressions through the Bit Machine implementation to test that
   the value computed by the Bit Machine matches that direct interpretation of
   the same Simplicity expressions. \ In this file you can see an example of
-  how <verbatim|executeUsing (runMachine . compiler) program> is used.
+  how <verbatim|executeUsing (runMachine . translate) program> is used.
 
   <subsection|Static Analysis>
 
@@ -2316,7 +2318,7 @@
   the example Simplicity expressions through the static analysis and compares
   the result with the maximum cell count of executing the Bit Machine on
   various inputs. In this file you can see an example of how
-  <verbatim|executeUsing (instrumentMachine . compiler) program> is used.
+  <verbatim|executeUsing (instrumentMachine . translate) program> is used.
 
   <chapter|C Library Guide>
 </body>

@@ -1,3 +1,4 @@
+-- This module tests the Simplicity programs on arbitrary inputs.
 module Simplicity.Programs.Tests (tests) where
 
 import Data.Bits ((.|.))
@@ -15,6 +16,7 @@ import Simplicity.Programs.Word
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.QuickCheck (Property, elements, forAll, testProperty)
 
+-- This collects the tests for the various Simplicity programs.
 tests :: TestTree
 tests = testGroup "Programs"
       [ testGroup "Arith"
@@ -28,22 +30,27 @@ tests = testGroup "Programs"
       , testProperty "sha256" prop_sha256
       ]
 
+-- The specification for full adder on Word8
 prop_fullAdder8 :: Word8 -> Word8 -> Bit -> Bool
 prop_fullAdder8 x y z = (if fromBit carry then 2^8 else 0) + fromWord8 result8 == fromWord8 x + fromWord8 y + if fromBit z then 1 else 0
  where
   (carry, result8) = fullAdder word8 ((x, y), z)
 
+-- The specification for adder on Word8
 prop_adder8 :: Word8 -> Word8 -> Bool
 prop_adder8 x y = (if fromBit carry then 2^8 else 0) + fromWord8 result8 == fromWord8 x + fromWord8 y
  where
   (carry, result8) = adder word8 (x, y)
 
+-- The specification for full multiplier on Word8
 prop_fullMultiplier8 :: Word8 -> Word8 -> Word8 -> Word8 -> Bool
 prop_fullMultiplier8 w x y z = fromWord16 (fullMultiplier word8 ((x, y), (w, z))) == fromWord8 x * fromWord8 y + fromWord8 w + fromWord8 z
 
+-- The specification for multiplier on Word8
 prop_multiplier8 :: Word8 -> Word8 -> Bool
 prop_multiplier8 x y = fromWord16 (multiplier word8 (x, y)) == fromWord8 x * fromWord8 y
 
+-- The specification for shifts on Word8
 prop_shift8 :: Word8 -> Property
 prop_shift8 x = forAll small (\z -> convert (shift word8 z x) == W.shift (convert x) z)
  where
@@ -51,6 +58,7 @@ prop_shift8 x = forAll small (\z -> convert (shift word8 z x) == W.shift (conver
   convert = fromInteger . fromWord8
   small = elements [-16..16]
 
+-- The specification for rotates on Word8
 prop_rotate8 :: Word8 -> Property
 prop_rotate8 x = forAll small (\z -> convert (rotate word8 z x) == W.rotate (convert x) z)
  where
@@ -58,6 +66,7 @@ prop_rotate8 x = forAll small (\z -> convert (rotate word8 z x) == W.rotate (con
   convert = fromInteger . fromWord8
   small = elements [-16..16]
 
+-- The specification for SHA-256's block compression function.
 prop_sha256 :: [W.Word8] -> Bool
 prop_sha256 x0 = mkInteger (BS.unpack (SHA256.hash (BS.pack x))) == fromWord256 ((iv &&& iden >>> hashBlock) (toWord (DoubleW word256) paddedInteger))
  where

@@ -1,16 +1,30 @@
 {-# LANGUAGE GADTs, ScopedTypeVariables, TypeOperators #-}
+-- | This module defines 2^/n/ bit word Simplicity types and some associated Simplicity expressions and combinators that operate on them.
 module Simplicity.Programs.Word
-  ( Word(..), wordTy, fromWord, toWord
-  , Word8, word8, fromWord8, toWord8
-  , Word16, word16, fromWord16, toWord16
-  , Word32, word32, fromWord32, toWord32
-  , Word64, word64, fromWord64, toWord64
-  , Word256, word256, fromWord256, toWord256
+  ( Word(..), wordSize, fromWord, toWord
+  -- * Arithmetic
   , zero
-  , adder, fullAdder
-  , multiplier, fullMultiplier
+  , adder, fullAdder, multiplier, fullMultiplier
+  -- * Bit-wise operations
   , shift, rotate
   , bitwise, bitwiseTri
+  -- * Type aliases
+  -- | Below are type aliases for Simplicity 'Word' types upto 256-bit words.
+  -- Note: This does not limit word sizes; arbitrarily large word sizes are allowed by making further pairs.
+  , Word2, Word4, Word8, Word16, Word32, Word64, Word128, Word256
+  -- * Specializations
+  -- | The following are useful instances of 'Word' and specializations of 'fromWord' and 'toWord' for commonly used word sizes.
+  -- Other word sizes can still be constructed using other 'Word' values.
+  -- ** Word8
+  , word8, fromWord8, toWord8
+  -- ** Word16
+  , word16, fromWord16, toWord16
+  -- ** Word32
+  , word32, fromWord32, toWord32
+  -- ** Word64
+  , word64, fromWord64, toWord64
+  -- ** Word256
+  , word256, fromWord256, toWord256
   ) where
 
 import Prelude hiding (Word, drop, take, not, or)
@@ -21,28 +35,43 @@ import Data.Type.Equality ((:~:)(Refl))
 import Simplicity.Term
 import Simplicity.Programs.Bit
 
+-- | The 'Word' GADT specifies which types correspond to Simplicity word types.
+--
+-- These are the types of 2^/n/ bit words and are made up of nested pairs of identically sized words down to the single-'Bit' word type.
 data Word a where
-  BitW :: Word Bit
+  -- | A single bit 'Word'.
+  BitW :: Word Bit 
+  -- | A pair of identically sized 'Word's is the next larger 'Word'.
   DoubleW :: TyC a => Word a -> Word (a,a)
 
+word8 :: Word Word8
 word8 = DoubleW . DoubleW . DoubleW $ BitW
+
+word16 :: Word Word16
 word16 = DoubleW word8
+
+word32 :: Word Word32
 word32 = DoubleW word16
+
+word64 :: Word Word64
 word64 = DoubleW word32
+
+word128 :: Word Word128
 word128 = DoubleW word64
+
+word256 :: Word Word256
 word256 = DoubleW word128
 
-wordTy :: Word a -> TyReflect a
-wordTy BitW = SumR OneR OneR
-wordTy (DoubleW w) = ProdR rec rec
- where
-  rec = wordTy w
-
--- wordSize w = bitSizeR (wordTy w)
+-- | Computes the number of bits of the 'Word' 'a'.
+--
+-- @'wordSize' w = 'Simplicity.BitMachine.Ty.bitSizeR' ('reifyProxy' w)@
 wordSize :: Word a -> Int
 wordSize BitW = 1
 wordSize (DoubleW w) = 2*(wordSize w)
 
+-- | Covert a value of a Simplicity word type into a standard Haskell integer.
+--
+-- @'toWord' w ('fromWord' w n) = n@
 fromWord :: Word a -> a -> Integer
 fromWord = go 0
  where
@@ -51,6 +80,10 @@ fromWord = go 0
   go i BitW (Right ()) = 2 * i + 1
   go i (DoubleW w) (hi, lo) = go (go i w hi) w lo
 
+-- | Covert a standard Haskell integer into a Simplicity word type.
+-- The value is take modulo 2^@('wordSize' w)@ where @w :: 'Word' a@ is the first argument.
+--
+-- @'fromWord' w ('toWord' w n) = n \`mod\` 'wordSize' w@
 toWord :: Word a -> Integer -> a
 toWord w i = evalState (go w) i
  where
@@ -103,12 +136,24 @@ toWord64 = toWord word64
 toWord256 :: Integer -> Word256
 toWord256 = toWord word256
 
+-- | Simplicity expression for the constant function that returns the representation of 0.
+--
+-- @
+-- 'fromWord' w ('zero' w _) = 0
+-- @
 zero :: (Core term, TyC a) => Word b -> term a b
 zero BitW = false
 zero (DoubleW w) = rec &&& rec
  where
   rec = zero w
 
+-- | Simplicity expression for computing the sum of two words, including the carry bit.
+--
+-- @
+-- 'fromWord' 'BitW' c * 2 ^ 'wordSize' w + 'fromWord' w z = 'fromWord' w x + 'fromWord' w y
+--  where
+--   (c, z) = 'adder' w (x, y)
+-- @  
 adder :: Core term => Word a -> term (a, a) (Bit, a)
 adder BitW = cond (iden &&& not iden) (false &&& iden)
 adder (DoubleW w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
@@ -118,6 +163,13 @@ adder (DoubleW w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
   rec = adder w
   fa = fullAdder w
 
+-- | Simplicity expression for computing the sum of two words and a carry input bit, including the carry output bit.
+--
+-- @
+-- 'fromWord' 'BitW' cout * 2 ^ 'wordSize' w + 'fromWord' w z = 'fromWord' w x + 'fromWord' w y + 'fromWord' 'BitW' cin
+--  where
+--   (cout, z) = 'fullAdder' w ((x, y), cin)
+-- @  
 fullAdder :: Core term => Word a -> term ((a, a), Bit) (Bit, a)
 fullAdder BitW = take add &&& ih
              >>> ooh &&& (oih &&& ih >>> add)
@@ -130,6 +182,11 @@ fullAdder (DoubleW w) = take (ooh &&& ioh) &&& (take (oih &&& iih) &&& ih >>> re
  where
   rec = fullAdder w
 
+-- | 'fullMultiplier' is a Simplicity expression that helps compute products of larger word sizes from smaller word sizes.
+--
+-- @
+-- 'fromWord' ('DoubleW' w) ('fullMultiplier' w ((a, b), (c, d))) = 'fromWord' w a * 'fromWord' w b  + 'fromWord' w c + 'fromWord' w d
+-- @  
 fullMultiplier :: Core term => Word a -> term ((a, a), (a, a)) (a, a)
 fullMultiplier BitW = ih &&& take (cond iden false)
                   >>> fullAdder BitW
@@ -142,6 +199,11 @@ fullMultiplier (DoubleW w) = take (ooh &&& (ioh &&& oih))
  where
   rec = fullMultiplier w
 
+-- | Simplicity expression for computing the product of two words, returning a doubled size word.
+--
+-- @
+-- 'fromWord' ('DoubleW' w) ('multiplier' w (x, y)) = 'fromWord' w x * 'fromWord' w y
+-- @  
 multiplier :: Core term => Word a -> term (a, a) (a, a)
 multiplier BitW = false &&& cond iden false
 multiplier (DoubleW w) = (ooh &&& (ioh &&& oih))
@@ -153,6 +215,7 @@ multiplier (DoubleW w) = (ooh &&& (ioh &&& oih))
   rec = multiplier w
   fm = fullMultiplier w
 
+-- | A Simplicity combinator for lifting a binary bit operation to a binary word operation that applies the bit operation bit-wise to each bit of the word.
 bitwise :: forall term a. Core term => term (Bit, Bit) Bit -> Word a -> term (a, a) a
 bitwise op = go
  where
@@ -162,6 +225,8 @@ bitwise op = go
    where
     rec = go w
 
+-- | A Simplicity combinator for lifting a trinary bit operation to a trinary word operation that applies the bit operation bit-wise to each bit of the word.
+-- This is similar to 'bitwise' except works with trinary bit operations instead of binary operations.
 bitwiseTri :: forall term a. Core term => term (Bit, (Bit, Bit)) Bit -> Word a -> term (a, (a, a)) a
 bitwiseTri op = go
  where
@@ -172,6 +237,8 @@ bitwiseTri op = go
    where
     rec = go w
 
+-- @'BiggerWord' a b@ is a GADT where @a@ and @b@ are Simplicity word types and @a@ has fewer bits than @b@
+-- This is a helper type that is used in the definitions of 'shift' and 'rotate'.
 data BiggerWord a b where
   JustBigger :: TyC a => Word a -> BiggerWord a (a,a)
   MuchBigger :: (TyC a, TyC b) => BiggerWord a b -> BiggerWord a (b,b)
@@ -200,7 +267,10 @@ compareWordSize (DoubleW n) (DoubleW m) =
     Left (Left bw) -> Left (Left (doubleBigger bw))
     Left (Right bw) -> Left (Right (doubleBigger bw))
 
--- shifts left on a positive amount and shifts right on a negative amount.
+-- | Simplicity expression for a bit shift by a constant amount.
+-- 
+-- @'shift' w n x@ is a left shift of @n@ bits of the word @x@.
+-- The value @n@ can be negative in which case a right shift is performed.
 shift :: (Core term, TyC a) => Word a -> Int -> term a a
 shift w = subseq w w
  where
@@ -219,7 +289,10 @@ shift w = subseq w w
   subseq0 (Left (Left (JustBigger w))) = iden &&& zero w
   subseq0 (Left (Left (MuchBigger bw))) = subseq0 (Left (Left bw)) &&& zero (biggerWord bw)
 
--- rotates left on a positive amount and rotates right on a negative amount.
+-- | Simplicity expression for a left bit rotation by a constant amount.
+-- 
+-- @'rotate' w n x@ is a left rotation of @n@ bits of the word @x@.
+-- The value @n@ can be negative in which case a right rotation is performed.
 rotate :: (Core term, TyC a) => Word a -> Int -> term a a
 rotate w z = subseqWrap w w (z `mod` wordSize w)
  where

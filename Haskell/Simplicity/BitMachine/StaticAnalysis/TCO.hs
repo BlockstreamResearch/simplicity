@@ -1,14 +1,27 @@
+-- | This module has functions for computing static analysis of Bit Machine resources used during execution of tail call optimized translated Simplicity expressions.
 module Simplicity.BitMachine.StaticAnalysis.TCO 
- ( ExtraCellsBnd, extraCellsBnd, cellsBnd
+ ( ExtraCellsBnd, cellsBnd
  ) where
 
 import Simplicity.Term
 import Simplicity.BitMachine.Ty
 
+-- | @'ExtraCellsBnd' a b@ is the data type for the Simplicity algebra used for computing the bound on the maximum number of Cells used by the Bit Machine.
 data ExtraCellsBnd a b = ExtraCellsBnd Int Int
 
+-- (extraCellBnd r) is the number of extra cells that will be allocated by the TCOon program when the active read frame as 'r' number of cells.
+-- The number of extra cells that will be allocated by TCOoff is (extraCellsBnd 0).
 extraCellsBnd r (ExtraCellsBnd n m) = max (n - r) m
 
+-- | @'cellsBnd' t@ computes an upper bound on the maximum number of Cells used by the Bit Machine, including the cells used to hold the input and output, when executing TCO translated Simplicity expressions.
+--
+-- Simplicity terms are represented in tagless-final style, so any Simplicity term can be instantiated as @'ExtraCellsBnd' a b@ and can be passed to the 'cellsBnd' function.
+cellsBnd :: (TyC a, TyC b) => ExtraCellsBnd a b -> Int
+cellsBnd t = bitSizeR a + bitSizeR b + extraCellsBnd 0 t
+ where
+  (a,b) = reifyArrow t
+
+-- Below is the Simplicity algebra that is used for computing 'cellsBnd'
 instance Core ExtraCellsBnd where
   iden = ExtraCellsBnd 0 0
   comp arrS@(ExtraCellsBnd sn sm) (ExtraCellsBnd tn tm) = ExtraCellsBnd (maximum [s + sn, tn, s + tm]) (s + sm)
@@ -23,7 +36,3 @@ instance Core ExtraCellsBnd where
   take (ExtraCellsBnd tn tm) = ExtraCellsBnd tn tm
   drop (ExtraCellsBnd tn tm) = ExtraCellsBnd tn tm
 
-cellsBnd :: (TyC a, TyC b) => ExtraCellsBnd a b -> Int
-cellsBnd t = bitSizeR a + bitSizeR b + extraCellsBnd 0 t
- where
-  (a,b) = reifyArrow t

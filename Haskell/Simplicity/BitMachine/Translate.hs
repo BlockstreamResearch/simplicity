@@ -1,6 +1,7 @@
+-- | This module implements naive translation of Simplicity terms to Bit Machine 'MachineCode'.
 module Simplicity.BitMachine.Translate
  ( Translation
- , compile
+ , translate
  ) where
 
 import Data.Proxy (Proxy(..))
@@ -9,11 +10,16 @@ import Simplicity.BitMachine
 import Simplicity.BitMachine.Ty
 import Simplicity.Term
 
+-- | @'Translation' a b@ is the data type for the Simplicity algebra used for translating terms to 'MachineCode'
 newtype Translation a b = Translation MachineCodeK
 
-compile :: Translation a b -> MachineCode
-compile (Translation f) = f end
+-- | 'translate' coverts a Simplicity term to the Bit Machine's 'MachineCode'.
+--
+-- Simplicity terms are represented in tagless-final style, so any Simplicity term can be instantiated as @'Translation' a b@ and can be passed to the 'translate' function.
+translate :: Translation a b -> MachineCode
+translate (Translation f) = f end
 
+-- Below is the Simplicity algebra that implements naive translation to 'MachineCodeK'.
 instance Core Translation where
   iden = result
    where
