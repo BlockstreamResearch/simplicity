@@ -1,5 +1,5 @@
 Require Export Coq.Lists.List.
-Require Import PeanoNat.
+Require Import NArith.
 
 Lemma repeat_S_tail {A} : forall (a : A) n, repeat a n ++ (a :: nil) = repeat a (S n).
 Proof.
@@ -64,4 +64,4 @@ rewrite <- (firstn_app_3 l1 l2) at 1.
 apply firstn_skipn.
 Qed.
 
-Definition nat_sum : list nat -> nat := fold_right plus O.
+Definition N_sum : list N -> N := fold_right N.add 0%N.

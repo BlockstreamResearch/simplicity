@@ -18,3 +18,9 @@ Lemma option_bind_assoc {A B C} (g : B -> option C) (f : A -> option B) x :
 Proof.
 destruct x as [|];reflexivity.
 Qed.
+
+Definition option_ap {A B} (f : option (A -> B)) : option A -> option B :=
+option_bind (fun a => option_map (fun f => f a) f).
+
+Definition option_map2 {A B C} (f : A -> B -> C) (x : option A) : option B ->  option C :=
+option_ap (option_map f x).

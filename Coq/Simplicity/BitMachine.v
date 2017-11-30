@@ -1,9 +1,11 @@
 Require Import PeanoNat.
+Require Import NArith.
 Require Import Util.List.
 Require Import Util.Option.
 Require Import Util.Thrist.
 Require Import Eqdep_dec.
-Require Import Omega.
+
+Local Open Scope N_scope.
 
 Definition Cell := option bool.
 
@@ -19,7 +21,7 @@ Record WriteFrame :=
  ; writeEmpty : nat
  }.
 
-Definition writeSize wf := length (writeData wf) + (writeEmpty wf).
+Definition writeSize wf := N.of_nat (length (writeData wf)) + N.of_nat (writeEmpty wf).
 
 Definition newWriteFrame n : WriteFrame := {| writeData := nil; writeEmpty := n |}.
 
@@ -28,11 +30,11 @@ Definition newWriteFrame n : WriteFrame := {| writeData := nil; writeEmpty := n 
  *)
 Definition fullWriteFrame l : WriteFrame := {| writeData := rev l; writeEmpty := 0 |}.
 
-Lemma fullWriteFrame_size l : writeSize (fullWriteFrame l) = length l.
+Lemma fullWriteFrame_size l : writeSize (fullWriteFrame l) = N.of_nat (length l).
 Proof.
-cbn.
+unfold writeSize; cbn.
 rewrite rev_length.
-auto with arith.
+ring.
 Qed.
 
 (* Read-only frames are represented in zipper format.  The cells before the
@@ -44,7 +46,7 @@ Record ReadFrame :=
  ; nextData : list Cell
  }.
 
-Definition readSize rf := length (prevData rf) + length (nextData rf).
+Definition readSize rf := N.of_nat (length (prevData rf)) + N.of_nat (length (nextData rf)).
 
 Definition setFrame l := {| prevData := nil; nextData := l |}.
 
@@ -66,10 +68,10 @@ repeat (decide equality).
 Qed.
 
 Record StateShape :=
- { inactiveReadFrameSizes : list nat
- ; activeReadFrameSize : nat
- ; activeWriteFrameSize : nat
- ; inactiveWriteFrameSizes : list nat
+ { inactiveReadFrameSizes : list N
+ ; activeReadFrameSize : N
+ ; activeWriteFrameSize : N
+ ; inactiveWriteFrameSizes : list N
  }.
 
 Definition stateShape s :=
@@ -80,10 +82,10 @@ Definition stateShape s :=
   |}.
 
 Definition stateShapeSize s :=
-  nat_sum (inactiveReadFrameSizes s) +
+  N_sum (inactiveReadFrameSizes s) +
   activeReadFrameSize s +
   activeWriteFrameSize s +
-  nat_sum (inactiveWriteFrameSizes s).
+  N_sum (inactiveWriteFrameSizes s).
 
 Definition stateSize s := stateShapeSize (stateShape s).
 
@@ -114,12 +116,12 @@ Record LocalState :=
  }.
 
 Record LocalStateShape :=
- { readLocalStateSize : nat
- ; writeLocalStateSize : nat
+ { readLocalStateSize : N
+ ; writeLocalStateSize : N
  }.
 
 Definition localStateShape ls :=
- {| readLocalStateSize := length (readLocalState ls)
+ {| readLocalStateSize := N.of_nat (length (readLocalState ls))
   ; writeLocalStateSize := writeSize (writeLocalState ls)
   |}.
 
@@ -156,7 +158,7 @@ destruct ctx as [irf [prf nrf] awf iwf].
 destruct h as [rl wl].
 unfold stateShape, fillContextShape; simpl.
 f_equal;[unfold readSize|unfold writeSize]; simpl;
-rewrite app_length; omega.
+rewrite app_length; repeat rewrite Nat2N.inj_add; ring.
 Qed.
 
 (* Sometimes we need to focus in on part of the LocalState.  We can divide the
@@ -199,7 +201,7 @@ Definition fillReadFrame (ctx : Context) (h : ReadFrame) : State :=
   ; inactiveWriteFrames := inactiveWriteFrames ctx
   |}.
 
-Definition fillReadFrameShape (ctx : StateShape) (h : nat) : StateShape :=
+Definition fillReadFrameShape (ctx : StateShape) (h : N) : StateShape :=
  {| inactiveReadFrameSizes := inactiveReadFrameSizes ctx
   ; activeReadFrameSize := activeReadFrameSize ctx + h
   ; activeWriteFrameSize := activeWriteFrameSize ctx
@@ -214,7 +216,7 @@ destruct h as [rl wl].
 unfold stateShape, fillReadFrameShape; simpl.
 f_equal.
 unfold readSize; simpl.
-repeat rewrite app_length; omega.
+repeat rewrite app_length, Nat2N.inj_add; ring.
 Qed.
 
 Module MachineCode.
@@ -392,7 +394,7 @@ Definition Skip_chk n s :
                      |}}.
 destruct s as [irf [rp rn] [wd we] iwf].
 generalize (Nat.leb_spec n we).
-destruct (n <=? we);intros H;[|exact None].
+destruct (n <=? we)%nat;intros H;[|exact None].
 left.
 pose (ctx := {| inactiveReadFrames := irf
               ; activeReadFrame := {| prevData := rp; nextData := rn |}
@@ -431,9 +433,9 @@ Definition Copy_chk n s :
                      |}}.
 destruct s as [irf [rp rn] [wd we] iwf].
 generalize (Nat.leb_spec n we).
-destruct (n <=? we);intros Hwe;[|exact None].
+destruct (n <=? we)%nat;intros Hwe;[|exact None].
 generalize (Nat.leb_spec n (length rn)).
-destruct (n <=? length rn);intros Hrn;[|exact None].
+destruct (n <=? length rn)%nat;intros Hrn;[|exact None].
 left.
 pose (ctx := {| inactiveReadFrames := irf
               ; activeReadFrame := {| prevData := rp; nextData := skipn n rn |}
@@ -485,7 +487,7 @@ Definition Fwd_chk n s :
                        |}}.
 destruct s as [irf [rp rn] awf iwf].
 generalize (Nat.leb_spec n (length rn)).
-destruct (n <=? length rn);intros Hrn;[|exact None].
+destruct (n <=? length rn)%nat;intros Hrn;[|exact None].
 left.
 pose (ctx := {| inactiveReadFrames := irf
               ; activeReadFrame := {| prevData := rp; nextData := skipn n rn |}
@@ -532,7 +534,7 @@ Definition Bwd_chk n s :
                        |}}.
 destruct s as [irf [rp rn] awf iwf].
 generalize (Nat.leb_spec n (length rp)).
-destruct (n <=? length rp);intros Hrp;[|exact None].
+destruct (n <=? length rp)%nat;intros Hrp;[|exact None].
 left.
 pose (ctx := {| inactiveReadFrames := irf
               ; activeReadFrame := {| prevData := skipn n rp; nextData := rn |}
@@ -814,4 +816,197 @@ rewrite Hp; cbn.
 unfold runMachine.
 rewrite bwd_correct.
 reflexivity.
+Qed.
+
+Lemma stateShape_copy n x y :
+ runMachine (copy n) x = Some y ->
+ stateShape x = stateShape y.
+Proof.
+unfold copy, runMachine.
+destruct (Copy_chk _ x) as [[[l x0] [_ ->]]|];[cbn|discriminate].
+inversion_clear 1.
+do 2 rewrite fillContextShape_correct.
+f_equal.
+unfold localStateShape; cbn.
+rewrite fullWriteFrame_size.
+reflexivity.
+Qed.
+
+Lemma stateShape_write b x y :
+ runMachine (write b) x = Some y ->
+ stateShape x = stateShape y.
+Proof.
+unfold write, runMachine.
+destruct (Write_chk x) as [[x0 ->]|];[cbn|discriminate].
+inversion_clear 1.
+do 2 rewrite fillContextShape_correct.
+reflexivity.
+Qed.
+
+Lemma stateShape_skip n x y :
+ runMachine (skip n) x = Some y ->
+ stateShape x = stateShape y.
+Proof.
+unfold skip, runMachine.
+destruct (Skip_chk _ x) as [[x0 ->]|];[cbn|discriminate].
+inversion_clear 1.
+do 2 rewrite fillContextShape_correct.
+f_equal.
+unfold localStateShape; cbn.
+rewrite fullWriteFrame_size, repeat_length.
+reflexivity.
+Qed.
+
+Lemma stateShape_fwd n x y :
+ runMachine (fwd n) x = Some y ->
+ stateShape x = stateShape y.
+Proof.
+unfold fwd, runMachine.
+destruct (Fwd_chk _ x) as [[[l x0] [_ ->]]|];[cbn|discriminate].
+inversion_clear 1.
+do 2 rewrite fillReadFrameShape_correct.
+f_equal.
+unfold readSize; cbn.
+rewrite rev_length.
+ring.
+Qed.
+
+Lemma stateShape_bwd n x y :
+ runMachine (bwd n) x = Some y ->
+ stateShape x = stateShape y.
+Proof.
+unfold bwd, runMachine.
+destruct (Bwd_chk _ x) as [[[l x0] [_ ->]]|];[cbn|discriminate].
+inversion_clear 1.
+do 2 rewrite fillReadFrameShape_correct.
+f_equal.
+unfold readSize; cbn.
+rewrite rev_length.
+ring.
+Qed.
+
+Fixpoint maximumMemoryResidence {x y} (tr : x ->> y) : N :=
+match tr with
+| Thrist.nil _ _ => stateSize y
+| Thrist.cons _ _ z _ _ tr0 => N.max (stateSize z) (maximumMemoryResidence tr0)
+end.
+
+Lemma MMR_app {x y z} (tr0 : x ->> y) (tr1 : y ->> z) :
+ maximumMemoryResidence (tr0 |><| tr1) =
+ N.max (maximumMemoryResidence tr0) (maximumMemoryResidence tr1).
+Proof.
+induction tr0;cbn.
+ induction tr1;cbn;[|rewrite N.max_assoc];rewrite N.max_id; reflexivity.
+rewrite <- N.max_assoc, IHtr0.
+reflexivity.
+Qed.
+
+Lemma MMR_bounds {x y} (tr0 : x ->> y) :
+ N.max (stateSize x) (stateSize y) <= maximumMemoryResidence tr0.
+Proof.
+apply N.max_lub.
+ destruct tr0.
+  reflexivity.
+ apply N.le_max_l.
+induction tr0.
+ reflexivity.
+etransitivity;[exact IHtr0|apply N.le_max_r].
+Qed.
+
+Definition programMaximumMemoryResidence (p : Program) x : option N :=
+  option_map (fun tr => maximumMemoryResidence (projT2 tr)) (p x).
+
+Lemma pMMR_moveFrame x :
+ programMaximumMemoryResidence moveFrame x =
+ option_map (fun _ => stateSize x) (runMachine moveFrame x).
+Proof.
+unfold moveFrame, programMaximumMemoryResidence, runMachine in *.
+destruct (MoveFrame_chk x) as [[[l y] ->]|];[cbn|reflexivity].
+f_equal.
+apply N.max_l.
+unfold stateSize, stateShape, stateShapeSize.
+cbn.
+rewrite fullWriteFrame_size.
+apply N.eq_le_incl.
+ring.
+Qed.
+
+Lemma pMMR_copy n x :
+ programMaximumMemoryResidence (copy n) x =
+ option_map (fun _ => stateSize x) (runMachine (copy n) x).
+Proof.
+assert (Hx := stateShape_copy n x).
+unfold copy, programMaximumMemoryResidence, runMachine in *.
+destruct (Copy_chk _ x) as [[[l y] [_ ->]]|];[cbn in *|reflexivity].
+unfold stateSize.
+rewrite (Hx _ (refl_equal _)), N.max_id.
+reflexivity.
+Qed.
+
+Lemma pMMR_write b x :
+ programMaximumMemoryResidence (write b) x =
+ option_map (fun _ => stateSize x) (runMachine (write b) x).
+Proof.
+assert (Hx := stateShape_write b x).
+unfold write, programMaximumMemoryResidence, runMachine in *.
+destruct (Write_chk x) as [[y ->]|];[cbn in *|reflexivity].
+unfold stateSize.
+rewrite (Hx _ (refl_equal _)), N.max_id.
+reflexivity.
+Qed.
+
+Lemma pMMR_skip n x :
+ programMaximumMemoryResidence (skip n) x =
+ option_map (fun _ => stateSize x) (runMachine (skip n) x).
+Proof.
+assert (Hx := stateShape_skip n x).
+unfold skip, programMaximumMemoryResidence, runMachine in *.
+destruct (Skip_chk _ x) as [[y ->]|];[cbn in *|reflexivity].
+unfold stateSize.
+rewrite (Hx _ (refl_equal _)), N.max_id.
+reflexivity.
+Qed.
+
+Lemma pMMR_fwd n x :
+ programMaximumMemoryResidence (fwd n) x =
+ option_map (fun _ => stateSize x) (runMachine (fwd n) x).
+Proof.
+assert (Hx := stateShape_fwd n x).
+unfold fwd, programMaximumMemoryResidence, runMachine in *.
+destruct (Fwd_chk _ x) as [[[l y] [_ ->]]|];[cbn in *|reflexivity].
+unfold stateSize.
+rewrite (Hx _ (refl_equal _)), N.max_id.
+reflexivity.
+Qed.
+
+Lemma pMMR_bwd n x :
+ programMaximumMemoryResidence (bwd n) x =
+ option_map (fun _ => stateSize x) (runMachine (bwd n) x).
+Proof.
+assert (Hx := stateShape_bwd n x).
+unfold bwd, programMaximumMemoryResidence, runMachine in *.
+destruct (Bwd_chk _ x) as [[[l y] [_ ->]]|];[cbn in *|reflexivity].
+unfold stateSize.
+rewrite (Hx _ (refl_equal _)), N.max_id.
+reflexivity.
+Qed.
+
+Lemma pMMR_seq (p q : Program) x :
+ programMaximumMemoryResidence (p ;;; q) x =
+ option_map2 N.max (option_bind (programMaximumMemoryResidence q) (runMachine p x))
+                   (programMaximumMemoryResidence p x).
+Proof.
+unfold seq, programMaximumMemoryResidence, runMachine.
+destruct (p x) as [[y tr0]|];[cbn|reflexivity].
+destruct (q y) as [[z tr1]|];[cbn|reflexivity].
+rewrite MMR_app, N.max_comm; reflexivity.
+Qed.
+
+Lemma pMMR_choice (p1 p2 : Program) (s : State) :
+ programMaximumMemoryResidence (p1 ||| p2) s = match nextData (activeReadFrame s) with
+ | Some b :: _ => programMaximumMemoryResidence (if b then p2 else p1) s
+ | _ => None
+ end.
+Proof.
+destruct s as [irf [rp [|[|] tl]] awf iwf]; reflexivity.
 Qed.
