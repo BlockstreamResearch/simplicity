@@ -1994,12 +1994,21 @@
   got there. \ A few lemmas are provided to help reason about the behaviour
   of <verbatim|runMachine> when running the program combinators.
 
-  <section|Translating Simplicity to the Bit Machine>
+  The <verbatim|maximumMemoryResidence> function computes the maximum number
+  of cells used by any intermediate state from the trace of execution of a
+  Bit Machine program. <verbatim|programMaximumMemoryResidence> runs a given
+  program from a given initial state and returns the
+  <verbatim|maximumMemoryResidence> of the resulting trace. \ A few lemmas
+  are provided to help reason about the behaviour of
+  <verbatim|programMaximumMemoryResidence> when running the program
+  combinators.
 
-  The <verbatim|Simplicity/Bit.v> file defines how to transform Simplicity
-  programs into Bit Machine programs that perform the same computation. The
-  <verbatim|bitSize> and <verbatim|encode> functions implement
-  <math|bitSize<around*|(|A|)>> and <math|<rep|a|A>> respectively.
+  <subsection|Translating Simplicity to the Bit Machine>
+
+  The <verbatim|Simplicity/Translate.v> file defines how to transform
+  Simplicity programs into Bit Machine programs that perform the same
+  computation. The <verbatim|bitSize> and <verbatim|encode> functions
+  implement <math|bitSize<around*|(|A|)>> and <math|<rep|a|A>> respectively.
 
   The <verbatim|Naive.translate> structure provides a Simplicity algebra for
   Bit Machine <verbatim|Progam>s that interprets Simplicity terms according
@@ -2018,8 +2027,32 @@
   the <verbatim|Naive.translate_correct> theorem. \ The
   <verbatim|Naive.translate_correct> operates on Simplicity term in the
   ``initial'' representaiton whereas the <verbatim|Naive.translate_correct_parametric>
-  theorem operates on Simplicity terms in the ``final''
-  representation.<chapter|Haskell Library Guide>
+  theorem operates on Simplicity terms in the ``final'' representation.
+
+  <subsection|Static Analysis>
+
+  The <verbatim|Simplicity/StaticAnalysis.v> files defines the static
+  analyses of Simplicity program that compute bounds on the various
+  computational resources used by the Bit Machine when executing translated
+  Simplicity. \ The file also proves the correctness of these upper bounds.
+
+  The <verbatim|MaximumMemory> module defines the
+  <verbatim|MaximumMemory.extraMemoryBound> algebra which is used to compute
+  an upper bound on additional memory that will be used when Simplicity
+  sub-expressions are naively translated to the Bit Machine and executed.
+  \ The <verbatim|MaximumMemory.Core_spec> lemma proves that for naively
+  translated core Simplicity expressions, the maximum memory used by the Bit
+  Machine is the memory needed by the size of the initial state, plus the
+  results of <verbatim|MaximumMemory.extraMemoryBound>. \ This bound holds no
+  matter what the starting state is, even if it is not a valid state for
+  holding the input for the Simplicity expression.
+
+  The <verbatim|MaximumMemory.CellBound> function computes the memory used by
+  the Bit Machine for evaluating Simplicity expressions starting from a
+  standard initial state and <verbatim|MaximumMemory.CellBound_correct>
+  proves that this upper bound is correct.
+
+  <chapter|Haskell Library Guide>
 
   WARNING: \ None of the Haskell library development is normative. \ There is
   no formalized connecton between any of the Haskell library and Simplicity's
@@ -2410,23 +2443,27 @@
     <associate|auto-75|<tuple|6.4|32>>
     <associate|auto-76|<tuple|6.4.1|33>>
     <associate|auto-77|<tuple|6.4.1.1|33>>
-    <associate|auto-78|<tuple|6.5|34>>
-    <associate|auto-79|<tuple|7|35>>
+    <associate|auto-78|<tuple|6.4.2|34>>
+    <associate|auto-79|<tuple|6.4.3|35>>
     <associate|auto-8|<tuple|2.1.2.1|8>>
-    <associate|auto-80|<tuple|7.1|35>>
-    <associate|auto-81|<tuple|7.2|36>>
-    <associate|auto-82|<tuple|7.3|36>>
-    <associate|auto-83|<tuple|7.3.1|36>>
-    <associate|auto-84|<tuple|7.3.2|36>>
-    <associate|auto-85|<tuple|7.3.2.1|37>>
-    <associate|auto-86|<tuple|7.3.2.2|37>>
-    <associate|auto-87|<tuple|7.3.3|37>>
-    <associate|auto-88|<tuple|7.3.4|37>>
-    <associate|auto-89|<tuple|7.4|37>>
+    <associate|auto-80|<tuple|7|35>>
+    <associate|auto-81|<tuple|7.1|36>>
+    <associate|auto-82|<tuple|7.2|36>>
+    <associate|auto-83|<tuple|7.3|36>>
+    <associate|auto-84|<tuple|7.3.1|36>>
+    <associate|auto-85|<tuple|7.3.2|37>>
+    <associate|auto-86|<tuple|7.3.2.1|37>>
+    <associate|auto-87|<tuple|7.3.2.2|37>>
+    <associate|auto-88|<tuple|7.3.3|37>>
+    <associate|auto-89|<tuple|7.3.4|37>>
     <associate|auto-9|<tuple|2.2|8>>
-    <associate|auto-90|<tuple|7.4.1|38>>
-    <associate|auto-91|<tuple|7.4.2|38>>
-    <associate|auto-92|<tuple|8|39>>
+    <associate|auto-90|<tuple|7.4|38>>
+    <associate|auto-91|<tuple|7.4.1|38>>
+    <associate|auto-92|<tuple|7.4.2|39>>
+    <associate|auto-93|<tuple|8|?>>
+    <associate|auto-94|<tuple|7.4.2|?>>
+    <associate|auto-95|<tuple|8|?>>
+    <associate|auto-96|<tuple|8|?>>
     <associate|footnote-1|<tuple|1|?>>
     <associate|footnote-2.1|<tuple|2.1|17>>
     <associate|footnr-2.1|<tuple|2.1|17>>
