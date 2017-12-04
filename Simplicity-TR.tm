@@ -1528,6 +1528,220 @@
 
   <subsection|Space Resources>
 
+  The primary source of memory resources used by the Bit Machine is the cells
+  used by all the frames that make of the state of Bit Machine. \ A secondary
+  source of memory resources used comes from the overhead of the frames
+  themselves, which need to store their bounderies or sizes, and the position
+  of their cursors. In our analysis we will make a simplifying assumption
+  that these bounderies / sizes / positions values are all of constant size.
+  \ This assumption holds when the Bit Machine is implemented on real
+  hardware which has an upper bound on its addressable memory and there is a
+  limit on the number of Cells that can be held anyways.
+
+  To bound these resources we perform a static analysis to compute an upper
+  bound on the maximum number of cells needed when executing a Simplicity
+  program on the Bit Machine for any input, and we compute an upper bound on
+  the maximum number of frames needed as well.
+
+  <subsubsection|Maximum Cell Count Bound>
+
+  We define the cell count of a frame to be the length of its underlying cell
+  array and the cell count of a Bit Machine state to be the sum of the cell
+  counts of all its frames.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|cellCount<around*|(|<carr|c<rsub|1>\<cdots\><wide*|c<rsub|i>|\<bar\>>\<cdots\>c<rsub|n>>|)>>|<cell|\<assign\>>|<cell|n>>|<row|<cell|cellCount<around*|(|<around*|[|r<rsub|n>\<vartriangleright\>\<ldots\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<ldots\>\<vartriangleleft\>w<rsub|m>|]>|)>>|<cell|\<assign\>>|<cell|<big|sum><rsup|n><rsub|i=0>cellCount<around*|(|r<rsub|i>|)>+<big|sum><rsup|m><rsub|j=0>cellCount<around*|(|w<rsub|j>|)>>>>>
+  </eqnarray*>
+
+  Given a trace of execution of a Bit Machine program <math|p> from an
+  initial state <math|S<rsub|0>> to a final state <math|S<rsub|1>>, <math|p :
+  S<rsub|0>\<twoheadrightarrow\>S<rsub|1>>, we define the cells required by
+  this execution as the cell count of every intermediate state.
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|i:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>>|<row|<cell|<math|cellsReq<around*|(|i|)><rsub|>\<assign\>
+    max<around*|(|cellCount<around*|(|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|)>,cellCount<around*|(|<around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>|)>|)>>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|k<rsub|0>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>|<cell|<math|k<rsub|1>
+    : <around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>>>|<row|<cell|<math|cellsReq<around*|(|k<rsub|0>;k<rsub|1>|)>\<assign\>max<around*|(|cellsReq<around*|(|k<rsub|0>|)>,cellsReq<around*|(|k<rsub|1>|)>|)>>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|k<rsub|0>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>|<row|<cell|<math|cellsReq<around*|(|k<rsub|0><around*|\|||\|>k<rsub|1>|)><rsub|>\<assign\>cellsReq<around*|(|k<rsub|0>|)>>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|k<rsub|1>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>|<row|<cell|<math|cellsReq<around*|(|k<rsub|0><around*|\|||\|>k<rsub|1>|)><rsub|>\<assign\>cellsReq<around*|(|k<rsub|1>|)>>>>>>>
+  </with>
+
+  \;
+
+  Note that when executing a Simplicity expression on the Bit Machine, the
+  size of the state prior and after execution is identical. For naive
+  transation of Simplicity to the Bit Machine, we can write a simple
+  recursive function that bounds the number of additional Cells needed to
+  evaluate a Simplicity expression beyond the size of the inital and final
+  state.
+
+  <\eqnarray*>
+    <tformat|<cwith|2|10|2|2|cell-halign|r>|<cwith|2|10|2|2|cell-halign|r>|<table|<row|<cell|extraCellsBound<around*|(|<math-ss|iden><rsub|A>|)>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|extraCellsBound<around*|(|<math-ss|comp><rsub|A,B,C>
+    s t|)>>|<cell|\<assign\>>|<cell|bitSize<around*|(|B|)>+max<around*|(|extraCellsBound<around*|(|s|)>,extraCellsBound<around*|(|t|)>|)>>>|<row|<cell|extraCellsBound<around*|(|<math-ss|unit><rsub|A>|)>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|extraCellsBound<around*|(|<math-ss|injl><rsub|A,B,C>
+    t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<around*|(|t|)>>>|<row|<cell|extraCellsBound<around*|(|<math-ss|injr><rsub|A,B,C>
+    t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<around*|(|t|)>>>|<row|<cell|extraCellsBound<around*|(|<math-ss|case><rsub|A,B,C,D>
+    s t|)>>|<cell|\<assign\>>|<cell|max<around*|(|extraCellsBound<around*|(|s|)>,extraCellsBound<around*|(|t|)>|)>>>|<row|<cell|extraCellsBound<around*|(|<math-ss|pair><rsub|A,B,C>
+    s t|)>>|<cell|\<assign\>>|<cell|max<around*|(|extraCellsBound<around*|(|s|)>,extraCellsBound<around*|(|t|)>|)>>>|<row|<cell|extraCellsBound<around*|(|<math-ss|take><rsub|A,B,C>
+    t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<around*|(|t|)>>>|<row|<cell|extraCellsBound<around*|(|<math-ss|drop><rsub|A,B,C>
+    t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<around*|(|t|)>>>>>
+  </eqnarray*>
+
+  <\lemma>
+    For any Simplicity expression <math|t:A\<vdash\>B>, such that
+
+    <\equation*>
+      <around*|\<llangle\>|t|\<rrangle\>>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>
+    </equation*>
+
+    we have that
+
+    <\enumerate>
+      <item><math|cellCount<around*|(|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|)>=cellCount<around*|(|<around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>|)>>
+
+      <item><math|cellsReq<around*|(|<around*|\<llangle\>|t|\<rrangle\>>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|)>+extraCellsBound<around*|(|t|)>>.
+    </enumerate>
+
+    In particular for <math|a:A> and
+
+    <\equation*>
+      <around*|\<llangle\>|t|\<rrangle\>>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
+    </equation*>
+
+    we have that
+
+    <math|cellsReq<around*|(|<around*|\<llangle\>|t|\<rrangle\>>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+extraCellsBound<around*|(|t|)>>.
+  </lemma>
+
+  We can compute a tighter bound for TCO translation, but the calculation is
+  a bit more complicated. \ The number of extra cells needed depends on
+  whether TCO is in the ``on'' state, and what the size of the active read
+  frame is.
+
+  <\eqnarray*>
+    <tformat|<cwith|2|10|2|2|cell-halign|r>|<cwith|2|10|2|2|cell-halign|r>|<table|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|iden><rsub|A>|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|comp><rsub|A,B,C>
+    s t|)>*<around*|(|r|)>>|<cell|\<assign\>>|<cell|bitSize<around*|(|B|)>+max<around*|(|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|s|)><around*|(|r|)>,<next-line>extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|bitSize<around*|(|B|)>|)>-r|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|unit><rsub|A>|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|injl><rsub|A,B,C>
+    t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO<rsub|>><rsub|dyn><around*|(|<math-ss|injr><rsub|A,B,C>
+    t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|case><rsub|A,B,C,D>
+    s t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|max<around*|(|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|s|)><around*|(|r|)>,<next-line>extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|r|)>|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|pair><rsub|A,B,C>
+    s t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|max<around*|(|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|s|)><rsup|><around*|(|0|)>,<next-line>extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|r|)>|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|take><rsub|A,B,C>
+    t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|drop><rsub|A,B,C>
+    t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>>>>
+  </eqnarray*>
+
+  <\lemma>
+    For any Simplicity expression <math|t:A\<vdash\>B>, such that
+
+    <\equation*>
+      <TCOon|t><rsup|>:<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>
+    </equation*>
+
+    and
+
+    <\equation*>
+      <TCOoff|t><rsup|>:<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>
+    </equation*>
+
+    we have that
+
+    <\enumerate>
+      <item><math|cellCount<around*|(|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|)>=cellCount<around*|(|r<rsub|on,0>|)>+cellCount<around*|(|<around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>|)>>
+      and<next-line><math|cellCount<around*|(|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|)>=cellCount<around*|(|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>|)>>
+
+      <item><math|cellsReq<around*|(|<TCOon|t>:<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|cellCount<around*|(|r<rsub|on,0>|)>|)>>
+      and<next-line><math|cellsReq<around*|(|<TCOoff|t><rsup|>:<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)>>.
+    </enumerate>
+
+    In particular for <math|a:A> and
+
+    <\equation*>
+      <TCOoff|t>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
+    </equation*>
+
+    we have that
+
+    <math|cellsReq<around*|(|<TCOoff|t>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)><text|.>>
+  </lemma>
+
+  The problem with <math|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>
+  is that it is effectively a dynamic analysis because its result is a
+  function. We cannot direclty use this definition to perform a static
+  analysis because we cannot cache and reuse results on shared
+  sub-expressions. \ Fortuantely we can charaterize the set of possible
+  functions returned by <math|extraCellsBound<rsup|TCO><rsub|dyn>> by a pair
+  of parameters.
+
+  <\equation*>
+    interp<rsup|TCO><around*|\<langle\>|n,m|\<rangle\>><around*|(|r|)>\<assign\>max<around*|(|n-r,m|)>
+  </equation*>
+
+  We can write a static analysis to compute the pair of parameters that
+  characterize the results of \ <math|extraCellsBound<rsup|TCO><rsub|dyn>>.
+
+  <\eqnarray*>
+    <tformat|<cwith|2|17|2|2|cell-halign|r>|<cwith|2|17|2|2|cell-halign|r>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|10|10|2|2|cell-halign|r>|<cwith|11|11|2|2|cell-halign|r>|<cwith|13|14|2|2|cell-halign|r>|<cwith|13|14|2|2|cell-halign|r>|<cwith|13|14|2|2|cell-halign|c>|<cwith|13|13|2|2|cell-halign|r>|<cwith|14|14|2|2|cell-halign|r>|<cwith|3|4|2|2|cell-halign|r>|<cwith|3|4|2|2|cell-halign|r>|<cwith|3|4|2|2|cell-halign|c>|<cwith|3|4|2|2|cell-halign|r>|<cwith|3|4|2|2|cell-halign|r>|<cwith|3|4|2|2|cell-halign|c>|<cwith|3|3|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<table|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|iden><rsub|A>|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|0,0|\<rangle\>>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|comp><rsub|A,B,C>
+    s t|)>*>|<cell|\<assign\>>|<cell|<around*|\<langle\>|max<around*|(|r<rsub|b>+n<rsub|s>,n<rsub|t>,r<rsub|b>+m<rsub|t>|)>,r<rsub|b>+m<rsub|s>|\<rangle\>>>>|<row|<cell|>|<cell|where>|<cell|<around*|\<langle\>|n<rsub|s>,m<rsub|s>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|s|)>>>|<row|<cell|>|<cell|and>|<cell|<around*|\<langle\>|n<rsub|t>,m<rsub|t>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|>|<cell|and>|<cell|r<rsub|b>\<assign\>bitSize<around*|(|B|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|unit><rsub|A>|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|0,0|\<rangle\>>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|injl><rsub|A,B,C>
+    t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO<rsub|>><rsub|static><around*|(|<math-ss|injr><rsub|A,B,C>
+    t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|case><rsub|A,B,C,D>
+    s t|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|max<around*|(|n<rsub|s>,n<rsub|t>|)>,max<around*|(|m<rsub|s>,m<rsub|t>|)>|\<rangle\>>>>|<row|<cell|>|<cell|where>|<cell|<around*|\<langle\>|n<rsub|s>,m<rsub|s>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|s|)>>>|<row|<cell|>|<cell|and>|<cell|<around*|\<langle\>|n<rsub|t>,m<rsub|t>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|pair><rsub|A,B,C>
+    s t|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|n<rsub|t>,max<around*|(|n<rsub|s>,m<rsub|s>,m<rsub|t>|)>|\<rangle\>>>>|<row|<cell|>|<cell|where>|<cell|<around*|\<langle\>|n<rsub|s>,m<rsub|s>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|s|)>>>|<row|<cell|>|<cell|and>|<cell|<around*|\<langle\>|n<rsub|t>,m<rsub|t>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|take><rsub|A,B,C>
+    t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|drop><rsub|A,B,C>
+    t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>>>
+  </eqnarray*>
+
+  When computing <math|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>
+  resulting values for shared sub-expressions can be shared, making
+  <math|extraCellsBound<rsup|TCO><rsub|static>> a static analysis. We can use
+  <math|interp<rsup|TCO>> and <math|extraCellsBound<rsup|TCO><rsub|static>>
+  to compute <math|extraCellsBound<rsup|TCO><rsub|dyn>> for our bound on cell
+  count.
+
+  <\lemma>
+    <math|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>=interp<rsup|TCO><around*|(|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>|)>>.
+  </lemma>
+
+  <\corollary>
+    For any Simplicity expression <math|t:A\<vdash\>B> and <math|a:A> such
+    that
+
+    <\equation*>
+      <TCOoff|t>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
+    </equation*>
+
+    we have that
+
+    <\equation*>
+      cellsReq<around*|(|<TCOoff|t>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>|)>\<leq\>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+max<around*|(|n,m|)><text|>
+    </equation*>
+
+    where <math|<around*|\<langle\>|n,m|\<rangle\>>\<assign\>><math|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>.
+  </corollary>
+
+  <subsubsection|Maximum Frame Count Bound>
+
   <subsection|Time Resources>
 
   <subsection|Commitment Merkle Root>
@@ -2404,63 +2618,63 @@
     <associate|auto-4|<tuple|2.1|7>>
     <associate|auto-40|<tuple|2.6|21>>
     <associate|auto-41|<tuple|2.6.1|21>>
-    <associate|auto-42|<tuple|2.6.2|21>>
-    <associate|auto-43|<tuple|2.6.3|21>>
-    <associate|auto-44|<tuple|2.7|21>>
-    <associate|auto-45|<tuple|2.7.1|21>>
-    <associate|auto-46|<tuple|3|23>>
-    <associate|auto-47|<tuple|3.1|23>>
-    <associate|auto-48|<tuple|3.1.1|23>>
-    <associate|auto-49|<tuple|3.2|23>>
+    <associate|auto-42|<tuple|2.6.1.1|21>>
+    <associate|auto-43|<tuple|2.6.1.2|21>>
+    <associate|auto-44|<tuple|2.6.2|21>>
+    <associate|auto-45|<tuple|2.6.3|21>>
+    <associate|auto-46|<tuple|2.7|23>>
+    <associate|auto-47|<tuple|2.7.1|23>>
+    <associate|auto-48|<tuple|3|23>>
+    <associate|auto-49|<tuple|3.1|23>>
     <associate|auto-5|<tuple|2.1.1|7>>
-    <associate|auto-50|<tuple|3.3|23>>
-    <associate|auto-51|<tuple|3.3.1|23>>
-    <associate|auto-52|<tuple|3.3.2|23>>
-    <associate|auto-53|<tuple|3.3.3|23>>
-    <associate|auto-54|<tuple|3.4|23>>
-    <associate|auto-55|<tuple|3.4.1|23>>
-    <associate|auto-56|<tuple|3.4.2|23>>
-    <associate|auto-57|<tuple|3.5|23>>
-    <associate|auto-58|<tuple|3.5.1|23>>
-    <associate|auto-59|<tuple|4|25>>
+    <associate|auto-50|<tuple|3.1.1|23>>
+    <associate|auto-51|<tuple|3.2|23>>
+    <associate|auto-52|<tuple|3.3|23>>
+    <associate|auto-53|<tuple|3.3.1|23>>
+    <associate|auto-54|<tuple|3.3.2|23>>
+    <associate|auto-55|<tuple|3.3.3|23>>
+    <associate|auto-56|<tuple|3.4|23>>
+    <associate|auto-57|<tuple|3.4.1|23>>
+    <associate|auto-58|<tuple|3.4.2|23>>
+    <associate|auto-59|<tuple|3.5|25>>
     <associate|auto-6|<tuple|2.1.1.1|7>>
-    <associate|auto-60|<tuple|4.1|25>>
-    <associate|auto-61|<tuple|5|27>>
-    <associate|auto-62|<tuple|5.1|27>>
-    <associate|auto-63|<tuple|6|29>>
-    <associate|auto-64|<tuple|6.1|29>>
-    <associate|auto-65|<tuple|6.2|29>>
-    <associate|auto-66|<tuple|6.2.1|29>>
-    <associate|auto-67|<tuple|6.2.2|29>>
-    <associate|auto-68|<tuple|6.2.2.1|30>>
-    <associate|auto-69|<tuple|6.2.2.2|30>>
+    <associate|auto-60|<tuple|3.5.1|25>>
+    <associate|auto-61|<tuple|4|27>>
+    <associate|auto-62|<tuple|4.1|27>>
+    <associate|auto-63|<tuple|5|29>>
+    <associate|auto-64|<tuple|5.1|29>>
+    <associate|auto-65|<tuple|6|29>>
+    <associate|auto-66|<tuple|6.1|29>>
+    <associate|auto-67|<tuple|6.2|29>>
+    <associate|auto-68|<tuple|6.2.1|30>>
+    <associate|auto-69|<tuple|6.2.2|30>>
     <associate|auto-7|<tuple|2.1.2|7>>
-    <associate|auto-70|<tuple|6.2.2.3|31>>
-    <associate|auto-71|<tuple|6.2.3|31>>
-    <associate|auto-72|<tuple|6.3|31>>
-    <associate|auto-73|<tuple|6.3.1|31>>
-    <associate|auto-74|<tuple|6.3.2|31>>
-    <associate|auto-75|<tuple|6.4|32>>
-    <associate|auto-76|<tuple|6.4.1|33>>
-    <associate|auto-77|<tuple|6.4.1.1|33>>
-    <associate|auto-78|<tuple|6.4.2|34>>
-    <associate|auto-79|<tuple|6.4.3|35>>
+    <associate|auto-70|<tuple|6.2.2.1|31>>
+    <associate|auto-71|<tuple|6.2.2.2|31>>
+    <associate|auto-72|<tuple|6.2.2.3|31>>
+    <associate|auto-73|<tuple|6.2.3|31>>
+    <associate|auto-74|<tuple|6.3|31>>
+    <associate|auto-75|<tuple|6.3.1|32>>
+    <associate|auto-76|<tuple|6.3.2|33>>
+    <associate|auto-77|<tuple|6.4|33>>
+    <associate|auto-78|<tuple|6.4.1|34>>
+    <associate|auto-79|<tuple|6.4.1.1|35>>
     <associate|auto-8|<tuple|2.1.2.1|8>>
-    <associate|auto-80|<tuple|7|35>>
-    <associate|auto-81|<tuple|7.1|36>>
-    <associate|auto-82|<tuple|7.2|36>>
-    <associate|auto-83|<tuple|7.3|36>>
-    <associate|auto-84|<tuple|7.3.1|36>>
-    <associate|auto-85|<tuple|7.3.2|37>>
-    <associate|auto-86|<tuple|7.3.2.1|37>>
-    <associate|auto-87|<tuple|7.3.2.2|37>>
-    <associate|auto-88|<tuple|7.3.3|37>>
-    <associate|auto-89|<tuple|7.3.4|37>>
+    <associate|auto-80|<tuple|6.4.2|35>>
+    <associate|auto-81|<tuple|6.4.3|36>>
+    <associate|auto-82|<tuple|7|36>>
+    <associate|auto-83|<tuple|7.1|36>>
+    <associate|auto-84|<tuple|7.2|36>>
+    <associate|auto-85|<tuple|7.3|37>>
+    <associate|auto-86|<tuple|7.3.1|37>>
+    <associate|auto-87|<tuple|7.3.2|37>>
+    <associate|auto-88|<tuple|7.3.2.1|37>>
+    <associate|auto-89|<tuple|7.3.2.2|37>>
     <associate|auto-9|<tuple|2.2|8>>
-    <associate|auto-90|<tuple|7.4|38>>
-    <associate|auto-91|<tuple|7.4.1|38>>
-    <associate|auto-92|<tuple|7.4.2|39>>
-    <associate|auto-93|<tuple|8|?>>
+    <associate|auto-90|<tuple|7.3.3|38>>
+    <associate|auto-91|<tuple|7.3.4|38>>
+    <associate|auto-92|<tuple|7.4|39>>
+    <associate|auto-93|<tuple|7.4.1|?>>
     <associate|auto-94|<tuple|7.4.2|?>>
     <associate|auto-95|<tuple|8|?>>
     <associate|auto-96|<tuple|8|?>>
@@ -2635,197 +2849,209 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-41>>
 
-      <with|par-left|<quote|1tab>|2.6.2<space|2spc>Time Resources
+      <with|par-left|<quote|2tab>|2.6.1.1<space|2spc>Maximum Cell Count Bound
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-42>>
 
-      <with|par-left|<quote|1tab>|2.6.3<space|2spc>Commitment Merkle Root
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|2tab>|2.6.1.2<space|2spc>Maximum Frame Count
+      Bound <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-43>>
 
-      2.7<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-44>
+      <with|par-left|<quote|1tab>|2.6.2<space|2spc>Time Resources
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-44>>
 
-      <with|par-left|<quote|1tab>|2.7.1<space|2spc>Type Inference
+      <with|par-left|<quote|1tab>|2.6.3<space|2spc>Commitment Merkle Root
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-45>>
 
+      2.7<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-46>
+
+      <with|par-left|<quote|1tab>|2.7.1<space|2spc>Type Inference
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-47>>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Full
       Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-46><vspace|0.5fn>
+      <no-break><pageref|auto-48><vspace|0.5fn>
 
       3.1<space|2spc>Assertions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-47>
+      <no-break><pageref|auto-49>
 
       <with|par-left|<quote|1tab>|3.1.1<space|2spc>Salted Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-48>>
+      <no-break><pageref|auto-50>>
 
       3.2<space|2spc>Witness Merkle Root <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-49>
+      <no-break><pageref|auto-51>
 
       3.3<space|2spc>Oracles <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-50>
+      <no-break><pageref|auto-52>
 
       <with|par-left|<quote|1tab>|3.3.1<space|2spc>Hidden Salted Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-51>>
+      <no-break><pageref|auto-53>>
 
       <with|par-left|<quote|1tab>|3.3.2<space|2spc>Serialization with Oracles
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-52>>
+      <no-break><pageref|auto-54>>
 
       <with|par-left|<quote|1tab>|3.3.3<space|2spc>Type Inference with
       Oracles <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-53>>
+      <no-break><pageref|auto-55>>
 
       3.4<space|2spc>Blockchain Primitives
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-54>
+      <no-break><pageref|auto-56>
 
       <with|par-left|<quote|1tab>|3.4.1<space|2spc>Bitcoin Transactions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-55>>
+      <no-break><pageref|auto-57>>
 
       <with|par-left|<quote|1tab>|3.4.2<space|2spc>Schnorr Signature
       Aggregation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-56>>
+      <no-break><pageref|auto-58>>
 
       3.5<space|2spc>Malleability <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-57>
+      <no-break><pageref|auto-59>
 
       <with|par-left|<quote|1tab>|3.5.1<space|2spc>Transaction Weight
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-58>>
+      <no-break><pageref|auto-60>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|4<space|2spc>Jetted
       Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-59><vspace|0.5fn>
+      <no-break><pageref|auto-61><vspace|0.5fn>
 
       4.1<space|2spc>Example: The Standard Single Signature
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-60>
+      <no-break><pageref|auto-62>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|5<space|2spc>Extended
       Simplicity> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-61><vspace|0.5fn>
+      <no-break><pageref|auto-63><vspace|0.5fn>
 
       5.1<space|2spc>Disconnect <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-62>
+      <no-break><pageref|auto-64>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|6<space|2spc>Coq
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-63><vspace|0.5fn>
+      <no-break><pageref|auto-65><vspace|0.5fn>
 
       6.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-64>
+      <no-break><pageref|auto-66>
 
       6.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-65>
+      <no-break><pageref|auto-67>
 
       <with|par-left|<quote|1tab>|6.2.1<space|2spc>The ``Initial''
       Representation of Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-66>>
+      <no-break><pageref|auto-68>>
 
       <with|par-left|<quote|1tab>|6.2.2<space|2spc>The ``Final''
       Representation of Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-67>>
+      <no-break><pageref|auto-69>>
 
       <with|par-left|<quote|2tab>|6.2.2.1<space|2spc>Simplicity Algebras
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-68>>
+      <no-break><pageref|auto-70>>
 
       <with|par-left|<quote|2tab>|6.2.2.2<space|2spc>The ``Final''
       Representation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-69>>
+      <no-break><pageref|auto-71>>
 
       <with|par-left|<quote|2tab>|6.2.2.3<space|2spc>Constructing ``Final''
       Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-70>>
+      <no-break><pageref|auto-72>>
 
       <with|par-left|<quote|1tab>|6.2.3<space|2spc>Why two representations of
       Terms? <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-71>>
+      <no-break><pageref|auto-73>>
 
       6.3<space|2spc>Example Simplicity Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-72>
+      <no-break><pageref|auto-74>
 
       <with|par-left|<quote|1tab>|6.3.1<space|2spc>Bits
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-73>>
+      <no-break><pageref|auto-75>>
 
       <with|par-left|<quote|1tab>|6.3.2<space|2spc>Arithmetic
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-74>>
+      <no-break><pageref|auto-76>>
 
       6.4<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-75>
+      <no-break><pageref|auto-77>
 
       <with|par-left|<quote|1tab>|6.4.1<space|2spc>Bit Machine Code
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-76>>
+      <no-break><pageref|auto-78>>
 
       <with|par-left|<quote|2tab>|6.4.1.1<space|2spc>Bit Machine Programs
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-77>>
+      <no-break><pageref|auto-79>>
 
-      6.5<space|2spc>Translating Simplicity to the Bit Machine
+      <with|par-left|<quote|1tab>|6.4.2<space|2spc>Translating Simplicity to
+      the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-80>>
+
+      <with|par-left|<quote|1tab>|6.4.3<space|2spc>Static Analysis
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-78>
+      <no-break><pageref|auto-81>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|7<space|2spc>Haskell
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-79><vspace|0.5fn>
+      <no-break><pageref|auto-82><vspace|0.5fn>
 
       7.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-80>
+      <no-break><pageref|auto-83>
 
       7.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-81>
+      <no-break><pageref|auto-84>
 
       7.3<space|2spc>Example Simplicity Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-82>
+      <no-break><pageref|auto-85>
 
       <with|par-left|<quote|1tab>|7.3.1<space|2spc>Bits
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-83>>
+      <no-break><pageref|auto-86>>
 
       <with|par-left|<quote|1tab>|7.3.2<space|2spc>Multi-bit Words
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-84>>
+      <no-break><pageref|auto-87>>
 
       <with|par-left|<quote|2tab>|7.3.2.1<space|2spc>Arithmetic operations
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-85>>
+      <no-break><pageref|auto-88>>
 
       <with|par-left|<quote|2tab>|7.3.2.2<space|2spc>Bit-wise operations
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-86>>
+      <no-break><pageref|auto-89>>
 
       <with|par-left|<quote|1tab>|7.3.3<space|2spc>Generic
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-87>>
+      <no-break><pageref|auto-90>>
 
       <with|par-left|<quote|1tab>|7.3.4<space|2spc>SHA-256
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-88>>
+      <no-break><pageref|auto-91>>
 
       7.4<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-89>
+      <no-break><pageref|auto-92>
 
       <with|par-left|<quote|1tab>|7.4.1<space|2spc>Translating Simplicity to
       the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-90>>
+      <no-break><pageref|auto-93>>
 
       <with|par-left|<quote|1tab>|7.4.2<space|2spc>Static Analysis
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-91>>
+      <no-break><pageref|auto-94>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-92><vspace|0.5fn>
+      <no-break><pageref|auto-95><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
