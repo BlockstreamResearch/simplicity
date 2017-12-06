@@ -221,18 +221,33 @@ Qed.
 
 Module MachineCode.
 
-(* This machine code type specifies all legal basic Bit Machine state
- * transitions.
+(* Although the types for the following instructions have the form of a
+ * Proposition (i.e. they have at most one inhabitant) we put them in the Set
+ * universe because we want to compute with the witness values.
  *)
-Inductive T : State -> State -> Set :=
-| NewFrame : forall n ctx,
-    T ctx
+Module NewFrame.
+
+Inductive T n ctx : State -> Set :=
+op : T n ctx
       {| inactiveReadFrames := inactiveReadFrames ctx
        ; activeReadFrame := activeReadFrame ctx
        ; activeWriteFrame := newWriteFrame n
        ; inactiveWriteFrames := activeWriteFrame ctx :: inactiveWriteFrames ctx
-       |}
-| MoveFrame : forall l ctx,
+       |}.
+
+(* This isn't really needed, but we add it for completeness *)
+Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : State & T n s0 s1}.
+right.
+econstructor.
+constructor.
+Defined.
+
+End NewFrame.
+
+Module MoveFrame.
+
+Inductive T : State -> State -> Set :=
+op : forall l ctx, 
     T {| inactiveReadFrames := inactiveReadFrames ctx
        ; activeReadFrame := activeReadFrame ctx
        ; activeWriteFrame := fullWriteFrame l
@@ -242,340 +257,300 @@ Inductive T : State -> State -> Set :=
        ; activeReadFrame := setFrame l
        ; activeWriteFrame := activeWriteFrame ctx
        ; inactiveWriteFrames := inactiveWriteFrames ctx
-       |}
-| DropFrame : forall rf ctx,
+       |}.
+
+Definition chk s0 : (forall s1, T s0 s1 -> False)+{s1 : State & T s0 s1}.
+destruct s0 as [irf arf [l n] [|awf iwf]].
+ left;abstract (inversion 1).
+destruct n as [|n];[|left;abstract (inversion 1)].
+pose (ctx := {| inactiveReadFrames := irf
+              ; activeReadFrame := arf
+              ; activeWriteFrame := awf
+              ; inactiveWriteFrames := iwf
+              |}).
+right.
+exists {| inactiveReadFrames := activeReadFrame ctx :: inactiveReadFrames ctx
+       ; activeReadFrame := setFrame (rev l)
+       ; activeWriteFrame := activeWriteFrame ctx
+       ; inactiveWriteFrames := inactiveWriteFrames ctx
+       |}.
+pattern l at 1.
+elim (rev_involutive l).
+exact (op _ ctx).
+Defined.
+
+End MoveFrame.
+
+Module DropFrame.
+
+Inductive T : State -> State -> Set :=
+op : forall rf ctx, 
     T {| inactiveReadFrames := activeReadFrame ctx :: inactiveReadFrames ctx
        ; activeReadFrame := rf
        ; activeWriteFrame := activeWriteFrame ctx
        ; inactiveWriteFrames := inactiveWriteFrames ctx
        |}
-      ctx
-| Write : forall b ctx,
-    T (fillContext ctx {| readLocalState := nil
+      ctx.
+
+Definition chk s0 : (forall s1, T s0 s1 -> False)+{s1 : State & T s0 s1}.
+destruct s0 as [[|arf irf] rf awf iwf].
+ left;abstract (inversion 1).
+right.
+pose (ctx := {| inactiveReadFrames := irf
+              ; activeReadFrame := arf
+              ; activeWriteFrame := awf
+              ; inactiveWriteFrames := iwf
+              |}).
+exists ctx.
+exact (op rf ctx).
+Defined.
+
+End DropFrame.
+
+Module Write.
+
+Inductive T b : State -> State -> Set :=
+op : forall ctx, 
+    T b 
+      (fillContext ctx {| readLocalState := nil
                         ; writeLocalState := newWriteFrame 1
                         |})
       (fillContext ctx {| readLocalState := nil
                         ; writeLocalState := fullWriteFrame (Some b :: nil)
-                        |})
-| Skip : forall n ctx,
-    T (fillContext ctx {| readLocalState := nil
+                        |}).
+
+Definition chk b s0 : (forall s1, T b s0 s1 -> False)+{s1 : State & T b s0 s1}.
+destruct s0 as [irf [rp rn] [wd [|we]] iwf].
+ left;abstract (inversion 1).
+right.
+eexists.
+exact (op _ {| inactiveReadFrames := irf
+        ; activeReadFrame := {| prevData := rp; nextData := rn |}
+        ; activeWriteFrame := {| writeData := wd; writeEmpty := we |}
+        ; inactiveWriteFrames := iwf
+        |}).
+Defined.
+
+End Write.
+
+Module Skip.
+
+Inductive T n : State -> State -> Set :=
+op : forall ctx, 
+    T n
+      (fillContext ctx {| readLocalState := nil
                         ; writeLocalState := newWriteFrame n
                         |})
       (fillContext ctx {| readLocalState := nil
                         ; writeLocalState := fullWriteFrame (repeat None n)
-                        |})
-| Copy : forall l ctx,
-    T (fillContext ctx {| readLocalState := l
-                        ; writeLocalState := newWriteFrame (length l)
+                        |}).
+
+Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : State & T n s0 s1}.
+destruct s0 as [irf [rp rn] [wd we] iwf].
+generalize (Nat.leb_spec n we).
+destruct (n <=? we)%nat;intros H.
+ right.
+ pose (ctx := {| inactiveReadFrames := irf
+               ; activeReadFrame := {| prevData := rp; nextData := rn |}
+               ; activeWriteFrame := {| writeData := wd; writeEmpty := we - n |}
+               ; inactiveWriteFrames := iwf
+               |}).
+ exists (fillContext ctx {| readLocalState := nil
+                          ; writeLocalState := fullWriteFrame (repeat None n)
+                          |}).
+ elim (Minus.le_plus_minus_r n we).
+  exact (op _ ctx).
+ abstract (inversion_clear H; assumption).
+left.
+abstract(
+ inversion 1;
+ apply (Lt.lt_not_le we n);
+ [inversion_clear H; assumption
+ |replace <- we;auto with arith
+ ]).
+Defined.
+
+End Skip.
+
+Module Copy.
+
+Inductive T n : State -> State -> Set :=
+op : forall l ctx, length l = n -> 
+    T n
+      (fillContext ctx {| readLocalState := l
+                        ; writeLocalState := newWriteFrame n
                         |})
       (fillContext ctx {| readLocalState := l
                         ; writeLocalState := fullWriteFrame l
-                        |})
-| Fwd : forall l ctx,
-    T (fillReadFrame ctx {| prevData := nil
+                        |}).
+
+Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : State & T n s0 s1}.
+destruct s0 as [irf [rp rn] [wd we] iwf].
+generalize (Nat.leb_spec n we).
+destruct (n <=? we)%nat;intros Hwe.
+ generalize (Nat.leb_spec n (length rn)).
+ destruct (n <=? length rn)%nat;intros Hrn.
+  right.
+  pose (ctx := {| inactiveReadFrames := irf
+                ; activeReadFrame := {| prevData := rp; nextData := skipn n rn |}
+                ; activeWriteFrame := {| writeData := wd; writeEmpty := we - n |}
+                ; inactiveWriteFrames := iwf
+                |}).
+  pose (l := firstn n rn).
+  exists (fillContext ctx {| readLocalState := l
+                           ; writeLocalState := fullWriteFrame l
+                           |}).
+  elim (firstn_skipn n rn).
+  elim (Minus.le_plus_minus_r n we).
+   refine (op n l ctx _).
+   abstract (apply (firstn_length_le _); inversion_clear Hrn; assumption).
+  abstract (inversion_clear Hwe; assumption).
+ left.
+ abstract (
+  inversion 1;
+  apply (Lt.lt_not_le (length rn) n);
+  [inversion_clear Hrn; assumption
+  |replace <- rn; replace <- n; rewrite app_length; auto with arith
+  ]).
+left.
+abstract(
+ inversion 1;
+ apply (Lt.lt_not_le we n);
+ [inversion_clear Hwe; assumption
+ |replace <- we;auto with arith
+ ]).
+Defined.
+
+End Copy.
+
+Module Fwd.
+
+Inductive T n : State -> State -> Set :=
+op : forall l ctx, length l = n -> 
+    T n
+      (fillReadFrame ctx {| prevData := nil
                           ; nextData := l
                           |})
       (fillReadFrame ctx {| prevData := rev l
                           ; nextData := nil
-                          |})
-| Bwd : forall l ctx,
-    T (fillReadFrame ctx {| prevData := rev l
+                          |}).
+
+Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : State & T n s0 s1}.
+Proof.
+destruct s0 as [irf [rp rn] awf iwf].
+generalize (Nat.leb_spec n (length rn)).
+destruct (n <=? length rn)%nat;intros Hrn.
+ right.
+ pose (ctx := {| inactiveReadFrames := irf
+               ; activeReadFrame := {| prevData := rp; nextData := skipn n rn |}
+               ; activeWriteFrame := awf
+               ; inactiveWriteFrames := iwf
+               |}).
+ pose (l := firstn n rn).
+ exists (fillReadFrame ctx {| prevData := rev l
+                            ; nextData := nil
+                            |}).
+ elim (firstn_skipn n rn).
+ refine (op n l ctx _).
+ abstract (apply (firstn_length_le _); inversion_clear Hrn; assumption).
+left.
+abstract (
+ inversion 1;
+ apply (Lt.lt_not_le (length rn) n);
+ [inversion_clear Hrn; assumption
+ |replace <- rn; replace <- n; rewrite app_length; auto with arith
+ ]).
+Defined.
+
+End Fwd.
+
+Module Bwd.
+
+Inductive T n : State -> State -> Set :=
+op : forall l ctx, length l = n -> 
+    T n
+      (fillReadFrame ctx {| prevData := rev l
                           ; nextData := nil
                           |})
       (fillReadFrame ctx {| prevData := nil
                           ; nextData := l
                           |}).
 
-End MachineCode.
-
-(* For each basic instruction we define function to check if a given state s is
- * valid state that the instruction can execute in.  If it is valid we return
- * a witness proving that s can be expressed in the form of a valid state. Each
- * function also has a correctness function that proves that any state that is
- * in the form of a valid state, the check function return success.  The
- * NewFrame instruction is valid in every state and therefore doesn't have a
- * check function.
- *)
-Definition MoveFrame_chk s :
-  option { lctx : list Cell * Context | let (l, ctx) := lctx in s =
-      {| inactiveReadFrames := inactiveReadFrames ctx
-       ; activeReadFrame := activeReadFrame ctx
-       ; activeWriteFrame := fullWriteFrame l
-       ; inactiveWriteFrames := activeWriteFrame ctx :: inactiveWriteFrames ctx
-       |}}.
-destruct s as [irf arf [l n] [|awf iwf]].
- exact None.
-destruct n as [|n];[|exact None].
-pose (ctx := {| inactiveReadFrames := irf
-              ; activeReadFrame := arf
-              ; activeWriteFrame := awf
-              ; inactiveWriteFrames := iwf
-              |}).
-left.
-exists (rev l, ctx).
-unfold fullWriteFrame.
-abstract (rewrite rev_involutive; reflexivity).
-Defined.
-
-Lemma MoveFrame_chk_correct l ctx : MoveFrame_chk
- {| inactiveReadFrames := inactiveReadFrames ctx
-  ; activeReadFrame := activeReadFrame ctx
-  ; activeWriteFrame := fullWriteFrame l
-  ; inactiveWriteFrames := activeWriteFrame ctx :: inactiveWriteFrames ctx
-  |} = Some (exist _ (l, ctx) (refl_equal _)).
-Proof.
-cbn.
-set (H := (MoveFrame_chk_subproof _ _ _ _ _)).
-generalize H; clear H.
-rewrite (rev_involutive l).
-apply (K_dec_set State_dec).
-destruct ctx as [irf arf awf iwf].
-reflexivity.
-Qed.
-
-Definition DropFrame_chk s :
-  option { rfctx : ReadFrame * Context | let (rf, ctx) := rfctx in s =
-      {| inactiveReadFrames := activeReadFrame ctx :: inactiveReadFrames ctx
-       ; activeReadFrame := rf
-       ; activeWriteFrame := activeWriteFrame ctx
-       ; inactiveWriteFrames := inactiveWriteFrames ctx
-       |}}.
-destruct s as [[|arf irf] rf awf iwf].
- exact None.
-left.
-exists (rf, {| inactiveReadFrames := irf
-             ; activeReadFrame := arf
-             ; activeWriteFrame := awf
-             ; inactiveWriteFrames := iwf
-             |}).
-reflexivity.
-Defined.
-
-Lemma DropFrame_chk_correct rf ctx : DropFrame_chk
- {| inactiveReadFrames := activeReadFrame ctx :: inactiveReadFrames ctx
-  ; activeReadFrame := rf
-  ; activeWriteFrame := activeWriteFrame ctx
-  ; inactiveWriteFrames := inactiveWriteFrames ctx
-  |} = Some (exist _ (rf, ctx) (refl_equal _)).
-Proof.
-destruct ctx; reflexivity.
-Qed.
-
-Definition Write_chk s :
-  option { ctx : Context | s =
-    fillContext ctx {| readLocalState := nil
-                     ; writeLocalState := newWriteFrame 1
-                     |}}.
-destruct s as [irf [rp rn] [wd [|we]] iwf].
- exact None.
-left.
-exists {| inactiveReadFrames := irf
-        ; activeReadFrame := {| prevData := rp; nextData := rn |}
-        ; activeWriteFrame := {| writeData := wd; writeEmpty := we |}
-        ; inactiveWriteFrames := iwf
-        |}.
-reflexivity.
-Defined.
-
-Lemma Write_chk_correct ctx : Write_chk
-  (fillContext ctx {| readLocalState := nil
-                    ; writeLocalState := newWriteFrame 1
-                    |})
-  = Some (exist _ ctx (refl_equal _)).
-Proof.
-destruct ctx as [irf [rp rn] [wd we] iwf].
-reflexivity.
-Qed.
-
-Definition Skip_chk n s :
-  option { ctx : Context | s =
-    fillContext ctx {| readLocalState := nil
-                     ; writeLocalState := newWriteFrame n
-                     |}}.
-destruct s as [irf [rp rn] [wd we] iwf].
-generalize (Nat.leb_spec n we).
-destruct (n <=? we)%nat;intros H;[|exact None].
-left.
-pose (ctx := {| inactiveReadFrames := irf
-              ; activeReadFrame := {| prevData := rp; nextData := rn |}
-              ; activeWriteFrame := {| writeData := wd; writeEmpty := we - n |}
-              ; inactiveWriteFrames := iwf
-              |}).
-exists ctx.
-abstract (
-  unfold fillContext; cbn;
-  inversion_clear H as [Hn|];
-  rewrite <- (Minus.le_plus_minus _ _ Hn);
-  reflexivity).
-Defined.
-
-Lemma Skip_chk_correct n ctx : Skip_chk n
-  (fillContext ctx {| readLocalState := nil
-                    ; writeLocalState := newWriteFrame n
-                    |})
-  = Some (exist _ ctx (refl_equal _)).
-Proof.
-cbn.
-destruct (Nat.leb_spec n (n + writeEmpty (activeWriteFrame ctx))) as [H0|H0];
- [|elim (Lt.lt_not_le _ _ H0); auto with arith].
-set (H := (Skip_chk_subproof _ _ _ _ _ _ _ _)).
-generalize H; clear H.
-rewrite Minus.minus_plus.
-apply (K_dec_set State_dec).
-destruct ctx as [irf [rp rn] [wd we] iwf].
-reflexivity.
-Qed.
-
-Definition Copy_chk n s :
-  option { lctx : list Cell * Context | let (l, ctx) := lctx in n = length l /\ s =
-    fillContext ctx {| readLocalState := l
-                     ; writeLocalState := newWriteFrame (length l)
-                     |}}.
-destruct s as [irf [rp rn] [wd we] iwf].
-generalize (Nat.leb_spec n we).
-destruct (n <=? we)%nat;intros Hwe;[|exact None].
-generalize (Nat.leb_spec n (length rn)).
-destruct (n <=? length rn)%nat;intros Hrn;[|exact None].
-left.
-pose (ctx := {| inactiveReadFrames := irf
-              ; activeReadFrame := {| prevData := rp; nextData := skipn n rn |}
-              ; activeWriteFrame := {| writeData := wd; writeEmpty := we - n |}
-              ; inactiveWriteFrames := iwf
-              |}).
-exists (firstn n rn, ctx).
-split.
-- abstract
-(inversion_clear Hrn as [H|];
- rewrite (firstn_length_le _ H);
- reflexivity).
-- abstract
-(inversion_clear Hrn as [H|];
- rewrite (firstn_length_le _ H);
- clear H;
- unfold fillContext; cbn;
- inversion_clear Hwe as [H|];
- rewrite firstn_skipn, <- (Minus.le_plus_minus _ _ H);
- reflexivity).
-Defined.
-
-Lemma Copy_chk_correct l ctx : Copy_chk (length l)
-  (fillContext ctx {| readLocalState := l
-                    ; writeLocalState := newWriteFrame (length l)
-                    |})
-  = Some (exist _ (l, ctx) (conj (refl_equal _) (refl_equal _))).
-Proof.
-cbn.
-destruct (Nat.leb_spec (length l) (length l + writeEmpty (activeWriteFrame ctx))) as [H0|H0];
- [|elim (Lt.lt_not_le _ _ H0); auto with arith].
-destruct (Nat.leb_spec (length l) (length (l ++ nextData (activeReadFrame ctx)))) as [H1|H1];
- [|elim (Lt.lt_not_le _ _ H1); rewrite app_length; auto with arith].
-set (H := (Copy_chk_subproof _ _ _)).
-generalize H; clear H.
-set (H := (Copy_chk_subproof0 _ _ _ _ _ _ _ _ _)).
-generalize H; clear H.
-rewrite firstn_app_3, Minus.minus_plus, skipn_app_3.
-intros H; elim H using (K_dec_set State_dec); clear H.
-apply (K_dec_set Nat.eq_dec).
-destruct ctx as [irf [rp rn] [wd we] iwf].
-reflexivity.
-Qed.
-
-Definition Fwd_chk n s :
-  option { lctx : list Cell * Context | let (l, ctx) := lctx in n = length l /\ s =
-    fillReadFrame ctx {| prevData := nil
-                       ; nextData := l
-                       |}}.
-destruct s as [irf [rp rn] awf iwf].
-generalize (Nat.leb_spec n (length rn)).
-destruct (n <=? length rn)%nat;intros Hrn;[|exact None].
-left.
-pose (ctx := {| inactiveReadFrames := irf
-              ; activeReadFrame := {| prevData := rp; nextData := skipn n rn |}
-              ; activeWriteFrame := awf
-              ; inactiveWriteFrames := iwf
-              |}).
-exists (firstn n rn, ctx).
-abstract(
-split;[
- inversion_clear Hrn as [H|];
- rewrite (firstn_length_le _ H);
- reflexivity
-|unfold fillReadFrame; cbn;
- inversion_clear Hrn as [H|];
- rewrite firstn_skipn;
- reflexivity
-]).
-Defined.
-
-Lemma Fwd_chk_correct l ctx : Fwd_chk (length l)
-  (fillReadFrame ctx {| prevData := nil
-                      ; nextData := l
-                      |})
-  = Some (exist _ (l, ctx) (conj (refl_equal _) (refl_equal _))).
-Proof.
-cbn.
-destruct (Nat.leb_spec (length l) (length (l ++ nextData (activeReadFrame ctx)))) as [H0|H0];
- [|elim (Lt.lt_not_le _ _ H0); rewrite app_length; auto with arith].
-set (H := (Fwd_chk_subproof _ _ _ _ _ _ _)).
-generalize H; clear H.
-rewrite firstn_app_3, skipn_app_3.
-intros [eq0 eq1].
-elim eq0 using (K_dec_set Nat.eq_dec).
-elim eq1 using (K_dec_set State_dec).
-clear eq0 eq1.
-destruct ctx as [irf [rp rn] [wd we] iwf].
-reflexivity.
-Qed.
-
-Definition Bwd_chk n s :
-  option { lctx : list Cell * Context | let (l, ctx) := lctx in n = length l /\ s =
-    fillReadFrame ctx {| prevData := rev l
-                       ; nextData := nil
-                       |}}.
-destruct s as [irf [rp rn] awf iwf].
+Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : State & T n s0 s1}.
+destruct s0 as [irf [rp rn] awf iwf].
 generalize (Nat.leb_spec n (length rp)).
-destruct (n <=? length rp)%nat;intros Hrp;[|exact None].
+destruct (n <=? length rp)%nat;intros Hrp.
+ right.
+ pose (ctx := {| inactiveReadFrames := irf
+               ; activeReadFrame := {| prevData := skipn n rp; nextData := rn |}
+               ; activeWriteFrame := awf
+               ; inactiveWriteFrames := iwf
+               |}).
+ pose (l := rev (firstn n rp)).
+ exists (fillReadFrame ctx {| prevData := nil
+                            ; nextData := l
+                            |}).
+ elim (firstn_skipn n rp).
+ elim (rev_involutive (firstn n rp)).
+ refine (op n l ctx _).
+ abstract (unfold l; rewrite rev_length; apply (firstn_length_le _); inversion_clear Hrp; assumption).
 left.
-pose (ctx := {| inactiveReadFrames := irf
-              ; activeReadFrame := {| prevData := skipn n rp; nextData := rn |}
-              ; activeWriteFrame := awf
-              ; inactiveWriteFrames := iwf
-              |}).
-exists (rev (firstn n rp), ctx).
-abstract(split;
-[inversion_clear Hrp as [H|];
- rewrite rev_length, (firstn_length_le _ H);
- reflexivity
-|unfold fillReadFrame; cbn;
- inversion_clear Hrp as [H|];
- rewrite rev_involutive, firstn_skipn;
- reflexivity
-]).
+abstract(
+ inversion 1;
+ apply (Lt.lt_not_le (length rp) n);
+ [inversion_clear Hrp; assumption
+ |replace <- rp; replace <- n; rewrite app_length, rev_length; auto with arith
+ ]).
 Defined.
 
-Lemma Bwd_chk_correct l ctx : Bwd_chk (length l)
-  (fillReadFrame ctx {| prevData := rev l
-                      ; nextData := nil
-                      |})
-  = Some (exist _ (l, ctx) (conj (refl_equal _) (refl_equal _))).
-Proof.
-cbn.
-destruct (Nat.leb_spec (length l) (length (rev l ++ prevData (activeReadFrame ctx)))) as [H0|H0];
- [|elim (Lt.lt_not_le _ _ H0); rewrite app_length, rev_length; auto with arith].
-set (H := (Bwd_chk_subproof _ _ _ _ _ _ _)).
-generalize H; clear H.
-replace (firstn (length l)) with (@firstn Cell (length (rev l))) by
-  (rewrite rev_length; reflexivity).
-replace (skipn (length l)) with (@skipn Cell (length (rev l))) by
-  (rewrite rev_length; reflexivity).
-rewrite firstn_app_3, skipn_app_3, rev_involutive.
-intros [eq0 eq1].
-elim eq0 using (K_dec_set Nat.eq_dec).
-elim eq1 using (K_dec_set State_dec).
-clear eq0 eq1.
-destruct ctx as [irf [rp rn] [wd we] iwf].
-reflexivity.
-Qed.
+End Bwd.
+
+(* This machine code type specifies all legal basic Bit Machine state
+ * transitions.
+ *)
+Inductive T (s0 s1 : State) : Set :=
+| NewFrame : forall n, NewFrame.T n s0 s1 -> T s0 s1
+| MoveFrame : MoveFrame.T s0 s1 -> T s0 s1
+| DropFrame : DropFrame.T s0 s1 -> T s0 s1
+| Write : forall b, Write.T b s0 s1 -> T s0 s1
+| Skip : forall n, Skip.T n s0 s1 -> T s0 s1
+| Copy : forall n, Copy.T n s0 s1 -> T s0 s1
+| Fwd : forall n, Fwd.T n s0 s1 -> T s0 s1
+| Bwd : forall n, Bwd.T n s0 s1 -> T s0 s1.
+Arguments NewFrame [s0 s1].
+Arguments MoveFrame [s0 s1].
+Arguments DropFrame [s0 s1].
+Arguments Write [s0 s1].
+Arguments Skip [s0 s1].
+Arguments Copy [s0 s1].
+Arguments Fwd [s0 s1].
+Arguments Bwd [s0 s1].
+
+Definition newFrame n ctx : T _ _ :=
+ NewFrame _ (NewFrame.op n ctx).
+
+Definition moveFrame l ctx : T _ _ :=
+ MoveFrame (MoveFrame.op l ctx).
+
+Definition dropFrame l ctx : T _ _ :=
+ DropFrame (DropFrame.op l ctx).
+
+Definition write b ctx : T _ _ :=
+ Write _ (Write.op b ctx).
+
+Definition skip n ctx : T _ _ :=
+ Skip _ (Skip.op n ctx).
+
+Definition copy l ctx : T _ _ :=
+ Copy _ (Copy.op (length l) l ctx (refl_equal _)).
+
+Definition fwd l ctx : T _ _ :=
+ Fwd _ (Fwd.op (length l) l ctx (refl_equal _)).
+
+Definition bwd l ctx : T _ _ :=
+ Bwd _ (Bwd.op (length l) l ctx (refl_equal _)).
+
+End MachineCode.
 
 Local Open Scope thrist_scope.
 
@@ -604,13 +579,13 @@ Definition nop : Program :=
  * on any abstract input (i.e. it doesn't need any iota reductions).
  *)
 Definition newFrame (n : nat) : Program :=
-  fun x => Some (existT _ _ (MachineCode.NewFrame n x <| [])).
+  fun x => Some (existT _ _ (MachineCode.newFrame n x <| [])).
 
 Definition moveFrame : Program.
-intros s.
-destruct (MoveFrame_chk s) as [P|];[left|right].
-destruct P as [[l ctx] Hs].
-exact (existT _ _ (eq_nil Hs |> MachineCode.MoveFrame l ctx)).
+intros s0.
+destruct (MachineCode.MoveFrame.chk s0) as [|[s1 t]];[right|left].
+eexists.
+exact (MachineCode.MoveFrame t <| []).
 Defined.
 
 Lemma moveFrame_correct : forall l ctx, moveFrame
@@ -618,19 +593,22 @@ Lemma moveFrame_correct : forall l ctx, moveFrame
    ; activeReadFrame := activeReadFrame ctx
    ; activeWriteFrame := fullWriteFrame l
    ; inactiveWriteFrames := activeWriteFrame ctx :: inactiveWriteFrames ctx
-   |} = Some (existT _ _ (MachineCode.MoveFrame l ctx <| [])).
+   |} = Some (existT _ _ (MachineCode.moveFrame l ctx <| [])).
 Proof.
 intros l ctx.
-unfold moveFrame.
-rewrite MoveFrame_chk_correct.
-reflexivity.
+cbn.
+generalize (rev_involutive (rev l)).
+rewrite (rev_involutive l).
+apply K_dec_set.
+ repeat decide equality.
+destruct ctx; reflexivity.
 Qed.
 
 Definition dropFrame : Program.
-intros s.
-destruct (DropFrame_chk s) as [P|];[left|right].
-destruct P as [[rf ctx] Hs].
-exact (existT _ _ (eq_nil Hs |> MachineCode.DropFrame rf ctx)).
+intros s0.
+destruct (MachineCode.DropFrame.chk s0) as [|[s1 t]];[right|left].
+eexists.
+exact (MachineCode.DropFrame t <| []).
 Defined.
 
 Lemma dropFrame_correct : forall rf ctx, dropFrame
@@ -638,101 +616,163 @@ Lemma dropFrame_correct : forall rf ctx, dropFrame
    ; activeReadFrame := rf
    ; activeWriteFrame := activeWriteFrame ctx
    ; inactiveWriteFrames := inactiveWriteFrames ctx
-   |} = Some (existT _ _ (MachineCode.DropFrame rf ctx <| [])).
+   |} = Some (existT _ _ (MachineCode.dropFrame rf ctx <| [])).
 Proof.
-intros l ctx.
-unfold dropFrame.
-rewrite DropFrame_chk_correct.
-reflexivity.
+intros rf ctx.
+destruct ctx; reflexivity.
 Qed.
 
 Definition write (b : bool) : Program.
-intros s.
-destruct (Write_chk s) as [P|];[left|right].
-destruct P as [ctx Hs].
-exact (existT _ _ (eq_nil Hs |> MachineCode.Write b ctx)).
+intros s0.
+destruct (MachineCode.Write.chk b s0) as [|[s1 t]];[right|left].
+eexists.
+exact (MachineCode.Write b t <| []).
 Defined.
 
 Lemma write_correct : forall b ctx, write b
   (fillContext ctx {| readLocalState := nil
                     ; writeLocalState := newWriteFrame 1
-                    |}) = Some (existT _ _ (MachineCode.Write b ctx <| [])).
+                    |}) = Some (existT _ _ (MachineCode.write b ctx <| [])).
 Proof.
-intros l ctx.
-unfold write.
-rewrite Write_chk_correct.
+intros b [irf [rp rn] [wd we] iwf].
 reflexivity.
 Qed.
 
 Definition skip (n : nat) : Program.
-intros s.
-destruct (Skip_chk n s) as [P|];[left|right].
-destruct P as [ctx Hs].
-exact (existT _ _ (eq_nil Hs |> MachineCode.Skip n ctx)).
+intros s0.
+destruct (MachineCode.Skip.chk n s0) as [|[s1 t]];[right|left].
+eexists.
+exact (MachineCode.Skip n t <| []).
 Defined.
 
 Lemma skip_correct : forall n ctx, skip n
   (fillContext ctx {| readLocalState := nil
                     ; writeLocalState := newWriteFrame n
-                    |}) = Some (existT _ _ (MachineCode.Skip n ctx <| [])).
+                    |}) = Some (existT _ _ (MachineCode.skip n ctx <| [])).
 Proof.
-intros l ctx.
+intros n ctx.
 unfold skip.
-rewrite Skip_chk_correct.
+cbn.
+set (H := Nat.leb_spec _ _).
+generalize H; clear H.
+rewrite (Compare_dec.leb_correct n (n + writeEmpty (activeWriteFrame ctx))%nat)
+  by auto with arith.
+intros H.
+set (e := Minus.le_plus_minus_r _ _ _).
+generalize e; clear e.
+rewrite Minus.minus_plus.
+apply (K_dec_set Nat.eq_dec).
+destruct ctx as [irf [rp rn] [wd we] iwf].
 reflexivity.
 Qed.
 
 Definition copy (n : nat) : Program.
-intros s.
-destruct (Copy_chk n s) as [P|];[left|right].
-destruct P as [[l ctx] [_ Hs]].
-exact (existT _ _ (eq_nil Hs |> MachineCode.Copy l ctx)).
+intros s0.
+destruct (MachineCode.Copy.chk n s0) as [|[s1 t]];[right|left].
+eexists.
+exact (MachineCode.Copy n t <| []).
 Defined.
 
 Lemma copy_correct : forall l ctx, copy (length l)
   (fillContext ctx {| readLocalState := l
                     ; writeLocalState := newWriteFrame (length l)
-                    |}) = Some (existT _ _ (MachineCode.Copy l ctx <| [])).
+                    |}) = Some (existT _ _ (MachineCode.copy l ctx <| [])).
 Proof.
 intros l ctx.
 unfold copy.
-rewrite Copy_chk_correct.
+cbn.
+set (H := Nat.leb_spec _ (_ + writeEmpty _)%nat).
+generalize H; clear H.
+rewrite (Compare_dec.leb_correct (length l) (length l + writeEmpty (activeWriteFrame ctx))%nat)
+  by auto with arith.
+intros H.
+set (H1 := Nat.leb_spec _ _).
+generalize H1; clear H1.
+rewrite (Compare_dec.leb_correct (length l) (length (l ++ nextData (activeReadFrame ctx))))
+  by (rewrite app_length;auto with arith).
+intros H1.
+set (e := Minus.le_plus_minus_r _ _ _).
+generalize e; clear e.
+rewrite Minus.minus_plus.
+apply (K_dec_set Nat.eq_dec).
+set (e := firstn_skipn _ _).
+generalize e; clear e.
+generalize (MachineCode.Copy.chk_subproof _ _ H1).
+rewrite firstn_app_3, skipn_app_3; intros e.
+apply (K_dec_set).
+ repeat decide equality.
+revert e.
+apply (K_dec_set Nat.eq_dec).
+destruct ctx as [irf [rp rn] [wd we] iwf].
 reflexivity.
 Qed.
 
 Definition fwd (n : nat) : Program.
-intros s.
-destruct (Fwd_chk n s) as [P|];[left|right].
-destruct P as [[l ctx] [_ Hs]].
-exact (existT _ _ (eq_nil Hs |> MachineCode.Fwd l ctx)).
+intros s0.
+destruct (MachineCode.Fwd.chk n s0) as [|[s1 t]];[right|left].
+eexists.
+exact (MachineCode.Fwd n t <| []).
 Defined.
 
 Lemma fwd_correct : forall l ctx, fwd (length l)
   (fillReadFrame ctx {| prevData := nil
                       ; nextData := l
-                      |}) = Some (existT _ _ (MachineCode.Fwd l ctx <| [])).
+                      |}) = Some (existT _ _ (MachineCode.fwd l ctx <| [])).
 Proof.
 intros l ctx.
-unfold fwd.
-rewrite Fwd_chk_correct.
+unfold fwd; cbn.
+set (H := Nat.leb_spec _ _).
+generalize H; clear H.
+rewrite (Compare_dec.leb_correct (length l) (length (l ++ nextData (activeReadFrame ctx))))
+  by (rewrite app_length;auto with arith).
+intros H1.
+set (e := firstn_skipn _ _).
+generalize e; clear e.
+generalize (MachineCode.Fwd.chk_subproof _ _ H1).
+rewrite firstn_app_3, skipn_app_3; intros e.
+apply (K_dec_set).
+ repeat decide equality.
+revert e.
+apply (K_dec_set Nat.eq_dec).
+destruct ctx as [irf [rp rn] [wd we] iwf].
 reflexivity.
 Qed.
 
 Definition bwd (n : nat) : Program.
-intros s.
-destruct (Bwd_chk n s) as [P|];[left|right].
-destruct P as [[l ctx] [_ Hs]].
-exact (existT _ _ (eq_nil Hs |> MachineCode.Bwd l ctx)).
+intros s0.
+destruct (MachineCode.Bwd.chk n s0) as [|[s1 t]];[right|left].
+eexists.
+exact (MachineCode.Bwd n t <| []).
 Defined.
 
 Lemma bwd_correct : forall l ctx, bwd (length l)
   (fillReadFrame ctx {| prevData := rev l
                       ; nextData := nil
-                      |}) = Some (existT _ _ (MachineCode.Bwd l ctx <| [])).
+                      |}) = Some (existT _ _ (MachineCode.bwd l ctx <| [])).
 Proof.
 intros l ctx.
-unfold bwd.
-rewrite Bwd_chk_correct.
+unfold bwd; cbn.
+set (H := Nat.leb_spec _ _).
+generalize H; clear H.
+rewrite (Compare_dec.leb_correct (length l) (length (rev l ++ prevData (activeReadFrame ctx))))
+  by (rewrite app_length, rev_length;auto with arith).
+intros H1.
+set (e := firstn_skipn _ _).
+generalize e; clear e.
+generalize (MachineCode.Bwd.chk_subproof _ _ H1).
+rewrite <- rev_length.
+rewrite firstn_app_3, skipn_app_3; intros e.
+apply K_dec_set.
+ repeat decide equality.
+set (e1 := rev_involutive (rev l)).
+generalize e1; clear e1.
+revert e; rewrite rev_involutive; intros e.
+apply K_dec_set.
+ repeat decide equality.
+revert e.
+rewrite rev_length.
+apply (K_dec_set Nat.eq_dec).
+destruct ctx as [irf [rp rn] [wd we] iwf].
 reflexivity.
 Qed.
 
@@ -823,13 +863,13 @@ Lemma stateShape_copy n x y :
  stateShape x = stateShape y.
 Proof.
 unfold copy, runMachine.
-destruct (Copy_chk _ x) as [[[l x0] [_ ->]]|];[cbn|discriminate].
+destruct (MachineCode.Copy.chk _ x) as [|[s1 [l ctx Hl]]];[discriminate|cbn].
 inversion_clear 1.
 do 2 rewrite fillContextShape_correct.
 f_equal.
 unfold localStateShape; cbn.
 rewrite fullWriteFrame_size.
-reflexivity.
+congruence.
 Qed.
 
 Lemma stateShape_write b x y :
@@ -837,7 +877,7 @@ Lemma stateShape_write b x y :
  stateShape x = stateShape y.
 Proof.
 unfold write, runMachine.
-destruct (Write_chk x) as [[x0 ->]|];[cbn|discriminate].
+destruct (MachineCode.Write.chk _ x) as [|[s1 [ctx]]];[discriminate|cbn].
 inversion_clear 1.
 do 2 rewrite fillContextShape_correct.
 reflexivity.
@@ -848,7 +888,7 @@ Lemma stateShape_skip n x y :
  stateShape x = stateShape y.
 Proof.
 unfold skip, runMachine.
-destruct (Skip_chk _ x) as [[x0 ->]|];[cbn|discriminate].
+destruct (MachineCode.Skip.chk _ x) as [|[s1 [ctx]]];[discriminate|cbn].
 inversion_clear 1.
 do 2 rewrite fillContextShape_correct.
 f_equal.
@@ -862,7 +902,7 @@ Lemma stateShape_fwd n x y :
  stateShape x = stateShape y.
 Proof.
 unfold fwd, runMachine.
-destruct (Fwd_chk _ x) as [[[l x0] [_ ->]]|];[cbn|discriminate].
+destruct (MachineCode.Fwd.chk _ x) as [|[s1 [ctx]]];[discriminate|cbn].
 inversion_clear 1.
 do 2 rewrite fillReadFrameShape_correct.
 f_equal.
@@ -876,7 +916,7 @@ Lemma stateShape_bwd n x y :
  stateShape x = stateShape y.
 Proof.
 unfold bwd, runMachine.
-destruct (Bwd_chk _ x) as [[[l x0] [_ ->]]|];[cbn|discriminate].
+destruct (MachineCode.Bwd.chk _ x) as [|[s1 [ctx]]];[discriminate|cbn].
 inversion_clear 1.
 do 2 rewrite fillReadFrameShape_correct.
 f_equal.
@@ -921,7 +961,7 @@ Lemma pMMR_moveFrame x :
  option_map (fun _ => stateSize x) (runMachine moveFrame x).
 Proof.
 unfold moveFrame, programMaximumMemoryResidence, runMachine in *.
-destruct (MoveFrame_chk x) as [[[l y] ->]|];[cbn|reflexivity].
+destruct (MachineCode.MoveFrame.chk x) as [|[s1 [ctx]]];[reflexivity|cbn].
 f_equal.
 apply N.max_l.
 unfold stateSize, stateShape, stateShapeSize.
@@ -937,7 +977,7 @@ Lemma pMMR_copy n x :
 Proof.
 assert (Hx := stateShape_copy n x).
 unfold copy, programMaximumMemoryResidence, runMachine in *.
-destruct (Copy_chk _ x) as [[[l y] [_ ->]]|];[cbn in *|reflexivity].
+destruct (MachineCode.Copy.chk n x) as [|[s1 [l ctx Hl]]];[reflexivity|cbn in *].
 unfold stateSize.
 rewrite (Hx _ (refl_equal _)), N.max_id.
 reflexivity.
@@ -949,7 +989,7 @@ Lemma pMMR_write b x :
 Proof.
 assert (Hx := stateShape_write b x).
 unfold write, programMaximumMemoryResidence, runMachine in *.
-destruct (Write_chk x) as [[y ->]|];[cbn in *|reflexivity].
+destruct (MachineCode.Write.chk b x) as [|[s1 [ctx]]];[reflexivity|cbn in *].
 unfold stateSize.
 rewrite (Hx _ (refl_equal _)), N.max_id.
 reflexivity.
@@ -961,7 +1001,7 @@ Lemma pMMR_skip n x :
 Proof.
 assert (Hx := stateShape_skip n x).
 unfold skip, programMaximumMemoryResidence, runMachine in *.
-destruct (Skip_chk _ x) as [[y ->]|];[cbn in *|reflexivity].
+destruct (MachineCode.Skip.chk n x) as [|[s1 [ctx]]];[reflexivity|cbn in *].
 unfold stateSize.
 rewrite (Hx _ (refl_equal _)), N.max_id.
 reflexivity.
@@ -973,7 +1013,7 @@ Lemma pMMR_fwd n x :
 Proof.
 assert (Hx := stateShape_fwd n x).
 unfold fwd, programMaximumMemoryResidence, runMachine in *.
-destruct (Fwd_chk _ x) as [[[l y] [_ ->]]|];[cbn in *|reflexivity].
+destruct (MachineCode.Fwd.chk n x) as [|[s1 [l ctx Hl]]];[reflexivity|cbn in *].
 unfold stateSize.
 rewrite (Hx _ (refl_equal _)), N.max_id.
 reflexivity.
@@ -985,7 +1025,7 @@ Lemma pMMR_bwd n x :
 Proof.
 assert (Hx := stateShape_bwd n x).
 unfold bwd, programMaximumMemoryResidence, runMachine in *.
-destruct (Bwd_chk _ x) as [[[l y] [_ ->]]|];[cbn in *|reflexivity].
+destruct (MachineCode.Bwd.chk n x) as [|[s1 [l ctx Hl]]];[reflexivity|cbn in *].
 unfold stateSize.
 rewrite (Hx _ (refl_equal _)), N.max_id.
 reflexivity.

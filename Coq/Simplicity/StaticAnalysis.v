@@ -35,13 +35,15 @@ set (x1 := Build_State _ _ _ _); specialize (Hs x1).
 destruct (runMachine _ x1) as [y0|];[cbn|discriminate].
 specialize (Hs _ (eq_refl _)).
 unfold moveFrame, runMachine at 3.
-destruct (MoveFrame_chk _) as [[[l0 st0] ->] |];[cbn|discriminate].
-set (y1 := Build_State _ _ _ _); specialize (Ht y1).
+destruct (MachineCode.MoveFrame.chk _) as [| [y1 st0]];[discriminate|cbn].
+specialize (Ht y1).
 destruct (runMachine _ y1) as [z0|];[cbn|discriminate].
 specialize (Ht _ (eq_refl _)).
 unfold dropFrame, runMachine.
-destruct (DropFrame_chk _) as [[[l1 st1] ->] |];[cbn|discriminate].
+destruct (MachineCode.DropFrame.chk _) as [| [z1 st1]];[discriminate|cbn].
 intros Hz; inversion Hz as [Hz0]; rewrite <- Hz0; clear z Hz Hz0.
+destruct st0 as [l0 ctx0].
+destruct st1 as [l1 ctx1].
 destruct x as [irf arf awf iwf];
 unfold stateShape in *; cbn in *.
 inversion Hs as [[Hs0 Hs1 Hs2 Hs3 Hs4]].
@@ -203,9 +205,7 @@ destruct (runMachine _ x0) as [y|];[cbn|discriminate].
 specialize (Hsx _ (refl_equal _)).
 rewrite pMMR_moveFrame.
 unfold moveFrame, runMachine at 2 3 4.
-destruct (MoveFrame_chk y) as [[[l ctx] ->] |];[cbn|discriminate].
-set (y0 := Build_State _ _ _ _).
-set (y := Build_State _ _ _ _) in Hsx |- *.
+destruct (MachineCode.MoveFrame.chk _) as [| [y0 sty]];[discriminate|cbn].
 specialize (Ht y0).
 destruct (programMaximumMemoryResidence _ y0) as [ny|];[cbn|discriminate].
 specialize (Ht _ (refl_equal _)).
@@ -213,26 +213,26 @@ assert (Hty := StateShape.Core_spec t y0).
 destruct (runMachine _ y0) as [z|];[cbn|discriminate].
 specialize (Hty _ (refl_equal _)).
 unfold programMaximumMemoryResidence, dropFrame.
-destruct (DropFrame_chk z) as [[[l0 ctx0] ->] |];[cbn|discriminate].
+destruct (MachineCode.DropFrame.chk _) as [| [z0 stz]];[discriminate|cbn].
 inversion_clear 1.
-set (z0 := Build_State _ _ _ _) in Hty |- *.
 unfold MemoryBound in *; cbn.
 unfold stateSize.
 rewrite <- Hsx, <- Hty.
-fold (stateSize y0); fold (stateSize ctx0); fold (stateSize x0); fold (stateSize x).
+fold (stateSize y0); fold (stateSize z0); fold (stateSize x0); fold (stateSize x).
 rewrite N.add_assoc.
 replace (stateSize x + _) with (stateSize x0).
  rewrite <- N.add_max_distr_l,
-         (N.max_l (stateSize y0) (stateSize ctx0)),
+         (N.max_l (stateSize y0) (stateSize z0)),
          (N.max_r (stateSize x) (stateSize x0)),
          (N.max_comm nx _), (N.max_assoc (stateSize x0) _ _), N.max_id,
          N.max_assoc, N.max_comm.
    replace (stateSize y0) with (stateSize x0) in *.
     apply N.max_le_compat; apply N.max_lub; solve [assumption|apply N.le_add_r].
-   clear -Hsx.
+   clear -Hsx sty.
    unfold stateSize.
    rewrite Hsx.
-   unfold y, y0, stateShape, stateShapeSize; cbn.
+   destruct sty as [l0 ctx0].
+   unfold stateShape, stateShapeSize; cbn.
    rewrite fullWriteFrame_size.
    ring.
   unfold x0; clear.
@@ -243,7 +243,7 @@ replace (stateSize x + _) with (stateSize x0).
   apply N.le_add_r.
  unfold stateSize.
  rewrite Hty.
- unfold z0; clear.
+ destruct stz as [rf0 ctx0].
  destruct ctx0 as [irf arf awf iwf]; cbn.
  unfold stateShape, stateShapeSize; cbn.
  repeat rewrite N.add_assoc; repeat apply N.add_le_mono_r.
