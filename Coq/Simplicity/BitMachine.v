@@ -247,7 +247,7 @@ End NewFrame.
 Module MoveFrame.
 
 Inductive T : State -> State -> Set :=
-op : forall l ctx, 
+op : forall l ctx,
     T {| inactiveReadFrames := inactiveReadFrames ctx
        ; activeReadFrame := activeReadFrame ctx
        ; activeWriteFrame := fullWriteFrame l
@@ -284,7 +284,7 @@ End MoveFrame.
 Module DropFrame.
 
 Inductive T : State -> State -> Set :=
-op : forall rf ctx, 
+op : forall rf ctx,
     T {| inactiveReadFrames := activeReadFrame ctx :: inactiveReadFrames ctx
        ; activeReadFrame := rf
        ; activeWriteFrame := activeWriteFrame ctx
@@ -310,8 +310,8 @@ End DropFrame.
 Module Write.
 
 Inductive T b : State -> State -> Set :=
-op : forall ctx, 
-    T b 
+op : forall ctx,
+    T b
       (fillContext ctx {| readLocalState := nil
                         ; writeLocalState := newWriteFrame 1
                         |})
@@ -336,7 +336,7 @@ End Write.
 Module Skip.
 
 Inductive T n : State -> State -> Set :=
-op : forall ctx, 
+op : forall ctx,
     T n
       (fillContext ctx {| readLocalState := nil
                         ; writeLocalState := newWriteFrame n
@@ -375,7 +375,7 @@ End Skip.
 Module Copy.
 
 Inductive T n : State -> State -> Set :=
-op : forall l ctx, length l = n -> 
+op : forall l ctx, length l = n ->
     T n
       (fillContext ctx {| readLocalState := l
                         ; writeLocalState := newWriteFrame n
@@ -426,7 +426,7 @@ End Copy.
 Module Fwd.
 
 Inductive T n : State -> State -> Set :=
-op : forall l ctx, length l = n -> 
+op : forall l ctx, length l = n ->
     T n
       (fillReadFrame ctx {| prevData := nil
                           ; nextData := l
@@ -467,7 +467,7 @@ End Fwd.
 Module Bwd.
 
 Inductive T n : State -> State -> Set :=
-op : forall l ctx, length l = n -> 
+op : forall l ctx, length l = n ->
     T n
       (fillReadFrame ctx {| prevData := rev l
                           ; nextData := nil
@@ -564,9 +564,49 @@ Notation "x ->> y" := (Thrst MachineCode.T x y) (at level 70) : type_scope.
  *)
 Definition Program := forall x : State, option { y : State & x ->> y }.
 
+Definition runProgram (p : Program) s0 s1 := exists tr : s0 ->> s1, (p s0) = Some (existT _ _ tr).
+
+Notation "s0 >>- p ->> s1" := (runProgram p s0 s1) (at level 70, p at next level) : type_scope.
+
+Definition trace {p s0 s1} : s0 >>- p ->> s1 -> s0 ->> s1.
+unfold runProgram.
+intros Htr.
+destruct (p s0) as [[s1' Hs1]|].
+ replace s1 with s1'.
+  exact Hs1.
+ abstract (destruct Htr as [tr Htr]; inversion_clear Htr; reflexivity).
+abstract (elimtype False; destruct Htr as [tr Htr]; discriminate).
+Defined.
+
+Lemma trace_correct {p s0 s1} (tr : s0 >>- p ->> s1) : p s0 = Some (existT _ _ (trace tr)).
+Proof.
+revert tr.
+unfold trace, runProgram.
+destruct (p s0) as [[s1' Hs1]|].
+ intros tr.
+ set (eq:= trace_subproof _ _ _ _ _).
+ destruct eq; reflexivity.
+intros [tr Htr].
+discriminate.
+Qed.
+
 (* The nop program has no basic instructions. *)
 Definition nop : Program :=
   fun x => Some (existT _ x []).
+
+Lemma nop_correct s : s >>- nop ->> s.
+Proof.
+eexists.
+reflexivity.
+Qed.
+
+Lemma nop_complete s1 s2 : s1 >>- nop ->> s2 -> s1 = s2.
+Proof.
+intros [tr Htr].
+unfold nop, runProgram in Htr.
+inversion_clear Htr.
+reflexivity.
+Qed.
 
 (* For each basic instruction we define a program that executes only that
  * single instruction.  For each instruction we have a correctness lemma
@@ -581,6 +621,35 @@ Definition nop : Program :=
 Definition newFrame (n : nat) : Program :=
   fun x => Some (existT _ _ (MachineCode.newFrame n x <| [])).
 
+Lemma newFrame_correct n s : s >>- newFrame n ->> {|
+       inactiveReadFrames := inactiveReadFrames s;
+       activeReadFrame := activeReadFrame s;
+       activeWriteFrame := newWriteFrame n;
+       inactiveWriteFrames := activeWriteFrame s :: inactiveWriteFrames s |}.
+Proof.
+eexists.
+reflexivity.
+Qed.
+
+Lemma newFrame_complete n s0 s1 :
+  s0 >>- newFrame n ->> s1 ->
+  MachineCode.NewFrame.T n s0 s1.
+unfold newFrame, runProgram.
+intros Htr.
+replace s1 with
+      {| inactiveReadFrames := inactiveReadFrames s0
+       ; activeReadFrame := activeReadFrame s0
+       ; activeWriteFrame := newWriteFrame n
+       ; inactiveWriteFrames := activeWriteFrame s0 :: inactiveWriteFrames s0
+       |}.
+ constructor.
+abstract(
+ destruct Htr as [tr Htr];
+ inversion_clear Htr;
+ reflexivity
+).
+Defined.
+
 Definition moveFrame : Program.
 intros s0.
 destruct (MachineCode.MoveFrame.chk s0) as [|[s1 t]];[right|left].
@@ -588,21 +657,43 @@ eexists.
 exact (MachineCode.MoveFrame t <| []).
 Defined.
 
-Lemma moveFrame_correct : forall l ctx, moveFrame
-  {| inactiveReadFrames := inactiveReadFrames ctx
-   ; activeReadFrame := activeReadFrame ctx
+Lemma moveFrame_correct : forall l irf arf awf iwf,
+  {| inactiveReadFrames := irf
+   ; activeReadFrame := arf
    ; activeWriteFrame := fullWriteFrame l
-   ; inactiveWriteFrames := activeWriteFrame ctx :: inactiveWriteFrames ctx
-   |} = Some (existT _ _ (MachineCode.moveFrame l ctx <| [])).
+   ; inactiveWriteFrames := awf :: iwf
+   |}
+  >>- moveFrame ->>
+  {| inactiveReadFrames := arf :: irf
+   ; activeReadFrame := setFrame l
+   ; activeWriteFrame := awf
+   ; inactiveWriteFrames := iwf
+   |}.
 Proof.
-intros l ctx.
+eexists.
 cbn.
 generalize (rev_involutive (rev l)).
 rewrite (rev_involutive l).
 apply K_dec_set.
  repeat decide equality.
-destruct ctx; reflexivity.
+reflexivity.
 Qed.
+
+Lemma moveFrame_complete s0 s1 :
+  s0 >>- moveFrame ->> s1 ->
+  MachineCode.MoveFrame.T s0 s1.
+unfold moveFrame, runProgram.
+destruct (MachineCode.MoveFrame.chk s0) as [|[s1' Hs1]].
+ abstract (intros Htr; elimtype False; destruct Htr; discriminate).
+intros Htr.
+replace s1 with s1'.
+ exact Hs1.
+abstract(
+ destruct Htr as [tr Htr];
+ inversion_clear Htr;
+ reflexivity
+).
+Defined.
 
 Definition dropFrame : Program.
 intros s0.
@@ -611,16 +702,32 @@ eexists.
 exact (MachineCode.DropFrame t <| []).
 Defined.
 
-Lemma dropFrame_correct : forall rf ctx, dropFrame
-  {| inactiveReadFrames := activeReadFrame ctx :: inactiveReadFrames ctx
+Lemma dropFrame_correct : forall rf s,
+  {| inactiveReadFrames := activeReadFrame s :: inactiveReadFrames s
    ; activeReadFrame := rf
-   ; activeWriteFrame := activeWriteFrame ctx
-   ; inactiveWriteFrames := inactiveWriteFrames ctx
-   |} = Some (existT _ _ (MachineCode.dropFrame rf ctx <| [])).
+   ; activeWriteFrame := activeWriteFrame s
+   ; inactiveWriteFrames := inactiveWriteFrames s
+   |} >>- dropFrame ->> s.
 Proof.
-intros rf ctx.
-destruct ctx; reflexivity.
+eexists.
+destruct s; reflexivity.
 Qed.
+
+Lemma dropFrame_complete s0 s1 :
+  s0 >>- dropFrame ->> s1 ->
+  MachineCode.DropFrame.T s0 s1.
+unfold dropFrame, runProgram.
+destruct (MachineCode.DropFrame.chk s0) as [|[s1' Hs1]].
+ abstract (intros Htr; elimtype False; destruct Htr; discriminate).
+intros Htr.
+replace s1 with s1'.
+ exact Hs1.
+abstract(
+ destruct Htr as [tr Htr];
+ inversion_clear Htr;
+ reflexivity
+).
+Defined.
 
 Definition write (b : bool) : Program.
 intros s0.
@@ -629,14 +736,31 @@ eexists.
 exact (MachineCode.Write b t <| []).
 Defined.
 
-Lemma write_correct : forall b ctx, write b
-  (fillContext ctx {| readLocalState := nil
-                    ; writeLocalState := newWriteFrame 1
-                    |}) = Some (existT _ _ (MachineCode.write b ctx <| [])).
+Lemma write_correct : forall b ctx,
+  fillContext ctx {| readLocalState := nil; writeLocalState := newWriteFrame 1 |}
+  >>- write b ->>
+  fillContext ctx
+   {| readLocalState := nil; writeLocalState := fullWriteFrame (Some b :: nil) |}.
 Proof.
-intros b [irf [rp rn] [wd we] iwf].
+eexists.
 reflexivity.
 Qed.
+
+Lemma write_complete b s0 s1 :
+  s0 >>- write b ->> s1 ->
+  MachineCode.Write.T b s0 s1.
+unfold write, runProgram.
+destruct (MachineCode.Write.chk _ s0) as [|[s1' Hs1]].
+ abstract (intros Htr; elimtype False; destruct Htr; discriminate).
+intros Htr.
+replace s1 with s1'.
+ exact Hs1.
+abstract(
+ destruct Htr as [tr Htr];
+ inversion_clear Htr;
+ reflexivity
+).
+Defined.
 
 Definition skip (n : nat) : Program.
 intros s0.
@@ -645,12 +769,13 @@ eexists.
 exact (MachineCode.Skip n t <| []).
 Defined.
 
-Lemma skip_correct : forall n ctx, skip n
-  (fillContext ctx {| readLocalState := nil
-                    ; writeLocalState := newWriteFrame n
-                    |}) = Some (existT _ _ (MachineCode.skip n ctx <| [])).
+Lemma skip_correct : forall n ctx,
+  fillContext ctx {| readLocalState := nil; writeLocalState := newWriteFrame n |}
+  >>- skip n ->>
+  fillContext ctx
+   {| readLocalState := nil; writeLocalState := fullWriteFrame (repeat None n) |}.
 Proof.
-intros n ctx.
+eexists.
 unfold skip.
 cbn.
 set (H := Nat.leb_spec _ _).
@@ -662,9 +787,24 @@ set (e := Minus.le_plus_minus_r _ _ _).
 generalize e; clear e.
 rewrite Minus.minus_plus.
 apply (K_dec_set Nat.eq_dec).
-destruct ctx as [irf [rp rn] [wd we] iwf].
 reflexivity.
 Qed.
+
+Lemma skip_complete n s0 s1 :
+  s0 >>- skip n ->> s1 ->
+  MachineCode.Skip.T n s0 s1.
+unfold skip, runProgram.
+destruct (MachineCode.Skip.chk _ s0) as [|[s1' Hs1]].
+ abstract (intros Htr; elimtype False; destruct Htr; discriminate).
+intros Htr.
+replace s1 with s1'.
+ exact Hs1.
+abstract(
+ destruct Htr as [tr Htr];
+ inversion_clear Htr;
+ reflexivity
+).
+Defined.
 
 Definition copy (n : nat) : Program.
 intros s0.
@@ -673,12 +813,12 @@ eexists.
 exact (MachineCode.Copy n t <| []).
 Defined.
 
-Lemma copy_correct : forall l ctx, copy (length l)
-  (fillContext ctx {| readLocalState := l
-                    ; writeLocalState := newWriteFrame (length l)
-                    |}) = Some (existT _ _ (MachineCode.copy l ctx <| [])).
+Lemma copy_correct : forall l ctx,
+  fillContext ctx {| readLocalState := l; writeLocalState := newWriteFrame (length l) |}
+  >>- copy (length l) ->>
+  fillContext ctx {| readLocalState := l; writeLocalState := fullWriteFrame l |}.
 Proof.
-intros l ctx.
+eexists.
 unfold copy.
 cbn.
 set (H := Nat.leb_spec _ (_ + writeEmpty _)%nat).
@@ -703,9 +843,24 @@ apply (K_dec_set).
  repeat decide equality.
 revert e.
 apply (K_dec_set Nat.eq_dec).
-destruct ctx as [irf [rp rn] [wd we] iwf].
 reflexivity.
 Qed.
+
+Lemma copy_complete n s0 s1 :
+  s0 >>- copy n ->> s1 ->
+  MachineCode.Copy.T n s0 s1.
+unfold copy, runProgram.
+destruct (MachineCode.Copy.chk _ s0) as [|[s1' Hs1]].
+ abstract (intros Htr; elimtype False; destruct Htr; discriminate).
+intros Htr.
+replace s1 with s1'.
+ exact Hs1.
+abstract(
+ destruct Htr as [tr Htr];
+ inversion_clear Htr;
+ reflexivity
+).
+Defined.
 
 Definition fwd (n : nat) : Program.
 intros s0.
@@ -714,12 +869,12 @@ eexists.
 exact (MachineCode.Fwd n t <| []).
 Defined.
 
-Lemma fwd_correct : forall l ctx, fwd (length l)
-  (fillReadFrame ctx {| prevData := nil
-                      ; nextData := l
-                      |}) = Some (existT _ _ (MachineCode.fwd l ctx <| [])).
+Lemma fwd_correct : forall l ctx,
+  fillReadFrame ctx {| prevData := nil; nextData := l |}
+  >>- fwd (length l) ->>
+  fillReadFrame ctx {| prevData := rev l; nextData := nil |}.
 Proof.
-intros l ctx.
+eexists.
 unfold fwd; cbn.
 set (H := Nat.leb_spec _ _).
 generalize H; clear H.
@@ -734,9 +889,24 @@ apply (K_dec_set).
  repeat decide equality.
 revert e.
 apply (K_dec_set Nat.eq_dec).
-destruct ctx as [irf [rp rn] [wd we] iwf].
 reflexivity.
 Qed.
+
+Lemma fwd_complete n s0 s1 :
+  s0 >>- fwd n ->> s1 ->
+  MachineCode.Fwd.T n s0 s1.
+unfold fwd, runProgram.
+destruct (MachineCode.Fwd.chk _ s0) as [|[s1' Hs1]].
+ abstract (intros Htr; elimtype False; destruct Htr; discriminate).
+intros Htr.
+replace s1 with s1'.
+ exact Hs1.
+abstract(
+ destruct Htr as [tr Htr];
+ inversion_clear Htr;
+ reflexivity
+).
+Defined.
 
 Definition bwd (n : nat) : Program.
 intros s0.
@@ -745,12 +915,12 @@ eexists.
 exact (MachineCode.Bwd n t <| []).
 Defined.
 
-Lemma bwd_correct : forall l ctx, bwd (length l)
-  (fillReadFrame ctx {| prevData := rev l
-                      ; nextData := nil
-                      |}) = Some (existT _ _ (MachineCode.bwd l ctx <| [])).
+Lemma bwd_correct : forall l ctx,
+  fillReadFrame ctx {| prevData := rev l; nextData := nil |}
+  >>- bwd (length l) ->>
+  fillReadFrame ctx {| prevData := nil; nextData := l |}.
 Proof.
-intros l ctx.
+eexists.
 unfold bwd; cbn.
 set (H := Nat.leb_spec _ _).
 generalize H; clear H.
@@ -772,9 +942,24 @@ apply K_dec_set.
 revert e.
 rewrite rev_length.
 apply (K_dec_set Nat.eq_dec).
-destruct ctx as [irf [rp rn] [wd we] iwf].
 reflexivity.
 Qed.
+
+Lemma bwd_complete n s0 s1 :
+  s0 >>- bwd n ->> s1 ->
+  MachineCode.Bwd.T n s0 s1.
+unfold bwd, runProgram.
+destruct (MachineCode.Bwd.chk _ s0) as [|[s1' Hs1]].
+ abstract (intros Htr; elimtype False; destruct Htr; discriminate).
+intros Htr.
+replace s1 with s1'.
+ exact Hs1.
+abstract(
+ destruct Htr as [tr Htr];
+ inversion_clear Htr;
+ reflexivity
+).
+Defined.
 
 (* The basic instruction crash always crashes the machine.  Crash doesn't
  * appear in the MachineCode.T because there is no state that is can
@@ -806,90 +991,183 @@ Notation "p1 ||| p2" := (choice p1 p2) (at level 50, left associativity) : mc_sc
 
 Local Open Scope mc_scope.
 
+Lemma seq_correct p q s0 s1 s2 :
+ s0 >>- p ->> s1 ->
+ s1 >>- q ->> s2 ->
+ s0 >>- p ;;; q ->> s2.
+Proof.
+intros [trp Hp] [trq Hq].
+eexists.
+unfold seq.
+rewrite Hp, Hq.
+reflexivity.
+Qed.
+
+Lemma seq_complete p q s0 s2 :
+ s0 >>- p ;;; q ->> s2 ->
+ { s1 | s0 >>- p ->> s1 & s1 >>- q ->> s2}.
+unfold seq, runProgram.
+destruct (p s0) as [[s1 tr1]|].
+- intros Hpq.
+  exists s1.
+   exists tr1; reflexivity.
+  abstract (
+   destruct (q s1) as [[s2' tr2]|];
+   [destruct Hpq as [tr Htr];
+    inversion Htr;
+    exists tr2; reflexivity
+   |destruct Hpq; discriminate
+   ]).
+- abstract (intros Hpq; elimtype False; destruct Hpq; discriminate).
+Defined.
+
+Lemma choice_left_correct p q s0 s1 :
+ head (nextData (activeReadFrame s0)) = Some (Some false) ->
+ s0 >>- p ->> s1 ->
+ s0 >>- p ||| q ->> s1.
+Proof.
+unfold choice, runProgram.
+destruct (nextData _) as [|[[|]|] tl]; try discriminate.
+auto.
+Qed.
+
+Lemma choice_right_correct p q s0 s1 :
+ head (nextData (activeReadFrame s0)) = Some (Some true) ->
+ s0 >>- q ->> s1 ->
+ s0 >>- p ||| q ->> s1.
+Proof.
+unfold choice, runProgram.
+destruct (nextData _) as [|[[|]|] tl]; try discriminate.
+auto.
+Qed.
+
+Lemma choice_complete p q s0 s1 :
+ s0 >>- p ||| q ->> s1 ->
+ { b | head (nextData (activeReadFrame s0)) = Some (Some b)
+     & s0 >>- (if b then q else p) ->> s1 }.
+unfold choice, runProgram.
+destruct (nextData _) as [|[b|]];
+ try abstract (intros Hpq; elimtype False; destruct Hpq; discriminate).
+exists b.
+ reflexivity.
+assumption.
+Defined.
+
+Lemma trace_left p q s0 s1 (trp : s0 >>- p ->> s1) (trpq : s0 >>- p ||| q ->> s1) :
+ head (nextData (activeReadFrame s0)) = Some (Some false) ->
+ trace trp = trace trpq.
+Proof.
+intros H.
+unfold trace, runProgram, choice in *.
+destruct (nextData _) as [|b];[discriminate|cbn in *].
+revert trpq.
+inversion_clear H.
+destruct (p s0) as [[s1' Hs1]|];[|intros [ ]; discriminate].
+destruct (trace_subproof _ _ _ _ trp).
+intros trpq.
+generalize (trace_subproof s0 s1' s1' Hs1 trpq).
+apply (K_dec_set State_dec).
+reflexivity.
+Qed.
+
+Lemma trace_right p q s0 s1 (trq : s0 >>- q ->> s1) (trpq : s0 >>- p ||| q ->> s1) :
+ head (nextData (activeReadFrame s0)) = Some (Some true) ->
+ trace trq = trace trpq.
+Proof.
+intros H.
+unfold trace, runProgram, choice in *.
+destruct (nextData _) as [|b];[discriminate|cbn in *].
+revert trpq.
+inversion_clear H.
+destruct (q s0) as [[s1' Hs1]|];[|intros [ ]; discriminate].
+destruct (trace_subproof _ _ _ _ trq).
+intros trpq.
+generalize (trace_subproof s0 s1' s1' Hs1 trpq).
+apply (K_dec_set State_dec).
+reflexivity.
+Qed.
+
 (* bump is notation for a program that is run where the active read frame's
  * cursor is temporarily advanced.
  *)
 Definition bump n p : Program := fwd n ;;; p ;;; bwd n.
 
-(* runMachine extracts the final state after executing a program, if
- * successful.
- *)
-Definition runMachine (p : Program) (s : State) : option State :=
-option_map (@projT1 _ _) (p s).
-
-
-(* The following lemma describe the behaviour of program cominators with
- * runMachine.
- *)
-Lemma runMachine_seq (p1 p2 : Program) (s : State) :
- runMachine (p1 ;;; p2) s = option_bind (runMachine p2) (runMachine p1 s).
-Proof.
-unfold runMachine, seq.
-destruct (p1 s) as [[s0 thr0]|];[|reflexivity].
-cbn.
-destruct (p2 s0) as [[s1 thr1]|];reflexivity.
-Qed.
-
-Lemma runMachine_choice (p1 p2 : Program) (s : State) :
- runMachine (p1 ||| p2) s = match nextData (activeReadFrame s) with
- | Some b :: _ => runMachine (if b then p2 else p1) s
- | _ => None
- end.
-Proof.
-destruct s as [irf [rp [|[|] tl]] awf iwf]; reflexivity.
-Qed.
-
-Lemma runMachine_bump (p : Program) l ctx0 ctx1 :
- runMachine p
-   (fillReadFrame ctx0 {| prevData := rev l; nextData := nil |}) =
-   Some (fillReadFrame ctx1 {| prevData := rev l; nextData := nil |}) ->
- runMachine (bump (length l) p)
-   (fillReadFrame ctx0 {| prevData := nil; nextData := l |}) =
-   Some (fillReadFrame ctx1 {| prevData := nil; nextData := l |}).
+Lemma bump_correct p l ctx0 ctx1 :
+ fillReadFrame ctx0 {| prevData := rev l; nextData := nil |}
+ >>- p ->>
+ fillReadFrame ctx1 {| prevData := rev l; nextData := nil |} ->
+ fillReadFrame ctx0 {| prevData := nil; nextData := l |}
+ >>- bump (length l) p ->>
+ fillReadFrame ctx1 {| prevData := nil; nextData := l |}.
 Proof.
 intros Hp.
 unfold bump.
-repeat rewrite runMachine_seq.
-unfold runMachine at 3.
-rewrite fwd_correct; cbn.
-rewrite Hp; cbn.
-unfold runMachine.
-rewrite bwd_correct.
-reflexivity.
+repeat eapply seq_correct;[apply fwd_correct|exact Hp|apply bwd_correct].
 Qed.
 
-Lemma stateShape_copy n x y :
- runMachine (copy n) x = Some y ->
- stateShape x = stateShape y.
+Lemma bump_complete p l ctx0 ctx1 :
+ fillReadFrame ctx0 {| prevData := nil; nextData := l |}
+ >>- bump (length l) p ->>
+ fillReadFrame ctx1 {| prevData := nil; nextData := l |} ->
+ fillReadFrame ctx0 {| prevData := rev l; nextData := nil |}
+ >>- p ->>
+ fillReadFrame ctx1 {| prevData := rev l; nextData := nil |}.
 Proof.
-unfold copy, runMachine.
-destruct (MachineCode.Copy.chk _ x) as [|[s1 [l ctx Hl]]];[discriminate|cbn].
-inversion_clear 1.
-do 2 rewrite fillContextShape_correct.
-f_equal.
-unfold localStateShape; cbn.
-rewrite fullWriteFrame_size.
+unfold bump.
+intros Hb.
+apply seq_complete in Hb.
+destruct Hb as [s2 Hb Hs2].
+apply seq_complete in Hb.
+destruct Hb as [s1 Hs1 Hb].
+replace (fillReadFrame _ _) with s1.
+ replace (fillReadFrame _ _) with s2.
+  assumption.
+ clear - Hs2.
+ apply bwd_complete in Hs2.
+ unfold fillReadFrame.
+ destruct s2; destruct ctx1; cbn in *.
+ inversion Hs2; cbn in *.
+ replace l0 with l in *.
+  rewrite (app_inv_head _ _ _ H6).
+  reflexivity.
+ apply (f_equal (firstn (length l0))) in H6.
+ rewrite firstn_app_3 in H6.
+ replace (length l0) in H6.
+ rewrite firstn_app_3 in H6.
+ congruence.
+clear - Hs1.
+apply fwd_complete in Hs1.
+unfold fillReadFrame.
+destruct s1; destruct ctx0; cbn in *.
+inversion Hs1; cbn in *.
+replace l0 with l in *.
+ rewrite (app_inv_head _ _ _ H2).
+ reflexivity.
+apply (f_equal (firstn (length l0))) in H2.
+rewrite firstn_app_3 in H2.
+replace (length l0) in H2.
+rewrite firstn_app_3 in H2.
 congruence.
 Qed.
 
 Lemma stateShape_write b x y :
- runMachine (write b) x = Some y ->
+ x >>- write b ->> y ->
  stateShape x = stateShape y.
 Proof.
-unfold write, runMachine.
-destruct (MachineCode.Write.chk _ x) as [|[s1 [ctx]]];[discriminate|cbn].
-inversion_clear 1.
+intros Hxy.
+apply write_complete in Hxy.
+inversion_clear Hxy.
 do 2 rewrite fillContextShape_correct.
 reflexivity.
 Qed.
 
 Lemma stateShape_skip n x y :
- runMachine (skip n) x = Some y ->
+ x >>- skip n ->> y ->
  stateShape x = stateShape y.
 Proof.
-unfold skip, runMachine.
-destruct (MachineCode.Skip.chk _ x) as [|[s1 [ctx]]];[discriminate|cbn].
-inversion_clear 1.
+intros Hxy.
+apply skip_complete in Hxy.
+inversion_clear Hxy.
 do 2 rewrite fillContextShape_correct.
 f_equal.
 unfold localStateShape; cbn.
@@ -897,13 +1175,27 @@ rewrite fullWriteFrame_size, repeat_length.
 reflexivity.
 Qed.
 
-Lemma stateShape_fwd n x y :
- runMachine (fwd n) x = Some y ->
+Lemma stateShape_copy n x y :
+ x >>- copy n ->> y ->
  stateShape x = stateShape y.
 Proof.
-unfold fwd, runMachine.
-destruct (MachineCode.Fwd.chk _ x) as [|[s1 [ctx]]];[discriminate|cbn].
-inversion_clear 1.
+intros Hxy.
+apply copy_complete in Hxy.
+inversion_clear Hxy.
+do 2 rewrite fillContextShape_correct.
+f_equal.
+unfold localStateShape; cbn.
+rewrite fullWriteFrame_size.
+congruence.
+Qed.
+
+Lemma stateShape_fwd n x y :
+ x >>- fwd n ->> y ->
+ stateShape x = stateShape y.
+Proof.
+intros Hxy.
+apply fwd_complete in Hxy.
+inversion_clear Hxy.
 do 2 rewrite fillReadFrameShape_correct.
 f_equal.
 unfold readSize; cbn.
@@ -912,12 +1204,12 @@ ring.
 Qed.
 
 Lemma stateShape_bwd n x y :
- runMachine (bwd n) x = Some y ->
+ x >>- bwd n ->> y ->
  stateShape x = stateShape y.
 Proof.
-unfold bwd, runMachine.
-destruct (MachineCode.Bwd.chk _ x) as [|[s1 [ctx]]];[discriminate|cbn].
-inversion_clear 1.
+intros Hxy.
+apply bwd_complete in Hxy.
+inversion_clear Hxy.
 do 2 rewrite fillReadFrameShape_correct.
 f_equal.
 unfold readSize; cbn.
@@ -953,100 +1245,147 @@ induction tr0.
 etransitivity;[exact IHtr0|apply N.le_max_r].
 Qed.
 
-Definition programMaximumMemoryResidence (p : Program) x : option N :=
-  option_map (fun tr => maximumMemoryResidence (projT2 tr)) (p x).
-
-Lemma pMMR_moveFrame x :
- programMaximumMemoryResidence moveFrame x =
- option_map (fun _ => stateSize x) (runMachine moveFrame x).
+Lemma MMR_newFrame n x y (tr : x >>- newFrame n ->> y) :
+   maximumMemoryResidence (trace tr) = stateSize y.
 Proof.
-unfold moveFrame, programMaximumMemoryResidence, runMachine in *.
-destruct (MachineCode.MoveFrame.chk x) as [|[s1 [ctx]]];[reflexivity|cbn].
-f_equal.
+unfold runProgram in tr.
+unfold trace.
+unfold newFrame in *.
+destruct (trace_subproof x y _ _ tr);cbn;clear.
+apply N.max_r.
+destruct x.
+unfold stateSize, stateShape, stateShapeSize.
+cbn.
+rewrite N.add_assoc.
+repeat apply N.add_le_mono_r.
+rewrite <- N.add_assoc.
+repeat apply N.add_le_mono_l.
+apply N.le_add_r.
+Qed.
+
+Lemma MMR_moveFrame x y (tr : x >>- moveFrame ->> y) :
+   maximumMemoryResidence (trace tr) = stateSize x.
+Proof.
+unfold runProgram in tr.
+unfold trace.
+unfold moveFrame in *.
+destruct (MachineCode.MoveFrame.chk x) as [|[y' Hy]]in *.
+ destruct tr; discriminate.
+destruct (trace_subproof x y y' _ tr);cbn.
 apply N.max_l.
 unfold stateSize, stateShape, stateShapeSize.
+inversion Hy.
 cbn.
 rewrite fullWriteFrame_size.
 apply N.eq_le_incl.
 ring.
 Qed.
 
-Lemma pMMR_copy n x :
- programMaximumMemoryResidence (copy n) x =
- option_map (fun _ => stateSize x) (runMachine (copy n) x).
+Lemma MMR_dropFrame x y (tr : x >>- dropFrame ->> y) :
+   maximumMemoryResidence (trace tr) = stateSize x.
 Proof.
-assert (Hx := stateShape_copy n x).
-unfold copy, programMaximumMemoryResidence, runMachine in *.
-destruct (MachineCode.Copy.chk n x) as [|[s1 [l ctx Hl]]];[reflexivity|cbn in *].
+unfold runProgram in tr.
+unfold trace.
+unfold dropFrame in *.
+destruct (MachineCode.DropFrame.chk x) as [|[y' Hy]]in *.
+ destruct tr; discriminate.
+destruct (trace_subproof x y y' _ tr);cbn.
+apply N.max_l.
+unfold stateSize, stateShape, stateShapeSize.
+inversion Hy.
+cbn.
+repeat apply N.add_le_mono_r.
+rewrite N.add_comm, <- N.add_assoc.
+repeat apply N.add_le_mono_l.
+apply N.le_add_r.
+Qed.
+
+Lemma MMR_write b x y (tr : x >>- write b ->> y) :
+   maximumMemoryResidence (trace tr) = stateSize x.
+Proof.
+assert (Hx := stateShape_write _ _ _ tr).
+unfold runProgram in tr.
+unfold trace.
+unfold write in *.
+destruct (MachineCode.Write.chk b x) as [|[y' Hy]]in *.
+ destruct tr; discriminate.
+destruct (trace_subproof x y y' _ tr);cbn.
 unfold stateSize.
-rewrite (Hx _ (refl_equal _)), N.max_id.
-reflexivity.
+rewrite Hx.
+apply N.max_id.
 Qed.
 
-Lemma pMMR_write b x :
- programMaximumMemoryResidence (write b) x =
- option_map (fun _ => stateSize x) (runMachine (write b) x).
+Lemma MMR_skip n x y (tr : x >>- skip n ->> y) :
+   maximumMemoryResidence (trace tr) = stateSize x.
 Proof.
-assert (Hx := stateShape_write b x).
-unfold write, programMaximumMemoryResidence, runMachine in *.
-destruct (MachineCode.Write.chk b x) as [|[s1 [ctx]]];[reflexivity|cbn in *].
+assert (Hx := stateShape_skip _ _ _ tr).
+unfold runProgram in tr.
+unfold trace.
+unfold skip in *.
+destruct (MachineCode.Skip.chk n x) as [|[y' Hy]]in *.
+ destruct tr; discriminate.
+destruct (trace_subproof x y y' _ tr);cbn.
 unfold stateSize.
-rewrite (Hx _ (refl_equal _)), N.max_id.
-reflexivity.
+rewrite Hx.
+apply N.max_id.
 Qed.
 
-Lemma pMMR_skip n x :
- programMaximumMemoryResidence (skip n) x =
- option_map (fun _ => stateSize x) (runMachine (skip n) x).
+Lemma MMR_copy n x y (tr : x >>- copy n ->> y) :
+   maximumMemoryResidence (trace tr) = stateSize x.
 Proof.
-assert (Hx := stateShape_skip n x).
-unfold skip, programMaximumMemoryResidence, runMachine in *.
-destruct (MachineCode.Skip.chk n x) as [|[s1 [ctx]]];[reflexivity|cbn in *].
+assert (Hx := stateShape_copy _ _ _ tr).
+unfold runProgram in tr.
+unfold trace.
+unfold copy in *.
+destruct (MachineCode.Copy.chk n x) as [|[y' Hy]]in *.
+ destruct tr; discriminate.
+destruct (trace_subproof x y y' _ tr);cbn.
 unfold stateSize.
-rewrite (Hx _ (refl_equal _)), N.max_id.
-reflexivity.
+rewrite Hx.
+apply N.max_id.
 Qed.
 
-Lemma pMMR_fwd n x :
- programMaximumMemoryResidence (fwd n) x =
- option_map (fun _ => stateSize x) (runMachine (fwd n) x).
+Lemma MMR_fwd n x y (tr : x >>- fwd n ->> y) :
+   maximumMemoryResidence (trace tr) = stateSize x.
 Proof.
-assert (Hx := stateShape_fwd n x).
-unfold fwd, programMaximumMemoryResidence, runMachine in *.
-destruct (MachineCode.Fwd.chk n x) as [|[s1 [l ctx Hl]]];[reflexivity|cbn in *].
+assert (Hx := stateShape_fwd _ _ _ tr).
+unfold runProgram in tr.
+unfold trace.
+unfold fwd in *.
+destruct (MachineCode.Fwd.chk n x) as [|[y' Hy]]in *.
+ destruct tr; discriminate.
+destruct (trace_subproof x y y' _ tr);cbn.
 unfold stateSize.
-rewrite (Hx _ (refl_equal _)), N.max_id.
-reflexivity.
+rewrite Hx.
+apply N.max_id.
 Qed.
 
-Lemma pMMR_bwd n x :
- programMaximumMemoryResidence (bwd n) x =
- option_map (fun _ => stateSize x) (runMachine (bwd n) x).
+Lemma MMR_bwd n x y (tr : x >>- bwd n ->> y) :
+   maximumMemoryResidence (trace tr) = stateSize x.
 Proof.
-assert (Hx := stateShape_bwd n x).
-unfold bwd, programMaximumMemoryResidence, runMachine in *.
-destruct (MachineCode.Bwd.chk n x) as [|[s1 [l ctx Hl]]];[reflexivity|cbn in *].
+assert (Hx := stateShape_bwd _ _ _ tr).
+unfold runProgram in tr.
+unfold trace.
+unfold bwd in *.
+destruct (MachineCode.Bwd.chk n x) as [|[y' Hy]]in *.
+ destruct tr; discriminate.
+destruct (trace_subproof x y y' _ tr);cbn.
 unfold stateSize.
-rewrite (Hx _ (refl_equal _)), N.max_id.
-reflexivity.
+rewrite Hx.
+apply N.max_id.
 Qed.
 
-Lemma pMMR_seq (p q : Program) x :
- programMaximumMemoryResidence (p ;;; q) x =
- option_map2 N.max (option_bind (programMaximumMemoryResidence q) (runMachine p x))
-                   (programMaximumMemoryResidence p x).
+Lemma MMR_seq (p q : Program) x y z (trp : x >>- p ->> y) (trq : y >>- q ->> z) (trpq : x >>- p ;;; q ->> z) :
+ maximumMemoryResidence (trace trpq) =
+ N.max (maximumMemoryResidence (trace trp)) (maximumMemoryResidence (trace trq)).
 Proof.
-unfold seq, programMaximumMemoryResidence, runMachine.
-destruct (p x) as [[y tr0]|];[cbn|reflexivity].
-destruct (q y) as [[z tr1]|];[cbn|reflexivity].
-rewrite MMR_app, N.max_comm; reflexivity.
-Qed.
-
-Lemma pMMR_choice (p1 p2 : Program) (s : State) :
- programMaximumMemoryResidence (p1 ||| p2) s = match nextData (activeReadFrame s) with
- | Some b :: _ => programMaximumMemoryResidence (if b then p2 else p1) s
- | _ => None
- end.
-Proof.
-destruct s as [irf [rp [|[|] tl]] awf iwf]; reflexivity.
+unfold runProgram in *.
+unfold trace.
+unfold seq in *.
+destruct (p x) as [[y' Hy]|];[|destruct trp; discriminate].
+destruct (trace_subproof x y y' Hy trp).
+destruct (q y') as [[z' Hz]|];[|destruct trq; discriminate].
+destruct (trace_subproof y' z z' Hz trq).
+destruct (trace_subproof x z' z' (Hy |><| Hz) trpq).
+apply MMR_app.
 Qed.
