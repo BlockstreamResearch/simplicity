@@ -614,6 +614,37 @@ Qed.
  * state that is legal for that instruction.
  *)
 
+(* This function is used to build a single program from a single instruction. *)
+Definition makeProgram {T : State -> State -> Set}
+                  (inj : forall {s0 s1}, T s0 s1 -> s0 ~~> s1)
+                  (dec : forall s0, (forall s1, T s0 s1 -> False)+{s1 : State & T s0 s1})
+                  : Program :=
+fun s0 : State =>
+match dec s0 with
+| inl _ => None
+| inr (existT _ s2 t) =>
+    Some (existT (fun y : State => s0 ->> y) s2 (inj t <| []))
+end.
+
+Lemma op_complete (T : State -> State -> Set)
+                  (inj : forall s0 s1, T s0 s1 -> s0 ~~> s1)
+                  (dec : forall s0, (forall s1, T s0 s1 -> False)+{s1 : State & T s0 s1})
+                  s0 s1 :
+  s0 >>- makeProgram inj dec ->> s1 ->
+  T s0 s1.
+unfold makeProgram, runProgram.
+destruct (dec s0) as [|[s1' Hs1]].
+ abstract (intros Htr; elimtype False; destruct Htr; discriminate).
+intros Htr.
+replace s1 with s1'.
+ exact Hs1.
+abstract(
+ destruct Htr as [tr Htr];
+ inversion_clear Htr;
+ reflexivity
+).
+Defined.
+
 (* The newFrame instruction is legal to execute in any initial state.  We don't
  * provide a correctness function for it since it can be evaluated inside Coq
  * on any abstract input (i.e. it doesn't need any iota reductions).
@@ -650,12 +681,7 @@ abstract(
 ).
 Defined.
 
-Definition moveFrame : Program.
-intros s0.
-destruct (MachineCode.MoveFrame.chk s0) as [|[s1 t]];[right|left].
-eexists.
-exact (MachineCode.MoveFrame t <| []).
-Defined.
+Definition moveFrame : Program := makeProgram MachineCode.MoveFrame MachineCode.MoveFrame.chk.
 
 Lemma moveFrame_correct : forall l irf arf awf iwf,
   {| inactiveReadFrames := irf
@@ -679,28 +705,12 @@ apply K_dec_set.
 reflexivity.
 Qed.
 
-Lemma moveFrame_complete s0 s1 :
+Definition moveFrame_complete s0 s1 :
   s0 >>- moveFrame ->> s1 ->
-  MachineCode.MoveFrame.T s0 s1.
-unfold moveFrame, runProgram.
-destruct (MachineCode.MoveFrame.chk s0) as [|[s1' Hs1]].
- abstract (intros Htr; elimtype False; destruct Htr; discriminate).
-intros Htr.
-replace s1 with s1'.
- exact Hs1.
-abstract(
- destruct Htr as [tr Htr];
- inversion_clear Htr;
- reflexivity
-).
-Defined.
+  MachineCode.MoveFrame.T s0 s1
+:= op_complete _ _ _ _ _.
 
-Definition dropFrame : Program.
-intros s0.
-destruct (MachineCode.DropFrame.chk s0) as [|[s1 t]];[right|left].
-eexists.
-exact (MachineCode.DropFrame t <| []).
-Defined.
+Definition dropFrame : Program := makeProgram MachineCode.DropFrame MachineCode.DropFrame.chk.
 
 Lemma dropFrame_correct : forall rf s,
   {| inactiveReadFrames := activeReadFrame s :: inactiveReadFrames s
@@ -713,28 +723,12 @@ eexists.
 destruct s; reflexivity.
 Qed.
 
-Lemma dropFrame_complete s0 s1 :
+Definition dropFrame_complete s0 s1 :
   s0 >>- dropFrame ->> s1 ->
-  MachineCode.DropFrame.T s0 s1.
-unfold dropFrame, runProgram.
-destruct (MachineCode.DropFrame.chk s0) as [|[s1' Hs1]].
- abstract (intros Htr; elimtype False; destruct Htr; discriminate).
-intros Htr.
-replace s1 with s1'.
- exact Hs1.
-abstract(
- destruct Htr as [tr Htr];
- inversion_clear Htr;
- reflexivity
-).
-Defined.
+  MachineCode.DropFrame.T s0 s1
+:= op_complete _ _ _ _ _.
 
-Definition write (b : bool) : Program.
-intros s0.
-destruct (MachineCode.Write.chk b s0) as [|[s1 t]];[right|left].
-eexists.
-exact (MachineCode.Write b t <| []).
-Defined.
+Definition write (b : bool) : Program := makeProgram (fun s0 s1 => @MachineCode.Write s0 s1 b) (MachineCode.Write.chk b).
 
 Lemma write_correct : forall b ctx,
   fillContext ctx {| readLocalState := nil; writeLocalState := newWriteFrame 1 |}
@@ -746,28 +740,12 @@ eexists.
 reflexivity.
 Qed.
 
-Lemma write_complete b s0 s1 :
+Definition write_complete b s0 s1 :
   s0 >>- write b ->> s1 ->
-  MachineCode.Write.T b s0 s1.
-unfold write, runProgram.
-destruct (MachineCode.Write.chk _ s0) as [|[s1' Hs1]].
- abstract (intros Htr; elimtype False; destruct Htr; discriminate).
-intros Htr.
-replace s1 with s1'.
- exact Hs1.
-abstract(
- destruct Htr as [tr Htr];
- inversion_clear Htr;
- reflexivity
-).
-Defined.
+  MachineCode.Write.T b s0 s1
+:= op_complete _ _ _ _ _.
 
-Definition skip (n : nat) : Program.
-intros s0.
-destruct (MachineCode.Skip.chk n s0) as [|[s1 t]];[right|left].
-eexists.
-exact (MachineCode.Skip n t <| []).
-Defined.
+Definition skip (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Skip s0 s1 n) (MachineCode.Skip.chk n).
 
 Lemma skip_correct : forall n ctx,
   fillContext ctx {| readLocalState := nil; writeLocalState := newWriteFrame n |}
@@ -776,7 +754,7 @@ Lemma skip_correct : forall n ctx,
    {| readLocalState := nil; writeLocalState := fullWriteFrame (repeat None n) |}.
 Proof.
 eexists.
-unfold skip.
+unfold skip, makeProgram.
 cbn.
 set (H := Nat.leb_spec _ _).
 generalize H; clear H.
@@ -790,28 +768,12 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Lemma skip_complete n s0 s1 :
+Definition skip_complete n s0 s1 :
   s0 >>- skip n ->> s1 ->
-  MachineCode.Skip.T n s0 s1.
-unfold skip, runProgram.
-destruct (MachineCode.Skip.chk _ s0) as [|[s1' Hs1]].
- abstract (intros Htr; elimtype False; destruct Htr; discriminate).
-intros Htr.
-replace s1 with s1'.
- exact Hs1.
-abstract(
- destruct Htr as [tr Htr];
- inversion_clear Htr;
- reflexivity
-).
-Defined.
+  MachineCode.Skip.T n s0 s1
+:= op_complete _ _ _ _ _.
 
-Definition copy (n : nat) : Program.
-intros s0.
-destruct (MachineCode.Copy.chk n s0) as [|[s1 t]];[right|left].
-eexists.
-exact (MachineCode.Copy n t <| []).
-Defined.
+Definition copy (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Copy s0 s1 n) (MachineCode.Copy.chk n).
 
 Lemma copy_correct : forall l ctx,
   fillContext ctx {| readLocalState := l; writeLocalState := newWriteFrame (length l) |}
@@ -819,7 +781,7 @@ Lemma copy_correct : forall l ctx,
   fillContext ctx {| readLocalState := l; writeLocalState := fullWriteFrame l |}.
 Proof.
 eexists.
-unfold copy.
+unfold copy, makeProgram.
 cbn.
 set (H := Nat.leb_spec _ (_ + writeEmpty _)%nat).
 generalize H; clear H.
@@ -846,28 +808,12 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Lemma copy_complete n s0 s1 :
+Definition copy_complete n s0 s1 :
   s0 >>- copy n ->> s1 ->
-  MachineCode.Copy.T n s0 s1.
-unfold copy, runProgram.
-destruct (MachineCode.Copy.chk _ s0) as [|[s1' Hs1]].
- abstract (intros Htr; elimtype False; destruct Htr; discriminate).
-intros Htr.
-replace s1 with s1'.
- exact Hs1.
-abstract(
- destruct Htr as [tr Htr];
- inversion_clear Htr;
- reflexivity
-).
-Defined.
+  MachineCode.Copy.T n s0 s1
+:= op_complete _ _ _ _ _.
 
-Definition fwd (n : nat) : Program.
-intros s0.
-destruct (MachineCode.Fwd.chk n s0) as [|[s1 t]];[right|left].
-eexists.
-exact (MachineCode.Fwd n t <| []).
-Defined.
+Definition fwd (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Fwd s0 s1 n) (MachineCode.Fwd.chk n).
 
 Lemma fwd_correct : forall l ctx,
   fillReadFrame ctx {| prevData := nil; nextData := l |}
@@ -875,7 +821,7 @@ Lemma fwd_correct : forall l ctx,
   fillReadFrame ctx {| prevData := rev l; nextData := nil |}.
 Proof.
 eexists.
-unfold fwd; cbn.
+unfold fwd, makeProgram; cbn.
 set (H := Nat.leb_spec _ _).
 generalize H; clear H.
 rewrite (Compare_dec.leb_correct (length l) (length (l ++ nextData (activeReadFrame ctx))))
@@ -892,28 +838,12 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Lemma fwd_complete n s0 s1 :
+Definition fwd_complete n s0 s1 :
   s0 >>- fwd n ->> s1 ->
-  MachineCode.Fwd.T n s0 s1.
-unfold fwd, runProgram.
-destruct (MachineCode.Fwd.chk _ s0) as [|[s1' Hs1]].
- abstract (intros Htr; elimtype False; destruct Htr; discriminate).
-intros Htr.
-replace s1 with s1'.
- exact Hs1.
-abstract(
- destruct Htr as [tr Htr];
- inversion_clear Htr;
- reflexivity
-).
-Defined.
+  MachineCode.Fwd.T n s0 s1
+:= op_complete _ _ _ _ _.
 
-Definition bwd (n : nat) : Program.
-intros s0.
-destruct (MachineCode.Bwd.chk n s0) as [|[s1 t]];[right|left].
-eexists.
-exact (MachineCode.Bwd n t <| []).
-Defined.
+Definition bwd (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Bwd s0 s1 n) (MachineCode.Bwd.chk n).
 
 Lemma bwd_correct : forall l ctx,
   fillReadFrame ctx {| prevData := rev l; nextData := nil |}
@@ -921,7 +851,7 @@ Lemma bwd_correct : forall l ctx,
   fillReadFrame ctx {| prevData := nil; nextData := l |}.
 Proof.
 eexists.
-unfold bwd; cbn.
+unfold bwd, makeProgram; cbn.
 set (H := Nat.leb_spec _ _).
 generalize H; clear H.
 rewrite (Compare_dec.leb_correct (length l) (length (rev l ++ prevData (activeReadFrame ctx))))
@@ -945,21 +875,10 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Lemma bwd_complete n s0 s1 :
+Definition bwd_complete n s0 s1 :
   s0 >>- bwd n ->> s1 ->
-  MachineCode.Bwd.T n s0 s1.
-unfold bwd, runProgram.
-destruct (MachineCode.Bwd.chk _ s0) as [|[s1' Hs1]].
- abstract (intros Htr; elimtype False; destruct Htr; discriminate).
-intros Htr.
-replace s1 with s1'.
- exact Hs1.
-abstract(
- destruct Htr as [tr Htr];
- inversion_clear Htr;
- reflexivity
-).
-Defined.
+  MachineCode.Bwd.T n s0 s1
+:= op_complete _ _ _ _ _.
 
 (* The basic instruction crash always crashes the machine.  Crash doesn't
  * appear in the MachineCode.T because there is no state that is can
@@ -1268,7 +1187,7 @@ Lemma MMR_moveFrame x y (tr : x >>- moveFrame ->> y) :
 Proof.
 unfold runProgram in tr.
 unfold trace.
-unfold moveFrame in *.
+unfold moveFrame, makeProgram in *.
 destruct (MachineCode.MoveFrame.chk x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
 destruct (trace_subproof x y y' _ tr);cbn.
@@ -1286,7 +1205,7 @@ Lemma MMR_dropFrame x y (tr : x >>- dropFrame ->> y) :
 Proof.
 unfold runProgram in tr.
 unfold trace.
-unfold dropFrame in *.
+unfold dropFrame, makeProgram in *.
 destruct (MachineCode.DropFrame.chk x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
 destruct (trace_subproof x y y' _ tr);cbn.
@@ -1306,7 +1225,7 @@ Proof.
 assert (Hx := stateShape_write _ _ _ tr).
 unfold runProgram in tr.
 unfold trace.
-unfold write in *.
+unfold write, makeProgram in *.
 destruct (MachineCode.Write.chk b x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
 destruct (trace_subproof x y y' _ tr);cbn.
@@ -1321,7 +1240,7 @@ Proof.
 assert (Hx := stateShape_skip _ _ _ tr).
 unfold runProgram in tr.
 unfold trace.
-unfold skip in *.
+unfold skip, makeProgram in *.
 destruct (MachineCode.Skip.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
 destruct (trace_subproof x y y' _ tr);cbn.
@@ -1336,7 +1255,7 @@ Proof.
 assert (Hx := stateShape_copy _ _ _ tr).
 unfold runProgram in tr.
 unfold trace.
-unfold copy in *.
+unfold copy, makeProgram in *.
 destruct (MachineCode.Copy.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
 destruct (trace_subproof x y y' _ tr);cbn.
@@ -1351,7 +1270,7 @@ Proof.
 assert (Hx := stateShape_fwd _ _ _ tr).
 unfold runProgram in tr.
 unfold trace.
-unfold fwd in *.
+unfold fwd, makeProgram in *.
 destruct (MachineCode.Fwd.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
 destruct (trace_subproof x y y' _ tr);cbn.
@@ -1366,7 +1285,7 @@ Proof.
 assert (Hx := stateShape_bwd _ _ _ tr).
 unfold runProgram in tr.
 unfold trace.
-unfold bwd in *.
+unfold bwd, makeProgram in *.
 destruct (MachineCode.Bwd.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
 destruct (trace_subproof x y y' _ tr);cbn.
