@@ -12,18 +12,22 @@ Local Open Scope N_scope.
 
 Module StateShape.
 (* In this section we prove that executing Simplicity programs on the Bit
- * Machine starting from *any* state, preserves the shape of the state (if it
- * doesn't crash).
+ * Machine starting from *any* state, preserves the shape of the state if it
+ * doesn't crash or halt.
+ * Although spec allows for starting from the Halted state, any program
+ * starting from the Halted state must end in the Halted state, which will
+ * violating the assumptions of spec that it doesn't end in the Halted state.
+ * Hence this scenario vacuously sastifies the spec.
  *)
 
 Definition spec {A B : Ty} (t : Term A B) :=
-  forall s0 s1,
+  forall s0 (s1 : RunState),
    s0 >>- (@Core.eval _ _ t Naive.translate) ->> s1 ->
    stateShape s0 = stateShape s1.
 
 Lemma iden_spec {A : Ty} : spec (@iden A).
 Proof.
-unfold spec.
+intros s0 s1.
 apply stateShape_copy.
 Qed.
 
@@ -40,17 +44,31 @@ apply seq_complete in Hs03.
 destruct Hs03 as [s2 Hs02 Hs23].
 apply seq_complete in Hs02.
 destruct Hs02 as [s1 Hs01 Hs12].
-apply newFrame_complete in Hs01.
-apply moveFrame_complete in Hs23.
-apply dropFrame_complete in Hs45.
-apply Hs in Hs12.
+remember (Running s5) as s5'.
+revert Hs34 Heqs5'; pattern s4; pattern s5'.
+revert s4 s5' Hs45; apply dropFrame_complete;[|discriminate].
+intros s4 s5' Hs45 Hs34 Heq.
+injection Heq; intros ->; clear Heq.
 apply Ht in Hs34.
+destruct s3 as [|s3];[discriminate|].
+remember (Running s3) as s3'.
+revert Hs12 Hs34 Heqs3'; pattern s2; pattern s3'.
+revert s2 s3' Hs23; apply moveFrame_complete;[|discriminate].
+intros s2 s3' Hs23 Hs12 Hs34 Heq.
+injection Heq; intros ->; clear Heq.
+apply Hs in Hs12.
+destruct s1 as [|s1];[discriminate|].
+remember (Running s1) as s1'.
+revert Hs12 Heqs1'; pattern s0; pattern s1'.
+revert s0 s1' Hs01; apply newFrame_complete;[|discriminate].
+intros s0 s1' Hs01 Hs12 Heq.
+injection Heq; intros ->; clear Heq.
 revert Hs12 Hs34.
 inversion_clear Hs01.
 inversion_clear Hs23.
 inversion_clear Hs45.
 clear.
-unfold stateShape; cbn.
+unfold stateShape, runStateShape; cbn.
 do 2 inversion 1.
 reflexivity.
 Qed.
@@ -91,7 +109,7 @@ rewrite (stateShape_skip _ _ _ Hs12).
 apply (Ht _ _ Hs23).
 Qed.
 
-Lemma bump_spec {A B : Ty} (t : Term A B) n (Ht : spec t) x y :
+Lemma bump_spec {A B : Ty} (t : Term A B) n (Ht : spec t) x (y : RunState) :
  x >>- bump n (@Core.eval _ _ t Naive.translate) ->> y ->
  stateShape x = stateShape y.
 Proof.
@@ -102,6 +120,10 @@ destruct Hxy as [s2 Hxs2 Hs2y].
 apply seq_complete in Hxs2.
 destruct Hxs2 as [s1 Hxs1 Hs1s2].
 rewrite (stateShape_fwd _ _ _ Hxs1).
+destruct s2 as [|s2].
+ destruct (State_dec y Halted) as [|ne];[discriminate|revert ne].
+ assert (Hs2y' := trace Hs2y).
+ inversion Hs2y' using runHalt; contradiction.
 rewrite (Ht _ _ Hs1s2).
 apply (stateShape_bwd _ _ _ Hs2y).
 Qed.
@@ -111,8 +133,9 @@ Lemma case_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D) :
 Proof.
 intros Hs Ht x y Hxy.
 simpl in Hxy.
-apply choice_complete in Hxy.
-destruct Hxy as [[|] _ Hxy];
+remember (Running y) as y'.
+revert Heqy'; pattern x; pattern y; revert x y' Hxy.
+apply choice_complete;[intros x y' [|] Hb Hxy ->|discriminate];
 eauto using bump_spec.
 Qed.
 
@@ -123,6 +146,10 @@ intros Hs Ht x z Hxz.
 simpl in Hxz.
 apply seq_complete in Hxz.
 destruct Hxz as [y Hxy Hyz].
+destruct y as [|y].
+ destruct (State_dec z Halted) as [|ne];[discriminate|revert ne].
+ assert (Hyz' := trace Hyz).
+ inversion Hyz' using runHalt; contradiction.
 rewrite (Hs _ _ Hxy).
 apply (Ht _ _ Hyz).
 Qed.
@@ -157,6 +184,16 @@ induction t.
 Qed.
 
 End StateShape.
+
+Lemma StateSize_Core A B (t : Term A B) s0 s1 :
+  s0 >>- @Core.eval _ _ t Naive.translate ->> s1 -> stateSize s1 <= stateSize s0.
+Proof.
+intros H01.
+destruct s1 as [|s1];[apply N.le_0_l|].
+unfold stateSize.
+rewrite (StateShape.Core_spec _ _ _ H01).
+reflexivity.
+Qed.
 
 Module MaximumMemory.
 
@@ -203,41 +240,27 @@ destruct (seq_complete _ _ _ _ tr02) as [s1 tr01 tr12].
 rewrite (MMR_seq _ _ _ _ _ tr01 tr12 tr02).
 rewrite N.add_assoc.
 rewrite MMR_newFrame, MMR_moveFrame, MMR_dropFrame.
-replace (stateSize _ + _) with (stateSize s1).
- specialize (Hs _ _ tr12).
- specialize (Ht _ _ tr34).
- unfold MemoryBound, stateSize in *.
- rewrite (StateShape.Core_spec s _ _ tr12) in *.
- fold (stateSize s2) in *.
- replace (stateSize s2) with (stateSize s3) in *.
-  unfold MemoryBound, stateSize in *.
-  rewrite (StateShape.Core_spec t _ _ tr34) in *.
-  rewrite N.max_comm.
-  repeat rewrite N.max_assoc.
-  rewrite N.max_id.
-  repeat rewrite <- N.max_assoc.
-  rewrite (N.max_comm _ (_ (_ tr34))).
-  repeat rewrite N.max_assoc.
-  rewrite N.max_comm.
-  repeat rewrite N.max_assoc.
-  rewrite N.max_id.
-  repeat rewrite <- N.max_assoc.
-  apply N.max_lub.
-   apply N.le_add_r.
-  rewrite <- N.add_max_distr_l.
-  apply N.max_le_compat; assumption.
- clear - tr23.
- apply moveFrame_complete in tr23.
- inversion tr23.
- unfold stateSize, stateShape, stateShapeSize.
- cbn.
- rewrite fullWriteFrame_size.
- ring.
-clear - tr01.
-apply newFrame_complete in tr01.
-inversion tr01.
-unfold stateSize, stateShape, stateShapeSize.
-cbn.
+transitivity (stateSize s1 + N.max (@Core.eval _ _ s extraMemoryBound) (@Core.eval _ _ t extraMemoryBound)).
+ rewrite <- N.add_max_distr_l; do 2 rewrite <- N.max_assoc.
+ apply N.max_le_compat.
+  apply N.max_lub;[apply N.le_add_r|apply (Hs _ _ tr12)].
+ transitivity (stateSize s2 + (@Core.eval _ _ t extraMemoryBound)).
+  replace (stateSize s2) with (stateSize s3).
+   transitivity (N.max (stateSize s3) (maximumMemoryResidence (trace tr34))).
+    rewrite N.max_assoc.
+    apply N.max_lub;[reflexivity|].
+    etransitivity;[apply (StateSize_Core _ _ _ _ _ tr34)|apply N.le_max_l].
+   apply N.max_lub;[apply N.le_add_r|apply (Ht _ _ tr34)].
+  clear - tr23; pattern s2; pattern s3;
+  revert s2 s3 tr23; apply moveFrame_complete;[intros s2 s3 H23|reflexivity].
+  inversion H23;cbn.
+  rewrite fullWriteFrame_size.
+  ring.
+ apply N.add_le_mono_r.
+ apply (StateSize_Core _ _ _ _ _ tr12).
+apply N.add_le_mono_r.
+destruct tr01 as [s0' s1' H01|] using newFrame_complete;[apply N.eq_le_incl|apply N.le_0_l].
+inversion H01; destruct s0'; cbn.
 ring.
 Qed.
 
@@ -310,11 +333,19 @@ intros Hs Ht s0 s1 tr01.
 unfold MemoryBound.
 cbn in *.
 rewrite <- N.add_max_distr_l.
-destruct (choice_complete _ _ _ _ tr01) as [[|] Hb tr].
- rewrite <- (trace_right _ _ _ _ tr tr01);[|assumption].
- etransitivity;[apply bump_spec;assumption|apply N.le_max_r].
-rewrite <- (trace_left _ _ _ _ tr tr01);[|assumption].
-etransitivity;[apply bump_spec;assumption|apply N.le_max_l].
+generalize tr01.
+pattern s0; pattern s1.
+revert s0 s1 tr01.
+apply choice_complete.
+ intros s0 s1 [|] Heq tr tr01.
+  rewrite <- (trace_right _ _ _ _ tr tr01);[|assumption].
+  etransitivity;[apply bump_spec;assumption|apply N.le_max_r].
+ rewrite <- (trace_left _ _ _ _ tr tr01);[|assumption].
+ etransitivity;[apply bump_spec;assumption|apply N.le_max_l].
+unfold runProgram, choice;cbn.
+intros tr01.
+destruct (trace_subproof _ _ _ _); cbn.
+apply N.le_0_l.
 Qed.
 
 Lemma pair_spec {A B C : Ty} (s : Term A B) (t : Term A C) :
@@ -326,9 +357,11 @@ cbn in *.
 destruct (seq_complete _ _ _ _ tr02) as [s1 tr01 tr12].
 rewrite (MMR_seq _ _ _ _ _ tr01 tr12 tr02).
 rewrite <- N.add_max_distr_l.
-unfold stateSize.
-rewrite (StateShape.Core_spec _ _ _ tr01) at 2.
-apply N.max_le_compat;[apply Hs|apply Ht].
+apply N.max_le_compat.
+ apply Hs.
+etransitivity;[apply Ht|].
+apply N.add_le_mono_r.
+apply (StateSize_Core _ _ _ _ _ tr01).
 Qed.
 
 Lemma take_spec {A B C : Ty} (t : Term A C) :

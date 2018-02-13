@@ -50,42 +50,65 @@ Definition readSize rf := N.of_nat (length (prevData rf)) + N.of_nat (length (ne
 
 Definition setFrame l := {| prevData := nil; nextData := l |}.
 
-(* The full state of the Bit Machine is captured by a list of inactive
+(* The full running state of the Bit Machine is captured by a list of inactive
  * read-only and write-only frames.  The top of the two stacks are held in the
  * activeReadFrame and activeWriteFrame.  This ensures that both stacks are
  * non-empty.
  *)
-Record State :=
+Record RunState :=
  { inactiveReadFrames : list ReadFrame
  ; activeReadFrame : ReadFrame
  ; activeWriteFrame : WriteFrame
  ; inactiveWriteFrames : list WriteFrame
  }.
 
+(* The state of the Bit Machine can either be a running state or a halted
+ * state.
+ *)
+Inductive State :=
+| Halted : State
+| Running : RunState -> State.
+Coercion Running : RunState >-> State.
+
 Lemma State_dec (x y : State) : {x = y} + {x <> y}.
 Proof.
 repeat (decide equality).
 Qed.
 
-Record StateShape :=
+Record RunStateShape :=
  { inactiveReadFrameSizes : list N
  ; activeReadFrameSize : N
  ; activeWriteFrameSize : N
  ; inactiveWriteFrameSizes : list N
  }.
 
-Definition stateShape s :=
+Inductive StateShape :=
+| HaltedSS : StateShape
+| RunningSS : RunStateShape -> StateShape.
+Coercion RunningSS : RunStateShape >-> StateShape.
+
+Definition runStateShape s :=
  {| inactiveReadFrameSizes := map readSize (inactiveReadFrames s)
   ; activeReadFrameSize := readSize (activeReadFrame s)
   ; activeWriteFrameSize := writeSize (activeWriteFrame s)
   ; inactiveWriteFrameSizes := map writeSize (inactiveWriteFrames s)
   |}.
 
+Definition stateShape s :=
+match s with
+| Running s0 => RunningSS (runStateShape s0)
+| Halted => HaltedSS
+end.
+
 Definition stateShapeSize s :=
-  N_sum (inactiveReadFrameSizes s) +
-  activeReadFrameSize s +
-  activeWriteFrameSize s +
-  N_sum (inactiveWriteFrameSizes s).
+match s with
+| RunningSS s0 =>
+  N_sum (inactiveReadFrameSizes s0) +
+  activeReadFrameSize s0 +
+  activeWriteFrameSize s0 +
+  N_sum (inactiveWriteFrameSizes s0)
+| HaltedSS => 0
+end.
 
 Definition stateSize s := stateShapeSize (stateShape s).
 
@@ -101,7 +124,7 @@ Definition stateSize s := stateShapeSize (stateShape s).
  * be isomorphic to the State type.  The fillContext function combines the
  * LocalState with some context to produce a complete state.
  *)
-Definition Context := State.
+Definition Context := RunState.
 
 Definition emptyCtx : Context :=
  {| inactiveReadFrames := nil
@@ -131,7 +154,7 @@ Definition localStateShapeSize ls :=
 
 Definition localStateSize ls := localStateShapeSize (localStateShape ls).
 
-Definition fillContext (ctx : Context) (h : LocalState) : State :=
+Definition fillContext (ctx : Context) (h : LocalState) : RunState :=
  {| inactiveReadFrames := inactiveReadFrames ctx
   ; activeReadFrame :=
       {| prevData := prevData (activeReadFrame ctx)
@@ -144,7 +167,7 @@ Definition fillContext (ctx : Context) (h : LocalState) : State :=
   ; inactiveWriteFrames := inactiveWriteFrames ctx
   |}.
 
-Definition fillContextShape (ctx : StateShape) (h : LocalStateShape) : StateShape :=
+Definition fillContextShape (ctx : RunStateShape) (h : LocalStateShape) : StateShape :=
  {| inactiveReadFrameSizes := inactiveReadFrameSizes ctx
   ; activeReadFrameSize := activeReadFrameSize ctx + readLocalStateSize h
   ; activeWriteFrameSize := activeWriteFrameSize ctx + writeLocalStateSize h
@@ -152,12 +175,12 @@ Definition fillContextShape (ctx : StateShape) (h : LocalStateShape) : StateShap
   |}.
 
 Lemma fillContextShape_correct ctx h :
-  stateShape (fillContext ctx h) = fillContextShape (stateShape ctx) (localStateShape h).
+  stateShape (fillContext ctx h) = fillContextShape (runStateShape ctx) (localStateShape h).
 Proof.
 destruct ctx as [irf [prf nrf] awf iwf].
 destruct h as [rl wl].
-unfold stateShape, fillContextShape; simpl.
-f_equal;[unfold readSize|unfold writeSize]; simpl;
+unfold stateShape, runStateShape, fillContextShape; simpl.
+repeat f_equal; [unfold readSize|unfold writeSize]; simpl;
 rewrite app_length; repeat rewrite Nat2N.inj_add; ring.
 Qed.
 
@@ -191,7 +214,7 @@ rewrite Plus.plus_assoc.
 reflexivity.
 Qed.
 
-Definition fillReadFrame (ctx : Context) (h : ReadFrame) : State :=
+Definition fillReadFrame (ctx : Context) (h : ReadFrame) : RunState :=
  {| inactiveReadFrames := inactiveReadFrames ctx
   ; activeReadFrame :=
       {| prevData := prevData h ++ prevData (activeReadFrame ctx)
@@ -201,7 +224,7 @@ Definition fillReadFrame (ctx : Context) (h : ReadFrame) : State :=
   ; inactiveWriteFrames := inactiveWriteFrames ctx
   |}.
 
-Definition fillReadFrameShape (ctx : StateShape) (h : N) : StateShape :=
+Definition fillReadFrameShape (ctx : RunStateShape) (h : N) : StateShape :=
  {| inactiveReadFrameSizes := inactiveReadFrameSizes ctx
   ; activeReadFrameSize := activeReadFrameSize ctx + h
   ; activeWriteFrameSize := activeWriteFrameSize ctx
@@ -209,12 +232,12 @@ Definition fillReadFrameShape (ctx : StateShape) (h : N) : StateShape :=
   |}.
 
 Lemma fillReadFrameShape_correct ctx h :
-  stateShape (fillReadFrame ctx h) = fillReadFrameShape (stateShape ctx) (readSize h).
+  stateShape (fillReadFrame ctx h) = fillReadFrameShape (runStateShape ctx) (readSize h).
 Proof.
 destruct ctx as [irf [prf nrf] awf iwf].
 destruct h as [rl wl].
-unfold stateShape, fillReadFrameShape; simpl.
-f_equal.
+unfold stateShape, runStateShape, fillReadFrameShape; simpl.
+repeat f_equal.
 unfold readSize; simpl.
 repeat rewrite app_length, Nat2N.inj_add; ring.
 Qed.
@@ -227,7 +250,7 @@ Module MachineCode.
  *)
 Module NewFrame.
 
-Inductive T n ctx : State -> Set :=
+Inductive T n ctx : RunState -> Set :=
 op : T n ctx
       {| inactiveReadFrames := inactiveReadFrames ctx
        ; activeReadFrame := activeReadFrame ctx
@@ -236,7 +259,7 @@ op : T n ctx
        |}.
 
 (* This isn't really needed, but we add it for completeness *)
-Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : State & T n s0 s1}.
+Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : RunState & T n s0 s1}.
 right.
 econstructor.
 constructor.
@@ -246,7 +269,7 @@ End NewFrame.
 
 Module MoveFrame.
 
-Inductive T : State -> State -> Set :=
+Inductive T : RunState -> RunState -> Set :=
 op : forall l ctx,
     T {| inactiveReadFrames := inactiveReadFrames ctx
        ; activeReadFrame := activeReadFrame ctx
@@ -259,7 +282,7 @@ op : forall l ctx,
        ; inactiveWriteFrames := inactiveWriteFrames ctx
        |}.
 
-Definition chk s0 : (forall s1, T s0 s1 -> False)+{s1 : State & T s0 s1}.
+Definition chk s0 : (forall s1, T s0 s1 -> False)+{s1 : RunState & T s0 s1}.
 destruct s0 as [irf arf [l n] [|awf iwf]].
  left;abstract (inversion 1).
 destruct n as [|n];[|left;abstract (inversion 1)].
@@ -283,7 +306,7 @@ End MoveFrame.
 
 Module DropFrame.
 
-Inductive T : State -> State -> Set :=
+Inductive T : RunState -> RunState -> Set :=
 op : forall rf ctx,
     T {| inactiveReadFrames := activeReadFrame ctx :: inactiveReadFrames ctx
        ; activeReadFrame := rf
@@ -292,7 +315,7 @@ op : forall rf ctx,
        |}
       ctx.
 
-Definition chk s0 : (forall s1, T s0 s1 -> False)+{s1 : State & T s0 s1}.
+Definition chk s0 : (forall s1, T s0 s1 -> False)+{s1 : RunState & T s0 s1}.
 destruct s0 as [[|arf irf] rf awf iwf].
  left;abstract (inversion 1).
 right.
@@ -309,7 +332,7 @@ End DropFrame.
 
 Module Write.
 
-Inductive T b : State -> State -> Set :=
+Inductive T b : RunState -> RunState -> Set :=
 op : forall ctx,
     T b
       (fillContext ctx {| readLocalState := nil
@@ -319,7 +342,7 @@ op : forall ctx,
                         ; writeLocalState := fullWriteFrame (Some b :: nil)
                         |}).
 
-Definition chk b s0 : (forall s1, T b s0 s1 -> False)+{s1 : State & T b s0 s1}.
+Definition chk b s0 : (forall s1, T b s0 s1 -> False)+{s1 : RunState & T b s0 s1}.
 destruct s0 as [irf [rp rn] [wd [|we]] iwf].
  left;abstract (inversion 1).
 right.
@@ -335,7 +358,7 @@ End Write.
 
 Module Skip.
 
-Inductive T n : State -> State -> Set :=
+Inductive T n : RunState -> RunState -> Set :=
 op : forall ctx,
     T n
       (fillContext ctx {| readLocalState := nil
@@ -345,7 +368,7 @@ op : forall ctx,
                         ; writeLocalState := fullWriteFrame (repeat None n)
                         |}).
 
-Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : State & T n s0 s1}.
+Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : RunState & T n s0 s1}.
 destruct s0 as [irf [rp rn] [wd we] iwf].
 generalize (Nat.leb_spec n we).
 destruct (n <=? we)%nat;intros H.
@@ -374,7 +397,7 @@ End Skip.
 
 Module Copy.
 
-Inductive T n : State -> State -> Set :=
+Inductive T n : RunState -> RunState -> Set :=
 op : forall l ctx, length l = n ->
     T n
       (fillContext ctx {| readLocalState := l
@@ -384,7 +407,7 @@ op : forall l ctx, length l = n ->
                         ; writeLocalState := fullWriteFrame l
                         |}).
 
-Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : State & T n s0 s1}.
+Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : RunState & T n s0 s1}.
 destruct s0 as [irf [rp rn] [wd we] iwf].
 generalize (Nat.leb_spec n we).
 destruct (n <=? we)%nat;intros Hwe.
@@ -425,7 +448,7 @@ End Copy.
 
 Module Fwd.
 
-Inductive T n : State -> State -> Set :=
+Inductive T n : RunState -> RunState -> Set :=
 op : forall l ctx, length l = n ->
     T n
       (fillReadFrame ctx {| prevData := nil
@@ -435,7 +458,7 @@ op : forall l ctx, length l = n ->
                           ; nextData := nil
                           |}).
 
-Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : State & T n s0 s1}.
+Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : RunState & T n s0 s1}.
 Proof.
 destruct s0 as [irf [rp rn] awf iwf].
 generalize (Nat.leb_spec n (length rn)).
@@ -466,7 +489,7 @@ End Fwd.
 
 Module Bwd.
 
-Inductive T n : State -> State -> Set :=
+Inductive T n : RunState -> RunState -> Set :=
 op : forall l ctx, length l = n ->
     T n
       (fillReadFrame ctx {| prevData := rev l
@@ -476,7 +499,7 @@ op : forall l ctx, length l = n ->
                           ; nextData := l
                           |}).
 
-Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : State & T n s0 s1}.
+Definition chk n s0 : (forall s1, T n s0 s1 -> False)+{s1 : RunState & T n s0 s1}.
 destruct s0 as [irf [rp rn] awf iwf].
 generalize (Nat.leb_spec n (length rp)).
 destruct (n <=? length rp)%nat;intros Hrp.
@@ -506,17 +529,19 @@ Defined.
 End Bwd.
 
 (* This machine code type specifies all legal basic Bit Machine state
- * transitions.
+ * transitions.  Notice that all legal state transitions begin in a RunState
+ * and only Abort ends in a Halted state.
  *)
-Inductive T (s0 s1 : State) : Set :=
-| NewFrame : forall n, NewFrame.T n s0 s1 -> T s0 s1
-| MoveFrame : MoveFrame.T s0 s1 -> T s0 s1
-| DropFrame : DropFrame.T s0 s1 -> T s0 s1
-| Write : forall b, Write.T b s0 s1 -> T s0 s1
-| Skip : forall n, Skip.T n s0 s1 -> T s0 s1
-| Copy : forall n, Copy.T n s0 s1 -> T s0 s1
-| Fwd : forall n, Fwd.T n s0 s1 -> T s0 s1
-| Bwd : forall n, Bwd.T n s0 s1 -> T s0 s1.
+Inductive T : State -> State -> Set :=
+| NewFrame : forall s0 s1 n, NewFrame.T n s0 s1 -> T s0 s1
+| MoveFrame : forall s0 s1, MoveFrame.T s0 s1 -> T s0 s1
+| DropFrame : forall s0 s1, DropFrame.T s0 s1 -> T s0 s1
+| Write : forall s0 s1 b, Write.T b s0 s1 -> T s0 s1
+| Skip : forall s0 s1 n, Skip.T n s0 s1 -> T s0 s1
+| Copy : forall s0 s1 n, Copy.T n s0 s1 -> T s0 s1
+| Fwd : forall s0 s1 n, Fwd.T n s0 s1 -> T s0 s1
+| Bwd : forall s0 s1 n, Bwd.T n s0 s1 -> T s0 s1
+| Abort : forall (s0 : RunState), T s0 Halted.
 Arguments NewFrame [s0 s1].
 Arguments MoveFrame [s0 s1].
 Arguments DropFrame [s0 s1].
@@ -525,6 +550,7 @@ Arguments Skip [s0 s1].
 Arguments Copy [s0 s1].
 Arguments Fwd [s0 s1].
 Arguments Bwd [s0 s1].
+Arguments Abort [s0].
 
 Definition newFrame n ctx : T _ _ :=
  NewFrame _ (NewFrame.op n ctx).
@@ -557,13 +583,32 @@ Local Open Scope thrist_scope.
 Notation "x ~~> y" := (MachineCode.T x y) (at level 70) : type_scope.
 Notation "x ->> y" := (Thrst MachineCode.T x y) (at level 70) : type_scope.
 
+(* When starting from the Halted state, the final state must also be
+ * Halted, and the only trace possible is the empty trace.
+ *)
+Lemma runHalt : forall P : forall s, (Halted ->> s) -> Prop,
+  P Halted [] -> forall s (tr : Halted ->> s), P s tr.
+Proof.
+remember Halted as h.
+intros P HP s tr.
+induction tr.
+assumption.
+elimtype False.
+rewrite Heqh in p.
+inversion p.
+Qed.
+
 (* A Bit Machine programs takes an inital state, x, and tries to produce a
  * thrist of basic state transformations to some final state, y. However, a
- * can potentially crash instead if it cannot execute successfully given the
- * inital state.
+ * program can potentially crash instead if it encounters an instruction that
+ * cannot execute successfully from the given state.
  *)
 Definition Program := forall x : State, option { y : State & x ->> y }.
 
+(* runProgram lives in Prop so the witness, tr, isn't directly extractable.
+ * However, the trace function below can be used to (indirectly) extract this
+ * witness value.
+ *)
 Definition runProgram (p : Program) s0 s1 := exists tr : s0 ->> s1, (p s0) = Some (existT _ _ tr).
 
 Notation "s0 >>- p ->> s1" := (runProgram p s0 s1) (at level 70, p at next level) : type_scope.
@@ -590,7 +635,7 @@ intros [tr Htr].
 discriminate.
 Qed.
 
-(* The nop program has no basic instructions. *)
+(* The nop program has no instructions. *)
 Definition nop : Program :=
   fun x => Some (existT _ x []).
 
@@ -608,51 +653,59 @@ inversion_clear Htr.
 reflexivity.
 Qed.
 
-(* For each basic instruction we define a program that executes only that
- * single instruction.  For each instruction we have a correctness lemma
- * that describes the result of the program when executed with an initial
- * state that is legal for that instruction.
+(* For each instruction we define a program that executes only that single
+ * instruction.  For each instruction we have a correctness lemma that
+ * describes the result of the program when executed with an initial state
+ * that is legal for that instruction.
  *)
 
-(* This function is used to build a single program from a single instruction. *)
-Definition makeProgram {T : State -> State -> Set}
+(* This function is used to build a program from a single instruction.
+ * When in the Halted state we ignore the instruction and return the
+ * empty trace.
+ *)
+Definition makeProgram {T : RunState -> RunState -> Set}
                   (inj : forall {s0 s1}, T s0 s1 -> s0 ~~> s1)
-                  (dec : forall s0, (forall s1, T s0 s1 -> False)+{s1 : State & T s0 s1})
+                  (dec : forall s0, (forall s1, T s0 s1 -> False)+{s1 : RunState & T s0 s1})
                   : Program :=
 fun s0 : State =>
-match dec s0 with
-| inl _ => None
-| inr (existT _ s2 t) =>
-    Some (existT (fun y : State => s0 ->> y) s2 (inj t <| []))
+match s0 with
+| Halted => Some (existT _ _ [])
+| Running s0' =>
+ match dec s0' with
+ | inl _ => None
+ | inr (existT _ s2 t) =>
+     Some (existT (fun y : State => s0' ->> y) s2 (inj t <| []))
+ end
 end.
 
-Lemma op_complete (T : State -> State -> Set)
+Lemma op_complete {T : RunState -> RunState -> Set}
                   (inj : forall s0 s1, T s0 s1 -> s0 ~~> s1)
-                  (dec : forall s0, (forall s1, T s0 s1 -> False)+{s1 : State & T s0 s1})
+                  (dec : forall s0, (forall s1, T s0 s1 -> False)+{s1 : RunState & T s0 s1})
+                  (P : State -> State -> Type)
+                  (HT : forall s0 s1, T s0 s1 -> P s0 s1)
+                  (HHalted : P Halted Halted)
                   s0 s1 :
-  s0 >>- makeProgram inj dec ->> s1 ->
-  T s0 s1.
+  s0 >>- makeProgram inj dec ->> s1 -> P s0 s1.
 unfold makeProgram, runProgram.
+destruct s0 as [|s0].
+ destruct s1 as [|s1].
+  intros _; exact HHalted.
+ abstract (intros Htr; elimtype False; destruct Htr; discriminate).
 destruct (dec s0) as [|[s1' Hs1]].
  abstract (intros Htr; elimtype False; destruct Htr; discriminate).
 intros Htr.
-replace s1 with s1'.
- exact Hs1.
+replace s1 with (Running s1').
+ exact (HT _ _ Hs1).
 abstract(
  destruct Htr as [tr Htr];
- inversion_clear Htr;
- reflexivity
+ inversion Htr;
+ auto
 ).
 Defined.
 
-(* The newFrame instruction is legal to execute in any initial state.  We don't
- * provide a correctness function for it since it can be evaluated inside Coq
- * on any abstract input (i.e. it doesn't need any iota reductions).
- *)
-Definition newFrame (n : nat) : Program :=
-  fun x => Some (existT _ _ (MachineCode.newFrame n x <| [])).
+Definition newFrame (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.NewFrame s0 s1 n) (MachineCode.NewFrame.chk n).
 
-Lemma newFrame_correct n s : s >>- newFrame n ->> {|
+Lemma newFrame_correct n (s : RunState) : s >>- newFrame n ->> {|
        inactiveReadFrames := inactiveReadFrames s;
        activeReadFrame := activeReadFrame s;
        activeWriteFrame := newWriteFrame n;
@@ -662,24 +715,12 @@ eexists.
 reflexivity.
 Qed.
 
-Lemma newFrame_complete n s0 s1 :
-  s0 >>- newFrame n ->> s1 ->
-  MachineCode.NewFrame.T n s0 s1.
-unfold newFrame, runProgram.
-intros Htr.
-replace s1 with
-      {| inactiveReadFrames := inactiveReadFrames s0
-       ; activeReadFrame := activeReadFrame s0
-       ; activeWriteFrame := newWriteFrame n
-       ; inactiveWriteFrames := activeWriteFrame s0 :: inactiveWriteFrames s0
-       |}.
- constructor.
-abstract(
- destruct Htr as [tr Htr];
- inversion_clear Htr;
- reflexivity
-).
-Defined.
+Definition newFrame_complete n : forall (P : State -> State -> Type),
+       (forall s0 s1 : RunState, MachineCode.NewFrame.T n s0 s1 -> P s0 s1) ->
+       P Halted Halted ->
+       forall s0 s1 : State,
+       s0 >>- newFrame n ->> s1 -> P s0 s1
+:= op_complete _ _.
 
 Definition moveFrame : Program := makeProgram MachineCode.MoveFrame MachineCode.MoveFrame.chk.
 
@@ -705,10 +746,12 @@ apply K_dec_set.
 reflexivity.
 Qed.
 
-Definition moveFrame_complete s0 s1 :
-  s0 >>- moveFrame ->> s1 ->
-  MachineCode.MoveFrame.T s0 s1
-:= op_complete _ _ _ _ _.
+Definition moveFrame_complete : forall (P : State -> State -> Type),
+       (forall s0 s1 : RunState, MachineCode.MoveFrame.T s0 s1 -> P s0 s1) ->
+       P Halted Halted ->
+       forall s0 s1 : State,
+       s0 >>- moveFrame ->> s1 -> P s0 s1
+:= op_complete _ _.
 
 Definition dropFrame : Program := makeProgram MachineCode.DropFrame MachineCode.DropFrame.chk.
 
@@ -723,10 +766,12 @@ eexists.
 destruct s; reflexivity.
 Qed.
 
-Definition dropFrame_complete s0 s1 :
-  s0 >>- dropFrame ->> s1 ->
-  MachineCode.DropFrame.T s0 s1
-:= op_complete _ _ _ _ _.
+Definition dropFrame_complete : forall (P : State -> State -> Type),
+       (forall s0 s1 : RunState, MachineCode.DropFrame.T s0 s1 -> P s0 s1) ->
+       P Halted Halted ->
+       forall s0 s1 : State,
+       s0 >>- dropFrame ->> s1 -> P s0 s1
+:= op_complete _ _.
 
 Definition write (b : bool) : Program := makeProgram (fun s0 s1 => @MachineCode.Write s0 s1 b) (MachineCode.Write.chk b).
 
@@ -740,10 +785,12 @@ eexists.
 reflexivity.
 Qed.
 
-Definition write_complete b s0 s1 :
-  s0 >>- write b ->> s1 ->
-  MachineCode.Write.T b s0 s1
-:= op_complete _ _ _ _ _.
+Definition write_complete b : forall (P : State -> State -> Type),
+       (forall s0 s1 : RunState, MachineCode.Write.T b s0 s1 -> P s0 s1) ->
+       P Halted Halted ->
+       forall s0 s1 : State,
+       s0 >>- write b ->> s1 -> P s0 s1
+:= op_complete _ _.
 
 Definition skip (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Skip s0 s1 n) (MachineCode.Skip.chk n).
 
@@ -768,10 +815,12 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition skip_complete n s0 s1 :
-  s0 >>- skip n ->> s1 ->
-  MachineCode.Skip.T n s0 s1
-:= op_complete _ _ _ _ _.
+Definition skip_complete n : forall (P : State -> State -> Type),
+       (forall s0 s1 : RunState, MachineCode.Skip.T n s0 s1 -> P s0 s1) ->
+       P Halted Halted ->
+       forall s0 s1 : State,
+       s0 >>- skip n ->> s1 -> P s0 s1
+:= op_complete _ _.
 
 Definition copy (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Copy s0 s1 n) (MachineCode.Copy.chk n).
 
@@ -808,10 +857,12 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition copy_complete n s0 s1 :
-  s0 >>- copy n ->> s1 ->
-  MachineCode.Copy.T n s0 s1
-:= op_complete _ _ _ _ _.
+Definition copy_complete n : forall (P : State -> State -> Type),
+       (forall s0 s1 : RunState, MachineCode.Copy.T n s0 s1 -> P s0 s1) ->
+       P Halted Halted ->
+       forall s0 s1 : State,
+       s0 >>- copy n ->> s1 -> P s0 s1
+:= op_complete _ _.
 
 Definition fwd (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Fwd s0 s1 n) (MachineCode.Fwd.chk n).
 
@@ -838,10 +889,12 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition fwd_complete n s0 s1 :
-  s0 >>- fwd n ->> s1 ->
-  MachineCode.Fwd.T n s0 s1
-:= op_complete _ _ _ _ _.
+Definition fwd_complete n : forall (P : State -> State -> Type),
+       (forall s0 s1 : RunState, MachineCode.Fwd.T n s0 s1 -> P s0 s1) ->
+       P Halted Halted ->
+       forall s0 s1 : State,
+       s0 >>- fwd n ->> s1 -> P s0 s1
+:= op_complete _ _.
 
 Definition bwd (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Bwd s0 s1 n) (MachineCode.Bwd.chk n).
 
@@ -875,18 +928,23 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition bwd_complete n s0 s1 :
-  s0 >>- bwd n ->> s1 ->
-  MachineCode.Bwd.T n s0 s1
-:= op_complete _ _ _ _ _.
+Definition bwd_complete n : forall (P : State -> State -> Type),
+       (forall s0 s1 : RunState, MachineCode.Bwd.T n s0 s1 -> P s0 s1) ->
+       P Halted Halted ->
+       forall s0 s1 : State,
+       s0 >>- bwd n ->> s1 -> P s0 s1
+:= op_complete _ _.
 
-(* The basic instruction crash always crashes the machine.  Crash doesn't
- * appear in the MachineCode.T because there is no state that is can
- * successfuly be executed in.  For the same reason it has no correctness
- * lemma.
+(* The basic instruction abort halts the machine. Of course if the machine
+ * is already halted, it does nothing, like every other program starting from
+ * the halted state.
  *)
-Definition crash : Program :=
-  fun x => None.
+Definition abort : Program :=
+fun s0 : State => Some
+match s0 with
+| Halted => existT _ _ []
+| Running s0' => existT _ _ (MachineCode.Abort <| [])
+end.
 
 (* There are two combinators for building larger programs from smaller ones:
  * seq runs two programs, one after the other.  choice runs one of two programs
@@ -902,7 +960,7 @@ Defined.
 Notation "p1 ;;; p2" := (seq p1 p2) (at level 40, left associativity) : mc_scope.
 
 Definition choice (p1 p2 : Program) : Program.
-intros x.
+intros [|x];[exact (Some (existT _ _ []))|].
 destruct (nextData (activeReadFrame x)) as [|[b|] tl];[exact None| |exact None].
 exact ((if b then p2 else p1) x).
 Defined.
@@ -960,19 +1018,28 @@ destruct (nextData _) as [|[[|]|] tl]; try discriminate.
 auto.
 Qed.
 
-Lemma choice_complete p q s0 s1 :
- s0 >>- p ||| q ->> s1 ->
- { b | head (nextData (activeReadFrame s0)) = Some (Some b)
-     & s0 >>- (if b then q else p) ->> s1 }.
+Lemma choice_complete p q : forall (P : State -> State -> Type),
+       (forall (s0 : RunState) s1 b, head (nextData (activeReadFrame s0)) = Some (Some b) ->
+                                     s0 >>- (if b then q else p) ->> s1 -> P s0 s1) ->
+       P Halted Halted ->
+       forall s0 s1 : State,
+       s0 >>- p ||| q ->> s1 -> P s0 s1.
+intros P H HHalted s0 s1.
 unfold choice, runProgram.
+destruct s0 as [|s0].
+ destruct s1.
+  intros _; exact HHalted.
+ try abstract (intros Hpq; elimtype False; destruct Hpq; discriminate).
+specialize (H s0 s1).
 destruct (nextData _) as [|[b|]];
  try abstract (intros Hpq; elimtype False; destruct Hpq; discriminate).
-exists b.
+intros Htr.
+apply (H b).
  reflexivity.
 assumption.
 Defined.
 
-Lemma trace_left p q s0 s1 (trp : s0 >>- p ->> s1) (trpq : s0 >>- p ||| q ->> s1) :
+Lemma trace_left p q (s0 : RunState) s1 (trp : s0 >>- p ->> s1) (trpq : s0 >>- p ||| q ->> s1) :
  head (nextData (activeReadFrame s0)) = Some (Some false) ->
  trace trp = trace trpq.
 Proof.
@@ -989,7 +1056,7 @@ apply (K_dec_set State_dec).
 reflexivity.
 Qed.
 
-Lemma trace_right p q s0 s1 (trq : s0 >>- q ->> s1) (trpq : s0 >>- p ||| q ->> s1) :
+Lemma trace_right p q (s0 : RunState) s1 (trq : s0 >>- q ->> s1) (trpq : s0 >>- p ||| q ->> s1) :
  head (nextData (activeReadFrame s0)) = Some (Some true) ->
  trace trq = trace trpq.
 Proof.
@@ -1038,11 +1105,13 @@ apply seq_complete in Hb.
 destruct Hb as [s2 Hb Hs2].
 apply seq_complete in Hb.
 destruct Hb as [s1 Hs1 Hb].
-replace (fillReadFrame _ _) with s1.
- replace (fillReadFrame _ _) with s2.
+replace (_ (fillReadFrame _ _)) with s1.
+ replace (_ (fillReadFrame _ _)) with s2.
   assumption.
  clear - Hs2.
- apply bwd_complete in Hs2.
+ remember (_ (fillReadFrame ctx1 {| prevData := nil; nextData := l |})) as s1.
+ destruct Hs2 as [s2 s1 Hs2|] using bwd_complete;[|discriminate].
+ injection Heqs1; clear Heqs1; intros ->.
  unfold fillReadFrame.
  destruct s2; destruct ctx1; cbn in *.
  inversion Hs2; cbn in *.
@@ -1055,7 +1124,9 @@ replace (fillReadFrame _ _) with s1.
  rewrite firstn_app_3 in H6.
  congruence.
 clear - Hs1.
-apply fwd_complete in Hs1.
+remember (_ (fillReadFrame ctx0 {| prevData := nil; nextData := l |})) as s2.
+destruct Hs1 as [s2 s1 Hs1|] using fwd_complete;[|discriminate].
+injection Heqs2; clear Heqs2; intros ->.
 unfold fillReadFrame.
 destruct s1; destruct ctx0; cbn in *.
 inversion Hs1; cbn in *.
@@ -1074,7 +1145,7 @@ Lemma stateShape_write b x y :
  stateShape x = stateShape y.
 Proof.
 intros Hxy.
-apply write_complete in Hxy.
+destruct Hxy as [x' y' Hxy|] using write_complete;[|reflexivity].
 inversion_clear Hxy.
 do 2 rewrite fillContextShape_correct.
 reflexivity.
@@ -1085,7 +1156,7 @@ Lemma stateShape_skip n x y :
  stateShape x = stateShape y.
 Proof.
 intros Hxy.
-apply skip_complete in Hxy.
+destruct Hxy as [x' y' Hxy|] using skip_complete;[|reflexivity].
 inversion_clear Hxy.
 do 2 rewrite fillContextShape_correct.
 f_equal.
@@ -1099,7 +1170,7 @@ Lemma stateShape_copy n x y :
  stateShape x = stateShape y.
 Proof.
 intros Hxy.
-apply copy_complete in Hxy.
+destruct Hxy as [x' y' Hxy|] using copy_complete;[|reflexivity].
 inversion_clear Hxy.
 do 2 rewrite fillContextShape_correct.
 f_equal.
@@ -1113,7 +1184,7 @@ Lemma stateShape_fwd n x y :
  stateShape x = stateShape y.
 Proof.
 intros Hxy.
-apply fwd_complete in Hxy.
+destruct Hxy as [x' y' Hxy|] using fwd_complete;[|reflexivity].
 inversion_clear Hxy.
 do 2 rewrite fillReadFrameShape_correct.
 f_equal.
@@ -1127,7 +1198,7 @@ Lemma stateShape_bwd n x y :
  stateShape x = stateShape y.
 Proof.
 intros Hxy.
-apply bwd_complete in Hxy.
+destruct Hxy as [x' y' Hxy|] using bwd_complete;[|reflexivity].
 inversion_clear Hxy.
 do 2 rewrite fillReadFrameShape_correct.
 f_equal.
@@ -1170,7 +1241,7 @@ Proof.
 unfold runProgram in tr.
 unfold trace.
 unfold newFrame in *.
-destruct (trace_subproof x y _ _ tr);cbn;clear.
+destruct x as [|x];cbn;destruct (trace_subproof _ _ _ _ tr);[reflexivity|cbn;clear].
 apply N.max_r.
 destruct x.
 unfold stateSize, stateShape, stateShapeSize.
@@ -1188,6 +1259,7 @@ Proof.
 unfold runProgram in tr.
 unfold trace.
 unfold moveFrame, makeProgram in *.
+destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
 destruct (MachineCode.MoveFrame.chk x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
 destruct (trace_subproof x y y' _ tr);cbn.
@@ -1206,6 +1278,7 @@ Proof.
 unfold runProgram in tr.
 unfold trace.
 unfold dropFrame, makeProgram in *.
+destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
 destruct (MachineCode.DropFrame.chk x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
 destruct (trace_subproof x y y' _ tr);cbn.
@@ -1226,9 +1299,10 @@ assert (Hx := stateShape_write _ _ _ tr).
 unfold runProgram in tr.
 unfold trace.
 unfold write, makeProgram in *.
+destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
 destruct (MachineCode.Write.chk b x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);cbn.
+destruct (trace_subproof x y y' _ tr);simpl.
 unfold stateSize.
 rewrite Hx.
 apply N.max_id.
@@ -1241,9 +1315,10 @@ assert (Hx := stateShape_skip _ _ _ tr).
 unfold runProgram in tr.
 unfold trace.
 unfold skip, makeProgram in *.
+destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
 destruct (MachineCode.Skip.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);cbn.
+destruct (trace_subproof x y y' _ tr);simpl.
 unfold stateSize.
 rewrite Hx.
 apply N.max_id.
@@ -1256,9 +1331,10 @@ assert (Hx := stateShape_copy _ _ _ tr).
 unfold runProgram in tr.
 unfold trace.
 unfold copy, makeProgram in *.
+destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
 destruct (MachineCode.Copy.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);cbn.
+destruct (trace_subproof x y y' _ tr);simpl.
 unfold stateSize.
 rewrite Hx.
 apply N.max_id.
@@ -1271,9 +1347,10 @@ assert (Hx := stateShape_fwd _ _ _ tr).
 unfold runProgram in tr.
 unfold trace.
 unfold fwd, makeProgram in *.
+destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
 destruct (MachineCode.Fwd.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);cbn.
+destruct (trace_subproof x y y' _ tr);simpl.
 unfold stateSize.
 rewrite Hx.
 apply N.max_id.
@@ -1286,9 +1363,10 @@ assert (Hx := stateShape_bwd _ _ _ tr).
 unfold runProgram in tr.
 unfold trace.
 unfold bwd, makeProgram in *.
+destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
 destruct (MachineCode.Bwd.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);cbn.
+destruct (trace_subproof x y y' _ tr);simpl.
 unfold stateSize.
 rewrite Hx.
 apply N.max_id.
