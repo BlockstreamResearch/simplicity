@@ -586,16 +586,14 @@ Notation "x ->> y" := (Thrst MachineCode.T x y) (at level 70) : type_scope.
 (* When starting from the Halted state, the final state must also be
  * Halted, and the only trace possible is the empty trace.
  *)
-Lemma runHalt : forall P : forall s, (Halted ->> s) -> Prop,
-  P Halted [] -> forall s (tr : Halted ->> s), P s tr.
+Inductive nop_trace s0 : forall s1, s0 ->> s1 -> Prop :=
+ nop_trace_empty : nop_trace s0 s0 [].
+
+Lemma runHalt {s} (tr : Halted ->> s): nop_trace _ _ tr.
 Proof.
-remember Halted as h.
-intros P HP s tr.
-induction tr.
-assumption.
-elimtype False.
-rewrite Heqh in p.
-inversion p.
+dependent inversion tr.
+ constructor.
+inversion t.
 Qed.
 
 (* A Bit Machine programs takes an inital state, x, and tries to produce a

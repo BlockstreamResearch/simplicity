@@ -121,9 +121,7 @@ apply seq_complete in Hxs2.
 destruct Hxs2 as [s1 Hxs1 Hs1s2].
 rewrite (stateShape_fwd _ _ _ Hxs1).
 destruct s2 as [|s2].
- destruct (State_dec y Halted) as [|ne];[discriminate|revert ne].
- assert (Hs2y' := trace Hs2y).
- inversion Hs2y' using runHalt; contradiction.
+ pose (inv := runHalt (trace Hs2y));inversion inv.
 rewrite (Ht _ _ Hs1s2).
 apply (stateShape_bwd _ _ _ Hs2y).
 Qed.
@@ -147,9 +145,7 @@ simpl in Hxz.
 apply seq_complete in Hxz.
 destruct Hxz as [y Hxy Hyz].
 destruct y as [|y].
- destruct (State_dec z Halted) as [|ne];[discriminate|revert ne].
- assert (Hyz' := trace Hyz).
- inversion Hyz' using runHalt; contradiction.
+ pose (inv := runHalt (trace Hyz));inversion inv.
 rewrite (Hs _ _ Hxy).
 apply (Ht _ _ Hyz).
 Qed.
