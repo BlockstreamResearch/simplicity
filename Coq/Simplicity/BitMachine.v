@@ -676,24 +676,25 @@ match s0 with
  end
 end.
 
+Inductive complete_spec (T : RunState -> RunState -> Set) : State -> State -> Set :=
+| complete_step : forall s0 s1, T s0 s1 -> complete_spec T s0 s1
+| complete_halted : complete_spec T Halted Halted.
+
 Lemma op_complete {T : RunState -> RunState -> Set}
                   (inj : forall s0 s1, T s0 s1 -> s0 ~~> s1)
                   (dec : forall s0, (forall s1, T s0 s1 -> False)+{s1 : RunState & T s0 s1})
-                  (P : State -> State -> Type)
-                  (HT : forall s0 s1, T s0 s1 -> P s0 s1)
-                  (HHalted : P Halted Halted)
                   s0 s1 :
-  s0 >>- makeProgram inj dec ->> s1 -> P s0 s1.
+  s0 >>- makeProgram inj dec ->> s1 -> complete_spec T s0 s1.
 unfold makeProgram, runProgram.
 destruct s0 as [|s0].
  destruct s1 as [|s1].
-  intros _; exact HHalted.
+  intros _; constructor.
  abstract (intros Htr; elimtype False; destruct Htr; discriminate).
 destruct (dec s0) as [|[s1' Hs1]].
  abstract (intros Htr; elimtype False; destruct Htr; discriminate).
 intros Htr.
 replace s1 with (Running s1').
- exact (HT _ _ Hs1).
+ constructor; assumption.
 abstract(
  destruct Htr as [tr Htr];
  inversion Htr;
@@ -713,11 +714,8 @@ eexists.
 reflexivity.
 Qed.
 
-Definition newFrame_complete n : forall (P : State -> State -> Type),
-       (forall s0 s1 : RunState, MachineCode.NewFrame.T n s0 s1 -> P s0 s1) ->
-       P Halted Halted ->
-       forall s0 s1 : State,
-       s0 >>- newFrame n ->> s1 -> P s0 s1
+Definition newFrame_complete {n} : forall {s0 s1},
+  s0 >>- newFrame n ->> s1 -> complete_spec (MachineCode.NewFrame.T n) s0 s1
 := op_complete _ _.
 
 Definition moveFrame : Program := makeProgram MachineCode.MoveFrame MachineCode.MoveFrame.chk.
@@ -744,11 +742,8 @@ apply K_dec_set.
 reflexivity.
 Qed.
 
-Definition moveFrame_complete : forall (P : State -> State -> Type),
-       (forall s0 s1 : RunState, MachineCode.MoveFrame.T s0 s1 -> P s0 s1) ->
-       P Halted Halted ->
-       forall s0 s1 : State,
-       s0 >>- moveFrame ->> s1 -> P s0 s1
+Definition moveFrame_complete : forall {s0 s1},
+  s0 >>- moveFrame ->> s1 -> complete_spec MachineCode.MoveFrame.T s0 s1
 := op_complete _ _.
 
 Definition dropFrame : Program := makeProgram MachineCode.DropFrame MachineCode.DropFrame.chk.
@@ -764,11 +759,8 @@ eexists.
 destruct s; reflexivity.
 Qed.
 
-Definition dropFrame_complete : forall (P : State -> State -> Type),
-       (forall s0 s1 : RunState, MachineCode.DropFrame.T s0 s1 -> P s0 s1) ->
-       P Halted Halted ->
-       forall s0 s1 : State,
-       s0 >>- dropFrame ->> s1 -> P s0 s1
+Definition dropFrame_complete : forall {s0 s1},
+  s0 >>- dropFrame ->> s1 -> complete_spec MachineCode.DropFrame.T s0 s1
 := op_complete _ _.
 
 Definition write (b : bool) : Program := makeProgram (fun s0 s1 => @MachineCode.Write s0 s1 b) (MachineCode.Write.chk b).
@@ -783,11 +775,8 @@ eexists.
 reflexivity.
 Qed.
 
-Definition write_complete b : forall (P : State -> State -> Type),
-       (forall s0 s1 : RunState, MachineCode.Write.T b s0 s1 -> P s0 s1) ->
-       P Halted Halted ->
-       forall s0 s1 : State,
-       s0 >>- write b ->> s1 -> P s0 s1
+Definition write_complete {b} : forall {s0 s1},
+  s0 >>- write b ->> s1 -> complete_spec (MachineCode.Write.T b) s0 s1
 := op_complete _ _.
 
 Definition skip (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Skip s0 s1 n) (MachineCode.Skip.chk n).
@@ -813,11 +802,8 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition skip_complete n : forall (P : State -> State -> Type),
-       (forall s0 s1 : RunState, MachineCode.Skip.T n s0 s1 -> P s0 s1) ->
-       P Halted Halted ->
-       forall s0 s1 : State,
-       s0 >>- skip n ->> s1 -> P s0 s1
+Definition skip_complete {n} : forall {s0 s1},
+  s0 >>- skip n ->> s1 -> complete_spec (MachineCode.Skip.T n) s0 s1
 := op_complete _ _.
 
 Definition copy (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Copy s0 s1 n) (MachineCode.Copy.chk n).
@@ -855,11 +841,8 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition copy_complete n : forall (P : State -> State -> Type),
-       (forall s0 s1 : RunState, MachineCode.Copy.T n s0 s1 -> P s0 s1) ->
-       P Halted Halted ->
-       forall s0 s1 : State,
-       s0 >>- copy n ->> s1 -> P s0 s1
+Definition copy_complete {n} : forall {s0 s1},
+  s0 >>- copy n ->> s1 -> complete_spec (MachineCode.Copy.T n) s0 s1
 := op_complete _ _.
 
 Definition fwd (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Fwd s0 s1 n) (MachineCode.Fwd.chk n).
@@ -887,11 +870,8 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition fwd_complete n : forall (P : State -> State -> Type),
-       (forall s0 s1 : RunState, MachineCode.Fwd.T n s0 s1 -> P s0 s1) ->
-       P Halted Halted ->
-       forall s0 s1 : State,
-       s0 >>- fwd n ->> s1 -> P s0 s1
+Definition fwd_complete {n} : forall {s0 s1},
+  s0 >>- fwd n ->> s1 -> complete_spec (MachineCode.Fwd.T n) s0 s1
 := op_complete _ _.
 
 Definition bwd (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Bwd s0 s1 n) (MachineCode.Bwd.chk n).
@@ -926,11 +906,8 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition bwd_complete n : forall (P : State -> State -> Type),
-       (forall s0 s1 : RunState, MachineCode.Bwd.T n s0 s1 -> P s0 s1) ->
-       P Halted Halted ->
-       forall s0 s1 : State,
-       s0 >>- bwd n ->> s1 -> P s0 s1
+Definition bwd_complete {n} : forall {s0 s1},
+  s0 >>- bwd n ->> s1 -> complete_spec (MachineCode.Bwd.T n) s0 s1
 := op_complete _ _.
 
 (* The basic instruction abort halts the machine. Of course if the machine
@@ -1107,30 +1084,22 @@ replace (_ (fillReadFrame _ _)) with s1.
  replace (_ (fillReadFrame _ _)) with s2.
   assumption.
  clear - Hs2.
- remember (_ (fillReadFrame ctx1 {| prevData := nil; nextData := l |})) as s1.
- destruct Hs2 as [s2 s1 Hs2|] using bwd_complete;[|discriminate].
- injection Heqs1; clear Heqs1; intros ->.
- unfold fillReadFrame.
- destruct s2; destruct ctx1; cbn in *.
- inversion Hs2; cbn in *.
+ pose (inv := bwd_complete Hs2);inversion_clear inv as [s0 s1 Hs01|].
+ destruct ctx1; inversion Hs01; unfold fillReadFrame; cbn.
  replace l0 with l in *.
-  rewrite (app_inv_head _ _ _ H6).
-  reflexivity.
- apply (f_equal (firstn (length l0))) in H6.
- rewrite firstn_app_3 in H6.
- replace (length l0) in H6.
- rewrite firstn_app_3 in H6.
+  rewrite (app_inv_head _ _ _ H3).
+  congruence.
+ apply (f_equal (firstn (length l0))) in H3.
+ rewrite firstn_app_3 in H3.
+ replace (length l0) in H3.
+ rewrite firstn_app_3 in H3.
  congruence.
 clear - Hs1.
-remember (_ (fillReadFrame ctx0 {| prevData := nil; nextData := l |})) as s2.
-destruct Hs1 as [s2 s1 Hs1|] using fwd_complete;[|discriminate].
-injection Heqs2; clear Heqs2; intros ->.
-unfold fillReadFrame.
-destruct s1; destruct ctx0; cbn in *.
-inversion Hs1; cbn in *.
+pose (inv := fwd_complete Hs1);inversion_clear inv as [s0 s1' Hs01|].
+destruct ctx0; inversion Hs01; unfold fillReadFrame; cbn.
 replace l0 with l in *.
  rewrite (app_inv_head _ _ _ H2).
- reflexivity.
+ congruence.
 apply (f_equal (firstn (length l0))) in H2.
 rewrite firstn_app_3 in H2.
 replace (length l0) in H2.
@@ -1143,8 +1112,8 @@ Lemma stateShape_write b x y :
  stateShape x = stateShape y.
 Proof.
 intros Hxy.
-destruct Hxy as [x' y' Hxy|] using write_complete;[|reflexivity].
-inversion_clear Hxy.
+destruct (write_complete Hxy) as[x' y' Hxy'|];[|reflexivity].
+inversion_clear Hxy'.
 do 2 rewrite fillContextShape_correct.
 reflexivity.
 Qed.
@@ -1154,8 +1123,8 @@ Lemma stateShape_skip n x y :
  stateShape x = stateShape y.
 Proof.
 intros Hxy.
-destruct Hxy as [x' y' Hxy|] using skip_complete;[|reflexivity].
-inversion_clear Hxy.
+destruct (skip_complete Hxy) as [x' y' Hxy'|];[|reflexivity].
+inversion_clear Hxy'.
 do 2 rewrite fillContextShape_correct.
 f_equal.
 unfold localStateShape; cbn.
@@ -1168,8 +1137,8 @@ Lemma stateShape_copy n x y :
  stateShape x = stateShape y.
 Proof.
 intros Hxy.
-destruct Hxy as [x' y' Hxy|] using copy_complete;[|reflexivity].
-inversion_clear Hxy.
+destruct (copy_complete Hxy) as [x' y' Hxy'|];[|reflexivity].
+inversion_clear Hxy'.
 do 2 rewrite fillContextShape_correct.
 f_equal.
 unfold localStateShape; cbn.
@@ -1182,8 +1151,8 @@ Lemma stateShape_fwd n x y :
  stateShape x = stateShape y.
 Proof.
 intros Hxy.
-destruct Hxy as [x' y' Hxy|] using fwd_complete;[|reflexivity].
-inversion_clear Hxy.
+destruct (fwd_complete Hxy) as [x' y' Hxy'|];[|reflexivity].
+inversion_clear Hxy'.
 do 2 rewrite fillReadFrameShape_correct.
 f_equal.
 unfold readSize; cbn.
@@ -1196,8 +1165,8 @@ Lemma stateShape_bwd n x y :
  stateShape x = stateShape y.
 Proof.
 intros Hxy.
-destruct Hxy as [x' y' Hxy|] using bwd_complete;[|reflexivity].
-inversion_clear Hxy.
+destruct (bwd_complete Hxy) as [x' y' Hxy'|];[|reflexivity].
+inversion_clear Hxy'.
 do 2 rewrite fillReadFrameShape_correct.
 f_equal.
 unfold readSize; cbn.

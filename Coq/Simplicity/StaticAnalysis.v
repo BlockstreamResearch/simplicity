@@ -44,29 +44,20 @@ apply seq_complete in Hs03.
 destruct Hs03 as [s2 Hs02 Hs23].
 apply seq_complete in Hs02.
 destruct Hs02 as [s1 Hs01 Hs12].
-remember (Running s5) as s5'.
-revert Hs34 Heqs5'; pattern s4; pattern s5'.
-revert s4 s5' Hs45; apply dropFrame_complete;[|discriminate].
-intros s4 s5' Hs45 Hs34 Heq.
-injection Heq; intros ->; clear Heq.
+pose (inv := dropFrame_complete Hs45);inversion inv as [s4' s5' Hs45'|]; clear inv Hs45.
+subst s4; subst s5.
 apply Ht in Hs34.
 destruct s3 as [|s3];[discriminate|].
-remember (Running s3) as s3'.
-revert Hs12 Hs34 Heqs3'; pattern s2; pattern s3'.
-revert s2 s3' Hs23; apply moveFrame_complete;[|discriminate].
-intros s2 s3' Hs23 Hs12 Hs34 Heq.
-injection Heq; intros ->; clear Heq.
+pose (inv := moveFrame_complete Hs23);inversion inv as [s2' s3' Hs23'|]; clear inv Hs23.
+subst s2; subst s3.
 apply Hs in Hs12.
 destruct s1 as [|s1];[discriminate|].
-remember (Running s1) as s1'.
-revert Hs12 Heqs1'; pattern s0; pattern s1'.
-revert s0 s1' Hs01; apply newFrame_complete;[|discriminate].
-intros s0 s1' Hs01 Hs12 Heq.
-injection Heq; intros ->; clear Heq.
+pose (inv := newFrame_complete Hs01);inversion inv as [s0' s1' Hs01'|]; clear inv Hs01.
+subst s0; subst s1.
 revert Hs12 Hs34.
-inversion_clear Hs01.
-inversion_clear Hs23.
-inversion_clear Hs45.
+inversion_clear Hs01'.
+inversion_clear Hs23'.
+inversion_clear Hs45'.
 clear.
 unfold stateShape, runStateShape; cbn.
 do 2 inversion 1.
@@ -247,16 +238,15 @@ transitivity (stateSize s1 + N.max (@Core.eval _ _ s extraMemoryBound) (@Core.ev
     apply N.max_lub;[reflexivity|].
     etransitivity;[apply (StateSize_Core _ _ _ _ _ tr34)|apply N.le_max_l].
    apply N.max_lub;[apply N.le_add_r|apply (Ht _ _ tr34)].
-  clear - tr23; pattern s2; pattern s3;
-  revert s2 s3 tr23; apply moveFrame_complete;[intros s2 s3 H23|reflexivity].
-  inversion H23;cbn.
+  destruct (moveFrame_complete tr23) as [s2 s3 T23|];[|reflexivity].
+  inversion T23;cbn.
   rewrite fullWriteFrame_size.
   ring.
  apply N.add_le_mono_r.
  apply (StateSize_Core _ _ _ _ _ tr12).
 apply N.add_le_mono_r.
-destruct tr01 as [s0' s1' H01|] using newFrame_complete;[apply N.eq_le_incl|apply N.le_0_l].
-inversion H01; destruct s0'; cbn.
+destruct (newFrame_complete tr01) as [s0 s1 T01|];[apply N.eq_le_incl|apply N.le_0_l].
+inversion T01; cbn.
 ring.
 Qed.
 
