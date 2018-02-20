@@ -1150,7 +1150,7 @@
   <math|<around*|\||<carr|1?0>|\|>=3>. The concatenation of two arrays,
   <math|a> and <math|b> is denoted by <math|a\<cdot\>b>, and replication of
   an array <math|n> times is denoted by expontiation, <math|a<rsup|n>>.
-  \ Sometime we will omit the dot whed performing concatenation.
+  \ Sometimes we will omit the dot whed performing concatenation.
 
   For any given type, we define the number of cells needed to hold values of
   that type using the following <math|bitSize> function.
@@ -1217,35 +1217,36 @@
   frame stack>|<cell|write frame stack>>|<row|<cell|<carr|100<underline|1>1??110101000>>|<cell|<cearr|11??1101>>>|<row|<cell|<carr|<underline|0>000>>|<cell|<carr|111<underline|?>?>>>|<row|<cell|<cearr|>>|<cell|>>|<row|<cell|<carr|<underline|1>0>>|<cell|>>>>>|Example
   state of the Bit Machine.>
 
-  Notationally we will write a stack of read frames as
-  <math|r<rsub|n>\<vartriangleright\>\<ldots\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0>>,
+  <assign|halted|<math|<op|\<boxtimes\>>>>Notationally we will write a stack
+  of read frames as <math|r<rsub|n>\<vartriangleright\>\<ldots\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0>>,
   with <math|r<rsub|0>> as the active read frame. We will write a stack of
   write frames in the opposite order, as <math|w<rsub|0>\<vartriangleleft\>w<rsub|1>\<vartriangleleft\>\<ldots\>\<vartriangleleft\>w<rsub|m>>
-  with <math|w<rsub|0><rsub|>> as the active write frame. In both cases we
-  denote an empty stack as <math|\<varnothing\>>. We write a state of the Bit
-  Machine as <math|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>>
-  where <math|\<Theta\>> is a read frame stack and <math|\<Xi\>> is a write
-  frame stack and <math|r<rsub|0>> is the active read frame and
-  <math|w<rsub|0>> is the active write frame.<\footnote>
+  with <math|w<rsub|0><rsub|>> as the active write frame. We write a state of
+  the Bit Machine as <math|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>>
+  where <math|\<Theta\>> is the (possibly empty) inactive read frame stack,
+  <math|\<Xi\>> is the (possibly empty) inactive write frame stack,
+  <math|r<rsub|0>> is the active read frame, and <math|w<rsub|0>> is the
+  active write frame.<\footnote>
     The notation for the Bit Machine's state is intended to mimic the gap
     buffer used in our C implemenation of the Bit Machine (see
     <with|color|red|TODO>).
-  </footnote>
+  </footnote> There is one additional state of the Bit Machine called the
+  <dfn|halted> state, which we denote by <value|halted>.
 
   The Bit Machine has nine basic instructions that, when executed, transform
   the Bit Machine's state. \ We denote these basic instructions as
-  <math|i:S\<rightsquigarrow\>S<rprime|'>>, where <math|i> is the
-  instructions's name, <math|S> is a state of the Bit Machine before
-  executing the instruction, and <math|S<rprime|'>> is the state of the
-  machine after the successful execution of the instructions.
+  <math|i:S<rsub|0>\<rightsquigarrow\>S<rsub|1>>, where <math|i> is the
+  instructions's name, <math|S<rsub|0>> is a state of the Bit Machine before
+  executing the instruction, and <math|S<rsub|1>> is the state of the machine
+  after the successful execution of the instructions.
 
-  <subsubsection|Frame operations>
+  <subsubsection|Frame Instructions>
 
   Our first three basic instructions, create, move, and delete active frames.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|newFrame<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
-    \<rightsquigarrow\><around*|[|\<Theta\>\|<emptyFrame><carr|?><rsup|n>\<vartriangleleft\>w<rsub|0>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|moveFrame>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0><emptyFrame>\<vartriangleleft\>w<rsub|1>\<vartriangleleft\>\<Xi\>|]>
+    \<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|<emptyFrame><carr|?><rsup|n>\<vartriangleleft\>w<rsub|0>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|moveFrame>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0><emptyFrame>\<vartriangleleft\>w<rsub|1>\<vartriangleleft\>\<Xi\>|]>
     \<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<vartriangleright\><emptyFrame>w<rsub|0>\|w<rsub|1>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|dropFrame>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0>\|\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\|\<Xi\>|]>>>>>
   </eqnarray*>
 
@@ -1263,7 +1264,7 @@
   Executing the <math|dropFrame> instructions removes the top frame of the
   read frame stack.
 
-  <subsubsection|Active Write Frame operations>
+  <subsubsection|Active Write Frame Instructions>
 
   Our next three instructions are used to write data to the active write
   frame.
@@ -1290,9 +1291,9 @@
   instruction <math|copy<around*|(|0|)>> is legal and executing it is
   effectively a nop.
 
-  <subsubsection|Active Read Frame operations>
+  <subsubsection|Active Read Frame Instructions>
 
-  The last two instructions are used to manipulate the active read frame's
+  The next two instructions are used to manipulate the active read frame's
   cursor.
 
   <\equation*>
@@ -1308,53 +1309,49 @@
   instruction moves the cursor backwards. In both cases there must be
   sufficent number of cells before or after the cursor. The trivial
   instructions <math|fwd<around*|(|0|)>> and <math|bwd<around*|(|0|)>> are
-  legal and executing them are effective nops.
+  legal and executing them are effectively nops.
 
-  <subsubsection|Crashing the Bit Machine>
+  <subsubsection|Abort Instruction>
 
-  All of the above instructions can only be executed in a state that matches
-  the pattern of the input state shown. If the operation are executed in any
-  other state, the Bit Machine instead crashes.
-
-  The ninth and final basic instruction is called <math|crash>. It always
-  crashes the Bit Machine when executed, regardless of what state the machine
-  is in. The <math|crash> instruction has no corresponding rule because there
-  is no state that it can execute successfully in.
-
-  <subsubsection|Bit Machine programs>
-
-  The basic instructions of the Bit Machine are combined to produce programs
-  that take the Bit Machine through a sequence of states. \ We write
-  <math|S\<twoheadrightarrow\>S<rprime|'>> to indicate a sequence of states
-  that start from <math|S> and ends in <math|S<rprime|'>>. \ We write
-  <math|k:S\<twoheadrightarrow\>S<rprime|'>> for a program, <math|k>, that,
-  when executed, sucessfully transfroms an initial state <math|S> to the
-  final state <math|S<rprime|'>>.
+  The final instruction of for the Bit Machine moves from any non-halted
+  state into the halted state.
 
   <\equation*>
-    nop:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
+    abort:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><halted>
   </equation*>
+
+  This is the only way to enter the halted state, and once in the halted
+  state no further insturctions can be executed.
+
+  <subsubsection|Bit Machine Programs>
+
+  <assign|prog|<macro|x|p|y|<math|<arg|x><math-relation|\<#291C\>><arg|p>\<twoheadrightarrow\><arg|y>>>>The
+  basic instructions of the Bit Machine are combined to produce programs that
+  take the Bit Machine through a sequence of states. \ We write
+  <prog|S<rsub|0>|k|S<rsub|1>> for a program, <math|k>, that, when executed,
+  successfully transfroms an initial state <math|S<rsub|0>> to the final
+  state <math|S<rsub|1>>.
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|2>|<table|<row|<cell|<prog|S|nop|S>>>>>>
+  </with>
 
   We write <math|nop> for the trival program with no instructions. \ The
   inital and final states are identical in this case.
 
-  \;
-
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|i:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>>|<row|<cell|<math|i<rsub|>:
-    <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|i:S<rsub|0>\<rightsquigarrow\>S<rsub|1>>>>|<row|<cell|<prog|S<rsub|0>|i|S<rsub|1>>>>>>>
   </with>
 
-  Every basic instruction is also program whose intial and final states match
-  those of the basic instruction.
-
-  \;
+  For every basic instruction there is a single instruction program whose
+  intial and final states match those of the basic instruction.
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|k<rsub|0>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>|<cell|<math|k<rsub|1>
-    : <around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>>>|<row|<cell|<math|k<rsub|0>;k<rsub|1>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<prog|S<rsub|0>|k<rsub|0>|S<rsub|1>>>|<cell|<prog|S<rsub|1>|k<rsub|1>|S<rsub|2>>>>>>>>>|<row|<cell|<prog|S<rsub|0>|k<rsub|0>;k<rsub|1>|S<rsub|2>>>>>>>
   </with>
 
   \;
@@ -1366,8 +1363,7 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|k<rsub|0>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>|<row|<cell|<math|k<rsub|0><around*|\|||\|>k<rsub|1><rsub|>:
-    <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>|S<rsub|>>>>|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0><around*|\|||\|>k<rsub|1>|S>>>>>>
   </with>
 
   \;
@@ -1375,17 +1371,31 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|k<rsub|1>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>|<row|<cell|<math|k<rsub|0><around*|\|||\|>k<rsub|1><rsub|>:
-    <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|1>|S>>>|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0><around*|\|||\|>k<rsub|1>|S>>>>>>
   </with>
 
-  Lastly, we define <math|k<rsub|0><around*|\|||\|>k<rsub|1>> as a
-  deterministic choice between two programs, <math|k<rsub|0>> and
-  <math|k<rsub|1>>. \ When executing a determinsitc choice, the value under
-  the active read frame's cursor decides which one of the two programs are
-  executed. \ When encountering a determinisitc choice, the active read
-  frame's cursor must not be at the end of its array and the cell under the
-  cursor cannot be an undefined value, otherwise the machine crashes.
+  We define <math|k<rsub|0><around*|\|||\|>k<rsub|1>> as a deterministic
+  choice between two programs, <math|k<rsub|0>> and <math|k<rsub|1>>. \ When
+  executing a determinsitc choice, the value under the active read frame's
+  cursor decides which one of the two programs are executed. \ When
+  encountering a determinisitc choice, the active read frame's cursor must
+  not be at the end of its array and the cell under the cursor must not be an
+  undefined value.
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<halted>|k|<halted>>>>>>>
+  </with>
+
+  Lastly, we stipulate that every program when executed from the halted state
+  ignores all instructions and perfrom a nop instead.
+
+  Take care to note this difference between instructions and programs
+  containing one instruction. A single instruction cannot be executed
+  starting from the halted state, while a program that consists of a single
+  instruction can be run starting from the halted state (however, it does
+  nothing from this state).
 
   <\equation*>
     n\<star\>k\<assign\>fwd<around*|(|n|)>;k;bwd<around*|(|n|)>
@@ -1399,12 +1409,32 @@
     \;
 
     <\with|par-mode|center>
-      <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|k:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><cearr|c<rsub|1>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><cearr|c<rsub|1>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>|<row|<cell|<math|n\<star\>k:
-      <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>
+      <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><cearr|c<rsub|1>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><cearr|c<rsub|1>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>>|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|n\<star\>k|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>>>>>
     </with>
 
     \;
   </theorem>
+
+  <subsubsection|Crashing the Bit Machine>
+
+  Bit Machine programs are deterministic. \ Given a program <math|k> and an
+  initial state <math|S<rsub|0>> there exists at most one state
+  <math|S<rsub|1>> such that <prog|S<rsub|0>|k|S<rsub|1>>. \ However it is
+  possible that there is no state <math|S<rsub|1>> such that
+  <prog|S<rsub|0>|k|S<rsub|1>> given an initial state for a program. \ This
+  happens when the Bit Machine is trying to execute a single instruction
+  program, <math|i>, from a non-halted state where that instruction cannot
+  legally execute from. \ This can also happen when a determinstic choice
+  operation is encounted starting from a state where the active read frame's
+  cursor is at the end of the frame, or is referencing and undefined value.
+
+  When a program cannot execute to completion from a given inital state, we
+  say that the Bit Machine crashes, or we say that the program crashes the
+  Bit Machine. \ Crashing is distinct from halting. \ We will have a number
+  of theorems that prove that a Bit Machine interpreting a Simpicity
+  expression from a suitable initial state never crashes the Bit Machine;
+  however in some of these cases the program may cause the Bit Machine to
+  legitmately enter the halted state.
 
   <subsection|Executing Simplicity>
 
@@ -1428,7 +1458,7 @@
     input <math|a:A>, then
 
     <\equation*>
-      <around*|\<llangle\>|t|\<rrangle\>>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
     </equation*>
 
     for any cell arrays <math|r<rsub|0>>, <math|r<rsub|0><rprime|'>>,
@@ -1440,7 +1470,7 @@
   <math|t:A\<vdash\>B>, we have\ 
 
   <\equation*>
-    <around*|\<llangle\>|t|\<rrangle\>>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
+    <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>
   </equation*>
 
   which means we if we start the Bit Machine with only the input represented
@@ -1503,13 +1533,13 @@
     input <math|a:A>, then
 
     <\equation*>
-      <TCOoff|t>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<TCOoff|t>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
     </equation*>
 
     and
 
     <\equation*>
-      <TCOon|t>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<TCOon|t>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
     </equation*>
 
     for any cell arrays <math|r<rsub|0>>, <math|r<rsub|0><rprime|'>>,
@@ -1521,7 +1551,7 @@
   <math|t:A\<vdash\>B>, we have\ 
 
   <\equation*>
-    <TCOoff|t>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
+    <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>
   </equation*>
 
   <section|Static Analysis>
@@ -1550,19 +1580,22 @@
   counts of all its frames.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|cellCount<around*|(|<carr|c<rsub|1>\<cdots\><wide*|c<rsub|i>|\<bar\>>\<cdots\>c<rsub|n>>|)>>|<cell|\<assign\>>|<cell|n>>|<row|<cell|cellCount<around*|(|<around*|[|r<rsub|n>\<vartriangleright\>\<ldots\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<ldots\>\<vartriangleleft\>w<rsub|m>|]>|)>>|<cell|\<assign\>>|<cell|<big|sum><rsup|n><rsub|i=0>cellCount<around*|(|r<rsub|i>|)>+<big|sum><rsup|m><rsub|j=0>cellCount<around*|(|w<rsub|j>|)>>>>>
+    <tformat|<table|<row|<cell|cellCount<around*|(|<carr|c<rsub|1>\<cdots\><wide*|c<rsub|i>|\<bar\>>\<cdots\>c<rsub|n>>|)>>|<cell|\<assign\>>|<cell|n>>|<row|<cell|cellCount<around*|(|<around*|[|r<rsub|n>\<vartriangleright\>\<ldots\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<ldots\>\<vartriangleleft\>w<rsub|m>|]>|)>>|<cell|\<assign\>>|<cell|<big|sum><rsup|n><rsub|i=0>cellCount<around*|(|r<rsub|i>|)>+<big|sum><rsup|m><rsub|j=0>cellCount<around*|(|w<rsub|j>|)>>>|<row|<cell|cellCount<around*|(|<halted>|)>>|<cell|\<assign\>>|<cell|0>>>>
   </eqnarray*>
 
-  Given a trace of execution of a Bit Machine program <math|p> from an
-  initial state <math|S<rsub|0>> to a final state <math|S<rsub|1>>, <math|p :
-  S<rsub|0>\<twoheadrightarrow\>S<rsub|1>>, we define the cells required by
-  this execution as the cell count of every intermediate state.
+  We define the cells required by a program <prog|S<rsub|0>|p|S<rsub|1>> as
+  the maximum cell count over every intermediate state.
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|2>|<table|<row|<cell|<math|cellsReq<around*|(|<prog|S<rsub|>|nop|S<rsub|>>|)><rsub|>\<assign\>
+    cellCount<around*|(|S<rsub|>|)>>>>>>>
+  </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|i:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>>|<row|<cell|<math|cellsReq<around*|(|i|)><rsub|>\<assign\>
-    max<around*|(|cellCount<around*|(|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|)>,cellCount<around*|(|<around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|i:S<rsub|0>\<rightsquigarrow\>S<rsub|1>>>>|<row|<cell|<math|cellsReq<around*|(|<prog|S<rsub|0>|i|S<rsub|1>>|)><rsub|>\<assign\>
+    max<around*|(|cellCount<around*|(|S<rsub|0>|)>,cellCount<around*|(|S<rsub|1>|)>|)>>>>>>>
   </with>
 
   \;
@@ -1570,8 +1603,7 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|k<rsub|0>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>>|<cell|<math|k<rsub|1>
-    : <around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>>>>>>|<row|<cell|<math|cellsReq<around*|(|k<rsub|0>;k<rsub|1>|)>\<assign\>max<around*|(|cellsReq<around*|(|k<rsub|0>|)>,cellsReq<around*|(|k<rsub|1>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<prog|S<rsub|0>|k<rsub|0>|S<rsub|1>>>|<cell|<prog|S<rsub|1>|k<rsub|1>|S<rsub|2>>>>>>>>>|<row|<cell|<math|cellsReq<around*|(|<prog|S<rsub|0>|k<rsub|0>;k<rsub|1>|S<rsub|2>>|)>\<assign\>max<around*|(|cellsReq<around*|(|<prog|S<rsub|0>|k<rsub|0>|S<rsub|1>>|)>,cellsReq<around*|(|<prog|S<rsub|1>|k<rsub|1>|S<rsub|2>>|)>|)>>>>>>>
   </with>
 
   \;
@@ -1579,7 +1611,7 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|k<rsub|0>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>|<row|<cell|<math|cellsReq<around*|(|k<rsub|0><around*|\|||\|>k<rsub|1>|)><rsub|>\<assign\>cellsReq<around*|(|k<rsub|0>|)>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>|S>>>|<row|<cell|<math|cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0><around*|\|||\|>k<rsub|1>|S>|)><rsub|>\<assign\>cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>|S>|)>>>>>>>
   </with>
 
   \;
@@ -1587,7 +1619,16 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|k<rsub|1>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|''>\<vartriangleright\>r<rsub|0><rprime|''>\|w<rsub|0><rprime|''>\<vartriangleleft\>\<Xi\><rprime|''>|]>>>>|<row|<cell|<math|cellsReq<around*|(|k<rsub|0><around*|\|||\|>k<rsub|1>|)><rsub|>\<assign\>cellsReq<around*|(|k<rsub|1>|)>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|1>|S>>>|<row|<cell|<math|cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0><around*|\|||\|>k<rsub|1>|S>|)><rsub|>\<assign\>cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|1>|S>|)>>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|2>|<table|<row|<cell|<math|cellsReq<around*|(|<prog|<halted>|k|<halted>>|)><rsub|>\<assign\>
+    0>>>>>>
   </with>
 
   \;
@@ -1611,10 +1652,10 @@
   </eqnarray*>
 
   <\lemma>
-    For any Simplicity expression <math|t:A\<vdash\>B>, such that
+    For any core Simplicity expression <math|t:A\<vdash\>B>, such that
 
     <\equation*>
-      <around*|\<llangle\>|t|\<rrangle\>>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>
     </equation*>
 
     we have that
@@ -1622,18 +1663,18 @@
     <\enumerate>
       <item><math|cellCount<around*|(|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|)>=cellCount<around*|(|<around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>|)>>
 
-      <item><math|cellsReq<around*|(|<around*|\<llangle\>|t|\<rrangle\>>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|)>+extraCellsBound<around*|(|t|)>>.
+      <item><math|cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|)>+extraCellsBound<around*|(|t|)>>.
     </enumerate>
 
     In particular for <math|a:A> and
 
     <\equation*>
-      <around*|\<llangle\>|t|\<rrangle\>>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
+      <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<around*|\<llangle\>|t|\<rrangle\>>|><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
     </equation*>
 
     we have that
 
-    <math|cellsReq<around*|(|<around*|\<llangle\>|t|\<rrangle\>>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+extraCellsBound<around*|(|t|)>>.
+    <math|cellsReq<around*|(|<prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<around*|\<llangle\>|t|\<rrangle\>>|><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+extraCellsBound<around*|(|t|)>>.
   </lemma>
 
   We can compute a tighter bound for TCO translation, but the calculation is
@@ -1653,16 +1694,16 @@
   </eqnarray*>
 
   <\lemma>
-    For any Simplicity expression <math|t:A\<vdash\>B>, such that
+    For any core Simplicity expression <math|t:A\<vdash\>B>, such that
 
     <\equation*>
-      <TCOon|t><rsup|>:<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>
+      <prog|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|<TCOon|t>|<around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>><rsup|>
     </equation*>
 
     and
 
     <\equation*>
-      <TCOoff|t><rsup|>:<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>
+      <prog|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|<TCOoff|t><rsup|>|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>>
     </equation*>
 
     we have that
@@ -1671,19 +1712,19 @@
       <item><math|cellCount<around*|(|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|)>=cellCount<around*|(|r<rsub|on,0>|)>+cellCount<around*|(|<around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>|)>>
       and<next-line><math|cellCount<around*|(|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|)>=cellCount<around*|(|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>|)>>
 
-      <item><math|cellsReq<around*|(|<TCOon|t>:<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|cellCount<around*|(|r<rsub|on,0>|)>|)>>
-      and<next-line><math|cellsReq<around*|(|<TCOoff|t><rsup|>:<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>\<twoheadrightarrow\><around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)>>.
+      <item><math|cellsReq<around*|(|<prog|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|<TCOon|t>|<around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|cellCount<around*|(|r<rsub|on,0>|)>|)>>
+      and<next-line><math|cellsReq<around*|(|<prog|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|<TCOoff|t><rsup|>|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)>>.
     </enumerate>
 
     In particular for <math|a:A> and
 
     <\equation*>
-      <TCOoff|t>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
+      <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>
     </equation*>
 
     we have that
 
-    <math|cellsReq<around*|(|<TCOoff|t>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)><text|.>>
+    <math|cellsReq<around*|(|<prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)><text|.>>
   </lemma>
 
   The problem with <math|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>
@@ -1724,18 +1765,16 @@
   </lemma>
 
   <\corollary>
-    For any Simplicity expression <math|t:A\<vdash\>B> and <math|a:A> such
-    that
+    For any core Simplicity expression <math|t:A\<vdash\>B> and <math|a:A>
+    such that
 
     <\equation*>
-      <TCOoff|t>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
+      <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>
     </equation*>
 
     we have that
 
-    <\equation*>
-      cellsReq<around*|(|<TCOoff|t>:<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>\<twoheadrightarrow\><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>|)>\<leq\>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+max<around*|(|n,m|)><text|>
-    </equation*>
+    <math|cellsReq<around*|(|<prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+max<around*|(|n,m|)><text|>>
 
     where <math|<around*|\<langle\>|n,m|\<rangle\>>\<assign\>><math|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>.
   </corollary>
@@ -2083,8 +2122,8 @@
   size and the <verbatim|fullWriteFrame> function builds an filled write
   frame from a list.
 
-  The <verbatim|State> record represents the state of the Bit Machine. \ It
-  consists of
+  The <verbatim|RunState> record represents the non-halted states of the Bit
+  Machine. \ It consists of
 
   <\itemize-dot>
     <item><verbatim|inactiveReadFrames>: a list of inactive read frames, with
@@ -2099,6 +2138,11 @@
     <item><verbatim|inactiveWriteFrames>: a list of inactive write frames,
     with the bottom of the stack at the end of the list.
   </itemize-dot>
+
+  The <verbatim|State> variant is either a <verbatim|RunState> or the
+  <verbatim|Halted> state and represents the possible states of the Bit
+  Machine. \ We make the injection of <verbatim|RunState> into
+  <verbatim|State> a coercion.
 
   It is sometimes useful to decompose the Bit Machine's state as\ 
 
@@ -2115,9 +2159,9 @@
   <verbatim|WriteFrame> type. \ The remainder of the state, consisting of
   <math|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|>\<bullet\>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\>\<bullet\>\<cdummy\><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
   is captured by the <verbatim|Context> type, which happens to be isomorphic
-  to the <verbatim|State> type. \ The <verbatim|fillContext> function
+  to the <verbatim|RunState> type. \ The <verbatim|fillContext> function
   combines a <verbatim|Context> value and a <verbatim|LocalState> value to
-  build a complete <verbatim|State> value.
+  build a complete <verbatim|RunState> value.
 
   Sometimes we are intersted in of some <verbatim|LocalState> within another
   <verbatim|LocalState>. \ The context of such a decomposition is isomorphic
@@ -2129,27 +2173,33 @@
   becomes a monoid action on <verbatim|Context>s with respect to this monoid.
   This theory isn't fully developed in Coq, but will be if it is needed. The
   <verbatim|context_action> lemma proves the monoid action property, which is
-  the only theorem needed so far.
+  the only theorem developed so far.
+
+  The <verbatim|StateShape> type is constructed using similar fields as the
+  <verbatim|State> type and contains a sequence of numbers. \ This is used
+  for counting the number of cells in the various components of the Bit
+  Machine's <verbatim|State>. \ The <verbatim|stateShapeSize> function
+  tallies up the totals and is used later in the
+  <verbatim|maximumMemoryResidence> function.
 
   <subsection|Bit Machine Code>
 
-  The <verbatim|MachineCode.T <em|S1> <em|S2>> type is an enumeration of the
-  nine primary instructions of the Bit Machine. The type of these
-  instructions are parameterized by the legal states that the instructions
-  can successfully operate in, <verbatim|<em|S1>>, and the resulting state
-  after execution of the instruction, <verbatim|<em|S2>>. In this way, the
+  The <verbatim|MachineCode.T <em|S1> <em|S2>> type enumerates the nine basic
+  instructions of the Bit Machine. The type of these instructions are
+  parameterized by the legal states that the instructions can successfully
+  operate in, <verbatim|<em|S1>>, and the resulting state after execution of
+  the instruction, <verbatim|<em|S2>>. In this way, the
   <verbatim|MachineCode.T> type family represents a precategory (also known
-  as a directed graph) that captures the machine instructions and their
-  semantics. \ There is an objects (a.k.a. node) for every possible state of
+  as a directed multi-graph) that captures the machine instructions and their
+  semantics. \ There is an objects (a.k.a. nodes) for every possible state of
   the Bit Machine. \ There is an arrow (a.k.a. edge) between two states if
   there is an instruction of the Bit Machine that successfully transitions
   from the source state to the target state, and that arrow (a.k.a. edge) is
-  labled with the name of the instruction. The specific type
+  labled with the name of the instruction. The <verbatim|Abort> instruction
+  is the only instruction whose final state is the <verbatim|Halted> state.
+  \ No instruction begins from the <verbatim|Halted> state. The specific type
   <verbatim|MachineCode.T <em|S1> <em|S2>> is the type of all instructions
   that transition from state <verbatim|<em|S1>> to state <verbatim|<em|S2>>.
-  The <verbatim|crash> instruction is never successful, and thus never
-  appears in the precategory (a.k.a. directed graph). This is why it doesn't
-  occur in the <verbatim|MachineCode.T> type family.
 
   A thrist of <verbatim|MachineCode.T> is the free category generated from
   the precategory <verbatim|MachineCode.T>. This free category can also be
@@ -2165,24 +2215,38 @@
   which corresponds to <math|S<rsub|1>\<rightsquigarrow\>S<rsub|2>>. \ The
   notation <verbatim|<em|S1> -\<gtr\>\<gtr\> <em|S2>> denotes the
   <verbatim|Thrst MachineCode.T <em|S1> <em|S2>> type of multi-step
-  (including 0 step) transitions between states <verbatim|<em|S1>> and
-  <verbatim|S2> and the trace of the instructions used, which corresponds to
-  <math|S<rsub|1>\<twoheadrightarrow\> S<rsub|2>>.
+  (including 0 steps) transitions between states <verbatim|<em|S1>> and
+  <verbatim|S2> and the trace of the instructions used. \ The
+  <verbatim|runHalt> lemma proves that the only trace that begins from the
+  <verbatim|Halted> state is the empty trace.
 
   <subsubsection|Bit Machine Programs>
 
   We interpret a Bit Machine <verbatim|Program> as a function taking an
   initial machine state and, if successful, returning a final machine state
   along with a thrist of machine instructions that connect the initial state
-  to the final state. For each machine instruction, we define a simple
-  <verbatim|Program> that tries to execute that single instruction once and
-  returns that state transition. \ If the initial state given to these single
-  instruction programs isn't valid for their instruction, the program fails
-  by returning <verbatim|None>. \ Most of these single instruction programs
+  to the final state. The notation <verbatim|S1 \<gtr\>\<gtr\>- k
+  -\<gtr\>\<gtr\> S2> corresponds to <prog|S<rsub|1>|k|S<rsub|2>> and denotes
+  that the program <verbatim|k> when started in state <verbatim|S1>
+  successfully executes and ends in state <verbatim|S2>. \ The
+  <verbatim|trace> function extracts a <verbatim|S1 -\<gtr\>\<gtr\> S2> trace
+  from a program <verbatim|k> when <verbatim|S1 \<gtr\>\<gtr\>- k
+  -\<gtr\>\<gtr\> S2> holds.
+
+  For each machine instruction, we use <verbatim|makeProgram> to define a
+  single instruction <verbatim|Program> that tries to execute that single
+  instruction once and returns that state transition. \ If the initial
+  non-halted state given to these single instruction programs isn't valid for
+  their instruction, the program fails by returning <verbatim|None>.
+  \ However, when the initial state is the <verbatim|Halted> state, the
+  program succeeds but ignores its instruction and remains in the
+  <verbatim|Halted> state. \ This corresponds to the
+  <prog|<halted>|i|<halted>> deduction. These single instruction programs
   have an associated correctness lemma that proves they run successfully when
-  run from an initial state valid for their instruction. \ We also define a
-  <verbatim|crash> program, which always fails, and the trivial
-  <verbatim|nop> program that contains no instructions.
+  run from an initial state valid for their instruction and a completeness
+  lemma that proves that they were run from either a valid initial state or
+  the <verbatim|Halted> state. We also define the trivial <verbatim|nop>
+  program that contains no instructions and always succeeds.
 
   These single instruction programs can be combined into more complex
   programs using the <verbatim|seq> and <verbatim|choice> combinators. \ The
@@ -2190,31 +2254,32 @@
   program starting from the final state of the first program and combines
   their thrists. The sequence fails if either program fails. The
   <verbatim|choice> combinator picks between running two programs by peeking
-  at the cell immedately after the active read frame's cursor from the
-  initial state and running either the first or second program depending on
-  whether the cell holds a <verbatim|0> or <verbatim|1> value. If the cell
-  holds an undefined value, or if the active read frame's cursor is at the
-  end of the frame, the <verbatim|choice> combinator fails. \ The notations
-  <verbatim|<em|k0> ;;; <em|k1>> and <verbatim|<em|k0> \|\|\| <em|k1>> denote
-  the sequence and choice combinations respectively of two programs and
-  correspond to <math|k<rsub|0>;k<rsub|1>> and
+  at the cell under the active read frame's cursor from the initial state and
+  running either the first or second program depending on whether the cell
+  holds a <verbatim|0> or <verbatim|1> value. When starting from a non-halted
+  state, if the cell holds an undefined value, or if the active read frame's
+  cursor is at the end of the frame, the <verbatim|choice> combinator fails.
+  When started from the <verbatim|Halted> state, the <verbatim|choice>
+  program succeeds but remains in the <verbatim|Halted> state.
+
+  The notations <verbatim|<em|k0> ;;; <em|k1>> and <verbatim|<em|k0> \|\|\|
+  <em|k1>> denote the sequence and choice combinations respectively of two
+  programs and correspond to <math|k<rsub|0>;k<rsub|1>> and
   <math|k<rsub|0><around*|\|||\|>k<rsub|1>>. We also define the combinator
   <verbatim|bump <em|n> <em|k>> which corresponds to <math|n\<star\>k>.
 
   The <verbatim|runMachine> function takes a <verbatim|Program> and an
   initial <verbatim|State> and extracts the resulting final <verbatim|State>
-  if the program is sucessful. For denotational semantics we only care about
-  the resulting final state. For operational semantics we will care how we
-  got there. \ A few lemmas are provided to help reason about the behaviour
-  of <verbatim|runMachine> when running the program combinators.
+  and the trace to get there, if the program is sucessful. For denotational
+  semantics we only care about the resulting final state. For operational
+  semantics we will care how we got there. \ A few lemmas are provided to
+  help reason about the behaviour of <verbatim|runMachine> when running the
+  program combinators.
 
   The <verbatim|maximumMemoryResidence> function computes the maximum number
   of cells used by any intermediate state from the trace of execution of a
-  Bit Machine program. <verbatim|programMaximumMemoryResidence> runs a given
-  program from a given initial state and returns the
-  <verbatim|maximumMemoryResidence> of the resulting trace. \ A few lemmas
-  are provided to help reason about the behaviour of
-  <verbatim|programMaximumMemoryResidence> when running the program
+  Bit Machine program. A few lemmas are provided to help reason about the
+  behaviour of <verbatim|maximumMemoryResidence> when running the program
   combinators.
 
   <subsection|Translating Simplicity to the Bit Machine>
@@ -2226,15 +2291,12 @@
 
   The <verbatim|Naive.translate> structure provides a Simplicity algebra for
   Bit Machine <verbatim|Progam>s that interprets Simplicity terms according
-  to the naive translation. The <verbatim|Naive.translate_correct> theorem is
-  actually a function that produces a thrist of Bit Machine instructions that
-  transform suitable initial machine states that contain an encoding of
-  Simplicity function's input to suitable final machine states that contain
+  to the naive translation. The <verbatim|Naive.translate_correct> theorem
+  proves that the <verbatim|Program> generated by <verbatim|Naive.translate>
+  when started from a state that contains an encoding of Simplicity
+  function's input successfuly end up in a final machine state that contains
   an encoding of Simplicity function's output (and input). The
-  <verbatim|translate_correct> theorem also proves that this thrist is the
-  ouput of evaluating the <verbatim|Program> generated by the
-  <verbatim|Naive.translate> Simplicity algebra. The <verbatim|spec> property
-  defines an inductive hypothesis that is used by
+  <verbatim|spec> property defines an inductive hypothesis that is used by
   <verbatim|Naive.translate_spec> that makes up the heart of this proof.
 
   The <verbatim|Naive.translate_correct_parametric> theorem is a variation of
@@ -2613,70 +2675,70 @@
     <associate|auto-35|<tuple|2.5.2.3|18>>
     <associate|auto-36|<tuple|2.5.2.4|18>>
     <associate|auto-37|<tuple|2.5.2.5|18>>
-    <associate|auto-38|<tuple|2.5.3|19>>
-    <associate|auto-39|<tuple|2.5.3.1|19>>
+    <associate|auto-38|<tuple|2.5.2.6|19>>
+    <associate|auto-39|<tuple|2.5.3|19>>
     <associate|auto-4|<tuple|2.1|7>>
-    <associate|auto-40|<tuple|2.6|21>>
-    <associate|auto-41|<tuple|2.6.1|21>>
-    <associate|auto-42|<tuple|2.6.1.1|21>>
-    <associate|auto-43|<tuple|2.6.1.2|21>>
-    <associate|auto-44|<tuple|2.6.2|21>>
-    <associate|auto-45|<tuple|2.6.3|21>>
-    <associate|auto-46|<tuple|2.7|23>>
-    <associate|auto-47|<tuple|2.7.1|23>>
-    <associate|auto-48|<tuple|3|23>>
-    <associate|auto-49|<tuple|3.1|23>>
+    <associate|auto-40|<tuple|2.5.3.1|21>>
+    <associate|auto-41|<tuple|2.6|21>>
+    <associate|auto-42|<tuple|2.6.1|21>>
+    <associate|auto-43|<tuple|2.6.1.1|21>>
+    <associate|auto-44|<tuple|2.6.1.2|21>>
+    <associate|auto-45|<tuple|2.6.2|21>>
+    <associate|auto-46|<tuple|2.6.3|23>>
+    <associate|auto-47|<tuple|2.7|23>>
+    <associate|auto-48|<tuple|2.7.1|23>>
+    <associate|auto-49|<tuple|3|23>>
     <associate|auto-5|<tuple|2.1.1|7>>
-    <associate|auto-50|<tuple|3.1.1|23>>
-    <associate|auto-51|<tuple|3.2|23>>
-    <associate|auto-52|<tuple|3.3|23>>
-    <associate|auto-53|<tuple|3.3.1|23>>
-    <associate|auto-54|<tuple|3.3.2|23>>
-    <associate|auto-55|<tuple|3.3.3|23>>
-    <associate|auto-56|<tuple|3.4|23>>
-    <associate|auto-57|<tuple|3.4.1|23>>
-    <associate|auto-58|<tuple|3.4.2|23>>
-    <associate|auto-59|<tuple|3.5|25>>
+    <associate|auto-50|<tuple|3.1|23>>
+    <associate|auto-51|<tuple|3.1.1|23>>
+    <associate|auto-52|<tuple|3.2|23>>
+    <associate|auto-53|<tuple|3.3|23>>
+    <associate|auto-54|<tuple|3.3.1|23>>
+    <associate|auto-55|<tuple|3.3.2|23>>
+    <associate|auto-56|<tuple|3.3.3|23>>
+    <associate|auto-57|<tuple|3.4|23>>
+    <associate|auto-58|<tuple|3.4.1|23>>
+    <associate|auto-59|<tuple|3.4.2|25>>
     <associate|auto-6|<tuple|2.1.1.1|7>>
-    <associate|auto-60|<tuple|3.5.1|25>>
-    <associate|auto-61|<tuple|4|27>>
-    <associate|auto-62|<tuple|4.1|27>>
-    <associate|auto-63|<tuple|5|29>>
-    <associate|auto-64|<tuple|5.1|29>>
-    <associate|auto-65|<tuple|6|29>>
-    <associate|auto-66|<tuple|6.1|29>>
-    <associate|auto-67|<tuple|6.2|29>>
-    <associate|auto-68|<tuple|6.2.1|30>>
-    <associate|auto-69|<tuple|6.2.2|30>>
+    <associate|auto-60|<tuple|3.5|25>>
+    <associate|auto-61|<tuple|3.5.1|27>>
+    <associate|auto-62|<tuple|4|27>>
+    <associate|auto-63|<tuple|4.1|29>>
+    <associate|auto-64|<tuple|5|29>>
+    <associate|auto-65|<tuple|5.1|29>>
+    <associate|auto-66|<tuple|6|29>>
+    <associate|auto-67|<tuple|6.1|29>>
+    <associate|auto-68|<tuple|6.2|30>>
+    <associate|auto-69|<tuple|6.2.1|30>>
     <associate|auto-7|<tuple|2.1.2|7>>
-    <associate|auto-70|<tuple|6.2.2.1|31>>
-    <associate|auto-71|<tuple|6.2.2.2|31>>
-    <associate|auto-72|<tuple|6.2.2.3|31>>
-    <associate|auto-73|<tuple|6.2.3|31>>
-    <associate|auto-74|<tuple|6.3|31>>
-    <associate|auto-75|<tuple|6.3.1|32>>
-    <associate|auto-76|<tuple|6.3.2|33>>
-    <associate|auto-77|<tuple|6.4|33>>
-    <associate|auto-78|<tuple|6.4.1|34>>
-    <associate|auto-79|<tuple|6.4.1.1|35>>
+    <associate|auto-70|<tuple|6.2.2|31>>
+    <associate|auto-71|<tuple|6.2.2.1|31>>
+    <associate|auto-72|<tuple|6.2.2.2|31>>
+    <associate|auto-73|<tuple|6.2.2.3|31>>
+    <associate|auto-74|<tuple|6.2.3|31>>
+    <associate|auto-75|<tuple|6.3|32>>
+    <associate|auto-76|<tuple|6.3.1|33>>
+    <associate|auto-77|<tuple|6.3.2|33>>
+    <associate|auto-78|<tuple|6.4|34>>
+    <associate|auto-79|<tuple|6.4.1|35>>
     <associate|auto-8|<tuple|2.1.2.1|8>>
-    <associate|auto-80|<tuple|6.4.2|35>>
-    <associate|auto-81|<tuple|6.4.3|36>>
-    <associate|auto-82|<tuple|7|36>>
-    <associate|auto-83|<tuple|7.1|36>>
-    <associate|auto-84|<tuple|7.2|36>>
-    <associate|auto-85|<tuple|7.3|37>>
-    <associate|auto-86|<tuple|7.3.1|37>>
-    <associate|auto-87|<tuple|7.3.2|37>>
-    <associate|auto-88|<tuple|7.3.2.1|37>>
-    <associate|auto-89|<tuple|7.3.2.2|37>>
+    <associate|auto-80|<tuple|6.4.1.1|35>>
+    <associate|auto-81|<tuple|6.4.2|36>>
+    <associate|auto-82|<tuple|6.4.3|36>>
+    <associate|auto-83|<tuple|7|36>>
+    <associate|auto-84|<tuple|7.1|36>>
+    <associate|auto-85|<tuple|7.2|37>>
+    <associate|auto-86|<tuple|7.3|37>>
+    <associate|auto-87|<tuple|7.3.1|37>>
+    <associate|auto-88|<tuple|7.3.2|37>>
+    <associate|auto-89|<tuple|7.3.2.1|37>>
     <associate|auto-9|<tuple|2.2|8>>
-    <associate|auto-90|<tuple|7.3.3|38>>
-    <associate|auto-91|<tuple|7.3.4|38>>
-    <associate|auto-92|<tuple|7.4|39>>
-    <associate|auto-93|<tuple|7.4.1|?>>
-    <associate|auto-94|<tuple|7.4.2|?>>
-    <associate|auto-95|<tuple|8|?>>
+    <associate|auto-90|<tuple|7.3.2.2|38>>
+    <associate|auto-91|<tuple|7.3.3|38>>
+    <associate|auto-92|<tuple|7.3.4|39>>
+    <associate|auto-93|<tuple|7.4|?>>
+    <associate|auto-94|<tuple|7.4.1|?>>
+    <associate|auto-95|<tuple|7.4.2|?>>
     <associate|auto-96|<tuple|8|?>>
     <associate|footnote-1|<tuple|1|?>>
     <associate|footnote-2.1|<tuple|2.1|17>>
