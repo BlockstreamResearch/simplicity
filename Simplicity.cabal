@@ -36,7 +36,7 @@ Test-Suite Simplicity-testsuite
   main-is:             Tests.hs
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
-  ghc-options:         -O2 -fsimpl-tick-factor=107
+  ghc-options:         -O2 -fsimpl-tick-factor=122
   other-modules:       Simplicity.Ty, Simplicity.Term,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
@@ -50,7 +50,7 @@ Test-Suite Simplicity-testsuite
                        transformers >=0.5 && <0.6,
                        unification-fd >=0.10 && <0.11,
                        vector >=0.12 && <0.13,
-                       QuickCheck >=2.9 && <2.10,
+                       QuickCheck >=2.9 && <2.11,
                        tasty >=0.11 && <0.12,
                        tasty-hunit >=0.9 && <0.10,
-                       tasty-quickcheck >=0.8 && <0.9
+                       tasty-quickcheck >=0.8 && <0.10

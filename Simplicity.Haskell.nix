@@ -5,6 +5,6 @@ mkDerivation (rec {
   src = lib.sourceByRegex ./. ["^Simplicity\.cabal$" "^Setup.hs$" "^Tests.hs$" "^Haskell$" "^Haskell/.*"];
   libraryHaskellDepends = [ base cryptohash-sha256 lens-family unification-fd vector ];
   testHaskellDepends = libraryHaskellDepends ++ [ QuickCheck tasty tasty-hunit tasty-quickcheck ];
-  testTarget = ''--test-option="--quickcheck-replay=0 TFGenR 0 0 0 0 0"'';
+  testTarget = ''--test-option="--quickcheck-replay=582534"'';
   license = stdenv.lib.licenses.unfree;
 })
