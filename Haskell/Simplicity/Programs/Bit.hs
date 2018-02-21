@@ -1,7 +1,6 @@
--- | This module defines the 'Bit' type alais used in Simplicity.
--- There are Simplicity combinators and expressions that operate on bits.
+-- | This module defines Simplicity combinators and expressions that operate on bits.
 module Simplicity.Programs.Bit
- ( Bit, fromBit, toBit
+ ( module Simplicity.Ty.Bit
  , false, true
  , cond, ch
  , not, and, or
@@ -10,22 +9,8 @@ module Simplicity.Programs.Bit
 
 import Prelude hiding (drop, take, not, and, or)
 
+import Simplicity.Ty.Bit
 import Simplicity.Term
-
--- | Simplicity types are composed from @()@, 'Either' and @(,)@.
--- We cannot use Haskell's 'Bool' type directly in Simplicity.
--- Instead we create use this isomorphic type in Simplicity to represent bits.
-type Bit = Either () ()
-
--- | Canonically convert a Simplicty 'Bit' type to the Haskell 'Bool' type.
-fromBit :: Bit -> Bool
-fromBit (Left ()) = False
-fromBit (Right ()) = True
-
--- | Canonically convert a Hasekll 'Bool' type to the Simplicity 'Bit' type.
-toBit :: Bool -> Bit
-toBit False = Left ()
-toBit True = Right ()
 
 -- | Simplicity expression always returns the zero bit.
 --
