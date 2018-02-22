@@ -5,9 +5,9 @@ import Data.Bits ((.|.))
 import qualified Data.Bits as W
 import qualified Data.List as L
 import qualified Data.Word as W
-import qualified Data.ByteString as BS
-import qualified Crypto.Hash.SHA256 as SHA256
+import qualified Data.ByteString.Lazy as BSL
 
+import Simplicity.Digest (integerHash256, bsHash)
 import Simplicity.Term
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Sha256
@@ -68,7 +68,7 @@ prop_rotate8 x = forAll small (\z -> convert (rotate word8 z x) == W.rotate (con
 
 -- The specification for SHA-256's block compression function.
 prop_sha256 :: [W.Word8] -> Bool
-prop_sha256 x0 = mkInteger (BS.unpack (SHA256.hash (BS.pack x))) == fromWord256 ((iv &&& iden >>> hashBlock) (toWord (DoubleW word256) paddedInteger))
+prop_sha256 x0 = integerHash256 (bsHash (BSL.pack x)) == fromWord256 ((iv &&& iden >>> hashBlock) (toWord (DoubleW word256) paddedInteger))
  where
   x = L.take 55 x0
   len = length x

@@ -18,16 +18,19 @@ library
                        Simplicity.Term,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
-                       Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO
-                       Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256
+                       Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
+                       Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256,
+                       Simplicity.Digest
   -- other-modules:       
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       base >=4.9 && <4.11,
-                       cryptohash-sha256 >=0.11 && <0.12,
+                       binary >=0.7 && <0.9,
+                       bytestring >=0.10 && <0.11,
                        lens-family >=1.2 && <1.3,
+                       SHA >=1.6 && <1.7,
                        transformers >=0.5 && <0.6,
                        unification-fd >=0.10 && <0.11,
                        vector >=0.12 && <0.13
@@ -42,13 +45,15 @@ Test-Suite Simplicity-testsuite
                        Simplicity.Term,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
-                       Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO
-                       Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256
-                       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests
+                       Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
+                       Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256,
+                       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests,
+                       Simplicity.Digest
   build-depends:       base >=4.9 && <4.11,
+                       binary >=0.7 && <0.9,
                        bytestring >=0.10 && <0.11,
-                       cryptohash-sha256 >=0.11 && <0.12,
                        lens-family >=1.2 && <1.3,
+                       SHA >=1.6 && <1.7,
                        transformers >=0.5 && <0.6,
                        unification-fd >=0.10 && <0.11,
                        vector >=0.12 && <0.13,
