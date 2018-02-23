@@ -1,4 +1,4 @@
-{-# LANGUAGE GADTs, TypeOperators, DeriveTraversable #-}
+{-# LANGUAGE GADTs, TypeOperators, TypeFamilies, DeriveTraversable #-}
 -- | This module provides representations of Simplicity types in Haskell.
 --
 -- The 'TyC' class captures those Haskell types that correspond to Simplicity types.
@@ -14,10 +14,14 @@ module Simplicity.Ty
  , unreflect
  ) where
 
+import Prelude hiding (sum, prod)
+
 import Control.Unification.Types (Unifiable, zipMatch)
 import Data.Functor.Fixedpoint (Fix(..))
+import Data.MemoTrie (HasTrie(..))
 import Data.Type.Equality ((:~:)(Refl))
-import Prelude hiding (sum, prod)
+import Lens.Family2 ((&), (%~))
+import Lens.Family2.Stock (mapped, _1)
 
 -- | 'TyC' is a type class for those Haskell types that correspond to Simplicity types;
 -- specifically those composed from @()@, @'Either' a b@, and @(a, b)@.
@@ -108,3 +112,19 @@ unreflect :: TyReflect a -> Ty
 unreflect OneR = one
 unreflect (SumR a b) = sum (unreflect a) (unreflect b)
 unreflect (ProdR a b) = prod (unreflect a) (unreflect b)
+
+memoTyF :: Maybe (Bool, x, x) -> TyF x
+memoTyF Nothing              = One
+memoTyF (Just (False, a, b)) = Sum a b
+memoTyF (Just (True, a, b))  = Prod a b
+
+deMemoTyF :: TyF x -> Maybe (Bool, x, x)
+deMemoTyF One        = Nothing
+deMemoTyF (Sum a b)  = Just (False, a, b)
+deMemoTyF (Prod a b) = Just (True, a, b)
+
+instance HasTrie x => HasTrie (TyF x) where
+  newtype TyF x :->: a = TyFTrie (Maybe (Bool, x, x) :->: a)
+  trie f = TyFTrie (trie (f . memoTyF))
+  untrie (TyFTrie t) = untrie t . deMemoTyF
+  enumerate (TyFTrie t) = enumerate t & mapped._1 %~ memoTyF
