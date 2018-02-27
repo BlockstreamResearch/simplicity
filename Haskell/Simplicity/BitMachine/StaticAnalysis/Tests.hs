@@ -11,7 +11,7 @@ import Simplicity.BitMachine.StaticAnalysis.TCO as AnalysisTCO
 import Simplicity.BitMachine.Translate as Translate
 import Simplicity.BitMachine.Translate.TCO as TranslateTCO
 import Simplicity.Programs.Word
-import Simplicity.Term
+import Simplicity.Term.Core
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.QuickCheck (Arbitrary, testProperty)

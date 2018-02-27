@@ -10,7 +10,7 @@ module Simplicity.Programs.Bit
 import Prelude hiding (drop, take, not, and, or)
 
 import Simplicity.Ty.Bit
-import Simplicity.Term
+import Simplicity.Term.Core
 
 -- | Simplicity expression always returns the zero bit.
 --

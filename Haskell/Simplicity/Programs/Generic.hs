@@ -9,7 +9,7 @@ module Simplicity.Programs.Generic
 import Prelude hiding (drop, take)
 
 import Simplicity.Programs.Bit
-import Simplicity.Term
+import Simplicity.Term.Core
 
 -- | For any Simplicity value, a Simplicity expression for a constant function returning that value.
 -- 

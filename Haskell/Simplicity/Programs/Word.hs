@@ -14,9 +14,9 @@ import Prelude hiding (Word, drop, take, not, or)
 
 import Data.Type.Equality ((:~:)(Refl))
 
-import Simplicity.Term
-import Simplicity.Ty.Word
 import Simplicity.Programs.Bit
+import Simplicity.Term.Core
+import Simplicity.Ty.Word
 
 -- | Simplicity expression for the constant function that returns the representation of 0.
 --

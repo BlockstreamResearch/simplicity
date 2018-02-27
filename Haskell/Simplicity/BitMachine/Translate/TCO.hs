@@ -8,7 +8,7 @@ import Data.Proxy (Proxy(..))
 
 import Simplicity.BitMachine
 import Simplicity.BitMachine.Ty
-import Simplicity.Term
+import Simplicity.Term.Core
 
 -- | @'Translation' a b@ is the data type for the Simplicity algebra used for translating terms to 'MachineCode'
 data Translation a b = Translation { tcoOn :: MachineCodeK

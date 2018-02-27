@@ -14,8 +14,9 @@ cabal-version:       >=1.10
 tested-with:         GHC ==8.2.1
 
 library
-  exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
-                       Simplicity.Term,
+  exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.Memo,
+                       Simplicity.Term, Simplicity.Term.Core,
+                       Simplicity.Primitive, Simplicity.Primitive.Bitcoin
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
@@ -42,8 +43,9 @@ Test-Suite Simplicity-testsuite
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
   ghc-options:         -O2 -fsimpl-tick-factor=122
-  other-modules:       Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
-                       Simplicity.Term,
+  other-modules:       Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.Memo,
+                       Simplicity.Term, Simplicity.Term.Core,
+                       Simplicity.Primitive, Simplicity.Primitive.Bitcoin
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,

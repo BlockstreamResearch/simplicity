@@ -7,7 +7,7 @@ import Simplicity.BitMachine.Authentic
 import Simplicity.BitMachine.Translate as Translate
 import Simplicity.BitMachine.Translate.TCO as TCO
 import Simplicity.Programs.Sha256
-import Simplicity.Term
+import Simplicity.Term.Core
 import Simplicity.Programs.Word
 
 import Test.Tasty (TestTree, testGroup)

@@ -8,10 +8,10 @@ import qualified Data.Word as W
 import qualified Data.ByteString.Lazy as BSL
 
 import Simplicity.Digest (integerHash256, bsHash)
-import Simplicity.Term
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Sha256
 import Simplicity.Programs.Word
+import Simplicity.Term.Core
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.QuickCheck (Property, elements, forAll, testProperty)

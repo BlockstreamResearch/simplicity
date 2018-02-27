@@ -3,8 +3,8 @@ module Simplicity.BitMachine.StaticAnalysis
  ( ExtraCellsBnd, cellsBnd
  ) where
 
-import Simplicity.Term
 import Simplicity.BitMachine.Ty
+import Simplicity.Term.Core
 
 -- | @'ExtraCellsBnd' a b@ is the data type for the Simplicity algebra used for computing the bound on the maximum number of Cells used by the Bit Machine.
 newtype ExtraCellsBnd a b = ExtraCellsBnd { extraCellsBnd :: Int }
