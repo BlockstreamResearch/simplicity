@@ -16,21 +16,23 @@ tested-with:         GHC ==8.2.1
 library
   exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.Memo,
                        Simplicity.Term, Simplicity.Term.Core,
-                       Simplicity.Primitive, Simplicity.Primitive.Bitcoin
+                       Simplicity.Primitive, Simplicity.Primitive.Bitcoin, Simplicity.Primitive.Bitcoin.DataTypes
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
                        Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256,
-                       Simplicity.Digest, Simplicity.MerkleRoot
+                       Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics
   -- other-modules:       
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
   ghc-options:         -O2
-  build-depends:       base >=4.9 && <4.11,
+  build-depends:       array >=0.5 && <0.6,
+                       base >=4.9 && <4.11,
                        binary >=0.7 && <0.9,
                        bytestring >=0.10 && <0.11,
                        lens-family >=1.2 && <1.3,
+                       mtl >=2.2 && <2.3,
                        MemoTrie >=0.6 && <0.7,
                        SHA >=1.6 && <1.7,
                        transformers >=0.5 && <0.6,
@@ -45,17 +47,19 @@ Test-Suite Simplicity-testsuite
   ghc-options:         -O2 -fsimpl-tick-factor=122
   other-modules:       Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.Memo,
                        Simplicity.Term, Simplicity.Term.Core,
-                       Simplicity.Primitive, Simplicity.Primitive.Bitcoin
+                       Simplicity.Primitive, Simplicity.Primitive.Bitcoin, Simplicity.Primitive.Bitcoin.DataTypes
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
                        Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256,
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests,
-                       Simplicity.Digest, Simplicity.MerkleRoot
-  build-depends:       base >=4.9 && <4.11,
+                       Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics
+  build-depends:       array >=0.5 && <0.6,
+                       base >=4.9 && <4.11,
                        binary >=0.7 && <0.9,
                        bytestring >=0.10 && <0.11,
                        lens-family >=1.2 && <1.3,
+                       mtl >=2.2 && <2.3,
                        MemoTrie >=0.6 && <0.7,
                        SHA >=1.6 && <1.7,
                        transformers >=0.5 && <0.6,

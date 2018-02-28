@@ -12,7 +12,6 @@ import Data.Proxy (Proxy(..))
 import Simplicity.Digest
 import Simplicity.Primitive
 import Simplicity.Term
-import Simplicity.Ty
 import Simplicity.Ty.Word
 import Simplicity.Ty.Memo
 
@@ -69,8 +68,8 @@ instance Core CommitmentRoot where
   drop (CommitmentRoot t)                     = commit $ compressHalf (termTag "drop") t
 
 instance Assert CommitmentRoot where
-  assertl (CommitmentRoot t) s = commit $ compress (termTag "case") (t, hashWord256 s)
-  assertr t (CommitmentRoot s) = commit $ compress (termTag "case") (hashWord256 t, s)
+  assertl (CommitmentRoot t) s = commit $ compress (termTag "case") (t, s)
+  assertr t (CommitmentRoot s) = commit $ compress (termTag "case") (t, s)
 
 instance Primitive CommitmentRoot where
   primitive = commit . primTag . primName
@@ -160,7 +159,7 @@ instance Core WitnessRoot where
 instance Assert WitnessRoot where
   assertl (WitnessRoot t) s = result
    where
-    result = observe $ compress (compress (compress (witnessTag "assertl") (t,hashWord256 s))
+    result = observe $ compress (compress (compress (witnessTag "assertl") (t, s))
                                           (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
                                 (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD))
     proxy :: proxy ((Either a b), c) d -> (Proxy a, Proxy b, Proxy c, Proxy d)
@@ -169,7 +168,7 @@ instance Assert WitnessRoot where
 
   assertr t (WitnessRoot s) = result
    where
-    result = observe $ compress (compress (compress (witnessTag "assertr") (hashWord256 t,s))
+    result = observe $ compress (compress (compress (witnessTag "assertr") (t, s))
                                           (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
                                 (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD))
     proxy :: proxy ((Either a b), c) d -> (Proxy a, Proxy b, Proxy c, Proxy d)
@@ -181,12 +180,9 @@ instance Primitive WitnessRoot where
 
 instance Jet WitnessRoot where
   jet (WitnessRoot t) = observe $ compressHalf jetTag t
-
-hashWord256 :: Word256 -> Hash256
-hashWord256 (((((w00,w01),(w02,w03)),((w04,w05),(w06,w07))),(((w08,w09),(w0a,w0b)),((w0c,w0d),(w0e,w0f))))
-            ,((((w10,w11),(w12,w13)),((w14,w15),(w16,w17))),(((w18,w19),(w1a,w1b)),((w1c,w1d),(w1e,w1f))))
-            ) = Hash256 $ BS.pack (convert <$> words)
-  where
-   words = [w00, w01, w02, w03, w04, w05, w06, w07, w08, w09, w0a, w0b, w0c, w0d, w0e, w0f
-           ,w10, w11, w12, w13, w14, w15, w16, w17, w18, w19, w1a, w1b, w1c, w1d, w1e, w1f]
-   convert = fromInteger . fromWord8
+  -- Idea for alternative WitnessRoot instance:
+  --     jet t = t
+  -- Trasparent jet witnesses would mean we could define the jet class as
+  --     jet :: (TyC a, TyC b) => (forall term0. (Assert term0, Primitive term0, Jet term0) => term0 a b) -> term a b
+  -- And then jets could contain jets such that their Sementics, WitnessRoots, and hence CommitmentRoots would all be transparent to jet sub-experssions.
+  -- Need to think carefully what this would mean for concensus, but I think it is okay.

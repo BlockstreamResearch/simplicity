@@ -25,8 +25,8 @@ import Control.Arrow (Kleisli(..))
 import Control.Monad ((>=>))
 import qualified Control.Monad.Fail as Fail
 
+import Simplicity.Digest
 import Simplicity.Ty
-import Simplicity.Ty.Word
 
 -- | Values of type @forall term. 'Core' term => term a b@ are well-typed terms of the core Simplicity language represented in tagless-final style.
 --
@@ -127,8 +127,8 @@ instance Monad m => Core (Kleisli m) where
   drop (Kleisli t) = Kleisli $ \(_, b) -> t b
 
 class Core term => Assert term where
-  assertl :: (TyC a, TyC b, TyC c, TyC d) => term (a, c) d -> Word256 -> term (Either a b, c) d
-  assertr :: (TyC a, TyC b, TyC c, TyC d) => Word256 -> term (b, c) d -> term (Either a b, c) d
+  assertl :: (TyC a, TyC b, TyC c, TyC d) => term (a, c) d -> Hash256 -> term (Either a b, c) d
+  assertr :: (TyC a, TyC b, TyC c, TyC d) => Hash256 -> term (b, c) d -> term (Either a b, c) d
 
 instance Fail.MonadFail m => Assert (Kleisli m) where
   assertl (Kleisli s) _ = Kleisli $ go

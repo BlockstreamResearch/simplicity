@@ -1,7 +1,7 @@
 -- | This modules wraps Data.Digest.Pure.SHA in order to simulate direct access to the SHA-256 compression function by providing access to SHA-256 midstates.
 module Simplicity.Digest
-  (Hash256(..), integerHash256
-  ,IV, bsIv, ivHash, bsHash
+  (Hash256, integerHash256
+  ,IV, bsIv, ivHash, bslHash, bsHash
   ,Block ,compress, compressHalf
   ) where
 
@@ -13,7 +13,7 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 
 -- | Represents a 256-bit hash value or midstate from SHA-256.
-newtype Hash256 = Hash256 { hash256 :: BS.ByteString }
+newtype Hash256 = Hash256 { hash256 :: BS.ByteString } deriving Show
 
 -- | Extracts the 256 hash value as an integer.
 integerHash256 :: Hash256 -> Integer
@@ -34,8 +34,12 @@ ivHash (IV state) =  case pushEndOfInput state of
   _          -> error "getHash256 unexpected decoder state"
 
 -- | Computes a SHA-256 hash from a lazy 'BSL.ByteString'.
-bsHash :: BSL.ByteString -> Hash256
-bsHash = ivHash .bsIv
+bslHash :: BSL.ByteString -> Hash256
+bslHash = ivHash . bsIv
+
+-- | Computes a SHA-256 hash from a 'BS.ByteString'.
+bsHash :: BS.ByteString -> Hash256
+bsHash = bslHash . BSL.fromStrict
 
 type Block = (Hash256, Hash256)
 
