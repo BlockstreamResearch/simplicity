@@ -1,8 +1,8 @@
 -- | This modules wraps Data.Digest.Pure.SHA in order to simulate direct access to the SHA-256 compression function by providing access to SHA-256 midstates.
 module Simplicity.Digest
-  (Hash256, integerHash256
-  ,IV, bsIv, ivHash, bslHash, bsHash
-  ,Block ,compress, compressHalf
+  ( Hash256, integerHash256
+  , IV, bsIv, ivHash, bslHash, bsHash
+  , Block512 ,compress, compressHalf
   ) where
 
 import Data.Binary.Get (Decoder(..), pushChunk, pushChunks, pushEndOfInput)
@@ -21,6 +21,9 @@ integerHash256 h = BS.foldl' go 0 $ hash256 h
  where
   go n w = (n `shiftL` 8) .|. fromIntegral w
 
+-- | Represents a SHA-256 midstate.  This is either the SHA-256 initial value,
+-- or some SHA-256 midstate created from applying the SHA-256 'compress'ion
+-- function.
 newtype IV = IV (Decoder SHA256State)
 
 -- | Computes a SHA-256 hash from a lazy 'BSL.ByteString' representing an initial value.
@@ -41,10 +44,12 @@ bslHash = ivHash . bsIv
 bsHash :: BS.ByteString -> Hash256
 bsHash = bslHash . BSL.fromStrict
 
-type Block = (Hash256, Hash256)
+-- | A SHA-256 block is 512 bits.  For Simplicity's Merkle tree application, we
+-- will be building blocks containting hashes.
+type Block512 = (Hash256, Hash256)
 
 -- | Given an initial value and a block of data consisting of a pair of hashes, apply the SHA-256 compression function.
-compress :: IV -> Block -> IV
+compress :: IV -> Block512 -> IV
 compress (IV state) (h1, h2) = IV $ state `pushChunk` hash256 h1 `pushChunk` hash256 h2
 
 -- | Given an initial value and a block of data consisting of a one hash followed by 256-bits of zeros, apply the SHA-256 compression function.

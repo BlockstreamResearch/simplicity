@@ -12,13 +12,14 @@ module Simplicity.Ty
  , Ty, TyF(..)
  , one, sum, prod
  , unreflect
+ , memoCataTy
  ) where
 
 import Prelude hiding (sum, prod)
 
 import Control.Unification.Types (Unifiable, zipMatch)
 import Data.Functor.Fixedpoint (Fix(..))
-import Data.MemoTrie (HasTrie(..))
+import Data.MemoTrie (HasTrie(..), memo)
 import Data.Type.Equality ((:~:)(Refl))
 import Lens.Family2 ((&), (%~))
 import Lens.Family2.Stock (mapped, _1)
@@ -113,6 +114,8 @@ unreflect OneR = one
 unreflect (SumR a b) = sum (unreflect a) (unreflect b)
 unreflect (ProdR a b) = prod (unreflect a) (unreflect b)
 
+-- memoTyF and dememoTyF hare non-exported helper functions for the
+-- HasTrie (TyF x) instance.
 memoTyF :: Maybe (Bool, x, x) -> TyF x
 memoTyF Nothing              = One
 memoTyF (Just (False, a, b)) = Sum a b
@@ -128,3 +131,28 @@ instance HasTrie x => HasTrie (TyF x) where
   trie f = TyFTrie (trie (f . memoTyF))
   untrie (TyFTrie t) = untrie t . deMemoTyF
   enumerate (TyFTrie t) = enumerate t & mapped._1 %~ memoTyF
+
+-- MemoTy, memoTy and dememoTy hare non-exported helper types and functions for
+-- defining memoCataTy
+newtype MemoTy = MemoTy { unMemoTy :: Ty }
+
+memoTy :: TyF MemoTy -> MemoTy
+memoTy x = MemoTy (Fix (unMemoTy <$> x))
+
+deMemoTy :: MemoTy -> TyF MemoTy
+deMemoTy (MemoTy (Fix v)) = MemoTy <$> v
+
+instance HasTrie MemoTy where
+  newtype MemoTy :->: a = TyTrie (TyF MemoTy :->: a)
+  trie f = TyTrie (trie (f . memoTy))
+  untrie (TyTrie t) = untrie t . deMemoTy
+  enumerate (TyTrie t) = enumerate t & mapped._1 %~ memoTy
+
+-- | An implementation of 'Data.Functor.Fixedpoint.cata' for 'TyF' that is
+-- transparently memoized.
+--
+-- @'memoCataTy' = 'Data.Functor.Fixedpoint.cata'@
+memoCataTy :: (TyF a -> a) -> Ty -> a
+memoCataTy alg = f . MemoTy
+ where
+  f = memo (alg . fmap f . deMemoTy)

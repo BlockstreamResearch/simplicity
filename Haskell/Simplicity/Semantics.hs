@@ -1,5 +1,9 @@
+-- | This module provides the functional semantics of the full 'Simplicity' language.
+-- The 'Semantics' arrow is an instance of the 'Simplicity' class and 'sem' evaluates terms of the full Simplicity langauge.
 module Simplicity.Semantics 
- ( Semantics, sem
+
+ ( Delegator, runDelegator
+ , Semantics, sem
  ) where
 
 import Prelude hiding (drop, take)
@@ -10,41 +14,58 @@ import Control.Monad.Reader (ReaderT(..))
 import Simplicity.Digest
 import Simplicity.MerkleRoot
 import Simplicity.Primitive
+import Simplicity.Programs.Generic
 import Simplicity.Term
 import Simplicity.Ty.Word
 
-data Semantics a b = Semantics (CommitmentRoot a b) (Kleisli (ReaderT PrimEnv Maybe) a b)
+-- | @'Delegator' p@ is a helper data type for creating a 'Delegate' instance.
+-- @p@ is typically at least an instance of 'Core'.
+data Delegator p a b = Delegator { delegatorRoot :: CommitmentRoot a b
+                                 , runDelegator :: p a b -- ^ Extract the @p a b@ arrow from the 'Delegator'
+                                 }
 
-sem :: Semantics a b -> a -> ReaderT PrimEnv Maybe b
-sem (Semantics _ (Kleisli f)) = f
+-- | The functional semantics of the full Simplicity language consists of
+--
+-- * Partial effect via the 'Maybe' effect.
+--
+-- * Environment effects via the 'Control.Monad.Reader.Reader' effect for primitives to access the 'PrimEnv'.
+--
+-- * Delegation via the 'Delegator' helper.
+type Semantics a b = Delegator (Kleisli (ReaderT PrimEnv Maybe)) a b
 
-instance Core Semantics where
-  iden = Semantics iden iden
-  comp (Semantics rs fs) (Semantics rt ft) = Semantics (comp rs rt) (comp fs ft)
-  unit = Semantics unit unit
-  injl (Semantics rt ft) = Semantics (injl rt) (injl ft)
-  injr (Semantics rt ft) = Semantics (injr rt) (injr ft)
-  match (Semantics rs fs) (Semantics rt ft) = Semantics (match rs rt) (match fs ft)
-  pair (Semantics rs fs) (Semantics rt ft) = Semantics (pair rs rt) (pair fs ft)
-  take (Semantics rt ft) = Semantics (take rt) (take ft)
-  drop (Semantics rt ft) = Semantics (drop rt) (drop ft)
+-- | Execute the fuctional semantics of the full Simplicity language.
+-- The first argument is typically of type @(forall term. 'Simplicity' term => term a b)@, which @'Semantics' a b@ is an instance of.
+sem :: Semantics a b -> PrimEnv -> a -> Maybe b
+sem = flip . (runReaderT .) . runKleisli . runDelegator
 
-instance Assert Semantics where
-  assertl (Semantics rs fs) t = Semantics (assertl rs t) (assertl fs t)
-  assertr s (Semantics rt ft) = Semantics (assertr s rt) (assertr s ft)
+instance Core p => Core (Delegator p) where
+  iden = Delegator iden iden
+  comp (Delegator rs fs) (Delegator rt ft) = Delegator (comp rs rt) (comp fs ft)
+  unit = Delegator unit unit
+  injl (Delegator rt ft) = Delegator (injl rt) (injl ft)
+  injr (Delegator rt ft) = Delegator (injr rt) (injr ft)
+  match (Delegator rs fs) (Delegator rt ft) = Delegator (match rs rt) (match fs ft)
+  pair (Delegator rs fs) (Delegator rt ft) = Delegator (pair rs rt) (pair fs ft)
+  take (Delegator rt ft) = Delegator (take rt) (take ft)
+  drop (Delegator rt ft) = Delegator (drop rt) (drop ft)
 
-instance Primitive Semantics where
-  primitive p = Semantics (primitive p) (primitive p)
+instance Assert p => Assert (Delegator p) where
+  assertl (Delegator rs fs) t = Delegator (assertl rs t) (assertl fs t)
+  assertr s (Delegator rt ft) = Delegator (assertr s rt) (assertr s ft)
 
-instance Jet Semantics where
-  jet t = Semantics (jet t) (jet t)
+instance Primitive p => Primitive (Delegator p) where
+  primitive p = Delegator (primitive p) (primitive p)
 
-instance Witness Semantics where
-  witness b = Semantics (witness b) (witness b)
+instance Jet p => Jet (Delegator p) where
+  jet t = Delegator (jet t) (jet t)
 
-instance Delegate Semantics where
-  disconnect (Semantics rs fs) (Semantics rt ft) = Semantics (disconnect rs rt) (Kleisli f)
+instance Witness p => Witness (Delegator p) where
+  witness b = Delegator (witness b) (witness b)
+
+instance Core p => Delegate (Delegator p) where
+  disconnect (Delegator rs fs) (Delegator rt ft) = Delegator (disconnect rs rt) f
    where
-    f a = runKleisli fs (a, commitmentRoot rt) >>= runKleisli (first ft)
+    root256 = toWord256 . integerHash256 $ commitmentRoot rt
+    f = iden &&& scribe root256 >>> fs >>> take iden &&& drop ft
 
-instance Simplicity Semantics where
+instance (Jet p, Witness p) => Simplicity (Delegator p) where

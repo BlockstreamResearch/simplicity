@@ -1,11 +1,10 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
--- | This module defines the term language for Simplicity using tagless-final style.
+-- | This module defines the term language for 'Core' Simplicity using
+-- tagless-final style, plus a few extensions: 'Assert', 'Witness' and 'Delegate'.
 module Simplicity.Term.Core
  ( module Simplicity.Ty
  , Core(..)
- , Assert(..)
- , Witness(..)
- -- * Notation for terms
+ -- * Notation for 'Core' terms
  , (>>>), (&&&)
  -- | The following expressions are for short sequences of 'take' and 'drop', with 'iden' that is used to access components of Simplicity inputs.
  --
@@ -17,6 +16,10 @@ module Simplicity.Term.Core
  --
  -- The string of @i@'s and @o@'s is meant to resemble a binary number that denotes an index to the leaves of a perfect binary tree.
  , oh, ih, ooh, oih, ioh, iih, oooh, ooih, oioh, oiih, iooh, ioih, iioh, iiih
+ -- * Language extensions
+ , Assert(..)
+ , Witness(..)
+ , Delegate(..)
  ) where
 
 import Prelude hiding (take, drop)
@@ -27,6 +30,7 @@ import qualified Control.Monad.Fail as Fail
 
 import Simplicity.Digest
 import Simplicity.Ty
+import Simplicity.Ty.Word
 
 -- | Values of type @forall term. 'Core' term => term a b@ are well-typed terms of the core Simplicity language represented in tagless-final style.
 --
@@ -112,6 +116,7 @@ instance Core (->) where
   take t (a, _) = t a
   drop t (_, b) = t b
 
+-- | The Monad 'm' should be a commutative monad.
 instance Monad m => Core (Kleisli m) where
   iden = Kleisli $ return
   comp (Kleisli s) (Kleisli t) = Kleisli $ s >=> t
@@ -126,10 +131,14 @@ instance Monad m => Core (Kleisli m) where
   take (Kleisli t) = Kleisli $ \(a, _) -> t a
   drop (Kleisli t) = Kleisli $ \(_, b) -> t b
 
+-- | This class extends the 'Core' Simplicity language with two assertion expressions.
+-- These expressions are use for assertions and for pruning 'match' (case) expressions.
+-- This extension produces partial functions.
 class Core term => Assert term where
   assertl :: (TyC a, TyC b, TyC c, TyC d) => term (a, c) d -> Hash256 -> term (Either a b, c) d
   assertr :: (TyC a, TyC b, TyC c, TyC d) => Hash256 -> term (b, c) d -> term (Either a b, c) d
 
+-- | The Monad 'm' should be a commutative monad.
 instance Fail.MonadFail m => Assert (Kleisli m) where
   assertl (Kleisli s) _ = Kleisli $ go
    where
@@ -140,7 +149,12 @@ instance Fail.MonadFail m => Assert (Kleisli m) where
     go (Left _, _)  = fail "Simplicity.Term.Core: assertr failed"
     go (Right b, c) = t (b, c)
 
+-- | This class adds 'witness' expressions to the Simplicity language.
 class Witness term where
+  -- | The 'witness' expression denotes a constant function, however this value is not committed to the 'Simplicity.MerkleRoot.CommitmentRoot'.
+  -- Compare this to 'Simplicity.Programs.Generic.scribe' which does commit to its value.
+  --
+  -- @witness v _ = v@
   witness :: (TyC a, TyC b) => b -> term a b
 
 instance Witness (->) where
@@ -148,3 +162,7 @@ instance Witness (->) where
 
 instance Monad m => Witness (Kleisli m) where
   witness = Kleisli . const . return
+
+-- | This class adds 'disconnect' expressions to the Simplicity language, which can be used for delegation.
+class Delegate term where
+  disconnect :: (TyC a, TyC b, TyC c, TyC d) => term (a, Word256) (b, c) -> term c d -> term a (b, d)

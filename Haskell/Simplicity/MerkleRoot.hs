@@ -13,7 +13,6 @@ import Simplicity.Digest
 import Simplicity.Primitive
 import Simplicity.Term
 import Simplicity.Ty.Word
-import Simplicity.Ty.Memo
 
 tag :: [String] -> IV
 tag ws | length str < 56 = bsIv . BSC.pack $ str
@@ -42,6 +41,8 @@ primTag x = tag $ primitivePrefix ++ [x]
 jetTag :: IV
 jetTag = tag (prefix ++ ["Jet"])
 
+-- | Computes a hash committing to a Simplicity type.
+-- This function is memoized.
 typeRoot :: Ty -> Hash256
 typeRoot = memoCataTy typeRootF
  where
@@ -50,10 +51,21 @@ typeRoot = memoCataTy typeRootF
   typeRootF (Sum a b)  = ivHash $ compress (typeTag "sum") (a, b)
   typeRootF (Prod a b) = ivHash $ compress (typeTag "prod") (a, b)
 
+-- | A variant of 'typeRoot' for @'TyReflect' a@ values.
+--
+-- @
+-- typeRootR = typeRoot . unreflect
+-- @
 typeRootR :: TyReflect a -> Hash256
 typeRootR = typeRoot . unreflect
 
-newtype CommitmentRoot a b = CommitmentRoot { commitmentRoot :: Hash256 }
+newtype CommitmentRoot a b = CommitmentRoot {
+-- | Interpret a Simplicity expression as a commitment hash.
+-- This commitment exclude 'witness' values and the 'disconnect'ed expression.
+-- It also exclude typing information (with the exception of jets).
+    commitmentRoot :: Hash256
+  }
+
 commit = CommitmentRoot . ivHash
 
 instance Core CommitmentRoot where
@@ -85,7 +97,13 @@ instance Delegate CommitmentRoot where
 
 instance Simplicity CommitmentRoot where
 
-newtype WitnessRoot a b = WitnessRoot { witnessRoot :: Hash256 }
+newtype WitnessRoot a b = WitnessRoot {
+-- | Interpret a Simplicity expression as a witness hash.
+-- This hash includes 'witness' values and the 'disconnect'ed expression.
+-- It also includes all typing decorations.
+    witnessRoot :: Hash256
+  }
+
 observe = WitnessRoot . ivHash
 
 instance Core WitnessRoot where

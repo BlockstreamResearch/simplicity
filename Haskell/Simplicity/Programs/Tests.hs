@@ -7,7 +7,7 @@ import Data.ByteString (pack)
 import qualified Data.List as L
 import qualified Data.Word as W
 
-import Simplicity.Digest (integerHash256, bsHash)
+import Simplicity.Digest
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Sha256
 import Simplicity.Programs.Word

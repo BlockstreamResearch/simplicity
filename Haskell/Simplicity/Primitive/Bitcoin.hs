@@ -1,6 +1,7 @@
 {-# LANGUAGE GADTs, ScopedTypeVariables #-}
+-- | This module provides the Simplicity primitives specific for Bitcoin or Bitcoin-like applications.
 module Simplicity.Primitive.Bitcoin
-  ( Prim, primPrefix, primName
+  ( Prim(..), primPrefix, primName
   , PrimEnv, primSem
   ) where
 
@@ -37,6 +38,7 @@ data Prim a b where
 primPrefix :: String
 primPrefix = "Bitcoin"
 
+-- Consider deriving Show instead?
 primName :: Prim a b -> String
 primName NVersion = "nVersion"
 primName NLockTime = "nLockTime"
@@ -57,6 +59,7 @@ primName OutputValue = "outputValue"
 primName OutputHashScript = "outputHashScript"
 primName ScriptCode = "scriptCode"
 
+-- TODO: create an interface for generating PrimEnv.
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32
                        , envScriptCode :: Hash256
