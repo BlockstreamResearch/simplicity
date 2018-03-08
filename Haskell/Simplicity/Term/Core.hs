@@ -22,7 +22,7 @@ module Simplicity.Term.Core
  , Delegate(..)
  ) where
 
-import Prelude hiding (take, drop)
+import Prelude hiding (take, drop, fail)
 
 import Control.Arrow (Kleisli(..))
 import Control.Monad ((>=>))
@@ -137,17 +137,19 @@ instance Monad m => Core (Kleisli m) where
 class Core term => Assert term where
   assertl :: (TyC a, TyC b, TyC c, TyC d) => term (a, c) d -> Hash256 -> term (Either a b, c) d
   assertr :: (TyC a, TyC b, TyC c, TyC d) => Hash256 -> term (b, c) d -> term (Either a b, c) d
+  fail :: (TyC a, TyC b) => Block512 -> term a b
 
 -- | The Monad 'm' should be a commutative monad.
 instance Fail.MonadFail m => Assert (Kleisli m) where
   assertl (Kleisli s) _ = Kleisli $ go
    where
     go (Left a, c)  = s (a, c)
-    go (Right _, _) = fail "Simplicity.Term.Core: assertl failed"
+    go (Right _, _) = Fail.fail "Simplicity.Term.Core: assertl failed"
   assertr _ (Kleisli t) = Kleisli $ go
    where
-    go (Left _, _)  = fail "Simplicity.Term.Core: assertr failed"
+    go (Left _, _)  = Fail.fail "Simplicity.Term.Core: assertr failed"
     go (Right b, c) = t (b, c)
+  fail _ = Kleisli . const $ Fail.fail "Simplicity.Term.Core: fail"
 
 -- | This class adds 'witness' expressions to the Simplicity language.
 class Witness term where

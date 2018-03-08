@@ -27,7 +27,7 @@ class Primitive term where
 instance (MonadReader PrimEnv m, Fail.MonadFail m) => Primitive (Kleisli m) where
   primitive p = Kleisli $ \a -> do
    env <- ask
-   let err = fail $ "Simplicity.Term.primitive in Primitive (Kleisli m) instance: " ++ primName p ++ " failed."
+   let err = Fail.fail $ "Simplicity.Term.primitive in Primitive (Kleisli m) instance: " ++ primName p ++ " failed."
    maybe err return $ primSem env p a
 
 -- | This class creates expressions for discounted jets.

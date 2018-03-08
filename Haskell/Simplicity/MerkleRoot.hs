@@ -22,15 +22,15 @@ tag ws | length str < 56 = bsIv . BSC.pack $ str
 
 prefix = ["Simplicity"]
 typePrefix = prefix ++ ["Type"]
-termPrefix = prefix ++ ["Term"]
+commitmentPrefix = prefix ++ ["Commitment"]
 witnessPrefix = prefix ++ ["Witness"]
 primitivePrefix = prefix ++ ["Primitive", primPrefix]
 
 typeTag :: String -> IV
 typeTag x = tag $ typePrefix ++ [x]
 
-termTag :: String -> IV
-termTag x = tag $ termPrefix ++ [x]
+commitmentTag :: String -> IV
+commitmentTag x = tag $ commitmentPrefix ++ [x]
 
 witnessTag :: String -> IV
 witnessTag x = tag $ witnessPrefix ++ [x]
@@ -69,19 +69,20 @@ newtype CommitmentRoot a b = CommitmentRoot {
 commit = CommitmentRoot . ivHash
 
 instance Core CommitmentRoot where
-  iden                                        = commit $ termTag "iden"
-  comp (CommitmentRoot t) (CommitmentRoot s)  = commit $ compress (termTag "iden") (t, s)
-  unit                                        = commit $ termTag "unit"
-  injl (CommitmentRoot t)                     = commit $ compressHalf (termTag "injl") t
-  injr (CommitmentRoot t)                     = commit $ compressHalf (termTag "injr") t
-  match (CommitmentRoot t) (CommitmentRoot s) = commit $ compress (termTag "case") (t, s)
-  pair (CommitmentRoot t) (CommitmentRoot s)  = commit $ compress (termTag "pair") (t, s)
-  take (CommitmentRoot t)                     = commit $ compressHalf (termTag "take") t
-  drop (CommitmentRoot t)                     = commit $ compressHalf (termTag "drop") t
+  iden                                        = commit $ commitmentTag "iden"
+  comp (CommitmentRoot t) (CommitmentRoot s)  = commit $ compress (commitmentTag "comp") (t, s)
+  unit                                        = commit $ commitmentTag "unit"
+  injl (CommitmentRoot t)                     = commit $ compressHalf (commitmentTag "injl") t
+  injr (CommitmentRoot t)                     = commit $ compressHalf (commitmentTag "injr") t
+  match (CommitmentRoot t) (CommitmentRoot s) = commit $ compress (commitmentTag "case") (t, s)
+  pair (CommitmentRoot t) (CommitmentRoot s)  = commit $ compress (commitmentTag "pair") (t, s)
+  take (CommitmentRoot t)                     = commit $ compressHalf (commitmentTag "take") t
+  drop (CommitmentRoot t)                     = commit $ compressHalf (commitmentTag "drop") t
 
 instance Assert CommitmentRoot where
-  assertl (CommitmentRoot t) s = commit $ compress (termTag "case") (t, s)
-  assertr t (CommitmentRoot s) = commit $ compress (termTag "case") (t, s)
+  assertl (CommitmentRoot t) s = commit $ compress (commitmentTag "case") (t, s)
+  assertr t (CommitmentRoot s) = commit $ compress (commitmentTag "case") (t, s)
+  fail b = commit $ compress (commitmentTag "fail") b
 
 instance Primitive CommitmentRoot where
   primitive = commit . primTag . primName
@@ -90,10 +91,10 @@ instance Jet CommitmentRoot where
   jet t = CommitmentRoot . witnessRoot $ jet t
 
 instance Witness CommitmentRoot where
-  witness _ = commit $ termTag "witness"
+  witness _ = commit $ commitmentTag "witness"
 
 instance Delegate CommitmentRoot where
-  disconnect (CommitmentRoot s) _ = commit $ compressHalf (termTag "disconnect") s
+  disconnect (CommitmentRoot s) _ = commit $ compressHalf (commitmentTag "disconnect") s
 
 instance Simplicity CommitmentRoot where
 
@@ -192,6 +193,8 @@ instance Assert WitnessRoot where
     proxy :: proxy ((Either a b), c) d -> (Proxy a, Proxy b, Proxy c, Proxy d)
     proxy _ = (Proxy, Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC, proxyD) = proxy result
+  -- This should never be called in practice, but we add it for completeness.
+  fail b = observe $ compress (witnessTag "fail") b
 
 instance Primitive WitnessRoot where
   primitive = observe . primTag . primName

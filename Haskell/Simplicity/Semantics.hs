@@ -6,7 +6,7 @@ module Simplicity.Semantics
  , Semantics, sem
  ) where
 
-import Prelude hiding (drop, take)
+import Prelude hiding (drop, take, fail)
 
 import Control.Arrow (Kleisli(..), first)
 import Control.Monad.Reader (ReaderT(..))
@@ -52,6 +52,7 @@ instance Core p => Core (Delegator p) where
 instance Assert p => Assert (Delegator p) where
   assertl (Delegator rs fs) t = Delegator (assertl rs t) (assertl fs t)
   assertr s (Delegator rt ft) = Delegator (assertr s rt) (assertr s ft)
+  fail b = Delegator (fail b) (fail b)
 
 instance Primitive p => Primitive (Delegator p) where
   primitive p = Delegator (primitive p) (primitive p)

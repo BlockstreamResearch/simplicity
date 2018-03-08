@@ -54,6 +54,6 @@ compress (IV state) (h1, h2) = IV $ state `pushChunk` hash256 h1 `pushChunk` has
 
 -- | Given an initial value and a block of data consisting of a one hash followed by 256-bits of zeros, apply the SHA-256 compression function.
 compressHalf :: IV -> Hash256 -> IV
-compressHalf iv h = compress iv (h, zero)
+compressHalf iv h = compress iv (zero, h)
  where
   zero = Hash256 (BS.replicate 32 0)
