@@ -27,20 +27,20 @@ type Lock = Word32
 type Value = Word64 -- bitcoin uses an Int64, but it doesn't really matter.
 
 -- | An outpoint is an index into the TXO set.
-data OutPoint = OutPoint { opHash :: Hash256
+data Outpoint = Outpoint { opHash :: Hash256
                          , opIndex :: Word32
                          } deriving Show
 {-
-instance Serialize OutPoint where
+instance Serialize Outpoint where
   get = do h <- get
            i <- getWord32le
-           return (OutPoint h i)
-  put (OutPoint h i) = put h >> putWord32le i
+           return (Outpoint h i)
+  put (Outpoint h i) = put h >> putWord32le i
 -}
 
 -- | The data type for signed transaction inputs.
 -- Note that signed transaction inputs for BIP 143 include the value of the input, which doesn't appear in the serialized transaction input format.
-data SigTxInput = SigTxInput { sigTxiPreviousOutput :: OutPoint
+data SigTxInput = SigTxInput { sigTxiPreviousOutput :: Outpoint
                              , sigTxiValue :: Value
                              , sigTxiSequence :: Word32
                              } deriving Show
@@ -65,7 +65,7 @@ instance Serialize TxOutput where
 -- | The data type for transactions in the context of signatures.
 -- The data signed in a BIP 143 directly covers input values.
 data SigTx = SigTx { sigTxVersion :: Word32
-                   , sigTxIn :: Array Word32 SigTxInput
+                   , sigTxIn :: Array Word64 SigTxInput
                    , sigTxOut :: Array Word32 TxOutput
                    , sigTxLock :: Lock
                    } deriving Show

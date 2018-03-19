@@ -13,24 +13,24 @@ import Simplicity.Primitive.Bitcoin.DataTypes
 import Simplicity.Ty.Word
 
 data Prim a b where
-  NVersion :: Prim () Word32
-  NLockTime :: Prim () Word32
-  HashInputs :: Prim () Word256
-  HashOutputs :: Prim () Word256
-  MaxInput :: Prim () Word32
+  Version :: Prim () Word32
+  LockTime :: Prim () Word32
+  InputsHash :: Prim () Word256
+  OutputsHash :: Prim () Word256
+  MaxInput :: Prim () Word64
   TotalInputValue :: Prim () Word64
   CurrentPrevOutpoint :: Prim () (Word256,Word32)
   CurrentValue :: Prim () Word64
   CurrentSequence :: Prim () Word32
-  CurrentIndex :: Prim () Word32
-  InputPrevOutpoint :: Prim Word32 (Either () (Word256,Word32))
-  InputValue :: Prim Word32 (Either () Word64)
-  InputSequence :: Prim Word32 (Either () Word32)
+  CurrentIndex :: Prim () Word64
+  InputPrevOutpoint :: Prim Word64 (Either () (Word256,Word32))
+  InputValue :: Prim Word64 (Either () Word64)
+  InputSequence :: Prim Word64 (Either () Word32)
   MaxOutput :: Prim () Word32
   TotalOutputValue :: Prim () Word64
   OutputValue :: Prim Word32 (Either () Word64)
-  OutputHashScript :: Prim Word32 (Either () Word256)
-  ScriptCode :: Prim () Word256
+  OutputScriptHash :: Prim Word32 (Either () Word256)
+  ScriptCMR :: Prim () Word256
 -- Other possible ideas:
   -- Fees :: Prim () Word64
   -- TxId :: Prim () Word256
@@ -40,10 +40,10 @@ primPrefix = "Bitcoin"
 
 -- Consider deriving Show instead?
 primName :: Prim a b -> String
-primName NVersion = "nVersion"
-primName NLockTime = "nLockTime"
-primName HashInputs = "hashInputs"
-primName HashOutputs = "hashOutputs"
+primName Version = "version"
+primName LockTime = "lockTime"
+primName InputsHash = "inputsHash"
+primName OutputsHash = "outputsHash"
 primName MaxInput = "maxInput"
 primName TotalInputValue = "totalInputValue"
 primName CurrentPrevOutpoint = "currentPrevOutpoint"
@@ -56,15 +56,15 @@ primName InputSequence = "inputSequence"
 primName MaxOutput = "maxOutput"
 primName TotalOutputValue = "totalOutputValue"
 primName OutputValue = "outputValue"
-primName OutputHashScript = "outputHashScript"
-primName ScriptCode = "scriptCode"
+primName OutputScriptHash = "outputScriptHash"
+primName ScriptCMR = "scriptCMR"
 
 -- TODO: create an interface for generating PrimEnv.
 data PrimEnv = PrimEnv { envTx :: SigTx
-                       , envIx :: Data.Word.Word32
-                       , envScriptCode :: Hash256
-                       , envHashInputs :: Hash256
-                       , envHashOutputs :: Hash256
+                       , envIx :: Data.Word.Word64
+                       , envScriptCMR :: Hash256
+                       , envInputsHash :: Hash256
+                       , envOutputsHash :: Hash256
                        }
 
 primSem :: PrimEnv -> Prim a b -> a -> Maybe b
@@ -84,26 +84,26 @@ primSem env = interpret
   cast :: Maybe a -> Either () a
   cast (Just x) = Right x
   cast Nothing = Left ()
-  atInput :: (SigTxInput -> a) -> Word32 -> Either () a
-  atInput f = cast . fmap f . lookupInput . fromInteger . fromWord32
+  atInput :: (SigTxInput -> a) -> Word64 -> Either () a
+  atInput f = cast . fmap f . lookupInput . fromInteger . fromWord64
   atOutput :: (TxOutput -> a) -> Word32 -> Either () a
   atOutput f = cast . fmap f . lookupOutput . fromInteger . fromWord32
   encodeOutpoint op = (toWord256 . integerHash256 $ opHash op, toWord32 . fromIntegral $ opIndex op)
-  interpret NVersion = const . return . toWord32 . toInteger $ sigTxVersion tx
-  interpret NLockTime = const . return . toWord32 . toInteger $ sigTxLock tx
-  interpret HashInputs = const . return . toWord256 . integerHash256 $ envHashInputs env
-  interpret HashOutputs = const . return . toWord256 . integerHash256 $ envHashOutputs env
-  interpret MaxInput = const . return . toWord32 . toInteger $ maxInput
+  interpret Version = const . return . toWord32 . toInteger $ sigTxVersion tx
+  interpret LockTime = const . return . toWord32 . toInteger $ sigTxLock tx
+  interpret InputsHash = const . return . toWord256 . integerHash256 $ envInputsHash env
+  interpret OutputsHash = const . return . toWord256 . integerHash256 $ envOutputsHash env
+  interpret MaxInput = const . return . toWord64 . toInteger $ maxInput
   interpret TotalInputValue = const . return . toWord64 . fromIntegral . sum $ sigTxiValue <$> elems (sigTxIn tx)
   interpret CurrentPrevOutpoint = const $ encodeOutpoint . sigTxiPreviousOutput <$> currentInput
   interpret CurrentValue = const $ toWord64 . toInteger . sigTxiValue <$> currentInput
   interpret CurrentSequence = const $ toWord32 . toInteger . sigTxiSequence <$> currentInput
-  interpret CurrentIndex = const . return . toWord32 . toInteger $ ix
+  interpret CurrentIndex = const . return . toWord64 . toInteger $ ix
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutput)
   interpret InputValue = return . (atInput $ toWord64 . toInteger . sigTxiValue)
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
   interpret MaxOutput = const . return . toWord32 . toInteger $ maxOutput
   interpret TotalOutputValue = const . return . toWord64 . fromIntegral . sum $ txoValue <$> elems (sigTxOut tx)
   interpret OutputValue = return . (atOutput $ toWord64 . fromIntegral . txoValue)
-  interpret OutputHashScript = return . (atOutput $ toWord256 . integerHash256 . bsHash . txoScript)
-  interpret ScriptCode = const . return . toWord256 . integerHash256 $ envScriptCode env
+  interpret OutputScriptHash = return . (atOutput $ toWord256 . integerHash256 . bsHash . txoScript)
+  interpret ScriptCMR = const . return . toWord256 . integerHash256 $ envScriptCMR env
