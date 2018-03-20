@@ -116,7 +116,7 @@ instance Core (->) where
   take t (a, _) = t a
   drop t (_, b) = t b
 
--- | The Monad 'm' should be a commutative monad.
+-- | The Monad 'm' should be a commutative, idempotent monad.
 instance Monad m => Core (Kleisli m) where
   iden = Kleisli $ return
   comp (Kleisli s) (Kleisli t) = Kleisli $ s >=> t
@@ -139,7 +139,7 @@ class Core term => Assert term where
   assertr :: (TyC a, TyC b, TyC c, TyC d) => Hash256 -> term (b, c) d -> term (Either a b, c) d
   fail :: (TyC a, TyC b) => Block512 -> term a b
 
--- | The Monad 'm' should be a commutative monad.
+-- | The Monad 'm' should be a commutative, idempotent monad with a zero that is both a left and right zero.
 instance Fail.MonadFail m => Assert (Kleisli m) where
   assertl (Kleisli s) _ = Kleisli $ go
    where

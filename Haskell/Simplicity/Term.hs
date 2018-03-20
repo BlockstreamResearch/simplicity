@@ -40,6 +40,6 @@ class (Assert term, Primitive term) => Jet term where
 instance (MonadReader PrimEnv m, Fail.MonadFail m) => Jet (Kleisli m) where
   jet t = t
 
--- | The class for the full Simplicity language.
+-- | The class for the full Simplicity language with delegation.
 -- This includes 'Core', 'Assert', 'Primitive', 'Jet', 'Witness' and 'Delegate'.
 class (Jet term, Witness term, Delegate term) => Simplicity term where
