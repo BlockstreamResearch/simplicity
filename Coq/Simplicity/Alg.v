@@ -1,8 +1,10 @@
 Require Import Simplicity.Ty.
 Require Simplicity.Core.
+Require Import Util.Monad.
 
 Set Implicit Arguments.
 Local Open Scope ty_scope.
+Local Open Scope monad_scope.
 
 Module Core.
 
@@ -199,7 +201,7 @@ Notation "'I' x" := (drop x) (at level 0, right associativity) : term_scope.
 
 Section CoreSem.
 
-Definition CoreSem : Core.Algebra := Core.Pack (Core.Class.Class (fun A B => A -> B)
+Definition CoreFunSem : Core.Algebra := Core.Pack (Core.Class.Class (fun A B => A -> B)
   (fun A a => a)
   (fun A B C s t a => t (s a))
   (fun A _ => tt)
@@ -215,11 +217,51 @@ Definition CoreSem : Core.Algebra := Core.Pack (Core.Class.Class (fun A B => A -
   (fun A B C t ab => t (snd ab))
 ).
 
-Lemma CoreSem_correct {A B} (x : Simplicity.Core.Term A B) : Simplicity.Core.eval x = Core.eval x (alg := CoreSem).
+Lemma CoreFunSem_correct {A B} (x : Simplicity.Core.Term A B) : Simplicity.Core.eval x = Core.eval x (alg := CoreFunSem).
 Proof.
 induction x; simpl; try first [rewrite IHx | rewrite IHx1, IHx2]; reflexivity.
 Qed.
 
+Definition CoreSem (M : CIMonad) : Core.Algebra := Core.Pack (Core.Class.Class (Kleisli M)
+  (fun A a => eta a)
+  (fun A B C s t a => (t <-< s) a)
+  (fun A _ => eta tt)
+  (fun A B C t a => map inl (t a))
+  (fun A B C t a => map inr (t a))
+  (fun A B C D s t p => let (ab, c) := p in
+    match ab with
+    | inl a => s (a, c)
+    | inr b => t (b, c)
+    end)
+  (fun A B C s t a => phi (s a) (t a))
+  (fun A B C t ab => t (fst ab))
+  (fun A B C t ab => t (snd ab))
+).
+
 End CoreSem.
 
-Notation "|[ x ]|" := (x : Core.domain CoreSem _ _) : core_alg_scope.
+Notation "|[ x ]|^ M" := (x : Core.domain (CoreSem M) _ _) (at level 0, M at level 0) : core_alg_scope.
+Notation "|[ x ]|" := (x : Core.domain CoreFunSem _ _) : core_alg_scope.
+
+Local Open Scope core_alg_scope.
+
+Lemma CoreSem_natural {M A B} {x : forall {alg : Core.Algebra}, alg A B} (Hx : Core.Parametric (@x)) (a : A) :
+  |[ x ]|^M a = eta (|[ x ]| a).
+Proof.
+rewrite (Core.term_eval Hx (CoreSem M)).
+rewrite (Core.term_eval Hx CoreFunSem).
+clear Hx.
+generalize (x Core.Term); clear x; intros t.
+induction t; cbn.
+- reflexivity.
+- rewrite kleisli_comp_def, IHt1, <- kleisli_comp_def.
+  rewrite kleisli_compr; apply IHt2.
+- reflexivity.
+- rewrite IHt; apply eta_natural.
+- rewrite IHt; apply eta_natural.
+- destruct a as [[a|b] c]; [apply IHt1|apply IHt2].
+- rewrite IHt1, IHt2.
+  apply phi_eta.
+- apply IHt.
+- apply IHt.
+Qed.

@@ -337,7 +337,7 @@ Theorem translate_correct_parametric {A B : Ty} (t : forall {term : Core.Algebra
   >>- @t translate ->>
  fillContext ctx {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (|[ t ]| a)) |}.
 Proof.
-rewrite (Core.term_eval Ht), (Core.term_eval Ht CoreSem), <- CoreSem_correct.
+rewrite (Core.term_eval Ht), (Core.term_eval Ht CoreFunSem), <- CoreFunSem_correct.
 apply translate_correct.
 Qed.
 

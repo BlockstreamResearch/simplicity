@@ -2099,6 +2099,12 @@
     \<rightarrow\> \<cal-M\>A>>|<row|<cell|\<mu\><rsup|\<cal-M\>><rsub|A>>|<cell|:>|<cell|\<cal-M\>\<cal-M\>A\<rightarrow\>\<cal-M\>A>>>>
   </eqnarray*>
 
+  where forall <math|f\<of\>A\<rightarrow\>B>,
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|\<cal-M\>f\<circ\>\<eta\><rsup|\<cal-M\>><rsub|A>>|<cell|=>|<cell|\<eta\><rsup|\<cal-M\>><rsub|B>\<circ\>f>>|<row|<cell|\<cal-M\>f\<circ\>\<mu\><rsup|\<cal-M\>><rsub|A>>|<cell|=>|<cell|\<mu\><rsup|\<cal-M\>><rsub|B>\<circ\>\<cal-M\>\<cal-M\>f>>>>
+  </eqnarray*>
+
   The <math|\<eta\><rsup|\<cal-M\>><rsub|A>> and
   <math|\<mu\><rsup|\<cal-M\>><rsub|A>> functions required to satisfy certain
   coherence laws. The monad laws are best presented using Kleisli morphisms.
@@ -2313,7 +2319,7 @@
 
   Our first side-effect will be aborting a computation. New assertion and
   <samp|fail> expressions make use of this effect. The langauge that uses
-  this extension is called <dfn|Simplicity with failure>.
+  this extension is called <dfn|Simplicity with assertions>.
 
   \;
 
@@ -2365,10 +2371,16 @@
   <subsection|Monad Zero><label|ss:MonadZero>
 
   To give monadic semantics to the assertion and <samp|fail> expressions, we
-  will require that the monad capturing the our effects have a <dfn|zero>.
+  will require that the monad capturing the our effects have a <dfn|zero>
 
   <\equation*>
     \<emptyset\><rsup|\<cal-M\>><rsub|A>\<of\>\<cal-M\>A
+  </equation*>
+
+  where forall <math|f\<of\>A\<rightarrow\>B>,
+
+  <\equation*>
+    \<cal-M\>f<around*|(|\<emptyset\><rsup|\<cal-M\>><rsub|A>|)>=\<emptyset\><rsup|\<cal-M\>><rsub|B>
   </equation*>
 
   This zero effect captures the notion of a failed, or aborted computation.
@@ -2440,6 +2452,36 @@
   Therefore, a term in the language of core Simplicity extended with
   witnesses and failure, <math|t\<of\>A\<vdash\>B>, can be intepreted as a
   function returning an optional result: <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|<maybe>>:A\<rightarrow\><maybe>B>.
+
+  There is a natural transformation from the option monad into any monad with
+  zero, <math|\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>\<of\><maybe>A\<rightarrow\>\<cal-M\>A>:
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A><around*|(|\<emptyset\><rsup|<maybe>><rsub|A>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|\<cal-M\>><rsub|A>>>|<row|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A><around*|(|\<eta\><rsup|<maybe>><rsub|A><around*|(|a|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|\<cal-M\>><rsub|A><around*|(|a|)>>>>>
+  </eqnarray*>
+
+  <\lemma>
+    For all <math|f :A\<rightarrow\>B>,
+
+    \;
+
+    <\equation*>
+      \<iota\><rsup|\<cal-M\>><rsub|<maybe>,B>\<circ\><maybe>f=\<cal-M\>f\<circ\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>
+    </equation*>
+
+    Also
+
+    <\equation*>
+      \<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>\<circ\>\<mu\><rsup|<maybe>><rsub|A>=\<mu\><rsup|\<cal-M\>><rsub|A>\<circ\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,\<cal-M\>A>\<circ\><maybe>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>
+      <around*|(|=\<mu\><rsup|\<cal-M\>><rsub|A>\<circ\>\<cal-M\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>\<circ\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,<maybe>A>|)>
+    </equation*>
+  </lemma>
+
+  <\theorem>
+    For any core Simplicity expression with assertions,
+    <math|t\<of\>A\<vdash\>B>, and any commutative idempotent monad with zero
+    <math|\<cal-M\>>, we have <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>>\<assign\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,B>\<circ\><around*|\<llbracket\>|t|\<rrbracket\>><rsup|<maybe>>>.
+  </theorem>
 
   <subsection|Merkle Roots><label|ss:AssertMerkleRoot>
 
