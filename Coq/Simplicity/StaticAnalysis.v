@@ -1,6 +1,5 @@
 Require Import NArith.
 Require Import Util.List.
-Require Import Util.Option.
 
 Require Import Simplicity.Alg.
 Require Import Simplicity.Core.

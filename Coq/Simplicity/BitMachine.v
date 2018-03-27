@@ -1,7 +1,6 @@
 Require Import PeanoNat.
 Require Import NArith.
 Require Import Util.List.
-Require Import Util.Option.
 Require Import Util.Thrist.
 Require Import Eqdep_dec.
 

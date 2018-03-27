@@ -1,6 +1,5 @@
 Require Import PeanoNat.
 Require Import Util.List.
-Require Import Util.Option.
 Require Import Util.Thrist.
 
 Require Import Simplicity.Alg.

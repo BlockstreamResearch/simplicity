@@ -5,9 +5,9 @@ Module CIMonad.
 
 Module Class.
 
-(* Since monaic values themselve can be functions, we should really be using
- * a setoid here.  However, for this development, let us see how far we can go
- * taking advantage of eta equality
+(* Eventually we will need the functional extensionality axoim, but let's try to
+ * delay that as long as possible.  The alternative is to use Setoid / PERs but that would
+ * seem to entail writing an entirely new standard library.
  *)
 Record class (M : Type -> Type) := Class
 { eta : forall {A}, A -> M A
@@ -19,8 +19,8 @@ Record class (M : Type -> Type) := Class
 ; _ : forall {A B} (f0 f1: A -> M B), (forall a, f0 a = f1 a) -> forall a, bind f0 a = bind f1 a
 ; _ : forall {A} (x : M A), bind eta x = x
 ; _ : forall {A B} (f : A -> M B) (a : A), bind f (eta a) = f a
-; _ : forall {A B C} (g : B -> M C) (f : A -> M B) (h : A -> M C) (x : M A),
-      (forall a, bind g (f a) = h a) -> bind g (bind f x) = bind h x
+; _ : forall {A B C} (g : B -> M C) (f : A -> M B) (x : M A),
+        bind g (bind f x) = bind (fun a => bind g (f a)) x
 ; _ : forall {A B} (p : M A * M B), kleisliComp strength strength' p = kleisliComp strength' strength p
 ; _ : forall {A} (x : M A), kleisliComp strength strength' (pair x x) = map (fun a => pair a a) x
 }.
@@ -35,6 +35,8 @@ Section Context.
 
 Context {M : type}.
 
+Definition Kleisli (F : Type -> Type) A B := A -> F B.
+
 Definition eta {A} (a : A) := Class.eta _ (class_of M) a.
 Definition bind {A B} (f : A -> M B) := Class.bind _ (class_of M) f.
 Definition map {A B} (f : A -> B) := Class.map _ (class_of M) f.
@@ -43,8 +45,6 @@ Definition kleisliComp {A B C} (g : B -> M C) (f : A -> M B) :=
 Definition strength {A B} (p : A * M B) := Class.strength _ (class_of M) p.
 Definition strength' {A B} (p : M A * B) := Class.strength' _ (class_of M) p.
 Definition mu {A} (x : M (M A)) : M A := bind (fun y => y) x.
-
-Definition Kleisli (F : Type -> Type) A B := A -> F B.
 
 Infix "<-<" := kleisliComp (at level 40, left associativity).
 
@@ -55,9 +55,10 @@ Lemma bind_def {A B} (f : A -> M B) (x : M A) :
 Proof.
 unfold mu, map.
 unfold bind, eta; destruct (class_of M) as [eta0 bind0 map0 kleisliComp0 strength0 strength'0 bind_ext bind_left bind_right bind_assoc comm idem]; cbn.
-erewrite bind_assoc;[reflexivity|].
-intros a.
-apply bind_right.
+rewrite bind_assoc.
+apply bind_ext; intros a.
+rewrite bind_right.
+reflexivity.
 Qed.
 
 Lemma kleisli_comp_def {A B C} (g : B -> M C) (f : A -> M B) (a : A) :
@@ -98,13 +99,30 @@ unfold map, eta; destruct (class_of M) as [eta0 bind0 map0 kleisliComp0 strength
 apply bind_right.
 Qed.
 
-Lemma mu_natural {A B} (f : A -> B) (a : M (M A)) :
-  map f (mu a) = mu (map (map f) a).
+Lemma mu_natural {A B} (f : A -> B) (x : M (M A)) :
+  map f (mu x) = mu (map (map f) x).
 Proof.
 unfold map, mu, bind; destruct (class_of M) as [eta0 bind0 map0 kleisliComp0 strength0 strength'0 bind_ext bind_left bind_right bind_assoc comm idem]; cbn.
-erewrite bind_assoc;[|reflexivity].
-erewrite bind_assoc;[reflexivity|].
-intros a0.
+repeat rewrite bind_assoc.
+apply bind_ext; intros y.
+rewrite bind_right.
+reflexivity.
+Qed.
+
+Lemma map_ext {A B} (f0 f1 : A -> B) (Hf : forall a, f0 a = f1 a) (x : M A) :
+  map f0 x = map f1 x.
+Proof.
+unfold map, bind; destruct (class_of M) as [eta0 bind0 map0 kleisliComp0 strength0 strength'0 bind_ext bind_left bind_right bind_assoc comm idem]; cbn.
+apply bind_ext.
+congruence.
+Qed.
+
+Lemma map_comp {A B C} (g : B -> C) (f : A -> B) (x : M A) : map g (map f x) = map (fun a => g (f a)) x.
+Proof.
+unfold map, bind; destruct (class_of M) as [eta0 bind0 map0 kleisliComp0 strength0 strength'0 bind_ext bind_left bind_right bind_assoc comm idem]; cbn.
+rewrite bind_assoc.
+apply bind_ext.
+intros.
 apply bind_right.
 Qed.
 
@@ -135,3 +153,107 @@ Export CIMonad.Theory.
 Notation CIMonad := CIMonad.type.
 Coercion CIMonad.domain : CIMonad >-> Funclass.
 Infix "<-<" := kleisliComp (at level 40, left associativity) : monad_scope.
+Arguments kleisliComp {M A B C} g f : simpl never.
+Arguments map {M A B} f : simpl never.
+Local Open Scope monad_scope.
+
+(* Monad with zero *)
+Module MonadZero.
+
+Module Class.
+
+Record mixin (M : CIMonad) := Mixin
+{ mzero : forall {A}, M A
+; kzero := (fun A B a => mzero) : forall {A B}, A -> M B
+; _ : forall {A B} (f : A -> B), map f mzero = mzero
+; _ : forall {A B C} (f : A -> M B) (a : A), (kzero <-< f) a = kzero a :> M C
+; _ : forall {A B C} (f : B -> M C) (a : A), (f <-< kzero) a = kzero a
+}.
+
+Record class (M : Type -> Type) := Class
+{ base : CIMonad.Class.class M
+; ext : mixin (CIMonad.Pack M base)
+}.
+
+End Class.
+Coercion Class.base : Class.class >-> CIMonad.Class.class.
+Coercion Class.ext : Class.class >-> Class.mixin.
+
+Structure type := Pack { domain :> Type -> Type; class_of :> Class.class domain }.
+
+Canonical Structure to_Monad (M : type) : CIMonad := CIMonad.Pack _ (class_of M).
+
+Module Theory.
+
+Section Context.
+
+Context {M : type}.
+
+Definition mzero {A} := Class.mzero _ (class_of M) : M A.
+Definition kzero {A B} := Class.kzero _ (class_of M) : A -> M B.
+
+Lemma mzero_natural {A B} (f : A -> B) :
+  map f mzero = mzero.
+Proof.
+unfold mzero; destruct M as [M0 [Monad_class0 [mzero0 kzero natural kzerol kzeror]]]; cbn.
+apply natural.
+Qed.
+
+Lemma kleisli_comp_zerol {A B C} (f : A -> M B) (a : A) :
+  (kzero <-< f) a = kzero a :> M C.
+Proof.
+unfold kzero; destruct M as [M0 [Monad_class0 [mzero0 kzero natural kzerol kzeror]]]; cbn.
+apply kzerol.
+Qed.
+
+Lemma kleisli_comp_zeror {A B C} (f : B -> M C) (a : A) :
+  (f <-< kzero) a = kzero a.
+Proof.
+unfold kzero; destruct M as [M0 [Monad_class0 [mzero0 kzero natural kzerol kzeror]]]; cbn.
+apply kzeror.
+Qed.
+
+Lemma mu_mzero {A} : mu mzero = mzero :> M A.
+Proof.
+cbn; change (@mzero (M A)) with (@kzero (M A) (M A) mzero).
+unfold mu.
+rewrite bind_def, <- kleisli_comp_def.
+rewrite kleisli_comp_zeror; reflexivity.
+Qed.
+
+Lemma mu_eta_mzero {A} : mu (eta mzero) = mzero :> M A.
+Proof.
+cbn; change (@mzero A) with (@kzero (M A) A mzero).
+unfold mu.
+rewrite bind_def, <- kleisli_comp_def.
+rewrite kleisli_compr; reflexivity.
+Qed.
+
+Lemma phi_mzeror {A B} (x : M B) : phi mzero x = mzero :> M (A * B).
+Proof.
+unfold phi.
+rewrite kleisli_comp_def.
+change (mu (map strength (map (fun a => pair a x) mzero)) = mzero :> M (A * B)).
+repeat rewrite mzero_natural.
+apply mu_mzero.
+Qed.
+
+Lemma phi_mzerol {A B} (x : M A) : phi x mzero = mzero :> M (A * B).
+Proof.
+unfold phi.
+rewrite kleisli_comp_def.
+change (mu (map strength (map (fun a => pair a mzero) x)) = mzero :> M (A * B)).
+rewrite map_comp.
+erewrite map_ext;[|intros; apply mzero_natural].
+change x with ((fun y => y) x).
+rewrite <- kleisli_comp_def.
+apply kleisli_comp_zerol.
+Qed.
+
+End Context.
+End Theory.
+End MonadZero.
+Notation CIMonadZero := MonadZero.type.
+Canonical Structure MonadZero.to_Monad.
+Coercion MonadZero.to_Monad : CIMonadZero >-> CIMonad.
+Export MonadZero.Theory.
