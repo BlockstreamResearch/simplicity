@@ -1,13 +1,15 @@
+Require Import Util.PackedClass.
+
+Set Implicit Arguments.
+
 Local Open Scope type_scope.
 
 (* Commutative and Idempotnent Monads *)
 Module CIMonad.
 
-Module Class.
-
-(* Eventually we will need the functional extensionality axoim, but let's try to
- * delay that as long as possible.  The alternative is to use Setoid / PERs but that would
- * seem to entail writing an entirely new standard library.
+(* Eventually we will need the functional extensionality axoim, but let's try
+ * to delay that as long as possible.  The alternative is to use Setoid / PERs
+ * but that would seem to entail writing an entirely new standard library.
  *)
 Record class (M : Type -> Type) := Class
 { eta : forall {A}, A -> M A
@@ -25,9 +27,8 @@ Record class (M : Type -> Type) := Class
 ; _ : forall {A} (x : M A), kleisliComp strength strength' (pair x x) = map (fun a => pair a a) x
 }.
 
-End Class.
-
-Structure type := Pack { domain :> Type -> Type; class_of :> Class.class domain }.
+Structure type := Pack { domain :> Type -> Type; class_of : class domain }.
+Arguments Pack : clear implicits.
 
 Module Theory.
 
@@ -35,15 +36,13 @@ Section Context.
 
 Context {M : type}.
 
-Definition Kleisli (F : Type -> Type) A B := A -> F B.
-
-Definition eta {A} (a : A) := Class.eta _ (class_of M) a.
-Definition bind {A B} (f : A -> M B) := Class.bind _ (class_of M) f.
-Definition map {A B} (f : A -> B) := Class.map _ (class_of M) f.
+Definition eta {A} (a : A) := eta (class_of M) a.
+Definition bind {A B} (f : A -> M B) := bind (class_of M) f.
+Definition map {A B} (f : A -> B) := map (class_of M) f.
 Definition kleisliComp {A B C} (g : B -> M C) (f : A -> M B) :=
-  Class.kleisliComp _ (class_of M) g f.
-Definition strength {A B} (p : A * M B) := Class.strength _ (class_of M) p.
-Definition strength' {A B} (p : M A * B) := Class.strength' _ (class_of M) p.
+  kleisliComp (class_of M) g f.
+Definition strength {A B} (p : A * M B) := strength (class_of M) p.
+Definition strength' {A B} (p : M A * B) := strength' (class_of M) p.
 Definition mu {A} (x : M (M A)) : M A := bind (fun y => y) x.
 
 Infix "<-<" := kleisliComp (at level 40, left associativity).
@@ -157,10 +156,16 @@ Arguments kleisliComp {M A B C} g f : simpl never.
 Arguments map {M A B} f : simpl never.
 Local Open Scope monad_scope.
 
+Definition Identity (A : Type) : Type := A.
+
+Definition Identity_CIMonad_class : CIMonad.class Identity.
+exists (fun A a => a) (fun A B f => f); auto.
+Defined.
+
+Canonical Structure Identity_CIMonad := CIMonad.Pack Identity Identity_CIMonad_class.
+
 (* Monad with zero *)
 Module MonadZero.
-
-Module Class.
 
 Record mixin (M : CIMonad) := Mixin
 { mzero : forall {A}, M A
@@ -171,17 +176,21 @@ Record mixin (M : CIMonad) := Mixin
 }.
 
 Record class (M : Type -> Type) := Class
-{ base : CIMonad.Class.class M
-; ext : mixin (CIMonad.Pack M base)
+{ base :> CIMonad.class M
+; ext :> mixin (CIMonad.Pack M base)
 }.
 
-End Class.
-Coercion Class.base : Class.class >-> CIMonad.Class.class.
-Coercion Class.ext : Class.class >-> Class.mixin.
+Structure type := _Pack { domain :> Type -> Type; class_of : class domain }.
 
-Structure type := Pack { domain :> Type -> Type; class_of :> Class.class domain }.
+Definition packager F M0 (mz0 : mixin M0) :=
+ [find M  | CIMonad.domain M ~ F | "is not a CIMonad" ]
+ [find cM | CIMonad.class_of M0 ~ cM ]
+ [find mz | mz ~ mz0 | "is not the right mixin" ]
+ @_Pack F (@Class F cM mz).
 
-Canonical Structure to_Monad (M : type) : CIMonad := CIMonad.Pack _ (class_of M).
+Notation Pack F mz := (@packager F _ mz _ id _ id _ id).  
+
+Canonical Structure to_Monad (M : type) : CIMonad := CIMonad.Pack M (class_of M).
 
 Module Theory.
 
@@ -189,8 +198,8 @@ Section Context.
 
 Context {M : type}.
 
-Definition mzero {A} := Class.mzero _ (class_of M) : M A.
-Definition kzero {A B} := Class.kzero _ (class_of M) : A -> M B.
+Definition mzero {A} := mzero (class_of M) : M A.
+Definition kzero {A B} := kzero (class_of M) : A -> M B.
 
 Lemma mzero_natural {A B} (f : A -> B) :
   map f mzero = mzero.

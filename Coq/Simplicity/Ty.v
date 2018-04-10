@@ -14,3 +14,6 @@ end.
 Notation "A + B" := (Sum A B) : ty_scope.
 Notation "A * B" := (Prod A B) : ty_scope.
 Coercion tySem : Ty >-> Sortclass.
+
+Definition Arrow (A B : Ty) := A -> B.
+Definition Kleisli (M : Type -> Type) (A B : Ty) := A -> M B.

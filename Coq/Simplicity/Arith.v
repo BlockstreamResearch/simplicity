@@ -3,10 +3,12 @@ Require Import Simplicity.Alg.
 Require Import Simplicity.Bit.
 Require Import ZArith.
 
+Set Implicit Arguments.
+
 Local Set Keyed Unification.
 Local Open Scope ty_scope.
 Local Open Scope term_scope.
-Local Open Scope core_alg_scope.
+Local Open Scope semantic_scope.
 
 Lemma Zmod_div (x y : Z) : (x mod y / y = 0)%Z.
 Proof.
@@ -29,7 +31,6 @@ end.
 
 Module ToZ.
 
-Module Class.
 Record class T := Class
   { bitSize : nat
   ; toZ : T -> Z
@@ -37,32 +38,33 @@ Record class T := Class
   ; from_toZ : forall (v : T), fromZ (toZ v) = v
   ; to_fromZ : forall (z : Z), toZ (fromZ z) = Zmod z (two_power_nat bitSize)
   }.
-End Class.
-Structure type := Pack { obj : Ty; class_of : Class.class obj }.
 
-Module Ops.
-Coercion obj : type >-> Ty.
-Coercion class_of : type >-> Class.class.
+Structure type := Pack { obj :> Ty; class_of : class obj }.
+Arguments Pack : clear implicits.
 
-Definition bitSize (T : type) : nat :=
- let '(Pack _ (Class.Class _ n _ _ _ _)) := T in n.
-Definition bitPower (T : type) : Z := two_power_nat (bitSize T).
-Definition toZ {T : type} : obj T -> Z :=
- let '(Pack _ (Class.Class _ _ f _ _ _)) := T in f.
-Definition fromZ {T : type} : Z -> obj T :=
- let '(Pack _ (Class.Class _ _ _ f _ _)) := T return (Z -> obj T) in f.
+Module Theory.
 
-Lemma from_toZ {T : type} (v : T) : fromZ (toZ v) = v.
+Section Context.
+
+Context {T : type}.
+
+Definition bitSize : nat := bitSize (class_of T).
+Definition toZ : obj T -> Z := toZ (class_of T).
+Definition fromZ : Z -> obj T := fromZ (class_of T).
+
+Lemma from_toZ (v : T) : fromZ (toZ v) = v.
 Proof.
-destruct T as [T []]; auto.
+unfold fromZ, toZ.
+destruct (class_of T); auto.
 Qed.
 
-Lemma to_fromZ {T : type} (z : Z) : toZ (fromZ z : T) = Zmod z (two_power_nat (bitSize T)).
+Lemma to_fromZ (z : Z) : toZ (fromZ z : T) = Zmod z (two_power_nat bitSize).
 Proof.
-destruct T as [T []]; auto.
+unfold fromZ, toZ, bitSize.
+destruct (class_of T); auto.
 Qed.
 
-Lemma galois {T : type} (v : T) (z : Z) : v = fromZ z <-> eqm (two_power_nat (bitSize T)) (toZ v) z.
+Lemma galois (v : T) (z : Z) : v = fromZ z <-> eqm (two_power_nat bitSize) (toZ v) z.
 Proof.
 unfold eqm.
 split.
@@ -79,9 +81,12 @@ split.
   reflexivity.
 Qed.
 
-End Ops.
+End Context.
+Arguments bitSize : clear implicits.
+End Theory.
 End ToZ.
-Import ToZ.Ops.
+Import ToZ.Theory.
+Coercion ToZ.obj : ToZ.type >-> Ty.
 
 Section BitToZ.
 
@@ -106,41 +111,40 @@ rewrite (Zmod_odd z).
 destruct (Z.odd z); reflexivity.
 Qed.
 
-Definition BitToZ_Class := ToZ.Class.Class Bit 1 BitToZ BitFromZ Bit_from_toZ Bit_to_fromZ.
+Definition BitToZ_Class := ToZ.Class 1 BitToZ BitFromZ Bit_from_toZ Bit_to_fromZ.
 End BitToZ.
-Canonical Structure BitToZ : ToZ.type := Eval compute in ToZ.Pack Bit BitToZ_Class.
+Canonical Structure BitToZ : ToZ.type := ToZ.Pack Bit BitToZ_Class.
 
 Section PairToZ.
-Context {a b : Ty} (a_class : ToZ.Class.class a) (b_class : ToZ.Class.class b).
+Context {a b : ToZ.type}.
 
-Let PairBitSize : nat :=
-ToZ.Class.bitSize _ a_class + ToZ.Class.bitSize _ b_class.
+Let PairBitSize : nat := bitSize a + bitSize b.
 
 Let PairToZ (v : a * b) : Z :=
 let (va, vb) := v in
- ToZ.Class.toZ _ a_class va * two_power_nat (ToZ.Class.bitSize _ b_class) +
- ToZ.Class.toZ _ b_class vb.
+ toZ va * two_power_nat (bitSize b) +
+ toZ vb.
 
 Let PairFromZ (z : Z) : a * b :=
-( ToZ.Class.fromZ _ a_class (z / two_power_nat (ToZ.Class.bitSize _ b_class))
-, ToZ.Class.fromZ _ b_class z
+( fromZ (z / two_power_nat (bitSize b))
+, fromZ z
 ).
 
 Lemma Pair_from_toZ (v : a * b) : PairFromZ (PairToZ v) = v.
 Proof.
 destruct v as [va vb].
 cbn; unfold PairFromZ.
-assert (Hb : two_power_nat (ToZ.Class.bitSize b b_class) <> 0%Z).
+assert (Hb : two_power_nat (bitSize b) <> 0%Z).
  rewrite two_power_nat_equiv.
  apply Z.pow_nonzero; auto with zarith.
 f_equal.
 - rewrite Z_div_plus_full_l by auto.
-  rewrite <- (ToZ.Class.from_toZ _ b_class vb), (ToZ.Class.to_fromZ _ b_class).
+  rewrite <- (from_toZ vb), to_fromZ.
   rewrite Zmod_div, Z.add_0_r.
-  apply (ToZ.Class.from_toZ _ a_class).
-- rewrite <- (ToZ.Class.from_toZ _ b_class (ToZ.Class.fromZ _ _ _)), (ToZ.Class.to_fromZ _ b_class).
+  apply from_toZ.
+- rewrite <- (from_toZ (fromZ _ )), to_fromZ.
   rewrite Zplus_comm, Z_mod_plus_full.
-  rewrite <- (ToZ.Class.to_fromZ _ b_class), 2!ToZ.Class.from_toZ.
+  rewrite <- to_fromZ, 2!from_toZ.
   reflexivity.
 Qed.
 
@@ -157,21 +161,22 @@ assert (H2' : forall n, (Zpower_nat 2 n <> 0)%Z).
 unfold PairBitSize.
 rewrite two_power_nat_correct, Zpower_nat_is_exp.
 rewrite Zmult_comm, Z.rem_mul_r by auto; cbn.
-rewrite 2!ToZ.Class.to_fromZ; rewrite !two_power_nat_correct.
+rewrite 2!to_fromZ; rewrite !two_power_nat_correct.
 rewrite Zplus_comm, Zmult_comm; reflexivity.
 Qed.
 
-Definition PairToZ_Class : ToZ.Class.class (a * b) :=
-ToZ.Class.Class (a * b) PairBitSize PairToZ PairFromZ Pair_from_toZ Pair_to_fromZ.
+Definition PairToZ_Class :=
+  ToZ.Class PairBitSize PairToZ PairFromZ Pair_from_toZ Pair_to_fromZ.
 
 End PairToZ.
-Canonical Structure PairToZ (a b : ToZ.type) : ToZ.type := ToZ.Pack (a * b) (PairToZ_Class a b).
+Canonical Structure PairToZ (a b : ToZ.type) : ToZ.type := ToZ.Pack (a * b) PairToZ_Class.
 
-Fixpoint WordToZ_Class {n : nat} : ToZ.Class.class (Word n) :=
+Fixpoint WordToZ_Class {n : nat} : ToZ.class (Word n) :=
 match n with
 | 0 => BitToZ_Class
-| (S m) => PairToZ_Class WordToZ_Class WordToZ_Class
+| (S m) => @PairToZ_Class (ToZ.Pack _ WordToZ_Class) (ToZ.Pack _ WordToZ_Class)
 end.
+
 Canonical Structure WordToZ (n : nat) : ToZ.type := ToZ.Pack (Word n) WordToZ_Class.
 
 Lemma toZ_Pair {A B : ToZ.type} (a : A) (b : B) :
@@ -377,21 +382,21 @@ rewrite two_power_nat_correct, Zpower_nat_is_exp, <- two_power_nat_correct; fold
 set (X := toZ _); ring.
 Qed.
 
-Lemma adderBit_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2) : R _ _ adderBit adderBit.
+Lemma adderBit_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) : R _ _ adderBit adderBit.
 Proof.
 unfold adderBit.
 auto with parametricity.
 Qed.
 Hint Resolve adderBit_Parametric : parametricity.
 
-Lemma fullAdderBit_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2) : R _ _ fullAdderBit fullAdderBit.
+Lemma fullAdderBit_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) : R _ _ fullAdderBit fullAdderBit.
 Proof.
 unfold fullAdderBit.
 auto 10 with parametricity.
 Qed.
 Hint Resolve fullAdderBit_Parametric : parametricity.
 
-Lemma buildFullAdder_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2)
+Lemma buildFullAdder_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {W} t1 t2 : R _ (Bit * W) t1 t2 -> R _ _ (buildFullAdder t1) (buildFullAdder t2).
 Proof.
 unfold buildFullAdder.
@@ -399,14 +404,14 @@ auto 10 with parametricity.
 Qed.
 Hint Resolve buildFullAdder_Parametric : parametricity.
 
-Lemma fullAdder_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2)
+Lemma fullAdder_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {n} : R _ _ fullAdder (@fullAdder n _).
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
 Hint Resolve fullAdder_Parametric : parametricity.
 
-Lemma buildAdder_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2)
+Lemma buildAdder_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {W} s1 s2 t1 t2 : R _ (Bit * W) s1 s2 -> R _ (Bit * W) t1 t2 -> R _ _ (buildAdder s1 t1) (buildAdder s2 t2).
 Proof.
 unfold buildAdder.
@@ -414,21 +419,21 @@ auto 10 with parametricity.
 Qed.
 Hint Resolve buildAdder_Parametric : parametricity.
 
-Lemma adder_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2)
+Lemma adder_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {n} : R _ _ adder (@adder n _).
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
 Hint Resolve adder_Parametric : parametricity.
 
-Lemma fullMultiplierBit_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2) : R _ _ fullMultiplierBit fullMultiplierBit.
+Lemma fullMultiplierBit_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) : R _ _ fullMultiplierBit fullMultiplierBit.
 Proof.
 unfold fullMultiplierBit.
 auto with parametricity.
 Qed.
 Hint Resolve fullMultiplierBit_Parametric : parametricity.
 
-Lemma buildFullMultiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2)
+Lemma buildFullMultiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {W} t1 t2 : R _ (W * W) t1 t2 -> R _ _ (buildFullMultiplier t1) (buildFullMultiplier t2).
 Proof.
 unfold buildFullMultiplier.
@@ -436,14 +441,14 @@ auto 15 with parametricity.
 Qed.
 Hint Resolve buildFullMultiplier_Parametric : parametricity.
 
-Lemma fullMultiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2)
+Lemma fullMultiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {n} : R _ (Word n * Word n) fullMultiplier (@fullMultiplier n _).
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
 Hint Resolve fullMultiplier_Parametric : parametricity.
 
-Lemma multiplierBit_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2) : R _ _ multiplierBit multiplierBit.
+Lemma multiplierBit_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) : R _ _ multiplierBit multiplierBit.
 Proof.
 simpl.
 unfold multiplierBit.
@@ -451,7 +456,7 @@ auto with parametricity.
 Qed.
 Hint Resolve multiplierBit_Parametric : parametricity.
 
-Lemma buildMultiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2)
+Lemma buildMultiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {W} s1 s2 t1 t2 : R _ (W * W) s1 s2 -> R _ (W * W) t1 t2 -> R _ _ (buildMultiplier s1 t1) (buildMultiplier s2 t2).
 Proof.
 unfold buildMultiplier.
@@ -459,7 +464,7 @@ auto 15 with parametricity.
 Qed.
 Hint Resolve buildMultiplier_Parametric : parametricity.
 
-Lemma multiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.ReynoldsRel term1 term2)
+Lemma multiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {n} : R _ _ multiplier (@multiplier n _).
 Proof.
 induction n; simpl; auto 20 with parametricity.

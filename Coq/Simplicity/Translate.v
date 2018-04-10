@@ -296,7 +296,9 @@ apply bump_correct.
 apply (Ht _ (fillReadFrame ctx {| prevData := rev (encode a); nextData := nil |})).
 Qed.
 
-Definition translate : Core.Algebra := Core.Pack (Core.Class.Class (fun A B => Program)
+Definition Program_ty (A B : Ty) := Program.
+
+Definition translate_class : Core.class Program_ty := Core.Class _
   (fun A => copy (bitSize A))
   (fun A B C ps pt => newFrame (bitSize B) ;;; ps ;;; moveFrame ;;; pt ;;; dropFrame)
   (fun A => nop)
@@ -305,8 +307,9 @@ Definition translate : Core.Algebra := Core.Pack (Core.Class.Class (fun A B => P
   (fun A B C D ps pt => bump (1 + padL A B) ps ||| bump (1 + padR A B) pt)
   (fun A B C ps pt => ps ;;; pt)
   (fun A B C pt => pt)
-  (fun A B C pt => bump (bitSize A) pt)
-).
+  (fun A B C pt => bump (bitSize A) pt).
+
+Canonical Structure translate : Core.Algebra := Core.Pack Program_ty translate_class.
 
 Lemma translate_correct {A B : Ty} (t : Term A B) a ctx :
  fillContext ctx (LocalStateBegin t a)
@@ -328,8 +331,7 @@ induction t.
 Qed.
 
 Local Open Scope thrist_scope.
-
-Local Open Scope core_alg_scope.
+Local Open Scope semantic_scope.
 
 Theorem translate_correct_parametric {A B : Ty} (t : forall {term : Core.Algebra}, term A B) (Ht : Core.Parametric (@t)) a ctx :
  fillContext ctx {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |}

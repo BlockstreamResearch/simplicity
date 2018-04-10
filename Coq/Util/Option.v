@@ -1,4 +1,7 @@
 Require Import Util.Monad.
+
+Set Implicit Arguments.
+
 Local Open Scope monad_scope.
 
 Definition option_join {A} (x : option (option A)) : option A :=
@@ -16,21 +19,20 @@ Proof.
 intros H [|];[apply H|reflexivity].
 Qed.
 
-Definition option_CIMonad_class : CIMonad.Class.class option.
+Definition option_CIMonad_class : CIMonad.class option.
 exists @Some @option_bind; try abstract (intros; try destruct x; try reflexivity).
 - abstract (auto using option_bind_ext).
 - abstract (intros; destruct p as [[|] [|]]; reflexivity).
 Defined.
 
-Canonical Structure option_CIMonad := CIMonad.Pack _ option_CIMonad_class.
+Canonical Structure option_CIMonad := CIMonad.Pack option option_CIMonad_class.
 
-Definition option_MonadZero_class : MonadZero.Class.class option.
-exists option_CIMonad_class.
+Definition option_MonadZero_mixin : MonadZero.mixin option_CIMonad.
 exists @None; try abstract (intros; try reflexivity).
 abstract (intros; unfold kleisliComp; cbn; destruct (f a); reflexivity).
 Defined.
 
-Canonical Structure option_Monad_Zero := MonadZero.Pack option option_MonadZero_class.
+Canonical Structure option_Monad_Zero := MonadZero.Pack option option_MonadZero_mixin.
 
 Definition optionZero {M : CIMonadZero} {A} (x : option A) : M A :=
 match x with
