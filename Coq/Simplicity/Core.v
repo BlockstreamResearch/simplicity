@@ -1,5 +1,7 @@
 Require Import Simplicity.Ty.
 
+Set Implicit Arguments.
+
 Inductive Term : Ty -> Ty -> Set :=
 | iden : forall {A}, Term A A
 | comp : forall {A B C}, Term A B -> Term B C -> Term A C

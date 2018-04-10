@@ -1,6 +1,8 @@
 Require Import Simplicity.Ty.
 Require Import Simplicity.Alg.
 
+Set Implicit Arguments.
+
 Local Open Scope ty_scope.
 Local Open Scope term_scope.
 

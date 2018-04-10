@@ -4,6 +4,8 @@ Require Import Util.List.
 Require Import Util.Thrist.
 Require Import Eqdep_dec.
 
+Set Implicit Arguments.
+
 Local Open Scope N_scope.
 
 Definition Cell := option bool.
@@ -424,7 +426,7 @@ destruct (n <=? we)%nat;intros Hwe.
                            |}).
   elim (firstn_skipn n rn).
   elim (Minus.le_plus_minus_r n we).
-   refine (op n l ctx _).
+   refine (op l ctx _).
    abstract (apply (firstn_length_le _); inversion_clear Hrn; assumption).
   abstract (inversion_clear Hwe; assumption).
  left.
@@ -473,7 +475,7 @@ destruct (n <=? length rn)%nat;intros Hrn.
                             ; nextData := nil
                             |}).
  elim (firstn_skipn n rn).
- refine (op n l ctx _).
+ refine (op l ctx _).
  abstract (apply (firstn_length_le _); inversion_clear Hrn; assumption).
 left.
 abstract (
@@ -514,7 +516,7 @@ destruct (n <=? length rp)%nat;intros Hrp.
                             |}).
  elim (firstn_skipn n rp).
  elim (rev_involutive (firstn n rp)).
- refine (op n l ctx _).
+ refine (op l ctx _).
  abstract (unfold l; rewrite rev_length; apply (firstn_length_le _); inversion_clear Hrp; assumption).
 left.
 abstract(
@@ -567,13 +569,13 @@ Definition skip n ctx : T _ _ :=
  Skip _ (Skip.op n ctx).
 
 Definition copy l ctx : T _ _ :=
- Copy _ (Copy.op (length l) l ctx (refl_equal _)).
+ Copy _ (Copy.op l ctx (refl_equal _)).
 
 Definition fwd l ctx : T _ _ :=
- Fwd _ (Fwd.op (length l) l ctx (refl_equal _)).
+ Fwd _ (Fwd.op l ctx (refl_equal _)).
 
 Definition bwd l ctx : T _ _ :=
- Bwd _ (Bwd.op (length l) l ctx (refl_equal _)).
+ Bwd _ (Bwd.op l ctx (refl_equal _)).
 
 End MachineCode.
 
@@ -586,9 +588,9 @@ Notation "x ->> y" := (Thrst MachineCode.T x y) (at level 70) : type_scope.
  * Halted, and the only trace possible is the empty trace.
  *)
 Inductive nop_trace s0 : forall s1, s0 ->> s1 -> Prop :=
- nop_trace_empty : nop_trace s0 s0 [].
+ nop_trace_empty : nop_trace [].
 
-Lemma runHalt {s} (tr : Halted ->> s): nop_trace _ _ tr.
+Lemma runHalt {s} (tr : Halted ->> s): nop_trace tr.
 Proof.
 dependent inversion tr.
  constructor.
@@ -626,7 +628,7 @@ revert tr.
 unfold trace, runProgram.
 destruct (p s0) as [[s1' Hs1]|].
  intros tr.
- set (eq:= trace_subproof _ _ _ _ _).
+ set (eq:= trace_subproof _).
  destruct eq; reflexivity.
 intros [tr Htr].
 discriminate.
@@ -713,9 +715,9 @@ eexists.
 reflexivity.
 Qed.
 
-Definition newFrame_complete {n} : forall {s0 s1},
-  s0 >>- newFrame n ->> s1 -> complete_spec (MachineCode.NewFrame.T n) s0 s1
-:= op_complete _ _.
+Definition newFrame_complete {n s0 s1} (tr : s0 >>- newFrame n ->> s1)
+ : complete_spec (MachineCode.NewFrame.T n) s0 s1
+:= op_complete tr.
 
 Definition moveFrame : Program := makeProgram MachineCode.MoveFrame MachineCode.MoveFrame.chk.
 
@@ -741,9 +743,9 @@ apply K_dec_set.
 reflexivity.
 Qed.
 
-Definition moveFrame_complete : forall {s0 s1},
-  s0 >>- moveFrame ->> s1 -> complete_spec MachineCode.MoveFrame.T s0 s1
-:= op_complete _ _.
+Definition moveFrame_complete {s0 s1} (tr : s0 >>- moveFrame ->> s1)
+ : complete_spec MachineCode.MoveFrame.T s0 s1
+:= op_complete tr.
 
 Definition dropFrame : Program := makeProgram MachineCode.DropFrame MachineCode.DropFrame.chk.
 
@@ -758,9 +760,9 @@ eexists.
 destruct s; reflexivity.
 Qed.
 
-Definition dropFrame_complete : forall {s0 s1},
-  s0 >>- dropFrame ->> s1 -> complete_spec MachineCode.DropFrame.T s0 s1
-:= op_complete _ _.
+Definition dropFrame_complete {s0 s1} (tr : s0 >>- dropFrame ->> s1)
+ : complete_spec MachineCode.DropFrame.T s0 s1
+:= op_complete tr.
 
 Definition write (b : bool) : Program := makeProgram (fun s0 s1 => @MachineCode.Write s0 s1 b) (MachineCode.Write.chk b).
 
@@ -774,9 +776,9 @@ eexists.
 reflexivity.
 Qed.
 
-Definition write_complete {b} : forall {s0 s1},
-  s0 >>- write b ->> s1 -> complete_spec (MachineCode.Write.T b) s0 s1
-:= op_complete _ _.
+Definition write_complete {b s0 s1} (tr : s0 >>- (write b) ->> s1)
+ : complete_spec (MachineCode.Write.T b) s0 s1
+:= op_complete tr.
 
 Definition skip (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Skip s0 s1 n) (MachineCode.Skip.chk n).
 
@@ -801,9 +803,9 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition skip_complete {n} : forall {s0 s1},
-  s0 >>- skip n ->> s1 -> complete_spec (MachineCode.Skip.T n) s0 s1
-:= op_complete _ _.
+Definition skip_complete {n s0 s1} (tr : s0 >>- (skip n) ->> s1)
+ : complete_spec (MachineCode.Skip.T n) s0 s1
+:= op_complete tr.
 
 Definition copy (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Copy s0 s1 n) (MachineCode.Copy.chk n).
 
@@ -831,7 +833,7 @@ rewrite Minus.minus_plus.
 apply (K_dec_set Nat.eq_dec).
 set (e := firstn_skipn _ _).
 generalize e; clear e.
-generalize (MachineCode.Copy.chk_subproof _ _ H1).
+generalize (MachineCode.Copy.chk_subproof _ H1).
 rewrite firstn_app_3, skipn_app_3; intros e.
 apply (K_dec_set).
  repeat decide equality.
@@ -840,9 +842,9 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition copy_complete {n} : forall {s0 s1},
-  s0 >>- copy n ->> s1 -> complete_spec (MachineCode.Copy.T n) s0 s1
-:= op_complete _ _.
+Definition copy_complete {n s0 s1} (tr : s0 >>- (copy n) ->> s1)
+ : complete_spec (MachineCode.Copy.T n) s0 s1
+:= op_complete tr.
 
 Definition fwd (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Fwd s0 s1 n) (MachineCode.Fwd.chk n).
 
@@ -860,7 +862,7 @@ rewrite (Compare_dec.leb_correct (length l) (length (l ++ nextData (activeReadFr
 intros H1.
 set (e := firstn_skipn _ _).
 generalize e; clear e.
-generalize (MachineCode.Fwd.chk_subproof _ _ H1).
+generalize (MachineCode.Fwd.chk_subproof _ H1).
 rewrite firstn_app_3, skipn_app_3; intros e.
 apply (K_dec_set).
  repeat decide equality.
@@ -869,9 +871,9 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition fwd_complete {n} : forall {s0 s1},
-  s0 >>- fwd n ->> s1 -> complete_spec (MachineCode.Fwd.T n) s0 s1
-:= op_complete _ _.
+Definition fwd_complete {n s0 s1} (tr : s0 >>- (fwd n) ->> s1)
+ : complete_spec (MachineCode.Fwd.T n) s0 s1
+:= op_complete tr.
 
 Definition bwd (n : nat) : Program := makeProgram (fun s0 s1 => @MachineCode.Bwd s0 s1 n) (MachineCode.Bwd.chk n).
 
@@ -889,7 +891,7 @@ rewrite (Compare_dec.leb_correct (length l) (length (rev l ++ prevData (activeRe
 intros H1.
 set (e := firstn_skipn _ _).
 generalize e; clear e.
-generalize (MachineCode.Bwd.chk_subproof _ _ H1).
+generalize (MachineCode.Bwd.chk_subproof _ H1).
 rewrite <- rev_length.
 rewrite firstn_app_3, skipn_app_3; intros e.
 apply K_dec_set.
@@ -905,9 +907,9 @@ apply (K_dec_set Nat.eq_dec).
 reflexivity.
 Qed.
 
-Definition bwd_complete {n} : forall {s0 s1},
-  s0 >>- bwd n ->> s1 -> complete_spec (MachineCode.Bwd.T n) s0 s1
-:= op_complete _ _.
+Definition bwd_complete {n s0 s1} (tr : s0 >>- (bwd n) ->> s1)
+ : complete_spec (MachineCode.Bwd.T n) s0 s1
+:= op_complete tr.
 
 (* The basic instruction abort halts the machine. Of course if the machine
  * is already halted, it does nothing, like every other program starting from
@@ -1023,9 +1025,9 @@ destruct (nextData _) as [|b];[discriminate|cbn in *].
 revert trpq.
 inversion_clear H.
 destruct (p s0) as [[s1' Hs1]|];[|intros [ ]; discriminate].
-destruct (trace_subproof _ _ _ _ trp).
+destruct (trace_subproof trp).
 intros trpq.
-generalize (trace_subproof s0 s1' s1' Hs1 trpq).
+generalize (trace_subproof trpq).
 apply (K_dec_set State_dec).
 reflexivity.
 Qed.
@@ -1040,9 +1042,9 @@ destruct (nextData _) as [|b];[discriminate|cbn in *].
 revert trpq.
 inversion_clear H.
 destruct (q s0) as [[s1' Hs1]|];[|intros [ ]; discriminate].
-destruct (trace_subproof _ _ _ _ trq).
+destruct (trace_subproof trq).
 intros trpq.
-generalize (trace_subproof s0 s1' s1' Hs1 trpq).
+generalize (trace_subproof trpq).
 apply (K_dec_set State_dec).
 reflexivity.
 Qed.
@@ -1207,7 +1209,7 @@ Proof.
 unfold runProgram in tr.
 unfold trace.
 unfold newFrame in *.
-destruct x as [|x];cbn;destruct (trace_subproof _ _ _ _ tr);[reflexivity|cbn;clear].
+destruct x as [|x];cbn;destruct (trace_subproof tr);[reflexivity|cbn;clear].
 apply N.max_r.
 destruct x.
 unfold stateSize, stateShape, stateShapeSize.
@@ -1225,10 +1227,10 @@ Proof.
 unfold runProgram in tr.
 unfold trace.
 unfold moveFrame, makeProgram in *.
-destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
+destruct x as [|x];[cbn;destruct (trace_subproof tr);reflexivity|].
 destruct (MachineCode.MoveFrame.chk x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);cbn.
+destruct (trace_subproof tr);cbn.
 apply N.max_l.
 unfold stateSize, stateShape, stateShapeSize.
 inversion Hy.
@@ -1244,10 +1246,10 @@ Proof.
 unfold runProgram in tr.
 unfold trace.
 unfold dropFrame, makeProgram in *.
-destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
+destruct x as [|x];[cbn;destruct (trace_subproof tr);reflexivity|].
 destruct (MachineCode.DropFrame.chk x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);cbn.
+destruct (trace_subproof tr);cbn.
 apply N.max_l.
 unfold stateSize, stateShape, stateShapeSize.
 inversion Hy.
@@ -1261,14 +1263,14 @@ Qed.
 Lemma MMR_write b x y (tr : x >>- write b ->> y) :
    maximumMemoryResidence (trace tr) = stateSize x.
 Proof.
-assert (Hx := stateShape_write _ _ _ tr).
+assert (Hx := stateShape_write tr).
 unfold runProgram in tr.
 unfold trace.
 unfold write, makeProgram in *.
-destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
+destruct x as [|x];[cbn;destruct (trace_subproof tr);reflexivity|].
 destruct (MachineCode.Write.chk b x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);simpl.
+destruct (trace_subproof tr);simpl.
 unfold stateSize.
 rewrite Hx.
 apply N.max_id.
@@ -1277,14 +1279,14 @@ Qed.
 Lemma MMR_skip n x y (tr : x >>- skip n ->> y) :
    maximumMemoryResidence (trace tr) = stateSize x.
 Proof.
-assert (Hx := stateShape_skip _ _ _ tr).
+assert (Hx := stateShape_skip tr).
 unfold runProgram in tr.
 unfold trace.
 unfold skip, makeProgram in *.
-destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
+destruct x as [|x];[cbn;destruct (trace_subproof tr);reflexivity|].
 destruct (MachineCode.Skip.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);simpl.
+destruct (trace_subproof tr);simpl.
 unfold stateSize.
 rewrite Hx.
 apply N.max_id.
@@ -1293,14 +1295,14 @@ Qed.
 Lemma MMR_copy n x y (tr : x >>- copy n ->> y) :
    maximumMemoryResidence (trace tr) = stateSize x.
 Proof.
-assert (Hx := stateShape_copy _ _ _ tr).
+assert (Hx := stateShape_copy tr).
 unfold runProgram in tr.
 unfold trace.
 unfold copy, makeProgram in *.
-destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
+destruct x as [|x];[cbn;destruct (trace_subproof tr);reflexivity|].
 destruct (MachineCode.Copy.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);simpl.
+destruct (trace_subproof tr);simpl.
 unfold stateSize.
 rewrite Hx.
 apply N.max_id.
@@ -1309,14 +1311,14 @@ Qed.
 Lemma MMR_fwd n x y (tr : x >>- fwd n ->> y) :
    maximumMemoryResidence (trace tr) = stateSize x.
 Proof.
-assert (Hx := stateShape_fwd _ _ _ tr).
+assert (Hx := stateShape_fwd tr).
 unfold runProgram in tr.
 unfold trace.
 unfold fwd, makeProgram in *.
-destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
+destruct x as [|x];[cbn;destruct (trace_subproof tr);reflexivity|].
 destruct (MachineCode.Fwd.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);simpl.
+destruct (trace_subproof tr);simpl.
 unfold stateSize.
 rewrite Hx.
 apply N.max_id.
@@ -1325,14 +1327,14 @@ Qed.
 Lemma MMR_bwd n x y (tr : x >>- bwd n ->> y) :
    maximumMemoryResidence (trace tr) = stateSize x.
 Proof.
-assert (Hx := stateShape_bwd _ _ _ tr).
+assert (Hx := stateShape_bwd tr).
 unfold runProgram in tr.
 unfold trace.
 unfold bwd, makeProgram in *.
-destruct x as [|x];[cbn;destruct (trace_subproof _ _ _ _ tr);reflexivity|].
+destruct x as [|x];[cbn;destruct (trace_subproof tr);reflexivity|].
 destruct (MachineCode.Bwd.chk n x) as [|[y' Hy]]in *.
  destruct tr; discriminate.
-destruct (trace_subproof x y y' _ tr);simpl.
+destruct (trace_subproof tr);simpl.
 unfold stateSize.
 rewrite Hx.
 apply N.max_id.
@@ -1346,9 +1348,9 @@ unfold runProgram in *.
 unfold trace.
 unfold seq in *.
 destruct (p x) as [[y' Hy]|];[|destruct trp; discriminate].
-destruct (trace_subproof x y y' Hy trp).
+destruct (trace_subproof  trp).
 destruct (q y') as [[z' Hz]|];[|destruct trq; discriminate].
-destruct (trace_subproof y' z z' Hz trq).
-destruct (trace_subproof x z' z' (Hy |><| Hz) trpq).
+destruct (trace_subproof trq).
+destruct (trace_subproof trpq).
 apply MMR_app.
 Qed.

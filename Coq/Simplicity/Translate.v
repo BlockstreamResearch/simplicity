@@ -7,6 +7,8 @@ Require Import Simplicity.Core.
 Require Import Simplicity.BitMachine.
 Require Import Simplicity.Ty.
 
+Set Implicit Arguments.
+
 Local Open Scope ty_scope.
 Local Open Scope mc_scope.
 

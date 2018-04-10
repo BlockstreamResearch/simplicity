@@ -7,6 +7,8 @@ Require Import Simplicity.BitMachine.
 Require Import Simplicity.Translate.
 Require Import Simplicity.Ty.
 
+Set Implicit Arguments.
+
 Local Open Scope N_scope.
 
 Module StateShape.
@@ -80,8 +82,8 @@ apply seq_complete in Hs03.
 destruct Hs03 as [s2 Hs02 Hs23].
 apply seq_complete in Hs02.
 destruct Hs02 as [s1 Hs01 Hs12].
-rewrite (stateShape_write _ _ _ Hs01).
-rewrite (stateShape_skip _ _ _ Hs12).
+rewrite (stateShape_write Hs01).
+rewrite (stateShape_skip Hs12).
 apply (Ht _ _ Hs23).
 Qed.
 
@@ -94,8 +96,8 @@ apply seq_complete in Hs03.
 destruct Hs03 as [s2 Hs02 Hs23].
 apply seq_complete in Hs02.
 destruct Hs02 as [s1 Hs01 Hs12].
-rewrite (stateShape_write _ _ _ Hs01).
-rewrite (stateShape_skip _ _ _ Hs12).
+rewrite (stateShape_write Hs01).
+rewrite (stateShape_skip Hs12).
 apply (Ht _ _ Hs23).
 Qed.
 
@@ -109,11 +111,11 @@ apply seq_complete in Hxy.
 destruct Hxy as [s2 Hxs2 Hs2y].
 apply seq_complete in Hxs2.
 destruct Hxs2 as [s1 Hxs1 Hs1s2].
-rewrite (stateShape_fwd _ _ _ Hxs1).
+rewrite (stateShape_fwd Hxs1).
 destruct s2 as [|s2].
  pose (inv := runHalt (trace Hs2y));inversion inv.
 rewrite (Ht _ _ Hs1s2).
-apply (stateShape_bwd _ _ _ Hs2y).
+apply (stateShape_bwd Hs2y).
 Qed.
 
 Lemma case_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D) :
@@ -177,7 +179,7 @@ Proof.
 intros H01.
 destruct s1 as [|s1];[apply N.le_0_l|].
 unfold stateSize.
-rewrite (StateShape.Core_spec _ _ _ H01).
+rewrite (StateShape.Core_spec _ H01).
 reflexivity.
 Qed.
 
@@ -220,14 +222,14 @@ Proof.
 intros Hs Ht s0 s5 tr05.
 unfold MemoryBound.
 cbn in *.
-destruct (seq_complete _ _ _ _ tr05) as [s4 tr04 tr45].
-rewrite (MMR_seq _ _ _ _ _ tr04 tr45 tr05).
-destruct (seq_complete _ _ _ _ tr04) as [s3 tr03 tr34].
-rewrite (MMR_seq _ _ _ _ _ tr03 tr34 tr04).
-destruct (seq_complete _ _ _ _ tr03) as [s2 tr02 tr23].
-rewrite (MMR_seq _ _ _ _ _ tr02 tr23 tr03).
-destruct (seq_complete _ _ _ _ tr02) as [s1 tr01 tr12].
-rewrite (MMR_seq _ _ _ _ _ tr01 tr12 tr02).
+destruct (seq_complete tr05) as [s4 tr04 tr45].
+rewrite (MMR_seq tr04 tr45 tr05).
+destruct (seq_complete tr04) as [s3 tr03 tr34].
+rewrite (MMR_seq tr03 tr34 tr04).
+destruct (seq_complete tr03) as [s2 tr02 tr23].
+rewrite (MMR_seq tr02 tr23 tr03).
+destruct (seq_complete tr02) as [s1 tr01 tr12].
+rewrite (MMR_seq tr01 tr12 tr02).
 rewrite N.add_assoc.
 rewrite MMR_newFrame, MMR_moveFrame, MMR_dropFrame.
 transitivity (stateSize s1 + N.max (@Core.eval _ _ s extraMemoryBound) (@Core.eval _ _ t extraMemoryBound)).
@@ -239,14 +241,14 @@ transitivity (stateSize s1 + N.max (@Core.eval _ _ s extraMemoryBound) (@Core.ev
    transitivity (N.max (stateSize s3) (maximumMemoryResidence (trace tr34))).
     rewrite N.max_assoc.
     apply N.max_lub;[reflexivity|].
-    etransitivity;[apply (StateSize_Core _ _ _ _ _ tr34)|apply N.le_max_l].
+    etransitivity;[apply (StateSize_Core _ tr34)|apply N.le_max_l].
    apply N.max_lub;[apply N.le_add_r|apply (Ht _ _ tr34)].
   destruct (moveFrame_complete tr23) as [s2 s3 T23|];[|reflexivity].
   inversion T23;cbn.
   rewrite fullWriteFrame_size.
   ring.
  apply N.add_le_mono_r.
- apply (StateSize_Core _ _ _ _ _ tr12).
+ apply (StateSize_Core _ tr12).
 apply N.add_le_mono_r.
 destruct (newFrame_complete tr01) as [s0 s1 T01|];[apply N.eq_le_incl|apply N.le_0_l].
 inversion T01; cbn.
@@ -258,7 +260,7 @@ Proof.
 intros x y tr.
 unfold MemoryBound.
 cbn in *.
-destruct (trace_subproof _ _ _ _ _); cbn.
+destruct (trace_subproof _); cbn.
 rewrite N.add_0_r.
 reflexivity.
 Qed.
@@ -269,13 +271,13 @@ Proof.
 intros Ht s0 s3 tr03.
 unfold MemoryBound.
 cbn in *.
-destruct (seq_complete _ _ _ _ tr03) as [s2 tr02 tr23].
-rewrite (MMR_seq _ _ _ _ _ tr02 tr23 tr03).
-destruct (seq_complete _ _ _ _ tr02) as [s1 tr01 tr12].
-rewrite (MMR_seq _ _ _ _ _ tr01 tr12 tr02).
+destruct (seq_complete tr03) as [s2 tr02 tr23].
+rewrite (MMR_seq tr02 tr23 tr03).
+destruct (seq_complete tr02) as [s1 tr01 tr12].
+rewrite (MMR_seq tr01 tr12 tr02).
 rewrite MMR_write, MMR_skip.
 unfold stateSize.
-rewrite (stateShape_write _ _ _ tr01), N.max_id, (stateShape_skip _ _ _ tr12).
+rewrite (stateShape_write tr01), N.max_id, (stateShape_skip tr12).
 apply N.max_lub.
  apply N.le_add_r.
 apply Ht.
@@ -287,13 +289,13 @@ Proof.
 intros Ht s0 s3 tr03.
 unfold MemoryBound.
 cbn in *.
-destruct (seq_complete _ _ _ _ tr03) as [s2 tr02 tr23].
-rewrite (MMR_seq _ _ _ _ _ tr02 tr23 tr03).
-destruct (seq_complete _ _ _ _ tr02) as [s1 tr01 tr12].
-rewrite (MMR_seq _ _ _ _ _ tr01 tr12 tr02).
+destruct (seq_complete tr03) as [s2 tr02 tr23].
+rewrite (MMR_seq tr02 tr23 tr03).
+destruct (seq_complete tr02) as [s1 tr01 tr12].
+rewrite (MMR_seq tr01 tr12 tr02).
 rewrite MMR_write, MMR_skip.
 unfold stateSize.
-rewrite (stateShape_write _ _ _ tr01), N.max_id, (stateShape_skip _ _ _ tr12).
+rewrite (stateShape_write tr01), N.max_id, (stateShape_skip tr12).
 apply N.max_lub.
  apply N.le_add_r.
 apply Ht.
@@ -303,13 +305,13 @@ Lemma bump_spec {A B : Ty} (t : Term A B) (Ht : spec t) x y n (tr : x >>- bump n
    maximumMemoryResidence (trace tr) <= MemoryBound t x.
 Proof.
 unfold bump in tr.
-destruct (seq_complete _ _ _ _ tr) as [s2 tr02 tr23].
-rewrite (MMR_seq _ _ _ _ _ tr02 tr23).
-destruct (seq_complete _ _ _ _ tr02) as [s1 tr01 tr12].
-rewrite (MMR_seq _ _ _ _ _ tr01 tr12).
+destruct (seq_complete tr) as [s2 tr02 tr23].
+rewrite (MMR_seq tr02 tr23).
+destruct (seq_complete tr02) as [s1 tr01 tr12].
+rewrite (MMR_seq tr01 tr12).
 rewrite MMR_bwd, MMR_fwd.
 unfold MemoryBound, stateSize.
-rewrite (stateShape_fwd _ _ _ tr01).
+rewrite (stateShape_fwd tr01).
 rewrite (N.max_comm (stateShapeSize _)), <- N.max_assoc, N.max_l.
  apply Ht.
 apply MMR_bounds.
@@ -327,13 +329,13 @@ pattern s0; pattern s1.
 revert s0 s1 tr01.
 apply choice_complete.
  intros s0 s1 [|] Heq tr tr01.
-  rewrite <- (trace_right _ _ _ _ tr tr01);[|assumption].
+  rewrite <- (trace_right tr tr01);[|assumption].
   etransitivity;[apply bump_spec;assumption|apply N.le_max_r].
- rewrite <- (trace_left _ _ _ _ tr tr01);[|assumption].
+ rewrite <- (trace_left tr tr01);[|assumption].
  etransitivity;[apply bump_spec;assumption|apply N.le_max_l].
 unfold runProgram, choice;cbn.
 intros tr01.
-destruct (trace_subproof _ _ _ _); cbn.
+destruct (trace_subproof _); cbn.
 apply N.le_0_l.
 Qed.
 
@@ -343,14 +345,14 @@ Proof.
 intros Hs Ht s0 s2 tr02.
 unfold MemoryBound.
 cbn in *.
-destruct (seq_complete _ _ _ _ tr02) as [s1 tr01 tr12].
-rewrite (MMR_seq _ _ _ _ _ tr01 tr12 tr02).
+destruct (seq_complete tr02) as [s1 tr01 tr12].
+rewrite (MMR_seq tr01 tr12 tr02).
 rewrite <- N.add_max_distr_l.
 apply N.max_le_compat.
  apply Hs.
 etransitivity;[apply Ht|].
 apply N.add_le_mono_r.
-apply (StateSize_Core _ _ _ _ _ tr01).
+apply (StateSize_Core _ tr01).
 Qed.
 
 Lemma take_spec {A B C : Ty} (t : Term A C) :
@@ -363,7 +365,7 @@ Lemma drop_spec {A B C : Ty} (t : Term B C) :
  spec t -> spec (@drop A B C t).
 Proof.
 intros Ht x n Hp;cbn.
-apply (bump_spec _ Ht _ _ _ Hp).
+apply (bump_spec Ht Hp).
 Qed.
 
 Lemma Core_spec {A B : Ty} (t : Term A B) :
@@ -387,7 +389,7 @@ Lemma CellBound_correct {A B : Ty} (t : Term A B) a y
   (tr : fillContext emptyCtx (LocalStateBegin t a) >>- @Core.eval _ _ t Naive.translate ->> y) :
   maximumMemoryResidence (trace tr) <= CellBound t.
 Proof.
-etransitivity;[apply (Core_spec _ _ _ tr)|].
+etransitivity;[apply (Core_spec _ tr)|].
 unfold MemoryBound, CellBound, stateSize, stateShapeSize; cbn.
 rewrite app_nil_r, encode_length, N.add_0_r, <- plus_n_O.
 reflexivity.
