@@ -3,7 +3,6 @@ Require Import Util.List.
 Require Import Util.Thrist.
 
 Require Import Simplicity.Alg.
-Require Import Simplicity.Core.
 Require Import Simplicity.BitMachine.
 Require Import Simplicity.Ty.
 
@@ -11,6 +10,7 @@ Set Implicit Arguments.
 
 Local Open Scope ty_scope.
 Local Open Scope mc_scope.
+Local Open Scope semantic_scope.
 
 Fixpoint bitSize (X : Ty) : nat :=
 match X with
@@ -67,28 +67,43 @@ induction X.
   reflexivity.
 Qed.
 
-Definition LocalStateBegin {A B : Ty} (t : Term A B) (a : A) :=
-  {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |}.
-
-Definition LocalStateEnd {A B : Ty} (t : Term A B) (a : A) :=
-  {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (eval t a)) |}.
-
-Definition spec {A B : Ty} (p : Program) (t : Term A B)  :=
-  forall a ctx, fillContext ctx (LocalStateBegin t a) >>- p ->> fillContext ctx (LocalStateEnd t a).
-
 Module Naive.
 
-Lemma iden_spec {A : Ty} : spec (copy (bitSize A)) (@iden A).
+Definition Program_ty (A B : Ty) := Program.
+
+Definition translate_class : Core.class Program_ty := Core.Class _
+  (fun A => copy (bitSize A))
+  (fun A B C ps pt => newFrame (bitSize B) ;;; ps ;;; moveFrame ;;; pt ;;; dropFrame)
+  (fun A => nop)
+  (fun A B C pt => write false ;;; skip (padL B C) ;;; pt)
+  (fun A B C pt => write true ;;; skip (padR B C) ;;; pt)
+  (fun A B C D ps pt => bump (1 + padL A B) ps ||| bump (1 + padR A B) pt)
+  (fun A B C ps pt => ps ;;; pt)
+  (fun A B C pt => pt)
+  (fun A B C pt => bump (bitSize A) pt).
+
+Canonical Structure translate : Core.Algebra := Core.Pack Program_ty translate_class.
+
+Definition LocalStateBegin {A B : Ty} (t : Arrow A B) (a : A) :=
+  {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |}.
+
+Definition LocalStateEnd {A B : Ty} (t : Arrow A B) (a : A) :=
+  {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (t a)) |}.
+
+Definition spec {A B : Ty} (p : Program_ty A B) (t : Arrow A B)  :=
+  forall a ctx, fillContext ctx (LocalStateBegin t a) >>- p ->> fillContext ctx (LocalStateEnd t a).
+
+Lemma iden_spec {A : Ty} : spec (A:=A) iden iden.
 Proof.
-intros a ctx.
+intros a ctx; cbn.
 unfold LocalStateBegin, LocalStateEnd.
 rewrite <- (encode_length a).
 apply copy_correct.
 Qed.
 
-Lemma comp_spec {A B C : Ty} (s : Term A B) (t : Term B C) ps pt :
+Lemma comp_spec {A B C : Ty} (s : Arrow A B) (t : Arrow B C) ps pt :
  spec ps s -> spec pt t ->
- spec (newFrame (bitSize B) ;;; ps ;;; moveFrame ;;; pt ;;; dropFrame) (comp s t) .
+ spec (comp ps pt) (comp s t) .
 Proof.
 intros Hs Ht a ctx.
 unfold LocalStateBegin, LocalStateEnd.
@@ -115,22 +130,22 @@ repeat eapply seq_correct.
                  ; activeWriteFrame := awf
                  ; inactiveWriteFrames := iwf
                  |}).
-  rewrite <- (app_nil_r (encode (eval s a))).
-  apply (Ht (eval s a) ctx0).
+  rewrite <- (app_nil_r (encode (s a))).
+  apply (Ht (s a) ctx0).
 - unfold fillContext; cbn.
   rewrite app_nil_r.
   apply dropFrame_correct.
 Qed.
 
-Lemma unit_spec {A : Ty} : spec nop (@unit A).
+Lemma unit_spec {A : Ty} : spec (A:=A) unit unit.
 Proof.
 intros a ctx.
 apply nop_correct.
 Qed.
 
-Lemma injl_spec {A B C : Ty} (t : Term A B) pt :
+Lemma injl_spec {A B C : Ty} (t : Arrow A B) pt :
  spec pt t ->
- spec (write false ;;; skip (padL B C) ;;; pt) (@injl A B C t).
+ spec (injl pt) (injl (C:=C) t).
 Proof.
 intros Ht a ctx.
 repeat eapply seq_correct.
@@ -159,9 +174,9 @@ repeat eapply seq_correct.
   apply Ht.
 Qed.
 
-Lemma injr_spec {A B C : Ty} (t : Term A C) pt :
+Lemma injr_spec {A B C : Ty} (t : Arrow A C) pt :
  spec pt t ->
- spec (write true ;;; skip (padR B C) ;;; pt) (@injr A B C t).
+ spec (injr pt) (injr (B:=B) t).
 Proof.
 intros Ht a ctx.
 repeat eapply seq_correct.
@@ -190,7 +205,7 @@ repeat eapply seq_correct.
   apply Ht.
 Qed.
 
-Lemma caseL_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D) ps pt :
+Lemma caseL_spec {A B C D : Ty} (s : Arrow (A * C) D) (t : Arrow (B * C) D) ps pt :
  spec ps s ->
  forall (a : A) (c : C) ctx,
   fillContext ctx (LocalStateBegin (case s t) (inl a, c))
@@ -213,7 +228,7 @@ apply bump_correct.
 apply (Hs _ (fillReadFrame ctx {| prevData := rev (prefix); nextData := nil |})).
 Qed.
 
-Lemma caseR_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D) ps pt :
+Lemma caseR_spec {A B C D : Ty} (s : Arrow (A * C) D) (t : Arrow (B * C) D) ps pt :
  spec pt t ->
  forall (b : B) (c : C) ctx,
   fillContext ctx (LocalStateBegin (case s t) (inr b, c))
@@ -236,18 +251,18 @@ apply bump_correct.
 apply (Ht _ (fillReadFrame ctx {| prevData := rev (prefix); nextData := nil |})).
 Qed.
 
-Lemma case_spec {A B C D : Ty} (s : Term (A * C) D) (t : Term (B * C) D) ps pt :
+Lemma case_spec {A B C D : Ty} (s : Arrow (A * C) D) (t : Arrow (B * C) D) ps pt :
  spec ps s -> spec pt t ->
- spec (bump (1 + padL A B) ps ||| bump (1 + padR A B) pt) (case s t).
+ spec (case ps pt) (case s t).
 Proof.
 intros Hs Ht [[a|b] c] ctx.
 - apply caseL_spec; assumption.
 - apply caseR_spec; assumption.
 Qed.
 
-Lemma pair_spec {A B C : Ty} (s : Term A B) (t : Term A C) ps pt :
+Lemma pair_spec {A B C : Ty} (s : Arrow A B) (t : Arrow A C) ps pt :
  spec ps s -> spec pt t ->
- spec (ps ;;; pt) (pair s t).
+ spec (pair ps pt) (pair s t).
 Proof.
 intros Hs Ht a ctx.
 unfold LocalStateBegin, LocalStateEnd.
@@ -261,16 +276,16 @@ eapply seq_correct.
   unfold appendLocalState, fullWriteFrame; cbn.
   rewrite (app_nil_r (rev _)), <- (Plus.plus_0_r (bitSize C)), rev_app_distr.
   rewrite <- (app_nil_r (encode a)) at 2.
-  pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (encode (eval s a)) |}).
+  pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (encode (s a)) |}).
   change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
   change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState ls1 (LocalStateEnd t a))).
   do 2 rewrite <- context_action.
   apply Ht.
 Qed.
 
-Lemma take_spec {A B C : Ty} (t : Term A C) pt :
+Lemma take_spec {A B C : Ty} (t : Arrow A C) pt :
  spec pt t ->
- spec pt (@take A B C t).
+ spec (take pt) (take (B:=B) t).
 Proof.
 intros Ht [a b] ctx.
 unfold LocalStateBegin, LocalStateEnd, fullWriteFrame; cbn.
@@ -282,11 +297,11 @@ do 2 rewrite <- context_action.
 apply Ht.
 Qed.
 
-Lemma drop_spec {A B C : Ty} (t : Term B C) pt :
+Lemma drop_spec {A B C : Ty} (t : Arrow B C) pt :
  spec pt t ->
- spec (bump (bitSize A) pt) (@drop A B C t).
+ spec (drop pt) (drop (A:=A) t).
 Proof.
-intros Ht [a b] ctx.
+intros Ht [a b] ctx; cbn.
 pose (ls2 := {| readLocalState := encode a; writeLocalState := newWriteFrame 0 |}).
 change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState (LocalStateBegin t b) ls2)).
 change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState (LocalStateEnd t b) ls2)).
@@ -298,29 +313,13 @@ apply bump_correct.
 apply (Ht _ (fillReadFrame ctx {| prevData := rev (encode a); nextData := nil |})).
 Qed.
 
-Definition Program_ty (A B : Ty) := Program.
-
-Definition translate_class : Core.class Program_ty := Core.Class _
-  (fun A => copy (bitSize A))
-  (fun A B C ps pt => newFrame (bitSize B) ;;; ps ;;; moveFrame ;;; pt ;;; dropFrame)
-  (fun A => nop)
-  (fun A B C pt => write false ;;; skip (padL B C) ;;; pt)
-  (fun A B C pt => write true ;;; skip (padR B C) ;;; pt)
-  (fun A B C D ps pt => bump (1 + padL A B) ps ||| bump (1 + padR A B) pt)
-  (fun A B C ps pt => ps ;;; pt)
-  (fun A B C pt => pt)
-  (fun A B C pt => bump (bitSize A) pt).
-
-Canonical Structure translate : Core.Algebra := Core.Pack Program_ty translate_class.
-
-Lemma translate_correct {A B : Ty} (t : Term A B) a ctx :
- fillContext ctx (LocalStateBegin t a)
-  >>- @Core.eval _ _ t translate ->>
- fillContext ctx (LocalStateEnd t a).
-Proof.
-revert a ctx.
-change (spec (@Core.eval _ _ t translate) t).
-induction t.
+Theorem translate_correct {A B : Ty} (t : forall {alg : Core.Algebra}, alg A B) (Ht : Core.Parametric (@t)) :
+ forall a ctx,
+ fillContext ctx {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |}
+  >>- @t translate ->>
+ fillContext ctx {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (|[ t ]| a)) |}.
+refine (Ht _ _ (Core.Parametric.Pack (_ : Core.Parametric.class (@spec)))).
+constructor; clear; intros.
 - apply iden_spec.
 - apply comp_spec; assumption.
 - apply unit_spec.
@@ -332,16 +331,5 @@ induction t.
 - apply drop_spec; assumption.
 Qed.
 
-Local Open Scope thrist_scope.
-Local Open Scope semantic_scope.
-
-Theorem translate_correct_parametric {A B : Ty} (t : forall {term : Core.Algebra}, term A B) (Ht : Core.Parametric (@t)) a ctx :
- fillContext ctx {| readLocalState := encode a; writeLocalState := newWriteFrame (bitSize B) |}
-  >>- @t translate ->>
- fillContext ctx {| readLocalState := encode a; writeLocalState := fullWriteFrame (encode (|[ t ]| a)) |}.
-Proof.
-rewrite (Core.term_eval Ht), (Core.term_eval Ht CoreFunSem), <- CoreFunSem_correct.
-apply translate_correct.
-Qed.
-
 End Naive.
+Canonical Structure Naive.translate.

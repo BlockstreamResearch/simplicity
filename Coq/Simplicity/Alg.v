@@ -53,14 +53,14 @@ Import Combinators.
 
 Record class {alg1 alg2 : Algebra} (rel : forall {A B}, alg1 A B -> alg2 A B -> Prop) :=
  { _ : forall A, rel iden (@iden A _)
- ; _ : forall A B C s1 s2 t1 t2, rel s1 s2 -> rel t1 t2 -> rel (comp s1 t1) (@comp A B C _ s2 t2)
+ ; _ : forall A B C s1 s2 t1 t2 (Hs : rel s1 s2) (Ht : rel t1 t2), rel (comp s1 t1) (@comp A B C _ s2 t2)
  ; _ : forall A, rel unit (@unit A _)
- ; _ : forall A B C t1 t2, rel t1 t2 -> rel (injl t1) (@injl A B C _ t2)
- ; _ : forall A B C t1 t2, rel t1 t2 -> rel (injr t1) (@injr A B C _ t2)
- ; _ : forall A B C D s1 s2 t1 t2, rel s1 s2 -> rel t1 t2 -> rel (case s1 t1) (@case A B C D _ s2 t2)
- ; _ : forall A B C s1 s2 t1 t2, rel s1 s2 -> rel t1 t2 -> rel (pair s1 t1) (@pair A B C _ s2 t2)
- ; _ : forall A B C t1 t2, rel t1 t2 -> rel (take t1) (@take A B C _ t2)
- ; _ : forall A B C t1 t2, rel t1 t2 -> rel (drop t1) (@drop A B C _ t2)
+ ; _ : forall A B C t1 t2 (Ht : rel t1 t2), rel (injl t1) (@injl A B C _ t2)
+ ; _ : forall A B C t1 t2 (Ht : rel t1 t2), rel (injr t1) (@injr A B C _ t2)
+ ; _ : forall A B C D s1 s2 t1 t2 (Hs : rel s1 s2) (Ht : rel t1 t2), rel (case s1 t1) (@case A B C D _ s2 t2)
+ ; _ : forall A B C s1 s2 t1 t2 (Hs : rel s1 s2) (Ht : rel t1 t2), rel (pair s1 t1) (@pair A B C _ s2 t2)
+ ; _ : forall A B C t1 t2 (Ht : rel t1 t2), rel (take t1) (@take A B C _ t2)
+ ; _ : forall A B C t1 t2 (Ht : rel t1 t2), rel (drop t1) (@drop A B C _ t2)
  }.
 
 Record Rel (alg1 alg2 : Algebra) := Pack
@@ -73,10 +73,10 @@ End Parametric.
 Section Reynolds.
 Local Coercion Parametric.rel : Parametric.Rel >-> Funclass.
 
-Definition Reynolds {A B} (x y : forall (alg : Algebra), alg A B) : Prop :=
-  forall alg1 alg2 (R : Parametric.Rel alg1 alg2), R A B (x alg1) (y alg2).
+Definition Reynolds {A B} (x y : forall {alg : Algebra}, alg A B) : Prop :=
+  forall alg1 alg2 (R : Parametric.Rel alg1 alg2), R A B x y.
 
-Definition Parametric {A B} (x : forall (alg : Algebra), alg A B) : Prop := Reynolds x x.
+Definition Parametric {A B} (x : forall {alg : Algebra}, alg A B) : Prop := Reynolds (@x) (@x).
 End Reynolds.
 
 Section CoreTerm.
@@ -133,6 +133,7 @@ End Core.
 Export Core.Combinators.
 Coercion Core.domain : Core.Algebra >-> Funclass.
 Coercion Core.Parametric.rel : Core.Parametric.Rel >-> Funclass.
+Canonical Structure Core.Term.
 
 Lemma iden_Parametric {alg1 alg2 : Core.Algebra} (R : Core.Parametric.Rel alg1 alg2)
   {A} : R A A iden iden.
@@ -225,12 +226,7 @@ Definition FunSem_mixin : Core.class Arrow := Core.Class Arrow
   (fun A B C t ab => t (fst ab))
   (fun A B C t ab => t (snd ab)).
 
-Definition CoreFunSem : Core.Algebra := Core.Pack Arrow FunSem_mixin.
-
-Lemma CoreFunSem_correct {A B} (x : Simplicity.Core.Term A B) : Simplicity.Core.eval x = Core.eval x (alg:=CoreFunSem).
-Proof.
-induction x; simpl; try first [rewrite IHx | rewrite IHx1, IHx2]; reflexivity.
-Qed.
+Canonical Structure CoreFunSem : Core.Algebra := Core.Pack Arrow FunSem_mixin.
 
 Definition CoreSem_mixin (M : CIMonad) := Core.Class (Kleisli M)
   (fun A a => eta a)
@@ -258,25 +254,32 @@ Notation "|[ x ]|" := (x : Core.domain CoreFunSem _ _) : semantic_scope.
 Local Open Scope semantic_scope.
 Local Open Scope monad_scope.
 
-Lemma CoreSem_initial {M : CIMonad} {A B} {x : forall {alg : Core.Algebra}, alg A B} (Hx : Core.Parametric (@x)) (a : A) :
-  |[ x ]|^M a = eta (|[ x ]| a).
+Lemma CoreFunSem_correct {A B} {t : forall {alg : Core.Algebra}, alg A B} (Ht : Core.Parametric (@t)) :
+ forall a, Simplicity.Core.eval t a = |[ t ]| a.
 Proof.
-rewrite (Core.term_eval Hx (CoreSem M)).
-rewrite (Core.term_eval Hx CoreFunSem).
-clear Hx.
-generalize (x Core.Term); clear x; intros t.
-induction t; cbn.
+set (R A B (x : Simplicity.Core.Term A B) (y : Arrow A B) := forall a, Simplicity.Core.eval x a = |[ y ]| a).
+refine (Ht _ _ (Core.Parametric.Pack (_ : Core.Parametric.class R))).
+constructor; unfold R; clear; intros; cbn; try destruct a as [[a|b] c];
+ try rewrite Hs; try rewrite Ht; try reflexivity.
+Qed.
+
+Lemma CoreSem_initial {M : CIMonad} {A B} {t : forall {alg : Core.Algebra}, alg A B} (Ht : Core.Parametric (@t)) :
+  forall a, |[ t ]|^M a = eta (|[ t ]| a).
+Proof.
+set (R A B (x : Kleisli M A B) (y : Arrow A B) := forall a, |[ x ]|^M a = eta (|[ y ]| a)).
+refine (Ht _ _ (Core.Parametric.Pack (_ : Core.Parametric.class R))).
+constructor; unfold R; clear; intros; cbn.
 - reflexivity.
-- rewrite kleisli_comp_def, IHt1, <- kleisli_comp_def.
-  rewrite kleisli_compr; apply IHt2.
+- rewrite kleisli_comp_def, Hs, <- kleisli_comp_def.
+  rewrite kleisli_compr; apply Ht.
 - reflexivity.
-- rewrite IHt; apply eta_natural.
-- rewrite IHt; apply eta_natural.
-- destruct a as [[a|b] c]; [apply IHt1|apply IHt2].
-- rewrite IHt1, IHt2.
+- rewrite Ht; apply eta_natural.
+- rewrite Ht; apply eta_natural.
+- destruct a as [[a|b] c]; [apply Hs|apply Ht].
+- rewrite Hs, Ht.
   apply phi_eta.
-- apply IHt.
-- apply IHt.
+- apply Ht.
+- apply Ht.
 Qed.
 
 Module Assertion.
