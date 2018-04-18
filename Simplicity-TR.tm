@@ -3676,8 +3676,8 @@
   <subsubsection|Bit-wise operations>
 
   The <verbatim|shift> and <verbatim|rotate> functions create Simplicity
-  expressions that do left shifts and rotates of multi-bit words by any
-  constant amount. Right (unsigned) shifts and rotates can be made by passing
+  expressions that do right shifts and rotates of multi-bit words by any
+  constant amount. Left (unsigned) shifts and rotates can be made by passing
   a negative value for the shift/rotate amount.
 
   The <verbatim|bitwise> combinator takes a Simplicity expression for a
@@ -4733,42 +4733,57 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-103>>
 
-      7.4<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      7.4<space|2spc>Blockchain Primitives
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-104>
 
-      <with|par-left|<quote|1tab>|7.4.1<space|2spc>Translating Simplicity to
-      the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|7.4.1<space|2spc>Bitcoin Primitives
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-105>>
 
-      <with|par-left|<quote|1tab>|7.4.2<space|2spc>Static Analysis
+      7.5<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-106>
+
+      7.6<space|2spc>Denotational Semantics of Full Simplicity
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-106>>
+      <no-break><pageref|auto-107>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>C
-      Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-107><vspace|0.5fn>
+      7.7<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-108>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
-      A<space|2spc>Preliminaries> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-108><vspace|0.5fn>
+      <with|par-left|<quote|1tab>|7.7.1<space|2spc>Translating Simplicity to
+      the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-109>>
 
-      A.1<space|2spc>Algebraic Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-109>
-
-      <with|par-left|<quote|1tab>|A.1.1<space|2spc>Records
+      <with|par-left|<quote|1tab>|7.7.2<space|2spc>Static Analysis
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-110>>
 
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>C
+      Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-111><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
+      A<space|2spc>Preliminaries> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-112><vspace|0.5fn>
+
+      A.1<space|2spc>Algebraic Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-113>
+
+      <with|par-left|<quote|1tab>|A.1.1<space|2spc>Records
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-114>>
+
       A.2<space|2spc>Functors <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-111>
+      <no-break><pageref|auto-115>
 
       <with|par-left|<quote|1tab>|A.2.1<space|2spc>Option Functor
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-112>>
+      <no-break><pageref|auto-116>>
 
       <with|par-left|<quote|1tab>|A.2.2<space|2spc>List Functors
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-113>>
+      <no-break><pageref|auto-117>>
     </associate>
   </collection>
 </auxiliary>

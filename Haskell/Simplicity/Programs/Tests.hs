@@ -52,7 +52,7 @@ prop_multiplier8 x y = fromWord16 (multiplier word8 (x, y)) == fromWord8 x * fro
 
 -- The specification for shifts on Word8
 prop_shift8 :: Word8 -> Property
-prop_shift8 x = forAll small (\z -> convert (shift word8 z x) == W.shift (convert x) z)
+prop_shift8 x = forAll small (\z -> convert (shift word8 z x) == W.shift (convert x) (-z))
  where
   convert :: Word8 -> W.Word8
   convert = fromInteger . fromWord8
@@ -60,7 +60,7 @@ prop_shift8 x = forAll small (\z -> convert (shift word8 z x) == W.shift (conver
 
 -- The specification for rotates on Word8
 prop_rotate8 :: Word8 -> Property
-prop_rotate8 x = forAll small (\z -> convert (rotate word8 z x) == W.rotate (convert x) z)
+prop_rotate8 x = forAll small (\z -> convert (rotate word8 z x) == W.rotate (convert x) (-z))
  where
   convert :: Word8 -> W.Word8
   convert = fromInteger . fromWord8

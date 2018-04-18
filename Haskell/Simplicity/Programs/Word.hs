@@ -151,44 +151,45 @@ compareWordSize (DoubleW n) (DoubleW m) =
 
 -- | Simplicity expression for a bit shift by a constant amount.
 -- 
--- @'shift' w n x@ is a left shift of @n@ bits of the word @x@.
--- The value @n@ can be negative in which case a right shift is performed.
+-- @'shift' w n x@ is a right shift of @n@ bits of the word @x@.
+-- The value @n@ can be negative in which case a left shift is performed.
+
 shift :: (Core term, TyC a) => Word a -> Int -> term a a
 shift w = subseq w w
  where
   subseq :: (Core term, TyC a, TyC b) => Word a -> Word b -> Int -> term a b
   subseq n m z | z == 0 = subseq0 (compareWordSize n m)
-  subseq n m z | wordSize n <= z = zero m
+               | wordSize n <= z = zero m
                | z + wordSize m <= 0 = zero m
-  subseq (DoubleW n) m           z | wordSize n <= z              = drop (subseq n m (z - wordSize n))
-  subseq (DoubleW n) m           z | z + wordSize m <= wordSize n = take (subseq n m z)
-  subseq n           (DoubleW m) z = subseq n m z &&& subseq n m (z + wordSize m)
+  subseq (DoubleW n) m           z | wordSize n <= z              = take (subseq n m (z - wordSize n))
+                                   | z + wordSize m <= wordSize n = drop (subseq n m z)
+  subseq n           (DoubleW m) z = subseq n m (z + wordSize m) &&& subseq n m z
 
   subseq0 :: (Core term, TyC a) => Either (Either (BiggerWord a b) (BiggerWord b a)) (a :~: b) -> term a b
   subseq0 (Right Refl) = iden
-  subseq0 (Left (Right (JustBigger w))) = take iden
-  subseq0 (Left (Right (MuchBigger bw))) = take (subseq0 (Left (Right bw)))
-  subseq0 (Left (Left (JustBigger w))) = iden &&& zero w
-  subseq0 (Left (Left (MuchBigger bw))) = subseq0 (Left (Left bw)) &&& zero (biggerWord bw)
+  subseq0 (Left (Right (JustBigger w))) = drop iden
+  subseq0 (Left (Right (MuchBigger bw))) = drop (subseq0 (Left (Right bw)))
+  subseq0 (Left (Left (JustBigger w))) = zero w &&& iden
+  subseq0 (Left (Left (MuchBigger bw))) = zero (biggerWord bw) &&& subseq0 (Left (Left bw))
 
--- | Simplicity expression for a left bit rotation by a constant amount.
+-- | Simplicity expression for a bit rotation by a constant amount.
 -- 
--- @'rotate' w n x@ is a left rotation of @n@ bits of the word @x@.
--- The value @n@ can be negative in which case a right rotation is performed.
+-- @'rotate' w n x@ is a right rotation of @n@ bits of the word @x@.
+-- The value @n@ can be negative in which case a left rotation is performed.
 rotate :: (Core term, TyC a) => Word a -> Int -> term a a
 rotate w z = subseqWrap w w (z `mod` wordSize w)
  where
    -- Precondition: 0 <= z < wordSize n
    subseqWrap :: (Core term, TyC a, TyC b) => Word a -> Word b -> Int -> term a b
    subseqWrap n m z | z == 0 = subseqWrap0 (compareWordSize n m)
-   subseqWrap (DoubleW n) m           z | wordSize n <= z && z + wordSize m <= 2 * wordSize n = drop (subseqWrap n m (z - wordSize n))
-   subseqWrap (DoubleW n) m           z | z + wordSize m <= wordSize n                        = take (subseqWrap n m z)
-   subseqWrap n           (DoubleW m) z = subseqWrap n m z &&& subseqWrap n m ((z + wordSize m) `mod` wordSize n)
+   subseqWrap (DoubleW n) m           z | wordSize n <= z && z + wordSize m <= 2 * wordSize n = take (subseqWrap n m (z - wordSize n))
+                                        | z + wordSize m <= wordSize n                        = drop (subseqWrap n m z)
+   subseqWrap n           (DoubleW m) z = subseqWrap n m ((z + wordSize m) `mod` wordSize n) &&& subseqWrap n m z
 
    subseqWrap0 :: (Core term, TyC a) => Either (Either (BiggerWord a b) (BiggerWord b a)) (a :~: b) -> term a b
    subseqWrap0 (Right Refl) = iden
-   subseqWrap0 (Left (Right (JustBigger w))) = take iden
-   subseqWrap0 (Left (Right (MuchBigger bw))) = take (subseqWrap0 (Left (Right bw)))
+   subseqWrap0 (Left (Right (JustBigger w))) = drop iden
+   subseqWrap0 (Left (Right (MuchBigger bw))) = drop (subseqWrap0 (Left (Right bw)))
    subseqWrap0 (Left (Left (JustBigger w))) = iden &&& iden
    subseqWrap0 (Left (Left (MuchBigger bw))) = rec &&& rec
     where

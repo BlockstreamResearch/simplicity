@@ -198,7 +198,7 @@ destruct R as [R []].
 cbn; auto.
 Qed.
 
-Create HintDb parametricity.
+Create HintDb parametricity discriminated.
 Hint Immediate iden_Parametric : parametricity.
 Hint Resolve comp_Parametric : parametricity.
 Hint Immediate unit_Parametric : parametricity.
@@ -281,6 +281,36 @@ constructor; unfold R; clear; intros; cbn.
 - apply Ht.
 - apply Ht.
 Qed.
+
+Section Generic.
+
+Fixpoint scribe {A B : Ty} : B -> forall {alg : Core.Algebra}, alg A B :=
+match B with
+| Unit => fun _ _ => unit
+| Sum BL BR => fun b =>
+  match b with
+  | inl l => fun _ => injl (scribe l)
+  | inr r => fun _ => injr (scribe r)
+  end
+| Prod B1 B2 => fun b _ => pair (scribe (fst b)) (scribe (snd b))
+end.
+
+Lemma scribe_correct {A B : Ty} (a : A) (b : B) : |[scribe b]| a = b.
+Proof.
+induction B;[destruct b as [] | destruct b as [b|b] | destruct b as [b0 b1]]; cbn;
+try rewrite IHB1; try rewrite IHB2; reflexivity.
+Qed.
+
+End Generic.
+
+Lemma scribe_Parametric {alg1 alg2 : Core.Algebra} (R : Core.Parametric.Rel alg1 alg2)
+  {A B : Ty} (b : B) : R A B (scribe b) (scribe b).
+Proof.
+induction B;[|destruct b as [b|b] |]; cbn;
+auto with parametricity.
+Qed.
+Hint Immediate scribe_Parametric : parametricity.
+
 
 Module Assertion.
 
