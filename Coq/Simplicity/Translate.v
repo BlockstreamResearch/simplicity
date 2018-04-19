@@ -71,16 +71,17 @@ Module Naive.
 
 Definition Program_ty (A B : Ty) := Program.
 
-Definition translate_class : Core.class Program_ty := Core.Class _
-  (fun A => copy (bitSize A))
-  (fun A B C ps pt => newFrame (bitSize B) ;;; ps ;;; moveFrame ;;; pt ;;; dropFrame)
-  (fun A => nop)
-  (fun A B C pt => write false ;;; skip (padL B C) ;;; pt)
-  (fun A B C pt => write true ;;; skip (padR B C) ;;; pt)
-  (fun A B C D ps pt => bump (1 + padL A B) ps ||| bump (1 + padR A B) pt)
-  (fun A B C ps pt => ps ;;; pt)
-  (fun A B C pt => pt)
-  (fun A B C pt => bump (bitSize A) pt).
+Definition translate_class : Core.class Program_ty :=
+  {| Core.iden A := copy (bitSize A)
+   ; Core.comp A B C ps pt := newFrame (bitSize B) ;;; ps ;;; moveFrame ;;; pt ;;; dropFrame
+   ; Core.unit A := nop
+   ; Core.injl A B C pt := write false ;;; skip (padL B C) ;;; pt
+   ; Core.injr A B C pt := write true ;;; skip (padR B C) ;;; pt
+   ; Core.case A B C D ps pt := bump (1 + padL A B) ps ||| bump (1 + padR A B) pt
+   ; Core.pair A B C ps pt := ps ;;; pt
+   ; Core.take A B C pt := pt
+   ; Core.drop A B C pt := bump (bitSize A) pt
+   |}.
 
 Canonical Structure translate : Core.Algebra := Core.Pack Program_ty translate_class.
 

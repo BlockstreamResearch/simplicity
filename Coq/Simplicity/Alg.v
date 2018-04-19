@@ -102,16 +102,17 @@ intros alg1 alg2 [R []].
 induction x; simpl; auto.
 Qed.
 
-Definition Term_mixin : class Simplicity.Core.Term := Class _
-  (@Simplicity.Core.iden)
-  (@Simplicity.Core.comp)
-  (@Simplicity.Core.unit)
-  (@Simplicity.Core.injl)
-  (@Simplicity.Core.injr)
-  (@Simplicity.Core.case)
-  (@Simplicity.Core.pair)
-  (@Simplicity.Core.take)
-  (@Simplicity.Core.drop).
+Definition Term_mixin : class Simplicity.Core.Term :=
+  {| Core.iden := @Simplicity.Core.iden
+   ; Core.comp := @Simplicity.Core.comp
+   ; Core.unit := @Simplicity.Core.unit
+   ; Core.injl := @Simplicity.Core.injl
+   ; Core.injr := @Simplicity.Core.injr
+   ; Core.case := @Simplicity.Core.case
+   ; Core.pair := @Simplicity.Core.pair
+   ; Core.take := @Simplicity.Core.take
+   ; Core.drop := @Simplicity.Core.drop
+   |}.
 
 Canonical Structure Term : Algebra := Pack Simplicity.Core.Term Term_mixin.
 
@@ -211,37 +212,39 @@ Hint Resolve drop_Parametric : parametricity.
 
 Section CoreSem.
 
-Definition FunSem_mixin : Core.class Arrow := Core.Class Arrow
-  (fun A a => a)
-  (fun A B C s t a => t (s a))
-  (fun A _ => tt)
-  (fun A B C t a => inl (t a))
-  (fun A B C t a => inr (t a))
-  (fun A B C D s t p => let (ab, c) := p in
-    match ab with
-    | inl a => s (a, c)
-    | inr b => t (b, c)
-    end)
-  (fun A B C s t a => (s a, t a))
-  (fun A B C t ab => t (fst ab))
-  (fun A B C t ab => t (snd ab)).
+Definition FunSem_mixin : Core.class Arrow :=
+  {| Core.iden A a := a
+   ; Core.comp A B C s t (a : A) := t (s a)
+   ; Core.unit A _ := tt
+   ; Core.injl A B C t a := inl (t a)
+   ; Core.injr A B C t a := inr (t a)
+   ; Core.case A B C D s t p := let (ab, c) := p in
+      match ab with
+      | inl a => s (a, c)
+      | inr b => t (b, c)
+      end
+   ; Core.pair A B C s t a := (s a, t a)
+   ; Core.take A B C t ab := t (fst ab)
+   ; Core.drop A B C t ab := t (snd ab)
+   |}.
 
 Canonical Structure CoreFunSem : Core.Algebra := Core.Pack Arrow FunSem_mixin.
 
-Definition CoreSem_mixin (M : CIMonad) := Core.Class (Kleisli M)
-  (fun A a => eta a)
-  (fun A B C s t a => (t <-< s) a)
-  (fun A _ => eta tt)
-  (fun A B C t a => map inl (t a))
-  (fun A B C t a => map inr (t a))
-  (fun A B C D s t p => let (ab, c) := p in
-    match ab with
-    | inl a => s (a, c)
-    | inr b => t (b, c)
-    end)
-  (fun A B C s t a => phi (s a) (t a))
-  (fun A B C t ab => t (fst ab))
-  (fun A B C t ab => t (snd ab)).
+Definition CoreSem_mixin (M : CIMonad) : Core.class (Kleisli M) :=
+  {| Core.iden A a := eta a
+   ; Core.comp A B C s t (a : A) := (t <-< s) a
+   ; Core.unit A _ := eta tt
+   ; Core.injl A B C t a := map inl (t a)
+   ; Core.injr A B C t a := map inr (t a)
+   ; Core.case A B C D s t p := let (ab, c) := p in
+      match ab with
+      | inl a => s (a, c)
+      | inr b => t (b, c)
+      end
+   ; Core.pair A B C s t a := phi (s a) (t a)
+   ; Core.take A B C t ab := t (fst ab)
+   ; Core.drop A B C t ab := t (snd ab)
+   |}.
 
 Canonical Structure CoreSem (M : CIMonad) : Core.Algebra :=
   Core.Pack (Kleisli M) (CoreSem_mixin M).
@@ -411,18 +414,19 @@ Hint Immediate fail_Parametric : parametricity.
 
 Section AssertionSem.
 
-Definition AssertionSem_mixin (M : CIMonadZero) := Assertion.Mixin (Kleisli M)
- (fun A B C D s _ p => let (ab, c) := p in
-    match ab with
-    | inl a => s (a, c)
-    | inr b => mzero
-    end)
- (fun A B C D _ t p => let (ab, c) := p in
-    match ab with
-    | inl a => mzero
-    | inr b => t (b, c)
-    end)
- (fun A B _ => kzero).
+Definition AssertionSem_mixin (M : CIMonadZero) : Assertion.mixin (Kleisli M) :=
+  {| Assertion.assertl A B C D s _ (p : tySem ((A + B) * C)):= let (ab, c) := p in
+      match ab with
+      | inl a => s (a, c)
+      | inr b => mzero
+      end
+   ; Assertion.assertr A B C D _ t p := let (ab, c) := p in
+      match ab with
+      | inl a => mzero
+      | inr b => t (b, c)
+      end
+   ; Assertion.fail A B _ := kzero
+   |}.
 
 Canonical Structure AssertionSem (M : CIMonadZero) : Assertion.Algebra :=
   Assertion.Pack (Kleisli M) (AssertionSem_mixin M).

@@ -189,16 +189,17 @@ Module MaximumMemory.
 
 Definition bound_ty (A B : Ty) := N.
 
-Definition extraMemoryBound_class : Core.class bound_ty := Core.Class _
-  (fun A => 0)
-  (fun A B C s t => N.of_nat (bitSize B) + N.max s t)
-  (fun A => 0)
-  (fun A B C t => t)
-  (fun A B C t => t)
-  (fun A B C D s t => N.max s t)
-  (fun A B C s t => N.max s t)
-  (fun A B C t => t)
-  (fun A B C t => t).
+Definition extraMemoryBound_class : Core.class bound_ty :=
+  {| Core.iden A := 0
+   ; Core.comp A B C s t := N.of_nat (bitSize B) + N.max s t
+   ; Core.unit A := 0
+   ; Core.injl A B C t := t
+   ; Core.injr A B C t := t
+   ; Core.case A B C D s t := N.max s t
+   ; Core.pair A B C s t := N.max s t
+   ; Core.take A B C t := t
+   ; Core.drop A B C t := t
+   |}.
 
 Canonical Structure extraMemoryBound : Core.Algebra :=
   Core.Pack bound_ty extraMemoryBound_class.
