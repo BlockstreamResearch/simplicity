@@ -408,9 +408,9 @@ match (Z.eq_dec z 0)%Z with
     match m with
     | 0 => take (rec (z - two_power_nat n)%Z)
     | S m =>
-      match Z_lt_le_dec (z + two_power_nat (S m)) (two_power_nat (S n)) with
-      | Specif.left _ => take (rec (z - two_power_nat n)%Z)
-      | Specif.right _ => subseqWrapPair (z + two_power_nat m) (@rec) &&& subseqWrapPair z (@rec)
+      match Z_lt_le_dec (two_power_nat (S n)) (z + two_power_nat (S m)) with
+      | Specif.left _ => subseqWrapPair (z + two_power_nat m) (@rec) &&& subseqWrapPair z (@rec)
+      | Specif.right _ => take (rec (z - two_power_nat n)%Z)
       end
     end
   end
@@ -756,7 +756,7 @@ revert z x i Hi; induction m; intros z [xhi xlo] i Hi; cbn -[toZ zero subseqWrap
 (destruct Z.eq_dec as [->|];[apply subseqWrap0_correct; auto|]);
  repeat destruct Z_lt_le_dec; simpl;
  change (two_power_nat 0) with 1%Z in *;
- try solve
+ solve
  [rewrite Z.mod_small, Hrec, testbitToZLo, Z.mod_small; auto with zarith
  |rewrite Z.mod_small, Hrec, testbitToZHi, <- Z.add_sub_assoc, Z.mod_small;
    repeat rewrite two_power_nat_S in *; auto with zarith

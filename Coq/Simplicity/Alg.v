@@ -3,8 +3,8 @@ Require Import Util.Option.
 Require Import Util.PackedClass.
 
 Require Import Simplicity.Ty.
+Require Import Simplicity.Digest.
 Require Simplicity.Core.
-Variable Hash256 : Set.
 
 Set Implicit Arguments.
 Local Open Scope ty_scope.

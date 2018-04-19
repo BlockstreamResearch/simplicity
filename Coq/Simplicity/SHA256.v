@@ -1,7 +1,9 @@
-Require sha.SHA256.
-Require Import compcert.lib.Integers.
 Require Import ZArith.
 Require Import Util.List.
+
+Require sha.SHA256.
+Require Import compcert.lib.Integers.
+Global Unset Asymmetric Patterns. (* the VST library does a Global Set so we must unset it. *)
 
 Require Import Simplicity.Alg.
 Require Import Simplicity.Bit.
@@ -464,3 +466,13 @@ solve [auto 30 with parametricity].
 Qed.
 
 Hint Immediate hashBlock_Parametric : parametricity.
+
+Require Import Simplicity.MerkleRoot.
+
+Fact Hash256_hashBlock : Hash256_to_Zlist (commitmentRoot hashBlock) =
+  [226; 109; 113; 195;  24; 230;  29;  58; 155;  49; 169; 205; 139; 238; 141;  77;
+    58; 176; 171; 101; 110; 119;  89; 240; 170;  16; 209; 221;   8; 156; 133; 130]%Z.
+Proof.
+vm_compute.
+reflexivity.
+Qed.
