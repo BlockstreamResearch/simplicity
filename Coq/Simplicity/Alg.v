@@ -318,9 +318,9 @@ Hint Immediate scribe_Parametric : parametricity.
 Module Assertion.
 
 Record mixin (term : Ty -> Ty -> Type) := Mixin
-{ assertl : forall {A B C D}, term (A * C) D -> Hash256 -> term ((A + B) * C) D
-; assertr : forall {A B C D}, Hash256 -> term (B * C) D -> term ((A + B) * C) D
-; fail : forall {A B}, (Hash256 * Hash256) -> term A B
+{ assertl : forall {A B C D}, term (A * C) D -> hash256 -> term ((A + B) * C) D
+; assertr : forall {A B C D}, hash256 -> term (B * C) D -> term ((A + B) * C) D
+; fail : forall {A B}, (hash256 * hash256) -> term A B
 }.
 
 Record class (term : Ty -> Ty -> Type) := Class
@@ -342,9 +342,9 @@ Canonical Structure toCore (alg : Algebra) : Core.Algebra := Core.Pack alg (clas
 
 Module Combinators.
 
-Definition assertl {A B C D} {alg : Algebra} : alg (A * C) D -> Hash256 -> alg ((A + B) * C) D := assertl (class_of alg).
-Definition assertr {A B C D} {alg : Algebra} : Hash256 -> alg (B * C) D -> alg ((A + B) * C) D := assertr (class_of alg).
-Definition fail {A B} {alg : Algebra} : (Hash256 * Hash256) -> alg A B := fail (class_of alg).
+Definition assertl {A B C D} {alg : Algebra} : alg (A * C) D -> hash256 -> alg ((A + B) * C) D := assertl (class_of alg).
+Definition assertr {A B C D} {alg : Algebra} : hash256 -> alg (B * C) D -> alg ((A + B) * C) D := assertr (class_of alg).
+Definition fail {A B} {alg : Algebra} : (hash256 * hash256) -> alg A B := fail (class_of alg).
 
 End Combinators.
 

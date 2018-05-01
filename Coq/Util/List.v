@@ -1,5 +1,5 @@
 Require Export Coq.Lists.List.
-Require Import NArith.
+Require Import ZArith.
 
 Lemma repeat_S_tail {A} : forall (a : A) n, repeat a n ++ (a :: nil) = repeat a (S n).
 Proof.
@@ -65,3 +65,5 @@ apply firstn_skipn.
 Qed.
 
 Definition N_sum : list N -> N := fold_right N.add 0%N.
+
+Definition Z_sum : list Z -> Z := fold_right Z.add 0%Z.

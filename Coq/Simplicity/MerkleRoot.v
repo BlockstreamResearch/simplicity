@@ -44,9 +44,9 @@ Let takeTag := Eval vm_compute in commitmentTag "take".
 Let dropTag := Eval vm_compute in commitmentTag "drop".
 Let failTag := Eval vm_compute in commitmentTag "fail".
 
-Definition CommitmentRoot (A B:Ty) := Hash256.
+Definition CommitmentRoot (A B:Ty) := hash256.
 
-Definition commitmentRoot {A B} (x : CommitmentRoot A B) : Hash256 := x.
+Definition commitmentRoot {A B} (x : CommitmentRoot A B) : hash256 := x.
 
 Definition CommitmentRoot_Core_mixin : Core.class CommitmentRoot :=
  {| Core.iden A := idenTag

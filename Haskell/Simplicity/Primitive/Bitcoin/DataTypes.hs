@@ -1,22 +1,53 @@
 -- | This module defines the data structures that make up the signed data in a Bitcoin transaction.
-module Simplicity.Primitive.Bitcoin.DataTypes where
+module Simplicity.Primitive.Bitcoin.DataTypes
+  ( Script, Lock, Value
+  , Outpoint, opHash, opIndex
+  , SigTxInput, sigTxiPreviousOutput, sigTxiValue, sigTxiSequence
+  , TxOutput, txoValue, txoScript
+  , SigTx, sigTxVersion, sigTxIn, sigTxOut, sigTxLock
+  ) where
 
--- import Control.Applicative ((<$>),(<*>))
 import Data.Array (Array)
-import Data.ByteString (ByteString)
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as BSL
 import Data.Word (Word64, Word32, Word8)
-{-
-import Bitcoin.Serialize ( Serialize, Get
-                         , get, getWord32le, getWord64le, getVarInteger, getList
-                         , put, putWord32le, putWord64le, putVarInteger, putList
-                         , encodeLazy, runPut )
--}
+import Data.Serialize ( Serialize
+                      , Get, get, getWord8, getWord16le, getWord32le, getWord64le, getLazyByteString
+                      , Put, put, putWord8, putWord16le, putWord32le, putWord64le, putLazyByteString
+                      )
 
 import Simplicity.Digest
 
+getVarInteger :: Get Word64
+getVarInteger = go =<< getWord8
+ where
+  go 0xff = getWord64le
+  go 0xfe = fromIntegral `fmap` getWord32le
+  go 0xfd = fromIntegral `fmap` getWord16le
+  go x = return (fromIntegral x)
+
+putVarInteger :: Word64 -> Put
+putVarInteger x | x < 0xfd = putWord8 (fromIntegral x)
+                | x <= 0xffff = putWord8 0xfd >> putWord16le (fromIntegral x)
+                | x <= 0xffffffff = putWord8 0xfe >> putWord32le (fromIntegral x)
+                | otherwise = putWord8 0xff >> putWord64le (fromIntegral x)
+
+getVarByteString :: Get BSL.ByteString
+getVarByteString = do l <- getVarInteger
+                      let l' = fromIntegral l :: Word32 -- length must be strictly less than 2^32.
+                                                        -- This is how Bitcoin Core reads bytestrings.
+                      getLazyByteString (fromIntegral l')
+  where
+
+putVarByteString :: BSL.ByteString -> Put
+putVarByteString s | len < 2^32 = putVarInteger len >> putLazyByteString s
+ where
+  len :: Word64
+  len = BSL.foldlChunks (\a c -> a + fromIntegral (BS.length c)) 0 s
+
 -- | Unparsed Bitcoin Script.
 -- Script in transactions outputs do not have to be parsable, so we encode this as a raw 'Data.ByteString.ByteString'.
-type Script = ByteString
+type Script = BSL.ByteString
 
 -- | Transaction locktime.
 -- This represents either a block height or a block time.
@@ -30,13 +61,9 @@ type Value = Word64 -- bitcoin uses an Int64, but it doesn't really matter.
 data Outpoint = Outpoint { opHash :: Hash256
                          , opIndex :: Word32
                          } deriving Show
-{-
 instance Serialize Outpoint where
-  get = do h <- get
-           i <- getWord32le
-           return (Outpoint h i)
+  get = Outpoint <$> get <*> getWord32le
   put (Outpoint h i) = put h >> putWord32le i
--}
 
 -- | The data type for signed transaction inputs.
 -- Note that signed transaction inputs for BIP 143 include the value of the input, which doesn't appear in the serialized transaction input format.
@@ -46,21 +73,20 @@ data SigTxInput = SigTxInput { sigTxiPreviousOutput :: Outpoint
                              } deriving Show
 
 {-
-instance Serialize TxInput where
-  get = TxInput <$> get <*> get <*> getWord32le
-  put (TxInput p s sq) = put p >> put s >> putWord32le sq
+instance Serialize SigTxInput where
+  get = SigTxInput <$> get <*> getWord64le <*> getWord32le
+  put (SigTxInput p v sq) = put p >> putWord64le v >> putWord32le sq
 -}
 
 -- | The data type for transaction outputs.
 -- The signed transactin output format is identical to the serialized transaction output format.
 data TxOutput = TxOutput { txoValue :: Value
-                         , txoScript :: Script
+                         , txoScript :: Script -- length must be strictly less than 2^32.
                          } deriving Show
-{-
+
 instance Serialize TxOutput where
-  get = TxOutput <$> getWord64le <*> get
-  put (TxOutput v s) = putWord64le v >> put s
--}
+  get = TxOutput <$> getWord64le <*> getVarByteString
+  put (TxOutput v s) = putWord64le v >> putVarByteString s
 
 -- | The data type for transactions in the context of signatures.
 -- The data signed in a BIP 143 directly covers input values.

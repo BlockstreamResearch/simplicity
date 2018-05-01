@@ -9,15 +9,22 @@ import Data.Binary.Get (Decoder(..), pushChunk, pushChunks, pushEndOfInput)
 import Data.Binary (encode)
 import Data.Bits ((.|.), shiftL)
 import Data.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
+import Data.List (foldl')
+import Data.Serialize (Serialize, get, getShortByteString, put, putShortByteString)
 import qualified Data.ByteString as BS
+import qualified Data.ByteString.Short as BSS
 import qualified Data.ByteString.Lazy as BSL
 
 -- | Represents a 256-bit hash value or midstate from SHA-256.
-newtype Hash256 = Hash256 { hash256 :: BS.ByteString } deriving Show
+newtype Hash256 = Hash256 { hash256 :: BSS.ShortByteString } deriving Show
+
+instance Serialize Hash256 where
+  get = Hash256 <$> getShortByteString 32
+  put (Hash256 bs) = putShortByteString bs
 
 -- | Extracts the 256 hash value as an integer.
 integerHash256 :: Hash256 -> Integer
-integerHash256 h = BS.foldl' go 0 $ hash256 h
+integerHash256 h = foldl' go 0 . BSS.unpack $ hash256 h
  where
   go n w = (n `shiftL` 8) .|. fromIntegral w
 
@@ -33,7 +40,7 @@ bsIv = IV . pushChunks sha256Incremental . padSHA1
 -- | Realize a initial value as a concrete Hash.
 ivHash :: IV -> Hash256
 ivHash (IV state) =  case pushEndOfInput state of
-  Done _ _ x -> Hash256 . BSL.toStrict . encode $ x
+  Done _ _ x -> Hash256 . BSS.toShort . BSL.toStrict . encode $ x
   _          -> error "getHash256 unexpected decoder state"
 
 -- | Computes a SHA-256 hash from a lazy 'BSL.ByteString'.
@@ -50,10 +57,10 @@ type Block512 = (Hash256, Hash256)
 
 -- | Given an initial value and a block of data consisting of a pair of hashes, apply the SHA-256 compression function.
 compress :: IV -> Block512 -> IV
-compress (IV state) (h1, h2) = IV $ state `pushChunk` hash256 h1 `pushChunk` hash256 h2
+compress (IV state) (h1, h2) = IV $ state `pushChunk` BSS.fromShort (hash256 h1) `pushChunk` BSS.fromShort (hash256 h2)
 
 -- | Given an initial value and a block of data consisting of a one hash followed by 256-bits of zeros, apply the SHA-256 compression function.
 compressHalf :: IV -> Hash256 -> IV
 compressHalf iv h = compress iv (zero, h)
  where
-  zero = Hash256 (BS.replicate 32 0)
+  zero = Hash256 . BSS.pack $ replicate 32 0

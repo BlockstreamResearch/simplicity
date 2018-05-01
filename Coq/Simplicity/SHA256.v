@@ -7,6 +7,7 @@ Global Unset Asymmetric Patterns. (* the VST library does a Global Set so we mus
 
 Require Import Simplicity.Alg.
 Require Import Simplicity.Bit.
+Require Import Simplicity.Digest.
 Require Import Simplicity.Ty.
 Require Import Simplicity.Word.
 
@@ -26,13 +27,14 @@ Local Tactic Notation "clearLet" := match goal with
   |- context f [let N := ?V in (@?b N)] => let Y := eval cbv beta in (b V) in let X := context f[Y] in change X
 end.
 
-Definition repr_Hash (h : Word256) : list int :=
+Definition repr_Hash (h : Word256) : hash256 :=
   let '(((h0,h1),(h2,h3)),((h4,h5),(h6,h7))) := h in
-    List.map (fun x : Word32 => Int.repr (toZ x))
-     [h0;h1;h2;h3;h4;h5;h6;h7].
+    Hash256 (List.map (fun x : Word32 => Int.repr (toZ x))
+              [h0;h1;h2;h3;h4;h5;h6;h7])
+            refl_equal.
 
-Definition repr_Hash_inv (l : list int) : Word256 :=
-match map (fun x => fromZ (Int.unsigned x) : Word32) l with
+Definition repr_Hash_inv (l : hash256) : Word256 :=
+match map (fun x => fromZ (Int.unsigned x) : Word32) (hash256_reg l) with
 | [h0;h1;h2;h3;h4;h5;h6;h7] => (((h0,h1),(h2,h3)),((h4,h5),(h6,h7)))
 | _ => fromZ 0%Z
 end.
@@ -53,30 +55,40 @@ Qed.
 
 Definition repr_Block (b : Word512) : list int :=
   let (b0,b1) := b in
-    repr_Hash b0 ++ repr_Hash b1.
+    hash256_reg (repr_Hash b0) ++ hash256_reg (repr_Hash b1).
 
 Definition repr_Block_inv (l : list int) : Word512 :=
-  (repr_Hash_inv (firstn 8 l), repr_Hash_inv (skipn 8 l)).
-
-Lemma repr_Hash_length (h : Word256) : length (repr_Hash h) = 8.
-Proof.
-destruct h as [[[h0 h1][h2 h3]][[h4 h5][h6 h7]]].
-reflexivity.
-Qed.
+match l with
+| [b0; b1; b2; b3; b4; b5; b6; b7;
+   b8; b9; ba; bb; bc; bd; be; bf] =>
+  (repr_Hash_inv (Hash256 [b0; b1; b2; b3; b4; b5; b6; b7] refl_equal)
+  ,repr_Hash_inv (Hash256 [b8; b9; ba; bb; bc; bd; be; bf] refl_equal))
+| _ => fromZ 0%Z
+end.
 
 Lemma repr_Block_inj (b : Word512) : repr_Block_inv (repr_Block b) = b.
 Proof.
-destruct b as [b0 b1]; cbn.
-unfold repr_Block_inv.
-rewrite <- (repr_Hash_length b0) at 3 4.
-rewrite firstn_app_3, skipn_app_3, !repr_Hash_inj.
+assert (H32 : forall x : Word32, (0 <= toZ x <= Int.max_unsigned)%Z).
+ intros x.
+ change Int.max_unsigned with (Zpred Int.modulus).
+ rewrite <- Z.lt_le_pred, toZ_mod.
+ apply Z.mod_pos_bound.
+ reflexivity.
+destruct b as [[[[b0 b1][b2 b3]][[b4 b5][b6 b7]]]
+               [[[b8 b9][ba bb]][[bc bd][be bf]]]].
+simpl.
+unfold repr_Hash_inv.
+simpl map.
+cbv iota beta.
+repeat rewrite Int.unsigned_repr by auto.
+repeat rewrite from_toZ.
 reflexivity.
 Qed.
 
 Lemma repr_Block_length (b : Word512) : length (repr_Block b) = 16.
 Proof.
 destruct b as [b0 b1];cbn.
-rewrite app_length, !repr_Hash_length.
+rewrite app_length, !hash256_len.
 reflexivity.
 Qed.
 
@@ -243,7 +255,7 @@ apply Znumtheory.Zmod_divide; auto with zarith.
 Qed.
 
 Lemma hashBlock_correct (h : Word256) (b : Word512) :
- repr_Hash (|[hashBlock]| (h, b)) = SHA256.hash_block (repr_Hash h) (repr_Block b).
+ repr_Hash (|[hashBlock]| (h, b)) = SHA256.hash_block (repr_Hash h) (repr_Block b) :> SHA256.registers.
 Proof.
 cbv beta delta [hashBlock].
 do 7 clearLet.
@@ -254,7 +266,7 @@ simpl.
 change (|[O H &&& compression]| (h, b)) with (h, |[compression]| (h,b)).
 unfold SHA256.hash_block.
 replace (SHA256.Round (repr_Hash h) (SHA256.nthi (repr_Block b)) 63) with
-  (repr_Hash (|[compression]| (h,b))).
+  (hash256_reg (repr_Hash (|[compression]| (h,b)))).
  destruct (|[compression]| (h,b)) as [[[h'0 h'1][h'2 h'3]][[h'4 h'5][h'6 h'7]]].
  destruct h as [[[h0 h1][h2 h3]][[h4 h5][h6 h7]]].
  simpl.
@@ -284,12 +296,11 @@ replace (|[compression]| (h,b)) with
  simpl fold_right at 1.
  unfold comp; simpl; rewrite IHks.
  destruct p as [k [h b]].
- unfold fr1, comp; simpl.
- f_equal.
+ unfold fr1, comp; simpl; f_equal.
  unfold pair; simpl.
  unfold scribe32; rewrite !scribe_correct.
  reflexivity.
-cut  (repr_Hash (fst (|[fr]| (h, b))) = SHA256.Round (repr_Hash h) (SHA256.nthi (repr_Block b)) 63
+cut  (repr_Hash (fst (|[fr]| (h, b))) = SHA256.Round (repr_Hash h) (SHA256.nthi (repr_Block b)) 63 :> SHA256.registers
    /\ repr_Block (snd (|[fr]| (h, b))) = map (fun n => SHA256.W (SHA256.nthi (repr_Block b)) (Z.of_nat n)) (seq (Z.to_nat (63 + 1)) 16)).
  intros [<- _].
  reflexivity.
@@ -337,7 +348,7 @@ split.
  cbn -[round scribe32 kt].
  unfold scribe32; rewrite scribe_correct.
  match goal with
-  |- repr_Hash (round (_, ?p)) = _ =>
+  |- _ (repr_Hash (round (_, ?p))) = _ =>
     destruct p as [[[[h0 h1][h2 h3]][[h4 h5][h6 h7]]] 
                    [[[[b0 b1][b2 b3]][[b4 b5][b6 b7]]]
                     [[[b8 b9][ba bb]][[bc bd][be bf]]]]]
@@ -469,7 +480,7 @@ Hint Immediate hashBlock_Parametric : parametricity.
 
 Require Import Simplicity.MerkleRoot.
 
-Fact Hash256_hashBlock : Hash256_to_Zlist (commitmentRoot hashBlock) =
+Fact Hash256_hashBlock : hash256_to_Zlist (commitmentRoot hashBlock) =
   [226; 109; 113; 195;  24; 230;  29;  58; 155;  49; 169; 205; 139; 238; 141;  77;
     58; 176; 171; 101; 110; 119;  89; 240; 170;  16; 209; 221;   8; 156; 133; 130]%Z.
 Proof.

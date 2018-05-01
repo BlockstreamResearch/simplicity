@@ -48,6 +48,7 @@ Definition mu {A} (x : M (M A)) : M A := bind (fun y => y) x.
 Infix "<-<" := kleisliComp (at level 40, left associativity).
 
 Definition phi {A B} (x : M A) (y : M B) : M (A * B) := (strength <-< strength') (pair x y).
+Definition phi' {A B} (x : M A) (y : M B) : M (A * B) := (strength' <-< strength) (pair x y).
 
 Lemma bind_def {A B} (f : A -> M B) (x : M A) :
   bind f x = mu (map f x).
@@ -143,6 +144,18 @@ unfold phi.
 rewrite kleisli_comp_def, strength'_eta, <- kleisli_comp_def.
 rewrite kleisli_compr.
 apply strength_eta.
+Qed.
+
+Lemma phi_phi' {A B} (a : M A) (b : M B) : phi a b = phi' a b.
+Proof.
+unfold phi, phi', kleisliComp, strength, strength', eta, map, bind; destruct (class_of M) as [eta0 bind0 map0 kleisliComp0 strength0 strength'0 bind_ext bind_left bind_right bind_assoc comm idem]; cbn.
+apply (comm _ _ (a,b)).
+Qed.
+
+Lemma phi_diag {A} (a : M A) : phi a a = map (fun x => (x,x)) a.
+Proof.
+unfold phi, kleisliComp, strength, strength', eta, map, bind; destruct (class_of M) as [eta0 bind0 map0 kleisliComp0 strength0 strength'0 bind_ext bind_left bind_right bind_assoc comm idem]; cbn.
+apply (idem _ a).
 Qed.
 
 End Context.

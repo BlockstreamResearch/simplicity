@@ -11,12 +11,12 @@ Global Unset Asymmetric Patterns. (* the VST library does a Global Set so we mus
 
 Set Implicit Arguments.
 
-Record Hash256 : Set := hash256 
- {hash256_reg :> SHA256.registers
- ;hash256_len : length hash256_reg = 8
+Record hash256 : Set := Hash256
+ { hash256_reg :> SHA256.registers
+ ; hash256_len : length hash256_reg = 8
  }.
 
-Definition Hash256_to_Zlist (x : Hash256) := intlist_to_Zlist (hash256_reg x).
+Definition hash256_to_Zlist (x : hash256) := intlist_to_Zlist (hash256_reg x).
 
 (* The normalizeInt and normalizeHash functions are extensionally the idenity
  * function.  Operationally they work by replacing the internal proof
@@ -39,14 +39,11 @@ Defined.
 
 Lemma normalizeInt_correct x : normalizeInt x = x.
 Proof.
-destruct x as [v [Hv0 Hv1]].
-unfold normalizeInt.
-unfold BinInt.Z.lt in *.
-cbn -[BinInt.Z.compare].
-repeat f_equal; apply UIP_dec; decide equality.
+destruct x; apply Integers.Int.mkint_eq.
+reflexivity.
 Qed.
 
-Definition normalizeHash (x : Hash256) : Hash256.
+Definition normalizeHash (x : hash256) : hash256.
 exists (map normalizeInt (hash256_reg x)).
 assert (Heq := hash256_len x).
 rewrite <- (map_length normalizeInt) in Heq.
@@ -67,14 +64,18 @@ f_equal.
 apply UIP_dec; decide equality.
 Qed.
 
-Definition stringHash (x : string) : Hash256 :=
- hash256 (process_msg SHA256.init_registers (generate_and_pad_alt (SHA256.str_to_Z x)))
+Definition byteStringHash (x : list Integers.byte) : hash256 :=
+ Hash256 (process_msg SHA256.init_registers (generate_and_pad_alt (map Integers.Byte.unsigned x)))
   (length_process_msg _).
 
-Definition compress (iv h1 h2 : Hash256) : Hash256 :=
-  hash256 (process_block iv (List.rev (hash256_reg h1 ++ hash256_reg h2)))
+Definition stringHash (x : string) : hash256 :=
+ Hash256 (process_msg SHA256.init_registers (generate_and_pad_alt (SHA256.str_to_Z x)))
+  (length_process_msg _).
+
+Definition compress (iv h1 h2 : hash256) : hash256 :=
+  Hash256 (process_block iv (List.rev (hash256_reg h1 ++ hash256_reg h2)))
    (length_process_block _ _ (hash256_len iv)).
 
-Definition compress_half (iv h: Hash256) : Hash256 :=
-  hash256 (process_block iv (List.rev (hash256_reg h) ++ repeat Integers.Int.zero 8))
+Definition compress_half (iv h: hash256) : hash256 :=
+  Hash256 (process_block iv (List.rev (hash256_reg h) ++ repeat Integers.Int.zero 8))
    (length_process_block _ _ (hash256_len iv)).

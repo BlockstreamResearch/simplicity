@@ -6,6 +6,7 @@ module Simplicity.Primitive.Bitcoin
   ) where
 
 import Data.Array (Array, (!), bounds, elems, inRange)
+import Data.Serialize (put, runPutLazy)
 import qualified Data.Word
 
 import Simplicity.Digest
@@ -59,13 +60,29 @@ primName OutputValue = "outputValue"
 primName OutputScriptHash = "outputScriptHash"
 primName ScriptCMR = "scriptCMR"
 
--- TODO: create an interface for generating PrimEnv.
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word64
                        , envScriptCMR :: Hash256
                        , envInputsHash :: Hash256
                        , envOutputsHash :: Hash256
                        }
+
+primEnv :: SigTx -> Data.Word.Word64 -> Hash256 -> Maybe PrimEnv
+primEnv tx ix scmr | cond = Just $ PrimEnv { envTx = tx
+                                           , envIx = ix
+                                           , envScriptCMR = scmr
+                                           , envInputsHash = inputsHash
+                                           , envOutputsHash = outputsHash
+                                           }
+                   | otherwise = Nothing
+ where
+  cond = inRange (bounds (sigTxIn tx)) ix
+  -- Perhaps the inputs and outputs should be hashed into a binary tree instead?
+  outputsHash = bslHash . runPutLazy $ mapM_ put (elems (sigTxOut tx))
+  inputsHash = bslHash . runPutLazy $ mapM_ go (elems (sigTxIn tx))
+   where
+    go txi = put (sigTxiPreviousOutput txi)
+          >> put (sigTxiSequence txi)
 
 primSem :: PrimEnv -> Prim a b -> a -> Maybe b
 primSem env = interpret
@@ -105,5 +122,5 @@ primSem env = interpret
   interpret MaxOutput = const . return . toWord32 . toInteger $ maxOutput
   interpret TotalOutputValue = const . return . toWord64 . fromIntegral . sum $ txoValue <$> elems (sigTxOut tx)
   interpret OutputValue = return . (atOutput $ toWord64 . fromIntegral . txoValue)
-  interpret OutputScriptHash = return . (atOutput $ toWord256 . integerHash256 . bsHash . txoScript)
+  interpret OutputScriptHash = return . (atOutput $ toWord256 . integerHash256 . bslHash . txoScript)
   interpret ScriptCMR = const . return . toWord256 . integerHash256 $ envScriptCMR env
