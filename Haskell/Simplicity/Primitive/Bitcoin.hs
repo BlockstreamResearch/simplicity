@@ -18,22 +18,21 @@ data Prim a b where
   LockTime :: Prim () Word32
   InputsHash :: Prim () Word256
   OutputsHash :: Prim () Word256
-  MaxInput :: Prim () Word64
+  NumInputs :: Prim () Word32
   TotalInputValue :: Prim () Word64
   CurrentPrevOutpoint :: Prim () (Word256,Word32)
   CurrentValue :: Prim () Word64
   CurrentSequence :: Prim () Word32
-  CurrentIndex :: Prim () Word64
-  InputPrevOutpoint :: Prim Word64 (Either () (Word256,Word32))
-  InputValue :: Prim Word64 (Either () Word64)
-  InputSequence :: Prim Word64 (Either () Word32)
-  MaxOutput :: Prim () Word32
+  CurrentIndex :: Prim () Word32
+  InputPrevOutpoint :: Prim Word32 (Either () (Word256,Word32))
+  InputValue :: Prim Word32 (Either () Word64)
+  InputSequence :: Prim Word32 (Either () Word32)
+  NumOutputs :: Prim () Word32
   TotalOutputValue :: Prim () Word64
   OutputValue :: Prim Word32 (Either () Word64)
   OutputScriptHash :: Prim Word32 (Either () Word256)
   ScriptCMR :: Prim () Word256
 -- Other possible ideas:
-  -- Fees :: Prim () Word64
   -- TxId :: Prim () Word256
 
 primPrefix :: String
@@ -45,7 +44,7 @@ primName Version = "version"
 primName LockTime = "lockTime"
 primName InputsHash = "inputsHash"
 primName OutputsHash = "outputsHash"
-primName MaxInput = "maxInput"
+primName NumInputs = "numInputs"
 primName TotalInputValue = "totalInputValue"
 primName CurrentPrevOutpoint = "currentPrevOutpoint"
 primName CurrentValue = "currentValue"
@@ -54,20 +53,20 @@ primName CurrentIndex = "currentIndex"
 primName InputPrevOutpoint = "inputPrevOutpoint"
 primName InputValue = "inputValue"
 primName InputSequence = "inputSequence"
-primName MaxOutput = "maxOutput"
+primName NumOutputs = "maxOutputs"
 primName TotalOutputValue = "totalOutputValue"
 primName OutputValue = "outputValue"
 primName OutputScriptHash = "outputScriptHash"
 primName ScriptCMR = "scriptCMR"
 
 data PrimEnv = PrimEnv { envTx :: SigTx
-                       , envIx :: Data.Word.Word64
+                       , envIx :: Data.Word.Word32
                        , envScriptCMR :: Hash256
                        , envInputsHash :: Hash256
                        , envOutputsHash :: Hash256
                        }
 
-primEnv :: SigTx -> Data.Word.Word64 -> Hash256 -> Maybe PrimEnv
+primEnv :: SigTx -> Data.Word.Word32 -> Hash256 -> Maybe PrimEnv
 primEnv tx ix scmr | cond = Just $ PrimEnv { envTx = tx
                                            , envIx = ix
                                            , envScriptCMR = scmr
@@ -101,8 +100,8 @@ primSem env = interpret
   cast :: Maybe a -> Either () a
   cast (Just x) = Right x
   cast Nothing = Left ()
-  atInput :: (SigTxInput -> a) -> Word64 -> Either () a
-  atInput f = cast . fmap f . lookupInput . fromInteger . fromWord64
+  atInput :: (SigTxInput -> a) -> Word32 -> Either () a
+  atInput f = cast . fmap f . lookupInput . fromInteger . fromWord32
   atOutput :: (TxOutput -> a) -> Word32 -> Either () a
   atOutput f = cast . fmap f . lookupOutput . fromInteger . fromWord32
   encodeOutpoint op = (toWord256 . integerHash256 $ opHash op, toWord32 . fromIntegral $ opIndex op)
@@ -110,16 +109,16 @@ primSem env = interpret
   interpret LockTime = const . return . toWord32 . toInteger $ sigTxLock tx
   interpret InputsHash = const . return . toWord256 . integerHash256 $ envInputsHash env
   interpret OutputsHash = const . return . toWord256 . integerHash256 $ envOutputsHash env
-  interpret MaxInput = const . return . toWord64 . toInteger $ maxInput
+  interpret NumInputs = const . return . toWord32 . toInteger $ 1 + maxInput
   interpret TotalInputValue = const . return . toWord64 . fromIntegral . sum $ sigTxiValue <$> elems (sigTxIn tx)
   interpret CurrentPrevOutpoint = const $ encodeOutpoint . sigTxiPreviousOutput <$> currentInput
   interpret CurrentValue = const $ toWord64 . toInteger . sigTxiValue <$> currentInput
   interpret CurrentSequence = const $ toWord32 . toInteger . sigTxiSequence <$> currentInput
-  interpret CurrentIndex = const . return . toWord64 . toInteger $ ix
+  interpret CurrentIndex = const . return . toWord32 . toInteger $ ix
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutput)
   interpret InputValue = return . (atInput $ toWord64 . toInteger . sigTxiValue)
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
-  interpret MaxOutput = const . return . toWord32 . toInteger $ maxOutput
+  interpret NumOutputs = const . return . toWord32 . toInteger $ 1 + maxOutput
   interpret TotalOutputValue = const . return . toWord64 . fromIntegral . sum $ txoValue <$> elems (sigTxOut tx)
   interpret OutputValue = return . (atOutput $ toWord64 . fromIntegral . txoValue)
   interpret OutputScriptHash = return . (atOutput $ toWord256 . integerHash256 . bslHash . txoScript)

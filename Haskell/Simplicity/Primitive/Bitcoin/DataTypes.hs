@@ -7,6 +7,7 @@ module Simplicity.Primitive.Bitcoin.DataTypes
   , SigTx, sigTxVersion, sigTxIn, sigTxOut, sigTxLock
   ) where
 
+import Control.Monad (guard)
 import Data.Array (Array)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
@@ -57,10 +58,20 @@ type Lock = Word32
 -- | A type for Bitcoin amounts measured in units of satoshi.
 type Value = Word64 -- bitcoin uses an Int64, but it doesn't really matter.
 
+moneyRange :: Value -> Bool
+moneyRange v = v <= 21000000 * 10^8
+
+getValue :: Get Value
+getValue = do
+  v <- getWord64le
+  guard $ moneyRange v
+  return v
+
 -- | An outpoint is an index into the TXO set.
 data Outpoint = Outpoint { opHash :: Hash256
                          , opIndex :: Word32
                          } deriving Show
+
 instance Serialize Outpoint where
   get = Outpoint <$> get <*> getWord32le
   put (Outpoint h i) = put h >> putWord32le i
@@ -74,7 +85,7 @@ data SigTxInput = SigTxInput { sigTxiPreviousOutput :: Outpoint
 
 {-
 instance Serialize SigTxInput where
-  get = SigTxInput <$> get <*> getWord64le <*> getWord32le
+  get = SigTxInput <$> get <*> getValue <*> getWord32le
   put (SigTxInput p v sq) = put p >> putWord64le v >> putWord32le sq
 -}
 
@@ -85,13 +96,13 @@ data TxOutput = TxOutput { txoValue :: Value
                          } deriving Show
 
 instance Serialize TxOutput where
-  get = TxOutput <$> getWord64le <*> getVarByteString
+  get = TxOutput <$> getValue <*> getVarByteString
   put (TxOutput v s) = putWord64le v >> putVarByteString s
 
 -- | The data type for transactions in the context of signatures.
 -- The data signed in a BIP 143 directly covers input values.
 data SigTx = SigTx { sigTxVersion :: Word32
-                   , sigTxIn :: Array Word64 SigTxInput
+                   , sigTxIn :: Array Word32 SigTxInput
                    , sigTxOut :: Array Word32 TxOutput
                    , sigTxLock :: Lock
                    } deriving Show

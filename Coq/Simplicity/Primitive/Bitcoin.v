@@ -48,8 +48,8 @@ Record sigTx : Set :=
  ; sigTxIn : list sigTxInput
  ; sigTxOut : list txOutput
  ; sigTxLock : lock
- ; sigTxInBounds : (0 < Zlength sigTxIn < Z.succ Int64.modulus)%Z
- ; sigTxOutBounds : (0 < Zlength sigTxOut < Z.succ Int.modulus)%Z
+ ; sigTxInBounds : (0 < Zlength sigTxIn < Int.modulus)%Z
+ ; sigTxOutBounds : (0 < Zlength sigTxOut < Int.modulus)%Z
  ; sigTxTotalInValue : Z := Z_sum (map (fun i => Int64.signed (sigTxiValue i)) sigTxIn)
  ; sigTxTotalOutValue : Z := Z_sum (map (fun i => Int64.signed (txoValue i)) sigTxOut)
  ; sigTxFee : Z := sigTxTotalOutValue - sigTxTotalInValue
@@ -104,16 +104,16 @@ Inductive prim : Ty -> Ty -> Set :=
 | LockTime : prim Unit Word32
 | InputsHash : prim Unit Word256
 | OutputsHash : prim Unit Word256
-| MaxInput : prim Unit Word64
+| NumInputs : prim Unit Word32
 | TotalInputValue : prim Unit Word64
 | CurrentPrevOutpoint : prim Unit (Prod Word256 Word32)
 | CurrentValue : prim Unit Word64
 | CurrentSequence : prim Unit Word32
-| CurrentIndex : prim Unit Word64
-| InputPrevOutpoint : prim Word64 (Sum Unit (Prod Word256 Word32))
-| InputValue : prim Word64 (Sum Unit Word64)
-| InputSequence : prim Word64 (Sum Unit Word32)
-| MaxOutput : prim Unit Word32
+| CurrentIndex : prim Unit Word32
+| InputPrevOutpoint : prim Word32 (Sum Unit (Prod Word256 Word32))
+| InputValue : prim Word32 (Sum Unit Word64)
+| InputSequence : prim Word32 (Sum Unit Word32)
+| NumOutputs : prim Unit Word32
 | TotalOutputValue : prim Unit Word64
 | OutputValue : prim Word32 (Sum Unit Word64)
 | OutputScriptHash : prim Word32 (Sum Unit Word256)
@@ -128,7 +128,7 @@ match p with
 | LockTime => "locktime"
 | InputsHash => "inputsHash"
 | OutputsHash => "outputsHash"
-| MaxInput => "maxInput"
+| NumInputs => "numInputs"
 | TotalInputValue => "totalInputValue"
 | CurrentPrevOutpoint => "currentPrevOutpoint"
 | CurrentValue => "currentValue"
@@ -137,7 +137,7 @@ match p with
 | InputPrevOutpoint => "inputPrevOutpoint"
 | InputValue => "inputValue"
 | InputSequence => "inputSequence"
-| MaxOutput => "maxOutput"
+| NumOutputs => "numOutputs"
 | TotalOutputValue => "totalOutputValue"
 | OutputValue => "outputValue"
 | OutputScriptHash => "outputScriptHash"
@@ -182,7 +182,7 @@ Definition sem (e : env) {A B} (p : t A B) : A -> option B :=
 let tx := envTx e in
 let ix := envIx e in
 let currentInput {A : Ty} (f : sigTxInput -> A) := option_map f (nth_error (sigTxIn tx) ix) in
-let atInput {A : Ty} (f : sigTxInput -> A) (i : Word64) :=
+let atInput {A : Ty} (f : sigTxInput -> A) (i : Word32) :=
   Some (cast (option_map f (nth_error (sigTxIn tx) (Z.to_nat (toZ i))))) in
 let atOutput {A : Ty} (f : txOutput -> A) (i : Word32) :=
   Some (cast (option_map f (nth_error (sigTxOut tx) (Z.to_nat (toZ i))))) in
@@ -195,7 +195,7 @@ match p with
 | LockTime => fun _ => Some (fromZ (Int.unsigned (sigTxLock tx)))
 | InputsHash => fun _ => Some (repr_Hash_inv inputsHash)
 | OutputsHash => fun _ => Some (repr_Hash_inv outputsHash)
-| MaxInput => fun _ => Some (fromZ (Zpred (Zlength (sigTxIn tx))))
+| NumInputs => fun _ => Some (fromZ (Zlength (sigTxIn tx)))
 | TotalInputValue => fun _ => Some (fromZ (sigTxTotalInValue tx))
 | CurrentPrevOutpoint => fun _ => currentInput (fun txi => encodeOutpoint (sigTxiPreviousOutpoint txi))
 | CurrentValue => fun _ => currentInput (fun txi => fromZ (Int64.signed (sigTxiValue txi)))
@@ -204,7 +204,7 @@ match p with
 | InputPrevOutpoint => atInput (fun txi => encodeOutpoint (sigTxiPreviousOutpoint txi))
 | InputValue => atInput (fun txi => fromZ (Int64.signed (sigTxiValue txi)))
 | InputSequence => atInput (fun txi => fromZ (Int.unsigned (sigTxiSequence txi)))
-| MaxOutput => fun _ => Some (fromZ (Zpred (Zlength (sigTxOut tx))))
+| NumOutputs => fun _ => Some (fromZ (Zlength (sigTxOut tx)))
 | TotalOutputValue => fun _ => Some (fromZ (sigTxTotalOutValue tx))
 | OutputValue => atOutput (fun txout => fromZ (Int64.signed (txoValue txout)))
 | OutputScriptHash => atOutput (fun txout => repr_Hash_inv (byteStringHash (txoScript txout)))
