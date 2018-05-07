@@ -228,8 +228,6 @@ Definition FunSem_mixin : Core.class Arrow :=
    ; Core.drop A B C t ab := t (snd ab)
    |}.
 
-Canonical Structure CoreFunSem : Core.Algebra := Core.Pack Arrow FunSem_mixin.
-
 Definition CoreSem_mixin (M : CIMonad) : Core.class (Kleisli M) :=
   {| Core.iden A a := eta a
    ; Core.comp A B C s t (a : A) := (t <-< s) a
@@ -246,10 +244,10 @@ Definition CoreSem_mixin (M : CIMonad) : Core.class (Kleisli M) :=
    ; Core.drop A B C t ab := t (snd ab)
    |}.
 
+End CoreSem.
+Canonical Structure CoreFunSem : Core.Algebra := Core.Pack Arrow FunSem_mixin.
 Canonical Structure CoreSem (M : CIMonad) : Core.Algebra :=
   Core.Pack (Kleisli M) (CoreSem_mixin M).
-
-End CoreSem.
 
 Notation "|[ x ]|^ M" := (x : Kleisli M _ _) (at level 0, M at level 0) : semantic_scope.
 Notation "|[ x ]|" := (x : Arrow _ _) : semantic_scope.
@@ -428,17 +426,16 @@ Definition AssertionSem_mixin (M : CIMonadZero) : Assertion.mixin (Kleisli M) :=
    ; Assertion.fail A B _ := kzero
    |}.
 
+End AssertionSem.
 Canonical Structure AssertionSem (M : CIMonadZero) : Assertion.Algebra :=
   Assertion.Pack (Kleisli M) (AssertionSem_mixin M).
 
-End AssertionSem.
-
-Lemma AssertionSem_initial {M : CIMonadZero} {A B} {x : forall {alg : Assertion.Algebra}, alg A B} (Hx : Assertion.Parametric (@x)) :
-  forall (a : A), |[ x ]|^M a = optionZero (|[ x ]|^option a).
+Lemma AssertionSem_initial {M : CIMonadZero} {A B} {t : forall {alg : Assertion.Algebra}, alg A B} (Ht : Assertion.Parametric (@t)) :
+  forall (a : A), |[ t ]|^M a = optionZero (|[ t ]|^option a).
 Proof.
 set (R := fun A B (x : AssertionSem M A B) (y : AssertionSem option_Monad_Zero A B) =>
           forall a : A, x a = optionZero (y a)).
-refine (Hx _ _ (Assertion.Parametric.Pack (_ : Assertion.Parametric.class R)));
+refine (Ht _ _ (Assertion.Parametric.Pack (_ : Assertion.Parametric.class R)));
 repeat constructor; unfold R; clear; try reflexivity; cbn.
 - intros A B C s1 s2 t1 t2 Hs Ht a.
   symmetry; rewrite kleisli_comp_def.
@@ -565,4 +562,94 @@ do 2 constructor; unfold R; clear; intros; cbn.
 - apply Ht.
 - apply Ht.
 - reflexivity.
+Qed.
+
+Module AssertionWitness.
+
+Record class (term : Ty -> Ty -> Type) := Class
+{ base :> Assertion.class term
+; ext  :> Witness.mixin term
+}.
+
+Definition base2 term (c : class term) : Witness.class term := Witness.Class (base c) (ext c).
+
+Structure Algebra := _Pack { domain :> Ty -> Ty -> Type; class_of : class domain }.
+
+Definition packager dom :=
+ [find a  | Assertion.domain a ~ dom | "is not a Assertion algebra" ]
+ [find ac | Assertion.class_of a ~ ac ]
+ [find w  | Witness.domain w ~ dom | "is not a Witness algebra" ]
+ [find wm | Witness.ext (Witness.class_of w) ~ wm ]
+ @_Pack dom (@Class dom ac wm).
+
+Notation Pack dom := (@packager dom _ id _ id _ id _ id).
+
+Canonical Structure toCore (alg : Algebra) : Core.Algebra := Core.Pack alg (class_of alg).
+Canonical Structure toAssertion (alg : Algebra) : Assertion.Algebra := Assertion.Pack alg (class_of alg).
+Canonical Structure toWitness (alg : Algebra) : Witness.Algebra := Witness.Pack alg (class_of alg).
+
+Module Parametric.
+
+Record class {alg1 alg2 : Algebra} (rel : forall {A B}, alg1 A B -> alg2 A B -> Prop) :=
+ { base :> Assertion.Parametric.class (@rel)
+ ; ext :> Witness.Parametric.mixin (@rel)
+ }.
+
+Record Rel (alg1 alg2 : Algebra) := Pack
+ { rel :> forall {A B}, alg1 A B -> alg2 A B -> Prop
+ ; class_of : class (@rel)
+ }.
+
+End Parametric.
+
+Section Reynolds.
+Local Coercion Parametric.rel : Parametric.Rel >-> Funclass.
+
+Definition Reynolds {A B} (x y : forall (alg : Algebra), alg A B) : Prop :=
+  forall alg1 alg2 (R : Parametric.Rel alg1 alg2), R A B (x alg1) (y alg2).
+
+Definition Parametric {A B} (x : forall (alg : Algebra), alg A B) : Prop := Reynolds x x.
+End Reynolds.
+
+End AssertionWitness.
+Coercion AssertionWitness.domain : AssertionWitness.Algebra >-> Funclass.
+Coercion AssertionWitness.toAssertion : AssertionWitness.Algebra >-> Assertion.Algebra.
+Coercion AssertionWitness.toWitness : AssertionWitness.Algebra >-> Witness.Algebra.
+Coercion AssertionWitness.base : AssertionWitness.class >-> Assertion.class.
+Coercion AssertionWitness.base2 : AssertionWitness.class >-> Witness.class.
+Coercion AssertionWitness.Parametric.rel : AssertionWitness.Parametric.Rel >-> Funclass.
+Canonical Structure AssertionWitness.toCore.
+Canonical Structure AssertionWitness.toAssertion.
+Canonical Structure AssertionWitness.toWitness.
+
+Canonical Structure AssertionWitnessSem (M : CIMonadZero) : AssertionWitness.Algebra :=
+  AssertionWitness.Pack (Kleisli M).
+
+Lemma AssertionWitnessSem_initial {M : CIMonadZero} {A B} {t : forall {alg : AssertionWitness.Algebra}, alg A B} (Ht : AssertionWitness.Parametric (@t)) :
+  forall (a : A), |[ t ]|^M a = optionZero (|[ t ]|^option a).
+Proof.
+set (R := fun A B (x : AssertionSem M A B) (y : AssertionSem option_Monad_Zero A B) =>
+          forall a : A, x a = optionZero (y a)).
+refine (Ht _ _ (AssertionWitness.Parametric.Pack (_ : AssertionWitness.Parametric.class R))).
+repeat constructor; unfold R; clear; try reflexivity; cbn.
+- intros A B C s1 s2 t1 t2 Hs Ht a.
+  symmetry; rewrite kleisli_comp_def.
+  rewrite optionZero_mu, optionZero_natural, map_comp, <- optionZero_natural, <- Hs.
+  erewrite map_ext;[|intros;symmetry;apply Ht].
+  rewrite <- kleisli_comp_def.
+  reflexivity.
+- intros A B C t1 t2 Ht a.
+  rewrite Ht; apply optionZero_natural.
+- intros A B C t1 t2 Ht a.
+  rewrite Ht; apply optionZero_natural.
+- intros A B C D s1 s2 t1 t2 Hs Ht [[a|b] c]; [apply Hs|apply Ht].
+- intros A B C s1 s2 t1 t2 Hs Ht a.
+  rewrite Hs, Ht.
+  symmetry; apply optionZero_phi.
+- intros A B C t1 t2 Ht a.
+  apply Ht.
+- intros A B C t1 t2 Ht a.
+  apply Ht.
+- intros A B C D s1 s2 h Hs [[a|b] c]; [apply Hs|reflexivity].
+- intros A B C D h t1 t2 Ht [[a|b] c]; [reflexivity|apply Ht].
 Qed.

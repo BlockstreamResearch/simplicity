@@ -80,3 +80,6 @@ Canonical Structure CommitmentRoot_Assertion_alg : Assertion.Algebra :=
 
 Canonical Structure CommitmentRoot_Witness_alg : Witness.Algebra :=
   Witness.Pack CommitmentRoot CommitmentRoot_Witness_mixin.
+
+Canonical Structure CommitmentRoot_AssertionWitness_alg : AssertionWitness.Algebra :=
+  AssertionWitness.Pack CommitmentRoot.
