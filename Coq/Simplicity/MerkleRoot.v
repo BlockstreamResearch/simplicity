@@ -22,12 +22,12 @@ Local Fixpoint concat (sep : string) (ls : list string) :=
   | cons x xs => (x ++ sep ++ concat sep xs)%string
 end.
 
-Definition tag (ws : list string) := 
+Definition tag (ws : list string) :=
  let str := concat (String "031" EmptyString) ws in
    fun (_precondition : length str - 55 = 0) => normalizeHash (stringHash str).
 
 Definition prefix := ["Simplicity"%string].
-Definition commitmentPrefix := prefix ++ ["Commitment"%string]. 
+Definition commitmentPrefix := prefix ++ ["Commitment"%string].
 
 Notation commitmentTag tg := (tag (commitmentPrefix ++ [tg%string]) refl_equal).
 
@@ -43,6 +43,7 @@ Let pairTag := Eval vm_compute in commitmentTag "pair".
 Let takeTag := Eval vm_compute in commitmentTag "take".
 Let dropTag := Eval vm_compute in commitmentTag "drop".
 Let failTag := Eval vm_compute in commitmentTag "fail".
+Let witnessTag := Eval vm_compute in commitmentTag "witness".
 
 Definition CommitmentRoot (A B:Ty) := hash256.
 
@@ -60,11 +61,14 @@ Definition CommitmentRoot_Core_mixin : Core.class CommitmentRoot :=
   ; Core.drop A B C ht := compress_half dropTag ht
   |}.
 
-Definition CommitmentRoot_Assertion_mixin : Assertion.mixin CommitmentRoot:= 
+Definition CommitmentRoot_Assertion_mixin : Assertion.mixin CommitmentRoot :=
  {| Assertion.assertl A B C D hs ht := compress caseTag hs ht
   ; Assertion.assertr A B C D hs ht := compress caseTag hs ht
   ; Assertion.fail A B h := compress failTag (fst h) (snd h)
   |}.
+
+Definition CommitmentRoot_Witness_mixin : Witness.mixin CommitmentRoot :=
+ {| Witness.witness A B b := witnessTag |}.
 
 End CommitmentRoot.
 
@@ -73,3 +77,6 @@ Canonical Structure CommitmentRoot_Core_alg : Core.Algebra :=
 
 Canonical Structure CommitmentRoot_Assertion_alg : Assertion.Algebra :=
   Assertion.Pack CommitmentRoot CommitmentRoot_Assertion_mixin.
+
+Canonical Structure CommitmentRoot_Witness_alg : Witness.Algebra :=
+  Witness.Pack CommitmentRoot CommitmentRoot_Witness_mixin.

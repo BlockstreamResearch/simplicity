@@ -252,7 +252,7 @@ Canonical Structure CoreSem (M : CIMonad) : Core.Algebra :=
 End CoreSem.
 
 Notation "|[ x ]|^ M" := (x : Kleisli M _ _) (at level 0, M at level 0) : semantic_scope.
-Notation "|[ x ]|" := (x : Core.domain CoreFunSem _ _) : semantic_scope.
+Notation "|[ x ]|" := (x : Arrow _ _) : semantic_scope.
 
 Local Open Scope semantic_scope.
 Local Open Scope monad_scope.
@@ -336,7 +336,7 @@ Definition packager dom (a0 : mixin dom) :=
  [find a  | a ~ a0 | "is not the right mixin" ]
  @_Pack dom (@Class dom cc a).
 
-Notation Pack dom a := (@packager dom a _ id _ id _ id).  
+Notation Pack dom a := (@packager dom a _ id _ id _ id).
 
 Canonical Structure toCore (alg : Algebra) : Core.Algebra := Core.Pack alg (class_of alg).
 
@@ -460,4 +460,109 @@ repeat constructor; unfold R; clear; try reflexivity; cbn.
   apply Ht.
 - intros A B C D s1 s2 h Hs [[a|b] c]; [apply Hs|reflexivity].
 - intros A B C D h t1 t2 Ht [[a|b] c]; [reflexivity|apply Ht].
+Qed.
+
+Module Witness.
+
+Record mixin (term : Ty -> Ty -> Type) := Mixin
+{ witness : forall {A B : Ty}, B -> term A B }.
+
+Record class (term : Ty -> Ty -> Type) := Class
+{ base :> Core.class term
+; ext  :> mixin term
+}.
+
+Structure Algebra := _Pack { domain :> Ty -> Ty -> Type; class_of : class domain }.
+
+Definition packager dom (a0 : mixin dom) :=
+ [find c  | Core.domain c ~ dom | "is not a Core algebra" ]
+ [find cc | Core.class_of c ~ cc ]
+ [find a  | a ~ a0 | "is not the right mixin" ]
+ @_Pack dom (@Class dom cc a).
+
+Notation Pack dom a := (@packager dom a _ id _ id _ id).
+
+Canonical Structure toCore (alg : Algebra) : Core.Algebra := Core.Pack alg (class_of alg).
+
+Module Combinators.
+
+Definition witness {A B : Ty} {alg : Algebra} : B -> alg A B := witness (class_of alg).
+
+End Combinators.
+
+Module Parametric.
+Import Combinators.
+
+Record mixin {alg1 alg2 : Algebra} (rel : forall {A B}, alg1 A B -> alg2 A B -> Prop) :=
+ { _ : forall A B b, rel (witness b) (@witness A B _ b) }.
+
+Record class {alg1 alg2 : Algebra} (rel : forall {A B}, alg1 A B -> alg2 A B -> Prop) :=
+ { base :> Core.Parametric.class (@rel)
+ ; ext :> mixin (@rel)
+ }.
+
+Record Rel (alg1 alg2 : Algebra) := Pack
+ { rel :> forall {A B}, alg1 A B -> alg2 A B -> Prop
+ ; class_of : class (@rel)
+ }.
+
+End Parametric.
+
+Section Reynolds.
+Local Coercion Parametric.rel : Parametric.Rel >-> Funclass.
+
+Definition Reynolds {A B} (x y : forall (alg : Algebra), alg A B) : Prop :=
+  forall alg1 alg2 (R : Parametric.Rel alg1 alg2), R A B (x alg1) (y alg2).
+
+Definition Parametric {A B} (x : forall (alg : Algebra), alg A B) : Prop := Reynolds x x.
+End Reynolds.
+
+End Witness.
+Export Witness.Combinators.
+Coercion Witness.domain : Witness.Algebra >-> Funclass.
+Coercion Witness.toCore : Witness.Algebra >-> Core.Algebra.
+Coercion Witness.base : Witness.class >-> Core.class.
+Coercion Witness.ext : Witness.class >-> Witness.mixin.
+Coercion Witness.Parametric.rel : Witness.Parametric.Rel >-> Funclass.
+Canonical Structure Witness.toCore.
+
+Lemma witness_Parametric {alg1 alg2 : Witness.Algebra} (R : Witness.Parametric.Rel alg1 alg2)
+  {A B} b : R A B (witness b) (witness b).
+Proof.
+destruct R as [R [Rb []]].
+cbn; auto.
+Qed.
+Hint Immediate witness_Parametric : parametricity.
+
+Section WitnessSem.
+
+Definition WitnessFunSem_mixin : Witness.mixin Arrow :=
+  {| Witness.witness A B b a := b |}.
+
+Definition WitnessSem_mixin (M : CIMonad) : Witness.mixin (Kleisli M) :=
+  {| Witness.witness A B b a := eta b |}.
+
+End WitnessSem.
+Canonical Structure WitnessFunSem : Witness.Algebra := Witness.Pack Arrow WitnessFunSem_mixin.
+Canonical Structure WitnessSem (M : CIMonad) : Witness.Algebra :=
+  Witness.Pack (Kleisli M) (WitnessSem_mixin M).
+
+Lemma WitnessSem_initial {M : CIMonad} {A B} {t : forall {alg : Witness.Algebra}, alg A B} (Ht : Witness.Parametric (@t)) :
+  forall a, |[ t ]|^M a = eta (|[ t ]| a).
+Proof.
+set (R A B (x : Kleisli M A B) (y : Arrow A B) := forall a, |[ x ]|^M a = eta (|[ y ]| a)).
+refine (Ht _ _ (Witness.Parametric.Pack (_ : Witness.Parametric.class R))).
+do 2 constructor; unfold R; clear; intros; cbn.
+- reflexivity.
+- rewrite kleisli_comp_def, Hs, <- kleisli_comp_def.
+  rewrite kleisli_compr; apply Ht.
+- reflexivity.
+- rewrite Ht; apply eta_natural.
+- rewrite Ht; apply eta_natural.
+- destruct a as [[a|b] c]; [apply Hs|apply Ht].
+- rewrite Hs, Ht.
+  apply phi_eta.
+- apply Ht.
+- apply Ht.
+- reflexivity.
 Qed.
