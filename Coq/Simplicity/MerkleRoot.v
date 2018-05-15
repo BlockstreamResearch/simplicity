@@ -27,11 +27,32 @@ Definition tag (ws : list string) :=
    fun (_precondition : length str - 55 = 0) => normalizeHash (stringHash str).
 
 Definition prefix := ["Simplicity"%string].
+Definition typePrefix := prefix ++ ["Type"%string].
 Definition commitmentPrefix := prefix ++ ["Commitment"%string].
+Definition witnessPrefix := prefix ++ ["Witness"%string].
 
-Notation commitmentTag tg := (tag (commitmentPrefix ++ [tg%string]) refl_equal).
+Section TypeRoot.
+
+Notation typeTag tg := (tag (typePrefix ++ [tg%string]) refl_equal).
+
+Let unitTag := Eval vm_compute in typeTag "unit".
+Let sumTag := Eval vm_compute in typeTag "sum".
+Let prodTag := Eval vm_compute in typeTag "prod".
+
+Definition typeRootAlg : tyAlg hash256 :=
+{| unitA := unitTag
+ ; sumA  := compress sumTag
+ ; prodA := compress prodTag
+ |}.
+
+End TypeRoot.
+
+(* :TODO: memoize the computation of type roots. *)
+Definition typeRoot : Ty -> hash256 := tyCata typeRootAlg.
 
 Section CommitmentRoot.
+
+Notation commitmentTag tg := (tag (commitmentPrefix ++ [tg%string]) refl_equal).
 
 Let idenTag := Eval vm_compute in commitmentTag "iden".
 Let compTag := Eval vm_compute in commitmentTag "comp".
@@ -83,3 +104,64 @@ Canonical Structure CommitmentRoot_Witness_alg : Witness.Algebra :=
 
 Canonical Structure CommitmentRoot_AssertionWitness_alg : AssertionWitness.Algebra :=
   AssertionWitness.Pack CommitmentRoot.
+
+Section WitnessRoot.
+
+Notation witnessTag tg := (tag (witnessPrefix ++ [tg%string]) refl_equal).
+
+Let idenTag := Eval vm_compute in witnessTag "iden".
+Let compTag := Eval vm_compute in witnessTag "comp".
+Let unitTag := Eval vm_compute in witnessTag "unit".
+Let injlTag := Eval vm_compute in witnessTag "injl".
+Let injrTag := Eval vm_compute in witnessTag "injr".
+Let caseTag := Eval vm_compute in witnessTag "case".
+Let pairTag := Eval vm_compute in witnessTag "pair".
+Let takeTag := Eval vm_compute in witnessTag "take".
+Let dropTag := Eval vm_compute in witnessTag "drop".
+Let assertlTag := Eval vm_compute in witnessTag "assertl".
+Let assertrTag := Eval vm_compute in witnessTag "assertr".
+Let failTag := Eval vm_compute in witnessTag "fail".
+
+Definition WitnessRoot (A B:Ty) := hash256.
+
+Definition witnessRoot {A B} (x : WitnessRoot A B) : hash256 := x.
+
+Definition WitnessRoot_Core_mixin : Core.class WitnessRoot :=
+ {| Core.iden A := compress_half idenTag (typeRoot A)
+  ; Core.comp A B C hs ht := compress (compress (compress_half compTag (typeRoot A))
+                                                (typeRoot B) (typeRoot C))
+                                       hs ht
+  ; Core.unit A := compress_half unitTag (typeRoot A)
+  ; Core.injl A B C ht := compress (compress injlTag (typeRoot A) (typeRoot B))
+                                   (typeRoot C) ht
+  ; Core.injr A B C ht := compress (compress injrTag (typeRoot A) (typeRoot B))
+                                   (typeRoot C) ht
+  ; Core.case A B C D hs ht := compress (compress (compress caseTag (typeRoot A) (typeRoot B))
+                                                  (typeRoot C) (typeRoot D))
+                                        hs ht
+  ; Core.pair A B C hs ht := compress (compress (compress_half pairTag (typeRoot A))
+                                                (typeRoot B) (typeRoot C))
+                                      hs ht
+  ; Core.take A B C ht := compress (compress takeTag (typeRoot A) (typeRoot B))
+                                   (typeRoot C) ht
+  ; Core.drop A B C ht := compress (compress dropTag (typeRoot A) (typeRoot B))
+                                   (typeRoot C) ht
+  |}.
+
+Definition WitnessRoot_Assertion_mixin : Assertion.mixin WitnessRoot :=
+ {| Assertion.assertl A B C D hs ht := compress (compress (compress assertlTag (typeRoot A) (typeRoot B))
+                                                          (typeRoot C) (typeRoot D))
+                                                hs ht
+  ; Assertion.assertr A B C D hs ht := compress (compress (compress assertrTag (typeRoot A) (typeRoot B))
+                                                          (typeRoot C) (typeRoot D))
+                                                hs ht
+  ; Assertion.fail A B h := compress failTag (fst h) (snd h)
+  |}.
+
+End WitnessRoot.
+
+Canonical Structure WitnessRoot_Core_alg : Core.Algebra :=
+  Core.Pack WitnessRoot WitnessRoot_Core_mixin.
+
+Canonical Structure WitnessRoot_Assertion_alg : Assertion.Algebra :=
+  Assertion.Pack WitnessRoot WitnessRoot_Assertion_mixin.

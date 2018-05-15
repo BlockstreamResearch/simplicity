@@ -87,8 +87,9 @@ instance Assert CommitmentRoot where
 instance Primitive CommitmentRoot where
   primitive = commit . primTag . primName
 
+-- Jets commit to their types, so we use WitnessRoot here.
 instance Jet CommitmentRoot where
-  jet t = CommitmentRoot . witnessRoot $ jet t
+  jet (WitnessRoot t) = commit $ compressHalf jetTag t
 
 instance Witness CommitmentRoot where
   witness _ = commit $ commitmentTag "witness"
@@ -114,9 +115,9 @@ instance Core WitnessRoot where
 
   comp wt@(WitnessRoot t) ws@(WitnessRoot s) = result
    where
-    result = observe $ compressHalf (compress (compress (witnessTag "comp") (t,s))
-                                              (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
-                                    (typeRootR (reifyProxy proxyC))
+    result = observe $ compress (compress (compressHalf (witnessTag "comp") (typeRootR (reifyProxy proxyA)))
+                                          (typeRootR (reifyProxy proxyB), (typeRootR (reifyProxy proxyC))))
+                                (t,s)
     proxy :: proxy a b -> proxy b c -> (Proxy a, Proxy b, Proxy c)
     proxy _ _ = (Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC) = proxy wt ws
@@ -127,50 +128,50 @@ instance Core WitnessRoot where
 
   injl (WitnessRoot t) = result
    where
-    result = observe $ compress (compress (witnessTag "injl") (t,typeRootR (reifyProxy proxyA)))
-                                (typeRootR (reifyProxy proxyB), typeRootR (reifyProxy proxyC))
+    result = observe $ compress (compress (witnessTag "injl") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
+                                (typeRootR (reifyProxy proxyC), t)
     proxy :: proxy a (Either b c) -> (Proxy a, Proxy b, Proxy c)
     proxy _ = (Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC) = proxy result
 
   injr (WitnessRoot t) = result
    where
-    result = observe $ compress (compress (witnessTag "injr") (t,typeRootR (reifyProxy proxyA)))
-                                (typeRootR (reifyProxy proxyB), typeRootR (reifyProxy proxyC))
+    result = observe $ compress (compress (witnessTag "injr") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
+                                (typeRootR (reifyProxy proxyC), t)
     proxy :: proxy a (Either b c) -> (Proxy a, Proxy b, Proxy c)
     proxy _ = (Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC) = proxy result
 
   match (WitnessRoot t) (WitnessRoot s) = result
    where
-    result = observe $ compress (compress (compress (witnessTag "case") (t,s))
-                                          (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
-                                (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD))
+    result = observe $ compress (compress (compress (witnessTag "case") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
+                                          (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD)))
+                                (t,s)
     proxy :: proxy ((Either a b), c) d -> (Proxy a, Proxy b, Proxy c, Proxy d)
     proxy _ = (Proxy, Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC, proxyD) = proxy result
 
   pair (WitnessRoot t) (WitnessRoot s) = result
    where
-    result = observe $ compressHalf (compress (compress (witnessTag "pair") (t,s))
-                                              (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
-                                    (typeRootR (reifyProxy proxyC))
+    result = observe $ compress (compress (compressHalf (witnessTag "pair") (typeRootR (reifyProxy proxyA)))
+                                          (typeRootR (reifyProxy proxyB), (typeRootR (reifyProxy proxyC))))
+                                (t,s)
     proxy :: proxy a (b,c) -> (Proxy a, Proxy b, Proxy c)
     proxy _ = (Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC) = proxy result
 
   take (WitnessRoot t) = result
    where
-    result = observe $ compress (compress (witnessTag "take") (t,typeRootR (reifyProxy proxyA)))
-                                (typeRootR (reifyProxy proxyB), typeRootR (reifyProxy proxyC))
+    result = observe $ compress (compress (witnessTag "take") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
+                                (typeRootR (reifyProxy proxyC), t)
     proxy :: proxy (a,b) c -> (Proxy a, Proxy b, Proxy c)
     proxy _ = (Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC) = proxy result
 
   drop (WitnessRoot t) = result
    where
-    result = observe $ compress (compress (witnessTag "drop") (t,typeRootR (reifyProxy proxyA)))
-                                (typeRootR (reifyProxy proxyB), typeRootR (reifyProxy proxyC))
+    result = observe $ compress (compress (witnessTag "drop") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
+                                (typeRootR (reifyProxy proxyC), t)
     proxy :: proxy (a,b) c -> (Proxy a, Proxy b, Proxy c)
     proxy _ = (Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC) = proxy result
@@ -178,18 +179,18 @@ instance Core WitnessRoot where
 instance Assert WitnessRoot where
   assertl (WitnessRoot t) s = result
    where
-    result = observe $ compress (compress (compress (witnessTag "assertl") (t, s))
-                                          (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
-                                (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD))
+    result = observe $ compress (compress (compress (witnessTag "assertl") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
+                                          (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD)))
+                                (t,s)
     proxy :: proxy ((Either a b), c) d -> (Proxy a, Proxy b, Proxy c, Proxy d)
     proxy _ = (Proxy, Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC, proxyD) = proxy result
 
   assertr t (WitnessRoot s) = result
    where
-    result = observe $ compress (compress (compress (witnessTag "assertr") (t, s))
-                                          (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
-                                (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD))
+    result = observe $ compress (compress (compress (witnessTag "assertr") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
+                                          (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD)))
+                                (t,s)
     proxy :: proxy ((Either a b), c) d -> (Proxy a, Proxy b, Proxy c, Proxy d)
     proxy _ = (Proxy, Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC, proxyD) = proxy result
