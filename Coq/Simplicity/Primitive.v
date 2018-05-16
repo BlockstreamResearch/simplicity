@@ -13,6 +13,7 @@ Set Implicit Arguments.
 Import ListNotations.
 
 Definition primitivePrefix primName := (MerkleRoot.prefix ++ ["Primitive"%string; primName])%list.
+Definition jetTag := Eval vm_compute in tag (MerkleRoot.prefix ++ ["Jet"%string]) refl_equal.
 
 Module Type PrimitiveSig.
 
@@ -24,7 +25,9 @@ Parameter sem : env -> forall {A B}, t A B -> A -> option B.
 
 End PrimitiveSig.
 
-Module Primitive (Prim : PrimitiveSig).
+Module PrimitiveModule (Prim : PrimitiveSig).
+
+Module Primitive.
 
 Record mixin (term : Ty -> Ty -> Type) := Mixin
 { prim : forall {A B}, Prim.t A B -> term A B
@@ -119,6 +122,10 @@ Canonical Structure AssertionPrimSem (M : CIMonadZero) : Assertion.Algebra :=
   Assertion.Pack (primSem M) (AssertionSem_mixin (ReaderT_CIMonadZero Prim.env M)).
 Canonical Structure PrimitivePrimSem (M : CIMonadZero) : Algebra :=
   Pack (primSem M) (PrimSem_mixin M).
+Canonical Structure WitnessPrimSem (M : CIMonad) : Witness.Algebra :=
+  Witness.Pack (primSem M) (WitnessSem_mixin (ReaderT_CIMonad Prim.env M)).
+Canonical Structure AssertionWitnessPrimSem (M : CIMonadZero) : AssertionWitness.Algebra :=
+  AssertionWitness.Pack (primSem M).
 
 Definition CommitmentRoot_Primitive_mixin : Primitive.mixin CommitmentRoot :=
  {| Primitive.prim A B p := Prim.tag p
@@ -137,12 +144,9 @@ Canonical Structure WitnessRoot_Primitive_alg : Algebra :=
 End Theory.
 
 End Primitive.
+Export Primitive.Theory.
 
-Definition jetTag := Eval vm_compute in tag (MerkleRoot.prefix ++ ["Jet"%string]) refl_equal.
-
-Module Jet (Prim : PrimitiveSig).
-Module Primitive := Primitive Prim.
-Import Primitive.Theory.
+Module Jet.
 
 Record mixin (term : Ty -> Ty -> Type) := Mixin
 { jet : forall {A B} (t : forall (term : Primitive.Algebra), term A B),
@@ -218,7 +222,9 @@ Definition Parametric {A B} (x : forall (alg : Algebra), alg A B) : Prop := Reyn
 End Reynolds.
 
 Module Theory.
+Export Primitive.Theory.
 Export Combinators.
+
 Coercion Parametric.rel : Parametric.Rel >-> Funclass.
 
 Lemma jet_Parametric {alg1 alg2 : Algebra} (R : Parametric.Rel alg1 alg2)
@@ -232,7 +238,7 @@ Hint Resolve jet_Parametric : parametricity.
 Definition PrimSem_jet_mixin (M : CIMonadZero) : mixin (primSem M) :=
   {| Jet.jet A B t p := t (PrimitivePrimSem M) |}.
 
-Canonical Structure PrimitivePrimSem (M : CIMonadZero) : Algebra :=
+Canonical Structure JetPrimSem (M : CIMonadZero) : Algebra :=
   Pack (primSem M) (PrimSem_jet_mixin M).
 
 Definition CommitmentRoot_Jet_mixin : Jet.mixin CommitmentRoot :=
@@ -251,3 +257,92 @@ Canonical Structure WitenssRoot_Jet_alg : Algebra :=
 
 End Theory.
 End Jet.
+Export Jet.Theory.
+
+Module FullSimplicity.
+
+Record class (term : Ty -> Ty -> Type) := Class
+{ base : Jet.class term
+; ext  : Witness.mixin term
+}.
+Definition base2 term (c : class term) : AssertionWitness.class term :=
+  AssertionWitness.Class (base c) (ext c).
+
+Structure Algebra := _Pack { domain : Ty -> Ty -> Type; class_of : class domain }.
+
+Definition packager dom :=
+ [find j  | Jet.domain j ~ dom | "is not a Jet algebra" ]
+ [find jc | Jet.class_of j ~ jc ]
+ [find aw  | AssertionWitness.domain aw ~ dom | "is not a AssertionWitness algebra" ]
+ [find awm | AssertionWitness.ext (AssertionWitness.class_of aw) ~ awm ]
+ @_Pack dom (@Class dom jc awm).
+
+Notation Pack dom := (@packager dom _ id _ id _ id _ id).
+
+Module Coercions.
+Coercion domain : Algebra >-> Funclass.
+Coercion base : class >-> Jet.class.
+Coercion base2 : class >-> AssertionWitness.class.
+End Coercions.
+
+Module CanonicalStructures.
+Export Coercions.
+
+Canonical Structure toCore (alg : Algebra) : Core.Algebra :=
+  Core.Pack alg (class_of alg).
+Canonical Structure toAssertion (alg : Algebra) : Assertion.Algebra :=
+  Assertion.Pack alg (class_of alg).
+Canonical Structure toPrimitive (alg : Algebra) : Primitive.Algebra :=
+  Primitive.Pack alg (class_of alg).
+Canonical Structure toJet (alg : Algebra) : Jet.Algebra :=
+  Jet.Pack alg (class_of alg).
+Canonical Structure toWitiness (alg : Algebra) : Witness.Algebra :=
+  Witness.Pack alg (class_of alg).
+Canonical Structure toAssertionWitiness (alg : Algebra) : AssertionWitness.Algebra :=
+  AssertionWitness.Pack alg.
+
+End CanonicalStructures.
+
+Module Parametric.
+Import CanonicalStructures.
+
+Record class {alg1 alg2 : Algebra} (rel : forall {A B}, alg1 A B -> alg2 A B -> Prop) :=
+ { base :> Jet.Parametric.class (@rel)
+ ; ext :> Witness.Parametric.mixin (@rel)
+ }.
+
+Record Rel (alg1 alg2 : Algebra) := Pack
+ { rel :> forall {A B}, alg1 A B -> alg2 A B -> Prop
+ ; class_of : class (@rel)
+ }.
+
+End Parametric.
+
+Section Reynolds.
+Import CanonicalStructures.
+Local Coercion Parametric.rel : Parametric.Rel >-> Funclass.
+
+Definition Reynolds {A B} (x y : forall (alg : Algebra), alg A B) : Prop :=
+  forall alg1 alg2 (R : Parametric.Rel alg1 alg2), R A B (x alg1) (y alg2).
+
+Definition Parametric {A B} (x : forall (alg : Algebra), alg A B) : Prop := Reynolds x x.
+End Reynolds.
+
+Module Theory.
+Export Jet.Theory.
+Export CanonicalStructures.
+
+Coercion Parametric.rel : Parametric.Rel >-> Funclass.
+
+Canonical Structure SimplicityPrimSem (M : CIMonadZero) : Algebra :=
+  Pack (primSem M).
+
+Canonical Structure CommitmentRoot_Simplicity_alg : Algebra :=
+  Pack CommitmentRoot.
+
+End Theory.
+
+End FullSimplicity.
+Export FullSimplicity.Theory.
+
+End PrimitiveModule.

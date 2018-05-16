@@ -215,5 +215,4 @@ End primSem.
 
 End Bitcoin.
 
-Module PrimitiveBitcoin := Primitive Bitcoin.
-Export PrimitiveBitcoin.Theory.
+Module Export PrimitiveBitcoin := PrimitiveModule Bitcoin.
