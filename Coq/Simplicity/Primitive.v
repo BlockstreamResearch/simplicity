@@ -6,6 +6,7 @@ Require Import Util.Monad.Reader.
 Require Import Util.Option.
 
 Require Import Simplicity.Alg.
+Require Import Simplicity.Delegation.
 Require Import Simplicity.MerkleRoot.
 Require Import Simplicity.Ty.
 
@@ -127,19 +128,28 @@ Canonical Structure WitnessPrimSem (M : CIMonad) : Witness.Algebra :=
 Canonical Structure AssertionWitnessPrimSem (M : CIMonadZero) : AssertionWitness.Algebra :=
   AssertionWitness.Pack (primSem M).
 
-Definition CommitmentRoot_Primitive_mixin : Primitive.mixin CommitmentRoot :=
+Definition CommitmentRoot_Primitive_mixin : mixin CommitmentRoot :=
  {| Primitive.prim A B p := Prim.tag p
   |}.
 
 Canonical Structure CommitmentRoot_Primitive_alg : Algebra :=
   Pack CommitmentRoot CommitmentRoot_Primitive_mixin.
 
-Definition WitnessRoot_Primitive_mixin : Primitive.mixin WitnessRoot :=
+Definition WitnessRoot_Primitive_mixin : mixin WitnessRoot :=
  {| Primitive.prim A B p := Prim.tag p
   |}.
 
 Canonical Structure WitnessRoot_Primitive_alg : Algebra :=
   Pack WitnessRoot WitnessRoot_Primitive_mixin.
+
+Definition Delegator_Primitive_mixin (alg : Algebra) : mixin (Delegator alg) :=
+  {| Primitive.prim A B p := {| delegatorRoot := prim p
+                              ; runDelegator := prim p
+                              |}
+   |}.
+
+Canonical Structure Delegator_Primitive_alg (alg : Algebra) : Algebra :=
+  Pack (Delegator alg) (Delegator_Primitive_mixin alg).
 
 End Theory.
 
@@ -222,7 +232,6 @@ Definition Parametric {A B} (x : forall (alg : Algebra), alg A B) : Prop := Reyn
 End Reynolds.
 
 Module Theory.
-Export Primitive.Theory.
 Export Combinators.
 
 Coercion Parametric.rel : Parametric.Rel >-> Funclass.
@@ -241,19 +250,28 @@ Definition PrimSem_jet_mixin (M : CIMonadZero) : mixin (primSem M) :=
 Canonical Structure JetPrimSem (M : CIMonadZero) : Algebra :=
   Pack (primSem M) (PrimSem_jet_mixin M).
 
-Definition CommitmentRoot_Jet_mixin : Jet.mixin CommitmentRoot :=
+Definition CommitmentRoot_Jet_mixin : mixin CommitmentRoot :=
  {| Jet.jet A B t p := compress_half jetTag (witnessRoot (t _))
   |}.
 
 Canonical Structure CommitmentRoot_Jet_alg : Algebra :=
   Pack CommitmentRoot CommitmentRoot_Jet_mixin.
 
-Definition WitnessRoot_Jet_mixin : Jet.mixin WitnessRoot :=
+Definition WitnessRoot_Jet_mixin : mixin WitnessRoot :=
  {| Jet.jet A B t p := compress_half jetTag (witnessRoot (t _))
   |}.
 
 Canonical Structure WitenssRoot_Jet_alg : Algebra :=
   Pack WitnessRoot WitnessRoot_Jet_mixin.
+
+Definition Delegator_Jet_mixin (alg : Algebra) : mixin (Delegator alg) :=
+  {| Jet.jet A B t p := {| delegatorRoot := jet p
+                         ; runDelegator := jet p
+                         |}
+   |}.
+
+Canonical Structure Delegator_Jet_alg (alg : Algebra) : Algebra :=
+  Pack (Delegator alg) (Delegator_Jet_mixin alg).
 
 End Theory.
 End Jet.
@@ -329,7 +347,6 @@ Definition Parametric {A B} (x : forall (alg : Algebra), alg A B) : Prop := Reyn
 End Reynolds.
 
 Module Theory.
-Export Jet.Theory.
 Export CanonicalStructures.
 
 Coercion Parametric.rel : Parametric.Rel >-> Funclass.
@@ -340,9 +357,119 @@ Canonical Structure SimplicityPrimSem (M : CIMonadZero) : Algebra :=
 Canonical Structure CommitmentRoot_Simplicity_alg : Algebra :=
   Pack CommitmentRoot.
 
+Canonical Structure Delegator_Simplicity_alg (alg : Algebra) : Algebra :=
+  Pack (Delegator alg).
+
+Lemma runDelegator_correctness A B (t : forall alg : Algebra, alg A B)
+  (Ht : Parametric t) alg : runDelegator (t (Delegator_Simplicity_alg alg)) = t alg.
+Proof.
+set (R := fun A B (x : Delegator alg A B) (y : alg A B) => runDelegator x = y).
+refine (Ht _ _ (Parametric.Pack (_ : Parametric.class R))).
+repeat constructor; unfold R; clear; intros; cbn; repeat f_equal; assumption.
+Qed.
+
 End Theory.
 
 End FullSimplicity.
 Export FullSimplicity.Theory.
+
+Module FullSimplicityWithDelegation.
+
+Record class (term : Ty -> Ty -> Type) := Class
+{ base : FullSimplicity.class term
+; ext  : Delegation.mixin term
+}.
+Definition base2 term (c : class term) : AssertionDelegation.class term :=
+  AssertionDelegation.Class (base c) (ext c).
+
+Structure Algebra := _Pack { domain : Ty -> Ty -> Type; class_of : class domain }.
+
+Definition packager dom :=
+ [find fs  | FullSimplicity.domain fs ~ dom | "is not a FullSimplicity algebra" ]
+ [find fsc | FullSimplicity.class_of fs ~ fsc ]
+ [find ad  | AssertionDelegation.domain ad ~ dom | "is not a AssertionDelegation algebra" ]
+ [find adm | AssertionDelegation.ext (AssertionDelegation.class_of ad) ~ adm ]
+ @_Pack dom (@Class dom fsc adm).
+
+Notation Pack dom := (@packager dom _ id _ id _ id _ id).
+
+Module Coercions.
+Coercion domain : Algebra >-> Funclass.
+Coercion base : class >-> FullSimplicity.class.
+Coercion base2 : class >-> AssertionDelegation.class.
+End Coercions.
+
+Module CanonicalStructures.
+Export Coercions.
+
+Canonical Structure toCore (alg : Algebra) : Core.Algebra :=
+  Core.Pack alg (class_of alg).
+Canonical Structure toAssertion (alg : Algebra) : Assertion.Algebra :=
+  Assertion.Pack alg (class_of alg).
+Canonical Structure toPrimitive (alg : Algebra) : Primitive.Algebra :=
+  Primitive.Pack alg (class_of alg).
+Canonical Structure toJet (alg : Algebra) : Jet.Algebra :=
+  Jet.Pack alg (class_of alg).
+Canonical Structure toWitiness (alg : Algebra) : Witness.Algebra :=
+  Witness.Pack alg (class_of alg).
+Canonical Structure toAssertionWitiness (alg : Algebra) : AssertionWitness.Algebra :=
+  AssertionWitness.Pack alg.
+Canonical Structure toFullSimplicity (alg : Algebra) : FullSimplicity.Algebra :=
+  FullSimplicity.Pack alg.
+Canonical Structure toDelegation (alg : Algebra) : Delegation.Algebra :=
+  Delegation.Pack alg (class_of alg).
+Canonical Structure toAssertionDelegation (alg : Algebra) : AssertionDelegation.Algebra :=
+  AssertionDelegation.Pack alg.
+
+End CanonicalStructures.
+
+Module Parametric.
+Import CanonicalStructures.
+
+Record class {alg1 alg2 : Algebra} (rel : forall {A B}, alg1 A B -> alg2 A B -> Prop) :=
+ { base :> FullSimplicity.Parametric.class (@rel)
+ ; ext :> Delegation.Parametric.mixin (@rel)
+ }.
+
+Record Rel (alg1 alg2 : Algebra) := Pack
+ { rel :> forall {A B}, alg1 A B -> alg2 A B -> Prop
+ ; class_of : class (@rel)
+ }.
+
+End Parametric.
+
+Section Reynolds.
+Import CanonicalStructures.
+Local Coercion Parametric.rel : Parametric.Rel >-> Funclass.
+
+Definition Reynolds {A B} (x y : forall (alg : Algebra), alg A B) : Prop :=
+  forall alg1 alg2 (R : Parametric.Rel alg1 alg2), R A B (x alg1) (y alg2).
+
+Definition Parametric {A B} (x : forall (alg : Algebra), alg A B) : Prop := Reynolds x x.
+End Reynolds.
+
+Module Theory.
+Export CanonicalStructures.
+
+Coercion Parametric.rel : Parametric.Rel >-> Funclass.
+
+Canonical Structure CommitmentRoot_Simplicity_alg : Algebra :=
+  Pack CommitmentRoot.
+
+Canonical Structure SimplicityDelegationDelegator (alg : FullSimplicity.Algebra) : Algebra :=
+  Pack (Delegator alg).
+
+Lemma delegatorRoot_correctness A B (t : forall alg : Algebra, alg A B)
+  (Ht : Parametric t) alg : delegatorRoot (t (SimplicityDelegationDelegator alg)) = t _.
+Proof.
+set (R := fun A B (x : Delegator alg A B) (y : CommitmentRoot A B) => delegatorRoot x = y).
+refine (Ht _ _ (Parametric.Pack (_ : Parametric.class R))).
+repeat constructor; unfold R; clear; intros; cbn; repeat f_equal; assumption.
+Qed.
+
+End Theory.
+
+End FullSimplicityWithDelegation.
+Export FullSimplicityWithDelegation.Theory.
 
 End PrimitiveModule.

@@ -50,9 +50,9 @@ End TypeRoot.
 (* :TODO: memoize the computation of type roots. *)
 Definition typeRoot : Ty -> hash256 := tyCata typeRootAlg.
 
-Section CommitmentRoot.
-
 Notation commitmentTag tg := (tag (commitmentPrefix ++ [tg%string]) refl_equal).
+
+Section CommitmentRoot.
 
 Let idenTag := Eval vm_compute in commitmentTag "iden".
 Let compTag := Eval vm_compute in commitmentTag "comp".
@@ -105,9 +105,9 @@ Canonical Structure CommitmentRoot_Witness_alg : Witness.Algebra :=
 Canonical Structure CommitmentRoot_AssertionWitness_alg : AssertionWitness.Algebra :=
   AssertionWitness.Pack CommitmentRoot.
 
-Section WitnessRoot.
-
 Notation witnessTag tg := (tag (witnessPrefix ++ [tg%string]) refl_equal).
+
+Section WitnessRoot.
 
 Let idenTag := Eval vm_compute in witnessTag "iden".
 Let compTag := Eval vm_compute in witnessTag "comp".
