@@ -4,6 +4,7 @@ Require Import Util.List.
 Require Import Util.Thrist.
 Require Import Eqdep_dec.
 
+Set Primitive Projections.
 Set Implicit Arguments.
 
 Local Open Scope N_scope.
@@ -789,7 +790,7 @@ Lemma skip_correct : forall n ctx,
    {| readLocalState := nil; writeLocalState := fullWriteFrame (repeat None n) |}.
 Proof.
 eexists.
-unfold skip, makeProgram.
+unfold skip, makeProgram, MachineCode.Skip.chk.
 cbn.
 set (H := Nat.leb_spec _ _).
 generalize H; clear H.
@@ -815,7 +816,7 @@ Lemma copy_correct : forall l ctx,
   fillContext ctx {| readLocalState := l; writeLocalState := fullWriteFrame l |}.
 Proof.
 eexists.
-unfold copy, makeProgram.
+unfold copy, makeProgram, MachineCode.Copy.chk.
 cbn.
 set (H := Nat.leb_spec _ (_ + writeEmpty _)%nat).
 generalize H; clear H.
@@ -854,7 +855,7 @@ Lemma fwd_correct : forall l ctx,
   fillReadFrame ctx {| prevData := rev l; nextData := nil |}.
 Proof.
 eexists.
-unfold fwd, makeProgram; cbn.
+unfold fwd, makeProgram, MachineCode.Fwd.chk; cbn.
 set (H := Nat.leb_spec _ _).
 generalize H; clear H.
 rewrite (Compare_dec.leb_correct (length l) (length (l ++ nextData (activeReadFrame ctx))))
@@ -883,7 +884,7 @@ Lemma bwd_correct : forall l ctx,
   fillReadFrame ctx {| prevData := nil; nextData := l |}.
 Proof.
 eexists.
-unfold bwd, makeProgram; cbn.
+unfold bwd, makeProgram, MachineCode.Bwd.chk; cbn.
 set (H := Nat.leb_spec _ _).
 generalize H; clear H.
 rewrite (Compare_dec.leb_correct (length l) (length (rev l ++ prevData (activeReadFrame ctx))))

@@ -1,3 +1,4 @@
+Set Primitive Projections.
 Set Implicit Arguments.
 
 Inductive Ty : Set :=
