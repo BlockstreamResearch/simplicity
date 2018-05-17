@@ -1,5 +1,5 @@
 Require Import ZArith.
-Require Import Util.List.
+Require Import List.
 
 Require sha.SHA256.
 Require Import compcert.lib.Integers.
@@ -27,42 +27,16 @@ Local Tactic Notation "clearLet" := match goal with
   |- context f [let N := ?V in (@?b N)] => let Y := eval cbv beta in (b V) in let X := context f[Y] in change X
 end.
 
-Definition repr_Hash (h : Word256) : hash256 :=
-  let '(((h0,h1),(h2,h3)),((h4,h5),(h6,h7))) := h in
-    Hash256 (List.map (fun x : Word32 => Int.repr (toZ x))
-              [h0;h1;h2;h3;h4;h5;h6;h7])
-            refl_equal.
-
-Definition repr_Hash_inv (l : hash256) : Word256 :=
-match map (fun x => fromZ (Int.unsigned x) : Word32) (hash256_reg l) with
-| [h0;h1;h2;h3;h4;h5;h6;h7] => (((h0,h1),(h2,h3)),((h4,h5),(h6,h7)))
-| _ => fromZ 0%Z
-end.
-
-Lemma repr_Hash_inj (h : Word256) : repr_Hash_inv (repr_Hash h) = h.
-Proof.
-assert (H32 : forall x : Word32, (0 <= toZ x <= Int.max_unsigned)%Z).
- intros x.
- change Int.max_unsigned with (Zpred Int.modulus).
- rewrite <- Z.lt_le_pred, toZ_mod.
- apply Z.mod_pos_bound.
- reflexivity.
-destruct h as [[[h0 h1][h2 h3]][[h4 h5][h6 h7]]]; cbn -[Word toZ fromZ].
-repeat rewrite Int.unsigned_repr by auto.
-repeat rewrite from_toZ.
-reflexivity.
-Qed.
-
 Definition repr_Block (b : Word512) : list int :=
   let (b0,b1) := b in
-    hash256_reg (repr_Hash b0) ++ hash256_reg (repr_Hash b1).
+    hash256_reg (to_hash256 b0) ++ hash256_reg (to_hash256 b1).
 
 Definition repr_Block_inv (l : list int) : Word512 :=
 match l with
 | [b0; b1; b2; b3; b4; b5; b6; b7;
    b8; b9; ba; bb; bc; bd; be; bf] =>
-  (repr_Hash_inv (Hash256 [b0; b1; b2; b3; b4; b5; b6; b7] refl_equal)
-  ,repr_Hash_inv (Hash256 [b8; b9; ba; bb; bc; bd; be; bf] refl_equal))
+  (from_hash256 (Hash256 [b0; b1; b2; b3; b4; b5; b6; b7] refl_equal)
+  ,from_hash256 (Hash256 [b8; b9; ba; bb; bc; bd; be; bf] refl_equal))
 | _ => fromZ 0%Z
 end.
 
@@ -77,7 +51,7 @@ assert (H32 : forall x : Word32, (0 <= toZ x <= Int.max_unsigned)%Z).
 destruct b as [[[[b0 b1][b2 b3]][[b4 b5][b6 b7]]]
                [[[b8 b9][ba bb]][[bc bd][be bf]]]].
 simpl.
-unfold repr_Hash_inv.
+unfold from_hash256.
 simpl map.
 cbv iota beta.
 repeat rewrite Int.unsigned_repr by auto.
@@ -255,7 +229,7 @@ apply Znumtheory.Zmod_divide; auto with zarith.
 Qed.
 
 Lemma hashBlock_correct (h : Word256) (b : Word512) :
- repr_Hash (|[hashBlock]| (h, b)) = SHA256.hash_block (repr_Hash h) (repr_Block b) :> SHA256.registers.
+ to_hash256 (|[hashBlock]| (h, b)) = SHA256.hash_block (to_hash256 h) (repr_Block b) :> SHA256.registers.
 Proof.
 cbv beta delta [hashBlock].
 do 7 clearLet.
@@ -265,8 +239,8 @@ do 6 introLet.
 simpl.
 change (|[O H &&& compression]| (h, b)) with (h, |[compression]| (h,b)).
 unfold SHA256.hash_block.
-replace (SHA256.Round (repr_Hash h) (SHA256.nthi (repr_Block b)) 63) with
-  (hash256_reg (repr_Hash (|[compression]| (h,b)))).
+replace (SHA256.Round (to_hash256 h) (SHA256.nthi (repr_Block b)) 63) with
+  (hash256_reg (to_hash256 (|[compression]| (h,b)))).
  destruct (|[compression]| (h,b)) as [[[h'0 h'1][h'2 h'3]][[h'4 h'5][h'6 h'7]]].
  destruct h as [[[h0 h1][h2 h3]][[h4 h5][h6 h7]]].
  simpl.
@@ -300,7 +274,7 @@ replace (|[compression]| (h,b)) with
  unfold pair; simpl.
  unfold scribe32; rewrite !scribe_correct.
  reflexivity.
-cut  (repr_Hash (fst (|[fr]| (h, b))) = SHA256.Round (repr_Hash h) (SHA256.nthi (repr_Block b)) 63 :> SHA256.registers
+cut  (to_hash256 (fst (|[fr]| (h, b))) = SHA256.Round (to_hash256 h) (SHA256.nthi (repr_Block b)) 63 :> SHA256.registers
    /\ repr_Block (snd (|[fr]| (h, b))) = map (fun n => SHA256.W (SHA256.nthi (repr_Block b)) (Z.of_nat n)) (seq (Z.to_nat (63 + 1)) 16)).
  intros [<- _].
  reflexivity.
@@ -348,7 +322,7 @@ split.
  cbn -[round scribe32 kt].
  unfold scribe32; rewrite scribe_correct.
  match goal with
-  |- _ (repr_Hash (round (_, ?p))) = _ =>
+  |- _ (to_hash256 (round (_, ?p))) = _ =>
     destruct p as [[[[h0 h1][h2 h3]][[h4 h5][h6 h7]]] 
                    [[[[b0 b1][b2 b3]][[b4 b5][b6 b7]]]
                     [[[b8 b9][ba bb]][[bc bd][be bf]]]]]

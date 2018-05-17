@@ -1,12 +1,18 @@
+Require Import Logic.Eqdep_dec.
+Require Import List.
+Require Import ZArith.
+Require Import Util.Arith.
+Require compcert.lib.Integers.
+
 Require Import Simplicity.Ty.
 Require Import Simplicity.Alg.
 Require Import Simplicity.Bit.
-Require Import ZArith.
-Require Import Util.Arith.
-
+Require Import Simplicity.Digest.
 Set Implicit Arguments.
 
 Local Set Keyed Unification.
+Import ListNotations.
+Local Open Scope list_scope.
 Local Open Scope ty_scope.
 Local Open Scope term_scope.
 Local Open Scope semantic_scope.
@@ -218,6 +224,43 @@ replace i with (i - Z.of_nat (bitSize (WordToZ n)) + Z.of_nat (bitSize (WordToZ 
 rewrite (toZ_Pair ahi alo), two_power_nat_equiv, <- Z.div_pow2_bits,
         Zplus_comm, Z_div_plus, (toZ_mod alo), two_power_nat_equiv, Zmod_div, Z.add_0_l;
 auto using Z.lt_gt, Z.pow_pos_nonneg with zarith.
+Qed.
+
+Definition to_hash256 (h : Word256) : hash256 :=
+  let '(((h0,h1),(h2,h3)),((h4,h5),(h6,h7))) := h in
+    Hash256 (List.map (fun x : Word32 => Integers.Int.repr (toZ x))
+              [h0;h1;h2;h3;h4;h5;h6;h7])
+            refl_equal.
+
+Definition from_hash256 (l : hash256) : Word256 :=
+match map (fun x => fromZ (Integers.Int.unsigned x) : Word32) (hash256_reg l) with
+| [h0;h1;h2;h3;h4;h5;h6;h7] => (((h0,h1),(h2,h3)),((h4,h5),(h6,h7)))
+| _ => fromZ 0%Z
+end.
+
+Lemma from_to_hash256 (h : Word256) : from_hash256 (to_hash256 h) = h.
+Proof.
+assert (H32 : forall x : Word32, (0 <= toZ x <= Integers.Int.max_unsigned)%Z).
+ intros x.
+ change Integers.Int.max_unsigned with (Zpred Integers.Int.modulus).
+ rewrite <- Z.lt_le_pred, toZ_mod.
+ apply Z.mod_pos_bound.
+ reflexivity.
+destruct h as [[[h0 h1][h2 h3]][[h4 h5][h6 h7]]]; cbn -[Word toZ fromZ].
+repeat rewrite Integers.Int.unsigned_repr by auto.
+repeat rewrite from_toZ.
+reflexivity.
+Qed.
+
+Lemma to_from_hash256 (h : hash256) : to_hash256 (from_hash256 h) = h.
+Proof.
+destruct h as [[|h0 [|h1 [|h2 [|h3 [|h4 [|h5 [|h6 [|h7 [|h8 h]]]]]]]]] Hh]; try discriminate.
+simpl.
+rewrite !to_fromZ.
+change (two_power_nat (bitSize (WordToZ 5))) with Integers.Int.modulus.
+rewrite <- !Integers.Int.unsigned_repr_eq, !Integers.Int.repr_unsigned.
+elim Hh using K_dec_set;[decide equality|].
+reflexivity.
 Qed.
 
 Section Definitions.

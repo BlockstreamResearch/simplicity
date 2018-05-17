@@ -8,7 +8,6 @@ Require Import Simplicity.Digest.
 Require Simplicity.MerkleRoot.
 Require Import Simplicity.Primitive.
 Require Import Simplicity.Ty.
-Require Import Simplicity.SHA256.
 Require Import Simplicity.Word.
 
 Set Primitive Projections.
@@ -176,7 +175,7 @@ match x with
 end.
 
 Let encodeOutpoint (op : outpoint) : tySem (Word256 * Word32) :=
- (repr_Hash_inv (opHash op), fromZ (Int.unsigned (opIndex op)) : Word32).
+ (from_hash256 (opHash op), fromZ (Int.unsigned (opIndex op)) : Word32).
 
 Definition sem (e : env) {A B} (p : t A B) : A -> option B :=
 let tx := envTx e in
@@ -193,8 +192,8 @@ let inputsHash :=
 match p with
 | Version => fun _ => Some (fromZ (Int.signed (sigTxVersion tx)))
 | LockTime => fun _ => Some (fromZ (Int.unsigned (sigTxLock tx)))
-| InputsHash => fun _ => Some (repr_Hash_inv inputsHash)
-| OutputsHash => fun _ => Some (repr_Hash_inv outputsHash)
+| InputsHash => fun _ => Some (from_hash256 inputsHash)
+| OutputsHash => fun _ => Some (from_hash256 outputsHash)
 | NumInputs => fun _ => Some (fromZ (Zlength (sigTxIn tx)))
 | TotalInputValue => fun _ => Some (fromZ (sigTxTotalInValue tx))
 | CurrentPrevOutpoint => fun _ => currentInput (fun txi => encodeOutpoint (sigTxiPreviousOutpoint txi))
@@ -207,8 +206,8 @@ match p with
 | NumOutputs => fun _ => Some (fromZ (Zlength (sigTxOut tx)))
 | TotalOutputValue => fun _ => Some (fromZ (sigTxTotalOutValue tx))
 | OutputValue => atOutput (fun txout => fromZ (Int64.signed (txoValue txout)))
-| OutputScriptHash => atOutput (fun txout => repr_Hash_inv (byteStringHash (txoScript txout)))
-| ScriptCMR => fun _ => Some (repr_Hash_inv (envScriptCMR e))
+| OutputScriptHash => atOutput (fun txout => from_hash256 (byteStringHash (txoScript txout)))
+| ScriptCMR => fun _ => Some (from_hash256 (envScriptCMR e))
 end.
 
 End primSem.

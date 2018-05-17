@@ -1,5 +1,5 @@
 Require Import Logic.Eqdep_dec.
-Require Import Coq.Strings.String.
+Require Import Strings.String.
 Require Import List.
 Require BinInt.
 

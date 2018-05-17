@@ -2,7 +2,6 @@ Require Import Util.PackedClass.
 
 Require Import Simplicity.Alg.
 Require Import Simplicity.MerkleRoot.
-Require Import Simplicity.SHA256.
 Require Import Simplicity.Ty.
 Require Import Simplicity.Word.
 
@@ -217,7 +216,7 @@ Definition WitnessDelegator_mixin (alg : Witness.Algebra) : Witness.mixin (Deleg
 Definition DelegationDelegator_mixin (alg : Core.Algebra) : Delegation.mixin (Delegator alg) :=
   {| Delegation.disconnect A B C D s t :=
      {| delegatorRoot := @disconnect A B C D _ (delegatorRoot s) (delegatorRoot t)
-      ; runDelegator := iden &&& scribe (repr_Hash_inv (delegatorRoot t))
+      ; runDelegator := iden &&& scribe (from_hash256 (delegatorRoot t))
                     >>> runDelegator s >>> take iden &&& drop (runDelegator t)
       |}
    |}.
