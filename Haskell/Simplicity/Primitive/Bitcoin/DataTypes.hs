@@ -19,6 +19,7 @@ import Data.Serialize ( Serialize
 
 import Simplicity.Digest
 
+{-
 getVarInteger :: Get Word64
 getVarInteger = go =<< getWord8
  where
@@ -45,6 +46,7 @@ putVarByteString s | len < 2^32 = putVarInteger len >> putLazyByteString s
  where
   len :: Word64
   len = BSL.foldlChunks (\a c -> a + fromIntegral (BS.length c)) 0 s
+-}
 
 -- | Unparsed Bitcoin Script.
 -- Script in transactions outputs do not have to be parsable, so we encode this as a raw 'Data.ByteString.ByteString'.
@@ -95,9 +97,11 @@ data TxOutput = TxOutput { txoValue :: Value
                          , txoScript :: Script -- length must be strictly less than 2^32.
                          } deriving Show
 
+{-
 instance Serialize TxOutput where
   get = TxOutput <$> getValue <*> getVarByteString
   put (TxOutput v s) = putWord64le v >> putVarByteString s
+-}
 
 -- | The data type for transactions in the context of signatures.
 -- The data signed in a BIP 143 directly covers input values.

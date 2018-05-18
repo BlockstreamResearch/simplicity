@@ -1263,7 +1263,7 @@
   </equation*>
 
   where <math|SHA256<rsub|IV>\<of\><2><rsup|256>> is the SHA-256 initial
-  value and <math|\<eta\><rsup|S><rsub|A>\<of\>A<rsup|+>\<rightarrow\>A<rsup|\<ast\>>>
+  value and <math|\<eta\><rsup|S><rsub|A<rsup|+>>\<of\>A<rsup|+>\<rightarrow\>A<rsup|\<ast\>>>
   formally converts a non-empty list to a regular list.
 
   The <math|SHA256<rsub|MD>> is a left fold using the SHA-256 block
@@ -2244,10 +2244,10 @@
   <math|\<mu\><rsup|Id><rsub|A>> are both the idenity function. The identity
   monad captures no side-effects. It is commutative and idempotent.
 
-  <\theorem>
+  <\corollary>
     For any core Simplicity expression, <math|t\<of\>A\<vdash\>B>, we have
     <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|Id>\<assign\><around*|\<llbracket\>|t|\<rrbracket\>>>.
-  </theorem>
+  </corollary>
 
   <section|Witness>
 
@@ -2302,6 +2302,8 @@
   Simplicity programs. Rather than accepting arguments as inputs and passing
   them down to where they are needed, <samp|witness> expressions lets input
   data appear right where it is needed.
+
+  <subsection|Elided Computation>
 
   <subsection|Witness Merkle Root>
 
@@ -2635,7 +2637,8 @@
   expressions and a monad to capture the side-effects for these primitives.
   This monad should be a commutative, idempotent monad with zero in order to
   interpret Simplicity and its extenstions. All primitive expressions must be
-  monomorphic and have no parameters.
+  monomorphic and have no parameters (i.e. they are not themselves
+  combinators).
 
   In this document we will be detailing the primitives used for Bitcoin, or a
   Bitcoin-like application.
@@ -2649,27 +2652,28 @@
   We define a record type that captures this context, called <math|BCEnv>.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|Lock>|<cell|\<assign\>>|<cell|<2><rsup|32>>>|<row|<cell|Value>|<cell|\<assign\>>|<cell|<2><rsup|64>>>|<row|<cell|Outpoint>|<cell|\<assign\>>|<cell|<2><rsup|256>\<times\><2><rsup|32>>>|<row|<cell|SigInput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|prevOutpoint\<of\>Outpoint>>|<row|<cell|value\<of\>Value>>|<row|<cell|sequence\<of\><2><rsup|32>>>>>>|}>>>|<row|<cell|SigOutput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|value\<of\>Value>>|<row|<cell|pubScriptHash\<of\><2><rsup|256>>>>>>|}>>>|<row|<cell|SigTx>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|version\<of\><2><rsup|32>>>|<row|<cell|inputs\<of\>SigInput<rsup|+>>>|<row|<cell|outputs\<of\>SigOutput<rsup|+>>>|<row|<cell|lockTime\<of\>Lock>>>>>|}>>>|<row|<cell|BCEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|tx\<of\>SigTx>>|<row|<cell|ix\<of\><2><rsup|64>>>|<row|<cell|scriptCMR\<of\><2><rsup|256>>>>>>|}>>>>>
+    <tformat|<table|<row|<cell|Lock>|<cell|\<assign\>>|<cell|<2><rsup|32>>>|<row|<cell|Value>|<cell|\<assign\>>|<cell|<2><rsup|64>>>|<row|<cell|Outpoint>|<cell|\<assign\>>|<cell|<2><rsup|256>\<times\><2><rsup|32>>>|<row|<cell|SigInput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|prevOutpoint\<of\>Outpoint>>|<row|<cell|value\<of\>Value>>|<row|<cell|sequence\<of\><2><rsup|32>>>>>>|}>>>|<row|<cell|SigOutput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|value\<of\>Value>>|<row|<cell|pubScript\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|SigTx>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|version\<of\><2><rsup|32>>>|<row|<cell|inputs\<of\>SigInput<rsup|+>>>|<row|<cell|outputs\<of\>SigOutput<rsup|+>>>|<row|<cell|lockTime\<of\>Lock>>>>>|}>>>|<row|<cell|BCEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|tx\<of\>SigTx>>|<row|<cell|ix\<of\><2><rsup|32>>>|<row|<cell|scriptCMR\<of\><2><rsup|256>>>>>>|}>>>>>
   </eqnarray*>
 
-  The type <math|SigTx> contains the signed transaction data. Following BIP
-  143, this signed transaction data excludes transaction inputs' sigScripts
-  and includes inputs' Bitcoin values. The <math|ix> field is input index
-  whose redemption is being processed by this Simplicity program. The
-  <math|scriptCMR> field holds the commitment Merkle root of the Simplicity
-  program being evaluated.
+  The type <math|SigTx> contains the signed transaction data. Following a
+  design similar to BIP 143, this signed transaction data excludes
+  transaction inputs' sigScripts and includes inputs' Bitcoin values. The
+  <math|ix> field is input index whose redemption is being processed by this
+  Simplicity program. The <math|scriptCMR> field holds the commitment Merkle
+  root of the Simplicity program being evaluated.
 
   The SigTx type given above allows for an unbounded number of inputs and
-  ouputs. However, there are limits on the number of inputs and outputs
-  imposed by the Bitcoin protocol. The number of inputs and outputs are
-  limited to <math|2<rsup|32>-1> by Bitcoin's serialization definition. We
+  ouputs. However, there are limits imposed by the Bitcoin protocol. The
+  number of inputs and outputs are limited to at most <math|2<rsup|32>-1> by
+  Bitcoin's deserialization implementation. Similarly, the length of
+  SigOutput's pubScript is limited to at most <math|2<rsup|32>-1> bytes. We
   presume all transactions to adhere to these limits when reasoning about
   Bitcoin transactions.\ 
 
-  Furthemore we pesume that it is always the case that for every
-  <math|e\<of\>BCEnv> that <math|<around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>\<less\><around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>>
+  Furthemore, we presume that for every <math|e\<of\>BCEnv> that
+  <math|<around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>\<less\><around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>>
   so that ``current'' index being validated is, in fact, an input of the
-  transaction.
+  transaction. <with|color|red|TODO moneyRange>
 
   <assign|BC|<math|BC>>The monad we use for the Bitcoin application provides
   an environment effect (also known as a reader effect) that allows read
@@ -2829,8 +2833,27 @@
   We extend the formal semantics of these new expressions as follows.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|nVersion>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|version|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|nLockTime>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|lockTime|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputsHash>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|>|<cell|<with|color|red|TODO>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputsHash>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|>|<cell|<with|color|red|TODO>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numInputs>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalInputValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fold<rsup|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>><around*|(|<around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentPrevOutpoint>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentSequence>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIndex>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|ix|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputPrevOutpoint>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputValue>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputSequence>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numOutputs>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|outputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalOutputValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fold<rsup|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>><around*|(|<around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputValue>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputScriptHash>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|pubScriptHash|]>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|scriptCMR>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|:=>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|scriptCMR|]>|)>>>>>
+    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|version>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|version|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|lockTime>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|lockTime|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputsHash>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>inputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputsHash>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>outputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numInputs>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalInputValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fold<rsup|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>><around*|(|<around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentPrevOutpoint>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentSequence>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIndex>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|ix|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputPrevOutpoint>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputValue>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputSequence>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numOutputs>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|outputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalOutputValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fold<rsup|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>><around*|(|<around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputValue>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputScriptHash>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|pubScript|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|scriptCMR>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|:=>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|scriptCMR|]>|)>>>>>
   </eqnarray*>
+
+  where
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|inputHash<around*|(|l|)>>|<cell|\<assign\>>|<cell|BE<rsub|<2><rsup|256>><around*|(|\<pi\><rsub|1><around*|(|l<around*|[|prevOutpoint|]>|)>|)>\<cdummy\>LE<rsub|<2><rsup|32>><around*|(|\<pi\><rsub|2><around*|(|l<around*|[|prevOutpoint|]>|)>|)>\<cdummy\>LE<rsub|<2><rsup|32>><around*|(|l<around*|[|sequence|]>|)>>>|<row|<cell|ouputHash<around*|(|l|)>>|<cell|\<assign\>>|<cell|LE<rsub|<2><rsup|64>><around*|(|l<around*|[|value|]>|)>\<cdummy\>BE<rsub|<2><rsup|256>><around*|(|SHA256<around*|(|l<around*|[|pubScript|]>|)>|)>>>>>
+  </eqnarray*>
+
+  and where <math|LE<rsub|<2><rsup|n>>\<of\><2><rsup|n>\<rightarrow\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>
+  and <math|BE<rsub|<2><rsup|n>>\<of\><2><rsup|n>\<rightarrow\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>
+  are little endian and big endian encodings of words of sutiably large size
+  as byte strings.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|LE<rsub|<2><rsup|8>><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|\<ast\>><around*|(|a|)>>>|<row|<cell|LE<rsub|<2><rsup|2*n>><around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>>|<cell|\<assign\>>|<cell|LE<rsub|<2><rsup|n>><around*|(|a<rsub|2>|)>\<cdummy\>LE<rsub|<2><rsup|n>><around*|(|a<rsub|1>|)><text|<htab|5mm>(when
+    <math|8\<leq\>n>)>>>|<row|<cell|BE<rsub|<2><rsup|8>><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|\<ast\>><around*|(|a|)>>>|<row|<cell|BE<rsub|<2><rsup|2*n>><around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>>|<cell|\<assign\>>|<cell|BE<rsub|<2><rsup|n>><around*|(|a<rsub|1>|)>\<cdummy\>BE<rsub|<2><rsup|n>><around*|(|a<rsub|2>|)><text|<htab|5mm>(when
+    <math|8\<leq\>n>)>>>>>
+  </eqnarray*>
+
+  <with|color|red|Consider making everything big endian?>
 
   For most of these primitive expressions, it is clear that they can never
   fail, in the sense of never returning <math|\<emptyset\><rsup|<maybe>>>.
@@ -2848,7 +2871,7 @@
   expressions by hashing new unique byte strings.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<cmr|<math-ss|nVersion><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[76657273696f6e]>|)>>>|<row|<cell|<cmr|<math-ss|nLockTime><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6c6f636b54696d65]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputsHash>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e7075747348617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputsHash>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f75747075747348617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|numInputs>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6e756d496e70757473]>|)>>>|<row|<cell|<cmr|<math-ss|<math|totalInputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[746f74616c496e70757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentPrevOutpoint>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e74507265764f7574706f696e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e7456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentSequence>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e7453657175656e6365]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIndex>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e74496e646578]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputPrevOutpoint>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e707574507265764f7574706f696e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e70757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputSequence>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e70757453657175656e6365]>|)>>>|<row|<cell|<cmr|<math-ss|<math|numOutput>s><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6e756d784f757470757473]>|)>>>|<row|<cell|<cmr|<math-ss|<math|totalOutputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[746f74616c4f757470757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f757470757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|outputScriptHash><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f757470757453637269707448617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|scriptCMR>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[736372697074434d52]>|)>>>>>
+    <tformat|<table|<row|<cell|<cmr|<math-ss|version><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[76657273696f6e]>|)>>>|<row|<cell|<cmr|<math-ss|lockTime><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6c6f636b54696d65]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputsHash>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e7075747348617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputsHash>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f75747075747348617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|numInputs>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6e756d496e70757473]>|)>>>|<row|<cell|<cmr|<math-ss|<math|totalInputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[746f74616c496e70757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentPrevOutpoint>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e74507265764f7574706f696e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e7456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentSequence>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e7453657175656e6365]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIndex>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e74496e646578]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputPrevOutpoint>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e707574507265764f7574706f696e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e70757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputSequence>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e70757453657175656e6365]>|)>>>|<row|<cell|<cmr|<math-ss|<math|numOutput>s><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6e756d784f757470757473]>|)>>>|<row|<cell|<cmr|<math-ss|<math|totalOutputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[746f74616c4f757470757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f757470757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|outputScriptHash><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f757470757453637269707448617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|scriptCMR>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[736372697074434d52]>|)>>>>>
   </eqnarray*>
 
   where
@@ -4151,6 +4174,12 @@
     <tformat|<table|<row|<cell|\<epsilon\><rsub|A>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><rsub|A<rsup|+>>>>|<row|<cell|a\<blacktriangleleft\>l>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><rsub|A<rsup|+>><around*|\<langle\>|a,l|\<rangle\>>>>>>
   </eqnarray*>
 
+  As a consequence the following equations hold.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|(|\<epsilon\><rsub|A>|)>>|<cell|=>|<cell|e>>|<row|<cell|fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|(|a<rsub|0>\<blacktriangleleft\>a<rsub|1>\<blacktriangleleft\>\<ldots\>\<blacktriangleleft\>a<rsub|n>\<blacktriangleleft\>\<epsilon\><rsub|A>|)>>|<cell|=>|<cell|a<rsub|0>\<odot\>a<rsub|1>\<odot\>\<ldots\>\<odot\>a<rsub|n>>>>>
+  </eqnarray*>
+
   For example, given two lists <math|l<rsub|1>,l<rsub|2>\<of\>A<rsup|\<ast\>>>,
   we define the append operation <math|l<rsub|1>\<cdummy\>l<rsub|2>:A<rsup|\<ast\>>>
   using nil and cons.
@@ -4193,25 +4222,26 @@
     <associate|Serialization|<tuple|2.8|?>>
     <associate|auto-1|<tuple|1|7>>
     <associate|auto-10|<tuple|2.2.1|10>>
-    <associate|auto-100|<tuple|7.3.2.1|51>>
-    <associate|auto-101|<tuple|7.3.2.2|51>>
-    <associate|auto-102|<tuple|7.3.3|51>>
-    <associate|auto-103|<tuple|7.3.4|51>>
-    <associate|auto-104|<tuple|7.4|52>>
-    <associate|auto-105|<tuple|7.4.1|52>>
-    <associate|auto-106|<tuple|7.5|53>>
-    <associate|auto-107|<tuple|7.6|55>>
-    <associate|auto-108|<tuple|7.7|55>>
-    <associate|auto-109|<tuple|7.7.1|55>>
+    <associate|auto-100|<tuple|7.3.2|51>>
+    <associate|auto-101|<tuple|7.3.2.1|51>>
+    <associate|auto-102|<tuple|7.3.2.2|51>>
+    <associate|auto-103|<tuple|7.3.3|51>>
+    <associate|auto-104|<tuple|7.3.4|51>>
+    <associate|auto-105|<tuple|7.4|52>>
+    <associate|auto-106|<tuple|7.4.1|52>>
+    <associate|auto-107|<tuple|7.5|52>>
+    <associate|auto-108|<tuple|7.6|52>>
+    <associate|auto-109|<tuple|7.7|53>>
     <associate|auto-11|<tuple|2.2.2|10>>
-    <associate|auto-110|<tuple|7.7.2|55>>
-    <associate|auto-111|<tuple|8|55>>
-    <associate|auto-112|<tuple|A|55>>
-    <associate|auto-113|<tuple|A.1|?>>
-    <associate|auto-114|<tuple|A.1.1|?>>
-    <associate|auto-115|<tuple|A.2|?>>
-    <associate|auto-116|<tuple|A.2.1|?>>
-    <associate|auto-117|<tuple|A.2.2|?>>
+    <associate|auto-110|<tuple|7.7.1|53>>
+    <associate|auto-111|<tuple|7.7.2|55>>
+    <associate|auto-112|<tuple|8|57>>
+    <associate|auto-113|<tuple|A|57>>
+    <associate|auto-114|<tuple|A.1|58>>
+    <associate|auto-115|<tuple|A.1.1|59>>
+    <associate|auto-116|<tuple|A.2|59>>
+    <associate|auto-117|<tuple|A.2.1|59>>
+    <associate|auto-118|<tuple|A.2.2|?>>
     <associate|auto-12|<tuple|2.2.3|10>>
     <associate|auto-13|<tuple|2.2.4|10>>
     <associate|auto-14|<tuple|2.2.5|11>>
@@ -4227,31 +4257,31 @@
     <associate|auto-23|<tuple|2.3.2|13>>
     <associate|auto-24|<tuple|2.3.3|17>>
     <associate|auto-25|<tuple|2.3.4|17>>
-    <associate|auto-26|<tuple|2.3.5|17>>
-    <associate|auto-27|<tuple|2.3.6|17>>
-    <associate|auto-28|<tuple|2.4|17>>
-    <associate|auto-29|<tuple|2.5|17>>
+    <associate|auto-26|<tuple|2.3.5|18>>
+    <associate|auto-27|<tuple|2.3.6|18>>
+    <associate|auto-28|<tuple|2.4|18>>
+    <associate|auto-29|<tuple|2.5|18>>
     <associate|auto-3|<tuple|2|9>>
-    <associate|auto-30|<tuple|2.5.1|18>>
-    <associate|auto-31|<tuple|2.5.2|18>>
-    <associate|auto-32|<tuple|2.1|18>>
-    <associate|auto-33|<tuple|2.5.2.1|19>>
-    <associate|auto-34|<tuple|2.5.2.2|19>>
-    <associate|auto-35|<tuple|2.5.2.3|19>>
-    <associate|auto-36|<tuple|2.5.2.4|20>>
-    <associate|auto-37|<tuple|2.5.2.5|20>>
-    <associate|auto-38|<tuple|2.5.2.6|21>>
-    <associate|auto-39|<tuple|2.5.3|21>>
+    <associate|auto-30|<tuple|2.5.1|19>>
+    <associate|auto-31|<tuple|2.5.2|19>>
+    <associate|auto-32|<tuple|2.1|19>>
+    <associate|auto-33|<tuple|2.5.2.1|20>>
+    <associate|auto-34|<tuple|2.5.2.2|20>>
+    <associate|auto-35|<tuple|2.5.2.3|20>>
+    <associate|auto-36|<tuple|2.5.2.4|21>>
+    <associate|auto-37|<tuple|2.5.2.5|21>>
+    <associate|auto-38|<tuple|2.5.2.6|22>>
+    <associate|auto-39|<tuple|2.5.3|22>>
     <associate|auto-4|<tuple|2.1|9>>
-    <associate|auto-40|<tuple|2.5.3.1|21>>
-    <associate|auto-41|<tuple|2.6|23>>
-    <associate|auto-42|<tuple|2.6.1|23>>
-    <associate|auto-43|<tuple|2.6.1.1|23>>
-    <associate|auto-44|<tuple|2.6.1.2|26>>
-    <associate|auto-45|<tuple|2.6.2|26>>
-    <associate|auto-46|<tuple|2.7|26>>
-    <associate|auto-47|<tuple|2.8|27>>
-    <associate|auto-48|<tuple|2.8.1|27>>
+    <associate|auto-40|<tuple|2.5.3.1|22>>
+    <associate|auto-41|<tuple|2.6|24>>
+    <associate|auto-42|<tuple|2.6.1|24>>
+    <associate|auto-43|<tuple|2.6.1.1|24>>
+    <associate|auto-44|<tuple|2.6.1.2|27>>
+    <associate|auto-45|<tuple|2.6.2|27>>
+    <associate|auto-46|<tuple|2.7|27>>
+    <associate|auto-47|<tuple|2.8|28>>
+    <associate|auto-48|<tuple|2.8.1|28>>
     <associate|auto-49|<tuple|3|29>>
     <associate|auto-5|<tuple|2.1.1|9>>
     <associate|auto-50|<tuple|3.1|29>>
@@ -4263,67 +4293,68 @@
     <associate|auto-56|<tuple|3.2.1|31>>
     <associate|auto-57|<tuple|3.2.2|31>>
     <associate|auto-58|<tuple|3.2.3|31>>
-    <associate|auto-59|<tuple|3.3|31>>
+    <associate|auto-59|<tuple|3.2.4|31>>
     <associate|auto-6|<tuple|2.1.1.1|9>>
-    <associate|auto-60|<tuple|3.3.1|32>>
-    <associate|auto-61|<tuple|3.3.2|32>>
-    <associate|auto-62|<tuple|3.3.2.1|33>>
-    <associate|auto-63|<tuple|3.3.3|33>>
-    <associate|auto-64|<tuple|3.3.3.1|33>>
-    <associate|auto-65|<tuple|3.3.3.2|34>>
-    <associate|auto-66|<tuple|3.4|34>>
-    <associate|auto-67|<tuple|3.4.1|35>>
-    <associate|auto-68|<tuple|3.4.1.1|37>>
-    <associate|auto-69|<tuple|3.4.1.2|37>>
+    <associate|auto-60|<tuple|3.3|32>>
+    <associate|auto-61|<tuple|3.3.1|32>>
+    <associate|auto-62|<tuple|3.3.2|33>>
+    <associate|auto-63|<tuple|3.3.2.1|33>>
+    <associate|auto-64|<tuple|3.3.3|34>>
+    <associate|auto-65|<tuple|3.3.3.1|34>>
+    <associate|auto-66|<tuple|3.3.3.2|35>>
+    <associate|auto-67|<tuple|3.4|35>>
+    <associate|auto-68|<tuple|3.4.1|37>>
+    <associate|auto-69|<tuple|3.4.1.1|38>>
     <associate|auto-7|<tuple|2.1.2|9>>
-    <associate|auto-70|<tuple|3.4.1.3|37>>
-    <associate|auto-71|<tuple|3.5|37>>
-    <associate|auto-72|<tuple|3.5.1|39>>
-    <associate|auto-73|<tuple|4|39>>
-    <associate|auto-74|<tuple|4.1|41>>
-    <associate|auto-75|<tuple|5|41>>
-    <associate|auto-76|<tuple|5.1|43>>
-    <associate|auto-77|<tuple|6|43>>
-    <associate|auto-78|<tuple|6.1|43>>
-    <associate|auto-79|<tuple|6.2|43>>
+    <associate|auto-70|<tuple|3.4.1.2|38>>
+    <associate|auto-71|<tuple|3.4.1.3|38>>
+    <associate|auto-72|<tuple|3.5|38>>
+    <associate|auto-73|<tuple|3.5.1|39>>
+    <associate|auto-74|<tuple|4|39>>
+    <associate|auto-75|<tuple|4.1|41>>
+    <associate|auto-76|<tuple|5|42>>
+    <associate|auto-77|<tuple|5.1|43>>
+    <associate|auto-78|<tuple|6|43>>
+    <associate|auto-79|<tuple|6.1|43>>
     <associate|auto-8|<tuple|2.1.2.1|10>>
-    <associate|auto-80|<tuple|6.2.1|43>>
-    <associate|auto-81|<tuple|6.2.2|44>>
-    <associate|auto-82|<tuple|6.2.2.1|44>>
-    <associate|auto-83|<tuple|6.2.2.2|45>>
-    <associate|auto-84|<tuple|6.2.2.3|45>>
-    <associate|auto-85|<tuple|6.2.3|45>>
-    <associate|auto-86|<tuple|6.3|45>>
-    <associate|auto-87|<tuple|6.3.1|45>>
-    <associate|auto-88|<tuple|6.3.2|46>>
-    <associate|auto-89|<tuple|6.4|47>>
+    <associate|auto-80|<tuple|6.2|43>>
+    <associate|auto-81|<tuple|6.2.1|43>>
+    <associate|auto-82|<tuple|6.2.2|44>>
+    <associate|auto-83|<tuple|6.2.2.1|44>>
+    <associate|auto-84|<tuple|6.2.2.2|45>>
+    <associate|auto-85|<tuple|6.2.2.3|45>>
+    <associate|auto-86|<tuple|6.2.3|45>>
+    <associate|auto-87|<tuple|6.3|45>>
+    <associate|auto-88|<tuple|6.3.1|45>>
+    <associate|auto-89|<tuple|6.3.2|46>>
     <associate|auto-9|<tuple|2.2|10>>
-    <associate|auto-90|<tuple|6.4.1|47>>
-    <associate|auto-91|<tuple|6.4.1.1|48>>
-    <associate|auto-92|<tuple|6.4.2|48>>
-    <associate|auto-93|<tuple|6.4.3|49>>
-    <associate|auto-94|<tuple|7|49>>
-    <associate|auto-95|<tuple|7.1|50>>
-    <associate|auto-96|<tuple|7.2|50>>
-    <associate|auto-97|<tuple|7.3|50>>
-    <associate|auto-98|<tuple|7.3.1|50>>
-    <associate|auto-99|<tuple|7.3.2|51>>
+    <associate|auto-90|<tuple|6.4|47>>
+    <associate|auto-91|<tuple|6.4.1|47>>
+    <associate|auto-92|<tuple|6.4.1.1|48>>
+    <associate|auto-93|<tuple|6.4.2|48>>
+    <associate|auto-94|<tuple|6.4.3|49>>
+    <associate|auto-95|<tuple|7|49>>
+    <associate|auto-96|<tuple|7.1|50>>
+    <associate|auto-97|<tuple|7.2|51>>
+    <associate|auto-98|<tuple|7.3|51>>
+    <associate|auto-99|<tuple|7.3.1|51>>
+    <associate|docs-internal-guid-af5ffdcd-7114-eda6-c80e-f3a224e6380a|<tuple|3.2.1|?>>
     <associate|footnote-1|<tuple|1|?>>
-    <associate|footnote-2.1|<tuple|2.1|19>>
+    <associate|footnote-2.1|<tuple|2.1|20>>
     <associate|footnote-3.1|<tuple|3.1|?>>
-    <associate|footnr-2.1|<tuple|2.1|19>>
+    <associate|footnr-2.1|<tuple|2.1|20>>
     <associate|footnr-3.1|<tuple|3.1|?>>
     <associate|full-adder-LHS|<tuple|2.3|16>>
-    <associate|full-adder-RHS|<tuple|2.2|15>>
+    <associate|full-adder-RHS|<tuple|2.2|16>>
     <associate|full-adder-spec|<tuple|2.1|15>>
     <associate|ss:AssertMerkleRoot|<tuple|3.3.3|33>>
-    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|7.6|?>>
-    <associate|ss:MonadZero|<tuple|3.3.1|?>>
-    <associate|ss:RepresentingValuesAsCellArrays|<tuple|2.5.1|?>>
-    <associate|ss:Serialization|<tuple|2.8|27>>
-    <associate|ss:pruning|<tuple|3.3.3.1|33>>
+    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|7.6|52>>
+    <associate|ss:MonadZero|<tuple|3.3.1|32>>
+    <associate|ss:RepresentingValuesAsCellArrays|<tuple|2.5.1|19>>
+    <associate|ss:Serialization|<tuple|2.8|28>>
+    <associate|ss:pruning|<tuple|3.3.3.1|34>>
     <associate|ss:salted|<tuple|3.3.3.2|34>>
-    <associate|thm:CSCT|<tuple|2.2|17>>
+    <associate|thm:CSCT|<tuple|2.2|18>>
   </collection>
 </references>
 

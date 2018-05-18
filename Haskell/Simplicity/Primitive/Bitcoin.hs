@@ -77,7 +77,10 @@ primEnv tx ix scmr | cond = Just $ PrimEnv { envTx = tx
  where
   cond = inRange (bounds (sigTxIn tx)) ix
   -- Perhaps the inputs and outputs should be hashed into a binary tree instead?
-  outputsHash = bslHash . runPutLazy $ mapM_ put (elems (sigTxOut tx))
+  outputsHash = bslHash . runPutLazy $ mapM_ go (elems (sigTxOut tx))
+   where
+    go txo = put (txoValue txo)
+          >> put (bslHash  (txoScript txo))
   inputsHash = bslHash . runPutLazy $ mapM_ go (elems (sigTxIn tx))
    where
     go txi = put (sigTxiPreviousOutput txi)

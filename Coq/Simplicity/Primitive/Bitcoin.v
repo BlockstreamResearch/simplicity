@@ -61,7 +61,7 @@ End DataTypes.
 
 Section Serialization.
 
-Definition putHash256le (x : hash256) : list byte :=
+Definition putHash256 (x : hash256) : list byte :=
   map Byte.repr (hash256_to_Zlist x).
 
 Definition putInt64le (x : Int64.int) : list byte :=
@@ -72,27 +72,9 @@ Definition putInt32le (x : Int.int) : list byte :=
 let z := Int.unsigned x in
 map (fun i => Byte.repr (z / two_power_nat (i*Byte.wordsize))%Z) (seq 0 4).
 
-Definition putVarInt (x : Int64.int) : list byte :=
-let z := Int64.unsigned x in
-  if (Z_lt_le_dec z 253)
-  then [ Byte.repr z ]
-  else if (Z_lt_le_dec z (two_power_nat 16))
-  then Byte.repr 253 :: map (fun i => Byte.repr (z / two_power_nat (i*Byte.wordsize))%Z) (seq 0 2)
-  else if (Z_lt_le_dec z Int.modulus)
-  then Byte.repr 254 :: putInt32le (Int.repr z)
-  else Byte.repr 255 :: putInt64le (Int64.repr z).
-
-Definition putScript (x : script) : list byte :=
-let z := Int64.repr (Zlength x) in
-    putVarInt z ++ x.
-
 Definition putOutpoint (x : outpoint) : list byte :=
-    putHash256le (opHash x)
+    putHash256 (opHash x)
  ++ putInt32le (opIndex x).
-
-Definition putTxOutput (x : txOutput) : list byte :=
-    putInt64le (txoValue x)
- ++ putScript (txoScript x).
 
 End Serialization.
 
@@ -185,7 +167,9 @@ let atInput {A : Ty} (f : sigTxInput -> A) (i : Word32) :=
   Some (cast (option_map f (nth_error (sigTxIn tx) (Z.to_nat (toZ i))))) in
 let atOutput {A : Ty} (f : txOutput -> A) (i : Word32) :=
   Some (cast (option_map f (nth_error (sigTxOut tx) (Z.to_nat (toZ i))))) in
-let outputsHash := byteStringHash (concat (map putTxOutput (sigTxOut tx))) in
+let outputsHash :=
+  let go i := putInt64le (txoValue i) ++ putHash256 (byteStringHash (txoScript i)) in
+  byteStringHash (concat (map go (sigTxOut tx))) in
 let inputsHash :=
   let go i := putOutpoint (sigTxiPreviousOutpoint i) ++ putInt32le (sigTxiSequence i) in
   byteStringHash (concat (map go (sigTxIn tx))) in
