@@ -8,4 +8,7 @@
   vst = nixpkgs.callPackage ./vst.nix {
     coq = nixpkgs.${coqVersion};
   };
+
+  # nix-build -A inheritance -o inheritance.Coq.eps
+  inheritance = nixpkgs.runCommand "inheritance.Coq.eps" { buildInputs = [ nixpkgs.graphviz ]; } "dot ${./inheritance.Coq.dot} -Teps -o $out";
 }

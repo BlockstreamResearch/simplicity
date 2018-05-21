@@ -28,7 +28,7 @@ instance (MonadReader PrimEnv m, Fail.MonadFail m) => Primitive (Kleisli m) wher
   primitive p = Kleisli $ \a -> do
    env <- ask
    let err = Fail.fail $ "Simplicity.Term.primitive in Primitive (Kleisli m) instance: " ++ primName p ++ " failed."
-   maybe err return $ primSem env p a
+   maybe err return $ primSem p a env
 
 -- | This class creates expressions for discounted jets.
 -- Jets expressions exclude witness-like expressions such as 'Witness' and 'Delegate' and other discounted 'Jet' expressions.

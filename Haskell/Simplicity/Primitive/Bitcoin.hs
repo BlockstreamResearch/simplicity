@@ -86,8 +86,8 @@ primEnv tx ix scmr | cond = Just $ PrimEnv { envTx = tx
     go txi = put (sigTxiPreviousOutput txi)
           >> put (sigTxiSequence txi)
 
-primSem :: PrimEnv -> Prim a b -> a -> Maybe b
-primSem env = interpret
+primSem :: Prim a b -> a -> PrimEnv -> Maybe b
+primSem p a env = interpret p a
  where
   tx = envTx env
   ix = envIx env

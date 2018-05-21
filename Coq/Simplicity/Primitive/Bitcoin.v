@@ -159,7 +159,7 @@ end.
 Let encodeOutpoint (op : outpoint) : tySem (Word256 * Word32) :=
  (from_hash256 (opHash op), fromZ (Int.unsigned (opIndex op)) : Word32).
 
-Definition sem (e : env) {A B} (p : t A B) : A -> option B :=
+Definition sem {A B} (p : t A B) (a : A) (e : env) : option B :=
 let tx := envTx e in
 let ix := envIx e in
 let currentInput {A : Ty} (f : sigTxInput -> A) := option_map f (nth_error (sigTxIn tx) ix) in
@@ -173,26 +173,27 @@ let outputsHash :=
 let inputsHash :=
   let go i := putOutpoint (sigTxiPreviousOutpoint i) ++ putInt32le (sigTxiSequence i) in
   byteStringHash (concat (map go (sigTxIn tx))) in
-match p with
-| Version => fun _ => Some (fromZ (Int.signed (sigTxVersion tx)))
-| LockTime => fun _ => Some (fromZ (Int.unsigned (sigTxLock tx)))
-| InputsHash => fun _ => Some (from_hash256 inputsHash)
-| OutputsHash => fun _ => Some (from_hash256 outputsHash)
-| NumInputs => fun _ => Some (fromZ (Zlength (sigTxIn tx)))
-| TotalInputValue => fun _ => Some (fromZ (sigTxTotalInValue tx))
-| CurrentPrevOutpoint => fun _ => currentInput (fun txi => encodeOutpoint (sigTxiPreviousOutpoint txi))
-| CurrentValue => fun _ => currentInput (fun txi => fromZ (Int64.signed (sigTxiValue txi)))
-| CurrentSequence => fun _ => currentInput (fun txi => fromZ (Int.unsigned (sigTxiSequence txi)))
-| CurrentIndex => fun _ => Some (fromZ (Z.of_nat ix))
-| InputPrevOutpoint => atInput (fun txi => encodeOutpoint (sigTxiPreviousOutpoint txi))
-| InputValue => atInput (fun txi => fromZ (Int64.signed (sigTxiValue txi)))
-| InputSequence => atInput (fun txi => fromZ (Int.unsigned (sigTxiSequence txi)))
-| NumOutputs => fun _ => Some (fromZ (Zlength (sigTxOut tx)))
-| TotalOutputValue => fun _ => Some (fromZ (sigTxTotalOutValue tx))
-| OutputValue => atOutput (fun txout => fromZ (Int64.signed (txoValue txout)))
-| OutputScriptHash => atOutput (fun txout => from_hash256 (byteStringHash (txoScript txout)))
-| ScriptCMR => fun _ => Some (from_hash256 (envScriptCMR e))
-end.
+(match p in prim A B return A -> option B with
+ | Version => fun _ => Some (fromZ (Int.signed (sigTxVersion tx)))
+ | LockTime => fun _ => Some (fromZ (Int.unsigned (sigTxLock tx)))
+ | InputsHash => fun _ => Some (from_hash256 inputsHash)
+ | OutputsHash => fun _ => Some (from_hash256 outputsHash)
+ | NumInputs => fun _ => Some (fromZ (Zlength (sigTxIn tx)))
+ | TotalInputValue => fun _ => Some (fromZ (sigTxTotalInValue tx))
+ | CurrentPrevOutpoint => fun _ => currentInput (fun txi => encodeOutpoint (sigTxiPreviousOutpoint txi))
+ | CurrentValue => fun _ => currentInput (fun txi => fromZ (Int64.signed (sigTxiValue txi)))
+ | CurrentSequence => fun _ => currentInput (fun txi => fromZ (Int.unsigned (sigTxiSequence txi)))
+ | CurrentIndex => fun _ => Some (fromZ (Z.of_nat ix))
+ | InputPrevOutpoint => atInput (fun txi => encodeOutpoint (sigTxiPreviousOutpoint txi))
+ | InputValue => atInput (fun txi => fromZ (Int64.signed (sigTxiValue txi)))
+ | InputSequence => atInput (fun txi => fromZ (Int.unsigned (sigTxiSequence txi)))
+ | NumOutputs => fun _ => Some (fromZ (Zlength (sigTxOut tx)))
+ | TotalOutputValue => fun _ => Some (fromZ (sigTxTotalOutValue tx))
+ | OutputValue => atOutput (fun txout => fromZ (Int64.signed (txoValue txout)))
+ | OutputScriptHash => atOutput (fun txout => from_hash256 (byteStringHash (txoScript txout)))
+ | ScriptCMR => fun _ => Some (from_hash256 (envScriptCMR e))
+ end
+) a.
 
 End primSem.
 

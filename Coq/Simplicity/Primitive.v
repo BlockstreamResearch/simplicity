@@ -22,7 +22,7 @@ Parameter t : Ty -> Ty -> Set.
 Parameter tag : forall {A B}, t A B -> hash256.
 
 Parameter env : Set.
-Parameter sem : env -> forall {A B}, t A B -> A -> option B.
+Parameter sem : forall {A B}, t A B -> A -> env -> option B.
 
 End PrimitiveSig.
 
@@ -114,7 +114,7 @@ Hint Immediate prim_Parametric : parametricity.
 Definition primSem M A B := Kleisli (ReaderT Prim.env M) A B.
 
 Definition PrimSem_mixin (M : CIMonadZero) : mixin (primSem M) :=
-  {| Primitive.prim A B p := fun a e => optionZero (Prim.sem e p a)
+  {| Primitive.prim A B p := fun a e => optionZero (Prim.sem p a e)
    |}.
 
 Canonical Structure CorePrimSem (M : CIMonad) : Core.Algebra :=
