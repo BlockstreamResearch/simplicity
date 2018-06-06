@@ -1,13 +1,14 @@
 -- | This modules wraps Data.Digest.Pure.SHA in order to simulate direct access to the SHA-256 compression function by providing access to SHA-256 midstates.
 module Simplicity.Digest
-  ( Hash256, integerHash256
+  ( Hash256, get256Bits, integerHash256
   , IV, bsIv, ivHash, bslHash, bsHash
-  , Block512 ,compress, compressHalf
+  , Block512, compress, compressHalf
   ) where
 
+import Control.Monad (replicateM)
 import Data.Binary.Get (Decoder(..), pushChunk, pushChunks, pushEndOfInput)
 import Data.Binary (encode)
-import Data.Bits ((.|.), shiftL)
+import Data.Bits ((.|.), shiftL, bit, zeroBits)
 import Data.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
 import Data.List (foldl')
 import Data.Serialize (Serialize, get, getShortByteString, put, putShortByteString)
@@ -21,6 +22,18 @@ newtype Hash256 = Hash256 { hash256 :: BSS.ShortByteString } deriving Show
 instance Serialize Hash256 where
   get = Hash256 <$> getShortByteString 32
   put (Hash256 bs) = putShortByteString bs
+
+-- | Deserializes a 256-bit hash value from a stream of 'Bool's.
+--
+-- Note that the type @forall m. Monad m => m Bool -> m a@ is isomorphic to the free monad over the @X²@ functor.
+-- In other words, 'get256Bits' has the type of a binary branching tree with leaves containing 'Hash256' values.
+get256Bits :: Monad m => m Bool -> m Hash256
+get256Bits next = Hash256 . BSS.pack <$> replicateM 32 (packBits <$> replicateM 8 next)
+ where
+  packBits = foldr (.|.) zeroBits . concat . zipWith f [7,6..0]
+   where
+    f i True = [bit i]
+    f i False = []
 
 -- | Extracts the 256 hash value as an integer.
 integerHash256 :: Hash256 -> Integer

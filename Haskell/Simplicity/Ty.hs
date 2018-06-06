@@ -1,4 +1,4 @@
-{-# LANGUAGE GADTs, TypeOperators, TypeFamilies, DeriveTraversable #-}
+{-# LANGUAGE ExistentialQuantification, GADTs, TypeOperators, TypeFamilies, DeriveTraversable #-}
 -- | This module provides representations of Simplicity types in Haskell.
 --
 -- The 'TyC' class captures those Haskell types that correspond to Simplicity types.
@@ -9,6 +9,8 @@ module Simplicity.Ty
  , TyReflect(..)
  , reify, reifyProxy, reifyArrow
  , equalTyReflect
+ , putValue, putValueR, getValue, getValueR
+ , SomeArrow(..), someArrow
  , Ty, TyF(..)
  , one, sum, prod
  , unreflect
@@ -80,6 +82,59 @@ equalTyReflect (ProdR a1 b1) (ProdR a2 b2) = do
   return Refl
 equalTyReflect _ _ = Nothing
 
+-- | @putValue@ produces a compact serialization of values of Simplicity types.
+-- The serialization format is simply a list of the tags of the sum types in canonical order.
+-- The type isn't serialized with the value in this format;
+-- you will need to know the original type in order to deserialize the value.
+putValue :: TyC a => a -> [Bool]
+putValue = putValueR reify
+
+-- | @putValueR@ produces a compact serialization of values of Simplicity types.
+-- The serialization format is simply a list of the tags of the sum types in canonical order.
+-- The type isn't serialized with the value in this format;
+-- you will need to know the original type in order to deserialize the value.
+--
+-- @putValue = putValueR reify@
+putValueR :: TyReflect a -> a -> [Bool]
+putValueR a x = go a x []
+ where
+  go :: TyReflect a -> a -> [Bool] -> [Bool]
+  go OneR () = id
+  go (SumR a b) (Left x) = (False:) . go a x
+  go (SumR a b) (Right y) = (True:) . go b y
+  go (ProdR a b) (x, y) = go a x . go b y
+
+-- | Deserializes a Simplicity value of a given type from a stream of Bits
+--
+-- Note that the type @forall m. Monad m => m Bool -> m a@ is isomorphic to the free monad over the @X²@ functor.
+-- In other words, 'getValue' has the type of a binary branching tree with leaves containing Simplicity values of a given .
+getValue :: (TyC a, Monad m) => m Bool -> m a
+getValue = getValueR reify
+
+-- | Deserializes a Simplicity value of a given type from a stream of Bits
+--
+-- Note that the type @forall m. Monad m => m Bool -> m a@ is isomorphic to the free monad over the @X²@ functor.
+-- In other words, 'getValue' has the type of a binary branching tree with leaves containing Simplicity values of a given .
+--
+-- @getValue = getValueR reify@
+getValueR :: Monad m => TyReflect a -> m Bool -> m a
+getValueR OneR next = return ()
+getValueR (SumR a b) next = next >>= f
+ where
+  f False = Left <$> getValueR a next
+  f True = Right <$> getValueR b next
+getValueR (ProdR a b) next = (,) <$> getValueR a next <*> getValueR b next
+
+-- | @SomeArrow arr@ captures the existential type @exists a b. (Ty a, TyC b) *> arr a b@.
+-- For conviencence it also includes the @TyReflect a@ and @TyReflect b@ values so that the type parameters can be deconstructed.
+data SomeArrow arr = forall a b. (TyC a, TyC b) => SomeArrow (arr a b) (TyReflect a) (TyReflect b)
+
+-- | A pseudo-constructor for @SomeArrow arr@ that fills in its @TyReflect a@ and @TyReflect b@ compontents automatically.
+someArrow :: (TyC a, TyC b) => arr a b -> SomeArrow arr
+someArrow x = SomeArrow x ra rb
+ where
+  (ra, rb) = reifyArrow x
+
 -- | A Haskell data type for representing Simplicity types.
 -- It uses an explicit 'Fix'edpoint of the 'TyF' functor.
 type Ty = Fix TyF
@@ -87,8 +142,8 @@ type Ty = Fix TyF
 -- | The functor used to define 'Ty' type.
 data TyF a = One
            | Sum a a
-           | Prod a a 
-           deriving (Eq, Functor, Foldable, Traversable)
+           | Prod a a
+           deriving (Eq, Functor, Foldable, Traversable, Show)
 
 instance Unifiable TyF where
   zipMatch One One = Just One
