@@ -56,10 +56,11 @@ Test-Suite Simplicity-testsuite
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
                        Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256,
-                       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests,
                        Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics
                        Simplicity.Elaboration
                        Simplicity.Serialization Simplicity.Serialization.BitString Simplicity.Serialization.ByteString
+                       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests
+                       Simplicity.Serialization.Tests, Simplicity.Ty.Tests
   build-depends:       array >=0.5 && <0.6,
                        base >=4.9 && <4.11,
                        binary >=0.7 && <0.9,

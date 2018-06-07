@@ -6,6 +6,8 @@ import Test.Tasty
 import qualified Simplicity.BitMachine.Tests as BitMachine
 import qualified Simplicity.BitMachine.StaticAnalysis.Tests as StaticAnalysis
 import qualified Simplicity.Programs.Tests as Programs
+import qualified Simplicity.Serialization.Tests as Serialization
+import qualified Simplicity.Ty.Tests as Ty
 
 main :: IO ()
 main = defaultMain tests
@@ -15,4 +17,6 @@ tests = testGroup "Tests"
       [ Programs.tests
       , BitMachine.tests
       , StaticAnalysis.tests
+      , Serialization.tests
+      , Ty.tests
       ]

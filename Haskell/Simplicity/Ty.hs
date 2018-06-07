@@ -14,6 +14,7 @@ module Simplicity.Ty
  , Ty, TyF(..)
  , one, sum, prod
  , unreflect
+ , SomeTy(..), reflect
  , memoCataTy
  ) where
 
@@ -168,6 +169,17 @@ unreflect :: TyReflect a -> Ty
 unreflect OneR = one
 unreflect (SumR a b) = sum (unreflect a) (unreflect b)
 unreflect (ProdR a b) = prod (unreflect a) (unreflect b)
+
+-- | SomeTy is isomorphic to Ty.
+data SomeTy = forall a. TyC a => SomeTy (TyReflect a)
+
+-- | Convert a Ty to SomeTy.
+reflect :: Ty -> SomeTy
+reflect (Fix One) = SomeTy OneR
+reflect (Fix (Sum a b)) = case (reflect a, reflect b) of
+                            (SomeTy ra, SomeTy rb) -> SomeTy $ SumR ra rb
+reflect (Fix (Prod a b)) = case (reflect a, reflect b) of
+                             (SomeTy ra, SomeTy rb) -> SomeTy $ ProdR ra rb
 
 -- memoTyF and dememoTyF hare non-exported helper functions for the
 -- HasTrie (TyF x) instance.
