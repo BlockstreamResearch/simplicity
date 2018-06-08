@@ -1,20 +1,23 @@
 -- | This modules wraps Data.Digest.Pure.SHA in order to simulate direct access to the SHA-256 compression function by providing access to SHA-256 midstates.
+{-# LANGUAGE BangPatterns #-}
 module Simplicity.Digest
   ( Hash256, get256Bits, integerHash256
-  , IV, bsIv, ivHash, bslHash, bsHash
+  , IV, bsIv, ivHash, bslHash, bsHash, bitStringHash
   , Block512, compress, compressHalf
   ) where
 
 import Control.Monad (replicateM)
+import Control.Monad.Trans.State (evalState, state)
 import Data.Binary.Get (Decoder(..), pushChunk, pushChunks, pushEndOfInput)
 import Data.Binary (encode)
-import Data.Bits ((.|.), shiftL, bit, zeroBits)
-import Data.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
-import Data.List (foldl')
-import Data.Serialize (Serialize, get, getShortByteString, put, putShortByteString)
+import Data.Bits ((.|.), bit, shiftL, testBit, zeroBits)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Short as BSS
 import qualified Data.ByteString.Lazy as BSL
+import Data.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
+import Data.List (foldl')
+import Data.Serialize (Serialize, get, getShortByteString, put, putShortByteString)
+import Data.Word (Word64)
 
 -- | Represents a 256-bit hash value or midstate from SHA-256.
 newtype Hash256 = Hash256 { hash256 :: BSS.ShortByteString } deriving Show
@@ -63,6 +66,26 @@ bslHash = ivHash . bsIv
 -- | Computes a SHA-256 hash from a 'BS.ByteString'.
 bsHash :: BS.ByteString -> Hash256
 bsHash = bslHash . BSL.fromStrict
+
+-- Perpare a bit string for SHA-256 hashing by adding the padding and grouping bits into blocks.
+padSha256 :: [Bool] -> [Block512]
+padSha256 l = go 0 (l ++ [True])
+ where
+  go :: Word64 -> [Bool] -> [Block512]
+  go !i l | 512 < lenPre + 64 = blockify pre : go (i + fromIntegral lenPre) post
+          | otherwise = [blockify (pre ++ replicate (512 - 64 - lenPre) False ++ map (testBit (i + fromIntegral lenPre - 1)) [63, 62 .. 0])]
+   where
+    (pre, post) = splitAt 512 l
+    lenPre = length pre
+    blockify = evalState (twice (get256Bits (state prog)))
+     where
+      prog [] = (False, [])
+      prog (b:bs) = (b, bs)
+      twice m = (,) <$> m <*> m
+
+-- | Compues a SHA-256 hash from a bit-string.
+bitStringHash :: [Bool] -> Hash256
+bitStringHash = ivHash . foldl' compress (IV sha256Incremental) . padSha256
 
 -- | A SHA-256 block is 512 bits.  For Simplicity's Merkle tree application, we
 -- will be building blocks containting hashes.

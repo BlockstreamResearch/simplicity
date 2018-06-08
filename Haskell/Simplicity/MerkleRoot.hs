@@ -70,18 +70,18 @@ commit = CommitmentRoot . ivHash
 
 instance Core CommitmentRoot where
   iden                                        = commit $ commitmentTag "iden"
-  comp (CommitmentRoot t) (CommitmentRoot s)  = commit $ compress (commitmentTag "comp") (t, s)
+  comp (CommitmentRoot s) (CommitmentRoot t)  = commit $ compress (commitmentTag "comp") (s, t)
   unit                                        = commit $ commitmentTag "unit"
   injl (CommitmentRoot t)                     = commit $ compressHalf (commitmentTag "injl") t
   injr (CommitmentRoot t)                     = commit $ compressHalf (commitmentTag "injr") t
-  match (CommitmentRoot t) (CommitmentRoot s) = commit $ compress (commitmentTag "case") (t, s)
-  pair (CommitmentRoot t) (CommitmentRoot s)  = commit $ compress (commitmentTag "pair") (t, s)
+  match (CommitmentRoot s) (CommitmentRoot t) = commit $ compress (commitmentTag "case") (s, t)
+  pair (CommitmentRoot s) (CommitmentRoot t)  = commit $ compress (commitmentTag "pair") (s, t)
   take (CommitmentRoot t)                     = commit $ compressHalf (commitmentTag "take") t
   drop (CommitmentRoot t)                     = commit $ compressHalf (commitmentTag "drop") t
 
 instance Assert CommitmentRoot where
-  assertl (CommitmentRoot t) s = commit $ compress (commitmentTag "case") (t, s)
-  assertr t (CommitmentRoot s) = commit $ compress (commitmentTag "case") (t, s)
+  assertl (CommitmentRoot s) t = commit $ compress (commitmentTag "case") (s, t)
+  assertr s (CommitmentRoot t) = commit $ compress (commitmentTag "case") (s, t)
   fail b = commit $ compress (commitmentTag "fail") b
 
 instance Primitive CommitmentRoot where
@@ -113,14 +113,14 @@ instance Core WitnessRoot where
    where
     result = observe $ compressHalf (witnessTag "iden") (typeRootR (reifyProxy result))
 
-  comp wt@(WitnessRoot t) ws@(WitnessRoot s) = result
+  comp ws@(WitnessRoot s) wt@(WitnessRoot t) = result
    where
     result = observe $ compress (compress (compressHalf (witnessTag "comp") (typeRootR (reifyProxy proxyA)))
                                           (typeRootR (reifyProxy proxyB), (typeRootR (reifyProxy proxyC))))
-                                (t,s)
+                                (s, t)
     proxy :: proxy a b -> proxy b c -> (Proxy a, Proxy b, Proxy c)
     proxy _ _ = (Proxy, Proxy, Proxy)
-    (proxyA, proxyB, proxyC) = proxy wt ws
+    (proxyA, proxyB, proxyC) = proxy ws wt
 
   unit = result
    where
@@ -142,20 +142,20 @@ instance Core WitnessRoot where
     proxy _ = (Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC) = proxy result
 
-  match (WitnessRoot t) (WitnessRoot s) = result
+  match (WitnessRoot s) (WitnessRoot t) = result
    where
     result = observe $ compress (compress (compress (witnessTag "case") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
                                           (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD)))
-                                (t,s)
+                                (s, t)
     proxy :: proxy ((Either a b), c) d -> (Proxy a, Proxy b, Proxy c, Proxy d)
     proxy _ = (Proxy, Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC, proxyD) = proxy result
 
-  pair (WitnessRoot t) (WitnessRoot s) = result
+  pair (WitnessRoot s) (WitnessRoot t) = result
    where
     result = observe $ compress (compress (compressHalf (witnessTag "pair") (typeRootR (reifyProxy proxyA)))
                                           (typeRootR (reifyProxy proxyB), (typeRootR (reifyProxy proxyC))))
-                                (t,s)
+                                (s, t)
     proxy :: proxy a (b,c) -> (Proxy a, Proxy b, Proxy c)
     proxy _ = (Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC) = proxy result
@@ -177,20 +177,20 @@ instance Core WitnessRoot where
     (proxyA, proxyB, proxyC) = proxy result
 
 instance Assert WitnessRoot where
-  assertl (WitnessRoot t) s = result
+  assertl (WitnessRoot s) t = result
    where
     result = observe $ compress (compress (compress (witnessTag "assertl") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
                                           (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD)))
-                                (t,s)
+                                (s, t)
     proxy :: proxy ((Either a b), c) d -> (Proxy a, Proxy b, Proxy c, Proxy d)
     proxy _ = (Proxy, Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC, proxyD) = proxy result
 
-  assertr t (WitnessRoot s) = result
+  assertr s (WitnessRoot t) = result
    where
     result = observe $ compress (compress (compress (witnessTag "assertr") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
                                           (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD)))
-                                (t,s)
+                                (s, t)
     proxy :: proxy ((Either a b), c) d -> (Proxy a, Proxy b, Proxy c, Proxy d)
     proxy _ = (Proxy, Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC, proxyD) = proxy result
@@ -208,3 +208,21 @@ instance Jet WitnessRoot where
   --     jet :: (TyC a, TyC b) => (forall term0. (Assert term0, Primitive term0, Jet term0) => term0 a b) -> term a b
   -- And then jets could contain jets such that their Sementics, WitnessRoots, and hence CommitmentRoots would all be transparent to jet sub-experssions.
   -- Need to think carefully what this would mean for concensus, but I think it is okay.
+
+instance Witness WitnessRoot where
+  witness v = result
+   where
+    result = observe $ compress (compressHalf (witnessTag "witness") (typeRootR ra)) (typeRootR rb, bitStringHash (putValue v))
+    (ra, rb) = reifyArrow result
+
+instance Delegate WitnessRoot where
+  disconnect ws@(WitnessRoot s) wt@(WitnessRoot t) = result
+   where
+    result = observe $ compress (compress (compressHalf (witnessTag "disconnect") (typeRootR (reifyProxy proxyA)))
+                                          (typeRootR (reifyProxy proxyB), (typeRootR (reifyProxy proxyC))))
+                                (s, t)
+    proxy :: proxy (a, w) (b, c) -> proxy c d -> (Proxy a, Proxy b, Proxy c)
+    proxy _ _ = (Proxy, Proxy, Proxy)
+    (proxyA, proxyB, proxyC) = proxy ws wt
+
+instance Simplicity WitnessRoot where
