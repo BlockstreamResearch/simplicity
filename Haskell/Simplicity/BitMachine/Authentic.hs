@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 -- | This modules implements the Bit Machine according to its specification.
 --
 -- This @Authentic@ module properly tracks undefined values in the Bit Machine's cells and will properly crash when, for example, reading from undefined cells.
@@ -10,8 +11,9 @@ module Simplicity.BitMachine.Authentic
 
 import Control.Monad ((>=>), guard, unless)
 import Control.Monad.Fail (MonadFail)
-import Control.Monad.Trans.Writer (WriterT, tell)
+import Control.Monad.Writer (MonadWriter, tell)
 import Data.Functor.Fixedpoint (cata)
+import Data.Monoid (Endo(..))
 import Data.Vector ((//), (!?))
 import qualified Data.Vector as V
 import qualified Data.Vector.Mutable as VM
@@ -197,12 +199,12 @@ profile st = Stats { memSize = sum readStackStats + sum writeStackStats + actRea
   writeStackStats = inactWriteFrameSizes st
 
 -- A state transformation that doesn't tranform the state but results in a side effect that emits the statistics of the current state.
-instrument st = tell (profile st) >> return st
+instrument st = tell [profile st] >> return st
 
 -- | An instrumented version of the authentic Bit Machine.
 --
 -- 'intrumentMachine' behaves as 'runMachine' but also profiles the execution returning 'Stats' about computation resources used during execution.
-instrumentMachine :: MonadFail m => MachineCode -> Interpreter (WriterT Stats m)
+instrumentMachine :: (MonadWriter [Stats] m, MonadFail m) => MachineCode -> Interpreter m
 instrumentMachine code input outputSize = interpreter (initialState input outputSize)
                                       >>= finalState
  where
