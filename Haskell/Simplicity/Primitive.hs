@@ -14,7 +14,7 @@
 -- * "Simplicity.Primitive.Bitcoin"
 module Simplicity.Primitive
  ( Prim, primPrefix, primName
- , getPrimBit, getPrimByte
+ , getPrimBit, getPrimByte, putPrimBit, putPrimByte
  , PrimEnv, primSem
  ) where
 

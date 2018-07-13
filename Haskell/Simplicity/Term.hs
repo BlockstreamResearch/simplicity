@@ -21,7 +21,7 @@ import Simplicity.Primitive
 -- | This class embeds Blockchain 'Prim'itives into the Simplicity language.
 -- The semantics for these primitives is mediated by the 'Simplicity.Primitive' module.
 class Primitive term where
-  primitive :: Prim a b -> term a b
+  primitive :: (TyC a, TyC b) => Prim a b -> term a b
 
 -- | The Monad 'm' should be a commutative monad.
 instance (MonadReader PrimEnv m, Fail.MonadFail m) => Primitive (Kleisli m) where

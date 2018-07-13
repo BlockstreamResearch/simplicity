@@ -1,12 +1,12 @@
 name:                Simplicity
 version:             0.0.0
--- synopsis:            
--- description:         
+-- synopsis:
+-- description:
 license:             AllRightsReserved
 -- license-file:        LICENSE
 author:              Russell O'Connor
 maintainer:          roconnor@blockstream.io
--- copyright:           
+-- copyright:
 category:            Language
 build-type:          Simple
 extra-source-files:  README.md
@@ -22,9 +22,9 @@ library
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
                        Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256,
                        Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics
-                       Simplicity.Elaboration
+                       Simplicity.Dag, Simplicity.Elaboration
                        Simplicity.Serialization Simplicity.Serialization.BitString Simplicity.Serialization.ByteString
-  -- other-modules:       
+  -- other-modules:
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
@@ -39,6 +39,7 @@ library
                        mtl >=2.2 && <2.3,
                        MemoTrie >=0.6 && <0.7,
                        SHA >=1.6 && <1.7,
+                       split >=0.2.3 && <0.3,
                        transformers >=0.5 && <0.6,
                        unification-fd >=0.10 && <0.11,
                        vector >=0.12 && <0.13
@@ -57,7 +58,7 @@ Test-Suite Simplicity-testsuite
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
                        Simplicity.Programs.Word Simplicity.Programs.Bit Simplicity.Programs.Generic Simplicity.Programs.Sha256,
                        Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics
-                       Simplicity.Elaboration
+                       Simplicity.Dag, Simplicity.Elaboration
                        Simplicity.Serialization Simplicity.Serialization.BitString Simplicity.Serialization.ByteString
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests
                        Simplicity.Serialization.Tests, Simplicity.Ty.Tests
@@ -71,6 +72,7 @@ Test-Suite Simplicity-testsuite
                        mtl >=2.2 && <2.3,
                        MemoTrie >=0.6 && <0.7,
                        SHA >=1.6 && <1.7,
+                       split >=0.2.3 && <0.3,
                        transformers >=0.5 && <0.6,
                        unification-fd >=0.10 && <0.11,
                        vector >=0.12 && <0.13,

@@ -2,21 +2,26 @@
 -- | This module defines a type for untyped Simplicity DAGs as well as a type checking function to convert such a DAG into a well-typed Simplicity expression.
 module Simplicity.Elaboration
   (
+  -- * Type checking untyped Simplicity
+    typeCheckDag
   -- * Untyped Simplicity
-    UntypedTermF
+  , UntypedTermF
   , UntypedSimplicityDag
-  , WitnessData
+  , WitnessData, witnessData
   -- ** Constructors for untyped Simplicity
   , uIden, uUnit, uInjl, uInjr
   , uTake, uDrop, uComp, uCase, uPair, uDisconnect
-  , uHidden, uWitness, uPrim
-  -- * Type checking untyped Simplicity
-  , typeCheckDag
+  , uHidden, uWitness, uPrim, uJet, uFail
+  -- ** Match expressions for untyped Simplicity
+  , isUIden, isUUnit, isUInjl, isUInjr
+  , isUTake, isUDrop, isUComp, isUCase, isUPair, isUDisconnect
+  , isUHidden, isUWitness, isUPrim
   ) where
 
 import Prelude hiding (fail, take, drop)
 
 import Control.Arrow ((+++), left)
+import Control.Monad (foldM)
 import Control.Monad.Trans (lift)
 import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
 import Control.Unification (Fallible(..), UTerm(..), (=:=), applyBindingsAll, freeVar, unfreeze)
@@ -24,10 +29,10 @@ import Control.Unification.STVar (STBinding, STVar, runSTBinding)
 import Control.Unification.Types (UFailure)
 import Data.Functor.Compose (Compose(..))
 import Data.Functor.Fixedpoint (Fix(..))
+import Data.Maybe (fromMaybe)
 import Data.Sequence (Seq, (|>), (!?), empty, index, mapWithIndex, ViewR(..), viewr)
 import Data.Traversable (foldMapDefault, fmapDefault)
 import Data.Type.Equality ((:~:)(Refl))
-import Data.Vector (Vector, unfoldrM, foldM)
 import qualified Data.Vector.Unboxed as UV
 
 import Simplicity.Digest
@@ -56,6 +61,9 @@ unital (UTerm t) = Fix (unital <$> t)
 -- We represent this block of bits as a unboxed vector of 'Bool's.
 type WitnessData = UV.Vector Bool
 
+witnessData :: TyC a => a -> WitnessData
+witnessData = UV.fromList . putValue
+
 -- An open recursive type for untyped Simplicity terms with type annotations.
 -- The 'ty' parameter holds the typing annotations, which can be 'UTy v', or 'Ty', etc.
 -- The 'a' parameter holds the (open) recursive subexpressions.
@@ -72,10 +80,88 @@ data TermF a ty = Iden ty
                 | Hidden ty ty Hash256
                 | Witness ty ty WitnessData
                 | Prim (SomeArrow Prim)
-{-
-             | Jet JetID
--}
+--              | Jet JetID
   deriving (Functor, Foldable, Traversable)
+
+instance (Eq a, Eq ty) => Eq (TermF a ty) where
+  (Iden a0) == (Iden a1) = a0 == a1
+  (Unit a0) == (Unit a1) = a0 == a1
+  (Injl a0 b0 c0 t0) == (Injl a1 b1 c1 t1) = [a0,b0,c0] == [a1,b1,c1] && t0 == t1
+  (Injr a0 b0 c0 t0) == (Injr a1 b1 c1 t1) = [a0,b0,c0] == [a1,b1,c1] && t0 == t1
+  (Take a0 b0 c0 t0) == (Take a1 b1 c1 t1) = [a0,b0,c0] == [a1,b1,c1] && t0 == t1
+  (Drop a0 b0 c0 t0) == (Drop a1 b1 c1 t1) = [a0,b0,c0] == [a1,b1,c1] && t0 == t1
+  (Comp a0 b0 c0 s0 t0) == (Comp a1 b1 c1 s1 t1) = [a0,b0,c0] == [a1,b1,c1] && [s0,t0] == [s1,t1]
+  (Case a0 b0 c0 d0 s0 t0) == (Case a1 b1 c1 d1 s1 t1) = [a0,b0,c0,d0] == [a1,b1,c1,d1] && [s0,t0] == [s1,t1]
+  (Pair a0 b0 c0 s0 t0) == (Pair a1 b1 c1 s1 t1) = [a0,b0,c0] == [a1,b1,c1] && [s0,t0] == [s1,t1]
+  (Disconnect a0 b0 c0 d0 s0 t0) == (Disconnect a1 b1 c1 d1 s1 t1) = [a0,b0,c0,d0] == [a1,b1,c1,d1] && [s0,t0] == [s1,t1]
+  (Hidden a0 b0 h0) == (Hidden a1 b1 h1) = [a0,b0] == [a1,b1] && h0 == h1
+  (Witness a0 b0 w0) == (Witness a1 b1 w1) = [a0,b0] == [a1,b1] && w0 == w1
+  (Prim (SomeArrow p0 ra0 rb0)) == (Prim (SomeArrow p1 ra1 rb1)) = fromMaybe False $ do
+    Refl <- equalTyReflect ra0 ra1
+    Refl <- equalTyReflect rb0 rb1
+    return $ p0 == p1
+  _ == _ = False
+
+instance (Show a, Show ty) => Show (TermF a ty) where
+  showsPrec p (Iden a) = showParen (10 < p) $ showString "Iden " . showsPrec 11 a
+  showsPrec p (Unit a) = showParen (10 < p) $ showString "Unit " . showsPrec 11 a
+  showsPrec p (Injl a b c t) = showParen (10 < p)
+                             $ showString "Injl " . showsPrec 11 a
+                             . showString " " . showsPrec 11 b
+                             . showString " " . showsPrec 11 c
+                             . showString " " . showsPrec 11 t
+  showsPrec p (Injr a b c t) = showParen (10 < p)
+                             $ showString "Injr " . showsPrec 11 a
+                             . showString " " . showsPrec 11 b
+                             . showString " " . showsPrec 11 c
+                             . showString " " . showsPrec 11 t
+  showsPrec p (Take a b c t) = showParen (10 < p)
+                             $ showString "Take " . showsPrec 11 a
+                             . showString " " . showsPrec 11 b
+                             . showString " " . showsPrec 11 c
+                             . showString " " . showsPrec 11 t
+  showsPrec p (Drop a b c t) = showParen (10 < p)
+                             $ showString "Drop " . showsPrec 11 a
+                             . showString " " . showsPrec 11 b
+                             . showString " " . showsPrec 11 c
+                             . showString " " . showsPrec 11 t
+  showsPrec p (Comp a b c s t) = showParen (10 < p)
+                               $ showString "Comp " . showsPrec 11 a
+                               . showString " " . showsPrec 11 b
+                               . showString " " . showsPrec 11 c
+                               . showString " " . showsPrec 11 s
+                               . showString " " . showsPrec 11 t
+  showsPrec p (Case a b c d s t) = showParen (10 < p)
+                                 $ showString "Case " . showsPrec 11 a
+                                 . showString " " . showsPrec 11 b
+                                 . showString " " . showsPrec 11 c
+                                 . showString " " . showsPrec 11 d
+                                 . showString " " . showsPrec 11 s
+                                 . showString " " . showsPrec 11 t
+  showsPrec p (Pair a b c s t) = showParen (10 < p)
+                               $ showString "Pair " . showsPrec 11 a
+                               . showString " " . showsPrec 11 b
+                               . showString " " . showsPrec 11 c
+                               . showString " " . showsPrec 11 s
+                               . showString " " . showsPrec 11 t
+  showsPrec p (Disconnect a b c d s t) = showParen (10 < p)
+                                       $ showString "Disconnect " . showsPrec 11 a
+                                       . showString " " . showsPrec 11 b
+                                       . showString " " . showsPrec 11 c
+                                       . showString " " . showsPrec 11 d
+                                       . showString " " . showsPrec 11 s
+                                       . showString " " . showsPrec 11 t
+  showsPrec p (Hidden a b h) = showParen (10 < p)
+                             $ showString "Hidden " . showsPrec 11 a
+                             . showString " " . showsPrec 11 b
+                             . showString " " . showsPrec 11 h
+  showsPrec p (Witness a b w) = showParen (10 < p)
+                              $ showString "Witness " . showsPrec 11 a
+                              . showString " " . showsPrec 11 b
+                              . showString " " . showsPrec 11 w
+  showsPrec p (Prim (SomeArrow prim _ _)) = showParen (10 < p)
+                                          $ showString "Prim "
+                                          . (showParen True $ showString "someArrow " . showString (primName prim))
 
 -- Given a 'UTy v' annonated Simplicity 'TermF', return the implied input and output types given the annotations.
 termFArrow :: TermF a (UTy v) -> (UTy v, UTy v)
@@ -95,6 +181,38 @@ termFArrow (Prim (SomeArrow p ra rb)) = (unfreeze (unreflect ra), unfreeze (unre
 
 -- | An open recursive type for untyped Simplicity expressions.
 newtype UntypedTermF a = Untyped (TermF a ())
+  deriving Eq
+
+instance Show a => Show (UntypedTermF a) where
+  showsPrec p (Untyped (Iden _)) = showString "uIden"
+  showsPrec p (Untyped (Unit _)) = showString "uUnit"
+  showsPrec p (Untyped (Injl _ _ _ t)) = showParen (10 < p)
+                                       $ showString "uInjl " . showsPrec 11 t
+  showsPrec p (Untyped (Injr _ _ _ t)) = showParen (10 < p)
+                                       $ showString "uInjr " . showsPrec 11 t
+  showsPrec p (Untyped (Take _ _ _ t)) = showParen (10 < p)
+                                       $ showString "uTake " . showsPrec 11 t
+  showsPrec p (Untyped (Drop _ _ _ t)) = showParen (10 < p)
+                                       $ showString "uDrop " . showsPrec 11 t
+  showsPrec p (Untyped (Comp _ _ _ s t)) = showParen (10 < p)
+                                         $ showString "uComp " . showsPrec 11 s
+                                         . showString " " . showsPrec 11 t
+  showsPrec p (Untyped (Case _ _ _ _ s t)) = showParen (10 < p)
+                                           $ showString "uCase " . showsPrec 11 s
+                                           . showString " " . showsPrec 11 t
+  showsPrec p (Untyped (Pair _ _ _ s t)) = showParen (10 < p)
+                                         $ showString "uPair " . showsPrec 11 s
+                                         . showString " " . showsPrec 11 t
+  showsPrec p (Untyped (Disconnect _ _ _ _ s t)) = showParen (10 < p)
+                                                 $ showString "uDisconnect " . showsPrec 11 s
+                                                 . showString " " . showsPrec 11 t
+  showsPrec p (Untyped (Hidden _ _ h)) = showParen (10 < p)
+                                       $ showString "Hidden " . showsPrec 11 h
+  showsPrec p (Untyped (Witness _ _ w)) = showParen (10 < p)
+                                        $ showString "Witness " . showsPrec 11 w
+  showsPrec p (Untyped (Prim (SomeArrow prim _ _))) = showParen (10 < p)
+                                                    $ showString "uPrim "
+                                                    . (showParen True $ showString "someArrow " . showString (primName prim))
 
 instance Functor UntypedTermF where
   fmap = fmapDefault
@@ -128,15 +246,48 @@ uComp x y = Untyped (Comp () () () x y)
 uCase x y = Untyped (Case () () () () x y)
 uPair x y = Untyped (Pair () () () x y)
 uDisconnect x y = Untyped (Disconnect () () () () x y)
+
 -- | Assertions are not directly represented in 'UntypedSimplicityDag'.
 -- Instead assertions are represented by a 'uCase' node where the missing branch is replaced with a 'uHidden' node.
 uHidden x = Untyped (Hidden () () x)
 uWitness x = Untyped (Witness () () x)
 uPrim p = Untyped (Prim p)
+-- | :TODO: NOT YET IMPLEMENTED
+uJet = error ":TODO: deserialization of jet nodes not yet implemented"
+-- | :TODO: NOT YET IMPLEMENTED
+uFail b = error ":TODO: deserialization of fail nodes not yet implemented"
+
+-- Matches for 'UntypedTermF a'.
+isUIden (Untyped (Iden _)) = Just ()
+isUIden _ = Nothing
+isUUnit (Untyped (Unit _)) = Just ()
+isUUnit _ = Nothing
+isUInjl (Untyped (Injl _ _ _ x)) = Just x
+isUInjl _ = Nothing
+isUInjr (Untyped (Injr _ _ _ x)) = Just x
+isUInjr _ = Nothing
+isUTake (Untyped (Take _ _ _ x)) = Just x
+isUTake _ = Nothing
+isUDrop (Untyped (Drop _ _ _ x)) = Just x
+isUDrop _ = Nothing
+isUComp (Untyped (Comp _ _ _ x y)) = Just (x,y)
+isUComp _ = Nothing
+isUCase (Untyped (Case _ _ _ _ x y)) = Just (x,y)
+isUCase _ = Nothing
+isUPair (Untyped (Pair _ _ _ x y)) = Just (x,y)
+isUPair _ = Nothing
+isUDisconnect (Untyped (Disconnect _ _ _ _ x y)) = Just (x,y)
+isUDisconnect _ = Nothing
+isUHidden (Untyped (Hidden _ _ x)) = Just x
+isUHidden _ = Nothing
+isUWitness (Untyped (Witness _ _ x)) = Just x
+isUWitness _ = Nothing
+isUPrim (Untyped (Prim p)) = Just p
+isUPrim _ = Nothing
 
 -- ElaborateError holds the possible errors that can occur during the 'elaborate' step.
 data ElaborateError s = UnificationFailure (UFailure TyF (STVar s TyF))
-                      | IndexError Int Int
+                      | IndexError Int Integer
                       | Overflow
                       deriving Show
 
@@ -147,13 +298,17 @@ instance Fallible TyF (STVar s TyF) (ElaborateError s) where
 -- | Untyped Simplicity expressions with explicit sharing of subexpressions.
 --
 -- Every node in an Simplicity expression is an element of a vector with indices that reference the relative locations of their immediate subexpressions within that vector.
--- This reference is indicated by a number that counts backwards from the refering node's position in the vector to the position in the vector wher ethe referred node is found.
--- The number @0@ is a reference to the immediately preciding node (as a node is not allowed to refer to itself).
+-- This reference is the difference in positions between refering node's position and the referred node's position.
+-- The number @1@ is a reference to the immediately preciding node and the number @0@ is not allowed as it would imply a node is refering to itself.
 --
 -- The last element of the vector is the root of the Simplicity expression DAG.
--- To be a valid DAG, we require that the subexpression references all come before the node itself
--- (i.e. the Vector must be topologically sorted).
-type UntypedSimplicityDag = Vector (UntypedTermF Integer)
+--
+-- Invariant:
+--
+-- @
+--     0 \<= /i/ && /i/ \< 'length' /v/ ==> 'Foldable.all' (\\x -> 0 < x && x <= /i/) (/v/ '!!' /i/)
+-- @
+type UntypedSimplicityDag = [UntypedTermF Integer]
 
 -- 'elaborate' takes an 'UntypedSimplicityDag' and adds suitiable type annotations to the nodes in the DAG as well as unification constraints.
 -- This can cause unification failures, however the occurs check isn't performed in this step.
@@ -168,36 +323,35 @@ elaborate = foldM loop empty
        -> ExceptT (ElaborateError s) (STBinding s) (Seq (TermF Int (UTy (STVar s TyF))))
   loop output node = (output |>) <$> go node
    where
-    lenOutput = length output
     fresh :: ExceptT (ElaborateError s) (STBinding s) (UTy (STVar s TyF))
     fresh = UVar <$> lift freeVar
-    lookup i | i <= toInteger (maxBound :: Int) = maybe (throwE (IndexError lenOutput i')) return (output !? (lenOutput - i'))
+    lenOutput = length output
+    offsetToIndex i = lenOutput - fromInteger i
+    lookup i | i <= toInteger (maxBound :: Int) = maybe (throwE (IndexError lenOutput i)) return (output !? offsetToIndex i)
              | otherwise = throwE Overflow
-     where
-      i' = fromInteger i
     go (Untyped (Iden _)) = Iden <$> fresh
     go (Untyped (Unit _)) = Unit <$> fresh
     go (Untyped (Injl _ _ _ it)) = do
       (a,b) <- termFArrow <$> lookup it
       c <- fresh
-      return (Injl a b c (fromInteger it))
+      return (Injl a b c (offsetToIndex it))
     go (Untyped (Injr _ _ _ it)) = do
       (a,c) <- termFArrow <$> lookup it
       b <- fresh
-      return (Injr a b c (fromInteger it))
+      return (Injr a b c (offsetToIndex it))
     go (Untyped (Take _ _ _ it)) = do
       (a,c) <- termFArrow <$> lookup it
       b <- fresh
-      return (Take a b c (fromInteger it))
+      return (Take a b c (offsetToIndex it))
     go (Untyped (Drop _ _ _ it)) = do
       (b,c) <- termFArrow <$> lookup it
       a <- fresh
-      return (Drop a b c (fromInteger it))
+      return (Drop a b c (offsetToIndex it))
     go (Untyped (Comp _ _ _ is it)) = do
       (a,b0) <- termFArrow <$> lookup is
       (b1,c) <- termFArrow <$> lookup it
       b <- b0 =:= b1
-      return (Comp a b c (fromInteger is) (fromInteger it))
+      return (Comp a b c (offsetToIndex is) (offsetToIndex it))
     go (Untyped (Case _ _ _ _ is it)) = do
       (ac,d0) <- termFArrow <$> lookup is
       (bc,d1) <- termFArrow <$> lookup it
@@ -207,12 +361,12 @@ elaborate = foldM loop empty
       _ <- UTerm (Prod a c) =:= ac
       _ <- UTerm (Prod b c) =:= bc
       d <- d0 =:= d1
-      return (Case a b c d (fromInteger is) (fromInteger it))
+      return (Case a b c d (offsetToIndex is) (offsetToIndex it))
     go (Untyped (Pair _ _ _ is it)) = do
       (a0,b) <- termFArrow <$> lookup is
       (a1,c) <- termFArrow <$> lookup it
       a <- a0 =:= a1
-      return (Pair a b c (fromInteger is) (fromInteger it))
+      return (Pair a b c (offsetToIndex is) (offsetToIndex it))
     go (Untyped (Disconnect _ _ _ _ is it)) = do
       (aw,bc) <- termFArrow <$> lookup is
       (c,d) <- termFArrow <$> lookup it
@@ -220,11 +374,12 @@ elaborate = foldM loop empty
       b <- fresh
       _ <- UTerm (Prod a (unfreeze tyWord256)) =:= aw
       _ <- UTerm (Prod b c) =:= bc
-      return (Disconnect a b c d (fromInteger is) (fromInteger it))
+      return (Disconnect a b c d (offsetToIndex is) (offsetToIndex it))
     go (Untyped (Hidden _ _ h)) = Hidden <$> fresh <*> fresh <*> pure h
     go (Untyped (Witness _ _ w)) = Witness <$> fresh <*> fresh <*> pure w
     go (Untyped (Prim p)) = pure (Prim p)
 
+-- :TODO: It should be possible to make a streamable variant of this (a la pipes) with type (MonadFail m) => m (Maybe (UntypedSimplicityF Integer)) -> m (term a b)
 -- | Transform a 'UntypedSimplicityDag' with explicit sharing into a well-typed Simplicity expression of a specified type.
 -- Various errors can occur if the input DAG isn't well-typed or well-formed.
 -- In such cases a 'String' describing the error is returned.

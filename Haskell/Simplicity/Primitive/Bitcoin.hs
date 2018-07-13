@@ -2,17 +2,18 @@
 -- | This module provides the Simplicity primitives specific for Bitcoin or Bitcoin-like applications.
 module Simplicity.Primitive.Bitcoin
   ( Prim(..), primPrefix, primName
-  , getPrimBit, getPrimByte
+  , getPrimBit, getPrimByte, putPrimBit, putPrimByte
   , PrimEnv, primSem
   ) where
 
 import Data.Array (Array, (!), bounds, elems, inRange)
 import qualified Data.List as List
-import Data.Serialize (Get, getWord8, put, runPutLazy)
+import Data.Serialize (Get, getWord8, Putter, put, putWord8, runPutLazy)
 import qualified Data.Word
 
 import Simplicity.Digest
 import Simplicity.Primitive.Bitcoin.DataTypes
+import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Ty.Word
 
@@ -37,6 +38,27 @@ data Prim a b where
   ScriptCMR :: Prim () Word256
 -- Other possible ideas:
   -- TxId :: Prim () Word256
+
+instance Eq (Prim a b) where
+  Version == Version = True
+  LockTime == LockTime = True
+  InputsHash == InputsHash = True
+  OutputsHash == OutputsHash = True
+  NumInputs == NumInputs = True
+  TotalInputValue == TotalInputValue = True
+  CurrentPrevOutpoint == CurrentPrevOutpoint = True
+  CurrentValue == CurrentValue = True
+  CurrentSequence == CurrentSequence = True
+  CurrentIndex == CurrentIndex = True
+  InputPrevOutpoint == InputPrevOutpoint = True
+  InputValue == InputValue = True
+  InputSequence == InputSequence = True
+  NumOutputs == NumOutputs = True
+  TotalOutputValue == TotalOutputValue = True
+  OutputValue == OutputValue = True
+  OutputScriptHash == OutputScriptHash = True
+  ScriptCMR == ScriptCMR = True
+  _ == _ = False
 
 primPrefix :: String
 primPrefix = "Bitcoin"
@@ -73,7 +95,7 @@ getPrimBit next =
   makeArrow p = return (someArrow p)
 
 getPrimByte :: Data.Word.Word8 -> Get (Maybe (SomeArrow Prim))
-getPrimByte w = return $ decode w
+getPrimByte = return . decode
  where
   decode 0x25 = Just $ someArrow Version
   decode 0x26 = Just $ someArrow LockTime
@@ -94,6 +116,49 @@ getPrimByte w = return $ decode w
   decode 0x35 = Just $ someArrow OutputScriptHash
   decode 0x36 = Just $ someArrow ScriptCMR
   decode _ = Nothing
+
+putPrimBit :: Prim a b -> DList Bool
+putPrimBit Version             = ([False,False,False,False,False]++)
+putPrimBit LockTime            = ([False,False,False,False,True]++)
+putPrimBit InputsHash          = ([False,False,False,True]++)
+putPrimBit OutputsHash         = ([False,False,True,False]++)
+putPrimBit NumInputs           = ([False,False,True,True]++)
+putPrimBit TotalInputValue     = ([False,True,False,False]++)
+putPrimBit CurrentPrevOutpoint = ([False,True,False,True]++)
+putPrimBit CurrentValue        = ([False,True,True,False]++)
+putPrimBit CurrentSequence     = ([False,True,True,True]++)
+putPrimBit CurrentIndex        = ([True,False,False,False,False]++)
+putPrimBit InputPrevOutpoint   = ([True,False,False,False,True]++)
+putPrimBit InputValue          = ([True,False,False,True]++)
+putPrimBit InputSequence       = ([True,False,True,False]++)
+putPrimBit NumOutputs          = ([True,False,True,True]++)
+putPrimBit TotalOutputValue    = ([True,True,False,False]++)
+putPrimBit OutputValue         = ([True,True,False,True]++)
+putPrimBit OutputScriptHash    = ([True,True,True,False]++)
+putPrimBit ScriptCMR           = ([True,True,True,True]++)
+
+putPrimByte :: Putter (Prim a b)
+putPrimByte = putWord8 . encode
+ where
+  encode :: Prim a b -> Data.Word.Word8
+  encode Version             = 0x25
+  encode LockTime            = 0x26
+  encode InputsHash          = 0x27
+  encode OutputsHash         = 0x28
+  encode NumInputs           = 0x29
+  encode TotalInputValue     = 0x2a
+  encode CurrentPrevOutpoint = 0x2b
+  encode CurrentValue        = 0x2c
+  encode CurrentSequence     = 0x2d
+  encode CurrentIndex        = 0x2e
+  encode InputPrevOutpoint   = 0x2f
+  encode InputValue          = 0x30
+  encode InputSequence       = 0x31
+  encode NumOutputs          = 0x32
+  encode TotalOutputValue    = 0x33
+  encode OutputValue         = 0x34
+  encode OutputScriptHash    = 0x35
+  encode ScriptCMR           = 0x36
 
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32

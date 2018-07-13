@@ -5,17 +5,19 @@ module Simplicity.Serialization
   , evalStream, evalExactVector
   , evalStreamWithError
   , Error(..)
-  , getEvalBitStream
+  , getEvalBitStream, putBitStream
   ) where
 
 import Prelude hiding (length)
 
-import Control.Monad (guard)
+import Control.Monad (forM_, guard)
 import Control.Monad.Trans (lift)
 import Control.Monad.Trans.State (StateT(..), evalStateT, get, modify, put)
-import Data.Bits (testBit)
+import Data.Bits (setBit, testBit)
 import Data.List (foldl', genericLength, unfoldr)
+import Data.List.Split (chunksOf)
 import Data.Serialize.Get (Get, getWord8)
+import Data.Serialize.Put (Putter, putWord8)
 import Data.Vector.Unboxed (Vector, Unbox, indexM, length)
 import Data.Word (Word8)
 
@@ -120,6 +122,7 @@ evalExactVector prog bs = evalStateT (prog (get >>= f) >>= assertEnd) init
 -- | The type of errors that can be produced by 'evalStreamWithError'.
 data Error = EndOfInput
            | ParseError
+           deriving (Eq, Show)
 
 -- | @evalStreamWithError :: (forall m. Monad m => m void -> m b -> m a) -> [b] -> 'Either' 'Error' a@
 --
@@ -157,3 +160,9 @@ getEvalBitStream prog = evalStateT (prog (fail "Simplicity.Serialization.getEval
   next (Just (w, i)) | i < 0     = next Nothing
                      | otherwise = return (testBit w i, Just (w, i-1))
 
+-- | Packs and writes out a list of 'Bool's via the 'Data.Serialize.Put.Put' monad.
+-- It writes starting from MSB (most sigificant bit) to LSB (least sigificant bit) within a byte.
+putBitStream :: Putter [Bool]
+putBitStream l = forM_ (chunksOf 8 l) putChunk
+ where
+  putChunk bs = putWord8 $ foldr (flip setBit) 0 [i|(b, i) <- zip bs [7,6..0], b]

@@ -2,6 +2,7 @@ module Simplicity.MerkleRoot
   ( typeRoot, typeRootR
   , CommitmentRoot, commitmentRoot
   , WitnessRoot, witnessRoot
+  , hiddenRoot
   ) where
 
 import qualified Data.ByteString as BS
@@ -41,6 +42,15 @@ primTag x = tag $ primitivePrefix ++ [x]
 jetTag :: IV
 jetTag = tag (prefix ++ ["Jet"])
 
+hiddenTag :: IV
+hiddenTag = tag $ (prefix ++ ["Hidden"])
+
+-- | This function hashes a hash such that it will not collide with any 'typeRoot', 'commitmentRoot' or 'witnessRoot'.
+--
+-- This function is mainly designed for internal use within this Simplicity library.
+hiddenRoot :: Hash256 -> Hash256
+hiddenRoot = ivHash . compressHalf hiddenTag
+
 -- | Computes a hash committing to a Simplicity type.
 -- This function is memoized.
 typeRoot :: Ty -> Hash256
@@ -64,7 +74,7 @@ newtype CommitmentRoot a b = CommitmentRoot {
 -- This commitment exclude 'witness' values and the 'disconnect'ed expression.
 -- It also exclude typing information (with the exception of jets).
     commitmentRoot :: Hash256
-  }
+  } deriving Eq
 
 commit = CommitmentRoot . ivHash
 
@@ -104,7 +114,7 @@ newtype WitnessRoot a b = WitnessRoot {
 -- This hash includes 'witness' values and the 'disconnect'ed expression.
 -- It also includes all typing decorations.
     witnessRoot :: Hash256
-  }
+  } deriving Eq
 
 observe = WitnessRoot . ivHash
 
