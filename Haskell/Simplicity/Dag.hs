@@ -18,7 +18,7 @@ import Data.Map.Strict ((!))
 import qualified Data.Map.Strict as Map
 
 import Simplicity.Digest
-import Simplicity.Elaboration
+import Simplicity.Inference
 import Simplicity.MerkleRoot
 import Simplicity.Term
 
@@ -53,7 +53,7 @@ data Dag a b = Dag { dagRoot :: WitnessRoot a b
 -- The type annotations are stripped.
 -- However, all sharing of subexpressions remains monomorphic to ensure that types can be infered in (quasi-)linear time.
 --
--- The result is suitable for serializatoin by 'Simplicity.Serialization.BitString.putDag' or for type inference by 'Simplicity.Elaboration.typeCheckDag'.
+-- The result is suitable for serializatoin by 'Simplicity.Serialization.BitString.putDag' or for type inference by 'Simplicity.Inference.typeCheckDag'.
 linearizeDag :: Dag a b -> UntypedSimplicityDag
 linearizeDag dag = execLinearM . go . witnessRoot . dagRoot $ dag
  where

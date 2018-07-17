@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveTraversable, FlexibleInstances, GADTs, MultiParamTypeClasses, ScopedTypeVariables #-}
 -- | This module defines a type for untyped Simplicity DAGs as well as a type checking function to convert such a DAG into a well-typed Simplicity expression.
-module Simplicity.Elaboration
+module Simplicity.Inference
   (
   -- * Type checking untyped Simplicity
     typeCheckDag
@@ -285,13 +285,13 @@ isUWitness _ = Nothing
 isUPrim (Untyped (Prim p)) = Just p
 isUPrim _ = Nothing
 
--- ElaborateError holds the possible errors that can occur during the 'elaborate' step.
-data ElaborateError s = UnificationFailure (UFailure TyF (STVar s TyF))
+-- InferenceError holds the possible errors that can occur during the 'inference' step.
+data InferenceError s = UnificationFailure (UFailure TyF (STVar s TyF))
                       | IndexError Int Integer
                       | Overflow
                       deriving Show
 
-instance Fallible TyF (STVar s TyF) (ElaborateError s) where
+instance Fallible TyF (STVar s TyF) (InferenceError s) where
   occursFailure v t = UnificationFailure (occursFailure v t)
   mismatchFailure t1 t2 = UnificationFailure (mismatchFailure t1 t2)
 
@@ -310,20 +310,20 @@ instance Fallible TyF (STVar s TyF) (ElaborateError s) where
 -- @
 type UntypedSimplicityDag = [UntypedTermF Integer]
 
--- 'elaborate' takes an 'UntypedSimplicityDag' and adds suitiable type annotations to the nodes in the DAG as well as unification constraints.
+-- 'inference' takes an 'UntypedSimplicityDag' and adds suitiable type annotations to the nodes in the DAG as well as unification constraints.
 -- This can cause unification failures, however the occurs check isn't performed in this step.
 -- This function also checks that the provided DAG is sorted in topological order.
-elaborate :: UntypedSimplicityDag ->
-             ExceptT (ElaborateError s) (STBinding s) (Seq (TermF Int (UTy (STVar s TyF))))
-elaborate = foldM loop empty
+inference :: UntypedSimplicityDag ->
+             ExceptT (InferenceError s) (STBinding s) (Seq (TermF Int (UTy (STVar s TyF))))
+inference = foldM loop empty
  where
   tyWord256 = unreflect (reify :: TyReflect Word256)
   loop :: Seq (TermF Int (UTy (STVar s TyF)))
        -> UntypedTermF Integer
-       -> ExceptT (ElaborateError s) (STBinding s) (Seq (TermF Int (UTy (STVar s TyF))))
+       -> ExceptT (InferenceError s) (STBinding s) (Seq (TermF Int (UTy (STVar s TyF))))
   loop output node = (output |>) <$> go node
    where
-    fresh :: ExceptT (ElaborateError s) (STBinding s) (UTy (STVar s TyF))
+    fresh :: ExceptT (InferenceError s) (STBinding s) (UTy (STVar s TyF))
     fresh = UVar <$> lift freeVar
     lenOutput = length output
     offsetToIndex i = lenOutput - fromInteger i
@@ -393,9 +393,9 @@ typeCheckDag v = typeCheckTerm =<< annotated
    a0 = reify
    b0 :: TyReflect b
    b0 = reify
-   elaborated :: forall s. ExceptT (ElaborateError s) (STBinding s) (Seq (TermF Int (UTy (STVar s TyF))))
-   elaborated = do
-     ev <- elaborate v
+   inferenced :: forall s. ExceptT (InferenceError s) (STBinding s) (Seq (TermF Int (UTy (STVar s TyF))))
+   inferenced = do
+     ev <- inference v
      _ <- case viewr ev of
          EmptyR -> return ()
          _ :> end -> do
@@ -405,18 +405,18 @@ typeCheckDag v = typeCheckTerm =<< annotated
            return ()
      return ev
    annotated :: Either String (Seq (TermF Int Ty))
-   annotated = runSTBinding ((show +++ (getCompose . fmap unital)) <$> runExceptT ((Compose <$> elaborated) >>= applyBindingsAll))
+   annotated = runSTBinding ((show +++ (getCompose . fmap unital)) <$> runExceptT ((Compose <$> inferenced) >>= applyBindingsAll))
    typeCheckTerm s = case viewr typeCheckedDag of
-     _ :> Right (SomeArrow t ra rb) -> maybe (error "Simplicity.Elaboration.typeCheckDag: unexpect mismatched type at end.") return $ do
+     _ :> Right (SomeArrow t ra rb) -> maybe (error "Simplicity.Inference.typeCheckDag: unexpect mismatched type at end.") return $ do
                                          Refl <- equalTyReflect ra a0
                                          Refl <- equalTyReflect rb b0
                                          return t
      _ :> Left s -> Left s
-     EmptyR -> Left "Simplicity.Elaboration.typeCheckDag: empty vector input."
+     EmptyR -> Left "Simplicity.Inference.typeCheckDag: empty vector input."
     where
      assertEqualTyReflect a b = maybe err Right (equalTyReflect a b)
       where
-       err = Left "Simplicity.Elaboration.typeCheckDag: unexpected mismatched type"
+       err = Left "Simplicity.Inference.typeCheckDag: unexpected mismatched type"
      typeCheckedDag = mapWithIndex (\i -> left (++ " at index " ++ show i ++ ".") . typeCheck) s
      typeCheck :: TermF Int Ty -> Either String (SomeArrow term)
      typeCheck (Iden a) = case reflect a of
@@ -468,11 +468,11 @@ typeCheckDag v = typeCheckTerm =<< annotated
                                               Refl <- assertEqualTyReflect rw (reify :: TyReflect Word256)
                                               Refl <- assertEqualTyReflect rc0 rc1
                                               return (SomeArrow (disconnect s t) ra (ProdR rb rd))
-     typeCheck (Hidden _ _ _) = Left "Simplicity.Elaboration.typeCheckDag: encountered illegal use of Hidden node"
+     typeCheck (Hidden _ _ _) = Left "Simplicity.Inference.typeCheckDag: encountered illegal use of Hidden node"
      typeCheck (Witness a b w) = case (reflect a, reflect b) of
                                    (SomeTy ra, SomeTy rb) -> do
                                       vb <- maybe err return $ evalExactVector (getValueR rb) w
                                       return (SomeArrow (witness vb) ra rb)
       where
-       err = Left "Simplicity.Elaboration.typeCheckDag: decode error in Witness value"
+       err = Left "Simplicity.Inference.typeCheckDag: decode error in Witness value"
      typeCheck (Prim (SomeArrow p ra rb)) = return (SomeArrow (primitive p) ra rb)

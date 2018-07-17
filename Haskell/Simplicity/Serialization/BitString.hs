@@ -8,7 +8,7 @@ import qualified Data.Vector.Unboxed as UV
 import Data.Void (Void, vacuous)
 
 import Simplicity.Digest
-import Simplicity.Elaboration
+import Simplicity.Inference
 import Simplicity.Primitive
 import Simplicity.Serialization
 import Simplicity.Ty

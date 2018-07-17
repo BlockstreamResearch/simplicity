@@ -18,7 +18,7 @@ import qualified Data.Word as W
 import Lens.Family2.Stock (_1)
 
 import Simplicity.Digest
-import Simplicity.Elaboration
+import Simplicity.Inference
 import Simplicity.Primitive
 import Simplicity.Serialization
 import Simplicity.Ty

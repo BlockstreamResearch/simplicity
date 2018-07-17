@@ -9,7 +9,7 @@ import qualified Data.Vector.Unboxed as UV
 
 import Simplicity.Dag
 import Simplicity.Digest
-import Simplicity.Elaboration
+import Simplicity.Inference
 import Simplicity.MerkleRoot
 import Simplicity.Primitive
 import Simplicity.Programs.Word
@@ -32,12 +32,12 @@ tests = testGroup "Serialization"
         , testProperty "get-put BitString DAG" prop_getPutBitStringDag
         , testProperty "get-put ByteString DAG" prop_getPutByteStringDag
         -- This collection tests type inference on a few sample programs.
-        , testGroup "Elaboration"
-          [ testElaboration "fullAdder word8" (fullAdder word8)
-          , testElaboration "adder word8" (adder word8)
-          , testElaboration "fullMultiplier word8" (fullMultiplier word8)
-          , testElaboration "multiplier word8" (multiplier word8)
-          , testElaboration "hashBlock" hashBlock
+        , testGroup "Inference"
+          [ testInference "fullAdder word8" (fullAdder word8)
+          , testInference "adder word8" (adder word8)
+          , testInference "fullMultiplier word8" (fullMultiplier word8)
+          , testInference "multiplier word8" (multiplier word8)
+          , testInference "hashBlock" hashBlock
         ] ]
 
 -- Check that deserialization of serialization of bit-strings returns the original input.
@@ -96,8 +96,8 @@ prop_getPutByteStringDag = forallUntypedTermDag prop
     bs = runPut (ByteString.putDag v)
 
 -- Check that type inference on dags produce correct terms by testing the generated Merkle roots.
-testElaboration :: forall a b. (TyC a, TyC b) => String -> (forall term. (Core term) => term a b) -> TestTree
-testElaboration name program = testProperty name . liftBool $ assertion1 && assertion2
+testInference :: forall a b. (TyC a, TyC b) => String -> (forall term. (Core term) => term a b) -> TestTree
+testInference name program = testProperty name . liftBool $ assertion1 && assertion2
  where
   -- type inference on first pass is not necessarily equal to the orginal program because the Haskell type of internal nodes in the original program might not have the most general type.
   pass1 :: forall term. Simplicity term => Either String (term a b)
