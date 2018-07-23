@@ -74,7 +74,7 @@ newtype CommitmentRoot a b = CommitmentRoot {
 -- This commitment exclude 'witness' values and the 'disconnect'ed expression.
 -- It also exclude typing information (with the exception of jets).
     commitmentRoot :: Hash256
-  } deriving Eq
+  } deriving (Eq, Show)
 
 commit = CommitmentRoot . ivHash
 
@@ -114,7 +114,7 @@ newtype WitnessRoot a b = WitnessRoot {
 -- This hash includes 'witness' values and the 'disconnect'ed expression.
 -- It also includes all typing decorations.
     witnessRoot :: Hash256
-  } deriving Eq
+  } deriving (Eq, Show)
 
 observe = WitnessRoot . ivHash
 

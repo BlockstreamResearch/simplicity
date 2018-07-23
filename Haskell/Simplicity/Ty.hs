@@ -9,13 +9,14 @@ module Simplicity.Ty
  , TyReflect(..)
  , reify, reifyProxy, reifyArrow
  , equalTyReflect
- , putValue, putValueR, getValue, getValueR
  , SomeArrow(..), someArrow
  , Ty, TyF(..)
  , one, sum, prod
  , unreflect
  , SomeTy(..), reflect
  , memoCataTy
+ , putValue, putValueR, getValue, getValueR
+ , UntypedValue(..), untypedValue, untypedValueR, castUntypedValue, castUntypedValueR
  ) where
 
 import Prelude hiding (sum, prod)
@@ -180,6 +181,43 @@ reflect (Fix (Sum a b)) = case (reflect a, reflect b) of
                             (SomeTy ra, SomeTy rb) -> SomeTy $ SumR ra rb
 reflect (Fix (Prod a b)) = case (reflect a, reflect b) of
                              (SomeTy ra, SomeTy rb) -> SomeTy $ ProdR ra rb
+
+-- | A union of all Simplicity values without type information.
+--
+-- A single 'UntypedValue' could be successfully interpreted at multiple different Simplicity types.
+-- For example, @'LeftV' 'OneV'@ could be successfully interpreted as @'Either' () b@ for any Simplicity type @b@.
+data UntypedValue = OneV
+                  | LeftV UntypedValue
+                  | RightV UntypedValue
+                  | PairV UntypedValue UntypedValue
+                  deriving (Eq, Show)
+
+-- | Construct an 'UntypedValue' from a (typed) Simplicity value.
+untypedValue :: TyC a => a -> UntypedValue
+untypedValue = untypedValueR reify
+
+-- | Construct an 'UntypedValue' from a (typed) Simplicity value.
+untypedValueR :: TyReflect a -> a -> UntypedValue
+untypedValueR OneR _ = OneV
+untypedValueR (SumR a b) (Left x) = LeftV $ untypedValueR a x
+untypedValueR (SumR a b) (Right y) = RightV $ untypedValueR b y
+untypedValueR (ProdR a b) (x, y) = PairV (untypedValueR a x) (untypedValueR b y)
+
+-- | Attempt to interpret an UntypedValue at a given Simplicity type.
+--
+-- Interpreting any 'UntypedValue' at the @()@ type is always successful, regardless of the UntypedValue.
+castUntypedValue :: TyC a => UntypedValue -> Maybe a
+castUntypedValue = castUntypedValueR reify
+
+-- | Attempt to interpret an UntypedValue at a given Simplicity type.
+--
+-- Interpreting any 'UntypedValue' at the @()@ type is always successful, regardless of the UntypedValue.
+castUntypedValueR :: TyReflect a -> UntypedValue -> Maybe a
+castUntypedValueR OneR _ = Just ()
+castUntypedValueR (SumR a b) (LeftV x) = Left <$> castUntypedValueR a x
+castUntypedValueR (SumR a b) (RightV y) = Right <$> castUntypedValueR b y
+castUntypedValueR (ProdR a b) (PairV x y) = (,) <$> castUntypedValueR a x <*> castUntypedValueR b y
+castUntypedValueR _ _ = Nothing
 
 -- memoTyF and dememoTyF hare non-exported helper functions for the
 -- HasTrie (TyF x) instance.

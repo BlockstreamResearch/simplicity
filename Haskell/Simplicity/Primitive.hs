@@ -1,3 +1,4 @@
+{-# LANGUAGE GADTs #-}
 -- | This module serves as an interface for different Blockchain applications of Simplicity.
 --
 -- Each blockchain application defines a set of primitive expressions specific to its application through the 'Prim' GADT.
@@ -16,6 +17,17 @@ module Simplicity.Primitive
  ( Prim, primPrefix, primName
  , getPrimBit, getPrimByte, putPrimBit, putPrimByte
  , PrimEnv, primSem
+ , somePrimEq
  ) where
 
+import Data.Maybe (fromMaybe)
+import Data.Type.Equality ((:~:)(Refl))
+
 import Simplicity.Primitive.Bitcoin
+import Simplicity.Ty
+
+somePrimEq :: SomeArrow Prim -> SomeArrow Prim -> Bool
+somePrimEq (SomeArrow p0 ra0 rb0) (SomeArrow p1 ra1 rb1) = fromMaybe False $ do
+    Refl <- equalTyReflect ra0 ra1
+    Refl <- equalTyReflect rb0 rb1
+    return $ p0 == p1
