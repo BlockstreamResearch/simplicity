@@ -9,13 +9,15 @@ module Simplicity.Ty
  , TyReflect(..)
  , reify, reifyProxy, reifyArrow
  , equalTyReflect
- , SomeArrow(..), someArrow
+ , SomeArrow(..), someArrowR
  , Ty, TyF(..)
  , one, sum, prod
  , unreflect
  , SomeTy(..), reflect
  , memoCataTy
+ -- ** Serialization
  , putValue, putValueR, getValue, getValueR
+ -- ** Untyped Simplicity Values
  , UntypedValue(..), untypedValue, untypedValueR, castUntypedValue, castUntypedValueR
  ) where
 
@@ -128,14 +130,11 @@ getValueR (SumR a b) next = next >>= f
 getValueR (ProdR a b) next = (,) <$> getValueR a next <*> getValueR b next
 
 -- | @SomeArrow arr@ captures the existential type @exists a b. (Ty a, TyC b) *> arr a b@.
--- For conviencence it also includes the @TyReflect a@ and @TyReflect b@ values so that the type parameters can be deconstructed.
-data SomeArrow arr = forall a b. (TyC a, TyC b) => SomeArrow (arr a b) (TyReflect a) (TyReflect b)
+data SomeArrow arr = forall a b. (TyC a, TyC b) => SomeArrow (arr a b)
 
--- | A pseudo-constructor for @SomeArrow arr@ that fills in its @TyReflect a@ and @TyReflect b@ compontents automatically.
-someArrow :: (TyC a, TyC b) => arr a b -> SomeArrow arr
-someArrow x = SomeArrow x ra rb
- where
-  (ra, rb) = reifyArrow x
+-- | A pseudo-constructor for @SomeArrow@ that provides proxy arguments to help specify the type parameters.
+someArrowR :: (TyC a, TyC b) => proxy a -> proxy b -> arr a b -> SomeArrow arr
+someArrowR _ _ x = SomeArrow x
 
 -- | A Haskell data type for representing Simplicity types.
 -- It uses an explicit 'Fix'edpoint of the 'TyF' functor.

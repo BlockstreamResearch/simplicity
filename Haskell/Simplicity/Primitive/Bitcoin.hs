@@ -92,29 +92,29 @@ getPrimBit next =
    ((makeArrow TotalOutputValue & makeArrow OutputValue) & (makeArrow OutputScriptHash & makeArrow ScriptCMR)))
  where
   l & r = next >>= \b -> if b then r else l
-  makeArrow p = return (someArrow p)
+  makeArrow p = return (SomeArrow p)
 
 getPrimByte :: Data.Word.Word8 -> Get (Maybe (SomeArrow Prim))
 getPrimByte = return . decode
  where
-  decode 0x25 = Just $ someArrow Version
-  decode 0x26 = Just $ someArrow LockTime
-  decode 0x27 = Just $ someArrow InputsHash
-  decode 0x28 = Just $ someArrow OutputsHash
-  decode 0x29 = Just $ someArrow NumInputs
-  decode 0x2a = Just $ someArrow TotalInputValue
-  decode 0x2b = Just $ someArrow CurrentPrevOutpoint
-  decode 0x2c = Just $ someArrow CurrentValue
-  decode 0x2d = Just $ someArrow CurrentSequence
-  decode 0x2e = Just $ someArrow CurrentIndex
-  decode 0x2f = Just $ someArrow InputPrevOutpoint
-  decode 0x30 = Just $ someArrow InputValue
-  decode 0x31 = Just $ someArrow InputSequence
-  decode 0x32 = Just $ someArrow NumOutputs
-  decode 0x33 = Just $ someArrow TotalOutputValue
-  decode 0x34 = Just $ someArrow OutputValue
-  decode 0x35 = Just $ someArrow OutputScriptHash
-  decode 0x36 = Just $ someArrow ScriptCMR
+  decode 0x25 = Just $ SomeArrow Version
+  decode 0x26 = Just $ SomeArrow LockTime
+  decode 0x27 = Just $ SomeArrow InputsHash
+  decode 0x28 = Just $ SomeArrow OutputsHash
+  decode 0x29 = Just $ SomeArrow NumInputs
+  decode 0x2a = Just $ SomeArrow TotalInputValue
+  decode 0x2b = Just $ SomeArrow CurrentPrevOutpoint
+  decode 0x2c = Just $ SomeArrow CurrentValue
+  decode 0x2d = Just $ SomeArrow CurrentSequence
+  decode 0x2e = Just $ SomeArrow CurrentIndex
+  decode 0x2f = Just $ SomeArrow InputPrevOutpoint
+  decode 0x30 = Just $ SomeArrow InputValue
+  decode 0x31 = Just $ SomeArrow InputSequence
+  decode 0x32 = Just $ SomeArrow NumOutputs
+  decode 0x33 = Just $ SomeArrow TotalOutputValue
+  decode 0x34 = Just $ SomeArrow OutputValue
+  decode 0x35 = Just $ SomeArrow OutputScriptHash
+  decode 0x36 = Just $ SomeArrow ScriptCMR
   decode _ = Nothing
 
 putPrimBit :: Prim a b -> DList Bool

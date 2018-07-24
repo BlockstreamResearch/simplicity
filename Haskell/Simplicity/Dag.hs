@@ -129,7 +129,7 @@ instance Delegate Dag where
   disconnect = mkBinary disconnect uDisconnect
 
 instance Primitive Dag where
-  primitive p = mkLeaf (primitive p) (Prim (someArrow p))
+  primitive p = mkLeaf (primitive p) (Prim (SomeArrow p))
 
 instance Jet Dag where
   jet t = error ":TODO: serialization of jet nodes not yet implemented"

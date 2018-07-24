@@ -27,7 +27,10 @@ import Simplicity.Primitive.Bitcoin
 import Simplicity.Ty
 
 somePrimEq :: SomeArrow Prim -> SomeArrow Prim -> Bool
-somePrimEq (SomeArrow p0 ra0 rb0) (SomeArrow p1 ra1 rb1) = fromMaybe False $ do
+somePrimEq (SomeArrow p0) (SomeArrow p1) = fromMaybe False $ do
     Refl <- equalTyReflect ra0 ra1
     Refl <- equalTyReflect rb0 rb1
     return $ p0 == p1
+  where
+   (ra0, rb0) = reifyArrow p0
+   (ra1, rb1) = reifyArrow p1

@@ -60,7 +60,7 @@ putNode = go
   go (Hidden _ _ h)           = Just $ ([o,i,i,o]++) . put256Bits h
   go (Witness _ b w)          = case reflect b of
                                  SomeTy rb -> (([o,i,i,i]++) .) . putBitString . putValueR rb <$> getWitnessData w
-  go (Prim (SomeArrow p _ _)) = Just $ ([i,o]++) . putPrimBit p
+  go (Prim (SomeArrow p)) = Just $ ([i,o]++) . putPrimBit p
   (o,i) = (False,True)
 
 -- Caution: Maybe [Bool] is a type that might cause space leaks.  Investiagte alternatives.

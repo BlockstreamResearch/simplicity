@@ -141,9 +141,9 @@ instance (Show ty, Show a) => Show (TermF ty a) where
                               $ showString "Witness " . showsPrec 11 a
                               . showString " " . showsPrec 11 b
                               . showString " " . showsPrec 11 w
-  showsPrec p (Prim (SomeArrow prim _ _)) = showParen (10 < p)
-                                          $ showString "Prim "
-                                          . (showParen True $ showString "someArrow " . showString (primName prim))
+  showsPrec p (Prim (SomeArrow prim)) = showParen (10 < p)
+                                      $ showString "Prim "
+                                      . (showParen True $ showString "someArrow " . showString (primName prim))
 
 -- Given a @'UTy' v@ annonated Simplicity 'TermF', return the implied input and output types given the annotations.
 termFArrow :: TermF (UTy v) a -> (UTy v, UTy v)
@@ -159,7 +159,9 @@ termFArrow (Pair a b c _ _) = (a, UTerm (Prod b c))
 termFArrow (Disconnect a b c d _ _) = (a, UTerm (Prod b d))
 termFArrow (Hidden a b _) = (a, b)
 termFArrow (Witness a b _) = (a, b)
-termFArrow (Prim (SomeArrow p ra rb)) = (unfreeze (unreflect ra), unfreeze (unreflect rb))
+termFArrow (Prim (SomeArrow p)) = (unfreeze (unreflect ra), unfreeze (unreflect rb))
+ where
+  (ra, rb) = reifyArrow p
 
 -- 'FocusTy a ty' is isomorphic to 'TermF ty a'.  Its purpose is to provide functor instances to 'TermF's ty parameter.
 newtype FocusTy a ty = FocusTy { unFocusTy :: TermF ty a }
@@ -367,10 +369,11 @@ typeCheck v = typeCheckTerm =<< runUnification inferenced
            return ()
      return ev
    typeCheckTerm s = case viewr typeCheckedDag of
-     _ :> Right (SomeArrow t ra rb) -> maybe (error "Simplicity.Inference.typeCheck: unexpect mismatched type at end.") return $ do
-                                         Refl <- equalTyReflect ra a0
-                                         Refl <- equalTyReflect rb b0
-                                         return t
+     _ :> Right (SomeArrow t) -> maybe (error "Simplicity.Inference.typeCheck: unexpect mismatched type at end.") return $ do
+                                  let (ra, rb) = reifyArrow t
+                                  Refl <- equalTyReflect ra a0
+                                  Refl <- equalTyReflect rb b0
+                                  return t
      _ :> Left s -> Left s
      EmptyR -> Left "Simplicity.Inference.typeCheck: empty vector input."
     where
@@ -383,56 +386,70 @@ typeCheck v = typeCheckTerm =<< runUnification inferenced
       where
        lookup j = index typeCheckedDag (i - j)
        typeCheckTerm (Iden a) = case reflect a of
-                                  SomeTy ra -> return (SomeArrow iden ra ra)
+                                  SomeTy ra -> return (someArrowR ra ra iden)
        typeCheckTerm (Unit a) = case reflect a of
-                                  SomeTy ra -> return (SomeArrow unit ra OneR)
+                                  SomeTy ra -> return (someArrowR ra OneR unit)
        typeCheckTerm (Injl a b c it) = case reflect c of
                                         SomeTy rc -> do
-                                          SomeArrow t ra rb <- lookup it
-                                          return (SomeArrow (injl t) ra (SumR rb rc))
+                                          SomeArrow t <- lookup it
+                                          let (ra, rb) = reifyArrow t
+                                          return (someArrowR ra (SumR rb rc) (injl t))
        typeCheckTerm (Injr a b c it) = case reflect b of
                                         SomeTy rb -> do
-                                          SomeArrow t ra rc <- lookup it
-                                          return (SomeArrow (injr t) ra (SumR rb rc))
+                                          SomeArrow t <- lookup it
+                                          let (ra, rc) = reifyArrow t
+                                          return (someArrowR ra (SumR rb rc) (injr t))
        typeCheckTerm (Take a b c it) = case reflect b of
                                         SomeTy rb -> do
-                                          SomeArrow t ra rc <- lookup it
-                                          return (SomeArrow (take t) (ProdR ra rb) rc)
+                                          SomeArrow t <- lookup it
+                                          let (ra, rc) = reifyArrow t
+                                          return (someArrowR (ProdR ra rb) rc (take t))
        typeCheckTerm (Drop a b c it) = case reflect a of
                                         SomeTy ra -> do
-                                          SomeArrow t rb rc <- lookup it
-                                          return (SomeArrow (drop t) (ProdR ra rb) rc)
-       typeCheckTerm (Comp a b c is it) = do SomeArrow s ra rb0 <- lookup is
-                                             SomeArrow t rb1 rc <- lookup it
+                                          SomeArrow t <- lookup it
+                                          let (rb, rc) = reifyArrow t
+                                          return (someArrowR (ProdR ra rb) rc (drop t))
+       typeCheckTerm (Comp a b c is it) = do SomeArrow s <- lookup is
+                                             SomeArrow t <- lookup it
+                                             let (ra, rb0) = reifyArrow s
+                                             let (rb1, rc) = reifyArrow t
                                              Refl <- assertEqualTyReflect rb0 rb1
-                                             return (SomeArrow (comp s t) ra rc)
+                                             return (someArrowR ra rc (comp s t))
        typeCheckTerm (Case a b c d is it) | (Hidden _ _ hs) <- index s is = case reflect a of
                                                                               SomeTy ra -> do
-                                                                                SomeArrow t (ProdR rb rc) rd <- lookup it
-                                                                                return (SomeArrow (assertr hs t) (ProdR (SumR ra rb) rc) rd)
+                                                                                SomeArrow t <- lookup it
+                                                                                ((ProdR rb rc), rd) <- return $ reifyArrow t
+                                                                                return (someArrowR (ProdR (SumR ra rb) rc) rd (assertr hs t))
                                           | (Hidden _ _ ht) <- index s is = case reflect b of
                                                                               SomeTy rb -> do
-                                                                                SomeArrow s (ProdR ra rc) rd <- lookup is
-                                                                                return (SomeArrow (assertl s ht) (ProdR (SumR ra rb) rc) rd)
-                                          | otherwise = do SomeArrow s (ProdR ra rc0) rd0 <- lookup is
-                                                           SomeArrow t (ProdR rb rc1) rd1 <- lookup it
+                                                                                SomeArrow s <- lookup is
+                                                                                ((ProdR ra rc), rd) <- return $ reifyArrow s
+                                                                                return (someArrowR (ProdR (SumR ra rb) rc) rd (assertl s ht))
+                                          | otherwise = do SomeArrow s <- lookup is
+                                                           SomeArrow t <- lookup it
+                                                           ((ProdR ra rc0), rd0) <- return $ reifyArrow s
+                                                           ((ProdR rb rc1), rd1) <- return $ reifyArrow t
                                                            Refl <- assertEqualTyReflect rc0 rc1
                                                            Refl <- assertEqualTyReflect rd0 rd1
-                                                           return (SomeArrow (match s t) (ProdR (SumR ra rb) rc0) rd0)
-       typeCheckTerm (Pair a b c is it) = do SomeArrow s ra0 rb <- lookup is
-                                             SomeArrow t ra1 rc <- lookup it
+                                                           return (someArrowR (ProdR (SumR ra rb) rc0) rd0 (match s t))
+       typeCheckTerm (Pair a b c is it) = do SomeArrow s <- lookup is
+                                             SomeArrow t <- lookup it
+                                             let (ra0, rb) = reifyArrow s
+                                             let (ra1, rc) = reifyArrow t
                                              Refl <- assertEqualTyReflect ra0 ra1
-                                             return (SomeArrow (pair s t) ra0 (ProdR rb rc))
-       typeCheckTerm (Disconnect a b c d is it) = do SomeArrow s (ProdR ra rw) (ProdR rb rc0) <- lookup is
-                                                     SomeArrow t rc1 rd <- lookup it
+                                             return (someArrowR ra0 (ProdR rb rc) (pair s t))
+       typeCheckTerm (Disconnect a b c d is it) = do SomeArrow s <- lookup is
+                                                     SomeArrow t <- lookup it
+                                                     ((ProdR ra rw), (ProdR rb rc0)) <- return $ reifyArrow s
+                                                     let (rc1, rd) = reifyArrow t
                                                      Refl <- assertEqualTyReflect rw (reify :: TyReflect Word256)
                                                      Refl <- assertEqualTyReflect rc0 rc1
-                                                     return (SomeArrow (disconnect s t) ra (ProdR rb rd))
+                                                     return (someArrowR ra (ProdR rb rd) (disconnect s t))
        typeCheckTerm (Hidden _ _ _) = Left "Simplicity.Inference.typeCheck: encountered illegal use of Hidden node"
        typeCheckTerm (Witness a b w) = case (reflect a, reflect b) of
                                         (SomeTy ra, SomeTy rb) -> do
                                          vb <- maybe err return $ getWitnessData w
-                                         return (SomeArrow (witness vb) ra rb)
+                                         return (someArrowR ra rb (witness vb))
         where
          err = Left "Simplicity.Inference.typeCheck: decode error in Witness value"
-       typeCheckTerm (Prim (SomeArrow p ra rb)) = return (SomeArrow (primitive p) ra rb)
+       typeCheckTerm (Prim (SomeArrow p)) = return (SomeArrow (primitive p))
