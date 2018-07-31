@@ -186,91 +186,92 @@
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-46>
 
-    2.8<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-47>
-
-    <with|par-left|1tab|2.8.1<space|2spc>Type Inference
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-48>>
-
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|3<space|2spc>Simplicity
     Extensions> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-49><vspace|0.5fn>
+    <no-break><pageref|auto-47><vspace|0.5fn>
 
     3.1<space|2spc>Monadic Effects <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-50>
+    <no-break><pageref|auto-48>
 
     <with|par-left|1tab|3.1.1<space|2spc>Kleisli Morphisms
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-51>>
+    <no-break><pageref|auto-49>>
 
     <with|par-left|1tab|3.1.2<space|2spc>Cartesian Strength
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-52>>
+    <no-break><pageref|auto-50>>
 
     <with|par-left|1tab|3.1.3<space|2spc>Monadic Semantics
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-53>>
+    <no-break><pageref|auto-51>>
 
     <with|par-left|2tab|3.1.3.1<space|2spc>Identity Monad
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-54>>
+    <no-break><pageref|auto-52>>
 
     3.2<space|2spc>Witness <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-55>
+    <no-break><pageref|auto-53>
 
-    <with|par-left|1tab|3.2.1<space|2spc>Witness Merkle Root
+    <with|par-left|1tab|3.2.1<space|2spc>Elided Computation
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-54>>
+
+    <with|par-left|1tab|3.2.2<space|2spc>Witness Merkle Root
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-55>>
+
+    <with|par-left|1tab|3.2.3<space|2spc>Serialization with Witnesses
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-56>>
 
-    <with|par-left|1tab|3.2.2<space|2spc>Serialization with Witnesses
+    <with|par-left|1tab|3.2.4<space|2spc>Type Inference with Witness
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-57>>
 
-    <with|par-left|1tab|3.2.3<space|2spc>Type Inference with Witness
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-58>>
-
     3.3<space|2spc>Assertions and Failure
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-59>
+    <no-break><pageref|auto-58>
 
     <with|par-left|1tab|3.3.1<space|2spc>Monad Zero
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-60>>
+    <no-break><pageref|auto-59>>
 
     <with|par-left|1tab|3.3.2<space|2spc>Denotational Semantics
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-61>>
+    <no-break><pageref|auto-60>>
 
     <with|par-left|2tab|3.3.2.1<space|2spc>Option Monad
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-62>>
+    <no-break><pageref|auto-61>>
 
     <with|par-left|1tab|3.3.3<space|2spc>Merkle Roots
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-63>>
+    <no-break><pageref|auto-62>>
 
     <with|par-left|2tab|3.3.3.1<space|2spc>Pruning Unused
     <with|font-family|ss|case> Branches <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-64>>
+    <no-break><pageref|auto-63>>
 
     <with|par-left|2tab|3.3.3.2<space|2spc>Salted Expressions
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-65>>
+    <no-break><pageref|auto-64>>
 
     3.4<space|2spc>Blockchain Primitives <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-66>
+    <no-break><pageref|auto-65>
 
     <with|par-left|1tab|3.4.1<space|2spc>Bitcoin Transactions
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-66>>
+
+    <with|par-left|2tab|3.4.1.1<space|2spc>Denotational Semantics
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-67>>
 
-    <with|par-left|2tab|3.4.1.1<space|2spc>Merkle Roots
+    <with|par-left|2tab|3.4.1.2<space|2spc>Merkle Roots
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-68>>
 
-    <with|par-left|2tab|3.4.1.2<space|2spc>Schnorr Signature Aggregation
+    <with|par-left|2tab|3.4.1.3<space|2spc>Schnorr Signature Aggregation
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-69>>
 
@@ -293,146 +294,213 @@
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-74><vspace|0.5fn>
 
-    5.1<space|2spc>Disconnect <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    5.1<space|2spc>Unbounded Loops <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-75>
 
-    <vspace*|1fn><with|font-series|bold|math-font-series|bold|6<space|2spc>Coq
-    Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|6<space|2spc>Deserialization>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-76><vspace|0.5fn>
 
-    6.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    6.1<space|2spc>Explicit Simplicity DAGs
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-77>
 
-    6.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-78>
-
-    <with|par-left|1tab|6.2.1<space|2spc>The ``Initial'' Representation of
-    Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-79>>
-
-    <with|par-left|1tab|6.2.2<space|2spc>The ``Final'' Representation of
-    Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-80>>
-
-    <with|par-left|2tab|6.2.2.1<space|2spc>Simplicity Algebras
+    <with|par-left|1tab|6.1.1<space|2spc>Type Inference
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-81>>
+    <no-break><pageref|auto-78>>
 
-    <with|par-left|2tab|6.2.2.2<space|2spc>The ``Final'' Representation
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|7<space|2spc>Coq
+    Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-79><vspace|0.5fn>
+
+    7.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-80>
+
+    7.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-81>
+
+    <with|par-left|1tab|7.2.1<space|2spc>The ``Initial'' Representation of
+    Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-82>>
 
-    <with|par-left|2tab|6.2.2.3<space|2spc>Constructing ``Final'' Terms
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|1tab|7.2.2<space|2spc>The ``Final'' Representation of
+    Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-83>>
 
-    <with|par-left|1tab|6.2.3<space|2spc>Why two representations of Terms?
+    <with|par-left|2tab|7.2.2.1<space|2spc>Simplicity Algebras
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-84>>
 
-    6.3<space|2spc>Example Simplicity Expressions
+    <with|par-left|2tab|7.2.2.2<space|2spc>The ``Final'' Representation
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-85>
+    <no-break><pageref|auto-85>>
 
-    <with|par-left|1tab|6.3.1<space|2spc>Bits
+    <with|par-left|2tab|7.2.2.3<space|2spc>Constructing ``Final'' Terms
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-86>>
 
-    <with|par-left|1tab|6.3.2<space|2spc>Arithmetic
+    <with|par-left|1tab|7.2.3<space|2spc>Why two representations of Terms?
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-87>>
 
-    6.4<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-88>
-
-    <with|par-left|1tab|6.4.1<space|2spc>Bit Machine Code
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-89>>
-
-    <with|par-left|2tab|6.4.1.1<space|2spc>Bit Machine Programs
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-90>>
-
-    <with|par-left|1tab|6.4.2<space|2spc>Translating Simplicity to the Bit
-    Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-91>>
-
-    <with|par-left|1tab|6.4.3<space|2spc>Static Analysis
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-92>>
-
-    <vspace*|1fn><with|font-series|bold|math-font-series|bold|7<space|2spc>Haskell
-    Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-93><vspace|0.5fn>
-
-    7.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-94>
-
-    7.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-95>
-
     7.3<space|2spc>Example Simplicity Expressions
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-96>
+    <no-break><pageref|auto-88>
 
     <with|par-left|1tab|7.3.1<space|2spc>Bits
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-89>>
+
+    <with|par-left|1tab|7.3.2<space|2spc>Arithmetic
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-90>>
+
+    <with|par-left|1tab|7.3.3<space|2spc>SHA256
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-91>>
+
+    7.4<space|2spc>The Hierarchy of Simplicity Language Extensions
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-92>
+
+    <with|par-left|1tab|7.4.1<space|2spc>Witness
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-94>>
+
+    <with|par-left|1tab|7.4.2<space|2spc>Assertion
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-95>>
+
+    <with|par-left|1tab|7.4.3<space|2spc>Delegation
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-96>>
+
+    <with|par-left|1tab|7.4.4<space|2spc>Primitives
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-97>>
 
-    <with|par-left|1tab|7.3.2<space|2spc>Multi-bit Words
+    <with|par-left|2tab|7.4.4.1<space|2spc>Bitcoin
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-98>>
 
-    <with|par-left|2tab|7.3.2.1<space|2spc>Arithmetic operations
+    <with|par-left|1tab|7.4.5<space|2spc>Jets
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-99>>
 
-    <with|par-left|2tab|7.3.2.2<space|2spc>Bit-wise operations
+    <with|par-left|1tab|7.4.6<space|2spc>Full Simplicity
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-100>>
 
-    <with|par-left|1tab|7.3.3<space|2spc>Generic
+    7.5<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-101>
+
+    7.6<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-102>
+
+    <with|par-left|1tab|7.6.1<space|2spc>Bit Machine Code
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-101>>
+    <no-break><pageref|auto-103>>
 
-    <with|par-left|1tab|7.3.4<space|2spc>SHA-256
+    <with|par-left|2tab|7.6.1.1<space|2spc>Bit Machine Programs
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-102>>
-
-    7.4<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-103>
-
-    <with|par-left|1tab|7.4.1<space|2spc>Translating Simplicity to the Bit
-    Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-104>>
 
-    <with|par-left|1tab|7.4.2<space|2spc>Static Analysis
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|1tab|7.6.2<space|2spc>Translating Simplicity to the Bit
+    Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-105>>
 
-    <vspace*|1fn><with|font-series|bold|math-font-series|bold|8<space|2spc>C
-    Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-106><vspace|0.5fn>
+    <with|par-left|1tab|7.6.3<space|2spc>Static Analysis
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-106>>
 
-    <vspace*|1fn><with|font-series|bold|math-font-series|bold|Appendix
-    A<space|2spc>Notation> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|8<space|2spc>Haskell
+    Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-107><vspace|0.5fn>
 
-    A.1<space|2spc>Algebraic Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    8.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-108>
 
-    <with|par-left|1tab|A.1.1<space|2spc>Option Type
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-109>>
+    8.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-109>
 
-    A.2<space|2spc>Records <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    8.3<space|2spc>Example Simplicity Expressions
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-110>
 
-    A.3<space|2spc>Lists <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-111>
+    <with|par-left|1tab|8.3.1<space|2spc>Bits
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-111>>
 
-    A.4<space|2spc>Byte Strings <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-112>
+    <with|par-left|1tab|8.3.2<space|2spc>Multi-bit Words
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-112>>
+
+    <with|par-left|2tab|8.3.2.1<space|2spc>Arithmetic operations
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-113>>
+
+    <with|par-left|2tab|8.3.2.2<space|2spc>Bit-wise operations
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-114>>
+
+    <with|par-left|1tab|8.3.3<space|2spc>Generic
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-115>>
+
+    <with|par-left|1tab|8.3.4<space|2spc>SHA-256
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-116>>
+
+    8.4<space|2spc>Blockchain Primitives <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-117>
+
+    <with|par-left|1tab|8.4.1<space|2spc>Bitcoin Primitives
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-118>>
+
+    8.5<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-119>
+
+    8.6<space|2spc>Denotational Semantics of Full Simplicity
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-120>
+
+    8.7<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-121>
+
+    <with|par-left|1tab|8.7.1<space|2spc>Translating Simplicity to the Bit
+    Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-122>>
+
+    <with|par-left|1tab|8.7.2<space|2spc>Static Analysis
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-123>>
+
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|9<space|2spc>C
+    Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-124><vspace|0.5fn>
+
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|Appendix
+    A<space|2spc>Preliminaries> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-125><vspace|0.5fn>
+
+    A.1<space|2spc>Algebraic Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-126>
+
+    <with|par-left|1tab|A.1.1<space|2spc>Records
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-127>>
+
+    A.2<space|2spc>Functors <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-128>
+
+    <with|par-left|1tab|A.2.1<space|2spc>Option Functor
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-129>>
+
+    <with|par-left|1tab|A.2.2<space|2spc>List Functors
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-130>>
   </table-of-contents>
 
   <chapter|Introduction>
@@ -464,7 +532,7 @@
     <item>The unit type, written as <value|1>.
 
     <item>The sum (also known as the disjoint union) of two types, witten as
-    <math|A + B>.
+    <math|A+B>.
 
     <item>The product of two types, written as <math|A\<times\>B>.
   </itemize-minus>
@@ -494,15 +562,15 @@
   <math|<around*|\<langle\>||\<rangle\>>:<value|1>> if we include its type
   annotation.
 
-  The type <math|A + B> contains values which are the tagged union of values
+  The type <math|A+B> contains values which are the tagged union of values
   from <math|A> and <math|B>. The sum type has left-tagged values
-  <math|<injl-long|A|B|<around*|(|a|)>>:A+ B> for each value <math|a : A>,
-  and right-tagged values <math|<injr-long|A|B|<around*|(|b|)>>:A+ B> for
-  each value <math|b : B>.
+  <math|<injl-long|A|B|<around*|(|a|)>>:A+B> for each value <math|a:A>, and
+  right-tagged values <math|<injr-long|A|B|<around*|(|b|)>>:A+B> for each
+  value <math|b:B>.
 
   The type <math|A\<times\>B> contains pairs of values from <math|A> and
-  <math|B>. For each pair of values <math|a :A> and <math|b : B> there is
-  value <math|>for the pair written as <math|><pair-long|a|b|A|B>.
+  <math|B>. For each pair of values <math|a:A> and <math|b:B> there is value
+  for the pair written as <pair-long|a|b|A|B>.
 
   Simplicity has neither function types nor recursive types. Every type in
   Simplicity can only contain a finite number of values. For example, the
@@ -551,7 +619,7 @@
 
   Simplicity programs are composed of terms that denote functions between
   types. Every Simplicity term is associated with an input type and an output
-  type and we write a type annotated term as <math|t:A\<vdash\>B> where
+  type and we write a type annotated term as <math|t\<of\>A\<vdash\>B> where
   <math|t> is the term, <math|A> is the input type and <math|B> is the output
   type. We write <math|<around*|\<llbracket\>|t|\<rrbracket\>>\<of\>A\<rightarrow\>B>
   for the function that the term <math|t> denotes.
@@ -561,12 +629,11 @@
   <subsection|Identity>
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|iden><rsub|A>
-    : A\<vdash\>A>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|iden><rsub|A>\<of\>A\<vdash\>A>>>>>>
   </with>
 
   <\equation*>
-    <around*|\<llbracket\>|<math|<samp|iden><rsub|A>>|\<rrbracket\>><around*|(|a|)>\<assign\>a
+    <around*|\<llbracket\>|<samp|iden><rsub|A>|\<rrbracket\>><around*|(|a|)>\<assign\>a
   </equation*>
 
   For every type <math|A> there we have an identity term that denotes the
@@ -580,13 +647,12 @@
   <subsection|Composition>
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s:A\<vdash\>B>>|<cell|<math|t
-    : B\<vdash\>C>>>>>>>>|<row|<cell|<math|<math-ss|comp><rsub|A,B,C> s t:
-    A\<vdash\>C>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\>A\<vdash\>B>>|<cell|<math|t\<of\>B\<vdash\>C>>>>>>>>|<row|<cell|<math|<math-ss|comp><rsub|A,B,C>
+    s t\<of\>A\<vdash\>C>>>>>>
   </with>
 
   <\equation*>
-    <around*|\<llbracket\>|<math|<math-ss|comp><rsub|A,B,C>> s
+    <around*|\<llbracket\>|<math-ss|comp><rsub|A,B,C> s
     t|\<rrbracket\>><around*|(|a|)>\<assign\><around*|(|<around*|\<llbracket\>|t|\<rrbracket\>>\<circ\><around*|\<llbracket\>|s|\<rrbracket\>>|)><around*|(|a|)>
   </equation*>
 
@@ -597,12 +663,11 @@
   <subsection|Constant Unit>
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<math-ss|unit><rsub|A>
-    : A\<vdash\><value|1>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<math-ss|unit><rsub|A>\<of\>A\<vdash\><value|1>>>>>>>
   </with>
 
   <\equation*>
-    <around*|\<llbracket\>|<math|<math-ss|unit><rsub|A>>|\<rrbracket\>><around*|(|a|)>\<assign\><around*|\<langle\>||\<rangle\>>
+    <around*|\<llbracket\>|<math-ss|unit><rsub|A>|\<rrbracket\>><around*|(|a|)>\<assign\><around*|\<langle\>||\<rangle\>>
   </equation*>
 
   The constant unit term ignores its argument and always returns
@@ -612,12 +677,12 @@
   <subsection|Left Injection>
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|t:A\<vdash\>B>>>|<row|<cell|<math|<math-ss|injl><rsub|A,B,C>
-    t: A\<vdash\>B+C>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|t\<of\>A\<vdash\>B>>>|<row|<cell|<math|<math-ss|injl><rsub|A,B,C>
+    t\<of\>A\<vdash\>B+C>>>>>>
   </with>
 
   <\equation*>
-    <around*|\<llbracket\>|<math|<math-ss|injl><rsub|A,B,C>>
+    <around*|\<llbracket\>|<math-ss|injl><rsub|A,B,C>
     t|\<rrbracket\>><around*|(|a|)>\<assign\><injl|<around*|(|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|)>>
   </equation*>
 
@@ -627,12 +692,12 @@
   <subsection|Right Injection>
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|t:A\<vdash\>C>>>|<row|<cell|<math|<math-ss|injr><rsub|A,B,C>
-    t: A\<vdash\>B+C>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|t\<of\>A\<vdash\>C>>>|<row|<cell|<math|<math-ss|injr><rsub|A,B,C>
+    t\<of\>A\<vdash\>B+C>>>>>>
   </with>
 
   <\equation*>
-    <around*|\<llbracket\>|<math|<math-ss|injr><rsub|A,B,C>>
+    <around*|\<llbracket\>|<math-ss|injr><rsub|A,B,C>
     t|\<rrbracket\>><around*|(|a|)>\<assign\><injr|<around*|(|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|)>>
   </equation*>
 
@@ -642,14 +707,13 @@
   <subsection|Case>
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s:A\<times\>C\<vdash\>D>>|<cell|<math|t
-    : B\<times\>C\<vdash\>D>>>>>>>>|<row|<cell|<math|<math-ss|case><rsub|A,B,C,D>
-    s t: <around*|(|A+B|)>\<times\>C\<vdash\>D>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\>A\<times\>C\<vdash\>D>>|<cell|<math|t\<of\>B\<times\>C\<vdash\>D>>>>>>>>|<row|<cell|<math|<math-ss|case><rsub|A,B,C,D>
+    s t\<of\><around*|(|A+B|)>\<times\>C\<vdash\>D>>>>>>
   </with>
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math|<math-ss|case><rsub|A,B,C,D>>
-    s t|\<rrbracket\>><around*|\<langle\>|<injl|<around*|(|a|)>>,c|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llbracket\>|s|\<rrbracket\>><around*|\<langle\>|a,c|\<rangle\>>>>|<row|<cell|<around*|\<llbracket\>|<math|<math-ss|case><rsub|A,B,C,D>>
+    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|case><rsub|A,B,C,D>
+    s t|\<rrbracket\>><around*|\<langle\>|<injl|<around*|(|a|)>>,c|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llbracket\>|s|\<rrbracket\>><around*|\<langle\>|a,c|\<rangle\>>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|case><rsub|A,B,C,D>
     s t|\<rrbracket\>><around*|\<langle\>|<injr|<around*|(|b|)>>,c|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llbracket\>|t|\<rrbracket\>><around*|\<langle\>|b,c|\<rangle\>>>>>>
   </eqnarray*>
 
@@ -663,13 +727,12 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s:A\<vdash\>B>>|<cell|<math|t
-    : A\<vdash\>C>>>>>>>>|<row|<cell|<math|<math-ss|pair><rsub|A,B,C> s t:
-    A\<vdash\>B\<times\>C>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\>A\<vdash\>B>>|<cell|<math|t\<of\>A\<vdash\>C>>>>>>>>|<row|<cell|<math|<math-ss|pair><rsub|A,B,C>
+    s t\<of\>A\<vdash\>B\<times\>C>>>>>>
   </with>
 
   <\equation*>
-    <around*|\<llbracket\>|<math|<math-ss|pair><rsub|A,B,C>> s
+    <around*|\<llbracket\>|<math-ss|pair><rsub|A,B,C> s
     t|\<rrbracket\>><around*|(|a|)>\<assign\><around*|\<langle\>|<around*|\<llbracket\>|s|\<rrbracket\>><around*|(|a|)>,<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|\<rangle\>>
   </equation*>
 
@@ -679,12 +742,12 @@
   <subsection|Take>
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|t:A\<vdash\>C>>>|<row|<cell|<math|<math-ss|take><rsub|A,B,C>
-    t: A\<times\>B\<vdash\>C>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|t\<of\>A\<vdash\>C>>>|<row|<cell|<math|<math-ss|take><rsub|A,B,C>
+    t\<of\>A\<times\>B\<vdash\>C>>>>>>
   </with>
 
   <\equation*>
-    <around*|\<llbracket\>|<math|<math-ss|take><rsub|A,B,C>>
+    <around*|\<llbracket\>|<math-ss|take><rsub|A,B,C>
     t|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>\<assign\><around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>
   </equation*>
 
@@ -694,12 +757,12 @@
   <subsection|Drop>
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|t:B\<vdash\>C>>>|<row|<cell|<math|<math-ss|drop><rsub|A,B,C>
-    t: A\<times\>B\<vdash\>C>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|t\<of\>B\<vdash\>C>>>|<row|<cell|<math|<math-ss|drop><rsub|A,B,C>
+    t\<of\>A\<times\>B\<vdash\>C>>>>>>
   </with>
 
   <\equation*>
-    <around*|\<llbracket\>|<math|<math-ss|drop><rsub|A,B,C>>
+    <around*|\<llbracket\>|<math-ss|drop><rsub|A,B,C>
     t|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>\<assign\><around*|\<llbracket\>|t|\<rrbracket\>><around*|(|b|)>
   </equation*>
 
@@ -787,7 +850,7 @@
   is complied or translated to. However, one can program directly in
   Simplicity just as one can write programs directly in an assembly language.
 
-  Becasue the core Simplicity langauge may seem meager, it is worthwhile to
+  Becasue the core Simplicity language may seem meager, it is worthwhile to
   see how one can build up sophisticated programs in it.
 
   <subsection|Bit Operations>
@@ -815,8 +878,8 @@
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<math-ss|false><rsub|A>>|<cell|\<assign\>>|<cell|<math-ss|injl><rsub|A,<value|1>,<value|1>>
-    <math-ss|unit> : A\<vdash\><2>>>|<row|<cell|<math-ss|true><rsub|A>>|<cell|\<assign\>>|<cell|<math-ss|injr><rsub|A,<value|1>,<value|1>>
-    <math-ss|unit> : A\<vdash\><2>>>>>
+    <math-ss|unit>\<of\>A\<vdash\><2>>>|<row|<cell|<math-ss|true><rsub|A>>|<cell|\<assign\>>|<cell|<math-ss|injr><rsub|A,<value|1>,<value|1>>
+    <math-ss|unit>\<of\>A\<vdash\><2>>>>>
   </eqnarray*>
 
   As a consequence of this these definitions, we can prove that
@@ -834,11 +897,10 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s:A\<vdash\>B>>|<cell|<math|t
-    : A\<vdash\>B>>>>>>>>|<row|<cell|<math|<math-ss|cond><rsub|A,B> s
-    t\<assign\><math-ss|case><rsub|<value|1>,<value|1>,A,B>
-    <around*|(|<math-ss|drop> t|)> <around*|(|<math-ss|drop> s|)>:
-    <2>\<times\>A\<vdash\>B>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\>A\<vdash\>B>>|<cell|<math|t\<of\>A\<vdash\>B>>>>>>>>|<row|<cell|<math|<math-ss|cond><rsub|A,B>
+    s t\<assign\><math-ss|case><rsub|<value|1>,<value|1>,A,B>
+    <around*|(|<math-ss|drop> t|)> <around*|(|<math-ss|drop>
+    s|)>\<of\><2>\<times\>A\<vdash\>B>>>>>>
   </with>
 
   \;
@@ -855,11 +917,10 @@
   Boolean connectives.
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|t
-    : A\<vdash\><2>>>>>>>>>|<row|<cell|<math|<math-ss|not><rsub|A>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|t\<of\>A\<vdash\><2>>>>>>>>>|<row|<cell|<math|<math-ss|not><rsub|A>
     t\<assign\><math-ss|cut><rsub|A,<2>\<times\><value|1>,<2>>
     <around*|(|<math-ss|pair> t <math-ss|unit>|)> <around*|(|<math-ss|cond>
-    <math-ss|false> <math-ss|true>|)>: A\<vdash\><2>>>>>>>
+    <math-ss|false> <math-ss|true>|)>\<of\>A\<vdash\><2>>>>>>>
   </with>
 
   \;
@@ -867,11 +928,10 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s:A\<vdash\><2>>>|<cell|<math|t
-    : A\<vdash\><2>>>>>>>>>|<row|<cell|<math|<math-ss|and><rsub|A> s
-    t\<assign\><math-ss|cut><rsub|A,<2>*\<times\>A,<2>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\>A\<vdash\><2>>>|<cell|<math|t\<of\>A\<vdash\><2>>>>>>>>>|<row|<cell|<math|<math-ss|and><rsub|A>
+    s t\<assign\><math-ss|cut><rsub|A,<2>\<times\>A,<2>>
     <around*|(|<math-ss|pair> s <math-ss|iden>|)> <around*|(|<math-ss|cond> t
-    <math-ss|false>|)>:A\<vdash\><2>>>>>>>
+    <math-ss|false>|)>\<of\>A\<vdash\><2>>>>>>>
   </with>
 
   \;
@@ -879,11 +939,10 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s:A\<vdash\><2>>>|<cell|<math|t
-    : A\<vdash\><2>>>>>>>>>|<row|<cell|<math|<math-ss|or><rsub|A> s
-    t\<assign\><math-ss|cut><rsub|A,<2>*\<times\>A,<2>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\>A\<vdash\><2>>>|<cell|<math|t:A\<vdash\><2>>>>>>>>>|<row|<cell|<math|<math-ss|or><rsub|A>
+    s t\<assign\><math-ss|cut><rsub|A,<2>\<times\>A,<2>>
     <around*|(|<math-ss|pair> s <math-ss|iden>|)> <around*|(|<math-ss|cond>
-    <math-ss|true> t|)>:A\<vdash\><2>>>>>>>
+    <math-ss|true> t|)>\<of\>A\<vdash\><2>>>>>>>
   </with>
 
   \;
@@ -913,8 +972,8 @@
     s t>>|<row|<cell|s;t>|<cell|\<assign\>>|<cell|<math-ss|comp> s t>>>>
   </eqnarray*>
 
-  with the <math|\<times\>> operator having higher precidence than the
-  <math|;> operator.
+  with the <math|\<times\>> operator having higher precidence than the ;
+  operator.
 
   Composition of sequences of <samp|drop> and <samp|take> with <samp|ident>
   is a very common way of picking data out of nested tuples of input. To make
@@ -922,7 +981,7 @@
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<math-ss|H>>|<cell|\<assign\>>|<cell|<math-ss|iden>>>|<row|<cell|<math-ss|O>s<math-ss|>>|<cell|\<assign\>>|<cell|<math-ss|take>
-    s>>|<row|<cell|<math-ss|I>s<math-ss|>*>|<cell|\<assign\>>|<cell|<math-ss|drop>
+    s>>|<row|<cell|<math-ss|I>s<math-ss|>>|<cell|\<assign\>>|<cell|<math-ss|drop>
     s>>>>
   </eqnarray*>
 
@@ -936,10 +995,7 @@
   <math|2<rsup|n>> bit words of any size we want.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<2><rsup|1>>|<cell|\<assign\>>|<cell|<2>>>|<row|<cell|<2><rsup|2>>|<cell|\<assign\>>|<cell|<2><rsup|1>
-    \<times\><2><rsup|1>>>|<row|<cell|<2><rsup|4>>|<cell|\<assign\>>|<cell|<2><rsup|2>
-    \<times\><2><rsup|2>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>|<row|<cell|<2><rsup|2<rsup|1+n>>>|<cell|\<assign\>>|<cell|<2><rsup|2<rsup|n>>
-    \<times\><2><rsup|2<rsup|n>>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>>>
+    <tformat|<table|<row|<cell|<2><rsup|1>>|<cell|\<assign\>>|<cell|<2>>>|<row|<cell|<2><rsup|2>>|<cell|\<assign\>>|<cell|<2><rsup|1>\<times\><2><rsup|1>>>|<row|<cell|<2><rsup|4>>|<cell|\<assign\>>|<cell|<2><rsup|2>\<times\><2><rsup|2>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>|<row|<cell|<2><rsup|2<rsup|1+n>>>|<cell|\<assign\>>|<cell|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>>>
   </eqnarray*>
 
   We chose to represent values in big endian format meaning that given a pair
@@ -953,7 +1009,7 @@
   into numbers that they represent.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<lceil\>|<math-tt|0><rsub|<2>>|\<rceil\>><rsub|1>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|<around*|\<lceil\>|<math-tt|1><rsub|<2>>|\<rceil\>><rsub|1>>|<cell|\<assign\>>|<cell|1>>|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|2n>>|<cell|\<assign\>>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>*2<rsup|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>>>>>
+    <tformat|<table|<row|<cell|<around*|\<lceil\>|<math-tt|0><rsub|<2>>|\<rceil\>><rsub|1>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|<around*|\<lceil\>|<math-tt|1><rsub|<2>>|\<rceil\>><rsub|1>>|<cell|\<assign\>>|<cell|1>>|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|2*n>>|<cell|\<assign\>>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>*2<rsup|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>>>>>
   </eqnarray*>
 
   We will also make use of the following variation of this value conversion
@@ -991,7 +1047,7 @@
   <math|<math-tt|<var|y>>>, we have <math|<math-tt|<var|xy>><rsub|<2><rsup|8>>=<around*|\<langle\>|<math-tt|<var|x>><rsub|<2><rsup|4>>,<math-tt|<var|y>><rsub|<2><rsup|4>>|\<rangle\>>>.)
   While lists of <math|<2><rsup|8>>, known as byte strings, are not a
   Simplicity type, we will at times make use of this type when defining the
-  Simplicity langauge. We will write these byte strings as sequences of
+  Simplicity language. We will write these byte strings as sequences of
   hexadecimal digits, e.g. <math|<math-tt|[53696d706c6963697479]><rsub|<2><rsup|8>>>.
   For all these values, we may omit the subscript when the interpretation is
   clear from the context.
@@ -1001,7 +1057,7 @@
   begin with definitions of the single bit adder and full adder.
 
   <\render-code>
-    <math|<math-ss|adder><rsub|1> :<2>\<times\><2>\<vdash\><2><rsup|2>>
+    <math|<math-ss|adder><rsub|1>\<of\><2>\<times\><2>\<vdash\><2><rsup|2>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|adder><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|cond>
     <around*|(|<math-ss|iden>\<times\><math-ss|not> <math-ss|iden>|)>
@@ -1009,11 +1065,10 @@
   </render-code>
 
   <\render-code>
-    <math|<math-ss|full-adder><rsub|1> :<around*|(|<2>\<times\><2>|)>\<times\><2>\<vdash\><2><rsup|2>>
+    <math|<math-ss|full-adder><rsub|1>\<of\><around*|(|<2>\<times\><2>|)>\<times\><2>\<vdash\><2><rsup|2>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-adder><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|take>
-    <math-ss|adder><rsub|1>\<times\> <math-ss|IH>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|OOH>\<times\><around*|(|<math-ss|OIH>\<times\>
-    <math-ss|IH> ;<math-ss|adder><rsub|1>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|<math|<math-ss|cond>
+    <math-ss|adder><rsub|1>\<times\><math-ss|IH>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|OOH>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|IH>;<math-ss|adder><rsub|1>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|<math|<math-ss|cond>
     <math-ss|true> <math-ss|OH>\<times\><math-ss|IIH>>>>>>>>>>>>>>
   </render-code>
 
@@ -1036,7 +1091,7 @@
     <around*|(|<math-ss|false>\<times\><math-ss|iden>|)>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|iden>\<times\><math-ss|not>
     <math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<llbracket\>|<math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>,<around*|\<llbracket\>|<math-ss|not>
     <math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|pair>
-    <math-ss|iden> <math-ss|unit>|)>; <around*|(|<math-ss|cond>
+    <math-ss|iden> <math-ss|unit>|)>;<around*|(|<math-ss|cond>
     <math-ss|false> <math-ss|true>|)>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|cond>
     <math-ss|false> <math-ss|true>|)>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<around*|(|<math-ss|pair>
     <math-ss|iden> <math-ss|unit>|)>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|cond>
@@ -1046,26 +1101,20 @@
 
   The calculations for the other cases are similar.
 
-  <math|>
-
   Next we recursively build adders and full adders for any word size.
 
   <\render-code>
-    <math|<math-ss|full-adder><rsub|2n> :<around*|(|<2><rsup|2n>\<times\><2><rsup|2n>|)>\<times\><2>\<vdash\><2>\<times\><2><rsup|2n>>
+    <math|<math-ss|full-adder><rsub|2*n>\<of\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<times\><2>\<vdash\><2>\<times\><2><rsup|2*n>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-adder><rsub|2n>>>|<cell|:=>|<cell|<math|<math-ss|take>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-adder><rsub|2*n>>>|<cell|:=>|<cell|<math|<math-ss|take>
     <around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><around*|(|<math-ss|take>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\> <math-ss|IH>
-    ;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>
-    ;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>>>>>>>>>>>>
+    <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\><math-ss|IH>;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
-    <math|<math-ss|adder><rsub|2n> :<math|<2><rsup|2n>>\<times\><math|<2><rsup|2n>>\<vdash\><2>\<times\><math|<2><rsup|2n>>>
+    <math|<math-ss|adder><rsub|2*n>\<of\><2><rsup|2*n>\<times\><2><rsup|2*n>\<vdash\><2>\<times\><2><rsup|2*n>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|adder><rsub|2n>>>|<cell|:=>|<cell|<math|<around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|IIH>
-    ;<math-ss|adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>
-    ;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>>>>>>>>>>>>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|adder><rsub|2*n>>>|<cell|:=>|<cell|<math|<around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|IIH>;<math-ss|adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>>>>>>>>>>>>
   </render-code>
 
   We generalize the specification for the single bit adders and full adders
@@ -1077,7 +1126,7 @@
 
   <\theorem>
     For all <math|n> which is a power of 2, and for all <math|a:<2><rsup|n>>,
-    <math|b :<2><rsup|n>>, and <math|c :<2>>, we have that
+    <math|b:<2><rsup|n>>, and <math|c:<2>>, we have that
     <math|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|1,n>=<around*|\<lceil\>|a|\<rceil\>><rsub|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>.
   </theorem>
 
@@ -1086,14 +1135,12 @@
     induction on <math|n>. As mentioned before,
     <math|<math-ss|full-adder><rsub|1>> case is easily checked by verifying
     all eight possible inputs. Next we prove that
-    <math|<math-ss|full-adder><rsub|2n>> meets its specification under the
+    <math|<math-ss|full-adder><rsub|2*n>> meets its specification under the
     assumption that <math|<math-ss|full-adder><rsub|n>> does. Specifically we
     want to show that
 
-    \;
-
     <\equation>
-      <around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|1,2*n>=<around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1><label|full-adder-spec>
+      <around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|1,2*n>=<around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1><label|full-adder-spec>
     </equation>
 
     Let us first consider the right hand side of equation
@@ -1117,7 +1164,7 @@
     </equation*>
 
     Let us define <math|c<rsub|0>> and <math|r<rsub|2>> such that
-    <math|<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>\<assign\>><math|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>>.
+    <math|<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>\<assign\><around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>>.
     Thus we have that
 
     <\eqnarray*>
@@ -1137,7 +1184,7 @@
     </equation*>
 
     Let us define <math|c<rsub|1>> and <math|r<rsub|1>> such that
-    <math|<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>\<assign\>><math|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>>.
+    <math|<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>\<assign\><around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>>.
     Thus we have that
 
     <\eqnarray*>
@@ -1146,25 +1193,21 @@
 
     Now let us consider the left hand side of equation
     <reference|full-adder-spec>. By the definition and semantics of
-    <math|<math-ss|full-adder><rsub|2n>> we have that
+    <math|<math-ss|full-adder><rsub|2*n>> we have that
 
     <\eqnarray*>
-      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>
-      ;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|take>
+      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|take>
       <around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><around*|(|<math-ss|take>
-      <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\> <math-ss|IH>
-      ;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>
-      ;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>
-      ;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>>>
+      <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\><math-ss|IH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>>>
     </eqnarray*>
 
     Therefore we have that
 
     <\eqnarray*>
-      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|1,2*n>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|r<rsub|1>|\<rceil\>><rsub|*n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|2>|\<rceil\>><rsub|n><eq-number><label|full-adder-LHS>>>>>
+      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|1,2*n>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|r<rsub|1>|\<rceil\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|2>|\<rceil\>><rsub|n><eq-number><label|full-adder-LHS>>>>>
     </eqnarray*>
 
-    Together equations <math|><reference|full-adder-RHS> and
+    Together equations <reference|full-adder-RHS> and
     <reference|full-adder-LHS> show that the right hand side and left hand
     side of equation <reference|full-adder-spec> are equal, as required.
   </proof>
@@ -1177,55 +1220,44 @@
   in a similar way.
 
   <\render-code>
-    <math|<math-ss|full-multiplier><rsub|1>
-    :<around*|(|<2>\<times\><2>|)>\<times\><around*|(|<2>\<times\><2>|)>\<vdash\><2><rsup|2>>
+    <math|<math-ss|full-multiplier><rsub|1>\<of\><around*|(|<2>\<times\><2>|)>\<times\><around*|(|<2>\<times\><2>|)>\<vdash\><2><rsup|2>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiplier><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|IH>\<times\><math-ss|take>
-    <around*|(|<math-ss|cond> <math-ss|iden> <math-ss|false>|)>
-    ;<math-ss|full-adder><rsub|1>>>>>>>>>>>>
+    <around*|(|<math-ss|cond> <math-ss|iden>
+    <math-ss|false>|)>;<math-ss|full-adder><rsub|1>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
-    <math|<math-ss|full-multiplier><rsub|2n>
-    :<around*|(|<math|<2><rsup|2n>>\<times\><2><rsup|2n>|)>\<times\><around*|(|<math|<2><rsup|2n>>\<times\><math|<2><rsup|2n>>|)>\<vdash\><2><rsup|4n>>
+    <math|<math-ss|full-multiplier><rsub|2*n>\<of\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<times\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<vdash\><2><rsup|4*n>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiplier><rsub|2n>>>|<cell|:=>|<cell|<math|<math-ss|take>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiplier><rsub|2*n>>>|<cell|:=>|<cell|<math|<math-ss|take>
     <around*|(|<math-ss|OOH>\<times\><around*|(|<math-ss|IOH>\<times\><math-ss|OIH>|)>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|(<math|<around*|(|<math-ss|take>
     <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>\<times\><math-ss|drop>
-    <around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>
-    ;<math-ss|full-multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|take>
+    <around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|take>
     <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\><math-ss|drop>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>
-    ;<math-ss|full-multiplier><rsub|n>|)>>)>>|<row|<cell|>|<cell|<math|;>>|<cell|<math|<math-ss|take>
+    <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>>)>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|take>
     <around*|(|<math-ss|OH>\<times\><math-ss|IOH>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|drop>
     <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|drop>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>
-    ;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|<math|;>>|<cell|<math|<around*|(|<math-ss|OH>\<times\><math-ss|drop>
-    <around*|(|<math-ss|IOH>\<times\><math-ss|OOH>|)>
-    ;<math-ss|full-multiplier><rsub|n>|)>\<times\><math-ss|drop>
+    <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<around*|(|<math-ss|OH>\<times\><math-ss|drop>
+    <around*|(|<math-ss|IOH>\<times\><math-ss|OOH>|)>;<math-ss|full-multiplier><rsub|n>|)>\<times\><math-ss|drop>
     <around*|(|<math-ss|IIH>\<times\><math-ss|OIH>|)>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
-    <math|<math-ss|multiplier><rsub|1> :<2>\<times\><2>\<vdash\><2><rsup|2>>
+    <math|<math-ss|multiplier><rsub|1>\<of\><2>\<times\><2>\<vdash\><2><rsup|2>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|false>\<times\><math-ss|cond>
-    <math-ss|iden> ><samp|false>>>>>>>>>>>
+    <math-ss|iden>><samp|false>>>>>>>>>>>
   </render-code>
 
   <\render-code>
-    <math|<math-ss|multiplier><rsub|2n> :<math|<2><rsup|2n>>\<times\><2><rsup|2n>\<vdash\><2><rsup|4n>>
+    <math|<math-ss|multiplier><rsub|2*n>\<of\><2><rsup|2*n>\<times\><2><rsup|2*n>\<vdash\><2><rsup|4*n>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|3|5|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|2n>>>|<cell|:=>|<cell|<math|
-    <around*|(|<math-ss|OOH>\<times\><around*|(|<math-ss|IOH>\<times\><math-ss|OIH>|)>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|><around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>
-    ;<math-ss|multiplier><rsub|n>|)>\<times\><around*|(|<around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>
-    ;<math-ss|multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|<math|;>>|<cell|<math|<math-ss|take>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|3|5|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|2*n>>>|<cell|:=>|<cell|<math|<around*|(|<math-ss|OOH>\<times\><around*|(|<math-ss|IOH>\<times\><math-ss|OIH>|)>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|><around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>;<math-ss|multiplier><rsub|n>|)>\<times\><around*|(|<around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>;<math-ss|multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|take>
     <around*|(|<math-ss|OH>\<times\><math-ss|IOH>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|drop>
     <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|drop>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>
-    ;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|<math|;>>|<cell|<math|<around*|(|<math-ss|OH>\<times\><math-ss|drop>
-    <around*|(|<math-ss|IOH>\<times\><math-ss|OOH>|)>
-    ;<math-ss|full-multiplier><rsub|n>|)>\<times\><math-ss|drop>
+    <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<around*|(|<math-ss|OH>\<times\><math-ss|drop>
+    <around*|(|<math-ss|IOH>\<times\><math-ss|OOH>|)>;<math-ss|full-multiplier><rsub|n>|)>\<times\><math-ss|drop>
     <around*|(|<math-ss|IIH>\<times\><math-ss|OIH>|)>>>>>>>>>>>>
   </render-code>
 
@@ -1233,7 +1265,7 @@
   specifications.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-multiplier><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,<around*|\<langle\>|c,d|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2*n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>\<cdot\><around*|\<lceil\>|b|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|n>+<around*|\<lceil\>|d|\<rceil\>><rsub|n>>>|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|multiplier><rsub|n>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|2n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>\<cdot\><around*|\<lceil\>|b|\<rceil\>><rsub|n>>>>>
+    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-multiplier><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,<around*|\<langle\>|c,d|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2*n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>\<cdot\><around*|\<lceil\>|b|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|n>+<around*|\<lceil\>|d|\<rceil\>><rsub|n>>>|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|multiplier><rsub|n>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|2*n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>\<cdot\><around*|\<lceil\>|b|\<rceil\>><rsub|n>>>>>
   </eqnarray*>
 
   \;
@@ -1303,7 +1335,7 @@
   formally converts a byte to a bit string (in big endian format).
 
   <\equation*>
-    \<iota\><rsup|<2><rsup|8>><rsub|<2><rsup|\<ast\>>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|b<rsub|0>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|b<rsub|2>,<rsub|>b<rsub|3>|\<rangle\>>|\<rangle\>>,<around*|\<langle\>|<around*|\<langle\>|b<rsub|4>,b<rsub|5>|\<rangle\>>,<around*|\<langle\>|b<rsub|6>,b<rsub|7>|\<rangle\>>|\<rangle\>>|\<rangle\>>\<assign\>b<rsub|0>\<blacktriangleleft\>b<rsub|1>\<blacktriangleleft\>b<rsub|2>\<blacktriangleleft\>b<rsub|3>\<blacktriangleleft\>b<rsub|4>\<blacktriangleleft\>b<rsub|5>\<blacktriangleleft\>b<rsub|6>\<blacktriangleleft\>b<rsub|7>\<blacktriangleleft\>\<epsilon\>
+    \<iota\><rsup|<2><rsup|8>><rsub|<2><rsup|\<ast\>>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|b<rsub|0>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|b<rsub|2>,<rsub|\<nosymbol\>>b<rsub|3>|\<rangle\>>|\<rangle\>>,<around*|\<langle\>|<around*|\<langle\>|b<rsub|4>,b<rsub|5>|\<rangle\>>,<around*|\<langle\>|b<rsub|6>,b<rsub|7>|\<rangle\>>|\<rangle\>>|\<rangle\>>\<assign\>b<rsub|0>\<blacktriangleleft\>b<rsub|1>\<blacktriangleleft\>b<rsub|2>\<blacktriangleleft\>b<rsub|3>\<blacktriangleleft\>b<rsub|4>\<blacktriangleleft\>b<rsub|5>\<blacktriangleleft\>b<rsub|6>\<blacktriangleleft\>b<rsub|7>\<blacktriangleleft\>\<epsilon\>
   </equation*>
 
   Since the <math|SHA256<rsub|<2><rsup|8>>> variant is so commonly used, we
@@ -1441,8 +1473,8 @@
   of read frames as <math|r<rsub|n>\<vartriangleright\>\<ldots\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0>>,
   with <math|r<rsub|0>> as the active read frame. We will write a stack of
   write frames in the opposite order, as <math|w<rsub|0>\<vartriangleleft\>w<rsub|1>\<vartriangleleft\>\<ldots\>\<vartriangleleft\>w<rsub|m>>
-  with <math|w<rsub|0><rsub|>> as the active write frame. We write a state of
-  the Bit Machine as <math|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>>
+  with <math|w<rsub|0>> as the active write frame. We write a state of the
+  Bit Machine as <math|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>>
   where <math|\<Theta\>> is the (possibly empty) inactive read frame stack,
   <math|\<Xi\>> is the (possibly empty) inactive write frame stack,
   <math|r<rsub|0>> is the active read frame, and <math|w<rsub|0>> is the
@@ -1455,7 +1487,7 @@
 
   The Bit Machine has nine basic instructions that, when executed, transform
   the Bit Machine's state. We denote these basic instructions as
-  <math|i:S<rsub|0>\<rightsquigarrow\>S<rsub|1>>, where <math|i> is the
+  <math|i\<of\>S<rsub|0>\<rightsquigarrow\>S<rsub|1>>, where <math|i> is the
   instructions's name, <math|S<rsub|0>> is a state of the Bit Machine before
   executing the instruction, and <math|S<rsub|1>> is the state of the machine
   after the successful execution of the instructions.
@@ -1465,9 +1497,7 @@
   Our first three basic instructions, create, move, and delete active frames.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|newFrame<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
-    \<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|<emptyFrame><carr|?><rsup|n>\<vartriangleleft\>w<rsub|0>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|moveFrame>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0><emptyFrame>\<vartriangleleft\>w<rsub|1>\<vartriangleleft\>\<Xi\>|]>
-    \<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<vartriangleright\><emptyFrame>w<rsub|0>\|w<rsub|1>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|dropFrame>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0>\|\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\|\<Xi\>|]>>>>>
+    <tformat|<table|<row|<cell|newFrame<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|<emptyFrame><carr|?><rsup|n>\<vartriangleleft\>w<rsub|0>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|moveFrame>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0><emptyFrame>\<vartriangleleft\>w<rsub|1>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<vartriangleright\><emptyFrame>w<rsub|0>\|w<rsub|1>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|dropFrame>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0>\|\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\|\<Xi\>|]>>>>>
   </eqnarray*>
 
   Executing a <math|newFrame<around*|(|n|)>> instruction pushes a new frame
@@ -1490,7 +1520,7 @@
   frame.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|write<around*|(|0|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|<wide*|?|\<bar\>>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><cearr|0><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|write<around*|(|1|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|<wide*|?|\<bar\>>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><cearr|1><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|skip<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0><emptyFrame><carr|?><rsup|n+m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|?><rsup|n><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|copy<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|n+m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><cearr|c<rsub|1>\<cdots\>c<rsub|n>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>>>
+    <tformat|<table|<row|<cell|write<around*|(|0|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|<wide*|?|\<bar\>>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><cearr|0><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|write<around*|(|1|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|<wide*|?|\<bar\>>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><cearr|1><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|skip<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0><emptyFrame><carr|?><rsup|n+m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|?><rsup|n><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|copy<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>*c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|n+m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>*c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><cearr|c<rsub|1>*\<cdots\>*c<rsub|n>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>>>
   </eqnarray*>
 
   Executing a <math|write<around*|(|b|)>> instruction writes a 0 or 1 to the
@@ -1516,11 +1546,11 @@
   cursor.
 
   <\equation*>
-    fwd<around*|(|n|)>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><cearr|c<rsub|1>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
+    fwd<around*|(|n|)>\<of\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|\<nosymbol\>><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>*c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|\<nosymbol\>><cearr|c<rsub|1>*\<cdots\>*c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
   </equation*>
 
   <\equation*>
-    bwd<around*|(|n|)>:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><cearr|c<rsub|1>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
+    bwd<around*|(|n|)>\<of\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|\<nosymbol\>><cearr|c<rsub|1>*\<cdots\>*c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|\<nosymbol\>><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>*c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>
   </equation*>
 
   Executing a <math|fwd<around*|(|n|)>> instructions moves the cursor on the
@@ -1536,7 +1566,7 @@
   state into the halted state.
 
   <\equation*>
-    abort:<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><halted>
+    abort\<of\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><halted>
   </equation*>
 
   This is the only way to enter the halted state, and once in the halted
@@ -1582,7 +1612,7 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>|S<rsub|>>>>|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0><around*|\|||\|>k<rsub|1>|S>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>|S<rsub|>>>>|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>\|\|k<rsub|1>|S>>>>>>
   </with>
 
   \;
@@ -1590,16 +1620,15 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|1>|S>>>|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0><around*|\|||\|>k<rsub|1>|S>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|1>|S>>>|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>\|\|k<rsub|1>|S>>>>>>
   </with>
 
-  We define <math|k<rsub|0><around*|\|||\|>k<rsub|1>> as a deterministic
-  choice between two programs, <math|k<rsub|0>> and <math|k<rsub|1>>. When
-  executing a determinsitc choice, the value under the active read frame's
-  cursor decides which one of the two programs are executed. When
-  encountering a determinisitc choice, the active read frame's cursor must
-  not be at the end of its array and the cell under the cursor must not be an
-  undefined value.
+  We define <math|k<rsub|0>\|\|k<rsub|1>> as a deterministic choice between
+  two programs, <math|k<rsub|0>> and <math|k<rsub|1>>. When executing a
+  determinsitc choice, the value under the active read frame's cursor decides
+  which one of the two programs are executed. When encountering a
+  determinisitc choice, the active read frame's cursor must not be at the end
+  of its array and the cell under the cursor must not be an undefined value.
 
   \;
 
@@ -1657,8 +1686,8 @@
 
   <subsection|Executing Simplicity>
 
-  We recursively translate a Core Simplicity program, <math|t \<of\> A
-  \<vdash\>B>, into a program for the Bit Machine,
+  We recursively translate a Core Simplicity program,
+  <math|t\<of\>A\<vdash\>B>, into a program for the Bit Machine,
   <math|<around*|\<llangle\>|t|\<rrangle\>>>, called the naive translation:
 
   <\eqnarray*>
@@ -1666,7 +1695,7 @@
     s t|\<rrangle\>>>|<cell|\<assign\>>|<cell|newFrame<around*|(|bitSize<around*|(|B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<around*|\<llangle\>|s|\<rrangle\>>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|<around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|>|<cell|;>|<cell|dropFrame>>|<row|<cell|<around*|\<llangle\>|<math-ss|unit><rsub|A>|\<rrangle\>>>|<cell|\<assign\>>|<cell|nop>>|<row|<cell|<around*|\<llangle\>|<math-ss|injl><rsub|A,B,C>
     t|\<rrangle\>>>|<cell|\<assign\>>|<cell|write<around*|(|0|)>;skip<around*|(|padL<around*|(|A,B|)>|)>;<around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|injr><rsub|A,B,C>
     t|\<rrangle\>>>|<cell|\<assign\>>|<cell|write<around*|(|1|)>;skip<around*|(|padR<around*|(|A,B|)>|)>;<around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|case><rsub|A,B,C,D>
-    s t|\<rrangle\>>>|<cell|\<assign\>>|<cell|<around*|(|1+padL<around*|(|A,B|)>|)>\<star\><around*|\<llangle\>|s|\<rrangle\>>>>|<row|<cell|>|<cell|<around*|\|||\|>>|<cell|<around*|(|1+padR<around*|(|A,B|)>|)>\<star\><around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|pair><rsub|A,B,C>
+    s t|\<rrangle\>>>|<cell|\<assign\>>|<cell|<around*|(|1+padL<around*|(|A,B|)>|)>\<star\><around*|\<llangle\>|s|\<rrangle\>>>>|<row|<cell|>|<cell|\|\|>|<cell|<around*|(|1+padR<around*|(|A,B|)>|)>\<star\><around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|pair><rsub|A,B,C>
     s t|\<rrangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llangle\>|s|\<rrangle\>>;<around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|take><rsub|A,B,C>
     t|\<rrangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|<around*|\<llangle\>|<math-ss|drop><rsub|A,B,C>
     t|\<rrangle\>>>|<cell|\<assign\>>|<cell|bitSize<around*|(|A|)>\<star\><around*|\<llangle\>|t|\<rrangle\>>>>>>
@@ -1677,12 +1706,12 @@
     input <math|a:A>, then
 
     <\equation*>
-      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|\<nosymbol\>><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|\<nosymbol\>><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
     </equation*>
 
     for any cell arrays <math|r<rsub|0>>, <math|r<rsub|0><rprime|'>>,
-    <math|w<rsub|0>>, any stacks <math|><math|\<Theta\>>, <math|\<Xi\>>, and
-    any natural number <math|m>.
+    <math|w<rsub|0>>, any stacks <math|\<Theta\>>, <math|\<Xi\>>, and any
+    natural number <math|m>.
   </theorem>
 
   In particular, for a well-typed core Simplicity program
@@ -1723,14 +1752,14 @@
     s t>>|<cell|\<assign\>>|<cell|newFrame<around*|(|bitSize<around*|(|B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<TCOoff|s>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|<TCOon|t>>>|<row|<cell|<TCOoff|<math-ss|unit><rsub|A>>>|<cell|\<assign\>>|<cell|nop>>|<row|<cell|<TCOoff|<math-ss|injl><rsub|A,B,C>
     t>>|<cell|\<assign\>>|<cell|write<around*|(|0|)>;skip<around*|(|padL<around*|(|A,B|)>|)>;<TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|injr><rsub|A,B,C>
     t>>|<cell|\<assign\>>|<cell|write<around*|(|1|)>;skip<around*|(|padR<around*|(|A,B|)>|)>;<TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|case><rsub|A,B,C,D>
-    s t>>|<cell|\<assign\>>|<cell|<around*|(|1+padL<around*|(|A,B|)>|)>\<star\><TCOoff|s>>>|<row|<cell|>|<cell|<around*|\|||\|>>|<cell|<around*|(|1+padR<around*|(|A,B|)>|)>\<star\><TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|pair><rsub|A,B,C>
+    s t>>|<cell|\<assign\>>|<cell|<around*|(|1+padL<around*|(|A,B|)>|)>\<star\><TCOoff|s>>>|<row|<cell|>|<cell|\|\|>|<cell|<around*|(|1+padR<around*|(|A,B|)>|)>\<star\><TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|pair><rsub|A,B,C>
     s t>>|<cell|\<assign\>>|<cell|<TCOoff|s>;<TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|take><rsub|A,B,C>
     t>>|<cell|\<assign\>>|<cell|<TCOoff|t>>>|<row|<cell|<TCOoff|<math-ss|drop><rsub|A,B,C>
     t>>|<cell|\<assign\>>|<cell|bitSize<around*|(|A|)>\<star\><TCOoff|t>>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<TCOon|<math-ss|iden><rsub|A>>>|<cell|\<assign\>>|<cell|copy<around*|(|bitSize<around*|(|A|)>|)>>>|<row|<cell|>|<cell|;>|<cell|dropFrame>>|<row|<cell|<TCOon|<math-ss|comp><rsub|A,B,C>
     s t>>|<cell|\<assign\>>|<cell|newFrame<around*|(|bitSize<around*|(|B|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<TCOon|s>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|unit><rsub|A>>>|<cell|\<assign\>>|<cell|dropFrame>>|<row|<cell|<TCOon|<math-ss|injl><rsub|A,B,C>
     t>>|<cell|\<assign\>>|<cell|write<around*|(|0|)>;skip<around*|(|padL<around*|(|A,B|)>|)>;<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|injr><rsub|A,B,C>
     t>>|<cell|\<assign\>>|<cell|write<around*|(|1|)>;skip<around*|(|padR<around*|(|A,B|)>|)>;<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|case><rsub|A,B,C,D>
-    s t>>|<cell|\<assign\>>|<cell|fwd<around*|(|1+padL<around*|(|A,B|)>|)>;<TCOon|s>>>|<row|<cell|>|<cell|<around*|\|||\|>>|<cell|fwd<around*|(|1+padR<around*|(|A,B|)>|)>;<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|pair><rsub|A,B,C>
+    s t>>|<cell|\<assign\>>|<cell|fwd<around*|(|1+padL<around*|(|A,B|)>|)>;<TCOon|s>>>|<row|<cell|>|<cell|\|\|>|<cell|fwd<around*|(|1+padR<around*|(|A,B|)>|)>;<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|pair><rsub|A,B,C>
     s t>>|<cell|\<assign\>>|<cell|<TCOoff|s>;<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|take><rsub|A,B,C>
     t>>|<cell|\<assign\>>|<cell|<TCOon|t>>>|<row|<cell|<TCOon|<math-ss|drop><rsub|A,B,C>
     t>>|<cell|\<assign\>>|<cell|fwd<around*|(|bitSize<around*|(|A|)>|)>;<TCOon|t>>>>>
@@ -1752,18 +1781,18 @@
     input <math|a:A>, then
 
     <\equation*>
-      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<TCOoff|t>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|\<nosymbol\>><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<TCOoff|t>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|\<nosymbol\>><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
     </equation*>
 
     and
 
     <\equation*>
-      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<TCOon|t>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0><emptyFrame><rsub|\<nosymbol\>><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<TCOon|t>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
     </equation*>
 
     for any cell arrays <math|r<rsub|0>>, <math|r<rsub|0><rprime|'>>,
     <math|w<rsub|0>>, any frame <math|r<rsub|1>>, any stacks
-    <math|><math|\<Theta\>>, <math|\<Xi\>>, and any natural number <math|m>.
+    <math|\<Theta\>>, <math|\<Xi\>>, and any natural number <math|m>.
   </theorem>
 
   In particular, for a well-typed core Simplicity program
@@ -1809,22 +1838,20 @@
   counts of all its frames.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|cellCount<around*|(|<carr|c<rsub|1>\<cdots\><wide*|c<rsub|i>|\<bar\>>\<cdots\>c<rsub|n>>|)>>|<cell|\<assign\>>|<cell|n>>|<row|<cell|cellCount<around*|(|<around*|[|r<rsub|n>\<vartriangleright\>\<ldots\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<ldots\>\<vartriangleleft\>w<rsub|m>|]>|)>>|<cell|\<assign\>>|<cell|<big|sum><rsup|n><rsub|i=0>cellCount<around*|(|r<rsub|i>|)>+<big|sum><rsup|m><rsub|j=0>cellCount<around*|(|w<rsub|j>|)>>>|<row|<cell|cellCount<around*|(|<halted>|)>>|<cell|\<assign\>>|<cell|0>>>>
+    <tformat|<table|<row|<cell|cellCount<around*|(|<carr|c<rsub|1>*\<cdots\><wide*|c<rsub|i>|\<bar\>>\<cdots\>*c<rsub|n>>|)>>|<cell|\<assign\>>|<cell|n>>|<row|<cell|cellCount<around*|(|<around*|[|r<rsub|n>\<vartriangleright\>\<ldots\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<ldots\>\<vartriangleleft\>w<rsub|m>|]>|)>>|<cell|\<assign\>>|<cell|<big|sum><rsup|n><rsub|i=0>cellCount<around*|(|r<rsub|i>|)>+<big|sum><rsup|m><rsub|j=0>cellCount<around*|(|w<rsub|j>|)>>>|<row|<cell|cellCount<around*|(|<halted>|)>>|<cell|\<assign\>>|<cell|0>>>>
   </eqnarray*>
 
   We define the cells required by a program <prog|S<rsub|0>|p|S<rsub|1>> as
   the maximum cell count over every intermediate state.
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|2>|<table|<row|<cell|<math|cellsReq<around*|(|<prog|S<rsub|>|nop|S<rsub|>>|)><rsub|>\<assign\>
-    cellCount<around*|(|S<rsub|>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|2>|<table|<row|<cell|<math|cellsReq<around*|(|<prog|S<rsub|\<nosymbol\>>|nop|S<rsub|\<nosymbol\>>>|)><rsub|\<nosymbol\>>\<assign\>cellCount<around*|(|S<rsub|\<nosymbol\>>|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|i:S<rsub|0>\<rightsquigarrow\>S<rsub|1>>>>|<row|<cell|<math|cellsReq<around*|(|<prog|S<rsub|0>|i|S<rsub|1>>|)><rsub|>\<assign\>
-    max<around*|(|cellCount<around*|(|S<rsub|0>|)>,cellCount<around*|(|S<rsub|1>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|i:S<rsub|0>\<rightsquigarrow\>S<rsub|1>>>>|<row|<cell|<math|cellsReq<around*|(|<prog|S<rsub|0>|i|S<rsub|1>>|)><rsub|\<nosymbol\>>\<assign\>max<around*|(|cellCount<around*|(|S<rsub|0>|)>,cellCount<around*|(|S<rsub|1>|)>|)>>>>>>>
   </with>
 
   \;
@@ -1840,7 +1867,7 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>|S>>>|<row|<cell|<math|cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0><around*|\|||\|>k<rsub|1>|S>|)><rsub|>\<assign\>cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>|S>|)>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>|S>>>|<row|<cell|<math|cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|\<nosymbol\>><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0><around*|\|||\|>*k<rsub|1>|S>|)><rsub|\<nosymbol\>>\<assign\>cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|\<nosymbol\>><carr|<wide*|0|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0>|S>|)>>>>>>>
   </with>
 
   \;
@@ -1848,7 +1875,7 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|1>|S>>>|<row|<cell|<math|cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0><around*|\|||\|>k<rsub|1>|S>|)><rsub|>\<assign\>cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|1>|S>|)>>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|1>|S>>>|<row|<cell|<math|cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|\<nosymbol\>><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|0><around*|\|||\|>*k<rsub|1>|S>|)><rsub|\<nosymbol\>>\<assign\>cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|\<nosymbol\>><carr|<wide*|1|\<bar\>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|k<rsub|1>|S>|)>>>>>>>
   </with>
 
   \;
@@ -1856,8 +1883,7 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|2>|<table|<row|<cell|<math|cellsReq<around*|(|<prog|<halted>|k|<halted>>|)><rsub|>\<assign\>
-    0>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|2>|<table|<row|<cell|<math|cellsReq<around*|(|<prog|<halted>|k|<halted>>|)><rsub|\<nosymbol\>>\<assign\>0>>>>>>
   </with>
 
   \;
@@ -1913,10 +1939,10 @@
   <\eqnarray*>
     <tformat|<cwith|2|10|2|2|cell-halign|r>|<cwith|2|10|2|2|cell-halign|r>|<table|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|iden><rsub|A>|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|comp><rsub|A,B,C>
     s t|)>*<around*|(|r|)>>|<cell|\<assign\>>|<cell|bitSize<around*|(|B|)>+max<around*|(|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|s|)><around*|(|r|)>,<next-line>extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|bitSize<around*|(|B|)>|)>-r|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|unit><rsub|A>|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|injl><rsub|A,B,C>
-    t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO<rsub|>><rsub|dyn><around*|(|<math-ss|injr><rsub|A,B,C>
+    t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO<rsub|\<nosymbol\>>><rsub|dyn><around*|(|<math-ss|injr><rsub|A,B,C>
     t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|case><rsub|A,B,C,D>
     s t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|max<around*|(|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|s|)><around*|(|r|)>,<next-line>extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|r|)>|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|pair><rsub|A,B,C>
-    s t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|max<around*|(|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|s|)><rsup|><around*|(|0|)>,<next-line>extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|r|)>|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|take><rsub|A,B,C>
+    s t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|max<around*|(|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|s|)><rsup|\<nosymbol\>><around*|(|0|)>,<next-line>extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|r|)>|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|take><rsub|A,B,C>
     t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|drop><rsub|A,B,C>
     t|)><around*|(|r|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>>>>
   </eqnarray*>
@@ -1925,13 +1951,13 @@
     For any core Simplicity expression <math|t:A\<vdash\>B>, such that
 
     <\equation*>
-      <prog|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|<TCOon|t>|<around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>><rsup|>
+      <prog|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|<TCOon|t>|<around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>><rsup|\<nosymbol\>>
     </equation*>
 
     and
 
     <\equation*>
-      <prog|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|<TCOoff|t><rsup|>|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>>
+      <prog|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|<TCOoff|t><rsup|\<nosymbol\>>|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>>
     </equation*>
 
     we have that
@@ -1941,7 +1967,7 @@
       and<next-line><math|cellCount<around*|(|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|)>=cellCount<around*|(|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>|)>>
 
       <item><math|cellsReq<around*|(|<prog|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|<TCOon|t>|<around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|cellCount<around*|(|r<rsub|on,0>|)>|)>>
-      and<next-line><math|cellsReq<around*|(|<prog|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|<TCOoff|t><rsup|>|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)>>.
+      and<next-line><math|cellsReq<around*|(|<prog|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|<TCOoff|t><rsup|\<nosymbol\>>|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)>>.
     </enumerate>
 
     In particular for <math|a:A> and
@@ -1952,7 +1978,7 @@
 
     we have that
 
-    <math|cellsReq<around*|(|<prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)><text|.>>
+    <math|cellsReq<around*|(|<prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)>>.
   </lemma>
 
   The problem with <math|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>
@@ -1972,8 +1998,8 @@
 
   <\eqnarray*>
     <tformat|<cwith|2|17|2|2|cell-halign|r>|<cwith|2|17|2|2|cell-halign|r>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|10|10|2|2|cell-halign|r>|<cwith|11|11|2|2|cell-halign|r>|<cwith|13|14|2|2|cell-halign|r>|<cwith|13|14|2|2|cell-halign|r>|<cwith|13|14|2|2|cell-halign|c>|<cwith|13|13|2|2|cell-halign|r>|<cwith|14|14|2|2|cell-halign|r>|<cwith|3|4|2|2|cell-halign|r>|<cwith|3|4|2|2|cell-halign|r>|<cwith|3|4|2|2|cell-halign|c>|<cwith|3|4|2|2|cell-halign|r>|<cwith|3|4|2|2|cell-halign|r>|<cwith|3|4|2|2|cell-halign|c>|<cwith|3|3|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<table|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|iden><rsub|A>|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|0,0|\<rangle\>>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|comp><rsub|A,B,C>
-    s t|)>*>|<cell|\<assign\>>|<cell|<around*|\<langle\>|max<around*|(|r<rsub|b>+n<rsub|s>,n<rsub|t>,r<rsub|b>+m<rsub|t>|)>,r<rsub|b>+m<rsub|s>|\<rangle\>>>>|<row|<cell|>|<cell|where>|<cell|<around*|\<langle\>|n<rsub|s>,m<rsub|s>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|s|)>>>|<row|<cell|>|<cell|and>|<cell|<around*|\<langle\>|n<rsub|t>,m<rsub|t>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|>|<cell|and>|<cell|r<rsub|b>\<assign\>bitSize<around*|(|B|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|unit><rsub|A>|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|0,0|\<rangle\>>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|injl><rsub|A,B,C>
-    t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO<rsub|>><rsub|static><around*|(|<math-ss|injr><rsub|A,B,C>
+    s t|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|max<around*|(|r<rsub|b>+n<rsub|s>,n<rsub|t>,r<rsub|b>+m<rsub|t>|)>,r<rsub|b>+m<rsub|s>|\<rangle\>>>>|<row|<cell|>|<cell|where>|<cell|<around*|\<langle\>|n<rsub|s>,m<rsub|s>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|s|)>>>|<row|<cell|>|<cell|and>|<cell|<around*|\<langle\>|n<rsub|t>,m<rsub|t>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|>|<cell|and>|<cell|r<rsub|b>\<assign\>bitSize<around*|(|B|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|unit><rsub|A>|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|0,0|\<rangle\>>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|injl><rsub|A,B,C>
+    t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO<rsub|\<nosymbol\>>><rsub|static><around*|(|<math-ss|injr><rsub|A,B,C>
     t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|case><rsub|A,B,C,D>
     s t|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|max<around*|(|n<rsub|s>,n<rsub|t>|)>,max<around*|(|m<rsub|s>,m<rsub|t>|)>|\<rangle\>>>>|<row|<cell|>|<cell|where>|<cell|<around*|\<langle\>|n<rsub|s>,m<rsub|s>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|s|)>>>|<row|<cell|>|<cell|and>|<cell|<around*|\<langle\>|n<rsub|t>,m<rsub|t>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|pair><rsub|A,B,C>
     s t|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|n<rsub|t>,max<around*|(|n<rsub|s>,m<rsub|s>,m<rsub|t>|)>|\<rangle\>>>>|<row|<cell|>|<cell|where>|<cell|<around*|\<langle\>|n<rsub|s>,m<rsub|s>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|s|)>>>|<row|<cell|>|<cell|and>|<cell|<around*|\<langle\>|n<rsub|t>,m<rsub|t>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|take><rsub|A,B,C>
@@ -2002,9 +2028,9 @@
 
     we have that
 
-    <math|cellsReq<around*|(|<prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>|)>\<leq\>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+max<around*|(|n,m|)><text|>>
+    <math|cellsReq<around*|(|<prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>|)>\<leq\>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+max<around*|(|n,m|)>>
 
-    <no-indent>where <math|<around*|\<langle\>|n,m|\<rangle\>>\<assign\>><math|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>.
+    <no-indent>where <math|<around*|\<langle\>|n,m|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>.
   </corollary>
 
   <subsubsection|Maximum Frame Count Bound>
@@ -2046,7 +2072,7 @@
   </eqnarray*>
 
   Here we are directly using SHA-256's compression function,
-  <math|SHA256Block<around*|\<langle\>|i,b|\<rangle\>>>, which takes two
+  <math|SHA256*Block<around*|\<langle\>|i,b|\<rangle\>>>, which takes two
   arguments. The first argument, <math|i>, is a 256-bit initial value. The
   second value, <math|b>, is a 512-bit block of data. Above we divide a block
   into two 256-bit values, <math|<around*|\<langle\>|b<rsub|0>,b<rsub|1>|\<rangle\>>>,
@@ -2061,17 +2087,13 @@
   combinator by taking the SHA-256 hash of unique byte strings:
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|tag<rsup|c><rsub|<math-ss|iden>>>|<cell|\<assign\>>|<cell|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f6964656e]>>>|<row|<cell|tag<rsup|c><rsub|<math-ss|comp>>>|<cell|\<assign\>>|<cell|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f636f6d70]>>>|<row|<cell|tag<rsup|c><rsub|<math-ss|unit>>>|<cell|\<assign\>>|<cell|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f756e6974]>>>|<row|<cell|tag<rsup|c><rsub|<math-ss|injl>>>|<cell|\<assign\>>|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f696e6a6c]>>|<row|<cell|tag<rsup|c><rsub|<math-ss|injr>>>|<cell|\<assign\>>|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f696e6a72]>>|<row|<cell|tag<rsup|c><rsub|<math-ss|case>>>|<cell|\<assign\>>|<math|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f63617365]>>>|<row|<cell|tag<rsup|c><rsub|<math-ss|pair>>>|<cell|\<assign\>>|<math|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f70616972]>>>|<row|<cell|tag<rsup|c><rsub|<math-ss|take>>>|<cell|\<assign\>>|<math|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f74616b65]>>>|<row|<cell|tag<rsup|c><rsub|<math-ss|drop>>>|<cell|\<assign\>>|<math|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f64726f70]>>>>>
+    <tformat|<table|<row|<cell|tag<rsup|c><rsub|<math-ss|iden>>>|<cell|\<assign\>>|<cell|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f6964656e]>>>|<row|<cell|tag<rsup|c><rsub|<math-ss|comp>>>|<cell|\<assign\>>|<cell|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f636f6d70]>>>|<row|<cell|tag<rsup|c><rsub|<math-ss|unit>>>|<cell|\<assign\>>|<cell|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f756e6974]>>>|<row|<cell|tag<rsup|c><rsub|<math-ss|injl>>>|<cell|\<assign\>>|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f696e6a6c]>>|<row|<cell|tag<rsup|c><rsub|<math-ss|injr>>>|<cell|\<assign\>>|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f696e6a72]>>|<row|<cell|tag<rsup|c><rsub|<math-ss|case>>>|<cell|\<assign\>>|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f63617365]>>|<row|<cell|tag<rsup|c><rsub|<math-ss|pair>>>|<cell|\<assign\>>|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f70616972]>>|<row|<cell|tag<rsup|c><rsub|<math-ss|take>>>|<cell|\<assign\>>|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f74616b65]>>|<row|<cell|tag<rsup|c><rsub|<math-ss|drop>>>|<cell|\<assign\>>|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f64726f70]>>>>
   </eqnarray*>
 
   Notice that the type annotations for expressions are not included in the
   commitment Merkle root. We will rely on type inference to derive principle
   type annotations. Later, we will make use of this flexibilty when pruning
   unused branches from <samp|case> expressions.
-
-  <section|Serialization><label|ss:Serialization>
-
-  <subsection|Type Inference>
 
   <chapter|Simplicity Extensions>
 
@@ -2083,8 +2105,8 @@
   <section|Monadic Effects>
 
   A functor <math|\<cal-F\>> maps types, <math|A>, to types
-  <math|\<cal-F\>A>, and maps function <math|f : A\<rightarrow\>B> to
-  functions <math|\<cal-F\>f : \<cal-F\>A \<rightarrow\>\<cal-F\>B>. This
+  <math|\<cal-F\>A>, and maps function <math|f\<of\>A\<rightarrow\>B> to
+  functions <math|\<cal-F\>f\<of\>\<cal-F\>A\<rightarrow\>\<cal-F\>B>. This
   mapping is required to satify natural laws.
 
   <\eqnarray*>
@@ -2095,14 +2117,13 @@
   transformations.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|\<eta\><rsup|\<cal-M\>><rsub|A>>|<cell|:>|<cell|A
-    \<rightarrow\> \<cal-M\>A>>|<row|<cell|\<mu\><rsup|\<cal-M\>><rsub|A>>|<cell|:>|<cell|\<cal-M\>\<cal-M\>A\<rightarrow\>\<cal-M\>A>>>>
+    <tformat|<table|<row|<cell|\<eta\><rsup|\<cal-M\>><rsub|A>>|<cell|:>|<cell|A\<rightarrow\>\<cal-M\>*A>>|<row|<cell|\<mu\><rsup|\<cal-M\>><rsub|A>>|<cell|:>|<cell|\<cal-M\>*\<cal-M\>*A\<rightarrow\>\<cal-M\>*A>>>>
   </eqnarray*>
 
   where forall <math|f\<of\>A\<rightarrow\>B>,
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|\<cal-M\>f\<circ\>\<eta\><rsup|\<cal-M\>><rsub|A>>|<cell|=>|<cell|\<eta\><rsup|\<cal-M\>><rsub|B>\<circ\>f>>|<row|<cell|\<cal-M\>f\<circ\>\<mu\><rsup|\<cal-M\>><rsub|A>>|<cell|=>|<cell|\<mu\><rsup|\<cal-M\>><rsub|B>\<circ\>\<cal-M\>\<cal-M\>f>>>>
+    <tformat|<table|<row|<cell|\<cal-M\>*f\<circ\>\<eta\><rsup|\<cal-M\>><rsub|A>>|<cell|=>|<cell|\<eta\><rsup|\<cal-M\>><rsub|B>\<circ\>f>>|<row|<cell|\<cal-M\>*f\<circ\>\<mu\><rsup|\<cal-M\>><rsub|A>>|<cell|=>|<cell|\<mu\><rsup|\<cal-M\>><rsub|B>\<circ\>\<cal-M\>*\<cal-M\>*f>>>>
   </eqnarray*>
 
   The <math|\<eta\><rsup|\<cal-M\>><rsub|A>> and
@@ -2112,24 +2133,25 @@
   <subsection|Kleisli Morphisms>
 
   Functions from <math|A> to <math|B> that produce side-effects are
-  represented by Kleisli morphisms, which are (pure) functions <math|A
-  \<rightarrow\>\<cal-M\>B>, where <math|\<cal-M\>> is a monad that captures
-  the particular side-effects of the function in the result type. For Kleisli
-  morphisms <math|f\<of\>A\<rightarrow\>\<cal-M\>B> and
-  <math|g\<of\>B\<rightarrow\>\<cal-M\>C> we define the Kleisli composition
-  of them as <math|g<op|\<leftarrowtail\><rsup|\<cal-M\>>>f\<of\>A\<rightarrow\>\<cal-M\>C>
+  represented by Kleisli morphisms, which are (pure) functions
+  <math|A\<rightarrow\>\<cal-M\>*B>, where <math|\<cal-M\>> is a monad that
+  captures the particular side-effects of the function in the result type.
+  For Kleisli morphisms <math|f\<of\>A\<rightarrow\>\<cal-M\>*B> and
+  <math|g\<of\>B\<rightarrow\>\<cal-M\>*C> we define the Kleisli composition
+  of them as <math|g<op|\<leftarrowtail\><rsup|\<cal-M\>>>f\<of\>A\<rightarrow\>\<cal-M\>*C>
   where
 
   <\equation*>
-    g<op|\<leftarrowtail\>><rsup|\<cal-M\>>f\<assign\>\<mu\><rsup|\<cal-M\>>\<circ\>\<cal-M\>g\<circ\>f
+    g<op|\<leftarrowtail\>><rsup|\<cal-M\>>f\<assign\>\<mu\><rsup|\<cal-M\>>\<circ\>\<cal-M\>*g\<circ\>f
   </equation*>
 
   We will usually omit the annotation.
 
   The monad laws can be presented in terms of Kleisli composition. For all
-  <math|f\<of\>A\<rightarrow\>\<cal-M\>B>, <math|g\<of\>B
-  \<rightarrow\>\<cal-M\>C>, and <math|h:C\<rightarrow\>\<cal-M\>D>, we
-  require that Kleisli composition satify the laws of composition with
+  <math|f\<of\>A\<rightarrow\>\<cal-M\>*B>,
+  <math|g\<of\>B\<rightarrow\>\<cal-M\>*C>, and
+  <math|h\<of\>C\<rightarrow\>\<cal-M\>*D>, we require that Kleisli
+  composition satify the laws of composition with
   <math|\<eta\><rsup|\<cal-M\>>> as its identity:
 
   <\eqnarray*>
@@ -2143,27 +2165,25 @@
 
   \;
 
-  <center|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-hyphen|n>|<cwith|1|-1|2|2|cell-lsep|0>|<cwith|1|-1|1|1|cell-rsep|0>|<table|<row|<cell|<math|\<beta\><rsup|\<cal-M\>><rsub|A,B>>>|<cell|<math|:A\<times\>\<cal-M\>B\<rightarrow\>\<cal-M\><around*|(|A\<times\>B|)>>>>|<row|<cell|<math|\<beta\><rsup|\<cal-M\>><around*|\<langle\>|a,b|\<rangle\>>>>|<cell|<math|\<assign\>
-  \<cal-M\><around*|(|\<lambda\>x\<point\><around*|\<langle\>|a,x|\<rangle\>>|)><around*|(|b|)>>>>>>>>
+  <center|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-hyphen|n>|<cwith|1|-1|2|2|cell-lsep|0>|<cwith|1|-1|1|1|cell-rsep|0>|<table|<row|<cell|<math|\<beta\><rsup|\<cal-M\>><rsub|A,B>>>|<cell|<math|:A\<times\>\<cal-M\>*B\<rightarrow\>\<cal-M\><around*|(|A\<times\>B|)>>>>|<row|<cell|<math|\<beta\><rsup|\<cal-M\>><around*|\<langle\>|a,b|\<rangle\>>>>|<cell|<math|\<assign\>\<cal-M\><around*|(|\<lambda\>x\<point\><around*|\<langle\>|a,x|\<rangle\>>|)><around*|(|b|)>>>>>>>>
 
   \;
 
   \;
 
-  <center|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-hyphen|n>|<cwith|1|-1|2|2|cell-lsep|0>|<cwith|1|-1|1|1|cell-rsep|0>|<table|<row|<cell|<math|<wide|\<beta\>|\<bar\>><rsup|\<cal-M\>><rsub|A,B>>>|<cell|<math|:\<cal-M\>A\<times\>B\<rightarrow\>\<cal-M\><around*|(|A\<times\>B|)>>>>|<row|<cell|<math|<wide|\<beta\>|\<bar\>><rsup|\<cal-M\>><around*|\<langle\>|a,b|\<rangle\>>>>|<cell|<math|\<assign\>
-  \<cal-M\><around*|(|\<lambda\>x\<point\><around*|\<langle\>|x,b|\<rangle\>>|)><around*|(|a|)>>>>>>>>
+  <center|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-hyphen|n>|<cwith|1|-1|2|2|cell-lsep|0>|<cwith|1|-1|1|1|cell-rsep|0>|<table|<row|<cell|<math|<wide|\<beta\>|\<bar\>><rsup|\<cal-M\>><rsub|A,B>>>|<cell|<math|:\<cal-M\>*A\<times\>B\<rightarrow\>\<cal-M\><around*|(|A\<times\>B|)>>>>|<row|<cell|<math|<wide|\<beta\>|\<bar\>><rsup|\<cal-M\>><around*|\<langle\>|a,b|\<rangle\>>>>|<cell|<math|\<assign\>\<cal-M\><around*|(|\<lambda\>x\<point\><around*|\<langle\>|x,b|\<rangle\>>|)><around*|(|a|)>>>>>>>>
 
   \;
 
   \;
 
-  <center|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-hyphen|n>|<cwith|1|-1|2|2|cell-lsep|0>|<cwith|1|-1|1|1|cell-rsep|0>|<table|<row|<cell|<math|\<phi\><rsup|\<cal-M\>><rsub|A,B>>>|<cell|<math|:\<cal-M\>A\<times\>\<cal-M\>B\<rightarrow\>\<cal-M\><around*|(|A\<times\>B|)>>>>|<row|<cell|<math|\<phi\><rsup|\<cal-M\>>>>|<cell|<math|\<assign\>\<beta\><rsup|\<cal-M\>>\<leftarrowtail\><wide|\<beta\>|\<bar\>><rsup|\<cal-M\>>>>>>>>>
+  <center|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-hyphen|n>|<cwith|1|-1|2|2|cell-lsep|0>|<cwith|1|-1|1|1|cell-rsep|0>|<table|<row|<cell|<math|\<phi\><rsup|\<cal-M\>><rsub|A,B>>>|<cell|<math|:\<cal-M\>*A\<times\>\<cal-M\>*B\<rightarrow\>\<cal-M\><around*|(|A\<times\>B|)>>>>|<row|<cell|<math|\<phi\><rsup|\<cal-M\>>>>|<cell|<math|\<assign\>\<beta\><rsup|\<cal-M\>>\<leftarrowtail\><wide|\<beta\>|\<bar\>><rsup|\<cal-M\>>>>>>>>>
 
   \;
 
   \;
 
-  <center|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-hyphen|n>|<cwith|1|-1|2|2|cell-lsep|0>|<cwith|1|-1|1|1|cell-rsep|0>|<table|<row|<cell|<math|<wide|\<phi\>|\<bar\>><rsup|\<cal-M\>><rsub|A,B>>>|<cell|<math|:\<cal-M\>A\<times\>\<cal-M\>B\<rightarrow\>\<cal-M\><around*|(|A\<times\>B|)>>>>|<row|<cell|<math|<wide|\<phi\>|\<bar\>><rsup|\<cal-M\>>>>|<cell|<math|\<assign\><wide|\<beta\>|\<bar\>><rsup|\<cal-M\>>\<leftarrowtail\>\<beta\><rsup|\<cal-M\>>>>>>>>>
+  <center|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-hyphen|n>|<cwith|1|-1|2|2|cell-lsep|0>|<cwith|1|-1|1|1|cell-rsep|0>|<table|<row|<cell|<math|<wide|\<phi\>|\<bar\>><rsup|\<cal-M\>><rsub|A,B>>>|<cell|<math|:\<cal-M\>*A\<times\>\<cal-M\>*B\<rightarrow\>\<cal-M\><around*|(|A\<times\>B|)>>>>|<row|<cell|<math|<wide|\<phi\>|\<bar\>><rsup|\<cal-M\>>>>|<cell|<math|\<assign\><wide|\<beta\>|\<bar\>><rsup|\<cal-M\>>\<leftarrowtail\>\<beta\><rsup|\<cal-M\>>>>>>>>>
 
   \;
 
@@ -2179,15 +2199,15 @@
   It is always the case that
 
   <\equation*>
-    \<phi\><rsup|\<cal-M\>><rsub|A,A>\<circ\>\<Delta\><rsub|\<cal-M\>A>=<wide|\<phi\>|\<bar\>><rsup|\<cal-M\>><rsub|A,A>\<circ\>\<Delta\><rsub|\<cal-M\>A>\<of\>\<cal-M\>A\<rightarrow\>\<cal-M\><around*|(|A<rsup|2>|)>
+    \<phi\><rsup|\<cal-M\>><rsub|A,A>\<circ\>\<Delta\><rsub|\<cal-M\>*A>=<wide|\<phi\>|\<bar\>><rsup|\<cal-M\>><rsub|A,A>\<circ\>\<Delta\><rsub|\<cal-M\>*A>\<of\>\<cal-M\>*A\<rightarrow\>\<cal-M\><around*|(|A<rsup|2>|)>
   </equation*>
 
   holds, even for non-commutative monads. In this case, the effect specified
   by the input is duplicated. Compare this with
-  <math|<math|\<cal-M\>\<Delta\><rsub|A>\<of\>\<cal-M\>A\<rightarrow\>\<cal-M\><around*|(|A<rsup|2>|)>>>
+  <math|\<cal-M\>*\<Delta\><rsub|A>\<of\>\<cal-M\>*A\<rightarrow\>\<cal-M\><around*|(|A<rsup|2>|)>>
   where the contents of type <math|A> are duplicated, but not the effect
-  itself. When we have <math|\<cal-M\>\<Delta\><rsub|A>=\<phi\><rsup|\<cal-M\>><rsub|A,A>\<circ\>\<Delta\><rsub|\<cal-M\>A>>
-  <around*|(|<text|equiv.> <math|\<cal-M\>\<Delta\><rsub|A>=<wide|\<phi\>|\<bar\>><rsup|\<cal-M\>><rsub|A,A>\<circ\>\<Delta\><rsub|\<cal-M\>A>>|)>,
+  itself. When we have <math|\<cal-M\>*\<Delta\><rsub|A>=\<phi\><rsup|\<cal-M\>><rsub|A,A>\<circ\>\<Delta\><rsub|\<cal-M\>*A>>
+  <around*|(|equiv. <math|\<cal-M\>*\<Delta\><rsub|A>=<wide|\<phi\>|\<bar\>><rsup|\<cal-M\>><rsub|A,A>\<circ\>\<Delta\><rsub|\<cal-M\>*A>>|)>,
   we say that <math|\<cal-M\>> is an <dfn|idempotent monad>.
   <with|color|red|TODO: note about King and Wadler.> For idempotent monads,
   the same effect is occuring two or more times in a row is equivalent to it
@@ -2199,7 +2219,7 @@
 
   We define a new intepretation of Simplicity expressions,
   <math|t\<of\>A\<vdash\>B>, whose denotations are these Kleisli morphisms,
-  <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>>\<of\>A\<rightarrow\>\<cal-M\>B>.
+  <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>>\<of\>A\<rightarrow\>\<cal-M\>*B>.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|iden><rsub|A>|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|\<cal-M\>><around*|(|a|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|comp><rsub|A,B,C>
@@ -2208,8 +2228,7 @@
     t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<cal-M\><injr|<around*|(|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>|)>>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|case><rsub|A,B,C,D>
     s t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<injl|<around*|(|a|)>>,c|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llbracket\>|s|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a,c|\<rangle\>>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|case><rsub|A,B,C,D>
     s t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<injr|<around*|(|b|)>>,c|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|b,c|\<rangle\>>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|pair><rsub|A,B,C>
-    s t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<phi\><rsup|\<cal-M\>><around*|\<langle\>|<around*|\<llbracket\>|s|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>,
-    <around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>|\<rangle\>>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|take><rsub|A,B,C>
+    s t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<phi\><rsup|\<cal-M\>><around*|\<langle\>|<around*|\<llbracket\>|s|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>,<around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>|\<rangle\>>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|take><rsub|A,B,C>
     t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a,b|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|drop><rsub|A,B,C>
     t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a,b|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|b|)>>>>>
   </eqnarray*>
@@ -2239,7 +2258,7 @@
   <subsubsection|Identity Monad>
 
   The most trivial monad is the identity monad, <math|Id>, where
-  <math|Id\<space\>A\<assign\>A> and <math|Id\<space\>f\<assign\> f>. The
+  <math|Id\<space\>A\<assign\>A> and <math|Id\<space\>f\<assign\>f>. The
   natural transformations <math|\<eta\><rsup|Id><rsub|A>> and
   <math|\<mu\><rsup|Id><rsub|A>> are both the idenity function. The identity
   monad captures no side-effects. It is commutative and idempotent.
@@ -2252,14 +2271,14 @@
   <section|Witness>
 
   Our first extension to core Simplicity is the witness expression. The
-  langauge that uses this extension is called <dfn|Simplicity with
+  language that uses this extension is called <dfn|Simplicity with
   witnesses>.
 
   \;
 
   <\with|par-mode|center>
     <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|b\<of\>B>>>|<row|<cell|<math|<math-ss|witness><rsub|A,B>
-    b \<of\>A\<vdash\>B>>>>>>
+    b\<of\>A\<vdash\>B>>>>>>
   </with>
 
   \;
@@ -2320,15 +2339,14 @@
   <section|Assertions and Failure>
 
   Our first side-effect will be aborting a computation. New assertion and
-  <samp|fail> expressions make use of this effect. The langauge that uses
+  <samp|fail> expressions make use of this effect. The language that uses
   this extension is called <dfn|Simplicity with assertions>.
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\>A\<times\>C\<vdash\>D>>|<cell|<math|h
-    \<of\><2><rsup|256>>>>>>>>>|<row|<cell|<math|<math-ss|assertl><rsub|A,B,C,D>
-    s h: <around*|(|A+B|)>\<times\>C\<vdash\>D>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\>A\<times\>C\<vdash\>D>>|<cell|<math|h\<of\><2><rsup|256>>>>>>>>>|<row|<cell|<math|<math-ss|assertl><rsub|A,B,C,D>
+    s h\<of\><around*|(|A+B|)>\<times\>C\<vdash\>D>>>>>>
   </with>
 
   \;
@@ -2336,9 +2354,8 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|h\<of\><2><rsup|256>>>|<cell|<math|t
-    : B\<times\>C\<vdash\>D>>>>>>>>|<row|<cell|<math|<math-ss|assertr><rsub|A,B,C,D>
-    h t: <around*|(|A+B|)>\<times\>C\<vdash\>D>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|h\<of\><2><rsup|256>>>|<cell|<math|t\<of\>B\<times\>C\<vdash\>D>>>>>>>>|<row|<cell|<math|<math-ss|assertr><rsub|A,B,C,D>
+    h t\<of\><around*|(|A+B|)>\<times\>C\<vdash\>D>>>>>>
   </with>
 
   \;
@@ -2347,7 +2364,7 @@
 
   <\with|par-mode|center>
     <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|h\<of\><2><rsup|512>>>>|<row|<cell|<math|<math-ss|fail><rsub|A,B>
-    h \<of\>A\<vdash\>B>>>>>>
+    h\<of\>A\<vdash\>B>>>>>>
   </with>
 
   \;
@@ -2376,30 +2393,29 @@
   will require that the monad capturing the our effects have a <dfn|zero>
 
   <\equation*>
-    \<emptyset\><rsup|\<cal-M\>><rsub|A>\<of\>\<cal-M\>A
+    \<emptyset\><rsup|\<cal-M\>><rsub|A>\<of\>\<cal-M\>*A
   </equation*>
 
   where forall <math|f\<of\>A\<rightarrow\>B>,
 
   <\equation*>
-    \<cal-M\>f<around*|(|\<emptyset\><rsup|\<cal-M\>><rsub|A>|)>=\<emptyset\><rsup|\<cal-M\>><rsub|B>
+    \<cal-M\>*f<around*|(|\<emptyset\><rsup|\<cal-M\>><rsub|A>|)>=\<emptyset\><rsup|\<cal-M\>><rsub|B>
   </equation*>
 
   This zero effect captures the notion of a failed, or aborted computation.
 
   The laws for these monads with zero are, again, best expressed using
   Kleisli morphsisms. At the risk of some notational confusion, we define
-  <math|\<varnothing\><rsup|\<cal-M\>><rsub|A,B>\<of\>A\<rightarrow\>\<cal-M\>B>
+  <math|\<varnothing\><rsup|\<cal-M\>><rsub|A,B>\<of\>A\<rightarrow\>\<cal-M\>*B>
   as a <dfn|zero morphism>.
 
   <\equation*>
-    \<varnothing\><rsup|\<cal-M\>><rsub|A,B><around*|(|a|)>\<assign\>
-    \<emptyset\><rsup|\<cal-M\>><rsub|B>
+    \<varnothing\><rsup|\<cal-M\>><rsub|A,B><around*|(|a|)>\<assign\>\<emptyset\><rsup|\<cal-M\>><rsub|B>
   </equation*>
 
   Zero morphisms are required to be an absorbing element for Kleisli
-  compostion. For all <math|f\<of\>A\<rightarrow\>\<cal-M\>B> and
-  <math|g\<of\>B \<rightarrow\>\<cal-M\>C> we require that
+  compostion. For all <math|f\<of\>A\<rightarrow\>\<cal-M\>*B> and
+  <math|g\<of\>B\<rightarrow\>\<cal-M\>*C> we require that
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|g<op|\<leftarrowtail\>>\<varnothing\><rsup|\<cal-M\>><rsub|A,B>>|<cell|=>|<cell|\<varnothing\><rsup|\<cal-M\>><rsub|A,C>>>|<row|<cell|\<varnothing\><rsup|\<cal-M\>><rsub|B,C><op|\<leftarrowtail\>>f>|<cell|=>|<cell|\<varnothing\><rsup|\<cal-M\>><rsub|A,C>>>>>
@@ -2453,29 +2469,29 @@
 
   Therefore, a term in the language of core Simplicity extended with
   witnesses and failure, <math|t\<of\>A\<vdash\>B>, can be intepreted as a
-  function returning an optional result: <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|<maybe>>:A\<rightarrow\><maybe>B>.
+  function returning an optional result: <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|<maybe>>\<of\>A\<rightarrow\><maybe>B>.
 
   There is a natural transformation from the option monad into any monad with
-  zero, <math|\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>\<of\><maybe>A\<rightarrow\>\<cal-M\>A>:
+  zero, <math|\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>\<of\><maybe>A\<rightarrow\>\<cal-M\>*A>:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A><around*|(|\<emptyset\><rsup|<maybe>><rsub|A>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|\<cal-M\>><rsub|A>>>|<row|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A><around*|(|\<eta\><rsup|<maybe>><rsub|A><around*|(|a|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|\<cal-M\>><rsub|A><around*|(|a|)>>>>>
   </eqnarray*>
 
   <\lemma>
-    For all <math|f :A\<rightarrow\>B>,
+    For all <math|f:A\<rightarrow\>B>,
 
     \;
 
     <\equation*>
-      \<iota\><rsup|\<cal-M\>><rsub|<maybe>,B>\<circ\><maybe>f=\<cal-M\>f\<circ\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>
+      \<iota\><rsup|\<cal-M\>><rsub|<maybe>,B>\<circ\><maybe>f=\<cal-M\>*f\<circ\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>
     </equation*>
 
     Also
 
     <\equation*>
-      \<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>\<circ\>\<mu\><rsup|<maybe>><rsub|A>=\<mu\><rsup|\<cal-M\>><rsub|A>\<circ\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,\<cal-M\>A>\<circ\><maybe>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>
-      <around*|(|=\<mu\><rsup|\<cal-M\>><rsub|A>\<circ\>\<cal-M\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>\<circ\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,<maybe>A>|)>
+      \<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>\<circ\>\<mu\><rsup|<maybe>><rsub|A>=\<mu\><rsup|\<cal-M\>><rsub|A>\<circ\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,\<cal-M\>*A>\<circ\><maybe>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>
+      <around*|(|=\<mu\><rsup|\<cal-M\>><rsub|A>\<circ\>\<cal-M\>*\<iota\><rsup|\<cal-M\>><rsub|<maybe>,A>\<circ\>\<iota\><rsup|\<cal-M\>><rsub|<maybe>,<maybe>A>|)>
     </equation*>
   </lemma>
 
@@ -2591,19 +2607,19 @@
   direct way is to incorporate the <samp|fail> expression which lets us
   directly incorporate random into is commitment Merkle root.
 
-  Given a block of random data, <math|h : <2><rsup|512>>, and a Simplicity
+  Given a block of random data, <math|h:<2><rsup|512>>, and a Simplicity
   expression <math|t\<of\>A\<vdash\>B>, we can define two salted variants of
   <math|t>:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<math-ss|salted><rsup|0> h
     t>|<cell|\<assign\>>|<cell|<math-ss|witness>
-    <math-ss|false>\<times\><math-ss|iden> ;<math-ss|assertl>
-    <around*|(|<math-ss|drop> t|)> <cmr|<math-ss|fail> h> : A
-    \<vdash\>B>>|<row|<cell|<math-ss|salted><rsup|1> h
+    <math-ss|false>\<times\><math-ss|iden>;<math-ss|assertl>
+    <around*|(|<math-ss|drop> t|)> <cmr|<math-ss|fail>
+    h>:A\<vdash\>B>>|<row|<cell|<math-ss|salted><rsup|1> h
     t>|<cell|\<assign\>>|<cell|<math-ss|witness>
-    <math-ss|true>\<times\><math-ss|iden> ;<math-ss|assertr>
-    <cmr|<math-ss|fail> h> <around*|(|<math-ss|drop> t|)> : A \<vdash\>B>>>>
+    <math-ss|true>\<times\><math-ss|iden>;<math-ss|assertr>
+    <cmr|<math-ss|fail> h> <around*|(|<math-ss|drop> t|)>:A\<vdash\>B>>>>
   </eqnarray*>
 
   The <math|<math-ss|salted><rsup|i> h t> experssion will have high entropy
@@ -2681,8 +2697,7 @@
   evaluation context. We call this monad <math|BC>.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<BC>A>|<cell|\<assign\>>|<cell|BCEnv\<rightarrow\><maybe>A>>|<row|<cell|<BC>f<around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>
-    <maybe>f<around*|(|a<around*|(|e|)>|)>>>>>
+    <tformat|<table|<row|<cell|<BC>A>|<cell|\<assign\>>|<cell|BCEnv\<rightarrow\><maybe>A>>|<row|<cell|<BC>f<around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe>f<around*|(|a<around*|(|e|)>|)>>>>>
   </eqnarray*>
 
   \;
@@ -2690,142 +2705,121 @@
   <BC> is a commutative, idempotent monad with zero:
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|\<eta\><rsup|<BC>><rsub|A><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>
-    \<eta\><rsup|<maybe>><rsub|A><around*|(|a|)>>>|<row|<cell|\<mu\><rsup|<BC>><rsub|A><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>
-    \<mu\><rsup|<maybe>><rsub|A><around*|(|<maybe><around*|(|\<lambda\>f\<point\>f<around*|(|e|)>|)><around*|(|a<around*|(|e|)>|)>|)>>>|<row|<cell|\<emptyset\><rsup|<BC>><rsub|A>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>
-    \<emptyset\><rsup|<maybe>><rsub|A>>>>>
+    <tformat|<table|<row|<cell|\<eta\><rsup|<BC>><rsub|A><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><rsub|A><around*|(|a|)>>>|<row|<cell|\<mu\><rsup|<BC>><rsub|A><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<mu\><rsup|<maybe>><rsub|A><around*|(|<maybe><around*|(|\<lambda\>f\<point\>f<around*|(|e|)>|)><around*|(|a<around*|(|e|)>|)>|)>>>|<row|<cell|\<emptyset\><rsup|<BC>><rsub|A>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<emptyset\><rsup|<maybe>><rsub|A>>>>>
   </eqnarray*>
 
   \;
 
   We define several new primitive expressions for reading data from a
-  <math|BCEnv> value. The langauge that uses this extension is called
+  <math|BCEnv> value. The language that uses this extension is called
   <dfn|Simplicity with Bitcoin>.
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|version>
-    : <value|1>\<vdash\><2><rsup|32>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|version>\<of\><value|1>\<vdash\><2><rsup|32>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|lockTime>
-    : <value|1>\<vdash\>Lock>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|lockTime>\<of\><value|1>\<vdash\>Lock>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputsHash>
-    : <value|1>\<vdash\><2><rsup|256>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputsHash>\<of\><value|1>\<vdash\><2><rsup|256>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputsHash>
-    : <value|1>\<vdash\><2><rsup|256>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputsHash>\<of\><value|1>\<vdash\><2><rsup|256>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|numInputs>
-    : <value|1>\<vdash\><2><rsup|32>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|numInputs>\<of\><value|1>\<vdash\><2><rsup|32>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|totalInputValue>
-    : <value|1>\<vdash\>Value>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|totalInputValue>\<of\><value|1>\<vdash\>Value>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentPrevOutpoint>
-    : <value|1>\<vdash\>OutPoint>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentPrevOutpoint>\<of\><value|1>\<vdash\>OutPoint>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentValue>
-    : <value|1>\<vdash\>Value>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentValue>\<of\><value|1>\<vdash\>Value>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentSequence>
-    : <value|1>\<vdash\><2><rsup|32>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentSequence>\<of\><value|1>\<vdash\><2><rsup|32>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIndex>
-    : <value|1>\<vdash\><2><rsup|32>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIndex>\<of\><value|1>\<vdash\><2><rsup|32>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputPrevOutpoint>
-    : <2><rsup|32>\<vdash\><maybe><around*|(|Outpoint|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputPrevOutpoint>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Outpoint|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputValue>
-    : <2><rsup|32>\<vdash\><maybe><around*|(|Value|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputValue>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Value|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputSequence>
-    : <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|32>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputSequence>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|32>|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|numOutputs>
-    : <value|1>\<vdash\><2><rsup|32>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|numOutputs>\<of\><value|1>\<vdash\><2><rsup|32>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|totalOutputValue>
-    : <value|1>\<vdash\>Value>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|totalOutputValue>\<of\><value|1>\<vdash\>Value>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputValue>
-    : <2><rsup|32>\<vdash\><maybe><around*|(|Value|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputValue>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Value|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputScriptHash>
-    : <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputScriptHash>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|scriptCMR>
-    : <value|1>\<vdash\><2><rsup|256>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|scriptCMR>\<of\><value|1>\<vdash\><2><rsup|256>>>>>>>
   </with>
 
   <subsubsection|Denotational Semantics><label|ss:BTDenotationalSemantics>
@@ -2833,7 +2827,7 @@
   We extend the formal semantics of these new expressions as follows.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|version>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|version|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|lockTime>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|lockTime|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputsHash>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>inputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputsHash>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>outputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numInputs>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalInputValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fold<rsup|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>><around*|(|<around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentPrevOutpoint>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentSequence>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIndex>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|ix|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputPrevOutpoint>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputValue>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputSequence>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numOutputs>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|outputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalOutputValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fold<rsup|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>><around*|(|<around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputValue>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputScriptHash>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|pubScript|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|scriptCMR>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|:=>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|scriptCMR|]>|)>>>>>
+    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|version>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|version|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|lockTime>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|lockTime|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputsHash>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>inputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputsHash>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>outputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numInputs>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalInputValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fold<rsup|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>><around*|(|<around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentPrevOutpoint>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentSequence>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIndex>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|ix|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputPrevOutpoint>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputValue>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputSequence>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numOutputs>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|outputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalOutputValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fold<rsup|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>><around*|(|<around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputValue>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|value|]>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputScriptHash>>|\<rrbracket\>><rsup|<BC>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|pubScript|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|scriptCMR>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>BCEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|scriptCMR|]>|)>>>>>
   </eqnarray*>
 
   where
@@ -2871,7 +2865,7 @@
   expressions by hashing new unique byte strings.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<cmr|<math-ss|version><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[76657273696f6e]>|)>>>|<row|<cell|<cmr|<math-ss|lockTime><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6c6f636b54696d65]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputsHash>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e7075747348617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputsHash>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f75747075747348617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|numInputs>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6e756d496e70757473]>|)>>>|<row|<cell|<cmr|<math-ss|<math|totalInputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[746f74616c496e70757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentPrevOutpoint>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e74507265764f7574706f696e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e7456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentSequence>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e7453657175656e6365]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIndex>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e74496e646578]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputPrevOutpoint>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e707574507265764f7574706f696e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e70757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputSequence>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e70757453657175656e6365]>|)>>>|<row|<cell|<cmr|<math-ss|<math|numOutput>s><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6e756d784f757470757473]>|)>>>|<row|<cell|<cmr|<math-ss|<math|totalOutputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[746f74616c4f757470757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputValue>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f757470757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|outputScriptHash><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f757470757453637269707448617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|scriptCMR>><rsub|>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[736372697074434d52]>|)>>>>>
+    <tformat|<table|<row|<cell|<cmr|<math-ss|version><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[76657273696f6e]>|)>>>|<row|<cell|<cmr|<math-ss|lockTime><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6c6f636b54696d65]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputsHash>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e7075747348617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputsHash>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f75747075747348617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|numInputs>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6e756d496e70757473]>|)>>>|<row|<cell|<cmr|<math-ss|<math|totalInputValue>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[746f74616c496e70757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentPrevOutpoint>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e74507265764f7574706f696e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentValue>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e7456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentSequence>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e7453657175656e6365]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIndex>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[63757272656e74496e646578]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputPrevOutpoint>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e707574507265764f7574706f696e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputValue>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e70757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputSequence>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[696e70757453657175656e6365]>|)>>>|<row|<cell|<cmr|<math-ss|<math|numOutput>s><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6e756d784f757470757473]>|)>>>|<row|<cell|<cmr|<math-ss|<math|totalOutputValue>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[746f74616c4f757470757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputValue>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f757470757456616c7565]>|)>>>|<row|<cell|<cmr|<math-ss|outputScriptHash><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[6f757470757453637269707448617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|scriptCMR>><rsub|\<nosymbol\>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|BCprefix\<cdummy\><math-tt|[736372697074434d52]>|)>>>>>
   </eqnarray*>
 
   where
@@ -2890,21 +2884,20 @@
 
   <section|Example: The Standard Single Signature>
 
-  <with|color|red|TODO: don't forget about lock parsing
-  jets.><chapter|Delegation>
+  <with|color|red|TODO: don't forget to make jets for parsing
+  locks.><chapter|Delegation>
 
   Our last Simplicity extension is the <samp|disconnect> expression. This
   extention allows for delegation but using it loses some nice properties of
-  Simplicity. The langauge that uses this extension is called <dfn|Simplicity
+  Simplicity. The language that uses this extension is called <dfn|Simplicity
   with delegation>. The language that uses this and all other extensions is
   called <dfn|full Simplicity with delegation>.
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s:A\<times\><2><rsup|256>\<vdash\>B\<times\>C>>|<cell|<math|t
-    : C\<vdash\>D>>>>>>>>|<row|<cell|<math|<math-ss|disconnect><rsub|A,B,C,D>
-    s t: A\<vdash\>B\<times\>D>>>>>>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\>A\<times\><2><rsup|256>\<vdash\>B\<times\>C>>|<cell|<math|t\<of\>C\<vdash\>D>>>>>>>>|<row|<cell|<math|<math-ss|disconnect><rsub|A,B,C,D>
+    s t\<of\>A\<vdash\>B\<times\>D>>>>>>
   </with>
 
   \;
@@ -2915,9 +2908,8 @@
   extend the formal semantics to the <samp|disconnect> expression as follows.
 
   <\equation*>
-    <around*|\<llbracket\>|<math|<math-ss|disconnect><rsub|A,B,C,D>> s
-    t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>\<assign\>
-    <around*|\<llbracket\>|s;<math-ss|take>
+    <around*|\<llbracket\>|<math-ss|disconnect><rsub|A,B,C,D> s
+    t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>\<assign\><around*|\<llbracket\>|s;<math-ss|take>
     <math-ss|iden>\<times\><math-ss|drop>
     t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a,<cmr|t>|\<rangle\>>
   </equation*>
@@ -2989,7 +2981,564 @@
   and/or vice versa. This is something that cannot happen with <samp|witness>
   expressions because <samp|witness> expressions take no input.>
 
-  <chapter|Coq Library Guide>
+  <chapter|Type Inference and Serialization>
+
+  In this chapter we will define an representation of Simplicity expressions
+  as an untyped Simplicity DAG where subexpressions are have explicit
+  sharing. \ We will define how to perform type inference and reconstruct a
+  Simplicity expression from this Simplicity DAG and we will define a binary
+  serialization format for these Simplicity DAGs.
+
+  <section|Explicit Simplicity DAGs><label|ss:DAGs>
+
+  In this section, we will introduce an DAG representation for (untyped)
+  Simplicity expressions with explicity sharing of subexpressions. \ An
+  explicit Simplicity DAG is a topological sorted list of Simplicity nodes.
+  \ Each Simplicity node is a combinator name with by a payload of references
+  to earlier nodes in the list, or a payload of witness data, etc.
+
+  First we enumerate the possible values for Simplicity nodes.
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|1>|<table|<row|<cell|<math|<math-ss|`iden'>\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|1>|<table|<row|<cell|<math|<math-ss|`unit'>\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|i\<of\>\<bbb-N\>>>>>>>>>|<row|<cell|<math|<math-ss|`injl'>
+    i\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|i\<of\>\<bbb-N\>>>>>>>>>|<row|<cell|<math|<math-ss|`injr'>
+    i\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|i\<of\>\<bbb-N\>>>>>>>>>|<row|<cell|<math|<math-ss|`take'>
+    i\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|i\<of\>\<bbb-N\>>>>>>>>>|<row|<cell|<math|<math-ss|`drop'>
+    i\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|i\<of\>\<bbb-N\>>>|<cell|<math|j\<of\>\<bbb-N\>>>>>>>>>|<row|<cell|<math|<math-ss|`comp'>
+    i j\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|i\<of\>\<bbb-N\>>>|<cell|<math|j\<of\>\<bbb-N\>>>>>>>>>|<row|<cell|<math|<math-ss|`case'>
+    i j\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|i\<of\>\<bbb-N\>>>|<cell|<math|j\<of\>\<bbb-N\>>>>>>>>>|<row|<cell|<math|<math-ss|`pair'>
+    i j\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|i\<of\>\<bbb-N\>>>|<cell|<math|j\<of\>\<bbb-N\>>>>>>>>>|<row|<cell|<math|<math-ss|`disconnect'>
+    i j\<of\>Node>>>>>>
+
+    \;
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|v\<of\><2><rsup|\<ast\>>>>>>>>>>|<row|<cell|<math|<math-ss|`witness'>
+    v\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|b\<of\><2><rsup|512>>>>>>>>>|<row|<cell|<math|<math-ss|`fail'>
+    b\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|h\<of\><2><rsup|256>>>>>>>>>|<row|<cell|<math|<math-ss|`hidden'>
+    h\<of\>Node>>>>>>
+  </with>
+
+  \;
+
+  In addition to the above every primitive name is a Node. \ This set of
+  primitives is applicaiton specific but for Simplicity with Bitcoin, we
+  would have <math|<math-ss|`version'>\<of\>Node>,
+  <math|<math-ss|`lockTime'>\<of\>Node>, etc.
+
+  The single quotes around the Node names is there to distinguish them from
+  their corresponding Simplicity combinator. \ Notice that there isn't a
+  perfect 1-to-1 relationship between Node names and Simplicity combinator.
+  \ In particular there are no Node names for the <samp|assertl> and
+  <samp|assertr> combinators. \ Instead we have one <samp|`hidden'> Node name
+  that will be used in conjuction with <samp|`case'> to represent assertions.
+
+  A Simplicity DAG is represented as a topologically sorted, (non-empty) list
+  of Nodes.
+
+  <\equation*>
+    DAG\<assign\>Node<rsup|+>
+  </equation*>
+
+  Each node has between 0 and 2 references to nodes found earlier in the list
+  represented by a relative offset.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|ref<around*|(|<math-ss|`iden'>|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`unit'>|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`injl'>
+    i|)>>|<cell|\<assign\>>|<cell|i\<blacktriangleleft\>\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`injr'>
+    i|)>>|<cell|\<assign\>>|<cell|i\<blacktriangleleft\>\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`take'>
+    i|)>>|<cell|\<assign\>>|<cell|i\<blacktriangleleft\>\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`drop'>
+    i|)>>|<cell|\<assign\>>|<cell|i\<blacktriangleleft\>\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`comp'>
+    i j|)>>|<cell|\<assign\>>|<cell|i\<blacktriangleleft\>j\<blacktriangleleft\>\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`case'>
+    i j|)>>|<cell|\<assign\>>|<cell|i\<blacktriangleleft\>j\<blacktriangleleft\>\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`pair'>
+    i j|)>>|<cell|\<assign\>>|<cell|i\<blacktriangleleft\>j\<blacktriangleleft\>\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`disconnect'>
+    i j|)>>|<cell|\<assign\>>|<cell|i\<blacktriangleleft\>j\<blacktriangleleft\>\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`witness'>
+    v|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`fail'>
+    b|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`hidden'>
+    h|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`version'>|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`lockTime'>|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>>>
+  </eqnarray*>
+
+  A list <math|l:DAG> must statify a condition that references only have
+  offset that refer to nodes occuring strictly earlier in the list in order
+  to be a well-formed DAG:<with|color|red|TODO: Define and use foldimap
+  instead>
+
+  <\equation*>
+    \<forall\>i j\<of\>\<bbb-N\>\<point\>0\<leq\>i\<less\><around*|\||l|\|>\<wedge\>0\<leq\>j\<less\><around*|\||ref<around*|(|l<around*|[|i|]>|)>|\|>\<Rightarrow\>0\<less\>ref<around*|(|l<around*|[|i|]>|)><around*|[|j|]>\<leq\>i
+  </equation*>
+
+  <subsection|Type Inference>
+
+  Simplicity DAGs, as described above, do not have type information
+  associated with them. \ Before we can intepret DAGs as Simplicity
+  expressions we must first perform type inference. \ Type inference can be
+  done by solving by way of unification of typing constraints to compute a
+  most general unifier.
+
+  Given a list <math|l:DAG>, we associate with each index in the list,
+  <math|0\<leq\>k\<less\><around*|\||l|\|>>, a pair of fresh unification
+  variables <math|\<alpha\><rsub|k>,\<beta\><rsub|k>> that are to be
+  instantiated at the infered source and target types of the expression for
+  the node at index <math|k>. Each differeent node occuring at an index
+  <math|k> in the DAG <math|l> implies a set of unification constraints on
+  these type variable, possibly requiring further fresh unificaiton
+  vairables. \ 
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|con<around*|(|k,<math-ss|`iden'>|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<beta\><rsub|k>|}>>>|<row|<cell|con<around*|(|k,<math-ss|`unit'>|)>>|<cell|\<assign\>>|<cell|<around*|{|\<beta\><rsub|k>\<doteq\><1>|}>>>|<row|<cell|con<around*|(|k,<math-ss|`injl'>
+    i|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>+\<gamma\>|}>*<htab|5mm>where
+    \<gamma\> is fresh>>|<row|<cell|con<around*|(|k,<math-ss|`injr'>
+    i|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>,\<beta\><rsub|k>\<doteq\>\<gamma\>+\<beta\><rsub|k-i>|}>*<htab|5mm>where
+    \<gamma\> is fresh>>|<row|<cell|con<around*|(|k,<math-ss|<math|>`take'>
+    i|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>\<times\>\<gamma\>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>|}>*<htab|5mm>where
+    \<gamma\> is fresh>>|<row|<cell|con<around*|(|k,<math-ss|`drop'>
+    i|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<gamma\>\<times\>\<alpha\><rsub|k-i>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>|}>*<htab|5mm>where
+    \<gamma\> is fresh>>|<row|<cell|con<around*|(|k,<math-ss|`comp'> i
+    j|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>,\<beta\><rsub|k-i>\<doteq\>\<alpha\><rsub|k-j>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-j>|}>>>|<row|<cell|con<around*|(|k,<math-ss|`case'>
+    i j|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\><around*|(|\<gamma\><rsub|1>+\<gamma\><rsub|2>|)>\<times\>\<gamma\><rsub|3>,\<alpha\><rsub|k-i>\<doteq\>\<gamma\><rsub|1>\<times\>\<gamma\><rsub|3>,a<rsub|k-j>\<doteq\>\<gamma\><rsub|2>\<times\>\<gamma\><rsub|3>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>\<doteq\>\<beta\><rsub|k-j>|}><next-line><htab|5mm>where
+    \<gamma\><rsub|1>,\<gamma\><rsub|2>,\<gamma\><rsub|3> are
+    fresh>>|<row|<cell|con<around*|(|k,<math-ss|`pair'> i
+    j|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>\<doteq\>\<alpha\><rsub|k-j>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>\<times\>\<beta\><rsub|k-j>|}>>>|<row|<cell|con<around*|(|k,<math-ss|`disconnect'>
+    i j|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k-i>\<doteq\>\<alpha\><rsub|k>\<times\><2><rsup|256>,\<beta\><rsub|k-i>\<doteq\>\<gamma\>\<times\>\<alpha\><rsub|k-j>,\<beta\><rsub|k>\<doteq\>\<gamma\>\<times\>\<beta\><rsub|k-j>|}>*<htab|5mm>where
+    \<gamma\> is fresh>>|<row|<cell|con<around*|(|k,<math-ss|`witness'>
+    v|)>>|<cell|\<assign\>>|<cell|<around*|{||}>>>|<row|<cell|con<around*|(|k,<math-ss|`fail'>
+    b|)>>|<cell|\<assign\>>|<cell|<around*|{||}>>>|<row|<cell|con<around*|(|k,<math-ss|`hidden'>
+    h|)>>|<cell|\<assign\>>|<cell|<around*|{||}>>>|<row|<cell|con<around*|(|k,<math-ss|`version'>|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\><1>,\<beta\><rsub|k>\<doteq\><2><rsup|32>|}>>>|<row|<cell|con<around*|(|k,<math-ss|`lockTime'>|)>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\><1>,\<beta\><rsub|k>\<doteq\>Lock|}>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>>>
+  </eqnarray*>
+
+  The rest of the constraints for the other Bitcoin primitive names follows
+  the same pattern of adding constraints for the <math|\<alpha\><rsub|k>> and
+  <math|\<beta\><rsub|k>> variables to be equal to the input and output types
+  of the corresponding primitives, all of which are required to be concrete
+  types.
+
+  Using the <math|con> function we can collect all the constraints that need
+  to be solved for an (untyped) Simplicity DAG, <math|l:DAG>, to be
+  well-typed:<with|color|red|TODO: Define and use foldimap instead>
+
+  <\equation*>
+    con<around*|(|l|)>\<assign\><big|cup><rsub|0\<leqslant\>k\<less\><around*|\||l|\|>>con<around*|(|k,l<around*|[|k|]>|)>
+  </equation*>
+
+  Depending on the application, there may be further constraints imposed on
+  the root of the DAG. \ For example, if the DAG is supposed to repesent a
+  Simplicity program, which has type <math|<1>\<vdash\><1>>, we would also
+  add the constraints <math|<around*|{|\<alpha\><rsub|<around*|\||l|\|>-1>\<doteq\><1>,\<beta\><rsub|<around*|\||l|\|>-1>\<doteq\><1>|}>>.
+
+  A unifier for a set of constraints is a substitution <math|\<varsigma\>>
+  such that for every constraint <math|s\<doteq\>t> we have
+  <math|s<around|\||<rsub|\<varsigma\>>=t|\|><rsub|\<varsigma\>>>. A
+  substitution <math|\<varsigma\><rsub|1>> is an instance of another
+  substituion <math|\<varsigma\><rsub|2>> whenever there exists a
+  substitution <math|\<tau\>> such that <math|\<varsigma\><rsub|1>=\<varsigma\><rsub|2>\|<rsub|\<tau\>>>.
+  If <math|\<varsigma\><rsub|1>> and <math|\<varsigma\><rsub|2>> are both
+  instances of each other then they are <math|\<alpha\>>-equivalent. The most
+  general unifier for a set of constraints is a unifier <math|\<varsigma\>>
+  for those constraints such that every other unifier
+  <math|\<varsigma\><rprime|'>> for those constratins is an instance of
+  <math|\<varsigma\>>. \ The most general unifier is unique upto
+  <math|\<alpha\>>-equivalence.
+
+  Once all the constraints have be gathered we can perform first-order
+  unification to solve for the most general unifier <math|\<varsigma\>>. The
+  most general unifier, <math|\<varsigma\>>, may still contain free
+  variables. \ To eliminate these free variables, we define an instance of
+  <math|\<varsigma\>> that sets all remaining free variable to the unit type
+  <1>. We call the resulting ground substitution
+  <math|\<varsigma\><rsub|<1>>>:
+
+  <\equation*>
+    \<varsigma\><rsub|<1>>\<assign\>\<varsigma\>\|<rsub|\<lambda\>\<gamma\>.<1>>
+  </equation*>
+
+  Notice that if <math|\<varsigma\>> and <math|\<tau\>> are
+  <math|\<alpha\>>-equivalent then <math|\<varsigma\><rsub|<1>>=\<tau\><rsub|<1>>>.
+  \ In particular this means that the ground subsitution
+  <math|\<varsigma\><rsub|<1>>> is independent of which choice of
+  <math|\<varsigma\>> we compute as the most general unifier.
+
+  It is possible that there is no unifier for the given collection of
+  constraints. \ In such a case the Simplicity DAG is ill-typed, (or doesn't
+  meed the type constraints imposed by the application) and doesn't represent
+  a well-typed Simplicity expression.
+
+  First-order unification can be preformed time linear in the size of the
+  constraints <inactive|<cite|Martelli, Montanari
+  (1976)>><inactive|<cite|Paterson, Wegman (1978)>>, although in practice
+  quasi-linear time algorithms using the union-find algorithm are simpler and
+  may perform better on the size of problems you are likely to encounter. Our
+  set of constraints is linear in the size of the DAG meaning we can compute
+  the most general unifier in linear (or quasi-linear) time.
+
+  It is important to note that these (quasi-)linear time computations rely on
+  having sharing of (type) subexpressions in the representation of the
+  substitution. \ If you flatten out the representation of the substituion,
+  for example by printing out all the types, the result can be exponential in
+  the size of the input DAG. Fortunately, all of the computation required for
+  Simplicity's consensus operations, from computing witness Merkle roots to
+  evaluation of Simplicity expressions using the Bit Machine, can operate
+  witout flattening the representation of the infered types.
+
+  Also notice that our set of constraints imply we are doing monomorphic type
+  inference, meaning that any shared subexpressions are assigned the same
+  type. \ Sometimes we will require multiple instances of the same sub-DAG
+  within a DAG so that different types can be infered for the subexpressions
+  corresponding to those sub-DAG. \ As a trival example, a DAG will often
+  have multiple <samp|`iden'> nodes, one for each type that the <samp|iden>
+  combinator will be used for. \ A DAG should never have sub-DAGs that end up
+  with the same pair of infered types and should be disallowed by
+  anti-malliablity rules (see Section<nbsp><inactive|<reference|<with|color|red|TODO>>>).
+
+  \ We could remove duplicate sub-DAGs entirely by using polymorphic type
+  inference instead. \ Polymorphic type inference is DEXPTIME-complete
+  <inactive|<cite|Mairson 1990>>, however because removing duplicated
+  sub-DAGs can produce exponentially smaller terms it could be that
+  polymorphic type inference is linear in the size of the DAG with duplicated
+  sub-DAGs that are needed for monomophic type inference. \ If this is the
+  case we could switch to polymorphic type inference without opening up DoS
+  attacks. Whether this is possible or not is currently open question for me.
+
+  <with|color|red|TODO: something about type-inference in the presenece of
+  sharing of hidden nodes?>
+
+  <subsection|Reconstructing a Simplicity Expressions>
+
+  Given a Simplicity DAG, <math|l:DAG>, that does have a substition
+  <math|\<varsigma\>> yeilding the most general unifier, we can attempt to
+  construct the canonicalized Simplicity expression that the DAG represents
+  by recursivily interpreting the DAG.
+
+  <\equation*>
+    syn<around*|(|l|)>\<assign\>syn<around*|(|l,<around*|\||l|\|>-1,l<around*|[|<around*|\||l|\|>-1|]>|)>
+  </equation*>
+
+  where
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|syn<around*|(|l,k,\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|\<bot\>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`iden'>|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|iden><rsub|\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`unit'>|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|unit><rsub|\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`injl'>
+    i|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|injl><rsub|\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>,B,C>
+    syn<around*|(|l,k-i,l<around*|[|k-i|]>|)>*<htab|5mm>where
+    B+C=\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`injr'>
+    i|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|injr><rsub|\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>,B,C>
+    syn<around*|(|l,k-i,l<around*|[|k-i|]>|)>*<htab|5mm>where
+    B+C=\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`take'>
+    i|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|take><rsub|A,B,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>
+    syn<around*|(|l,k-i,l<around*|[|k-i|]>|)>*<htab|5mm>where
+    A\<times\>B=\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`drop'>
+    i|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|drop><rsub|A,B,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>
+    syn<around*|(|l,k-i,l<around*|[|k-i|]>|)>*<htab|5mm>where
+    A\<times\>B=\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`comp'>
+    i j|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|comp><rsub|\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k-i>|)>,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>
+    syn<around*|(|l,k-i,l<around*|[|k-i|]>|)>
+    syn<around*|(|l,k-j,l<around*|[|k-j|]>|)>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`case'>
+    i j|)>|)>>|<cell|\<assign\>>|<cell|syncase<around*|(|l,k,k-i,l<around*|[|k-i|]>,k-j,l<around*|[|k-j|]>|)>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`pair'>
+    i j|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|pair><rsub|\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k-i>|)>,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k-j>|)>>
+    syn<around*|(|l,k-i,l<around*|[|k-i|]>|)>
+    syn<around*|(|l,k-j,l<around*|[|k-j|]>|)>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`disconnect'>
+    i j|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|disconnect><rsub|\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>,B,C,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k-j>|)>>
+    syn<around*|(|l,k-i,l<around*|[|k-i|]>|)>
+    syn<around*|(|l,k-j,l<around*|[|k-j|]>|)><next-line><htab|5mm>where
+    B\<times\>C=\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k-i>|)>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`witness'>
+    v|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|witness><rsub|\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>
+    inflate<around*|(|\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>,v|)>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`fail'>
+    b|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|fail><rsub|\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>
+    b>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    h|)>|)>>|<cell|\<assign\>>|<cell|\<bot\>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`version'>|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|version>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`lockTime'>|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|lockTime>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>>>
+  </eqnarray*>
+
+  The <samp|case> and <samp|witness> clauses require special consideration
+  which we define below. \ The syn function fails if it encounters a
+  <math|<math-ss|`hidden'>> node. \ These \ <math|<math-ss|`hidden'>> nodes
+  are only used by the syncase function.
+
+  <subsubsection|syncase>
+
+  The syncase function constructs <samp|case> expressions as well as
+  <samp|assertl> and <samp|assertr> expressions. \ Assertion expressions are
+  produced when hidden nodes are passed as parmeters. \ However we do not
+  allow both braches of a case expression to be hidden. The syncase function
+  fails in this scenario.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|syncase<around*|(|l,k<rsub|0>,k<rsub|1>,\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    h<rsub|1>|)>,k<rsub|2>,\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    h<rsub|2>|)>|)>>|<cell|\<assign\>>|<cell|\<bot\>>>|<row|<cell|syncase<around*|(|l,k<rsub|0>,k<rsub|1>,n<rsub|1>,k<rsub|2>,\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    h<rsub|2>|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|assertl><rsub|A,B,C,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k<rsub|0>>|)>>
+    syn<around*|(|l,k<rsub|1>,n<rsub|1>|)>
+    h<rsub|2><next-line><htab|5mm>where \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|1>>|)>=A\<times\>C
+    and \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|2>>|)>=B\<times\>C<next-line>
+    <htab|5mm>and when \<forall\>h<rsub|1>\<point\>n<rsub|1>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    h<rsub|1>|)>>>|<row|<cell|syncase<around*|(|l,k<rsub|0>,k<rsub|1>,\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    h<rsub|1>|)>,k<rsub|2>,n<rsub|2>|)>>|<cell|\<assign\>>|<cell|<math-ss|assertr><rsub|A,B,C,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k<rsub|0>>|)>>
+    h<rsub|1> syn<around*|(|l,k<rsub|2>,n<rsub|2>|)><next-line><htab|5mm>where
+    \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|1>>|)>=A\<times\>C
+    and \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|2>>|)>=B\<times\>C<next-line>
+    <htab|5mm>and when \<forall\>h<rsub|2>\<point\>n<rsub|2>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    h<rsub|2>|)>>>|<row|<cell|syncase<around*|(|l,k<rsub|0>,k<rsub|1>,n<rsub|1>,k<rsub|2>,n<rsub|2>|)>>|<cell|\<assign\>>|<cell|<math-ss|case><rsub|A,B,C,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k<rsub|0>>|)>>
+    syn<around*|(|l,k<rsub|1>,n<rsub|1>|)>
+    syn<around*|(|l,k<rsub|2>,n<rsub|2>|)><next-line><htab|5mm>where
+    \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|1>>|)>=A\<times\>C
+    and \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|2>>|)>=B\<times\>C<next-line>
+    <htab|5mm>and when \<forall\>h<rsub|1>,h<rsub|2>\<point\>n<rsub|1>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    h<rsub|1>|)><next-line><htab|5mm>\<wedge\>n<rsub|2>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    h<rsub|2>|)>>>>>
+  </eqnarray*>
+
+  <subsubsection|inflate>
+
+  A <samp|`witness'> node doesn't hold a Simplicity value, like the
+  <samp|witness> combinator requires. \ Instead it has a bit string that
+  encodes a Simplicity value. \ The inflate function performs a type-directed
+  decoding of this bit string to reconstruct the witness value. \ The inflate
+  function is defined recursively via the inflation function. \ These two
+  functions are defined below.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|inflation<around*|(|<1>,v|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|<around*|\<langle\>||\<rangle\>>,v|\<rangle\>>>>|<row|<cell|inflation<around*|(|A+B,0<rsub|<2>>\<blacktriangleleft\>v|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|<injl-long|A|B|a>,v<rprime|'>|\<rangle\>>*<htab|5mm>where
+    <around*|\<langle\>|a,v<rprime|'>|\<rangle\>>=inflation<around*|(|A,v|)>>>|<row|<cell|inflation<around*|(|A+B,1<rsub|<2>>\<blacktriangleleft\>v|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|<injr-long|A|B|b>,v<rprime|'>|\<rangle\>>*<htab|5mm>where
+    <around*|\<langle\>|b,v<rprime|'>|\<rangle\>>=inflation<around*|(|B,v|)>>>|<row|<cell|inflation<around*|(|A+B,\<epsilon\>|)>>|<cell|\<assign\>>|<cell|\<bot\>>>|<row|<cell|inflation<around*|(|A\<times\>B,v|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,v<rprime|''>|\<rangle\>>*<htab|5mm>where
+    <around*|\<langle\>|a,v<rprime|'>|\<rangle\>>=inflation<around*|(|A,v|)><next-line><htab|5mm>and
+    <around*|\<langle\>|b,v<rprime|''>|\<rangle\>>=inflation<around*|(|B,v<rprime|'>|)>>>>>
+  </eqnarray*>
+
+  \;
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|inflate<around*|(|A,v|)>>|<cell|\<assign\>>|<cell|a*<htab|5mm>when
+    <around*|\<langle\>|a,\<epsilon\>|\<rangle\>>=inflation<around*|(|A,v|)>>>|<row|<cell|inflate<around*|(|A,v|)>>|<cell|\<assign\>>|<cell|\<bot\><htab|5mm>otherwise>>>>
+  </eqnarray*>
+
+  As part of DoS protections and malleability protection, we want to prevent
+  witness data from being inflated with unused bits. Notice that that in the
+  defintion of <math|syn<around*|(|k,<math-ss|`witness'> v|)>>, the inflate
+  function is passed the infered type <math|\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>.
+  \ Using the infered type ensures that the witness data only contains data
+  that is nominaly useful by the surounding Simplicity program. \ Futhermore
+  the inflate function fails unless it consumes exactly all of its bit string
+  argument. \ This prevents <samp|`witness'> data from being padded with
+  extra bits.
+
+  <section|Serialization><label|ss:Serialization>
+
+  In this section we define a binary prefix code for serializing Simplicity
+  DAGs. Because prefix codes are self-delimiting, they provide a convenient
+  framework for creating serialization formats. \ Compoud structures can be
+  serialized by concatenation of prefix codes of its substructures.
+
+  Our serialization of Simplicity DAgs could be used for a network protocol
+  or writing data to a file. The program size metric (see
+  Section<nbsp><inactive|<reference|<with|color|red|TODO>>>) computed for
+  terms can be used to bound to the length of this binary encoding. However,
+  specific binary encodings, such of this one, do not form a consensus
+  critial aspect of Simplicity's design and can be substituted with other
+  encodings that have similar suitable bounds.
+  \ Appendix<nbsp><inactive|<reference|<with|color|red|TODO>>> describes an
+  alternative binary encoding.
+
+  <subsection|Serializtion of Bit String and Positive Numbers>
+
+  In this section we present a recursive Elias prefix code for bit strings
+  and positive natural numbers. \ Our code for positive natural numbers it
+  has properities similar to the Elias omega coding, but is a has a simple
+  recursive functional defitional and some other nice properties.
+
+  First, for any <math|n:\<bbb-N\>> with <math|0\<less\>n>, we define
+  <math|<around*|\<lfloor\>|n|\<rfloor\>><rsub|<2><rsup|\<ast\>>>> to be a
+  bit string for <math|n>, written in binary, with the leading
+  <math|1<rsub|<2>>> chopped off. \ Formally that is defined below.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<around*|\<lfloor\>|1|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[||]>>>>|<row|<cell|<around*|\<lfloor\>|2*n|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|\<assign\>>|<cell|<around*|\<lfloor\>|n|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>\<cdummy\><verbatim|<around*|[|0|]>>>>|<row|<cell|<around*|\<lfloor\>|2*n+1|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|\<assign\>>|<cell|<around*|\<lfloor\>|n|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>\<cdummy\><verbatim|<around*|[|1|]>>>>>>
+  </eqnarray*>
+
+  For example,
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<around*|\<lfloor\>|1|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|=>|<cell|<verbatim|<around*|[||]>>>>|<row|<cell|<around*|\<lfloor\>|2|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|=>|<cell|<verbatim|<around*|[|0|]>>>>|<row|<cell|<around*|\<lfloor\>|3|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|=>|<cell|<verbatim|<around*|[|1|]>>>>|<row|<cell|<around*|\<lfloor\>|4|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|=>|<cell|<verbatim|<around*|[|00|]>>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>|<row|<cell|<around*|\<lfloor\>|7|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|=>|<cell|<verbatim|<around*|[|11|]>>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>>>
+  </eqnarray*>
+
+  This binary code isn't a prefix code. \ To make a prefix code we define
+  mutually recursive function on bit strings and positive numbers. This
+  encodes a bit string by prefixing it a tag indicating if the bit string is
+  null followed by the bit string's length in the case when it is not null.
+  \ It encodes a positive number, <math|n>, by encoding its associated
+  bitstring <math|<around*|\<lfloor\>|n|\<rfloor\>><rsub|<2><rsup|\<ast\>>>>.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<rep|\<emptyset\><rsup|<maybe>><rsub|<2><rsup|+>>|>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|0|]>>>>|<row|<cell|<rep|\<eta\><rsup|<maybe>><rsub|<2><rsup|+>><around*|(|l|)>|>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|1|]>>\<cdummy\><rep|<around*|\||l|\|>|>\<cdummy\>l>>|<row|<cell|<rep|n|>>|<cell|\<assign\>>|<cell|<rep|<around*|\<lfloor\>|n|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>|>>>>>
+  </eqnarray*>
+
+  The table below illustrates this prefix code on a few inputs.
+
+  \;
+
+  <center|<tabular|<tformat|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|4|4|cell-halign|c>|<cwith|9|9|1|-1|cell-halign|c>|<cwith|12|12|2|2|cell-halign|c>|<cwith|12|12|4|4|cell-halign|c>|<cwith|12|12|1|5|cell-halign|c>|<cwith|10|10|2|2|cell-halign|c>|<cwith|10|10|4|4|cell-halign|c>|<cwith|13|14|2|2|cell-halign|c>|<cwith|13|14|4|4|cell-halign|c>|<cwith|13|13|2|2|cell-halign|c>|<cwith|13|13|4|4|cell-halign|c>|<cwith|1|-1|1|1|cell-halign|r>|<cwith|15|15|2|2|cell-halign|c>|<cwith|15|15|4|4|cell-halign|c>|<cwith|15|15|2|2|cell-halign|c>|<cwith|15|15|4|4|cell-halign|c>|<cwith|15|15|1|5|cell-halign|c>|<cwith|15|15|1|1|cell-halign|r>|<cwith|14|14|4|4|cell-halign|c>|<cwith|14|14|4|4|cell-halign|c>|<cwith|2|2|4|4|cell-halign|c>|<cwith|3|4|4|4|cell-halign|c>|<cwith|4|4|4|4|cell-halign|c>|<cwith|5|8|4|4|cell-halign|c>|<cwith|6|6|4|4|cell-halign|c>|<cwith|7|8|4|4|cell-halign|c>|<cwith|8|8|4|4|cell-halign|c>|<cwith|10|11|4|4|cell-halign|c>|<cwith|10|11|4|4|cell-halign|c>|<cwith|10|11|4|4|cell-halign|c>|<cwith|11|11|4|4|cell-halign|c>|<cwith|13|14|4|4|cell-halign|c>|<cwith|13|14|4|4|cell-halign|c>|<cwith|13|14|4|4|cell-halign|c>|<cwith|14|14|4|4|cell-halign|c>|<cwith|13|14|2|2|cell-halign|c>|<cwith|13|14|2|2|cell-halign|c>|<cwith|13|14|2|2|cell-halign|c>|<cwith|14|14|2|2|cell-halign|c>|<cwith|7|8|2|2|cell-halign|c>|<cwith|7|8|2|2|cell-halign|c>|<cwith|7|8|2|2|cell-halign|c>|<cwith|8|8|2|2|cell-halign|c>|<cwith|5|6|2|2|cell-halign|c>|<cwith|5|6|2|2|cell-halign|c>|<cwith|5|6|2|2|cell-halign|c>|<cwith|6|6|2|2|cell-halign|c>|<cwith|3|4|2|2|cell-halign|c>|<cwith|3|4|2|2|cell-halign|c>|<cwith|3|4|2|2|cell-halign|c>|<cwith|4|4|2|2|cell-halign|c>|<cwith|1|2|2|2|cell-halign|c>|<cwith|1|2|2|2|cell-halign|c>|<cwith|1|2|2|2|cell-halign|c>|<cwith|2|2|2|2|cell-halign|c>|<cwith|10|11|2|2|cell-halign|c>|<cwith|10|11|2|2|cell-halign|c>|<cwith|10|10|2|2|cell-halign|c>|<cwith|10|11|2|2|cell-halign|c>|<cwith|10|11|2|2|cell-halign|c>|<cwith|10|11|2|2|cell-halign|c>|<cwith|11|11|2|2|cell-halign|c>|<cwith|1|-1|3|3|cell-halign|c>|<cwith|1|-1|5|5|cell-halign|l>|<table|<row|<cell|<rep|1|>>|<cell|<math|=>>|<cell|<rep|<verbatim|[]>|>>|<cell|<math|=>>|<cell|<verbatim|[0]>>>|<row|<cell|<rep|2|>>|<cell|<math|=>>|<cell|<rep|<verbatim|[0]>|>>|<cell|<math|=>>|<cell|<verbatim|[100]>>>|<row|<cell|<rep|3|>>|<cell|<math|=>>|<cell|<rep|<verbatim|[1]>|>>|<cell|<math|=>>|<cell|<verbatim|[101]>>>|<row|<cell|<rep|4|>>|<cell|<math|=>>|<cell|<rep|<verbatim|[00]>|>>|<cell|<math|=>>|<cell|<verbatim|[110000]>>>|<row|<cell|<rep|5|>>|<cell|<math|=>>|<cell|<rep|<verbatim|[01]>|>>|<cell|<math|=>>|<cell|<verbatim|[110001]>>>|<row|<cell|<rep|6|>>|<cell|<math|=>>|<cell|<rep|<verbatim|[10]>|>>|<cell|<math|=>>|<cell|<verbatim|[110010]>>>|<row|<cell|<rep|7|>>|<cell|<math|=>>|<cell|<rep|<verbatim|[11]>|>>|<cell|<math|=>>|<cell|<verbatim|[110011]>>>|<row|<cell|<rep|8|>>|<cell|<math|=>>|<cell|<rep|<verbatim|[000]>|>>|<cell|<math|=>>|<cell|<verbatim|[1101000]>>>|<row|<cell|<math|\<vdots\>>>|<cell|>|<cell|<math|\<vdots\>>>|<cell|>|<cell|<math|\<vdots\>>>>|<row|<cell|<rep|15|>>|<cell|<math|=>>|<cell|<rep|<verbatim|[111]>|>>|<cell|<math|=>>|<cell|<verbatim|[1101111]>>>|<row|<cell|<rep|16|>>|<cell|<math|=>>|<cell|<rep|<verbatim|[0000]>|>>|<cell|<math|=>>|<cell|<verbatim|[11100000000]>>>|<row|<cell|<math|\<vdots\>>>|<cell|>|<cell|<math|\<vdots\>>>|<cell|>|<cell|<math|\<vdots\>>>>|<row|<cell|<rep|<math|2<rsup|16>-1>|>>|<cell|<math|=>>|<cell|<rep|<math|<verbatim|<around|[|1|]>><rsup|15>>|>>|<cell|<math|=>>|<cell|<math|<verbatim|<around|[|11101111|]>>\<cdummy\><verbatim|<around|[|1|]>><rsup|15>>>>|<row|<rep|<math|2<rsup|16>>|>|<cell|<math|=>>|<cell|<rep|<math|<verbatim|<around|[|0|]>><rsup|16>>|>>|<cell|<math|=>>|<cell|<math|<verbatim|<around|[|111100000000|]>>\<cdummy\><verbatim|<around|[|0|]>><rsup|16>>>>|<row|<cell|<math|\<vdots\>>>|<cell|>|<cell|<math|\<vdots\>>>|<cell|>|<cell|<math|\<vdots\>>>>>>>>
+
+  \;
+
+  Notice that this prefix code preserves numeric ordering as lexicographical
+  ordering. If <math|n> and <math|m> are positive numbers then
+  <math|n\<leq\>m\<Leftrightarrow\><rep|n|>\<preceq\><rep|m|>> where
+  <math|\<preceq\>> is the lexicographical ordering on bit strings.
+
+  When you are parsing a code for a positive number that you happen to know
+  from context is not allowed to exceed some bound <math|b>. Then during
+  parsing you can abort as soon as the string being parsed lexicographically
+  exceeds <math|<rep|b|>>. \ In some cases you can abort parsing after only a
+  few bits. For example, if from context you know that a the postive number
+  must fit in a 64-bit integer (i.e. it is not allowed to exceed
+  <math|2<rsup|64>-1>), then you can abort parsing as soon as the bit string
+  being parsed lexicographically meets or exceeds the prefix
+  <verbatim|[1111001]>.
+
+  <subsection|Serialization of Simplicity>
+
+  In this section we describe a fairly direct serialization for Simplicity
+  DAGs. \ Firstly we provide a prefix code for <math|Node> values:
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<rep|<text|<samp|`comp'>> i
+    j|>>|<cell|=>|<cell|<verbatim|<around*|[|00000|]>>\<cdummy\><rep|i|>\<cdummy\><rep|j|>>>|<row|<cell|<rep|<text|<samp|`case'>>
+    i j|>>|<cell|=>|<cell|<verbatim|<around*|[|00001|]>>\<cdummy\><rep|i|>\<cdummy\><rep|j|>>>|<row|<cell|<rep|<text|<samp|`pair'>>
+    i j|>>|<cell|=>|<cell|<verbatim|<around*|[|00010|]>>\<cdummy\><rep|i|>\<cdummy\><rep|j|>>>|<row|<cell|<rep|<text|<samp|`disconnect'>>
+    i j|>>|<cell|=>|<cell|<verbatim|<around*|[|00011|]>>\<cdummy\><rep|i|>\<cdummy\><rep|j|>>>|<row|<cell|<rep|<text|<samp|`injl'>>
+    i|>>|<cell|=>|<cell|<verbatim|<around*|[|00100|]>>\<cdummy\><rep|i|>>>|<row|<cell|<rep|<text|<samp|`injr'>>
+    i|>>|<cell|=>|<cell|<verbatim|<around*|[|00101|]>>\<cdummy\><rep|i|>>>|<row|<cell|<rep|<text|<samp|`take'>>
+    i|>>|<cell|=>|<cell|<verbatim|<around*|[|00110|]>>\<cdummy\><rep|i|>>>|<row|<cell|<rep|<text|<samp|`drop'>>
+    i|>>|<cell|=>|<cell|<verbatim|<around*|[|00111|]>>\<cdummy\><rep|i|>>>|<row|<cell|<rep|<text|<samp|`iden'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|01000|]>>>>|<row|<cell|<rep|<text|<samp|`unit'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|01001|]>>>>|<row|<cell|<rep|<text|<samp|`fail'>>
+    b|>>|<cell|=>|<cell|<verbatim|<around*|[|01010|]>>\<cdummy\><around*|(|\<mu\><rsup|\<ast\>>\<circ\><around*|(|\<iota\><rsup|<2><rsup|8>><rsub|<2><rsup|\<ast\>>>|)><rsup|\<ast\>><rsup|>\<circ\>BE|)><rsup|><around*|(|b|)>>>|<row|<cell|<rep|<text|<samp|`hidden'>>
+    h|>>|<cell|=>|<cell|<verbatim|<around*|[|0110|]>>\<cdummy\><around*|(|\<mu\><rsup|\<ast\>>\<circ\><around*|(|\<iota\><rsup|<2><rsup|8>><rsub|<2><rsup|\<ast\>>>|)><rsup|\<ast\>><rsup|>\<circ\>BE|)><rsup|><around*|(|h|)>>>|<row|<cell|<rep|<text|<samp|`witness'>>v|>>|<cell|=>|<cell|<verbatim|<around*|[|0111|]>>\<cdummy\><rep|v|>>>>>
+  </eqnarray*>
+
+  Below we give codes for Bitcoin primitive names, but each Simplicity
+  application will have its own set of codes for its own primitives. The
+  prefix codes for primitive names all begin with <verbatim|[10]>, which we
+  emphasize below.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<rep|<text|<samp|`version'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|00000|]>>>>|<row|<cell|<rep|<text|<samp|`lockTime'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|00001|]>>>>|<row|<cell|<rep|<text|<samp|`inputsHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|0001|]>>>>|<row|<cell|<rep|<text|<samp|`outputsHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|0010|]>>>>|<row|<cell|<rep|<text|<samp|`numInputs'>>|>>|<cell|=>|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|0011|]>>>|<row|<cell|<rep|<text|<samp|`totalnputValue'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|0100|]>>>>|<row|<cell|<rep|<text|<samp|`currentPrevOutpoint'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|0101|]>>>>|<row|<cell|<rep|<text|<samp|`currentValue'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|0110|]>>>>|<row|<cell|<rep|<text|<samp|`currentSequence'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|0111|]>>>>|<row|<cell|<rep|<text|<samp|`currentIndex'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|10000|]>>>>|<row|<cell|<rep|<text|<samp|`inputPrevOutpoint'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|10001|]>>>>|<row|<cell|<rep|<text|<samp|`inputValue'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|1001|]>>>>|<row|<cell|<rep|<text|<samp|`inputSequence'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|1010|]>>>>|<row|<cell|<rep|<text|<samp|`numOutputs'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|1011|]>>>>|<row|<cell|<rep|<text|<samp|`totalOutputValue'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|1100|]>>>>|<row|<cell|<rep|<text|<samp|`outputValue'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|1101|]>>>>|<row|<cell|<rep|<text|<samp|`outputScriptHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|1110|]>>>>|<row|<cell|<rep|<text|<samp|`scriptCMR'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10|]>>\<cdummy\><verbatim|<around*|[|1111|]>>>>>>
+  </eqnarray*>
+
+  <with|color|red|TODO: <verbatim|[11]> prefix reserved for jets>
+
+  For serialization of DAGs, <math|l:DAG>, which is a non-empty list of
+  Nodes, we a couple of serialization options.
+
+  <\equation*>
+    stopCode<around*|(|l|)>\<assign\><around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<upl\>><around*|(|l|)>\<cdummy\><verbatim|<around*|[|01011|]>>
+  </equation*>
+
+  The <math|stopCode> above serializes the list of nodes using the prefix
+  code for nodes and terminating the list with the code
+  <math|<verbatim|<around*|[|01011|]>>>, which has been reserved for use as
+  an end-of-stream marker.
+
+  <\equation*>
+    lenCode<around*|(|l|)>\<assign\><rep|<around*|\||l|\|>|>\<cdummy\><around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<upl\>><around*|(|l|)>
+  </equation*>
+
+  The <math|lenCode> above prefixes the serialization of DAG with the number
+  of nodes, followed by the list of nodes serialized with the prefix code for
+  nodes. \ Both <math|stopCode> and <math|lenCode> are prefix codes.
+
+  The last alternative is to directly use
+  <math|<around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<upl\>><around*|(|l|)>>.
+  \ This is suitable when, from the context of where the code is used, the
+  number of nodes or the length of the code in bits is already known. \ This
+  variant is not a prefix code.
+
+  Which serialization format is best depends on the context in which it is
+  being used. \ Users should choose the most suitable one for their
+  application.<chapter|Coq Library Guide>
 
   The Coq development for Simplicity is found in the <verbatim|Coq/>
   directory. There are two subdirectories, <verbatim|Simplicity/> contains
@@ -3055,14 +3604,14 @@
   correspond to <math|\<noplus\>+> and <math|\<times\>> operations that
   satify certain ring laws. A term from the language of rings is an
   expression made out of <math|0>, <math|1>, <math|+>, and <math|\<times\>>.
-  Given a ring and a term from the langauge of rings, we can intepret that
+  Given a ring and a term from the language of rings, we can intepret that
   term in the given ring and compute an element of the domain that the term
   represents. There are many different rings structures, such as the ring of
   integers, and the ring of integers modulo <math|n> for any positive number
   <math|n>. A given term can be interpreted as some value for any ring. It
   turns out that an alternative way to represent terms is as a function that
   given any ring returns a value from its domain and does so in a ``uniform''
-  way. This would be the ``final'' representation for terms in the langauge
+  way. This would be the ``final'' representation for terms in the language
   of rings.
 
   <subsubsection|Simplicity Algebras>
@@ -3312,7 +3861,7 @@
   by an environment (a.k.a reader) monad that provides read-only access to
   the signed transaction data.
 
-  We break up the langauge of Simplicity into these layers because it helps
+  We break up the language of Simplicity into these layers because it helps
   us isolate the side-effects of the various language extensions when
   reasoning about Simplicity programs. \ When dealing with a sub-expression
   from the first layer, one can safely ignore the enviroment and failure
@@ -3429,7 +3978,7 @@
 
   Given an instance of the <verbatim|PrimitiveSig>'s parameters, the
   <verbatim|PrimitiveModule> defines the algebras for the parts of the
-  Simplicity langauge that depends on the primtives. \ This includes the
+  Simplicity language that depends on the primtives. \ This includes the
   <verbatim|Primitive>, <verbatim|Jet>, <verbatim|FullSimplicity> and
   <verbatim|FullSimplicityWithDelegation> algebras.
 
@@ -3492,14 +4041,14 @@
   of the <verbatim|Jet> and <verbatim|AssertionWitness> algebras) with no
   additonal combinators. \ It defines the full Simplicity language. \ The
   <verbatim|SimplicityPrimSem> canonical structure provides the functional
-  semantics of the full Simplicity langauge as the <verbatim|primSem M> type
+  semantics of the full Simplicity language as the <verbatim|primSem M> type
   familiy when <verbatim|M> is a monad zero.\ 
 
   The <verbatim|FullSimplicityWithDelegation> algebra is the the meet of the
   <verbatim|Jet> and the <verbatim|Delegation> algebras (equiv. the meet of
   the <verbatim|FullSimplicity> and <verbatim|Delegation> algebras, or the
   meet of the <verbatim|FullSimplicity> and <verbatim|AssertionDelegation>
-  algebras, etc.) defines the full Simplicity with delegation langauge. \ The
+  algebras, etc.) defines the full Simplicity with delegation language. \ The
   functional semantics are defined via the
   <verbatim|SimplicityDelegationDelegator> canonical structure whose domain
   includes <verbatim|Delegator (primSem M)> when <verbatim|M> is a monad
@@ -3510,16 +4059,15 @@
 
   The <verbatim|Simplicity/MerkleRoot.v> file defines a Merkle root of types,
   and the commitment Merkle root and witness Merkle roots for part of the
-  Simplicity langauge. \ The Merkle root of types is specified by
-  <verbatim|><code|<code*|typeRootAlg>> and defined by <verbatim|typeRoot>.
-  \ The in the <verbatim|CommitmentRoot A B> family the parameters are
-  phantom parameters, and the value is always a <verbatim|has256> type.
-  \ Canonical Structures provide instances of <verbatim|CommitmentRoot> for
-  Core Simplicity, and Simplicity with assertions and witnesses. \ The
-  <verbatim|CommitmentRoot> for delegation is found in
-  <verbatim|Simplicity/Delegation.v> and the <verbatim|CommitmentRoot> for
-  primitives, jets, Full Simplicity and Full Simplicity with delegation is
-  found in <verbatim|Simplicity/Primtive.v>.
+  Simplicity language. \ The Merkle root of types is specified by
+  <code|<code*|typeRootAlg>> and defined by <verbatim|typeRoot>. \ The in the
+  <verbatim|CommitmentRoot A B> family the parameters are phantom parameters,
+  and the value is always a <verbatim|has256> type. \ Canonical Structures
+  provide instances of <verbatim|CommitmentRoot> for Core Simplicity, and
+  Simplicity with assertions and witnesses. \ The <verbatim|CommitmentRoot>
+  for delegation is found in <verbatim|Simplicity/Delegation.v> and the
+  <verbatim|CommitmentRoot> for primitives, jets, Full Simplicity and Full
+  Simplicity with delegation is found in <verbatim|Simplicity/Primtive.v>.
 
   These Merkle roots are computed using the SHA-256 compression function with
   unique tags providing the initial value for each language contstruct.
@@ -3589,17 +4137,17 @@
   It is sometimes useful to decompose the Bit Machine's state as\ 
 
   <\equation*>
-    <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n<rsub|0>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><cearr|c<rsub|1>\<cdots\>c<rsub|n<rsub|1>>><carr|?><rsup|n<rsub|2>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>
+    <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|\<nosymbol\>><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>*c<rsub|n<rsub|0>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><cearr|c<rsub|1>*\<cdots\>*c<rsub|n<rsub|1>>><carr|?><rsup|n<rsub|2>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>
   </equation*>
 
   where we are locally interested in what is immediately in front of the
-  active read frame's cursor, <math|<carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>c<rsub|n<rsub|0>>>>,
+  active read frame's cursor, <math|<carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>*c<rsub|n<rsub|0>>>>,
   and what is immediately surrounding the active write frame's cursor,
-  <math|<cearr|c<rsub|1>\<cdots\>c<rsub|n<rsub|1>>><carr|?><rsup|n<rsub|2>>>.
+  <math|<cearr|c<rsub|1>*\<cdots\>*c<rsub|n<rsub|1>>><carr|?><rsup|n<rsub|2>>>.
   This is captured by the <verbatim|LocalState> type, noting that the data
   immediately surrounding the active write frame's cursor is captured by the
   <verbatim|WriteFrame> type. The remainder of the state, consisting of
-  <math|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|>\<bullet\>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\>\<bullet\>\<cdummy\><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
+  <math|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><rsub|\<nosymbol\>>\<bullet\>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\>\<bullet\>\<cdummy\><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
   is captured by the <verbatim|Context> type, which happens to be isomorphic
   to the <verbatim|RunState> type. The <verbatim|fillContext> function
   combines a <verbatim|Context> value and a <verbatim|LocalState> value to
@@ -3611,9 +4159,9 @@
   The <verbatim|appendLocalState> funciton combines a context,
   <verbatim|ls1>, with a <verbatim|LocalState>, <verbatim|ls2>, to build a
   combined <verbatim|LocalState>. <verbatim|appendLocalState> makes
-  <verbatim|<verbatim|LocalState>> into a monoid and <verbatim|fillContext>
-  becomes a monoid action on <verbatim|Context>s with respect to this monoid.
-  This theory isn't fully developed in Coq, but will be if it is needed. The
+  <verbatim|LocalState> into a monoid and <verbatim|fillContext> becomes a
+  monoid action on <verbatim|Context>s with respect to this monoid. This
+  theory isn't fully developed in Coq, but will be if it is needed. The
   <verbatim|context_action> lemma proves the monoid action property, which is
   the only theorem developed so far.
 
@@ -3704,7 +4252,7 @@
   The notations <verbatim|<em|k0> ;;; <em|k1>> and <verbatim|<em|k0> \|\|\|
   <em|k1>> denote the sequence and choice combinations respectively of two
   programs and correspond to <math|k<rsub|0>;k<rsub|1>> and
-  <math|k<rsub|0><around*|\|||\|>k<rsub|1>>. We also define the combinator
+  <math|k<rsub|0><around*|\|||\|>*k<rsub|1>>. We also define the combinator
   <verbatim|bump <em|n> <em|k>> which corresponds to <math|n\<star\>k>.
 
   The <verbatim|runMachine> function takes a <verbatim|Program> and an
@@ -3881,7 +4429,7 @@
   Simplicity is split into two files.
 
   The <verbatim|Simplicity/Term/Core.hs> file develops the core Simplicity
-  term langauge plus a few extensions. The <verbatim|Core> type class
+  term language plus a few extensions. The <verbatim|Core> type class
   captures Simplicity algebras for core Simplicity expressions. Core
   Simplicity expressions are represented in Haskell by expressions of type
   <verbatim|Core term =\<gtr\> term a b> which are expressions that hold for
@@ -3928,7 +4476,7 @@
   that consumes such a GADT cannot take advantage of that sharing. Sharing
   results of static analysis between shared sub-experssions is critical to
   making static analysis practical. Adding explicit sharing to the Simplicity
-  language would make the langauge more complex and would risk incorrectly
+  language would make the language more complex and would risk incorrectly
   implementing the sharing combinator. Explicitly building memoization tables
   could work, but will have overhead. For instance, we do do this for
   computing Merkle roots of Simplicity types. However, the solution of using
@@ -4016,8 +4564,7 @@
   applications. \ This module exports
 
   <\itemize>
-    <item><verbatim|Prim a b>, a GADT for different primitive expressions,
-    <verbatim|>
+    <item><verbatim|Prim a b>, a GADT for different primitive expressions,\ 
 
     <item><verbatim|primPrefix> and <verbatim|primName> which are used to
     generate unique names for the Merkle roots of primtive expressions,
@@ -4064,7 +4611,7 @@
 
   The <verbatim|Simplicity/Term.hs> module provides <verbatim|(-\<gtr\>)> and
   <verbatim|Kleisli m> instances for the full Simplicity language excluding
-  delegation. Semantics for the full Simplicity langauge with delegation,
+  delegation. Semantics for the full Simplicity language with delegation,
   which depends on computing commitment Merkle roots, is found in the
   <verbatim|Simplicity/Semantics.hs> module.
 
@@ -4186,7 +4733,7 @@
   semantics, we give detailed definitions below of the common notation used
   throughout this document.
 
-  Our formal langauge is phrased in terms of simple type theory, and even so,
+  Our formal language is phrased in terms of simple type theory, and even so,
   readers familiar with mathematics should not have too much trouble
   following it since mathematics notation already borrows heavily from simple
   type theory and everything can be interpreted in standard mathematics.
@@ -4234,18 +4781,17 @@
   the unit type is <math|<around*|\<langle\>||\<rangle\>>\<of\><value|1>>.
 
   <assign|0|<math|<with|font|Bbb*|0>>>We write the primitive void type as
-  <value|0>. Assuming <math|z:<value|0>> were a value of the void type, then
-  <math|!<rsup|A>z\<of\>A> is a value of any type.
+  <value|0>. Assuming <math|z\<of\><value|0>> were a value of the void type,
+  then <math|!<rsup|A>z\<of\>A> is a value of any type.
 
   Given types <math|A> and <math|B>, then <math|A+B>, <math|A\<times\>B>, and
   <math|A\<rightarrow\>B> are the sum type (also known as disjoin union
   type), (Cartesian) product type, and function type respectively. Given
-  <math|a:A> and <math|b:B> we denote values of the sum and product types as
+  <math|a\<of\>A> and <math|b\<of\>B> we denote values of the sum and product
+  types as
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<injl-long|A|B|<around*|(|a|)>>>|<cell|:>|A+
-    B>|<row|<cell|<injr-long|A|B|<around*|(|b|)>>>|<cell|:>|<cell|A+
-    B>>|<row|<cell|<around*|\<langle\>|a,b|\<rangle\>><rsub|A,B>>|<cell|:>|<cell|A\<times\>B>>>>
+    <tformat|<table|<row|<cell|<injl-long|A|B|<around*|(|a|)>>>|<cell|:>|A+B>|<row|<cell|<injr-long|A|B|<around*|(|b|)>>>|<cell|:>|<cell|A+B>>|<row|<cell|<around*|\<langle\>|a,b|\<rangle\>><rsub|A,B>>|<cell|:>|<cell|A\<times\>B>>>>
   </eqnarray*>
 
   To access components of sum and product types we use pattern matching. For
@@ -4264,7 +4810,7 @@
 
   where <math|e> is an expression with <math|x\<of\>A> as a free variable
   (that may or zero or more times in <math|e>). Given
-  <math|f\<of\>A\<rightarrow\>B> and <math|a:A>, then ordinary function
+  <math|f\<of\>A\<rightarrow\>B> and <math|a\<of\>A>, then ordinary function
   application retrieves a value of type <math|B>:
 
   <\equation*>
@@ -4305,8 +4851,7 @@
   with successively larger powers of two:
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|A<rsup|1>>|<cell|\<assign\>>|<cell|A>>|<row|<cell|A<rsup|2>>|<cell|\<assign\>>|<cell|A<rsup|1>\<times\>A<rsup|1>>>|<row|<cell|A<rsup|4>>|<cell|\<assign\>>|<cell|A<rsup|2>\<times\>A<rsup|2>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>|<row|<cell|A<rsup|2<rsup|1+n>>>|<cell|\<assign\>>|<cell|A<rsup|2<rsup|n>>
-    \<times\>A<rsup|2<rsup|n>>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>>>
+    <tformat|<table|<row|<cell|A<rsup|1>>|<cell|\<assign\>>|<cell|A>>|<row|<cell|A<rsup|2>>|<cell|\<assign\>>|<cell|A<rsup|1>\<times\>A<rsup|1>>>|<row|<cell|A<rsup|4>>|<cell|\<assign\>>|<cell|A<rsup|2>\<times\>A<rsup|2>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>|<row|<cell|A<rsup|2<rsup|n+1>>>|<cell|\<assign\>>|<cell|A<rsup|2<rsup|n>>\<times\>A<rsup|2<rsup|n>>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>>>
   </eqnarray*>
 
   We define the diagonal function returning a square type,
@@ -4419,7 +4964,7 @@
   beyond the end of the list.
 
   <\lemma>
-    For all <math|n\<of\>\<bbb-N\>> and <math|l\<of\>A<rsup|*\<ast\>>> or
+    For all <math|n\<of\>\<bbb-N\>> and <math|l\<of\>A<rsup|\<ast\>>> or
     <math|l\<of\>A<rsup|+>>, <math|l<around*|[|n|]>=\<emptyset\>> if and only
     if <math|<around*|\||l|\|>\<leqslant\>n>.
   </lemma>
@@ -4466,7 +5011,7 @@
 
   The append operation together with nil,
   <math|<around*|\<langle\>|\<cdummy\>,\<epsilon\>|\<rangle\>>>, forms a
-  monoid over <math|A<rsup|*\<ast\>>>. This allows us to define the
+  monoid over <math|A<rsup|\<ast\>>>. This allows us to define the
   concatenation function <math|\<mu\><rsup|\<ast\>><rsub|A>\<of\>A<rsup|\<ast\>\<ast\>>\<rightarrow\>A<rsup|\<ast\>>>
 
   <\equation*>
@@ -4474,11 +5019,135 @@
   </equation*>
 
   Now it is only natural to define a function that generates a list with one
-  element, <math|\<eta\><rsup|\<ast\>><rsub|A>:A\<rightarrow\>A<rsup|\<ast\>>>.
+  element, <math|\<eta\><rsup|\<ast\>><rsub|A>\<of\>A\<rightarrow\>A<rsup|\<ast\>>>.
 
   <\equation*>
     \<eta\><rsup|\<ast\>><rsub|A><around*|(|a|)>\<assign\>a\<blacktriangleleft\>\<epsilon\>
   </equation*>
+
+  <appendix|Alternative Serialization of Simplicity DAGs>
+
+  This appendix presents an alternative, byte-oriented prefix code for
+  Simplicity DAGs. \ This code is not as compact as the bit-oriented code
+  presented in Section<nbsp><reference|ss:Serialization> and it imposes some
+  arbitrary limits on the size of the DAG and witness values. \ Its only
+  advantage is that it might be faster to decode. \ This code probably should
+  not be used by any application and should probably be removed from this
+  report.
+
+  First we define a byte-string serialization for numbers <math|i> known to
+  be less than a bound <math|b> by determining the minimum number of bytes
+  needed to fit a number less than <math|b>.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|byteCode<around*|(|1,0|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|byteCode<around*|(|b,i|)>>|<cell|\<assign\>>|<cell|byteCode<around*|(|2<rsup|*8*n>,q|)>\<cdummy\>BE<around*|(|<around*|\<lfloor\>|i|\<rfloor\>><rsub|8>|)><htab|5mm>where
+    2<rsup|8>*q\<leq\>i\<less\>2<rsup|8><around*|(|q+1|)> and
+    2<rsup|8*n>\<less\>b\<leq\>2<rsup|8*<around*|(|n+1|)>> and i\<less\>b>>>>
+  </eqnarray*>
+
+  \;
+
+  For witness data, which is a bit-string, we group the bits into bytes to
+  form a byte-string, padding the least signficiant bits with zero bits.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|bytePad<around*|(|\<epsilon\>|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|bytePad<around*|(|b<rsub|0>\<blacktriangleleft\>b<rsub|1>\<blacktriangleleft\>b<rsub|2>\<blacktriangleleft\>b<rsub|3>\<blacktriangleleft\>b<rsub|4>\<blacktriangleleft\>b<rsub|5>\<blacktriangleleft\>b<rsub|6>\<blacktriangleleft\>b<rsub|7>\<blacktriangleleft\>v|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|b<rsub|0>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|b<rsub|2>,<rsub|\<nosymbol\>>b<rsub|3>|\<rangle\>>|\<rangle\>>,<around*|\<langle\>|<around*|\<langle\>|b<rsub|4>,b<rsub|5>|\<rangle\>>,<around*|\<langle\>|b<rsub|6>,b<rsub|7>|\<rangle\>>|\<rangle\>>|\<rangle\>>\<blacktriangleleft\>bytePad<around*|(|v|)>>>|<row|<cell|bytePad<around*|(|v|)>>|<cell|\<assign\>>|<cell|bytePad<around*|(|v\<cdummy\><verbatim|<around*|[|0|]>><rsup|8-<around*|\||v|\|>>|)><htab|5mm>when
+    0\<less\><around*|\||v|\|>\<less\>8>>>>
+  </eqnarray*>
+
+  Note that by itself bytePad is not a prefix code and forgets how many bits
+  where in the vector. \ Both issues are addressed by prefixing this encoding
+  with the length of the number of bits in the original bit-string.
+
+  Next we define a byte-string serialization for Node,
+  <math|byteCode\<of\>\<bbb-N\>\<times\>Node\<rightarrow\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>.
+  \ The first parameter to byteCode, <math|k>, is the index at which the Node
+  occurs in the Dag. \ It is used to determine the bound on the size of the
+  sub-expression offsets for serialization of those values.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|byteCode<around*|(|k,<text|<samp|`comp'>> 1
+    1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|00>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`case'>>
+    1 1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|01>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`pair'>>
+    1 1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|02>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`disconnect'>>
+    1 1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|03>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`comp'>>
+    1 j|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|04>|]>>\<cdummy\>byteCode<around*|(|k-1,j-2|)><htab|5mm>where
+    1\<less\>j>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`case'>> 1
+    j|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|05>|]>>\<cdummy\>byteCode<around*|(|k-1,j-2|)><htab|5mm>where
+    1\<less\>j>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`pair'>> 1
+    j|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|06>|]>>\<cdummy\>byteCode<around*|(|k-1,j-2|)><htab|5mm>where
+    1\<less\>j>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`disconnect'>> 1
+    j|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|07>|]>>\<cdummy\>byteCode<around*|(|k-1,j-2|)><htab|5mm>where
+    1\<less\>j>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`comp'>> i
+    1|)>>|=|<cell|<verbatim|<around*|[|<math-tt|08>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)><htab|5mm>where
+    1\<less\>i>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`case'>> i
+    1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|09>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)><htab|5mm>where
+    1\<less\>i>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`pair'>> i
+    1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|0a>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)><htab|5mm>where
+    1\<less\>i>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`disconnect'>> i
+    1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|0b>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)><htab|5mm>where
+    1\<less\>i>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`comp'>> i
+    j|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|0c>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)>\<cdummy\>byteCode<around*|(|k-1,j-2|)><htab|5mm>where
+    1\<less\>i and 1\<less\>j>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`case'>>
+    i j|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|0d>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)>\<cdummy\>byteCode<around*|(|k-1,j-2|)><htab|5mm>where
+    1\<less\>i and 1\<less\>j>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`pair'>>
+    i j|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|0e>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)>\<cdummy\>byteCode<around*|(|k-1,j-2|)><htab|5mm>where
+    1\<less\>i and 1\<less\>j>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`disconnect'>>
+    i j|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|0f>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)>\<cdummy\>byteCode<around*|(|k-1,j-2|)><htab|5mm>where
+    1\<less\>i and 1\<less\>j>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`injl'>>
+    1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|10>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`injr'>>
+    1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|11>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`take'>>
+    1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|12>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`drop'>>
+    1|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|13>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`injl'>>
+    i|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|18>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)><htab|5mm>where
+    1\<less\>i>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`injr'>>
+    i|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|19>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)><htab|5mm>where
+    1\<less\>i>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`take'>>
+    i|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|1a>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)><htab|5mm>where
+    1\<less\>i>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`drop'>>
+    i|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|1b>|]>>\<cdummy\>byteCode<around*|(|k-1,i-2|)><htab|5mm>where
+    1\<less\>i>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`iden'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|20|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`unit'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|21|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`fail'>>
+    b|)>>|<cell|=>|<cell|<verbatim|<around*|[|22|]>>\<cdummy\>BE<rsup|><around*|(|b|)>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`hidden'>>
+    h|)>>|<cell|=>|<cell|<verbatim|<around*|[|23|]>>\<cdummy\>BE<rsup|><around*|(|h|)>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`witness'>>
+    v|)>>|<cell|=>|<cell|BE<around*|(|<around*|\<lfloor\>|128+<around*|\||v|\|>|\<rfloor\>><rsub|8>|)>\<cdummy\>bytePad<around*|(|v|)><htab|5mm>where
+    <around*|\||v|\|>\<less\>127>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`witness'>>
+    v|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|ff>|]>>\<cdummy\>BE<around*|(|<around*|\<lfloor\>|<around*|\||v|\|>|\<rfloor\>><rsub|16>|)><rsub|>\<cdummy\>bytePad<around*|(|v|)><htab|5mm>where
+    127 \<leq\><around*|\||v|\|>\<less\>2<rsup|16>>>>>
+  </eqnarray*>
+
+  The byte codes for primitivies begin with a byte between <verbatim|[24]>
+  and <verbatim|[3f]> inclusive. \ The codes can contain multiple bytes.
+  However, for the Bitcoin primitives, we only need to use one byte per
+  primitive.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|byteCode<around*|(|k,<text|<samp|`version'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|24>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`lockTime'>>|)>>|<cell|=>|<cell|<verbatim|<verbatim|<around*|[|<math-tt|25>|]>>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`inputsHash'>>|)>>|<cell|=>|<cell|<verbatim|<verbatim|<around*|[|<math-tt|26>|]>>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`outputsHash'>>|)>>|<cell|=>|<cell|<verbatim|<verbatim|<around*|[|<math-tt|27>|]>>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`numInputs'>>|)>>|<cell|=>|<verbatim|<verbatim|<around*|[|<math-tt|28>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`totalnputValue'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|29>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`currentPrevOutpoint'>>|)>>|<cell|=>|<cell|<verbatim|<verbatim|<around*|[|<math-tt|2a>|]>>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`currentValue'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|2b>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`currentSequence'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|2c>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`currentIndex'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|2d>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`inputPrevOutpoint'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|2e>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`inputValue'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|2f>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`inputSequence'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|30>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`numOutputs'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|31>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`totalOutputValue'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|32>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`outputValue'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|33>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`outputScriptHash'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|34>|]>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`scriptCMR'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|35>|]>>>>>>
+  </eqnarray*>
+
+  Recall from Section<nbsp><reference|ss:DAGs>, A Simplicity DAG is a list of
+  Nodes, <math|l>, that satisfies the condition <with|color|red|TODO: Define
+  and use foldimap instead>
+
+  <\equation*>
+    \<forall\>i j\<of\>\<bbb-N\>\<point\>0\<leq\>i\<less\><around*|\||l|\|>\<wedge\>0\<leq\>j\<less\><around*|\||ref<around*|(|l<around*|[|i|]>|)>|\|>\<Rightarrow\>0\<less\>ref<around*|(|l<around*|[|i|]>|)><around*|[|j|]>\<leq\>i.
+  </equation*>
+
+  We define a byte-string prefix code for Simplicity DAGs as a concatenation
+  of byte-string codes of its nodes, terminated by a sentinel value that has
+  been reserved as an end-of-stream byte. <with|color|red|TODO: Define and
+  use foldimap instead>
+
+  <\equation*>
+    byteCode<around*|(|l|)>\<assign\>byteCode<around*|(|0,l<around*|[|0|]>|)>\<cdummy\>byteCode<around*|(|1,l<around*|[|1|]>|)>\<cdummy\>\<ldots\>\<cdummy\>byteCode<around*|(|<around*|\||l|\|>-1,l<around*|[|<around*|\||l|\|>-1|]>|)>\<cdummy\><verbatim|<around*|[|<math-tt|1f>|]>>
+  </equation*>
+
+  Notice that while <math|byteCode<around*|(|0,x|)>> for <math|x\<of\>Node>
+  is called which in turn seems like it could call
+  <math|byteCode<around*|(|-1,n|)>> for some <math|n:\<bbb-N\>>, this can
+  never happend for Simplicity DAGs. \ The condition on DAGs implies that
+  <math|<around*|\||ref<around*|(|l<around*|[|0|]>|)>|\|>=0>. \ This
+  condition means that <math|byteCode<around*|(|-1,n|)>> never occurs for any
+  <math|n:\<bbb-N\>>.
 </body>
 
 <\initial>
@@ -4497,43 +5166,52 @@
     <associate|LC313|<tuple|6.5|?>>
     <associate|LC42|<tuple|6.5|?>>
     <associate|LC98|<tuple|6.2.2|?>>
-    <associate|SS:Coq:MerkleRoots|<tuple|6.5|?>>
+    <associate|SS:Coq:MerkleRoots|<tuple|7.5|57>>
     <associate|Serialization|<tuple|2.8|?>>
     <associate|auto-1|<tuple|1|7>>
     <associate|auto-10|<tuple|2.2.1|10>>
-    <associate|auto-100|<tuple|6.5|51>>
-    <associate|auto-101|<tuple|6.6|51>>
-    <associate|auto-102|<tuple|6.6.1|51>>
-    <associate|auto-103|<tuple|6.6.1.1|51>>
-    <associate|auto-104|<tuple|6.6.2|51>>
-    <associate|auto-105|<tuple|6.6.3|52>>
-    <associate|auto-106|<tuple|7|52>>
-    <associate|auto-107|<tuple|7.1|52>>
-    <associate|auto-108|<tuple|7.2|52>>
-    <associate|auto-109|<tuple|7.3|53>>
+    <associate|auto-100|<tuple|7.4.1|55>>
+    <associate|auto-101|<tuple|7.4.2|55>>
+    <associate|auto-102|<tuple|7.4.3|56>>
+    <associate|auto-103|<tuple|7.4.4|56>>
+    <associate|auto-104|<tuple|7.4.4.1|56>>
+    <associate|auto-105|<tuple|7.4.5|57>>
+    <associate|auto-106|<tuple|7.4.6|57>>
+    <associate|auto-107|<tuple|7.5|57>>
+    <associate|auto-108|<tuple|7.6|58>>
+    <associate|auto-109|<tuple|7.6.1|58>>
     <associate|auto-11|<tuple|2.2.2|10>>
-    <associate|auto-110|<tuple|7.3.1|53>>
-    <associate|auto-111|<tuple|7.3.2|55>>
-    <associate|auto-112|<tuple|7.3.2.1|57>>
-    <associate|auto-113|<tuple|7.3.2.2|57>>
-    <associate|auto-114|<tuple|7.3.3|58>>
-    <associate|auto-115|<tuple|7.3.4|59>>
-    <associate|auto-116|<tuple|7.4|59>>
-    <associate|auto-117|<tuple|7.4.1|59>>
-    <associate|auto-118|<tuple|7.5|?>>
-    <associate|auto-119|<tuple|7.6|?>>
+    <associate|auto-110|<tuple|7.6.1.1|59>>
+    <associate|auto-111|<tuple|7.6.2|59>>
+    <associate|auto-112|<tuple|7.6.3|61>>
+    <associate|auto-113|<tuple|8|61>>
+    <associate|auto-114|<tuple|8.1|62>>
+    <associate|auto-115|<tuple|8.2|63>>
+    <associate|auto-116|<tuple|8.3|63>>
+    <associate|auto-117|<tuple|8.3.1|63>>
+    <associate|auto-118|<tuple|8.3.2|63>>
+    <associate|auto-119|<tuple|8.3.2.1|63>>
     <associate|auto-12|<tuple|2.2.3|10>>
-    <associate|auto-120|<tuple|7.7|?>>
-    <associate|auto-121|<tuple|7.7.1|?>>
-    <associate|auto-122|<tuple|7.7.2|?>>
-    <associate|auto-123|<tuple|8|?>>
-    <associate|auto-124|<tuple|A|?>>
-    <associate|auto-125|<tuple|A.1|?>>
-    <associate|auto-126|<tuple|A.1.1|?>>
-    <associate|auto-127|<tuple|A.2|?>>
-    <associate|auto-128|<tuple|A.2.1|?>>
-    <associate|auto-129|<tuple|A.2.2|?>>
+    <associate|auto-120|<tuple|8.3.2.2|63>>
+    <associate|auto-121|<tuple|8.3.3|63>>
+    <associate|auto-122|<tuple|8.3.4|63>>
+    <associate|auto-123|<tuple|8.4|64>>
+    <associate|auto-124|<tuple|8.4.1|64>>
+    <associate|auto-125|<tuple|8.5|64>>
+    <associate|auto-126|<tuple|8.6|64>>
+    <associate|auto-127|<tuple|8.7|65>>
+    <associate|auto-128|<tuple|8.7.1|65>>
+    <associate|auto-129|<tuple|8.7.2|67>>
     <associate|auto-13|<tuple|2.2.4|10>>
+    <associate|auto-130|<tuple|9|69>>
+    <associate|auto-131|<tuple|A|69>>
+    <associate|auto-132|<tuple|A.1|70>>
+    <associate|auto-133|<tuple|A.1.1|71>>
+    <associate|auto-134|<tuple|A.2|71>>
+    <associate|auto-135|<tuple|A.2.1|71>>
+    <associate|auto-136|<tuple|A.2.2|?>>
+    <associate|auto-137|<tuple|B|?>>
+    <associate|auto-138|<tuple|B.1|?>>
     <associate|auto-14|<tuple|2.2.5|11>>
     <associate|auto-15|<tuple|2.2.6|11>>
     <associate|auto-16|<tuple|2.2.7|11>>
@@ -4570,66 +5248,67 @@
     <associate|auto-44|<tuple|2.6.1.2|27>>
     <associate|auto-45|<tuple|2.6.2|27>>
     <associate|auto-46|<tuple|2.7|27>>
-    <associate|auto-47|<tuple|2.8|28>>
-    <associate|auto-48|<tuple|2.8.1|28>>
-    <associate|auto-49|<tuple|3|29>>
+    <associate|auto-47|<tuple|3|29>>
+    <associate|auto-48|<tuple|3.1|29>>
+    <associate|auto-49|<tuple|3.1.1|29>>
     <associate|auto-5|<tuple|2.1.1|9>>
-    <associate|auto-50|<tuple|3.1|29>>
-    <associate|auto-51|<tuple|3.1.1|29>>
-    <associate|auto-52|<tuple|3.1.2|29>>
-    <associate|auto-53|<tuple|3.1.3|30>>
-    <associate|auto-54|<tuple|3.1.3.1|31>>
-    <associate|auto-55|<tuple|3.2|31>>
-    <associate|auto-56|<tuple|3.2.1|31>>
-    <associate|auto-57|<tuple|3.2.2|31>>
-    <associate|auto-58|<tuple|3.2.3|31>>
-    <associate|auto-59|<tuple|3.2.4|31>>
+    <associate|auto-50|<tuple|3.1.2|29>>
+    <associate|auto-51|<tuple|3.1.3|30>>
+    <associate|auto-52|<tuple|3.1.3.1|31>>
+    <associate|auto-53|<tuple|3.2|31>>
+    <associate|auto-54|<tuple|3.2.1|31>>
+    <associate|auto-55|<tuple|3.2.2|31>>
+    <associate|auto-56|<tuple|3.2.3|31>>
+    <associate|auto-57|<tuple|3.2.4|31>>
+    <associate|auto-58|<tuple|3.3|31>>
+    <associate|auto-59|<tuple|3.3.1|32>>
     <associate|auto-6|<tuple|2.1.1.1|9>>
-    <associate|auto-60|<tuple|3.3|32>>
-    <associate|auto-61|<tuple|3.3.1|32>>
-    <associate|auto-62|<tuple|3.3.2|33>>
-    <associate|auto-63|<tuple|3.3.2.1|33>>
-    <associate|auto-64|<tuple|3.3.3|34>>
-    <associate|auto-65|<tuple|3.3.3.1|34>>
-    <associate|auto-66|<tuple|3.3.3.2|35>>
-    <associate|auto-67|<tuple|3.4|35>>
-    <associate|auto-68|<tuple|3.4.1|37>>
-    <associate|auto-69|<tuple|3.4.1.1|38>>
+    <associate|auto-60|<tuple|3.3.2|32>>
+    <associate|auto-61|<tuple|3.3.2.1|33>>
+    <associate|auto-62|<tuple|3.3.3|33>>
+    <associate|auto-63|<tuple|3.3.3.1|34>>
+    <associate|auto-64|<tuple|3.3.3.2|34>>
+    <associate|auto-65|<tuple|3.4|35>>
+    <associate|auto-66|<tuple|3.4.1|35>>
+    <associate|auto-67|<tuple|3.4.1.1|37>>
+    <associate|auto-68|<tuple|3.4.1.2|38>>
+    <associate|auto-69|<tuple|3.4.1.3|38>>
     <associate|auto-7|<tuple|2.1.2|9>>
-    <associate|auto-70|<tuple|3.4.1.2|38>>
-    <associate|auto-71|<tuple|3.4.1.3|38>>
-    <associate|auto-72|<tuple|3.5|38>>
-    <associate|auto-73|<tuple|3.5.1|39>>
-    <associate|auto-74|<tuple|4|39>>
-    <associate|auto-75|<tuple|4.1|41>>
-    <associate|auto-76|<tuple|5|42>>
-    <associate|auto-77|<tuple|5.1|43>>
-    <associate|auto-78|<tuple|6|43>>
-    <associate|auto-79|<tuple|6.1|43>>
+    <associate|auto-70|<tuple|3.5|38>>
+    <associate|auto-71|<tuple|3.5.1|38>>
+    <associate|auto-72|<tuple|4|39>>
+    <associate|auto-73|<tuple|4.1|39>>
+    <associate|auto-74|<tuple|5|41>>
+    <associate|auto-75|<tuple|5.1|42>>
+    <associate|auto-76|<tuple|6|43>>
+    <associate|auto-77|<tuple|6.1|43>>
+    <associate|auto-78|<tuple|6.1.1|44>>
+    <associate|auto-79|<tuple|6.1.2|46>>
     <associate|auto-8|<tuple|2.1.2.1|10>>
-    <associate|auto-80|<tuple|6.2|43>>
-    <associate|auto-81|<tuple|6.2.1|43>>
-    <associate|auto-82|<tuple|6.2.2|44>>
-    <associate|auto-83|<tuple|6.2.2.1|44>>
-    <associate|auto-84|<tuple|6.2.2.2|45>>
-    <associate|auto-85|<tuple|6.2.2.3|45>>
-    <associate|auto-86|<tuple|6.2.3|45>>
-    <associate|auto-87|<tuple|6.3|45>>
-    <associate|auto-88|<tuple|6.3.1|45>>
-    <associate|auto-89|<tuple|6.3.2|46>>
+    <associate|auto-80|<tuple|6.1.2.1|47>>
+    <associate|auto-81|<tuple|6.1.2.2|47>>
+    <associate|auto-82|<tuple|6.2|47>>
+    <associate|auto-83|<tuple|6.2.1|48>>
+    <associate|auto-84|<tuple|6.2.2|51>>
+    <associate|auto-85|<tuple|7|51>>
+    <associate|auto-86|<tuple|7.1|51>>
+    <associate|auto-87|<tuple|7.2|51>>
+    <associate|auto-88|<tuple|7.2.1|51>>
+    <associate|auto-89|<tuple|7.2.2|52>>
     <associate|auto-9|<tuple|2.2|10>>
-    <associate|auto-90|<tuple|6.3.3|47>>
-    <associate|auto-91|<tuple|6.4|47>>
-    <associate|auto-92|<tuple|6.1|48>>
-    <associate|auto-93|<tuple|6.4.1|48>>
-    <associate|auto-94|<tuple|6.4.2|49>>
-    <associate|auto-95|<tuple|6.4.3|49>>
-    <associate|auto-96|<tuple|6.4.4|50>>
-    <associate|auto-97|<tuple|6.4.4.1|51>>
-    <associate|auto-98|<tuple|6.4.5|51>>
-    <associate|auto-99|<tuple|6.4.6|51>>
+    <associate|auto-90|<tuple|7.2.2.1|52>>
+    <associate|auto-91|<tuple|7.2.2.2|53>>
+    <associate|auto-92|<tuple|7.2.2.3|53>>
+    <associate|auto-93|<tuple|7.2.3|53>>
+    <associate|auto-94|<tuple|7.3|53>>
+    <associate|auto-95|<tuple|7.3.1|53>>
+    <associate|auto-96|<tuple|7.3.2|54>>
+    <associate|auto-97|<tuple|7.3.3|54>>
+    <associate|auto-98|<tuple|7.4|54>>
+    <associate|auto-99|<tuple|7.1|55>>
+    <associate|cite_ref-Martelli.Montanari.1976_16-1|<tuple|6.1.1|?>>
     <associate|docs-internal-guid-af5ffdcd-7114-eda6-c80e-f3a224e6380a|<tuple|3.2.1|?>>
-    <associate|fig:inheritance|<tuple|6.1|?>>
+    <associate|fig:inheritance|<tuple|7.1|54>>
     <associate|footnote-1|<tuple|1|?>>
     <associate|footnote-2.1|<tuple|2.1|20>>
     <associate|footnote-3.1|<tuple|3.1|?>>
@@ -4639,13 +5318,15 @@
     <associate|full-adder-RHS|<tuple|2.2|16>>
     <associate|full-adder-spec|<tuple|2.1|15>>
     <associate|ss:AssertMerkleRoot|<tuple|3.3.3|33>>
-    <associate|ss:BTDenotationalSemantics|<tuple|3.4.1.1|?>>
-    <associate|ss:BTMerkleRoots|<tuple|3.4.1.2|?>>
-    <associate|ss:BitcoinTransactions|<tuple|3.4.1|?>>
-    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|7.6|52>>
+    <associate|ss:BTDenotationalSemantics|<tuple|3.4.1.1|37>>
+    <associate|ss:BTMerkleRoots|<tuple|3.4.1.2|38>>
+    <associate|ss:BitcoinTransactions|<tuple|3.4.1|35>>
+    <associate|ss:DAGs|<tuple|6.1|?>>
+    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|8.6|64>>
+    <associate|ss:Deserialization|<tuple|6.2|?>>
     <associate|ss:MonadZero|<tuple|3.3.1|32>>
     <associate|ss:RepresentingValuesAsCellArrays|<tuple|2.5.1|19>>
-    <associate|ss:Serialization|<tuple|2.8|28>>
+    <associate|ss:Serialization|<tuple|6.2|47>>
     <associate|ss:pruning|<tuple|3.3.3.1|34>>
     <associate|ss:salted|<tuple|3.3.3.2|34>>
     <associate|thm:CSCT|<tuple|2.2|18>>
@@ -4658,7 +5339,7 @@
       <tuple|normal|Example state of the Bit Machine.|<pageref|auto-32>>
 
       <tuple|normal|The inheritance hierarchy of algebras for Simplicity's
-      languge extensions in Coq.|<pageref|auto-92>>
+      languge extensions in Coq.|<pageref|auto-98>>
     </associate>
     <\associate|toc>
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Introduction>
@@ -4836,319 +5517,343 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-46>
 
-      2.8<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-47>
-
-      <with|par-left|<quote|1tab>|2.8.1<space|2spc>Type Inference
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-48>>
-
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Simplicity
       Extensions> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-49><vspace|0.5fn>
+      <no-break><pageref|auto-47><vspace|0.5fn>
 
       3.1<space|2spc>Monadic Effects <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-50>
+      <no-break><pageref|auto-48>
 
       <with|par-left|<quote|1tab>|3.1.1<space|2spc>Kleisli Morphisms
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-51>>
+      <no-break><pageref|auto-49>>
 
       <with|par-left|<quote|1tab>|3.1.2<space|2spc>Cartesian Strength
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-52>>
+      <no-break><pageref|auto-50>>
 
       <with|par-left|<quote|1tab>|3.1.3<space|2spc>Monadic Semantics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-53>>
+      <no-break><pageref|auto-51>>
 
       <with|par-left|<quote|2tab>|3.1.3.1<space|2spc>Identity Monad
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-54>>
+      <no-break><pageref|auto-52>>
 
       3.2<space|2spc>Witness <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-55>
+      <no-break><pageref|auto-53>
 
       <with|par-left|<quote|1tab>|3.2.1<space|2spc>Elided Computation
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-56>>
+      <no-break><pageref|auto-54>>
 
       <with|par-left|<quote|1tab>|3.2.2<space|2spc>Witness Merkle Root
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-57>>
+      <no-break><pageref|auto-55>>
 
       <with|par-left|<quote|1tab>|3.2.3<space|2spc>Serialization with
       Witnesses <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-58>>
+      <no-break><pageref|auto-56>>
 
       <with|par-left|<quote|1tab>|3.2.4<space|2spc>Type Inference with
       Witness <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-59>>
+      <no-break><pageref|auto-57>>
 
       3.3<space|2spc>Assertions and Failure
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-60>
+      <no-break><pageref|auto-58>
 
       <with|par-left|<quote|1tab>|3.3.1<space|2spc>Monad Zero
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-61>>
+      <no-break><pageref|auto-59>>
 
       <with|par-left|<quote|1tab>|3.3.2<space|2spc>Denotational Semantics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-62>>
+      <no-break><pageref|auto-60>>
 
       <with|par-left|<quote|2tab>|3.3.2.1<space|2spc>Option Monad
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-63>>
+      <no-break><pageref|auto-61>>
 
       <with|par-left|<quote|1tab>|3.3.3<space|2spc>Merkle Roots
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-64>>
+      <no-break><pageref|auto-62>>
 
       <with|par-left|<quote|2tab>|3.3.3.1<space|2spc>Pruning Unused
       <with|font-family|<quote|ss>|case> Branches
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-65>>
+      <no-break><pageref|auto-63>>
 
       <with|par-left|<quote|2tab>|3.3.3.2<space|2spc>Salted Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-66>>
+      <no-break><pageref|auto-64>>
 
       3.4<space|2spc>Blockchain Primitives
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-67>
+      <no-break><pageref|auto-65>
 
       <with|par-left|<quote|1tab>|3.4.1<space|2spc>Bitcoin Transactions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-68>>
+      <no-break><pageref|auto-66>>
 
       <with|par-left|<quote|2tab>|3.4.1.1<space|2spc>Denotational Semantics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-69>>
+      <no-break><pageref|auto-67>>
 
       <with|par-left|<quote|2tab>|3.4.1.2<space|2spc>Merkle Roots
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-70>>
+      <no-break><pageref|auto-68>>
 
       <with|par-left|<quote|2tab>|3.4.1.3<space|2spc>Schnorr Signature
       Aggregation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-71>>
+      <no-break><pageref|auto-69>>
 
       3.5<space|2spc>Malleability <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-72>
+      <no-break><pageref|auto-70>
 
       <with|par-left|<quote|1tab>|3.5.1<space|2spc>Transaction Weight
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-73>>
+      <no-break><pageref|auto-71>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|4<space|2spc>Jets>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-74><vspace|0.5fn>
+      <no-break><pageref|auto-72><vspace|0.5fn>
 
       4.1<space|2spc>Example: The Standard Single Signature
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-75>
+      <no-break><pageref|auto-73>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|5<space|2spc>Delegation>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-76><vspace|0.5fn>
+      <no-break><pageref|auto-74><vspace|0.5fn>
 
       5.1<space|2spc>Unbounded Loops <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-75>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|6<space|2spc>Type
+      Inference and Serialization> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-76><vspace|0.5fn>
+
+      6.1<space|2spc>Explicit Simplicity DAGs
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-77>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|6<space|2spc>Coq
-      Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-78><vspace|0.5fn>
+      <with|par-left|<quote|1tab>|6.1.1<space|2spc>Type Inference
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-78>>
 
-      6.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-79>
+      <with|par-left|<quote|1tab>|6.1.2<space|2spc>Reconstructing a
+      Simplicity Expressions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-79>>
 
-      6.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-80>
+      <with|par-left|<quote|2tab>|6.1.2.1<space|2spc>syncase
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-80>>
 
-      <with|par-left|<quote|1tab>|6.2.1<space|2spc>The ``Initial''
-      Representation of Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|2tab>|6.1.2.2<space|2spc>inflate
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-81>>
 
-      <with|par-left|<quote|1tab>|6.2.2<space|2spc>The ``Final''
-      Representation of Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-82>>
+      6.2<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-82>
 
-      <with|par-left|<quote|2tab>|6.2.2.1<space|2spc>Simplicity Algebras
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|6.2.1<space|2spc>Serializtion of Bit String
+      and Positive Numbers <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-83>>
 
-      <with|par-left|<quote|2tab>|6.2.2.2<space|2spc>The ``Final''
-      Representation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-84>>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|7<space|2spc>Coq
+      Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-84><vspace|0.5fn>
 
-      <with|par-left|<quote|2tab>|6.2.2.3<space|2spc>Constructing ``Final''
-      Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-85>>
+      7.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-85>
 
-      <with|par-left|<quote|1tab>|6.2.3<space|2spc>Why two representations of
-      Terms? <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-86>>
+      7.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-86>
 
-      6.3<space|2spc>Example Simplicity Expressions
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-87>
+      <with|par-left|<quote|1tab>|7.2.1<space|2spc>The ``Initial''
+      Representation of Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-87>>
 
-      <with|par-left|<quote|1tab>|6.3.1<space|2spc>Bits
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|7.2.2<space|2spc>The ``Final''
+      Representation of Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-88>>
 
-      <with|par-left|<quote|1tab>|6.3.2<space|2spc>Arithmetic
+      <with|par-left|<quote|2tab>|7.2.2.1<space|2spc>Simplicity Algebras
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-89>>
 
-      <with|par-left|<quote|1tab>|6.3.3<space|2spc>SHA256
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|2tab>|7.2.2.2<space|2spc>The ``Final''
+      Representation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-90>>
 
-      6.4<space|2spc>The Hierarchy of Simplicity Language Extensions
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-91>
+      <with|par-left|<quote|2tab>|7.2.2.3<space|2spc>Constructing ``Final''
+      Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-91>>
 
-      <with|par-left|<quote|1tab>|6.4.1<space|2spc>Witness
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-93>>
-
-      <with|par-left|<quote|1tab>|6.4.2<space|2spc>Assertion
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-94>>
-
-      <with|par-left|<quote|1tab>|6.4.3<space|2spc>Delegation
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-95>>
-
-      <with|par-left|<quote|1tab>|6.4.4<space|2spc>Primitives
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-96>>
-
-      <with|par-left|<quote|2tab>|6.4.4.1<space|2spc>Bitcoin
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-97>>
-
-      <with|par-left|<quote|1tab>|6.4.5<space|2spc>Jets
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-98>>
-
-      <with|par-left|<quote|1tab>|6.4.6<space|2spc>Full Simplicity
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-99>>
-
-      6.5<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-100>
-
-      6.6<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-101>
-
-      <with|par-left|<quote|1tab>|6.6.1<space|2spc>Bit Machine Code
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-102>>
-
-      <with|par-left|<quote|2tab>|6.6.1.1<space|2spc>Bit Machine Programs
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-103>>
-
-      <with|par-left|<quote|1tab>|6.6.2<space|2spc>Translating Simplicity to
-      the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-104>>
-
-      <with|par-left|<quote|1tab>|6.6.3<space|2spc>Static Analysis
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-105>>
-
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|7<space|2spc>Haskell
-      Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-106><vspace|0.5fn>
-
-      7.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-107>
-
-      7.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-108>
+      <with|par-left|<quote|1tab>|7.2.3<space|2spc>Why two representations of
+      Terms? <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-92>>
 
       7.3<space|2spc>Example Simplicity Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-109>
+      <no-break><pageref|auto-93>
 
       <with|par-left|<quote|1tab>|7.3.1<space|2spc>Bits
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-94>>
+
+      <with|par-left|<quote|1tab>|7.3.2<space|2spc>Arithmetic
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-95>>
+
+      <with|par-left|<quote|1tab>|7.3.3<space|2spc>SHA256
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-96>>
+
+      7.4<space|2spc>The Hierarchy of Simplicity Language Extensions
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-97>
+
+      <with|par-left|<quote|1tab>|7.4.1<space|2spc>Witness
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-99>>
+
+      <with|par-left|<quote|1tab>|7.4.2<space|2spc>Assertion
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-100>>
+
+      <with|par-left|<quote|1tab>|7.4.3<space|2spc>Delegation
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-101>>
+
+      <with|par-left|<quote|1tab>|7.4.4<space|2spc>Primitives
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-102>>
+
+      <with|par-left|<quote|2tab>|7.4.4.1<space|2spc>Bitcoin
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-103>>
+
+      <with|par-left|<quote|1tab>|7.4.5<space|2spc>Jets
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-104>>
+
+      <with|par-left|<quote|1tab>|7.4.6<space|2spc>Full Simplicity
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-105>>
+
+      7.5<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-106>
+
+      7.6<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-107>
+
+      <with|par-left|<quote|1tab>|7.6.1<space|2spc>Bit Machine Code
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-108>>
+
+      <with|par-left|<quote|2tab>|7.6.1.1<space|2spc>Bit Machine Programs
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-109>>
+
+      <with|par-left|<quote|1tab>|7.6.2<space|2spc>Translating Simplicity to
+      the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-110>>
 
-      <with|par-left|<quote|1tab>|7.3.2<space|2spc>Multi-bit Words
+      <with|par-left|<quote|1tab>|7.6.3<space|2spc>Static Analysis
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-111>>
 
-      <with|par-left|<quote|2tab>|7.3.2.1<space|2spc>Arithmetic operations
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-112>>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>Haskell
+      Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-112><vspace|0.5fn>
 
-      <with|par-left|<quote|2tab>|7.3.2.2<space|2spc>Bit-wise operations
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-113>>
+      8.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-113>
 
-      <with|par-left|<quote|1tab>|7.3.3<space|2spc>Generic
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-114>>
+      8.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-114>
 
-      <with|par-left|<quote|1tab>|7.3.4<space|2spc>SHA-256
+      8.3<space|2spc>Example Simplicity Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-115>>
+      <no-break><pageref|auto-115>
 
-      7.4<space|2spc>Blockchain Primitives
+      <with|par-left|<quote|1tab>|8.3.1<space|2spc>Bits
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-116>
+      <no-break><pageref|auto-116>>
 
-      <with|par-left|<quote|1tab>|7.4.1<space|2spc>Bitcoin Primitives
+      <with|par-left|<quote|1tab>|8.3.2<space|2spc>Multi-bit Words
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-117>>
 
-      7.5<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-118>
-
-      7.6<space|2spc>Denotational Semantics of Full Simplicity
+      <with|par-left|<quote|2tab>|8.3.2.1<space|2spc>Arithmetic operations
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-119>
+      <no-break><pageref|auto-118>>
 
-      7.7<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-120>
+      <with|par-left|<quote|2tab>|8.3.2.2<space|2spc>Bit-wise operations
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-119>>
 
-      <with|par-left|<quote|1tab>|7.7.1<space|2spc>Translating Simplicity to
-      the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|8.3.3<space|2spc>Generic
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-120>>
+
+      <with|par-left|<quote|1tab>|8.3.4<space|2spc>SHA-256
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-121>>
 
-      <with|par-left|<quote|1tab>|7.7.2<space|2spc>Static Analysis
+      8.4<space|2spc>Blockchain Primitives
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-122>>
+      <no-break><pageref|auto-122>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>C
-      Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-123><vspace|0.5fn>
+      <with|par-left|<quote|1tab>|8.4.1<space|2spc>Bitcoin Primitives
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-123>>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
-      A<space|2spc>Preliminaries> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-124><vspace|0.5fn>
+      8.5<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-124>
 
-      A.1<space|2spc>Algebraic Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      8.6<space|2spc>Denotational Semantics of Full Simplicity
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-125>
 
-      <with|par-left|<quote|1tab>|A.1.1<space|2spc>Records
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-126>>
+      8.7<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-126>
 
-      A.2<space|2spc>Functors <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-127>
+      <with|par-left|<quote|1tab>|8.7.1<space|2spc>Translating Simplicity to
+      the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-127>>
 
-      <with|par-left|<quote|1tab>|A.2.1<space|2spc>Option Functor
+      <with|par-left|<quote|1tab>|8.7.2<space|2spc>Static Analysis
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-128>>
 
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|9<space|2spc>C
+      Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-129><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
+      A<space|2spc>Preliminaries> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-130><vspace|0.5fn>
+
+      A.1<space|2spc>Algebraic Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-131>
+
+      <with|par-left|<quote|1tab>|A.1.1<space|2spc>Records
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-132>>
+
+      A.2<space|2spc>Functors <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-133>
+
+      <with|par-left|<quote|1tab>|A.2.1<space|2spc>Option Functor
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-134>>
+
       <with|par-left|<quote|1tab>|A.2.2<space|2spc>List Functors
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-129>>
+      <no-break><pageref|auto-135>>
     </associate>
   </collection>
 </auxiliary>

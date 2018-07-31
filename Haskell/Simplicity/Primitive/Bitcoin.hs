@@ -97,24 +97,24 @@ getPrimBit next =
 getPrimByte :: Data.Word.Word8 -> Get (Maybe (SomeArrow Prim))
 getPrimByte = return . decode
  where
-  decode 0x25 = Just $ SomeArrow Version
-  decode 0x26 = Just $ SomeArrow LockTime
-  decode 0x27 = Just $ SomeArrow InputsHash
-  decode 0x28 = Just $ SomeArrow OutputsHash
-  decode 0x29 = Just $ SomeArrow NumInputs
-  decode 0x2a = Just $ SomeArrow TotalInputValue
-  decode 0x2b = Just $ SomeArrow CurrentPrevOutpoint
-  decode 0x2c = Just $ SomeArrow CurrentValue
-  decode 0x2d = Just $ SomeArrow CurrentSequence
-  decode 0x2e = Just $ SomeArrow CurrentIndex
-  decode 0x2f = Just $ SomeArrow InputPrevOutpoint
-  decode 0x30 = Just $ SomeArrow InputValue
-  decode 0x31 = Just $ SomeArrow InputSequence
-  decode 0x32 = Just $ SomeArrow NumOutputs
-  decode 0x33 = Just $ SomeArrow TotalOutputValue
-  decode 0x34 = Just $ SomeArrow OutputValue
-  decode 0x35 = Just $ SomeArrow OutputScriptHash
-  decode 0x36 = Just $ SomeArrow ScriptCMR
+  decode 0x24 = Just $ SomeArrow Version
+  decode 0x25 = Just $ SomeArrow LockTime
+  decode 0x26 = Just $ SomeArrow InputsHash
+  decode 0x27 = Just $ SomeArrow OutputsHash
+  decode 0x28 = Just $ SomeArrow NumInputs
+  decode 0x29 = Just $ SomeArrow TotalInputValue
+  decode 0x2a = Just $ SomeArrow CurrentPrevOutpoint
+  decode 0x2b = Just $ SomeArrow CurrentValue
+  decode 0x2c = Just $ SomeArrow CurrentSequence
+  decode 0x2d = Just $ SomeArrow CurrentIndex
+  decode 0x2e = Just $ SomeArrow InputPrevOutpoint
+  decode 0x2f = Just $ SomeArrow InputValue
+  decode 0x30 = Just $ SomeArrow InputSequence
+  decode 0x31 = Just $ SomeArrow NumOutputs
+  decode 0x32 = Just $ SomeArrow TotalOutputValue
+  decode 0x33 = Just $ SomeArrow OutputValue
+  decode 0x34 = Just $ SomeArrow OutputScriptHash
+  decode 0x35 = Just $ SomeArrow ScriptCMR
   decode _ = Nothing
 
 putPrimBit :: Prim a b -> DList Bool
@@ -141,24 +141,24 @@ putPrimByte :: Putter (Prim a b)
 putPrimByte = putWord8 . encode
  where
   encode :: Prim a b -> Data.Word.Word8
-  encode Version             = 0x25
-  encode LockTime            = 0x26
-  encode InputsHash          = 0x27
-  encode OutputsHash         = 0x28
-  encode NumInputs           = 0x29
-  encode TotalInputValue     = 0x2a
-  encode CurrentPrevOutpoint = 0x2b
-  encode CurrentValue        = 0x2c
-  encode CurrentSequence     = 0x2d
-  encode CurrentIndex        = 0x2e
-  encode InputPrevOutpoint   = 0x2f
-  encode InputValue          = 0x30
-  encode InputSequence       = 0x31
-  encode NumOutputs          = 0x32
-  encode TotalOutputValue    = 0x33
-  encode OutputValue         = 0x34
-  encode OutputScriptHash    = 0x35
-  encode ScriptCMR           = 0x36
+  encode Version             = 0x24
+  encode LockTime            = 0x25
+  encode InputsHash          = 0x26
+  encode OutputsHash         = 0x27
+  encode NumInputs           = 0x28
+  encode TotalInputValue     = 0x29
+  encode CurrentPrevOutpoint = 0x2a
+  encode CurrentValue        = 0x2b
+  encode CurrentSequence     = 0x2c
+  encode CurrentIndex        = 0x2d
+  encode InputPrevOutpoint   = 0x2e
+  encode InputValue          = 0x2f
+  encode InputSequence       = 0x30
+  encode NumOutputs          = 0x31
+  encode TotalOutputValue    = 0x32
+  encode OutputValue         = 0x33
+  encode OutputScriptHash    = 0x34
+  encode ScriptCMR           = 0x35
 
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32
