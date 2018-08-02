@@ -3963,7 +3963,7 @@
     <item>A function <verbatim|tag : forall A B, t A B -\<gtr\> hash256> that
     defines the Merkle roots for the primitives.
 
-    <item>A type \ <verbatim|env : Set> that captures the relevent read-only
+    <item>A type <verbatim|env : Set> that captures the relevent read-only
     context used to intepret the primitives.
 
     <item>A function <verbatim|sem : forall A B, t A B -\<gtr\> A -\<gtr\>
@@ -4721,6 +4721,210 @@
   various inputs. In this file you can see an example of how
   <verbatim|executeUsing (instrumentMachine . translate) program> is used.
 
+  <section|Type Inference>
+
+  The file <verbatim|Simplicity/Inference.hs> defines a concrete term data
+  type for Simplicity expressions in open recursive style via the
+  <verbatim|TermF ty> functor. \ The <verbatim|ty> parameter allows for these
+  terms to be decorated with type annotations, though nothing in the data
+  type itself enforces the annotations to be well-typed. When type
+  annotations are unused this <verbatim|ty> parameter is set to
+  <verbatim|()>, as is the case for the <verbatim|UntypedTermF> functor
+  synonym.
+
+  While the <verbatim|Data.Functor.Fixedpoint.Fix> of this <verbatim|TermF
+  ty> functor would yield a type for untyped, full Simplicity terms, instead
+  we usually use a list or vector of <verbatim|TermF ty Integer> values to
+  build a DAG structure, where the <verbatim|Integer> values are references
+  to other subexpressions withing the list or vector. \ This provides a
+  structure with explicit sharing of subexpressions. \ This structure is
+  captured by the <verbatim|SimplicityDag> type synonym.
+
+  The <verbatim|WitnessData> type is a specialized data structure to allowing
+  the witness values to be pruned during encoding and decoding. \ The
+  <verbatim|getWitnessData> function restores the witness data as a value of
+  a Simplicity type; however a the caller must know a suitable Simplicity
+  type to interpret the witness data correctly.
+
+  The two principle functions of this module are the <verbatim|typeInference>
+  and <verbatim|typeCheck> functions. The <verbatim|typeInference> function
+  discards the type annotations of the input Simplicity DAG and peforms
+  first-order unification to infer new, principle type annotations, with any
+  remaining type variables instantiated at the <verbatim|()> type. \ The
+  <verbatim|typeCheck> function performs the same unification, but also adds
+  unification constraints for the input and output types of the expression as
+  provided by the caller of the function. \ The type annoations are type
+  checked and if everything is successful a proper well-typed Simplicity
+  expression is returned.
+
+  <section|Serialization>
+
+  There are two main methods of serialization found in this Simplicity
+  library. \ The first methods is via the <verbatim|Get> and <verbatim|PutM>
+  monads from the <verbatim|cereal> package. These are used for
+  serializations to and from <verbatim|ByteStrings>. The second method is
+  serialization via a difference list of <verbatim|Bool>s and deserialization
+  via a free monad representation of a binary branching tree.
+
+  A difference list, represented within the type <verbatim|[Bool] -\<gtr\>
+  [Bool]> should be familiar to most Haskell programmers. The same technique
+  is used in the <verbatim|shows> function using the <verbatim|ShowS> type
+  synomym and is used to avoid quadradic time complexity in some cases of
+  nested appending of lists. \ A <verbatim|DList> type synonym is defined in
+  <verbatim|Simplicity/Serializaiton.hs>.
+
+  <subsection|Free Monadic Deserializaiton>
+
+  Our free monad representation of binary trees is perhaps less familiar. \ A
+  binary branching tree with leaves holding values of type <verbatim|a> can
+  be represented by the free monad over the functor
+  <math|X\<mapsto\>X<rsup|2>>, which in Haskell could be written as
+  <verbatim|Free ((-\<gtr\>) Bool) a> where <verbatim|Free> is from the
+  <verbatim|Control.Monad.Free> in the <verbatim|free> package.
+
+  \;
+
+  <verbatim|type BinaryTree a = <verbatim|Free ((-\<gtr\>) Bool) a>>
+
+  \;
+
+  \ In the free monad representation the <verbatim|Pure> constructor creates
+  a leaf holding an <verbatim|a> value while the <verbatim|Free> constructor
+  builds a branch represented as a function <verbatim|Bool -\<gtr\>
+  BinaryTree a>, which is equivalent to a pair of binary trees.
+
+  Given a binary tree (represented as a free monad) we can ``execute'' this
+  monad to produce a value <verbatim|a> by providing an executable
+  interpretation of each branch. \ Our interpretation of a branch is to read
+  a bit from a stream of bits and recursively execute either the left branch
+  or the right branch depending on whether we encounter a 0 bit or a 1 bit.
+  \ This process repeats until we encounter a leaf, after which we halt,
+  returning the value of type <verbatim|a> held by that leaf. This
+  interpretation captures precisely what it means to use a prefix code to
+  parse a stream of bits. Given a stream of bits we follow branches in a
+  binary tree, left or right, in accordance to the bits that we encounter
+  within the stream until we encounter a leaf, in which case parsing is
+  complete and we have our result, plus a possible remainder of unparsed
+  bits.
+
+  Where does the stream of bits come from? \ Well, if we were to interpret
+  this in the state monad, the state hold hold a stream of bits. \ If we were
+  to interpret this the <verbatim|IO> monad, we could grab a stream bits from
+  <verbatim|stdin> or from a file handle. \ In general, we can interpret our
+  free monad in any monad that offers a callback to generate bits for us to
+  consume.
+
+  \;
+
+  <\verbatim>
+    runBinaryTree : Monad m =\<gtr\> m Bool -\<gtr\> BinaryTree a -\<gtr\> m
+    a
+
+    runBinaryTree next = foldFree (\<less\>$\<gtr\> next)
+  </verbatim>
+
+  \;
+
+  This ability to intepret a free monad within any other monad is essentially
+  what it means to be a free monad in the first place.
+
+  This free monad approach to parsing can be extended. \ For example, suppose
+  when parsing we encounter a prefix that isn't a code for any value. \ We
+  can extend our functor to given a variant to return failure in this case.
+  \ Thus we build a free monad over the functor
+  <math|X\<mapsto\>1+X<rsup|2>>. \ In Haskell we could use the type
+  <verbatim|Free (Sum (Const ()) ((-\<gtr\>) Bool))> for this monad or
+  equivalently
+
+  \;
+
+  <\verbatim>
+    type BitDecoder a = Free (Sum (Const ()) ((-\<gtr\>) Bool)) a
+
+    \;
+
+    runBitDecoder : Monad m =\<gtr\> m Void -\<gtr\> m Bool -\<gtr\>
+    BitDecoder a -\<gtr\> m a
+
+    runBitDecoder abort next = foldFree eta
+
+    \ where
+
+    \ \ eta (Inl (Const ())) = vacuous abort
+
+    \ \ eta (Inr f) = f \<less\>$\<gtr\> next
+  </verbatim>
+
+  \;
+
+  Our free monad interpreter now requires two callbacks. The <verbatim|next>
+  callback is as before; it generates bits to be parsed. \ The
+  <verbatim|abort> callback handles a failure case when the a sequence of
+  bits do not correspond to any coded value. \ This callback can throw an
+  exception or call <verbatim|fail>, or do whatever is appropriate in case of
+  failure.
+
+  This implementation of free monads suffers from a similar quadratic
+  complexity issue that lists have. \ In some cases, nested calls to the free
+  monad's bind opertaion can have quadratic time complexity. \ To mitigate
+  this we choose a to use a different representation of free monads.
+
+  It is the case that the above interpreters completely characterize their
+  corresponding free monads. \ Instead of using the <verbatim|BinaryTree a>
+  type we can directly use the type <verbatim|forall m. Monad m =\<gtr\> m
+  Bool -\<gtr\> m a>. \ Similarly we can directly use the type
+  <verbatim|forall m. Monad m =\<gtr\> m Void -\<gtr\> m Bool -\<gtr\> m a>
+  in place of the <verbatim|BitParser a> type <with|color|red|TODO: consider
+  replacing <verbatim|m Void> with a <verbatim|MonadFail> constraint
+  instead>. \ This is known as the Van Laarhoven free monad representation
+  <inactive|<cite|<with|color|red|TODO>>> and it is what we use in this
+  library.
+
+  For example, <verbatim|getBitString> and <verbatim|getPositive> from the
+  <verbatim|Simplicity.Serialization> module are decoders a list of bits and
+  positive numbers respectively that use this Van Laarhoven representation of
+  binary trees. \ Similarly <verbatim|get256Bits> from
+  <verbatim|Simplicity.Digest> is a decoder for a 256-bit hash value.
+
+  In <verbatim|Simplicity/Serializaiton.hs> there are several adaptor
+  functions for executing these Van Laarhoven free monads within particular
+  monads.
+
+  <\itemize-dot>
+    <item><verbatim|evalStream> evaluates a Van Laarhoven binary tree using a
+    list of bits and returns <verbatim|Nothing> if all the bits are consumed
+    before decoding is successful.
+
+    <item><verbatim|evalExactVector> evaluates a Van Laarhoven binary tree
+    using a vector of bits and will return <verbatim|Nothing> unless the
+    vector is exactly entirely consumed. \ 
+
+    <item><verbatim|evalStreamWithError> evaluates a Van Laarhoven bit
+    decoder using a list of bits and returns an <verbatim|Error> if the
+    decoder aborts or the list runs out of bits.
+
+    <item><verbatim|getEvalBitStream> evaluates a Van Laarhoven bit decoder
+    within cereal's <verbatim|Get> monad while internally tracking partially
+    consumed bytes.
+  </itemize-dot>
+
+  <subsection|Serialization of Simplicity DAGs>
+
+  The file <verbatim|Simplicity/Dag.hs> provides a <verbatim|sortDag> that
+  coverts Simplicity expressions into a topologicaly sorted DAG structure
+  with explicit sharing that is suitable for encoding. This conversion finds
+  and shares identical well-typed subexpressions. It also runs type inference
+  to determine the principle type annotations needed to optimal sharing.
+  \ The type inference is also used to prune away any unused witness data.
+
+  The file <verbatim|Simplicity/Serialization/BitString.hs> provides
+  <verbatim|getDag> and <verbatim|putDag> functions that decode and encode a
+  Simplicity DAG structures, generated by <verbatim|Simplicity.Dag.getDag>,
+  as described in Section<nbsp><reference|ss:Serialization>. The file
+  <verbatim|Simplicity/Serialization/ByteString.hs> provides the same
+  functions for the encoding described in
+  Appendix<nbsp><reference|app:AltSerialization>.
+
   <chapter|C Library Guide>
 
   <appendix|Preliminaries>
@@ -4861,6 +5065,10 @@
   <\equation*>
     \<Delta\><rsub|A><around*|(|a|)>\<assign\><around*|\<langle\>|a,a|\<rangle\>>
   </equation*>
+
+  While the types <math|A<rsup|2>> and <math|A<rsup|<2>>> are isomorphic,
+  they are not identical. \ The former is a product type, while the latter is
+  a function type.
 
   <subsection|Records>
 
@@ -5059,7 +5267,8 @@
     <tformat|<table|<row|<cell|\<forall\>a\<in\>l\<point\>P<around*|(|a|)>>|<cell|\<assign\>>|<cell|fold<rsup|\<wedge\>><around*|(|P<rsup|+><around*|(|l|)>|)>>>|<row|<cell|\<exists\>a\<in\>l\<point\>P<around*|(|a|)>>|<cell|\<assign\>>|<cell|fold<rsup|\<vee\>><around*|(|P<rsup|+><around*|(|l|)>|)>>>>>
   </eqnarray*>
 
-  <appendix|Alternative Serialization of Simplicity DAGs>
+  <appendix|Alternative Serialization of Simplicity
+  DAGs><label|app:AltSerialization>
 
   This appendix presents an alternative, byte-oriented prefix code for
   Simplicity DAGs. \ This code is not as compact as the bit-oriented code
@@ -5199,6 +5408,7 @@
     <associate|LC98|<tuple|6.2.2|?>>
     <associate|SS:Coq:MerkleRoots|<tuple|7.5|57>>
     <associate|Serialization|<tuple|2.8|?>>
+    <associate|app:AltSerialization|<tuple|B|?>>
     <associate|auto-1|<tuple|1|7>>
     <associate|auto-10|<tuple|2.2.1|10>>
     <associate|auto-100|<tuple|7.4.1|55>>
@@ -5234,16 +5444,19 @@
     <associate|auto-128|<tuple|8.7.1|65>>
     <associate|auto-129|<tuple|8.7.2|65>>
     <associate|auto-13|<tuple|2.2.4|10>>
-    <associate|auto-130|<tuple|9|67>>
-    <associate|auto-131|<tuple|A|69>>
-    <associate|auto-132|<tuple|A.1|69>>
-    <associate|auto-133|<tuple|A.1.1|70>>
-    <associate|auto-134|<tuple|A.2|71>>
-    <associate|auto-135|<tuple|A.2.1|71>>
-    <associate|auto-136|<tuple|A.2.2|71>>
-    <associate|auto-137|<tuple|B|73>>
-    <associate|auto-138|<tuple|B.1|?>>
+    <associate|auto-130|<tuple|8.8|67>>
+    <associate|auto-131|<tuple|8.9|69>>
+    <associate|auto-132|<tuple|8.9.1|69>>
+    <associate|auto-133|<tuple|8.9.2|70>>
+    <associate|auto-134|<tuple|9|71>>
+    <associate|auto-135|<tuple|A|71>>
+    <associate|auto-136|<tuple|A.1|71>>
+    <associate|auto-137|<tuple|A.1.1|73>>
+    <associate|auto-138|<tuple|A.2|?>>
+    <associate|auto-139|<tuple|A.2.1|?>>
     <associate|auto-14|<tuple|2.2.5|11>>
+    <associate|auto-140|<tuple|A.2.2|?>>
+    <associate|auto-141|<tuple|B|?>>
     <associate|auto-15|<tuple|2.2.6|11>>
     <associate|auto-16|<tuple|2.2.7|11>>
     <associate|auto-17|<tuple|2.2.8|11>>

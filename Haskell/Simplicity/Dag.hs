@@ -1,8 +1,8 @@
 {-# LANGUAGE ScopedTypeVariables #-}
--- | This module provides the 'getDag' function for converting a Simplicity expression into an topologically sorted, DAG representation.
+-- | This module provides the 'sortDag' function for converting a Simplicity expression into an topologically sorted, DAG representation.
 module Simplicity.Dag
   ( Dag
-  , getDag
+  , sortDag
   -- * Type annoated, open recursive Simplicity terms.
   , TermF(..), SimplicityDag
   ) where
@@ -39,7 +39,7 @@ tellNode h iterm = StateT go
     sz = toInteger (Map.size map)
     f i = sz - i -- transform indexes to offsets
 
--- | A 'Simplicity' instance used with 'getDag'.
+-- | A 'Simplicity' instance used with 'sortDag'.
 -- This instance merges identical typed Simplicity sub-expressions to create a DAG (directed acyclic graph) structure that represents the expression.
 data Dag a b = Dag { dagRoot :: WitnessRoot a b
                    , dagMap :: Map.Map Hash256 (TermF () Hash256)
@@ -64,8 +64,8 @@ linearizeDag dag = execLinearM . go . witnessRoot . dagRoot $ dag
 --
 -- This function invokes type inference to ensure that the type annotations are principle types (with type variables instantiated at unit types).
 -- Therefore the 'WitnessRoot' of the result may not match the 'WitnessRoot' of the input.
-getDag :: forall a b. (TyC a, TyC b) => Dag a b -> SimplicityDag [] Ty
-getDag t = toList pass2
+sortDag :: forall a b. (TyC a, TyC b) => Dag a b -> SimplicityDag [] Ty
+sortDag t = toList pass2
  where
   pass1 :: Dag a b
   -- The patterns should never fail as we are running type inference on terms that are already known to be well typed.

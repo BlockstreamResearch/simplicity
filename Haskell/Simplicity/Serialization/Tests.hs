@@ -10,7 +10,7 @@ import Data.Serialize (Get, Putter, runGetState, runPut)
 import qualified Data.Vector as V
 import qualified Data.Vector.Unboxed as UV
 
-import Simplicity.Dag as Dag
+import Simplicity.Dag
 import Simplicity.Digest
 import Simplicity.Inference
 import Simplicity.MerkleRoot
@@ -138,9 +138,9 @@ testInference name program = testGroup name [testProperty "CommitmentRoot" asser
  where
   -- type inference on first pass is not necessarily equal to the orginal program because the Haskell type of internal nodes in the original program might not have the term's principle type.
   pass1 :: forall term. Simplicity term => Either String (term a b)
-  pass1 = typeCheck . Dag.getDag $ program
+  pass1 = typeCheck . sortDag $ program
   -- Type inference on the second pass ought to always be equal to the first pass.
   pass2 :: forall term. Simplicity term => Either String (term a b)
-  pass2 = typeCheck . Dag.getDag =<< pass1
+  pass2 = typeCheck . sortDag =<< pass1
   assertion1 = pass1 == Right (program :: CommitmentRoot a b)
   assertion2 = pass2 == (pass1 :: Either String (WitnessRoot a b))
