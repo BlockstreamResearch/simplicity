@@ -1,4 +1,4 @@
-{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc822", coqVersion ? "coq", secp256k1git}: rec
+{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc822", coqVersion ? "coq", secp256k1git ? null}: rec
 {
   haskell = nixpkgs.haskell.packages.${compiler}.callPackage ./Simplicity.Haskell.nix { };
   coq = nixpkgs.callPackage ./Simplicity.Coq.nix {
