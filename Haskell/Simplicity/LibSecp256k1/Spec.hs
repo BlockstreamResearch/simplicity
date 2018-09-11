@@ -6,7 +6,7 @@ module Simplicity.LibSecp256k1.Spec
  , Scalar(..), _scalar, scalarZero
  , normalizeWeak, normalize
  , feIsZero, neg, mulInt, add, mul, sqr, inv, sqrt, (.+.), (.*.)
- , double, addPoint, offsetPoint, offsetPointZinv
+ , double, offsetPoint, offsetPointZinv
  , eqXCoord, hasQuadY
  , scalarNegate
  , wnaf, ecMult
@@ -145,8 +145,8 @@ mulInt m = fe *~ m
 add :: FE -> FE -> FE
 add = zipWithOf (over _fe) (+)
 
-carry :: (Int -> Word64) -> FE
-carry p =
+sum19 :: (Int -> Word64) -> FE
+sum19 p =
   FE r0 r1 r2 (r!!3) (r!!4) (r!!5) (r!!6) (r!!7) (r!!8) r9
  where
   (d,(t9:u)) = mapAccumL (f 26) 0 [p i | i <- [9..18]]
@@ -167,12 +167,12 @@ carry p =
   k1 = 0x400
 
 mul :: FE -> FE -> FE
-mul a b = carry p
+mul a b = sum19 p
  where
   p i = sum [wideMul (a ! j) (b ! (i - j)) | j <- [0..9]]
 
 sqr :: FE -> FE
-sqr a = carry p
+sqr a = sum19 p
  where
   f x y = wideMul (2*x) y
   p i = sum [f (a ! j) (a ! (i - j)) | j <- [0..top]] + remainder
@@ -185,7 +185,7 @@ wideMul :: Word32 -> Word32 -> Word64
 wideMul a b = (fromIntegral a) * (fromIntegral b)
 
 tower :: FE -> (FE,FE,FE)
-tower a = (x2, x22, x223)
+tower a = (x2, x22, foldr ($) t1 (replicate 5 sqr))
  where
   x2 = sqr a .*. a
   x3 = sqr x2 .*. a
@@ -198,13 +198,13 @@ tower a = (x2, x22, x223)
   x176 = foldr ($) x88 (replicate 88 sqr) .*. x88
   x220 = foldr ($) x176 (replicate 44 sqr) .*. x44
   x223 = foldr ($) x220 (replicate 3 sqr) .*. x3
+  t1 = foldr ($) x223 (replicate 23 sqr) .*. x22
 
 inv :: FE -> FE
 inv a = t4
  where
-  (x2, x22, x223) = tower a
-  t1 = foldr ($) x223 (replicate 23 sqr) .*. x22
-  t2 = foldr ($) t1 (replicate 5 sqr) .*. a
+  (x2, x22, t1') = tower a
+  t2 = t1' .*. a
   t3 = foldr ($) t2 (replicate 3 sqr) .*. x2
   t4 = foldr ($) t3 (replicate 2 sqr) .*. a
 
@@ -212,9 +212,8 @@ sqrt :: FE -> Maybe FE
 sqrt a | feIsZero (neg 1 t4 .+. a) = Just t3
        | otherwise = Nothing
  where
-  (x2, x22, x223) = tower a
-  t1 = foldr ($) x223 (replicate 23 sqr) .*. x22
-  t2 = foldr ($) t1 (replicate 6 sqr) .*. x2
+  (x2, x22, t1') = tower a
+  t2 = sqr t1' .*. x2
   t3 = sqr (sqr t2)
   t4 = sqr t3
 
@@ -244,11 +243,10 @@ _z f (GEJ x y z) = (\z -> GEJ x y z) <$> f z
 isInf :: GEJ -> Bool
 isInf a = feIsZero (a^._z)
 
-double :: GEJ -> (FE, GEJ)
-double a | isInf a = (feOne, mempty)
-         | otherwise = (rz, GEJ x y z)
+double :: GEJ -> GEJ
+double a | isInf a = mempty
+         | otherwise = GEJ x y z
  where
-  rz = mulInt 2 (normalizeWeak (a^._y))
   z = mulInt 2 (a^._z .*. a^._y)
   t1 = mulInt 3 (sqr (a^._x))
   t2 = sqr t1
@@ -258,11 +256,13 @@ double a | isInf a = (feOne, mempty)
   x = neg 4 (mulInt 4 t3') .+. t2
   y = t1 .*. (mulInt 6 t3' .+. neg 1 t2) .+. neg 2 t4
 
-addPoint a b | isInf a = (feZero, b)
-             | isInf b = (feOne, a)
-             | isZeroH && isZeroI = double a
-             | isZeroH = (feZero, mempty)
-             | otherwise = (zr, GEJ x y z)
+instance Monoid GEJ where
+  mempty = GEJ feOne feOne feZero
+  mappend a b | isInf a = b
+              | isInf b = a
+              | isZeroH && isZeroI = double a
+              | isZeroH = mempty
+              | otherwise = GEJ x y z
    where
     z22 = sqr (b^._z)
     z12 = sqr (a^._z)
@@ -282,9 +282,6 @@ addPoint a b | isInf a = (feZero, b)
     t = u1 .*. h2
     x = neg 3 (mulInt 2 t .+. h3) .+. i2
     y = ((neg 5 x .+. t) .*. i) .+. (neg 1 (h3 .*. s1))
-instance Monoid GEJ where
-  mempty = GEJ feOne feOne feZero
-  mappend a b = snd $ addPoint a b
 
 eqXCoord :: FE -> GEJ -> Bool
 eqXCoord x a = feIsZero $ neg 1 (sqr (a^._z) .*. x) .+. normalizeWeak (a^._x)
@@ -293,18 +290,16 @@ hasQuadY :: GEJ -> Bool
 hasQuadY a@(GEJ _ y z) | isInf a = False
                        | otherwise = isQuad (y .*. z)
 
-data GE = GE !FE !FE
-        | Infinity
+data GE = GE !FE !FE -- Infinity not included.
         deriving Show
 
 offsetPoint :: GEJ -> GE -> (FE, GEJ)
-a `offsetPoint` Infinity | isInf a = (feZero, mempty)
-                         | otherwise = (feOne, a)
 a `offsetPoint` (GE bx by) | isInf a = (feZero, GEJ bx by feOne)
-                           | isZeroH && isZeroI = double a
+                           | isZeroH && isZeroI = (doublerz, double a)
                            | isZeroH = (feZero, mempty)
                            | otherwise = (h, GEJ x y z)
  where
+  doublerz = mulInt 2 s1
   z12 = sqr (a^._z)
   u1 = normalizeWeak $ a^._x
   u2 = bx .*. z12
@@ -323,9 +318,8 @@ a `offsetPoint` (GE bx by) | isInf a = (feZero, GEJ bx by feOne)
   y = ((neg 5 x .+. t) .*. i) .+. (neg 1 (h3 .*. s1))
 
 offsetPointZinv :: GEJ -> GE -> FE -> GEJ
-offsetPointZinv a Infinity bzinv = a
 offsetPointZinv a (GE bx by) bzinv | isInf a = GEJ (bx .*. bzinv2) (by .*. bzinv3) feOne
-                                   | isZeroH && isZeroI = snd $ double a
+                                   | isZeroH && isZeroI = double a
                                    | isZeroH = mempty
                                    | otherwise = GEJ x y z
  where
@@ -350,7 +344,6 @@ offsetPointZinv a (GE bx by) bzinv | isInf a = GEJ (bx .*. bzinv2) (by .*. bzinv
   bzinv3 = bzinv2 .*. bzinv
 
 pointNegate :: GE -> GE
-pointNegate Infinity = Infinity
 pointNegate (GE x y) = GE x (neg 1 . normalizeWeak $ y)
 
 data Scalar = Scalar !Word64
@@ -405,44 +398,47 @@ ecMult a na ng = foldr f mempty (zipEx wnafa (wnaf wg ng)) & _z %~ (.*. globalZ)
   wnafa = wnaf wa na
   (tableA, globalZ) | null wnafa = (V.empty, feOne)
                     | otherwise = scalarTable wa a
-  f (0,0) r0 = snd (double r0)
-  f (x,0) r0 | x > 0 = snd $ f (0,0) r0 `offsetPoint` (tableA V.! (x `div` 2))
-             | otherwise = snd $ f (0,0) r0 `offsetPoint` pointNegate (tableA V.! ((-x) `div` 2))
-  f (x,y) r0 | y > 0 = offsetPointZinv (f (x,0) r0) (lookupG (y `div` 2)) globalZ
-             | otherwise = offsetPointZinv (f (x,0) r0) (pointNegate (lookupG ((-y) `div` 2))) globalZ
+  f (Nothing, Nothing) r0 = double r0
+  f (Just x, Nothing) r0 | x >= 0 = snd $ f (Nothing, Nothing) r0 `offsetPoint` (tableA V.! x)
+                         | otherwise = snd $ f (Nothing, Nothing) r0 `offsetPoint` pointNegate (tableA V.! complement x)
+  f (x, Just y) r0 | y >= 0 = offsetPointZinv (f (x, Nothing) r0) (lookupG y) globalZ
+                   | otherwise = offsetPointZinv (f (x, Nothing) r0) (pointNegate (lookupG (complement y))) globalZ
   zipEx [] [] = []
-  zipEx [] bs = map (\b -> (0,b)) bs
-  zipEx as [] = map (\a -> (a,0)) as
+  zipEx [] bs = map (\b -> (Nothing,b)) bs
+  zipEx as [] = map (\a -> (a,Nothing)) as
   zipEx (a:as) (b:bs) = (a,b) : zipEx as bs
   lookupG n = norm $ scalarMult (Scalar (fromIntegral (2*n+1)) 0 0 0) g
-  norm p | isInf p = Infinity
-         | otherwise = GE (normalize (p^._x .*. zinv2)) (normalize (p^._y .*. zinv3))
+  norm p = GE (normalize (p^._x .*. zinv2)) (normalize (p^._y .*. zinv3))
    where
     zinv = inv (p^._z)
     zinv2 = sqr zinv
     zinv3 = zinv2 .*. zinv
 
-wnaf :: Int -> Scalar -> [Int]
-wnaf w s | last (s^..scalar._bits) = negate <$> wnaf w (scalarNegate s)
-         | otherwise = go False [] (s^..scalar._bits)
+wnaf :: Int -> Scalar -> [Maybe Int]
+wnaf w s = post $ go False [] (s'^..scalar._bits)
  where
-  go :: Bool -> [Int] -> [Bool] -> [Int]
+  hibit = last (s^..scalar._bits)
+  s' | hibit = scalarNegate s
+     | otherwise = s
+  post | hibit = fmap (fmap complement)
+       | otherwise = id
+  go :: Bool -> [Maybe Int] -> [Bool] -> [Maybe Int]
   go _ _ [] = []
-  go carry acc (bit:bits) | bit == carry = go carry (0:acc) bits
-  go carry acc bits = acc ++ word' : go carry' (replicate (w-1) 0) post
+  go carry acc (bit:bits) | bit == carry = go carry (Nothing:acc) bits
+  go carry acc bits = acc ++ (Just word') : go carry' (replicate (w-1) Nothing) post
    where
     (pre,post) = splitAt w bits
-    word = foldr (\x y -> y*2 + if x then 1 else 0) 0 pre + if carry then 1 else 0
-    carry' = testBit word (w-1)
-    word' = word - if carry' then 2^w else 0
+    word = foldr (\x y -> y*2 + if x then 1 else 0) 0 (tail pre)
+    carry' = testBit word (w-2)
+    word' = word - if carry' then 2^(w-1) else 0
 
 -- a must not be infinity
 scalarTable :: Int -> GEJ -> (V.Vector GE, FE)
 scalarTable w a = (V.fromList r, globalZ)
  where
-  d = snd $ double a
+  d = double a
   len = 2^(w-2)
-  l = take len $ iterate (\(_, b) -> offsetPoint b (GE (d^._x) (d^._y))) (error "scalarTable: Impossible to access", a')
+  l = take len $ iterate (\p -> offsetPoint (snd p) (GE (d^._x) (d^._y))) (error "scalarTable: Impossible to access", a')
    where
     z0 = d^._z
     z2 = sqr z0
@@ -466,5 +462,4 @@ tableG = t & traverse %~ norm
   zinv = inv z
   zinv2 = sqr zinv
   zinv3 = zinv2 .*. zinv
-  norm Infinity = Infinity
   norm (GE x y) = GE (normalize (x .*. zinv2)) (normalize (y .*. zinv3))

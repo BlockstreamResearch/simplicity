@@ -20,6 +20,8 @@ tests = testGroup "C / SPEC"
         , hunit_feIsZero_true "Spec" Spec.feIsZero
         , testProperty "normalizeWeak" prop_normalizeWeak
         , testProperty "normalize" prop_normalize
+        , testProperty "normalize_over_low" prop_normalize_over_low
+        , testProperty "normalize_over_high" prop_normalize_over_high
         , testProperty "feIsZero" prop_feIsZero
         , testProperty "neg" prop_neg
         , testProperty "mulInt" prop_mulInt
@@ -38,18 +40,14 @@ tests = testGroup "C / SPEC"
         , testProperty "addPoint_inf" prop_addPoint_inf
         , testProperty "addPoint_inf_l" prop_addPoint_inf_l
         , testProperty "addPoint_inf_r" prop_addPoint_inf_r
-        , testProperty "offsetPoint" prop_offsetPoint
+        , testProperty "offsetPoint_all" prop_offsetPoint_all
         , testProperty "offsetPoint_double" prop_offsetPoint_double
         , testProperty "offsetPoint_opp" prop_offsetPoint_opp
         , testProperty "offsetPoint_inf" prop_offsetPoint_inf
-        , testProperty "offsetPoint_inf_l" prop_offsetPoint_inf_l
-        , testProperty "offsetPoint_inf_r" prop_offsetPoint_inf_r
-        , testProperty "offsetPointZinv" prop_offsetPointZinv
+        , testProperty "offsetPointZinv_all" prop_offsetPointZinv_all
         , testProperty "offsetPointZinv_double" prop_offsetPointZinv_double
         , testProperty "offsetPointZinv_opp" prop_offsetPointZinv_opp
         , testProperty "offsetPointZinv_inf" prop_offsetPointZinv_inf
-        , testProperty "offsetPointZinv_inf_l" prop_offsetPointZinv_inf_l
-        , testProperty "offsetPointZinv_inf_r" prop_offsetPointZinv_inf_r
         , testProperty "eqXCoord" prop_eqXCoord
         , testProperty "eqXCoord_true" prop_eqXCoord_true
         , testProperty "hasQuadY" prop_hasQuadY
@@ -60,7 +58,10 @@ tests = testGroup "C / SPEC"
         ]
       , testGroup "ecMult"
         [ testProperty "wnaf 5" (prop_wnaf 5)
+        , testProperty "wnaf_hi 5" (prop_wnaf_hi 5)
         , testProperty "wnaf 16" (prop_wnaf 16)
+        , testProperty "wnaf_hi 16" (prop_wnaf_hi 16)
+        , testProperty "ecMult0" prop_ecMult0
         , testProperty "ecMult" prop_ecMult
       ] ]
 
@@ -96,6 +97,13 @@ hunit_feIsZero_true name isZero = testGroup ("feIsZero_true: " ++ name)
 
 prop_normalizeWeak a = C.normalizeWeak a `eq_fe` Spec.normalizeWeak a
 prop_normalize a = C.normalize a `eq_fe` Spec.normalize a
+prop_normalize_over_low x y = prop_normalize a
+ where
+  a = FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x03FFFFF
+prop_normalize_over_high x y = prop_normalize a
+ where
+  a = FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x07FFFFF
+
 prop_feIsZero a = C.feIsZero a == Spec.feIsZero a -- feIsZero will essentially always be false on random inputs.
 prop_neg a = forAll (choose (0, 32)) (\m -> C.neg (fromIntegral m) a `eq_fe` Spec.neg m a)
 prop_mulInt a = forAll (choose (0, 32)) (\m -> C.mulInt (fromIntegral m) a `eq_fe` Spec.mulInt m a)
@@ -107,64 +115,62 @@ prop_sqrt a = C.sqrt a^..(traverse.fe) == Spec.sqrt a^..(traverse.fe)
 
 gen_inf = GEJ <$> arbitrary <*> arbitrary <*> pure feZero
 
-prop_double_inf = forAll gen_inf $ \a -> C.double a `eq_fe_gej` Spec.double a
-prop_double a = C.double a `eq_fe_gej` Spec.double a
-prop_addPoint a b = C.addPoint a b `eq_fe_gej` Spec.addPoint a b
-prop_addPoint_double z a = C.addPoint a b `eq_fe_gej` Spec.addPoint a b
+prop_double_inf = forAll gen_inf prop_double
+prop_double a = C.double a `eq_gej` Spec.double a
+prop_addPoint a b = C.addPoint a b `eq_gej` mappend a b
+prop_addPoint_double z a = prop_addPoint a b
  where
   z2 = C.sqr z
   z3 = z .*. z2
   b = GEJ (a^._x .*. z2) (a^._y .*. z3) (a^._z .*. z)
-prop_addPoint_opp z a = C.addPoint a b `eq_fe_gej` Spec.addPoint a b
+prop_addPoint_opp z a = prop_addPoint a b
  where
   z2 = C.sqr z
   z3 = z .*. z2
   b = GEJ (a^._x .*. z2) (C.neg 1 (a^._y .*. z3)) (a^._z .*. z)
-prop_addPoint_inf = forAll gen_inf $ \a -> forAll gen_inf $ \b -> C.addPoint a b `eq_fe_gej` Spec.addPoint a b
-prop_addPoint_inf_l b = forAll gen_inf $ \a -> C.addPoint a b `eq_fe_gej` Spec.addPoint a b
-prop_addPoint_inf_r a = forAll gen_inf $ \b -> C.addPoint a b `eq_fe_gej` Spec.addPoint a b
-prop_offsetPoint a bx by = C.offsetPoint a b `eq_fe_gej` Spec.offsetPoint a b
+prop_addPoint_inf = forAll gen_inf $ \a -> forAll gen_inf $ \b -> prop_addPoint a b
+prop_addPoint_inf_l b = forAll gen_inf $ \a -> prop_addPoint a b
+prop_addPoint_inf_r a = forAll gen_inf $ \b -> prop_addPoint a b
+prop_offsetPoint a b = C.offsetPoint a b `eq_fe_gej` Spec.offsetPoint a b
+prop_offsetPoint_all a bx by = prop_offsetPoint a b
  where
   b = GE bx by
-prop_offsetPoint_double z bx by = C.offsetPoint a b `eq_fe_gej` Spec.offsetPoint a b
+prop_offsetPoint_double z bx by = prop_offsetPoint a b
  where
   z2 = C.sqr z
   z3 = z .*. z2
   a = GEJ (bx .*. z2) (by .*. z3) z
   b = GE bx by
-prop_offsetPoint_opp z bx by = C.offsetPoint a b `eq_fe_gej` Spec.offsetPoint a b
+prop_offsetPoint_opp z bx by = prop_offsetPoint a b
  where
   z2 = C.sqr z
   z3 = z .*. z2
   a = GEJ (bx .*. z2) (C.neg 1 (by .*. z3)) z
   b = GE bx by
-prop_offsetPoint_inf = forAll gen_inf $ \a -> C.offsetPoint a Infinity `eq_fe_gej` Spec.offsetPoint a Infinity
-prop_offsetPoint_inf_l bx by = forAll gen_inf $ \a -> C.offsetPoint a b `eq_fe_gej` Spec.offsetPoint a b
+prop_offsetPoint_inf bx by = forAll gen_inf $ \a -> prop_offsetPoint a b
  where
   b = GE bx by
-prop_offsetPoint_inf_r a = C.offsetPoint a Infinity `eq_fe_gej` Spec.offsetPoint a Infinity
-prop_offsetPointZinv a b = C.offsetPointZinv a (GE bx by) bz `eq_gej` Spec.offsetPointZinv a (GE bx by) bz
+prop_offsetPointZinv a b bz = C.offsetPointZinv a b bz `eq_gej` Spec.offsetPointZinv a b bz
+prop_offsetPointZinv_all a b = prop_offsetPointZinv a (GE bx by) bz
  where
   GEJ bx by bz = b
-prop_offsetPointZinv_double z b = C.offsetPointZinv a (GE bx by) bz `eq_gej` Spec.offsetPointZinv a (GE bx by) bz
+prop_offsetPointZinv_double z b = prop_offsetPointZinv a (GE bx by) bz
  where
   z2 = C.sqr z
   z3 = z .*. z2
   a = GEJ (bx .*. z2) (by .*. z3) (C.inv bz .*. z)
   GEJ bx by bz = b
-prop_offsetPointZinv_opp z b = C.offsetPointZinv a (GE bx by) bz `eq_gej` Spec.offsetPointZinv a (GE bx by) bz
+prop_offsetPointZinv_opp z b = prop_offsetPointZinv a (GE bx by) bz
  where
   z2 = C.sqr z
   z3 = z .*. z2
   a = GEJ (bx .*. z2) (C.neg 1 (by .*. z3)) (C.inv bz .*. z)
   GEJ bx by bz = b
-prop_offsetPointZinv_inf bzinv = forAll gen_inf $ \a -> C.offsetPointZinv a Infinity bzinv `eq_gej` Spec.offsetPointZinv a Infinity bzinv
-prop_offsetPointZinv_inf_l b = forAll gen_inf $ \a -> C.offsetPointZinv a (GE bx by) bz `eq_gej` Spec.offsetPointZinv a (GE bx by) bz
+prop_offsetPointZinv_inf b = forAll gen_inf $ \a -> prop_offsetPointZinv a (GE bx by) bz
  where
   GEJ bx by bz = b
-prop_offsetPointZinv_inf_r a bz = C.offsetPointZinv a Infinity bz `eq_gej` Spec.offsetPointZinv a Infinity bz
 prop_eqXCoord x a = C.eqXCoord x a == Spec.eqXCoord x a -- eqXCoord will essentially always be false on random inputs.
-prop_eqXCoord_true x y z = C.eqXCoord x (GEJ (x .*. z2) y z) == Spec.eqXCoord x (GEJ (x .*. z2) y z)
+prop_eqXCoord_true x y z = prop_eqXCoord x (GEJ (x .*. z2) y z)
  where
   z2 = C.sqr z
 prop_hasQuadY a = C.hasQuadY a == Spec.hasQuadY a
@@ -172,5 +178,15 @@ prop_hasQuadY a = C.hasQuadY a == Spec.hasQuadY a
 hunit_scalarNegate_zero = testCase "scalarNegate_zero" (assertEqual "" (C.scalarNegate scalarZero) (Spec.scalarNegate scalarZero))
 prop_scalarNegate a = C.scalarNegate a == Spec.scalarNegate a
 
-prop_wnaf n a = C.wnaf n a == Spec.wnaf n a
+prop_wnaf n a = C.wnaf n a == map f (Spec.wnaf n a)
+ where
+  f Nothing = 0
+  f (Just x) = 2*x+1
+prop_wnaf_hi n a0 a1 = prop_wnaf n a
+ where
+  a = Spec.Scalar a0 a1 0xFFFFFFFFFFFFFFFF 0xFFFFFFFFFFFFFFFF
+
 prop_ecMult x y z = C.ecMult x y z `eq_gej` Spec.ecMult x y z
+prop_ecMult0 x z = prop_ecMult x y z
+ where
+  y = scalarZero

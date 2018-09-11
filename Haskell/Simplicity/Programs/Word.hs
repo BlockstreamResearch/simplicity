@@ -4,8 +4,11 @@ module Simplicity.Programs.Word
   ( module Simplicity.Ty.Word
   -- * Arithmetic
   , zero
-  , adder, fullAdder, multiplier, fullMultiplier
+  , adder, fullAdder
+  , subtractor, fullSubtractor
+  , multiplier, fullMultiplier
   -- * Bit-wise operations
+  , bitwiseNot
   , shift, rotate
   , bitwise, bitwiseTri
   ) where
@@ -35,7 +38,7 @@ zero (DoubleW w) = rec &&& rec
 -- 'fromWord' 'BitW' c * 2 ^ 'wordSize' w + 'fromWord' w z = 'fromWord' w x + 'fromWord' w y
 --  where
 --   (c, z) = 'adder' w (x, y)
--- @  
+-- @
 adder :: Core term => Word a -> term (a, a) (Bit, a)
 adder BitW = cond (iden &&& not iden) (false &&& iden)
 adder (DoubleW w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
@@ -45,13 +48,29 @@ adder (DoubleW w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
   rec = adder w
   fa = fullAdder w
 
+-- | Simplicity expression for computing the difference of two words, also returning the borrow bit.
+--
+-- @
+-- 'fromWord' w z = 'fromWord' 'BitW' b * 2 ^ 'wordSize' + 'fromWord' w x - 'fromWord' w y
+--  where
+--   (b, z) = 'subtractor' w (x, y)
+-- @
+subtractor :: Core term => Word a -> term (a, a) (Bit, a)
+subtractor BitW = cond (false &&& not iden) (iden &&& iden)
+subtractor (DoubleW w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
+                     >>> iih &&& (oh &&& ioh >>> fs)
+                     >>> ioh &&& (iih &&& oh)
+ where
+  rec = subtractor w
+  fs = fullSubtractor w
+
 -- | Simplicity expression for computing the sum of two words and a carry input bit, including the carry output bit.
 --
 -- @
 -- 'fromWord' 'BitW' cout * 2 ^ 'wordSize' w + 'fromWord' w z = 'fromWord' w x + 'fromWord' w y + 'fromWord' 'BitW' cin
 --  where
 --   (cout, z) = 'fullAdder' w ((x, y), cin)
--- @  
+-- @
 fullAdder :: Core term => Word a -> term ((a, a), Bit) (Bit, a)
 fullAdder BitW = take add &&& ih
              >>> ooh &&& (oih &&& ih >>> add)
@@ -64,11 +83,30 @@ fullAdder (DoubleW w) = take (ooh &&& ioh) &&& (take (oih &&& iih) &&& ih >>> re
  where
   rec = fullAdder w
 
+-- | Simplicity expression for computing the difference of two words and a borrow input bit, also returning the borrow output bit.
+--
+-- @
+-- 'fromWord' w z = 'fromWord' 'BitW' bout * 2 ^ 'wordSize' + 'fromWord' w x - 'fromWord' w y - 'fromWord' 'BitW' bin
+--  where
+--   (bout, z) = 'fullSubtractor' w ((x, y), bin)
+-- @
+fullSubtractor :: Core term => Word a -> term ((a, a), Bit) (Bit, a)
+fullSubtractor BitW = take sub &&& ih
+                  >>> ooh &&& (oih &&& ih >>> sub)
+                  >>> cond true oh &&& iih
+ where
+  sub = subtractor BitW
+fullSubtractor (DoubleW w) = take (ooh &&& ioh) &&& (take (oih &&& iih) &&& ih >>> rec)
+                         >>> iih &&& (oh &&& ioh >>> rec)
+                         >>> ioh &&& (iih &&& oh)
+ where
+  rec = fullSubtractor w
+
 -- | 'fullMultiplier' is a Simplicity expression that helps compute products of larger word sizes from smaller word sizes.
 --
 -- @
 -- 'fromWord' ('DoubleW' w) ('fullMultiplier' w ((a, b), (c, d))) = 'fromWord' w a * 'fromWord' w b  + 'fromWord' w c + 'fromWord' w d
--- @  
+-- @
 fullMultiplier :: Core term => Word a -> term ((a, a), (a, a)) (a, a)
 fullMultiplier BitW = ih &&& take (cond iden false)
                   >>> fullAdder BitW
@@ -85,7 +123,7 @@ fullMultiplier (DoubleW w) = take (ooh &&& (ioh &&& oih))
 --
 -- @
 -- 'fromWord' ('DoubleW' w) ('multiplier' w (x, y)) = 'fromWord' w x * 'fromWord' w y
--- @  
+-- @
 multiplier :: Core term => Word a -> term (a, a) (a, a)
 multiplier BitW = false &&& cond iden false
 multiplier (DoubleW w) = (ooh &&& (ioh &&& oih))
@@ -96,6 +134,13 @@ multiplier (DoubleW w) = (ooh &&& (ioh &&& oih))
  where
   rec = multiplier w
   fm = fullMultiplier w
+
+-- | A Simplicity combinator for computing the bitwise complement of a binary word.
+bitwiseNot :: forall term a. Core term => Word a -> term a a
+bitwiseNot BitW = not iden
+bitwiseNot (DoubleW w) = (oh >>> rec) &&& (ih >>> rec)
+   where
+    rec = bitwiseNot w
 
 -- | A Simplicity combinator for lifting a binary bit operation to a binary word operation that applies the bit operation bit-wise to each bit of the word.
 bitwise :: forall term a. Core term => term (Bit, Bit) Bit -> Word a -> term (a, a) a
@@ -150,7 +195,7 @@ compareWordSize (DoubleW n) (DoubleW m) =
     Left (Right bw) -> Left (Right (doubleBigger bw))
 
 -- | Simplicity expression for a bit shift by a constant amount.
--- 
+--
 -- @'shift' w n x@ is a right shift of @n@ bits of the word @x@.
 -- The value @n@ can be negative in which case a left shift is performed.
 
@@ -173,7 +218,7 @@ shift w = subseq w w
   subseq0 (Left (Left (MuchBigger bw))) = zero (biggerWord bw) &&& subseq0 (Left (Left bw))
 
 -- | Simplicity expression for a bit rotation by a constant amount.
--- 
+--
 -- @'rotate' w n x@ is a right rotation of @n@ bits of the word @x@.
 -- The value @n@ can be negative in which case a left rotation is performed.
 rotate :: (Core term, TyC a) => Word a -> Int -> term a a

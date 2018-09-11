@@ -14,7 +14,7 @@ import Foreign.ForeignPtr (ForeignPtr, addForeignPtrFinalizer, mallocForeignPtr,
 import Foreign.Marshal.Alloc (alloca)
 import Foreign.Marshal.Array (allocaArray, peekArray)
 import Foreign.Marshal.Utils (with)
-import Foreign.Ptr (FunPtr, Ptr, alignPtr, castPtr, plusPtr, nullFunPtr)
+import Foreign.Ptr (FunPtr, Ptr, alignPtr, castPtr, plusPtr, nullFunPtr, nullPtr)
 import Foreign.C.Types (CInt(..))
 import Foreign.Storable (Storable(..))
 import System.IO.Unsafe (unsafeDupablePerformIO, unsafePerformIO)
@@ -79,16 +79,9 @@ instance Storable GE where
     CInt flag <- peek (alignPtr (ptr' `plusPtr` (2 * sizeOf (undefined :: FE))) (alignment (undefined :: CInt)))
     if flag == 0
      then GE <$> peekElemOff ptr' 0 <*> peekElemOff ptr' 1
-     else return Infinity
+     else error "peek GE.Infinity"
    where
     ptr' = castPtr ptr
-  poke ptr Infinity = do
-    pokeElemOff ptr' 0 feOne
-    pokeElemOff ptr' 1 feOne
-    poke (alignPtr (ptr `plusPtr` (2 * sizeOf (undefined :: FE))) (alignment flag)) flag
-   where
-    ptr' = castPtr ptr
-    flag = CInt 1
   poke ptr (GE x y) = do
     pokeElemOff ptr' 0 x
     pokeElemOff ptr' 1 y
@@ -218,22 +211,20 @@ sqrt a = unsafeDupablePerformIO $ do
    CInt flag <- c_secp256k1_fe_sqrt rptr aptr
    if flag == 0 then return Nothing else Just <$> peek rptr
 
-double :: GEJ -> (FE, GEJ)
+double :: GEJ -> GEJ
 double a = unsafeDupablePerformIO $ do
   with a $ \aptr -> do
   with mempty $ \rptr -> do
-  alloca $ \zrptr -> do
-    c_secp256k1_gej_double_var rptr aptr zrptr
-    (,) <$> peek zrptr <*> peek rptr
+    c_secp256k1_gej_double_var rptr aptr nullPtr
+    peek rptr
 
-addPoint :: GEJ -> GEJ -> (FE, GEJ)
+addPoint :: GEJ -> GEJ -> GEJ
 addPoint a b = unsafeDupablePerformIO $ do
   with a $ \aptr -> do
   with b $ \bptr -> do
   with mempty $ \rptr -> do
-  with feZero $ \zrptr -> do
-    c_secp256k1_gej_add_var rptr aptr bptr zrptr
-    (,) <$> peek zrptr <*> peek rptr
+    c_secp256k1_gej_add_var rptr aptr bptr nullPtr
+    peek rptr
 
 offsetPoint :: GEJ -> GE -> (FE, GEJ)
 offsetPoint a b = unsafeDupablePerformIO $ do
