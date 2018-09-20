@@ -4,7 +4,7 @@ module Simplicity.LibSecp256k1.Spec
  , GEJ(..), _gej, gej, _x, _y, _z
  , GE(..)
  , Scalar(..), _scalar, scalarZero
- , normalizeWeak, normalize
+ , normalizeWeak, normalize, fePack
  , feIsZero, neg, mulInt, add, mul, sqr, inv, sqrt, (.+.), (.*.)
  , double, offsetPoint, offsetPointZinv
  , eqXCoord, hasQuadY
@@ -15,6 +15,7 @@ module Simplicity.LibSecp256k1.Spec
 import Prelude hiding (sqrt)
 import Control.Monad.Trans.State (state, evalState)
 import Data.Bits (FiniteBits, (.&.), (.|.), complement, finiteBitSize, setBit, testBit, zeroBits)
+import Data.ByteString.Short (ShortByteString, pack)
 import Data.Functor.Identity (Identity(..))
 import Data.Functor.Constant (Constant(..))
 import Data.Functor.Product (Product(..))
@@ -53,6 +54,10 @@ bits f a = r
   r = assemble <$> sequenceA [f (p i) | i<-[0..finiteBitSize x-1]]
 -- ^^^ Proto-lens-family stuff ^^^ --
 
+horner :: Integral a => [a] -> Integer -> Integer
+horner [] _ = 0
+horner (c0:cs) x = toInteger c0 + x * horner cs x
+
 data FE = FE !Word32
              !Word32
              !Word32
@@ -66,7 +71,7 @@ data FE = FE !Word32
   deriving Show
 
 repr :: FE -> Integer
-repr a = sum [2^(26*i) * toInteger (a ! i) | i <- [0..9]] `mod` 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F
+repr a = horner (a^..fe) (2^26) `mod` 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F
 
 unrepr :: Integer -> FE
 unrepr n = FE a0 a1 a2 a3 a4 a5 a6 a7 a8 a9
@@ -128,6 +133,21 @@ normalize a | more = FE r0 r1 r2 r3 r4 r5 r6 r7 r8 (r9 `mod` (2^22))
       || (a'!9 == 0x03FFFFF && all (\i -> a'!i == 0x3FFFFFF) [2..8]
           && a'!1 + 0x40 + ((a'!0 + 0x3D1) `div` (2^26)) > 0x3FFFFFF)
   (FE r0 r1 r2 r3 r4 r5 r6 r7 r8 r9) = reduce 1 a'
+
+fePack :: FE -> ShortByteString
+fePack (FE a0 a1 a2 a3 a4 a5 a6 a7 a8 a9) = pack [fromInteger (n `div` (2^(8*i))) |i <- [31,30..0]]
+ where
+  n = horner [ a0 .&. 0x3FFFFFF
+             , a1 .&. 0x3FFFFFF
+             , a2 .&. 0x3FFFFFF
+             , a3 .&. 0x3FFFFFF
+             , a4 .&. 0x3FFFFFF
+             , a5 .&. 0x3FFFFFF
+             , a6 .&. 0x3FFFFFF
+             , a7 .&. 0x3FFFFFF
+             , a8 .&. 0x3FFFFFF
+             , a9 .&. 0x03FFFFF
+             ] (2^26)
 
 feIsZero :: FE -> Bool
 feIsZero a = na^..fe `elem` [feZero^..fe, bigZero^..fe]

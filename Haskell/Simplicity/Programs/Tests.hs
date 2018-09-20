@@ -4,6 +4,7 @@ module Simplicity.Programs.Tests (tests) where
 import Data.Bits ((.|.))
 import qualified Data.Bits as W
 import Data.ByteString (pack)
+import Data.ByteString.Short (toShort)
 import qualified Data.List as L
 import qualified Data.Word as W
 import Lens.Family2 ((^..), allOf)
@@ -143,12 +144,18 @@ prop_normalizeWeak a = fromFE (normalizeWeak a) `eq_fe` LibSecp.normalizeWeak (f
 
 prop_normalize :: FE -> Bool
 prop_normalize a = fromFE (normalize a) `eq_fe` LibSecp.normalize (fromFE a)
-prop_normalize_over_low x y = prop_normalize a
+over_low x y = toFE $ LibSecp.FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x03FFFFF
+over_high x y = toFE $ LibSecp.FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x07FFFFF
+prop_normalize_over_low x y = prop_normalize (over_low x y)
+prop_normalize_over_high x y = prop_normalize (over_high x y)
+
+prop_fePack :: FE -> Bool
+prop_fePack a = toBS (fePack a) == LibSecp.fePack (fromFE a)
  where
-  a = toFE $ LibSecp.FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x03FFFFF
-prop_normalize_over_high x y = prop_normalize a
- where
-  a = toFE $ LibSecp.FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x07FFFFF
+  toBS x = toShort . pack . map conv $ x^..(both.both.both.both.both)
+  conv = fromInteger . fromWord8
+prop_fePack_over_low x y = prop_fePack (over_low x y)
+prop_fePack_over_high x y = prop_fePack (over_high x y)
 
 prop_add :: FE -> FE -> Bool
 prop_add a b = fromFE (add (a, b)) `eq_fe` LibSecp.add (fromFE a) (fromFE b)
@@ -243,7 +250,6 @@ fromScalar :: Ty.Word256 -> LibSecp.Scalar
 fromScalar ((n3,n2),(n1,n0)) = LibSecp.Scalar (conv n0) (conv n1) (conv n2) (conv n3)
  where
   conv = fromInteger . fromWord64
-
 
 prop_wnaf5 :: Ty.Word256 -> Bool
 prop_wnaf5 n = L.and $ zipWith (==) lhs (fmap (fmap unsign) (LibSecp.wnaf 5 (fromScalar n) ++ repeat Nothing))

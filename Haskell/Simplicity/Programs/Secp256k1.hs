@@ -102,6 +102,19 @@ normalize = normalizeWeak >>> more &&& iden
   modAt9 =       oh &&& drop (oh &&& drop (oh &&& drop (oh &&& drop (oh
        &&& drop (oh &&& drop (oh &&& drop (oh &&& drop (oh &&& drop mod22))))))))
 
+fePack :: forall term. Core term => term FE Word256
+fePack = drop (drop (drop (drop (drop (drop (drop (drop w7 &&& w6))) &&& (drop (drop w5) &&& w4)))))
+     &&& (drop (drop (drop w3 &&& w2)) &&& (drop w1 &&& w0))
+ where
+  w0 = ((drop (take (drop (drop (oih &&& ioh)))) &&& (drop (take (drop iiih)) &&& take (take oiih))) &&& ooih) &&& oih
+  w1 = (drop (take (drop (oih &&& ioh))) &&& (drop (take iiih) &&& take (take (oiih &&& iooh)))) &&& take ((take (drop (oih &&& ioh)) &&& (take iiih &&& drop oooh) ) &&& drop (take (oih &&& ioh) &&& (oiih &&& iooh)))
+  w2 = drop (take (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh)))) &&& (((drop (take (drop iiih)) &&& take (take oiih)) &&& take oioh) &&& take (oiih &&& iooh))
+  w3 = drop (take (oih &&& ioh)) &&& (drop (take iih) &&& take (take ((oiih &&& iooh) &&& drop (oih &&& ioh))))
+  w4 = drop ((drop (take iiih) &&& take (take (oiih &&& iooh))) &&& take (take (drop (oih &&& ioh)) &&& (take iiih &&& drop oooh))) &&& (drop (take (drop (take (oih &&& ioh) &&& (oiih &&& iooh)))) &&& (drop (take (drop (drop (oih &&& ioh)))) &&& (drop (take (drop iiih)) &&& take (take oiih))))
+  w5 = (drop (take (drop ((oiih &&& iooh) &&& drop (oih &&& ioh)))) &&& ((drop (take (drop iiih)) &&& take (take oiih)) &&& take oioh)) &&& take ((oiih &&& iooh) &&& drop (oih &&& ioh))
+  w6 = drop (take ih) &&& take (take ((oiih &&& iooh) &&& drop (oih &&& ioh)) &&& ((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))))
+  w7 = drop ((take (drop (oih &&& ioh)) &&& (take iiih &&& drop oooh)) &&& drop (take (oih &&& ioh) &&& (oiih &&& iooh))) &&& ((drop (drop (drop (oih &&& ioh))) &&& (drop (drop iiih) &&& take (take oiih))) &&& take oih)
+
 feZero :: forall term a. (Core term, TyC a) => term a FE
 feZero = z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z
  where

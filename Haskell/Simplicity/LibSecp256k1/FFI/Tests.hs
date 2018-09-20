@@ -22,6 +22,9 @@ tests = testGroup "C / SPEC"
         , testProperty "normalize" prop_normalize
         , testProperty "normalize_over_low" prop_normalize_over_low
         , testProperty "normalize_over_high" prop_normalize_over_high
+        , testProperty "fePack" prop_fePack
+        , testProperty "fePack_over_low" prop_fePack_over_low
+        , testProperty "fePack_over_high" prop_fePack_over_high
         , testProperty "feIsZero" prop_feIsZero
         , testProperty "neg" prop_neg
         , testProperty "mulInt" prop_mulInt
@@ -97,13 +100,13 @@ hunit_feIsZero_true name isZero = testGroup ("feIsZero_true: " ++ name)
 
 prop_normalizeWeak a = C.normalizeWeak a `eq_fe` Spec.normalizeWeak a
 prop_normalize a = C.normalize a `eq_fe` Spec.normalize a
-prop_normalize_over_low x y = prop_normalize a
- where
-  a = FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x03FFFFF
-prop_normalize_over_high x y = prop_normalize a
- where
-  a = FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x07FFFFF
-
+over_low x y = FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x03FFFFF
+over_high x y = FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x07FFFFF
+prop_normalize_over_low x y = prop_normalize (over_low x y)
+prop_normalize_over_high x y = prop_normalize (over_high x y)
+prop_fePack a = C.fePack a == Spec.fePack a
+prop_fePack_over_low x y = prop_fePack (over_low x y)
+prop_fePack_over_high x y = prop_fePack (over_high x y)
 prop_feIsZero a = C.feIsZero a == Spec.feIsZero a -- feIsZero will essentially always be false on random inputs.
 prop_neg a = forAll (choose (0, 32)) (\m -> C.neg (fromIntegral m) a `eq_fe` Spec.neg m a)
 prop_mulInt a = forAll (choose (0, 32)) (\m -> C.mulInt (fromIntegral m) a `eq_fe` Spec.mulInt m a)

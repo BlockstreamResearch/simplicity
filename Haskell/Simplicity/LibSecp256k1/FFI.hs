@@ -1,5 +1,5 @@
 module Simplicity.LibSecp256k1.FFI
- ( normalizeWeak, normalize
+ ( normalizeWeak, normalize, fePack
  , feIsZero, neg, mulInt, add, mul, sqr, inv, sqrt
  , double, addPoint, offsetPoint, offsetPointZinv
  , eqXCoord, hasQuadY
@@ -9,13 +9,15 @@ module Simplicity.LibSecp256k1.FFI
 
 import Prelude hiding (sqrt)
 
+import Data.ByteString (packCStringLen)
+import Data.ByteString.Short (ShortByteString, toShort)
 import Data.Word (Word32)
 import Foreign.ForeignPtr (ForeignPtr, addForeignPtrFinalizer, mallocForeignPtr, withForeignPtr)
 import Foreign.Marshal.Alloc (alloca)
 import Foreign.Marshal.Array (allocaArray, peekArray)
 import Foreign.Marshal.Utils (with)
 import Foreign.Ptr (FunPtr, Ptr, alignPtr, castPtr, plusPtr, nullFunPtr, nullPtr)
-import Foreign.C.Types (CInt(..))
+import Foreign.C.Types (CInt(..), CChar)
 import Foreign.Storable (Storable(..))
 import System.IO.Unsafe (unsafeDupablePerformIO, unsafePerformIO)
 
@@ -127,6 +129,7 @@ data Callback
 
 foreign import ccall unsafe "secp256k1_fe_normalize_weak" c_secp256k1_fe_normalize_weak :: Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_fe_normalize_var" c_secp256k1_fe_normalize_var :: Ptr FE -> IO ()
+foreign import ccall unsafe "secp256k1_fe_get_b32" c_secp256k1_fe_get_b32 :: Ptr CChar -> Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_fe_normalizes_to_zero_var" c_secp256k1_fe_normalizes_to_zero_var :: Ptr FE -> IO CInt
 foreign import ccall unsafe "secp256k1_fe_negate" c_secp256k1_fe_negate :: Ptr FE -> Ptr FE -> CInt -> IO ()
 foreign import ccall unsafe "secp256k1_fe_mul_int" c_secp256k1_fe_mul_int :: Ptr FE -> CInt -> IO ()
@@ -159,6 +162,13 @@ normalize a = unsafeDupablePerformIO $ do
  with a $ \aptr -> do
    c_secp256k1_fe_normalize_var aptr
    peek aptr
+
+fePack :: FE -> ShortByteString
+fePack a = unsafeDupablePerformIO $ do
+ with a $ \aptr -> do
+ allocaArray 32 $ \rptr -> do
+  c_secp256k1_fe_get_b32 rptr aptr
+  toShort <$> packCStringLen (rptr, 32)
 
 feIsZero :: FE -> Bool
 feIsZero a = unsafeDupablePerformIO $ do
