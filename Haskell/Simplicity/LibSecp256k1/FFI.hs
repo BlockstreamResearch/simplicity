@@ -21,9 +21,10 @@ import Foreign.C.Types (CInt(..), CChar)
 import Foreign.Storable (Storable(..))
 import System.IO.Unsafe (unsafeDupablePerformIO, unsafePerformIO)
 
-import Simplicity.LibSecp256k1.Spec ( FE(..), feZero, feOne
+import Simplicity.LibSecp256k1.Spec ( W256(..)
+                                    , FE(..), feZero, feOne
                                     , GEJ(..), GE(..)
-                                    , Scalar(..), scalarZero
+                                    , Scalar, scalarZero
                                     )
 
 instance Storable FE where
@@ -92,7 +93,7 @@ instance Storable GE where
     ptr' = castPtr ptr
     flag = CInt 0
 
-instance Storable Scalar where
+instance Storable W256 where
   sizeOf x = 8*sizeOf (undefined :: Word32)
   alignment _ = alignment (undefined :: Word32)
   peek ptr = mkScalar <$> (peekElemOff ptr' 0)
@@ -106,12 +107,12 @@ instance Storable Scalar where
    where
     ptr' = castPtr ptr
     mkScalar :: Word32 -> Word32 -> Word32 -> Word32 -> Word32 -> Word32 -> Word32 -> Word32 -> Scalar
-    mkScalar a0lo a0hi a1lo a1hi a2lo a2hi a3lo a3hi = Scalar (fromIntegral a0lo + 2^32*fromIntegral a0hi)
-                                                              (fromIntegral a1lo + 2^32*fromIntegral a1hi)
-                                                              (fromIntegral a2lo + 2^32*fromIntegral a2hi)
-                                                              (fromIntegral a3lo + 2^32*fromIntegral a3hi)
+    mkScalar a0lo a0hi a1lo a1hi a2lo a2hi a3lo a3hi = W256 (fromIntegral a0lo + 2^32*fromIntegral a0hi)
+                                                            (fromIntegral a1lo + 2^32*fromIntegral a1hi)
+                                                            (fromIntegral a2lo + 2^32*fromIntegral a2hi)
+                                                            (fromIntegral a3lo + 2^32*fromIntegral a3hi)
 
-  poke ptr (Scalar a0 a1 a2 a3) = do
+  poke ptr (W256 a0 a1 a2 a3) = do
     pokeElemOff ptr' 0 (fromIntegral a0)
     pokeElemOff ptr' 1 (fromIntegral (a0 `div` 2^32))
     pokeElemOff ptr' 2 (fromIntegral a1)

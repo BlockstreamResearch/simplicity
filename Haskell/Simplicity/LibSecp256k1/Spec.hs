@@ -1,20 +1,23 @@
 module Simplicity.LibSecp256k1.Spec
  ( review, under, zipWithOf, _bits, bits -- TODO proto-lens-family stuff needs to be in its own module
+ , W256(..), fromW256, toW256
  , FE(..), _fe, fe, feZero, bigZero, feOne
  , GEJ(..), _gej, gej, _x, _y, _z
  , GE(..)
- , Scalar(..), _scalar, scalarZero
+ , Scalar, _scalar, scalarZero
  , normalizeWeak, normalize, fePack
  , feIsZero, neg, mulInt, add, mul, sqr, inv, sqrt, (.+.), (.*.)
  , double, offsetPoint, offsetPointZinv
  , eqXCoord, hasQuadY
  , scalarNegate
  , wnaf, ecMult
+ , PubKey(..), Sig(..), schnorr
  ) where
 
 import Prelude hiding (sqrt)
+import Control.Monad (guard)
 import Control.Monad.Trans.State (state, evalState)
-import Data.Bits (FiniteBits, (.&.), (.|.), complement, finiteBitSize, setBit, testBit, zeroBits)
+import Data.Bits (FiniteBits, (.&.), (.|.), complement, finiteBitSize, setBit, shiftL, shiftR, testBit, zeroBits)
 import Data.ByteString.Short (ShortByteString, pack)
 import Data.Functor.Identity (Identity(..))
 import Data.Functor.Constant (Constant(..))
@@ -22,10 +25,14 @@ import Data.Functor.Product (Product(..))
 import Data.List (foldl', mapAccumL, mapAccumR, unfoldr)
 import Data.Maybe (isJust)
 import Data.Proxy (asProxyTypeOf)
+import Data.Serialize (Serialize, get, put)
+import Data.Serialize.Put (runPut, putWord8)
 import qualified Data.Vector as V
 import Data.Word (Word32, Word64)
 import Lens.Family2 ((^.), (^..), (&), (+~), (*~), (%~), over)
 import Lens.Family2.Stock (_1)
+
+import Simplicity.Digest
 
 infixl 7 .*.
 infixl 6 .+.
@@ -54,9 +61,34 @@ bits f a = r
   r = assemble <$> sequenceA [f (p i) | i<-[0..finiteBitSize x-1]]
 -- ^^^ Proto-lens-family stuff ^^^ --
 
+-- :TODO: Make a Word256 module.
+data W256 = W256 !Word64
+                 !Word64
+                 !Word64
+                 !Word64
+            deriving (Eq, Show)
+
+instance Serialize W256 where
+  get = do
+    a3 <- get
+    a2 <- get
+    a1 <- get
+    a0 <- get
+    return (W256 a0 a1 a2 a3)
+  put (W256 a0 a1 a2 a3) = put a3 >> put a2 >> put a1 >> put a0
+
 horner :: Integral a => [a] -> Integer -> Integer
 horner [] _ = 0
 horner (c0:cs) x = toInteger c0 + x * horner cs x
+
+fromW256 :: Num a => W256 -> a
+fromW256 (W256 a0 a1 a2 a3) = fromInteger $ horner [a0,a1,a2,a3] (2^64)
+
+toW256 :: Integral a => a -> W256
+toW256 x = W256 (fromIntegral x)
+                (fromIntegral (x `div` (2^64)))
+                (fromIntegral (x `div` (2^(2*64))))
+                (fromIntegral (x `div` (2^(3*64))))
 
 data FE = FE !Word32
              !Word32
@@ -108,6 +140,9 @@ feZero = review (over _fe) 0
 feOne :: FE
 feOne = FE 1 0 0 0 0 0 0 0 0 0
 
+feSeven :: FE
+feSeven = FE 7 0 0 0 0 0 0 0 0 0
+
 bigZero :: FE
 bigZero = FE 0x3FFFC2F 0x3FFFFBF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x03FFFFF
 
@@ -148,6 +183,18 @@ fePack (FE a0 a1 a2 a3 a4 a5 a6 a7 a8 a9) = pack [fromInteger (n `div` (2^(8*i))
              , a8 .&. 0x3FFFFFF
              , a9 .&. 0x03FFFFF
              ] (2^26)
+
+feUnpack :: W256 -> FE
+feUnpack (W256 a0 a1 a2 a3) = FE (fromIntegral $ a0 .&. 0x3FFFFFF)
+                                 (fromIntegral $ (a0 `shiftR` 26) .&. 0x3FFFFFF)
+                                 (fromIntegral $ ((a0 `shiftR` (26*2)) .|. (a1 `shiftL` 12)) .&. 0x3FFFFFF)
+                                 (fromIntegral $ (a1 `shiftR` 14) .&. 0x3FFFFFF)
+                                 (fromIntegral $ ((a1 `shiftR` (14+26)) .|. (a2 `shiftL` 24)) .&. 0x3FFFFFF)
+                                 (fromIntegral $ (a2 `shiftR` 2) .&. 0x3FFFFFF)
+                                 (fromIntegral $ (a2 `shiftR` (2+26)) .&. 0x3FFFFFF)
+                                 (fromIntegral $ ((a2 `shiftR` (2+2*26)) .|. (a3 `shiftL` 10)) .&. 0x3FFFFFF)
+                                 (fromIntegral $ (a3 `shiftR` 16) .&. 0x3FFFFFF)
+                                 (fromIntegral $ a3 `shiftR` 42)
 
 feIsZero :: FE -> Bool
 feIsZero a = na^..fe `elem` [feZero^..fe, bigZero^..fe]
@@ -366,11 +413,10 @@ offsetPointZinv a (GE bx by) bzinv | isInf a = GEJ (bx .*. bzinv2) (by .*. bzinv
 pointNegate :: GE -> GE
 pointNegate (GE x y) = GE x (neg 1 . normalizeWeak $ y)
 
-data Scalar = Scalar !Word64
-                     !Word64
-                     !Word64
-                     !Word64
-            deriving (Eq, Show)
+type Scalar = W256
+
+scalarUnrepr :: Integer -> Scalar
+scalarUnrepr x = toW256 $ x `mod` (fromW256 scalarBound)
 
 -- FE has a traversal.
 scalar :: Applicative f => (Word64 -> f Word64) -> Scalar -> f Scalar
@@ -378,15 +424,15 @@ scalar = under _scalar
 
 -- FE has both a traversal and a grate.
 _scalar :: (Functor g, Applicative f) => (g Word64 -> f Word64) -> g Scalar -> f Scalar
-_scalar f a = Scalar <$> f (p0 <$> a)
-                     <*> f (p1 <$> a)
-                     <*> f (p2 <$> a)
-                     <*> f (p3 <$> a)
+_scalar f a = W256 <$> f (p0 <$> a)
+                   <*> f (p1 <$> a)
+                   <*> f (p2 <$> a)
+                   <*> f (p3 <$> a)
  where
-  p0 (Scalar a0 a1 a2 a3) = a0
-  p1 (Scalar a0 a1 a2 a3) = a1
-  p2 (Scalar a0 a1 a2 a3) = a2
-  p3 (Scalar a0 a1 a2 a3) = a3
+  p0 (W256 a0 a1 a2 a3) = a0
+  p1 (W256 a0 a1 a2 a3) = a1
+  p2 (W256 a0 a1 a2 a3) = a2
+  p3 (W256 a0 a1 a2 a3) = a3
 
 scalarZero :: Scalar
 scalarZero = review (over _scalar) 0
@@ -395,10 +441,10 @@ scalarIsZero :: Scalar -> Bool
 scalarIsZero = (==scalarZero)
 
 scalarBound :: Scalar -- not a legal scalar value
-scalarBound = Scalar 0xBFD25E8CD0364141 0xBAAEDCE6AF48A03B 0xFFFFFFFFFFFFFFFE 0xFFFFFFFFFFFFFFFF
+scalarBound = W256 0xBFD25E8CD0364141 0xBAAEDCE6AF48A03B 0xFFFFFFFFFFFFFFFE 0xFFFFFFFFFFFFFFFF
 
 scalarNegate :: Scalar -> Scalar
-scalarNegate a@(Scalar 0 0 0 0) = a
+scalarNegate a@(W256 0 0 0 0) = a
 scalarNegate a = evalState (zipWithOf _scalar ripple (a & scalar %~ complement) scalarBound) 1
  where
   ripple x y = state $ \c -> (x + y + c, carry c)
@@ -427,7 +473,7 @@ ecMult a na ng = foldr f mempty (zipEx wnafa (wnaf wg ng)) & _z %~ (.*. globalZ)
   zipEx [] bs = map (\b -> (Nothing,b)) bs
   zipEx as [] = map (\a -> (a,Nothing)) as
   zipEx (a:as) (b:bs) = (a,b) : zipEx as bs
-  lookupG n = norm $ scalarMult (Scalar (fromIntegral (2*n+1)) 0 0 0) g
+  lookupG n = norm $ scalarMult (W256 (fromIntegral (2*n+1)) 0 0 0) g
   norm p = GE (normalize (p^._x .*. zinv2)) (normalize (p^._y .*. zinv3))
    where
     zinv = inv (p^._z)
@@ -483,3 +529,24 @@ tableG = t & traverse %~ norm
   zinv2 = sqr zinv
   zinv3 = zinv2 .*. zinv
   norm (GE x y) = GE (normalize (x .*. zinv2)) (normalize (y .*. zinv3))
+
+data PubKey = PubKey Bool W256
+data Sig = Sig W256 W256
+
+schnorr :: PubKey  -- ^ pubkey
+        -> Hash256 -- ^ message
+        -> Sig     -- ^ signature
+        -> Bool
+schnorr (PubKey py px) m (Sig r s) = Just () == do
+  guard $ scalarUnrepr (fromW256 s) == s
+  let rx = feUnpack r
+  guard $ (normalize rx^..fe) == (rx^..fe)
+  let x = feUnpack px
+  guard $ (normalize x^..fe) == (x^..fe)
+  y0 <- normalize <$> sqrt (sqr x .*. x .+. feSeven)
+  let p = GEJ x (if py == odd (repr y0) then y0 else neg 1 y0) feOne
+  let h = bsHash . runPut $ put r >> putWord8 (if py then 3 else 2) >> put px >> put m
+  let nege = scalarNegate . scalarUnrepr . integerHash256 $ h -- TODO scalarNormalize
+  let r = ecMult p nege s
+  guard $ hasQuadY r
+  guard $ eqXCoord rx r

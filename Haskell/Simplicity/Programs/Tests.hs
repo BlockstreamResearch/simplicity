@@ -247,7 +247,7 @@ prop_offsetPointZinv_inf :: GE -> FE -> Property
 prop_offsetPointZinv_inf b zinv = forAll gen_inf $ \a -> prop_offsetPointZinv a b zinv
 
 fromScalar :: Ty.Word256 -> LibSecp.Scalar
-fromScalar ((n3,n2),(n1,n0)) = LibSecp.Scalar (conv n0) (conv n1) (conv n2) (conv n3)
+fromScalar ((n3,n2),(n1,n0)) = LibSecp.W256 (conv n0) (conv n1) (conv n2) (conv n3)
  where
   conv = fromInteger . fromWord64
 
