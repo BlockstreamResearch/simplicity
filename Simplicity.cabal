@@ -16,15 +16,16 @@ tested-with:         GHC ==8.2.1
 library
   exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
                        Simplicity.Term, Simplicity.Term.Core,
-                       Simplicity.Primitive, Simplicity.Primitive.Bitcoin, Simplicity.Primitive.Bitcoin.DataTypes
+                       Simplicity.Primitive, Simplicity.Primitive.Bitcoin, Simplicity.Primitive.Bitcoin.DataTypes,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
                        Simplicity.Programs.Word, Simplicity.Programs.Bit, Simplicity.Programs.Generic, Simplicity.Programs.Secp256k1, Simplicity.Programs.Sha256,
-                       Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics
-                       Simplicity.Dag, Simplicity.Inference
+                       Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics,
+                       Simplicity.Dag, Simplicity.Inference,
                        Simplicity.Serialization, Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString
-  other-modules:       Simplicity.LibSecp256k1.Spec
+                       Simplicity.Word
+  other-modules:       Simplicity.LensEx
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
@@ -52,17 +53,18 @@ Test-Suite Simplicity-testsuite
   ghc-options:         -O2 -fsimpl-tick-factor=122
   other-modules:       Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
                        Simplicity.Term, Simplicity.Term.Core,
-                       Simplicity.Primitive, Simplicity.Primitive.Bitcoin, Simplicity.Primitive.Bitcoin.DataTypes
+                       Simplicity.Primitive, Simplicity.Primitive.Bitcoin, Simplicity.Primitive.Bitcoin.DataTypes,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
                        Simplicity.Programs.Word, Simplicity.Programs.Bit, Simplicity.Programs.Generic, Simplicity.Programs.Secp256k1, Simplicity.Programs.Sha256,
-                       Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics
-                       Simplicity.Dag, Simplicity.Inference
-                       Simplicity.Serialization, Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString
-                       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests
+                       Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics,
+                       Simplicity.Dag, Simplicity.Inference,
+                       Simplicity.Serialization, Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString,
+                       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests,
                        Simplicity.Serialization.Tests, Simplicity.Ty.Tests,
-                       Simplicity.LibSecp256k1.Spec
+                       Simplicity.Word,
+                       Simplicity.LibSecp256k1.Spec, Simplicity.LensEx
   build-depends:       array >=0.5 && <0.6,
                        base >=4.9 && <4.11,
                        binary >=0.7 && <0.9,

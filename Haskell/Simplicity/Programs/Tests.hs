@@ -11,7 +11,8 @@ import Lens.Family2 ((^..), allOf)
 import Lens.Family2.Stock (both)
 
 import Simplicity.Digest
-import Simplicity.LibSecp256k1.Spec ((.*.), zipWithOf)
+import Simplicity.LibSecp256k1.Spec ((.*.))
+import Simplicity.LensEx (zipWithOf)
 import qualified Simplicity.LibSecp256k1.Spec as LibSecp
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Secp256k1
@@ -137,7 +138,7 @@ toFE (LibSecp.FE a0 a1 a2 a3 a4 a5 a6 a7 a8 a9) =
  where
   conv = toWord32 . toInteger
 
-eq_fe = zipWithOf (allOf LibSecp._fe) (==)
+eq_fe = zipWithOf (allOf LibSecp.fe) (==)
 
 prop_normalizeWeak :: FE -> Bool
 prop_normalizeWeak a = fromFE (normalizeWeak a) `eq_fe` LibSecp.normalizeWeak (fromFE a)
@@ -187,7 +188,7 @@ fromGEJ ((x, y), z) = LibSecp.GEJ (fromFE x) (fromFE y) (fromFE z)
 toGEJ :: LibSecp.GEJ -> GEJ
 toGEJ (LibSecp.GEJ x y z) = ((toFE x, toFE y), toFE z)
 
-eq_gej = zipWithOf (allOf LibSecp._gej) eq_fe
+eq_gej = zipWithOf (allOf LibSecp.gej) eq_fe
 
 gen_inf :: Gen GEJ
 gen_inf = (\xy -> (xy, feZero ())) <$> arbitrary
@@ -247,9 +248,7 @@ prop_offsetPointZinv_inf :: GE -> FE -> Property
 prop_offsetPointZinv_inf b zinv = forAll gen_inf $ \a -> prop_offsetPointZinv a b zinv
 
 fromScalar :: Ty.Word256 -> LibSecp.Scalar
-fromScalar ((n3,n2),(n1,n0)) = LibSecp.W256 (conv n0) (conv n1) (conv n2) (conv n3)
- where
-  conv = fromInteger . fromWord64
+fromScalar = LibSecp.Scalar . fromInteger . fromWord256
 
 prop_wnaf5 :: Ty.Word256 -> Bool
 prop_wnaf5 n = L.and $ zipWith (==) lhs (fmap (fmap unsign) (LibSecp.wnaf 5 (fromScalar n) ++ repeat Nothing))

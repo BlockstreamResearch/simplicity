@@ -1,7 +1,9 @@
 -- | This modules wraps Data.Digest.Pure.SHA in order to simulate direct access to the SHA-256 compression function by providing access to SHA-256 midstates.
 {-# LANGUAGE BangPatterns #-}
 module Simplicity.Digest
-  ( Hash256, get256Bits, put256Bits, integerHash256
+  ( Hash256, _be256, be256
+  , get256Bits, put256Bits
+  , integerHash256
   , IV, bsIv, ivHash, bslHash, bsHash, bitStringHash
   , Block512, compress, compressHalf
   ) where
@@ -9,16 +11,18 @@ module Simplicity.Digest
 import Control.Monad (replicateM)
 import Control.Monad.Trans.State (evalState, state)
 import Data.Binary.Get (Decoder(..), pushChunk, pushChunks, pushEndOfInput)
-import Data.Binary (encode)
+import qualified Data.Binary as Binary
 import Data.Bits ((.|.), bit, shiftL, testBit, zeroBits)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Short as BSS
 import qualified Data.ByteString.Lazy as BSL
 import Data.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
 import Data.List (foldl')
-import Data.Serialize (Serialize, get, getShortByteString, put, putShortByteString)
-import Data.Word (Word64)
+import Data.Serialize (Serialize, encode, get, getShortByteString, put, putShortByteString)
+import Lens.Family2 (Lens, (^.),(^..))
 
+import Simplicity.LensEx (_bits, bits, review, under)
+import Simplicity.Word
 import Simplicity.Serialization
 
 -- | Represents a 256-bit hash value or midstate from SHA-256.
@@ -28,6 +32,19 @@ instance Serialize Hash256 where
   get = Hash256 <$> getShortByteString 32
   put (Hash256 bs) = putShortByteString bs
 
+-- | A 'Lens' accessing a 'Word256' from a 'Hash256' using a big endian interpretation.
+_be256 :: Functor f => (Word256 -> f Word256) -> Hash256 -> f Hash256
+_be256 = under be256
+
+-- | An adaptor converting a 'Hash256' to a 'Word256' using a big endian interpretation.
+be256 :: (Functor g, Functor f) => (g Word256 -> f Word256) -> g Hash256 -> f Hash256
+be256 f = fmap fro . f . fmap to
+ where
+  fro w = Hash256 $ BSS.toShort (encode w)
+  to h = foldl' go 0 . BSS.unpack $ hash256 h
+   where
+    go n w = (n `shiftL` 8) .|. fromIntegral w
+
 -- | Deserializes a 256-bit hash value from a stream of 'Bool's.
 --
 -- Note that the type @forall m. Monad m => m Bool -> m a@ is isomorphic to the free monad over the @X²@ functor.
@@ -36,24 +53,15 @@ instance Serialize Hash256 where
 -- Due to the flat nature of 'Hash256' only the 'Applicative' interface happens to be used by 'get256Bits'.
 -- This is why the constraint is 'Applicative' instead of 'Monad'.
 get256Bits :: Applicative m => m Bool -> m Hash256
-get256Bits next = Hash256 . BSS.pack <$> replicateM 32 (packBits <$> replicateM 8 next)
- where
-  packBits = foldr (.|.) zeroBits . concat . zipWith f [7,6..0]
-   where
-    f i True = [bit i]
-    f i False = []
+get256Bits = review (be256.bits)
 
 -- | Serializes a 256-bit hash value to a stream of 'Bool's.
 put256Bits :: Hash256 -> DList Bool
-put256Bits h k = foldr put8Bits k . BSS.unpack $ hash256 h
- where
-  put8Bits w = ([testBit w i | i <- [7,6..0]]++)
+put256Bits h k = (h^.._be256._bits) ++ k
 
 -- | Extracts the 256 hash value as an integer.
 integerHash256 :: Hash256 -> Integer
-integerHash256 h = foldl' go 0 . BSS.unpack $ hash256 h
- where
-  go n w = (n `shiftL` 8) .|. fromIntegral w
+integerHash256 h = toInteger $ h^._be256
 
 -- | Represents a SHA-256 midstate.  This is either the SHA-256 initial value,
 -- or some SHA-256 midstate created from applying the SHA-256 'compress'ion
@@ -67,7 +75,7 @@ bsIv = IV . pushChunks sha256Incremental . padSHA1
 -- | Realize a initial value as a concrete Hash.
 ivHash :: IV -> Hash256
 ivHash (IV state) =  case pushEndOfInput state of
-  Done _ _ x -> Hash256 . BSS.toShort . BSL.toStrict . encode $ x
+  Done _ _ x -> Hash256 . BSS.toShort . BSL.toStrict . Binary.encode $ x
   _          -> error "getHash256 unexpected decoder state"
 
 -- | Computes a SHA-256 hash from a lazy 'BSL.ByteString'.

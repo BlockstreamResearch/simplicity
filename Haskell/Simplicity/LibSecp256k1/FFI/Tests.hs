@@ -3,16 +3,18 @@ module Simplicity.LibSecp256k1.FFI.Tests
  , main
  ) where
 
-import Data.Functor.Identity (Identity(..))
-import Data.Serialize (decode, encode)
-import Lens.Family2 ((^.), (^..), allOf)
+import Lens.Family2 ((^.), (^..), over, allOf)
 import Test.Tasty (TestTree, defaultMain, testGroup)
-import Test.Tasty.QuickCheck (Arbitrary(..), choose, forAll, testProperty)
+import Test.Tasty.QuickCheck ( Arbitrary(..), arbitrarySizedBoundedIntegral, shrinkIntegral
+                             , choose, forAll, testProperty
+                             )
 import Test.Tasty.HUnit (assertBool, assertEqual, testCase)
 
-import Simplicity.Digest (Hash256, get256Bits)
+import Simplicity.Digest
 import Simplicity.LibSecp256k1.FFI as C
 import Simplicity.LibSecp256k1.Spec as Spec
+import Simplicity.LensEx (review, zipWithOf)
+import Simplicity.Word
 
 main = defaultMain tests
 
@@ -28,6 +30,7 @@ tests = testGroup "C / SPEC"
         , testProperty "fePack" prop_fePack
         , testProperty "fePack_over_low" prop_fePack_over_low
         , testProperty "fePack_over_high" prop_fePack_over_high
+        , testProperty "feUnpack" prop_feUnpack
         , testProperty "feIsZero" prop_feIsZero
         , testProperty "neg" prop_neg
         , testProperty "mulInt" prop_mulInt
@@ -62,12 +65,13 @@ tests = testGroup "C / SPEC"
       , testGroup "scalar"
         [ hunit_scalarNegate_zero
         , testProperty "scalarNegate" prop_scalarNegate
+        , testProperty "scalarNegate_high" prop_scalarNegate_high
         ]
       , testGroup "ecMult"
         [ testProperty "wnaf 5" (prop_wnaf 5)
-        , testProperty "wnaf_hi 5" (prop_wnaf_hi 5)
+        , testProperty "wnaf_high 5" (prop_wnaf_high 5)
         , testProperty "wnaf 16" (prop_wnaf 16)
-        , testProperty "wnaf_hi 16" (prop_wnaf_hi 16)
+        , testProperty "wnaf_high 16" (prop_wnaf_high 16)
         , testProperty "ecMult0" prop_ecMult0
         , testProperty "ecMult" prop_ecMult
         ]
@@ -77,16 +81,20 @@ tests = testGroup "C / SPEC"
       ] ]
 
 instance Arbitrary FE where
-  arbitrary = review _fe arbitrary
+  arbitrary = review fe arbitrary
 
 instance Arbitrary GEJ where
-  arbitrary = review _gej arbitrary
+  arbitrary = review gej arbitrary
 
-instance Arbitrary W256 where
-  arbitrary = review _scalar arbitrary
+instance Arbitrary Word256 where
+  arbitrary = arbitrarySizedBoundedIntegral
+  shrink = shrinkIntegral
 
-eq_fe = zipWithOf (allOf _fe) (==)
-eq_gej = zipWithOf (allOf (_gej._fe)) (==)
+instance Arbitrary Scalar where
+  arbitrary = Scalar <$> arbitrary
+
+eq_fe = zipWithOf (allOf fe) (==)
+eq_gej = zipWithOf (allOf (gej.fe)) (==)
 eq_fe_gej (a0,a1) (b0,b1) = (eq_fe a0 b0) && (eq_gej a1 b1)
 
 hunit_feIsZero_true name isZero = testGroup ("feIsZero_true: " ++ name)
@@ -115,6 +123,7 @@ prop_normalize_over_high x y = prop_normalize (over_high x y)
 prop_fePack a = C.fePack a == Spec.fePack a
 prop_fePack_over_low x y = prop_fePack (over_low x y)
 prop_fePack_over_high x y = prop_fePack (over_high x y)
+prop_feUnpack w = C.feUnpack w `eq_fe` Spec.feUnpack w
 prop_feIsZero a = C.feIsZero a == Spec.feIsZero a -- feIsZero will essentially always be false on random inputs.
 prop_neg a = forAll (choose (0, 32)) (\m -> C.neg (fromIntegral m) a `eq_fe` Spec.neg m a)
 prop_mulInt a = forAll (choose (0, 32)) (\m -> C.mulInt (fromIntegral m) a `eq_fe` Spec.mulInt m a)
@@ -122,7 +131,7 @@ prop_add a b = C.add a b `eq_fe` Spec.add a b
 prop_mul a b = C.mul a b `eq_fe` Spec.mul a b
 prop_sqr a = C.sqr a `eq_fe` Spec.sqr a
 prop_inv a = C.inv a `eq_fe` Spec.inv a
-prop_sqrt a = C.sqrt a^..(traverse.fe) == Spec.sqrt a^..(traverse.fe)
+prop_sqrt a = C.sqrt a^..(traverse._fe) == Spec.sqrt a^..(traverse._fe)
 
 gen_inf = GEJ <$> arbitrary <*> arbitrary <*> pure feZero
 
@@ -187,38 +196,39 @@ prop_eqXCoord_true x y z = prop_eqXCoord x (GEJ (x .*. z2) y z)
 prop_hasQuadY a = C.hasQuadY a == Spec.hasQuadY a
 prop_hasQuadY_inf = forAll gen_inf $ prop_hasQuadY
 
+scalar_high :: Word64 -> Word64 -> Scalar
+scalar_high a0 a1 = Scalar $ (fromIntegral a0) + (fromIntegral a1)*2^64 + (0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF * 2^128)
+
 hunit_scalarNegate_zero = testCase "scalarNegate_zero" (assertEqual "" (C.scalarNegate scalarZero) (Spec.scalarNegate scalarZero))
 prop_scalarNegate a = C.scalarNegate a == Spec.scalarNegate a
+prop_scalarNegate_high a0 a1 = prop_scalarNegate $ scalar_high a0 a1
 
 prop_wnaf n a = C.wnaf n a == map f (Spec.wnaf n a)
  where
   f Nothing = 0
   f (Just x) = 2*x+1
-prop_wnaf_hi n a0 a1 = prop_wnaf n a
- where
-  a = Spec.W256 a0 a1 0xFFFFFFFFFFFFFFFF 0xFFFFFFFFFFFFFFFF
+prop_wnaf_high :: Int -> Word64 -> Word64 -> Bool
+prop_wnaf_high n a0 a1 = prop_wnaf n $ scalar_high a0 a1
 
 prop_ecMult x y z = C.ecMult x y z `eq_gej` Spec.ecMult x y z
 prop_ecMult0 x z = prop_ecMult x y z
  where
   y = scalarZero
 
-schnorr_almost_always_false py px m r s = not $ schnorr (PubKey py px) (conv m) (Sig r s)
- where
-  conv :: W256 -> Hash256
-  conv x = let Right y = decode . encode $ x in y
+schnorr_almost_always_false py px m r s = not $ schnorr (PubKey py px) (review (over be256) m) (Sig r s)
 
 hunit_schnorr = testGroup "schnorr"
-              $ [ testCase "vector 1" (assertBool "schnorr" $ schnorr (PubKey False (toW256 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798)) (conv 0) (Sig (toW256 0x787A848E71043D280C50470E8E1532B2DD5D20EE912A45DBDD2BD1DFBF187EF6) (toW256 0x7031A98831859DC34DFFEEDDA86831842CCD0079E1F92AF177F7F22CC1DCED05)))
-                , testCase "vector 2" (assertBool "schnorr" $ schnorr (PubKey False (toW256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659)) (conv pi) (Sig (toW256 0x2A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1D) (toW256 0x1E51A22CCEC35599B8F266912281F8365FFC2D035A230434A1A64DC59F7013FD)))
-                , testCase "vector 3" (assertBool "schnorr" $ schnorr (PubKey True (toW256 0xFAC2114C2FBB091527EB7C64ECB11F8021CB45E8E7809D3C0938E4B8C0E5F84B)) (conv 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C) (Sig (toW256 0x00DA9B08172A9B6F0466A2DEFD817F2D7AB437E0D253CB5395A963866B3574BE) (toW256 0x00880371D01766935B92D2AB4CD5C8A2A5837EC57FED7660773A05F0DE142380)))
-                , testCase "vector 4" (assertBool "schnorr" $ schnorr (PubKey True (toW256 0xDEFDEA4CDB677750A420FEE807EACF21EB9898AE79B9768766E4FAA04A2D4A34)) (conv bla) (Sig (toW256 0x00000000000000000000003B78CE563F89A0ED9414F5AA28AD0D96D6795F9C63) (toW256 0x02A8DC32E64E86A333F20EF56EAC9BA30B7246D6D25E22ADB8C6BE1AEB08D49D)))
-                , testCase "vector 5" (assertBool "not schnorr" . not $ schnorr (PubKey False (toW256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659)) (conv pi) (Sig (toW256 0x2A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1D) (toW256 0xFA16AEE06609280A19B67A24E1977E4697712B5FD2943914ECD5F730901B4AB7)))
-                , testCase "vector 6" (assertBool "not schnorr" . not $ schnorr (PubKey True (toW256 0xFAC2114C2FBB091527EB7C64ECB11F8021CB45E8E7809D3C0938E4B8C0E5F84B)) (conv 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C) (Sig (toW256 0x00DA9B08172A9B6F0466A2DEFD817F2D7AB437E0D253CB5395A963866B3574BE) (toW256 0xD092F9D860F1776A1F7412AD8A1EB50DACCC222BC8C0E26B2056DF2F273EFDEC)))
-                , testCase "vector 7" (assertBool "not schnorr" . not $ schnorr (PubKey False (toW256 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798)) (conv 0) (Sig (toW256 0x787A848E71043D280C50470E8E1532B2DD5D20EE912A45DBDD2BD1DFBF187EF6) (toW256 0x8FCE5677CE7A623CB20011225797CE7A8DE1DC6CCD4F754A47DA6C600E59543C)))
-                , testCase "vector 8" (assertBool "not schnorr" . not $ schnorr (PubKey True (toW256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659)) (conv pi) (Sig (toW256 0x2A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1D) (toW256 0x1E51A22CCEC35599B8F266912281F8365FFC2D035A230434A1A64DC59F7013FD)))
+              $ [ testCase "vector 1" (assertBool "schnorr" $ schnorr (PubKey False 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798) (conv 0) (Sig 0x787A848E71043D280C50470E8E1532B2DD5D20EE912A45DBDD2BD1DFBF187EF6 0x7031A98831859DC34DFFEEDDA86831842CCD0079E1F92AF177F7F22CC1DCED05))
+                , testCase "vector 2" (assertBool "schnorr" $ schnorr (PubKey False 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659) (conv pi) (Sig 0x2A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1D 0x1E51A22CCEC35599B8F266912281F8365FFC2D035A230434A1A64DC59F7013FD))
+                , testCase "vector 3" (assertBool "schnorr" $ schnorr (PubKey True 0xFAC2114C2FBB091527EB7C64ECB11F8021CB45E8E7809D3C0938E4B8C0E5F84B) (conv 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C) (Sig 0x00DA9B08172A9B6F0466A2DEFD817F2D7AB437E0D253CB5395A963866B3574BE 0x00880371D01766935B92D2AB4CD5C8A2A5837EC57FED7660773A05F0DE142380))
+                , testCase "vector 4" (assertBool "schnorr" $ schnorr (PubKey True 0xDEFDEA4CDB677750A420FEE807EACF21EB9898AE79B9768766E4FAA04A2D4A34) (conv bla) (Sig 0x00000000000000000000003B78CE563F89A0ED9414F5AA28AD0D96D6795F9C63 0x02A8DC32E64E86A333F20EF56EAC9BA30B7246D6D25E22ADB8C6BE1AEB08D49D))
+                , testCase "vector 5" (assertBool "not schnorr" . not $ schnorr (PubKey False 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659) (conv pi) (Sig 0x2A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1D 0xFA16AEE06609280A19B67A24E1977E4697712B5FD2943914ECD5F730901B4AB7))
+                , testCase "vector 6" (assertBool "not schnorr" . not $ schnorr (PubKey True 0xFAC2114C2FBB091527EB7C64ECB11F8021CB45E8E7809D3C0938E4B8C0E5F84B) (conv 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C) (Sig 0x00DA9B08172A9B6F0466A2DEFD817F2D7AB437E0D253CB5395A963866B3574BE 0xD092F9D860F1776A1F7412AD8A1EB50DACCC222BC8C0E26B2056DF2F273EFDEC))
+                , testCase "vector 7" (assertBool "not schnorr" . not $ schnorr (PubKey False 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798) (conv 0) (Sig 0x787A848E71043D280C50470E8E1532B2DD5D20EE912A45DBDD2BD1DFBF187EF6 0x8FCE5677CE7A623CB20011225797CE7A8DE1DC6CCD4F754A47DA6C600E59543C))
+                , testCase "vector 8" (assertBool "not schnorr" . not $ schnorr (PubKey True 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659) (conv pi) (Sig 0x2A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1D 0x1E51A22CCEC35599B8F266912281F8365FFC2D035A230434A1A64DC59F7013FD))
                 ]
  where
-  conv x = let Right y = decode . encode $ toW256 x in y
+  conv :: Word256 -> Hash256
+  conv = review (over be256)
   pi = 0x243F6A8885A308D313198A2E03707344A4093822299F31D0082EFA98EC4E6C89
   bla = 0x4DF3C3F68FCC83B27E9D42C90431A72499F17875C81A599B566C9889B9696703
