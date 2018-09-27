@@ -1,13 +1,23 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Simplicity.Programs.Secp256k1 where
 
-import Prelude hiding (drop, take, and, or)
+import Prelude hiding (drop, take, and, or, not, sqrt)
 
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Word
+import Simplicity.Programs.Sha256
 import Simplicity.Ty
 import Simplicity.Term
+
+feOrder :: Integer
+feOrder = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F
+
+scalarOrder :: Integer
+scalarOrder = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
+
+scribe8 :: forall term a. (Core term, TyC a) => Integer -> term a Word8
+scribe8 = scribe . toWord8
 
 add32 :: forall term. Core term => term (Word32, Word32) Word32
 add32 = adder word32 >>> ih
@@ -32,6 +42,9 @@ scribe64 = scribe . toWord64
 
 wideMul32 :: forall term. Core term => term (Word32, Word32) Word64
 wideMul32 = multiplier word32
+
+sub256 :: forall term. Core term => term (Word256, Word256) Word256
+sub256 = subtractor word256 >>> ih
 
 mod26 :: forall term. Core term => term Word32 Word32
 mod26 = take ((zero word4 &&& (zero word2 &&& oiih)) &&& ih) &&& ih
@@ -115,6 +128,21 @@ fePack = drop (drop (drop (drop (drop (drop (drop (drop w7 &&& w6))) &&& (drop (
   w6 = drop (take ih) &&& take (take ((oiih &&& iooh) &&& drop (oih &&& ioh)) &&& ((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))))
   w7 = drop ((take (drop (oih &&& ioh)) &&& (take iiih &&& drop oooh)) &&& drop (take (oih &&& ioh) &&& (oiih &&& iooh))) &&& ((drop (drop (drop (oih &&& ioh))) &&& (drop (drop iiih) &&& take (take oiih))) &&& take oih)
 
+feUnpack :: forall term. Core term => term Word256 FE
+feUnpack = drop (drop (drop (take ((zero word4 &&& (zero word2 &&& oiih)) &&& ih) &&& ih)))
+       &&& drop (drop (take ((zero word4 &&& (zero word2 &&& take (drop ioh))) &&& ((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh)))) &&& (take (drop ((oiih &&& iooh) &&& drop (oih &&& ioh))) &&& ((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh)))))))
+       &&& drop (take (drop (drop ((zero word4 &&& (zero word2 &&& ooih)) &&& (oih &&& ioh)))) &&& ((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh)))))
+       &&& drop (take (((zero word4 &&& (zero word2 &&& take (drop iooh))) &&& (take (drop (drop (oih &&& ioh))) &&& (take (drop iiih) &&& drop (take oooh)))) &&& drop ((take (take (oih &&& ioh) &&& (oiih &&& iooh))) &&& (take (ioih &&& iioh) &&& (take iiih &&& drop oooh)))))
+       &&& (((zero word4 &&& (zero word2 &&& take (drop (drop (drop iiih))))) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh))))
+       &&& take ((drop (drop (take ((zero word4 &&& (zero word2 &&& oioh)) &&& ((oiih &&& iooh) &&& drop (oih &&& ioh))) &&& (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh))))))
+        &&& drop (take ((zero word4 &&& (zero word2 &&& take ioih)) &&& (oiih &&& iooh)) &&& (take (drop (oih &&& ioh)) &&& (take iiih &&& drop oooh)))
+        &&& (take (drop (drop ((zero word4 &&& (zero word2 &&& oooh)) &&& (take (oih &&& ioh) &&& (oiih &&& iooh))))) &&& ((take (drop (drop (drop (oih &&& ioh)))) &&& (take (drop (drop iiih)) &&& drop (take (take oooh)))) &&& drop (take (take (take (oih &&& ioh) &&& (oiih &&& iooh))))))
+        &&& take ((((zero word4 &&& (zero word2 &&& take (drop oiih))) &&& oiih) &&& ioh)
+         &&& take (take (take (zero word8 &&& ((zero word2 &&& ooh) &&& (oih &&& ioh)))) &&& (take ((oiih &&& iooh) &&& drop (oih &&& ioh)) &&& ((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh)))))))
+ where
+  word2 = DoubleW BitW
+  word4 = DoubleW word2
+
 feZero :: forall term a. (Core term, TyC a) => term a FE
 feZero = z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z
  where
@@ -122,6 +150,11 @@ feZero = z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z
 
 feOne :: forall term a. (Core term, TyC a) => term a FE
 feOne = scribe32 1 &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z
+ where
+  z = zero word32
+
+feSeven :: forall term a. (Core term, TyC a) => term a FE
+feSeven = scribe32 7 &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z
  where
   z = zero word32
 
@@ -234,6 +267,15 @@ inv :: forall term. Core term => term FE FE
 inv = iden &&& tower
   >>> oh &&& (ioh &&& (oh &&& iih >>> mul >>> sqr >>> sqr >>> sqr) >>> mul >>> sqr >>> sqr) >>> mul
 
+sqrt :: forall term. Core term => term FE (Either () FE)
+sqrt = iden &&& tower
+   >>> oh &&& drop ((oh &&& drop sqr >>> mul) >>> sqr >>> sqr)
+   >>> (oh &&& drop (sqr >>> neg 1) >>> add >>> feIsZero) &&& ih
+   >>> cond (injr iden) (injl unit)
+
+isQuad :: forall term. Core term => term FE Bit
+isQuad = sqrt &&& unit >>> match false true
+
 type GE = (FE, FE)
 type GEJ = (GE, FE)
 
@@ -287,6 +329,13 @@ geNegate = oh &&& drop (normalizeWeak >>> neg 1)
 normalizePoint :: forall term. Core term => term GEJ GE
 normalizePoint = oh &&& (ih >>> inv >>> (sqr &&& iden))
              >>> (ooh &&& ioh >>> mul >>> normalize) &&& (oih &&& (ioh &&& iih >>> mul) >>> mul >>> normalize)
+
+eqXCoord :: forall term. Core term => term (FE, GEJ) Bit
+eqXCoord = drop (take (take normalizeWeak)) &&& (drop (drop sqr) &&& oh >>> mul >>> neg 1)
+       >>> add >>> feIsZero
+
+hasQuadY :: forall term. Core term => term GEJ Bit
+hasQuadY = and (not isInf) (oih &&& ih >>> mul >>> isQuad)
 
 type Vector2 x = (x,x)
 type Vector4 x = Vector2 (Vector2 x)
@@ -356,10 +405,9 @@ wnaf5step16 = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) 
 -- TODO: share code between wnaf5, wnaf5Short and wnaf16?
 wnaf5 :: forall term. Core term => term Word256 (Vector256 (Either () Word4))
 wnaf5 = (take . take . take . take . take $ oooh) &&& iden
-    >>> cond (true &&& (scribe (toWord256 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141) &&& iden >>> lt) >>> go)
+    >>> cond (true &&& (scribe (toWord256 scalarOrder) &&& iden >>> sub256) >>> go)
              (false &&& iden >>> go)
  where
-  lt = subtractor word256 >>> ih
   -- a variant of shift that pulls in leading ones could be useful here instead of using bitwiseNot.
   go = (injr unit &&& oh) &&& (oh &&& drop (iden &&& ((shift word256 4 &&& shift word256 3) &&& (shift word256 2 &&& shift word256 1)))
                            >>> cond (take (bitwiseNot word256) &&& drop (bitwiseNot (DoubleW (DoubleW word256)))) iden)
@@ -384,132 +432,11 @@ wnaf5Short = false &&& iden >>> go
                            >>> cond (take (bitwiseNot word16) &&& drop (bitwiseNot (DoubleW (DoubleW word16)))) iden)
    >>> wnaf5step16 >>> ih
 
-{-
 wnaf16 :: forall term. Core term => term Word256 (Vector256 (Either () Word16))
 wnaf16 = (take . take . take . take . take $ oooh) &&& iden
-    >>> cond (true &&& (scribe (toWord256 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141) &&& iden >>> lt) >>> go)
+    >>> cond (true &&& (scribe (toWord256 scalarOrder) &&& iden >>> sub256) >>> go)
              (false &&& iden >>> go)
  where
-  lt = subtractor word256 >>> ih
-  -- a variant of shift that pulls in leading ones could be useful here instead of using bitwiseNot.
-  go = (injr unit &&& false) &&& (oh &&& drop shifts)
-   >>> wnaf16step256 >>> ih
-  shifts = (((shift word256 15 &&& shift word256 14) &&& (shift word256 13 &&& shift word256 12)) &&& ((shift word256 11 &&& shift word256 10) &&& (shift word256 9 &&& shift word256 8)))
-       &&& (((shift word256 7 &&& shift word256 6) &&& (shift word256 5 &&& shift word256 4)) &&& ((shift word256 3 &&& shift word256 2) &&& (shift word256 1 &&& iden)))
-  wnaf16step = ooh &&& (oih &&& ih)
-           >>> match (count &&& injl unit) (drop body)
-   where
-    count = (zero word4 &&& oh >>> eq) &&& (oh &&& ioh)
-        >>> cond (injr unit &&& ih) (injl ((oh &&& zero word4) &&& true >>> fullSubtractor word4 >>> ih) &&& ih)
-    body = ((oh &&& drop (drop (drop iiih)) >>> eq) &&& iden)
-       >>> cond ((injr unit &&& oh) &&& injl unit)
-                ((injl (scribe (toWord word4 14)) &&& drop (drop (take oooh))) &&& drop (oh &&& drop carry >>> injr (cond negator iden)))
-    word4 = DoubleW (DoubleW BitW)
-    negator = zero word16 &&& iden >>> subtractor word16 >>> ih
-    carry = oh &&& drop (oh &&& drop (oh &&& drop (oh &&& true)))
-  wnaf16step2 = (oh &&& drop (oh &&& drop dropV16) >>> wnaf16step) &&& drop (oh &&& drop takeV16)
-            >>> oih &&& (ooh &&& ih >>> wnaf16step)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step4 = (oh &&& drop (oh &&& drop dropV16) >>> wnaf16step2) &&& drop (oh &&& drop takeV16)
-            >>> oih &&& (ooh &&& ih >>> wnaf16step2)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step8 = (oh &&& drop (oh &&& drop dropV16) >>> wnaf16step4) &&& drop (oh &&& drop takeV16)
-            >>> oih &&& (ooh &&& ih >>> wnaf16step4)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step16 = (oh &&& drop (oh &&& drop dropV16) >>> wnaf16step8) &&& drop (oh &&& drop takeV16)
-            >>> oih &&& (ooh &&& ih >>> wnaf16step8)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step32 = (oh &&& drop (oh &&& drop dropV16) >>> wnaf16step16) &&& drop (oh &&& drop takeV16)
-            >>> oih &&& (ooh &&& ih >>> wnaf16step16)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step64 = (oh &&& drop (oh &&& drop dropV16) >>> wnaf16step32) &&& drop (oh &&& drop takeV16)
-            >>> oih &&& (ooh &&& ih >>> wnaf16step32)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step128 = (oh &&& drop (oh &&& drop dropV16) >>> wnaf16step64) &&& drop (oh &&& drop takeV16)
-            >>> oih &&& (ooh &&& ih >>> wnaf16step64)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step256 = (oh &&& drop (oh &&& drop dropV16) >>> wnaf16step128) &&& drop (oh &&& drop takeV16)
-            >>> oih &&& (ooh &&& ih >>> wnaf16step128)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
--}
-wnaf16 :: forall term. Core term => term Word256 (Vector256 (Either () Word16))
-wnaf16 = (take . take . take . take . take $ oooh) &&& iden
-    >>> cond (true &&& (scribe (toWord256 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141) &&& iden >>> lt) >>> go)
-             (false &&& iden >>> go)
- where
-  lt = subtractor word256 >>> ih
   -- a variant of shift that pulls in leading ones could be useful here instead of using bitwiseNot.
   go = (injr unit &&& oh) &&& (oh &&& drop shifts
                            >>> cond (bitwiseNot (DoubleW (DoubleW (DoubleW (DoubleW word256))))) iden)
@@ -676,3 +603,44 @@ ecMult = (scribe (toWord256 0) &&& oih >>> eq) &&& iden
   step64 = (oh &&& drop (oh &&& ioih &&& iiih) >>> step32) &&& drop (oh &&& iooh &&& iioh) >>> step32
   step128 = (oh &&& drop (oh &&& ioih &&& iiih) >>> step64) &&& drop (oh &&& iooh &&& iioh) >>> step64
   step256 = (oh &&& drop (oh &&& ioih &&& iiih) >>> step128) &&& drop (oh &&& iooh &&& iioh) >>> step128
+
+type PubKey = (Bit, Word256)
+type Sig = (Word256, Word256)
+
+pkPoint :: forall term. Core term => term PubKey (Either () GEJ)
+pkPoint = (ih &&& scribe (toWord256 feOrder) >>> lt) &&& (drop feUnpack &&& oh)
+      >>> cond k1 (injl unit)
+ where
+  k1 = take (feSeven &&& (iden &&& sqr >>> mul) >>> add >>> sqrt) &&& iden
+   >>> match (injl unit) (injr k2)
+  k2 = (ioh &&& (take normalize &&& iih >>> (take (take (drop (drop iiih))) &&& ih >>> eq) &&& oh >>> cond iden (neg 1))) &&& feOne
+  lt = subtractor word256 >>> oh
+
+sigUnpack :: forall term. Core term => term Sig (Either () (FE, Word256))
+sigUnpack = and (oh &&& scribe (toWord256 feOrder) >>> lt)
+                (ih &&& scribe (toWord256 scalarOrder) >>> lt)
+        &&& (take feUnpack &&& ih)
+        >>> cond (injr iden) (injl unit)
+ where
+  lt = subtractor word256 >>> oh
+
+scalarUnrepr :: forall term. Core term => term Word256 Word256
+scalarUnrepr = (iden &&& scribe (toWord256 scalarOrder) >>> subtractor word256) &&& iden
+           >>> ooh &&& (oih &&& ih)
+           >>> cond ih oh
+
+schnorr :: forall term. Core term => term ((PubKey, Word256), Sig) Bit
+schnorr = drop sigUnpack &&& (take (take pkPoint) &&& nege)
+      >>> match false k1
+ where
+  k1 = ioh &&& (iih &&& oh)
+   >>> match false k2
+  k2 = iioh &&& ((oh &&& ioh) &&& iiih >>> ecMult)
+   >>> and eqXCoord (drop hasQuadY)
+  nege = (scribe (toWord256 scalarOrder) &&& (h >>> scalarUnrepr) >>> sub256)
+  h = m >>> (iv &&& oh >>> hashBlock) &&& ih >>> hashBlock
+  m = (ioh
+     &&& take (take (((((y &&& drop (take (take oooh))) &&& drop (take (take (take (oih &&& ioh))))) &&& drop (take (take ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop (take (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop ((((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh)))) &&& drop (take ((oiih &&& iooh) &&& drop (oih &&& ioh)))) &&& drop (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh)))))))
+    &&& take ((((((take (drop (drop (drop iiih))) &&& drop (take (take oooh))) &&& drop (take (take (take (oih &&& ioh))))) &&& drop (take (take ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop (take (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop ((((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh)))) &&& drop (take ((oiih &&& iooh) &&& drop (oih &&& ioh)))) &&& drop (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh)))))
+    &&& (((((drop (drop (drop iiih)) &&& scribe8 0x80) &&& zero word16) &&& zero word32) &&& zero word64) &&& scribe (toWord (DoubleW word64) (256+8+256+256))))
+  y = cond (scribe8 3) (scribe8 2)

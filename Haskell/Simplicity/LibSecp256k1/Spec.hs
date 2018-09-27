@@ -1,15 +1,17 @@
 module Simplicity.LibSecp256k1.Spec
- ( FE(..), _fe, fe, feZero, bigZero, feOne
+ ( FE(..), _fe, fe, unrepr, feZero, bigZero, feOne
  , GEJ(..), _gej, gej, _x, _y, _z
  , GE(..)
- , Scalar(..), scalarZero
+ , Scalar(..), scalarUnrepr, scalarZero
  , normalizeWeak, normalize, fePack, feUnpack
  , feIsZero, neg, mulInt, add, mul, sqr, inv, sqrt, (.+.), (.*.)
  , double, offsetPoint, offsetPointZinv
  , eqXCoord, hasQuadY
  , scalarNegate
  , wnaf, ecMult
- , PubKey(..), Sig(..), schnorr
+ , PubKey(..), pkPoint
+ , Sig(..), sigUnpack
+ , schnorr
  ) where
 
 import Prelude hiding (sqrt)
@@ -199,8 +201,8 @@ sqr a = sum19 p
 wideMul :: Word32 -> Word32 -> Word64
 wideMul a b = (fromIntegral a) * (fromIntegral b)
 
-tower :: FE -> (FE,FE,FE)
-tower a = (x2, x22, foldr ($) t1 (replicate 5 sqr))
+tower :: FE -> (FE,FE)
+tower a = (x2, foldr ($) t1 (replicate 5 sqr))
  where
   x2 = sqr a .*. a
   x3 = sqr x2 .*. a
@@ -218,7 +220,7 @@ tower a = (x2, x22, foldr ($) t1 (replicate 5 sqr))
 inv :: FE -> FE
 inv a = t4
  where
-  (x2, x22, t1') = tower a
+  (x2, t1') = tower a
   t2 = t1' .*. a
   t3 = foldr ($) t2 (replicate 3 sqr) .*. x2
   t4 = foldr ($) t3 (replicate 2 sqr) .*. a
@@ -227,7 +229,7 @@ sqrt :: FE -> Maybe FE
 sqrt a | feIsZero (neg 1 t4 .+. a) = Just t3
        | otherwise = Nothing
  where
-  (x2, x22, t1') = tower a
+  (x2, t1') = tower a
   t2 = sqr t1' .*. x2
   t3 = sqr (sqr t2)
   t4 = sqr t3

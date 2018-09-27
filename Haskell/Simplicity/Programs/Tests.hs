@@ -1,6 +1,8 @@
 -- This module tests the Simplicity programs on arbitrary inputs.
 module Simplicity.Programs.Tests (tests) where
 
+import Prelude hiding (sqrt)
+import Control.Arrow ((***))
 import Data.Bits ((.|.))
 import qualified Data.Bits as W
 import Data.ByteString (pack)
@@ -158,6 +160,9 @@ prop_fePack a = toBS (fePack a) == LibSecp.fePack (fromFE a)
 prop_fePack_over_low x y = prop_fePack (over_low x y)
 prop_fePack_over_high x y = prop_fePack (over_high x y)
 
+prop_feUnpack :: Word256 -> Bool
+prop_feUnpack w = fromFE (feUnpack w) `eq_fe` LibSecp.feUnpack (fromInteger (fromWord256 w))
+
 prop_add :: FE -> FE -> Bool
 prop_add a b = fromFE (add (a, b)) `eq_fe` LibSecp.add (fromFE a) (fromFE b)
 
@@ -175,6 +180,14 @@ prop_neg a = forAll (choose (0, 32)) (\m -> fromFE (neg m a) `eq_fe` LibSecp.neg
 
 prop_inv :: FE -> Bool
 prop_inv a = fromFE (inv a) `eq_fe` LibSecp.inv (fromFE a)
+
+prop_sqrt :: FE -> Bool
+prop_sqrt a = conv (sqrt a) `eq_mfe` LibSecp.sqrt (fromFE a)
+ where
+  conv = either (const Nothing) (Just . fromFE)
+  eq_mfe (Just x) (Just y) = x `eq_fe` y
+  eq_mfe Nothing Nothing = True
+  eq_mfe _ _ = False
 
 fromGE :: GE -> LibSecp.GE
 fromGE (x, y) = LibSecp.GE (fromFE x) (fromFE y)
@@ -275,3 +288,85 @@ prop_ecMult0 :: GEJ -> Word256 -> Bool
 prop_ecMult0 a ng = prop_ecMult a na ng
  where
   na = toWord256 0
+
+prop_pkPoint :: PubKey -> Bool
+prop_pkPoint pk@(pky, pkx) = conv (pkPoint pk) `eq_mgej` LibSecp.pkPoint pk'
+ where
+  pk' = LibSecp.PubKey (Right () == pky) (fromInteger (fromWord256 pkx))
+  conv = either (const Nothing) (Just . fromGEJ)
+  eq_mgej (Just x) (Just y) = x `eq_gej` y
+  eq_mgej Nothing Nothing = True
+  eq_mgej _ _ = False
+
+prop_sigUnpack :: Sig -> Bool
+prop_sigUnpack sig@(r, s) = conv (sigUnpack sig) `eq_mfeW256` LibSecp.sigUnpack sig'
+ where
+  sig' = LibSecp.Sig (fromInteger (fromWord256 r)) (fromInteger (fromWord256 s))
+  conv = either (const Nothing) (Just . (fromFE *** fromScalar))
+  eq_mfeW256 (Just (a0, a1)) (Just (b0, b1)) = (a0 `eq_fe` b0) && a1 == b1
+  eq_mfeW256 Nothing Nothing = True
+  eq_mfeW256 _ _ = False
+
+prop_scalarUnrepr :: Word256 -> Bool
+prop_scalarUnrepr w = fromScalar (scalarUnrepr w) == LibSecp.scalarUnrepr (fromWord256 w)
+prop_scalarUnrepr_hi w = prop_scalarUnrepr (toWord (DoubleW word64) 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, w)
+
+schnorr1 :: Bool
+schnorr1 = fromBit $ schnorr ((pk,m),sig)
+ where
+  pk = (toBit False, toWord256 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798)
+  m = toWord256 0
+  sig = toWord (DoubleW word256) 0x787A848E71043D280C50470E8E1532B2DD5D20EE912A45DBDD2BD1DFBF187EF67031A98831859DC34DFFEEDDA86831842CCD0079E1F92AF177F7F22CC1DCED05
+
+schnorr2 :: Bool
+schnorr2 = fromBit $ schnorr ((pk,m),sig)
+ where
+  pk = (toBit False, toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659)
+  m = toWord256 0x243F6A8885A308D313198A2E03707344A4093822299F31D0082EFA98EC4E6C89
+  sig = toWord (DoubleW word256) 0x2A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1D1E51A22CCEC35599B8F266912281F8365FFC2D035A230434A1A64DC59F7013FD
+
+schnorr3 :: Bool
+schnorr3 = fromBit $ schnorr ((pk,m),sig)
+ where
+  pk = (toBit True, toWord256 0xFAC2114C2FBB091527EB7C64ECB11F8021CB45E8E7809D3C0938E4B8C0E5F84B)
+  m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
+  sig = toWord (DoubleW word256) 0x00DA9B08172A9B6F0466A2DEFD817F2D7AB437E0D253CB5395A963866B3574BE00880371D01766935B92D2AB4CD5C8A2A5837EC57FED7660773A05F0DE142380
+
+schnorr4 :: Bool
+schnorr4 = fromBit $ schnorr ((pk,m),sig)
+ where
+  pk = (toBit True, toWord256 0xDEFDEA4CDB677750A420FEE807EACF21EB9898AE79B9768766E4FAA04A2D4A34)
+  m = toWord256 0x4DF3C3F68FCC83B27E9D42C90431A72499F17875C81A599B566C9889B9696703
+  sig = toWord (DoubleW word256) 0x00000000000000000000003B78CE563F89A0ED9414F5AA28AD0D96D6795F9C6302A8DC32E64E86A333F20EF56EAC9BA30B7246D6D25E22ADB8C6BE1AEB08D49D
+
+schnorr5 :: Bool
+schnorr5 = fromBit $ schnorr ((pk,m),sig)
+ where
+  pk = (toBit False, toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659)
+  m = toWord256 0x243F6A8885A308D313198A2E03707344A4093822299F31D0082EFA98EC4E6C89
+  sig = toWord (DoubleW word256) 0x2A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1DFA16AEE06609280A19B67A24E1977E4697712B5FD2943914ECD5F730901B4AB7
+
+schnorr6 :: Bool
+schnorr6 = fromBit $ schnorr ((pk,m),sig)
+ where
+  pk = (toBit True, toWord256 0xFAC2114C2FBB091527EB7C64ECB11F8021CB45E8E7809D3C0938E4B8C0E5F84B)
+  m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
+  sig = toWord (DoubleW word256) 0x00DA9B08172A9B6F0466A2DEFD817F2D7AB437E0D253CB5395A963866B3574BED092F9D860F1776A1F7412AD8A1EB50DACCC222BC8C0E26B2056DF2F273EFDEC
+
+schnorr7 :: Bool
+schnorr7 = fromBit $ schnorr ((pk,m),sig)
+ where
+  pk = (toBit False, toWord256 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798)
+  m = toWord256 0
+  sig = toWord (DoubleW word256) 0x787A848E71043D280C50470E8E1532B2DD5D20EE912A45DBDD2BD1DFBF187EF68FCE5677CE7A623CB20011225797CE7A8DE1DC6CCD4F754A47DA6C600E59543C
+
+schnorr8 :: Bool
+schnorr8 = fromBit $ schnorr ((pk,m),sig)
+ where
+  pk = (toBit True, toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659)
+  m = toWord256 0x243F6A8885A308D313198A2E03707344A4093822299F31D0082EFA98EC4E6C89
+  sig = toWord (DoubleW word256) 0x2A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1D1E51A22CCEC35599B8F266912281F8365FFC2D035A230434A1A64DC59F7013FD
+
+schnorr_tests :: Bool
+schnorr_tests = Prelude.and [schnorr1, schnorr2, schnorr3, schnorr4]
+             && Prelude.not (Prelude.or [schnorr5, schnorr6, schnorr7, schnorr8])
