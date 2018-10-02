@@ -3,7 +3,7 @@
 module Simplicity.Digest
   ( Hash256, _be256, be256
   , get256Bits, put256Bits
-  , integerHash256
+  , integerHash256, hash0
   , IV, bsIv, ivHash, bslHash, bsHash, bitStringHash
   , Block512, compress, compressHalf
   ) where
@@ -19,7 +19,7 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
 import Data.List (foldl')
 import Data.Serialize (Serialize, encode, get, getShortByteString, put, putShortByteString)
-import Lens.Family2 (Lens, (^.),(^..))
+import Lens.Family2 (Lens, (^.), (^..), over)
 
 import Simplicity.LensEx (_bits, bits, review, under)
 import Simplicity.Word
@@ -62,6 +62,13 @@ put256Bits h k = (h^.._be256._bits) ++ k
 -- | Extracts the 256 hash value as an integer.
 integerHash256 :: Hash256 -> Integer
 integerHash256 h = toInteger $ h^._be256
+
+
+-- | A hash value with all bits set to 0.
+--
+-- @ integerHash256 hash0 = 0 @
+hash0 :: Hash256
+hash0 = review (over be256) 0
 
 -- | Represents a SHA-256 midstate.  This is either the SHA-256 initial value,
 -- or some SHA-256 midstate created from applying the SHA-256 'compress'ion

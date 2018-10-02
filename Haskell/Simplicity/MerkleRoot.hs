@@ -3,11 +3,14 @@ module Simplicity.MerkleRoot
   , CommitmentRoot, commitmentRoot
   , WitnessRoot, witnessRoot
   , hiddenRoot
+  , signatureIv
   ) where
 
 import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.Char8 as BSC
 import Data.List (intercalate)
+import Data.Serialize (encode)
 import Data.Proxy (Proxy(..))
 
 import Simplicity.Digest
@@ -50,6 +53,10 @@ hiddenTag = tag $ (prefix ++ ["Hidden"])
 -- This function is mainly designed for internal use within this Simplicity library.
 hiddenRoot :: Hash256 -> Hash256
 hiddenRoot = ivHash . compressHalf hiddenTag
+
+-- | This function produces an initial value suitable for signatures such that it will not collide with any other of Simplicity's Merkle root construction.
+signatureIv :: Hash256 -> IV
+signatureIv h = tag $ (prefix ++ ["Signature\GS" ++ (BSC.unpack . BSL.fromStrict . encode $ h)])
 
 -- | Computes a hash committing to a Simplicity type.
 -- This function is memoized.

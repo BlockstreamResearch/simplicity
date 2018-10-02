@@ -2,7 +2,7 @@
 module Simplicity.Programs.Bit
  ( module Simplicity.Ty.Bit
  , false, true
- , cond, ch
+ , cond, ch, assert
  , not, and, or
  , xor3, maj
  ) where
@@ -43,6 +43,11 @@ cond thn els = match (drop els) (drop thn)
 -- @
 ch :: (Core term, TyC a) => term (Bit, (a, a)) a
 ch = cond oh ih
+
+-- | Requires the bit produced by @t@ to be 'true' and fails otherwise.
+assert :: (Assert term, TyC a) => term a Bit -> term a ()
+assert t = t &&& unit
+       >>> cond unit fail0
 
 -- | Simplicity combinator that computes inverts the Bit result of an expression.
 not :: (Core term, TyC a) => term a Bit -> term a Bit

@@ -17,7 +17,7 @@ module Simplicity.Term.Core
  -- The string of @i@'s and @o@'s is meant to resemble a binary number that denotes an index to the leaves of a perfect binary tree.
  , oh, ih, ooh, oih, ioh, iih, oooh, ooih, oioh, oiih, iooh, ioih, iioh, iiih
  -- * Language extensions
- , Assert(..)
+ , Assert(..), fail0
  , Witness(..)
  , Delegate(..)
  ) where
@@ -27,10 +27,12 @@ import Prelude hiding (take, drop, fail)
 import Control.Arrow (Kleisli(..))
 import Control.Monad ((>=>))
 import qualified Control.Monad.Fail as Fail
+import Lens.Family2 (over)
 
 import Simplicity.Digest
 import Simplicity.Ty
 import Simplicity.Ty.Word
+import Simplicity.LensEx (review)
 
 -- | Values of type @forall term. 'Core' term => term a b@ are well-typed terms of the core Simplicity language represented in tagless-final style.
 --
@@ -138,6 +140,10 @@ class Core term => Assert term where
   assertl :: (TyC a, TyC b, TyC c, TyC d) => term (a, c) d -> Hash256 -> term (Either a b, c) d
   assertr :: (TyC a, TyC b, TyC c, TyC d) => Hash256 -> term (b, c) d -> term (Either a b, c) d
   fail :: (TyC a, TyC b) => Block512 -> term a b
+
+-- | A canonical version of the 'fail' combinator with the 'Block512' set to 0.
+fail0 :: (Assert term, TyC a, TyC b) => term a b
+fail0 = fail (hash0, hash0)
 
 -- | The Monad 'm' should be a commutative, idempotent monad with a zero that is both a left and right zero.
 instance Fail.MonadFail m => Assert (Kleisli m) where

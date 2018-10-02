@@ -629,8 +629,8 @@ scalarUnrepr = (iden &&& scribe (toWord256 scalarOrder) >>> subtractor word256) 
            >>> ooh &&& (oih &&& ih)
            >>> cond ih oh
 
-schnorr :: forall term. Core term => term ((PubKey, Word256), Sig) Bit
-schnorr = drop sigUnpack &&& (take (take pkPoint) &&& nege)
+schnorrVerify :: forall term. Core term => term ((PubKey, Word256), Sig) Bit
+schnorrVerify = drop sigUnpack &&& (take (take pkPoint) &&& nege)
       >>> match false k1
  where
   k1 = ioh &&& (iih &&& oh)
@@ -644,3 +644,6 @@ schnorr = drop sigUnpack &&& (take (take pkPoint) &&& nege)
     &&& take ((((((take (drop (drop (drop iiih))) &&& drop (take (take oooh))) &&& drop (take (take (take (oih &&& ioh))))) &&& drop (take (take ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop (take (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop ((((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh)))) &&& drop (take ((oiih &&& iooh) &&& drop (oih &&& ioh)))) &&& drop (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh)))))
     &&& (((((drop (drop (drop iiih)) &&& scribe8 0x80) &&& zero word16) &&& zero word32) &&& zero word64) &&& scribe (toWord (DoubleW word64) (256+8+256+256))))
   y = cond (scribe8 3) (scribe8 2)
+
+schnorrAssert :: forall term. Assert term => term ((PubKey, Word256), Sig) ()
+schnorrAssert = assert schnorrVerify
