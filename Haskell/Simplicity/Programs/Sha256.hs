@@ -14,7 +14,7 @@ import Simplicity.Programs.Word
 import Simplicity.Term.Core
 
 -- | In SHA-256, each block of data passed to the compression function is a 512-bit 'Word'.
-type Block = (Word256, Word256)
+type Block = Word512
 
 -- | In SHA-256, the inital vector and hash value are 256-bit 'Word's.
 type Hash = Word256

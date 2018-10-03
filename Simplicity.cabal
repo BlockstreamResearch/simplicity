@@ -25,6 +25,7 @@ library
                        Simplicity.Dag, Simplicity.Inference,
                        Simplicity.Serialization, Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString
                        Simplicity.Word
+                       Simplicity.LibSecp256k1.Spec
   other-modules:       Simplicity.LensEx
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   hs-source-dirs:      Haskell

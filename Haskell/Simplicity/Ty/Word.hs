@@ -3,12 +3,17 @@
 module Simplicity.Ty.Word
   ( Word(..), wordSize, fromWord, toWord
   -- * Type aliases
-  -- | Below are type aliases for Simplicity 'Word' types upto 256-bit words.
+  -- | Below are type aliases for Simplicity 'Word' types upto 512-bit words.
   -- Note: This does not limit word sizes; arbitrarily large word sizes are allowed by making further pairs.
-  , Word2, Word4, Word8, Word16, Word32, Word64, Word128, Word256
+  , Word2, Word4, Word8, Word16, Word32, Word64, Word128, Word256, Word512
   -- * Specializations
   -- | The following are useful instances of 'Word' and specializations of 'fromWord' and 'toWord' for commonly used word sizes.
   -- Other word sizes can still be constructed using other 'Word' values.
+
+  -- ** Word2
+  , word2, fromWord2, toWord2
+  -- ** Word4
+  , word4, fromWord4, toWord4
   -- ** Word8
   , word8, fromWord8, toWord8
   -- ** Word16
@@ -17,8 +22,12 @@ module Simplicity.Ty.Word
   , word32, fromWord32, toWord32
   -- ** Word64
   , word64, fromWord64, toWord64
+  -- ** Word128
+  , word128, fromWord128, toWord128
   -- ** Word256
   , word256, fromWord256, toWord256
+  -- ** Word512
+  , word512, fromWord512, toWord512
   ) where
 
 import Prelude hiding (Word)
@@ -33,12 +42,18 @@ import Simplicity.Ty.Bit
 -- These are the types of 2^/n/ bit words and are made up of nested pairs of identically sized words down to the single-'Bit' word type.
 data Word a where
   -- | A single bit 'Word'.
-  BitW :: Word Bit 
+  BitW :: Word Bit
   -- | A pair of identically sized 'Word's is the next larger 'Word'.
   DoubleW :: TyC a => Word a -> Word (a,a)
 
+word2 :: Word Word2
+word2 = DoubleW BitW
+
+word4 :: Word Word4
+word4 = DoubleW word2
+
 word8 :: Word Word8
-word8 = DoubleW . DoubleW . DoubleW $ BitW
+word8 = DoubleW word4
 
 word16 :: Word Word16
 word16 = DoubleW word8
@@ -54,6 +69,9 @@ word128 = DoubleW word64
 
 word256 :: Word Word256
 word256 = DoubleW word128
+
+word512 :: Word Word512
+word512 = DoubleW word256
 
 -- | Computes the number of bits of the 'Word' 'a'.
 --
@@ -98,6 +116,13 @@ type Word32 = (Word16, Word16)
 type Word64 = (Word32, Word32)
 type Word128 = (Word64, Word64)
 type Word256 = (Word128, Word128)
+type Word512 = (Word256, Word256)
+
+fromWord2 :: Word2 -> Integer
+fromWord2 = fromWord word2
+
+fromWord4 :: Word4 -> Integer
+fromWord4 = fromWord word4
 
 fromWord8 :: Word8 -> Integer
 fromWord8 = fromWord word8
@@ -111,8 +136,20 @@ fromWord32 = fromWord word32
 fromWord64 :: Word64 -> Integer
 fromWord64 = fromWord word64
 
+fromWord128 :: Word128 -> Integer
+fromWord128 = fromWord word128
+
 fromWord256 :: Word256 -> Integer
 fromWord256 = fromWord word256
+
+fromWord512 :: Word512 -> Integer
+fromWord512 = fromWord word512
+
+toWord2 :: Integer -> Word2
+toWord2 = toWord word2
+
+toWord4 :: Integer -> Word4
+toWord4 = toWord word4
 
 toWord8 :: Integer -> Word8
 toWord8 = toWord word8
@@ -126,5 +163,11 @@ toWord32 = toWord word32
 toWord64 :: Integer -> Word64
 toWord64 = toWord word64
 
+toWord128 :: Integer -> Word128
+toWord128 = toWord word128
+
 toWord256 :: Integer -> Word256
 toWord256 = toWord word256
+
+toWord512 :: Integer -> Word512
+toWord512 = toWord word512

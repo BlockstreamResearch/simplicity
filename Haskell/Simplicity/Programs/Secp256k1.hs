@@ -48,14 +48,9 @@ sub256 = subtractor word256 >>> ih
 
 mod26 :: forall term. Core term => term Word32 Word32
 mod26 = take ((zero word4 &&& (zero word2 &&& oiih)) &&& ih) &&& ih
- where
-  word2 = DoubleW BitW
-  word4 = DoubleW word2
 
 mod22 :: forall term. Core term => term Word32 Word32
 mod22 = (zero word8 &&& take (drop ((zero word2 &&& oih) &&& ih))) &&& ih
- where
-  word2 = DoubleW BitW
 
 shift26 :: forall term. Core term => term Word32 Word32
 shift26 = shift word32 26
@@ -139,9 +134,6 @@ feUnpack = drop (drop (drop (take ((zero word4 &&& (zero word2 &&& oiih)) &&& ih
         &&& (take (drop (drop ((zero word4 &&& (zero word2 &&& oooh)) &&& (take (oih &&& ioh) &&& (oiih &&& iooh))))) &&& ((take (drop (drop (drop (oih &&& ioh)))) &&& (take (drop (drop iiih)) &&& drop (take (take oooh)))) &&& drop (take (take (take (oih &&& ioh) &&& (oiih &&& iooh))))))
         &&& take ((((zero word4 &&& (zero word2 &&& take (drop oiih))) &&& oiih) &&& ioh)
          &&& take (take (take (zero word8 &&& ((zero word2 &&& ooh) &&& (oih &&& ioh)))) &&& (take ((oiih &&& iooh) &&& drop (oih &&& ioh)) &&& ((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh)))))))
- where
-  word2 = DoubleW BitW
-  word4 = DoubleW word2
 
 feZero :: forall term a. (Core term, TyC a) => term a FE
 feZero = z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z
@@ -451,7 +443,6 @@ wnaf16 = (take . take . take . take . take $ oooh) &&& iden
     body = ((oh &&& drop (drop iiih) >>> eq) &&& iden)
        >>> cond ((injr unit &&& oh) &&& injl unit)
                 ((injl (scribe (toWord word4 14)) &&& drop (take oooh)) &&& (injr (drop setLowBit)))
-    word4 = DoubleW (DoubleW BitW)
     setLowBit = oh &&& drop (oh &&& drop (oh &&& drop (oh &&& true)))
   wnaf16step2 = (oh &&& drop dropV16 >>> wnaf16step) &&& drop takeV16
             >>> oih &&& (ooh &&& ih >>> wnaf16step)
@@ -642,7 +633,7 @@ schnorrVerify = drop sigUnpack &&& (take (take pkPoint) &&& nege)
   m = (ioh
      &&& take (take (((((y &&& drop (take (take oooh))) &&& drop (take (take (take (oih &&& ioh))))) &&& drop (take (take ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop (take (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop ((((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh)))) &&& drop (take ((oiih &&& iooh) &&& drop (oih &&& ioh)))) &&& drop (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh)))))))
     &&& take ((((((take (drop (drop (drop iiih))) &&& drop (take (take oooh))) &&& drop (take (take (take (oih &&& ioh))))) &&& drop (take (take ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop (take (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop ((((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh)))) &&& drop (take ((oiih &&& iooh) &&& drop (oih &&& ioh)))) &&& drop (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh)))))
-    &&& (((((drop (drop (drop iiih)) &&& scribe8 0x80) &&& zero word16) &&& zero word32) &&& zero word64) &&& scribe (toWord (DoubleW word64) (256+8+256+256))))
+    &&& (((((drop (drop (drop iiih)) &&& scribe8 0x80) &&& zero word16) &&& zero word32) &&& zero word64) &&& scribe (toWord128 (256+8+256+256))))
   y = cond (scribe8 3) (scribe8 2)
 
 schnorrAssert :: forall term. Assert term => term ((PubKey, Word256), Sig) ()
