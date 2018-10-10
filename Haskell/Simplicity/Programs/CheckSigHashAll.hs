@@ -4,7 +4,7 @@ import qualified Data.ByteString.Char8 as BSC
 
 import Simplicity.Digest
 import Simplicity.MerkleRoot
-import qualified Simplicity.LibSecp256k1.Spec as LibSecp
+import qualified Simplicity.LibSecp256k1.Types as LibSecp
 import Simplicity.Primitive.Bitcoin
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
@@ -32,3 +32,8 @@ checkSigHashAll = (oh &&& (unit >>> sigHashAll)) &&& ih
 wCheckSigHashAll :: (Assert term, Primitive term, Witness term) => LibSecp.Sig -> term PubKey ()
 wCheckSigHashAll (LibSecp.Sig r s) = iden &&& (witness (toWord256 . toInteger $ r, toWord256 . toInteger $ s))
                                  >>> checkSigHashAll
+
+pkwCheckSigHashAll :: (Assert term, Primitive term, Witness term, TyC a) => LibSecp.PubKey -> LibSecp.Sig -> term a ()
+pkwCheckSigHashAll (LibSecp.PubKey y x) (LibSecp.Sig r s) =
+   scribe (toBit y, toWord256 . toInteger $ x) &&& (witness (toWord256 . toInteger $ r, toWord256 . toInteger $ s))
+   >>> checkSigHashAll

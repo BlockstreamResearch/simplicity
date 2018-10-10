@@ -22,14 +22,14 @@ import Data.ByteString.Short (ShortByteString, pack)
 import Data.Ix (inRange)
 import Data.List (mapAccumL, mapAccumR, unfoldr)
 import Data.Maybe (isJust)
-import Data.Serialize (Serialize, get, put)
-import Data.Serialize.Get (getWord8)
-import Data.Serialize.Put (runPut, putShortByteString, putWord8)
+import Data.Serialize (put)
+import Data.Serialize.Put (putShortByteString, runPut)
 import qualified Data.Vector as V
 import Lens.Family2 ((^.), (^..), (&), (+~), (*~), (%~), over)
 import Lens.Family2.Stock (_1)
 
 import Simplicity.Digest
+import Simplicity.LibSecp256k1.Types
 import Simplicity.Word
 import Simplicity.LensEx (_bits, review, under, zipWithOf)
 
@@ -464,31 +464,12 @@ tableG = t & traverse %~ norm
   zinv3 = zinv2 .*. zinv
   norm (GE x y) = GE (normalize (x .*. zinv2)) (normalize (y .*. zinv3))
 
-data PubKey = PubKey Bool Word256
-
-instance Serialize PubKey where
-  get = PubKey <$> (getWord8 >>= compressedY) <*> get
-   where
-    compressedY 2 = return False
-    compressedY 3 = return True
-    compressedY _ = fail "Serialize.get{PubKey}: bad compressed y-coordinate."
-  put (PubKey y x) = putY y >> put x
-   where
-    putY False = putWord8 2
-    putY True = putWord8 3
-
 pkPoint :: PubKey -> Maybe GEJ
 pkPoint (PubKey py px) = do
   let x = feUnpack px
   guard $ (normalize x^.._fe) == (x^.._fe)
   y0 <- normalize <$> sqrt (sqr x .*. x .+. feSeven)
   return $ GEJ x (if py == odd (repr y0) then y0 else neg 1 y0) feOne
-
-data Sig = Sig Word256 Word256
-
-instance Serialize Sig where
-  get = Sig <$> get <*> get
-  put (Sig r s) = put r >> put s
 
 sigUnpack :: Sig -> Maybe (FE, Scalar)
 sigUnpack (Sig r0 s0) = do

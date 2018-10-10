@@ -1,5 +1,22 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-module Simplicity.Programs.Secp256k1 where
+module Simplicity.Programs.Secp256k1
+  ( FE, fePack, feUnpack, feZero, feOne, feIsZero
+  , normalizeWeak, normalize
+  , add, neg, mulInt, sqr, mul, inv, sqrt
+  , isQuad
+  , GE, GEJ, inf, isInf
+  , normalizePoint
+  , geNegate, double, offsetPoint, offsetPointZinv
+  , eqXCoord, hasQuadY
+  , wnaf5, wnaf16
+  , ecMult
+  , PubKey, pkPoint
+  , Sig, sigUnpack
+  , scalarUnrepr
+  , schnorrVerify, schnorrAssert
+  , X10
+  , Vector256, Vector16, Vector8, Vector4, Vector2
+  ) where
 
 import Prelude hiding (drop, take, and, or, not, sqrt)
 
@@ -59,7 +76,7 @@ shift22 :: forall term. Core term => term Word32 Word32
 shift22 = shift word32 22
 
 type X9 x = (x, (x, (x, (x, (x, (x, (x, (x, x))))))))
-type X10 x = (x, X9 x)
+type X10 x = (x, (x, (x, (x, (x, (x, (x, (x, (x, x)))))))))
 type FE = X10 Word32
 
 at :: forall term x a. (Core term, TyC x, TyC a) => term x a -> Integer -> term (X10 x) a
@@ -332,9 +349,8 @@ hasQuadY = and (not isInf) (oih &&& ih >>> mul >>> isQuad)
 type Vector2 x = (x,x)
 type Vector4 x = Vector2 (Vector2 x)
 type Vector8 x = Vector2 (Vector4 x)
-type Vector16 x = Vector2 (Vector8 x)
-type Vector32 x = Vector2 (Vector16 x)
-type Vector256 x = Vector8 (Vector32 x)
+type Vector16 x = Vector4 (Vector4 x)
+type Vector256 x = Vector16 (Vector16 x)
 
 scalarTable5 :: forall term. Core term => term GEJ (FE, Vector8 GE)
 scalarTable5 = iden &&& double
