@@ -15,7 +15,6 @@ module Simplicity.Programs.Secp256k1
   , scalarUnrepr
   , schnorrVerify, schnorrAssert
   , X10
-  , Vector256, Vector16, Vector8, Vector4, Vector2
   ) where
 
 import Prelude hiding (drop, take, and, or, not, sqrt)
@@ -346,12 +345,6 @@ eqXCoord = drop (take (take normalizeWeak)) &&& (drop (drop sqr) &&& oh >>> mul 
 hasQuadY :: forall term. Core term => term GEJ Bit
 hasQuadY = and (not isInf) (oih &&& ih >>> mul >>> isQuad)
 
-type Vector2 x = (x,x)
-type Vector4 x = Vector2 (Vector2 x)
-type Vector8 x = Vector2 (Vector4 x)
-type Vector16 x = Vector4 (Vector4 x)
-type Vector256 x = Vector16 (Vector16 x)
-
 scalarTable5 :: forall term. Core term => term GEJ (FE, Vector8 GE)
 scalarTable5 = iden &&& double
            >>> iih &&& (((ooh &&& iih >>> scaleZ) &&& oih) &&& ioh) -- (dz, (a', (dx,dy)))
@@ -386,31 +379,25 @@ lookupTable5 = oooh &&& ooih &&& oih &&& ih
 type Wnaf5State = (Either Word2 (), Bit) -- state consists of a counter for skiping upto for places and a bit indicating the current carry bit.
 type Wnaf5Env b = (b, Vector4 b) -- the environment consists of the current bit in the scalar being considered and the following 4 bits afterwards (zero padded).
 
-wnaf5step16 :: forall term. Core term => term (Wnaf5State, Wnaf5Env Word16) (Wnaf5State, Vector16 (Either () Word4))
-wnaf5step16 = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) >>> wnaf5step8) &&& drop (ooh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh)))
-          >>> oih &&& (ooh &&& ih >>> wnaf5step8)
-          >>> ioh &&& (oh &&& iih)
+wnaf5step1 :: forall term. Core term => term (Wnaf5State, Wnaf5Env Bit) (Wnaf5State, Either () Word4)
+wnaf5step1 = ooh &&& (oih &&& ih)
+         >>> match (count &&& injl unit) (drop body)
  where
-  wnaf5step = ooh &&& (oih &&& ih)
-          >>> match (count &&& injl unit) (drop body)
-   where
-    count = ooh &&& (oih &&& ioh)
-        >>> cond (cond (injl (true  &&& false) &&& iden) (injl (false &&& true) &&& iden))
-                 (cond (injl (false &&& false) &&& iden) (injr unit             &&& iden))
-    body = ((oh &&& ioh >>> eq) &&& (oh &&& iih))
-       >>> cond ((injr unit &&& oh) &&& injl unit)
-                ((injl (true &&& true) &&& iooh) &&& (injr ih))
-  wnaf5step2 = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) >>> wnaf5step) &&& drop (ooh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh)))
-           >>> oih &&& (ooh &&& ih >>> wnaf5step)
-           >>> ioh &&& (oh &&& iih)
-  wnaf5step4 = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) >>> wnaf5step2) &&& drop (ooh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh)))
-           >>> oih &&& (ooh &&& ih >>> wnaf5step2)
-           >>> ioh &&& (oh &&& iih)
-  wnaf5step8 = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) >>> wnaf5step4) &&& drop (ooh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh)))
-           >>> oih &&& (ooh &&& ih >>> wnaf5step4)
-           >>> ioh &&& (oh &&& iih)
+  count = ooh &&& (oih &&& ioh)
+      >>> cond (cond (injl (true  &&& false) &&& iden) (injl (false &&& true) &&& iden))
+               (cond (injl (false &&& false) &&& iden) (injr unit             &&& iden))
+  body = ((oh &&& ioh >>> eq) &&& (oh &&& iih))
+     >>> cond ((injr unit &&& oh) &&& injl unit)
+              ((injl (true &&& true) &&& iooh) &&& (injr ih))
 
--- TODO: share code between wnaf5, wnaf5Short and wnaf16?
+wnaf5stepD :: forall w v term. (TyC w, TyC v, Core term) => term (Wnaf5State, Wnaf5Env w) (Wnaf5State, v) -> term (Wnaf5State, Wnaf5Env (w,w)) (Wnaf5State, (v,v))
+wnaf5stepD rec = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) >>> rec) &&& drop (ooh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh)))
+          >>> oih &&& (ooh &&& ih >>> rec)
+          >>> ioh &&& (oh &&& iih)
+
+wnaf5step16 :: forall term. Core term => term (Wnaf5State, Wnaf5Env Word16) (Wnaf5State, Vector16 (Either () Word4))
+wnaf5step16 = wnaf5stepD . wnaf5stepD . wnaf5stepD . wnaf5stepD $ wnaf5step1
+
 wnaf5 :: forall term. Core term => term Word256 (Vector256 (Either () Word4))
 wnaf5 = (take . take . take . take . take $ oooh) &&& iden
     >>> cond (true &&& (scribe (toWord256 scalarOrder) &&& iden >>> sub256) >>> go)
@@ -418,26 +405,15 @@ wnaf5 = (take . take . take . take . take $ oooh) &&& iden
  where
   -- a variant of shift that pulls in leading ones could be useful here instead of using bitwiseNot.
   go = (injr unit &&& oh) &&& (oh &&& drop (iden &&& ((shift word256 4 &&& shift word256 3) &&& (shift word256 2 &&& shift word256 1)))
-                           >>> cond (take (bitwiseNot word256) &&& drop (bitwiseNot (DoubleW (DoubleW word256)))) iden)
+                           >>> cond (take (bitwiseNot word256) &&& drop (bitwiseNot (DoubleV (DoubleV word256)))) iden)
    >>> wnaf5step256 >>> ih
-  wnaf5step32 = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) >>> wnaf5step16) &&& drop (ooh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh)))
-            >>> oih &&& (ooh &&& ih >>> wnaf5step16)
-            >>> ioh &&& (oh &&& iih)
-  wnaf5step64 = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) >>> wnaf5step32) &&& drop (ooh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh)))
-            >>> oih &&& (ooh &&& ih >>> wnaf5step32)
-            >>> ioh &&& (oh &&& iih)
-  wnaf5step128 = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) >>> wnaf5step64) &&& drop (ooh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh)))
-             >>> oih &&& (ooh &&& ih >>> wnaf5step64)
-             >>> ioh &&& (oh &&& iih)
-  wnaf5step256 = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) >>> wnaf5step128) &&& drop (ooh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh)))
-             >>> oih &&& (ooh &&& ih >>> wnaf5step128)
-             >>> ioh &&& (oh &&& iih)
+  wnaf5step256 = wnaf5stepD . wnaf5stepD . wnaf5stepD . wnaf5stepD $ wnaf5step16
 
 wnaf5Short :: forall term. Core term => term Word16 (Vector16 (Either () Word4))
 wnaf5Short = false &&& iden >>> go
  where
   go = (injr unit &&& oh) &&& (oh &&& drop (iden &&& ((shift word16 4 &&& shift word16 3) &&& (shift word16 2 &&& shift word16 1)))
-                           >>> cond (take (bitwiseNot word16) &&& drop (bitwiseNot (DoubleW (DoubleW word16)))) iden)
+                           >>> cond (take (bitwiseNot word16) &&& drop (bitwiseNot (DoubleV (DoubleV word16)))) iden)
    >>> wnaf5step16 >>> ih
 
 wnaf16 :: forall term. Core term => term Word256 (Vector256 (Either () Word16))
@@ -447,11 +423,11 @@ wnaf16 = (take . take . take . take . take $ oooh) &&& iden
  where
   -- a variant of shift that pulls in leading ones could be useful here instead of using bitwiseNot.
   go = (injr unit &&& oh) &&& (oh &&& drop shifts
-                           >>> cond (bitwiseNot (DoubleW (DoubleW (DoubleW (DoubleW word256))))) iden)
+                           >>> cond (bitwiseNot (DoubleV (DoubleV (DoubleV (DoubleV word256))))) iden)
    >>> wnaf16step256 >>> ih
   shifts = (((shift word256 15 &&& shift word256 14) &&& (shift word256 13 &&& shift word256 12)) &&& ((shift word256 11 &&& shift word256 10) &&& (shift word256 9 &&& shift word256 8)))
        &&& (((shift word256 7 &&& shift word256 6) &&& (shift word256 5 &&& shift word256 4)) &&& ((shift word256 3 &&& shift word256 2) &&& (shift word256 1 &&& iden)))
-  wnaf16step = ooh &&& (oih &&& ih)
+  wnaf16step1 = ooh &&& (oih &&& ih)
            >>> match (count &&& injl unit) (drop body)
    where
     count = (zero word4 &&& oh >>> eq) &&& (oh &&& ioh)
@@ -460,8 +436,8 @@ wnaf16 = (take . take . take . take . take $ oooh) &&& iden
        >>> cond ((injr unit &&& oh) &&& injl unit)
                 ((injl (scribe (toWord word4 14)) &&& drop (take oooh)) &&& (injr (drop setLowBit)))
     setLowBit = oh &&& drop (oh &&& drop (oh &&& drop (oh &&& true)))
-  wnaf16step2 = (oh &&& drop dropV16 >>> wnaf16step) &&& drop takeV16
-            >>> oih &&& (ooh &&& ih >>> wnaf16step)
+  wnaf16stepD rec = (oh &&& drop dropV16 >>> rec) &&& drop takeV16
+            >>> oih &&& (ooh &&& ih >>> rec)
             >>> ioh &&& (oh &&& iih)
    where
     takeV2 = ooh &&& ioh
@@ -472,90 +448,7 @@ wnaf16 = (take . take . take . take . take $ oooh) &&& iden
     dropV4 = take dropV2 &&& drop dropV2
     dropV8 = take dropV4 &&& drop dropV4
     dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step4 = (oh &&& drop dropV16 >>> wnaf16step2) &&& drop takeV16
-            >>> oih &&& (ooh &&& ih >>> wnaf16step2)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step8 = (oh &&& drop dropV16 >>> wnaf16step4) &&& drop takeV16
-            >>> oih &&& (ooh &&& ih >>> wnaf16step4)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step16 = (oh &&& drop dropV16 >>> wnaf16step8) &&& drop takeV16
-            >>> oih &&& (ooh &&& ih >>> wnaf16step8)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step32 = (oh &&& drop dropV16 >>> wnaf16step16) &&& drop takeV16
-            >>> oih &&& (ooh &&& ih >>> wnaf16step16)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step64 = (oh &&& drop dropV16 >>> wnaf16step32) &&& drop takeV16
-            >>> oih &&& (ooh &&& ih >>> wnaf16step32)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step128 = (oh &&& drop dropV16 >>> wnaf16step64) &&& drop takeV16
-            >>> oih &&& (ooh &&& ih >>> wnaf16step64)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
-  wnaf16step256 = (oh &&& drop dropV16 >>> wnaf16step128) &&& drop takeV16
-            >>> oih &&& (ooh &&& ih >>> wnaf16step128)
-            >>> ioh &&& (oh &&& iih)
-   where
-    takeV2 = ooh &&& ioh
-    takeV4 = take takeV2 &&& drop takeV2
-    takeV8 = take takeV4 &&& drop takeV4
-    takeV16 = take takeV8 &&& drop takeV8
-    dropV2 = oih &&& iih
-    dropV4 = take dropV2 &&& drop dropV2
-    dropV8 = take dropV4 &&& drop dropV4
-    dropV16 = take dropV8 &&& drop dropV8
+  wnaf16step256 = wnaf16stepD . wnaf16stepD . wnaf16stepD . wnaf16stepD . wnaf16stepD . wnaf16stepD . wnaf16stepD . wnaf16stepD $ wnaf16step1
 
 generatorSmall :: forall term. Core term => term Word16 GE
 generatorSmall = signAbs
