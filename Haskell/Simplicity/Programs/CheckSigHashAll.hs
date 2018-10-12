@@ -9,7 +9,7 @@ import Simplicity.Primitive.Bitcoin
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Sha256
-import Simplicity.Programs.Secp256k1
+import Simplicity.Programs.LibSecp256k1
 import Simplicity.Programs.Word
 import Simplicity.Term
 import Simplicity.Ty

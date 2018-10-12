@@ -17,7 +17,7 @@ import Simplicity.LibSecp256k1.Spec ((.*.))
 import Simplicity.LensEx (zipWithOf)
 import qualified Simplicity.LibSecp256k1.Spec as LibSecp
 import Simplicity.Programs.Bit
-import Simplicity.Programs.Secp256k1
+import Simplicity.Programs.LibSecp256k1
 import Simplicity.Programs.Sha256
 import Simplicity.Programs.Word
 import Simplicity.Term.Core

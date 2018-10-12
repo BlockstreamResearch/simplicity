@@ -20,7 +20,7 @@ library
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
-                       Simplicity.Programs.Word, Simplicity.Programs.Bit, Simplicity.Programs.CheckSigHashAll, Simplicity.Programs.Generic, Simplicity.Programs.Secp256k1, Simplicity.Programs.Sha256,
+                       Simplicity.Programs.Word, Simplicity.Programs.Bit, Simplicity.Programs.CheckSigHashAll, Simplicity.Programs.Generic, Simplicity.Programs.LibSecp256k1, Simplicity.Programs.Sha256,
                        Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics,
                        Simplicity.Dag, Simplicity.Inference,
                        Simplicity.Serialization, Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString
@@ -58,7 +58,7 @@ Test-Suite Simplicity-testsuite
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
-                       Simplicity.Programs.Word, Simplicity.Programs.Bit, Simplicity.Programs.CheckSigHashAll, Simplicity.Programs.Generic, Simplicity.Programs.Secp256k1, Simplicity.Programs.Sha256,
+                       Simplicity.Programs.Word, Simplicity.Programs.Bit, Simplicity.Programs.CheckSigHashAll, Simplicity.Programs.Generic, Simplicity.Programs.LibSecp256k1, Simplicity.Programs.Sha256,
                        Simplicity.Digest, Simplicity.MerkleRoot, Simplicity.Semantics,
                        Simplicity.Dag, Simplicity.Inference,
                        Simplicity.Serialization, Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString,

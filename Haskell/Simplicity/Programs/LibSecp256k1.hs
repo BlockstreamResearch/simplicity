@@ -1,5 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-module Simplicity.Programs.Secp256k1
+module Simplicity.Programs.LibSecp256k1
   ( FE, fePack, feUnpack, feZero, feOne, feIsZero
   , normalizeWeak, normalize
   , add, neg, mulInt, sqr, mul, inv, sqrt
