@@ -1,19 +1,31 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+-- | This modules defines Simplicity expressions that replicate the functional behaviour of (a specific version of) libsecp256k1's elliptic curve operations <https://github.com/bitcoin-core/secp256k1/tree/1e6f1f5ad5e7f1e3ef79313ec02023902bf8175c>.
+-- The funcitions defined here return precisely the same field and point representatives that the corresponding libsecp256k1's functions do, with a few exceptions with the way the point at infinity is handled.
+-- This makes these expressions suitable for being jetted by using libsecp256k1 functions.
+--
+-- This module is not yet complete.
 module Simplicity.Programs.LibSecp256k1
-  ( FE, fePack, feUnpack, feZero, feOne, feIsZero
+  (
+  -- * Field operations
+    FE, fePack, feUnpack, feZero, feOne, feIsZero
   , normalizeWeak, normalize
   , add, neg, mulInt, sqr, mul, inv, sqrt
   , isQuad
+  -- * Point operations
   , GE, GEJ, inf, isInf
   , normalizePoint
   , geNegate, double, offsetPoint, offsetPointZinv
   , eqXCoord, hasQuadY
+  -- * Elliptic curve multiplication related operations
+  , Scalar
   , wnaf5, wnaf16
   , ecMult
+  -- * Schnorr signature operations
   , PubKey, pkPoint
   , Sig, sigUnpack
   , scalarUnrepr
   , schnorrVerify, schnorrAssert
+  -- * Types
   , X10
   ) where
 
@@ -26,58 +38,80 @@ import Simplicity.Programs.Sha256
 import Simplicity.Ty
 import Simplicity.Term
 
+-- The number of elements in secp256k1's field.
 feOrder :: Integer
 feOrder = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F
 
+-- The number of points on secp256k1's elliptic curve.
 scalarOrder :: Integer
 scalarOrder = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
 
+-- A constant expression for a 8-bit value.
 scribe8 :: forall term a. (Core term, TyC a) => Integer -> term a Word8
 scribe8 = scribe . toWord8
 
+-- Addition modulo 2^32.
 add32 :: forall term. Core term => term (Word32, Word32) Word32
 add32 = adder word32 >>> ih
 
+-- Subtraction modulo 2^32.
 sub32 :: forall term. Core term => term (Word32, Word32) Word32
 sub32 = subtractor word32 >>> ih
 
+-- Multiplication modulo 2^32.
 mul32 :: forall term. Core term => term (Word32, Word32) Word32
 mul32 = multiplier word32 >>> ih
 
+-- A constant expression for a 32-bit value.
 scribe32 :: forall term a. (Core term, TyC a) => Integer -> term a Word32
 scribe32 = scribe . toWord32
 
+-- Addition modulo 2^64.
 add64 :: forall term. Core term => term (Word64, Word64) Word64
 add64 = adder word64 >>> ih
 
+-- Multiplication modulo 2^64.
 mul64 :: forall term. Core term => term (Word64, Word64) Word64
 mul64 = multiplier word64 >>> ih
 
+-- A constant expression for a 64-bit value.
 scribe64 :: forall term a. (Core term, TyC a) => Integer -> term a Word64
 scribe64 = scribe . toWord64
 
+-- Multiplication of two 32-bit values.
 wideMul32 :: forall term. Core term => term (Word32, Word32) Word64
 wideMul32 = multiplier word32
 
+-- Subtraction modulo 2^256.
 sub256 :: forall term. Core term => term (Word256, Word256) Word256
 sub256 = subtractor word256 >>> ih
 
+-- Reduction modulo 2^26.
 mod26 :: forall term. Core term => term Word32 Word32
 mod26 = take ((zero word4 &&& (zero word2 &&& oiih)) &&& ih) &&& ih
 
+-- Reduction modulo 2^22.
 mod22 :: forall term. Core term => term Word32 Word32
 mod22 = (zero word8 &&& take (drop ((zero word2 &&& oih) &&& ih))) &&& ih
 
+-- Shift right by 26 bits.
 shift26 :: forall term. Core term => term Word32 Word32
 shift26 = shift word32 26
 
+-- Shift right by 22 bits.
 shift22 :: forall term. Core term => term Word32 Word32
 shift22 = shift word32 22
 
+-- | Right-nested 9-tuple.
 type X9 x = (x, (x, (x, (x, (x, (x, (x, (x, x))))))))
+
+-- | Right-nested 10-tuple.
 type X10 x = (x, (x, (x, (x, (x, (x, (x, (x, (x, x)))))))))
+
+-- | Simplicity's representation of 'fe' (field) elements in libsecp256k1's 10x26-bit form.
 type FE = X10 Word32
 
+-- A combinator for evaluating @k@ on the ith element of an @X10 x@ value.
 at :: forall term x a. (Core term, TyC x, TyC a) => term x a -> Integer -> term (X10 x) a
 at k 0 = take k
 at k 1 = drop . take $ k
@@ -90,6 +124,7 @@ at k 7 = drop . drop . drop . drop . drop . drop . drop . take $ k
 at k 8 = drop . drop . drop . drop . drop . drop . drop . drop . take $ k
 at k 9 = drop . drop . drop . drop . drop . drop . drop . drop . drop $ k
 
+-- Common code shared between 'normalizeWeak' and 'normalize'.
 reduce :: forall term. Core term => term (Word32, FE) FE
 reduce = ((ioh &&& ((oh &&& scribe32 0x3D1) >>> mul32) >>> add32)
      &&& ((iioh &&& (take (shift word32 (-6))) >>> add32)
@@ -105,9 +140,15 @@ reduce = ((ioh &&& ((oh &&& scribe32 0x3D1) >>> mul32) >>> add32)
      >>> ((take mod26) &&& ((drop mod22) &&& (take shift26) >>> add32))
          ))))))))))))))))
 
+-- | Change the representation of a field element to one with magnitude 1.
+--
+-- Corresponds to @secp256k1_fe_normalize_weak@.
 normalizeWeak :: forall term. Core term => term FE FE
 normalizeWeak = (shift22 `at` 9) &&& iden >>> reduce
 
+-- | Reduce the representation of a field element to its canonical represenative.
+--
+-- Corresponds to @secp256k1_fe_normalize_var@ (and @secp256k1_fe_normalize@).
 normalize :: forall term. Core term => term FE FE
 normalize = normalizeWeak >>> more &&& iden
         >>> cond (scribe32 1 &&& iden >>> reduce >>> modAt9) iden
@@ -126,6 +167,10 @@ normalize = normalizeWeak >>> more &&& iden
   modAt9 =       oh &&& drop (oh &&& drop (oh &&& drop (oh &&& drop (oh
        &&& drop (oh &&& drop (oh &&& drop (oh &&& drop (oh &&& drop mod22))))))))
 
+-- | Pack a field element into a 256-bit packed representation.
+-- The input is required to be 'normalize'd.
+--
+-- Corresponds to @secp256k1_fe_get_b32@.
 fePack :: forall term. Core term => term FE Word256
 fePack = drop (drop (drop (drop (drop (drop (drop (drop w7 &&& w6))) &&& (drop (drop w5) &&& w4)))))
      &&& (drop (drop (drop w3 &&& w2)) &&& (drop w1 &&& w0))
@@ -139,6 +184,9 @@ fePack = drop (drop (drop (drop (drop (drop (drop (drop w7 &&& w6))) &&& (drop (
   w6 = drop (take ih) &&& take (take ((oiih &&& iooh) &&& drop (oih &&& ioh)) &&& ((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))))
   w7 = drop ((take (drop (oih &&& ioh)) &&& (take iiih &&& drop oooh)) &&& drop (take (oih &&& ioh) &&& (oiih &&& iooh))) &&& ((drop (drop (drop (oih &&& ioh))) &&& (drop (drop iiih) &&& take (take oiih))) &&& take oih)
 
+-- | Unpack a field element from a 256-bit packed representation.
+--
+-- Corresponds to @secp256k1_fe_set_b32@
 feUnpack :: forall term. Core term => term Word256 FE
 feUnpack = drop (drop (drop (take ((zero word4 &&& (zero word2 &&& oiih)) &&& ih) &&& ih)))
        &&& drop (drop (take ((zero word4 &&& (zero word2 &&& take (drop ioh))) &&& ((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh)))) &&& (take (drop ((oiih &&& iooh) &&& drop (oih &&& ioh))) &&& ((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh)))))))
@@ -151,21 +199,26 @@ feUnpack = drop (drop (drop (take ((zero word4 &&& (zero word2 &&& oiih)) &&& ih
         &&& take ((((zero word4 &&& (zero word2 &&& take (drop oiih))) &&& oiih) &&& ioh)
          &&& take (take (take (zero word8 &&& ((zero word2 &&& ooh) &&& (oih &&& ioh)))) &&& (take ((oiih &&& iooh) &&& drop (oih &&& ioh)) &&& ((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh)))))))
 
+-- | The normalized reprsentative for the field element 0.
 feZero :: forall term a. (Core term, TyC a) => term a FE
 feZero = z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z
  where
   z = zero word32
 
+-- | The normalized reprsentative for the field element 1.
 feOne :: forall term a. (Core term, TyC a) => term a FE
 feOne = scribe32 1 &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z
  where
   z = zero word32
 
+-- | The normalized reprsentative for the field element 7.
 feSeven :: forall term a. (Core term, TyC a) => term a FE
 feSeven = scribe32 7 &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z &&& z
  where
   z = zero word32
 
+-- The first non-canonical representative of 0.
+-- It consists of the bits of feOrder
 bigZero :: forall term. Core term => term FE FE
 bigZero = scribe32 0x3FFFC2F
       &&& scribe32 0x3FFFFBF
@@ -180,9 +233,14 @@ bigZero = scribe32 0x3FFFC2F
  where
   scribe3FFFFFF = scribe32 0x3FFFFFF
 
+-- | Tests if the input value is a representative of the field element 0.
+-- Some preconditions apply.
+--
+-- Corresponds to @secp256k1_fe_is_zero@.
 feIsZero :: forall term. Core term => term FE Bit
 feIsZero = normalizeWeak >>> or (feZero &&& iden >>> eq) (bigZero &&& iden >>> eq)
 
+-- A combinator for applying the binary @k@ expression pointwise on pair of field elements.
 pointWise :: forall term. Core term => term (Word32, Word32) Word32 -> term (FE,FE) FE
 pointWise k = ((take (iden `at` 0) &&& drop (iden `at` 0)) >>> k)
           &&& ((take (iden `at` 1) &&& drop (iden `at` 1)) >>> k)
@@ -195,9 +253,17 @@ pointWise k = ((take (iden `at` 0) &&& drop (iden `at` 0)) >>> k)
           &&& ((take (iden `at` 8) &&& drop (iden `at` 8)) >>> k)
           &&& ((take (iden `at` 9) &&& drop (iden `at` 9)) >>> k)
 
+-- | Adds two field elements.
+-- The resulting magnitude is the sum of the input magnitudes.
+--
+-- Corresponds to @secp256k1_fe_add@.
 add :: forall term. Core term => term (FE,FE) FE
 add = pointWise add32
 
+-- | Multiplies a field element by a small, static integer.
+-- The resulting magnitude is the input magnitude multiplied by the small integer.
+--
+-- Corresponds to @secp256k1_fe_mul_int@.
 mulInt :: forall term. Core term => Integer -> term FE FE
 mulInt x = take scale &&& drop
          ( take scale &&& drop
@@ -212,9 +278,14 @@ mulInt x = take scale &&& drop
  where
   scale = iden &&& scribe32 x >>> mul32
 
+-- | Negates a field element.
+-- The resulting magnitude is one more than the input magnitude.
+--
+-- Corresponds to @secp256k1_fe_negate@.
 neg :: forall term. Core term => Integer -> term FE FE
 neg x = (bigZero >>> mulInt (2*(x+1))) &&& iden >>> pointWise sub32
 
+-- Common code shared between 'mul' and 'sqr'.
 sum19 :: forall term. Core term => term (X9 Word64, X10 Word64) FE
 sum19 = (oh &&& iih) &&& (drop (take (shift26' &&& mod26')))
     >>> take (oih &&& iih) &&& (((oioh &&& ioh >>> add64) &&& oooh >>> circut) &&& iih)
@@ -238,6 +309,11 @@ sum19 = (oh &&& iih) &&& (drop (take (shift26' &&& mod26')))
   shiftk1 = (zero word32 &&& iden >>> shift word64 (-10))
   rest = iden `at` 6 &&& iden `at` 5 &&& iden `at` 4 &&& iden `at` 3 &&& iden `at` 2 &&& iden `at` 1 &&& iden `at` 0
 
+-- | Multiplies two field elements.
+-- The input magnitudes must be at most 8 (okay maybe up to 10).
+-- The resulting magnitude is 1 (which isn't necessarily normalized).
+--
+-- Corresponds to @secp256k1_fe_mul@.
 mul :: forall term. Core term => term (FE,FE) FE
 mul = (convlo 0 &&& convlo 1 &&& convlo 2 &&& convlo 3 &&& convlo 4 &&& convlo 5 &&& convlo 6 &&& convlo 7 &&& convlo 8)
   &&& (convhi 9 &&& convhi 10 &&& convhi 11 &&& convhi 12 &&& convhi 13 &&& convhi 14 &&& convhi 15 &&& convhi 16 &&& convhi 17 &&& convhi 18)
@@ -249,6 +325,11 @@ mul = (convlo 0 &&& convlo 1 &&& convlo 2 &&& convlo 3 &&& convlo 4 &&& convlo 5
   rarg i = drop (iden `at` i)
   mksum = foldr1 (\t1 t2 -> t1 &&& t2 >>> add64)
 
+-- | Squares a field element.
+-- The input magnitude must be at most 8.
+-- The resulting magnitude is 1 (which isn't necessarily normalized).
+--
+-- Corresponds to @secp256k1_fe_sqr@.
 sqr :: forall term. Core term => term FE FE
 sqr = (convlo 0 &&& convlo 1 &&& convlo 2 &&& convlo 3 &&& convlo 4 &&& convlo 5 &&& convlo 6 &&& convlo 7 &&& convlo 8)
   &&& (convhi 9 &&& convhi 10 &&& convhi 11 &&& convhi 12 &&& convhi 13 &&& convhi 14 &&& convhi 15 &&& convhi 16 &&& convhi 17 &&& convhi 18)
@@ -258,6 +339,7 @@ sqr = (convlo 0 &&& convlo 1 &&& convlo 2 &&& convlo 3 &&& convlo 4 &&& convlo 5
   convhi i = mksum $ [iden `at` j &&& shift word32 (-1) `at` (i-j) >>> wideMul32|j<-[(i+2) `div` 2..9]] ++ [iden `at` (i `div` 2) >>> iden &&& iden >>> wideMul32 | even i]
   mksum = foldr1 (\t1 t2 -> t1 &&& t2 >>> add64)
 
+-- Common code shared between 'inv' and 'sqrt'.
 tower :: forall term. Core term => term FE (FE, FE)
 tower = iden &&& (iden &&& sqr >>> mul)
     >>> ih &&& (oh &&& drop sqr >>> mul)
@@ -271,30 +353,59 @@ tower = iden &&& (iden &&& sqr >>> mul)
                        >>> foldr1 (>>>) (replicate 23 sqr)) >>> mul                               -- (x2,t1)
              >>> foldr1 (>>>) (replicate 5 sqr))
 
+-- | Computes the modular inverse of a field element.
+-- The input magnitude must be at most 8.
+-- The resulting magnitude is 1 (which isn't necessarily normalized).
+-- Returns a represenative of 0 when given 0.
+--
+-- Corresponds to @secp256k1_fe_inv@.
 inv :: forall term. Core term => term FE FE
 inv = iden &&& tower
   >>> oh &&& (ioh &&& (oh &&& iih >>> mul >>> sqr >>> sqr >>> sqr) >>> mul >>> sqr >>> sqr) >>> mul
 
+-- | Computes the modular square root of a field element if it exists.
+-- The input magnitude must be at most 8.
+-- If the result exists, magnitude is 1 (which isn't necessarily normalized) and it is a quadratic residue
+--
+-- Corresponds to @secp256k1_fe_sqrt@.
+-- If @secp256k1_fe_sqrt@ would return 0, then @'Left' ()@ is returned by 'sqrt'.
+-- If @secp256k1_fe_sqrt@ would return 1, then @'Right' r@ is returned by 'sqrt' where @r@ is the result from @secp256k1_fe_sqrt@.
 sqrt :: forall term. Core term => term FE (Either () FE)
 sqrt = iden &&& tower
    >>> oh &&& drop ((oh &&& drop sqr >>> mul) >>> sqr >>> sqr)
    >>> (oh &&& drop (sqr >>> neg 1) >>> add >>> feIsZero) &&& ih
    >>> cond (injr iden) (injl unit)
 
+-- | Tests if the field element is a quadratic residue.
+--
+-- Corresponds to @secp256k1_fe_is_quad_var@.
 isQuad :: forall term. Core term => term FE Bit
 isQuad = sqrt &&& unit >>> match false true
 
+-- | A point in affine coordinates.
+-- Usually expected to be on the elliptic curve.
+-- The point at infinity isn't representable.
 type GE = (FE, FE)
+
+-- | A point in Jacobian coordinates.
+-- Usually expected to be on the elliptic curve.
+-- The point at infinity's representatives are of the form @((a^2, a^3), 0)@, with @((1, 1), 0)@ being the canonical representative.
 type GEJ = (GE, FE)
 
+-- | Returns the canonical represenative of the point at infinity.
 inf :: forall term a. (Core term, TyC a) => term a GEJ
 inf = (one &&& one) &&& feZero
  where
   one = feOne
 
+-- | Given a point on curve, or a represenativie of infinity, tests if the point is a representative of infinity.
 isInf :: forall term. Core term => term GEJ Bit
 isInf = drop feIsZero
 
+-- | Adds a point with itself.
+--
+-- Corresponds to @secp256k1_gej_double_var@.
+-- However if the input is infinity, it returns infinity in canonical form.
 double :: forall term. Core term => term GEJ GEJ
 double = isInf &&& iden >>> cond inf body
  where
@@ -303,6 +414,12 @@ double = isInf &&& iden >>> cond inf body
       >>> take (oh &&& (drop (mulInt 4) >>> neg 4) >>> add) &&& (drop (drop (neg 2)) &&& (ioh &&& take (take (neg 1) &&& drop (mulInt 6) >>> add) >>> mul) >>> add))
      &&& (oih &&& ih >>> mul >>> mulInt 2)
 
+-- | Adds a point in Jacobian coordinates with a point in affine coordinates.
+-- Returns the result in Jacobian coordinates and the ratio of z-coordinates between the output and the input that is in Jacobain coordinates.
+-- If the input point in Jacobian coordinates is the point at infinity, the ratio returned is set to 0.
+--
+-- Corresponds to @secp256k1_gej_add_ge_var@ with a non-null @rzr@.
+-- If the result is the point at infinity, it is returned in canonical form.
 offsetPoint :: forall term. Core term => term (GEJ, GE) (FE, GEJ)
 offsetPoint = take isInf &&& iden >>> cond (feZero &&& (drop (iden &&& feOne))) body
  where
@@ -316,6 +433,10 @@ offsetPoint = take isInf &&& iden >>> cond (feZero &&& (drop (iden &&& feOne))) 
          >>> oh &&& drop (((take (oh &&& drop (mulInt 2) >>> add >>> neg 3) &&& drop (take sqr) >>> add) &&& oih) &&& (ioh &&& (ooh &&& iih >>> mul >>> neg 1))) -- ((h,z),((x,t),(i,(-h3*s1))))
          >>> ooh &&& (drop (ooh &&& (iih &&& (ioh &&& (oih &&& take (take (neg 5)) >>> add) >>> mul) >>> add)) &&& oih)                                          -- (h,((x,y),z))
 
+-- | Adds two point in Jacobian coordinates where the second point's z-coordinate is passed as the modular inverse of its true value.
+--
+-- Corresponds to @secp256k1_gej_add_zinv_var@.
+-- If the result is the point at infinity, it is returned in canonical form.
 offsetPointZinv :: forall term. Core term => term (GEJ, (GE, FE)) GEJ
 offsetPointZinv = take isInf &&& iden >>> cond (drop (infCase &&& feOne)) body
  where
@@ -331,20 +452,33 @@ offsetPointZinv = take isInf &&& iden >>> cond (drop (infCase &&& feOne)) body
          >>> oh &&& drop (((take (oh &&& drop (mulInt 2) >>> add >>> neg 3) &&& drop (take sqr) >>> add) &&& oih) &&& (ioh &&& (ooh &&& iih >>> mul >>> neg 1))) -- (z,((x,t),(i,(-h3*s1))))
          >>> drop (ooh &&& (iih &&& (ioh &&& (oih &&& take (take (neg 5)) >>> add) >>> mul) >>> add)) &&& oh                                                     -- ((x,y),z)
 
+-- | Negates a point in affine coordinates.
+--
+-- Corresponds to @secp256k1_ge_neg@.
 geNegate :: forall term. Core term => term GE GE
 geNegate = oh &&& drop (normalizeWeak >>> neg 1)
 
+-- | Converts a point in Jacobian coordintes to the same point in affine coordinates, and normalizes the field represenatives.
+-- Returns the point (0, 0) when given the point at infinity.
 normalizePoint :: forall term. Core term => term GEJ GE
 normalizePoint = oh &&& (ih >>> inv >>> (sqr &&& iden))
              >>> (ooh &&& ioh >>> mul >>> normalize) &&& (oih &&& (ioh &&& iih >>> mul) >>> mul >>> normalize)
 
+-- | Given a field element and a point in Jacobian coordiantes, test if the point represents one whose affine x-coordinate is equal to the given field element.
+--
+-- Corresponds to @secp256k1_gej_eq_x_var@.
 eqXCoord :: forall term. Core term => term (FE, GEJ) Bit
 eqXCoord = drop (take (take normalizeWeak)) &&& (drop (drop sqr) &&& oh >>> mul >>> neg 1)
        >>> add >>> feIsZero
 
+-- | Given a point in Jacobian coordiantes, test if the point represents one whose affine y-coordinate is a quadratic residue.
+--
+-- Corresponds to @secp256k1_gej_has_quad_y_var@.
 hasQuadY :: forall term. Core term => term GEJ Bit
 hasQuadY = and (not isInf) (oih &&& ih >>> mul >>> isQuad)
 
+-- Compute odd-multiples of a point for small (5-bit) multiples.
+-- The result is in Jacobian coordinates but the z-coordinate is identical for all outputs.
 scalarTable5 :: forall term. Core term => term GEJ (FE, Vector8 GE)
 scalarTable5 = iden &&& double
            >>> iih &&& (((ooh &&& iih >>> scaleZ) &&& oih) &&& ioh) -- (dz, (a', (dx,dy)))
@@ -369,12 +503,17 @@ scalarTable5 = iden &&& double
       >>> oh &&& drop ((oih &&& (((ooh &&& iooh >>> mul) &&& (drop oioh &&& ooh >>> scaleZ)) &&& iih))
       >>> oh &&& drop (oih &&& (ioh &&& ooh >>> scaleZ)))))))
 
+-- Given an odd-multiples table of affinte points, extract the @i@th element of the table.
+-- If the index is negative @i@, then return the point negation of the @i@th element of the table.
 lookupTable5 :: forall term. Core term => term (Word4, Vector8 GE) GE
 lookupTable5 = oooh &&& ooih &&& oih &&& ih
            >>> cond neg pos
  where
   pos = ioih &&& (iooh &&& (oh &&& iih >>> cond ih oh) >>> cond ih oh) >>> cond ih oh
   neg = ioih &&& (iooh &&& (oh &&& iih >>> cond oh ih) >>> cond oh ih) >>> cond (take geNegate) (drop geNegate)
+
+-- | Scalar values, those less than the order of secp256's elliptic curve, are represented by a 256-bit word type.
+type Scalar = Word256
 
 type Wnaf5State = (Either Word2 (), Bit) -- state consists of a counter for skiping upto for places and a bit indicating the current carry bit.
 type Wnaf5Env b = (b, Vector4 b) -- the environment consists of the current bit in the scalar being considered and the following 4 bits afterwards (zero padded).
@@ -398,7 +537,11 @@ wnaf5stepD rec = (oh &&& drop (oih &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih)
 wnaf5step16 :: forall term. Core term => term (Wnaf5State, Wnaf5Env Word16) (Wnaf5State, Vector16 (Either () Word4))
 wnaf5step16 = wnaf5stepD . wnaf5stepD . wnaf5stepD . wnaf5stepD $ wnaf5step1
 
-wnaf5 :: forall term. Core term => term Word256 (Vector256 (Either () Word4))
+-- | Convert a scalar value to wnaf form, with a window of 5 bits.
+-- The input must be strictly less than the order of secp256k1's elliptic curve.
+--
+-- Corresponds to @secp256k1_ecmult_wnaf@ with @w@ parameter set to 5.
+wnaf5 :: forall term. Core term => term Scalar (Vector256 (Either () Word4))
 wnaf5 = (take . take . take . take . take $ oooh) &&& iden
     >>> cond (true &&& (scribe (toWord256 scalarOrder) &&& iden >>> sub256) >>> go)
              (false &&& iden >>> go)
@@ -416,7 +559,11 @@ wnaf5Short = false &&& iden >>> go
                            >>> cond (take (bitwiseNot word16) &&& drop (bitwiseNot (DoubleV (DoubleV word16)))) iden)
    >>> wnaf5step16 >>> ih
 
-wnaf16 :: forall term. Core term => term Word256 (Vector256 (Either () Word16))
+-- | Convert a scalar value to wnaf form, with a window of 16 bits.
+-- The input must be strictly less than the order of secp256k1's elliptic curve.
+--
+-- Corresponds to @secp256k1_ecmult_wnaf@ with @w@ parameter set to 16.
+wnaf16 :: forall term. Core term => term Scalar (Vector256 (Either () Word16))
 wnaf16 = (take . take . take . take . take $ oooh) &&& iden
     >>> cond (true &&& (scribe (toWord256 scalarOrder) &&& iden >>> sub256) >>> go)
              (false &&& iden >>> go)
@@ -450,6 +597,7 @@ wnaf16 = (take . take . take . take . take $ oooh) &&& iden
     dropV16 = take dropV8 &&& drop dropV8
   wnaf16step256 = wnaf16stepD . wnaf16stepD . wnaf16stepD . wnaf16stepD . wnaf16stepD . wnaf16stepD . wnaf16stepD . wnaf16stepD $ wnaf16step1
 
+-- Returns a small, signed integer multiple of the secp256k1's generator as a normalized affine point.
 generatorSmall :: forall term. Core term => term Word16 GE
 generatorSmall = signAbs
          >>> oh &&& drop (wnaf5Short &&& (scribe g >>> scalarTable5) -- TODO directly scribe the scalarTable5 for g.
@@ -473,7 +621,9 @@ generatorSmall = signAbs
   step16 = ooh &&& (oih &&& ih >>> step8) &&& iih >>> step8
   negator = zero word16 &&& iden >>> subtractor word16 >>> ih
 
-generator :: forall term. Core term => term Word256 GEJ
+-- Returns an integer multiple of the secp256k1's generator.
+-- The input must be strictly less than the order of secp256k1's elliptic curve.
+generator :: forall term. Core term => term Scalar GEJ
 generator = wnaf16 &&& inf >>> step256
  where
   step = match (drop double) (drop double &&& take generatorSmall &&& feOne >>> offsetPointZinv)
@@ -486,7 +636,12 @@ generator = wnaf16 &&& inf >>> step256
   step128 = ooh &&& (oih &&& ih >>> step64) >>> step64
   step256 = ooh &&& (oih &&& ih >>> step128) >>> step128
 
-ecMult :: forall term. Core term => term ((GEJ, Word256), Word256) GEJ
+-- | Given an elliptic curve point, @a@, and two scalar values @na@ and @ng@, return @na * a + ng * g@ where @g@ is secp256k1's generator.
+-- The scalar inputs must be strictly less than the order of secp256k1's elliptic curve.
+--
+-- Corresponds to @secp256k1_ecmult@.
+-- If the result is the point at infinity, it is returned in canonical form.
+ecMult :: forall term. Core term => term ((GEJ, Scalar), Scalar) GEJ
 ecMult = (scribe (toWord256 0) &&& oih >>> eq) &&& iden
      >>> cond (drop (feOne &&& generator)) body
      >>> ioh &&& (oh &&& iih >>> mul)
@@ -504,9 +659,18 @@ ecMult = (scribe (toWord256 0) &&& oih >>> eq) &&& iden
   step128 = (oh &&& drop (oh &&& ioih &&& iiih) >>> step64) &&& drop (oh &&& iooh &&& iioh) >>> step64
   step256 = (oh &&& drop (oh &&& ioih &&& iiih) >>> step128) &&& drop (oh &&& iooh &&& iioh) >>> step128
 
+-- | A format for (Schnorr) elliptic curve public keys.
+-- It consists of the least significant bit of the y-coordinate and the packed format for the x-coordinate.
+-- The point at infinity isn't representable (nor is it a valid public key to begin with).
 type PubKey = (Bit, Word256)
+
+-- | A format for Schnorr signatures.
 type Sig = (Word256, Word256)
 
+-- | This function unpacks a 'PubKey' as a elliptic curve point in Jacobian coordinates.
+--
+-- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
+-- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
 pkPoint :: forall term. Core term => term PubKey (Either () GEJ)
 pkPoint = (ih &&& scribe (toWord256 feOrder) >>> lt) &&& (drop feUnpack &&& oh)
       >>> cond k1 (injl unit)
@@ -516,7 +680,11 @@ pkPoint = (ih &&& scribe (toWord256 feOrder) >>> lt) &&& (drop feUnpack &&& oh)
   k2 = (ioh &&& (take normalize &&& iih >>> (take (take (drop (drop iiih))) &&& ih >>> eq) &&& oh >>> cond iden (neg 1))) &&& feOne
   lt = subtractor word256 >>> oh
 
-sigUnpack :: forall term. Core term => term Sig (Either () (FE, Word256))
+-- | This function unpackes a 'Sig' as a pair of a field element and a scalar value.
+--
+-- If the field element's value is greater than or equal to the field order, the function return @Left ()@.
+-- If the scalar element's value is greater than or equal to secp256k1's curve order, the function returns @Left ()@.
+sigUnpack :: forall term. Core term => term Sig (Either () (FE, Scalar))
 sigUnpack = and (oh &&& scribe (toWord256 feOrder) >>> lt)
                 (ih &&& scribe (toWord256 scalarOrder) >>> lt)
         &&& (take feUnpack &&& ih)
@@ -524,11 +692,13 @@ sigUnpack = and (oh &&& scribe (toWord256 feOrder) >>> lt)
  where
   lt = subtractor word256 >>> oh
 
-scalarUnrepr :: forall term. Core term => term Word256 Word256
+-- | This function reduces a 256-bit unsigned integer module the order of the secp256k1 curve, yielding a scalar value.
+scalarUnrepr :: forall term. Core term => term Word256 Scalar
 scalarUnrepr = (iden &&& scribe (toWord256 scalarOrder) >>> subtractor word256) &&& iden
            >>> ooh &&& (oih &&& ih)
            >>> cond ih oh
 
+-- | This function is given a public key, a 256-bit message, and a signature, and checks if the signature is valid for the given message and public key.
 schnorrVerify :: forall term. Core term => term ((PubKey, Word256), Sig) Bit
 schnorrVerify = drop sigUnpack &&& (take (take pkPoint) &&& nege)
       >>> match false k1
@@ -545,5 +715,6 @@ schnorrVerify = drop sigUnpack &&& (take (take pkPoint) &&& nege)
     &&& (((((drop (drop (drop iiih)) &&& scribe8 0x80) &&& zero word16) &&& zero word32) &&& zero word64) &&& scribe (toWord128 (256+8+256+256))))
   y = cond (scribe8 3) (scribe8 2)
 
+-- | This function is given a public key, a 256-bit message, and a signature, and asserts that the signature is valid for the given message and public key.
 schnorrAssert :: forall term. Assert term => term ((PubKey, Word256), Sig) ()
 schnorrAssert = assert schnorrVerify

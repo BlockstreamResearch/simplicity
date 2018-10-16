@@ -25,7 +25,7 @@ library
                        Simplicity.Dag, Simplicity.Inference,
                        Simplicity.Serialization, Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString
                        Simplicity.Word
-                       Simplicity.LibSecp256k1.Types
+                       Simplicity.LibSecp256k1.Schnorr
   other-modules:       Simplicity.LibSecp256k1.Spec, Simplicity.LensEx
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   hs-source-dirs:      Haskell
@@ -65,7 +65,7 @@ Test-Suite Simplicity-testsuite
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests, Simplicity.Programs.Tests,
                        Simplicity.Serialization.Tests, Simplicity.Ty.Tests,
                        Simplicity.Word,
-                       Simplicity.LibSecp256k1.Types
+                       Simplicity.LibSecp256k1.Schnorr
                        Simplicity.LibSecp256k1.Spec, Simplicity.LensEx
   build-depends:       array >=0.5 && <0.6,
                        base >=4.9 && <4.11,

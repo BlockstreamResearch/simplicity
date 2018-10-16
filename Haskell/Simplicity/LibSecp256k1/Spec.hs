@@ -29,7 +29,7 @@ import Lens.Family2 ((^.), (^..), (&), (+~), (*~), (%~), over)
 import Lens.Family2.Stock (_1)
 
 import Simplicity.Digest
-import Simplicity.LibSecp256k1.Types
+import Simplicity.LibSecp256k1.Schnorr
 import Simplicity.Word
 import Simplicity.LensEx (_bits, review, under, zipWithOf)
 

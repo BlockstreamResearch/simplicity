@@ -1,4 +1,6 @@
-module Simplicity.LibSecp256k1.Types
+-- | This module specifices the types to be used to interface with bindings to a real Schnorr signature module for Secp256k1.
+-- It largely acts as a placeholder at this point in time.
+module Simplicity.LibSecp256k1.Schnorr
  ( PubKey(..), Sig(..)
  ) where
 
@@ -8,6 +10,7 @@ import Data.Serialize.Put (putWord8)
 
 import Simplicity.Word
 
+-- | A public key format to be used for Schnorr signatures.
 data PubKey = PubKey Bool Word256
 
 instance Serialize PubKey where
@@ -21,6 +24,7 @@ instance Serialize PubKey where
     putY False = putWord8 2
     putY True = putWord8 3
 
+-- | A Schnorr signature format.
 data Sig = Sig Word256 Word256
 
 instance Serialize Sig where
