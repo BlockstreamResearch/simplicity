@@ -47,7 +47,7 @@ ch = cond oh ih
 -- | Requires the bit produced by @t@ to be 'true' and fails otherwise.
 assert :: (Assert term, TyC a) => term a Bit -> term a ()
 assert t = t &&& unit
-       >>> cond unit fail0
+       >>> match fail0 unit
 
 -- | Simplicity combinator that computes inverts the Bit result of an expression.
 not :: (Core term, TyC a) => term a Bit -> term a Bit
