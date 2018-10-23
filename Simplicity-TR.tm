@@ -564,11 +564,164 @@
 
   <chapter|Introduction>
 
-  <with|color|red|TODO: specify commitment and redemption time.>
+  <section|Bitcoin Script>
 
-  <section|Design Goals>
+  Bitcoin<inactive|<cite|>> was the first protocol that used a blockchain to
+  build a distributed ledger that allows participants practically transact a
+  cyrptographic currency with minimal risk of their transaction being
+  reversed or undone, without relying on a trusted third party or cetnral
+  authority. \ Typically access to funds are controlled by a cryptographic
+  private key. \ References to one or more of these funds, which may or may
+  not have the same private keys, are assembled into a data structure, called
+  a <dfn|transaction>, along with a set of one or more outputs which specify
+  which cyrptographic public keys will control each output. \ This
+  transaction data is signed with each private key for each input and added
+  to the transaction as ``witness data''.
 
-  <chapter|Core Simplicity>
+  More precisely, the outputs are not necessarily controlled by a simple
+  single cryptographic key, rather each output is controlled by a small
+  program written in a language called <dfn|Bitcoin
+  Script><inactive|<cite|>>. \ Bitcoin Script is a stack-based language with
+  conditionals operations for control flow and no loops. \ Bitcoin has stack
+  manipulation operations, boolean logic operataions, and simple arithmetic
+  expression without even multiplication. It also has some cryptographic
+  operations that include cyrptographic hash functions, and digital signature
+  verification operations. The <verbatim|CHECKSIG> operation does an ECDSA
+  digital signature verification of transaction data.
+
+  A basic Bitcoin Script programs pushes an ECDSA public key onto the stack,
+  followed by a <verbatim|CHECKSIG> operation. \ This Script is part of the
+  output data within a transaction. \ In order to spend the funds held by
+  such an output, one builds a transaction with an input referencing this
+  output and adds a ECDSA signature to the transaction's witness data for the
+  input. \ The signature says which part of the transaction data is being
+  signed (typically everything other than the witness data itself) and has
+  the signature.
+
+  To validate an input, the witness data is pushed onto the primary stack,
+  and the the program in the referenced output is executed. \ In our example
+  above, this program pushes a specific ECDSA public key onto the stack and
+  then executes <verbatim|CHECKSIG>. \ The <verbatim|CHECKSIG> operation pops
+  the private key and the signature data off the stack. \ Then it hashes the
+  transaction data as specified by the signature, including which input is
+  being signed, using the SHA-256 cryptographic hash, and verifies that
+  digital signature for that public key is valid for that hashed data. Only
+  if successful is the value <verbatim|1> pushed back onto the stack. In
+  order for a transaction to be valid, all inputs are checked in this
+  fashion, by pushing its associated witness data onto the stack and then
+  executing the program found in the referenced output and requiring a
+  non-zero value be left on the stack.
+
+  From this example, we see that there are there parts that go into checking
+  if a transaction's input is authorized to be spent:
+
+  <\itemize-dot>
+    <item>A Bitcoin Script, which is contained in a transaction output.
+
+    <item>Witness data, for each transactions input.
+
+    <item>The rest of the transaction data, which includes things like output
+    amounts, version numbers, etc.
+  </itemize-dot>
+
+  All the data needed to validate a transaction is part of (or
+  cryptographically committed within) the transaction data. \ This means the
+  inputs can be validated independently of the state of the rest of the
+  blockchain, as far as Bitcoin Script is concerned.
+
+  In the above example, the Bitcoin Script is included into a transaction's
+  output, at what I call <dfn|commitment time>. \ The signature and
+  transaction data is specified later at what I call <dfn|redemption time>.
+  \ That said, the Bitcoin Script does not have to be entirely revealed at
+  commitment time; it is acceptable to just commit to the Bitcoin Script's
+  cryptographic hash. \ Then, at redemption time, the script is revealed
+  together with the witness data and the rest of the transaction. \ In this
+  case the script's hash is verified to be equal to the hash committed in the
+  ouput, and then the witness data, and revealed Bitcoin Script are validated
+  by executation as before. \ Bitcoin's <dfn|pay to script hash> or
+  <dfn|P2SH> follows this modified procedure which makes it easy for users to
+  specify complex Bitcoin Scripts with which to receive funds while only
+  needing to provide a single hash value to their counterparty.
+
+  These more complex scripts can be devised to do multi-signagure, escrow,
+  hash timelock contracts, etc. However because of the the limited
+  expressiveness of Bitcoin Script (e.g. no multiplication operation), only
+  so much can be programmed. Therefore, we want to design an alternative to
+  Bitcoin Script that will be more expresive, without sacrificing the good
+  properties of Bitcoin Script. \ We call this new language <dfn|Simplicity>.
+
+  <section|Simplicity's Design Goals>
+
+  Our goals for Simplicity include the following:
+
+  <\itemize-dot>
+    <item>Create an expressive langauge that lets users build novel programs
+    and smart contracts.
+
+    <item>Enable useful static analysis to bound computational resource usage
+    of programs.
+
+    <item>Minimize bandwidth and storage requirements by enabling sharing of
+    expressions and pruning of unused expressions.
+
+    <item>Capture the computational environment entirely within a unit of
+    transaction.
+
+    <item>Provide formal semantics for reasoning with off-the-shelf
+    proof-assistant software.
+  </itemize-dot>
+
+  <subsection|Static Analysis>
+
+  In Bitcoin Script, static analysis lets us count how many operations there
+  are and, in particular, bound the maximum number of expensive operations,
+  such as signature validation, that could be performed. \ We can do this
+  because Bitcoin Script has no looping operations. In a transaction, if
+  Bitcoin Script is deemed to be potentially too expensive from this
+  analysis, the program is rejected at redemption time.
+
+  We want to support this same sort of static analysis in Simplicity. \ It
+  lets users determine at commitment time, the worst case cost for redeeming
+  the program, for any possible inputs. \ At redemption time, it allows, as
+  part of the consensus rules, to bound the cost of running programs prior to
+  execution. \ This serves as one method of avoiding denial of service
+  attacks in a blockchain protocal like Bitcoin.
+
+  <subsection|Pruning and Sharing>
+
+  As we saw before, at commitment time we only need to specify a
+  cryptographic commitment to the program contents, and the program can be
+  revealed at redemption time. \ For more complex programs with multiple
+  alternative branches, only those branches that are actually going to be
+  executed need to be revealed, and the remainer of the program that is not
+  executed for this particular transaction can be excluded.
+
+  Using a technique called <dfn|Merkelized Abstract Syntax Trees> a.k.a.
+  <dfn|MAST>, we can commit to a Merkle root of a program's abstract syntax
+  tree. At redemption time, we can prune unused sub-expressions. Instead only
+  the Merkle root of the pruned branches need to be revealed in order to
+  verify that the program's Merkle root matches the root specified at
+  commitment time.
+
+  Because two identical subexpressions necessarly have the same Merkle root,
+  this proceedure also lets reduce program size by sharing these identical
+  subexpressions.
+
+  <subsection|Formal Semantics>
+
+  Once a program has been committed to, it cannot be changed or updated
+  later. \ If a program has errors or security vulnerabilities, it can no
+  longer be fixed. Therefore, it is essential to get these program correct.
+  Fortunately these programs tend to be relatively small, and hence amenable
+  to formal analysis. \ We use the Coq proof assistant<inactive|<cite|>> to
+  specify formal semantics of Simplicity. \ This allows us to both reason
+  about programs written in Simplicity, but also lets us reason about our
+  static analysis and Simplicity interpreters and prove that they are
+  correct.
+
+  While we specifically use the Coq proof assistent, the formal semantics of
+  Simplicity is designed to be easy enough to define in any proof assistant,
+  especially others based on dependent type theory.<chapter|Core Simplicity>
 
   Simplicty is a typed functional programming language based on Gentzen's
   sequent calculus. The core language consists of nine combinators for
@@ -5888,150 +6041,154 @@
     <associate|Serialization|<tuple|2.8|?>>
     <associate|app:AltSerialization|<tuple|B|83>>
     <associate|auto-1|<tuple|1|7>>
-    <associate|auto-10|<tuple|2.2.1|10>>
-    <associate|auto-100|<tuple|7.4|60>>
-    <associate|auto-101|<tuple|7.1|60>>
-    <associate|auto-102|<tuple|7.4.1|61>>
-    <associate|auto-103|<tuple|7.4.2|61>>
-    <associate|auto-104|<tuple|7.4.3|61>>
-    <associate|auto-105|<tuple|7.4.4|62>>
-    <associate|auto-106|<tuple|7.4.4.1|62>>
-    <associate|auto-107|<tuple|7.4.5|62>>
-    <associate|auto-108|<tuple|7.4.6|63>>
-    <associate|auto-109|<tuple|7.5|63>>
-    <associate|auto-11|<tuple|2.2.2|10>>
-    <associate|auto-110|<tuple|7.6|63>>
-    <associate|auto-111|<tuple|7.6.1|64>>
-    <associate|auto-112|<tuple|7.6.1.1|64>>
-    <associate|auto-113|<tuple|7.6.2|65>>
-    <associate|auto-114|<tuple|7.6.3|65>>
-    <associate|auto-115|<tuple|8|67>>
-    <associate|auto-116|<tuple|8.1|67>>
-    <associate|auto-117|<tuple|8.2|68>>
-    <associate|auto-118|<tuple|8.3|69>>
-    <associate|auto-119|<tuple|8.3.1|69>>
-    <associate|auto-12|<tuple|2.2.3|10>>
-    <associate|auto-120|<tuple|8.4|69>>
-    <associate|auto-121|<tuple|8.5|69>>
-    <associate|auto-122|<tuple|8.6|70>>
-    <associate|auto-123|<tuple|8.6.1|70>>
-    <associate|auto-124|<tuple|8.6.2|70>>
-    <associate|auto-125|<tuple|8.6.2.1|70>>
-    <associate|auto-126|<tuple|8.6.2.2|70>>
-    <associate|auto-127|<tuple|8.6.3|70>>
-    <associate|auto-128|<tuple|8.6.4|70>>
-    <associate|auto-129|<tuple|8.6.5|70>>
-    <associate|auto-13|<tuple|2.2.4|10>>
-    <associate|auto-130|<tuple|8.6.6|71>>
-    <associate|auto-131|<tuple|8.7|71>>
-    <associate|auto-132|<tuple|8.7.1|71>>
-    <associate|auto-133|<tuple|8.7.2|72>>
-    <associate|auto-134|<tuple|8.8|72>>
-    <associate|auto-135|<tuple|8.9|72>>
-    <associate|auto-136|<tuple|8.9.1|72>>
-    <associate|auto-137|<tuple|8.9.2|74>>
-    <associate|auto-138|<tuple|9|75>>
-    <associate|auto-139|<tuple|A|77>>
-    <associate|auto-14|<tuple|2.2.5|11>>
-    <associate|auto-140|<tuple|A.1|77>>
-    <associate|auto-141|<tuple|A.1.1|78>>
-    <associate|auto-142|<tuple|A.2|79>>
-    <associate|auto-143|<tuple|A.2.1|79>>
-    <associate|auto-144|<tuple|A.2.2|79>>
-    <associate|auto-145|<tuple|B|83>>
-    <associate|auto-15|<tuple|2.2.6|11>>
-    <associate|auto-16|<tuple|2.2.7|11>>
-    <associate|auto-17|<tuple|2.2.8|11>>
-    <associate|auto-18|<tuple|2.2.9|11>>
-    <associate|auto-19|<tuple|2.2.10|11>>
+    <associate|auto-10|<tuple|2.1.1.1|10>>
+    <associate|auto-100|<tuple|7.3|60>>
+    <associate|auto-101|<tuple|7.3.1|60>>
+    <associate|auto-102|<tuple|7.3.2|61>>
+    <associate|auto-103|<tuple|7.3.3|61>>
+    <associate|auto-104|<tuple|7.4|61>>
+    <associate|auto-105|<tuple|7.1|62>>
+    <associate|auto-106|<tuple|7.4.1|62>>
+    <associate|auto-107|<tuple|7.4.2|62>>
+    <associate|auto-108|<tuple|7.4.3|63>>
+    <associate|auto-109|<tuple|7.4.4|63>>
+    <associate|auto-11|<tuple|2.1.2|10>>
+    <associate|auto-110|<tuple|7.4.4.1|63>>
+    <associate|auto-111|<tuple|7.4.5|64>>
+    <associate|auto-112|<tuple|7.4.6|64>>
+    <associate|auto-113|<tuple|7.5|65>>
+    <associate|auto-114|<tuple|7.6|65>>
+    <associate|auto-115|<tuple|7.6.1|67>>
+    <associate|auto-116|<tuple|7.6.1.1|67>>
+    <associate|auto-117|<tuple|7.6.2|68>>
+    <associate|auto-118|<tuple|7.6.3|69>>
+    <associate|auto-119|<tuple|8|69>>
+    <associate|auto-12|<tuple|2.1.2.1|10>>
+    <associate|auto-120|<tuple|8.1|69>>
+    <associate|auto-121|<tuple|8.2|69>>
+    <associate|auto-122|<tuple|8.3|70>>
+    <associate|auto-123|<tuple|8.3.1|70>>
+    <associate|auto-124|<tuple|8.4|70>>
+    <associate|auto-125|<tuple|8.5|70>>
+    <associate|auto-126|<tuple|8.6|70>>
+    <associate|auto-127|<tuple|8.6.1|70>>
+    <associate|auto-128|<tuple|8.6.2|70>>
+    <associate|auto-129|<tuple|8.6.2.1|70>>
+    <associate|auto-13|<tuple|2.2|10>>
+    <associate|auto-130|<tuple|8.6.2.2|71>>
+    <associate|auto-131|<tuple|8.6.3|71>>
+    <associate|auto-132|<tuple|8.6.4|71>>
+    <associate|auto-133|<tuple|8.6.5|72>>
+    <associate|auto-134|<tuple|8.6.6|72>>
+    <associate|auto-135|<tuple|8.7|72>>
+    <associate|auto-136|<tuple|8.7.1|72>>
+    <associate|auto-137|<tuple|8.7.2|74>>
+    <associate|auto-138|<tuple|8.8|75>>
+    <associate|auto-139|<tuple|8.9|77>>
+    <associate|auto-14|<tuple|2.2.1|11>>
+    <associate|auto-140|<tuple|8.9.1|77>>
+    <associate|auto-141|<tuple|8.9.2|78>>
+    <associate|auto-142|<tuple|9|79>>
+    <associate|auto-143|<tuple|A|79>>
+    <associate|auto-144|<tuple|A.1|79>>
+    <associate|auto-145|<tuple|A.1.1|83>>
+    <associate|auto-146|<tuple|A.2|?>>
+    <associate|auto-147|<tuple|A.2.1|?>>
+    <associate|auto-148|<tuple|A.2.2|?>>
+    <associate|auto-149|<tuple|B|?>>
+    <associate|auto-15|<tuple|2.2.2|11>>
+    <associate|auto-16|<tuple|2.2.3|11>>
+    <associate|auto-17|<tuple|2.2.4|11>>
+    <associate|auto-18|<tuple|2.2.5|11>>
+    <associate|auto-19|<tuple|2.2.6|11>>
     <associate|auto-2|<tuple|1.1|7>>
-    <associate|auto-20|<tuple|2.2.11|12>>
-    <associate|auto-21|<tuple|2.3|12>>
-    <associate|auto-22|<tuple|2.3.1|12>>
-    <associate|auto-23|<tuple|2.3.2|13>>
-    <associate|auto-24|<tuple|2.3.3|17>>
-    <associate|auto-25|<tuple|2.3.4|17>>
-    <associate|auto-26|<tuple|2.3.5|18>>
-    <associate|auto-27|<tuple|2.3.5.1|18>>
-    <associate|auto-28|<tuple|2.3.5.2|19>>
-    <associate|auto-29|<tuple|2.3.5.3|21>>
-    <associate|auto-3|<tuple|2|9>>
-    <associate|auto-30|<tuple|2.4|21>>
-    <associate|auto-31|<tuple|2.5|22>>
-    <associate|auto-32|<tuple|2.5.1|22>>
-    <associate|auto-33|<tuple|2.5.2|22>>
-    <associate|auto-34|<tuple|2.1|23>>
-    <associate|auto-35|<tuple|2.5.2.1|23>>
-    <associate|auto-36|<tuple|2.5.2.2|23>>
-    <associate|auto-37|<tuple|2.5.2.3|24>>
-    <associate|auto-38|<tuple|2.5.2.4|24>>
-    <associate|auto-39|<tuple|2.5.2.5|24>>
-    <associate|auto-4|<tuple|2.1|9>>
-    <associate|auto-40|<tuple|2.5.2.6|25>>
-    <associate|auto-41|<tuple|2.5.3|25>>
-    <associate|auto-42|<tuple|2.5.3.1|26>>
-    <associate|auto-43|<tuple|2.6|27>>
-    <associate|auto-44|<tuple|2.6.1|27>>
-    <associate|auto-45|<tuple|2.6.1.1|27>>
-    <associate|auto-46|<tuple|2.6.1.2|30>>
-    <associate|auto-47|<tuple|2.6.2|30>>
-    <associate|auto-48|<tuple|2.7|30>>
-    <associate|auto-49|<tuple|3|33>>
-    <associate|auto-5|<tuple|2.1.1|9>>
-    <associate|auto-50|<tuple|3.1|33>>
-    <associate|auto-51|<tuple|3.1.1|33>>
-    <associate|auto-52|<tuple|3.1.2|33>>
-    <associate|auto-53|<tuple|3.1.3|34>>
-    <associate|auto-54|<tuple|3.1.3.1|35>>
-    <associate|auto-55|<tuple|3.2|35>>
-    <associate|auto-56|<tuple|3.2.1|35>>
-    <associate|auto-57|<tuple|3.2.2|35>>
-    <associate|auto-58|<tuple|3.2.3|35>>
-    <associate|auto-59|<tuple|3.2.4|35>>
-    <associate|auto-6|<tuple|2.1.1.1|9>>
-    <associate|auto-60|<tuple|3.3|35>>
-    <associate|auto-61|<tuple|3.3.1|36>>
-    <associate|auto-62|<tuple|3.3.2|36>>
-    <associate|auto-63|<tuple|3.3.2.1|37>>
-    <associate|auto-64|<tuple|3.3.3|37>>
-    <associate|auto-65|<tuple|3.3.3.1|38>>
-    <associate|auto-66|<tuple|3.3.3.2|38>>
-    <associate|auto-67|<tuple|3.4|39>>
-    <associate|auto-68|<tuple|3.4.1|39>>
-    <associate|auto-69|<tuple|3.4.1.1|41>>
-    <associate|auto-7|<tuple|2.1.2|9>>
-    <associate|auto-70|<tuple|3.4.1.2|42>>
-    <associate|auto-71|<tuple|3.5|42>>
-    <associate|auto-72|<tuple|3.5.1|43>>
-    <associate|auto-73|<tuple|3.6|43>>
-    <associate|auto-74|<tuple|3.6.1|43>>
-    <associate|auto-75|<tuple|4|45>>
-    <associate|auto-76|<tuple|5|47>>
-    <associate|auto-77|<tuple|5.1|48>>
-    <associate|auto-78|<tuple|6|49>>
-    <associate|auto-79|<tuple|6.1|49>>
-    <associate|auto-8|<tuple|2.1.2.1|10>>
-    <associate|auto-80|<tuple|6.1.1|50>>
-    <associate|auto-81|<tuple|6.1.2|52>>
-    <associate|auto-82|<tuple|6.1.2.1|53>>
-    <associate|auto-83|<tuple|6.1.2.2|53>>
-    <associate|auto-84|<tuple|6.2|53>>
-    <associate|auto-85|<tuple|6.2.1|54>>
-    <associate|auto-86|<tuple|6.2.2|55>>
-    <associate|auto-87|<tuple|7|57>>
-    <associate|auto-88|<tuple|7.1|57>>
-    <associate|auto-89|<tuple|7.2|57>>
-    <associate|auto-9|<tuple|2.2|10>>
-    <associate|auto-90|<tuple|7.2.1|57>>
-    <associate|auto-91|<tuple|7.2.2|57>>
-    <associate|auto-92|<tuple|7.2.2.1|58>>
-    <associate|auto-93|<tuple|7.2.2.2|58>>
-    <associate|auto-94|<tuple|7.2.2.3|59>>
-    <associate|auto-95|<tuple|7.2.3|59>>
-    <associate|auto-96|<tuple|7.3|59>>
-    <associate|auto-97|<tuple|7.3.1|59>>
-    <associate|auto-98|<tuple|7.3.2|59>>
-    <associate|auto-99|<tuple|7.3.3|60>>
+    <associate|auto-20|<tuple|2.2.7|12>>
+    <associate|auto-21|<tuple|2.2.8|12>>
+    <associate|auto-22|<tuple|2.2.9|12>>
+    <associate|auto-23|<tuple|2.2.10|13>>
+    <associate|auto-24|<tuple|2.2.11|17>>
+    <associate|auto-25|<tuple|2.3|17>>
+    <associate|auto-26|<tuple|2.3.1|18>>
+    <associate|auto-27|<tuple|2.3.2|18>>
+    <associate|auto-28|<tuple|2.3.3|19>>
+    <associate|auto-29|<tuple|2.3.4|21>>
+    <associate|auto-3|<tuple|1.2|9>>
+    <associate|auto-30|<tuple|2.3.5|21>>
+    <associate|auto-31|<tuple|2.3.5.1|22>>
+    <associate|auto-32|<tuple|2.3.5.2|22>>
+    <associate|auto-33|<tuple|2.3.5.3|22>>
+    <associate|auto-34|<tuple|2.4|23>>
+    <associate|auto-35|<tuple|2.5|23>>
+    <associate|auto-36|<tuple|2.5.1|23>>
+    <associate|auto-37|<tuple|2.5.2|24>>
+    <associate|auto-38|<tuple|2.1|24>>
+    <associate|auto-39|<tuple|2.5.2.1|24>>
+    <associate|auto-4|<tuple|1.2.1|9>>
+    <associate|auto-40|<tuple|2.5.2.2|25>>
+    <associate|auto-41|<tuple|2.5.2.3|25>>
+    <associate|auto-42|<tuple|2.5.2.4|26>>
+    <associate|auto-43|<tuple|2.5.2.5|27>>
+    <associate|auto-44|<tuple|2.5.2.6|27>>
+    <associate|auto-45|<tuple|2.5.3|27>>
+    <associate|auto-46|<tuple|2.5.3.1|30>>
+    <associate|auto-47|<tuple|2.6|30>>
+    <associate|auto-48|<tuple|2.6.1|30>>
+    <associate|auto-49|<tuple|2.6.1.1|33>>
+    <associate|auto-5|<tuple|1.2.2|9>>
+    <associate|auto-50|<tuple|2.6.1.2|33>>
+    <associate|auto-51|<tuple|2.6.2|33>>
+    <associate|auto-52|<tuple|2.7|33>>
+    <associate|auto-53|<tuple|3|34>>
+    <associate|auto-54|<tuple|3.1|35>>
+    <associate|auto-55|<tuple|3.1.1|35>>
+    <associate|auto-56|<tuple|3.1.2|35>>
+    <associate|auto-57|<tuple|3.1.3|35>>
+    <associate|auto-58|<tuple|3.1.3.1|35>>
+    <associate|auto-59|<tuple|3.2|35>>
+    <associate|auto-6|<tuple|1.2.3|9>>
+    <associate|auto-60|<tuple|3.2.1|35>>
+    <associate|auto-61|<tuple|3.2.2|36>>
+    <associate|auto-62|<tuple|3.2.3|36>>
+    <associate|auto-63|<tuple|3.2.4|37>>
+    <associate|auto-64|<tuple|3.3|37>>
+    <associate|auto-65|<tuple|3.3.1|38>>
+    <associate|auto-66|<tuple|3.3.2|38>>
+    <associate|auto-67|<tuple|3.3.2.1|39>>
+    <associate|auto-68|<tuple|3.3.3|39>>
+    <associate|auto-69|<tuple|3.3.3.1|41>>
+    <associate|auto-7|<tuple|2|9>>
+    <associate|auto-70|<tuple|3.3.3.2|42>>
+    <associate|auto-71|<tuple|3.4|42>>
+    <associate|auto-72|<tuple|3.4.1|43>>
+    <associate|auto-73|<tuple|3.4.1.1|43>>
+    <associate|auto-74|<tuple|3.4.1.2|43>>
+    <associate|auto-75|<tuple|3.5|45>>
+    <associate|auto-76|<tuple|3.5.1|47>>
+    <associate|auto-77|<tuple|3.6|48>>
+    <associate|auto-78|<tuple|3.6.1|49>>
+    <associate|auto-79|<tuple|4|49>>
+    <associate|auto-8|<tuple|2.1|10>>
+    <associate|auto-80|<tuple|5|50>>
+    <associate|auto-81|<tuple|5.1|52>>
+    <associate|auto-82|<tuple|6|53>>
+    <associate|auto-83|<tuple|6.1|53>>
+    <associate|auto-84|<tuple|6.1.1|53>>
+    <associate|auto-85|<tuple|6.1.2|54>>
+    <associate|auto-86|<tuple|6.1.2.1|55>>
+    <associate|auto-87|<tuple|6.1.2.2|57>>
+    <associate|auto-88|<tuple|6.2|57>>
+    <associate|auto-89|<tuple|6.2.1|57>>
+    <associate|auto-9|<tuple|2.1.1|10>>
+    <associate|auto-90|<tuple|6.2.2|57>>
+    <associate|auto-91|<tuple|7|57>>
+    <associate|auto-92|<tuple|7.1|58>>
+    <associate|auto-93|<tuple|7.2|58>>
+    <associate|auto-94|<tuple|7.2.1|59>>
+    <associate|auto-95|<tuple|7.2.2|59>>
+    <associate|auto-96|<tuple|7.2.2.1|59>>
+    <associate|auto-97|<tuple|7.2.2.2|59>>
+    <associate|auto-98|<tuple|7.2.2.3|59>>
+    <associate|auto-99|<tuple|7.2.3|60>>
     <associate|cite_ref-Martelli.Montanari.1976_16-1|<tuple|6.1.1|?>>
     <associate|docs-internal-guid-af5ffdcd-7114-eda6-c80e-f3a224e6380a|<tuple|3.2.1|?>>
     <associate|fig:inheritance|<tuple|7.1|60>>
