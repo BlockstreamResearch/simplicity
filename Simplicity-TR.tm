@@ -1811,12 +1811,13 @@
   presentation. We will also start using some notation to abbrevate terms.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|s\<times\>t>|<cell|\<assign\>>|<cell|<math-ss|pair>
-    s t>>|<row|<cell|s;t>|<cell|\<assign\>>|<cell|<math-ss|comp> s t>>>>
+    <tformat|<table|<row|<cell|s \<vartriangle\>
+    t>|<cell|\<assign\>>|<cell|<math-ss|pair> s
+    t>>|<row|<cell|s;t>|<cell|\<assign\>>|<cell|<math-ss|comp> s t>>>>
   </eqnarray*>
 
-  with the <math|\<times\>> operator having higher precidence than the ;
-  operator.
+  with the <math|\<vartriangle\>> operator having higher precidence than the
+  ; operator.
 
   Composition of sequences of <samp|drop> and <samp|take> with <samp|ident>
   is a very common way of picking data out of nested tuples of input. To make
@@ -1841,16 +1842,19 @@
     <math|<math-ss|adder><rsub|1>\<of\><2>\<times\><2>\<vdash\><2><rsup|2>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|adder><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|cond>
-    <around*|(|<math-ss|iden>\<times\><math-ss|not> <math-ss|iden>|)>
-    <around*|(|<math-ss|false>\<times\><math-ss|iden>|)>>>>>>>>>>>>
+    <around*|(|<math-ss|iden> \<vartriangle\> <math-ss|not> <math-ss|iden>|)>
+    <around*|(|<math-ss|false> \<vartriangle\> <math-ss|iden>|)>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
     <math|<math-ss|full-adder><rsub|1>\<of\><around*|(|<2>\<times\><2>|)>\<times\><2>\<vdash\><2><rsup|2>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-adder><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|take>
-    <math-ss|adder><rsub|1>\<times\><math-ss|IH>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|OOH>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|IH>;<math-ss|adder><rsub|1>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|<math|<math-ss|cond>
-    <math-ss|true> <math-ss|OH>\<times\><math-ss|IIH>>>>>>>>>>>>>>
+    <math-ss|adder><rsub|1> \<vartriangle\>
+    <math-ss|IH>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|OOH>
+    \<vartriangle\> <around*|(|<math-ss|OIH> \<vartriangle\>
+    <math-ss|IH>;<math-ss|adder><rsub|1>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|<math|<math-ss|cond>
+    <math-ss|true> <math-ss|OH> \<vartriangle\> <math-ss|IIH>>>>>>>>>>>>>>
   </render-code>
 
   These two adders meet the following specification.
@@ -1868,9 +1872,10 @@
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|adder><rsub|1>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rceil\>><rsub|2>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|cond>
-    <around*|(|<math-ss|iden>\<times\><math-ss|not> <math-ss|iden>|)>
-    <around*|(|<math-ss|false>\<times\><math-ss|iden>|)>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|iden>\<times\><math-ss|not>
-    <math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<llbracket\>|<math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>,<around*|\<llbracket\>|<math-ss|not>
+    <around*|(|<math-ss|iden> \<vartriangle\> <math-ss|not> <math-ss|iden>|)>
+    <around*|(|<math-ss|false> \<vartriangle\>
+    <math-ss|iden>|)>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|iden>
+    \<vartriangle\> <math-ss|not> <math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<llbracket\>|<math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>,<around*|\<llbracket\>|<math-ss|not>
     <math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|pair>
     <math-ss|iden> <math-ss|unit>|)>;<around*|(|<math-ss|cond>
     <math-ss|false> <math-ss|true>|)>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|cond>
@@ -1888,14 +1893,25 @@
     <math|<math-ss|full-adder><rsub|2*n>\<of\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<times\><2>\<vdash\><2>\<times\><2><rsup|2*n>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-adder><rsub|2*n>>>|<cell|:=>|<cell|<math|<math-ss|take>
-    <around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><around*|(|<math-ss|take>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\><math-ss|IH>;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>>>>>>>>>>>>
+    <around*|(|<math-ss|OOH> \<vartriangle\> <math-ss|IOH>|)> \<vartriangle\>
+    <around*|(|<math-ss|take> <around*|(|<math-ss|OIH> \<vartriangle\>
+    <math-ss|IIH>|)> \<vartriangle\> <math-ss|IH>;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>
+    \<vartriangle\> <around*|(|<math-ss|OH> \<vartriangle\>
+    <math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>
+    \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
+    <math-ss|OH>|)>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
     <math|<math-ss|adder><rsub|2*n>\<of\><2><rsup|2*n>\<times\><2><rsup|2*n>\<vdash\><2>\<times\><2><rsup|2*n>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|adder><rsub|2*n>>>|<cell|:=>|<cell|<math|<around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|IIH>;<math-ss|adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>>>>>>>>>>>>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|adder><rsub|2*n>>>|<cell|:=>|<cell|<math|<around*|(|<math-ss|OOH>
+    \<vartriangle\> <math-ss|IOH>|)> \<vartriangle\> <around*|(|<math-ss|OIH>
+    \<vartriangle\> <math-ss|IIH>;<math-ss|adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>
+    \<vartriangle\> <around*|(|<math-ss|OH> \<vartriangle\>
+    <math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>
+    \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
+    <math-ss|OH>|)>>>>>>>>>>>>
   </render-code>
 
   We generalize the specification for the single bit adders and full adders
@@ -1977,9 +1993,27 @@
     <math|<math-ss|full-adder><rsub|2*n>> we have that
 
     <\eqnarray*>
-      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|take>
-      <around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>\<times\><around*|(|<math-ss|take>
-      <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\><math-ss|IH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>\<times\><around*|(|<math-ss|OH>\<times\><math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>\<times\><around*|(|<math-ss|IIH>\<times\><math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>>>
+      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
+      <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>
+      \<vartriangle\> <around*|(|<math-ss|OH> \<vartriangle\>
+      <math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|take>
+      <around*|(|<math-ss|OOH> \<vartriangle\> <math-ss|IOH>|)>
+      \<vartriangle\> <around*|(|<math-ss|take> <around*|(|<math-ss|OIH>
+      \<vartriangle\> <math-ss|IIH>|)> \<vartriangle\>
+      <math-ss|IH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
+      <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>
+      \<vartriangle\> <around*|(|<math-ss|OH> \<vartriangle\>
+      <math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
+      <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>
+      \<vartriangle\> <around*|(|<math-ss|OH> \<vartriangle\>
+      <math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
+      <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
+      <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>>>
     </eqnarray*>
 
     Therefore we have that
@@ -2003,8 +2037,8 @@
   <\render-code>
     <math|<math-ss|full-multiplier><rsub|1>\<of\><around*|(|<2>\<times\><2>|)>\<times\><around*|(|<2>\<times\><2>|)>\<vdash\><2><rsup|2>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiplier><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|IH>\<times\><math-ss|take>
-    <around*|(|<math-ss|cond> <math-ss|iden>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiplier><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|IH>
+    \<vartriangle\> <math-ss|take> <around*|(|<math-ss|cond> <math-ss|iden>
     <math-ss|false>|)>;<math-ss|full-adder><rsub|1>>>>>>>>>>>>
   </render-code>
 
@@ -2012,34 +2046,52 @@
     <math|<math-ss|full-multiplier><rsub|2*n>\<of\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<times\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<vdash\><2><rsup|4*n>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiplier><rsub|2*n>>>|<cell|:=>|<cell|<math|<math-ss|take>
-    <around*|(|<math-ss|OOH>\<times\><around*|(|<math-ss|IOH>\<times\><math-ss|OIH>|)>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|(<math|<around*|(|<math-ss|take>
-    <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>\<times\><math-ss|drop>
-    <around*|(|<math-ss|OOH>\<times\><math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|take>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>\<times\><math-ss|drop>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>>)>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|take>
-    <around*|(|<math-ss|OH>\<times\><math-ss|IOH>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|drop>
-    <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|drop>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<around*|(|<math-ss|OH>\<times\><math-ss|drop>
-    <around*|(|<math-ss|IOH>\<times\><math-ss|OOH>|)>;<math-ss|full-multiplier><rsub|n>|)>\<times\><math-ss|drop>
-    <around*|(|<math-ss|IIH>\<times\><math-ss|OIH>|)>>>>>>>>>>>>
+    <around*|(|<math-ss|OOH> \<vartriangle\> <around*|(|<math-ss|IOH>
+    \<vartriangle\> <math-ss|OIH>|)>|)>>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|(<math|<around*|(|<math-ss|take>
+    <around*|(|<math-ss|OOH> \<vartriangle\> <math-ss|IIH>|)> \<vartriangle\>
+    <math-ss|drop> <around*|(|<math-ss|OOH> \<vartriangle\>
+    <math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|<math|<around*|(|<math-ss|take>
+    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IIH>|)> \<vartriangle\>
+    <math-ss|drop> <around*|(|<math-ss|OIH> \<vartriangle\>
+    <math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>>)>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|take>
+    <around*|(|<math-ss|OH> \<vartriangle\>
+    <math-ss|IOH>|)>>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|<math|<around*|(|<math-ss|drop>
+    <around*|(|<math-ss|OOH> \<vartriangle\> <math-ss|IIH>|)> \<vartriangle\>
+    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|drop>
+    <around*|(|<math-ss|OIH> \<vartriangle\>
+    <math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<around*|(|<math-ss|OH>
+    \<vartriangle\> <math-ss|drop> <around*|(|<math-ss|IOH> \<vartriangle\>
+    <math-ss|OOH>|)>;<math-ss|full-multiplier><rsub|n>|)> \<vartriangle\>
+    <math-ss|drop> <around*|(|<math-ss|IIH> \<vartriangle\>
+    <math-ss|OIH>|)>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
     <math|<math-ss|multiplier><rsub|1>\<of\><2>\<times\><2>\<vdash\><2><rsup|2>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|false>\<times\><math-ss|cond>
-    <math-ss|iden>><samp|false>>>>>>>>>>>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|false>
+    \<vartriangle\> <math-ss|cond> <math-ss|iden>><samp|false>>>>>>>>>>>
   </render-code>
 
   <\render-code>
     <math|<math-ss|multiplier><rsub|2*n>\<of\><2><rsup|2*n>\<times\><2><rsup|2*n>\<vdash\><2><rsup|4*n>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|3|5|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|2*n>>>|<cell|:=>|<cell|<math|<around*|(|<math-ss|OOH>\<times\><around*|(|<math-ss|IOH>\<times\><math-ss|OIH>|)>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|><around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>;<math-ss|multiplier><rsub|n>|)>\<times\><around*|(|<around*|(|<math-ss|OIH>\<times\><math-ss|IIH>|)>;<math-ss|multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|take>
-    <around*|(|<math-ss|OH>\<times\><math-ss|IOH>|)>>>>|<row|<cell|>|<cell|<math|\<times\>>>|<cell|<math|<around*|(|<math-ss|drop>
-    <around*|(|<math-ss|OOH>\<times\><math-ss|IIH>|)>\<times\><around*|(|<math-ss|OIH>\<times\><math-ss|drop>
-    <around*|(|<math-ss|OIH>\<times\><math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<around*|(|<math-ss|OH>\<times\><math-ss|drop>
-    <around*|(|<math-ss|IOH>\<times\><math-ss|OOH>|)>;<math-ss|full-multiplier><rsub|n>|)>\<times\><math-ss|drop>
-    <around*|(|<math-ss|IIH>\<times\><math-ss|OIH>|)>>>>>>>>>>>>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|3|5|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|2*n>>>|<cell|:=>|<cell|<math|<around*|(|<math-ss|OOH>
+    \<vartriangle\> <around*|(|<math-ss|IOH> \<vartriangle\>
+    <math-ss|OIH>|)>|)>>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|<math|<around*|(|<math-ss|><around*|(|<math-ss|OOH>
+    \<vartriangle\> <math-ss|IIH>|)>;<math-ss|multiplier><rsub|n>|)>
+    \<vartriangle\> <around*|(|<around*|(|<math-ss|OIH> \<vartriangle\>
+    <math-ss|IIH>|)>;<math-ss|multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|take>
+    <around*|(|<math-ss|OH> \<vartriangle\>
+    <math-ss|IOH>|)>>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|<math|<around*|(|<math-ss|drop>
+    <around*|(|<math-ss|OOH> \<vartriangle\> <math-ss|IIH>|)> \<vartriangle\>
+    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|drop>
+    <around*|(|<math-ss|OIH> \<vartriangle\>
+    <math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<around*|(|<math-ss|OH>
+    \<vartriangle\> <math-ss|drop> <around*|(|<math-ss|IOH> \<vartriangle\>
+    <math-ss|OOH>|)>;<math-ss|full-multiplier><rsub|n>|)> \<vartriangle\>
+    <math-ss|drop> <around*|(|<math-ss|IIH> \<vartriangle\>
+    <math-ss|OIH>|)>>>>>>>>>>>>
   </render-code>
 
   We can prove that the multipliers and full multipliers meet the following
@@ -2467,9 +2519,8 @@
   <\eqnarray*>
     <tformat|<table|<row|<cell|<math-ss|scribe><rsub|A,<1>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|<math-ss|unit>>>|<row|<cell|<math-ss|scribe><rsub|A,B+C><around*|(|<injl-long|B|C|<around*|(|b|)>>|)>>|<cell|\<assign\>>|<cell|<math-ss|injl>
     <around*|(|<math-ss|scribe><rsub|A,B><around*|(|b|)>|)>>>|<row|<cell|<math-ss|scribe><rsub|A,B+C><around*|(|<injr-long|B|C|<around*|(|c|)>>|)>>|<cell|\<assign\>>|<cell|<math-ss|injr>
-    <around*|(|<math-ss|scribe><rsub|A,C><around*|(|c|)>|)>>>|<row|<cell|<math-ss|scribe><rsub|A,B\<times\>C><around*|\<langle\>|b,c|\<rangle\>>>|<cell|\<assign\>>|<cell|<math-ss|pair>
-    <around*|(|<math-ss|scribe><rsub|A,B><around*|(|b|)>|)>
-    <around*|(|<math-ss|scribe><rsub|A,C><around*|(|c|)>|)>>>>>
+    <around*|(|<math-ss|scribe><rsub|A,C><around*|(|c|)>|)>>>|<row|<cell|<math-ss|scribe><rsub|A,B\<times\>C><around*|\<langle\>|b,c|\<rangle\>>>|<cell|\<assign\>>|<cell|<math-ss|scribe><rsub|A,B><around*|(|b|)>
+    \<vartriangle\> <math-ss|scribe><rsub|A,C><around*|(|c|)>>>>>
   </eqnarray*>
 
   <\theorem>
@@ -3786,7 +3837,14 @@
   <\render-code>
     <math|<math-ss|sigAll>\<of\><1>\<vdash\><2><rsup|512>\<times\><2><rsup|512>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|sigAll>>>|<cell|:=>|<cell|<around*|(|<math|<math-ss|<math|inputsHash>>\<times\><math-ss|<math|outputsHash>>>|)>>>|<row|<cell|>|<cell|<math|<op|\<times\>>>>|<cell|<math|<around*|(|<around*|(|<around*|(|<samp|currentValue>\<times\><around*|(|<samp|currentIndex>\<times\><math-ss|lockTime>|)>|)>\<times\><around*|(|<around*|(|<math-ss|version>\<times\><around*|\<lfloor\>|2<rsup|31>|\<rfloor\>><rsub|32>|)>\<times\><around*|\<lfloor\>|0|\<rfloor\>><rsub|64>|)>|)>\<times\><around*|\<lfloor\>|1184|\<rfloor\>><rsub|256>|)>>>>>>>>>>>>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|sigAll>>>|<cell|:=>|<cell|<around*|(|<math|<math-ss|<math|inputsHash>>
+    \<vartriangle\> <math-ss|<math|outputsHash>>>|)>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|<math|<around*|(|<around*|(|<around*|(|<samp|currentValue>
+    \<vartriangle\> <around*|(|<samp|currentIndex> \<vartriangle\>
+    <math-ss|lockTime>|)>|)> |\<nobracket\>>|\<nobracket\>>>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|<math|<around*|\<nobracket\>|
+    <around*|\<nobracket\>| <around*|(|<around*|(|<math-ss|version>
+    \<vartriangle\> <math-ss|scribe><around*|(|<around*|\<lfloor\>|2<rsup|31>|\<rfloor\>><rsub|32>|)>|)>
+    \<vartriangle\> <math-ss|scribe><around*|(|<around*|\<lfloor\>|0|\<rfloor\>><rsub|64>|)>|)>|)>
+    \<vartriangle\> <math-ss|scribe><around*|(|<around*|\<lfloor\>|1184|\<rfloor\>><rsub|256>|)>|)>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
@@ -3798,7 +3856,9 @@
   <\render-code>
     <math|<math-ss|sigHashAll>\<of\><1>\<vdash\>Msg>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|sigHashAll>>>|<cell|:=>|<cell|<math|><math|<math-ss|sigAll>;<around*|(|<math-ss|ivSigAll>\<times\><math-ss|OH>;<math-ss|sha256-block>|)>\<times\><math-ss|IH>;<math-ss|sha256-block>>>>>>>>>>>>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|sigHashAll>>>|<cell|:=>|<cell|<math|><math|<math-ss|sigAll>;<around*|(|<math-ss|ivSigAll>
+    \<vartriangle\> <math-ss|OH>;<math-ss|sha256-block>|)> \<vartriangle\>
+    <math-ss|IH>;<math-ss|sha256-block>>>>>>>>>>>>
   </render-code>
 
   The <math-ss|sigAll> expression reads a total of 672 bits of data from the
@@ -3819,7 +3879,9 @@
   <math|<math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>\<of\><1>\<vdash\><1>>
 
   <\equation*>
-    <math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>\<assign\><around*|(|<math-ss|scribe><rsub|PubKey><around*|(|p|)>\<times\><math-ss|sigHashAll>|)>\<times\><math-ss|witness><rsub|Sig><around*|(|s|)>;<math-ss|schnorrAssert>
+    <math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>\<assign\><around*|(|<math-ss|scribe><rsub|PubKey><around*|(|p|)>
+    \<vartriangle\> <math-ss|sigHashAll>|)> \<vartriangle\>
+    <math-ss|witness><rsub|Sig><around*|(|s|)>;<math-ss|schnorrAssert>
   </equation*>
 
   The <math-ss|witness> combinator ensures that the program's commitment
@@ -3868,7 +3930,7 @@
   <\equation*>
     <around*|\<llbracket\>|<math-ss|disconnect><rsub|A,B,C,D> s
     t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>\<assign\><around*|\<llbracket\>|s;<math-ss|take>
-    <math-ss|iden>\<times\><math-ss|drop>
+    <math-ss|iden> \<vartriangle\> <math-ss|drop>
     t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a,<cmr|t>|\<rangle\>>
   </equation*>
 
