@@ -3655,7 +3655,18 @@
   Furthemore, we presume that for every <math|e\<of\>BCEnv> that
   <math|<around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>\<less\><around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>>
   so that ``current'' index being validated is, in fact, an input of the
-  transaction. <with|color|red|TODO moneyRange>
+  transaction.
+
+  Bitcoin's money supply is capped below <math|21<nbsp>000<nbsp>000\<times\>10<rsup|8>>
+  satoshis, therefore it is safe to assume that all monetary values are
+  within this bound. In particular we presume that for every
+  <math|e\<of\>BCEnv> that the following inequalities hold.
+
+  <\equation*>
+    0\<leq\>fold<rsup|<around*|\<langle\>|+,0|\<rangle\>>><rsub|\<bbb-N\>><around*|(|<around*|(|\<lambda\>o\<point\><around*|\<lceil\>|o<around*|[|value|]>|\<rceil\>><rsub|64>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>|)>\<leq\>fold<rsup|<around*|\<langle\>|+,0|\<rangle\>>><rsub|\<bbb-N\>><around*|(|<around*|(|\<lambda\>i\<point\><around*|\<lceil\>|i<around*|[|value|]>|\<rceil\>><rsub|64>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>|)>\<leq\>21<nbsp>000<nbsp>000\<times\>10<rsup|8>
+  </equation*>
+
+  \;
 
   <assign|BC|<math|BC>>The monad we use for the Bitcoin application provides
   an environment effect (also known as a reader effect) that allows read
@@ -3813,6 +3824,11 @@
   that for every <math|e\<of\>BCEnv> that
   <math|<around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>\<less\><around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>>
   implies that those expressions cannot fail either.
+
+  The sums computed for <math|<around*|\<llbracket\>|<math-ss|<math|totalInputValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>
+  and <math|<around*|\<llbracket\>|<math-ss|<math|totalOutputValue>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>>
+  never ``overflow'' their 64-bit values due to our assumptions about
+  Bitcoin's money supply.
 
   <subsubsection|Merkle Roots><label|ss:BTMerkleRoots>
 
@@ -6273,71 +6289,71 @@
     <associate|LC313|<tuple|6.5|?>>
     <associate|LC42|<tuple|6.5|?>>
     <associate|LC98|<tuple|6.2.2|?>>
-    <associate|SS:Coq:MerkleRoots|<tuple|8.5|65>>
+    <associate|SS:Coq:MerkleRoots|<tuple|8.5|67>>
     <associate|Serialization|<tuple|2.8|?>>
-    <associate|app:AltSerialization|<tuple|A|79>>
+    <associate|app:AltSerialization|<tuple|A|81>>
     <associate|auto-1|<tuple|1|7>>
     <associate|auto-10|<tuple|2.2|11>>
-    <associate|auto-100|<tuple|7.2.2|57>>
-    <associate|auto-101|<tuple|8|59>>
-    <associate|auto-102|<tuple|8.1|59>>
-    <associate|auto-103|<tuple|8.2|59>>
-    <associate|auto-104|<tuple|8.2.1|59>>
-    <associate|auto-105|<tuple|8.2.2|59>>
-    <associate|auto-106|<tuple|8.2.2.1|60>>
-    <associate|auto-107|<tuple|8.2.2.2|60>>
-    <associate|auto-108|<tuple|8.2.2.3|61>>
-    <associate|auto-109|<tuple|8.2.3|61>>
+    <associate|auto-100|<tuple|7.2.2|59>>
+    <associate|auto-101|<tuple|8|61>>
+    <associate|auto-102|<tuple|8.1|61>>
+    <associate|auto-103|<tuple|8.2|61>>
+    <associate|auto-104|<tuple|8.2.1|61>>
+    <associate|auto-105|<tuple|8.2.2|61>>
+    <associate|auto-106|<tuple|8.2.2.1|62>>
+    <associate|auto-107|<tuple|8.2.2.2|62>>
+    <associate|auto-108|<tuple|8.2.2.3|63>>
+    <associate|auto-109|<tuple|8.2.3|63>>
     <associate|auto-11|<tuple|2.2.1|11>>
-    <associate|auto-110|<tuple|8.3|61>>
-    <associate|auto-111|<tuple|8.3.1|61>>
-    <associate|auto-112|<tuple|8.3.2|61>>
-    <associate|auto-113|<tuple|8.3.3|62>>
-    <associate|auto-114|<tuple|8.4|62>>
-    <associate|auto-115|<tuple|8.1|62>>
-    <associate|auto-116|<tuple|8.4.1|63>>
-    <associate|auto-117|<tuple|8.4.2|63>>
-    <associate|auto-118|<tuple|8.4.3|63>>
-    <associate|auto-119|<tuple|8.4.4|64>>
+    <associate|auto-110|<tuple|8.3|63>>
+    <associate|auto-111|<tuple|8.3.1|63>>
+    <associate|auto-112|<tuple|8.3.2|63>>
+    <associate|auto-113|<tuple|8.3.3|64>>
+    <associate|auto-114|<tuple|8.4|64>>
+    <associate|auto-115|<tuple|8.1|64>>
+    <associate|auto-116|<tuple|8.4.1|65>>
+    <associate|auto-117|<tuple|8.4.2|65>>
+    <associate|auto-118|<tuple|8.4.3|65>>
+    <associate|auto-119|<tuple|8.4.4|66>>
     <associate|auto-12|<tuple|2.2.2|11>>
-    <associate|auto-120|<tuple|8.4.4.1|64>>
-    <associate|auto-121|<tuple|8.4.5|64>>
-    <associate|auto-122|<tuple|8.4.6|65>>
-    <associate|auto-123|<tuple|8.5|65>>
-    <associate|auto-124|<tuple|8.6|65>>
-    <associate|auto-125|<tuple|8.6.1|66>>
-    <associate|auto-126|<tuple|8.6.1.1|67>>
-    <associate|auto-127|<tuple|8.6.2|67>>
-    <associate|auto-128|<tuple|8.6.3|67>>
-    <associate|auto-129|<tuple|9|69>>
+    <associate|auto-120|<tuple|8.4.4.1|66>>
+    <associate|auto-121|<tuple|8.4.5|66>>
+    <associate|auto-122|<tuple|8.4.6|67>>
+    <associate|auto-123|<tuple|8.5|67>>
+    <associate|auto-124|<tuple|8.6|67>>
+    <associate|auto-125|<tuple|8.6.1|68>>
+    <associate|auto-126|<tuple|8.6.1.1|69>>
+    <associate|auto-127|<tuple|8.6.2|69>>
+    <associate|auto-128|<tuple|8.6.3|69>>
+    <associate|auto-129|<tuple|9|71>>
     <associate|auto-13|<tuple|2.3|13>>
-    <associate|auto-130|<tuple|9.1|69>>
-    <associate|auto-131|<tuple|9.2|70>>
-    <associate|auto-132|<tuple|9.3|71>>
-    <associate|auto-133|<tuple|9.3.1|71>>
-    <associate|auto-134|<tuple|9.4|71>>
-    <associate|auto-135|<tuple|9.5|71>>
-    <associate|auto-136|<tuple|9.6|72>>
-    <associate|auto-137|<tuple|9.6.1|72>>
-    <associate|auto-138|<tuple|9.6.2|72>>
-    <associate|auto-139|<tuple|9.6.2.1|72>>
+    <associate|auto-130|<tuple|9.1|71>>
+    <associate|auto-131|<tuple|9.2|72>>
+    <associate|auto-132|<tuple|9.3|73>>
+    <associate|auto-133|<tuple|9.3.1|73>>
+    <associate|auto-134|<tuple|9.4|73>>
+    <associate|auto-135|<tuple|9.5|73>>
+    <associate|auto-136|<tuple|9.6|74>>
+    <associate|auto-137|<tuple|9.6.1|74>>
+    <associate|auto-138|<tuple|9.6.2|74>>
+    <associate|auto-139|<tuple|9.6.2.1|74>>
     <associate|auto-14|<tuple|2.3.1|13>>
-    <associate|auto-140|<tuple|9.6.2.2|72>>
-    <associate|auto-141|<tuple|9.6.3|72>>
-    <associate|auto-142|<tuple|9.6.4|72>>
-    <associate|auto-143|<tuple|9.6.5|72>>
-    <associate|auto-144|<tuple|9.6.6|73>>
-    <associate|auto-145|<tuple|9.7|73>>
-    <associate|auto-146|<tuple|9.7.1|73>>
-    <associate|auto-147|<tuple|9.7.2|74>>
-    <associate|auto-148|<tuple|9.8|74>>
-    <associate|auto-149|<tuple|9.9|74>>
+    <associate|auto-140|<tuple|9.6.2.2|74>>
+    <associate|auto-141|<tuple|9.6.3|74>>
+    <associate|auto-142|<tuple|9.6.4|74>>
+    <associate|auto-143|<tuple|9.6.5|74>>
+    <associate|auto-144|<tuple|9.6.6|75>>
+    <associate|auto-145|<tuple|9.7|75>>
+    <associate|auto-146|<tuple|9.7.1|75>>
+    <associate|auto-147|<tuple|9.7.2|76>>
+    <associate|auto-148|<tuple|9.8|76>>
+    <associate|auto-149|<tuple|9.9|76>>
     <associate|auto-15|<tuple|2.3.2|14>>
-    <associate|auto-150|<tuple|9.9.1|74>>
-    <associate|auto-151|<tuple|9.9.2|76>>
-    <associate|auto-152|<tuple|10|77>>
-    <associate|auto-153|<tuple|A|79>>
-    <associate|auto-154|<tuple|A|81>>
+    <associate|auto-150|<tuple|9.9.1|76>>
+    <associate|auto-151|<tuple|9.9.2|78>>
+    <associate|auto-152|<tuple|10|79>>
+    <associate|auto-153|<tuple|A|81>>
+    <associate|auto-154|<tuple|A|83>>
     <associate|auto-16|<tuple|2.3.3|14>>
     <associate|auto-17|<tuple|2.3.4|14>>
     <associate|auto-18|<tuple|2.3.4.1|15>>
@@ -6398,7 +6414,7 @@
     <associate|auto-68|<tuple|4|39>>
     <associate|auto-69|<tuple|4.1|39>>
     <associate|auto-7|<tuple|2|9>>
-    <associate|auto-70|<tuple|4.2|39>>
+    <associate|auto-70|<tuple|4.2|40>>
     <associate|auto-71|<tuple|4.2.1|40>>
     <associate|auto-72|<tuple|4.2.2|40>>
     <associate|auto-73|<tuple|4.2.3|40>>
@@ -6406,52 +6422,51 @@
     <associate|auto-75|<tuple|4.3|40>>
     <associate|auto-76|<tuple|4.3.1|41>>
     <associate|auto-77|<tuple|4.3.2|41>>
-    <associate|auto-78|<tuple|4.3.2.1|41>>
+    <associate|auto-78|<tuple|4.3.2.1|42>>
     <associate|auto-79|<tuple|4.3.2.2|42>>
     <associate|auto-8|<tuple|2.1|9>>
-    <associate|auto-80|<tuple|4.4|42>>
-    <associate|auto-81|<tuple|4.4.1|42>>
-    <associate|auto-82|<tuple|4.4.1.1|44>>
-    <associate|auto-83|<tuple|4.4.1.2|45>>
-    <associate|auto-84|<tuple|4.5|45>>
+    <associate|auto-80|<tuple|4.4|43>>
+    <associate|auto-81|<tuple|4.4.1|43>>
+    <associate|auto-82|<tuple|4.4.1.1|45>>
+    <associate|auto-83|<tuple|4.4.1.2|46>>
+    <associate|auto-84|<tuple|4.5|46>>
     <associate|auto-85|<tuple|4.5.1|46>>
-    <associate|auto-86|<tuple|4.6|46>>
-    <associate|auto-87|<tuple|4.7|46>>
-    <associate|auto-88|<tuple|4.7.1|46>>
-    <associate|auto-89|<tuple|5|47>>
+    <associate|auto-86|<tuple|4.6|47>>
+    <associate|auto-87|<tuple|4.7|47>>
+    <associate|auto-88|<tuple|4.7.1|47>>
+    <associate|auto-89|<tuple|5|49>>
     <associate|auto-9|<tuple|2.1.1|10>>
-    <associate|auto-90|<tuple|6|49>>
-    <associate|auto-91|<tuple|6.1|49>>
-    <associate|auto-92|<tuple|7|51>>
-    <associate|auto-93|<tuple|7.1|51>>
-    <associate|auto-94|<tuple|7.1.1|53>>
-    <associate|auto-95|<tuple|7.1.2|55>>
-    <associate|auto-96|<tuple|7.1.2.1|55>>
-    <associate|auto-97|<tuple|7.1.2.2|56>>
-    <associate|auto-98|<tuple|7.2|56>>
-    <associate|auto-99|<tuple|7.2.1|56>>
-    <associate|bib-Appel:2015|<tuple|1|81>>
-    <associate|bib-Carette:2009|<tuple|3|81>>
-    <associate|bib-Coq:manual|<tuple|5|81>>
-    <associate|bib-King1993|<tuple|8|81>>
-    <associate|bib-Mahboubi:2013|<tuple|9|81>>
-    <associate|bib-Mairson:1989|<tuple|10|81>>
-    <associate|bib-bip-schnorr|<tuple|17|81>>
-    <associate|bib-bitcoin|<tuple|11|81>>
-    <associate|bib-f-algebra|<tuple|16|81>>
-    <associate|bib-garillot:2009|<tuple|6|81>>
-    <associate|bib-gentzen|<tuple|7|81>>
-    <associate|bib-libsecp256k1|<tuple|18|81>>
-    <associate|bib-oconnor2014|<tuple|14|81>>
-    <associate|bib-satoshiScript|<tuple|12|81>>
-    <associate|bib-script|<tuple|2|81>>
-    <associate|bib-sec2|<tuple|4|81>>
-    <associate|bib-sha|<tuple|13|81>>
-    <associate|bib-unification|<tuple|15|81>>
+    <associate|auto-90|<tuple|6|51>>
+    <associate|auto-91|<tuple|6.1|51>>
+    <associate|auto-92|<tuple|7|53>>
+    <associate|auto-93|<tuple|7.1|53>>
+    <associate|auto-94|<tuple|7.1.1|55>>
+    <associate|auto-95|<tuple|7.1.2|57>>
+    <associate|auto-96|<tuple|7.1.2.1|57>>
+    <associate|auto-97|<tuple|7.1.2.2|58>>
+    <associate|auto-98|<tuple|7.2|58>>
+    <associate|auto-99|<tuple|7.2.1|58>>
+    <associate|bib-Appel:2015|<tuple|1|83>>
+    <associate|bib-Carette:2009|<tuple|3|83>>
+    <associate|bib-Coq:manual|<tuple|5|83>>
+    <associate|bib-King1993|<tuple|8|83>>
+    <associate|bib-Mahboubi:2013|<tuple|9|83>>
+    <associate|bib-Mairson:1989|<tuple|10|83>>
+    <associate|bib-bip-schnorr|<tuple|17|83>>
+    <associate|bib-bitcoin|<tuple|11|83>>
+    <associate|bib-f-algebra|<tuple|16|83>>
+    <associate|bib-garillot:2009|<tuple|6|83>>
+    <associate|bib-gentzen|<tuple|7|83>>
+    <associate|bib-libsecp256k1|<tuple|18|83>>
+    <associate|bib-oconnor2014|<tuple|14|83>>
+    <associate|bib-satoshiScript|<tuple|12|83>>
+    <associate|bib-script|<tuple|2|83>>
+    <associate|bib-sec2|<tuple|4|83>>
+    <associate|bib-sha|<tuple|13|83>>
+    <associate|bib-unification|<tuple|15|83>>
     <associate|chapter:preliminaries|<tuple|2|9>>
     <associate|cite_ref-Martelli.Montanari.1976_16-1|<tuple|6.1.1|?>>
-    <associate|docs-internal-guid-af5ffdcd-7114-eda6-c80e-f3a224e6380a|<tuple|3.2.1|?>>
-    <associate|fig:inheritance|<tuple|8.1|62>>
+    <associate|fig:inheritance|<tuple|8.1|64>>
     <associate|footnote-1|<tuple|1|?>>
     <associate|footnote-2.1|<tuple|2.1|14>>
     <associate|footnote-2.2|<tuple|2.2|23>>
@@ -6465,21 +6480,21 @@
     <associate|full-adder-RHS|<tuple|3.2|23>>
     <associate|full-adder-spec|<tuple|3.1|22>>
     <associate|ss:AssertMerkleRoot|<tuple|4.3.2|41>>
-    <associate|ss:BTDenotationalSemantics|<tuple|4.4.1.1|44>>
-    <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|45>>
-    <associate|ss:BitcoinTransactions|<tuple|4.4.1|42>>
-    <associate|ss:DAGs|<tuple|7.1|51>>
-    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.5|71>>
+    <associate|ss:BTDenotationalSemantics|<tuple|4.4.1.1|45>>
+    <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|46>>
+    <associate|ss:BitcoinTransactions|<tuple|4.4.1|43>>
+    <associate|ss:DAGs|<tuple|7.1|53>>
+    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.5|73>>
     <associate|ss:Deserialization|<tuple|6.2|?>>
     <associate|ss:MonadZero|<tuple|2.3.4|14>>
     <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|29>>
-    <associate|ss:Serialization|<tuple|7.2|56>>
-    <associate|ss:coqArith|<tuple|8.3.2|61>>
-    <associate|ss:coqInitial|<tuple|8.2.1|59>>
+    <associate|ss:Serialization|<tuple|7.2|58>>
+    <associate|ss:coqArith|<tuple|8.3.2|63>>
+    <associate|ss:coqInitial|<tuple|8.2.1|61>>
     <associate|ss:monadicSemantics|<tuple|4.1|39>>
-    <associate|ss:pruning|<tuple|4.3.2.1|41>>
+    <associate|ss:pruning|<tuple|4.3.2.1|42>>
     <associate|ss:salted|<tuple|4.3.2.2|42>>
-    <associate|ss:typeInference|<tuple|7.1.1|53>>
+    <associate|ss:typeInference|<tuple|7.1.1|55>>
     <associate|thm:CSCT|<tuple|3.2|28>>
     <associate|v:checkSigHashAll|<tuple|8.6.6|?>>
   </collection>
