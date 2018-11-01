@@ -600,52 +600,52 @@
   <section|Bitcoin Script>
 
   Bitcoin<cite|bitcoin> was the first protocol that used a blockchain to
-  build a distributed ledger that allows any participants transact a
-  cyrptographic currency with minimal risk of their transaction being
-  reversed or undone, without relying on a trusted third party or cetnral
-  authority. \ Typically access to funds are controlled by a cryptographic
-  private key. \ References to one or more of these funds, which may or may
-  not have the same private keys, are assembled into a data structure, called
-  a <dfn|transaction>, along with a set of one or more outputs which specify
-  which cyrptographic public keys will control each output. \ This
+  build a distributed ledger that allows anyone to transact a cyrptographic
+  currency with minimal risk of their transaction being reversed or undone,
+  and without relying on a trusted third party or central authority.
+  Typically access to funds are controlled by a cryptographic private key.
+  References to one or more of these funds, which may or may not have the
+  same private keys, are assembled into a data structure, called a
+  <dfn|transaction>, along with a set of one or more outputs which specify
+  which cyrptographic public keys that will control each output. This
   transaction data is signed with each private key for each input and added
-  to the transaction as ``witness data''.
+  to the transaction as <dfn|witness data>.
 
   More precisely, the outputs are not necessarily controlled by a simple
   single cryptographic key, rather each output is controlled by a small
   program written in a language called <dfn|Bitcoin
-  Script><cite|satoshiScript|script>. \ Bitcoin Script is a stack-based
+  Script><cite|satoshiScript|script>. Bitcoin Script is a stack-based
   language with conditionals operations for control flow and no loops.
-  \ Bitcoin has stack manipulation operations, boolean logic operataions, and
-  simple arithmetic expression without even multiplication. It also has some
-  cryptographic operations that include cyrptographic hash functions, and
-  digital signature verification operations. The <verbatim|CHECKSIG>
-  operation does an ECDSA digital signature verification of transaction data.
+  Bitcoin has stack manipulation operations, Boolean logic operations, and
+  very simple arithmetic operations (without even multiplication). It also
+  has some cryptographic operations that include cyrptographic hash
+  functions, and digital signature verification operations. The
+  <verbatim|CHECKSIG> operation does an ECDSA digital signature verification
+  of transaction data.
 
-  A basic Bitcoin Script programs pushes an ECDSA public key onto the stack,
-  followed by a <verbatim|CHECKSIG> operation. \ This Script is part of the
-  output data within a transaction. \ In order to spend the funds held by
-  such an output, one builds a transaction with an input referencing this
+  A basic example of a Bitcoin Script program pushes an ECDSA public key onto
+  the stack, followed by a <verbatim|CHECKSIG> operation. This Script is part
+  of the output data within a transaction. In order to spend the funds held
+  by such an output, one builds a transaction with an input referencing this
   output and adds a ECDSA signature to the transaction's witness data for the
-  input. \ The signature says which part of the transaction data is being
-  signed (typically everything other than the witness data itself) and has
-  the signature.
+  input (called a ScriptSig). The witness data describes which part of the
+  transaction data is being signed (typically everything other than the
+  witness data itself) and has the signature.
 
-  To validate an input, the witness data is pushed onto the primary stack,
-  and the the program in the referenced output is executed. \ In our example
-  above, this program pushes a specific ECDSA public key onto the stack and
-  then executes <verbatim|CHECKSIG>. \ The <verbatim|CHECKSIG> operation pops
-  the private key and the signature data off the stack. \ Then it hashes the
-  transaction data as specified by the signature, including which input is
-  being signed, using the SHA-256 cryptographic hash, and verifies that
-  digital signature for that public key is valid for that hashed data. Only
-  if successful is the value <verbatim|1> pushed back onto the stack. In
-  order for a transaction to be valid, all inputs are checked in this
-  fashion, by pushing its associated witness data onto the stack and then
-  executing the program found in the referenced output and requiring a
-  non-zero value be left on the stack.
+  To validate an input, the witness data is pushed onto the stack, and the
+  the program in the referenced output is executed. In our example above, the
+  program pushes a specific ECDSA public key onto the stack and then executes
+  <verbatim|CHECKSIG>. The <verbatim|CHECKSIG> operation pops the public key
+  and the signature data off the stack. Then it cryptographically hashes the
+  transaction data as specified by the signature data, including which input
+  is being signed, and verifies that the digital signature for that public
+  key is valid for that hashed data. Only if successful is the value
+  <verbatim|1> pushed back onto the stack. In order for a transaction to be
+  valid, all inputs are checked in this fashion, by pushing its associated
+  witness data onto the stack and then executing the program found in the
+  referenced output and requiring a non-zero value be left on the stack.
 
-  From this example, we see that there are there parts that go into checking
+  From this example, we see that there are three parts that go into checking
   if a transaction's input is authorized to be spent:
 
   <\itemize-dot>
@@ -658,43 +658,43 @@
   </itemize-dot>
 
   All the data needed to validate a transaction is part of (or
-  cryptographically committed within) the transaction data. \ This means the
+  cryptographically committed within) the transaction data. This means the
   inputs can be validated independently of the state of the rest of the
   blockchain, as far as Bitcoin Script is concerned.
 
   In the above example, the Bitcoin Script is included into a transaction's
-  output, at what I call <dfn|commitment time>. \ The signature and
-  transaction data is specified later at what I call <dfn|redemption time>.
-  \ That said, the Bitcoin Script does not have to be entirely revealed at
-  commitment time; it is acceptable to just commit to the Bitcoin Script's
-  cryptographic hash. \ Then, at redemption time, the script is revealed
-  together with the witness data and the rest of the transaction. \ In this
-  case the script's hash is verified to be equal to the hash committed in the
-  ouput, and then the witness data, and revealed Bitcoin Script are validated
-  by executation as before. \ Bitcoin's <dfn|pay to script hash> or
-  <dfn|P2SH> follows this modified procedure which makes it easy for users to
-  specify complex Bitcoin Scripts with which to receive funds while only
-  needing to provide a single hash value to their counterparty.
+  output, at what I call <dfn|commitment time>. The signature and transaction
+  data is specified later at what I call <dfn|redemption time>. That said,
+  the Bitcoin Script does not have to be entirely presented at commitment
+  time; it is acceptable to just commit to the Bitcoin Script's cryptographic
+  hash. Then, at redemption time, the script is revealed together with the
+  witness data and the rest of the transaction. In this case the program's
+  hash is verified to be equal to the hash committed in the output, and then
+  the witness data, and revealed Bitcoin Script are validated as before.
+  Bitcoin's <dfn|pay to script hash> (a.k.a. <dfn|P2SH>) follows this
+  modified procedure which makes it easy for users to specify complex Bitcoin
+  Scripts with to control funds while only needing to provide a single hash
+  value to their counterparty when they are first receiving their funds.
 
-  These more complex scripts can be devised to do multi-signagure, escrow,
-  hash timelock contracts, etc. However because of the the limited
+  More complex scripts can be devised to do multi-signature, escrow,
+  hashed-timelock contracts, etc. However, because of the the limited
   expressiveness of Bitcoin Script (e.g. no multiplication operation), only
   so much can be programmed. Therefore, we want to design an alternative to
-  Bitcoin Script that will be more expresive, without sacrificing the good
-  properties of Bitcoin Script. \ We call this new language <dfn|Simplicity>.
+  Bitcoin Script that will be more expressive, without sacrificing the good
+  properties of Bitcoin Script. We call this new language <dfn|Simplicity>.
 
   <section|Simplicity's Design Goals>
 
   Our goals for Simplicity include the following:
 
   <\itemize-dot>
-    <item>Create an expressive langauge that lets users build novel programs
+    <item>Create an expressive language that lets users build novel programs
     and smart contracts.
 
     <item>Enable useful static analysis to bound computational resource usage
     of programs.
 
-    <item>Minimize bandwidth and storage requirements by enabling sharing of
+    <item>Minimize bandwidth and storage requirements by allowing sharing of
     expressions and pruning of unused expressions.
 
     <item>Capture the computational environment entirely within a unit of
@@ -708,26 +708,26 @@
 
   In Bitcoin Script, static analysis lets us count how many operations there
   are and, in particular, bound the maximum number of expensive operations,
-  such as signature validation, that could be performed. \ We can do this
+  such as signature validation, that could be performed. We can do this
   because Bitcoin Script has no looping operations. In a transaction, if
   Bitcoin Script is deemed to be potentially too expensive from this
   analysis, the program is rejected at redemption time.
 
-  We want to support this same sort of static analysis in Simplicity. \ It
-  lets users determine at commitment time, the worst case cost for redeeming
-  the program, for any possible inputs. \ At redemption time, it allows, as
+  We want to support this same sort of static analysis in Simplicity. It lets
+  users determine, at commitment time, the worst case cost for redeeming the
+  program, for any possible witness inputs. At redemption time it allows, as
   part of the consensus rules, to bound the cost of running programs prior to
-  execution. \ This serves as one method of avoiding denial of service
-  attacks in a blockchain protocal like Bitcoin.
+  execution. This serves as one method of avoiding denial of service attacks
+  in a blockchain protocol like Bitcoin.
 
   <subsection|Pruning and Sharing>
 
-  As we saw before, at commitment time we only need to specify a
-  cryptographic commitment to the program contents, and the program can be
-  revealed at redemption time. \ For more complex programs with multiple
-  alternative branches, only those branches that are actually going to be
-  executed need to be revealed, and the remainer of the program that is not
-  executed for this particular transaction can be excluded.
+  As we saw before at commitment time we only need to specify a cryptographic
+  commitment to the program, and the program can be revealed at redemption
+  time. For more complex programs with multiple alternative branches, only
+  those branches that are actually going to be executed need to be revealed,
+  and the remainder of the program that is not executed for this particular
+  transaction can be excluded.
 
   Using a technique called <dfn|Merkelized Abstract Syntax Trees> a.k.a.
   <dfn|MAST>, we can commit to a Merkle root of a program's abstract syntax
@@ -736,67 +736,66 @@
   verify that the program's Merkle root matches the root specified at
   commitment time.
 
-  Because two identical subexpressions necessarly have the same Merkle root,
-  this proceedure also lets reduce program size by sharing these identical
-  subexpressions.
+  Because two identical subexpressions necessarily have the same Merkle root,
+  this procedure also lets us reduce program size by sharing these identical
+  subexpressions. In principle, this sharing could extend as wide as between
+  different program in different transactions.
 
   <subsection|Formal Semantics>
 
   Once a program has been committed to, it cannot be changed or updated
-  later. \ If a program has errors or security vulnerabilities, it can no
+  later. If a program has errors or security vulnerabilities, it can no
   longer be fixed. Therefore, it is essential to get these program correct.
   Fortunately these programs tend to be relatively small, and hence amenable
-  to formal analysis. \ We use the Coq proof assistant<cite|Coq:manual> to
-  specify formal semantics of Simplicity. \ This allows us to both reason
-  about programs written in Simplicity, but also lets us reason about our
+  to formal analysis. We use the Coq proof assistant<nbsp><cite|Coq:manual>
+  to specify formal semantics of Simplicity. This allows us to both reason
+  about programs written in Simplicity, and also lets us reason about our
   static analysis and Simplicity interpreters and prove that they are
   correct.
 
-  While we specifically use the Coq proof assistent, the formal semantics of
+  While we specifically use the Coq proof assistant, the formal semantics of
   Simplicity is designed to be easy enough to define in any proof assistant,
   especially others based on dependent type theory.
 
   <chapter|Type Theory Preliminaries><label|chapter:preliminaries>
 
   <assign|maybe|<math|<math-up|S>>><assign|injl-long|<macro|A|B|x|<math|\<sigma\><rsup|\<b-up-L\>><rsub|<arg|A>,<arg|B>><arg|x>>>><assign|2|<with|font|Bbb*|2>><assign|injr-long|<macro|A|B|x|<math|\<sigma\><rsup|\<b-up-R\>><rsub|<arg|A>,<arg|B>><arg|x>>>><assign|1|<math|<with|font|Bbb*|1>>><assign|pair-long|<macro|x|y|A|B|<math|<around*|\<langle\>|<arg|x>,<arg|y>|\<rangle\>><rsub|<arg|A>,<arg|B>>>>><assign|injl|<macro|x|<math|\<sigma\><rsup|\<b-up-L\>><arg|x>>>><assign|injr|<macro|x|<math|\<sigma\><rsup|\<b-up-R\>><arg|x>>>>In
-  this document we endeavour to be precise about the semantics surronding the
-  definition of the Simplicity language. To this end we use formal language
-  composed from a mix of mathematics, category theory, simple type theory,
-  and functional programming. While most all our notation is standard in some
-  community, we do not necessarily expect all readers to be familiar with
-  ever bit of it. To that end, and to ensure completeness of our semantics,
-  we give detailed definitions below of the common notation used throughout
-  this document.
+  this document we endeavour to be precise about the semantics surrounding
+  the definition of the Simplicity language. To this end we use formal
+  language composed from a mix of mathematics, category theory, simple type
+  theory, and functional programming. While most all our notation is standard
+  in some community, readers may not be familiar with all of it. To that end,
+  and to ensure completeness of our semantics, we give detailed definitions
+  below of the common notation used throughout this document.
 
-  Our formal language is phrased in terms of simple type theory, and even so,
-  readers familiar with mathematics should not have too much trouble
-  following it since mathematics notation already borrows heavily from simple
-  type theory and everything can be interpreted in standard mathematics.
+  Our formal language is phrased in terms of simple type theory and readers
+  familiar with mathematics should not have too much trouble following it
+  since mathematics notation already borrows heavily from simple type theory.
 
   To being with we will assume that we have a notation of a type of natural
   numbers, <math|\<bbb-N\>>, with <math|0\<of\>\<bbb-N\>>,
-  <math|1:\<bbb-N\>>, and so forth for all other numbers. Given natural
-  numbers <math|n:\<bbb-N\>> and <math|m:\<bbb-N\>>, we take it for granted
-  that we have
+  <math|1\<of\>\<bbb-N\>>, and so forth for all other numbers. Given natural
+  numbers <math|n\<of\>\<bbb-N\>> and <math|m\<of\>\<bbb-N\>>, we take it for
+  granted that we have
 
   <\itemize>
     <item>notions of arithmetic including <math|n+m>, <math|n*m>, and
     <math|n<rsup|m>>;
 
     <item>comparison operations including <math|n\<less\>m>,
-    <math|n\<leqslant\>m>, <math|n\<geqslant\>m>, and <math|n\<gtr\>m>;
+    <math|n\<leq\>m>, <math|n\<geq\>m>, and <math|n\<gtr\>m>;
 
-    <item>when <math|n\<geqslant\>m> then the difference <math|n-m> is a
-    natural number.
+    <item>when <math|n\<geq\>m> then the difference <math|n-m> is a natural
+    number.
   </itemize>
 
-  We will partake in several notational conviences. For example we will
-  generally elide parentheses when the value they surround already has has
-  its own brackes. For example,
+  We will partake in several notational conveniences. We will generally elide
+  parentheses when the value they surround already has has its own brackets.
+  For example,
 
   <\itemize>
-    <item>we will write <math|f<around*|\<langle\>|x,y|\<rangle\>>> intead of
-    <math|f<around*|(|<around*|\<langle\>|x,y|\<rangle\>>|)>>;
+    <item>we will write <math|f<around*|\<langle\>|x,y|\<rangle\>>> instead
+    of <math|f<around*|(|<around*|\<langle\>|x,y|\<rangle\>>|)>>;
 
     <item>we will write <math|f<math-tt|[cafe]>> instead of
     <math|f<around*|(|<math-tt|[cafe]>|)>>;
@@ -806,11 +805,11 @@
   </itemize>
 
   As you will see, we have a lot of notation with type annotations that are
-  used to fully disambiguate them. Usually these type annotations can be
+  used to fully disambiguate them. Often these type annotations can be
   completely inferred from the surrounding context and accordingly we will
   usually omit these annotations to reduce notational clutter and reserve the
-  annotated versions for the rare cases where the annotations are ambigous or
-  where we want to draw specific attention to them.
+  annotated versions for cases where the annotations are ambiguous or where
+  we want to draw specific attention to them.
 
   <section|Algebraic Types>
 
@@ -822,19 +821,18 @@
   then <math|!<rsup|A>z\<of\>A> is a value of any type.
 
   Given types <math|A> and <math|B>, then <math|A+B>, <math|A\<times\>B>, and
-  <math|A\<rightarrow\>B> are the sum type (also known as disjoin union
-  type), (Cartesian) product type, and function type respectively. Given
-  <math|a\<of\>A> and <math|b\<of\>B> we denote values of the sum and product
-  types as
+  <math|A\<rightarrow\>B> are the sum type (also known as disjoint union
+  type), the (Cartesian) product type, and the function type respectively.
+  Given <math|a\<of\>A> and <math|b\<of\>B> we denote values of the sum and
+  product types as
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<injl-long|A|B|<around*|(|a|)>>>|<cell|:>|A+B>|<row|<cell|<injr-long|A|B|<around*|(|b|)>>>|<cell|:>|<cell|A+B>>|<row|<cell|<around*|\<langle\>|a,b|\<rangle\>><rsub|A,B>>|<cell|:>|<cell|A\<times\>B>>>>
   </eqnarray*>
 
   We will usually omit the annotations, writing
-  <math|<injl-long|A|B|<around*|(|a|)>>> as <math|<injl|<around*|(|a|)>>>,
-  <injr-long|A|B|<around*|(|b|)>> as <math|<injr|<around*|(|b|)>>>, and
-  <math|<pair-long|a|b|A|B>> as <math|<around*|\<langle\>|a,b|\<rangle\>>>.
+  <math|<injl|<around*|(|a|)>>>, <math|<injr|<around*|(|b|)>>>, and
+  <math|<around*|\<langle\>|a,b|\<rangle\>>>.
 
   We write an expression of type <math|A\<rightarrow\>B> using lambda
   notation:
@@ -852,7 +850,7 @@
     f<around*|(|a|)>\<of\>B
   </equation*>
 
-  Per usual, the type operator <math|\<rightarrow\>> is right assocative:
+  The type operator <math|\<rightarrow\>> is right associative:
 
   <\equation*>
     A\<rightarrow\>B\<rightarrow\>C=A\<rightarrow\><around*|(|B\<rightarrow\>C|)>
@@ -860,7 +858,7 @@
 
   \;
 
-  We define the identity function <math|id<rsub|A>\<of\>A\<rightarrow\>A> as
+  We define the identity function <math|id<rsub|A>\<of\>A\<rightarrow\>A> by
 
   <\equation*>
     id<rsub|A><around*|(|a|)>\<assign\>a
@@ -874,41 +872,38 @@
   </equation*>
 
   To access components of sum and product types we use pattern matching. For
-  example, we can define the first and second projection functions as:
+  example, we define the first and second projection functions as
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|\<pi\><rsup|A,B><rsub|1><around*|\<langle\>|a,b|\<rangle\>>>|<cell|\<assign\>>|<cell|a>>|<row|<cell|\<pi\><rsup|A,B><rsub|2><around*|\<langle\>|a,b|\<rangle\>>>|<cell|\<assign\>>|<cell|b>>>>
+    <tformat|<table|<row|<cell|\<pi\><rsup|A,B><rsub|1><around*|\<langle\>|a,b|\<rangle\>>>|<cell|\<assign\>>|<cell|a>>|<row|<cell|\<pi\><rsup|A,B><rsub|2><around*|\<langle\>|a,b|\<rangle\>>>|<cell|\<assign\>>|<cell|b<text|.>>>>>
   </eqnarray*>
 
-  When we take a product type with itself, we form a square and denote with
-  exponential notation accordingly
+  When we take a product type with itself, we form a square and denote it by
+  exponential notation accordingly:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|A<rsup|2>>|<cell|\<assign\>>|<cell|A\<times\>A>>>>
   </eqnarray*>
 
-  We can take repreated squares, and we denote this by exponential notation
-  with successively larger powers of two:
+  When we take repeated squares, we denote this by exponential notation with
+  successively larger powers of two:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|A<rsup|1>>|<cell|\<assign\>>|<cell|A>>|<row|<cell|A<rsup|2>>|<cell|\<assign\>>|<cell|A<rsup|1>\<times\>A<rsup|1>>>|<row|<cell|A<rsup|4>>|<cell|\<assign\>>|<cell|A<rsup|2>\<times\>A<rsup|2>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>|<row|<cell|A<rsup|2<rsup|1+n>>>|<cell|\<assign\>>|<cell|A<rsup|2<rsup|n>>\<times\>A<rsup|2<rsup|n>>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>>>
   </eqnarray*>
 
   We define the diagonal function returning a square type,
-  <math|\<Delta\><rsub|A>\<of\>A\<rightarrow\>A<rsup|2>>.
+  <math|\<Delta\><rsub|A>\<of\>A\<rightarrow\>A<rsup|2>>:
 
   <\equation*>
     \<Delta\><rsub|A><around*|(|a|)>\<assign\><around*|\<langle\>|a,a|\<rangle\>>
   </equation*>
 
-  We define <2> as the Boolean type (or Bit type),
+  We define <2> as the Boolean type (or Bit type):
 
   <\equation*>
     <2>\<assign\><1>+<1>
   </equation*>
-
-  To be clear, we are not doing arithmetic above; we are instead defining the
-  type of Booleans to be the sum type of two unit types.
 
   We name the two values of this type, <math|<math-tt|0><rsub|<2>>\<of\><2>>
   and <math|<math-tt|1><rsub|<2>>\<of\><2>>.
@@ -919,15 +914,15 @@
 
   <subsection|Records>
 
-  Record types are essentially the same as product type, but with fancy
-  syntax. We write a record type encloded in curly braces.
+  Record types are essentially the same as product types, but with fancy
+  syntax. We write a record type enclosed by curly braces.
 
   <\equation*>
     <around*|{|<tabular|<tformat|<cwith|3|3|1|1|cell-halign|c>|<table|<row|<cell|field<rsub|1>\<of\>A<rsub|1>>>|<row|<cell|field<rsub|2>\<of\>A<rsub|2>>>|<row|<cell|\<vdots\>>>|<row|<cell|field<rsub|n>\<of\>A<rsub|n>>>>>>|}>
   </equation*>
 
   If <math|R> is the above record type and <math|r\<of\>R>, then we denote
-  access the compontent of the record as follows.
+  access the component of the record as follows.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|>|<cell|r<around*|[|field<rsub|1>|]>\<of\>A<rsub|1>>|<cell|>>|<row|<cell|>|<cell|r<around*|[|field<rsub|2>|]>\<of\>A<rsub|2>>|<cell|>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>|<row|<cell|>|<cell|r<around*|[|field<rsub|n>|]>\<of\>A<rsub|n>>|<cell|>>>>
@@ -945,9 +940,9 @@
 
   A functor <math|\<cal-F\>> is a type parameterized by a free type variable,
   such that whenever <math|A> is a type then <math|\<cal-F\><around*|(|A|)>>
-  is a type. Given a funciton <math|f\<of\>A\<rightarrow\>B>, is it often
+  is a type. Given a function <math|f\<of\>A\<rightarrow\>B>, is it often
   possible to define a new function <math|\<cal-F\>f\<of\>\<cal-F\>A\<rightarrow\>\<cal-F\>B>
-  such that forall <math|f\<of\>A\<rightarrow\>B> and
+  such that for all <math|f\<of\>A\<rightarrow\>B> and
   <math|g\<of\>B\<rightarrow\>C> we have
 
   <\eqnarray*>
@@ -955,13 +950,13 @@
   </eqnarray*>
 
   When this happens we call such a functor a <dfn|covariant functor>. In this
-  document, all our functors will be covariant functors, and we will simply
+  document all our functors will be covariant functors, and we will simply
   call them <dfn|functor>s.
 
   <subsection|Option Functor>
 
   By way of a useful example, we define <maybe> to be the option functor,
-  also known as the maybe functor, as follows
+  also known as the maybe functor,
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<maybe>A>|<cell|\<assign\>>|<cell|<value|1>+A>>|<row|<cell|<maybe>f<around*|(|<injl-long|<value|1>|A|<around*|\<langle\>||\<rangle\>>>|)>>|<cell|\<assign\>>|<cell|<injl-long|<value|1>|B|<around*|\<langle\>||\<rangle\>>>>>|<row|<cell|<maybe>f<around*|(|<injr-long|<value|1>|A|<around*|(|a|)>>|)>>|<cell|\<assign\>>|<cell|<injr-long|<value|1>|B|<around*|(|f<around*|(|a|)>|)>>>>>>
@@ -970,7 +965,7 @@
   where <math|f\<of\>A\<rightarrow\>B>.
 
   We define special notation for values of ``optional'' types
-  <math|<maybe>A>.
+  <math|<maybe>A>,
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|\<emptyset\><rsub|A><rsup|<maybe>>>|<cell|\<assign\>>|<cell|<injl-long|<value|1>|A|<around*|\<langle\>||\<rangle\>>>\<of\><maybe>A>>|<row|<cell|\<eta\><rsup|S><rsub|A><around*|(|a|)>>|<cell|\<assign\>>|<cell|<injr-long|<value|1>|A|<around*|(|a|)>>\<of\><maybe>A>>>>
@@ -978,13 +973,13 @@
 
   where <math|a\<of\>A>.
 
-  This notation is design to coincide with the monadic notation that we will
-  define in Section<nbsp><reference|ss:MonadZero>.
+  This notation is designed to coincide with the monadic notation that we
+  will define in Section<nbsp><reference|ss:MonadZero>.
 
   <subsection|List Functors>
 
   Given a type <math|A>, we recursively define the list functor
-  <math|A<rsup|\<ast\>>> and the non-empty list functor <math|A<rsup|+>>.
+  <math|A<rsup|\<ast\>>> and the non-empty list functor <math|A<rsup|+>>,
 
   \;
 
@@ -994,10 +989,9 @@
 
   where <math|f\<of\>A\<rightarrow\>B>.
 
-  We will leave implicit the fact that these are inductive types and
-  recursive definitions over them need to be checked that they are
-  well-founded. Suffice to say that the definitions in this section are, in
-  fact, all well-defined.
+  We leave implicit the fact that these are inductive types and recursive
+  definitions over them need to be checked that they are well-founded.
+  Suffice to say that the definitions in this section are all well-defined.
 
   Given a list <math|l\<of\>A<rsup|\<ast\>>> or a non-empty list
   <math|l\<of\>A<rsup|+>>, we define <math|<around*|\||l|\|>\<of\>\<bbb-N\>>
@@ -1009,7 +1003,7 @@
 
   \;
 
-  To retrive an element we define lookup functions for lists and non-empty
+  To retrieve an element we define lookup functions for lists and non-empty
   lists. Given a natural number <math|n\<of\>\<bbb-N\>> and either list
   <math|l\<of\>A<rsup|\<ast\>>> or a non-empty list <math|l\<of\>A<rsup|+>>,
   in both cases we define <math|l<around*|[|n|]>\<of\><maybe>A> to lookup the
@@ -1019,19 +1013,19 @@
     <tformat|<table|<row|<cell|<around*|(|\<emptyset\><rsup|<maybe>><rsub|A<rsup|+>>|)><around*|[|n|]>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><rsub|A>>>|<row|<cell|<around*|(|\<eta\><rsup|<maybe>><rsub|A<rsup|+>><around*|(|l|)>|)><around*|[|n|]>>|<cell|\<assign\>>|<cell|l<around*|[|n|]>>>|<row|<cell|<around*|\<langle\>|a,l|\<rangle\>><around*|[|0|]>>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><rsub|A><around*|(|a|)>>>|<row|<cell|<around*|\<langle\>|a,l|\<rangle\>><around*|[|1+n|]>>|<cell|\<assign\>>|<cell|l<around*|[|n|]>>>>>
   </eqnarray*>
 
-  Naturally the lookup will return <math|\<emptyset\>> when the lookup goes
+  Naturally, the lookup returns <math|\<emptyset\>> when the index goes
   beyond the end of the list.
 
   <\lemma>
     For all <math|n\<of\>\<bbb-N\>> and <math|l\<of\>A<rsup|\<ast\>>> or
     <math|l\<of\>A<rsup|+>>, <math|l<around*|[|n|]>=\<emptyset\>> if and only
-    if <math|<around*|\||l|\|>\<leqslant\>n>.
+    if <math|<around*|\||l|\|>\<leq\>n>.
   </lemma>
 
-  Given a list <math|l\<of\>A<rsup|\<ast\>>> or a non-empty list
-  <math|l\<of\>A<rsup|+>>, we define <math|indexed<around*|(|l|)>\<of\><around*|(|\<bbb-N\>\<times\>A|)><rsup|*\<ast\>>>
+  Given a list <math|l\<of\>A<rsup|\<ast\>>> (or a non-empty list
+  <math|l\<of\>A<rsup|+>>), we define <math|indexed<around*|(|l|)>\<of\><around*|(|\<bbb-N\>\<times\>A|)><rsup|*\<ast\>>>
   (and <math|indexed<around*|(|l|)>\<of\><around*|(|\<bbb-N\>\<times\>A|)><rsup|*+>>
-  respectively) as a list of elements paired with its index.
+  respectively) as a list of elements paired with its index,
 
   <\equation*>
     indexed<around*|(|l|)>\<assign\>indexedRec<around*|(|0,l|)>
@@ -1040,7 +1034,7 @@
   where
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|indexedRec<around*|(|i,\<emptyset\><rsup|<maybe>><rsub|A<rsup|+>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><rsub|<around*|(|\<bbb-N\>\<times\>A|)><rsup|+>>>>|<row|<cell|indexedRec<around*|(|i,\<eta\><rsup|<maybe>><rsub|A<rsup|+>><around*|(|l|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><rsub|<around*|(|\<bbb-N\>\<times\>A|)><rsup|+>><around*|(|indexedRec<around*|(|i,l|)>|)>>>|<row|<cell|indexedRec<around*|(|i,<around*|\<langle\>|a,l|\<rangle\>>|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|<around*|\<langle\>|i,a|\<rangle\>>,indexedRec<around*|(|1+i,l|)>|\<rangle\>>>>>>
+    <tformat|<table|<row|<cell|indexedRec<around*|(|i,\<emptyset\><rsup|<maybe>><rsub|A<rsup|+>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><rsub|<around*|(|\<bbb-N\>\<times\>A|)><rsup|+>>>>|<row|<cell|indexedRec<around*|(|i,\<eta\><rsup|<maybe>><rsub|A<rsup|+>><around*|(|l|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><rsub|<around*|(|\<bbb-N\>\<times\>A|)><rsup|+>><around*|(|indexedRec<around*|(|i,l|)>|)>>>|<row|<cell|indexedRec<around*|(|i,<around*|\<langle\>|a,l|\<rangle\>>|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|<around*|\<langle\>|i,a|\<rangle\>>,indexedRec<around*|(|1+i,l|)>|\<rangle\>><text|.>>>>>
   </eqnarray*>
 
   <\lemma>
@@ -1049,12 +1043,10 @@
   </lemma>
 
   The fold operation on a list is a most general way of consuming a list.
-  Given a type <math|A> with a monoid \<odot\>, <math|e> over that type, we
-  define <math|fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|(|l|)>>
+  Given a type <math|A> with a monoid <math|<around*|\<langle\>|\<odot\>,e|\<rangle\>>>
+  over that type, we define <math|fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|(|l|)>>
   for both lists <math|l\<of\>A<rsup|\<ast\>>> and non-empty lists
   <math|l\<of\>A<rsup|+>>.
-
-  \;
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|(|\<emptyset\><rsup|<maybe>><rsub|A<rsup|+>>|)>>|<cell|\<assign\>>|<cell|e>>|<row|<cell|fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|(|\<eta\><rsup|<maybe>><rsub|A<rsup|+>><around*|(|l|)>|)>>|<cell|\<assign\>>|<cell|fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|(|l|)>>>|<row|<cell|fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|\<langle\>|a,l|\<rangle\>>>|<cell|\<assign\>>|<cell|a\<odot\>fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|(|l|)>>>>>
@@ -1067,14 +1059,14 @@
 
   For lists, we provide special notations for its two effective constructors
   called <dfn|nil>, <math|\<epsilon\><rsub|A>\<of\>A<rsup|\<ast\>>>, and
-  <dfn|cons>, <math|a\<blacktriangleleft\>l\<of\>A<rsup|\<ast\>>> where
-  <math|a\<of\>A> and <math|l\<of\>A<rsup|\<ast\>>>
+  <dfn|cons>, <math|a\<blacktriangleleft\>l\<of\>A<rsup|\<ast\>>>
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|\<epsilon\><rsub|A>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><rsub|A<rsup|+>>>>|<row|<cell|a\<blacktriangleleft\>l>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><rsub|A<rsup|+>><around*|\<langle\>|a,l|\<rangle\>>>>>>
   </eqnarray*>
 
-  As a consequence the following equations hold.
+  where <math|a\<of\>A> and <math|l\<of\>A<rsup|\<ast\>>>. As a consequence
+  the following equations hold.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|(|\<epsilon\><rsub|A>|)>>|<cell|=>|<cell|e>>|<row|<cell|fold<rsup|<around*|\<langle\>|\<odot\>,e|\<rangle\>>><rsub|A><around*|(|a<rsub|0>\<blacktriangleleft\>a<rsub|1>\<blacktriangleleft\>\<ldots\>\<blacktriangleleft\>a<rsub|n>\<blacktriangleleft\>\<epsilon\><rsub|A>|)>>|<cell|=>|<cell|a<rsub|0>\<odot\>a<rsub|1>\<odot\>\<ldots\>\<odot\>a<rsub|n>>>>>
@@ -1104,14 +1096,14 @@
     \<eta\><rsup|\<ast\>><rsub|A><around*|(|a|)>\<assign\>a\<blacktriangleleft\>\<epsilon\>
   </equation*>
 
-  We write replication a lists, <math|l\<of\>A<rsup|\<ast\>>> as
+  We write replication of a list, <math|l\<of\>A<rsup|\<ast\>>> as
   exponentiation:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|l<rsup|0>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|l<rsup|1+n>>|<cell|\<assign\>>|<cell|l\<cdummy\>l<rsup|n>>>>>
   </eqnarray*>
 
-  We also define quantifier notation for elements of lists. \ Given a list
+  We also define quantifier notation for elements of lists. Given a list
   <math|l\<of\>A<rsup|\<ast\>>>, and a predicate <math|P> over <math|A>, we
   define
 
@@ -1127,13 +1119,13 @@
 
   <section|Monads>
 
-  A moand, <math|\<cal-M\>>, is a functor that comes with two functions
+  A monad, <math|\<cal-M\>>, is a functor that comes with two functions
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|\<eta\><rsup|\<cal-M\>><rsub|A>>|<cell|:>|<cell|A\<rightarrow\>\<cal-M\>*A>>|<row|<cell|\<mu\><rsup|\<cal-M\>><rsub|A>>|<cell|:>|<cell|\<cal-M\>*\<cal-M\>*A\<rightarrow\>\<cal-M\>*A>>>>
   </eqnarray*>
 
-  that are both natural transformations, meaning forall
+  that are both natural transformations, meaning for all
   <math|f\<of\>A\<rightarrow\>B>,
 
   <\eqnarray*>
@@ -1141,8 +1133,8 @@
   </eqnarray*>
 
   The <math|\<eta\><rsup|\<cal-M\>><rsub|A>> and
-  <math|\<mu\><rsup|\<cal-M\>><rsub|A>> functions required to satisfy certain
-  coherence laws. These monad laws are best presented using Kleisli
+  <math|\<mu\><rsup|\<cal-M\>><rsub|A>> functions are required to satisfy
+  certain coherence laws. These monad laws are best presented using Kleisli
   composition.
 
   <subsection|Kleisli Morphisms>
@@ -1150,16 +1142,16 @@
   Functions from <math|A> to <math|B> that produce side-effects can often be
   represented by Kleisli morphisms, which are (pure) functions
   <math|A\<rightarrow\>\<cal-M\>*B>, where <math|\<cal-M\>> is a monad that
-  captures the particular side-effects of the function in the result type. A
+  captures the particular side-effects of the function in the result. A
   function <math|f\<of\>A\<rightarrow\>\<cal-M\>*B> is called a <dfn|Kleisli
   morphism> from <math|A> to <math|B>. For Kleisli morphisms
   <math|f\<of\>A\<rightarrow\>\<cal-M\>*B> and
   <math|g\<of\>B\<rightarrow\>\<cal-M\>*C> we define the <dfn|Kleisli
-  composition> of them as <math|g<op|\<leftarrowtail\><rsup|\<cal-M\>>>f\<of\>A\<rightarrow\>\<cal-M\>*C>
+  composition> of them as <math|g<above|\<leftarrowtail\>|<very-small|\<cal-M\>>>f\<of\>A\<rightarrow\>\<cal-M\>*C>
   where
 
   <\equation*>
-    g<op|\<leftarrowtail\>><rsup|\<cal-M\>>f\<assign\>\<mu\><rsup|\<cal-M\>>\<circ\>\<cal-M\>*g\<circ\>f
+    g<above|\<leftarrowtail\>|<very-small|\<cal-M\>>>f\<assign\>\<mu\><rsup|\<cal-M\>>\<circ\>\<cal-M\>*g\<circ\>f
   </equation*>
 
   We will usually omit the annotation.
@@ -1168,7 +1160,7 @@
   <math|f\<of\>A\<rightarrow\>\<cal-M\>*B>,
   <math|g\<of\>B\<rightarrow\>\<cal-M\>*C>, and
   <math|h\<of\>C\<rightarrow\>\<cal-M\>*D>, we require that Kleisli
-  composition satify the laws of composition with
+  composition satisfy the laws of composition with
   <math|\<eta\><rsup|\<cal-M\>>> as its identity:
 
   <\eqnarray*>
@@ -1177,8 +1169,8 @@
 
   <subsection|Cartesian Strength>
 
-  In addition to Kleisli composition, we define a series of helper functions
-  for manupulating products.\ 
+  In addition to Kleisli composition we define a series of helper functions
+  for manipulating products.\ 
 
   \;
 
@@ -1229,36 +1221,36 @@
     Beware that we are using the definition of idempotent monad from King and
     Wadler<nbsp><cite|King1993>, as opposed to the traditional categorical
     definition of an idempotent monad.
-  </footnote> \ For idempotent monads, the same effect is occuring two or
-  more times in a row is equivalent to it occuring once.
+  </footnote> For idempotent monads, the same effect is occurring two or more
+  times in a row is equivalent to it occurring once.
 
   <subsection|Identity Monad>
 
   The most trivial monad is the identity monad, <math|Id>, where
   <math|Id\<space\>A\<assign\>A> and <math|Id\<space\>f\<assign\>f>. The
   natural transformations <math|\<eta\><rsup|Id><rsub|A>> and
-  <math|\<mu\><rsup|Id><rsub|A>> are both the idenity function. The identity
-  monad captures no side-effects. It is commutative and idempotent.
+  <math|\<mu\><rsup|Id><rsub|A>> are both the identity function. The identity
+  monad captures no side-effects and it is commutative and idempotent.
 
   <subsection|Monad Zero><label|ss:MonadZero>
 
-  Some monad have a universal <dfn|zero> value
+  Some monads have a universal <dfn|zero> value
 
   <\equation*>
     \<emptyset\><rsup|\<cal-M\>><rsub|A>\<of\>\<cal-M\>*A
   </equation*>
 
-  where forall <math|f\<of\>A\<rightarrow\>B>,
+  where for all <math|f\<of\>A\<rightarrow\>B>,
 
   <\equation*>
-    \<cal-M\>*f<around*|(|\<emptyset\><rsup|\<cal-M\>><rsub|A>|)>=\<emptyset\><rsup|\<cal-M\>><rsub|B>
+    \<cal-M\>f<around*|(|\<emptyset\><rsup|\<cal-M\>><rsub|A>|)>=\<emptyset\><rsup|\<cal-M\>><rsub|B>
   </equation*>
 
   This zero value denotes a side-effect that captures the notion of a failed
   or aborted computation or some kind of empty result.
 
   The laws for these monads with zero are, again, best expressed using
-  Kleisli morphsisms. At the risk of some notational confusion, we define
+  Kleisli morphisms. At the risk of some notational confusion, we define
   <math|\<varnothing\><rsup|\<cal-M\>><rsub|A,B>\<of\>A\<rightarrow\>\<cal-M\>*B>
   as a <dfn|zero morphism>.
 
@@ -1267,7 +1259,7 @@
   </equation*>
 
   Zero morphisms are required to be an absorbing element for Kleisli
-  compostion. For all <math|f\<of\>A\<rightarrow\>\<cal-M\>*B> and
+  composition. For all <math|f\<of\>A\<rightarrow\>\<cal-M\>*B> and
   <math|g\<of\>B\<rightarrow\>\<cal-M\>*C> we require that
 
   <\eqnarray*>
@@ -1275,7 +1267,7 @@
   </eqnarray*>
 
   (Note: In Haskell, the <verbatim|mzero> value typically is only required to
-  satify the first equation; however, we require monads with zero to satify
+  satisfy the first equation; however, we require monads with zero to satisfy
   both laws.)
 
   <subsubsection|Option Monad>
@@ -1320,36 +1312,35 @@
 
   <section|Multi-bit Words>
 
-  By repeatedly taking products of the bit types we can build the types
+  By repeatedly taking products of the bit type we can build the types
   <math|<2><rsup|2<rsup|n>>> which denote <math|2<rsup|n>>-bit words. We
-  chose to represent values in big endian format meaning that given a pair
+  choose to represent values in big endian format, meaning that given a pair
   representing the low and high bits of a value, the most significant bits
-  are stored in the first word.
-
-  Given a value <math|a\<of\><2><rsup|n>>, where <math|n> is a power of two,
-  let us recursively define <math|<around*|\<lceil\>|a|\<rceil\>><rsub|n>\<of\>\<bbb-N\>>
-  to be the number that <math|a> represents:
+  are stored in the first half. Given a value <math|a\<of\><2><rsup|n>>,
+  where <math|n> is a power of two, we recursively define
+  <math|<around*|\<lceil\>|a|\<rceil\>><rsub|n>\<of\>\<bbb-N\>> to be the
+  number that <math|a> represents:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<around*|\<lceil\>|<math-tt|0><rsub|<2>>|\<rceil\>><rsub|1>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|<around*|\<lceil\>|<math-tt|1><rsub|<2>>|\<rceil\>><rsub|1>>|<cell|\<assign\>>|<cell|1>>|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|2*n>>|<cell|\<assign\>>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>*2<rsup|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>>>>>
   </eqnarray*>
 
-  We will also make use of the following variation of this value conversion
+  We also make use of the following variation of this value intepretation
   function.
 
   <\equation*>
     <around*|\<lceil\>|<around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|n,m>\<assign\><around*|\<lceil\>|a|\<rceil\>><rsub|n>*2<rsup|m>+<around*|\<lceil\>|b|\<rceil\>><rsub|m>
   </equation*>
 
-  These value conversion functions are all injective (one-to-one) and we can
-  choose a left inverse. Given <math|m\<of\>\<bbb-N\>>, we implicly define
-  <math|<around*|\<lfloor\>|m|\<rfloor\>><rsub|n>\<of\><2><rsup|n>> such that
-  <math|<around*|\<lceil\>|<around*|\<lfloor\>|m|\<rfloor\>><rsub|n>|\<rceil\>><rsub|n>\<equiv\>m
+  These value interpretation functions are all injective (one-to-one) and we
+  can choose a left inverse. Given <math|m\<of\>\<bbb-N\>>, we implicitly
+  define <math|<around*|\<lfloor\>|m|\<rfloor\>><rsub|n>\<of\><2><rsup|n>>
+  such that <math|<around*|\<lceil\>|<around*|\<lfloor\>|m|\<rfloor\>><rsub|n>|\<rceil\>><rsub|n>\<equiv\>m
   <around*|(|mod 2<rsup|n>|)>>. We have chosen
   <math|<around*|\<lfloor\>|m|\<rfloor\>><rsub|n>> so that it represents
   <math|m> modulo <math|2<rsup|n>>.
 
-  We can equip the type <math|<2><rsup|n>> with addition and multipliction
+  We can equip the type <math|<2><rsup|n>> with addition and multiplication
   operations, so that <math|<around*|\<lfloor\>|\<cdummy\>|\<rfloor\>><rsub|n>>
   becomes a semiring homomorphism. Given <math|a\<of\><2><rsup|n>> and
   <math|b\<of\><2><rsup|n>>, we define <math|a<around*|\<lfloor\>|+|\<rfloor\>><rsub|n>b\<of\><2><rsup|n>>
@@ -1362,19 +1353,19 @@
 
   \;
 
-  We will write <math|<math-tt|0><rsub|<2><rsup|4>>,<math-tt|1><rsub|<2><rsup|4>>,\<ldots\>,<math-tt|f><rsub|<2><rsup|4>>>
+  We write <math|<math-tt|0><rsub|<2><rsup|4>>,<math-tt|1><rsub|<2><rsup|4>>,\<ldots\>,<math-tt|f><rsub|<2><rsup|4>>>
   to denote the 16 values of <math|<2><rsup|4>> that represent their
-  respective hexadecimal values. Similarly we will write
+  respective hexadecimal values. Similarly, we write
   <math|<math-tt|00><rsub|<2><rsup|8>>,<math-tt|01><rsub|<2><rsup|8>>,\<ldots\>,<math-tt|ff><rsub|<2><rsup|8>>>
-  to denote the 256 values of <math|<2><rsup|8>>, and so forth. (It is worth
+  to denote the 256 values of <math|<2><rsup|8>>, and so forth. It is worth
   observing that for hexadecimal digits <math|<math-tt|<var|x>>> and
-  <math|<math-tt|<var|y>>>, we have <math|<math-tt|<var|xy>><rsub|<2><rsup|8>>=<around*|\<langle\>|<math-tt|<var|x>><rsub|<2><rsup|4>>,<math-tt|<var|y>><rsub|<2><rsup|4>>|\<rangle\>>>.)
+  <math|<math-tt|<var|y>>>, we have <math|<math-tt|<var|xy>><rsub|<2><rsup|8>>=<around*|\<langle\>|<math-tt|<var|x>><rsub|<2><rsup|4>>,<math-tt|<var|y>><rsub|<2><rsup|4>>|\<rangle\>>>.
 
   <subsection|Byte Strings>
 
   The type <math|<around*|(|<2><rsup|8>|)><rsup|\<ast\>>> is known as byte
   strings. We will write byte string values as sequences of hexadecimal
-  digits surrouned by square brackets, e.g.
+  digits surrounded by square brackets, e.g.
   <math|<math-tt|[cafe]><rsub|<2><rsup|8>>> denotes
   <math|<math-tt|ca><rsub|<2><rsup|8>>\<blacktriangleleft\><math-tt|fe><rsub|<2><rsup|8>>\<blacktriangleleft\>\<epsilon\><rsub|<2><rsup|8>>>
   (whereas <math|<math-tt|cafe><rsub|<2><rsup|16>>> denotes
@@ -1383,7 +1374,7 @@
   clear from the context.
 
   Words larger than a byte are commonly encoded as byte strings in either big
-  endian or little endian order. \ We define
+  endian or little endian order. We define
   <math|BE<rsub|n>\<of\><2><rsup|n>\<rightarrow\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>
   and <math|LE<rsub|n>\<of\><2><rsup|n>\<rightarrow\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>
   as big endian and little endian encodings of words respectively for
@@ -1397,26 +1388,26 @@
 
   <subsection|Bit Strings>
 
-  The type <math|<2><rsup|\<ast\>>> is known as bit strings. \ We will write
-  bit string values as sequences of binary digits surounded by square
+  The type <math|<2><rsup|\<ast\>>> is known as bit strings. We will write
+  bit string values as sequences of binary digits surrounded by square
   brackets, e.g. <math|<math-tt|[0110]><rsub|<2>>> denotes
   <math|<math-tt|0><rsub|<2>>\<blacktriangleleft\><math-tt|1><rsub|<2>>\<blacktriangleleft\><math-tt|1><rsub|<2>>\<blacktriangleleft\><math-tt|0><rsub|<2>>\<blacktriangleleft\>\<epsilon\><rsub|<2>>>.
-  \ Again, we may omit the subscript when the interpretation is clear from
+  Again, we may omit the subscript when the interpretation is clear from
   context.
 
   <chapter|Core Simplicity>
 
-  Simplicty is a typed functional programming language based on Gentzen's
+  Simplicity is a typed functional programming language based on Gentzen's
   sequent calculus<nbsp><cite|gentzen>. The core language consists of nine
   combinators for forming expressions. These nine combinators capture the
-  computational power of Simplicity. In later chapters, other combinators
-  will extend this core language and provide other effects to handle input
-  and access the transaction that provides context for the program.
+  computational power of Simplicity. In later chapters other combinators will
+  extend this core language and provide other effects to handle input and
+  access the transaction that provides context for the Simplicity program.
 
   <section|Types>
 
   This section introduces the abstract syntax and semantics types available
-  in Simplicity. \ Simplicity uses a particular subset of the simple type
+  in Simplicity. Simplicity uses a particular subset of the simple type
   theory we developed in Chapter<nbsp><reference|chapter:preliminaries>.
 
   <subsection|Abstract Syntax>
@@ -1424,11 +1415,11 @@
   Simplicity has only three kinds of types:
 
   <\itemize-minus>
-    <item>The unit type, written as <value|1>.
+    <item>The unit type, <value|1>.
 
     <item>The sum of two Simplicity types, <math|A+B>.
 
-    <item>The product of two Simplicity types, \ <math|A\<times\>B>.
+    <item>The product of two Simplicity types, <math|A\<times\>B>.
   </itemize-minus>
 
   \;
@@ -1441,10 +1432,10 @@
   <math|<around*|(|<value|1>+<value|1>|)>\<times\><around*|(|<value|1>+<value|1>|)>>
   has exactly four values. As you can see, the number of values that a type
   contains can be easily calculated by interpreting the type as an arithmetic
-  expression. Be aware that these types are not arithmetic expressions. For
+  expression. Be aware that types are not arithmetic expressions. For
   example, the types <math|<around*|(|<value|1>+<value|1>|)>+<around*|(|<value|1>+<value|1>|)>>
   and <math|<around*|(|<value|1>+<value|1>|)>\<times\><around*|(|<value|1>+<value|1>|)>>
-  are distinct and not interchangable.
+  are distinct and not interchangeable.
 
   <subsection|Formal Syntax>
 
@@ -1465,8 +1456,8 @@
 
   <subsection|Formal Semantics>
 
-  Formally we define the denotational semantics as a function from syntax to
-  types from the standard library in Coq:
+  Formally we define the denotational semantics of Simplicity types as a
+  function from syntax to Coq types:
 
   \;
 
@@ -1493,7 +1484,7 @@
   type. We write <math|<around*|\<llbracket\>|t|\<rrbracket\>>\<of\>A\<rightarrow\>B>
   for the function that the term <math|t> denotes.
 
-  Core Simplicty has nine combinators for forming well-typed terms.
+  Core Simplicity has nine combinators for forming well-typed terms.
 
   <subsection|Identity>
 
@@ -1505,13 +1496,8 @@
     <around*|\<llbracket\>|<samp|iden><rsub|A>|\<rrbracket\>><around*|(|a|)>\<assign\>a
   </equation*>
 
-  For every type <math|A> there we have an identity term that denotes the
-  identity function for that type.\ 
-
-  Like the type annotations on values, the type argument for <math|iden>
-  usually can be infered and therefore we will usually omit. Similarly, we
-  will usually omit the type arguments for all the other Simplicity
-  combinators.
+  For every Simplicity type <math|A>, we have an identity term that denotes
+  the identity function for that type.
 
   <subsection|Composition>
 
@@ -1541,7 +1527,7 @@
 
   The constant unit term ignores its argument and always returns
   <math|<around*|\<langle\>||\<rangle\>>>, the unique value of the unit type.
-  Since the argument is ignored, we have a constant unit term for every type.
+  The argument is ignored so we have a constant unit term for every type.
 
   <subsection|Left Injection>
 
@@ -1588,7 +1574,7 @@
 
   The case combinator is Simplicity's only branching operation. Given a pair
   of values with the first component being a sum type, this combinator
-  evalutes either its <math|s> or <math|t> argument depending on which tag
+  evaluates either its <math|s> or <math|t> argument, depending on which tag
   the first component has, on the pair of inputs.
 
   <subsection|Pair>
@@ -1605,7 +1591,7 @@
     t|\<rrbracket\>><around*|(|a|)>\<assign\><around*|\<langle\>|<around*|\<llbracket\>|s|\<rrbracket\>><around*|(|a|)>,<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|\<rangle\>>
   </equation*>
 
-  The pair combinator executes both its arguments, <math|s> and <math|t>, on
+  The pair combinator evaluates both its arguments, <math|s> and <math|t>, on
   the same input and returns the pair of the two results.
 
   <subsection|Take>
@@ -1673,7 +1659,7 @@
 
   <subsection|Formal Semantics>
 
-  The formal semantics in Coq for core Simplicity recursively interprets each
+  The formal semantics for core Simplicity in Coq recursively interprets each
   term as a function between the formal semantics of its associated types:
 
   \;
@@ -1714,19 +1700,19 @@
 
   <section|Example Simplicity>
 
-  Simplicity is not meant as a language to directly write programs in. It is
-  intended to be a backend language that some other language (or languages)
-  is complied or translated to. However, one can program directly in
-  Simplicity just as one can write programs directly in an assembly language.
+  Simplicity is not meant to be a language to directly write programs in. It
+  is intended to be a backend language that some other language (or
+  languages) is complied or translated to. However, one can program directly
+  in Simplicity just as one can write programs directly in an assembly
+  language.
 
-  Becasue the core Simplicity language may seem meager, it is worthwhile to
-  see how one can build up sophisticated programs in it.
+  Because the core Simplicity language may seem meager, it is worthwhile to
+  see how one can build up sophisticated functions in it.
 
-  <subsection|Bit Operations>
+  <subsection|Bit Operations><label|ss:bitOps>
 
-  We can define the terms that represent the constant functions that return
-  these two values as <math|<math-ss|false>> and <math|<math-ss|true>>
-  respectively
+  For the bit type, <2>, we can define core Simplicity terms that represent
+  the two constant functions that return this type:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<math-ss|false><rsub|A>>|<cell|\<assign\>>|<cell|<math-ss|injl><rsub|A,<value|1>,<value|1>>
@@ -1734,9 +1720,8 @@
     <math-ss|unit>\<of\>A\<vdash\><2>>>>>
   </eqnarray*>
 
-  As a consequence of this these definitions, we can prove that
-  <math|<math-ss|false>> and <math|<math-ss|true>> have the following
-  semantics.
+  From these definitions, we can prove that <math|<math-ss|false>> and
+  <math|<math-ss|true>> have the following semantics.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|false>|\<rrbracket\>><around*|(|a|)>>|<cell|=>|<cell|<math-tt|0><rsub|<2>>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|true>|\<rrbracket\>><around*|(|a|)>>|<cell|=>|<cell|<math-tt|1><rsub|<2>>>>>>
@@ -1757,7 +1742,7 @@
 
   \;
 
-  Thus we can prove that <math|<math-ss|cond>> has the following semantics.
+  We can prove that <math|<math-ss|cond>> has the following semantics.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|cond> s
@@ -1765,8 +1750,8 @@
     s t|\<rrbracket\>><around*|\<langle\>|<math-tt|0><rsub|<2>>,a|\<rangle\>>>|<cell|=>|<cell|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>>>>>
   </eqnarray*>
 
-  With these fundamental operations for Bits in hand, we can define standard
-  Boolean connectives.
+  With these fundamental operations for bits in hand, we can define standard
+  Boolean connectives:
 
   <\with|par-mode|center>
     <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|t\<of\>A\<vdash\><2>>>>>>>>>|<row|<cell|<math|<math-ss|not><rsub|A>
@@ -1800,15 +1785,13 @@
   \;
 
   We use combinators to define <samp|and> and <samp|or> in order to give them
-  short-circut evalutation behaviour. Short-circut evaluation is especially
-  useful in our blockchain application because when the second branch does
-  not need to be evaluated, the source code for it can be pruned at
-  redemption time (see Section<nbsp><reference|ss:pruning>).
-
-  If we had directly define the boolean functions with types
-  <math|<math-ss|and-func>:<2>\<times\><2>\<vdash\><2>> and
-  <math|<math-ss|or-func>:<2>\<times\><2>\<vdash\><2>>, then the two
-  arguments to <samp|and-func> and <samp|or-func> would both need to be fully
+  short-circuit evaluation behaviour. Short-circuit evaluation useful because
+  if we know the second branch does not need to be evaluated, the source code
+  for it can be pruned at redemption time (see
+  Section<nbsp><reference|ss:pruning>). If instead we directly defined the
+  Boolean functions with types <math|<math-ss|and-func>:<2>\<times\><2>\<vdash\><2>>
+  and <math|<math-ss|or-func>:<2>\<times\><2>\<vdash\><2>>, then the two
+  arguments to <samp|and-func> and <samp|or-func> would both be fully
   evaluated under strict semantics (see Section<nbsp><reference|ss:monadicSemantics>).
   For the <samp|not> combinator, this is less of an issue, but we define it
   in combinator form to be consistent.
@@ -1817,7 +1800,7 @@
 
   In the previous section, we were relatively detailed with the annotations
   given to the definitions. Going forward we will be a bit more lax in the
-  presentation. We will also start using some notation to abbrevate terms.
+  presentation. We will also begin using some notation to abbreviate terms.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|s \<vartriangle\>
@@ -1825,12 +1808,12 @@
     t>>|<row|<cell|s;t>|<cell|\<assign\>>|<cell|<math-ss|comp> s t>>>>
   </eqnarray*>
 
-  with the <math|\<vartriangle\>> operator having higher precidence than the
+  with the <math|\<vartriangle\>> operator having higher precedence than the
   ; operator.
 
-  Composition of sequences of <samp|drop> and <samp|take> with <samp|ident>
-  is a very common way of picking data out of nested tuples of input. To make
-  this more concise we will use the following notation.
+  Composition of sequences of <samp|drop> and <samp|take> with <samp|iden> is
+  a very common way of picking data from a nested tuple input. To make this
+  more concise we will use the following notation.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<math-ss|H>>|<cell|\<assign\>>|<cell|<math-ss|iden>>>|<row|<cell|<math-ss|O>s<math-ss|>>|<cell|\<assign\>>|<cell|<math-ss|take>
@@ -1843,9 +1826,10 @@
 
   <subsection|Arithmetic>
 
-  Using techniques familiar from digitial logic we can build an adders and
-  full adders from our Boolean operations defined in the previous section. We
-  begin with definitions of the single bit adder and full adder.
+  Using techniques familiar from digital logic, we can build an adders and
+  full adders from our Boolean operations defined in
+  Section<nbsp><reference|ss:bitOps>. We begin with definitions of the single
+  bit adder and full adder.
 
   <\render-code>
     <math|<math-ss|adder><rsub|1>\<of\><2>\<times\><2>\<vdash\><2><rsup|2>>
@@ -1866,7 +1850,7 @@
     <math-ss|true> <math-ss|OH> \<vartriangle\> <math-ss|IIH>>>>>>>>>>>>>>
   </render-code>
 
-  These two adders meet the following specification.
+  These adders meet the following specifications.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|adder><rsub|1>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|2>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|1>+<around*|\<lceil\>|b|\<rceil\>><rsub|1>>>|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|1>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|2>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|1>+<around*|\<lceil\>|b|\<rceil\>><rsub|1>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>>>>
@@ -1896,7 +1880,7 @@
 
   The calculations for the other cases are similar.
 
-  Next we recursively build adders and full adders for any word size.
+  Next, we recursively build adders and full adders for any word size.
 
   <\render-code>
     <math|<math-ss|full-adder><rsub|2*n>\<of\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<times\><2>\<vdash\><2>\<times\><2><rsup|2*n>>
@@ -1923,8 +1907,8 @@
     <math-ss|OH>|)>>>>>>>>>>>>
   </render-code>
 
-  We generalize the specification for the single bit adders and full adders
-  to the multi-bit adders and full adders.
+  We generalize the specification of the single bit adders and full adders to
+  the multi-bit adders and full adders.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|1,n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>>>|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|1,n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>>>>
@@ -1938,12 +1922,12 @@
 
   <\proof>
     We prove <math|<math-ss|full-adder><rsub|n>> meets its specification by
-    induction on <math|n>. As mentioned before,
+    induction on <math|n>. As mentioned before, the
     <math|<math-ss|full-adder><rsub|1>> case is easily checked by verifying
-    all eight possible inputs. Next we prove that
+    all eight possible inputs. Next, we prove that
     <math|<math-ss|full-adder><rsub|2*n>> meets its specification under the
     assumption that <math|<math-ss|full-adder><rsub|n>> does. Specifically we
-    want to show that
+    need to show that
 
     <\equation>
       <around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|1,2*n>=<around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1><label|full-adder-spec>
@@ -1969,12 +1953,12 @@
       <around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>=<around*|(|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|1,n>
     </equation*>
 
-    Let us define <math|c<rsub|0>> and <math|r<rsub|2>> such that
-    <math|<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>\<assign\><around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>>.
+    Let us define <math|c<rsub|0>> and <math|r<rsub|0>> such that
+    <math|<around*|\<langle\>|c<rsub|0>,r<rsub|0>|\<rangle\>>\<assign\><around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>,c|\<rangle\>>>.
     Thus we have that
 
     <\eqnarray*>
-      <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>|<cell|=>|<cell|<around*|(|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>|\<rceil\>><rsub|1,n>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|c<rsub|0>|\<rceil\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|2>|\<rceil\>><rsub|n>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|c<rsub|0>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|2>|\<rceil\>><rsub|n>>>>>
+      <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>|<cell|=>|<cell|<around*|(|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|<around*|\<langle\>|c<rsub|0>,r<rsub|0>|\<rangle\>>|\<rceil\>><rsub|1,n>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|c<rsub|0>|\<rceil\>><rsub|1>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|0>|\<rceil\>><rsub|n>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|c<rsub|0>|\<rceil\>><rsub|1>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|0>|\<rceil\>><rsub|n>>>>>
     </eqnarray*>
 
     Again, by our inductive hypothesis, we have that
@@ -1994,7 +1978,7 @@
     Thus we have that
 
     <\eqnarray*>
-      <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>|\<rceil\>><rsub|1,n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|2>|\<rceil\>><rsub|n>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|1>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|2>|\<rceil\>><rsub|n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|r<rsub|1>|\<rceil\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|2>|\<rceil\>><rsub|n><eq-number><label|full-adder-RHS>>>>>
+      <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>|\<rceil\>><rsub|1,n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|0>|\<rceil\>><rsub|n>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|1>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|0>|\<rceil\>><rsub|n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|r<rsub|1>|\<rceil\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|0>|\<rceil\>><rsub|n><eq-number><label|full-adder-RHS>>>>>
     </eqnarray*>
 
     Now let us consider the left hand side of equation
@@ -2018,17 +2002,17 @@
       \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
       <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>
       \<vartriangle\> <around*|(|<math-ss|OH> \<vartriangle\>
-      <math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|c<rsub|0>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      <math-ss|IOH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|c<rsub|0>,r<rsub|0>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
       \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
-      <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|0>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
       \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
-      <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|2>,<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rangle\>>>>>>
+      <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|0>,<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|0>|\<rangle\>>|\<rangle\>>>>>>
     </eqnarray*>
 
     Therefore we have that
 
     <\eqnarray*>
-      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|1,2*n>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|<around*|\<langle\>|r<rsub|1>,r<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|r<rsub|1>|\<rceil\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|2>|\<rceil\>><rsub|n><eq-number><label|full-adder-LHS>>>>>
+      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>,c|\<rangle\>>|\<rceil\>><rsub|1,2*n>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|0>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|<around*|\<langle\>|r<rsub|1>,r<rsub|0>|\<rangle\>>|\<rceil\>><rsub|2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|r<rsub|1>|\<rceil\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|0>|\<rceil\>><rsub|n><eq-number><label|full-adder-LHS>>>>>
     </eqnarray*>
 
     Together equations <reference|full-adder-RHS> and
@@ -2037,11 +2021,10 @@
   </proof>
 
   The proof that <math|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|1,n>=<around*|\<lceil\>|a|\<rceil\>><rsub|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>>
-  is done in a similar manner. Computered verified versions of theses proofs
+  is done in a similar manner. Computer verified versions of theses proofs
   can be found in the Coq library (see Section<nbsp><reference|ss:coqArith>).
 
-  With a full adder we can recursively build multipliers and full multiplier
-  in a similar way.
+  With a full adder we can recursively build multipliers and full multiplier.
 
   <\render-code>
     <math|<math-ss|full-multiplier><rsub|1>\<of\><around*|(|<2>\<times\><2>|)>\<times\><around*|(|<2>\<times\><2>|)>\<vdash\><2><rsup|2>>
@@ -2079,7 +2062,7 @@
     <math|<math-ss|multiplier><rsub|1>\<of\><2>\<times\><2>\<vdash\><2><rsup|2>>
 
     <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|false>
-    \<vartriangle\> <math-ss|cond> <math-ss|iden>><samp|false>>>>>>>>>>>
+    \<vartriangle\> <math-ss|cond> <math-ss|iden> <math-ss|false>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
@@ -2112,21 +2095,22 @@
 
   \;
 
-  <with|color|red|TODO: notes on tradeoffs between efficency and simplicity.>
+  <with|color|red|TODO: Notes on trade-offs between efficiency and
+  simplicity.>
 
   <subsection|Bitwise Operations>
 
   <subsection|SHA-256>
 
-  The offical standard for the SHA-2 family, which includes SHA-256 can be
+  The official standard for the SHA-2 family, which includes SHA-256, can be
   found in the <hlink|FIPS PUB 180-4: Secure Hash Standard
   (SHS)|http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf><nbsp><cite|sha>.
   We define the SHA-256 function, <math|SHA256<rsub|<2>>\<of\><2><rsup|\<ast\>>\<rightarrow\><2><rsup|256>>,
-  as a function from bit strings to a 256-bit word. Technically, the SHA-256
-  is restricted to inputs <math|l\<of\><2><rsup|\<ast\>>> whose bit length is
-  restricted such that <math|<around*|\||l|\|>\<less\>2<rsup|64>>.
+  as a function from bit strings to a 256-bit word. Technically, SHA-256 is
+  restricted to inputs <math|l\<of\><2><rsup|\<ast\>>> where
+  <math|<around*|\||l|\|>\<less\>2<rsup|64>>.
 
-  The SHA-256 hash function is composed out of two components, a padding
+  The SHA-256 hash function is composed from two components, a padding
   function <math|SHA256<rsub|Pad>\<of\><2><rsup|\<ast\>>\<rightarrow\><around*|(|<2><rsup|512>|)><rsup|+>>,
   which appends padding and length data to produce a (non-empty) sequence of
   blocks of 512 bits, and the Merkle--Damgård construction
@@ -2140,7 +2124,7 @@
   value and <math|\<eta\><rsup|S><rsub|A<rsup|+>>\<of\>A<rsup|+>\<rightarrow\>A<rsup|\<ast\>>>
   formally converts a non-empty list to a regular list.
 
-  The <math|SHA256<rsub|MD>> is a left fold using the SHA-256 block
+  The <math|SHA256<rsub|MD>> function is a left fold using the SHA-256 block
   compression function <math|SHA256<rsub|Block>\<of\><2><rsup|256>\<times\><2><rsup|512>\<rightarrow\><2><rsup|256>>.
 
   <\eqnarray*>
@@ -2148,8 +2132,8 @@
   </eqnarray*>
 
   The block compression function <math|SHA256<rsub|Block>\<of\><2><rsup|256>\<times\><2><rsup|512>\<rightarrow\><2><rsup|256>>
-  is a function that has a type that fits in Simplicity's framework. We can
-  create a core Simplicity term <math|<math-ss|sha256-block>\<of\><2><rsup|256>\<times\><2><rsup|512>\<vdash\><2><rsup|256>>
+  is a function whose type fits in Simplicity's framework. We can create a
+  core Simplicity term <math|<math-ss|sha256-block>\<of\><2><rsup|256>\<times\><2><rsup|512>\<vdash\><2><rsup|256>>
   that implements this function
 
   <\equation*>
@@ -2166,7 +2150,7 @@
   Beyond defining the block compression function in the Simplicity language,
   we will also be using the SHA-256 hash function elsewhere in this
   specification. In practice, SHA-256 is applied to byte strings rather than
-  bit strings. To this end we define the variant
+  bit strings. To this end, we define the variant
   <math|SHA256<rsub|<2><rsup|8>>\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>\<rightarrow\><2><rsup|256>>.
 
   <\equation*>
@@ -2181,43 +2165,43 @@
   </equation*>
 
   Since the <math|SHA256<rsub|<2><rsup|8>>> variant is so commonly used, we
-  will write it unaddorned as simply <math|SHA256>.
+  will write it unadorned as simply <math|SHA256>.
 
   <subsection|Elliptic Curve Operations on secp256k1>
 
-  The Standards for Efficent Cryptography (SEC) documents recommened modular
-  elliptic curve parameters including the secp256k1 curve<nbsp><cite|sec2>,
-  which is used by Bitcoin's ECDSA signature scheme and the proposed
-  EC-Schnorr scheme.
+  The Standards for Efficient Cryptography (SEC) documents have recommend
+  modular elliptic curve parameters including the secp256k1
+  curve<nbsp><cite|sec2>, which is used by Bitcoin's EC-DSA signature scheme
+  and the proposed EC-Schnorr scheme.
 
-  Most points on a elliptic curve, such as secp256k1, consist of a pair of
-  coordinates from a specified finite field. \ In the case of secp256k1, the
+  Most points on an elliptic curve, such as secp256k1, consist of a pair of
+  coordinates from a specified finite field. In the case of secp256k1, the
   finite field is the prime field <math|\<bbb-F\><rsub|p><rsub|>> where
   <math|p\<assign\>2<rsup|256>-4294968273>. The elliptic curve for secp256k1
-  consists of the points <math|<around*|\<langle\>|x,y|\<rangle\>>> satifying
-  the equation <math|y<rsup|2>\<equiv\>x<rsup|3>+7 <around*|(|mod p|)>>, plus
-  an additional ``point at infinity'', which we will write as
-  <math|\<cal-O\>>. \ It turns out that elliptic curves can be given a group
+  consists of the points <math|<around*|\<langle\>|x,y|\<rangle\>>>
+  satisfying the equation <math|y<rsup|2>\<equiv\>x<rsup|3>+7 <around*|(|mod
+  p|)>>, plus an additional ``point at infinity'', which we will write as
+  <math|\<cal-O\>>. It turns out that elliptic curves can be given a group
   structure via ``geometry'', where any three points on the curve that are
-  co-linear are considered to sum to 0 under this group structure, and with
-  <math|\<cal-O\>> as its identity element. We have to be careful to count
-  lines ``tangent'' to the curve as passing through the same point twice, and
-  count vertical lines as passing through <math|\<cal-O\>>. This group
-  structure is Abelian, and therefore can also be viewed as a
+  co-linear sum to 0 under this group structure, and where <math|\<cal-O\>>
+  is the group's identity element. We have to be careful to count lines
+  ``tangent'' to the curve as passing through the same point twice, and count
+  vertical lines as passing through <math|\<cal-O\>>. This group structure is
+  Abelian, and therefore can also be viewed as a
   <math|\<bbb-Z\><rsub|n>>-module<\footnote>
     Mathematically, we actually have a 1-dimensional vector space; however
     determining the linear dependence between two vectors is presumed to be
-    infeasable. \ Indeed, the security properties of the elliptic curve
-    depends on this being infeasable. For this reason, it is more useful to
-    think of this structure as a module rather than as a vector space.
+    infeasible. Indeed, the security properties of the elliptic curve depends
+    on this being infeasible. For this reason, it is more useful to think of
+    this structure as a module rather than as a vector space.
   </footnote> where <math|n \<assign\> 2<rsup|256>-432420386565659656852420866394968145599>
-  is the order of this elliptic curve. \ This <math|\<bbb-Z\><rsub|n>>-module
+  is the order of this elliptic curve. This <math|\<bbb-Z\><rsub|n>>-module
   structure allows us to talk about ``adding'' two points of the elliptic
   curve, and scaling a point by a factor from <math|\<bbb-Z\><rsub|n>>.
 
   Because the order of the elliptic curve, <math|n>, is a prime number, every
   non-<math|\<cal-O\>> element generates the entire curve (through scalar
-  multiplication). \ The specification for secp256k1 comes with a reference
+  multiplication). The specification for secp256k1 comes with a reference
   generator, <math|\<cal-G\>>, which is defined as the following point.
 
   <\eqnarray*>
@@ -2229,8 +2213,8 @@
   The libsecp256k1 library<nbsp><cite|libsecp256k1> is a C implementation of
   optimized functions on this elliptic curve. This library has two variants
   for the representation for field elements, of which the <verbatim|10x26>
-  representation is the most portable. \ This representation consists of an
-  array of 10 32-bit unsigned integer values. \ Such an array, <verbatim|a>,
+  representation is the most portable. This representation consists of an
+  array of 10 32-bit unsigned integer values. Such an array, <verbatim|a>,
   represents the value
 
   <\equation*>
@@ -2238,19 +2222,19 @@
     <around*|(|mod p|)><text|.>
   </equation*>
 
-  Different arrays may represent the same value. The various field
-  arithemetic operations, including modular inverse and sqaure roots, are
-  implemented efficently, subject to various specific pre-conditions on their
-  inputs that need to be satisfied to prevent overflows of the internal
-  32-bit unsigned integer values.
+  Different arrays may represent the same value. The various field arithmetic
+  operations, including modular inverse and square roots, are implemented
+  efficiently, subject to various specific preconditions on their inputs that
+  need to be satisfied to prevent overflows of the internal 32-bit unsigned
+  integer values.
 
-  The libsecp256k1 library also has two variants for the represenation of
-  elliptic curve point values. \ The affine coordinate representation
-  consists of a pair of field elements, and a flag to indicate the value
-  <math|\<cal-O\>> (in which case the coordinates should be ignored). \ The
+  The libsecp256k1 library also has two variants for the representation of
+  elliptic curve point values. The affine coordinate representation consists
+  of a pair of field elements, and a flag to indicate the value
+  <math|\<cal-O\>> (in which case the coordinate values are ignored). The
   Jacobian coordinate representation consists of a triple of field elements,
   and a flag to indicate the value <math|\<cal-O\>> (in which case the
-  coordinates should be ignored).
+  coordinates are ignored).
 
   A point in Jacobian coordinates, <math|<around*|\<langle\>|x,y,z|\<rangle\>>>
   is defined to be on the elliptic curve when
@@ -2270,26 +2254,26 @@
   </equation*>
 
   A point in Jacobian coordinates, <math|<around*|\<langle\>|x,y,z|\<rangle\>>>
-  represents the curve point <math|<around*|\<langle\>|<frac|x|z<rsup|2>>,<frac|y|z<rsup|3>>|\<rangle\>>>
+  represents the curve point <math|<around*|\<langle\>|x*z<rsup|-2>,y*z<rsup|-3>|\<rangle\>>>
   in affine coordinates when <math|z\<neq\>0>. In particular, the point
   <math|<around*|\<langle\>|x,y,1|\<rangle\>>> in Jacobian coordinates
   represents the point <math|<around*|\<langle\>|x,y|\<rangle\>>> in affine
-  coordinates. The same point has multiple represenations in Jacobian
-  coordinates, however, even the affine coordinate representation is redudent
-  becaues the underlying field represtation is itself redudent.
+  coordinates. The same point has multiple representations in Jacobian
+  coordinates, however, even the affine coordinate representation is
+  redundant because the underlying field representation is itself redundant.
 
-  Normally the point at infinity would be represented as
+  Normally the point at infinity would be represented by
   <math|<around*|\<langle\>|a<rsup|2>,a<rsup|3>,0|\<rangle\>>> in Jacobian
   coordinates for any <math|a\<in\>\<bbb-F\><rsub|p>>; however this is not
   done in libsecp256k1. Instead a flag is used to represent the point at
   infinity (and the coordinates are ignored when this flag is set). Testing
   if a field element is equivalent to 0 is a non-trivial operation, so using
-  a flag like this can be sensible.
+  a flag like this may be sensible.
 
   The various group and <math|\<bbb-Z\><rsub|n>>-module operations are
-  implemented efficently, again subjecto to various specific pre-conditions
-  on their inputs. \ In particular the operation for forming linear
-  combinations of the form
+  implemented efficiently, again subject to various specific preconditions on
+  their inputs. In particular, the operation for forming linear combinations
+  of the form
 
   <\equation*>
     <big|sum><rsub|i=0><rsup|k>n<rsub|\<cal-A\><rsub|i>>*\<cal-A\><rsub|i>+n<rsub|\<cal-G\>>*\<cal-G\>
@@ -2302,18 +2286,20 @@
 
   <subsubsection|libsecp256k1 in Simplicity>
 
-  The primary application for Simplicity is to implement compuation for
-  public validation. We have no need to worry about constant-time
-  implementations, nor securing private key material, because Simplicity's
-  application only processes public data.
+  The primary application for Simplicity is to implement computation for
+  public validation. In implementing cryptographic operations in Simplicity,
+  we have no need to worry about constant-time implementations, nor securing
+  private key material because Simplicity's application only processes public
+  data.
 
   When it comes to implementing elliptic curve operations in Simplicity, we
-  do face one problem. In order for elliptic curve operations to be fas,t we
+  do face one problem. In order for elliptic curve operations to be fast, we
   need a representation of field elements and curve points that have
-  redundent representations, but the choice of which specific representative
-  returned by Simplicity expressions then becomes consensus critical.\ 
+  redundant representations, but then the choice of which specific
+  representative returned by Simplicity expressions becomes consensus
+  critical.\ 
 
-  We have three possible ways of addressing this problem:
+  We see three possible ways of addressing this problem:
 
   <\enumerate-numeric>
     <item>We can define minimal Simplicity types that can represent field
@@ -2321,37 +2307,38 @@
     every elliptic curve operation.
 
     <item>We can define Simplicity types that can represent field elements
-    and elliptic curve points with redudencies and specify precisely which
-    representative is the result of each elliptic curve operation.
+    and elliptic curve points with redundant representations and specify
+    precisely which representative is the result of each elliptic curve
+    operation.
 
     <item>We can extend Simplicity with abstract data types for field
-    elements and elliptic curve operations and enforce data abstraction for
-    the elliptic curve operations.
+    elements and elliptic curve points and enforce data abstraction in the
+    elliptic curve operations.
   </enumerate-numeric>
 
-  Choosing 1 would make it easy for developers to implement elliptic curve
-  jets (see Section<nbsp><inactive|<reference|<with|color|red|TODO>>>) that
+  Option 1 would make it easy for developers to implement elliptic curve jets
+  (see Section<nbsp><inactive|<reference|<with|color|red|TODO>>>) that
   short-cut the interpretation of Simplicity's elliptic curve operations by
-  running native code instead. The native code for the jets can be
-  implemented by any reasonable algorithm, and the results would then be
-  normalized. The problem with this is that computing the normal form of
-  elliptic curve points tends to be an expensive operation. \ In particular,
-  normalizing a point in Jacobian coordinates requires computing a modular
-  inverse, which is a very expensive operation compared to the other field
-  operations.
+  running native code instead. The native code for these jets can be
+  implemented by any reasonable algorithm, and the results normalized. The
+  problem with this option is that computing the normal form of elliptic
+  curve points is an expensive operation. In particular, normalizing a point
+  in Jacobian coordinates requires computing a modular inverse, which is a
+  very expensive operation compared to the other field operations.
 
-  Choosing 2 means we have to ensure that the native code for jets must
-  return exactly the same represenative that the Simplicity expression they
-  are replacing would produce. \ Even libsecp256k1 does not guarentee that
-  different versions of the library will return the same representives for
-  basic elliptic curve operations between different versions, so Simplicity
-  jets would not be able to keep up with libsecp256k1 updates.
+  Option 2 means we must ensure that the native code for jets returns exactly
+  the same representative that the Simplicity expression it replaces would
+  have produced. Even libsecp256k1 does not guarantee that different versions
+  of the library will return the same representatives for its basic elliptic
+  curve operations, so Simplicity jets would not be able to keep up with
+  libsecp256k1 updates.
 
-  Choosing 3 would let us change the underlying representations of elliptic
-  curve values, allowing us to use any version of any secp256k1 library, but
-  would extend the scope of Simplicty beyond what we are willing to do.
+  Option 3 would let us change the underlying representations of elliptic
+  curve values, allowing us to use any version of any secp256k1 library.
+  However, it would extend the scope of Simplicity beyond what we are willing
+  to do.
 
-  We have chosen to go with option 2. \ We have reimplemented the exact same
+  We have chosen to go with option 2. We have reimplemented the exact same
   algorithms for field and elliptic curve operations that the most recent
   release of libsecp256k1 uses as of the time of this writing, including
   computing of linear combinations of the form\ 
@@ -2361,10 +2348,12 @@
   </equation*>
 
   which is used for Schnorr signature validation. Our jets will be tied to
-  this specific version of libsecp256k1. The libsecp256k1 is already
-  reasonably mature, so we are not expecting to lose out too much by missing
-  future advances. \ When there are major improvements, new versions of
-  Simplicity jets can be substituted in by using a versioning mechanism for
+  this specific version of libsecp256k1, and the commitment Merkle root (see
+  Section<nbsp><reference|ss:cmr>) captures the formal specification of the
+  functional behavour of our jets. The libsecp256k1 is already reasonably
+  mature, so we are not expecting to lose out too much by missing future
+  advances. When there are major improvements, new versions of Simplicity
+  jets could be substituted in by using a versioning mechanism for
   Simplicity.
 
   In Simplicity, we represent a field element by the type
@@ -2378,7 +2367,7 @@
 
   <\equation*>
     <around*|\<lceil\>|<around*|\<langle\>|a<rsub|0>,<around*|\<langle\>|a<rsub|1>,<around*|\<langle\>|a<rsub|2>,<around*|\<langle\>|a<rsub|3>,<around*|\<langle\>|a<rsub|4>,<around*|\<langle\>|a<rsub|5>,<around*|\<langle\>|a<rsub|6>,<around*|\<langle\>|a<rsub|7>,<around*|\<langle\>|a<rsub|8>,a<rsub|9>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|FE>\<assign\><big|sum><rsup|9><rsub|i=0><around*|\<lceil\>|a<rsub|i>|\<rceil\>><rsub|32>\<cdot\>2<rsup|26*i>
-    <around*|(|mod p|)>
+    <around*|(|mod p|)><text|.>
   </equation*>
 
   We represent non-<math|\<cal-O\>> points on the secp256k1 elliptic curve in
@@ -2392,7 +2381,7 @@
   the point\ 
 
   <\equation*>
-    <around*|\<lceil\>|<around*|\<langle\>|x,y|\<rangle\>>|\<rceil\>><rsub|GE>\<assign\><around*|\<langle\>|<around*|\<lceil\>|x|\<rceil\>><rsub|FE>,<around*|\<lceil\>|y|\<rceil\>><rsub|FE>|\<rangle\>>
+    <around*|\<lceil\>|<around*|\<langle\>|x,y|\<rangle\>>|\<rceil\>><rsub|GE>\<assign\><around*|\<langle\>|<around*|\<lceil\>|x|\<rceil\>><rsub|FE>,<around*|\<lceil\>|y|\<rceil\>><rsub|FE>|\<rangle\>><text|.>
   </equation*>
 
   We also represent points on the secp256k1 elliptic curve in Jacobian
@@ -2406,16 +2395,18 @@
   represents the point
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<langle\>|x,y|\<rangle\>>,z|\<rangle\>>|\<rceil\>><rsub|GEJ>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|<frac|<around*|\<lceil\>|x|\<rceil\>><rsub|FE>|<around*|\<lceil\>|z|\<rceil\>><rsub|FE><rsup|2>>,<frac|<around*|\<lceil\>|y|\<rceil\>><rsub|FE>|<around*|\<lceil\>|z|\<rceil\>><rsub|FE><rsup|3>>|\<rangle\>><htab|5mm><text|when
+    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<langle\>|x,y|\<rangle\>>,z|\<rangle\>>|\<rceil\>><rsub|GEJ>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|<around*|\<lceil\>|x|\<rceil\>><rsub|FE>\<cdot\><around*|\<lceil\>|z|\<rceil\>><rsub|FE><rsup|-2>
+    <around*|(|mod p|)>,<around*|\<lceil\>|y|\<rceil\>><rsub|FE>\<cdot\><around*|\<lceil\>|z|\<rceil\>><rsub|FE><rsup|-3>
+    <around*|(|mod p|)>|\<rangle\>><htab|5mm><text|when
     <math|<around*|\<lceil\>|z|\<rceil\>><rsub|FE> \<nequiv\>0 <around*|(|mod
     p|)>>>>>|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<langle\>|x,y|\<rangle\>>,z|\<rangle\>>|\<rceil\>><rsub|GEJ>>|<cell|\<assign\>>|<cell|\<cal-O\><htab|5mm><text|when
     <math|<around*|\<lceil\>|z|\<rceil\>><rsub|FE>\<equiv\>0 <around*|(|mod
     p|)>> and ><around*|\<lceil\>|y|\<rceil\>><rsub|FE><rsup|2>\<equiv\><around*|\<lceil\>|x|\<rceil\>><rsub|FE><rsup|3>
-    <around*|(|mod p|)>>>>>
+    <around*|(|mod p|)><text|.>>>>>
   </eqnarray*>
 
   The translation between the libsecp256k1's <verbatim|10x32> field
-  represenation and Simplicity's <math|FE> type is straightforward. The
+  representation and Simplicity's <math|FE> type is straightforward. The
   translation between libsecp256k1's affine coordinate representation of
   elliptic curve points and Simplicity's <math|GE> is also straightforward
   except that Simplicity's <math|GE> type has no flag and cannot represent
@@ -2423,41 +2414,31 @@
   coordinate representation of elliptic curve points and Simplicity's
   <math|GEJ> type is mostly straight forward, however the <math|GEJ> type
   represents the <math|\<cal-O\>> point using a z-coordinate representing 0,
-  while libsecp256k1 uses a flag to reprsent the <math|\<cal-O\>> point.
+  while libsecp256k1 uses a flag to represent the <math|\<cal-O\>> point.
 
-  The Simplicity implemention of libsecp256k1 is designed so that
+  The Simplicity implementation of libsecp256k1 is designed so that
   libsecp256k1 can be used as jets for these Simplicity expressions. As such,
-  the Simplicity expressions are designed to mimic the extact behaviour of a
-  specific version of libsecp256k1's elliptic curve functions. \ For inputs
-  of a particular representitive of field elements, or points, the Simplicity
-  expression returns the exact same represenative for its result as
-  libsecp256k1. \ If a pre-condition of a libsecp256k1 function is violated,
-  the the Simplicity code also overflows and returns the corresponding value
-  that libsecp256k1 returns. \ If an off-curve point is passed to a
-  libsecp256k1 function, the Simplicity code again computes the same result
-  that the libsecp256k1 function does.
-
-  This precise reimplemenation of the libsecp256k1 functions are necessary
-  for it to support fast jets of elliptic curve operations. \ When
-  programming we think of these functions are manipulating abstract field
-  elements and points, but fundamentally the Simplicity programs are
-  manipulating the bits that make up the specific representatives. \ Even if
-  it is logically nonsensical, it is possible to violate the field and curve
-  point abstractions and operate on the specific bit values of the
-  representatives, and the results of such operations is consensus critical
-  in a blockchain application.
+  the Simplicity expressions are designed to mimic the exact behaviour of a
+  specific version of libsecp256k1's elliptic curve functions. For inputs of
+  particular representations of field elements, or points, the Simplicity
+  expression returns the exact same representative for its result as
+  libsecp256k1. If a precondition of a libsecp256k1 function is violated, the
+  the Simplicity code also overflows and returns the corresponding value that
+  libsecp256k1 returns. If an off-curve point is passed to a libsecp256k1
+  function, the Simplicity code again computes the same result that the
+  libsecp256k1 function does.
 
   The only subtle point with using libsecp256k1 for jets lies in the
-  different representation of <math|\<cal-O\>>. \ The inputs and outputs of
-  operations need to be suitable translated between the two represnations.
-  \ However, this can be done as part of the marshalling code for the jets,
-  and the Simplicity expressions are written with this in mind.
+  different representation of <math|\<cal-O\>>. The inputs and outputs of
+  operations need to be suitable translated between the two representations.
+  However, this can be done as part of the marshalling code for the jets, and
+  the Simplicity expressions are written with this in mind.
 
   <subsubsection|Schnorr Signature Validation>
 
   With elliptic curve operations defined, we are able to implement Schnorr
   signature validation in accordance with the BIP-Schnorr
-  specification<nbsp><cite|bip-schnorr>. \ We define Simplicty types for
+  specification<nbsp><cite|bip-schnorr>. We define Simplicity types for the
   formats of compressed public keys, <math|PubKey>; messages, <math|Msg>; and
   Schnorr signatures, <math|Sig>, below.
 
@@ -2473,15 +2454,15 @@
   <math|Sig> value <math|a> represents the byte-string
   <math|BE<rsub|512><around*|(|a|)>> for a Schnorr signature.
 
-  We have implemented a core Simplicity exprssion to check a Schnorr
+  We have implemented a core Simplicity expression to check a Schnorr
   signature for a public key on a given message:
 
   <\equation*>
     <math-ss|schnorrVerify>\<of\><around*|(|PubKey\<times\>Msg|)>\<times\>Sig\<vdash\><2>
   </equation*>
 
-  The sematics are such that <math|<around*|\<llbracket\>|<math-ss|schnorrVerify>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=<math-tt|1><rsub|<2>>>
-  only when the values that the inputs represents satify the verification
+  The semantics are such that <math|<around*|\<llbracket\>|<math-ss|schnorrVerify>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=<math-tt|1><rsub|<2>>>
+  only when the values that the inputs represents satisfy the verification
   conditions of the BIP-Schnorr specification.
 
   <section|Completeness Theorem>
@@ -2489,17 +2470,17 @@
   General purpose programming languages are famously incomplete because there
   are functions that are uncomputable, the halting problem being the most
   famous of these. Core Simplicity is even more limited that these general
-  purpose programming languages because the denotational semantics are
+  purpose programming languages because its denotational semantics are
   limited to functions from finite types to finite types.
 
   However, we can ask the question, is every function from a finite type to a
-  finite type expressible in Core Simplicity? This question is answered by
+  finite type expressible in core Simplicity? This question is answered by
   the following completeness theorem.
 
   <\theorem>
     <label|thm:CSCT>Core Simplicity Completeness Theorem. For any Simplicity
     types <math|A> and <math|B> and any function <math|f:A\<rightarrow\>B>,
-    there exists some Core Simplicity term <math|t> such that for all
+    there exists some core Simplicity term <math|t> such that for all
     <math|a:A>,
 
     <\equation*>
@@ -2509,14 +2490,14 @@
 
   This result is possible because these functions are all finitary and can
   be, in principle, expressed as a large lookup table. It is possible to
-  encode these lookup tables as Simplicity expressions. The formal proof of
+  encode these lookup tables with Simplicity expressions. The formal proof of
   this theorem can be found in the Coq library (see
   Section<nbsp><reference|ss:coqInitial>).
 
   It is worth emphasizing that this result is a purely theoretical result
-  that show that Core Simplicity is fully expressive for its domain; it is
+  that shows that core Simplicity is fully expressive for its domain; it is
   completely impractical to generate Simplicity expressions this way as many
-  expressions would be astronomical in size. Thus we can see Simplicity
+  expressions would be astronomical in size. Thus we can view Simplicity
   programming as an exercise in compression: how can we take advantage of the
   structure within computations to express our functions succinctly.
 
@@ -2561,8 +2542,8 @@
   <math|<around*|\||\<cdummy\>|\|>>. For example,
   <math|<around*|\||<carr|1?0>|\|>=3>. The concatenation of two arrays,
   <math|a> and <math|b> is denoted by <math|a\<cdot\>b>, and replication of
-  an array <math|n> times is denoted by expontiation, <math|a<rsup|n>>.
-  Sometimes we will omit the dot whed performing concatenation.
+  an array <math|n> times is denoted by exponentiation, <math|a<rsup|n>>.
+  Sometimes we will omit the dot when performing concatenation.
 
   For any given type, we define the number of cells needed to hold values of
   that type using the following <math|bitSize> function.
@@ -2571,7 +2552,7 @@
     <tformat|<table|<row|<cell|bitSize<around*|(|<value|1>|)>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|bitSize<around*|(|A+B|)>>|<cell|\<assign\>>|<cell|1+max<around*|(|bitSize<around*|(|A|)>,bitSize<around*|(|B|)>|)>>>|<row|<cell|bitSize<around*|(|A\<times\>B|)>>|<cell|\<assign\>>|<cell|bitSize<around*|(|A|)>+bitSize<around*|(|B|)>>>>>
   </eqnarray*>
 
-  We define a represenation of values of Simplicity types as arrays of cells
+  We define a representation of values of Simplicity types as arrays of cells
   as follows.
 
   <\eqnarray*>
@@ -2586,7 +2567,7 @@
   </eqnarray*>
 
   <\theorem>
-    Given any value of some Simplicity type, <math|a:A>, we have
+    Given any value of some Simplicity type, <math|a\<of\>A>, we have
     <math|<around*|\||<rep|a|A>|\|>=bitSize<around*|(|A|)>>.
   </theorem>
 
@@ -2619,10 +2600,10 @@
   <assign|emptyFrame|<math|<tiny|\<wedge\>>>>We will sometimes denote the
   empty frame, <math|<cearr|>>, with a small cursor, <value|emptyFrame>.
 
-  The state of the Bit Machine consistes of two non-empty stacks of frames: a
+  The state of the Bit Machine consists of two non-empty stacks of frames: a
   read-frame stack and a write-frame stack. The top elements of the two
   stacks are called the <dfn|active read frame> and the <dfn|active write
-  frame> respectively. The other frames are called inactive read-frames or
+  frame> respectively. The other frames are called inactive read-frames and
   inactive write-frames.
 
   <big-figure|<tabular|<tformat|<cwith|1|1|1|-1|cell-tborder|2px>|<cwith|5|5|1|-1|cell-bborder|2px>|<cwith|1|1|1|-1|cell-bborder|1px>|<table|<row|<cell|read
@@ -2640,7 +2621,7 @@
   <math|r<rsub|0>> is the active read frame, and <math|w<rsub|0>> is the
   active write frame.<\footnote>
     The notation for the Bit Machine's state is intended to mimic the gap
-    buffer used in our C implemenation of the Bit Machine (see
+    buffer used in our C implementation of the Bit Machine (see
     <with|color|red|TODO: C implementation>).
   </footnote> There is one additional state of the Bit Machine called the
   <dfn|halted> state, which we denote by <value|halted>.
@@ -2671,13 +2652,12 @@
   frame. The cursor is reset to the beginning of the frame when it is placed
   onto the read frame stack.
 
-  Executing the <math|dropFrame> instructions removes the top frame of the
+  Executing the <math|dropFrame> instruction removes the top frame of the
   read frame stack.
 
   <subsubsection|Active Write Frame Instructions>
 
-  Our next three instructions are used to write data to the active write
-  frame.
+  Our next three instructions operate on the active write frame.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|write<around*|(|0|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|<wide*|?|\<bar\>>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><cearr|0><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|write<around*|(|1|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|<wide*|?|\<bar\>>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><cearr|1><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|skip<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0><emptyFrame><carr|?><rsup|n+m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<cdummy\><carr|?><rsup|n><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>|<row|<cell|copy<around*|(|n|)>>|<cell|:>|<cell|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>*c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|n+m>\<vartriangleleft\>\<Xi\>|]>\<rightsquigarrow\><around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>*c<rsub|n>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><cearr|c<rsub|1>*\<cdots\>*c<rsub|n>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>>>>
@@ -2689,16 +2669,18 @@
   the frame.
 
   Executing a <math|skip<around*|(|n|)>> instruction advances the active
-  write frame's cursor without writing any data. There must be sufficent
+  write frame's cursor without writing any data. There must be sufficient
   number of cells after the cursor. The trivial instruction
-  <math|skip<around*|(|0|)>> is legal and executing it is effectively a nop.
+  <math|skip<around*|(|0|)>> is legal and executing it is effectively a
+  no-op.
 
   Executing a <math|copy<around*|(|n|)>> instruction copies the values of the
   <math|n> cells after the active read frame's cursor into the active write
-  frame, advancing the write frame's cursor. The must be a sufficent number
+  frame, advancing the write frame's cursor. The must be a sufficient number
   of cells after both the active read frame and active write frame's cursors.
   Note that undefined cell values are legal to copy. The trivial instruction
-  <math|copy<around*|(|0|)>> is legal and executing it is effectively a nop.
+  <math|copy<around*|(|0|)>> is legal and executing it is effectively a
+  no-op.
 
   <subsubsection|Active Read Frame Instructions>
 
@@ -2716,9 +2698,9 @@
   Executing a <math|fwd<around*|(|n|)>> instructions moves the cursor on the
   active read frame forward, and executing a <math|bwd<around*|(|n|)>>
   instruction moves the cursor backwards. In both cases there must be
-  sufficent number of cells before or after the cursor. The trivial
+  sufficient number of cells before or after the cursor. The trivial
   instructions <math|fwd<around*|(|0|)>> and <math|bwd<around*|(|0|)>> are
-  legal and executing them are effectively nops.
+  legal and executing them are effectively no-ops.
 
   <subsubsection|Abort Instruction>
 
@@ -2730,7 +2712,7 @@
   </equation*>
 
   This is the only way to enter the halted state, and once in the halted
-  state no further insturctions can be executed.
+  state no further instructions can be executed.
 
   <subsubsection|Bit Machine Programs>
 
@@ -2738,7 +2720,7 @@
   basic instructions of the Bit Machine are combined to produce programs that
   take the Bit Machine through a sequence of states. We write
   <prog|S<rsub|0>|k|S<rsub|1>> for a program, <math|k>, that, when executed,
-  successfully transfroms an initial state <math|S<rsub|0>> to the final
+  successfully transforms an initial state <math|S<rsub|0>> to the final
   state <math|S<rsub|1>>.
 
   \;
@@ -2747,15 +2729,15 @@
     <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<cwith|1|1|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-col-span|2>|<table|<row|<cell|<prog|S|nop|S>>>>>>
   </with>
 
-  We write <math|nop> for the trival program with no instructions. The inital
-  and final states are identical in this case.
+  We write <math|nop> for the trivial program with no instructions. The
+  initial and final states are identical in this case.
 
   <\with|par-mode|center>
     <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|2|2|1|1|cell-col-span|2>|<table|<row|<cell|<math|i:S<rsub|0>\<rightsquigarrow\>S<rsub|1>>>>|<row|<cell|<prog|S<rsub|0>|i|S<rsub|1>>>>>>>
   </with>
 
   For every basic instruction there is a single instruction program whose
-  intial and final states match those of the basic instruction.
+  initial and final states match those of the basic instruction.
 
   \;
 
@@ -2785,9 +2767,9 @@
 
   We define <math|k<rsub|0>\|\|k<rsub|1>> as a deterministic choice between
   two programs, <math|k<rsub|0>> and <math|k<rsub|1>>. When executing a
-  determinsitc choice, the value under the active read frame's cursor decides
-  which one of the two programs are executed. When encountering a
-  determinisitc choice, the active read frame's cursor must not be at the end
+  deterministic choice, the value under the active read frame's cursor
+  decides which one of the two programs are executed. When encountering a
+  deterministic choice, the active read frame's cursor must not be at the end
   of its array and the cell under the cursor must not be an undefined value.
 
   \;
@@ -2797,7 +2779,7 @@
   </with>
 
   Lastly, we stipulate that every program when executed from the halted state
-  ignores all instructions and perfrom a nop instead.
+  ignores all instructions and perform a no-op instead.
 
   Take care to note this difference between instructions and programs
   containing one instruction. A single instruction cannot be executed
@@ -2832,21 +2814,22 @@
   <prog|S<rsub|0>|k|S<rsub|1>> given an initial state for a program. This
   happens when the Bit Machine is trying to execute a single instruction
   program, <math|i>, from a non-halted state where that instruction cannot
-  legally execute from. This can also happen when a determinstic choice
-  operation is encounted starting from a state where the active read frame's
-  cursor is at the end of the frame, or is referencing and undefined value.
+  legally execute from. This can also happen when a deterministic choice
+  operation is encountered starting from a state where the active read
+  frame's cursor is at the end of the frame, or is referencing and undefined
+  value.
 
-  When a program cannot execute to completion from a given inital state, we
+  When a program cannot execute to completion from a given initial state, we
   say that the Bit Machine crashes, or we say that the program crashes the
   Bit Machine. Crashing is distinct from halting. We will have a number of
-  theorems that prove that a Bit Machine interpreting a Simpicity expression
+  theorems that prove that a Bit Machine interpreting a Simplicity expression
   from a suitable initial state never crashes the Bit Machine; however in
-  some of these cases the program may cause the Bit Machine to legitmately
+  some of these cases the program may cause the Bit Machine to legitimately
   enter the halted state.
 
   <subsection|Executing Simplicity>
 
-  We recursively translate a Core Simplicity program,
+  We recursively translate a core Simplicity program,
   <math|t\<of\>A\<vdash\>B>, into a program for the Bit Machine,
   <math|<around*|\<llangle\>|t|\<rrangle\>>>, called the naive translation:
 
@@ -2926,10 +2909,10 @@
   </eqnarray*>
 
   The definition of the <math|<TCOoff|\<cdummy\>>> translation is very
-  similar to the naive one, except the dropFrame instruction at the end of
-  the translation of the composition combinator is replaced by having a
-  recursive call to <math|<TCOon|\<cdummy\>>> instead. The definition of
-  <math|<TCOon|\<cdummy\>>> puts the dropFrame instruction in the
+  similar to the naive one, except the <math|dropFrame> instruction at the
+  end of the translation of the composition combinator is replaced by having
+  a recursive call to <math|<TCOon|\<cdummy\>>> instead. The definition of
+  <math|<TCOon|\<cdummy\>>> puts the <math|dropFrame> instruction in the
   translations of <math|<math-ss|iden>> and <math|<math-ss|unit>>. The
   <math|bwd> instructions are removed from the translations of
   <math|<math-ss|case>> and <math|<math-ss|drop>>. Lastly notice that the
@@ -2964,14 +2947,14 @@
 
   <section|Static Analysis>
 
-  Static analysis lets us quickly compute properties of programs, without the
-  need for exhasutively executing programs on all possible inputs. We use
-  static analysis in Simplicity to bound the computation costs in terms of
-  time and space of Simplicity programs for all their inputs. The analysis we
-  do are linear in the size of the DAG representing the Simplicity
-  expression, and typically the analysis runs much faster than the cost of
-  even evaluating an expression on a single input. We can do this because the
-  intermediate results of static analysis can be shared where there are
+  Static analysis lets us quickly compute properties of expressions, without
+  the need for exhaustively executing expressions on all possible inputs. We
+  use static analysis in Simplicity to bound the computation costs in terms
+  of time and space of Simplicity expressions for all their inputs. The
+  analysis we do are linear in the size of the DAG representing the
+  Simplicity expression, and typically the analysis runs much faster than the
+  cost of evaluating an expression on a single input. We can do this because
+  the intermediate results of static analysis can be shared where there are
   shared sub-expressions.
 
   <subsection|Space Resources>
@@ -2979,9 +2962,9 @@
   The primary source of memory resources used by the Bit Machine is the cells
   used by all the frames that make of the state of Bit Machine. A secondary
   source of memory resources used comes from the overhead of the frames
-  themselves, which need to store their bounderies or sizes, and the position
+  themselves, which need to store their boundaries or sizes, and the position
   of their cursors. In our analysis we will make a simplifying assumption
-  that these bounderies / sizes / positions values are all of constant size.
+  that these boundaries / sizes / positions values are all of constant size.
   This assumption holds when the Bit Machine is implemented on real hardware
   which has an upper bound on its addressable memory and there is a limit on
   the number of Cells that can be held anyways.
@@ -3050,9 +3033,9 @@
 
   Note that when executing a Simplicity expression on the Bit Machine, the
   size of the state prior and after execution is identical. For naive
-  transation of Simplicity to the Bit Machine, we can write a simple
+  translation of Simplicity to the Bit Machine, we can write a simple
   recursive function that bounds the number of additional Cells needed to
-  evaluate a Simplicity expression beyond the size of the inital and final
+  evaluate a Simplicity expression beyond the size of the initial and final
   state.
 
   <\eqnarray*>
@@ -3143,9 +3126,9 @@
 
   The problem with <math|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>>
   is that it is effectively a dynamic analysis because its result is a
-  function. We cannot direclty use this definition to perform a static
+  function. We cannot directly use this definition to perform a static
   analysis because we cannot cache and reuse results on shared
-  sub-expressions. Fortuantely we can charaterize the set of possible
+  sub-expressions. Fortunately, we can characterize the set of possible
   functions returned by <math|extraCellsBound<rsup|TCO><rsub|dyn>> by a pair
   of parameters.
 
@@ -3197,20 +3180,21 @@
 
   <subsection|Time Resources>
 
-  <section|Commitment Merkle Root>
+  <section|Commitment Merkle Root><label|ss:cmr>
 
   In modern Bitcoin, users who use P2SH (pay to script hash) do not commit
-  funds directly to Script, rather they commit to a hash of their Script.
-  Only when they wish to redeem their funds do they reveal their Script for
-  executation. Bitcoin's concensus protocol enforces that the Script
-  presented during redemption has a hash that matches the commited hash.
+  funds directly to Bitcoin Script, rather they commit to a hash of their
+  Bitcoin Script. Only when they wish to redeem their funds do they reveal
+  their Bitcoin Script for execution. Bitcoin's consensus protocol enforces
+  that the Bitcoin Script presented during redemption has a hash that matches
+  the committed hash.
 
   <assign|cmr|<macro|x|<math|#<rsup|c><around*|(|<arg|x>|)>>>>Simplicity is
   designed to work in the same way. However, instead of a linear hash of a
   serialized Simplicity program (Section<nbsp><reference|Serialization>) we
   follow the tree structure of a Simplicity expression and compute a
-  commitment Merkle root of the syntax tree. Below we define the commitment
-  merkle root of a Simplicity expression <math|t\<of\>A\<vdash\>B> as
+  commitment Merkle root of its syntax tree. Below we define the commitment
+  Merkle root of a Simplicity expression <math|t\<of\>A\<vdash\>B> as
   <math|<cmr|t>\<of\><2><rsup|256>>.
 
   <\eqnarray*>
@@ -3242,7 +3226,7 @@
   root is linear in the size of the DAG representing the term because the
   intermediate results on sub-expressions can be shared.
 
-  We define unique inital values <math|tag<rsup|c><rsub|x>> for every
+  We define unique initial values <math|tag<rsup|c><rsub|x>> for every
   combinator by taking the SHA-256 hash of unique byte strings:
 
   <\eqnarray*>
@@ -3252,8 +3236,8 @@
   Notice that the type annotations for expressions are not included in the
   commitment Merkle root. We will rely on type inference to derive principle
   type annotations (see Section<nbsp><with|color|red|<reference|ss:typeInference>>).
-  Later, we will make use of this flexibilty when pruning unused branches
-  from <samp|case> expressions.
+  Later, we will make use of this flexibility when pruning unused branches
+  from <samp|case> expressions (see Section<nbsp><reference|ss:pruning>).
 
   <chapter|Simplicity Extensions>
 
@@ -3267,8 +3251,8 @@
 
   \;
 
-  We define a new intepretation of Simplicity expressions,
-  <math|t\<of\>A\<vdash\>B>, whose denotations are these Kleisli morphisms,
+  We define a new interpretation of Simplicity expressions,
+  <math|t\<of\>A\<vdash\>B>, whose denotations are Kleisli morphisms,
   <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>>\<of\>A\<rightarrow\>\<cal-M\>*B>.
 
   <\eqnarray*>
@@ -3310,12 +3294,12 @@
     <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|Id>\<assign\><around*|\<llbracket\>|t|\<rrbracket\>>>.
   </corollary>
 
-  Notice that our monadic semantics are strict, in the sense that in the
-  definition of <math|<around*|\<llbracket\>|<math-ss|pair> s
-  t|\<rrbracket\>><rsup|\<cal-M\>>>, the side-effects of
+  Notice that our monadic semantics are strict in their side-effects in the
+  sense that the definition of <math|<around*|\<llbracket\>|<math-ss|pair> s
+  t|\<rrbracket\>><rsup|\<cal-M\>>> implies that the side-effects of
   <math|<around*|\<llbracket\>|s|\<rrbracket\>><rsup|\<cal-M\>>> and
   <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|\<cal-M\>>> are both
-  realized, even if it turns out one (or both) of the values returned by
+  realized even if it ends up that one (or both) of the values returned by
   <math|s> and <math|t> end up never used.
 
   <section|Witness>
@@ -3343,7 +3327,7 @@
     b|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>\<assign\>\<eta\><rsup|\<cal-M\>><rsub|B><around*|(|b|)>
   </equation*>
 
-  As far as semantics goes, this extension doesn't provide any new
+  As far as semantics goes, this extension does not provide any new
   expressivity. A constant function for any value <math|b> can already be
   expressed in core Simplicity using <math|<samp|scribe><rsub|A,B><around*|(|b|)>>.
   The difference between <samp|scribe> and <samp|witness> expressions lies in
@@ -3361,10 +3345,10 @@
     <tformat|<table|<row|<cell|tag<rsup|c><rsub|<math-ss|witness>>>|<cell|\<assign\>>|<cell|SHA256<math-tt|[53696d706c69636974791f436f6d6d69746d656e741f7769746e657373]>>>>>
   </eqnarray*>
 
-  Notice that a <math|<samp|witness> b> expression does commit to its
+  Notice that a <math|<samp|witness> b> expression does not commit to its
   parameter in the commitment root. This means that at redemption time a
-  <samp|witness> expression's parameter, called a <dfn|witness value>, can, a
-  priori, be set to any value.
+  <samp|witness> expression's parameter, called a <dfn|witness value>, could
+  be set to any value.
 
   Witness values play the same role as Bitcoin Script's input stack in its
   <verbatim|sigScript> or Segwit's <verbatim|witness>. They act as inputs to
@@ -3376,14 +3360,13 @@
 
   <subsection|Witness Merkle Root>
 
-  <subsection|Serialization with Witnesses>
-
   <subsection|Type Inference with Witness>
 
-  Like other expressions, a <samp|witness> expression doesn't commit to its
+  Like other expressions, a <samp|witness> expression does not commit to its
   type in its commitment Merkle root. Type inference is used to compute the
-  minimal type needed for each witness expression. This ensures that third
-  parties cannot perform witness malleation to it with unused data on
+  minimal type needed for each witness expression (see
+  Section<nbsp><reference|ss:typeInference>) This helps ensures that third
+  parties cannot perform witness malleation to add unused data on
   transactions during transit.
 
   <section|Assertions and Failure>
@@ -3421,20 +3404,20 @@
 
   Assertions serve a dual purpose. One purpose is to replicate the behaviour
   of Bitcoin Script's <verbatim|OP_VERIFY> and similar operations that are
-  used to validate checks on programable conditions, such as verifying that a
-  digital signature verificaiton passes and causing the program to abort
+  used to validate checks on programmable conditions, such as verifying that
+  a digital signature verification passes or causing the program to abort
   otherwise.
 
-  The second purpose is to support pruning of unsued <samp|case> branches
+  The second purpose is to support pruning of unused <samp|case> branches
   during redemption. The 256-bit value is used in the commitment Merkle root
-  computation to hold Merkle root of the pruned braches. This will be covered
-  in Section<nbsp><reference|ss:pruning>.
+  computation to hold Merkle root of the pruned branches. This will be
+  covered in Section<nbsp><reference|ss:pruning>.
 
-  Because we are extending Simplicty's semantics to support an abort effect,
+  Because we are extending Simplicity's semantics to support an abort effect,
   there is no harm in adding a generic <samp|fail> expression. The parameter
   to the <samp|fail> expression is used to support salted expressions (see
   Section<nbsp><reference|ss:salted>). We will see that <samp|fail>
-  expressions never manifest themselves within a blockchain's concensus
+  expressions never manifest themselves within a blockchain's consensus
   protocol.
 
   <subsection|Denotational Semantics>
@@ -3458,7 +3441,7 @@
   Section<nbsp><reference|ss:AssertMerkleRoot>.
 
   A term in the language of core Simplicity extended with witnesses and
-  assertions, <math|t\<of\>A\<vdash\>B>, can be intepreted as a function
+  assertions, <math|t\<of\>A\<vdash\>B>, can be interpreted as a function
   returning an optional result: <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|<maybe>>\<of\>A\<rightarrow\><maybe>B>.
 
   <\theorem>
@@ -3494,8 +3477,8 @@
   <math|tag<rsup|c><rsub|<math-ss|case>>> when tagging assertions in their
   commitment Merkle root. Also notice that the <math|h> value, which was
   ignored in the semantics, is used in the commitment Merkle root. Together
-  this can allow an assertion expression to substitute for a case expression
-  at redeption time while maintaining the same commitment Merkle root. This
+  this allows an assertion expression to substitute for a case expression at
+  redemption time while maintaining the same commitment Merkle root. This
   enables a feature of Simplicity called pruning.
 
   \;
@@ -3504,7 +3487,7 @@
 
   The commitment Merkle roots of the assertion expression reuses
   <math|tag<rsup|c><rsub|<math-ss|case>>> in the compression function. This
-  means that the following identies hold.
+  means that the following identities hold.
 
   <\equation*>
     <cmr|<math-ss|assertl><rsub|A,B,C,D> s
@@ -3515,17 +3498,17 @@
   In particular, it means that when a <math|<math-ss|case>> expression is
   used at commitment time, it can be replaced by an assertion expression. If
   we substitute a <samp|case> with an assertion expression and that assertion
-  fails during evalutation, then the whole transaction will be deemed invalid
+  fails during evaluation, then the whole transaction will be deemed invalid
   and rejected. On the other hand if the assertion does not fail, then we are
-  guarenteed to end up with the same result (which ultimately could still be
-  failure due to a later assertion failure). Therefore, assuming the
-  transaction is valid, a subsitution of assertions will not change the
+  guaranteed to end up with the same result as before (which ultimately could
+  still be failure due to a later assertion failure). Therefore, assuming the
+  transaction is valid, a substitution of assertions will not change the
   semantics.
 
-  We can take advantage of this by performing this substituion at redemption
-  time. We can effiecively replace any unused branch in a case expression
+  We can take advantage of this by performing this substitution at redemption
+  time. We can effectively replace any unused branch in a case expression
   with its commitment Merkle root. In fact, we will require this replacement
-  to occur during redemption.
+  to occur during redemption (see Section<nbsp><inactive|<reference|<with|color|red|TODO>>>).
 
   For those cases where we want to use an assertion at commitment time, for
   example when performing something similar to Bitcoin Script's
@@ -3536,8 +3519,8 @@
 
   <\with|par-mode|center>
     <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|t\<of\>A\<vdash\><2>>>>>>>>>|<row|<cell|<math|<math-ss|assert><rsub|A>
-    t\<assign\>t\<times\><math-ss|unit>;<math-ss|assertr> <cmr|<math-ss|fail>
-    <around*|\<lfloor\>|0|\<rfloor\>><rsub|512>>
+    t\<assign\>t \<vartriangle\> <math-ss|unit>;<math-ss|assertr>
+    <cmr|<math-ss|fail> <around*|\<lfloor\>|0|\<rfloor\>><rsub|512>>
     <math-ss|unit>\<of\>A\<vdash\><1>>>>>>>
   </with>
 
@@ -3545,33 +3528,33 @@
 
   <no-indent>where <math|<around*|\<lfloor\>|0|\<rfloor\>><rsub|512>> is used
   as a canonical parameter for <samp|fail>. Naturally, the
-  <around*|\<lfloor\>|0|\<rfloor\>><rsub|512> paramter can be replaced with
-  any value; this can be used as a method of salting expression, which is the
+  <around*|\<lfloor\>|0|\<rfloor\>><rsub|512> parameter can be replaced with
+  any value. This can be used as a method of salting expression, which is the
   subject of the next section.
 
   <subsubsection|Salted Expressions><label|ss:salted>
 
-  During pruning, usused branches are replaced by its commitment Merkle root.
+  During pruning, unused branches are replaced by its commitment Merkle root.
   Since hashes are one way functions, one might believe that third parties
   will be unable to recover the pruned branch from just its commitment Merkle
   root. However, this argument is not so straightforward. Whether or not the
   expression can be recovered from just its commitment Merkle root depends on
   how much entropy the pruned expression contains. Third parties can grind,
   testing many different expressions, until they find one whose commitment
-  Merkle root matches the one occuring in the assertion. If the entropy of
+  Merkle root matches the one occurring in the assertion. If the entropy of
   the pruned expression is low, then this grinding is feasible.
 
   Some expressions naturally have high entropy. For example, any branch that
   contains a commitment to a public key will have at least the entropy of the
-  public key space. However, this only holds so long as that public key isn't
-  reused nor will ever be resued elsewhere.
+  public key space. However, this only holds so long as that public key is
+  not reused nor will ever be reused elsewhere.
 
-  For expressions that need to reuse public keys, or otherwise naturally
-  having low entropy, one can add salt, which is random data, to increase its
-  entropy. There are several possible ways to incorporate random data into a
-  Simplicity expression without altering the program's semantics. The most
-  direct way is to incorporate the <samp|fail> expression which lets us
-  directly incorporate random into is commitment Merkle root.
+  For expressions that reuse public keys, or otherwise naturally having low
+  entropy, one can add salt, which is random data, to increase its entropy.
+  There are several possible ways to incorporate random data into a
+  Simplicity expression without altering the program's semantics. One way is
+  to incorporate the <samp|fail> expression which lets us directly
+  incorporate random into is commitment Merkle root.
 
   Given a block of random data, <math|h:<2><rsup|512>>, and a Simplicity
   expression <math|t\<of\>A\<vdash\>B>, we can define two salted variants of
@@ -3580,45 +3563,48 @@
   <\eqnarray*>
     <tformat|<table|<row|<cell|<math-ss|salted><rsup|0> h
     t>|<cell|\<assign\>>|<cell|<math-ss|witness>
-    <math-ss|false>\<times\><math-ss|iden>;<math-ss|assertl>
-    <around*|(|<math-ss|drop> t|)> <cmr|<math-ss|fail>
-    h>:A\<vdash\>B>>|<row|<cell|<math-ss|salted><rsup|1> h
-    t>|<cell|\<assign\>>|<cell|<math-ss|witness>
-    <math-ss|true>\<times\><math-ss|iden>;<math-ss|assertr>
-    <cmr|<math-ss|fail> h> <around*|(|<math-ss|drop> t|)>:A\<vdash\>B>>>>
+    <math-tt|0><rsub|<2>><math-ss|> \<vartriangle\>
+    <math-ss|iden>;<math-ss|assertl> <around*|(|<math-ss|drop> t|)>
+    <cmr|<math-ss|fail> h>:A\<vdash\>B>>|<row|<cell|<math-ss|salted><rsup|1>
+    h t>|<cell|\<assign\>>|<cell|<math-ss|witness>
+    <math|<math-tt|1><rsub|<2>>> \<vartriangle\>
+    <math-ss|iden>;<math-ss|assertr> <cmr|<math-ss|fail> h>
+    <around*|(|<math-ss|drop> t|)>:A\<vdash\>B>>>>
   </eqnarray*>
 
-  The <math|<math-ss|salted><rsup|i> h t> experssion will have high entropy
-  so long as the random data <math|h> has high entropy. By randomly chosing
-  between these two variants, this method of salting obsurces the fact that
-  the expression is salted at all, in cases where this expression ends up
-  being revield during redemption. Without knowing <math|h>, it is
+  The <math|<math-ss|salted><rsup|b> h t> expression will have high entropy
+  so long as the random data <math|h> has high entropy. By randomly choosing
+  between these two variants, this method of salting obscures the fact that
+  the expression is salted at all. Without knowing <math|h>, it is
   impractical to determine if <math|#<rsup|c><around*|(|<math-ss|fail> h|)>>
   is the commitment Merkle root of a <samp|fail> expression, or if it is a
   some other, high-entropy, alternate expression that the redeemer has simply
-  choosen not to execute.
+  chosen not to execute.
 
   By explicitly using the <samp|fail> expression here, one has the option
   prove that these alternative branches are unexecutable by revealing the
-  value <math|h>. If the Simplicity expression is part of a multi-party
-  contract, it maybe required to reveal <math|h> (or prove in zero-knowledge
+  value <math|h>. If the Simplicity expression is part of a multi-party smart
+  contract, it maybe required to reveal <math|h> (or prove in a deniable way
   that such an <math|h> exists) to all party members so everyone can vet the
   security properties of the overall smart contract.
 
+  Of course, lots of variations of this <samp|salted> expression are
+  possible.\ 
+
   <section|Blockchain Primitives>
 
-  We entend Simplicity with primitive expressions that provide blockchain
-  specific features. Naturally the specifics of these primtive expressions
+  We extend Simplicity with primitive expressions that provide blockchain
+  specific features. Naturally the specifics of these primitive expressions
   depends on the specific blockchain application, but generally speaking the
   primitives allow reading data from the context that a Simplicity program is
-  being executed within. This is usually the data of the encompasing
+  being executed within. This is usually the data of the encompassing
   transaction including details about the inputs and outputs of the
   transaction, and which specific input is being evaluated.
 
   A blockchain application needs to provide a set of typed primitive
   expressions and a monad to capture the side-effects for these primitives.
   This monad should be a commutative, idempotent monad with zero in order to
-  interpret Simplicity and its extenstions. All primitive expressions must be
+  interpret Simplicity and its extensions. All primitive expressions must be
   monomorphic and have no parameters (i.e. they are not themselves
   combinators).
 
@@ -3639,28 +3625,28 @@
 
   The type <math|SigTx> contains the signed transaction data. Following a
   design similar to BIP 143, this signed transaction data excludes
-  transaction inputs' sigScripts and includes inputs' Bitcoin values. The
+  transaction inputs' ScriptSigs and includes inputs' Bitcoin values. The
   <math|ix> field is input index whose redemption is being processed by this
   Simplicity program. The <math|scriptCMR> field holds the commitment Merkle
   root of the Simplicity program being executed.
 
-  The SigTx type given above allows for an unbounded number of inputs and
-  ouputs. However, there are limits imposed by the Bitcoin protocol. The
-  number of inputs and outputs are limited to at most <math|2<rsup|32>-1> by
-  Bitcoin's deserialization implementation. Similarly, the length of
-  SigOutput's pubScript is limited to at most <math|2<rsup|32>-1> bytes. We
-  presume all transactions to adhere to these limits when reasoning about
-  Bitcoin transactions.\ 
+  The <math|SigTx> type given above allows for an unbounded number of inputs
+  and outputs. However, there are limits imposed by the Bitcoin protocol. The
+  number of inputs and outputs are limited to strictly less than
+  <math|2<rsup|32>> by Bitcoin's deserialization implementation. Similarly,
+  the length of <math|SigOutput>'s <math|pubScript> is limited to strictly
+  less than <math|2<rsup|32>> bytes. We assume all transactions to adhere to
+  these limits when reasoning about Bitcoin transactions.\ 
 
-  Furthemore, we presume that for every <math|e\<of\>BCEnv> that
+  Furthermore, we assume that for every <math|e\<of\>BCEnv> that
   <math|<around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>\<less\><around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>>
   so that ``current'' index being validated is, in fact, an input of the
   transaction.
 
   Bitcoin's money supply is capped below <math|21<nbsp>000<nbsp>000\<times\>10<rsup|8>>
-  satoshis, therefore it is safe to assume that all monetary values are
-  within this bound. In particular we presume that for every
-  <math|e\<of\>BCEnv> that the following inequalities hold.
+  satoshi, therefore it is safe to assume that all monetary values are within
+  this bound. In particular, we assume that for every <math|e\<of\>BCEnv>
+  that the following inequalities hold.
 
   <\equation*>
     0\<leq\>fold<rsup|<around*|\<langle\>|+,0|\<rangle\>>><rsub|\<bbb-N\>><around*|(|<around*|(|\<lambda\>o\<point\><around*|\<lceil\>|o<around*|[|value|]>|\<rceil\>><rsub|64>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>|)>\<leq\>fold<rsup|<around*|\<langle\>|+,0|\<rangle\>>><rsub|\<bbb-N\>><around*|(|<around*|(|\<lambda\>i\<point\><around*|\<lceil\>|i<around*|[|value|]>|\<rceil\>><rsub|64>|)><rsup|+><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>|)>\<leq\>21<nbsp>000<nbsp>000\<times\>10<rsup|8>
@@ -3669,8 +3655,8 @@
   \;
 
   <assign|BC|<math|BC>>The monad we use for the Bitcoin application provides
-  an environment effect (also known as a reader effect) that allows read
-  access to the <math|BitcoinEnv> value defining the Simplicity program's
+  an environment effect (also known as a reader effect) that allows
+  read-access to the <math|BCEnv> value defining the Simplicity program's
   evaluation context. We call this monad <math|BC>.
 
   <\eqnarray*>
@@ -3832,7 +3818,7 @@
 
   <subsubsection|Merkle Roots><label|ss:BTMerkleRoots>
 
-  We extend the definition of commitment Merkle root to support the new
+  We extend the definition of the commitment Merkle root to support the new
   expressions by hashing new unique byte strings.
 
   <\eqnarray*>
@@ -3848,25 +3834,26 @@
   <section|Simplicity Programs>
 
   Ultimately, we only are interested in the side-effects of Simplicity
-  programs, that is we only care if a particular expression does not fail
-  when executed within the context of a given transaction. \ We do not care
-  about the output value of a Simplicity expression, nor do we provide
-  explicit inputs to Simplicity expressions, which are handled by
-  <samp|witness> expressions instead.
+  expression; we only care that a particular expression does not fail when
+  executed within the context of a given transaction. We do not care about
+  the output value of a Simplicity expression, nor do we provide explicit
+  inputs to Simplicity expressions, which are handled by <samp|witness>
+  expressions instead.
 
   To this end, we define a <dfn|Simplicity program> to be a Simplicity
-  expression of type <math|<1>\<vdash\><1>>. \ A core Simplicity expression
-  of this type is useless. \ However, a Simplicity program with witnesses,
+  expression of type <math|<1>\<vdash\><1>>. A core Simplicity expression of
+  this type is useless. However, a Simplicity program with witnesses,
   assertions, and Bitcoin, <math|t\<of\><1>\<vdash\><1>>, has semantics of
   <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>\<of\>BCEnv
-  \<rightarrow\> <2>>, which is the type of predictes over <math|BCEnv>.
-  \ This is exactly what we want to use a Blockchain program for: to decide
-  if a given set of witness data authorises the redeption of funds for a
-  specific input of a specific transaction. \ A particular input authorizes
-  the transaction only when <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>>=<math-tt|1><rsub|<2>>>,
+  \<rightarrow\> <2>>, which is the type of predicates over <math|BCEnv>.
+  This is exactly what we want to use a Blockchain program for: to decide if
+  a given set of witness data authorizes the redemption of funds for a
+  specific input of a specific transaction. A particular input authorizes the
+  transaction in the context <math|e\<of\>BCEnv> only when
+  <math|<around*|\<llbracket\>|t|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>><around*|(|e|)>=<math-tt|1><rsub|<2>>>,
   and all inputs must authorize the transaction if the transaction is valid.
 
-  Let us look at an basic example of a Simplicity program that requires a
+  Let us look at a basic example of a Simplicity program that requires a
   single Schnorr signature.
 
   <subsection|Example: <math-ss|checkSigHashAll>>
@@ -3884,10 +3871,10 @@
   such that
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|schnorrAssert>|\<rrbracket\>><rsup|<maybe>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=\<eta\><rsup|<maybe>><around*|\<langle\>||\<rangle\>>>|<cell|\<Leftrightarrow\>>|<cell|<around*|\<llbracket\>|<math-ss|schnorrVerify>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=<math-tt|1><rsub|<2>>>>>>
+    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|schnorrAssert>|\<rrbracket\>><rsup|<maybe>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=\<eta\><rsup|<maybe>><around*|\<langle\>||\<rangle\>>>|<cell|\<Leftrightarrow\>>|<cell|<around*|\<llbracket\>|<math-ss|schnorrVerify>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=<math-tt|1><rsub|<2>><text|.>>>>>
   </eqnarray*>
 
-  Next we use the Bitcoin transaction extension to build a
+  Next, we use the Bitcoin transaction extension to build a
   <math|<math-ss|sigHashAll>> expression that computes a SHA-256 hash that
   commits to all of the current transaction data from the environment and
   which input is being signed for.
@@ -3920,21 +3907,21 @@
   </render-code>
 
   The <math-ss|sigAll> expression reads a total of 672 bits of data from the
-  environment. \ The <math-ss|ivSigAll> adds one 512-bit block constant
-  prefix to this, which totals 1184 bits of data. \ While it is not strictly
+  environment. The <math-ss|ivSigAll> adds one 512-bit block constant prefix
+  to this, which totals 1184 bits of data. While it is not strictly
   necessary, we choose to explicitly append the SHA-256 padding for this
   length of data.
 
-  Notice that in addition hashing the transaction data itself, we also hash
-  the semantics of the data by including the commitment Merkle root of the
-  Simplicity expression that generates the data in <math-ss|ivSigAll>. \ This
+  Notice that in <math-ss|ivSigAll>, in addition hashing the transaction data
+  itself, we also hash the semantics of the data by including the commitment
+  Merkle root of the Simplicity expression that generates the data. This
   fulfills the same role that including Bitcoin's sighash flags in its signed
   data does.
 
-  Finally we combine everything together into a single expression. \ Given a
-  public key in compressed format <math|p\<of\>PubKey> and a formated Schnorr
-  signature <math|s\<of\>Sig> we can create the Simplicity program
-  <math|<math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>\<of\><1>\<vdash\><1>>
+  Finally, we combine everything together into a single Simplicity program.
+  Given a public key in compressed format <math|p\<of\>PubKey> and a
+  formatted Schnorr signature <math|s\<of\>Sig> we can create the Simplicity
+  program <math|<math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>\<of\><1>\<vdash\><1>>
 
   <\equation*>
     <math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>\<assign\><around*|(|<math-ss|scribe><rsub|PubKey><around*|(|p|)>
@@ -3944,13 +3931,13 @@
 
   The <math-ss|witness> combinator ensures that the program's commitment
   Merkle root <math|<cmr|<math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>>>
-  is independent of the value of the signature <math|s>. \ This allows us to
-  commit to this program without knowning the signature, and only providing
-  the signature at redemption time. \ As with normal Bitcoin transactions,
-  the signature is only valid in the context, <math|e\<of\>BCEnv>, of a
+  is independent of the value of the signature <math|s>. This allows us to
+  commit to this program without knowing the signature, and only providing
+  the signature at redemption time. As with normal Bitcoin transactions, the
+  signature is only valid in the context, <math|e\<of\>BCEnv>, of a
   particular input on a particular transaction during redemption because our
   program only executes successfully, i.e.
-  <math|<around*|\<llbracket\>|<math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>><around*|(|e|)>\<neq\>\<emptyset\><rsup|<maybe>><rsub|<1>>>,
+  <math|<around*|\<llbracket\>|<math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>|\<rrbracket\>><rsup|<BC>><around*|\<langle\>||\<rangle\>><around*|(|e|)>=\<eta\><rsup|<maybe>><around*|\<langle\>||\<rangle\>>>,
   when provided a witness that is a valid signature on the transaction data
   and input number.
 
@@ -3966,7 +3953,7 @@
   <math-ss|lockTime>s.><chapter|Delegation>
 
   Our last Simplicity extension is the <samp|disconnect> expression. This
-  extention allows for delegation but using it loses some nice properties of
+  extension allows for delegation but using it loses some nice properties of
   Simplicity. The language that uses this extension is called <dfn|Simplicity
   with delegation>. The language that uses this and all other extensions is
   called <dfn|full Simplicity with delegation>.
@@ -3992,7 +3979,7 @@
     t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a,<cmr|t>|\<rangle\>>
   </equation*>
 
-  Like a <samp|witness> expression, the real signifigance comes from the form
+  Like a <samp|witness> expression, the real significance comes from the form
   of its commitment Merkle root. We extend the definition of the commitment
   Merkle root as follows.
 
@@ -4018,55 +4005,56 @@
   here.
 
   The primary purpose of <samp|disconnect> is for delegation. In this
-  scenario, <math|s>, validates that the commitment merkle root
+  scenario, <math|s>, validates that the commitment Merkle root
   <math|<cmr|t>> is signed by a fixed public key. This lets a user postpone
   defining <math|t> until redemption time, but still maintaining full
-  control, because any redeption requires their signature on <math|t>. For
+  control, because any redemption requires their signature on <math|t>. For
   example, a user can have <math|t> return a public key. After commitment,
-  but before redemption, the user can delegate authorisation to redeem these
+  but before redemption, the user can delegate authorization to redeem these
   funds to a third party by signing the that party's key in this fashion.
 
   The <samp|disconnect> expression comes with some significant caveats.
-  Because the whole program isn't commited to at commitment time, it is no
-  longer possible to statically analyse the maximum resource costs for
+  Because the whole program is not committed to at commitment time, it is no
+  longer possible to statically analyze the maximum resource costs for
   redemption before commitment. During redemption <math|t> could, a priori,
-  perfrom arbitrarly much computation. Indeed we can use <samp|disconnect> to
-  commit to what are effectively unbounded loops in Simplicity. Contrast this
-  with the <samp|witness> expression, where type inference limits the size of
-  the witness data, so such bounds are still possible to compute.
+  perform arbitrarily much computation. Indeed we can use <samp|disconnect>
+  to commit to what are effectively unbounded loops in Simplicity (see
+  Section<nbsp><reference|ss:unboundedLoop>). Contrast this with the
+  <samp|witness> expression, where type inference limits the size of the
+  witness data, so such bounds are still possible to compute.
 
   Of course, depending on the specifics of the policy enforced by <math|s>,
   it may be possible to bound the maximum resource costs for redemption in
   specific cases. However, that depends on the details of <math|s> and there
-  is no practical, universal algorithm that will work for any Simpliciy
+  is no practical, universal algorithm that will work for any Simplicity
   expression. Using <samp|disconnect> risks creating program that ends up
-  impractical to redeem due to costs. This danger is why <samp|disconnect>
-  isn't part of full Simplicity and it is instead considered an extension to
-  be used with extreme caution.
+  impractical to redeem due to costs. This danger is why <samp|disconnect> is
+  not part of full Simplicity and it is instead considered an extension to be
+  used with caution.
 
-  However, it is also important to notice that static analysis can be
-  performed at redemption time. At that point time the <math|t> expression
-  has been proviced and usual static analysis can proceed. Static analysis
-  can still be part of the consensus protocol, even when the
-  <samp|disconnect> expression is used.
+  However, it is also important to note that static analysis can be performed
+  at redemption time. At that point time the <math|t> expression has been
+  provided and usual static analysis can proceed. Static analysis can still
+  be part of the consensus protocol, even when the <samp|disconnect>
+  expression is used.
 
-  <section|Unbounded Loops>
+  <section|Unbounded Loops><label|ss:unboundedLoop>
 
   <chapter|Type Inference and Serialization>
 
-  In this chapter we will define an representation of Simplicity expressions
+  In this chapter we will define a representation of Simplicity expressions
   as an untyped Simplicity DAG where subexpressions are have explicit
-  sharing. \ We will define how to perform type inference and reconstruct a
+  sharing. We will define how to perform type inference and reconstruct a
   Simplicity expression from this Simplicity DAG and we will define a binary
   serialization format for these Simplicity DAGs.
 
   <section|Explicit Simplicity DAGs><label|ss:DAGs>
 
   In this section, we will introduce an DAG representation for (untyped)
-  Simplicity expressions with explicit sharing of subexpressions. \ An
-  explicit Simplicity DAG is a topological sorted list of Simplicity nodes.
-  \ Each Simplicity node is a combinator name with by a payload of references
-  to earlier nodes in the list, or a payload of witness data, etc.
+  Simplicity expressions with explicit sharing of subexpressions. An explicit
+  Simplicity DAG is a topological sorted list of Simplicity nodes. Each
+  Simplicity node is a combinator name with by a payload of references to
+  earlier nodes in the list, or a payload of witness data, etc.
 
   First we enumerate the possible values for Simplicity nodes.
 
@@ -4181,17 +4169,18 @@
 
   \;
 
-  In addition to the above every primitive name is a Node. \ This set of
-  primitives is applicaiton specific but for Simplicity with Bitcoin, we
-  would have <math|<math-ss|`version'>\<of\>Node>,
-  <math|<math-ss|`lockTime'>\<of\>Node>, etc.
+  In addition to the above every primitive name is a Node. This set of
+  primitives is application specific but for Simplicity with Bitcoin, we have
+  <math|<math-ss|`version'>\<of\>Node>, <math|<math-ss|`lockTime'>\<of\>Node>,
+  etc.
 
   The single quotes around the Node names is there to distinguish them from
-  their corresponding Simplicity combinator. \ Notice that there isn't a
-  perfect 1-to-1 relationship between Node names and Simplicity combinator.
-  \ In particular, there are no Node names for the <samp|assertl> and
-  <samp|assertr> combinators. \ Instead we have one <samp|`hidden'> Node name
-  that will be used in conjuction with <samp|`case'> to represent assertions.
+  their corresponding Simplicity combinator. Notice that there is not a
+  perfect 1-to-1 relationship between Node names and Simplicity combinators.
+  In particular, there are no Node names for the <samp|assertl> and
+  <samp|assertr> combinators. Instead we have one <samp|`hidden'> Node name
+  that will be used in conjunction with <samp|`case'> to represent
+  assertions.
 
   A Simplicity DAG is represented as a topologically sorted, (non-empty) list
   of Nodes.
@@ -4218,8 +4207,8 @@
     h|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`version'>|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`lockTime'>|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>>>
   </eqnarray*>
 
-  A list <math|l:DAG> must statify a condition that references only have
-  offset that refer to nodes occuring strictly earlier in the list in order
+  A list <math|l:DAG> must satisfy a condition that references only have
+  offset that refer to nodes occurring strictly earlier in the list in order
   to be a well-formed DAG:
 
   <\equation*>
@@ -4229,24 +4218,24 @@
   <subsection|Type Inference><label|ss:typeInference>
 
   Simplicity DAGs, as described above, do not have type information
-  associated with them. \ Before we can intepret DAGs as Simplicity
-  expressions we must first perform type inference. \ Type inference can be
+  associated with them. Before we can interpret DAGs as Simplicity
+  expressions we must first perform type inference. Type inference can be
   done by solving unification equations of typing constraints to compute a
   most general unifier.
 
   A unification equation is written as <math|S\<doteq\>T> were <math|S> and
   <math|T> are Simplicity type expressions with unification variables, where
-  unification varaibles are denoted by greek letters <math|\<alpha\>>,
+  unification variables are denoted by Greek letters <math|\<alpha\>>,
   <math|\<beta\>>, <math|\<gamma\>>, etc.
 
   Given a list <math|l:DAG>, we associate with each index in the list,
   <math|0\<leq\>k\<less\><around*|\||l|\|>>, a pair of fresh unification
   variables <math|\<alpha\><rsub|k>,\<beta\><rsub|k>> that are to be
-  instantiated at the infered source and target types of the expression for
-  the node at index <math|k>. Each differeent node occuring at an index
+  instantiated at the inferred source and target types of the expression for
+  the node at index <math|k>. Each different node occurring at an index
   <math|k> in the DAG <math|l> implies a set of unification equations over
-  these type variables, possibly requiring further fresh unificaiton
-  vairables. \ 
+  these type variables, possibly requiring further fresh unification
+  variables.\ 
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|con<around*|\<langle\>|k,<math-ss|`iden'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<beta\><rsub|k>|}>>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`unit'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<beta\><rsub|k>\<doteq\><1>|}>>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`injl'>
@@ -4284,8 +4273,8 @@
     con<around*|(|l|)>\<assign\>fold<rsup|<op|\<cup\>>><around*|(|con<rsup|+><around*|(|indexed<around*|(|l|)>|)>|)>
   </equation*>
 
-  Depending on the application, there may be further constraints imposed on
-  the root of the DAG. \ For example, if the DAG is supposed to repesent a
+  Depending on the application there may be further constraints imposed on
+  the root of the DAG. For example, if the DAG is supposed to represent a
   Simplicity program, which has type <math|<1>\<vdash\><1>>, we would also
   add the constraints <math|<around*|{|\<alpha\><rsub|<around*|\||l|\|>-1>\<doteq\><1>,\<beta\><rsub|<around*|\||l|\|>-1>\<doteq\><1>|}>>.
 
@@ -4293,45 +4282,43 @@
   variables to Simplicity type expressions with unification variables. A
   substitution, <math|\<varsigma\>>, is a <dfn|ground substitution> if for
   every unification variable <math|\<alpha\>>, the Simplicity type
-  <math|\<varsigma\><around*|(|\<alpha\>|)>> has no unification variables.
-
-  A subsitution, <math|\<varsigma\>>, applyed to Simplicity type expression
+  <math|\<varsigma\><around*|(|\<alpha\>|)>> has no unification variables. A
+  substitution, <math|\<varsigma\>>, applied to Simplicity type expression
   <math|S>, is a new Simplicity type expression <math|S\|<rsub|\<varsigma\>>>
-  with each unification variable <math|\<alpha\>> repliced by
+  with each unification variable <math|\<alpha\>> replaced by
   <math|\<varsigma\><around*|(|\<alpha\>|)>>:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|\<alpha\>\|<rsub|\<varsigma\>>>|<cell|\<assign\>>|<cell|\<varsigma\><around*|(|\<alpha\>|)>>>|<row|<cell|<1>\|<rsub|\<varsigma\>>>|<cell|\<assign\>>|<cell|<1>>>|<row|<cell|<around*|(|S+T|)>\|<rsub|\<varsigma\>>>|<cell|\<assign\>>|<cell|S<mid|\|><rsub|\<varsigma\>>+T<mid|\|><rsub|\<varsigma\>>>>|<row|<cell|<around*|(|S\<times\>T|)>\|<rsub|\<varsigma\>>>|<cell|\<assign\>>|<cell|S<mid|\|><rsub|\<varsigma\>>\<times\>T<mid|\|><rsub|\<varsigma\>>>>>>
   </eqnarray*>
 
-  A substitution <math|\<tau\>> can also be applied to other subsitutions
+  A substitution <math|\<tau\>> can also be applied to other substitutions
   yielding a composite substitution:
 
   <\equation*>
     \<varsigma\>\|<rsub|\<tau\>><around*|(|\<alpha\>|)>\<assign\>\<varsigma\><around*|(|\<alpha\>|)>\|<rsub|\<tau\>>
   </equation*>
 
-  \;
+  A substitution <math|\<varsigma\><rsub|1>> is an instance of another
+  substitution <math|\<varsigma\><rsub|2>> whenever there exists a
+  substitution <math|\<tau\>> such that <math|\<varsigma\><rsub|1>=\<varsigma\><rsub|2>\|<rsub|\<tau\>>>.
+  If <math|\<varsigma\><rsub|1>> and <math|\<varsigma\><rsub|2>> are both
+  instances of each other then they are <math|\<alpha\>>-equivalent.
 
   A unifier for a set of constraints <math|C> is a substitution
   <math|\<varsigma\>> such that for every constraint
   <math|<around*|(|S\<doteq\>T|)>\<in\>C> we have
-  <math|S<around|\||<rsub|\<varsigma\>>= T|\|><rsub|\<varsigma\>>>. A
-  substitution <math|\<varsigma\><rsub|1>> is an instance of another
-  substituion <math|\<varsigma\><rsub|2>> whenever there exists a
-  substitution <math|\<tau\>> such that <math|\<varsigma\><rsub|1>=\<varsigma\><rsub|2>\|<rsub|\<tau\>>>.
-  If <math|\<varsigma\><rsub|1>> and <math|\<varsigma\><rsub|2>> are both
-  instances of each other then they are <math|\<alpha\>>-equivalent. The most
+  <math|S<around|\||<rsub|\<varsigma\>>= T|\|><rsub|\<varsigma\>>>. The most
   general unifier for a set of constraints is a unifier <math|\<varsigma\>>
   for those constraints such that every other unifier
-  <math|\<varsigma\><rprime|'>> for those constratins is an instance of
-  <math|\<varsigma\>>. \ The most general unifier is unique upto
+  <math|\<varsigma\><rprime|'>> for those constraints is an instance of
+  <math|\<varsigma\>>. The most general unifier is unique up to
   <math|\<alpha\>>-equivalence.
 
   Once all the constraints have be gathered we can perform first-order
   unification to solve for the most general unifier <math|\<varsigma\>>. The
   most general unifier, <math|\<varsigma\>>, may still contain free
-  variables. \ To eliminate these free variables, we define an instance of
+  variables. To eliminate these free variables, we define an instance of
   <math|\<varsigma\>> that sets all remaining free variable to the unit type
   <1>. We call the resulting ground substitution
   <math|\<varsigma\><rsub|<1>>>:
@@ -4342,67 +4329,69 @@
 
   Notice that if <math|\<varsigma\>> and <math|\<tau\>> are
   <math|\<alpha\>>-equivalent then <math|\<varsigma\><rsub|<1>>=\<tau\><rsub|<1>>>.
-  \ In particular this means that the ground subsitution
+  In particular, this means that the ground substitution
   <math|\<varsigma\><rsub|<1>>> is independent of which choice of
   <math|\<varsigma\>> we compute as the most general unifier.
 
   It is possible that there is no unifier for the given collection of
-  constraints. \ In such a case the Simplicity DAG is ill-typed, (or doesn't
-  meed the type constraints imposed by the application) and doesn't represent
-  a well-typed Simplicity expression.
+  constraints. In such a case the Simplicity DAG is ill-typed, (or does not
+  need the type constraints imposed by the application) and does not
+  represent a well-typed Simplicity expression.
 
   First-order unification can be preformed time linear in the size of the
-  constraints<cite|unification>, although in practice quasi-linear time
+  constraints<nbsp><cite|unification>, although in practice quasi-linear time
   algorithms using the union-find algorithm are simpler and may perform
-  better on the size of problems you are likely to encounter. Our set of
-  constraints is linear in the size of the DAG meaning we can compute the
-  most general unifier in linear (or quasi-linear) time.
+  better on the size of problems one is likely to encounter. Our set of
+  constraints is linear in the size of the DAG thus we can compute the most
+  general unifier in linear (or quasi-linear) time.
 
   It is important to note that these (quasi-)linear time computations rely on
   having sharing of (type) subexpressions in the representation of the
-  substitution. \ If you flatten out the representation of the substituion,
+  substitution. If you flatten out the representation of the substitution,
   for example by printing out all the types, the result can be exponential in
   the size of the input DAG. Fortunately, all of the computation required for
   Simplicity's consensus operations, from computing witness Merkle roots to
   evaluation of Simplicity expressions using the Bit Machine, can operate
-  witout flattening the representation of the infered types.
+  without flattening the representation of the inferred types.
 
   Also notice that our set of constraints imply we are doing monomorphic type
   inference, meaning that any shared subexpressions are assigned the same
-  type. \ Sometimes we will require multiple instances of the same sub-DAG
-  within a DAG so that different types can be infered for the subexpressions
-  corresponding to those sub-DAG. \ As a trival example, a DAG will often
-  have multiple <samp|`iden'> nodes, one for each type that the <samp|iden>
-  combinator will be used for. \ A DAG should never have sub-DAGs that end up
-  with the same pair of infered types and should be disallowed by
-  anti-malliablity rules (see Section<nbsp><inactive|<reference|<with|color|red|TODO>>>).
+  type. Sometimes we will require multiple instances of the same sub-DAG
+  within a DAG so that different types can be inferred for the subexpressions
+  corresponding to those sub-DAG. As a trivial example, a DAG will often have
+  multiple <samp|`iden'> nodes, one for each type that the <samp|iden>
+  combinator is be used for. A DAG should never have sub-DAGs that end up
+  with the same pair of inferred types and should be disallowed by
+  anti-malleability rules (see Section<nbsp><inactive|<reference|<with|color|red|TODO>>>).
 
   \ We could remove duplicate sub-DAGs entirely by using polymorphic type
-  inference instead. \ Polymorphic type inference is
+  inference instead. Polymorphic type inference is
   DEXPTIME-complete<nbsp><cite|Mairson:1989>, however because removing
   duplicated sub-DAGs can produce exponentially smaller terms it could be
   that polymorphic type inference is linear in the size of the DAG with
-  duplicated sub-DAGs that are needed for monomophic type inference. \ If
-  this is the case we could switch to polymorphic type inference without
-  opening up DoS attacks. Whether this is possible or not is currently open
-  question for me.
+  duplicated sub-DAGs that are needed for monomorphic type inference. If this
+  is the case we could switch to polymorphic type inference without opening
+  up DoS attacks. Whether this is possible or not is currently open question
+  for me.
 
-  <with|color|red|TODO: something about type-inference in the presenece of
+  <with|color|red|TODO: something about type-inference in the presence of
   sharing of hidden nodes? It might cause sharing that would otherwise be
   impossible with <samp|assertl> and <samp|assertr>?>
 
   <subsection|Reconstructing a Simplicity Expressions>
 
-  Given a Simplicity DAG, <math|l:DAG>, that does have a substition
-  <math|\<varsigma\>> yeilding the most general unifier, we can attempt to
-  synthesize the canonicalized Simplicity expression that the DAG represents
-  by recursivily interpreting the DAG.
+  Given a Simplicity DAG, <math|l:DAG>, that does have a substitution
+  <math|\<varsigma\>> yielding the most general unifier for
+  <math|con<around*|(|l|)>>, we can attempt to synthesize the Simplicity
+  expression that the DAG represents by recursively interpreting the DAG as
+  <math|syn<around*|(|l|)>\<of\>\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|<around*|\||l|\|>-1>|)>\<vdash\>\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|<around*|\||l|\|>-1>|)>>
+  where
 
   <\equation*>
     syn<around*|(|l|)>\<assign\>syn<around*|(|l,<around*|\||l|\|>-1,l<around*|[|<around*|\||l|\|>-1|]>|)>
   </equation*>
 
-  where
+  and where
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|syn<around*|(|l,k,\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|\<bot\>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`iden'>|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|iden><rsub|\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k>|)>>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`unit'>|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|unit><rsub|\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>>>|<row|<cell|syn<around*|(|l,k,\<eta\><rsup|<maybe>><around*|(|<math-ss|`injl'>
@@ -4437,17 +4426,16 @@
   </eqnarray*>
 
   The <samp|case> and <samp|witness> clauses require special consideration
-  which we define below. \ The syn function fails if it encounters a
-  <math|<math-ss|`hidden'>> node. \ These \ <math|<math-ss|`hidden'>> nodes
-  are only used by the syncase function.
+  which we define below. The syn function fails if it encounters a
+  <math|<math-ss|`hidden'>> node. These <math|<math-ss|`hidden'>> nodes are
+  only used by the syncase function.
 
   <subsubsection|syncase>
 
   The syncase function constructs <samp|case> expressions as well as
-  <samp|assertl> and <samp|assertr> expressions. \ Assertion expressions are
-  produced when hidden nodes are passed as parmeters. \ However we do not
-  allow both braches of a case expression to be hidden. The syncase function
-  fails in this scenario.
+  <samp|assertl> and <samp|assertr> expressions. Assertion expressions are
+  produced when hidden nodes are passed as parameters. However we do not
+  allow both branches of a case expression to be hidden.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|syncase<around*|(|l,k<rsub|0>,k<rsub|1>,\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
@@ -4474,13 +4462,13 @@
     h<rsub|2>|)>>>>>
   </eqnarray*>
 
-  <subsubsection|inflate>
+  <subsubsection|inflate><label|ss:inflate>
 
-  A <samp|`witness'> node doesn't hold a Simplicity value, like the
-  <samp|witness> combinator requires. \ Instead it has a bit string that
-  encodes a Simplicity value. \ The inflate function performs a type-directed
-  decoding of this bit string to reconstruct the witness value. \ The inflate
-  function is defined recursively via the inflation function. \ These two
+  A <samp|`witness'> node does not hold a Simplicity value, like the
+  <samp|witness> combinator requires. Instead it has a bit string that
+  encodes a Simplicity value. The inflate function performs a type-directed
+  decoding of this bit string to reconstruct the witness value. The inflate
+  function is defined recursively via the inflation function. These two
   functions are defined below.
 
   <\eqnarray*>
@@ -4500,37 +4488,37 @@
 
   As part of DoS protections and malleability protection, we want to prevent
   witness data from being inflated with unused bits. Notice that that in the
-  defintion of <math|syn<around*|(|k,<math-ss|`witness'> v|)>>, the inflate
-  function is passed the infered type <math|\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>.
-  \ Using the infered type ensures that the witness data only contains data
-  that is nominaly useful by the surounding Simplicity program. \ Futhermore
-  the inflate function fails unless it consumes exactly all of its bit string
-  argument. \ This prevents <samp|`witness'> data from being padded with
-  extra bits.
+  definition of <math|syn<around*|(|k,<math-ss|`witness'> v|)>>, the inflate
+  function is passed the inferred type <math|\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k>|)>>.
+  Using the inferred type ensures that the witness data only contains data
+  that is nominally useful by the surrounding Simplicity program.
+  Furthermore, the inflate function fails unless it consumes exactly all of
+  its bit string argument. This prevents <samp|`witness'> data from being
+  padded with extra, unused bits.
 
   <section|Serialization><label|ss:Serialization>
 
   In this section, we define a binary prefix code for serializing Simplicity
   DAGs. Because prefix codes are self-delimiting, they provide a convenient
-  framework for creating serialization formats. \ Compoud structures can be
+  framework for creating serialization formats. Compound structures can be
   serialized by concatenation of prefix codes of its substructures.
 
-  Our serialization of Simplicity DAGs could be used for a network protocol
-  or writing data to a file. The program size metric (see
+  Our serialization of Simplicity DAGs can be used as part of a network
+  protocol or for writing data to a file. The program size metric (see
   Section<nbsp><inactive|<reference|<with|color|red|TODO>>>) computed for
   terms can be used to bound to the length of this binary encoding. However,
   specific binary encodings, such of this one, do not form a consensus
-  critial aspect of Simplicity's design and can be substituted with other
+  critical aspect of Simplicity's design and can be substituted with other
   encodings that have similar suitable bounds.
-  \ Appendix<nbsp><reference|app:AltSerialization> describes an alternative
-  binary encoding.
+  Appendix<nbsp><reference|app:AltSerialization> describes an alternative,
+  byte-based, binary encoding.
 
   <subsection|Serializtion of Bit String and Positive Numbers>
 
   In this section we present a recursive Elias prefix code for bit strings
-  and positive natural numbers. \ Our code for positive natural numbers it
-  has properities similar to the Elias omega coding, but is a has a simple
-  recursive functional defitional and some other nice properties.
+  and positive natural numbers. Our code for positive natural numbers it has
+  properties similar to the Elias omega coding, but is a has a simple
+  recursive functional definition and some other nice properties.
 
   First, for any <math|n:\<bbb-N\>> with <math|0\<less\>n>, we define
   <math|<around*|\<lfloor\>|n|\<rfloor\>><rsub|<2><rsup|\<ast\>>>> to be a
@@ -4547,12 +4535,12 @@
     <tformat|<table|<row|<cell|<around*|\<lfloor\>|1|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|=>|<cell|<verbatim|<around*|[||]>><rsub|<2>>>>|<row|<cell|<around*|\<lfloor\>|2|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|=>|<cell|<verbatim|<around*|[|0|]>><rsub|<2>>>>|<row|<cell|<around*|\<lfloor\>|3|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|=>|<cell|<verbatim|<around*|[|1|]>><rsub|<2>>>>|<row|<cell|<around*|\<lfloor\>|4|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|=>|<cell|<verbatim|<around*|[|00|]>><rsub|<2>>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>|<row|<cell|<around*|\<lfloor\>|7|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>>|<cell|=>|<cell|<verbatim|<around*|[|11|]>><rsub|<2>>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>>>
   </eqnarray*>
 
-  This binary code isn't a prefix code. \ To make a prefix code we define
+  This binary code is not a prefix code. To make a prefix code we define
   mutually recursive function on bit strings and positive numbers. This
   encodes a bit string by prefixing it with a tag indicating if the bit
-  string is null followed by the bit string's length in the case when it is
-  not null. It encodes a positive number, <math|n>, by encoding its
-  associated bitstring <math|<around*|\<lfloor\>|n|\<rfloor\>><rsub|<2><rsup|\<ast\>>>>.
+  string is null followed by the bit string's length when it is not null. It
+  encodes a positive number, <math|n>, by encoding its associated bit string
+  <math|<around*|\<lfloor\>|n|\<rfloor\>><rsub|<2><rsup|\<ast\>>>>.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<rep|\<emptyset\><rsup|<maybe>><rsub|<2><rsup|+>>|>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|0|]>><rsub|<2>>>>|<row|<cell|<rep|\<eta\><rsup|<maybe>><rsub|<2><rsup|+>><around*|(|l|)>|>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|1|]>><rsub|<2>>\<cdummy\><rep|<around*|\||l|\|>|>\<cdummy\>l>>|<row|<cell|<rep|n|>>|<cell|\<assign\>>|<cell|<rep|<around*|\<lfloor\>|n|\<rfloor\>><rsub|<2><rsup|*\<ast\>>>|>>>>>
@@ -4569,22 +4557,20 @@
   Notice that this prefix code preserves numeric ordering as lexicographical
   ordering. If <math|n> and <math|m> are positive numbers then
   <math|n\<leq\>m\<Leftrightarrow\><rep|n|>\<preceq\><rep|m|>> where
-  <math|\<preceq\>> is the lexicographical ordering on bit strings.
-
-  When you are parsing a code for a positive number that you know from
-  context is not allowed to exceed some bound <math|b>. Then during parsing
-  you can abort as soon as the string being parsed lexicographically exceeds
-  <math|<rep|b|>>. \ In some cases you can abort parsing after only a few
-  bits. For example, if from context you know that a the postive number must
-  fit in a 64-bit integer (i.e. it is not allowed to exceed
-  <math|2<rsup|64>-1>), then you can abort parsing as soon as the bit string
-  being parsed lexicographically meets or exceeds the prefix
-  <verbatim|[1111001]>.
+  <math|\<preceq\>> is the lexicographical ordering on bit strings. When you
+  are parsing a code for a positive number that you know from context is not
+  allowed to exceed some bound <math|b>. Then during parsing you can abort as
+  soon as the string being parsed lexicographically exceeds <math|<rep|b|>>.
+  In some cases you can abort parsing after only a few bits. For example, if
+  from context you know that a the positive number must fit in a 64-bit
+  integer (i.e. it is not allowed to exceed <math|2<rsup|64>-1>), then you
+  can abort parsing as soon as the bit string being parsed lexicographically
+  meets or exceeds the prefix <verbatim|[1111001]>.
 
   <subsection|Serialization of Simplicity>
 
   In this section we describe a fairly direct serialization for Simplicity
-  DAGs. \ Firstly we provide a prefix code for <math|Node> values:
+  DAGs. First, we provide a prefix code for <math|Node> values:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<rep|<text|<samp|`comp'>> i
@@ -4612,7 +4598,7 @@
   <with|color|red|TODO: <verbatim|[11]> prefix reserved for jets>
 
   For serialization of DAGs, <math|l:DAG>, which is a non-empty list of
-  Nodes, we a couple of serialization options.
+  Nodes, we have a couple of serialization options.
 
   <\equation*>
     stopCode<around*|(|l|)>\<assign\><around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<upl\>><around*|(|l|)>\<cdummy\><verbatim|<around*|[|01011|]>><rsub|<2>>
@@ -4629,26 +4615,26 @@
 
   The <math|lengthCode> above prefixes the serialization of DAG with the
   number of nodes, followed by the list of nodes serialized with the prefix
-  code for nodes. \ Both <math|stopCode> and <math|lengthCode> are prefix
+  code for nodes. Both <math|stopCode> and <math|lengthCode> are prefix
   codes.
 
   The last alternative is to directly use
   <math|<around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<upl\>><around*|(|l|)>>.
-  \ This is suitable when, from the context of where the code is used, the
-  number of nodes or the length of the code in bits is already known. \ This
+  This is suitable when, from the context of where the code is used, the
+  number of nodes or the length of the code in bits is already known. This
   variant is not a prefix code.
 
   Which serialization format is best depends on the context in which it is
-  being used. \ Users should choose the most suitable one for their
+  being used. Users should choose the most suitable one for their
   application.<chapter|Coq Library Guide>
 
   The Coq development for Simplicity is found in the <verbatim|Coq/>
-  directory. There are two subdirectories, <verbatim|Simplicity/> contains
-  modules releated to Simplicity, and the <verbatim|Util/> directory has a
-  few modules dedicated to other structures that are not by themselves
-  specific to Simplicity, including a short hierarchy for commutitive and
-  idempotent monads. \ We will focus on the contents of the
-  <verbatim|Simplicity/> directory.
+  directory. There are two subdirectories: <verbatim|Simplicity/> contains
+  modules related to Simplicity, and the <verbatim|Util/> directory has a few
+  modules dedicated to other structures that are not by themselves specific
+  to Simplicity, including a short hierarchy for commutative and idempotent
+  monads. We will focus on the contents of the <verbatim|Simplicity/>
+  directory.
 
   <section|Simplicity Types>
 
@@ -4668,16 +4654,16 @@
   <section|Simplicity Terms>
 
   There are two different ways of representing of Simplicity terms defined in
-  Coq. One representation is an ``inital'' representation, as an inductive
-  types. The other representation is a ``final'' representation, as based on
-  algebras for Simplicity.
+  Coq. One representation is an ``initial'' representation, as an inductive
+  type. The other representation is a ``final'' representation, based on
+  algebras.
 
   Generally speaking the ``initial'' representation works well when reasoning
   about Simplicity term using induction to prove properties about them, while
   the ``final'' representation is useful for implicitly capturing shared
   sub-expressions when defining Simplicity programs.
 
-  We begin with the ``initial'' represetation, which will most readers will
+  We begin with the ``initial'' representation, which will most readers will
   find more familiar.
 
   <subsection|The ``Initial'' Representation of Terms><label|ss:coqInitial>
@@ -4689,44 +4675,42 @@
   function provides denotational semantics and interprets terms as Coq
   functions over the corresponding Coq types.
 
-  This module also establishes the Core Simplicity completeness theorem
-  (Theorem <reference|thm:CSCT>) as the <verbatim|Simplicity_Completeness>
-  theorem. The proof is built from <verbatim|scribe>, a function to produce
-  Simplicity terms representing constant functions, and <verbatim|reify>
-  which transforms Coq functions over Simplicity types into Simplicity terms
-  representing those functions.
+  This module also establishes the core Simplicity completeness theorem
+  (Theorem<nbsp><reference|thm:CSCT>) as the
+  <verbatim|Simplicity_Completeness> theorem. The proof is built from
+  <verbatim|scribe>, a function to produce Simplicity terms representing
+  constant functions, and <verbatim|reify> which transforms Coq functions
+  over Simplicity types into Simplicity terms representing those functions.
 
   <subsection|The ``Final'' Representation of Terms>
 
-  To explain the ``final'' representation of terms it is first neccessary to
+  To explain the ``final'' representation of terms it is first necessary to
   understand what an algebra for Simplicity is. We can understand this by way
   of a mathematical analogy with ring theory. A ring is a mathematical
-  structure consiting of a domain along with constants from that domain that
+  structure consisting of a domain along with constants from that domain that
   correspond to 0 and 1, and binary functions over that domain that
   correspond to <math|\<noplus\>+> and <math|\<times\>> operations that
-  satify certain ring laws. A term from the language of rings is an
+  satisfy certain ring laws. A term from the language of rings is an
   expression made out of <math|0>, <math|1>, <math|+>, and <math|\<times\>>.
-  Given a ring and a term from the language of rings, we can intepret that
+  Given a ring and a term from the language of rings, we can interpret that
   term in the given ring and compute an element of the domain that the term
   represents. There are many different rings structures, such as the ring of
   integers, and the ring of integers modulo <math|n> for any positive number
-  <math|n>. A given term can be interpreted as some value for any ring. It
-  turns out that an alternative way to represent terms is as a function that
-  given any ring returns a value from its domain and does so in a ``uniform''
-  way. This would be the ``final'' representation for terms in the language
-  of rings.
+  <math|n>. A given term can be interpreted as some value for any ring. An
+  alternative way to represent terms is as a function that, given any ring,
+  returns a value from its domain and does so in a ``uniform'' way. This
+  would be the ``final'' representation for terms in the language of rings.
 
   <subsubsection|Simplicity Algebras>
 
-  An algebra for Simplicity is an analgous structure to a ring. An algebra
+  An algebra for Simplicity is an analogous structure to a ring. An algebra
   for Simplicity consists of a domain, along with constants from that domain
   that correspond to <math|<math-ss|iden>> and <math|<math-ss|unit>> and
   functions over that domain that correspond the other combinators from
   Simplicity. Unlike the case for rings, the domain of a Simplicity algebra
   is indexed by a pair of Simplicity types, and naturally the constants and
   functions that interpret Simplicity combinators must respect these types
-  (and unlike rings, we are not going to impose any extra laws, making it a
-  free-algebra).
+  (and unlike rings, we are not going to impose any extra laws).
 
   Core Simplicity algebras are formalized in the <verbatim|Simplicity/Alg.v>
   file. The <verbatim|Core.Class.class> record captures the interpretation of
@@ -4746,8 +4730,8 @@
   functional semantics of Simplicity. The domain of this algebra is the
   functions between Simplicity types. This domain is indexed by the input and
   output Simplicity types. The interpretation of the <math|<math-ss|iden>>
-  and <math|<math-ss|unit>> constants are the idenity and constant-unit
-  functions respectively and the intepretation of the other core Simplicity
+  and <math|<math-ss|unit>> constants are the identity and constant-unit
+  functions respectively and the interpretation of the other core Simplicity
   combinators is also in accordance with Simplicity's denotational semantics.
   This algebra is defined in the <verbatim|CoreSem> structure and the
   <verbatim|CorSem_correct> lemma proves that the interpretation of terms in
@@ -4756,41 +4740,41 @@
   <verbatim|Simplicity/Core.v> produces. The <verbatim|\|[x]\|> notation
   denotes this denotation semantics using the <verbatim|CoreSem> domain.
 
-  Another example of a Simplicity algebra is the ``initial'' reprsentation of
-  terms themselves, which form a trivial algebra. This domain of Simplicity
-  terms is also indexed by input and output Simplicity types and the
-  constants and combinators are interpreted as themselves. This algebra is
-  defined in the <verbatim|Core.Term> structure and the
+  Another example of a Simplicity algebra is the ``initial'' representation
+  of terms themselves, which form a trivial algebra. This domain of
+  Simplicity terms is also indexed by input and output Simplicity types and
+  the constants and combinators are interpreted as themselves. This algebra
+  is defined in the <verbatim|Core.Term> structure and the
   <verbatim|Core.eval_Term> lemma proves that the interpretation of any term
   in this algebra returns the original term back.
 
   There are several other Simplicity algebras. Programs for the Bit Machine
   form a Simplicity algebra with the translation from Simplicity to Bit
-  Machine code defining the interpreptation of core Simplicity combinators.
-  Also 256-bit hashes are a Simplicity algebra with the merkle root
-  computation defining the interpretation of core Simplicity combinators.
-  Static analysis of resource usage for Simplicity expressions will for yet
-  another set of Simplicity algebras.
+  Machine code defining the interpretation of core Simplicity combinators.
+  Also 256-bit hashes form a Simplicity algebra with the commitment Merkle
+  root computation defining the interpretation of core Simplicity
+  combinators. Static analysis of resource usage for Simplicity expressions
+  forms yet another set of Simplicity algebras.
 
   Instances of Simplicity algebras are declared as <verbatim|Canonical
-  Structures>. \ This allows Coq's type inference engine to infer the
-  interpration of Simplicity terms when they are used in the typing contexts
-  of domain of one of these Simplicity algebras.
+  Structures>. This allows Coq's type inference engine to infer the
+  interpretation of Simplicity terms when they are used in the typing
+  contexts of domain of one of these Simplicity algebras.
 
   <subsubsection|The ``Final'' Representation>
 
   The ``final'' representation of a Simplicity term is as a function that
   selects a value out of any Simplicity algebra and does so in a ``uniform''
-  manner. A ``uniform'' manner means a function that satifies the
+  manner. A ``uniform'' manner means a function that satisfies the
   <verbatim|Core.Parametric> property which effectively says that that the
-  values choosen by the function from two domains must each be constructed
-  from a composition of the intepretation of combinators in the two domains
+  values chosen by the function from two domains must each be constructed
+  from a composition of the interpretation of combinators in the two domains
   in the same way. In other words, the function must act the the
-  intepretation of some ``inital'' represented term under
+  interpretation of some ``initial'' represented term under
   <verbatim|Core.eval> for any domain.
 
-  Terms in the ``inital'' representation can be converted to the ``final''
-  representation by parital application of <verbatim|Core.eval>. The
+  Terms in the ``initial'' representation can be converted to the ``final''
+  representation by partial application of <verbatim|Core.eval>. The
   <verbatim|Core.eval_Parametric> lemma proves that the resulting ``final''
   representation resulting from <verbatim|Core.eval> satisfies the
   <verbatim|Core.Parametric> property.
@@ -4801,7 +4785,7 @@
   converting from the ``initial'' representation to the ``final''
   representation and back to the ``initial'' representation returns the
   original value. The <verbatim|Core.term_eval> lemma shows that starting
-  from any term in the ``final'' representation that satsifies the
+  from any term in the ``final'' representation that satisfies the
   <verbatim|Core.Parametric> property and converting it to the ``initial''
   representation and back to the ``final'' representation results in an
   equivalent term. This completes the proof at the two representations are
@@ -4809,8 +4793,8 @@
 
   <subsubsection|Constructing ``Final'' Terms>
 
-  To faciliate the construction of expression in the ``final''
-  representaiton, the nine core combinators are defined as functions
+  To facilitate the construction of expression in the ``final''
+  representation, the nine core combinators are defined as functions
   parameterized over all Simplicity algebras, and each combinator is proven
   to be parameteric or to preserve parametericity. For the most part, these
   combinators can be used to write Simplicity expressions in the ``final''
@@ -4818,13 +4802,13 @@
   Simplicity expressions in the ``initial'' representation. On top of this,
   notation <verbatim|s &&& t> is defined for the pair combinator, and
   <verbatim|s \<gtr\>\<gtr\>\<gtr\> t> is defined for the composition
-  combinator. Also the <verbatim|'H'>, <verbatim|'O'>, and <verbatim|'I'>
-  notations for sequences of takes and drops over the identity combinator is
-  also defined.
+  combinator. Also we define the <verbatim|'H'>, <verbatim|'O'>, and
+  <verbatim|'I'> notations for sequences of takes and drops over the identity
+  combinator.
 
   For every expression built in the ``final'' representation, it is necessary
-  to prove that the result sastifies the paramatricity property. A
-  <verbatim|parametricity> hint database is provided to faciliate automatic
+  to prove that the result satisfies the parametericity property. A
+  <verbatim|parametricity> hint database is provided to facilitate automatic
   proofs of these results. Users should add their own parametricity lemmas to
   the hint database as they create new Simplicity expressions. Some examples
   of this can be found in the <verbatim|Simplicity/Arith.v> module.
@@ -4832,32 +4816,29 @@
   <subsection|Why two representations of Terms?>
 
   The ``initial'' inductive representation is the traditional definition one
-  expects for terms and is easy to reason inductively about. This is the
-  representation we will typically use in proofs. The problem with this
-  representation is that, due to lack of sharing between sub-expressions, it
-  is expensive to evaluate with these terms inside Coq itself. For example,
-  one cannot compute Merkle roots of anything but the most trivial of
-  expressions.
+  expects for terms and is easy to reason inductively about. The problem with
+  this representation is that, due to lack of sharing between
+  sub-expressions, it is expensive to evaluate with these terms inside Coq
+  itself. For example, one cannot compute Merkle roots of anything but the
+  most trivial of expressions.
 
   The ``final'' algebra representation solves this problem by allowing
   transparent sharing of expressions. In the ``final'' representation, terms
   are really values of a Simplicity algebra. When these values are shared
   using in Coq's let expressions, or shared via some function argument in
   Coq, those values of the algebra are shared during computation within Coq.
-  This representation makes it feasable to acutally compute Merkle roots for
+  This representation makes it feasible to actually compute Merkle roots for
   Simplicity expressions directly inside Coq.
 
   Both representations are used throughout the Simplicity Coq library. The
-  ``final'' representation is used when building concrete Simplicity
-  expressions. The ``initial'' representation is used when reasoning about
-  functions of Simplicity expressions. The isomorphism between the two
-  representations is used to transport theorems between them.
+  isomorphism between the two representations is used to transport theorems
+  between them.
 
-  You will find that I typically use <verbatim|term : Core.Algebra> as the
-  variable name for an abstract Simplicity algebra. I use this variable name
-  because <verbatim|Core.Term> are the most generic type of Simplicity
-  algebra (formally knowns as an initial algebra) so it makes sense to think
-  of generic Simplicity algebras as if they are term algebras.
+  I typically use <verbatim|term : Core.Algebra> as the variable name for an
+  abstract Simplicity algebra. I use this variable name because
+  <verbatim|Core.Term> are the most generic type of Simplicity algebra
+  (formally known as an initial algebra) so it makes sense to think of
+  generic Simplicity algebras as if they are term algebras.
 
   <section|Example Simplicity Expressions>
 
@@ -4926,30 +4907,30 @@
   <section|The Hierarchy of Simplicity Language Extensions>
 
   <big-figure|<image|inheritance.Coq.eps||8cm||>|The inheritance hierarchy of
-  algebras for Simplicity's languge extensions in
+  algebras for Simplicity's partial extensions in
   Coq.<label|fig:inheritance>>
 
-  So far we've only covered the algebra for the Core Simplicity language in
-  Coq. \ The various extensions to this Core Simplicity language are captured
-  by extensions to the record type for the Core Simplicity algebra.
+  So far we have only covered the algebra for the core Simplicity language in
+  Coq. The various extensions to this core Simplicity language are captured
+  by extensions to the record type for the core Simplicity algebra.
   Figure<nbsp><reference|fig:inheritance> illustrates the names of the
   algebras extending the <verbatim|Core> language algebra and their
-  inhieritance relationship. \ We use the ``packed-classes'' method for
-  formalzing the inheritance releation of these extensions in Coq. Readers
+  inheritance relationship. We use the ``packed-classes'' method for
+  formalizing the inheritance relation of these extensions in Coq. Readers
   unfamiliar with this style should first read ``<hlink|Canonical Structures
   for the working Coq user|https://hal.inria.fr/hal-00816703v1/document>''<nbsp><cite|Mahboubi:2013>
   and ``<hlink|Packaging Mathematical Structures|https://hal.inria.fr/inria-00368403v1/document>''<nbsp><cite|garillot:2009>.
 
-  Roughly speaking, there are two dimensions to the inheritence structure.
-  \ In one direction, the <verbatim|Core>, <verbatim|Witness>, and
-  <verbatim|Delegation> algebras all have semantics that can be intepreted as
-  pure functions. \ That is, the function semantics of terms from these
+  Roughly speaking, there are two dimensions to the inheritance structure. In
+  one direction, the <verbatim|Core>, <verbatim|Witness>, and
+  <verbatim|Delegation> algebras all have semantics that can be interpreted
+  as pure functions. That is, the function semantics of terms from these
   languages can be evaluated as functions that have no side-effects and can
   return values within any monad, including the identity monad.
 
   The next layer in this direction, <verbatim|Assertion>,
   <verbatim|AssertionWitness>, and <verbatim|AssertionDelegation>, extend the
-  previous layer with assertion and failure expressions. \ These expressions
+  previous layer with assertion and failure expressions. These expressions
   introduce the failure effect and the functional semantics of terms from
   these languages return values within a <verbatim|MonadZero>, which includes
   the <verbatim|option> monad.
@@ -4957,55 +4938,53 @@
   The last layer in this direction, <verbatim|Primitive>, <verbatim|Jet>,
   <verbatim|FullSimplicity>, and <verbatim|FullSimplicityWithDelegation>,
   include primitive terms that are particular to the specific blockchain
-  application. \ The functional semantics of terms from these language return
-  values within a monad that caputures the particular effects of the
-  blockchain application. \ In the case of Bitcoin, the effects are captured
-  by an environment (a.k.a reader) monad that provides read-only access to
-  the signed transaction data.
+  application. The functional semantics of terms from these language return
+  values within a monad that captures the particular effects of the
+  blockchain application. In the case of Bitcoin, the effects are captured by
+  an environment (a.k.a reader) monad that provides read-only access to the
+  signed transaction data.
 
   We break up the language of Simplicity into these layers because it helps
   us isolate the side-effects of the various language extensions when
-  reasoning about Simplicity programs. \ When dealing with a sub-expression
-  from the first layer, one can safely ignore the enviroment and failure
+  reasoning about Simplicity programs. When dealing with a sub-expression
+  from the first layer, one can safely ignore the environment and failure
   effects and reason only about pure functions. Afterwards, various lemmas,
   such as <code|<code*|Simplicity.Alg.CoreSem_initial>> or
   <verbatim|Simplicity.Alg.AssertionSem_initial>, can be used to lift results
   into the monads use by the other layers when combining the pure
   sub-expression with other sub-expressions that do have effects.
 
-  The other dimension of the inheritence structure breaks the language into
-  feature sets. \ The <verbatim|Core>, <verbatim|Assertion>, and
+  The other dimension of the inheritance structure breaks the language into
+  feature sets. The <verbatim|Core>, <verbatim|Assertion>, and
   <verbatim|Primitive> algebras exclude witness and delegation features and
-  encompse the set of language features that <verbatim|Jet>s are restricted
-  to using. \ The next layer, <verbatim|Witness>,
-  <verbatim|AssertionWitness,> and <verbatim|FullSimplicity>, add witness
-  features cumulating in the <verbatim|FullSimplcity> algebra defining the
-  Full Simplicity language. \ The last layer, <verbatim|Delegation>,
-  <verbatim|AssertionDelegation>, and <verbatim|FullSimplicityWithDelgation>
-  provides the powerful and dangerous delegation extension, which should only
-  be used with caution.
+  encompass the set of language features that <verbatim|Jet>s are restricted
+  to using. The next layer, <verbatim|Witness>, <verbatim|AssertionWitness,>
+  and <verbatim|FullSimplicity>, add witness features culminating in the
+  <verbatim|FullSimplcity> algebra defining the Full Simplicity language. The
+  last layer, <verbatim|Delegation>, <verbatim|AssertionDelegation>, and
+  <verbatim|FullSimplicityWithDelgation> provides the powerful and dangerous
+  delegation extension, which should only be used with caution.
 
   We cover these language extensions in more detail below.
 
   <subsection|Witness>
 
   The <verbatim|Witness> algebra, found in <verbatim|Simplicity/Alg.v>,
-  \ extends the <verbatim|Core> algebra with the <verbatim|witness>
-  combinator. The <verbatim|WitnessFunSem> and <verbatim|WitnessSem>
-  canonical structures define the function semantics by interpreting the
-  terms as pure functions and as Kleisli morphisms for any monad,
-  respectively. \ The <verbatim|Witness_initial> lemma relates these two
-  intepretations.
+  extends the <verbatim|Core> algebra with the <verbatim|witness> combinator.
+  The <verbatim|WitnessFunSem> and <verbatim|WitnessSem> canonical structures
+  define the function semantics by interpreting the terms as pure functions
+  and as Kleisli morphisms for any monad, respectively. The
+  <verbatim|Witness_initial> lemma relates these two interpretations.
 
   <subsection|Assertion>
 
   The <verbatim|Assertion> algebra, found in <verbatim|Simplicity/Alg.v>,
   extends the <verbatim|Core> algebra with the <verbatim|assertl>,
-  <verbatim|assertr>, and <verbatim|fail> combinators. \ The
+  <verbatim|assertr>, and <verbatim|fail> combinators. The
   <verbatim|AssertionSem> canonical structure defines the functional
   semantics of Simplicity with assertions by interpreting terms as Kleisli
   morphisms for a monad with zero. The <verbatim|AssertionSem_initial> lemma
-  shows that when reasoning about the function semantics of Simplicity with
+  shows that when reasoning about the functional semantics of Simplicity with
   assertions, it suffices to reason within the <verbatim|option> monad and
   translate the result to any other monad with zero via the
   <verbatim|optionZero> homomorphism.
@@ -5025,23 +5004,22 @@
   adding any new combinators.
 
   \ Building the functional semantics of Simplicity with delegation involves
-  a simultaneous computation of commitment merkle roots (see
-  Section<nbsp><reference|SS:Coq:MerkleRoots>) and the functiona semantics.
-  \ To support this the <verbatim|Delegator arr A B> type is the product of
-  the <verbatim|arr A B> and the <verbatim|CommitmentRoot A B> types.
-  \ Whenever <verbatim|arr> forms an algebra from any of the previous
-  Simplicity language algberas, then \ <verbatim|Delegator arr> is also a
-  member of the same algebra. \ Furtheremove whenver <verbatim|arr> is a
-  Simplicity with witnesses algebra, then \ <verbatim|Delegator arr> is a
-  Simplicity with witnesses and delegation algebra. \ Similarly whenver
-  <verbatim|arr> is a Simplicity with assertions and witnesses algebra, then
-  \ <verbatim|Delegator arr> is a Simplicity with assertions, witnesses and
-  delegation algebra.
+  a simultaneous computation of commitment Merkle roots (see
+  Section<nbsp><reference|SS:Coq:MerkleRoots>) and the functional semantics.
+  To support this the <verbatim|Delegator arr A B> type is the product of the
+  <verbatim|arr A B> and the <verbatim|CommitmentRoot A B> types. Whenever
+  <verbatim|arr> forms an algebra from any of the previous Simplicity
+  language algebras, then <verbatim|Delegator arr> is also a member of the
+  same algebra. Furthermore whenever <verbatim|arr> is a Simplicity with
+  witnesses algebra, then <verbatim|Delegator arr> is a Simplicity with
+  witnesses and delegation algebra. Similarly whenever <verbatim|arr> is a
+  Simplicity with assertions and witnesses algebra, then <verbatim|Delegator
+  arr> is a Simplicity with assertions, witnesses and delegation algebra.
 
-  The <verbatim|runDelegator> projeciton extract <verbatim|arr A B>, from
-  <verbatim|Delegator arr A B>. \ For example, <verbatim|Arrow A B> is a
-  functional semantics for Simplicity with witnesses. \ Then, when
-  <verbatim|<em|t>> is a term for Simplicity with witneses and delegation,
+  The <verbatim|runDelegator> projection extracts <verbatim|arr A B>, from
+  <verbatim|Delegator arr A B>. For example, <verbatim|Arrow A B> is a
+  functional semantics for Simplicity with witnesses. Then, when
+  <verbatim|<em|t>> is a term for Simplicity with witnesses and delegation,
   <verbatim|runDelegator t : Arrow A B> is the functional semantics of
   <verbatim|<em|t>>.
 
@@ -5052,10 +5030,10 @@
   <subsection|Primitives>
 
   The Simplicity language is parameterized by the choice of
-  blockchain-specific primitives. \ Currently we use Coq's module system to
-  capture this parameterization. \ A <verbatim|Module Type PrimitiveSig>
-  found in <verbatim|Simplicity/Primitive.v> defines the parameters that
-  define these blockchain-specific applications of simplicity:
+  blockchain-specific primitives. Currently we use Coq's module system to
+  capture this parameterization. A <verbatim|Module Type PrimitiveSig> found
+  in <verbatim|Simplicity/Primitive.v> defines the parameters that define
+  these blockchain-specific applications of simplicity:
 
   <\itemize>
     <item>A type family <verbatim|t : Ty -\<gtr\> Ty -\<gtr\> Set> of the
@@ -5064,46 +5042,46 @@
     <item>A function <verbatim|tag : forall A B, t A B -\<gtr\> hash256> that
     defines the Merkle roots for the primitives.
 
-    <item>A type <verbatim|env : Set> that captures the relevent read-only
-    context used to intepret the primitives.
+    <item>A type <verbatim|env : Set> that captures the relevant read-only
+    context used to interpret the primitives.
 
     <item>A function <verbatim|sem : forall A B, t A B -\<gtr\> A -\<gtr\>
     env -\<gtr\> option B> that defines the functional semantics of the
-    primtives.
+    primitives.
   </itemize>
 
   At the moment, this frameworks only supports primitives that use the
-  enviroment (and failure) side-effect; however this framework could be
-  extended to allow primtives that require other effects that can be captured
-  by commutative and idemponent monads (for example, the writer effect for a
-  commutative and idempontent monoid).
+  environment (and failure) side-effect; however this framework could be
+  extended to allow primitives that require other effects that can be
+  captured by commutative and idempotent monads (for example, the writer
+  effect to a commutative and idempotent monoid).
 
   Given an instance of the <verbatim|PrimitiveSig>'s parameters, the
   <verbatim|PrimitiveModule> defines the algebras for the parts of the
-  Simplicity language that depends on the primtives. \ This includes the
+  Simplicity language that depends on the primitives. This includes the
   <verbatim|Primitive>, <verbatim|Jet>, <verbatim|FullSimplicity> and
   <verbatim|FullSimplicityWithDelegation> algebras.
 
   The <verbatim|Primitive> algebra extends the <verbatim|Assertion> algebra
   with the primitives given by the <verbatim|PrimitiveSig>'s type family
-  <verbatim|t> through the <verbatim|prim> combinator. \ The
-  <verbatim|primSem M> arrow is the Kleisli arrow for the monad generated by
-  adding an environment effect for the <verbatim|PrimitiveSig>'s
-  <verbatim|env> to the monad <verbatim|M>. \ The <verbatim|PrimitivePrimSem>
-  canonical structure provides the funciton semantics for Simplicity with
-  primitives by interpreting terms as <verbatim|primSem M> whenever
-  <verbatim|M> is a monad zero.
+  <verbatim|t> through the <verbatim|prim> combinator. The <verbatim|primSem
+  M> arrow is the Kleisli arrow for the monad generated by adding an
+  environment effect for the <verbatim|PrimitiveSig>'s <verbatim|env> to the
+  monad <verbatim|M>. The <verbatim|PrimitivePrimSem> canonical structure
+  provides the functional semantics for Simplicity with primitives by
+  interpreting terms as <verbatim|primSem M> whenever <verbatim|M> is a monad
+  zero.
 
   <subsubsection|Bitcoin>
 
   The <verbatim|Bitcoin> module found in <verbatim|Simplicity/Primitive/Bitcoin.v>
   provides these an instance of the <verbatim|PrimitiveSig> parameters used
-  for a Bitcoin or Bitcoin-like applicaiton of Simplicity. \ The structures
-  defining the signed transaction data are specified cumulating in the
+  for a Bitcoin or Bitcoin-like application of Simplicity. The structures
+  defining the signed transaction data are specified culminating in the
   <verbatim|sigTx> data type.
 
   The <verbatim|Bitcoin.prim> type lists the typed primitive expressions
-  defined in Section<nbsp><reference|ss:BitcoinTransactions>. \ The
+  defined in Section<nbsp><reference|ss:BitcoinTransactions>. The
   <verbatim|environment> type captures the read-only context for interpreting
   these primitives and it includes a <verbatim|sigTx>, the index withing this
   transaction that is under consideration, and the commitment Merkle root of
@@ -5111,10 +5089,10 @@
 
   Lastly, the <verbatim|sem> function defines the functional semantics of the
   primitives in accordance with Section<nbsp><reference|ss:BTDenotationalSemantics>
-  and the <verbatim|tag> function defines the merkle roots for the primitives
+  and the <verbatim|tag> function defines the Merkle roots for the primitives
   in accordance with Section<nbsp><reference|ss:BTMerkleRoots>. We use
-  <verbatim|vm_compute> in the defintion of <verbatim|tag> to pre-evaluate
-  the definitions of the merkle roots as an optimization.
+  <verbatim|vm_compute> in the definition of <verbatim|tag> to pre-evaluate
+  the definitions of the Merkle roots as an optimization.
 
   <subsection|Jets>
 
@@ -5123,14 +5101,14 @@
   with generic support for jets. The <verbatim|jet> combinator takes a term
   <verbatim|<em|t>> from the <verbatim|Primitive> algebra and the
   <verbatim|JetPrimSem> canonical structures defines the functional semantics
-  of a jet to be the function sematics of <verbatim|<em|t>>. Operationaly, we
-  expect implementations of specific jets to be natively implemented, but
-  this detail goes beyond the scope of the specification of Simplicity within
-  Coq.
+  of a jet to be the functional semantics of <verbatim|<em|t>>.
+  Operationally, we expect implementations of specific jets to be natively
+  implemented, but this detail goes beyond the scope of the specification of
+  Simplicity within Coq.
 
   Because <verbatim|<em|t>> is restricted to being a term from the
   <verbatim|Primitive> algebra, jets cannot contain <verbatim|witness> or
-  <verbatim|disconnect> sub-expressions. \ While our generic definiton of
+  <verbatim|disconnect> sub-expressions. While our generic definition of
   <verbatim|jets> allows any term from the <verbatim|Primtiive> algebra to be
   a jet, we expect specific applications of Simplicity to limit themselves to
   a finite collection of jets through its serialization format.
@@ -5141,50 +5119,50 @@
   <verbatim|PrimitiveModule> in <verbatim|Simplicity/Primtive.v>, is the meet
   of the <verbatim|Jet> and the <verbatim|Witness> algebras (equiv. the meet
   of the <verbatim|Jet> and <verbatim|AssertionWitness> algebras) with no
-  additonal combinators. \ It defines the full Simplicity language. \ The
+  additional combinators. It defines the full Simplicity language. The
   <verbatim|SimplicityPrimSem> canonical structure provides the functional
   semantics of the full Simplicity language as the <verbatim|primSem M> type
-  familiy when <verbatim|M> is a monad zero.\ 
+  family when <verbatim|M> is a monad zero.\ 
 
   The <verbatim|FullSimplicityWithDelegation> algebra is the the meet of the
   <verbatim|Jet> and the <verbatim|Delegation> algebras (equiv. the meet of
   the <verbatim|FullSimplicity> and <verbatim|Delegation> algebras, or the
   meet of the <verbatim|FullSimplicity> and <verbatim|AssertionDelegation>
-  algebras, etc.) defines the full Simplicity with delegation language. \ The
+  algebras, etc.) defines the full Simplicity with delegation language. The
   functional semantics are defined via the
   <verbatim|SimplicityDelegationDelegator> canonical structure whose domain
   includes <verbatim|Delegator (primSem M)> when <verbatim|M> is a monad
-  zero. \ Using <verbatim|runDelegator>, one can extract a <verbatim|primSem
-  M> value as the functional semantics.
+  zero. Using <verbatim|runDelegator>, one can extract a <verbatim|primSem M>
+  value as the functional semantics.
 
   <section|Merkle Roots><label|SS:Coq:MerkleRoots>
 
   The <verbatim|Simplicity/MerkleRoot.v> file defines a Merkle root of types,
   and the commitment Merkle root and witness Merkle roots for part of the
-  Simplicity language. \ The Merkle root of types is specified by
-  <code|<code*|typeRootAlg>> and defined by <verbatim|typeRoot>. \ The in the
+  Simplicity language. The Merkle root of types is specified by
+  <code|<code*|typeRootAlg>> and defined by <verbatim|typeRoot>. The in the
   <verbatim|CommitmentRoot A B> family the parameters are phantom parameters,
-  and the value is always a <verbatim|hash256> type. \ Canonical Structures
-  provide instances of <verbatim|CommitmentRoot> for Core Simplicity, and
-  Simplicity with assertions and witnesses. \ The <verbatim|CommitmentRoot>
-  for delegation is found in <verbatim|Simplicity/Delegation.v> and the
+  and the value is always a <verbatim|hash256> type. Canonical Structures
+  provide instances of <verbatim|CommitmentRoot> for core Simplicity, and
+  Simplicity with assertions and witnesses. The <verbatim|CommitmentRoot> for
+  delegation is found in <verbatim|Simplicity/Delegation.v> and the
   <verbatim|CommitmentRoot> for primitives, jets, Full Simplicity and Full
   Simplicity with delegation is found in <verbatim|Simplicity/Primtive.v>.
 
   These Merkle roots are computed using the SHA-256 compression function with
-  unique tags providing the initial value for each language contstruct.
-  \ These tags are in turn the SHA-256 hash of short (less than 56 character)
-  ASCII strings. \ The Coq definition of SHA-256 is taken from the VST
-  (Verified Software Toolchain) project<cite|Appel:2015> and the
+  unique tags providing the initial value for each language construct. These
+  tags are in turn the SHA-256 hash of short (less than 56 character) ASCII
+  strings. The Coq definition of SHA-256 is taken from the VST (Verified
+  Software Toolchain) project<cite|Appel:2015> and the
   <verbatim|Simplicity/Digest.v> module provides an interface to that
   project.
 
-  The VST implemention of SHA-256 is effecent enough that it is practical to
-  compute some commitment Merkle roots of functions inside Coq itself using
-  <verbatim|vm_compute>. \ See <verbatim|Fact Hash256_hashBlock> at the end
-  of <verbatim|Simplicity/SHA256.v> for an example of comuting the commitment
-  Merkle root of a Simplicity function that computes the SHA-256 compression
-  function.
+  The VST implementation of SHA-256 is efficient enough that it is practical
+  to compute some commitment Merkle roots of functions inside Coq itself
+  using <verbatim|vm_compute>. See <verbatim|Fact Hash256_hashBlock> at the
+  end of <verbatim|Simplicity/SHA256.v> for an example of computing the
+  commitment Merkle root of a Simplicity function that computes the SHA-256
+  compression function.
 
   <section|The Bit Machine>
 
@@ -5192,8 +5170,8 @@
   of the abstract Bit Machine. This definition, and hence this file, is
   independent of the rest of the Simplicity language.
 
-  The <verbatim|Cell> type explicity tracks cell values in the bit machine as
-  being one of <verbatim|0>, <verbatim|1>, and undefined. <verbatim|None>
+  The <verbatim|Cell> type explicitly tracks cell values in the bit machine
+  as being one of <verbatim|0>, <verbatim|1>, and undefined. <verbatim|None>
   represents the undefined value and <verbatim|Some false> and <verbatim|Some
   true> represent <verbatim|0> and <verbatim|1> respectively.
 
@@ -5255,15 +5233,15 @@
   combines a <verbatim|Context> value and a <verbatim|LocalState> value to
   build a complete <verbatim|RunState> value.
 
-  Sometimes we are intersted in of some <verbatim|LocalState> within another
+  Sometimes we are interested in of some <verbatim|LocalState> within another
   <verbatim|LocalState>. The context of such a decomposition is isomorphic to
   <verbatim|LocalState> and we don't even both giving a type alias to this.
-  The <verbatim|appendLocalState> funciton combines a context,
+  The <verbatim|appendLocalState> function combines a context,
   <verbatim|ls1>, with a <verbatim|LocalState>, <verbatim|ls2>, to build a
   combined <verbatim|LocalState>. <verbatim|appendLocalState> makes
   <verbatim|LocalState> into a monoid and <verbatim|fillContext> becomes a
   monoid action on <verbatim|Context>s with respect to this monoid. This
-  theory isn't fully developed in Coq, but will be if it is needed. The
+  theory is not fully developed in Coq, but will be if it is needed. The
   <verbatim|context_action> lemma proves the monoid action property, which is
   the only theorem developed so far.
 
@@ -5282,15 +5260,16 @@
   the instruction, <verbatim|<em|S2>>. In this way, the
   <verbatim|MachineCode.T> type family represents a precategory (also known
   as a directed multi-graph) that captures the machine instructions and their
-  semantics. There is an objects (a.k.a. nodes) for every possible state of
-  the Bit Machine. There is an arrow (a.k.a. edge) between two states if
+  semantics. There is an object (a.k.a. node) for every possible state of the
+  Bit Machine. There is an arrow (a.k.a. directed edge) between two states if
   there is an instruction of the Bit Machine that successfully transitions
-  from the source state to the target state, and that arrow (a.k.a. edge) is
-  labled with the name of the instruction. The <verbatim|Abort> instruction
-  is the only instruction whose final state is the <verbatim|Halted> state.
-  No instruction begins from the <verbatim|Halted> state. The specific type
-  <verbatim|MachineCode.T <em|S1> <em|S2>> is the type of all instructions
-  that transition from state <verbatim|<em|S1>> to state <verbatim|<em|S2>>.
+  from the source state to the target state, and that arrow (a.k.a. directed
+  edge) is labeled with the name of the instruction. The <verbatim|Abort>
+  instruction is the only instruction whose final state is the
+  <verbatim|Halted> state. No instruction begins from the <verbatim|Halted>
+  state. The specific type <verbatim|MachineCode.T <em|S1> <em|S2>> is the
+  type of all instructions that transition from state <verbatim|<em|S1>> to
+  state <verbatim|<em|S2>>.
 
   A thrist of <verbatim|MachineCode.T> is the free category generated from
   the precategory <verbatim|MachineCode.T>. This free category can also be
@@ -5323,25 +5302,26 @@
   function extracts a <verbatim|S1 -\<gtr\>\<gtr\> S2> trace from a program
   <verbatim|k> when <verbatim|S1 \<gtr\>\<gtr\>- k -\<gtr\>\<gtr\> S2> holds.
 
-  For each machine instruction, we use <verbatim|makeProgram> to define a
+  For each machine instruction we use <verbatim|makeProgram> to define a
   single instruction <verbatim|Program> that tries to execute that single
   instruction once and returns that state transition. If the initial
-  non-halted state given to these single instruction programs isn't valid for
-  their instruction, the program fails by returning <verbatim|None>. However,
-  when the initial state is the <verbatim|Halted> state, the program succeeds
-  but ignores its instruction and remains in the <verbatim|Halted> state.
-  This corresponds to the <prog|<halted>|i|<halted>> deduction. These single
-  instruction programs have an associated correctness lemma that proves they
-  run successfully when run from an initial state valid for their instruction
-  and a completeness lemma that proves that they were run from either a valid
-  initial state or the <verbatim|Halted> state. We also define the trivial
-  <verbatim|nop> program that contains no instructions and always succeeds.
+  non-halted state given to these single instruction programs is not valid
+  for their instruction, the program fails by returning <verbatim|None>.
+  However, when the initial state is the <verbatim|Halted> state, the program
+  succeeds but ignores its instruction and remains in the <verbatim|Halted>
+  state. This corresponds to the <prog|<halted>|i|<halted>> deduction. These
+  single instruction programs have an associated correctness lemma that
+  proves they run successfully when run from an initial state valid for their
+  instruction and a completeness lemma that proves that they were run from
+  either a valid initial state or the <verbatim|Halted> state. We also define
+  the trivial <verbatim|nop> program that contains no instructions and always
+  succeeds.
 
-  These single instruction programs can be combined into more complex
-  programs using the <verbatim|seq> and <verbatim|choice> combinators. The
-  <verbatim|seq> combinator sequences two programs, running the second
-  program starting from the final state of the first program and combines
-  their thrists. The sequence fails if either program fails. The
+  These single instruction (and <verbatim|nop>) programs can be combined into
+  more complex programs using the <verbatim|seq> and <verbatim|choice>
+  combinators. The <verbatim|seq> combinator sequences two programs, running
+  the second program starting from the final state of the first program and
+  combines their thrists. The sequence fails if either program fails. The
   <verbatim|choice> combinator picks between running two programs by peeking
   at the cell under the active read frame's cursor from the initial state and
   running either the first or second program depending on whether the cell
@@ -5359,7 +5339,7 @@
 
   The <verbatim|runMachine> function takes a <verbatim|Program> and an
   initial <verbatim|State> and extracts the resulting final <verbatim|State>
-  and the trace to get there, if the program is sucessful. For denotational
+  and the trace to get there, if the program is successful. For denotational
   semantics we only care about the resulting final state. For operational
   semantics we will care how we got there. A few lemmas are provided to help
   reason about the behaviour of <verbatim|runMachine> when running the
@@ -5383,16 +5363,8 @@
   to the naive translation. The <verbatim|Naive.translate_correct> theorem
   proves that the <verbatim|Program> generated by <verbatim|Naive.translate>
   when started from a state that contains an encoding of Simplicity
-  function's input successfuly end up in a final machine state that contains
-  an encoding of Simplicity function's output (and input). The
-  <verbatim|spec> property defines an inductive hypothesis that is used by
-  <verbatim|Naive.translate_spec> that makes up the heart of this proof.
-
-  The <verbatim|Naive.translate_correct_parametric> theorem is a variation of
-  the <verbatim|Naive.translate_correct> theorem. The
-  <verbatim|Naive.translate_correct> operates on Simplicity term in the
-  ``initial'' representaiton whereas the <verbatim|Naive.translate_correct_parametric>
-  theorem operates on Simplicity terms in the ``final'' representation.
+  function's input successfully ends up in a final machine state that
+  contains an encoding of Simplicity function's output (and input).
 
   <subsection|Static Analysis>
 
@@ -5420,18 +5392,18 @@
   <chapter|Haskell Library Guide>
 
   WARNING: None of the Haskell library development is normative. There is no
-  formalized connecton between any of the Haskell library and Simplicity's
+  formalized connection between any of the Haskell library and Simplicity's
   formal semantics and development in Coq. There could be errors in the
   Haskell library that cause it to disagree with the formal development
   defined in Coq. The Haskell library is intended to be used for
-  experimental, exporitory and rapid development of Simplicity related work,
+  experimental, exploratory and rapid development of Simplicity related work,
   but should not be relied upon for production development. For production
   development, formal developments in Coq should be created.
 
   The Haskell development for Simplicity is found in the <verbatim|Haskell>
   directory. The <verbatim|Haskell/Tests.hs> file imports the various test
-  modules throught the development to build a testing executable to run them
-  all.
+  modules throughout the development to build a testing executable to run
+  them all.
 
   <section|Simplicity Types>
 
@@ -5471,33 +5443,33 @@
   </code>
 
   This data type provides a concrete, value-level representation of
-  Simplicity types that are tied to the type-level representation of types.
-  For each Haskell type corresponding to a Simplicity type, <verbatim|a> the
-  <verbatim|TyReflect a> type has exactly one value that is built up out of
-  other values of type <verbatim|TyReflect> corresponding to the Simplicity
-  type sub-expression. For example the value of type <verbatim|TyReflect
-  (Either () ())> is <verbatim|SumR OneR OneR>.
+  Simplicity types that is tied to the type-level representation of
+  Simplicity types. For each Haskell type corresponding to a Simplicity type,
+  <verbatim|a>, the <verbatim|TyReflect a> type has exactly one value that is
+  built up out of other values of type <verbatim|TyReflect> corresponding to
+  the Simplicity type sub-expression. For example the value of type
+  <verbatim|TyReflect (Either () ())> is <verbatim|SumR OneR OneR>.
 
-  The <verbatim|reify :: TyC a =\<gtr\> TyReflect a> uses the one method of
-  the <verbatim|TyC> class to produce the value of the <verbatim|TyReflect>
-  GADT that corresponds to the type constrained by the <verbatim|TyC>
-  constraint. When users have a Haskell type constrained by <verbatim|TyC>
-  they can use <verbatim|reify> to get the corresponding concrete value of
-  the <verbatim|TyReflect> GADT which can then be further processed. The
-  <verbatim|reifyProxy> and <verbatim|reifyArrow> functions are helper
-  functions for <verbatim|refiy> that let you pass types via a proxy.
+  The <verbatim|reify :: TyC a =\<gtr\> TyReflect a> produces the value of
+  the <verbatim|TyReflect> GADT that corresponds to the type constrained by
+  the <verbatim|TyC> constraint. When users have a Haskell type constrained
+  by <verbatim|TyC> they can use <verbatim|reify> to get the corresponding
+  concrete value of the <verbatim|TyReflect> GADT which can then be further
+  processed. The <verbatim|reifyProxy> and <verbatim|reifyArrow> functions
+  are helper functions for <verbatim|refiy> that let you pass types via a
+  proxy.
 
   The third way Simplicity types are captured is by the <verbatim|Ty> type
   alias, which is the fixed point of the <verbatim|TyF> functor. This is a
   representation of Simplicity types as a data type. The <verbatim|one>,
   <verbatim|sum>, and <verbatim|prod> functions provide smart-constructors
-  that handle the explicit fixpoint constructor. The <verbatim|memoCataTy>
+  that handle the explicit fixed-point constructor. The <verbatim|memoCataTy>
   helps one build memoized functions that consume <verbatim|Ty> values.
 
   Generally speaking, we use <verbatim|TyC> to constrain Haskell types to
-  Simplicity types when creating Simplicity expressions. This way Simplicty
-  type errors are also Haskell type errors and can be caught by the Haskell
-  compiler. We use the <verbatim|Ty> type when doing compuation like
+  Simplicity types when creating Simplicity expressions. This way Simplicity
+  type errors are Haskell type errors and can be caught by the Haskell
+  compiler. We use the <verbatim|Ty> type when doing computations such asgg
   deserializing Simplicity expressions and performing unification for
   Simplicity's type inference. The <verbatim|TyReflect> GADT links these two
   representations. For example, the <verbatim|equalTyReflect> function can
@@ -5513,21 +5485,21 @@
   Haskell's <verbatim|Bool> type and <verbatim|Bit>.
 
   The <verbatim|Simplicity/Ty/Word.hs> module provides the <verbatim|Word a>
-  GADT that describes Simplicity types for multi-bit words. Its type
+  type that describes Simplicity types for multi-bit words. Its type
   parameter is restricted to either be a single <verbatim|Bit> word type or a
-  product that doubles the size of a another word type. The
-  <verbatim|wordSize> returns the number of bits a word has. The
-  <verbatim|fromWord> and <verbatim|toWord> functions convert values of
-  Simplicity words types to and from Haskell <verbatim|Integer>s (modulo the
-  size of the word). The file also provides specializations of these various
-  functions for popular word sizes between 8 and 256 bits.
+  product that doubles the size of a another word type via the
+  <verbatim|Vector> GADT. The <verbatim|wordSize> returns the number of bits
+  a word has. The <verbatim|fromWord> and <verbatim|toWord> functions convert
+  values of Simplicity words types to and from Haskell <verbatim|Integer>s
+  (modulo the size of the word). The file also provides specializations of
+  these various functions for popular word sizes between 1 and 512 bits.
 
   <section|Simplicity Terms>
 
   Terms are represented in tagless-final style<nbsp><cite|Carette:2009>. This
-  style is analgous to the ``final'' represention of terms that is defined in
-  the Coq library. The development of the term language for full Simplicity
-  is split into two files.
+  style is analogous to the ``final'' representation of terms that is defined
+  in the Coq library. The development of the term language for full
+  Simplicity is split into two files.
 
   The <verbatim|Simplicity/Term/Core.hs> file develops the core Simplicity
   term language plus a few extensions. The <verbatim|Core> type class
@@ -5541,20 +5513,20 @@
   Simplicity combinators respectively. It also provides notation for short
   sequences of string of <samp|I>'s, <samp|O>'s and <samp|H>'s. Note that
   because <verbatim|case> is a reserved word in Haskell we use
-  <verbatim|match> for Simplicty's <samp|case> combinator. Examples of
+  <verbatim|match> for Simplicity's <samp|case> combinator. Examples of
   building Simplicity expressions can be found in the next section.
 
   This module also provides <verbatim|Assert>, <verbatim|Witness>, and
-  <verbatim|Delegate> classes for the failure, witness, and delgation
+  <verbatim|Delegate> classes for the failure, witness, and delegation
   language extensions respectively. Terms that make use of these extension
-  will have these class contraints added to their type signatures. For
+  will have these class constraints added to their type signatures. For
   example, a value of type <verbatim|(Core term, Witness term) =\<gtr\> term
   a b> is a term in the language of Simplicity with witnesses.
 
   This module provides <verbatim|(-\<gtr\>)> and <verbatim|Kleisli m>
-  instances of these classes where possible that provide denotational
-  semantics of core Simplicity and some extensions. For example, one can take
-  core Simplicity terms and directly use them as functions. The semantics of
+  instances of these classes that provide denotational semantics of core
+  Simplicity and some extensions. For example, one can take core Simplicity
+  terms and directly use them as functions. The semantics of
   <verbatim|Delegate> depends on the commitment Merkle root; you can find
   semantics for that extension in <verbatim|Simplicity/Semantics.hs> and it
   is discussed in Section<nbsp><reference|ss:DenotationalSemanticsOfFullSimplicity>.
@@ -5573,11 +5545,11 @@
   sharing of subexpressions in Simplicity. While subexpressions can be shared
   if we used a GADT to represent Simplicity terms, any recursive function
   that consumes such a GADT cannot take advantage of that sharing. Sharing
-  results of static analysis between shared sub-experssions is critical to
+  results of static analysis between shared sub-expressions is critical to
   making static analysis practical. Adding explicit sharing to the Simplicity
   language would make the language more complex and would risk incorrectly
   implementing the sharing combinator. Explicitly building memoization tables
-  could work, but will have overhead. For instance, we do do this for
+  could work, but will have overhead. For instance, we do this whenh
   computing Merkle roots of Simplicity types. However, the solution of using
   tagless-final style lets us write terms in a natural manner and we get
   sharing for Simplicity expressions at exactly the points where we have
@@ -5586,23 +5558,23 @@
   <section|Blockchain Primitives>
 
   We aim to keep the Haskell library of Simplicity modular over different
-  blockchain applications. \ Different blockchain applications are provided
-  in the <verbatim|Simplicity/Primitive> directory. \ At the moment only the
-  Bitcoin blockchain applicaiton is provided by the
+  blockchain applications. Different blockchain applications are provided in
+  the <verbatim|Simplicity/Primitive> directory. At the moment only the
+  Bitcoin blockchain application is provided by the
   <verbatim|Simplicity/Primitive/Bitcoin.hs>.
 
   The <verbatim|Simplicity/Primitive.hs> module provides an interface to the
   different possible primitives provided by different blockchain
-  applications. \ This module exports
+  applications. This module exports
 
   <\itemize>
     <item><verbatim|Prim a b>, a GADT for different primitive expressions,\ 
 
     <item><verbatim|primPrefix> and <verbatim|primName> which are used to
-    generate unique names for the Merkle roots of primtive expressions,
+    generate unique names for the Merkle roots of primitive expressions,
 
     <item><verbatim|PrimEnv> and <verbatim|primSem>, which provides the type
-    of the context and the denotaitonal semantics for evaluating primitive
+    of the context and the denotational semantics for evaluating primitive
     expressions.
   </itemize>
 
@@ -5616,13 +5588,13 @@
 
   The <verbatim|Simplicity/Primitive/Bitcoin.hs> module provides the
   primitive expressions and their semantics for Simplicity's Bitcoin
-  application. \ The <verbatim|Prim a b> GADT enumerates the list of
-  primitive Simplicity expressions for Bitcoin. \ The <verbatim|PrimEnv>
-  provides the context that a Simplicity expression is evaluated within,
-  providing the signed transaction data, the index of the input being
-  considered for redemption, and the commitment Merkle root of the Simplicity
-  program itself. \ The <verbatim|primSem> function is an interpreter for
-  these primitive expressions for the Bitcoin.
+  application. The <verbatim|Prim a b> GADT enumerates the list of primitive
+  Simplicity expressions for Bitcoin. The <verbatim|PrimEnv> provides the
+  context that a Simplicity expression is evaluated within, providing the
+  signed transaction data, the index of the input being considered for
+  redemption, and the commitment Merkle root of the Simplicity program
+  itself. The <verbatim|primSem> function is an interpreter for these
+  primitive expressions for the Bitcoin.
 
   The <verbatim|Simplicity/Primitive/Bitcoin/DataTypes.hs> module provides
   the data structures that make up the signed transaction data for Bitcoin.
@@ -5630,12 +5602,12 @@
   <section|Merkle Roots>
 
   The <verbatim|Simplicity/MerkleRoot.hs> module provides instances of
-  Simplicity terms that compute the commitment and witness Merkle roots.
-  \ The <verbatim|commitmentRoot> and <verbatim|witnessRoot> return these
-  Merkle root values. The <verbatim|Simplicity/MerkleRoot.hs> module also
-  provides a memoized computation of the Merkle roots for Simplicity types.
+  Simplicity terms that compute the commitment and witness Merkle roots. The
+  <verbatim|commitmentRoot> and <verbatim|witnessRoot> return these Merkle
+  root values. The <verbatim|Simplicity/MerkleRoot.hs> module also provides a
+  memoized computation of the Merkle roots for Simplicity types.
 
-  The SHA-256 implemenation is provided through an abstract interface found
+  The SHA-256 implementation is provided through an abstract interface found
   in <verbatim|Simplicity/Digest.hs>.
 
   <section|Denotational Semantics of Full
@@ -5655,16 +5627,16 @@
 
   The <verbatim|Semantics a b> is an instance of <verbatim|Delegator> for the
   Kleisli semantics that support the Blockchain primitives, and thus is an
-  instance of the full Simplicity language with delegation. \ The
-  <verbatim|sem> function unwraps all the type wrapers of <verbatim|Semantics
-  a b> and provides a concrete function from <verbatim|PrimEnv> and
-  <verbatim|a> to <verbatim|Maybe b>.
+  instance of the full Simplicity language with delegation. The
+  <verbatim|sem> function unwraps all the type wrappers of
+  <verbatim|Semantics a b> and provides a concrete function from
+  <verbatim|PrimEnv> and <verbatim|a> to <verbatim|Maybe b>.
 
   <section|Example Simplicity Expressions>
 
   The <verbatim|Simplicity/Programs> directory contains various developments
   of Simplicity expressions in Haskell. The
-  <verbatim|Simplicity/Programs/Tests.hs> has some Quickcheck properties that
+  <verbatim|Simplicity/Programs/Tests.hs> has some QuickCheck properties that
   provide randomized testing for some of the programs defined in this
   section.
 
@@ -5674,8 +5646,8 @@
   for bit manipulation. <verbatim|false> and <verbatim|true> are Simplicity
   expressions for the constant functions of those types and <verbatim|cond>
   provides case analysis combinator for a single bit. There are combinators
-  for various logical operators. These logical operators are short-circuted
-  where possible. There are also a few trinary boolean Simplicity expressions
+  for various logical operators. These logical operators are short-circuited
+  where possible. There are also a few trinary Boolean Simplicity expressions
   that are used in hash functions such as SHA-256.
 
   <subsection|Multi-bit Words>
@@ -5688,7 +5660,7 @@
   <subsubsection|Arithmetic operations>
 
   The <verbatim|Simplicity/Programs/Word.hs> file provides the standard
-  implemenations of the <verbatim|zero>, <verbatim|adder>,
+  implementations of the <verbatim|zero>, <verbatim|adder>,
   <verbatim|fullAdder>, <verbatim|subtractor>, <verbatim|fullSubtractor>,
   <verbatim|multiplier>, and <verbatim|fullMultiplier> Simplicity
   expressions. Notice that the implementation of these functions is careful
@@ -5716,7 +5688,7 @@
   The <verbatim|scribe> function produces a Simplicity expression denoting a
   constant function for any value for any Simplicity type. The <verbatim|eq>
   Simplicity expression compares any two values of the same Simplicity type
-  and deicides if they are equal or not.
+  and decides if they are equal or not.
 
   <subsection|SHA-256>
 
@@ -5731,22 +5703,22 @@
   <subsection|LibSecp256k1>
 
   The <verbatim|Simplicity/Programs/LibSecp256k1.hs> file provides Simplicity
-  expressions that mimic the functional behavour of the the libsecp256k1
-  elliptic curve library<nbsp><cite|libsecp256k1>. \ This includes Simplicity
+  expressions that mimic the functional behaviour of the the libsecp256k1
+  elliptic curve library<nbsp><cite|libsecp256k1>. This includes Simplicity
   types for, and operations on secp256k1's underlying finite field with the
   <verbatim|10x26> limb representation, elliptic curve point operations in
   affine and Jacobian coordinates, and linear combinations of points.
 
   This module also include the <verbatim|schnorrVerify> and
-  <verbatim|schnorrAssert> expressions that implement Schorr signatures as
-  specified in BIP-Schnorr <cite|bip-schnorr>.
+  <verbatim|schnorrAssert> expressions that implement Schnorr signatures as
+  specified in BIP-Schnorr<nbsp><cite|bip-schnorr>.
 
   <subsection|CheckSigHashAll>
 
   The <verbatim|Simplicity/Programs/CheckSigHashAll.hs> file provides the
   <verbatim|checkSigHashAll> Simplicity expression that verifies Schnorr
   signature over the transaction data hash produced by <verbatim|sigHashAll>
-  for the provided public key. \ Some variantes of this expression are also
+  for a provided public key. Some variants of this expression are also
   provided including <verbatim|pkwCheckSigHashAll> which builds a complete
   Simplicity program from a given public key and signature.
 
@@ -5781,8 +5753,8 @@
   passing style (analogous to using difference lists to build lists), making
   use of the <verbatim|MachineCodeK> type alias. There are smart-constructors
   for each machine code that make single instruction <verbatim|MachineCodeK>
-  programs. Programs are composed sequentually using ordinary function
-  compostion, <verbatim|(.)>. Determinic choice between two programs is
+  programs. Programs are composed sequentially using ordinary function
+  composition, <verbatim|(.)>. Deterministic choice between two programs is
   provided by the <verbatim|(\|\|\|)> operator. The <verbatim|nop> program is
   an alias for the identity function.
 
@@ -5795,7 +5767,7 @@
   components of the State.
 
   The <verbatim|runMachine> function interprets <verbatim|MachineCode> in
-  accorance with the semantics of the Bit Machine, and transforms an initial
+  accordance with the semantics of the Bit Machine, and transforms an initial
   state into a final state (possibly crashing during execution). It is meant
   to be used, in conjunction with a Simplicity translator, with
   <verbatim|executeUsing>. The <verbatim|instrumentMachine> function is a
@@ -5808,12 +5780,12 @@
   The <verbatim|Simplicity/BitMachine/Translate.hs> file defines the naive
   translation from Simplicity to the Bit Machine. The <verbatim|Translation>
   type wraps the <verbatim|MachineCodeK> type with phantom type parameters in
-  order to make an instance suitable for a Simplicity Algebra. The
-  <verbatim|translate> function translates Simplicity terms to Machine Code
-  via the <verbatim|Translation> Algebra (recall that a Simplicity term in
-  tagless final form is a polymorphic value that can become any Simplicity
-  Algebra). The <verbatim|Simplicity/BitMachine/Translate/TCO.hs> file
-  provides a similar <verbatim|Translation> Simplicity Algebra and
+  order to make an instance suitable to be a Simplicity algebra. The
+  <verbatim|translate> function translates Simplicity terms to
+  <verbatim|MachineCode> via the <verbatim|Translation> algebra (recall that
+  a Simplicity term in tagless final form is a polymorphic value that can
+  become any Simplicity algebra). The <verbatim|Simplicity/BitMachine/Translate/TCO.hs>
+  file provides a similar <verbatim|Translation> Simplicity algebra and
   <verbatim|translate> functions, but this translating using tail composition
   optimization.
 
@@ -5825,16 +5797,17 @@
 
   <subsection|Static Analysis>
 
-  The <verbatim|Simplicity/BitMachine/StaticAnalysis.hs> file performs the
-  static analysis for bounding the maximum number of cells used by the Bit
-  Machine when executing the naive translation of Simplicity expressions. The
-  <verbatim|ExtraCellsBnd> type wraps the data needed for the static analysis
-  with phantom type parameters in order ot make an instance suitable for a
-  Simplicity Algebra. The <verbatim|cellsBnd> function computes the bound on
-  cell use from Simplicity terms via the <verbatim|ExtraCellsBnd> Algebra.
-  The <verbatim|Simplicity/BitMachine/StaticAnalysis/TCO.hs> file provides a
-  similar static analysis that bounds the maximum number of cells used by the
-  Bit Machine when executing the TCO translation of Simplicity expressions.
+  The <verbatim|Simplicity/BitMachine/StaticAnalysis.hs> file has instances
+  to perform static analysis for bounding the maximum number of cells used by
+  the Bit Machine when executing the naive translation of Simplicity
+  expressions. The <verbatim|ExtraCellsBnd> type wraps the data needed for
+  the static analysis with phantom type parameters in order to make an
+  instance suitable for a Simplicity Algebra. The <verbatim|cellsBnd>
+  function computes the bound on cell use from Simplicity terms via the
+  <verbatim|ExtraCellsBnd> Algebra. The <verbatim|Simplicity/BitMachine/StaticAnalysis/TCO.hs>
+  file provides a similar static analysis that bounds the maximum number of
+  cells used by the Bit Machine when executing the TCO translation of
+  Simplicity expressions.
 
   The <verbatim|Simplicity/BitMachine/StaticAnalysis/Tests.hs> runs a few of
   the example Simplicity expressions through the static analysis and compares
@@ -5846,10 +5819,10 @@
 
   The file <verbatim|Simplicity/Inference.hs> defines a concrete term data
   type for Simplicity expressions in open recursive style via the
-  <verbatim|TermF ty> functor. \ The <verbatim|ty> parameter allows for these
+  <verbatim|TermF ty> functor. The <verbatim|ty> parameter allows for these
   terms to be decorated with type annotations, though nothing in the data
-  type itself enforces the annotations to be well-typed. When type
-  annotations are unused this <verbatim|ty> parameter is set to
+  type itself enforces that the annotations are well-typed. When type
+  annotations are unused, this <verbatim|ty> parameter is set to
   <verbatim|()>, as is the case for the <verbatim|UntypedTermF> functor
   synonym.
 
@@ -5857,31 +5830,31 @@
   ty> functor would yield a type for untyped, full Simplicity terms, instead
   we usually use a list or vector of <verbatim|TermF ty Integer> values to
   build a DAG structure, where the <verbatim|Integer> values are references
-  to other subexpressions withing the list or vector. \ This provides a
-  structure with explicit sharing of subexpressions. \ This structure is
+  to other subexpressions withing the list or vector. This provides a
+  structure with explicit sharing of subexpressions. This structure is
   captured by the <verbatim|SimplicityDag> type synonym.
 
   The <verbatim|WitnessData> type is a specialized data structure to allowing
-  the witness values to be pruned during encoding and decoding. \ The
+  the witness values to be pruned during encoding and decoding. The
   <verbatim|getWitnessData> function restores the witness data as a value of
   a Simplicity type; however a the caller must know a suitable Simplicity
   type to interpret the witness data correctly.
 
   The two principle functions of this module are the <verbatim|typeInference>
   and <verbatim|typeCheck> functions. The <verbatim|typeInference> function
-  discards the type annotations of the input Simplicity DAG and peforms
+  discards the type annotations of the input Simplicity DAG and performs
   first-order unification to infer new, principle type annotations, with any
-  remaining type variables instantiated at the <verbatim|()> type. \ The
+  remaining type variables instantiated at the <verbatim|()> type. The
   <verbatim|typeCheck> function performs the same unification, but also adds
   unification constraints for the input and output types of the expression as
-  provided by the caller of the function. \ The type annoations are type
-  checked and if everything is successful a proper well-typed Simplicity
+  provided by the caller of the function. The type annotations are type
+  checked and, if everything is successful, a proper well-typed Simplicity
   expression is returned.
 
   <section|Serialization>
 
   There are two main methods of serialization found in this Simplicity
-  library. \ The first methods is via the <verbatim|Get> and <verbatim|PutM>
+  library. The first methods is via the <verbatim|Get> and <verbatim|PutM>
   monads from the <verbatim|cereal> package. These are used for
   serializations to and from <verbatim|ByteStrings>. The second method is
   serialization via a difference list of <verbatim|Bool>s and deserialization
@@ -5890,13 +5863,13 @@
   A difference list, represented within the type <verbatim|[Bool] -\<gtr\>
   [Bool]> should be familiar to most Haskell programmers. The same technique
   is used in the <verbatim|shows> function using the <verbatim|ShowS> type
-  synomym and is used to avoid quadradic time complexity in some cases of
-  nested appending of lists. \ A <verbatim|DList> type synonym is defined in
+  synonym and is used to avoid quadratic time complexity in some cases of
+  nested appending of lists. A <verbatim|DList> type synonym is defined in
   <verbatim|Simplicity/Serializaiton.hs>.
 
   <subsection|Free Monadic Deserializaiton>
 
-  Our free monad representation of binary trees is perhaps less familiar. \ A
+  Our free monad representation of binary trees is perhaps less familiar. A
   binary branching tree with leaves holding values of type <verbatim|a> can
   be represented by the free monad over the functor
   <math|X\<mapsto\>X<rsup|2>>, which in Haskell could be written as
@@ -5916,22 +5889,21 @@
 
   Given a binary tree (represented as a free monad) we can ``execute'' this
   monad to produce a value <verbatim|a> by providing an executable
-  interpretation of each branch. \ Our interpretation of a branch is to read
-  a bit from a stream of bits and recursively execute either the left branch
-  or the right branch depending on whether we encounter a 0 bit or a 1 bit.
-  \ This process repeats until we encounter a leaf, after which we halt,
-  returning the value of type <verbatim|a> held by that leaf. This
-  interpretation captures precisely what it means to use a prefix code to
-  parse a stream of bits. Given a stream of bits we follow branches in a
-  binary tree, left or right, in accordance to the bits that we encounter
-  within the stream until we encounter a leaf, in which case parsing is
-  complete and we have our result, plus a possible remainder of unparsed
-  bits.
+  interpretation of each branch. Our interpretation of a branch is to read a
+  bit from a stream of bits and recursively execute either the left branch or
+  the right branch depending on whether we encounter a 0 bit or a 1 bit. This
+  process repeats until we encounter a leaf, after which we halt, returning
+  the value of type <verbatim|a> held by that leaf. This interpretation
+  captures precisely what it means to use a prefix code to parse a stream of
+  bits. Given a stream of bits we follow branches in a binary tree, left or
+  right, in accordance to the bits that we encounter within the stream until
+  we encounter a leaf, in which case parsing is complete and we have our
+  result, plus a possible remainder of unparsed bits.
 
-  Where does the stream of bits come from? \ Well, if we were to interpret
-  this in the state monad, the state hold hold a stream of bits. \ If we were
-  to interpret this the <verbatim|IO> monad, we could grab a stream bits from
-  <verbatim|stdin> or from a file handle. \ In general, we can interpret our
+  Where does the stream of bits come from? Well, if we were to interpret this
+  in the state monad, the state would hold a stream of bits. If we were to
+  interpret this the <verbatim|IO> monad, we could grab a stream bits from
+  <verbatim|stdin> or from a file handle. In general, we can interpret our
   free monad in any monad that offers a callback to generate bits for us to
   consume.
 
@@ -5946,16 +5918,15 @@
 
   \;
 
-  This ability to intepret a free monad within any other monad is essentially
-  what it means to be a free monad in the first place.
+  This ability to interpret a free monad within any other monad is
+  essentially what it means to be a free monad in the first place.
 
-  This free monad approach to parsing can be extended. \ For example, suppose
-  when parsing we encounter a prefix that isn't a code for any value. \ We
-  can extend our functor to given a variant to return failure in this case.
-  \ Thus we build a free monad over the functor
-  <math|X\<mapsto\>1+X<rsup|2>>. \ In Haskell we could use the type
-  <verbatim|Free (Sum (Const ()) ((-\<gtr\>) Bool))> for this monad or
-  equivalently
+  This free monad approach to parsing can be extended. For example, suppose
+  when parsing we encounter a prefix that is not a code of any value. We can
+  extend our functor to given a variant to return failure in this case. Thus
+  we build a free monad over the functor <math|X\<mapsto\>1+X<rsup|2>>. In
+  Haskell we could use the type <verbatim|Free (Sum (Const ()) ((-\<gtr\>)
+  Bool))> for this monad or equivalently
 
   \;
 
@@ -5979,35 +5950,33 @@
   \;
 
   Our free monad interpreter now requires two callbacks. The <verbatim|next>
-  callback is as before; it generates bits to be parsed. \ The
-  <verbatim|abort> callback handles a failure case when the a sequence of
-  bits do not correspond to any coded value. \ This callback can throw an
-  exception or call <verbatim|fail>, or do whatever is appropriate in case of
-  failure.
+  callback is as before; it generates bits to be parsed. The <verbatim|abort>
+  callback handles a failure case when the a sequence of bits do not
+  correspond to any coded value. This callback can throw an exception or call
+  <verbatim|fail>, or do whatever is appropriate in case of failure.
 
   This implementation of free monads suffers from a similar quadratic
-  complexity issue that lists have. \ In some cases, nested calls to the free
-  monad's bind opertaion can have quadratic time complexity. \ To mitigate
-  this we choose a to use a different representation of free monads.
+  complexity issue that lists have. In some cases, nested calls to the free
+  monad's bind operation can have quadratic time complexity. To mitigate this
+  we choose a to use a different representation of free monads.
 
-  It is the case that the above interpreters completely characterize their
-  corresponding free monads. \ Instead of using the <verbatim|BinaryTree a>
-  type we can directly use the type <verbatim|forall m. Monad m =\<gtr\> m
-  Bool -\<gtr\> m a>. \ Similarly we can directly use the type
-  <verbatim|forall m. Monad m =\<gtr\> m Void -\<gtr\> m Bool -\<gtr\> m a>
-  in place of the <verbatim|BitParser a> type <with|color|red|TODO: consider
-  replacing <verbatim|m Void> with a <verbatim|MonadFail> constraint
-  instead>. \ This is known as the Van Laarhoven free monad
-  representation<nbsp><cite|oconnor2014> and it is what we use in this
-  library.
+  The above interpreters completely characterize their corresponding free
+  monads. Instead of using the <verbatim|BinaryTree a> type we can directly
+  use the type <verbatim|forall m. Monad m =\<gtr\> m Bool -\<gtr\> m a>.
+  Similarly we can directly use the type <verbatim|forall m. Monad m =\<gtr\>
+  m Void -\<gtr\> m Bool -\<gtr\> m a> in place of the <verbatim|BitParser a>
+  type <with|color|red|TODO: consider replacing <verbatim|m Void> with a
+  <verbatim|MonadFail> constraint instead>. This is known as the Van
+  Laarhoven free monad representation<nbsp><cite|oconnor2014> and it is what
+  we use in this library.
 
   For example, <verbatim|getBitString> and <verbatim|getPositive> from the
   <verbatim|Simplicity.Serialization> module are decoders a list of bits and
   positive numbers respectively that use this Van Laarhoven representation of
-  binary trees. \ Similarly <verbatim|get256Bits> from
+  binary trees. Similarly <verbatim|get256Bits> from
   <verbatim|Simplicity.Digest> is a decoder for a 256-bit hash value.
 
-  In <verbatim|Simplicity/Serializaiton.hs> there are several adaptor
+  In <verbatim|Simplicity/Serializaiton.hs> there are several adapter
   functions for executing these Van Laarhoven free monads within particular
   monads.
 
@@ -6018,7 +5987,7 @@
 
     <item><verbatim|evalExactVector> evaluates a Van Laarhoven binary tree
     using a vector of bits and will return <verbatim|Nothing> unless the
-    vector is exactly entirely consumed. \ 
+    vector is exactly entirely consumed.\ 
 
     <item><verbatim|evalStreamWithError> evaluates a Van Laarhoven bit
     decoder using a list of bits and returns an <verbatim|Error> if the
@@ -6032,11 +6001,11 @@
   <subsection|Serialization of Simplicity DAGs>
 
   The file <verbatim|Simplicity/Dag.hs> provides a <verbatim|sortDag> that
-  coverts Simplicity expressions into a topologicaly sorted DAG structure
+  coverts Simplicity expressions into a topologically sorted DAG structure
   with explicit sharing that is suitable for encoding. This conversion finds
   and shares identical well-typed subexpressions. It also runs type inference
-  to determine the principle type annotations needed to optimal sharing.
-  \ The type inference is also used to prune away any unused witness data.
+  to determine the principle type annotations needed to optimal sharing. The
+  type inference is also used to prune away any unused witness data.
 
   The file <verbatim|Simplicity/Serialization/BitString.hs> provides
   <verbatim|getDag> and <verbatim|putDag> functions that decode and encode a
@@ -6052,11 +6021,11 @@
   DAGs><label|app:AltSerialization>
 
   This appendix presents an alternative, byte-oriented prefix code for
-  Simplicity DAGs. \ This code is not as compact as the bit-oriented code
+  Simplicity DAGs. This code is not as compact as the bit-oriented code
   presented in Section<nbsp><reference|ss:Serialization> and it imposes some
-  arbitrary limits on the size of the DAG and witness values. \ Its only
-  advantage is that it might be faster to decode. \ This code probably should
-  not be used by any application and should probably be removed from this
+  arbitrary limits on the size of the DAG and witness values. Its only
+  advantage is that it might be faster to decode. This code probably should
+  not be used by any application and maybe should be removed from this
   report.
 
   First we define a byte-string serialization for numbers <math|i> known to
@@ -6072,22 +6041,22 @@
   \;
 
   For witness data, which is a bit-string, we group the bits into bytes to
-  form a byte-string, padding the least signficiant bits with zero bits.
+  form a byte-string, padding the least significant bits with zero bits.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|bytePad<around*|(|\<epsilon\>|)>>|<cell|\<assign\>>|<cell|\<epsilon\><rsub|<2><rsup|8>>>>|<row|<cell|bytePad<around*|(|b<rsub|0>\<blacktriangleleft\>b<rsub|1>\<blacktriangleleft\>b<rsub|2>\<blacktriangleleft\>b<rsub|3>\<blacktriangleleft\>b<rsub|4>\<blacktriangleleft\>b<rsub|5>\<blacktriangleleft\>b<rsub|6>\<blacktriangleleft\>b<rsub|7>\<blacktriangleleft\>v|)>>|<cell|\<assign\>>|<cell|<around*|\<langle\>|<around*|\<langle\>|<around*|\<langle\>|b<rsub|0>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|b<rsub|2>,b<rsub|3>|\<rangle\>>|\<rangle\>>,<around*|\<langle\>|<around*|\<langle\>|b<rsub|4>,b<rsub|5>|\<rangle\>>,<around*|\<langle\>|b<rsub|6>,b<rsub|7>|\<rangle\>>|\<rangle\>>|\<rangle\>>\<blacktriangleleft\>bytePad<around*|(|v|)>>>|<row|<cell|bytePad<around*|(|v|)>>|<cell|\<assign\>>|<cell|bytePad<around*|(|v\<cdummy\><verbatim|<around*|[|0|]>><rsup|8-<around*|\||v|\|>>|)><htab|5mm>when
     0\<less\><around*|\||v|\|>\<less\>8>>>>
   </eqnarray*>
 
-  Note that by itself bytePad is not a prefix code and forgets how many bits
-  where in the vector. \ Both issues are addressed by prefixing this encoding
-  with the length of the number of bits in the original bit-string.
+  Note that by itself <math|bytePad> is not a prefix code and forgets how
+  many bits where in the vector. Both issues are addressed by prefixing this
+  encoding with the length of the number of bits in the original bit-string.
 
   Next we define a byte-string serialization for Node,
   <math|byteCode\<of\>\<bbb-N\>\<times\>Node\<rightarrow\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>.
-  \ The first parameter to byteCode, <math|k>, is the index at which the Node
-  occurs in the Dag. \ It is used to determine the bound on the size of the
-  sub-expression offsets for serialization of those values.
+  The first parameter to <math|byteCode>, <math|k>, is the index at which the
+  Node occurs in the Dag. It is used to determine the bound on the size of
+  the sub-expression offsets for serialization of those values.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|byteCode<around*|(|k,<text|<samp|`comp'>> 1
@@ -6139,11 +6108,11 @@
     127 \<leq\><around*|\||v|\|>\<less\>2<rsup|16>>>>>
   </eqnarray*>
 
-  The byte codes for primitivies begin with a byte between
+  The byte codes for primitives begin with a byte between
   <math|<verbatim|[24]><rsub|<2><rsup|8>>> and
-  <math|<verbatim|[3f]><rsub|<2><rsup|8>>> inclusive. \ The codes can contain
-  multiple bytes. However, for the Bitcoin primitives, we only need to use
-  one byte per primitive.
+  <math|<verbatim|[<math-tt|3f>]><rsub|<2><rsup|8>>> inclusive. The codes can
+  contain multiple bytes. However, for the Bitcoin primitives, we only need
+  to use one byte per primitive.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|byteCode<around*|(|k,<text|<samp|`version'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|24>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`lockTime'>>|)>>|<cell|=>|<cell|<verbatim|<verbatim|<around*|[|<math-tt|25>|]>>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`inputsHash'>>|)>>|<cell|=>|<cell|<verbatim|<verbatim|<around*|[|<math-tt|26>|]>>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`outputsHash'>>|)>>|<cell|=>|<cell|<verbatim|<verbatim|<around*|[|<math-tt|27>|]>>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`numInputs'>>|)>>|<cell|=>|<verbatim|<verbatim|<around*|[|<math-tt|28>|]>>><rsub|<2><rsup|8>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`totalnputValue'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|29>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`currentPrevOutpoint'>>|)>>|<cell|=>|<cell|<verbatim|<verbatim|<around*|[|<math-tt|2a>|]>>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`currentValue'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|2b>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`currentSequence'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|2c>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`currentIndex'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|2d>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`inputPrevOutpoint'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|2e>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`inputValue'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|2f>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`inputSequence'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|30>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`numOutputs'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|31>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`totalOutputValue'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|32>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`outputValue'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|33>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`outputScriptHash'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|34>|]>><rsub|<2><rsup|8>>>>|<row|<cell|byteCode<around*|(|k,<text|<samp|`scriptCMR'>>|)>>|<cell|=>|<cell|<verbatim|<around*|[|<math-tt|35>|]>><rsub|<2><rsup|8>>>>>>
@@ -6159,7 +6128,7 @@
 
   Notice that while <math|byteCode<around*|(|0,x|)>> for <math|x\<of\>Node>
   seems like it could call <math|byteCode<around*|(|-1,n|)>> for some
-  <math|n:\<bbb-N\>>, this can never happend for Simplicity DAGs. Recall from
+  <math|n:\<bbb-N\>>, this can never happen for Simplicity DAGs. Recall from
   Section<nbsp><reference|ss:DAGs>, that a well-formed Simplicity DAG,
   <math|l\<of\>Node<rsup|+>>, satisfies the condition
 
@@ -6167,8 +6136,8 @@
     \<forall\><around*|\<langle\>|i,a|\<rangle\>>\<in\>indexed<around*|(|l|)>\<point\>\<forall\>j\<in\>ref<around*|(|a|)>\<point\>0\<less\>j\<leq\>i<text|.>
   </equation*>
 
-  The condition on DAGs implies that <math|<around*|\||ref<around*|(|\<pi\><rsub|1><around*|(|l|)>|)>|\|>=0>.
-  \ This condition means that <math|byteCode<around*|(|-1,n|)>> never occurs
+  The condition on DAGs implies that <math|<around*|\||ref<around*|(|l<around*|[|0|]>|)>|\|>=0>.
+  This condition means that <math|byteCode<around*|(|-1,n|)>> never occurs
   for any <math|n:\<bbb-N\>>.
 
   <\bibliography|bib|tm-plain|Simplicity.bib>
@@ -6289,213 +6258,217 @@
     <associate|LC313|<tuple|6.5|?>>
     <associate|LC42|<tuple|6.5|?>>
     <associate|LC98|<tuple|6.2.2|?>>
-    <associate|SS:Coq:MerkleRoots|<tuple|8.5|67>>
+    <associate|SS:Coq:MerkleRoots|<tuple|8.5|69>>
     <associate|Serialization|<tuple|2.8|?>>
-    <associate|app:AltSerialization|<tuple|A|81>>
+    <associate|app:AltSerialization|<tuple|A|83>>
     <associate|auto-1|<tuple|1|7>>
-    <associate|auto-10|<tuple|2.2|11>>
-    <associate|auto-100|<tuple|7.2.2|59>>
-    <associate|auto-101|<tuple|8|61>>
-    <associate|auto-102|<tuple|8.1|61>>
-    <associate|auto-103|<tuple|8.2|61>>
-    <associate|auto-104|<tuple|8.2.1|61>>
-    <associate|auto-105|<tuple|8.2.2|61>>
-    <associate|auto-106|<tuple|8.2.2.1|62>>
-    <associate|auto-107|<tuple|8.2.2.2|62>>
-    <associate|auto-108|<tuple|8.2.2.3|63>>
-    <associate|auto-109|<tuple|8.2.3|63>>
-    <associate|auto-11|<tuple|2.2.1|11>>
-    <associate|auto-110|<tuple|8.3|63>>
-    <associate|auto-111|<tuple|8.3.1|63>>
-    <associate|auto-112|<tuple|8.3.2|63>>
-    <associate|auto-113|<tuple|8.3.3|64>>
-    <associate|auto-114|<tuple|8.4|64>>
-    <associate|auto-115|<tuple|8.1|64>>
-    <associate|auto-116|<tuple|8.4.1|65>>
-    <associate|auto-117|<tuple|8.4.2|65>>
-    <associate|auto-118|<tuple|8.4.3|65>>
-    <associate|auto-119|<tuple|8.4.4|66>>
-    <associate|auto-12|<tuple|2.2.2|11>>
-    <associate|auto-120|<tuple|8.4.4.1|66>>
-    <associate|auto-121|<tuple|8.4.5|66>>
-    <associate|auto-122|<tuple|8.4.6|67>>
-    <associate|auto-123|<tuple|8.5|67>>
-    <associate|auto-124|<tuple|8.6|67>>
-    <associate|auto-125|<tuple|8.6.1|68>>
-    <associate|auto-126|<tuple|8.6.1.1|69>>
-    <associate|auto-127|<tuple|8.6.2|69>>
-    <associate|auto-128|<tuple|8.6.3|69>>
-    <associate|auto-129|<tuple|9|71>>
-    <associate|auto-13|<tuple|2.3|13>>
-    <associate|auto-130|<tuple|9.1|71>>
-    <associate|auto-131|<tuple|9.2|72>>
-    <associate|auto-132|<tuple|9.3|73>>
-    <associate|auto-133|<tuple|9.3.1|73>>
-    <associate|auto-134|<tuple|9.4|73>>
-    <associate|auto-135|<tuple|9.5|73>>
-    <associate|auto-136|<tuple|9.6|74>>
-    <associate|auto-137|<tuple|9.6.1|74>>
-    <associate|auto-138|<tuple|9.6.2|74>>
-    <associate|auto-139|<tuple|9.6.2.1|74>>
-    <associate|auto-14|<tuple|2.3.1|13>>
-    <associate|auto-140|<tuple|9.6.2.2|74>>
-    <associate|auto-141|<tuple|9.6.3|74>>
-    <associate|auto-142|<tuple|9.6.4|74>>
-    <associate|auto-143|<tuple|9.6.5|74>>
-    <associate|auto-144|<tuple|9.6.6|75>>
-    <associate|auto-145|<tuple|9.7|75>>
-    <associate|auto-146|<tuple|9.7.1|75>>
-    <associate|auto-147|<tuple|9.7.2|76>>
-    <associate|auto-148|<tuple|9.8|76>>
-    <associate|auto-149|<tuple|9.9|76>>
-    <associate|auto-15|<tuple|2.3.2|14>>
-    <associate|auto-150|<tuple|9.9.1|76>>
-    <associate|auto-151|<tuple|9.9.2|78>>
-    <associate|auto-152|<tuple|10|79>>
-    <associate|auto-153|<tuple|A|81>>
+    <associate|auto-10|<tuple|2.2|13>>
+    <associate|auto-100|<tuple|8|63>>
+    <associate|auto-101|<tuple|8.1|63>>
+    <associate|auto-102|<tuple|8.2|63>>
+    <associate|auto-103|<tuple|8.2.1|63>>
+    <associate|auto-104|<tuple|8.2.2|63>>
+    <associate|auto-105|<tuple|8.2.2.1|64>>
+    <associate|auto-106|<tuple|8.2.2.2|64>>
+    <associate|auto-107|<tuple|8.2.2.3|65>>
+    <associate|auto-108|<tuple|8.2.3|65>>
+    <associate|auto-109|<tuple|8.3|65>>
+    <associate|auto-11|<tuple|2.2.1|13>>
+    <associate|auto-110|<tuple|8.3.1|65>>
+    <associate|auto-111|<tuple|8.3.2|65>>
+    <associate|auto-112|<tuple|8.3.3|66>>
+    <associate|auto-113|<tuple|8.4|66>>
+    <associate|auto-114|<tuple|8.1|66>>
+    <associate|auto-115|<tuple|8.4.1|67>>
+    <associate|auto-116|<tuple|8.4.2|67>>
+    <associate|auto-117|<tuple|8.4.3|67>>
+    <associate|auto-118|<tuple|8.4.4|68>>
+    <associate|auto-119|<tuple|8.4.4.1|68>>
+    <associate|auto-12|<tuple|2.2.2|13>>
+    <associate|auto-120|<tuple|8.4.5|68>>
+    <associate|auto-121|<tuple|8.4.6|69>>
+    <associate|auto-122|<tuple|8.5|69>>
+    <associate|auto-123|<tuple|8.6|69>>
+    <associate|auto-124|<tuple|8.6.1|70>>
+    <associate|auto-125|<tuple|8.6.1.1|70>>
+    <associate|auto-126|<tuple|8.6.2|71>>
+    <associate|auto-127|<tuple|8.6.3|71>>
+    <associate|auto-128|<tuple|9|73>>
+    <associate|auto-129|<tuple|9.1|73>>
+    <associate|auto-13|<tuple|2.3|15>>
+    <associate|auto-130|<tuple|9.2|74>>
+    <associate|auto-131|<tuple|9.3|75>>
+    <associate|auto-132|<tuple|9.3.1|75>>
+    <associate|auto-133|<tuple|9.4|75>>
+    <associate|auto-134|<tuple|9.5|75>>
+    <associate|auto-135|<tuple|9.6|76>>
+    <associate|auto-136|<tuple|9.6.1|76>>
+    <associate|auto-137|<tuple|9.6.2|76>>
+    <associate|auto-138|<tuple|9.6.2.1|76>>
+    <associate|auto-139|<tuple|9.6.2.2|76>>
+    <associate|auto-14|<tuple|2.3.1|15>>
+    <associate|auto-140|<tuple|9.6.3|76>>
+    <associate|auto-141|<tuple|9.6.4|76>>
+    <associate|auto-142|<tuple|9.6.5|76>>
+    <associate|auto-143|<tuple|9.6.6|77>>
+    <associate|auto-144|<tuple|9.7|77>>
+    <associate|auto-145|<tuple|9.7.1|77>>
+    <associate|auto-146|<tuple|9.7.2|78>>
+    <associate|auto-147|<tuple|9.8|78>>
+    <associate|auto-148|<tuple|9.9|78>>
+    <associate|auto-149|<tuple|9.9.1|78>>
+    <associate|auto-15|<tuple|2.3.2|15>>
+    <associate|auto-150|<tuple|9.9.2|80>>
+    <associate|auto-151|<tuple|10|81>>
+    <associate|auto-152|<tuple|A|83>>
+    <associate|auto-153|<tuple|A|85>>
     <associate|auto-154|<tuple|A|83>>
-    <associate|auto-16|<tuple|2.3.3|14>>
-    <associate|auto-17|<tuple|2.3.4|14>>
-    <associate|auto-18|<tuple|2.3.4.1|15>>
-    <associate|auto-19|<tuple|2.4|15>>
+    <associate|auto-16|<tuple|2.3.3|16>>
+    <associate|auto-17|<tuple|2.3.4|16>>
+    <associate|auto-18|<tuple|2.3.4.1|17>>
+    <associate|auto-19|<tuple|2.4|17>>
     <associate|auto-2|<tuple|1.1|7>>
-    <associate|auto-20|<tuple|2.4.1|16>>
-    <associate|auto-21|<tuple|2.4.2|16>>
-    <associate|auto-22|<tuple|3|17>>
-    <associate|auto-23|<tuple|3.1|17>>
-    <associate|auto-24|<tuple|3.1.1|17>>
-    <associate|auto-25|<tuple|3.1.2|17>>
-    <associate|auto-26|<tuple|3.1.3|17>>
-    <associate|auto-27|<tuple|3.2|18>>
-    <associate|auto-28|<tuple|3.2.1|18>>
-    <associate|auto-29|<tuple|3.2.2|18>>
+    <associate|auto-20|<tuple|2.4.1|18>>
+    <associate|auto-21|<tuple|2.4.2|18>>
+    <associate|auto-22|<tuple|3|19>>
+    <associate|auto-23|<tuple|3.1|19>>
+    <associate|auto-24|<tuple|3.1.1|19>>
+    <associate|auto-25|<tuple|3.1.2|19>>
+    <associate|auto-26|<tuple|3.1.3|19>>
+    <associate|auto-27|<tuple|3.2|20>>
+    <associate|auto-28|<tuple|3.2.1|20>>
+    <associate|auto-29|<tuple|3.2.2|20>>
     <associate|auto-3|<tuple|1.2|8>>
-    <associate|auto-30|<tuple|3.2.3|18>>
-    <associate|auto-31|<tuple|3.2.4|18>>
-    <associate|auto-32|<tuple|3.2.5|18>>
-    <associate|auto-33|<tuple|3.2.6|19>>
-    <associate|auto-34|<tuple|3.2.7|19>>
-    <associate|auto-35|<tuple|3.2.8|19>>
-    <associate|auto-36|<tuple|3.2.9|19>>
-    <associate|auto-37|<tuple|3.2.10|19>>
-    <associate|auto-38|<tuple|3.2.11|20>>
-    <associate|auto-39|<tuple|3.3|20>>
+    <associate|auto-30|<tuple|3.2.3|20>>
+    <associate|auto-31|<tuple|3.2.4|20>>
+    <associate|auto-32|<tuple|3.2.5|20>>
+    <associate|auto-33|<tuple|3.2.6|21>>
+    <associate|auto-34|<tuple|3.2.7|21>>
+    <associate|auto-35|<tuple|3.2.8|21>>
+    <associate|auto-36|<tuple|3.2.9|21>>
+    <associate|auto-37|<tuple|3.2.10|21>>
+    <associate|auto-38|<tuple|3.2.11|22>>
+    <associate|auto-39|<tuple|3.3|22>>
     <associate|auto-4|<tuple|1.2.1|8>>
-    <associate|auto-40|<tuple|3.3.1|20>>
-    <associate|auto-41|<tuple|3.3.2|21>>
-    <associate|auto-42|<tuple|3.3.3|21>>
-    <associate|auto-43|<tuple|3.3.4|24>>
-    <associate|auto-44|<tuple|3.3.5|24>>
-    <associate|auto-45|<tuple|3.3.6|25>>
-    <associate|auto-46|<tuple|3.3.6.1|25>>
-    <associate|auto-47|<tuple|3.3.6.2|26>>
-    <associate|auto-48|<tuple|3.3.6.3|28>>
-    <associate|auto-49|<tuple|3.4|28>>
+    <associate|auto-40|<tuple|3.3.1|22>>
+    <associate|auto-41|<tuple|3.3.2|23>>
+    <associate|auto-42|<tuple|3.3.3|23>>
+    <associate|auto-43|<tuple|3.3.4|26>>
+    <associate|auto-44|<tuple|3.3.5|26>>
+    <associate|auto-45|<tuple|3.3.6|27>>
+    <associate|auto-46|<tuple|3.3.6.1|27>>
+    <associate|auto-47|<tuple|3.3.6.2|28>>
+    <associate|auto-48|<tuple|3.3.6.3|30>>
+    <associate|auto-49|<tuple|3.4|30>>
     <associate|auto-5|<tuple|1.2.2|8>>
-    <associate|auto-50|<tuple|3.5|29>>
-    <associate|auto-51|<tuple|3.5.1|29>>
-    <associate|auto-52|<tuple|3.5.2|29>>
-    <associate|auto-53|<tuple|3.1|30>>
-    <associate|auto-54|<tuple|3.5.2.1|30>>
-    <associate|auto-55|<tuple|3.5.2.2|30>>
-    <associate|auto-56|<tuple|3.5.2.3|31>>
-    <associate|auto-57|<tuple|3.5.2.4|31>>
-    <associate|auto-58|<tuple|3.5.2.5|31>>
-    <associate|auto-59|<tuple|3.5.2.6|32>>
-    <associate|auto-6|<tuple|1.2.3|8>>
-    <associate|auto-60|<tuple|3.5.3|32>>
-    <associate|auto-61|<tuple|3.5.3.1|33>>
-    <associate|auto-62|<tuple|3.6|34>>
-    <associate|auto-63|<tuple|3.6.1|34>>
-    <associate|auto-64|<tuple|3.6.1.1|34>>
-    <associate|auto-65|<tuple|3.6.1.2|37>>
-    <associate|auto-66|<tuple|3.6.2|37>>
-    <associate|auto-67|<tuple|3.7|37>>
-    <associate|auto-68|<tuple|4|39>>
-    <associate|auto-69|<tuple|4.1|39>>
-    <associate|auto-7|<tuple|2|9>>
-    <associate|auto-70|<tuple|4.2|40>>
-    <associate|auto-71|<tuple|4.2.1|40>>
-    <associate|auto-72|<tuple|4.2.2|40>>
-    <associate|auto-73|<tuple|4.2.3|40>>
-    <associate|auto-74|<tuple|4.2.4|40>>
-    <associate|auto-75|<tuple|4.3|40>>
-    <associate|auto-76|<tuple|4.3.1|41>>
-    <associate|auto-77|<tuple|4.3.2|41>>
-    <associate|auto-78|<tuple|4.3.2.1|42>>
-    <associate|auto-79|<tuple|4.3.2.2|42>>
-    <associate|auto-8|<tuple|2.1|9>>
-    <associate|auto-80|<tuple|4.4|43>>
-    <associate|auto-81|<tuple|4.4.1|43>>
-    <associate|auto-82|<tuple|4.4.1.1|45>>
-    <associate|auto-83|<tuple|4.4.1.2|46>>
-    <associate|auto-84|<tuple|4.5|46>>
-    <associate|auto-85|<tuple|4.5.1|46>>
-    <associate|auto-86|<tuple|4.6|47>>
-    <associate|auto-87|<tuple|4.7|47>>
-    <associate|auto-88|<tuple|4.7.1|47>>
-    <associate|auto-89|<tuple|5|49>>
-    <associate|auto-9|<tuple|2.1.1|10>>
-    <associate|auto-90|<tuple|6|51>>
-    <associate|auto-91|<tuple|6.1|51>>
-    <associate|auto-92|<tuple|7|53>>
-    <associate|auto-93|<tuple|7.1|53>>
-    <associate|auto-94|<tuple|7.1.1|55>>
-    <associate|auto-95|<tuple|7.1.2|57>>
-    <associate|auto-96|<tuple|7.1.2.1|57>>
-    <associate|auto-97|<tuple|7.1.2.2|58>>
-    <associate|auto-98|<tuple|7.2|58>>
-    <associate|auto-99|<tuple|7.2.1|58>>
-    <associate|bib-Appel:2015|<tuple|1|83>>
-    <associate|bib-Carette:2009|<tuple|3|83>>
-    <associate|bib-Coq:manual|<tuple|5|83>>
-    <associate|bib-King1993|<tuple|8|83>>
-    <associate|bib-Mahboubi:2013|<tuple|9|83>>
-    <associate|bib-Mairson:1989|<tuple|10|83>>
-    <associate|bib-bip-schnorr|<tuple|17|83>>
-    <associate|bib-bitcoin|<tuple|11|83>>
-    <associate|bib-f-algebra|<tuple|16|83>>
-    <associate|bib-garillot:2009|<tuple|6|83>>
-    <associate|bib-gentzen|<tuple|7|83>>
-    <associate|bib-libsecp256k1|<tuple|18|83>>
-    <associate|bib-oconnor2014|<tuple|14|83>>
-    <associate|bib-satoshiScript|<tuple|12|83>>
-    <associate|bib-script|<tuple|2|83>>
-    <associate|bib-sec2|<tuple|4|83>>
-    <associate|bib-sha|<tuple|13|83>>
-    <associate|bib-unification|<tuple|15|83>>
-    <associate|chapter:preliminaries|<tuple|2|9>>
+    <associate|auto-50|<tuple|3.5|31>>
+    <associate|auto-51|<tuple|3.5.1|31>>
+    <associate|auto-52|<tuple|3.5.2|31>>
+    <associate|auto-53|<tuple|3.1|32>>
+    <associate|auto-54|<tuple|3.5.2.1|32>>
+    <associate|auto-55|<tuple|3.5.2.2|32>>
+    <associate|auto-56|<tuple|3.5.2.3|33>>
+    <associate|auto-57|<tuple|3.5.2.4|33>>
+    <associate|auto-58|<tuple|3.5.2.5|33>>
+    <associate|auto-59|<tuple|3.5.2.6|34>>
+    <associate|auto-6|<tuple|1.2.3|9>>
+    <associate|auto-60|<tuple|3.5.3|34>>
+    <associate|auto-61|<tuple|3.5.3.1|35>>
+    <associate|auto-62|<tuple|3.6|36>>
+    <associate|auto-63|<tuple|3.6.1|36>>
+    <associate|auto-64|<tuple|3.6.1.1|36>>
+    <associate|auto-65|<tuple|3.6.1.2|39>>
+    <associate|auto-66|<tuple|3.6.2|39>>
+    <associate|auto-67|<tuple|3.7|39>>
+    <associate|auto-68|<tuple|4|41>>
+    <associate|auto-69|<tuple|4.1|41>>
+    <associate|auto-7|<tuple|2|11>>
+    <associate|auto-70|<tuple|4.2|42>>
+    <associate|auto-71|<tuple|4.2.1|42>>
+    <associate|auto-72|<tuple|4.2.2|42>>
+    <associate|auto-73|<tuple|4.2.3|42>>
+    <associate|auto-74|<tuple|4.3|42>>
+    <associate|auto-75|<tuple|4.3.1|43>>
+    <associate|auto-76|<tuple|4.3.2|43>>
+    <associate|auto-77|<tuple|4.3.2.1|44>>
+    <associate|auto-78|<tuple|4.3.2.2|44>>
+    <associate|auto-79|<tuple|4.4|45>>
+    <associate|auto-8|<tuple|2.1|11>>
+    <associate|auto-80|<tuple|4.4.1|45>>
+    <associate|auto-81|<tuple|4.4.1.1|47>>
+    <associate|auto-82|<tuple|4.4.1.2|48>>
+    <associate|auto-83|<tuple|4.5|48>>
+    <associate|auto-84|<tuple|4.5.1|48>>
+    <associate|auto-85|<tuple|4.6|49>>
+    <associate|auto-86|<tuple|4.7|49>>
+    <associate|auto-87|<tuple|4.7.1|49>>
+    <associate|auto-88|<tuple|5|51>>
+    <associate|auto-89|<tuple|6|53>>
+    <associate|auto-9|<tuple|2.1.1|12>>
+    <associate|auto-90|<tuple|6.1|53>>
+    <associate|auto-91|<tuple|7|55>>
+    <associate|auto-92|<tuple|7.1|55>>
+    <associate|auto-93|<tuple|7.1.1|56>>
+    <associate|auto-94|<tuple|7.1.2|58>>
+    <associate|auto-95|<tuple|7.1.2.1|59>>
+    <associate|auto-96|<tuple|7.1.2.2|59>>
+    <associate|auto-97|<tuple|7.2|60>>
+    <associate|auto-98|<tuple|7.2.1|60>>
+    <associate|auto-99|<tuple|7.2.2|61>>
+    <associate|bib-Appel:2015|<tuple|1|85>>
+    <associate|bib-Carette:2009|<tuple|3|85>>
+    <associate|bib-Coq:manual|<tuple|5|85>>
+    <associate|bib-King1993|<tuple|8|85>>
+    <associate|bib-Mahboubi:2013|<tuple|9|85>>
+    <associate|bib-Mairson:1989|<tuple|10|85>>
+    <associate|bib-bip-schnorr|<tuple|17|85>>
+    <associate|bib-bitcoin|<tuple|11|85>>
+    <associate|bib-f-algebra|<tuple|16|85>>
+    <associate|bib-garillot:2009|<tuple|6|85>>
+    <associate|bib-gentzen|<tuple|7|85>>
+    <associate|bib-libsecp256k1|<tuple|18|85>>
+    <associate|bib-oconnor2014|<tuple|14|85>>
+    <associate|bib-satoshiScript|<tuple|12|85>>
+    <associate|bib-script|<tuple|2|85>>
+    <associate|bib-sec2|<tuple|4|85>>
+    <associate|bib-sha|<tuple|13|85>>
+    <associate|bib-unification|<tuple|15|85>>
+    <associate|chapter:preliminaries|<tuple|2|11>>
     <associate|cite_ref-Martelli.Montanari.1976_16-1|<tuple|6.1.1|?>>
-    <associate|fig:inheritance|<tuple|8.1|64>>
+    <associate|fig:inheritance|<tuple|8.1|66>>
     <associate|footnote-1|<tuple|1|?>>
-    <associate|footnote-2.1|<tuple|2.1|14>>
+    <associate|footnote-2.1|<tuple|2.1|16>>
     <associate|footnote-2.2|<tuple|2.2|23>>
-    <associate|footnote-3.1|<tuple|3.1|25>>
-    <associate|footnote-3.2|<tuple|3.2|30>>
-    <associate|footnr-2.1|<tuple|2.1|14>>
+    <associate|footnote-3.1|<tuple|3.1|27>>
+    <associate|footnote-3.2|<tuple|3.2|32>>
+    <associate|footnr-2.1|<tuple|2.1|16>>
     <associate|footnr-2.2|<tuple|2.2|23>>
-    <associate|footnr-3.1|<tuple|3.1|25>>
-    <associate|footnr-3.2|<tuple|3.2|30>>
-    <associate|full-adder-LHS|<tuple|3.3|23>>
-    <associate|full-adder-RHS|<tuple|3.2|23>>
-    <associate|full-adder-spec|<tuple|3.1|22>>
-    <associate|ss:AssertMerkleRoot|<tuple|4.3.2|41>>
-    <associate|ss:BTDenotationalSemantics|<tuple|4.4.1.1|45>>
-    <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|46>>
-    <associate|ss:BitcoinTransactions|<tuple|4.4.1|43>>
-    <associate|ss:DAGs|<tuple|7.1|53>>
-    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.5|73>>
+    <associate|footnr-3.1|<tuple|3.1|27>>
+    <associate|footnr-3.2|<tuple|3.2|32>>
+    <associate|full-adder-LHS|<tuple|3.3|25>>
+    <associate|full-adder-RHS|<tuple|3.2|25>>
+    <associate|full-adder-spec|<tuple|3.1|24>>
+    <associate|ss:AssertMerkleRoot|<tuple|4.3.2|43>>
+    <associate|ss:BTDenotationalSemantics|<tuple|4.4.1.1|47>>
+    <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|48>>
+    <associate|ss:BitcoinTransactions|<tuple|4.4.1|45>>
+    <associate|ss:DAGs|<tuple|7.1|55>>
+    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.5|75>>
     <associate|ss:Deserialization|<tuple|6.2|?>>
-    <associate|ss:MonadZero|<tuple|2.3.4|14>>
-    <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|29>>
-    <associate|ss:Serialization|<tuple|7.2|58>>
-    <associate|ss:coqArith|<tuple|8.3.2|63>>
-    <associate|ss:coqInitial|<tuple|8.2.1|61>>
-    <associate|ss:monadicSemantics|<tuple|4.1|39>>
-    <associate|ss:pruning|<tuple|4.3.2.1|42>>
-    <associate|ss:salted|<tuple|4.3.2.2|42>>
-    <associate|ss:typeInference|<tuple|7.1.1|55>>
-    <associate|thm:CSCT|<tuple|3.2|28>>
+    <associate|ss:MonadZero|<tuple|2.3.4|16>>
+    <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|31>>
+    <associate|ss:Serialization|<tuple|7.2|60>>
+    <associate|ss:bitOps|<tuple|3.3.1|22>>
+    <associate|ss:cmr|<tuple|3.7|39>>
+    <associate|ss:coqArith|<tuple|8.3.2|65>>
+    <associate|ss:coqInitial|<tuple|8.2.1|63>>
+    <associate|ss:inflate|<tuple|7.1.2.2|59>>
+    <associate|ss:monadicSemantics|<tuple|4.1|41>>
+    <associate|ss:pruning|<tuple|4.3.2.1|44>>
+    <associate|ss:salted|<tuple|4.3.2.2|44>>
+    <associate|ss:typeInference|<tuple|7.1.1|56>>
+    <associate|ss:unboundedLoop|<tuple|6.1|53>>
+    <associate|thm:CSCT|<tuple|3.2|30>>
     <associate|v:checkSigHashAll|<tuple|8.6.6|?>>
   </collection>
 </references>
@@ -6547,7 +6520,7 @@
       <tuple|normal|Example state of the Bit Machine.|<pageref|auto-53>>
 
       <tuple|normal|The inheritance hierarchy of algebras for Simplicity's
-      languge extensions in Coq.|<pageref|auto-115>>
+      partial extensions in Coq.|<pageref|auto-114>>
     </associate>
     <\associate|toc>
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Introduction>
@@ -6823,318 +6796,314 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-72>>
 
-      <with|par-left|<quote|1tab>|4.2.3<space|2spc>Serialization with
-      Witnesses <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-73>>
-
-      <with|par-left|<quote|1tab>|4.2.4<space|2spc>Type Inference with
+      <with|par-left|<quote|1tab>|4.2.3<space|2spc>Type Inference with
       Witness <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-74>>
+      <no-break><pageref|auto-73>>
 
       4.3<space|2spc>Assertions and Failure
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-75>
+      <no-break><pageref|auto-74>
 
       <with|par-left|<quote|1tab>|4.3.1<space|2spc>Denotational Semantics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-76>>
+      <no-break><pageref|auto-75>>
 
       <with|par-left|<quote|1tab>|4.3.2<space|2spc>Merkle Roots
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-77>>
+      <no-break><pageref|auto-76>>
 
       <with|par-left|<quote|2tab>|4.3.2.1<space|2spc>Pruning Unused
       <with|font-family|<quote|ss>|case> Branches
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-78>>
+      <no-break><pageref|auto-77>>
 
       <with|par-left|<quote|2tab>|4.3.2.2<space|2spc>Salted Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-79>>
+      <no-break><pageref|auto-78>>
 
       4.4<space|2spc>Blockchain Primitives
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-80>
+      <no-break><pageref|auto-79>
 
       <with|par-left|<quote|1tab>|4.4.1<space|2spc>Bitcoin Transactions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-81>>
+      <no-break><pageref|auto-80>>
 
       <with|par-left|<quote|2tab>|4.4.1.1<space|2spc>Denotational Semantics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-82>>
+      <no-break><pageref|auto-81>>
 
       <with|par-left|<quote|2tab>|4.4.1.2<space|2spc>Merkle Roots
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-83>>
+      <no-break><pageref|auto-82>>
 
       4.5<space|2spc>Simplicity Programs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-84>
+      <no-break><pageref|auto-83>
 
       <with|par-left|<quote|1tab>|4.5.1<space|2spc>Example:
       <rigid|<with|mode|<quote|text>|<with|font-family|<quote|ss>|font-shape|<quote|right>|checkSigHashAll>>>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-85>>
+      <no-break><pageref|auto-84>>
 
       4.6<space|2spc>Schnorr Signature Aggregation
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-86>
+      <no-break><pageref|auto-85>
 
       4.7<space|2spc>Malleability <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-87>
+      <no-break><pageref|auto-86>
 
       <with|par-left|<quote|1tab>|4.7.1<space|2spc>Transaction Weight
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-88>>
+      <no-break><pageref|auto-87>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|5<space|2spc>Jets>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-89><vspace|0.5fn>
+      <no-break><pageref|auto-88><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|6<space|2spc>Delegation>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-90><vspace|0.5fn>
+      <no-break><pageref|auto-89><vspace|0.5fn>
 
       6.1<space|2spc>Unbounded Loops <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-91>
+      <no-break><pageref|auto-90>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|7<space|2spc>Type
       Inference and Serialization> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-92><vspace|0.5fn>
+      <no-break><pageref|auto-91><vspace|0.5fn>
 
       7.1<space|2spc>Explicit Simplicity DAGs
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-93>
+      <no-break><pageref|auto-92>
 
       <with|par-left|<quote|1tab>|7.1.1<space|2spc>Type Inference
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-94>>
+      <no-break><pageref|auto-93>>
 
       <with|par-left|<quote|1tab>|7.1.2<space|2spc>Reconstructing a
       Simplicity Expressions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-95>>
+      <no-break><pageref|auto-94>>
 
       <with|par-left|<quote|2tab>|7.1.2.1<space|2spc>syncase
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-96>>
+      <no-break><pageref|auto-95>>
 
       <with|par-left|<quote|2tab>|7.1.2.2<space|2spc>inflate
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-97>>
+      <no-break><pageref|auto-96>>
 
       7.2<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-98>
+      <no-break><pageref|auto-97>
 
       <with|par-left|<quote|1tab>|7.2.1<space|2spc>Serializtion of Bit String
       and Positive Numbers <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-99>>
+      <no-break><pageref|auto-98>>
 
       <with|par-left|<quote|1tab>|7.2.2<space|2spc>Serialization of
       Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-100>>
+      <no-break><pageref|auto-99>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|8<space|2spc>Coq
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-101><vspace|0.5fn>
+      <no-break><pageref|auto-100><vspace|0.5fn>
 
       8.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-102>
+      <no-break><pageref|auto-101>
 
       8.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-103>
+      <no-break><pageref|auto-102>
 
       <with|par-left|<quote|1tab>|8.2.1<space|2spc>The ``Initial''
       Representation of Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-104>>
+      <no-break><pageref|auto-103>>
 
       <with|par-left|<quote|1tab>|8.2.2<space|2spc>The ``Final''
       Representation of Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-105>>
+      <no-break><pageref|auto-104>>
 
       <with|par-left|<quote|2tab>|8.2.2.1<space|2spc>Simplicity Algebras
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-106>>
+      <no-break><pageref|auto-105>>
 
       <with|par-left|<quote|2tab>|8.2.2.2<space|2spc>The ``Final''
       Representation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-107>>
+      <no-break><pageref|auto-106>>
 
       <with|par-left|<quote|2tab>|8.2.2.3<space|2spc>Constructing ``Final''
       Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-108>>
+      <no-break><pageref|auto-107>>
 
       <with|par-left|<quote|1tab>|8.2.3<space|2spc>Why two representations of
       Terms? <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-109>>
+      <no-break><pageref|auto-108>>
 
       8.3<space|2spc>Example Simplicity Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-110>
+      <no-break><pageref|auto-109>
 
       <with|par-left|<quote|1tab>|8.3.1<space|2spc>Bits
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-111>>
+      <no-break><pageref|auto-110>>
 
       <with|par-left|<quote|1tab>|8.3.2<space|2spc>Arithmetic
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-112>>
+      <no-break><pageref|auto-111>>
 
       <with|par-left|<quote|1tab>|8.3.3<space|2spc>SHA256
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-113>>
+      <no-break><pageref|auto-112>>
 
       8.4<space|2spc>The Hierarchy of Simplicity Language Extensions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-114>
+      <no-break><pageref|auto-113>
 
       <with|par-left|<quote|1tab>|8.4.1<space|2spc>Witness
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-116>>
+      <no-break><pageref|auto-115>>
 
       <with|par-left|<quote|1tab>|8.4.2<space|2spc>Assertion
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-117>>
+      <no-break><pageref|auto-116>>
 
       <with|par-left|<quote|1tab>|8.4.3<space|2spc>Delegation
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-118>>
+      <no-break><pageref|auto-117>>
 
       <with|par-left|<quote|1tab>|8.4.4<space|2spc>Primitives
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-119>>
+      <no-break><pageref|auto-118>>
 
       <with|par-left|<quote|2tab>|8.4.4.1<space|2spc>Bitcoin
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-120>>
+      <no-break><pageref|auto-119>>
 
       <with|par-left|<quote|1tab>|8.4.5<space|2spc>Jets
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-121>>
+      <no-break><pageref|auto-120>>
 
       <with|par-left|<quote|1tab>|8.4.6<space|2spc>Full Simplicity
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-122>>
+      <no-break><pageref|auto-121>>
 
       8.5<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-123>
+      <no-break><pageref|auto-122>
 
       8.6<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-124>
+      <no-break><pageref|auto-123>
 
       <with|par-left|<quote|1tab>|8.6.1<space|2spc>Bit Machine Code
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-125>>
+      <no-break><pageref|auto-124>>
 
       <with|par-left|<quote|2tab>|8.6.1.1<space|2spc>Bit Machine Programs
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-126>>
+      <no-break><pageref|auto-125>>
 
       <with|par-left|<quote|1tab>|8.6.2<space|2spc>Translating Simplicity to
       the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-127>>
+      <no-break><pageref|auto-126>>
 
       <with|par-left|<quote|1tab>|8.6.3<space|2spc>Static Analysis
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-128>>
+      <no-break><pageref|auto-127>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|9<space|2spc>Haskell
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-129><vspace|0.5fn>
+      <no-break><pageref|auto-128><vspace|0.5fn>
 
       9.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-130>
+      <no-break><pageref|auto-129>
 
       9.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-131>
+      <no-break><pageref|auto-130>
 
       9.3<space|2spc>Blockchain Primitives
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-132>
+      <no-break><pageref|auto-131>
 
       <with|par-left|<quote|1tab>|9.3.1<space|2spc>Bitcoin Primitives
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-133>>
+      <no-break><pageref|auto-132>>
 
       9.4<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-134>
+      <no-break><pageref|auto-133>
 
       9.5<space|2spc>Denotational Semantics of Full Simplicity
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-135>
+      <no-break><pageref|auto-134>
 
       9.6<space|2spc>Example Simplicity Expressions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-136>
+      <no-break><pageref|auto-135>
 
       <with|par-left|<quote|1tab>|9.6.1<space|2spc>Bits
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-137>>
+      <no-break><pageref|auto-136>>
 
       <with|par-left|<quote|1tab>|9.6.2<space|2spc>Multi-bit Words
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-138>>
+      <no-break><pageref|auto-137>>
 
       <with|par-left|<quote|2tab>|9.6.2.1<space|2spc>Arithmetic operations
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-139>>
+      <no-break><pageref|auto-138>>
 
       <with|par-left|<quote|2tab>|9.6.2.2<space|2spc>Bit-wise operations
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-140>>
+      <no-break><pageref|auto-139>>
 
       <with|par-left|<quote|1tab>|9.6.3<space|2spc>Generic
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-141>>
+      <no-break><pageref|auto-140>>
 
       <with|par-left|<quote|1tab>|9.6.4<space|2spc>SHA-256
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-142>>
+      <no-break><pageref|auto-141>>
 
       <with|par-left|<quote|1tab>|9.6.5<space|2spc>LibSecp256k1
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-143>>
+      <no-break><pageref|auto-142>>
 
       <with|par-left|<quote|1tab>|9.6.6<space|2spc>CheckSigHashAll
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-144>>
+      <no-break><pageref|auto-143>>
 
       9.7<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-145>
+      <no-break><pageref|auto-144>
 
       <with|par-left|<quote|1tab>|9.7.1<space|2spc>Translating Simplicity to
       the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-146>>
+      <no-break><pageref|auto-145>>
 
       <with|par-left|<quote|1tab>|9.7.2<space|2spc>Static Analysis
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-147>>
+      <no-break><pageref|auto-146>>
 
       9.8<space|2spc>Type Inference <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-148>
+      <no-break><pageref|auto-147>
 
       9.9<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-149>
+      <no-break><pageref|auto-148>
 
       <with|par-left|<quote|1tab>|9.9.1<space|2spc>Free Monadic
       Deserializaiton <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-150>>
+      <no-break><pageref|auto-149>>
 
       <with|par-left|<quote|1tab>|9.9.2<space|2spc>Serialization of
       Simplicity DAGs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-151>>
+      <no-break><pageref|auto-150>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|10<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-152><vspace|0.5fn>
+      <no-break><pageref|auto-151><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       A<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-153><vspace|0.5fn>
+      <no-break><pageref|auto-152><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-154><vspace|0.5fn>
+      <no-break><pageref|auto-153><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
