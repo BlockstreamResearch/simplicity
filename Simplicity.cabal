@@ -2,11 +2,11 @@ name:                Simplicity
 version:             0.0.0
 -- synopsis:
 -- description:
-license:             AllRightsReserved
--- license-file:        LICENSE
+license:             MIT
+license-file:        LICENSE
 author:              Russell O'Connor
 maintainer:          roconnor@blockstream.io
--- copyright:
+copyright:           (c) 2018 Blockstream
 category:            Language
 build-type:          Simple
 extra-source-files:  README.md

@@ -12,6 +12,6 @@ stdenv.mkDerivation {
   propagatedBuildInputs = [ vst ];
   installFlags = "COQLIB=$(out)/lib/coq/${coq.coq-version}/";
   meta = {
-    license = lib.licenses.unfree;
+    license = lib.licenses.mit;
   };
 }
