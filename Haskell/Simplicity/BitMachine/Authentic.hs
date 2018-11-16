@@ -180,6 +180,9 @@ data Stats = Stats { memSize :: !Int   -- ^ Maximum total number of 'Cell's occu
                    , stackSize :: !Int -- ^ Maximum total number of frames occuring during execution
                    } deriving Show
 
+instance Semigroup Stats where
+  (<>) = mappend
+
 -- The monoid instance for statistics combine intermediate execution profiles of the Bit Machine's state.
 instance Monoid Stats where
   mempty = Stats { memSize = 0

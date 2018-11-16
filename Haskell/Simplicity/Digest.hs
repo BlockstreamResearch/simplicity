@@ -1,7 +1,7 @@
 -- | This modules wraps Data.Digest.Pure.SHA in order to simulate direct access to the SHA-256 compression function by providing access to SHA-256 midstates.
 {-# LANGUAGE BangPatterns #-}
 module Simplicity.Digest
-  ( Hash256, _be256, be256
+  ( Hash256, be256, be256_
   , get256Bits, put256Bits
   , integerHash256, hash0
   , IV, bsIv, ivHash, bslHash, bsHash, bitStringHash
@@ -19,9 +19,9 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
 import Data.List (foldl')
 import Data.Serialize (Serialize, encode, get, getShortByteString, put, putShortByteString)
-import Lens.Family2 (Lens, (^.), (^..), over)
-
-import Simplicity.LensEx (_bits, bits, review, under)
+import Lens.Family2 (Adapter', Lens', (^.), (^..), over, review, under)
+import Lens.Family2.Stock (bend, bend_)
+import Lens.Family2.Unchecked (adapter)
 import Simplicity.Word
 import Simplicity.Serialization
 
@@ -33,12 +33,12 @@ instance Serialize Hash256 where
   put (Hash256 bs) = putShortByteString bs
 
 -- | A 'Lens' accessing a 'Word256' from a 'Hash256' using a big endian interpretation.
-_be256 :: Functor f => (Word256 -> f Word256) -> Hash256 -> f Hash256
-_be256 = under be256
+be256_ :: Lens' Hash256 Word256
+be256_ = under be256
 
 -- | An adaptor converting a 'Hash256' to a 'Word256' using a big endian interpretation.
-be256 :: (Functor g, Functor f) => (g Word256 -> f Word256) -> g Hash256 -> f Hash256
-be256 f = fmap fro . f . fmap to
+be256 :: Adapter' Hash256 Word256
+be256 = adapter to fro
  where
   fro w = Hash256 $ BSS.toShort (encode w)
   to h = foldl' go 0 . BSS.unpack $ hash256 h
@@ -53,15 +53,15 @@ be256 f = fmap fro . f . fmap to
 -- Due to the flat nature of 'Hash256' only the 'Applicative' interface happens to be used by 'get256Bits'.
 -- This is why the constraint is 'Applicative' instead of 'Monad'.
 get256Bits :: Applicative m => m Bool -> m Hash256
-get256Bits = review (be256.bits)
+get256Bits = review (be256.bend)
 
 -- | Serializes a 256-bit hash value to a stream of 'Bool's.
 put256Bits :: Hash256 -> DList Bool
-put256Bits h k = (h^.._be256._bits) ++ k
+put256Bits h k = (h^..be256_.bend_) ++ k
 
 -- | Extracts the 256 hash value as an integer.
 integerHash256 :: Hash256 -> Integer
-integerHash256 h = toInteger $ h^._be256
+integerHash256 h = toInteger $ h^.be256_
 
 
 -- | A hash value with all bits set to 0.

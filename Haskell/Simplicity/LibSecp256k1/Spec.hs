@@ -25,13 +25,12 @@ import Data.Maybe (isJust)
 import Data.Serialize (put)
 import Data.Serialize.Put (putShortByteString, runPut)
 import qualified Data.Vector as V
-import Lens.Family2 ((^.), (^..), (&), (+~), (*~), (%~), over)
-import Lens.Family2.Stock (_1)
+import Lens.Family2 ((^.), (^..), (&), (+~), (*~), (%~), over, review, under, zipWithOf)
+import Lens.Family2.Stock (_1, lend_)
 
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.Schnorr
 import Simplicity.Word
-import Simplicity.LensEx (_bits, review, under, zipWithOf)
 
 infixl 7 .*.
 infixl 6 .+.
@@ -273,6 +272,9 @@ double a | isInf a = mempty
   x = neg 4 (mulInt 4 t3') .+. t2
   y = t1 .*. (mulInt 6 t3' .+. neg 1 t2) .+. neg 2 t4
 
+instance Semigroup GEJ where
+  (<>) = mappend
+
 instance Monoid GEJ where
   mempty = GEJ feOne feOne feZero
   mappend a b | isInf a = b
@@ -415,9 +417,9 @@ ecMult a na ng = foldr f mempty (zipEx wnafa (wnaf wg ng)) & _z %~ (.*. globalZ)
     zinv3 = zinv2 .*. zinv
 
 wnaf :: Int -> Scalar -> [Maybe Int]
-wnaf w s@(Scalar ws) = post $ go False [] (s'^.._bits)
+wnaf w s@(Scalar ws) = post $ go False [] (s'^..lend_)
  where
-  hibit = last (ws^.._bits)
+  hibit = last (ws^..lend_)
   (Scalar s') | hibit = scalarNegate s
               | otherwise = s
   post | hibit = fmap (fmap complement)

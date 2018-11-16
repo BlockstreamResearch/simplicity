@@ -26,18 +26,18 @@ library
                        Simplicity.Serialization, Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString
                        Simplicity.Word
                        Simplicity.LibSecp256k1.Schnorr
-  other-modules:       Simplicity.LibSecp256k1.Spec, Simplicity.LensEx
+  other-modules:       Simplicity.LibSecp256k1.Spec
   other-extensions:    GADTs, TypeOperators, DeriveTraversable
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
   ghc-options:         -O2 -fsimpl-tick-factor=122
   build-depends:       array >=0.5 && <0.6,
-                       base >=4.9 && <4.11,
+                       base >=4.9 && <4.12,
                        binary >=0.7 && <0.9,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,
                        containers >=0.5.10 && <0.6,
-                       lens-family >=1.2 && <1.3,
+                       lens-family >=2.0 && <2.1,
                        mtl >=2.2 && <2.3,
                        MemoTrie >=0.6 && <0.7,
                        SHA >=1.6 && <1.7,
@@ -66,14 +66,14 @@ Test-Suite Simplicity-testsuite
                        Simplicity.Serialization.Tests, Simplicity.Ty.Tests,
                        Simplicity.Word,
                        Simplicity.LibSecp256k1.Schnorr
-                       Simplicity.LibSecp256k1.Spec, Simplicity.LensEx
+                       Simplicity.LibSecp256k1.Spec
   build-depends:       array >=0.5 && <0.6,
-                       base >=4.9 && <4.11,
+                       base >=4.9 && <4.12,
                        binary >=0.7 && <0.9,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,
                        containers >=0.5.10 && <0.6,
-                       lens-family >=1.2 && <1.3,
+                       lens-family >=2.0 && <2.1,
                        mtl >=2.2 && <2.3,
                        MemoTrie >=0.6 && <0.7,
                        SHA >=1.6 && <1.7,

@@ -3,7 +3,7 @@ module Simplicity.LibSecp256k1.FFI.Tests
  , main
  ) where
 
-import Lens.Family2 ((^.), (^..), over, allOf)
+import Lens.Family2 ((^.), (^..), over, allOf, review, zipWithOf)
 import Test.Tasty (TestTree, defaultMain, testGroup)
 import Test.Tasty.QuickCheck ( Arbitrary(..), arbitrarySizedBoundedIntegral, shrinkIntegral
                              , choose, forAll, testProperty
@@ -13,7 +13,6 @@ import Test.Tasty.HUnit (assertBool, assertEqual, testCase)
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.FFI as C
 import Simplicity.LibSecp256k1.Spec as Spec
-import Simplicity.LensEx (review, zipWithOf)
 import Simplicity.Word
 
 main = defaultMain tests

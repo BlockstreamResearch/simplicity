@@ -9,7 +9,7 @@ import Data.Word (Word8, Word16, Word32, Word64)
 import Foreign.Ptr (castPtr)
 import Foreign.Storable
 import Lens.Family2 ((&), (%~))
-import Lens.Family2.Stock (_1, both, mapped)
+import Lens.Family2.Stock (_1, both_, mapped)
 
 -- | 256-bit unsigned integer type
 data Word256 = Word256 !Word64 !Word64 !Word64 !Word64 deriving (Bounded, Eq, Ord)
@@ -46,8 +46,8 @@ instance Integral Word256 where
   rem = liftBinary rem
   div = liftBinary div
   mod = liftBinary mod
-  quotRem a b = quotRem (toInteger a) (toInteger b) & both %~ fromInteger
-  divMod a b = divMod (toInteger a) (toInteger b) & both %~ fromInteger
+  quotRem a b = quotRem (toInteger a) (toInteger b) & both_ %~ fromInteger
+  divMod a b = divMod (toInteger a) (toInteger b) & both_ %~ fromInteger
   toInteger (Word256 a3 a2 a1 a0) = toInteger a0 + 2^64*(toInteger a1 + 2^64*(toInteger a2 + 2^64*toInteger a3))
 
 instance Enum Word256 where

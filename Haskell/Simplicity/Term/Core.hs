@@ -27,12 +27,10 @@ import Prelude hiding (take, drop, fail)
 import Control.Arrow (Kleisli(..))
 import Control.Monad ((>=>))
 import qualified Control.Monad.Fail as Fail
-import Lens.Family2 (over)
 
 import Simplicity.Digest
 import Simplicity.Ty
 import Simplicity.Ty.Word
-import Simplicity.LensEx (review)
 
 -- | Values of type @forall term. 'Core' term => term a b@ are well-typed terms of the core Simplicity language represented in tagless-final style.
 --

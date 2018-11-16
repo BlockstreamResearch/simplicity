@@ -9,12 +9,11 @@ import Data.ByteString (pack)
 import Data.ByteString.Short (toShort)
 import qualified Data.List as L
 import qualified Data.Word as W
-import Lens.Family2 ((^..), allOf)
-import Lens.Family2.Stock (both)
+import Lens.Family2 ((^..), allOf, zipWithOf)
+import Lens.Family2.Stock (both_)
 
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.Spec ((.*.))
-import Simplicity.LensEx (zipWithOf)
 import qualified Simplicity.LibSecp256k1.Spec as LibSecp
 import Simplicity.Programs.Bit
 import Simplicity.Programs.LibSecp256k1
@@ -155,7 +154,7 @@ prop_normalize_over_high x y = prop_normalize (over_high x y)
 prop_fePack :: FE -> Bool
 prop_fePack a = toBS (fePack a) == LibSecp.fePack (fromFE a)
  where
-  toBS x = toShort . pack . map conv $ x^..(both.both.both.both.both)
+  toBS x = toShort . pack . map conv $ x^..(both_.both_.both_.both_.both_)
   conv = fromInteger . fromWord8
 prop_fePack_over_low x y = prop_fePack (over_low x y)
 prop_fePack_over_high x y = prop_fePack (over_high x y)
@@ -266,7 +265,7 @@ fromScalar = LibSecp.Scalar . fromInteger . fromWord256
 prop_wnaf5 :: Ty.Word256 -> Bool
 prop_wnaf5 n = L.and $ zipWith (==) lhs (fmap (fmap unsign) (LibSecp.wnaf 5 (fromScalar n) ++ repeat Nothing))
  where
-  lhs = either (const Nothing) (Just . fromInteger . fromWord4) <$> wnaf5 n^..both.both.both.both.both.both.both.both
+  lhs = either (const Nothing) (Just . fromInteger . fromWord4) <$> wnaf5 n^..both_.both_.both_.both_.both_.both_.both_.both_
   unsign x | x < 0 = 2^4 + x
            | otherwise = x
 prop_wnaf5_hi :: Ty.Word128 -> Bool
@@ -275,7 +274,7 @@ prop_wnaf5_hi n10 = prop_wnaf5 (toWord128 (-1), n10)
 prop_wnaf16 :: Ty.Word256 -> Bool
 prop_wnaf16 n = L.and $ zipWith (==) lhs (fmap (fmap unsign) (LibSecp.wnaf 16 (fromScalar n) ++ repeat Nothing))
  where
-  lhs = either (const Nothing) (Just . fromInteger . fromWord16) <$> wnaf16 n^..both.both.both.both.both.both.both.both
+  lhs = either (const Nothing) (Just . fromInteger . fromWord16) <$> wnaf16 n^..both_.both_.both_.both_.both_.both_.both_.both_
   unsign x | x < 0 = 2^16 + 2*x+1
            | otherwise = 2*x+1
 prop_wnaf16_hi :: Ty.Word128 -> Bool
