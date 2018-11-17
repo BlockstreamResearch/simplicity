@@ -768,7 +768,7 @@
   familiar with mathematics should not have too much trouble following it
   since mathematics notation already borrows heavily from simple type theory.
 
-  To being with we will assume that we have a notation of a type of natural
+  To begin with we will assume that we have a notation of a type of natural
   numbers, <math|\<bbb-N\>>, with <math|0\<of\>\<bbb-N\>>,
   <math|1\<of\>\<bbb-N\>>, and so forth for all other numbers. Given natural
   numbers <math|n\<of\>\<bbb-N\>> and <math|m\<of\>\<bbb-N\>>, we take it for
