@@ -21,3 +21,8 @@ A recent PDF version can be found in the [pdf](https://github.com/ElementsProjec
 Software artifacts can be built using [Nix](https://nixos.org/nix/).
 To build the Haskell project, run `nix-build -A haskell`.
 To build the Coq project, run `nix-build -A coq`.
+
+## Contact
+
+Interested parties are welcome to join the [Simplicity mailing list](https://lists.ozlabs.org/listinfo/simplicity).
+Issues and pull-requests can be made through GitHub's interface.
