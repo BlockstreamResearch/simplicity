@@ -171,7 +171,7 @@ let outputsHash :=
   let go i := putInt64le (txoValue i) ++ putHash256 (byteStringHash (txoScript i)) in
   byteStringHash (concat (map go (sigTxOut tx))) in
 let inputsHash :=
-  let go i := putOutpoint (sigTxiPreviousOutpoint i) ++ putInt32le (sigTxiSequence i) in
+  let go i := putOutpoint (sigTxiPreviousOutpoint i) ++ putInt64le (sigTxiValue i) ++ putInt32le (sigTxiSequence i) in
   byteStringHash (concat (map go (sigTxIn tx))) in
 (match p in prim A B return A -> option B with
  | Version => fun _ => Some (fromZ (Int.signed (sigTxVersion tx)))

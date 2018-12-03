@@ -8,7 +8,8 @@ module Simplicity.Primitive.Bitcoin
 
 import Data.Array (Array, (!), bounds, elems, inRange)
 import qualified Data.List as List
-import Data.Serialize (Get, getWord8, Putter, put, putWord8, runPutLazy)
+import Data.Serialize (Get, getWord8,
+                       Putter, put, putWord8, putWord32le, putWord64le, runPutLazy)
 import qualified Data.Word
 
 import Simplicity.Digest
@@ -180,12 +181,13 @@ primEnv tx ix scmr | cond = Just $ PrimEnv { envTx = tx
   -- Perhaps the inputs and outputs should be hashed into a binary tree instead?
   outputsHash = bslHash . runPutLazy $ mapM_ go (elems (sigTxOut tx))
    where
-    go txo = put (txoValue txo)
-          >> put (bslHash  (txoScript txo))
+    go txo = putWord64le (txoValue txo)
+          >> put (bslHash (txoScript txo))
   inputsHash = bslHash . runPutLazy $ mapM_ go (elems (sigTxIn tx))
    where
     go txi = put (sigTxiPreviousOutput txi)
-          >> put (sigTxiSequence txi)
+          >> putWord64le (sigTxiValue txi)
+          >> putWord32le (sigTxiSequence txi)
 
 primSem :: Prim a b -> a -> PrimEnv -> Maybe b
 primSem p a env = interpret p a
