@@ -39,7 +39,7 @@ import Simplicity.Ty
 sigHashAll :: (Core term, Primitive term) => term () Hash
 sigHashAll = sigAll >>> (scribe iv &&& oh >>> hashBlock) &&& ih >>> hashBlock
  where
-  iv = toWord256 . integerHash256 . ivHash $ signatureIv (witnessRoot sigAll)
+  iv = toWord256 . integerHash256 . ivHash $ signatureIv (commitmentRoot sigAll)
   sigAll :: (Core term, Primitive term) => term () (Block, Block)
   sigAll = blk1 &&& blk2
    where
