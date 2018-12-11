@@ -1,9 +1,7 @@
 -- | This module provides the functional semantics of the full 'Simplicity' language.
 -- The 'Semantics' arrow is an instance of the 'Simplicity' class and 'sem' evaluates terms of the full Simplicity langauge.
-module Simplicity.Semantics 
-
- ( Delegator, runDelegator
- , Semantics, sem
+module Simplicity.Semantics
+ ( Semantics, sem
  ) where
 
 import Prelude hiding (drop, take, fail)
@@ -18,6 +16,7 @@ import Simplicity.Programs.Generic
 import Simplicity.Term
 import Simplicity.Ty.Word
 
+-- Note: 'Delegator' differs from 'Simplicity.Tensor.Product CommitmentRoot' due to a different 'Delegate' instance.
 -- | @'Delegator' p@ is a helper data type for creating a 'Delegate' instance.
 -- @p@ is typically at least an instance of 'Core'.
 data Delegator p a b = Delegator { delegatorRoot :: CommitmentRoot a b
@@ -40,18 +39,18 @@ sem = flip . (runReaderT .) . runKleisli . runDelegator
 
 instance Core p => Core (Delegator p) where
   iden = Delegator iden iden
-  comp (Delegator rs fs) (Delegator rt ft) = Delegator (comp rs rt) (comp fs ft)
+  comp ~(Delegator rs fs) ~(Delegator rt ft) = Delegator (comp rs rt) (comp fs ft)
   unit = Delegator unit unit
-  injl (Delegator rt ft) = Delegator (injl rt) (injl ft)
-  injr (Delegator rt ft) = Delegator (injr rt) (injr ft)
-  match (Delegator rs fs) (Delegator rt ft) = Delegator (match rs rt) (match fs ft)
-  pair (Delegator rs fs) (Delegator rt ft) = Delegator (pair rs rt) (pair fs ft)
-  take (Delegator rt ft) = Delegator (take rt) (take ft)
-  drop (Delegator rt ft) = Delegator (drop rt) (drop ft)
+  injl ~(Delegator rt ft) = Delegator (injl rt) (injl ft)
+  injr ~(Delegator rt ft) = Delegator (injr rt) (injr ft)
+  match ~(Delegator rs fs) ~(Delegator rt ft) = Delegator (match rs rt) (match fs ft)
+  pair ~(Delegator rs fs) ~(Delegator rt ft) = Delegator (pair rs rt) (pair fs ft)
+  take ~(Delegator rt ft) = Delegator (take rt) (take ft)
+  drop ~(Delegator rt ft) = Delegator (drop rt) (drop ft)
 
 instance Assert p => Assert (Delegator p) where
-  assertl (Delegator rs fs) t = Delegator (assertl rs t) (assertl fs t)
-  assertr s (Delegator rt ft) = Delegator (assertr s rt) (assertr s ft)
+  assertl ~(Delegator rs fs) t = Delegator (assertl rs t) (assertl fs t)
+  assertr s ~(Delegator rt ft) = Delegator (assertr s rt) (assertr s ft)
   fail b = Delegator (fail b) (fail b)
 
 instance Primitive p => Primitive (Delegator p) where
@@ -64,7 +63,7 @@ instance Witness p => Witness (Delegator p) where
   witness b = Delegator (witness b) (witness b)
 
 instance Core p => Delegate (Delegator p) where
-  disconnect (Delegator rs fs) (Delegator rt ft) = Delegator (disconnect rs rt) f
+  disconnect ~(Delegator rs fs) ~(Delegator rt ft) = Delegator (disconnect rs rt) f
    where
     root256 = toWord256 . integerHash256 $ commitmentRoot rt
     f = iden &&& scribe root256 >>> fs >>> take iden &&& drop ft
