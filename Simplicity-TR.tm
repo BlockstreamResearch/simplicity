@@ -388,7 +388,7 @@
     7.2<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-99>
 
-    <with|par-left|1tab|7.2.1<space|2spc>Serializtion of Bit String and
+    <with|par-left|1tab|7.2.1<space|2spc>Serialization of Bit Strings and
     Positive Numbers <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-100>>
 
@@ -4877,7 +4877,7 @@
   Appendix<nbsp><reference|app:AltSerialization> describes an alternative,
   byte-based, binary encoding.
 
-  <subsection|Serializtion of Bit String and Positive Numbers>
+  <subsection|Serialization of Bit Strings and Positive Numbers>
 
   In this section we present a recursive Elias prefix code for bit strings
   and positive natural numbers. Our code for positive natural numbers it has
@@ -7290,8 +7290,8 @@
       7.2<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-99>
 
-      <with|par-left|<quote|1tab>|7.2.1<space|2spc>Serializtion of Bit String
-      and Positive Numbers <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|7.2.1<space|2spc>Serialization of Bit
+      Strings and Positive Numbers <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-100>>
 
       <with|par-left|<quote|1tab>|7.2.2<space|2spc>Serialization of
