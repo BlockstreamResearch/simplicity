@@ -11,6 +11,8 @@ let hp = nixpkgs.haskell.packages.${compiler};
     coq = nixpkgs.${coqVersion};
   };
 
+  c = nixpkgs.callPackage ./Simplicity.C.nix {};
+
   vst = nixpkgs.callPackage ./vst.nix {
     coq = nixpkgs.${coqVersion};
   };
