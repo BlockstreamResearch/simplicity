@@ -418,20 +418,24 @@ typeCheck v = typeCheckTerm =<< runUnification inferenced
        typeCheckTerm (Case a b c d is it) | (Hidden _ _ hs) <- index s is = case reflect a of
                                                                               SomeTy ra -> do
                                                                                 SomeArrow t <- lookup it
-                                                                                ((ProdR rb rc), rd) <- return $ reifyArrow t
-                                                                                return (someArrowR (ProdR (SumR ra rb) rc) rd (assertr hs t))
+                                                                                let (rbc, rd) = reifyArrow t
+                                                                                case rbc of
+                                                                                  ProdR rb rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertr hs t))
                                           | (Hidden _ _ ht) <- index s is = case reflect b of
                                                                               SomeTy rb -> do
                                                                                 SomeArrow s <- lookup is
-                                                                                ((ProdR ra rc), rd) <- return $ reifyArrow s
-                                                                                return (someArrowR (ProdR (SumR ra rb) rc) rd (assertl s ht))
+                                                                                let (rac, rd) = reifyArrow s
+                                                                                case rac of
+                                                                                  ProdR ra rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertl s ht))
                                           | otherwise = do SomeArrow s <- lookup is
                                                            SomeArrow t <- lookup it
-                                                           ((ProdR ra rc0), rd0) <- return $ reifyArrow s
-                                                           ((ProdR rb rc1), rd1) <- return $ reifyArrow t
-                                                           Refl <- assertEqualTyReflect rc0 rc1
-                                                           Refl <- assertEqualTyReflect rd0 rd1
-                                                           return (someArrowR (ProdR (SumR ra rb) rc0) rd0 (match s t))
+                                                           let (rac0, rd0) = reifyArrow s
+                                                           let (rbc1, rd1) = reifyArrow t
+                                                           case (rac0, rbc1) of
+                                                             (ProdR ra rc0, ProdR rb rc1) -> do
+                                                               Refl <- assertEqualTyReflect rc0 rc1
+                                                               Refl <- assertEqualTyReflect rd0 rd1
+                                                               return (someArrowR (ProdR (SumR ra rb) rc0) rd0 (match s t))
        typeCheckTerm (Pair a b c is it) = do SomeArrow s <- lookup is
                                              SomeArrow t <- lookup it
                                              let (ra0, rb) = reifyArrow s
@@ -440,11 +444,12 @@ typeCheck v = typeCheckTerm =<< runUnification inferenced
                                              return (someArrowR ra0 (ProdR rb rc) (pair s t))
        typeCheckTerm (Disconnect a b c d is it) = do SomeArrow s <- lookup is
                                                      SomeArrow t <- lookup it
-                                                     ((ProdR ra rw), (ProdR rb rc0)) <- return $ reifyArrow s
                                                      let (rc1, rd) = reifyArrow t
-                                                     Refl <- assertEqualTyReflect rw (reify :: TyReflect Word256)
-                                                     Refl <- assertEqualTyReflect rc0 rc1
-                                                     return (someArrowR ra (ProdR rb rd) (disconnect s t))
+                                                     case reifyArrow s of
+                                                       ((ProdR ra rw), (ProdR rb rc0)) -> do
+                                                         Refl <- assertEqualTyReflect rw (reify :: TyReflect Word256)
+                                                         Refl <- assertEqualTyReflect rc0 rc1
+                                                         return (someArrowR ra (ProdR rb rd) (disconnect s t))
        typeCheckTerm (Hidden _ _ _) = Left "Simplicity.Inference.typeCheck: encountered illegal use of Hidden node"
        typeCheckTerm (Witness a b w) = case (reflect a, reflect b) of
                                         (SomeTy ra, SomeTy rb) -> do

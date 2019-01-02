@@ -33,11 +33,11 @@ library
   default-language:    Haskell2010
   ghc-options:         -O2 -fsimpl-tick-factor=122
   build-depends:       array >=0.5 && <0.6,
-                       base >=4.9 && <4.12,
+                       base >=4.9 && <4.13,
                        binary >=0.7 && <0.9,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,
-                       containers >=0.5.10 && <0.6,
+                       containers >=0.5.10 && <0.7,
                        lens-family >=2.0 && <2.1,
                        mtl >=2.2 && <2.3,
                        MemoTrie >=0.6 && <0.7,
@@ -70,11 +70,11 @@ Test-Suite Simplicity-testsuite
                        Simplicity.LibSecp256k1.Schnorr
                        Simplicity.LibSecp256k1.Spec
   build-depends:       array >=0.5 && <0.6,
-                       base >=4.9 && <4.12,
+                       base >=4.9 && <4.13,
                        binary >=0.7 && <0.9,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,
-                       containers >=0.5.10 && <0.6,
+                       containers >=0.5.10 && <0.7,
                        lens-family >=2.0 && <2.1,
                        mtl >=2.2 && <2.3,
                        MemoTrie >=0.6 && <0.7,
@@ -83,7 +83,7 @@ Test-Suite Simplicity-testsuite
                        transformers >=0.5 && <0.6,
                        unification-fd >=0.10 && <0.11,
                        vector >=0.12 && <0.13,
-                       QuickCheck >=2.10 && <2.12,
-                       tasty >=0.11 && <1.2,
+                       QuickCheck >=2.10 && <2.13,
+                       tasty >=0.11 && <1.3,
                        tasty-hunit >=0.9 && <0.11,
                        tasty-quickcheck >=0.8 && <0.11
