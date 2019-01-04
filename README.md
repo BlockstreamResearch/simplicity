@@ -13,7 +13,7 @@ This project contains
 
 ## Documentation
 
-Detailed documentation can be found in the `Simplicity.tm` TeXmacs file.
+Detailed documentation can be found in the `Simplicity-TR.tm` TeXmacs file.
 A recent PDF version can be found in the [pdf](https://github.com/ElementsProject/simplicity/blob/pdf/Simplicity-TR.pdf) branch.
 
 ## Build
