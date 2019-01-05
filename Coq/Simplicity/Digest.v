@@ -16,7 +16,7 @@ Record hash256 : Set := Hash256
  ; hash256_len : length hash256_reg = 8
  }.
 
-Definition hash256_to_Zlist (x : hash256) := intlist_to_Zlist (hash256_reg x).
+Definition hash256_to_bytelist (x : hash256) := intlist_to_bytelist (hash256_reg x).
 
 (* The normalizeInt and normalizeHash functions are extensionally the idenity
  * function.  Operationally they work by replacing the internal proof
@@ -65,12 +65,10 @@ apply UIP_dec; decide equality.
 Qed.
 
 Definition byteStringHash (x : list Integers.byte) : hash256 :=
- Hash256 (process_msg SHA256.init_registers (generate_and_pad_alt (map Integers.Byte.unsigned x)))
+ Hash256 (process_msg SHA256.init_registers (generate_and_pad_alt x))
   (length_process_msg _).
 
-Definition stringHash (x : string) : hash256 :=
- Hash256 (process_msg SHA256.init_registers (generate_and_pad_alt (SHA256.str_to_Z x)))
-  (length_process_msg _).
+Definition stringHash (x : string) : hash256 := byteStringHash (SHA256.str_to_bytes x).
 
 Definition compress (iv h1 h2 : hash256) : hash256 :=
   Hash256 (process_block iv (List.rev (hash256_reg h1 ++ hash256_reg h2)))

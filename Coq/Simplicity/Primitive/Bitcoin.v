@@ -61,8 +61,7 @@ End DataTypes.
 
 Section Serialization.
 
-Definition putHash256 (x : hash256) : list byte :=
-  map Byte.repr (hash256_to_Zlist x).
+Definition putHash256 (x : hash256) : list byte := hash256_to_bytelist x.
 
 Definition putInt64le (x : Int64.int) : list byte :=
 let z := Int64.unsigned x in

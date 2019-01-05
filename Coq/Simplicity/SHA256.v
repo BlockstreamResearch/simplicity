@@ -454,9 +454,8 @@ Hint Immediate hashBlock_Parametric : parametricity.
 
 Require Import Simplicity.MerkleRoot.
 
-Fact Hash256_hashBlock : hash256_to_Zlist (commitmentRoot hashBlock) =
-  [226; 109; 113; 195;  24; 230;  29;  58; 155;  49; 169; 205; 139; 238; 141;  77;
-    58; 176; 171; 101; 110; 119;  89; 240; 170;  16; 209; 221;   8; 156; 133; 130]%Z.
+Fact Hash256_hashBlock : map Byte.unsigned (hash256_to_bytelist (commitmentRoot hashBlock)) =
+  map Byte.unsigned (sha.functional_prog.hexstring_to_bytelist "e26d71c318e61d3a9b31a9cd8bee8d4d3ab0ab656e7759f0aa10d1dd089c8582").
 Proof.
 vm_compute.
 reflexivity.
