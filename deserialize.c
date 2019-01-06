@@ -1,6 +1,7 @@
 #include "deserialize.h"
 
 #include <limits.h>
+#include <stdlib.h>
 
 /* Ensure a non-zero amount of bits are 'available'.
  * If no more bits are available in the 'stream', returns 'ERR_BISTREAM_EOF'.
@@ -53,6 +54,34 @@ static int32_t getNBits(int n, bit_stream* stream) {
  */
 static int32_t getBit(bit_stream* stream) {
   return getNBits(1, stream);
+}
+
+/* Fetches 'len' bytes from 'stream' into 'result'.
+ * The bits in each byte are set from the MSB to the LSB and the bytes of 'result' are set from 0 upto 'len'.
+ * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available ('result' may be modified).
+ * Returns 0 if successful.
+ *
+ * Precondition: uint8_t result[len];
+ *               NULL != stream
+ */
+static int32_t getByteArray(uint8_t* result, const size_t len, bit_stream* stream) {
+  for (size_t i = 0; i < len; ++i) {
+    int32_t byte = getNBits(8, stream);
+    if (byte < 0) return byte;
+    result[i] = byte;
+  }
+  return 0;
+}
+
+/* Fetches a 256-bit hash value from 'stream' into 'result'.
+ * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available ('result' may be modified).
+ * Returns 0 if successful.
+ *
+ * Precondition: uint8_t result[32];
+ *               NULL != stream
+ */
+static int32_t getHash(uint8_t* result, bit_stream* stream) {
+  return getByteArray(result, 32, stream);
 }
 
 /* Decode an encoded bitstring up to length 1.
@@ -198,5 +227,130 @@ int32_t decodeUptoMaxInt(bit_stream* stream) {
       if (result < 0) return result;
       return ((1 << n) | result);
     }
+  }
+}
+
+/* Decode a single node of a Simplicity dag from 'stream' into 'dag'['i'].
+ * Returns 'ERR_DATA_OUT_OF_RANGE' if the node's child isn't a reference to one of the preceeding nodes.
+ * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered (all fail subexpressions ought to have been pruned prior to deserialization).
+ * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
+ * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * In the above error cases, 'dag' may be modified.
+ * Returns 0 if successful.
+ *
+ * :TODO: Decoding of witness, primitives and jets are not implemented yet.
+ *
+ * Precondition: dag_node dag[i + 1];
+ *               i < 2^31 - 1
+ *               NULL != stream
+ */
+static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
+  int32_t bit = getBit(stream);
+  if (bit < 0) return bit;
+  if (0 == bit) {
+    int32_t code = getNBits(2, stream);
+    if (code < 0) return code;
+    int32_t subcode = getNBits(code < 3 ? 2 : 1, stream);
+    if (subcode < 0) return subcode;
+    for (int32_t j = 0; j < 2 - code; ++j) {
+      int32_t ix = decodeUptoMaxInt(stream);
+      if (ix < 0) return ix;
+      if (i < ix) return ERR_DATA_OUT_OF_RANGE;
+      dag[i].child[j] = i - ix;
+    }
+    switch (code) {
+     case 0:
+      switch (subcode) {
+       case 0: dag[i].tag = COMP; return 0;
+       case 1: dag[i].tag = CASE; return 0;
+       case 2: dag[i].tag = PAIR; return 0;
+       case 3: dag[i].tag = DISCONNECT; return 0;
+      }
+     case 1:
+      switch (subcode) {
+       case 0: dag[i].tag = INJL; return 0;
+       case 1: dag[i].tag = INJR; return 0;
+       case 2: dag[i].tag = TAKE; return 0;
+       case 3: dag[i].tag = DROP; return 0;
+      }
+     case 2:
+      switch (subcode) {
+       case 0: dag[i].tag = IDEN; return 0;
+       case 1: dag[i].tag = UNIT; return 0;
+       case 2: return ERR_FAIL_CODE;
+       case 3: return ERR_STOP_CODE;
+      }
+     case 3:
+      switch (subcode) {
+       case 0:
+        dag[i].tag = HIDDEN;
+        return getHash(dag[i].hash, stream);
+       case 1:
+        dag[i].tag = WITNESS;
+        // TODO: parse witness data
+        fprintf(stderr, "witness nodes not yet implemented\n");
+        exit(EXIT_FAILURE);
+      }
+    }
+    return ERR_IMPOSSIBLE;
+  } else {
+    // TODO: Decode primitives and jets
+    fprintf(stderr, "primitives and jets nodes not yet implemented\n");
+    exit(EXIT_FAILURE);
+  }
+}
+
+/* Decode a Simplicity DAG consisting of 'len' nodes from 'stream' into 'dag'.
+ * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceeding nodes.
+ * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered (all fail subexpressions ought to have been pruned prior to deserialization).
+ * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
+ * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * In the above error cases, 'dag' may be modified.
+ * Returns 0 if successful.
+ *
+ * Precondition: dag_node dag[len];
+ *               len < 2^31
+ *               NULL != stream
+ */
+static int32_t decodeDag(dag_node* dag, const size_t len, bit_stream* stream) {
+  for (size_t i = 0; i < len; ++i) {
+    int32_t err = decodeNode(dag, i, stream);
+    if (err < 0) return err;
+  }
+  return 0;
+}
+
+/* Decode a length-prefixed Simplicity DAG from 'stream'.
+ * Returns 'ERR_DATA_OUT_OF_RANGE' the length prefix's value is too large.
+ * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceeding nodes.
+ * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered (all fail subexpressions ought to have been pruned prior to deserialization).
+ * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
+ * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 0 if malloc fails.
+ * In the above error cases, '*dag' is set to NULL.
+ * If successful, returns a positive value equal to the length of an allocated array of (*dag).
+ *
+ * Precondition: NULL != dag
+ *               NULL != stream
+ *
+ * Postcondition: (dag_node (*dag)[return_value] and '*dag' is a well-formed dag) when the return value of the function is positive;
+ *                NULL == *dag when the return value is non-positive.
+ */
+int32_t decodeMallocDag(dag_node** dag, bit_stream* stream) {
+  *dag = NULL;
+  int32_t dagLen = decodeUptoMaxInt(stream);
+  if (dagLen <= 0) return dagLen;
+  /* :TODO: a consensus parameter limiting the maximum length of a DAG needs to be enforeced here */
+  if (PTRDIFF_MAX / sizeof(dag_node) < dagLen) return ERR_DATA_OUT_OF_RANGE;
+  *dag = malloc(sizeof(dag_node[dagLen]));
+  if (!*dag) return 0;
+
+  int32_t err = decodeDag(*dag, dagLen, stream);
+  if (err < 0) {
+    free(*dag);
+    *dag = NULL;
+    return err;
+  } else {
+    return dagLen;
   }
 }

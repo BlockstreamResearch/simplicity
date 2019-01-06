@@ -2,11 +2,14 @@
 #ifndef DESERIALIZE_H
 #define DESERIALIZE_H
 
-#include <stdint.h>
 #include <stdio.h>
+#include "dag.h"
 
 #define ERR_BITSTREAM_EOF (-1)
 #define ERR_DATA_OUT_OF_RANGE (-2)
+#define ERR_FAIL_CODE (-3)
+#define ERR_STOP_CODE (-4)
+#define ERR_IMPOSSIBLE (-128)
 
 /* Datatype representing a bit stream.
  * Bits are streamed from MSB to LSB.
@@ -35,5 +38,23 @@ static inline bit_stream initializeBitStream(FILE* file) {
  * Precondition: NULL != stream
  */
 int32_t decodeUptoMaxInt(bit_stream* stream);
+
+/* Decode a length-prefixed Simplicity DAG from 'stream'.
+ * Returns 'ERR_DATA_OUT_OF_RANGE' the length prefix's value is too large.
+ * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceeding nodes.
+ * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered (all fail subexpressions ought to have been pruned prior to deserialization).
+ * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
+ * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 0 if malloc fails.
+ * In the above error cases, '*dag' is set to NULL.
+ * If successful, returns a positive value equal to the length of an allocated array of (*dag).
+ *
+ * Precondition: NULL != dag
+ *               NULL != stream
+ *
+ * Postcondition: (dag_node (*dag)[return_value] and '*dag' is a well-formed dag) when the return value of the function is positive;
+ *                NULL == *dag when the return value is non-positive.
+ */
+int32_t decodeMallocDag(dag_node** dag, bit_stream* stream);
 
 #endif
