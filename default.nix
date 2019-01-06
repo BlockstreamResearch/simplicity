@@ -11,7 +11,11 @@ let hp = nixpkgs.haskell.packages.${compiler};
     coq = nixpkgs.${coqVersion};
   };
 
-  c = nixpkgs.callPackage ./Simplicity.C.nix {};
+  c = nixpkgs.callPackage ./Simplicity.C.nix {
+    inherit libsha256compression;
+  };
+
+  libsha256compression = nixpkgs.callPackage ./libsha256compression {};
 
   vst = nixpkgs.callPackage ./vst.nix {
     coq = nixpkgs.${coqVersion};
