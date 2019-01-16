@@ -1,5 +1,6 @@
 #include <limits.h>
 #include <stdlib.h>
+#include <string.h>
 #include "dag.h"
 #include "deserialize.h"
 #include "hashBlock.h"
@@ -45,10 +46,10 @@ static void test_decodeUptoMaxInt(void) {
 
 static void test_decodeMallocDag_computeCommitmentMerkleRoot(void) {
   /* 'expected' is the expected CMR for the 'hashBlock' Simplicity expression. */
-  const uint8_t expected[32] =
-  { 0xe2, 0x6d, 0x71, 0xc3, 0x18, 0xe6, 0x1d, 0x3a, 0x9b, 0x31, 0xa9, 0xcd, 0x8b, 0xee, 0x8d, 0x4d
-  , 0x3a, 0xb0, 0xab, 0x65, 0x6e, 0x77, 0x59, 0xf0, 0xaa, 0x10, 0xd1, 0xdd, 0x08, 0x9c, 0x85, 0x82
-  };
+  const uint32_t expected[8] =
+    { 0xe26d71c3ul, 0x18e61d3aul, 0x9b31a9cdul, 0x8bee8d4dul
+    , 0x3ab0ab65ul, 0x6e7759f0ul, 0xaa10d1ddul, 0x089c8582ul
+    };
   dag_node* dag = NULL;
   int32_t len;
   {
@@ -59,19 +60,16 @@ static void test_decodeMallocDag_computeCommitmentMerkleRoot(void) {
   }
   if (len <= 0) {
     printf("Error parsing dag: %d\n", len);
+    failures++;
   } else {
+    successes++;
+
     analyses analysis[len];
     computeCommitmentMerkleRoot(analysis, dag, (size_t)len);
-    size_t i;
-    for (i = 0; i < 32; i++) {
-      if (expected[i] != analysis[len-1].commitmentMerkleRoot[i]) {
-        printf("Unexpected CMR of hashblock\n");
-        break;
-      }
-    }
-    if (32 == i) {
+    if (0 == memcmp(expected, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]))) {
       successes++;
     } else {
+      printf("Unexpected CMR of hashblock\n");
       failures++;
     }
   }

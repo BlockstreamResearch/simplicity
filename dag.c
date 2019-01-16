@@ -18,34 +18,30 @@
  * This function should only be called through the 'MK_TAG' macro.
  *
  * Precondition: uint32 midstate[8];
- *               uint8_t tagName[len];
+ *               unsigned char tagName[len];
  *               len <= MAX_TAG_LEN (= 55)
  */
-static void mkTag(uint32_t* midstate, const uint8_t* tagName, const size_t len) {
-  uint8_t block[64] = {0};
+static void mkTag(uint32_t* midstate, const unsigned char* tagName, const size_t len) {
+  unsigned char block[64] = {0};
 
-  memcpy(block, tagName, sizeof(uint8_t[len]));
+  memcpy(block, tagName, len);
   block[len] = 0x80;
   /* The length of tag (in bits) is guarenteed to fit within two bytes. */
   block[63] = (len << 3) & 0xff;
   block[62] = (len >> 5) & 0xff;
 
   sha256_iv(midstate);
-  sha256_compression(midstate, block);
+  sha256_compression_uchar(midstate, block);
 }
 
 /* TAG_NAME(s) takes a string literal, verifies its length is less than 'MAX_TAG_LEN', and removes the trailing NULL character. */
-#define TAG_NAME(s) (((struct { const uint8_t name[LENGTH_OF(s)]; _Static_assert(LENGTH_OF(s) <= MAX_TAG_LEN, "Tag Name too long: " s); }){ .name = "" s }).name)
+#define TAG_NAME(s) (((struct { const unsigned char name[LENGTH_OF(s)]; _Static_assert(LENGTH_OF(s) <= MAX_TAG_LEN, "Tag Name too long: " s); }){ .name = "" s }).name)
 
 /* MK_TAG(midstate, s) takes a string literal, 's', and fills in the 'tag' and 'len' arguments of 'mkTag' appropriately. */
 #define MK_TAG(midstate, s) (mkTag((midstate), TAG_NAME(s), LENGTH_OF(s)))
 
 /* Prepends the Simplicity CMR tag prefix to a string literal 's'. */
 #define COMMITMENT_TAG(s) "Simplicity\x1F" "Commitment\x1F" s
-
-typedef struct sha256_midstate {
-  uint32_t s[8];
-} sha256_midstate;
 
 /* Given a tag for a core or witness expression node, return the SHA-256 hash of its assocaited CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
@@ -110,18 +106,18 @@ static sha256_midstate cmrIV(int32_t tag) {
 void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, const size_t len) {
   for (size_t i = 0; i < len; ++i) {
     if (HIDDEN == dag[i].tag) {
-      memcpy(analysis[i].commitmentMerkleRoot, dag[i].hash, sizeof(uint8_t[32]));
+      analysis[i].commitmentMerkleRoot = dag[i].hash;
     } else {
-      sha256_midstate cmr = cmrIV(dag[i].tag);
+      analysis[i].commitmentMerkleRoot = cmrIV(dag[i].tag);
 
       /* Hash the child sub-expression's CMRs (if there are any children). */
-      uint8_t block[64] = {0};
-      size_t j = 32;
+      uint32_t block[16] = {0};
+      size_t j = 8;
       switch (dag[i].tag) {
        case COMP:
        case CASE:
        case PAIR:
-        memcpy(block + j, analysis[dag[i].child[1]].commitmentMerkleRoot, sizeof(uint8_t[32]));
+        memcpy(block + j, analysis[dag[i].child[1]].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
         j = 0;
         /* Fall through. */
        case DISCONNECT: /* Only the first child is used in the CMR. */
@@ -129,10 +125,9 @@ void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, const 
        case INJR:
        case TAKE:
        case DROP:
-        memcpy(block + j, analysis[dag[i].child[0]].commitmentMerkleRoot, sizeof(uint8_t[32]));
-        sha256_compression(cmr.s, block);
+        memcpy(block + j, analysis[dag[i].child[0]].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
+        sha256_compression(analysis[i].commitmentMerkleRoot.s, block);
       }
-      sha256_fromMidstate(analysis[i].commitmentMerkleRoot, cmr.s);
     }
   }
 }
