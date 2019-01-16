@@ -34,6 +34,12 @@ static inline int32_t numChildren(int32_t tag) {
   }
 }
 
+/* A struct holding the 256-bit array of a SHA-256 hash or midstate.
+ */
+typedef struct sha256_midstate {
+  uint32_t s[8];
+} sha256_midstate;
+
 /* A node the the DAG of a Simplicity expression.
  * It consists of a 'tag' indicating the kind of expression the node represents.
  * The contents of a node depend on the kind of the expressions.
@@ -42,13 +48,13 @@ static inline int32_t numChildren(int32_t tag) {
  * Invariant: 'tag' is a valid tag;
  *            size_t child[2] when numChildren(tag) == 2;
  *            size_t child[1] when numChildren(tag) == 1;
- *            uint8_t hash[32] when HIDDEN == tag
+ *            sha256_midstate hash when HIDDEN == tag
  */
 typedef struct dag_node {
   int32_t tag;
   union {
     size_t child[2];
-    uint8_t hash[32];
+    sha256_midstate hash;
   };
 } dag_node;
 
@@ -67,7 +73,7 @@ typedef struct dag_node {
  * 'commitmentMerkleRoot' is the commitment Merkle root of the subexpressions represented by the node.
  */
 typedef struct analyses {
-  uint8_t commitmentMerkleRoot[32];
+  sha256_midstate commitmentMerkleRoot;
 } analyses;
 
 /* Given a well-formed dag representing a Simplicity expressions, compute the commitment Merkle roots of all subexpressions.

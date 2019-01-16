@@ -28,82 +28,82 @@ static inline void Round(uint32_t a, uint32_t b, uint32_t c, uint32_t* d, uint32
     *h = t1 + t2;
 }
 
-/* Given a 256-bit 's' and a 512-bit 'chunck', then 's' becomes the value of the SHA-256 compression function ("added" to the original 's' value).
+/* Given a 256-bit 's' and a 512-bit 'chunk', then 's' becomes the value of the SHA-256 compression function ("added" to the original 's' value).
  *
  * Precondition: uint32_t s[8];
- *               uint8_t chunck[64]
+ *               uint32_t chunk[16]
  */
-extern void sha256_compression(uint32_t* s, const uint8_t* chunk) {
+extern void sha256_compression(uint32_t* s, const uint32_t* chunk) {
     uint32_t a = s[0], b = s[1], c = s[2], d = s[3], e = s[4], f = s[5], g = s[6], h = s[7];
     uint32_t w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15;
 
-    Round(a, b, c, &d, e, f, g, &h, 0x428a2f98 + (w0 = ReadBE32(chunk + 0)));
-    Round(h, a, b, &c, d, e, f, &g, 0x71374491 + (w1 = ReadBE32(chunk + 4)));
-    Round(g, h, a, &b, c, d, e, &f, 0xb5c0fbcf + (w2 = ReadBE32(chunk + 8)));
-    Round(f, g, h, &a, b, c, d, &e, 0xe9b5dba5 + (w3 = ReadBE32(chunk + 12)));
-    Round(e, f, g, &h, a, b, c, &d, 0x3956c25b + (w4 = ReadBE32(chunk + 16)));
-    Round(d, e, f, &g, h, a, b, &c, 0x59f111f1 + (w5 = ReadBE32(chunk + 20)));
-    Round(c, d, e, &f, g, h, a, &b, 0x923f82a4 + (w6 = ReadBE32(chunk + 24)));
-    Round(b, c, d, &e, f, g, h, &a, 0xab1c5ed5 + (w7 = ReadBE32(chunk + 28)));
-    Round(a, b, c, &d, e, f, g, &h, 0xd807aa98 + (w8 = ReadBE32(chunk + 32)));
-    Round(h, a, b, &c, d, e, f, &g, 0x12835b01 + (w9 = ReadBE32(chunk + 36)));
-    Round(g, h, a, &b, c, d, e, &f, 0x243185be + (w10 = ReadBE32(chunk + 40)));
-    Round(f, g, h, &a, b, c, d, &e, 0x550c7dc3 + (w11 = ReadBE32(chunk + 44)));
-    Round(e, f, g, &h, a, b, c, &d, 0x72be5d74 + (w12 = ReadBE32(chunk + 48)));
-    Round(d, e, f, &g, h, a, b, &c, 0x80deb1fe + (w13 = ReadBE32(chunk + 52)));
-    Round(c, d, e, &f, g, h, a, &b, 0x9bdc06a7 + (w14 = ReadBE32(chunk + 56)));
-    Round(b, c, d, &e, f, g, h, &a, 0xc19bf174 + (w15 = ReadBE32(chunk + 60)));
+    Round(a, b, c, &d, e, f, g, &h, UINT32_C(0x428a2f98) + (w0 = chunk[0]));
+    Round(h, a, b, &c, d, e, f, &g, UINT32_C(0x71374491) + (w1 = chunk[1]));
+    Round(g, h, a, &b, c, d, e, &f, UINT32_C(0xb5c0fbcf) + (w2 = chunk[2]));
+    Round(f, g, h, &a, b, c, d, &e, UINT32_C(0xe9b5dba5) + (w3 = chunk[3]));
+    Round(e, f, g, &h, a, b, c, &d, UINT32_C(0x3956c25b) + (w4 = chunk[4]));
+    Round(d, e, f, &g, h, a, b, &c, UINT32_C(0x59f111f1) + (w5 = chunk[5]));
+    Round(c, d, e, &f, g, h, a, &b, UINT32_C(0x923f82a4) + (w6 = chunk[6]));
+    Round(b, c, d, &e, f, g, h, &a, UINT32_C(0xab1c5ed5) + (w7 = chunk[7]));
+    Round(a, b, c, &d, e, f, g, &h, UINT32_C(0xd807aa98) + (w8 = chunk[8]));
+    Round(h, a, b, &c, d, e, f, &g, UINT32_C(0x12835b01) + (w9 = chunk[9]));
+    Round(g, h, a, &b, c, d, e, &f, UINT32_C(0x243185be) + (w10 = chunk[10]));
+    Round(f, g, h, &a, b, c, d, &e, UINT32_C(0x550c7dc3) + (w11 = chunk[11]));
+    Round(e, f, g, &h, a, b, c, &d, UINT32_C(0x72be5d74) + (w12 = chunk[12]));
+    Round(d, e, f, &g, h, a, b, &c, UINT32_C(0x80deb1fe) + (w13 = chunk[13]));
+    Round(c, d, e, &f, g, h, a, &b, UINT32_C(0x9bdc06a7) + (w14 = chunk[14]));
+    Round(b, c, d, &e, f, g, h, &a, UINT32_C(0xc19bf174) + (w15 = chunk[15]));
 
-    Round(a, b, c, &d, e, f, g, &h, 0xe49b69c1 + (w0 += sigma1(w14) + w9 + sigma0(w1)));
-    Round(h, a, b, &c, d, e, f, &g, 0xefbe4786 + (w1 += sigma1(w15) + w10 + sigma0(w2)));
-    Round(g, h, a, &b, c, d, e, &f, 0x0fc19dc6 + (w2 += sigma1(w0) + w11 + sigma0(w3)));
-    Round(f, g, h, &a, b, c, d, &e, 0x240ca1cc + (w3 += sigma1(w1) + w12 + sigma0(w4)));
-    Round(e, f, g, &h, a, b, c, &d, 0x2de92c6f + (w4 += sigma1(w2) + w13 + sigma0(w5)));
-    Round(d, e, f, &g, h, a, b, &c, 0x4a7484aa + (w5 += sigma1(w3) + w14 + sigma0(w6)));
-    Round(c, d, e, &f, g, h, a, &b, 0x5cb0a9dc + (w6 += sigma1(w4) + w15 + sigma0(w7)));
-    Round(b, c, d, &e, f, g, h, &a, 0x76f988da + (w7 += sigma1(w5) + w0 + sigma0(w8)));
-    Round(a, b, c, &d, e, f, g, &h, 0x983e5152 + (w8 += sigma1(w6) + w1 + sigma0(w9)));
-    Round(h, a, b, &c, d, e, f, &g, 0xa831c66d + (w9 += sigma1(w7) + w2 + sigma0(w10)));
-    Round(g, h, a, &b, c, d, e, &f, 0xb00327c8 + (w10 += sigma1(w8) + w3 + sigma0(w11)));
-    Round(f, g, h, &a, b, c, d, &e, 0xbf597fc7 + (w11 += sigma1(w9) + w4 + sigma0(w12)));
-    Round(e, f, g, &h, a, b, c, &d, 0xc6e00bf3 + (w12 += sigma1(w10) + w5 + sigma0(w13)));
-    Round(d, e, f, &g, h, a, b, &c, 0xd5a79147 + (w13 += sigma1(w11) + w6 + sigma0(w14)));
-    Round(c, d, e, &f, g, h, a, &b, 0x06ca6351 + (w14 += sigma1(w12) + w7 + sigma0(w15)));
-    Round(b, c, d, &e, f, g, h, &a, 0x14292967 + (w15 += sigma1(w13) + w8 + sigma0(w0)));
+    Round(a, b, c, &d, e, f, g, &h, UINT32_C(0xe49b69c1) + (w0 += sigma1(w14) + w9 + sigma0(w1)));
+    Round(h, a, b, &c, d, e, f, &g, UINT32_C(0xefbe4786) + (w1 += sigma1(w15) + w10 + sigma0(w2)));
+    Round(g, h, a, &b, c, d, e, &f, UINT32_C(0x0fc19dc6) + (w2 += sigma1(w0) + w11 + sigma0(w3)));
+    Round(f, g, h, &a, b, c, d, &e, UINT32_C(0x240ca1cc) + (w3 += sigma1(w1) + w12 + sigma0(w4)));
+    Round(e, f, g, &h, a, b, c, &d, UINT32_C(0x2de92c6f) + (w4 += sigma1(w2) + w13 + sigma0(w5)));
+    Round(d, e, f, &g, h, a, b, &c, UINT32_C(0x4a7484aa) + (w5 += sigma1(w3) + w14 + sigma0(w6)));
+    Round(c, d, e, &f, g, h, a, &b, UINT32_C(0x5cb0a9dc) + (w6 += sigma1(w4) + w15 + sigma0(w7)));
+    Round(b, c, d, &e, f, g, h, &a, UINT32_C(0x76f988da) + (w7 += sigma1(w5) + w0 + sigma0(w8)));
+    Round(a, b, c, &d, e, f, g, &h, UINT32_C(0x983e5152) + (w8 += sigma1(w6) + w1 + sigma0(w9)));
+    Round(h, a, b, &c, d, e, f, &g, UINT32_C(0xa831c66d) + (w9 += sigma1(w7) + w2 + sigma0(w10)));
+    Round(g, h, a, &b, c, d, e, &f, UINT32_C(0xb00327c8) + (w10 += sigma1(w8) + w3 + sigma0(w11)));
+    Round(f, g, h, &a, b, c, d, &e, UINT32_C(0xbf597fc7) + (w11 += sigma1(w9) + w4 + sigma0(w12)));
+    Round(e, f, g, &h, a, b, c, &d, UINT32_C(0xc6e00bf3) + (w12 += sigma1(w10) + w5 + sigma0(w13)));
+    Round(d, e, f, &g, h, a, b, &c, UINT32_C(0xd5a79147) + (w13 += sigma1(w11) + w6 + sigma0(w14)));
+    Round(c, d, e, &f, g, h, a, &b, UINT32_C(0x06ca6351) + (w14 += sigma1(w12) + w7 + sigma0(w15)));
+    Round(b, c, d, &e, f, g, h, &a, UINT32_C(0x14292967) + (w15 += sigma1(w13) + w8 + sigma0(w0)));
 
-    Round(a, b, c, &d, e, f, g, &h, 0x27b70a85 + (w0 += sigma1(w14) + w9 + sigma0(w1)));
-    Round(h, a, b, &c, d, e, f, &g, 0x2e1b2138 + (w1 += sigma1(w15) + w10 + sigma0(w2)));
-    Round(g, h, a, &b, c, d, e, &f, 0x4d2c6dfc + (w2 += sigma1(w0) + w11 + sigma0(w3)));
-    Round(f, g, h, &a, b, c, d, &e, 0x53380d13 + (w3 += sigma1(w1) + w12 + sigma0(w4)));
-    Round(e, f, g, &h, a, b, c, &d, 0x650a7354 + (w4 += sigma1(w2) + w13 + sigma0(w5)));
-    Round(d, e, f, &g, h, a, b, &c, 0x766a0abb + (w5 += sigma1(w3) + w14 + sigma0(w6)));
-    Round(c, d, e, &f, g, h, a, &b, 0x81c2c92e + (w6 += sigma1(w4) + w15 + sigma0(w7)));
-    Round(b, c, d, &e, f, g, h, &a, 0x92722c85 + (w7 += sigma1(w5) + w0 + sigma0(w8)));
-    Round(a, b, c, &d, e, f, g, &h, 0xa2bfe8a1 + (w8 += sigma1(w6) + w1 + sigma0(w9)));
-    Round(h, a, b, &c, d, e, f, &g, 0xa81a664b + (w9 += sigma1(w7) + w2 + sigma0(w10)));
-    Round(g, h, a, &b, c, d, e, &f, 0xc24b8b70 + (w10 += sigma1(w8) + w3 + sigma0(w11)));
-    Round(f, g, h, &a, b, c, d, &e, 0xc76c51a3 + (w11 += sigma1(w9) + w4 + sigma0(w12)));
-    Round(e, f, g, &h, a, b, c, &d, 0xd192e819 + (w12 += sigma1(w10) + w5 + sigma0(w13)));
-    Round(d, e, f, &g, h, a, b, &c, 0xd6990624 + (w13 += sigma1(w11) + w6 + sigma0(w14)));
-    Round(c, d, e, &f, g, h, a, &b, 0xf40e3585 + (w14 += sigma1(w12) + w7 + sigma0(w15)));
-    Round(b, c, d, &e, f, g, h, &a, 0x106aa070 + (w15 += sigma1(w13) + w8 + sigma0(w0)));
+    Round(a, b, c, &d, e, f, g, &h, UINT32_C(0x27b70a85) + (w0 += sigma1(w14) + w9 + sigma0(w1)));
+    Round(h, a, b, &c, d, e, f, &g, UINT32_C(0x2e1b2138) + (w1 += sigma1(w15) + w10 + sigma0(w2)));
+    Round(g, h, a, &b, c, d, e, &f, UINT32_C(0x4d2c6dfc) + (w2 += sigma1(w0) + w11 + sigma0(w3)));
+    Round(f, g, h, &a, b, c, d, &e, UINT32_C(0x53380d13) + (w3 += sigma1(w1) + w12 + sigma0(w4)));
+    Round(e, f, g, &h, a, b, c, &d, UINT32_C(0x650a7354) + (w4 += sigma1(w2) + w13 + sigma0(w5)));
+    Round(d, e, f, &g, h, a, b, &c, UINT32_C(0x766a0abb) + (w5 += sigma1(w3) + w14 + sigma0(w6)));
+    Round(c, d, e, &f, g, h, a, &b, UINT32_C(0x81c2c92e) + (w6 += sigma1(w4) + w15 + sigma0(w7)));
+    Round(b, c, d, &e, f, g, h, &a, UINT32_C(0x92722c85) + (w7 += sigma1(w5) + w0 + sigma0(w8)));
+    Round(a, b, c, &d, e, f, g, &h, UINT32_C(0xa2bfe8a1) + (w8 += sigma1(w6) + w1 + sigma0(w9)));
+    Round(h, a, b, &c, d, e, f, &g, UINT32_C(0xa81a664b) + (w9 += sigma1(w7) + w2 + sigma0(w10)));
+    Round(g, h, a, &b, c, d, e, &f, UINT32_C(0xc24b8b70) + (w10 += sigma1(w8) + w3 + sigma0(w11)));
+    Round(f, g, h, &a, b, c, d, &e, UINT32_C(0xc76c51a3) + (w11 += sigma1(w9) + w4 + sigma0(w12)));
+    Round(e, f, g, &h, a, b, c, &d, UINT32_C(0xd192e819) + (w12 += sigma1(w10) + w5 + sigma0(w13)));
+    Round(d, e, f, &g, h, a, b, &c, UINT32_C(0xd6990624) + (w13 += sigma1(w11) + w6 + sigma0(w14)));
+    Round(c, d, e, &f, g, h, a, &b, UINT32_C(0xf40e3585) + (w14 += sigma1(w12) + w7 + sigma0(w15)));
+    Round(b, c, d, &e, f, g, h, &a, UINT32_C(0x106aa070) + (w15 += sigma1(w13) + w8 + sigma0(w0)));
 
-    Round(a, b, c, &d, e, f, g, &h, 0x19a4c116 + (w0 += sigma1(w14) + w9 + sigma0(w1)));
-    Round(h, a, b, &c, d, e, f, &g, 0x1e376c08 + (w1 += sigma1(w15) + w10 + sigma0(w2)));
-    Round(g, h, a, &b, c, d, e, &f, 0x2748774c + (w2 += sigma1(w0) + w11 + sigma0(w3)));
-    Round(f, g, h, &a, b, c, d, &e, 0x34b0bcb5 + (w3 += sigma1(w1) + w12 + sigma0(w4)));
-    Round(e, f, g, &h, a, b, c, &d, 0x391c0cb3 + (w4 += sigma1(w2) + w13 + sigma0(w5)));
-    Round(d, e, f, &g, h, a, b, &c, 0x4ed8aa4a + (w5 += sigma1(w3) + w14 + sigma0(w6)));
-    Round(c, d, e, &f, g, h, a, &b, 0x5b9cca4f + (w6 += sigma1(w4) + w15 + sigma0(w7)));
-    Round(b, c, d, &e, f, g, h, &a, 0x682e6ff3 + (w7 += sigma1(w5) + w0 + sigma0(w8)));
-    Round(a, b, c, &d, e, f, g, &h, 0x748f82ee + (w8 += sigma1(w6) + w1 + sigma0(w9)));
-    Round(h, a, b, &c, d, e, f, &g, 0x78a5636f + (w9 += sigma1(w7) + w2 + sigma0(w10)));
-    Round(g, h, a, &b, c, d, e, &f, 0x84c87814 + (w10 += sigma1(w8) + w3 + sigma0(w11)));
-    Round(f, g, h, &a, b, c, d, &e, 0x8cc70208 + (w11 += sigma1(w9) + w4 + sigma0(w12)));
-    Round(e, f, g, &h, a, b, c, &d, 0x90befffa + (w12 += sigma1(w10) + w5 + sigma0(w13)));
-    Round(d, e, f, &g, h, a, b, &c, 0xa4506ceb + (w13 += sigma1(w11) + w6 + sigma0(w14)));
-    Round(c, d, e, &f, g, h, a, &b, 0xbef9a3f7 + (w14 + sigma1(w12) + w7 + sigma0(w15)));
-    Round(b, c, d, &e, f, g, h, &a, 0xc67178f2 + (w15 + sigma1(w13) + w8 + sigma0(w0)));
+    Round(a, b, c, &d, e, f, g, &h, UINT32_C(0x19a4c116) + (w0 += sigma1(w14) + w9 + sigma0(w1)));
+    Round(h, a, b, &c, d, e, f, &g, UINT32_C(0x1e376c08) + (w1 += sigma1(w15) + w10 + sigma0(w2)));
+    Round(g, h, a, &b, c, d, e, &f, UINT32_C(0x2748774c) + (w2 += sigma1(w0) + w11 + sigma0(w3)));
+    Round(f, g, h, &a, b, c, d, &e, UINT32_C(0x34b0bcb5) + (w3 += sigma1(w1) + w12 + sigma0(w4)));
+    Round(e, f, g, &h, a, b, c, &d, UINT32_C(0x391c0cb3) + (w4 += sigma1(w2) + w13 + sigma0(w5)));
+    Round(d, e, f, &g, h, a, b, &c, UINT32_C(0x4ed8aa4a) + (w5 += sigma1(w3) + w14 + sigma0(w6)));
+    Round(c, d, e, &f, g, h, a, &b, UINT32_C(0x5b9cca4f) + (w6 += sigma1(w4) + w15 + sigma0(w7)));
+    Round(b, c, d, &e, f, g, h, &a, UINT32_C(0x682e6ff3) + (w7 += sigma1(w5) + w0 + sigma0(w8)));
+    Round(a, b, c, &d, e, f, g, &h, UINT32_C(0x748f82ee) + (w8 += sigma1(w6) + w1 + sigma0(w9)));
+    Round(h, a, b, &c, d, e, f, &g, UINT32_C(0x78a5636f) + (w9 += sigma1(w7) + w2 + sigma0(w10)));
+    Round(g, h, a, &b, c, d, e, &f, UINT32_C(0x84c87814) + (w10 += sigma1(w8) + w3 + sigma0(w11)));
+    Round(f, g, h, &a, b, c, d, &e, UINT32_C(0x8cc70208) + (w11 += sigma1(w9) + w4 + sigma0(w12)));
+    Round(e, f, g, &h, a, b, c, &d, UINT32_C(0x90befffa) + (w12 += sigma1(w10) + w5 + sigma0(w13)));
+    Round(d, e, f, &g, h, a, b, &c, UINT32_C(0xa4506ceb) + (w13 += sigma1(w11) + w6 + sigma0(w14)));
+    Round(c, d, e, &f, g, h, a, &b, UINT32_C(0xbef9a3f7) + (w14 + sigma1(w12) + w7 + sigma0(w15)));
+    Round(b, c, d, &e, f, g, h, &a, UINT32_C(0xc67178f2) + (w15 + sigma1(w13) + w8 + sigma0(w0)));
 
     s[0] += a;
     s[1] += b;
@@ -113,4 +113,30 @@ extern void sha256_compression(uint32_t* s, const uint8_t* chunk) {
     s[5] += f;
     s[6] += g;
     s[7] += h;
+}
+
+/* Given a 256-bit 's' and a 512-bit 'chunk', then 's' becomes the value of the SHA-256 compression function ("added" to the original 's' value).
+ *
+ * Precondition: uint32_t s[8];
+ *               unsigned char chunk[64]
+ */
+extern void sha256_compression_uchar(uint32_t* s, const unsigned char* chunk) {
+  sha256_compression(s, (const uint32_t[16])
+    { ReadBE32(chunk + 4*0)
+    , ReadBE32(chunk + 4*1)
+    , ReadBE32(chunk + 4*2)
+    , ReadBE32(chunk + 4*3)
+    , ReadBE32(chunk + 4*4)
+    , ReadBE32(chunk + 4*5)
+    , ReadBE32(chunk + 4*6)
+    , ReadBE32(chunk + 4*7)
+    , ReadBE32(chunk + 4*8)
+    , ReadBE32(chunk + 4*9)
+    , ReadBE32(chunk + 4*10)
+    , ReadBE32(chunk + 4*11)
+    , ReadBE32(chunk + 4*12)
+    , ReadBE32(chunk + 4*13)
+    , ReadBE32(chunk + 4*14)
+    , ReadBE32(chunk + 4*15)
+    });
 }

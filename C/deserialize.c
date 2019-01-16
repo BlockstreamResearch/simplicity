@@ -58,19 +58,23 @@ static int32_t getBit(bit_stream* stream) {
   return getNBits(1, stream);
 }
 
-/* Fetches 'len' bytes from 'stream' into 'result'.
- * The bits in each byte are set from the MSB to the LSB and the bytes of 'result' are set from 0 upto 'len'.
+/* Fetches 'len' 'uint32_t's from 'stream' into 'result'.
+ * The bits in each 'uint32_t' are set from the MSB to the LSB and the 'uint32_t's of 'result' are set from 0 upto 'len'.
  * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available ('result' may be modified).
  * Returns 0 if successful.
  *
- * Precondition: uint8_t result[len];
+ * Precondition: uint32_t result[len];
  *               NULL != stream
  */
-static int32_t getByteArray(uint8_t* result, const size_t len, bit_stream* stream) {
+static int32_t getWord32Array(uint32_t* result, const size_t len, bit_stream* stream) {
   for (size_t i = 0; i < len; ++i) {
-    int32_t byte = getNBits(8, stream);
-    if (byte < 0) return byte;
-    result[i] = (uint8_t)byte;
+    /* Due to error codes, getNBits cannot fetch 32 bits at once. Instead we fetch two groups of 16 bits. */
+    int32_t bits16 = getNBits(16, stream);
+    if (bits16 < 0) return bits16;
+    result[i] = (uint32_t)bits16 << 16;
+    bits16 = getNBits(16, stream);
+    if (bits16 < 0) return bits16;
+    result[i] |= (uint32_t)bits16;
   }
   return 0;
 }
@@ -79,11 +83,11 @@ static int32_t getByteArray(uint8_t* result, const size_t len, bit_stream* strea
  * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available ('result' may be modified).
  * Returns 0 if successful.
  *
- * Precondition: uint8_t result[32];
+ * Precondition: NULL != result
  *               NULL != stream
  */
-static int32_t getHash(uint8_t* result, bit_stream* stream) {
-  return getByteArray(result, 32, stream);
+static int32_t getHash(sha256_midstate* result, bit_stream* stream) {
+  return getWord32Array(result->s, 8, stream);
 }
 
 /* Decode an encoded bitstring up to length 1.
@@ -292,7 +296,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
       switch (subcode) {
        case 0:
         dag[i].tag = HIDDEN;
-        return getHash(dag[i].hash, stream);
+        return getHash(&(dag[i].hash), stream);
        case 1:
         dag[i].tag = WITNESS;
         // TODO: parse witness data

@@ -3,19 +3,23 @@
 
 #include <stdint.h>
 
-/* Precondition: uint8_t b[4]
+/* Packs (the 8 least significant bits of) 4 'unsigned char's into a 'uint32_t' in "big endian" order.
+ *
+ * Precondition: unsigned char b[4]
  */
-static inline uint32_t ReadBE32(const uint8_t* b) {
+static inline uint32_t ReadBE32(const unsigned char* b) {
   return (uint32_t)(b[0]) << 24
-       | (uint32_t)(b[1]) << 16
-       | (uint32_t)(b[2]) << 8
-       | (uint32_t)(b[3]);
+       | (uint32_t)(b[1] & 0xff) << 16
+       | (uint32_t)(b[2] & 0xff) << 8
+       | (uint32_t)(b[3] & 0xff);
 }
 
-/* Precondition: uint8_t ptr[4]
+/* Unpacks 4 bytes from a 'uint32_t' into an 'unsigned char' array in "big endian" order.
+ *
+ * Precondition: unsigned char ptr[4]
  */
-static inline void WriteBE32(uint8_t* ptr, uint32_t x) {
-  ptr[0] = (uint8_t)(x >> 24);
+static inline void WriteBE32(unsigned char* ptr, uint32_t x) {
+  ptr[0] = (unsigned char)(x >> 24);
   ptr[1] = (x >> 16) & 0xff;
   ptr[2] = (x >> 8) & 0xff;
   ptr[3] = x & 0xff;
@@ -36,12 +40,12 @@ static inline void sha256_iv(uint32_t* iv) {
     iv[7] = 0x5be0cd19ul;
 }
 
-/* Coverts a given 'midstate' value to a 'hash' value as a byte array.
+/* Coverts a given 'midstate' value to a 'hash' value as 32 bytes stored in an unsigned char array.
  *
- * Precondition: uint8_t hash[32];
+ * Precondition: unsigned char hash[32];
  *               uint32_t midstate[8]
  */
-static inline void sha256_fromMidstate(uint8_t* hash, const uint32_t* midstate) {
+static inline void sha256_fromMidstate(unsigned char* hash, const uint32_t* midstate) {
   WriteBE32(hash + 0*4, midstate[0]);
   WriteBE32(hash + 1*4, midstate[1]);
   WriteBE32(hash + 2*4, midstate[2]);
@@ -52,12 +56,12 @@ static inline void sha256_fromMidstate(uint8_t* hash, const uint32_t* midstate) 
   WriteBE32(hash + 7*4, midstate[7]);
 }
 
-/* Coverts a given 'hash' value as a byte array to a 'midstate' value.
+/* Coverts a given 'hash' value as 32 bytes stored in an unsigned char array to a 'midstate' value.
  *
  * Precondition: uint32_t midstate[8];
- *               uint8_t hash[32]
+ *               unsigned char hash[32]
  */
-static inline void sha256_toMidstate(uint32_t* midstate, const uint8_t* hash) {
+static inline void sha256_toMidstate(uint32_t* midstate, const unsigned char* hash) {
   midstate[0] = ReadBE32(hash + 0*4);
   midstate[1] = ReadBE32(hash + 1*4);
   midstate[2] = ReadBE32(hash + 2*4);
@@ -71,8 +75,15 @@ static inline void sha256_toMidstate(uint32_t* midstate, const uint8_t* hash) {
 /* Given a 256-bit 'midstate' and a 512-bit 'block', then 'midstate' becomes the value of the SHA-256 compression function ("added" to the original 'midstate' value).
  *
  * Precondition: uint32_t midstate[8];
- *               uint8_t block[64]
+ *               uint32_t block[16]
  */
-extern void sha256_compression(uint32_t* midstate, const uint8_t* block);
+extern void sha256_compression(uint32_t* midstate, const uint32_t* block);
+
+/* Given a 256-bit 'midstate' and a 512-bit 'block', then 'midstate' becomes the value of the SHA-256 compression function ("added" to the original 'midstate' value).
+ *
+ * Precondition: uint32_t midstate[8];
+ *               unsigned char block[64]
+ */
+extern void sha256_compression_uchar(uint32_t* midstate, const unsigned char* block);
 
 #endif /* SHA256_COMPRESSION_H */
