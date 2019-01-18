@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "tag.h"
 
 /* Unique numeric tags the various kinds of Simplicity combinators.
  * We choose to generate unique tags by using the reverse bit pattern used in Simplicity's bit-wise prefix code.
@@ -33,12 +34,6 @@ static inline int32_t numChildren(int32_t tag) {
    default: return 0;
   }
 }
-
-/* A struct holding the 256-bit array of a SHA-256 hash or midstate.
- */
-typedef struct sha256_midstate {
-  uint32_t s[8];
-} sha256_midstate;
 
 /* A node the the DAG of a Simplicity expression.
  * It consists of a 'tag' indicating the kind of expression the node represents.
