@@ -237,11 +237,11 @@ instance Witness WitnessRoot where
 instance Delegate WitnessRoot where
   disconnect ws@(WitnessRoot s) wt@(WitnessRoot t) = result
    where
-    result = observe $ compress (compress (compressHalf (witnessTag "disconnect") (typeRootR (reifyProxy proxyA)))
-                                          (typeRootR (reifyProxy proxyB), (typeRootR (reifyProxy proxyC))))
+    result = observe $ compress (compress (compress (witnessTag "disconnect") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
+                                          (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD)))
                                 (s, t)
-    proxy :: proxy (a, w) (b, c) -> proxy c d -> (Proxy a, Proxy b, Proxy c)
-    proxy _ _ = (Proxy, Proxy, Proxy)
-    (proxyA, proxyB, proxyC) = proxy ws wt
+    proxy :: proxy (a, w) (b, c) -> proxy c d -> (Proxy a, Proxy b, Proxy c, Proxy d)
+    proxy _ _ = (Proxy, Proxy, Proxy, Proxy)
+    (proxyA, proxyB, proxyC, proxyD) = proxy ws wt
 
 instance Simplicity WitnessRoot where
