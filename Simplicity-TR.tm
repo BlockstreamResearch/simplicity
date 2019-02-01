@@ -4407,17 +4407,17 @@
   <chapter|Type Inference and Serialization>
 
   In this chapter we will define a representation of Simplicity expressions
-  as an untyped Simplicity DAG where subexpressions are have explicit
-  sharing. We will define how to perform type inference and reconstruct a
-  Simplicity expression from this Simplicity DAG and we will define a binary
+  as an untyped Simplicity DAG where subexpressions have explicit sharing. We
+  will define how to perform type inference and reconstruct a Simplicity
+  expression from this Simplicity DAG and we will define a binary
   serialization format for these Simplicity DAGs.
 
   <section|Explicit Simplicity DAGs><label|ss:DAGs>
 
   In this section, we will introduce an DAG representation for (untyped)
-  Simplicity expressions with explicit sharing of subexpressions. An explicit
-  Simplicity DAG is a topological sorted list of Simplicity nodes. Each
-  Simplicity node is a combinator name with by a payload of references to
+  Simplicity expressions with explicit sharing of subexpressions. A
+  Simplicity DAG is a topologically sorted list of Simplicity nodes. Each
+  Simplicity node is a combinator name with a payload of references to
   earlier nodes in the list, or a payload of witness data, etc.
 
   First we enumerate the possible values for Simplicity nodes.
@@ -4533,8 +4533,8 @@
 
   \;
 
-  In addition to the above every primitive name is a Node. This set of
-  primitives is application specific but for Simplicity with Bitcoin, we have
+  In addition to the above, every primitive name is a Node. This set of
+  primitives is application specific. For Simplicity with Bitcoin, we have
   <math|<math-ss|`version'>\<of\>Node>, <math|<math-ss|`lockTime'>\<of\>Node>,
   etc.
 
@@ -4571,28 +4571,59 @@
     h|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`version'>|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|ref<around*|(|<math-ss|`lockTime'>|)>>|<cell|\<assign\>>|<cell|\<epsilon\>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>>>
   </eqnarray*>
 
-  A list <math|l:DAG> must satisfy a condition that references only have
-  offset that refer to nodes occurring strictly earlier in the list in order
-  to be a well-formed DAG:
+  In order for a list <math|l:DAG> to be well-formed, it must satisfy two
+  conditions. Firstly, we require that references only have offsets that
+  refer to nodes occurring strictly earlier in the list:
 
   <\equation*>
-    \<forall\><around*|\<langle\>|i,a|\<rangle\>>\<in\>indexed<around*|(|l|)>\<point\>\<forall\>j\<in\>ref<around*|(|a|)>\<point\>0\<less\>j\<leq\>i
+    \<forall\><around*|\<langle\>|k,a|\<rangle\>>\<in\>indexed<around*|(|l|)>\<point\>\<forall\>i\<in\>ref<around*|(|a|)>\<point\>0\<less\>i\<leq\>k
   </equation*>
+
+  Secondly, when <math|<math-ss|`hidden'>> a node is a child, the parent must
+  be a <math|<math-ss|`case'>> node, which in turn can only have at most one
+  <math|<math-ss|`hidden'>> child node.
+
+  <\equation*>
+    \<forall\><around*|\<langle\>|k,a|\<rangle\>>\<in\>indexed<around*|(|l|)>\<point\>\<forall\>i\<in\>ref<around*|(|a|)>\<point\>
+    \<forall\>h.l<around*|[|k-i|]>=\<eta\><rsup|S><around*|(|<math-ss|`hidden'>
+    h|)>\<Rightarrow\> \<exists\> j<rsub|1> j<rsub|2>. a=<math-ss|`case'>
+    j<rsub|1> j<rsub|2>
+  </equation*>
+
+  and
+
+  <\equation*>
+    \<forall\><around*|\<langle\>|k,<math-ss|`case'> i<rsub|>
+    j|\<rangle\>>\<in\>indexed<around*|(|l|)>\<point\>\<forall\>h<rsub|1>h<rsub|2>.l<around*|[|k-i|]>\<neq\>\<eta\><rsup|S><around*|(|<math-ss|`hidden'>
+    h<rsub|1>|)>\<vee\>l<around*|[|k-j|]>\<neq\>\<eta\><rsup|S><around*|(|<math-ss|`hidden'>
+    h<rsub|2>|)>
+  </equation*>
+
+  <\theorem>
+    If a list <math|l:DAG> is well-formed, and <math|l<rsub|0>:DAG> is a
+    prefix of <math|l> (i.e. there exists an <math|l<rsub|1>> such that
+    <math|\<eta\><rsup|S><around*|(|l<rsub|0>|)>\<cdummy\>l<rsub|1>=\<eta\><rsup|S><around*|(|l|)>>)
+    then <math|l<rsub|0>> is also well-formed.
+  </theorem>
+
+  Note that technically the root of a well-formed DAG,
+  <math|l<around*|[|<around*|\||l|\|>-1|]>>, can be a
+  <math|<math-ss|`hidden'>> node.
 
   <subsection|Type Inference><label|ss:typeInference>
 
   Simplicity DAGs, as described above, do not have type information
-  associated with them. Before we can interpret DAGs as Simplicity
-  expressions we must first perform type inference. Type inference can be
-  done by solving unification equations of typing constraints to compute a
-  most general unifier.
+  associated with them. Before we can interpret a Simplicity DAG as a
+  Simplicity expression we must first perform type inference. Type inference
+  can be done by solving unification equations of typing constraints to
+  compute a most general unifier.
 
   A unification equation is written as <math|S\<doteq\>T> were <math|S> and
   <math|T> are Simplicity type expressions with unification variables, where
   unification variables are denoted by Greek letters <math|\<alpha\>>,
   <math|\<beta\>>, <math|\<gamma\>>, etc.
 
-  Given a list <math|l:DAG>, we associate with each index in the list,
+  Given a well-formed <math|l:DAG>, we associate with each index in the list,
   <math|0\<leq\>k\<less\><around*|\||l|\|>>, a pair of fresh unification
   variables <math|\<alpha\><rsub|k>,\<beta\><rsub|k>> that are to be
   instantiated at the inferred source and target types of the expression for
@@ -4602,25 +4633,26 @@
   variables.\ 
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|con<around*|\<langle\>|k,<math-ss|`iden'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<beta\><rsub|k>|}>>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`unit'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<beta\><rsub|k>\<doteq\><1>|}>>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`injl'>
+    <tformat|<table|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`iden'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<beta\><rsub|k>|}>>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`unit'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<beta\><rsub|k>\<doteq\><1>|}>>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`injl'>
     i|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>+\<gamma\>|}>*<htab|5mm>where
-    \<gamma\> is fresh>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`injr'>
+    \<gamma\> is fresh>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`injr'>
     i|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>,\<beta\><rsub|k>\<doteq\>\<gamma\>+\<beta\><rsub|k-i>|}>*<htab|5mm>where
-    \<gamma\> is fresh>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|<math|>`take'>
+    \<gamma\> is fresh>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|<math|>`take'>
     i|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>\<times\>\<gamma\>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>|}>*<htab|5mm>where
-    \<gamma\> is fresh>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`drop'>
+    \<gamma\> is fresh>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`drop'>
     i|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<gamma\>\<times\>\<alpha\><rsub|k-i>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>|}>*<htab|5mm>where
-    \<gamma\> is fresh>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`comp'>
-    i j|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>,\<beta\><rsub|k-i>\<doteq\>\<alpha\><rsub|k-j>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-j>|}>>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`case'>
-    i j|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\><around*|(|\<gamma\><rsub|1>+\<gamma\><rsub|2>|)>\<times\>\<gamma\><rsub|3>,\<alpha\><rsub|k-i>\<doteq\>\<gamma\><rsub|1>\<times\>\<gamma\><rsub|3>,a<rsub|k-j>\<doteq\>\<gamma\><rsub|2>\<times\>\<gamma\><rsub|3>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>\<doteq\>\<beta\><rsub|k-j>|}><next-line><htab|5mm>where
-    \<gamma\><rsub|1>,\<gamma\><rsub|2>,\<gamma\><rsub|3> are
-    fresh>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`pair'> i
-    j|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>\<doteq\>\<alpha\><rsub|k-j>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>\<times\>\<beta\><rsub|k-j>|}>>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`disconnect'>
+    \<gamma\> is fresh>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`comp'>
+    i j|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>,\<beta\><rsub|k-i>\<doteq\>\<alpha\><rsub|k-j>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-j>|}>>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`case'>
+    i j|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\><around*|(|\<gamma\><rsub|1>+\<gamma\><rsub|2>|)>\<times\>\<gamma\><rsub|3>|}><next-line>\<cup\><around*|{|\<alpha\><rsub|k-i>\<doteq\>\<gamma\><rsub|1>\<times\>\<gamma\><rsub|3>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>\|\<forall\>h.l<around*|[|k-i|]>\<neq\>\<eta\><rsup|S><around*|(|<math-ss|`hidden'>
+    h|)>|}><htab|5mm><next-line>\<cup\><around*|{|a<rsub|k-j>\<doteq\>\<gamma\><rsub|2>\<times\>\<gamma\><rsub|3>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-j>\|\<forall\>h.l<around*|[|k-j|]>\<neq\>\<eta\><rsup|S><around*|(|<math-ss|`hidden'>
+    h|)>|}><next-line><htab|5mm>where \<gamma\><rsub|1>,\<gamma\><rsub|2>,\<gamma\><rsub|3>
+    are fresh>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`pair'>
+    i j|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<alpha\><rsub|k-i>\<doteq\>\<alpha\><rsub|k-j>,\<beta\><rsub|k>\<doteq\>\<beta\><rsub|k-i>\<times\>\<beta\><rsub|k-j>|}>>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`disconnect'>
     i j|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k-i>\<doteq\>\<alpha\><rsub|k>\<times\><2><rsup|256>,\<beta\><rsub|k-i>\<doteq\>\<gamma\>\<times\>\<alpha\><rsub|k-j>,\<beta\><rsub|k>\<doteq\>\<gamma\>\<times\>\<beta\><rsub|k-j>|}>*<htab|5mm>where
-    \<gamma\> is fresh>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`witness'>
-    v|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{||}>>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`fail'>
-    b|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{||}>>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`hidden'>
-    h|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{||}>>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`version'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\><1>,\<beta\><rsub|k>\<doteq\><2><rsup|32>|}>>>|<row|<cell|con<around*|\<langle\>|k,<math-ss|`lockTime'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\><1>,\<beta\><rsub|k>\<doteq\>Lock|}>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>>>
+    \<gamma\> is fresh>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`witness'>
+    v|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{||}>>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`fail'>
+    b|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{||}>>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`hidden'>
+    h|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{||}>>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`version'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\><1>,\<beta\><rsub|k>\<doteq\><2><rsup|32>|}>>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`lockTime'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\><1>,\<beta\><rsub|k>\<doteq\>Lock|}>>>|<row|<cell|\<vdots\>>|<cell|>|<cell|\<vdots\>>>>>
   </eqnarray*>
 
   The rest of the constraints for the other Bitcoin primitive names follows
@@ -4629,12 +4661,19 @@
   of the corresponding primitives, all of which are required to be concrete
   types.
 
-  Using the <math|con> function we can collect all the constraints that need
-  to be solved for an (untyped) Simplicity DAG, <math|l:DAG>, to be
-  well-typed:
+  Notice that the unification variables for <samp|`hidden'> nodes are unused.
+  When <samp|`hidden'> nodes occur as children, their parent must be a
+  <samp|`case'> node and the constraints for <samp|`case'> nodes specifically
+  excludes references to their <samp|`hidden'> children's unification
+  variables. Thus when a <samp|`case'> node represents an assertion, the only
+  type constraints needed for an assertion are added.
+
+  Using the <math|con<rsub|l>> function, we can collect all the constraints
+  that need to be solved for a well-formed (untyped) Simplicity DAG,
+  <math|l:DAG>, to be well-typed:
 
   <\equation*>
-    con<around*|(|l|)>\<assign\>fold<rsup|<op|\<cup\>>><around*|(|con<rsup|+><around*|(|indexed<around*|(|l|)>|)>|)>
+    con<around*|(|l|)>\<assign\>fold<rsup|<op|\<cup\>>><around*|(|con<rsub|l><rsup|+><around*|(|indexed<around*|(|l|)>|)>|)>
   </equation*>
 
   Depending on the application there may be further constraints imposed on
@@ -4699,7 +4738,7 @@
 
   It is possible that there is no unifier for the given collection of
   constraints. In such a case the Simplicity DAG is ill-typed, (or does not
-  need the type constraints imposed by the application) and does not
+  meet the type constraints imposed by the application) and does not
   represent a well-typed Simplicity expression.
 
   First-order unification can be preformed time linear in the size of the
@@ -4725,27 +4764,23 @@
   corresponding to those sub-DAG. As a trivial example, a DAG will often have
   multiple <samp|`iden'> nodes, one for each type that the <samp|iden>
   combinator is be used for. A DAG should never have sub-DAGs that end up
-  with the same pair of inferred types and should be disallowed by
+  with the same pair of inferred types and will be disallowed by
   anti-malleability rules (see Section<nbsp><inactive|<reference|<with|color|red|TODO>>>).
 
   \ We could remove duplicate sub-DAGs entirely by using polymorphic type
   inference instead. Polymorphic type inference is
-  DEXPTIME-complete<nbsp><cite|Mairson:1989>, however because removing
-  duplicated sub-DAGs can produce exponentially smaller terms it could be
-  that polymorphic type inference is linear in the size of the DAG with
+  DEXPTIME-complete<nbsp><cite|Mairson:1989>. However, because removing
+  duplicated sub-DAGs can produce exponentially smaller terms it might be the
+  case that polymorphic type inference is linear in the size of the DAG with
   duplicated sub-DAGs that are needed for monomorphic type inference. If this
-  is the case we could switch to polymorphic type inference without opening
+  is the case, we could switch to polymorphic type inference without opening
   up DoS attacks. Whether this is possible or not is currently open question
   for me.
 
-  <with|color|red|TODO: something about type-inference in the presence of
-  sharing of hidden nodes? It might cause sharing that would otherwise be
-  impossible with <samp|assertl> and <samp|assertr>?>
-
   <subsection|Reconstructing Simplicity Expressions>
 
-  Given a Simplicity DAG, <math|l:DAG>, that does have a substitution
-  <math|\<varsigma\>> yielding the most general unifier for
+  Given a well-formed Simplicity DAG, <math|l:DAG>, that does have a
+  substitution <math|\<varsigma\>> yielding the most general unifier for
   <math|con<around*|(|l|)>>, we can attempt to synthesize the Simplicity
   expression that the DAG represents by recursively interpreting the DAG as
   <math|syn<around*|(|l|)>\<of\>\<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|<around*|\||l|\|>-1>|)>\<vdash\>\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|<around*|\||l|\|>-1>|)>>
@@ -4790,16 +4825,18 @@
   </eqnarray*>
 
   The <samp|case> and <samp|witness> clauses require special consideration
-  which we define below. The syn function fails if it encounters a
-  <math|<math-ss|`hidden'>> node. These <math|<math-ss|`hidden'>> nodes are
-  only used by the syncase function.
+  which we define below. The syn function never encounters a
+  <math|<math-ss|`hidden'>> node when <math|l> is well-formed except when
+  <math|\<exists\>h.l<around*|[|<around*|\||l|\|>-1|]>=\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+  h|)>>, in which case the entire expression itself is hidden. These
+  <math|<math-ss|`hidden'>> nodes are only used by the syncase function.
 
   <subsubsection|syncase>
 
   The syncase function constructs <samp|case> expressions as well as
   <samp|assertl> and <samp|assertr> expressions. Assertion expressions are
-  produced when hidden nodes are passed as parameters. However we do not
-  allow both branches of a case expression to be hidden.
+  produced when hidden nodes are passed as parameters. However both branches
+  of a case expression cannot be hidden when <math|l> is well-formed.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|syncase<around*|(|l,k<rsub|0>,k<rsub|1>,\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
@@ -4807,21 +4844,18 @@
     h<rsub|2>|)>|)>>|<cell|\<assign\>>|<cell|\<bot\>>>|<row|<cell|syncase<around*|(|l,k<rsub|0>,k<rsub|1>,n<rsub|1>,k<rsub|2>,\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
     h<rsub|2>|)>|)>>|<cell|\<assign\>>|<cell|<math-ss|assertl><rsub|A,B,C,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k<rsub|0>>|)>>
     syn<around*|(|l,k<rsub|1>,n<rsub|1>|)>
-    h<rsub|2><next-line><htab|5mm>where \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|1>>|)>=A\<times\>C
-    and \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|2>>|)>=B\<times\>C<next-line>
-    <htab|5mm>and when \<forall\>h<rsub|1>\<point\>n<rsub|1>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    h<rsub|2><next-line><htab|5mm>where \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|0>>|)>=<around*|(|A+B|)>\<times\>C
+    <next-line> <htab|5mm>and when \<forall\>h<rsub|1>\<point\>n<rsub|1>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
     h<rsub|1>|)>>>|<row|<cell|syncase<around*|(|l,k<rsub|0>,k<rsub|1>,\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
     h<rsub|1>|)>,k<rsub|2>,n<rsub|2>|)>>|<cell|\<assign\>>|<cell|<math-ss|assertr><rsub|A,B,C,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k<rsub|0>>|)>>
     h<rsub|1> syn<around*|(|l,k<rsub|2>,n<rsub|2>|)><next-line><htab|5mm>where
-    \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|1>>|)>=A\<times\>C
-    and \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|2>>|)>=B\<times\>C<next-line>
-    <htab|5mm>and when \<forall\>h<rsub|2>\<point\>n<rsub|2>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|0>>|)>=<around*|(|A+B|)>\<times\>C
+    <next-line> <htab|5mm>and when \<forall\>h<rsub|2>\<point\>n<rsub|2>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
     h<rsub|2>|)>>>|<row|<cell|syncase<around*|(|l,k<rsub|0>,k<rsub|1>,n<rsub|1>,k<rsub|2>,n<rsub|2>|)>>|<cell|\<assign\>>|<cell|<math-ss|case><rsub|A,B,C,\<varsigma\><rsub|<1>><around*|(|\<beta\><rsub|k<rsub|0>>|)>>
     syn<around*|(|l,k<rsub|1>,n<rsub|1>|)>
     syn<around*|(|l,k<rsub|2>,n<rsub|2>|)><next-line><htab|5mm>where
-    \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|1>>|)>=A\<times\>C
-    and \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|2>>|)>=B\<times\>C<next-line>
-    <htab|5mm>and when \<forall\>h<rsub|1>,h<rsub|2>\<point\>n<rsub|1>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
+    \<varsigma\><rsub|<1>><around*|(|\<alpha\><rsub|k<rsub|0>>|)>=<around*|(|A+B|)>\<times\>C
+    <next-line> <htab|5mm>and when \<forall\>h<rsub|1>,h<rsub|2>\<point\>n<rsub|1>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
     h<rsub|1>|)><next-line><htab|5mm>\<wedge\>n<rsub|2>\<neq\>\<eta\><rsup|<maybe>><around*|(|<math-ss|`hidden'>
     h<rsub|2>|)>>>>>
   </eqnarray*>

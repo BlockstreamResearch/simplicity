@@ -118,7 +118,7 @@ putNode bnd = go
   go (Drop _ _ _ x)           = Just $ putUnary x 0x13
   go (Iden _)                 = Just $ putWord8 0x20
   go (Unit _)                 = Just $ putWord8 0x21
-  go (Hidden _ _ h)           = Just $ putWord8 0x23 >> put h
+  go (Hidden h)               = Just $ putWord8 0x23 >> put h
   go (Witness _ b w) = case reflect b of
                         SomeTy rb -> putWitness . UV.fromList . putValueR rb <$> getWitnessData w
   go (Prim (SomeArrow p)) = Just $ putPrimByte p

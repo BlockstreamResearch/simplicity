@@ -57,7 +57,7 @@ putNode = go
   go (Drop _ _ _ x)           = Just $ ([o,o,i,i,i]++) . putPositive x
   go (Iden _)                 = Just $ ([o,i,o,o,o]++)
   go (Unit _)                 = Just $ ([o,i,o,o,i]++)
-  go (Hidden _ _ h)           = Just $ ([o,i,i,o]++) . put256Bits h
+  go (Hidden h)               = Just $ ([o,i,i,o]++) . put256Bits h
   go (Witness _ b w)          = case reflect b of
                                  SomeTy rb -> (([o,i,i,i]++) .) . putBitString . putValueR rb <$> getWitnessData w
   go (Prim (SomeArrow p)) = Just $ ([i,o]++) . putPrimBit p

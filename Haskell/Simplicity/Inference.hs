@@ -22,7 +22,7 @@ import Prelude hiding (fail, take, drop)
 import Control.Arrow ((+++), left)
 import Control.Monad (foldM)
 import Control.Monad.Trans (lift)
-import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
+import Control.Monad.Trans.Except (ExceptT, catchE, runExceptT, throwE)
 import Control.Unification (Fallible(..), UTerm(..), (=:=), applyBindingsAll, freeVar, unfreeze)
 import Control.Unification.STVar (STBinding, STVar, runSTBinding)
 import Control.Unification.Types (UFailure)
@@ -78,7 +78,7 @@ data TermF ty a = Iden ty
                 | Case ty ty ty ty a a
                 | Pair ty ty ty a a
                 | Disconnect ty ty ty ty a a
-                | Hidden ty ty Hash256
+                | Hidden Hash256
                 | Witness ty ty WitnessData
                 | Prim (SomeArrow Prim)
 --              | Jet JetID
@@ -133,10 +133,8 @@ instance (Show ty, Show a) => Show (TermF ty a) where
                                        . showString " " . showsPrec 11 d
                                        . showString " " . showsPrec 11 s
                                        . showString " " . showsPrec 11 t
-  showsPrec p (Hidden a b h) = showParen (10 < p)
-                             $ showString "Hidden " . showsPrec 11 a
-                             . showString " " . showsPrec 11 b
-                             . showString " " . showsPrec 11 h
+  showsPrec p (Hidden h) = showParen (10 < p)
+                         $ showString "Hidden " . showsPrec 11 h
   showsPrec p (Witness a b w) = showParen (10 < p)
                               $ showString "Witness " . showsPrec 11 a
                               . showString " " . showsPrec 11 b
@@ -144,24 +142,6 @@ instance (Show ty, Show a) => Show (TermF ty a) where
   showsPrec p (Prim (SomeArrow prim)) = showParen (10 < p)
                                       $ showString "Prim "
                                       . (showParen True $ showString "someArrow " . showString (primName prim))
-
--- Given a @'UTy' v@ annonated Simplicity 'TermF', return the implied input and output types given the annotations.
-termFArrow :: TermF (UTy v) a -> (UTy v, UTy v)
-termFArrow (Iden a) = (a, a)
-termFArrow (Unit a) = (a, UTerm One)
-termFArrow (Injl a b c _) = (a, UTerm (Sum b c))
-termFArrow (Injr a b c _) = (a, UTerm (Sum b c))
-termFArrow (Take a b c _) = (UTerm (Prod a b), c)
-termFArrow (Drop a b c _) = (UTerm (Prod a b), c)
-termFArrow (Comp a b c _ _) = (a, c)
-termFArrow (Case a b c d _ _) = (UTerm (Prod (UTerm (Sum a b)) c), d)
-termFArrow (Pair a b c _ _) = (a, UTerm (Prod b c))
-termFArrow (Disconnect a b c d _ _) = (a, UTerm (Prod b d))
-termFArrow (Hidden a b _) = (a, b)
-termFArrow (Witness a b _) = (a, b)
-termFArrow (Prim (SomeArrow p)) = (unfreeze (unreflect ra), unfreeze (unreflect rb))
- where
-  (ra, rb) = reifyArrow p
 
 -- 'FocusTy a ty' is isomorphic to 'TermF ty a'.  Its purpose is to provide functor instances to 'TermF's ty parameter.
 newtype FocusTy a ty = FocusTy { unFocusTy :: TermF ty a }
@@ -183,13 +163,14 @@ instance Traversable (FocusTy a)  where
   traverse f (FocusTy (Case a b c d x y)) = fmap FocusTy $ Case <$> f a <*> f b <*> f c <*> f d <*> pure x <*> pure y
   traverse f (FocusTy (Pair a b c x y)) = fmap FocusTy $ Pair <$> f a <*> f b <*> f c <*> pure x <*> pure y
   traverse f (FocusTy (Disconnect a b c d x y)) = fmap FocusTy $ Disconnect <$> f a <*> f b <*> f c <*> f d <*> pure x <*> pure y
-  traverse f (FocusTy (Hidden a b x)) = fmap FocusTy $ Hidden <$> f a <*> f b <*> pure x
+  traverse f (FocusTy (Hidden x)) = pure (FocusTy (Hidden x))
   traverse f (FocusTy (Witness a b x)) = fmap FocusTy $ Witness <$> f a <*> f b <*> pure x
   traverse f (FocusTy (Prim p)) = pure (FocusTy (Prim p))
 
 -- InferenceError holds the possible errors that can occur during the 'inference' step.
 data InferenceError s = UnificationFailure (UFailure TyF (STVar s TyF))
                       | IndexError Int Integer
+                      | HiddenError
                       | Overflow
                       deriving Show
 
@@ -232,7 +213,7 @@ uDisconnect :: a -> a -> UntypedTermF a
 uDisconnect = Disconnect () () () ()
 
 uHidden :: Hash256 -> UntypedTermF a
-uHidden = Hidden () ()
+uHidden = Hidden
 
 uWitness :: WitnessData -> UntypedTermF a
 uWitness = Witness () ()
@@ -243,6 +224,24 @@ uJet = error "uJet: :TODO: NOT YET IMPLEMENTED"
 -- | :TODO: NOT YET IMPLEMENTED
 uFail :: Block512 -> UntypedTermF a
 uFail = error "uFail: :TODO: NOT YET IMPLEMENTED"
+
+-- Given a @'UTy' v@ annonated Simplicity 'TermF', return the implied input and output types given the annotations.
+termFArrow :: Monad m => TermF (UTy v) a -> ExceptT (InferenceError s) m (UTy v, UTy v)
+termFArrow (Iden a) = return (a, a)
+termFArrow (Unit a) = return (a, UTerm One)
+termFArrow (Injl a b c _) = return (a, UTerm (Sum b c))
+termFArrow (Injr a b c _) = return (a, UTerm (Sum b c))
+termFArrow (Take a b c _) = return (UTerm (Prod a b), c)
+termFArrow (Drop a b c _) = return (UTerm (Prod a b), c)
+termFArrow (Comp a b c _ _) = return (a, c)
+termFArrow (Case a b c d _ _) = return (UTerm (Prod (UTerm (Sum a b)) c), d)
+termFArrow (Pair a b c _ _) = return (a, UTerm (Prod b c))
+termFArrow (Disconnect a b c d _ _) = return (a, UTerm (Prod b d))
+termFArrow (Hidden _) = throwE HiddenError
+termFArrow (Witness a b _) = return (a, b)
+termFArrow (Prim (SomeArrow p)) = return (unfreeze (unreflect ra), unfreeze (unreflect rb))
+ where
+  (ra, rb) = reifyArrow p
 
 -- | Simplicity terms with explicit sharing of subexpressions to form a topologically sorted DAG (directed acyclic graph).
 --
@@ -280,50 +279,61 @@ inference = foldM loop empty
     go (Iden _) = Iden <$> fresh
     go (Unit _) = Unit <$> fresh
     go (Injl _ _ _ it) = do
-      (a,b) <- termFArrow <$> lookup it
+      (a,b) <- termFArrow =<< lookup it
       c <- fresh
       return (Injl a b c (fromInteger it))
     go (Injr _ _ _ it) = do
-      (a,c) <- termFArrow <$> lookup it
+      (a,c) <- termFArrow =<< lookup it
       b <- fresh
       return (Injr a b c (fromInteger it))
     go (Take _ _ _ it) = do
-      (a,c) <- termFArrow <$> lookup it
+      (a,c) <- termFArrow =<< lookup it
       b <- fresh
       return (Take a b c (fromInteger it))
     go (Drop _ _ _ it) = do
-      (b,c) <- termFArrow <$> lookup it
+      (b,c) <- termFArrow =<< lookup it
       a <- fresh
       return (Drop a b c (fromInteger it))
     go (Comp _ _ _ is it) = do
-      (a,b0) <- termFArrow <$> lookup is
-      (b1,c) <- termFArrow <$> lookup it
+      (a,b0) <- termFArrow =<< lookup is
+      (b1,c) <- termFArrow =<< lookup it
       b <- b0 =:= b1
       return (Comp a b c (fromInteger is) (fromInteger it))
     go (Case _ _ _ _ is it) = do
-      (ac,d0) <- termFArrow <$> lookup is
-      (bc,d1) <- termFArrow <$> lookup it
       a <- fresh
       b <- fresh
       c <- fresh
-      _ <- UTerm (Prod a c) =:= ac
-      _ <- UTerm (Prod b c) =:= bc
-      d <- d0 =:= d1
+      d <- fresh
+      ignoreHidden $ do
+        (ac,d0) <- termFArrow =<< lookup is
+        _ <- UTerm (Prod a c) =:= ac
+        _ <- d =:= d0
+        return ()
+      ignoreHidden $ do
+        (bc,d1) <- termFArrow =<< lookup it
+        _ <- UTerm (Prod b c) =:= bc
+        _ <- d =:= d1
+        return ()
       return (Case a b c d (fromInteger is) (fromInteger it))
+     where
+      ignoreHidden m = catchE m handler
+       where
+        handler HiddenError = return ()
+        handler e = throwE e
     go (Pair _ _ _ is it) = do
-      (a0,b) <- termFArrow <$> lookup is
-      (a1,c) <- termFArrow <$> lookup it
+      (a0,b) <- termFArrow =<< lookup is
+      (a1,c) <- termFArrow =<< lookup it
       a <- a0 =:= a1
       return (Pair a b c (fromInteger is) (fromInteger it))
     go (Disconnect _ _ _ _ is it) = do
-      (aw,bc) <- termFArrow <$> lookup is
-      (c,d) <- termFArrow <$> lookup it
+      (aw,bc) <- termFArrow =<< lookup is
+      (c,d) <- termFArrow =<< lookup it
       a <- fresh
       b <- fresh
       _ <- UTerm (Prod a (unfreeze tyWord256)) =:= aw
       _ <- UTerm (Prod b c) =:= bc
       return (Disconnect a b c d (fromInteger is) (fromInteger it))
-    go (Hidden _ _ h) = Hidden <$> fresh <*> fresh <*> pure h
+    go (Hidden h) = pure (Hidden h)
     go (Witness _ _ w) = Witness <$> fresh <*> fresh <*> pure w
     go (Prim p) = pure (Prim p)
 
@@ -363,7 +373,7 @@ typeCheck v = typeCheckTerm =<< runUnification inferenced
      _ <- case viewr ev of
          EmptyR -> return ()
          _ :> end -> do
-           let (a1, b1) = termFArrow end
+           (a1, b1) <- termFArrow end
            _ <- a1 =:= unfreeze (unreflect a0)
            _ <- b1 =:= unfreeze (unreflect b0)
            return ()
@@ -415,18 +425,20 @@ typeCheck v = typeCheckTerm =<< runUnification inferenced
                                              let (rb1, rc) = reifyArrow t
                                              Refl <- assertEqualTyReflect rb0 rb1
                                              return (someArrowR ra rc (comp s t))
-       typeCheckTerm (Case a b c d is it) | (Hidden _ _ hs) <- index s is = case reflect a of
-                                                                              SomeTy ra -> do
-                                                                                SomeArrow t <- lookup it
-                                                                                let (rbc, rd) = reifyArrow t
-                                                                                case rbc of
-                                                                                  ProdR rb rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertr hs t))
-                                          | (Hidden _ _ ht) <- index s is = case reflect b of
-                                                                              SomeTy rb -> do
-                                                                                SomeArrow s <- lookup is
-                                                                                let (rac, rd) = reifyArrow s
-                                                                                case rac of
-                                                                                  ProdR ra rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertl s ht))
+       typeCheckTerm (Case a b c d is it) | Hidden hs <- index s is =
+                                              case reflect a of
+                                                SomeTy ra -> do
+                                                  SomeArrow t <- lookup it
+                                                  let (rbc, rd) = reifyArrow t
+                                                  case rbc of
+                                                    ProdR rb rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertr hs t))
+                                          | Hidden ht <- index s it =
+                                              case reflect b of
+                                                SomeTy rb -> do
+                                                  SomeArrow s <- lookup is
+                                                  let (rac, rd) = reifyArrow s
+                                                  case rac of
+                                                    ProdR ra rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertl s ht))
                                           | otherwise = do SomeArrow s <- lookup is
                                                            SomeArrow t <- lookup it
                                                            let (rac0, rd0) = reifyArrow s
@@ -450,7 +462,7 @@ typeCheck v = typeCheckTerm =<< runUnification inferenced
                                                          Refl <- assertEqualTyReflect rw (reify :: TyReflect Word256)
                                                          Refl <- assertEqualTyReflect rc0 rc1
                                                          return (someArrowR ra (ProdR rb rd) (disconnect s t))
-       typeCheckTerm (Hidden _ _ _) = Left "Simplicity.Inference.typeCheck: encountered illegal use of Hidden node"
+       typeCheckTerm (Hidden _) = Left "Simplicity.Inference.typeCheck: encountered illegal use of Hidden node"
        typeCheckTerm (Witness a b w) = case (reflect a, reflect b) of
                                         (SomeTy ra, SomeTy rb) -> do
                                          vb <- maybe err return $ getWitnessData w

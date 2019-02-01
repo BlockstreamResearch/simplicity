@@ -77,7 +77,7 @@ forallSimplicityDag = forAll gen_UntypedTermF_list
     , pure $ Case one one one one () ()
     , pure $ Pair one one one () ()
     , pure $ Disconnect one one one one () ()
-    , Hidden one one <$> get256Bits arbitrary
+    , Hidden <$> get256Bits arbitrary
     , wit
     , Prim <$> elements allPrim
     ]
@@ -104,7 +104,7 @@ compareDag v1 v2 = (and $ zipWith compareNode v1 v2) && (length v1 == length v2)
   compareNode (Case _ _ _ _ x0 y0) (Case _ _ _ _ x1 y1) = [x0,y0] == [x1,y1]
   compareNode (Pair _ _ _ x0 y0) (Pair _ _ _ x1 y1) = [x0,y0] == [x1,y1]
   compareNode (Disconnect _ _ _ _ x0 y0) (Disconnect _ _ _ _ x1 y1) = [x0,y0] == [x1,y1]
-  compareNode (Hidden _ _ h0) (Hidden _ _ h1) = h0 == h1
+  compareNode (Hidden h0) (Hidden h1) = h0 == h1
   compareNode (Witness _ b w0) (Witness _ _ w1) = case reflect b of
                                                    SomeTy rb -> fromMaybe False $ (==) <$> getWitnessDataAs rb w0 <*> getWitnessDataAs rb w1
    where
