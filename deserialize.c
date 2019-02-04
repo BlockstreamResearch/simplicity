@@ -1,5 +1,6 @@
 #include "deserialize.h"
 
+#include <assert.h>
 #include <limits.h>
 #include <stdlib.h>
 
@@ -13,7 +14,7 @@ static int32_t ensureBuffer(bit_stream* stream) {
   if (stream->available <= 0) {
     int ch = fgetc(stream->file);
     if (ch < 0) return ERR_BITSTREAM_EOF;
-    stream->byte = ch;
+    stream->byte = (unsigned char)ch;
     stream->available = CHAR_BIT;
   }
   return 0;
@@ -33,8 +34,9 @@ static int32_t getNBits(int n, bit_stream* stream) {
   } else {
     return 0;
   }
+  assert(n < 32);
 
-  int32_t result = 0;
+  uint32_t result = 0;
   while (stream->available < n) {
     n -= stream->available;
     result |= (stream->byte & (((uint32_t)1 << stream->available) - 1)) << n;
@@ -43,8 +45,8 @@ static int32_t getNBits(int n, bit_stream* stream) {
     if (err < 0) return err;
   }
   stream->available -= n;
-  result |= (stream->byte >> stream->available) & (((uint32_t)1 << n) - 1);
-  return result;
+  result |= (uint32_t)(stream->byte >> stream->available) & (((uint32_t)1 << n) - 1);
+  return (int32_t)result;
 }
 
 /* Returns one bit from 'stream', 0 or 1.
@@ -68,7 +70,7 @@ static int32_t getByteArray(uint8_t* result, const size_t len, bit_stream* strea
   for (size_t i = 0; i < len; ++i) {
     int32_t byte = getNBits(8, stream);
     if (byte < 0) return byte;
-    result[i] = byte;
+    result[i] = (uint8_t)byte;
   }
   return 0;
 }
@@ -255,8 +257,8 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
     for (int32_t j = 0; j < 2 - code; ++j) {
       int32_t ix = decodeUptoMaxInt(stream);
       if (ix < 0) return ix;
-      if (i < ix) return ERR_DATA_OUT_OF_RANGE;
-      dag[i].child[j] = i - ix;
+      if (i < (uint32_t)ix) return ERR_DATA_OUT_OF_RANGE;
+      dag[i].child[j] = i - (uint32_t)ix;
     }
     switch (code) {
      case 0:
@@ -266,6 +268,8 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
        case 2: dag[i].tag = PAIR; return 0;
        case 3: dag[i].tag = DISCONNECT; return 0;
       }
+      assert(0);
+      /*@fallthrough@*/
      case 1:
       switch (subcode) {
        case 0: dag[i].tag = INJL; return 0;
@@ -273,6 +277,8 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
        case 2: dag[i].tag = TAKE; return 0;
        case 3: dag[i].tag = DROP; return 0;
       }
+      assert(0);
+      /*@fallthrough@*/
      case 2:
       switch (subcode) {
        case 0: dag[i].tag = IDEN; return 0;
@@ -280,6 +286,8 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
        case 2: return ERR_FAIL_CODE;
        case 3: return ERR_STOP_CODE;
       }
+      assert(0);
+      /*@fallthrough@*/
      case 3:
       switch (subcode) {
        case 0:
@@ -291,6 +299,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
         fprintf(stderr, "witness nodes not yet implemented\n");
         exit(EXIT_FAILURE);
       }
+      assert(0);
     }
     return ERR_IMPOSSIBLE;
   } else {
@@ -341,11 +350,11 @@ int32_t decodeMallocDag(dag_node** dag, bit_stream* stream) {
   int32_t dagLen = decodeUptoMaxInt(stream);
   if (dagLen <= 0) return dagLen;
   /* :TODO: a consensus parameter limiting the maximum length of a DAG needs to be enforeced here */
-  if (PTRDIFF_MAX / sizeof(dag_node) < dagLen) return ERR_DATA_OUT_OF_RANGE;
+  if (PTRDIFF_MAX / sizeof(dag_node) < (size_t)dagLen) return ERR_DATA_OUT_OF_RANGE;
   *dag = malloc(sizeof(dag_node[dagLen]));
   if (!*dag) return 0;
 
-  int32_t err = decodeDag(*dag, dagLen, stream);
+  int32_t err = decodeDag(*dag, (size_t)dagLen, stream);
   if (err < 0) {
     free(*dag);
     *dag = NULL;

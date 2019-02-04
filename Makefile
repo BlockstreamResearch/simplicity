@@ -1,5 +1,11 @@
-CFLAGS = -Wall
-LDLIBS = -lsha256compression
+# From https://fastcompression.blogspot.com/2019/01/compiler-warnings.html
+CFLAGS := -Werror -Wall -Wextra -Wcast-qual -Wcast-align -Wstrict-aliasing -Wpointer-arith -Winit-self -Wshadow -Wswitch-enum -Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls -Wfloat-equal -Wundef -Wconversion
+
+ifneq ($(doCheck), 1)
+CFLAGS := $(CFLAGS) -DNDEBUG
+endif
+
+LDLIBS := -lsha256compression
 test_deserialize: test_deserialize.o dag.o deserialize.o hashBlock.o
 	$(CC) $^ -o $@ $(LDLIBS)
 
