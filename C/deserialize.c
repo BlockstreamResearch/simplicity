@@ -342,10 +342,12 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
  *               len < 2^31
  *               NULL != stream
  */
-static int32_t decodeDag(dag_node* dag, const size_t len, bit_stream* stream) {
+static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* census, bit_stream* stream) {
   for (size_t i = 0; i < len; ++i) {
     int32_t err = decodeNode(dag, i, stream);
     if (err < 0) return err;
+
+    enumerator(census, dag[i].tag);
   }
   return 0;
 }
@@ -366,9 +368,11 @@ static int32_t decodeDag(dag_node* dag, const size_t len, bit_stream* stream) {
  *               NULL != stream
  *
  * Postcondition: (dag_node (*dag)[return_value] and '*dag' is a well-formed dag) when the return value of the function is positive;
+ *                '*census' contains a tally of the different tags that occur in 'dag' when the return value
+ *                          of the function is positive and NULL != census;
  *                NULL == *dag when the return value is non-positive.
  */
-int32_t decodeMallocDag(dag_node** dag, bit_stream* stream) {
+int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream* stream) {
   *dag = NULL;
   int32_t dagLen = decodeUptoMaxInt(stream);
   if (dagLen <= 0) return dagLen;
@@ -377,7 +381,8 @@ int32_t decodeMallocDag(dag_node** dag, bit_stream* stream) {
   *dag = malloc(sizeof(dag_node[dagLen]));
   if (!*dag) return 0;
 
-  int32_t err = decodeDag(*dag, (size_t)dagLen, stream);
+  *census = (combinator_counters){0};
+  int32_t err = decodeDag(*dag, (size_t)dagLen, census, stream);
   if (err < 0) {
     free(*dag);
     *dag = NULL;

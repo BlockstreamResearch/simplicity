@@ -51,11 +51,12 @@ static void test_decodeMallocDag_computeCommitmentMerkleRoot(void) {
     , 0x3ab0ab65ul, 0x6e7759f0ul, 0xaa10d1ddul, 0x089c8582ul
     };
   dag_node* dag = NULL;
+  combinator_counters census;
   int32_t len;
   {
     FILE* file = fmemopen_rb(hashBlock, sizeof_hashBlock);
     bit_stream stream = initializeBitStream(file);
-    len = decodeMallocDag(&dag, &stream);
+    len = decodeMallocDag(&dag, &census, &stream);
     fclose(file);
   }
   if (len <= 0) {

@@ -55,8 +55,10 @@ int32_t decodeUptoMaxInt(bit_stream* stream);
  *               NULL != stream
  *
  * Postcondition: (dag_node (*dag)[return_value] and '*dag' is a well-formed dag) when the return value of the function is positive;
+ *                '*census' contains a tally of the different tags that occur in 'dag' when the return value
+ *                          of the function is positive when NULL != census;
  *                NULL == *dag when the return value is non-positive.
  */
-int32_t decodeMallocDag(dag_node** dag, bit_stream* stream);
+int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream* stream);
 
 #endif
