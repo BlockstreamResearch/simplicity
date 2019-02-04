@@ -26,6 +26,32 @@
 #define HIDDEN     0x06
 #define WITNESS    0x0e
 
+/* This structure is use to count the different kinds of combinators in a Simplicity DAG. */
+typedef struct combinator_counters {
+  size_t comp_cnt, case_cnt, pair_cnt, disconnect_cnt,
+         injl_cnt, injr_cnt, take_cnt, drop_cnt;
+} combinator_counters;
+
+/* Given a tag for an expression, add it to the 'census'.
+ *
+ * Precondition: 'tag' is a valid tag.
+ */
+static inline void enumerator(combinator_counters* census, int32_t tag) {
+  if (!census) return;
+  switch (tag) {
+   case COMP: census->comp_cnt++; return;
+   case ASSERTL:
+   case ASSERTR: /* Assertions are counted as CASE combinators. */
+   case CASE: census->case_cnt++; return;
+   case PAIR: census->pair_cnt++; return;
+   case DISCONNECT: census->disconnect_cnt++; return;
+   case INJL: census->injl_cnt++; return;
+   case INJR: census->injr_cnt++; return;
+   case TAKE: census->take_cnt++; return;
+   case DROP: census->drop_cnt++; return;
+  }
+}
+
 /* Returns the number of children that a Simplicity combinator of the 'tag' kind has.
  *
  * Precondition: 'tag' is a valid tag.
