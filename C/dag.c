@@ -28,7 +28,7 @@ static void mkTag(uint32_t* midstate, const uint8_t* tagName, const size_t len) 
   block[len] = 0x80;
   /* The length of tag (in bits) is guarenteed to fit within two bytes. */
   block[63] = (len << 3) & 0xff;
-  block[62] = len >> 5;
+  block[62] = (len >> 5) & 0xff;
 
   sha256_iv(midstate);
   sha256_compression(midstate, block);

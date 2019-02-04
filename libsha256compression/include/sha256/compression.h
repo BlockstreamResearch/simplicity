@@ -15,7 +15,7 @@ static inline uint32_t ReadBE32(const uint8_t* b) {
 /* Precondition: uint8_t ptr[4]
  */
 static inline void WriteBE32(uint8_t* ptr, uint32_t x) {
-  ptr[0] = x >> 24;
+  ptr[0] = (uint8_t)(x >> 24);
   ptr[1] = (x >> 16) & 0xff;
   ptr[2] = (x >> 8) & 0xff;
   ptr[3] = x & 0xff;
