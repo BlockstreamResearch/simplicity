@@ -238,8 +238,10 @@ int32_t decodeUptoMaxInt(bit_stream* stream) {
 
 /* Decode a single node of a Simplicity dag from 'stream' into 'dag'['i'].
  * Returns 'ERR_DATA_OUT_OF_RANGE' if the node's child isn't a reference to one of the preceeding nodes.
- * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered (all fail subexpressions ought to have been pruned prior to deserialization).
+ * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered
+ *   (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
+ * Returns 'ERR_HIDDEN' if the decoded node has illegal HIDDEN children.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
@@ -267,22 +269,29 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
     switch (code) {
      case 0:
       switch (subcode) {
-       case 0: dag[i].tag = COMP; return 0;
-       case 1: dag[i].tag = CASE; return 0;
-       case 2: dag[i].tag = PAIR; return 0;
-       case 3: dag[i].tag = DISCONNECT; return 0;
+       case 0: dag[i].tag = COMP; break;
+       case 1:
+        if (HIDDEN == dag[dag[i].child[0]].tag) {
+          if (HIDDEN == dag[dag[i].child[1]].tag) return ERR_HIDDEN;
+          dag[i].tag = ASSERTR; return 0;
+        }
+        if (HIDDEN == dag[dag[i].child[1]].tag) {
+          if (HIDDEN == dag[dag[i].child[0]].tag) return ERR_HIDDEN;
+          dag[i].tag = ASSERTL; return 0;
+        }
+        dag[i].tag = CASE; return 0;
+       case 2: dag[i].tag = PAIR; break;
+       case 3: dag[i].tag = DISCONNECT; break;
       }
-      assert(0);
-      /*@fallthrough@*/
+      break;
      case 1:
       switch (subcode) {
-       case 0: dag[i].tag = INJL; return 0;
-       case 1: dag[i].tag = INJR; return 0;
-       case 2: dag[i].tag = TAKE; return 0;
-       case 3: dag[i].tag = DROP; return 0;
+       case 0: dag[i].tag = INJL; break;
+       case 1: dag[i].tag = INJR; break;
+       case 2: dag[i].tag = TAKE; break;
+       case 3: dag[i].tag = DROP; break;
       }
-      assert(0);
-      /*@fallthrough@*/
+      break;
      case 2:
       switch (subcode) {
        case 0: dag[i].tag = IDEN; return 0;
@@ -305,7 +314,13 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
       }
       assert(0);
     }
-    return ERR_IMPOSSIBLE;
+
+    /* Verify that there are no illegal HIDDEN children. */
+    for (int32_t j = 0; j < 2 - code; ++j) {
+       if (HIDDEN == dag[dag[i].child[j]].tag) return ERR_HIDDEN;
+    }
+
+    return 0;
   } else {
     // TODO: Decode primitives and jets
     fprintf(stderr, "primitives and jets nodes not yet implemented\n");
@@ -315,8 +330,10 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
 
 /* Decode a Simplicity DAG consisting of 'len' nodes from 'stream' into 'dag'.
  * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceeding nodes.
- * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered (all fail subexpressions ought to have been pruned prior to deserialization).
+ * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered
+ *   (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
+ * Returns 'ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
@@ -336,8 +353,10 @@ static int32_t decodeDag(dag_node* dag, const size_t len, bit_stream* stream) {
 /* Decode a length-prefixed Simplicity DAG from 'stream'.
  * Returns 'ERR_DATA_OUT_OF_RANGE' the length prefix's value is too large.
  * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceeding nodes.
- * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered (all fail subexpressions ought to have been pruned prior to deserialization).
+ * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered
+ *  (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
+ * Returns 'ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * Returns 0 if malloc fails.
  * In the above error cases, '*dag' is set to NULL.

@@ -9,9 +9,12 @@
  * We choose to generate unique tags by using the reverse bit pattern used in Simplicity's bit-wise prefix code.
  * Thus all tags for core, witness, and hidden node are even numbers.
  * Jets and primitive tags are be odd numbers.
+ * Assertions are not part of Simplicity's bit-wise prefix code, and instead make use of unused codes that extend the code for CASE.
  */
 #define COMP       0x00
 #define CASE       0x10
+#define ASSERTL    0x30
+#define ASSERTR    0x70
 #define PAIR       0x08
 #define DISCONNECT 0x18
 #define INJL       0x04
@@ -27,7 +30,7 @@
  *
  * Precondition: 'tag' is a valid tag.
  */
-static inline int32_t numChildren(int32_t tag) {
+static inline size_t numChildren(int32_t tag) {
   switch (tag & 0x7) {
    case 0x00: return 2;
    case 0x04: return 1;
@@ -38,12 +41,11 @@ static inline int32_t numChildren(int32_t tag) {
 /* A node the the DAG of a Simplicity expression.
  * It consists of a 'tag' indicating the kind of expression the node represents.
  * The contents of a node depend on the kind of the expressions.
- * The node may have references to children, if it is a combinator kind of expression.
+ * The node may have references to children, when it is a combinator kind of expression.
  *
  * Invariant: 'tag' is a valid tag;
- *            size_t child[2] when numChildren(tag) == 2;
- *            size_t child[1] when numChildren(tag) == 1;
- *            sha256_midstate hash when HIDDEN == tag
+ *            size_t child[numChildren(tag)] when tag != HIDDEN;
+ *            sha256_midstate hash is active when tag == HIDDEN;
  */
 typedef struct dag_node {
   int32_t tag;
@@ -57,9 +59,21 @@ typedef struct dag_node {
  *
  *     dag_node dag[len],
  *
- * such that for all 'i', 0 <= 'i' < 'len' and for all 'j', 0 <= 'j' < 'numChildren'('dag'['i'].'tag'),
+ * such that
  *
- *     dag[i].child[j] < i.
+ *     0 < len
+ *
+ * and for all 'i', 0 <= 'i' < 'len' and for all 'j', 0 <= 'j' < 'numChildren(dag[i].tag)',
+ *
+ *     dag[i].child[j] < i
+ *
+ * and for all 'i', 0 <= 'i' < 'len',
+ *
+ *     if dag[dag[i].child[0]].tag == HIDDEN then dag[i].tag == ASSERTR
+ *
+ *     and
+ *
+ *     if dag[dag[i].child[1]].tag == HIDDEN then dag[i].tag == ASSERTL
  *
  * Note that a well-formed Simplicity DAG is not neccesarily a well-typed Simplicity DAG.
  */
