@@ -43,6 +43,8 @@ static sha256_midstate cmrIV(int32_t tag) {
 
   switch (tag) {
    case COMP: return compIV;
+   case ASSERTL:
+   case ASSERTR:
    case CASE: return caseIV;
    case PAIR: return pairIV;
    case DISCONNECT: return disconnectIV;
@@ -78,6 +80,8 @@ void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, const 
       size_t j = 8;
       switch (dag[i].tag) {
        case COMP:
+       case ASSERTL:
+       case ASSERTR:
        case CASE:
        case PAIR:
         memcpy(block + j, analysis[dag[i].child[1]].commitmentMerkleRoot.s, sizeof(uint32_t[8]));

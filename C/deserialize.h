@@ -9,7 +9,7 @@
 #define ERR_DATA_OUT_OF_RANGE (-2)
 #define ERR_FAIL_CODE (-3)
 #define ERR_STOP_CODE (-4)
-#define ERR_IMPOSSIBLE (-128)
+#define ERR_HIDDEN (-5)
 
 /* Datatype representing a bit stream.
  * Bits are streamed from MSB to LSB.
@@ -42,8 +42,10 @@ int32_t decodeUptoMaxInt(bit_stream* stream);
 /* Decode a length-prefixed Simplicity DAG from 'stream'.
  * Returns 'ERR_DATA_OUT_OF_RANGE' the length prefix's value is too large.
  * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceeding nodes.
- * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered (all fail subexpressions ought to have been pruned prior to deserialization).
+ * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered
+ *  (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
+ * Returns 'ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * Returns 0 if malloc fails.
  * In the above error cases, '*dag' is set to NULL.
