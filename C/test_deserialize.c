@@ -3,6 +3,7 @@
 #include <string.h>
 #include "dag.h"
 #include "deserialize.h"
+#include "typeInference.h"
 #include "hashBlock.h"
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen persume 8 bit chars");
@@ -44,11 +45,15 @@ static void test_decodeUptoMaxInt(void) {
   fclose(file);
 }
 
-static void test_decodeMallocDag_computeCommitmentMerkleRoot(void) {
+static void test_hashBlock(void) {
   /* 'expected' is the expected CMR for the 'hashBlock' Simplicity expression. */
-  const uint32_t expected[8] =
+  const uint32_t expectedCMR[8] =
     { 0xe26d71c3ul, 0x18e61d3aul, 0x9b31a9cdul, 0x8bee8d4dul
     , 0x3ab0ab65ul, 0x6e7759f0ul, 0xaa10d1ddul, 0x089c8582ul
+    };
+  const uint32_t expectedWMR[8] =
+    { 0xeeae47e2ul, 0xf7876c3bul, 0x9cbcd404ul, 0xa338b089ul
+    , 0xfdeadf1bul, 0x9bb382ecul, 0x6e69719dul, 0x31baec9aul
     };
   dag_node* dag = NULL;
   combinator_counters census;
@@ -59,7 +64,7 @@ static void test_decodeMallocDag_computeCommitmentMerkleRoot(void) {
     len = decodeMallocDag(&dag, &census, &stream);
     fclose(file);
   }
-  if (len <= 0) {
+  if (!dag) {
     printf("Error parsing dag: %d\n", len);
     failures++;
   } else {
@@ -67,19 +72,62 @@ static void test_decodeMallocDag_computeCommitmentMerkleRoot(void) {
 
     analyses analysis[len];
     computeCommitmentMerkleRoot(analysis, dag, (size_t)len);
-    if (0 == memcmp(expected, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]))) {
+    if (0 == memcmp(expectedCMR, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]))) {
       successes++;
     } else {
       printf("Unexpected CMR of hashblock\n");
       failures++;
     }
+
+    type* type_dag = mallocTypeInference(dag, (size_t)len, &census);
+    if (!type_dag) {
+      printf("Unexpected failure of type inference for hashblock\n");
+      failures++;
+    } else {
+      computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
+      if (0 == memcmp(expectedWMR, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]))) {
+        successes++;
+      } else {
+        printf("Unexpected WMR of hashblock\n");
+        failures++;
+      }
+      free(type_dag);
+    }
+  }
+  free(dag);
+}
+
+static void test_occursCheck(void) {
+  /* The untyped Simplicity term (case (drop iden) iden) ought to cause an occurs check failure. */
+  const unsigned char buf[] = { 0xc1, 0x07, 0x20, 0x30 };
+  dag_node* dag = NULL;
+  combinator_counters census = {0};
+  int32_t len;
+  {
+    FILE* file = fmemopen_rb(buf, sizeof(buf));
+    bit_stream stream = initializeBitStream(file);
+    len = decodeMallocDag(&dag, &census, &stream);
+    fclose(file);
+  }
+  if (!dag) {
+    printf("Error parsing dag: %d\n", len);
+  } else {
+    type* type_dag = mallocTypeInference(dag, (size_t)len, &census);
+    if (!type_dag) {
+      successes++;
+    } else {
+      printf("Unexpected occurs check success\n");
+      failures++;
+    }
+    free(type_dag);
   }
   free(dag);
 }
 
 int main(void) {
   test_decodeUptoMaxInt();
-  test_decodeMallocDag_computeCommitmentMerkleRoot();
+  test_hashBlock();
+  test_occursCheck();
 
   printf("Successes: %d\n", successes);
   printf("Failures: %d\n", failures);
