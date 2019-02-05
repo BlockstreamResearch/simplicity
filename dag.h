@@ -1,9 +1,12 @@
+/* This module defines the structure for Simplicity DAGs, and functions for some analysis of that structure,
+ * such as computing Merkle Roots.
+ */
 #ifndef DAG_H
 #define DAG_H
 
 #include <stddef.h>
 #include <stdint.h>
-#include "tag.h"
+#include "type.h"
 
 /* Unique numeric tags the various kinds of Simplicity combinators.
  * We choose to generate unique tags by using the reverse bit pattern used in Simplicity's bit-wise prefix code.
@@ -76,7 +79,10 @@ static inline size_t numChildren(int32_t tag) {
 typedef struct dag_node {
   int32_t tag;
   union {
-    size_t child[2];
+    struct {
+      size_t child[2];
+      size_t typeAnnotation[4];
+    };
     sha256_midstate hash;
   };
 } dag_node;
@@ -109,16 +115,31 @@ typedef struct dag_node {
  */
 typedef struct analyses {
   sha256_midstate commitmentMerkleRoot;
+  sha256_midstate witnessMerkleRoot;
 } analyses;
 
-/* Given a well-formed dag representing a Simplicity expressions, compute the commitment Merkle roots of all subexpressions.
- * For all 'i', 0 <= 'i' < 'len', 'analysis'['i'].'commitmentMerkleRoot' will be the CMR of the subexpression denoted by the slice ('dag_nodes'['i'])('dag').
- * The commitment Merkle root of the overall expression will be 'analysis'['len'-1].'commitmentMerkleRoot'.
+/* Given a well-formed dag representing a Simplicity expression, compute the commitment Merkle roots of all subexpressions.
+ * For all 'i', 0 <= 'i' < 'len', 'analysis[i].commitmentMerkleRoot' will be the CMR of the subexpression denoted by the slice
+ *
+ *     (dag_nodes[i + 1])dag.
+ *
+ * The CMR of the overall expression will be 'analysis[len - 1].commitmentMerkleRoot'.
  *
  * Precondition: analyses analysis[len];
- *               dag_node dag[len];
- *               'dag' is well-formed.
+ *               dag_node dag[len] and 'dag' is well-formed.
  */
 void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, size_t len);
+
+/* Given a well-typed dag representing a Simplicity expression, compute the witness Merkle roots of all subexpressions.
+ * For all 'i', 0 <= 'i' < 'len', 'analysis[i].witnessMerkleRoot' will be the WMR of the subexpression denoted by the slice
+ *
+ *     (dag_nodes[i + 1])dag.
+ *
+ * The WMR of the overall expression will be 'analysis[len - 1].witnessMerkleRoot'.
+ *
+ * Precondition: analyses analysis[len];
+ *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
+ */
+void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
 
 #endif
