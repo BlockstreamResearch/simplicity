@@ -88,15 +88,19 @@ typedef struct unification_arrow {
 static unification_var* findRoot(unification_var* alpha) {
   /* During unification, when '.rank' fields are active, the value of 'alpha->rank' strictly increases during this loop.
    * If 'alpha->rank' = 'i', then there must be at least 2^'i' unification variables referencing (indirectly) 'alpha'.
-   * Therefore, this loop terminates in at most log_2('n') steps where 'n' is the number of unificaiton variables in 'alpha's
+   * Therefore, this loop terminates in at most log_2('n')/2 steps where 'n' is the number of unificaiton variables in 'alpha's
    * equivalence class.
    * This bound holds even during freezing when 'alpha->rank' may not be activated.
    *
    * Note: the total number of unification variables created for type inference is linearly bounded by the number of nodes
    * in the Simplicity expression being infered's DAG.
+   *
+   * According to ``Worst-Case Analysis of Set Union Algorithms'' by Robert E. Tarjan and Jan van Leeuwen (1984)
+   * the "path halving" method used in this implementaiton is adequate to ensure that the amortized time complexity is
+   * O(InvAck('n')) and ``for all pratical purposes InvAck('n') a constant no larger than four''.
    */
   while (alpha->parent != NULL) {
-    /* :TODO: Implement (partial) path compression. */
+    if (alpha->parent->parent != NULL) alpha->parent = alpha->parent->parent;
     alpha = alpha->parent;
   }
   return alpha;
