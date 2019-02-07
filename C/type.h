@@ -12,6 +12,7 @@ typeName;
 /* A structure for Simplicity type DAGs. */
 typedef struct type {
   size_t typeArg[2];
+  size_t bitSize;
   sha256_midstate typeMerkleRoot;
   typeName kind;
 } type;
@@ -33,8 +34,10 @@ typedef struct type {
  *     type_dag[i].kind \in { SUM, PRODUCT } and type_dag[i].typeArg[j] < i.
  */
 
-/* Given a well-formed 'type_dag', compute the type Merkle roots of all subexpressions.
- * For all 'i', 0 <= 'i' < 'len', 'type_dag'['i'].'typeMerkleRoot' will be the TMR of the subexpression denoted by the slice
+/* Given a well-formed 'type_dag', compute the bitSizes and type Merkle roots of all subexpressions.
+ * For all 'i', 0 <= 'i' < 'len',
+ *   'type_dag[i].typeMerkleRoot' will be the TMR
+ *   and 'type_dag[i].bitSize' will be the bitSize of the subexpression denoted by the slice
  *
  *     (type_dag[i + 1])type_dag.
  *

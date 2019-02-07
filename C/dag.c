@@ -2,9 +2,11 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include "bounded.h"
 #include "tag.h"
+#include "uword.h"
 
-/* :TODO: remove these includes after witnesses are supported. */
+/* :TODO: remove these includes after witnesses are supported, etc. */
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -233,6 +235,88 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
         exit(EXIT_FAILURE);
         break;
       }
+    }
+  }
+}
+
+/* :TODO: Document extraStackBoundTCO in the Tech Report (and implement it in Haskell) */
+/* Given a well-typed dag representing a Simplicity expression, compute the bounds on memory requirement for evaluation.
+ * For all 'i', 0 <= 'i' < 'len', compute 'analysis[i].extraCellsBoundTCO' and 'analysis[i].extraStackBoundTCO'
+ * for the subexpression denoted by the slice
+ *
+ *     (dag_nodes[i + 1])dag.
+ *
+ * Precondition: analyses analysis[len];
+ *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
+ */
+void computeEvalTCOBounds(analyses* analysis, const dag_node* dag, const type* type_dag, const size_t len) {
+  size_t scratch;
+  for (size_t i = 0; i < len; ++i) {
+    switch (dag[i].tag) {
+     case ASSERTL:
+     case ASSERTR:
+     case CASE:
+      analysis[i].extraCellsBoundTCO[0] = max( analysis[dag[i].child[0]].extraCellsBoundTCO[0]
+                                             , analysis[dag[i].child[1]].extraCellsBoundTCO[0] );
+      analysis[i].extraCellsBoundTCO[1] = max( analysis[dag[i].child[0]].extraCellsBoundTCO[1]
+                                             , analysis[dag[i].child[1]].extraCellsBoundTCO[1] );
+
+      analysis[i].extraStackBound[0] = max( analysis[dag[i].child[0]].extraStackBound[0]
+                                          , analysis[dag[i].child[1]].extraStackBound[0] );
+      analysis[i].extraStackBound[1] = max( analysis[dag[i].child[0]].extraStackBound[1]
+                                          , analysis[dag[i].child[1]].extraStackBound[1] );
+      break;
+     case DISCONNECT:
+      /* :TODO: Support disconnect */
+      fprintf(stderr, "EvalTCOBounds for disconnect not yet implemented\n");
+      exit(EXIT_FAILURE);
+      break;
+     case COMP:
+      /* :TODO: replace this check with a consensus critical limit. */
+      if (UWORD_BIT - 1 <= SIZE_MAX - type_dag[dag[i].typeAnnotation[1]].bitSize) {
+        scratch = roundUWord(type_dag[dag[i].typeAnnotation[1]].bitSize);
+        analysis[i].extraCellsBoundTCO[0] = max( bounded_add( scratch
+                                                            , max( analysis[dag[i].child[0]].extraCellsBoundTCO[0]
+                                                                 , analysis[dag[i].child[1]].extraCellsBoundTCO[1] ))
+                                               , analysis[dag[i].child[1]].extraCellsBoundTCO[0] );
+        analysis[i].extraCellsBoundTCO[1] = bounded_add(scratch, analysis[dag[i].child[0]].extraCellsBoundTCO[1]);
+
+      } else {
+        /* 'type_dag[dag[i].typeAnnotation[1]].bitSize' has exceeded our limits. */
+        analysis[i].extraCellsBoundTCO[0] = SIZE_MAX;
+        analysis[i].extraCellsBoundTCO[1] = SIZE_MAX;
+      }
+      analysis[i].extraStackBound[0] = max( analysis[dag[i].child[0]].extraStackBound[0]
+                                          , analysis[dag[i].child[1]].extraStackBound[1] );
+      bounded_inc(&analysis[i].extraStackBound[0]);
+      scratch = analysis[dag[i].child[0]].extraStackBound[1];
+      bounded_inc(&scratch);
+      analysis[i].extraStackBound[1] = max( scratch
+                                          , analysis[dag[i].child[1]].extraStackBound[1] );
+      break;
+     case PAIR:
+      analysis[i].extraCellsBoundTCO[0] = analysis[dag[i].child[1]].extraCellsBoundTCO[0];
+      analysis[i].extraCellsBoundTCO[1] = max( analysis[dag[i].child[0]].extraCellsBoundTCO[0]
+                                             , max( analysis[dag[i].child[0]].extraCellsBoundTCO[1]
+                                                  , analysis[dag[i].child[1]].extraCellsBoundTCO[1] ));
+
+      analysis[i].extraStackBound[0] = max( analysis[dag[i].child[0]].extraStackBound[0]
+                                          , analysis[dag[i].child[1]].extraStackBound[0] );
+      analysis[i].extraStackBound[1] = max( analysis[dag[i].child[0]].extraStackBound[0]
+                                          , analysis[dag[i].child[1]].extraStackBound[1] );
+      break;
+     case INJL:
+     case INJR:
+     case TAKE:
+     case DROP:
+      analysis[i].extraCellsBoundTCO[0] = analysis[dag[i].child[0]].extraCellsBoundTCO[0];
+      analysis[i].extraCellsBoundTCO[1] = analysis[dag[i].child[0]].extraCellsBoundTCO[1];
+      analysis[i].extraStackBound[0] = analysis[dag[i].child[0]].extraStackBound[0];
+      analysis[i].extraStackBound[1] = analysis[dag[i].child[0]].extraStackBound[1];
+      break;
+     default:
+      analysis[i].extraCellsBoundTCO[0] = analysis[i].extraCellsBoundTCO[1] = 0;
+      analysis[i].extraStackBound[0] = analysis[i].extraStackBound[1] = 0;
     }
   }
 }

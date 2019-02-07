@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <stdbool.h>
 
+#include "bounded.h"
+
 /* Prepends the Simplicity TMR tag prefix to a string literal 's'. */
 #define TYPE_TAG(s) "Simplicity\x1F" "Type\x1F" s
 
@@ -32,8 +34,10 @@ static sha256_midstate tmrIV(typeName kind) {
   return (sha256_midstate){0};
 }
 
-/* Given a well-formed 'type_dag', compute the type Merkle roots of all subexpressions.
- * For all 'i', 0 <= 'i' < 'len', 'type_dag'['i'].'typeMerkleRoot' will be the TMR of the subexpression denoted by the slice
+/* Given a well-formed 'type_dag', compute the bitSizes and type Merkle roots of all subexpressions.
+ * For all 'i', 0 <= 'i' < 'len',
+ *   'type_dag[i].typeMerkleRoot' will be the TMR
+ *   and 'type_dag[i].bitSize' will be the bitSize of the subexpression denoted by the slice
  *
  *     (type_dag[i + 1])type_dag.
  *
@@ -41,6 +45,18 @@ static sha256_midstate tmrIV(typeName kind) {
  */
 void computeTypeAnalyses(type* type_dag, const size_t len) {
   for (size_t i = 0; i < len; ++i) {
+    switch (type_dag[i].kind) {
+     case ONE:
+      type_dag[i].bitSize = 0;
+      break;
+     case SUM:
+      type_dag[i].bitSize = max(type_dag[type_dag[i].typeArg[0]].bitSize, type_dag[type_dag[i].typeArg[1]].bitSize);
+      bounded_inc(&type_dag[i].bitSize);
+      break;
+     case PRODUCT:
+      type_dag[i].bitSize = bounded_add(type_dag[type_dag[i].typeArg[0]].bitSize, type_dag[type_dag[i].typeArg[1]].bitSize);
+    }
+
     type_dag[i].typeMerkleRoot = tmrIV(type_dag[i].kind);
 
     uint32_t block[16];
