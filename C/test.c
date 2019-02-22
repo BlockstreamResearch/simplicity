@@ -6,6 +6,7 @@
 #include "eval.h"
 #include "typeInference.h"
 #include "hashBlock.h"
+#include "schnorrAssert.h"
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen persume 8 bit chars");
 
@@ -22,6 +23,7 @@ static int successes = 0;
 static int failures = 0;
 
 static void test_decodeUptoMaxInt(void) {
+  printf("Test decodeUptoMaxInt\n");
   const unsigned char buf[] =
   { 0x4b, 0x86, 0x39, 0xe8, 0xdf, 0xc0, 0x38, 0x0f, 0x7f, 0xff, 0xff, 0x00
   , 0x00, 0x00, 0xf0, 0xe0, 0x00, 0x00, 0x00, 0x3c, 0x3b, 0xff, 0xff, 0xff
@@ -47,6 +49,7 @@ static void test_decodeUptoMaxInt(void) {
 }
 
 static void test_hashBlock(void) {
+  printf("Test hashBlock\n");
   /* 'expected' is the expected CMR for the 'hashBlock' Simplicity expression. */
   const uint32_t expectedCMR[8] =
     { 0xe26d71c3ul, 0x18e61d3aul, 0x9b31a9cdul, 0x8bee8d4dul
@@ -129,7 +132,79 @@ static void test_hashBlock(void) {
   free(dag);
 }
 
+static void test_schnorrAssert(void) {
+  printf("Test schnorrAssert\n");
+  dag_node* dag = NULL;
+  combinator_counters census;
+  int32_t len;
+  {
+    FILE* file = fmemopen_rb(schnorrAssert, sizeof_schnorrAssert);
+    bit_stream stream = initializeBitStream(file);
+    len = decodeMallocDag(&dag, &census, &stream);
+    fclose(file);
+  }
+  if (!dag) {
+    failures++;
+    printf("Error parsing dag: %d\n", len);
+  } else {
+    analyses analysis[len];
+    type* type_dag = mallocTypeInference(dag, (size_t)len, &census);
+    if (!type_dag) {
+      failures++;
+      printf("Unexpected failure of type inference for schnorrAssert.\n");
+    } else {
+      _Static_assert(UWORD_BIT - 1 <= SIZE_MAX - (1+256+256+512), "UWORD_BIT is far too large.");
+      UWORD input[roundUWord(1+256+256+512)];
+      computeEvalTCOBounds(analysis, dag, type_dag, (size_t)len);
+      { frameItem frame = initWriteFrame(1+256+256+512, &input[roundUWord(1+256+256+512)]);
+        writeBit(&frame, 0);
+        write256(&frame, (sha256_midstate){
+          .s = { 0x79BE667E, 0xF9DCBBAC, 0x55A06295, 0xCE870B07, 0x029BFCDB, 0x2DCE28D9, 0x59F2815B, 0x16F81798 }
+        });
+        write256(&frame, (sha256_midstate){0});
+        write256(&frame, (sha256_midstate){
+          .s = { 0x787A848E, 0x71043D28, 0x0C50470E, 0x8E1532B2, 0xDD5D20EE, 0x912A45DB, 0xDD2BD1DF, 0xBF187EF6 }
+        });
+        write256(&frame, (sha256_midstate){
+          .s = { 0x7031A988, 0x31859DC3, 0x4DFFEEDD, 0xA8683184, 0x2CCD0079, 0xE1F92AF1, 0x77F7F22C, 0xC1DCED05 }
+        });
+      }
+      if (evalTCOExpression(NULL, 0, input, 1+256+256+512, analysis, dag, type_dag, (size_t)len)) {
+        successes++;
+      } else {
+        failures++;
+        printf("Unexpected failure of schnorrAssert evaluation 1.\n");
+      }
+
+      { frameItem frame = initWriteFrame(1+256+256+512, &input[roundUWord(1+256+256+512)]);
+        writeBit(&frame, 1);
+        write256(&frame, (sha256_midstate){
+          .s = { 0xFAC2114C, 0x2FBB0915, 0x27EB7C64, 0xECB11F80, 0x21CB45E8, 0xE7809D3C, 0x0938E4B8, 0xC0E5F84B }
+        });
+        write256(&frame, (sha256_midstate){
+          .s = { 0x5E2D58D8, 0xB3BCDF1A, 0xBADEC782, 0x9054F90D, 0xDA9805AA, 0xB56C7733, 0x3024B9D0, 0xA508B75C }
+        });
+        write256(&frame, (sha256_midstate){
+          .s = { 0x00DA9B08, 0x172A9B6F, 0x0466A2DE, 0xFD817F2D, 0x7AB437E0, 0xD253CB53, 0x95A96386, 0x6B3574BE }
+        });
+        write256(&frame, (sha256_midstate){
+          .s = { 0xD092F9D8, 0x60F1776A, 0x1F7412AD, 0x8A1EB50D, 0xACCC222B, 0xC8C0E26B, 0x2056DF2F, 0x273EFDEC }
+        });
+      }
+      if (!evalTCOExpression(NULL, 0, input, 1+256+256+512, analysis, dag, type_dag, (size_t)len)) {
+        successes++;
+      } else {
+        failures++;
+        printf("Unexpected success of schnorrAssert evaluation 2.\n");
+      }
+    }
+    free(type_dag);
+  }
+  free(dag);
+}
+
 static void test_occursCheck(void) {
+  printf("Test occursCheck\n");
   /* The untyped Simplicity term (case (drop iden) iden) ought to cause an occurs check failure. */
   const unsigned char buf[] = { 0xc1, 0x07, 0x20, 0x30 };
   dag_node* dag = NULL;
@@ -160,6 +235,7 @@ int main(void) {
   test_decodeUptoMaxInt();
   test_hashBlock();
   test_occursCheck();
+  test_schnorrAssert();
 
   printf("Successes: %d\n", successes);
   printf("Failures: %d\n", failures);

@@ -6,7 +6,7 @@ CFLAGS := $(CFLAGS) -DNDEBUG
 endif
 
 LDLIBS := -lsha256compression
-test: test.o dag.o deserialize.o eval.o hashBlock.o type.o typeInference.o
+test: test.o dag.o deserialize.o eval.o hashBlock.o schnorrAssert.o type.o typeInference.o
 	$(CC) $^ -o $@ $(LDLIBS)
 
 install: test
