@@ -6,12 +6,12 @@ CFLAGS := $(CFLAGS) -DNDEBUG
 endif
 
 LDLIBS := -lsha256compression
-test_deserialize: test_deserialize.o dag.o deserialize.o hashBlock.o type.o typeInference.o
+test: test.o dag.o deserialize.o eval.o hashBlock.o type.o typeInference.o
 	$(CC) $^ -o $@ $(LDLIBS)
 
-install: test_deserialize
+install: test
 	mkdir -p $(out)/bin
 	cp $^ $(out)/bin/
 
-check: test_deserialize
-	./test_deserialize
+check: test
+	./test

@@ -152,6 +152,10 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
  *
  * Precondition: analyses analysis[len];
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
+ * Postcondition: 'max(analysis[len-1].extraCellsBoundTCO[0], analysis[len-1].extraCellsBoundTCO[1]) == SIZE_MAX'.
+ *                  or 'analysis[len-1].extraCellsBoundTCO' characterizes the number of UWORDs needed
+ *                    for the frames allocated during evaluation of 'dag';
+ *                analysis[len-1].extraStackBoundTCO[0] bounds the the number of stack frames needed during execution of 'dag';
  */
 void computeEvalTCOBounds(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
 

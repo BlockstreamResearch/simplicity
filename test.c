@@ -3,6 +3,7 @@
 #include <string.h>
 #include "dag.h"
 #include "deserialize.h"
+#include "eval.h"
 #include "typeInference.h"
 #include "hashBlock.h"
 
@@ -65,8 +66,8 @@ static void test_hashBlock(void) {
     fclose(file);
   }
   if (!dag) {
-    printf("Error parsing dag: %d\n", len);
     failures++;
+    printf("Error parsing dag: %d\n", len);
   } else {
     successes++;
 
@@ -75,22 +76,53 @@ static void test_hashBlock(void) {
     if (0 == memcmp(expectedCMR, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]))) {
       successes++;
     } else {
-      printf("Unexpected CMR of hashblock\n");
       failures++;
+      printf("Unexpected CMR of hashblock\n");
     }
 
     type* type_dag = mallocTypeInference(dag, (size_t)len, &census);
     if (!type_dag) {
-      printf("Unexpected failure of type inference for hashblock\n");
       failures++;
+      printf("Unexpected failure of type inference for hashblock\n");
     } else {
       computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
       if (0 == memcmp(expectedWMR, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]))) {
         successes++;
       } else {
-        printf("Unexpected WMR of hashblock\n");
         failures++;
+        printf("Unexpected WMR of hashblock\n");
       }
+
+      _Static_assert(UWORD_BIT - 1 <= SIZE_MAX - (256+512), "UWORD_BIT is far too large.");
+      UWORD output[roundUWord(256)];
+      UWORD input[roundUWord(256+512)];
+      { frameItem frame = initWriteFrame(256+512, &input[roundUWord(256+512)]);
+        /* Set SHA-256's initial value. */
+        write256(&frame, (sha256_midstate){
+          .s = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 }
+        });
+        /* Set the block to be compressed to "abc" with padding. */
+        write256(&frame, (sha256_midstate){ .s = { 0x61626380 } });
+        write256(&frame, (sha256_midstate){ .s = { [7] = 0x18 } });
+      }
+      computeEvalTCOBounds(analysis, dag, type_dag, (size_t)len);
+      if (evalTCOExpression(output, 256, input, 256+512, analysis, dag, type_dag, (size_t)len)) {
+        /* The expected result is the value 'SHA256("abc")'. */
+        const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
+                                         , 0xb00361a3ul, 0x96177a9cul, 0xb410ff61ul, 0xf20015adul };
+        frameItem frame = initReadFrame(256, &output[0]);
+        sha256_midstate result = read256(&frame);
+        if (0 == memcmp(expectedHash, result.s, sizeof(uint32_t[8]))) {
+          successes++;
+        } else {
+          failures++;
+          printf("Unexpected output of hashblock computation.\n");
+        }
+      } else {
+        failures++;
+        printf("Unexpected failure of hashblock evaluation\n");
+      }
+
       free(type_dag);
     }
   }
