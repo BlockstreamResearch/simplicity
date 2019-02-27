@@ -36,4 +36,17 @@ _Static_assert(UWORD_BIT <= SIZE_MAX, "UWORD_BIT must fit into size_t.");
  */
 #define roundUWord(bitSize) ((bitSize + (UWORD_BIT - 1)) / UWORD_BIT)
 
+/* Clear the 'n' least significant bits of a UWORD.
+ * Precondition: 0 < n <= UWORD_BIT
+ */
+static inline UWORD LSBclear(UWORD x, size_t n) {
+  return (UWORD)(x >> 1 >> (n - 1) << 1 << (n - 1));
+}
+
+/* Clear all but the 'n' least significant bits of a UWORD.
+ * Precondition: 0 < n <= UWORD_BIT
+ */
+static inline UWORD LSBkeep(UWORD x, size_t n) {
+  return (UWORD)(x & (UWORD_MAX >> (UWORD_BIT - n)));
+}
 #endif
