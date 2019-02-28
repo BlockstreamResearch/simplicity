@@ -144,21 +144,92 @@ static void skip(frameItem* frame, size_t n) {
 }
 
 /* Given a write frame and a read frame, copy 'n' cells from after the read frame's cursor to after the write frame's cursor,
+ * Cells in within the write frame beyond 'n' cells after the write frame's cursor may also be overwritten.
+ *
+ * Precondition: '*dst' is a valid write frame for 'n' more cells;
+ *               '*src' is a valid read frame for 'n' more cells;
+ *               '0 < n';
+ *               n + UWORD_BIT - 1 <= SIZE_MAX;
+ */
+static void copyBitsHelper(const frameItem* dst, const frameItem *src, size_t n) {
+  /* Pointers to the UWORDs of the read and write frame that contain the frame's cursor. */
+  UWORD* src_ptr = src->edge - 1 - src->offset / UWORD_BIT;
+  UWORD* dst_ptr = dst->edge + (dst->offset - 1) / UWORD_BIT;
+  /* The specific bit within those UWORDs that is immediately in front of their respective cursors.
+   * That bit is specifically '1 << (src_shift - 1)' for the read frame,
+   * and '1 << (dst_shift - 1)' for the write frame, unless 'dst_shift == 0', in which case it is '1 << (UWORD_BIT - 1)'.
+   */
+  size_t src_shift = UWORD_BIT - (src->offset % UWORD_BIT);
+  size_t dst_shift = dst->offset % UWORD_BIT;
+  if (dst_shift) {
+    /* The write frame's current UWORD is partially filled.
+     * Fill the rest of it without overwriting the existing data.
+     */
+    *dst_ptr = LSBclear(*dst_ptr, dst_shift);
+
+    if (src_shift < dst_shift) {
+      /* The read frame's current UWORD doesn't have enough data to entirely fill the rest of the write frame's current UWORD.
+       * Fill as much as we can and move src_ptr to the read frame's next UWORD.
+       */
+      *dst_ptr |= (UWORD)(LSBkeep(*src_ptr, src_shift) << (dst_shift - src_shift));
+      if (n <= src_shift) return;
+      n -= src_shift;
+      dst_shift -= src_shift;
+      src_ptr--;
+      src_shift = UWORD_BIT;
+    }
+
+    /* Fill the rest of the write frame's current UWORD and move dst_ptr to the write frame's next UWORD. */
+    *dst_ptr |= LSBkeep((UWORD)(*src_ptr >> (src_shift - dst_shift)), dst_shift);
+    if (n <= dst_shift) return;
+    n -= dst_shift;
+    src_shift -= dst_shift;
+    dst_ptr--;
+  }
+  /* The next cell in the write frame to be filled begins at the boundary of a UWORD. */
+
+  /* :TODO: Use static analysis to limit the total amount of copied memory. */
+  if (0 == src_shift % UWORD_BIT) {
+    /* The next cell in the read frame to be filled also begins at the boundary of a UWORD.
+     * We can use 'memcpy' to copy data in bulk.
+     */
+    size_t m = roundUWord(n);
+    /* If we when through the previous 'if (dst_shift)' block then 'src_shift == 0' and we need to decrement src_ptr.
+     * If we did not go through the previous 'if (dst_shift)' block then 'src_shift == UWORD_BIT'
+     * and we do not need to decrement src_ptr.
+     * We have folded this conditional decriment into the equation applied to 'src_ptr' below.
+     */
+    memcpy(dst_ptr - (m - 1), src_ptr - (m - src_shift / UWORD_BIT), sizeof(UWORD[m]));
+  } else {
+    while(1) {
+      /* Fill the write frame's UWORD by copying the LSBs of the read frame's current UWORD
+       * to the MSBs of the write frame's current UWORD,
+       * and copy the MSBs of the read frame's next UWORD to the LSBs of the write frame's current UWORD.
+       * Then move both the src_ptr and dst_ptr to their next UWORDs.
+       */
+      *dst_ptr = (UWORD)(LSBkeep(*src_ptr, src_shift) << (UWORD_BIT - src_shift));
+      if (n <= src_shift) return;
+
+      *dst_ptr |= (UWORD)(*(src_ptr - 1) >> src_shift);
+      if (n <= UWORD_BIT) return;
+      n -= UWORD_BIT;
+      dst_ptr--; src_ptr--;
+    }
+  }
+}
+
+/* Given a write frame and a read frame, copy 'n' cells from after the read frame's cursor to after the write frame's cursor,
  * and then advance the write frame's cursor by 'n'.
  * Cells in front of the '*dst's cursor's final position may be overwritten.
  *
- * Precondition: '*dst' is a valid write frame for 'n' more cells.
- *               '*src' is a valid read frame for 'n' more cells.
+ * Precondition: '*dst' is a valid write frame for 'n' more cells;
+ *               '*src' is a valid read frame for 'n' more cells;
+ *               n + UWORD_BIT - 1 <= SIZE_MAX;
  */
-/* :TODO: optimize this with memcopy. */
 static void copyBits(frameItem* dst, const frameItem* src, size_t n) {
-  frameItem src0 = *src;
-
-  /* :TODO: Use static analysis to limit the number of iterations through this loop. */
-  for(; n; --n) {
-    writeBit(dst, peekBit(&src0));
-    src0.offset++;
-  }
+  if (0 == n) return;
+  copyBitsHelper(dst, src, n);
+  dst->offset -= n;
 }
 
 /* Given a read frame, return the value of the 32 cells after the cursor and advance the frame's cursor by 32.
@@ -166,13 +237,37 @@ static void copyBits(frameItem* dst, const frameItem* src, size_t n) {
  *
  * Precondition: '*frame' is a valid read frame for 32 more cells.
  */
-/* :TODO: optimize this. */
 uint32_t read32(frameItem* frame) {
   uint32_t result = 0;
-  for (size_t i = 32; i; --i) {
-    result |= (uint32_t)peekBit(frame) << (i - 1);
-    frame->offset++;
+  /* Pointers to the UWORD of the read frame that contains the frame's cursor (or is immediately after the cursor). */
+  UWORD* frame_ptr = frame->edge - 1 - frame->offset / UWORD_BIT;
+  /* The specific bit within the above UWORD that is immediately in front of the cursor.
+   * That bit is specifically '1 << (frame_shift - 1)'.
+   */
+  size_t frame_shift = UWORD_BIT - (frame->offset % UWORD_BIT);
+  size_t n = 32;
+  if (frame_shift < n) {
+    /* We may only want part of the LSBs from the read frame's current UWORD.
+     * Copy that data to 'x', and move the frame_ptr to the frame's next UWORD.
+     */
+    result |= (uint32_t)LSBkeep(*frame_ptr, frame_shift) << (n - frame_shift);
+    frame->offset += frame_shift;
+    n -= frame_shift;
+    frame_shift = UWORD_BIT;
+    frame_ptr--;
+    while (UWORD_BIT < n) {
+      /* Copy the entire read frame's current UWORD to 'x', and move the frame_ptr to the frame's next UWORD. */
+      result |= (uint32_t)(*frame_ptr) << (n - UWORD_BIT);
+      frame->offset += UWORD_BIT;
+      n -= UWORD_BIT;
+      frame_ptr--;
+    }
   }
+  /* We may only want part of the bits from the middle of the read frame's current UWORD.
+   * Copy that data to fill the remainder of 'x'.
+   */
+  result |= (uint32_t)(LSBkeep((UWORD)(*frame_ptr >> (frame_shift - n)), n));
+  frame->offset += n;
   return result;
 }
 
@@ -182,11 +277,36 @@ uint32_t read32(frameItem* frame) {
  *
  * Precondition: '*frame' is a valid write frame for 32 more cells.
  */
-/* :TODO: optimize this. */
 void write32(frameItem* frame, uint32_t x) {
-  for (size_t i = 32; i; --i) {
-    writeBit(frame, 1 & (x >> (i - 1)));
+  /* Pointers to the UWORD of the write frame that contains the frame's cursor (or is immediately after the cursor). */
+  UWORD* frame_ptr = frame->edge + (frame->offset - 1) / UWORD_BIT;
+  /* The specific bit within the above UWORD that is immediately in front of the cursor.
+   * That bit is specifically '1 << (frame_shift - 1)'.
+   */
+  size_t frame_shift = (frame->offset - 1) % UWORD_BIT + 1;
+  size_t n = 32;
+  if (frame_shift < n) {
+    /* The write frame's current UWORD may be partially filled.
+     * Fill the rest of it with data from 'x', and move the frame_ptr to the frame's next UWORD.
+     */
+    *frame_ptr = LSBclear(*frame_ptr, frame_shift) | LSBkeep((UWORD)(x >> (n - frame_shift)), frame_shift);
+    frame->offset -= frame_shift;
+    n -= frame_shift;
+    frame_shift = UWORD_BIT;
+    frame_ptr--;
+    while (UWORD_BIT < n) {
+      /* Fill the write frame's entire current UWORD with data from 'x', and move the frame_ptr to the frame's next UWORD. */
+      *frame_ptr = (UWORD)(x >> (n - UWORD_BIT));
+      frame->offset -= UWORD_BIT;
+      n -= UWORD_BIT;
+      frame_ptr--;
+    }
   }
+  /* The current write frame's UWORD may be partially filled.
+   * Fill the UWORD with the last of the data from 'x', which may or may not be enough to fill the rest of the UWORD.
+   */
+  *frame_ptr = (UWORD)(LSBclear(*frame_ptr, frame_shift) | (LSBkeep((UWORD)x, n) << (frame_shift - n)));
+  frame->offset -= n;
 }
 
 /* Our representation of the Bit Machine state consists of a gap buffer of 'frameItem's.
