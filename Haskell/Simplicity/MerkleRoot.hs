@@ -6,6 +6,7 @@ module Simplicity.MerkleRoot
   , WitnessRoot, witnessRoot
   , hiddenRoot
   , signatureIv
+  , cmrFail0
   ) where
 
 import qualified Data.ByteString as BS
@@ -86,6 +87,12 @@ newtype CommitmentRoot a b = CommitmentRoot {
   } deriving (Eq, Show)
 
 commit = CommitmentRoot . ivHash
+
+-- | The commitment root of a 'fail 0' expression.
+--
+-- This hash value can be used as a default value for assertions, but at the cost of not hidding the fact that it isn't a pruned alternative branch.
+cmrFail0 :: Hash256
+cmrFail0 = commitmentRoot (fail0 :: CommitmentRoot () ())
 
 instance Core CommitmentRoot where
   iden                                        = commit $ commitmentTag "iden"

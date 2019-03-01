@@ -9,6 +9,7 @@ module Simplicity.Programs.Bit
 
 import Prelude hiding (drop, take, not, and, or)
 
+import Simplicity.MerkleRoot
 import Simplicity.Ty.Bit
 import Simplicity.Term.Core
 
@@ -47,7 +48,7 @@ ch = cond oh ih
 -- | Requires the bit produced by @t@ to be 'true' and fails otherwise.
 assert :: (Assert term, TyC a) => term a Bit -> term a ()
 assert t = t &&& unit
-       >>> match fail0 unit
+       >>> assertr cmrFail0 unit
 
 -- | Simplicity combinator that computes inverts the Bit result of an expression.
 not :: (Core term, TyC a) => term a Bit -> term a Bit
