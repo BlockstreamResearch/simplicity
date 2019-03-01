@@ -425,14 +425,14 @@ typeCheck v = typeCheckTerm =<< runUnification inferenced
                                              let (rb1, rc) = reifyArrow t
                                              Refl <- assertEqualTyReflect rb0 rb1
                                              return (someArrowR ra rc (comp s t))
-       typeCheckTerm (Case a b c d is it) | Hidden hs <- index s is =
+       typeCheckTerm (Case a b c d is it) | Hidden hs <- index s (i - is) =
                                               case reflect a of
                                                 SomeTy ra -> do
                                                   SomeArrow t <- lookup it
                                                   let (rbc, rd) = reifyArrow t
                                                   case rbc of
                                                     ProdR rb rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertr hs t))
-                                          | Hidden ht <- index s it =
+                                          | Hidden ht <- index s (i - it) =
                                               case reflect b of
                                                 SomeTy rb -> do
                                                   SomeArrow s <- lookup is

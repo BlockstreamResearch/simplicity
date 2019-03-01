@@ -70,8 +70,12 @@ sortDag t = toList pass2
   pass1 :: Dag a b
   -- The patterns should never fail as we are running type inference on terms that are already known to be well typed.
   -- A failure of a pattern match here suggests there is an error in the type inference engine.
-  Right pass1 = typeCheck (linearizeDag t)
-  Right pass2 = typeInference (linearizeDag pass1)
+  pass1 = case typeCheck (linearizeDag t) of
+            Right pass -> pass
+            Left e -> error $ "sortDag.pass1: " ++ e
+  pass2 = case typeInference (linearizeDag pass1) of
+            Right pass -> pass
+            Left e -> error $ "sortDag.pass2: " ++ e
 
 mkLeaf comb uComb = Dag { dagRoot = root
                         , dagMap = Map.singleton (witnessRoot root) uComb
