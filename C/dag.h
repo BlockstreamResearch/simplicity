@@ -114,8 +114,6 @@ typedef struct dag_node {
  * 'commitmentMerkleRoot' is the commitment Merkle root of the subexpressions represented by the node.
  */
 typedef struct analyses {
-  size_t extraCellsBoundTCO[2];
-  size_t extraStackBound[2]; /* extraStackBound[0] is for TCO off and extraStackBound[1] is for TCO on */
   sha256_midstate commitmentMerkleRoot;
   sha256_midstate witnessMerkleRoot;
 } analyses;
@@ -143,20 +141,5 @@ void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, size_t
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
  */
 void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
-
-/* Given a well-typed dag representing a Simplicity expression, compute the bounds on memory requirement for evaluation.
- * For all 'i', 0 <= 'i' < 'len', compute 'analysis[i].extraCellsBoundTCO' and 'analysis[i].extraStackBoundTCO'
- * for the subexpression denoted by the slice
- *
- *     (dag_nodes[i + 1])dag.
- *
- * Precondition: analyses analysis[len];
- *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
- * Postcondition: 'max(analysis[len-1].extraCellsBoundTCO[0], analysis[len-1].extraCellsBoundTCO[1]) == SIZE_MAX'.
- *                  or 'analysis[len-1].extraCellsBoundTCO' characterizes the number of UWORDs needed
- *                    for the frames allocated during evaluation of 'dag';
- *                analysis[len-1].extraStackBoundTCO[0] bounds the the number of stack frames needed during execution of 'dag';
- */
-void computeEvalTCOBounds(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
 
 #endif

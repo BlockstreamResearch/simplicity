@@ -440,6 +440,107 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, const type
   return true;
 }
 
+/* This structure is used by the static analysis that computes  bounds on the working memory that suffices for
+ * the Simplicity interpreter.
+ */
+typedef struct memBound {
+  size_t extraCellsBoundTCO[2];
+  size_t extraStackBound[2]; /* extraStackBound[0] is for TCO off and extraStackBound[1] is for TCO on */
+} memBound;
+
+/* :TODO: Document extraStackBoundTCO in the Tech Report (and implement it in Haskell) */
+/* Given a well-typed dag representing a Simplicity expression, compute the bounds on memory requirement for evaluation.
+ * For all 'i', 0 <= 'i' < 'len', compute 'bound[i].extraCellsBoundTCO' and 'bound[i].extraStackBoundTCO'
+ * for the subexpression denoted by the slice
+ *
+ *     (dag_nodes[i + 1])dag.
+ *
+ * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
+ * Postcondition: 'max(result.extraCellsBoundTCO[0], result.extraCellsBoundTCO[1]) == SIZE_MAX'.
+ *                  or 'result.extraCellsBoundTCO' characterizes the number of UWORDs needed
+ *                    for the frames allocated during evaluation of 'dag';
+ *                'result.extraStackBoundTCO[0] == SIZE_MAX'
+ *                  or result.extraStackBoundTCO[0] bounds the the number of stack frames needed during execution of 'dag';
+ */
+static memBound computeEvalTCOBound(const dag_node* dag, const type* type_dag, const size_t len) {
+  memBound* bound = malloc(sizeof(memBound[len]));
+  if (!bound) return (memBound){ .extraCellsBoundTCO = { SIZE_MAX, SIZE_MAX }, .extraStackBound = { SIZE_MAX, SIZE_MAX } };
+
+  size_t scratch;
+  for (size_t i = 0; i < len; ++i) {
+    switch (dag[i].tag) {
+     case ASSERTL:
+     case ASSERTR:
+     case CASE:
+      bound[i].extraCellsBoundTCO[0] = max( bound[dag[i].child[0]].extraCellsBoundTCO[0]
+                                          , bound[dag[i].child[1]].extraCellsBoundTCO[0] );
+      bound[i].extraCellsBoundTCO[1] = max( bound[dag[i].child[0]].extraCellsBoundTCO[1]
+                                          , bound[dag[i].child[1]].extraCellsBoundTCO[1] );
+
+      bound[i].extraStackBound[0] = max( bound[dag[i].child[0]].extraStackBound[0]
+                                       , bound[dag[i].child[1]].extraStackBound[0] );
+      bound[i].extraStackBound[1] = max( bound[dag[i].child[0]].extraStackBound[1]
+                                       , bound[dag[i].child[1]].extraStackBound[1] );
+      break;
+     case DISCONNECT:
+      /* :TODO: Support disconnect */
+      fprintf(stderr, "EvalTCOBounds for disconnect not yet implemented\n");
+      exit(EXIT_FAILURE);
+      break;
+     case COMP:
+      /* :TODO: replace this check with a consensus critical limit. */
+      if (UWORD_BIT - 1 <= SIZE_MAX - type_dag[dag[i].typeAnnotation[1]].bitSize) {
+        scratch = roundUWord(type_dag[dag[i].typeAnnotation[1]].bitSize);
+        bound[i].extraCellsBoundTCO[0] = max( bounded_add( scratch
+                                                         , max( bound[dag[i].child[0]].extraCellsBoundTCO[0]
+                                                              , bound[dag[i].child[1]].extraCellsBoundTCO[1] ))
+                                            , bound[dag[i].child[1]].extraCellsBoundTCO[0] );
+        bound[i].extraCellsBoundTCO[1] = bounded_add(scratch, bound[dag[i].child[0]].extraCellsBoundTCO[1]);
+
+      } else {
+        /* 'type_dag[dag[i].typeAnnotation[1]].bitSize' has exceeded our limits. */
+        bound[i].extraCellsBoundTCO[0] = SIZE_MAX;
+        bound[i].extraCellsBoundTCO[1] = SIZE_MAX;
+      }
+      bound[i].extraStackBound[0] = max( bound[dag[i].child[0]].extraStackBound[0]
+                                       , bound[dag[i].child[1]].extraStackBound[1] );
+      bounded_inc(&bound[i].extraStackBound[0]);
+      scratch = bound[dag[i].child[0]].extraStackBound[1];
+      bounded_inc(&scratch);
+      bound[i].extraStackBound[1] = max( scratch
+                                       , bound[dag[i].child[1]].extraStackBound[1] );
+      break;
+     case PAIR:
+      bound[i].extraCellsBoundTCO[0] = bound[dag[i].child[1]].extraCellsBoundTCO[0];
+      bound[i].extraCellsBoundTCO[1] = max( bound[dag[i].child[0]].extraCellsBoundTCO[0]
+                                          , max( bound[dag[i].child[0]].extraCellsBoundTCO[1]
+                                               , bound[dag[i].child[1]].extraCellsBoundTCO[1] ));
+
+      bound[i].extraStackBound[0] = max( bound[dag[i].child[0]].extraStackBound[0]
+                                       , bound[dag[i].child[1]].extraStackBound[0] );
+      bound[i].extraStackBound[1] = max( bound[dag[i].child[0]].extraStackBound[0]
+                                       , bound[dag[i].child[1]].extraStackBound[1] );
+      break;
+     case INJL:
+     case INJR:
+     case TAKE:
+     case DROP:
+      bound[i].extraCellsBoundTCO[0] = bound[dag[i].child[0]].extraCellsBoundTCO[0];
+      bound[i].extraCellsBoundTCO[1] = bound[dag[i].child[0]].extraCellsBoundTCO[1];
+      bound[i].extraStackBound[0] = bound[dag[i].child[0]].extraStackBound[0];
+      bound[i].extraStackBound[1] = bound[dag[i].child[0]].extraStackBound[1];
+      break;
+     default:
+      bound[i].extraCellsBoundTCO[0] = bound[i].extraCellsBoundTCO[1] = 0;
+      bound[i].extraStackBound[0] = bound[i].extraStackBound[1] = 0;
+    }
+  }
+
+  memBound result = bound[len-1];
+  free(bound);
+  return result;
+}
+
 /* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]'.
  * If 'NULL != input', initialize the active read frame's data with 'input[roundUWord(inputSize)]'.
  *
@@ -457,19 +558,15 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, const type
  *               inputSize + UWORD_BIT - 1 <= SIZE_MAX;
  *               output == NULL or UWORD output[roundUWord(outputSize)];
  *               input == NULL or UWORD input[roundUWord(inputSize)];
- *               analyses analysis[len];
- *               'max(analysis[len-1].extraCellsBoundTCO[0], analysis[len-1].extraCellsBoundTCO[1]) == SIZE_MAX'.
- *                 or 'analysis[len-1].extraCellsBoundTCO' characterizes the number of UWORDs needed
- *                   for the frames allocated during evaluation of 'dag';
- *               analysis[len-1].extraStackBoundTCO[0] bounds the the number of stack frames needed during execution of 'dag';
  */
 bool evalTCOExpression( UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
-                      , const analyses* analysis, const dag_node* dag, const type* type_dag, size_t len
+                      , const dag_node* dag, const type* type_dag, size_t len
                       ) {
+  memBound bound = computeEvalTCOBound(dag, type_dag, len);
   size_t cellsBound = bounded_add( bounded_add(roundUWord(inputSize), roundUWord(outputSize))
-                                 , max(analysis[len-1].extraCellsBoundTCO[0], analysis[len-1].extraCellsBoundTCO[1])
+                                 , max(bound.extraCellsBoundTCO[0], bound.extraCellsBoundTCO[1])
                                  );
-  size_t stackBound = bounded_add(analysis[len-1].extraStackBound[0], 2);
+  size_t stackBound = bounded_add(bound.extraStackBound[0], 2);
 
   /* :TODO: add reasonable, consensus critical limits to cells and stack bounds */
   if (SIZE_MAX <= cellsBound || SIZE_MAX <= stackBound) return false;
