@@ -23,14 +23,9 @@
  *               inputSize + UWORD_BIT - 1 <= SIZE_MAX;
  *               output == NULL or UWORD output[roundUWord(outputSize)];
  *               input == NULL or UWORD input[roundUWord(inputSize)];
- *               analyses analysis[len];
- *               'max(analysis[len-1].extraCellsBoundTCO[0], analysis[len-1].extraCellsBoundTCO[1]) == SIZE_MAX'.
- *                 or 'analysis[len-1].extraCellsBoundTCO' characterizes the number of UWORDs needed
- *                   for the frames allocated during evaluation of 'dag';
- *               analysis[len-1].extraStackBoundTCO[0] bounds the the number of stack frames needed during execution of 'dag';
  */
 bool evalTCOExpression( UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
-                      , const analyses* analysis, const dag_node* dag, const type* type_dag, size_t len
+                      , const dag_node* dag, const type* type_dag, size_t len
                       );
 
 /* Run the Bit Machine on the well-typed Simplicity program 'dag[len]'.
@@ -41,13 +36,8 @@ bool evalTCOExpression( UWORD* output, size_t outputSize, const UWORD* input, si
  * Otherwise return 'true'.
  *
  * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type 1 |- 1;
- *               analyses analysis[len];
- *               'max(analysis[len-1].extraCellsBoundTCO[0], analysis[len-1].extraCellsBoundTCO[1]) == SIZE_MAX'.
- *                 or 'analysis[len-1].extraCellsBoundTCO' characterizes the number of UWORDs needed
- *                   for the frames allocated during evaluation of 'dag';
- *               analysis[len-1].extraStackBoundTCO[0] bounds the the number of stack frames needed during execution of 'dag';
  */
-static inline bool evalTCOProgram(const analyses* analysis, const dag_node* dag, const type* type_dag, size_t len) {
-  return evalTCOExpression( NULL, 0, NULL, 0, analysis, dag, type_dag, len);
+static inline bool evalTCOProgram(const dag_node* dag, const type* type_dag, size_t len) {
+  return evalTCOExpression( NULL, 0, NULL, 0, dag, type_dag, len);
 }
 #endif

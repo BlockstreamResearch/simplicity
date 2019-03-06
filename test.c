@@ -107,8 +107,7 @@ static void test_hashBlock(void) {
         /* Set the block to be compressed to "abc" with padding. */
         write32s(&frame, (uint32_t[16]){ [0] = 0x61626380, [15] = 0x18 }, 16);
       }
-      computeEvalTCOBounds(analysis, dag, type_dag, (size_t)len);
-      if (evalTCOExpression(output, 256, input, 256+512, analysis, dag, type_dag, (size_t)len)) {
+      if (evalTCOExpression(output, 256, input, 256+512, dag, type_dag, (size_t)len)) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
                                          , 0xb00361a3ul, 0x96177a9cul, 0xb410ff61ul, 0xf20015adul };
@@ -147,7 +146,6 @@ static void test_schnorrAssert(void) {
     failures++;
     printf("Error parsing dag: %d\n", len);
   } else {
-    analyses analysis[len];
     type* type_dag = mallocTypeInference(dag, (size_t)len, &census);
     if (!type_dag) {
       failures++;
@@ -155,7 +153,6 @@ static void test_schnorrAssert(void) {
     } else {
       _Static_assert(UWORD_BIT - 1 <= SIZE_MAX - (1+256+256+512), "UWORD_BIT is far too large.");
       UWORD input[roundUWord(1+256+256+512)];
-      computeEvalTCOBounds(analysis, dag, type_dag, (size_t)len);
       { frameItem frame = initWriteFrame(1+256+256+512, &input[roundUWord(1+256+256+512)]);
         writeBit(&frame, 0);
         write32s(&frame, (uint32_t[32])
@@ -165,7 +162,7 @@ static void test_schnorrAssert(void) {
             , 0x7031A988, 0x31859DC3, 0x4DFFEEDD, 0xA8683184, 0x2CCD0079, 0xE1F92AF1, 0x77F7F22C, 0xC1DCED05 }
           , 32);
       }
-      if (evalTCOExpression(NULL, 0, input, 1+256+256+512, analysis, dag, type_dag, (size_t)len)) {
+      if (evalTCOExpression(NULL, 0, input, 1+256+256+512, dag, type_dag, (size_t)len)) {
         successes++;
       } else {
         failures++;
@@ -181,7 +178,7 @@ static void test_schnorrAssert(void) {
             , 0xD092F9D8, 0x60F1776A, 0x1F7412AD, 0x8A1EB50D, 0xACCC222B, 0xC8C0E26B, 0x2056DF2F, 0x273EFDEC }
           , 32);
       }
-      if (!evalTCOExpression(NULL, 0, input, 1+256+256+512, analysis, dag, type_dag, (size_t)len)) {
+      if (!evalTCOExpression(NULL, 0, input, 1+256+256+512, dag, type_dag, (size_t)len)) {
         successes++;
       } else {
         failures++;
