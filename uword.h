@@ -2,6 +2,8 @@
 #define UWORD_H
 
 #include <limits.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /* Number of bits for any value of the form 2^b - 1 where 0 <= b < 0x3fffffff * 30.
  * From: https://stackoverflow.com/a/4589384/727983
