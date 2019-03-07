@@ -414,7 +414,13 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, const type
       }
       break;
      case IDEN:
-      copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
+     case JET:
+      if (IDEN == dag[pc].tag) {
+         copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
+      } else {
+         assert(JET == dag[pc].tag);
+         if(!dag[pc].jet(state.activeWriteFrame, *state.activeReadFrame)) return false;
+      }
       /*@fallthrough@*/
      case UNIT:
       assert(calling);

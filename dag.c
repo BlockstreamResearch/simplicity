@@ -178,6 +178,7 @@ void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, const 
  *
  * Precondition: analyses analysis[len];
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
+ * Postconditon: analyses analysis[len] contains the witness Merkle roots of each subexpressions of 'dag'.
  */
 void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, const size_t len) {
   for (size_t i = 0; i < len; ++i) {
@@ -235,6 +236,27 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
         exit(EXIT_FAILURE);
         break;
       }
+    }
+  }
+}
+
+/* This function finds subexpressions in 'dag' that have known jetted implementations and replaces them by those jets.
+ * For jets that have a discount, one would normally have jets deserialized via a code for the specific jet.
+ * If all jets are discounted jets, one might not even use this function in production.
+ *
+ * A 'filter' can be set to only force some kinds of jets.  This parameter is mostly used for testing purposes.
+ * In produciton we expect 'filter' to be passed the 'JET_ALL' value.
+ *
+ * Precondition: dag_node dag[len] and 'dag' is well-typed;
+ *               analyses analysis[len] contains the witness Merkle roots for each subexpression of 'dag'.
+ */
+void forceJets(dag_node* dag, const analyses* analysis, const size_t len, JET_FLAG filter) {
+  if (!filter) return;
+  for (size_t i = 0; i < len; ++i) {
+    jet_ptr jet = lookupJet(&analysis[i].witnessMerkleRoot, filter);
+    if (jet) {
+      dag[i].tag = JET;
+      dag[i].jet = jet;
     }
   }
 }

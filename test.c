@@ -146,6 +146,7 @@ static void test_schnorrAssert(void) {
     failures++;
     printf("Error parsing dag: %d\n", len);
   } else {
+    analyses analysis[len];
     type* type_dag = mallocTypeInference(dag, (size_t)len, &census);
     if (!type_dag) {
       failures++;
@@ -153,6 +154,8 @@ static void test_schnorrAssert(void) {
     } else {
       _Static_assert(UWORD_BIT - 1 <= SIZE_MAX - (1+256+256+512), "UWORD_BIT is far too large.");
       UWORD input[roundUWord(1+256+256+512)];
+      computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
+      forceJets(dag, analysis, (size_t)len, JET_ALL);
       { frameItem frame = initWriteFrame(1+256+256+512, &input[roundUWord(1+256+256+512)]);
         writeBit(&frame, 0);
         write32s(&frame, (uint32_t[32])
