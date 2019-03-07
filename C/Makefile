@@ -1,12 +1,22 @@
 # From https://fastcompression.blogspot.com/2019/01/compiler-warnings.html
-CFLAGS := -Werror -Wall -Wextra -Wcast-qual -Wcast-align -Wstrict-aliasing -Wpointer-arith -Winit-self -Wshadow -Wswitch-enum -Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls -Wfloat-equal -Wundef -Wconversion
+CWARN := -Werror -Wall -Wextra -Wcast-qual -Wcast-align -Wstrict-aliasing -Wpointer-arith -Winit-self -Wshadow -Wswitch-enum -Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls -Wfloat-equal -Wundef -Wconversion
 
 ifneq ($(doCheck), 1)
-CFLAGS := $(CFLAGS) -DNDEBUG
+CPPFLAGS := $(CPPFLAGS) -DNDEBUG
 endif
 
 LDLIBS := -lsha256compression
-test: test.o dag.o deserialize.o eval.o frame.o hashBlock.o schnorrAssert.o type.o typeInference.o
+
+jetTable.c: jetTable.gperf
+	gperf --output-file=$@ $^
+
+jetTable.o: jetTable.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<
+
+test: test.o dag.o deserialize.o eval.o frame.o hashBlock.o jets.o jetTable.o schnorrAssert.o type.o typeInference.o
 	$(CC) $^ -o $@ $(LDLIBS)
 
 install: test

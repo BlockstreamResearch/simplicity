@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "type.h"
+#include "jetTable.h"
 
 /* Unique numeric tags the various kinds of Simplicity combinators.
  * We choose to generate unique tags by using the reverse bit pattern used in Simplicity's bit-wise prefix code.
@@ -28,6 +29,7 @@
 #define UNIT       0x12
 #define HIDDEN     0x06
 #define WITNESS    0x0e
+#define JET        0x03
 
 /* This structure is use to count the different kinds of combinators in a Simplicity DAG. */
 typedef struct combinator_counters {
@@ -73,8 +75,9 @@ static inline size_t numChildren(int32_t tag) {
  * The node may have references to children, when it is a combinator kind of expression.
  *
  * Invariant: 'tag' is a valid tag;
- *            size_t child[numChildren(tag)] when tag != HIDDEN;
  *            sha256_midstate hash is active when tag == HIDDEN;
+ *            jet_ptr jet is active when tag == JET;
+ *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, JET};
  */
 typedef struct dag_node {
   int32_t tag;
@@ -84,6 +87,7 @@ typedef struct dag_node {
       size_t typeAnnotation[4];
     };
     sha256_midstate hash;
+    jet_ptr jet;
   };
 } dag_node;
 
@@ -139,7 +143,20 @@ void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, size_t
  *
  * Precondition: analyses analysis[len];
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
+ * Postconditon: analyses analysis[len] contains the witness Merkle roots of each subexpressions of 'dag'.
  */
 void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
+
+/* This function finds subexpressions in 'dag' that have known jetted implementations and replaces them by those jets.
+ * For jets that have a discount, one would normally have jets deserialized via a code for the specific jet.
+ * If all jets are discounted jets, one might not even use this function in production.
+ *
+ * A 'filter' can be set to only force some kinds of jets.  This parameter is mostly used for testing purposes.
+ * In produciton we expect 'filter' to be passed the 'JET_ALL' value.
+ *
+ * Precondition: dag_node dag[len] and 'dag' is well-typed;
+ *               analyses analysis[len] contains the witness Merkle roots for each subexpression of 'dag'.
+ */
+void forceJets(dag_node* dag, const analyses* analysis, size_t len, JET_FLAG filter);
 
 #endif
