@@ -12,7 +12,7 @@ import Prelude hiding (length)
 
 import Control.Monad (forM_, guard)
 import Control.Monad.Trans (lift)
-import Control.Monad.Trans.State (StateT(..), evalStateT, get, modify, put)
+import Control.Monad.Trans.State (StateT(..), evalStateT, get, put)
 import Data.Bits (setBit, testBit)
 import Data.List (foldl', genericLength, unfoldr)
 import Data.List.Split (chunksOf)
@@ -97,8 +97,6 @@ evalStream prog = evalStateT (prog (get >>= f))
   f [] = fail "Simplicity.Serialization.evalStream: End of Stream"
   f (hd:tl) = put tl >> return hd
 
-data EVState b = EVState { bs :: Vector b, offset :: Int }
-
 -- | @evalExactVector :: Unboxed b => (forall m. Monad m => m b -> m a) -> 'Vector' b -> Maybe a@
 --
 -- Interprets the free monad representation of a stream transformer as a function consuming unboxed 'Vector's.
@@ -107,17 +105,19 @@ data EVState b = EVState { bs :: Vector b, offset :: Int }
 -- Note that the type @forall m. Monad m => m b -> m a@ is isomorphic to the free monad over the @X^b@ functor at @a@.
 -- In other words, 'evalExactVector' transforms a type of @b@-branching trees with leaves containing @a@ values
 -- into a function consuming a 'Vector' of @b@s and returning a @Maybe a@.
-evalExactVector :: Unbox b => (StateT (EVState b) Maybe b -> StateT (EVState b) Maybe a) -> Vector b -> Maybe a
-evalExactVector prog bs = evalStateT (prog (get >>= f) >>= assertEnd) init
+evalExactVector :: Unbox b => (StateT Int Maybe b -> StateT Int Maybe a) -> Vector b -> Maybe a
+evalExactVector prog bs = evalStateT (prog next >>= assertEnd) 0
  where
-  init = EVState bs 0
-  f (EVState bv i) = modify advance >> (lift $ indexM bv i)
-  advance (EVState bv i) = EVState bv (i+1)
+  n = length bs
+  next = do
+   i <- get
+   guard (i < n)
+   put (i + 1)
+   indexM bs i
   assertEnd result = do
-    bst <- get
-    guard (checkEnd bst)
+    i <- get
+    guard (i == n)
     return result
-  checkEnd (EVState bv i) = i == length bv
 
 -- | The type of errors that can be produced by 'evalStreamWithError'.
 data Error = EndOfInput
