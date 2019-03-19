@@ -4968,7 +4968,8 @@
   <subsection|Serialization of Simplicity>
 
   In this section we describe a fairly direct serialization for Simplicity
-  DAGs. First, we provide a prefix code for <math|Node> values:
+  DAGs. First, we provide a prefix code for <math|Node> values stripped of
+  witness data:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<rep|<text|<samp|`comp'>> i
@@ -4981,7 +4982,7 @@
     i|>>|<cell|=>|<cell|<verbatim|<around*|[|00110|]>><rsub|<2>>\<cdummy\><rep|i|>>>|<row|<cell|<rep|<text|<samp|`drop'>>
     i|>>|<cell|=>|<cell|<verbatim|<around*|[|00111|]>><rsub|<2>>\<cdummy\><rep|i|>>>|<row|<cell|<rep|<text|<samp|`iden'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|01000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`unit'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|01001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`fail'>>
     b|>>|<cell|=>|<cell|<verbatim|<around*|[|01010|]>><rsub|<2>>\<cdummy\><around*|(|\<mu\><rsup|\<ast\>>\<circ\><around*|(|\<iota\><rsup|<2><rsup|8>><rsub|<2><rsup|\<ast\>>>|)><rsup|\<ast\>><rsup|>\<circ\>BE|)><rsup|><around*|(|b|)>>>|<row|<cell|<rep|<text|<samp|`hidden'>>
-    h|>>|<cell|=>|<cell|<verbatim|<around*|[|0110|]>><rsub|<2>>\<cdummy\><around*|(|\<mu\><rsup|\<ast\>>\<circ\><around*|(|\<iota\><rsup|<2><rsup|8>><rsub|<2><rsup|\<ast\>>>|)><rsup|\<ast\>><rsup|>\<circ\>BE|)><rsup|><around*|(|h|)>>>|<row|<cell|<rep|<text|<samp|`witness'>>v|>>|<cell|=>|<cell|<verbatim|<around*|[|0111|]>><rsub|<2>>\<cdummy\><rep|v|>>>>>
+    h|>>|<cell|=>|<cell|<verbatim|<around*|[|0110|]>><rsub|<2>>\<cdummy\><around*|(|\<mu\><rsup|\<ast\>>\<circ\><around*|(|\<iota\><rsup|<2><rsup|8>><rsub|<2><rsup|\<ast\>>>|)><rsup|\<ast\>><rsup|>\<circ\>BE|)><rsup|><around*|(|h|)>>>|<row|<cell|<rep|<text|<samp|`witness'>>v|>>|<cell|=>|<cell|<verbatim|<around*|[|0111|]>><rsub|<2>>>>>>
   </eqnarray*>
 
   Below we give codes for Bitcoin primitive names, but each Simplicity
@@ -4995,11 +4996,24 @@
 
   <with|color|red|TODO: <verbatim|[11]> prefix reserved for jets>
 
+  We define a <math|witnessData<around*|(|l|)> : <2><rsup|\<ast\>>> function
+  for DAGs <math|l\<of\>DAG> that serializes the values held by the witness
+  data:
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|witnessDatum<around*|(|<text|<samp|`witness'>>v|)>>|<cell|\<assign\>>|<cell|v>>|<row|<cell|witnessDatum<around*|(|n|)>>|<cell|\<assign\>>|<cell|\<varepsilon\><htab|5mm><text|when>
+    \<forall\>v.n\<neq\><text|<samp|`witness'>>v>>>>
+  </eqnarray*>
+
+  <\equation*>
+    witnessData<around*|(|l|)>\<assign\> <rep|\<mu\><rsup|\<ast\>><around*|(|witnessDatum<rsup|*\<ast\>><around*|(|\<eta\><rsup|S><around*|(|l|)>|)>|)>|>
+  </equation*>
+
   For serialization of DAGs, <math|l:DAG>, which is a non-empty list of
   Nodes, we have a couple of serialization options.
 
   <\equation*>
-    stopCode<around*|(|l|)>\<assign\><around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<upl\>><around*|(|l|)>\<cdummy\><verbatim|<around*|[|01011|]>><rsub|<2>>
+    stopCode<around*|(|l|)>\<assign\>\<mu\><rsup|\<ast\>><around*|(|<around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<ast\>><around*|(|\<eta\><rsup|S><around*|(|l|)>|)>|)>\<cdummy\><verbatim|<around*|[|01011|]>><rsub|<2>>\<cdummy\>witnessData<around*|(|l|)>
   </equation*>
 
   The <math|stopCode> above serializes the list of nodes using the prefix
@@ -5008,7 +5022,7 @@
   for use as an end-of-stream marker.
 
   <\equation*>
-    lengthCode<around*|(|l|)>\<assign\><rep|<around*|\||l|\|>|>\<cdummy\><around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<upl\>><around*|(|l|)>
+    lengthCode<around*|(|l|)>\<assign\><rep|<around*|\||l|\|>|>\<cdummy\>\<mu\><rsup|\<ast\>><around*|(|<around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<ast\>><around*|(|\<eta\><rsup|S><around*|(|l|)>|)>|)>\<cdummy\>witnessData<around*|(|l|)>
   </equation*>
 
   The <math|lengthCode> above prefixes the serialization of DAG with the
@@ -5017,14 +5031,26 @@
   codes.
 
   The last alternative is to directly use
-  <math|<around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<upl\>><around*|(|l|)>>.
+  <math|\<mu\><rsup|\<ast\>><around*|(|<around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<ast\>><around*|(|\<eta\><rsup|S><around*|(|l|)>|)>|)>>.
   This is suitable when, from the context of where the code is used, the
   number of nodes or the length of the code in bits is already known. This
   variant is not a prefix code.
 
   Which serialization format is best depends on the context in which it is
   being used. Users should choose the most suitable one for their
-  application.<chapter|Coq Library Guide>
+  application.
+
+  Notice that the <math|witnessDatum> does not use a prefix code, and the
+  witnessData simply concatenates values without separating them with
+  deliminators. \ This works because during deserialization, type inference
+  does not depend on witness data, and once type inference is complete, we
+  can use the inference types of witness nodes to decode the witness values
+  in sequence. \ In fact we could even drop the prefix-code use in the
+  <math|witnessData> code itself, however we chose to put the block of all
+  the witness values into a prefix-coded list so that one doesn't need to
+  perform type inference to figure out where the the witness data ends.
+
+  <chapter|Coq Library Guide>
 
   The Coq development for Simplicity is found in the <verbatim|Coq/>
   directory. There are two subdirectories: <verbatim|Simplicity/> contains
@@ -5876,6 +5902,12 @@
   types. The <verbatim|unreflect> function turns a <verbatim|TyReflect> value
   into a <verbatim|Ty> value by forgetting about the type parameter.
 
+  The <verbatim|Simplicity/Ty.hs> file also defines the
+  <verbatim|UntypedValue> that represents data values of Simplity's typed,
+  but in an untyped mannar. \ This is mostly used for <samp|witness> nodes.
+  \ There are functions to convert to and from typed and
+  <verbatim|UntypedValue>s.
+
   Within the <verbatim|Simplicity/Ty> directory, there are modules providing
   data types that are built from Simplicity types. The
   <verbatim|Simplicity/Ty/Bit.hs> module provides a <verbatim|Bit> type,
@@ -6240,7 +6272,10 @@
   type itself enforces that the annotations are well-typed. When type
   annotations are unused, this <verbatim|ty> parameter is set to
   <verbatim|()>, as is the case for the <verbatim|UntypedTermF> functor
-  synonym.
+  synonym. The <verbatim|w> parameter determines the type of data held by
+  <verbatim|Witness> nodes. This is often <verbatim|UntypedValue>, but is
+  sometimes a vector or list of <verbatim|Bool>s, which may be used in
+  intermediate computations when deserializing Simplicity expressions.
 
   While the <verbatim|Data.Functor.Fixedpoint.Fix> of this <verbatim|TermF
   ty> functor would yield a type for untyped, full Simplicity terms, instead
@@ -6250,22 +6285,18 @@
   structure with explicit sharing of subexpressions. This structure is
   captured by the <verbatim|SimplicityDag> type synonym.
 
-  The <verbatim|WitnessData> type is a specialized data structure to allowing
-  the witness values to be pruned during encoding and decoding. The
-  <verbatim|getWitnessData> function restores the witness data as a value of
-  a Simplicity type; however a the caller must know a suitable Simplicity
-  type to interpret the witness data correctly.
-
-  The two principle functions of this module are the <verbatim|typeInference>
-  and <verbatim|typeCheck> functions. The <verbatim|typeInference> function
+  The main functions of this module are the <verbatim|typeInference> and
+  <verbatim|typeCheck> functions. The <verbatim|typeInference> function
   discards the type annotations of the input Simplicity DAG and performs
   first-order unification to infer new, principle type annotations, with any
-  remaining type variables instantiated at the <verbatim|()> type. The
-  <verbatim|typeCheck> function performs the same unification, but also adds
-  unification constraints for the input and output types of the expression as
-  provided by the caller of the function. The type annotations are type
-  checked and, if everything is successful, a proper well-typed Simplicity
-  expression is returned.
+  remaining type variables instantiated at the <verbatim|()> type. It also
+  adds unification constraints given the input and output types of the
+  intended Simplicity expression provided through the <verbatim|proxy a b>
+  argument. The <verbatim|typeCheck> function checks the type annotations
+  and, if everything is successful, a proper well-typed Simplicity expression
+  of is returned. \ Note that the one calling <verbatim|typeCheck> specifies
+  the type of the resulting Simplicity expression; it is not inferred from
+  the <verbatim|SimplicityDag>.
 
   <section|Serialization>
 
@@ -6424,12 +6455,15 @@
   type inference is also used to prune away any unused witness data.
 
   The file <verbatim|Simplicity/Serialization/BitString.hs> provides
-  <verbatim|getDag> and <verbatim|putDag> functions that decode and encode a
-  Simplicity DAG structures, generated by <verbatim|Simplicity.Dag.getDag>,
-  as described in Section<nbsp><reference|ss:Serialization>. The file
-  <verbatim|Simplicity/Serialization/ByteString.hs> provides the same
-  functions for the encoding described in
-  Appendix<nbsp><reference|app:AltSerialization>.
+  <verbatim|getTerm> and <verbatim|putTerm> functions that decode and encode
+  a Simplicity expression, as described in
+  Section<nbsp><reference|ss:Serialization>. It also provides,
+  <verbatim|getDagNoWitness>, <verbatim|getWitnessData> and
+  <verbatim|putDag>, that are used to convert between Simplicity DAGs and
+  their serialized representation. The file
+  <verbatim|Simplicity/Serialization/ByteString.hs> provides similar
+  <verbatim|getDag> and <verbatim|putDag> functions for the encoding
+  described in Appendix<nbsp><reference|app:AltSerialization>.
 
   <chapter|C Library Guide>
 

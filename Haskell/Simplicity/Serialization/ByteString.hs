@@ -33,16 +33,18 @@ getBoolVector i = getEvalBitStream prog
 putBoolVector :: Putter (UV.Vector Bool)
 putBoolVector = putBitStream . UV.toList
 
+{- Consider replacing @UV.Vector Bool@ with @Vector Bit@ from https://github.com/mokus0/bitvec when issues are resolved.
+   see https://github.com/mokus0/bitvec/issues/3 & https://github.com/mokus0/bitvec/issues/4. -}
 -- Decodes a single node for a 'SimplicityDag'.
 -- The first byte is given as an argument, but if needed, more bytes may be consumed from the stream.
-decodeNode :: W.Word8 -> Get (TermF () Bool)
+decodeNode :: W.Word8 -> Get (TermF () (UV.Vector Bool) Bool)
 decodeNode 0x20 = return uIden
 decodeNode 0x21 = return uUnit
 decodeNode 0x23 = uHidden <$> get
 decodeNode 0xff = do
   len <- fromIntegral <$> getWord16be
   unless (127 <= len) (fail "Simplicity.Serialization.ByteString.decodeNode: Badly coded long witness length.")
-  uWitness . WitnessData <$> getBoolVector len
+  uWitness <$> getBoolVector len
 decodeNode w | w .&. 0xf7 == 0x10 = return (uInjl (testBit w 3))
              | w .&. 0xf7 == 0x11 = return (uInjr (testBit w 3))
              | w .&. 0xf7 == 0x12 = return (uTake (testBit w 3))
@@ -51,7 +53,7 @@ decodeNode w | w .&. 0xf7 == 0x10 = return (uInjl (testBit w 3))
              | w .&. 0xf3 == 0x01 = return (uCase (testBit w 3) (testBit w 2))
              | w .&. 0xf3 == 0x02 = return (uPair (testBit w 3) (testBit w 2))
              | w .&. 0xf3 == 0x03 = return (uDisconnect (testBit w 3) (testBit w 2))
-             | w .&. 0x80 == 0x80 = uWitness . WitnessData <$> getBoolVector (fromIntegral (w .&. 0x7f))
+             | w .&. 0x80 == 0x80 = uWitness <$> getBoolVector (fromIntegral (w .&. 0x7f))
              | w .&. 0x20 == 0x20 = getPrimByte w >>= go
    where
     go (Just p) = return (Prim p)
@@ -81,7 +83,7 @@ getIx True = do
 
 -- Decodes a single node and references for a 'SimplicityDag'.
 -- 'Nothing' is returned when then end-of-stream code is encountered.
-getNode :: DeserializeM (Maybe (TermF () Integer))
+getNode :: DeserializeM (Maybe (TermF () (UV.Vector Bool) Integer))
 getNode = do
   w <- lift getWord8
   case w of
@@ -93,7 +95,7 @@ getNode = do
 -- | Decodes a self-delimiting byte-stream encoding of 'SimplicityDag'.
 --
 -- Type annotations are not part of the encoding.  After deserialization you will want to run type inference from "Simplicity.Inference".
-getDag :: Get (SimplicityDag V.Vector ())
+getDag :: Get (SimplicityDag V.Vector () (UV.Vector Bool))
 getDag = V.unfoldrM (fmap f . runStateT getNode) 0
  where
   f (mnode, i) = do
@@ -105,7 +107,7 @@ putIx bound i | bound <= 0 = return ()
 
 -- Encode a Simplicity node that occurs at position 'bnd'.
 -- Caution: 'Maybe Put' might lead to space-leaks.  Invesigate alternative formulations of this function.
-putNode :: Int -> TermF Ty Integer -> Maybe Put
+putNode :: Int -> TermF Ty UntypedValue Integer -> Maybe Put
 putNode bnd = go
  where
   go (Comp _ _ _ x y)         = Just $ putBinary x y 0x00
@@ -120,7 +122,7 @@ putNode bnd = go
   go (Unit _)                 = Just $ putWord8 0x21
   go (Hidden h)               = Just $ putWord8 0x23 >> put h
   go (Witness _ b w) = case reflect b of
-                        SomeTy rb -> putWitness . UV.fromList . putValueR rb <$> getWitnessData w
+                        SomeTy rb -> putWitness . UV.fromList . putValueR rb <$> castUntypedValue w
   go (Prim (SomeArrow p)) = Just $ putPrimByte p
   putUnary 1 z = putWord8 z
   putUnary i z | 2 <= i = putWord8 (setBit z 3) >> putIx (bnd - 2) (i - 2)
@@ -138,5 +140,5 @@ putNode bnd = go
 -- Encoding of witness values require that its type annotation be the value's principle type.
 -- 'putDag' requires a type annotated 'SimplicityDag' in order to pursuade the user to run 'typeInference' first.
 -- This function may return 'Nothing' if witness values cannot be encoded using the witnesses' type annoation.
-putDag :: Foldable f => SimplicityDag f Ty -> Maybe Put
+putDag :: Foldable f => SimplicityDag f Ty UntypedValue -> Maybe Put
 putDag v = fmap sequence_ . sequence $ zipWith putNode [0..] (toList v) ++ [Just (putWord8 0x1f)]

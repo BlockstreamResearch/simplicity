@@ -1,15 +1,18 @@
 {-# LANGUAGE DeriveTraversable, FlexibleInstances, GADTs, MultiParamTypeClasses, RankNTypes, ScopedTypeVariables #-}
 -- | This module defines a type for Simplicity DAGs (directed acyclic graph) as well as a type checking function to convert such a DAG into a well-typed Simplicity expression.
+-- The expected progression is to first run 'typeInference' on an untyped Simplicity DAG.
+-- Then use the inferred type annotations to transform witness data into 'UntypedValue' using 'witnessData'.
+-- Finally use 'typeCheck' to create a Simplicity expression.
 module Simplicity.Inference
   (
   -- * Type checking untyped Simplicity
     typeInference
+  , witnessData
   , typeCheck
   -- * Simplicity with type annotations
   , TermF(..)
   , UntypedTermF
   , SimplicityDag
-  , WitnessData(..), getWitnessData
   -- * Constructors for 'UntypedTermF'.
   -- | There is no @uPrim@.  You must use 'Simplicity.Inference.Prim' instead.
   , uIden, uUnit, uInjl, uInjr
@@ -36,7 +39,6 @@ import qualified Data.Vector.Unboxed as UV
 import Simplicity.Digest
 import Simplicity.Primitive
 import Simplicity.MerkleRoot
-import Simplicity.Serialization
 import Simplicity.Term
 import Simplicity.Ty
 import Simplicity.Ty.Word
@@ -50,41 +52,27 @@ unital :: UTy v -> Ty
 unital (UVar _) = one
 unital (UTerm t) = Fix (unital <$> t)
 
-{- Consider replacing @UV.Vector Bool@ with @Vector Bit@ from https://github.com/mokus0/bitvec when issues are resolved.
-   see https://github.com/mokus0/bitvec/issues/3 & https://github.com/mokus0/bitvec/issues/4. -}
--- | Untyped witness data is a (partially) unstructured value that may be interpreted as a Simplicity value for an appropriately given type.
---
--- Because the Simplicity type of witness data is not explicitly serialized, 'WitnessData' cannot be interpreted until after type inference determines its Simplicity type.
-data WitnessData = WitnessValue UntypedValue
-                 | WitnessData (UV.Vector Bool)
-                 deriving Show
-
--- | Interpret 'WitnessData' at a the given Simplicity type.
--- This may fail if the data isn't interpretable at the given Simplicity type.
-getWitnessData :: TyC a => WitnessData -> Maybe a
-getWitnessData (WitnessValue v) = castUntypedValue v
-getWitnessData (WitnessData v) = evalExactVector getValue v
-
 -- | An open recursive type for untyped Simplicity terms with type annotations.
 -- The 'ty' parameter holds the typing annotations, which can be, for example, 'Ty', or @()@ for untyped Simplicity terms without annotations.
+-- The 'w' parameter holds the data held by 'Witness' nodes.
 -- The 'a' parameter holds the (open) recursive subexpressions.
-data TermF ty a = Iden ty
-                | Unit ty
-                | Injl ty ty ty a
-                | Injr ty ty ty a
-                | Take ty ty ty a
-                | Drop ty ty ty a
-                | Comp ty ty ty a a
-                | Case ty ty ty ty a a
-                | Pair ty ty ty a a
-                | Disconnect ty ty ty ty a a
-                | Hidden Hash256
-                | Witness ty ty WitnessData
-                | Prim (SomeArrow Prim)
---              | Jet JetID
+data TermF ty w a = Iden ty
+                  | Unit ty
+                  | Injl ty ty ty a
+                  | Injr ty ty ty a
+                  | Take ty ty ty a
+                  | Drop ty ty ty a
+                  | Comp ty ty ty a a
+                  | Case ty ty ty ty a a
+                  | Pair ty ty ty a a
+                  | Disconnect ty ty ty ty a a
+                  | Hidden Hash256
+                  | Witness ty ty w
+                  | Prim (SomeArrow Prim)
+--                | Jet JetID
   deriving (Functor, Foldable, Traversable)
 
-instance (Show ty, Show a) => Show (TermF ty a) where
+instance (Show ty, Show w, Show a) => Show (TermF ty w a) where
   showsPrec p (Iden a) = showParen (10 < p) $ showString "Iden " . showsPrec 11 a
   showsPrec p (Unit a) = showParen (10 < p) $ showString "Unit " . showsPrec 11 a
   showsPrec p (Injl a b c t) = showParen (10 < p)
@@ -143,16 +131,16 @@ instance (Show ty, Show a) => Show (TermF ty a) where
                                       $ showString "Prim "
                                       . (showParen True $ showString "someArrow " . showString (primName prim))
 
--- 'FocusTy a ty' is isomorphic to 'TermF ty a'.  Its purpose is to provide functor instances to 'TermF's ty parameter.
-newtype FocusTy a ty = FocusTy { unFocusTy :: TermF ty a }
+-- 'FocusTy w a ty' is isomorphic to 'TermF ty w a'.  Its purpose is to provide functor instances to 'TermF's ty parameter.
+newtype FocusTy w a ty = FocusTy { unFocusTy :: TermF ty w a }
 
-instance Functor (FocusTy a)  where
+instance Functor (FocusTy w a)  where
   fmap = fmapDefault
 
-instance Foldable (FocusTy a) where
+instance Foldable (FocusTy w a) where
   foldMap = foldMapDefault
 
-instance Traversable (FocusTy a)  where
+instance Traversable (FocusTy w a)  where
   traverse f (FocusTy (Iden a)) = FocusTy . Iden <$> f a
   traverse f (FocusTy (Unit a)) = FocusTy . Unit <$> f a
   traverse f (FocusTy (Injl a b c x)) = fmap FocusTy $ Injl <$> f a <*> f b <*> f c <*> pure x
@@ -179,54 +167,54 @@ instance Fallible TyF (STVar s TyF) (InferenceError s) where
   mismatchFailure t1 t2 = UnificationFailure (mismatchFailure t1 t2)
 
 -- | A type synonym for Simplicity terms without type annotations.
-type UntypedTermF a = TermF () a
+type UntypedTermF w a = TermF () w a
 
 -- Constructors for untyped 'TermF'.
-uIden :: UntypedTermF a
+uIden :: UntypedTermF w a
 uIden = Iden ()
 
-uUnit :: UntypedTermF a
+uUnit :: UntypedTermF w a
 uUnit = Unit ()
 
-uInjl :: a -> UntypedTermF a
+uInjl :: a -> UntypedTermF w a
 uInjl = Injl () () ()
 
-uInjr :: a -> UntypedTermF a
+uInjr :: a -> UntypedTermF w a
 uInjr = Injr () () ()
 
-uTake :: a -> UntypedTermF a
+uTake :: a -> UntypedTermF w a
 uTake = Take () () ()
 
-uDrop :: a -> UntypedTermF a
+uDrop :: a -> UntypedTermF w a
 uDrop = Drop () () ()
 
-uComp :: a -> a -> UntypedTermF a
+uComp :: a -> a -> UntypedTermF w a
 uComp = Comp () () ()
 
-uCase :: a -> a -> UntypedTermF a
+uCase :: a -> a -> UntypedTermF w a
 uCase = Case () () () ()
 
-uPair :: a -> a -> UntypedTermF a
+uPair :: a -> a -> UntypedTermF w a
 uPair = Pair () () ()
 
-uDisconnect :: a -> a -> UntypedTermF a
+uDisconnect :: a -> a -> UntypedTermF w a
 uDisconnect = Disconnect () () () ()
 
-uHidden :: Hash256 -> UntypedTermF a
+uHidden :: Hash256 -> UntypedTermF w a
 uHidden = Hidden
 
-uWitness :: WitnessData -> UntypedTermF a
+uWitness :: w -> UntypedTermF w a
 uWitness = Witness () ()
 
 -- | :TODO: NOT YET IMPLEMENTED
 uJet = error "uJet: :TODO: NOT YET IMPLEMENTED"
 
 -- | :TODO: NOT YET IMPLEMENTED
-uFail :: Block512 -> UntypedTermF a
+uFail :: Block512 -> UntypedTermF w a
 uFail = error "uFail: :TODO: NOT YET IMPLEMENTED"
 
 -- Given a @'UTy' v@ annonated Simplicity 'TermF', return the implied input and output types given the annotations.
-termFArrow :: Monad m => TermF (UTy v) a -> ExceptT (InferenceError s) m (UTy v, UTy v)
+termFArrow :: Monad m => TermF (UTy v) w a -> ExceptT (InferenceError s) m (UTy v, UTy v)
 termFArrow (Iden a) = return (a, a)
 termFArrow (Unit a) = return (a, UTerm One)
 termFArrow (Injl a b c _) = return (a, UTerm (Sum b c))
@@ -256,19 +244,19 @@ termFArrow (Prim (SomeArrow p)) = return (unfreeze (unreflect ra), unfreeze (unr
 -- @
 --     0 \<= /i/ && /i/ \< 'Foldable.length' /v/ ==> 'Foldable.all' (\\x -> 0 < x && x <= /i/) ('Foldable.toList' /v/ '!!' /i/)
 -- @
-type SimplicityDag f ty = f (TermF ty Integer)
+type SimplicityDag f ty w = f (TermF ty w Integer)
 
 -- 'inference' takes an 'SimplicityDag' and adds suitiable type annotations to the nodes in the DAG as well as unification constraints.
 -- This can cause unification failures, however the occurs check isn't performed in this step.
 -- This function also checks that the provided DAG is sorted in topological order.
-inference :: Foldable f => SimplicityDag f x ->
-             ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) Int))
+inference :: Foldable f => SimplicityDag f x w ->
+             ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) w Int))
 inference = foldM loop empty
  where
   tyWord256 = unreflect (reify :: TyReflect Word256)
-  loop :: Seq (TermF (UTy (STVar s TyF)) Int)
-       -> TermF x Integer
-       -> ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) Int))
+  loop :: Seq (TermF (UTy (STVar s TyF)) w Int)
+       -> TermF x w Integer
+       -> ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) w Int))
   loop output node = (output |>) <$> go node
    where
     fresh :: ExceptT (InferenceError s) (STBinding s) (UTy (STVar s TyF))
@@ -340,133 +328,154 @@ inference = foldM loop empty
 -- Given the output of 'inference', execute unification and return the container of type annotated Simplicity nodes.
 -- Any free type variables left over after unification are instantiated at the unit type.
 -- Errors, such as unification errors or occurs errors are retuned as 'String's.
-runUnification :: Traversable t => (forall s. ExceptT (InferenceError s) (STBinding s) (t (TermF (UTy (STVar s TyF)) i))) -> Either String (t (TermF Ty i))
+runUnification :: Traversable t => (forall s. ExceptT (InferenceError s) (STBinding s) (t (TermF (UTy (STVar s TyF)) w i))) -> Either String (t (TermF Ty w i))
 runUnification mv = runSTBinding $ left show <$> runExceptT (bindV mv)
  where
-  bindV :: Traversable t => ExceptT (InferenceError s) (STBinding s) (t (TermF (UTy (STVar s TyF)) i)) -> ExceptT (InferenceError s) (STBinding s) (t (TermF Ty i))
+  bindV :: Traversable t => ExceptT (InferenceError s) (STBinding s) (t (TermF (UTy (STVar s TyF)) w i)) -> ExceptT (InferenceError s) (STBinding s) (t (TermF Ty w i))
   bindV mv = do
     v <- mv
     bv <- applyBindingsAll (Compose (FocusTy <$> v))
     return . fmap unFocusTy . getCompose $ unital <$> bv
 
 -- | Given a 'SimplicityDag', throw away the existing type annotations, if any, and run type inference to compute a new set of type annotations.
+-- The Simplicity types, @a@ and @b@, provides further constraints for the Simplicity expression for the 'SimplicityDag'.
 -- If type inference fails, such as a unification error or an occurs error, return an error message.
-typeInference :: Foldable f => SimplicityDag f x -> Either String (SimplicityDag Seq Ty)
-typeInference v = fmap (fmap toInteger) <$> runUnification (inference v)
+typeInference :: forall proxy a b f x w. (Foldable f, TyC a, TyC b) => proxy a b -> SimplicityDag f x w -> Either String (SimplicityDag Seq Ty w)
+typeInference p v = fmap (fmap toInteger) <$> runUnification inferenced
+ where
+  inferenced :: forall s. ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) w Int))
+  inferenced = do
+    ev <- inference v
+    _ <- case viewr ev of
+        EmptyR -> return ()
+        _ :> end -> do
+          (a1, b1) <- termFArrow end
+          let (a0, b0) = reifyArrow p
+          _ <- a1 =:= unfreeze (unreflect a0)
+          _ <- b1 =:= unfreeze (unreflect b0)
+          return ()
+    return ev
 
--- | Transform a 'SimplicityDag' into a well-typed Simplicity expression of a specified type.
--- If type inference fails, such as a unification error or an occurs error, return an error message.
+-- | A Traversal-like operation for 'TermF' that can be use to modify witness data in the context of witnesses type annotations.
+-- The 'witnessData' is to let you take @TermF Ty (Vector Bool) a@ values and turn them into @TermF Ty UntypedValue a@ values
+-- by parsing witness data stored as bit vector into Simplicity values after type inference.
+-- Alternatively, 'witnessData' can help build a @TermF Ty () a -> m Bool -> m (TermF Ty Untyped a)@ function that parses witness data
+-- after type inference from a 'Bool' stream accessable via a monadic effect.
+witnessData :: Applicative m => (ty -> w0 -> m w1) -> TermF ty w0 a -> m (TermF ty w1 a)
+witnessData f (Iden a) = pure $ Iden a
+witnessData f (Unit a) = pure $ Unit a
+witnessData f (Injl a b c x) = pure $ Injl a b c x
+witnessData f (Injr a b c x) = pure $ Injr a b c x
+witnessData f (Take a b c x) = pure $ Take a b c x
+witnessData f (Drop a b c x) = pure $ Drop a b c x
+witnessData f (Comp a b c x y) = pure $ Comp a b c x y
+witnessData f (Case a b c d x y) = pure $ Case a b c d x y
+witnessData f (Pair a b c x y) = pure $ Pair a b c x y
+witnessData f (Disconnect a b c d x y) = pure $ Disconnect a b c d x y
+witnessData f (Hidden x) = pure $ Hidden x
+witnessData f (Witness a b x) = Witness a b <$> f b x
+witnessData f (Prim p) = pure $ Prim p
+
+-- | Transform a well-typed-annotated 'SimplicityDag' into a Simplicity expression of a specified type.
+-- If type checking fails, return an error message.
 --
 -- Note: The one calling 'typeCheck' determines the input and output Simplicity types of the resulting Simplicity expression.
 -- They are __not__ inferered from the DAG input.
 -- Instead the types @a@ and @b@ are used as constraints during type inference.
-typeCheck :: forall f x term a b. (Foldable f, Simplicity term, TyC a, TyC b) => SimplicityDag f x -> Either String (term a b)
-typeCheck v = typeCheckTerm =<< runUnification inferenced
+typeCheck :: forall term a b. (Simplicity term, TyC a, TyC b) => SimplicityDag Seq Ty UntypedValue -> Either String (term a b)
+typeCheck s = result
  where
-   a0 :: TyReflect a
-   a0 = reify
-   b0 :: TyReflect b
-   b0 = reify
-   inferenced :: forall s. ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) Int))
-   inferenced = do
-     ev <- inference v
-     _ <- case viewr ev of
-         EmptyR -> return ()
-         _ :> end -> do
-           (a1, b1) <- termFArrow end
-           _ <- a1 =:= unfreeze (unreflect a0)
-           _ <- b1 =:= unfreeze (unreflect b0)
-           return ()
-     return ev
-   typeCheckTerm s = case viewr typeCheckedDag of
-     _ :> Right (SomeArrow t) -> maybe (error "Simplicity.Inference.typeCheck: unexpect mismatched type at end.") return $ do
-                                  let (ra, rb) = reifyArrow t
-                                  Refl <- equalTyReflect ra a0
-                                  Refl <- equalTyReflect rb b0
-                                  return t
-     _ :> Left s -> Left s
-     EmptyR -> Left "Simplicity.Inference.typeCheck: empty vector input."
-    where
-     assertEqualTyReflect a b = maybe err Right (equalTyReflect a b)
-      where
-       err = Left "Simplicity.Inference.typeCheck: unexpected mismatched type"
-     typeCheckedDag = mapWithIndex (\i -> left (++ " at index " ++ show i ++ ".") . typeCheckTermIx i) s
-     typeCheckTermIx :: Int -> TermF Ty Int -> Either String (SomeArrow term)
-     typeCheckTermIx i = typeCheckTerm
-      where
-       lookup j = index typeCheckedDag (i - j)
-       typeCheckTerm (Iden a) = case reflect a of
-                                  SomeTy ra -> return (someArrowR ra ra iden)
-       typeCheckTerm (Unit a) = case reflect a of
-                                  SomeTy ra -> return (someArrowR ra OneR unit)
-       typeCheckTerm (Injl a b c it) = case reflect c of
-                                        SomeTy rc -> do
-                                          SomeArrow t <- lookup it
-                                          let (ra, rb) = reifyArrow t
-                                          return (someArrowR ra (SumR rb rc) (injl t))
-       typeCheckTerm (Injr a b c it) = case reflect b of
-                                        SomeTy rb -> do
-                                          SomeArrow t <- lookup it
-                                          let (ra, rc) = reifyArrow t
-                                          return (someArrowR ra (SumR rb rc) (injr t))
-       typeCheckTerm (Take a b c it) = case reflect b of
-                                        SomeTy rb -> do
-                                          SomeArrow t <- lookup it
-                                          let (ra, rc) = reifyArrow t
-                                          return (someArrowR (ProdR ra rb) rc (take t))
-       typeCheckTerm (Drop a b c it) = case reflect a of
-                                        SomeTy ra -> do
-                                          SomeArrow t <- lookup it
-                                          let (rb, rc) = reifyArrow t
-                                          return (someArrowR (ProdR ra rb) rc (drop t))
-       typeCheckTerm (Comp a b c is it) = do SomeArrow s <- lookup is
-                                             SomeArrow t <- lookup it
-                                             let (ra, rb0) = reifyArrow s
-                                             let (rb1, rc) = reifyArrow t
-                                             Refl <- assertEqualTyReflect rb0 rb1
-                                             return (someArrowR ra rc (comp s t))
-       typeCheckTerm (Case a b c d is it) | Hidden hs <- index s (i - is) =
-                                              case reflect a of
-                                                SomeTy ra -> do
-                                                  SomeArrow t <- lookup it
-                                                  let (rbc, rd) = reifyArrow t
-                                                  case rbc of
-                                                    ProdR rb rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertr hs t))
-                                          | Hidden ht <- index s (i - it) =
-                                              case reflect b of
-                                                SomeTy rb -> do
-                                                  SomeArrow s <- lookup is
-                                                  let (rac, rd) = reifyArrow s
-                                                  case rac of
-                                                    ProdR ra rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertl s ht))
-                                          | otherwise = do SomeArrow s <- lookup is
-                                                           SomeArrow t <- lookup it
-                                                           let (rac0, rd0) = reifyArrow s
-                                                           let (rbc1, rd1) = reifyArrow t
-                                                           case (rac0, rbc1) of
-                                                             (ProdR ra rc0, ProdR rb rc1) -> do
-                                                               Refl <- assertEqualTyReflect rc0 rc1
-                                                               Refl <- assertEqualTyReflect rd0 rd1
-                                                               return (someArrowR (ProdR (SumR ra rb) rc0) rd0 (match s t))
-       typeCheckTerm (Pair a b c is it) = do SomeArrow s <- lookup is
-                                             SomeArrow t <- lookup it
-                                             let (ra0, rb) = reifyArrow s
-                                             let (ra1, rc) = reifyArrow t
-                                             Refl <- assertEqualTyReflect ra0 ra1
-                                             return (someArrowR ra0 (ProdR rb rc) (pair s t))
-       typeCheckTerm (Disconnect a b c d is it) = do SomeArrow s <- lookup is
-                                                     SomeArrow t <- lookup it
-                                                     let (rc1, rd) = reifyArrow t
-                                                     case reifyArrow s of
-                                                       ((ProdR ra rw), (ProdR rb rc0)) -> do
-                                                         Refl <- assertEqualTyReflect rw (reify :: TyReflect Word256)
-                                                         Refl <- assertEqualTyReflect rc0 rc1
-                                                         return (someArrowR ra (ProdR rb rd) (disconnect s t))
-       typeCheckTerm (Hidden _) = Left "Simplicity.Inference.typeCheck: encountered illegal use of Hidden node"
-       typeCheckTerm (Witness a b w) = case (reflect a, reflect b) of
-                                        (SomeTy ra, SomeTy rb) -> do
-                                         vb <- maybe err return $ getWitnessData w
-                                         return (someArrowR ra rb (witness vb))
-        where
-         err = Left "Simplicity.Inference.typeCheck: decode error in Witness value"
-       typeCheckTerm (Prim (SomeArrow p)) = return (SomeArrow (primitive p))
+  resultProxy = let Right x = result in undefined `asTypeOf` x
+  result = case viewr typeCheckedDag of
+    _ :> Right (SomeArrow t) -> maybe (error "Simplicity.Inference.typeCheck: unexpect mismatched type at end.") return $ do
+                                 let (ra, rb) = reifyArrow t
+                                 let (a0, b0) = reifyArrow resultProxy
+                                 Refl <- equalTyReflect ra a0
+                                 Refl <- equalTyReflect rb b0
+                                 return t
+    _ :> Left s -> Left s
+    EmptyR -> Left "Simplicity.Inference.typeCheck: empty vector input."
+   where
+    assertEqualTyReflect a b = maybe err Right (equalTyReflect a b)
+     where
+      err = Left "Simplicity.Inference.typeCheck: unexpected mismatched type"
+    typeCheckedDag = mapWithIndex (\i -> left (++ " at index " ++ show i ++ ".") . typeCheckTermIx i) s
+    typeCheckTermIx :: Int -> TermF Ty UntypedValue Integer -> Either String (SomeArrow term)
+    typeCheckTermIx i = typeCheckTerm . fmap fromInteger
+     where
+      lookup j = index typeCheckedDag (i - j)
+      typeCheckTerm (Iden a) = case reflect a of
+                                 SomeTy ra -> return (someArrowR ra ra iden)
+      typeCheckTerm (Unit a) = case reflect a of
+                                 SomeTy ra -> return (someArrowR ra OneR unit)
+      typeCheckTerm (Injl a b c it) = case reflect c of
+                                       SomeTy rc -> do
+                                         SomeArrow t <- lookup it
+                                         let (ra, rb) = reifyArrow t
+                                         return (someArrowR ra (SumR rb rc) (injl t))
+      typeCheckTerm (Injr a b c it) = case reflect b of
+                                       SomeTy rb -> do
+                                         SomeArrow t <- lookup it
+                                         let (ra, rc) = reifyArrow t
+                                         return (someArrowR ra (SumR rb rc) (injr t))
+      typeCheckTerm (Take a b c it) = case reflect b of
+                                       SomeTy rb -> do
+                                         SomeArrow t <- lookup it
+                                         let (ra, rc) = reifyArrow t
+                                         return (someArrowR (ProdR ra rb) rc (take t))
+      typeCheckTerm (Drop a b c it) = case reflect a of
+                                       SomeTy ra -> do
+                                         SomeArrow t <- lookup it
+                                         let (rb, rc) = reifyArrow t
+                                         return (someArrowR (ProdR ra rb) rc (drop t))
+      typeCheckTerm (Comp a b c is it) = do SomeArrow s <- lookup is
+                                            SomeArrow t <- lookup it
+                                            let (ra, rb0) = reifyArrow s
+                                            let (rb1, rc) = reifyArrow t
+                                            Refl <- assertEqualTyReflect rb0 rb1
+                                            return (someArrowR ra rc (comp s t))
+      typeCheckTerm (Case a b c d is it) | Hidden hs <- index s (i - is) =
+                                             case reflect a of
+                                               SomeTy ra -> do
+                                                 SomeArrow t <- lookup it
+                                                 let (rbc, rd) = reifyArrow t
+                                                 case rbc of
+                                                   ProdR rb rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertr hs t))
+                                         | Hidden ht <- index s (i - it) =
+                                             case reflect b of
+                                               SomeTy rb -> do
+                                                 SomeArrow s <- lookup is
+                                                 let (rac, rd) = reifyArrow s
+                                                 case rac of
+                                                   ProdR ra rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertl s ht))
+                                         | otherwise = do SomeArrow s <- lookup is
+                                                          SomeArrow t <- lookup it
+                                                          let (rac0, rd0) = reifyArrow s
+                                                          let (rbc1, rd1) = reifyArrow t
+                                                          case (rac0, rbc1) of
+                                                            (ProdR ra rc0, ProdR rb rc1) -> do
+                                                              Refl <- assertEqualTyReflect rc0 rc1
+                                                              Refl <- assertEqualTyReflect rd0 rd1
+                                                              return (someArrowR (ProdR (SumR ra rb) rc0) rd0 (match s t))
+      typeCheckTerm (Pair a b c is it) = do SomeArrow s <- lookup is
+                                            SomeArrow t <- lookup it
+                                            let (ra0, rb) = reifyArrow s
+                                            let (ra1, rc) = reifyArrow t
+                                            Refl <- assertEqualTyReflect ra0 ra1
+                                            return (someArrowR ra0 (ProdR rb rc) (pair s t))
+      typeCheckTerm (Disconnect a b c d is it) = do SomeArrow s <- lookup is
+                                                    SomeArrow t <- lookup it
+                                                    let (rc1, rd) = reifyArrow t
+                                                    case reifyArrow s of
+                                                      ((ProdR ra rw), (ProdR rb rc0)) -> do
+                                                        Refl <- assertEqualTyReflect rw (reify :: TyReflect Word256)
+                                                        Refl <- assertEqualTyReflect rc0 rc1
+                                                        return (someArrowR ra (ProdR rb rd) (disconnect s t))
+      typeCheckTerm (Hidden _) = Left "Simplicity.Inference.typeCheck: encountered illegal use of Hidden node"
+      typeCheckTerm (Witness a b w) = case (reflect a, reflect b) of
+                                       (SomeTy ra, SomeTy rb) -> do
+                                        vb <- maybe err return $ castUntypedValue w
+                                        return (someArrowR ra rb (witness vb))
+       where
+        err = Left "Simplicity.Inference.typeCheck: decode error in Witness value"
+      typeCheckTerm (Prim (SomeArrow p)) = return (SomeArrow (primitive p))

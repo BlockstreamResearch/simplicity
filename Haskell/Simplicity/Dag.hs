@@ -23,13 +23,13 @@ import Simplicity.MerkleRoot
 import Simplicity.Term
 
 -- A monad used in the implementation of linearizeDag.
-type LinearM a = StateT (Map.Map Hash256 Integer) (Writer (SimplicityDag [] ())) a
+type LinearM w a = StateT (Map.Map Hash256 Integer) (Writer (SimplicityDag [] () w)) a
 
-execLinearM :: LinearM a -> SimplicityDag [] ()
+execLinearM :: LinearM w a -> SimplicityDag [] () w
 execLinearM m = execWriter (evalStateT m Map.empty)
 
 -- Emit a new node and add insert it into the state's map.
-tellNode :: Hash256 -> TermF () Integer -> LinearM Integer
+tellNode :: Hash256 -> TermF () w Integer -> LinearM w Integer
 tellNode h iterm = StateT go
  where
   go map = do
@@ -42,13 +42,13 @@ tellNode h iterm = StateT go
 -- | A 'Simplicity' instance used with 'sortDag'.
 -- This instance merges identical typed Simplicity sub-expressions to create a DAG (directed acyclic graph) structure that represents the expression.
 data Dag a b = Dag { dagRoot :: WitnessRoot a b
-                   , dagMap :: Map.Map Hash256 (TermF () Hash256)
+                   , dagMap :: Map.Map Hash256 (TermF () UntypedValue Hash256)
                    }
 
 -- Topologically sort the 'Dag'.
 -- The type annotations are also stripped in order to ensure the result isn't accidentally serialized before inference of principle type annotations.
 -- All sharing of subexpressions remains monomorphic to ensure that types can be infered in (quasi-)linear time.
-linearizeDag :: Dag a b -> SimplicityDag [] ()
+linearizeDag :: Dag a b -> SimplicityDag [] () UntypedValue
 linearizeDag dag = execLinearM . go . witnessRoot . dagRoot $ dag
  where
   dmap = dagMap dag
@@ -64,16 +64,16 @@ linearizeDag dag = execLinearM . go . witnessRoot . dagRoot $ dag
 --
 -- This function invokes type inference to ensure that the type annotations are principle types (with type variables instantiated at unit types).
 -- Therefore the 'WitnessRoot' of the result may not match the 'WitnessRoot' of the input.
-sortDag :: forall a b. (TyC a, TyC b) => Dag a b -> SimplicityDag [] Ty
+sortDag :: forall a b. (TyC a, TyC b) => Dag a b -> SimplicityDag [] Ty UntypedValue
 sortDag t = toList pass2
  where
   pass1 :: Dag a b
   -- The patterns should never fail as we are running type inference on terms that are already known to be well typed.
   -- A failure of a pattern match here suggests there is an error in the type inference engine.
-  pass1 = case typeCheck (linearizeDag t) of
+  pass1 = case typeCheck =<< typeInference pass1 (linearizeDag t) of
             Right pass -> pass
             Left e -> error $ "sortDag.pass1: " ++ e
-  pass2 = case typeInference (linearizeDag pass1) of
+  pass2 = case typeInference pass1 (linearizeDag pass1) of
             Right pass -> pass
             Left e -> error $ "sortDag.pass2: " ++ e
 
@@ -127,7 +127,7 @@ instance Assert Dag where
   fail b = mkLeaf (fail b) (uFail b)
 
 instance Witness Dag where
-  witness v = mkLeaf (witness v) (uWitness (WitnessValue (untypedValue v)))
+  witness v = mkLeaf (witness v) (uWitness (untypedValue v))
 
 instance Delegate Dag where
   disconnect = mkBinary disconnect uDisconnect

@@ -9,6 +9,7 @@ import Data.Maybe (fromMaybe)
 import Data.Serialize (Get, Putter, runGetState, runPut)
 import qualified Data.Vector as V
 import qualified Data.Vector.Unboxed as UV
+import Lens.Family2 (Traversal, (&), (.~))
 
 import Simplicity.Dag
 import Simplicity.Digest
@@ -24,9 +25,9 @@ import Simplicity.Term
 import Simplicity.Ty.Tests hiding (tests)
 
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.QuickCheck ( testProperty, Positive(Positive)
+import Test.Tasty.QuickCheck ( Testable, testProperty, Positive(Positive)
                              , Gen, Property, arbitrary, choose, elements, forAll, listOf, oneof)
-import Test.QuickCheck.Property (liftBool)
+import Test.QuickCheck.Property (Result, failed, succeeded, reason)
 
 -- This collects the tests for the various serialization/deserialization pairs.
 tests :: TestTree
@@ -53,7 +54,7 @@ prop_getPutPositive :: Positive Integer -> Bool
 prop_getPutPositive (Positive n) = evalExactVector getPositive (UV.fromList (putPositive n [])) == Just n
 
 -- Test a 'SimplicityDag' predicate over suitable Arbitrary inputs.
-forallSimplicityDag :: (SimplicityDag [] Ty -> Bool) -> Property
+forallSimplicityDag :: Testable prop => (SimplicityDag [] Ty UntypedValue -> prop) -> Property
 forallSimplicityDag = forAll gen_UntypedTermF_list
  where
   gen_UntypedTermF_list = do
@@ -65,7 +66,7 @@ forallSimplicityDag = forAll gen_UntypedTermF_list
     f (i, term) = traverse (const (choose (1,i))) term
   -- We are subverting putDag's type annotation requirement.  It is for purpose of testing the 'putDag' function, so maybe it is okay to do.
   -- :TODO: replace this with a proper generator for well-typed Simplicity terms.
-  gen_UntypedTermF :: Gen (TermF Ty ())
+  gen_UntypedTermF :: Gen (TermF Ty UntypedValue ())
   gen_UntypedTermF = oneof
     [ pure $ Iden one
     , pure $ Unit one
@@ -86,13 +87,13 @@ forallSimplicityDag = forAll gen_UntypedTermF_list
     wit = do
       b <- arbTy
       v <- case reflect b of SomeTy rb -> untypedValue <$> arbValueR rb
-      return (Witness one b (WitnessValue v))
+      return (Witness one b v)
     allPrim = getPrimBit [False,True]
 
--- Compare a type annoated 'SimplicityDag' to one without annotations.
--- To return 'True', the nodes must be identical (ignoring type annotations), and the witness values must be compatable at the type given by the type annotated version.
-compareDag :: Eq a => [TermF Ty a] -> [TermF x a] -> Bool
-compareDag v1 v2 = (and $ zipWith compareNode v1 v2) && (length v1 == length v2)
+-- Compare 'SimplicityDag' disregarding most type annotations.
+-- Witness nodes are compared using the 'compareWitness' function which may or may not consider type annotations.
+compareDag :: Eq a => (ty0 -> w0 -> ty1 -> w1 -> Bool) -> [TermF ty0 w0 a] -> [TermF ty1 w1 a] -> Bool
+compareDag compareWitness v1 v2 = (and $ zipWith compareNode v1 v2) && (length v1 == length v2)
  where
   compareNode (Iden _) (Iden _) = True
   compareNode (Unit _) (Unit _) = True
@@ -105,30 +106,42 @@ compareDag v1 v2 = (and $ zipWith compareNode v1 v2) && (length v1 == length v2)
   compareNode (Pair _ _ _ x0 y0) (Pair _ _ _ x1 y1) = [x0,y0] == [x1,y1]
   compareNode (Disconnect _ _ _ _ x0 y0) (Disconnect _ _ _ _ x1 y1) = [x0,y0] == [x1,y1]
   compareNode (Hidden h0) (Hidden h1) = h0 == h1
-  compareNode (Witness _ b w0) (Witness _ _ w1) = case reflect b of
-                                                   SomeTy rb -> fromMaybe False $ (==) <$> getWitnessDataAs rb w0 <*> getWitnessDataAs rb w1
-   where
-    getWitnessDataAs :: TyC a => TyReflect a -> WitnessData -> Maybe a
-    getWitnessDataAs _ = getWitnessData
+  compareNode (Witness _ b0 w0) (Witness _ b1 w1) = compareWitness b0 w0 b1 w1
   compareNode (Prim p0) (Prim p1) = somePrimEq p0 p1
+  compareNode _ _ = False
 
--- Check that deserialization of serialization of 'SimplicityDag's works for the bit-string serialization.
+-- Check that 'BitString.putDag's serialization of 'SimplicityDag's works can be deserialized by a combination of 'BitString.getDagNoWitness' and 'BitString.getWitnessData'.
+-- Note: Because we do not yet have a generator for arbitrary well-typed Simplicity expressions we cannot easily test 'BitString.putTerm' with 'BitString.getTerm'.
+-- Instead we perform an akward combinator of 'BitString.getDagNoWitness' and 'BitString.getWitnessData' on mostly untyped Simplicity DAGs for now.
 prop_getPutBitStringDag :: Property
 prop_getPutBitStringDag = forallSimplicityDag prop
  where
-  prop v = (const False ||| compareDag v . toList) eval1 && [EndOfInput] == lefts [eval2]
+  compareWitness _ w0 _ w1 = w0 == w1
+  prop v = case eval of
+    Left msg -> failed { reason = show msg }
+    Right (pdag, wdag) | not (compareDag (\_ _ _ _ -> True) v (toList pdag)) -> failed { reason = "Bitstring.getDagNoWiness returned bad value" }
+                       | not (compareDag compareWitness v (toList wdag)) -> failed { reason = "Bitstring.getWitnessData returend bad value" }
+                       | otherwise -> succeeded
    where
     Just bs = BitString.putDag v -- generation is designed to create terms that always succeed at serializaiton.
-    eval1 = evalStreamWithError BitString.getDag bs
-    eval2 = evalStreamWithError BitString.getDag (init bs)
+    eval = flip evalStreamWithError bs $ \abort next -> do
+     pdag <- BitString.getDagNoWitness abort next
+     wdag <- BitString.getWitnessData vStripped abort next
+     return (pdag, wdag)
+    vStripped = v & traverse . witness_ .~ ()
+     where
+      witness_ :: Traversal (TermF ty w0 a) (TermF ty w1 a) w0 w1
+      witness_ = witnessData . const
 
 -- Check that deserialization of serialization of 'SimplicityDag's works for the byte-string serialization.
 prop_getPutByteStringDag :: Property
 prop_getPutByteStringDag = forallSimplicityDag prop
  where
+  compareWitness b w0 _ w1 = case reflect b of
+                               SomeTy rb -> fromMaybe False $ (==) <$> castUntypedValueR rb w0 <*> evalExactVector (getValueR rb) w1
   prop v = case runGetState (toList <$> ByteString.getDag) bs 0 of
             Left _ -> False
-            Right (v', rest) -> rest == mempty && compareDag v v'
+            Right (v', rest) -> rest == mempty && compareDag compareWitness v v'
    where
     Just bs = runPut <$> ByteString.putDag v -- generation is designed to create terms that always succeed at serializaiton.
 
@@ -136,11 +149,13 @@ prop_getPutByteStringDag = forallSimplicityDag prop
 testInference :: forall a b. (TyC a, TyC b) => String -> (forall term. (Core term) => term a b) -> TestTree
 testInference name program = testGroup name [testProperty "CommitmentRoot" assertion1, testProperty "WitnessRoot" assertion2]
  where
+  dag :: Dag a b
+  dag = program
   -- type inference on first pass is not necessarily equal to the orginal program because the Haskell type of internal nodes in the original program might not have the term's principle type.
   pass1 :: forall term. Simplicity term => Either String (term a b)
-  pass1 = typeCheck . sortDag $ program
+  pass1 = typeCheck =<< typeInference dag (sortDag dag)
   -- Type inference on the second pass ought to always be equal to the first pass.
   pass2 :: forall term. Simplicity term => Either String (term a b)
-  pass2 = typeCheck . sortDag =<< pass1
+  pass2 = typeCheck =<< (typeInference dag . sortDag) =<< pass1
   assertion1 = pass1 == Right (program :: CommitmentRoot a b)
   assertion2 = pass2 == (pass1 :: Either String (WitnessRoot a b))
