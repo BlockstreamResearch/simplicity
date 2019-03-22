@@ -26,7 +26,7 @@ import Simplicity.Ty.Tests hiding (tests)
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.QuickCheck ( Testable, testProperty, Positive(Positive)
-                             , Gen, Property, arbitrary, choose, elements, forAll, listOf, oneof)
+                             , Gen, Property, arbitrary, choose, elements, forAll, listOf1, oneof)
 import Test.QuickCheck.Property (Result, failed, succeeded, reason)
 
 -- This collects the tests for the various serialization/deserialization pairs.
@@ -58,7 +58,7 @@ forallSimplicityDag :: Testable prop => (SimplicityDag [] Ty UntypedValue -> pro
 forallSimplicityDag = forAll gen_UntypedTermF_list
  where
   gen_UntypedTermF_list = do
-    l <- traverse f =<< (zip [1..] <$> listOf gen_UntypedTermF)
+    l <- traverse f =<< (zip [1..] <$> listOf1 gen_UntypedTermF)
     case l of
      [] -> return []
      nl -> (:nl) <$> elements [Iden one, Unit one]
@@ -113,8 +113,8 @@ compareDag compareWitness v1 v2 = (and $ zipWith compareNode v1 v2) && (length v
 -- Check that 'BitString.putDag's serialization of 'SimplicityDag's works can be deserialized by a combination of 'BitString.getDagNoWitness' and 'BitString.getWitnessData'.
 -- Note: Because we do not yet have a generator for arbitrary well-typed Simplicity expressions we cannot easily test 'BitString.putTerm' with 'BitString.getTerm'.
 -- Instead we perform an akward combinator of 'BitString.getDagNoWitness' and 'BitString.getWitnessData' on mostly untyped Simplicity DAGs for now.
-prop_getPutBitStringDag :: Property
-prop_getPutBitStringDag = forallSimplicityDag prop
+prop_getPutBitStringDag :: Bool -> Property
+prop_getPutBitStringDag stopCode = forallSimplicityDag prop
  where
   compareWitness _ w0 _ w1 = w0 == w1
   prop v = case eval of
@@ -123,9 +123,9 @@ prop_getPutBitStringDag = forallSimplicityDag prop
                        | not (compareDag compareWitness v (toList wdag)) -> failed { reason = "Bitstring.getWitnessData returend bad value" }
                        | otherwise -> succeeded
    where
-    Just bs = BitString.putDag v -- generation is designed to create terms that always succeed at serializaiton.
+    Just bs = (if stopCode then BitString.putDagStopCode else BitString.putDagLengthCode) v -- generation is designed to create terms that always succeed at serializaiton.
     eval = flip evalStreamWithError bs $ \abort next -> do
-     pdag <- BitString.getDagNoWitness abort next
+     pdag <- (if stopCode then BitString.getDagNoWitnessStopCode else BitString.getDagNoWitnessLengthCode) abort next
      wdag <- BitString.getWitnessData vStripped abort next
      return (pdag, wdag)
     vStripped = v & traverse . witness_ .~ ()
