@@ -381,7 +381,7 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream*
   *dag = malloc(sizeof(dag_node[dagLen]));
   if (!*dag) return 0;
 
-  *census = (combinator_counters){0};
+  if (census) *census = (combinator_counters){0};
   int32_t err = decodeDag(*dag, (size_t)dagLen, census, stream);
   if (err < 0) {
     free(*dag);
