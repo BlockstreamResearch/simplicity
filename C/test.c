@@ -6,7 +6,8 @@
 #include "eval.h"
 #include "typeInference.h"
 #include "hashBlock.h"
-#include "schnorrAssert.h"
+#include "schnorr1.h"
+#include "schnorr8.h"
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen persume 8 bit chars");
 
@@ -50,33 +51,32 @@ static void test_decodeUptoMaxInt(void) {
 
 static void test_hashBlock(void) {
   printf("Test hashBlock\n");
-  /* 'expected' is the expected CMR for the 'hashBlock' Simplicity expression. */
-  const uint32_t expectedCMR[8] =
-    { 0xe26d71c3ul, 0x18e61d3aul, 0x9b31a9cdul, 0x8bee8d4dul
-    , 0x3ab0ab65ul, 0x6e7759f0ul, 0xaa10d1ddul, 0x089c8582ul
-    };
-  const uint32_t expectedWMR[8] =
-    { 0xeeae47e2ul, 0xf7876c3bul, 0x9cbcd404ul, 0xa338b089ul
-    , 0xfdeadf1bul, 0x9bb382ecul, 0x6e69719dul, 0x31baec9aul
-    };
   dag_node* dag = NULL;
   combinator_counters census;
-  int32_t len;
+  int32_t len, err = 0;
+  bitstring witness;
   {
     FILE* file = fmemopen_rb(hashBlock, sizeof_hashBlock);
     bit_stream stream = initializeBitStream(file);
     len = decodeMallocDag(&dag, &census, &stream);
+    if (!dag) {
+      failures++;
+      printf("Error parsing dag: %d\n", len);
+    } else {
+      err = decodeMallocWitnessData(&witness, &stream);
+      if (err < 0) {
+        failures++;
+        printf("Error parsing witness: %d\n", err);
+      }
+    }
     fclose(file);
   }
-  if (!dag) {
-    failures++;
-    printf("Error parsing dag: %d\n", len);
-  } else {
+  if (dag && 0 <= err) {
     successes++;
 
     analyses analysis[len];
     computeCommitmentMerkleRoot(analysis, dag, (size_t)len);
-    if (0 == memcmp(expectedCMR, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]))) {
+    if (0 == memcmp(hashBlock_cmr, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]))) {
       successes++;
     } else {
       failures++;
@@ -87,9 +87,12 @@ static void test_hashBlock(void) {
     if (!type_dag) {
       failures++;
       printf("Unexpected failure of type inference for hashblock\n");
+    } else if (!fillWitnessData(dag, type_dag, (size_t)len, witness)) {
+      failures++;
+      printf("Unexpected failure of fillWitnessData for hashblock\n");
     } else {
       computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
-      if (0 == memcmp(expectedWMR, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]))) {
+      if (0 == memcmp(hashBlock_wmr, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]))) {
         successes++;
       } else {
         failures++;
@@ -131,61 +134,63 @@ static void test_hashBlock(void) {
   free(dag);
 }
 
-static void test_schnorrAssert(void) {
-  printf("Test schnorrAssert\n");
+static void test_program(char* name, FILE* file, bool expectedResult, const uint32_t* expectedCMR, const uint32_t* expectedWMR) {
+  printf("Test %s\n", name);
   dag_node* dag = NULL;
   combinator_counters census;
-  int32_t len;
+  int32_t len, err = 0;
+  bitstring witness;
   {
-    FILE* file = fmemopen_rb(schnorrAssert, sizeof_schnorrAssert);
     bit_stream stream = initializeBitStream(file);
     len = decodeMallocDag(&dag, &census, &stream);
-    fclose(file);
+    if (!dag) {
+      failures++;
+      printf("Error parsing dag: %d\n", len);
+    } else {
+      err = decodeMallocWitnessData(&witness, &stream);
+      if (err < 0) {
+        failures++;
+        printf("Error parsing witness: %d\n", err);
+      }
+    }
   }
-  if (!dag) {
-    failures++;
-    printf("Error parsing dag: %d\n", len);
-  } else {
+  if (dag && 0 <= err) {
+    successes++;
+
     analyses analysis[len];
+    computeCommitmentMerkleRoot(analysis, dag, (size_t)len);
+    if (expectedCMR) {
+      if (0 == memcmp(expectedCMR, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]))) {
+        successes++;
+      } else {
+        failures++;
+        printf("Unexpected CMR.\n");
+      }
+    }
     type* type_dag = mallocTypeInference(dag, (size_t)len, &census);
     if (!type_dag) {
       failures++;
-      printf("Unexpected failure of type inference for schnorrAssert.\n");
+      printf("Unexpected failure of type inference.\n");
+      return;
+    } else if (!fillWitnessData(dag, type_dag, (size_t)len, witness)) {
+      failures++;
+      printf("Unexpected failure of fillWitnessData.\n");
     } else {
-      _Static_assert(UWORD_BIT - 1 <= SIZE_MAX - (1+256+256+512), "UWORD_BIT is far too large.");
-      UWORD input[roundUWord(1+256+256+512)];
       computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
+      if (expectedWMR) {
+        if (0 == memcmp(expectedWMR, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]))) {
+          successes++;
+        } else {
+          failures++;
+          printf("Unexpected WMR.\n");
+        }
+      }
       forceJets(dag, analysis, (size_t)len, JET_ALL);
-      { frameItem frame = initWriteFrame(1+256+256+512, &input[roundUWord(1+256+256+512)]);
-        writeBit(&frame, 0);
-        write32s(&frame, (uint32_t[32])
-            { 0x79BE667E, 0xF9DCBBAC, 0x55A06295, 0xCE870B07, 0x029BFCDB, 0x2DCE28D9, 0x59F2815B, 0x16F81798
-            , 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-            , 0x787A848E, 0x71043D28, 0x0C50470E, 0x8E1532B2, 0xDD5D20EE, 0x912A45DB, 0xDD2BD1DF, 0xBF187EF6
-            , 0x7031A988, 0x31859DC3, 0x4DFFEEDD, 0xA8683184, 0x2CCD0079, 0xE1F92AF1, 0x77F7F22C, 0xC1DCED05 }
-          , 32);
-      }
-      if (evalTCOExpression(NULL, 0, input, 1+256+256+512, dag, type_dag, (size_t)len)) {
+      if (expectedResult == evalTCOProgram(dag, type_dag, (size_t)len)) {
         successes++;
       } else {
         failures++;
-        printf("Unexpected failure of schnorrAssert evaluation 1.\n");
-      }
-
-      { frameItem frame = initWriteFrame(1+256+256+512, &input[roundUWord(1+256+256+512)]);
-        writeBit(&frame, 1);
-        write32s(&frame, (uint32_t[32])
-            { 0xFAC2114C, 0x2FBB0915, 0x27EB7C64, 0xECB11F80, 0x21CB45E8, 0xE7809D3C, 0x0938E4B8, 0xC0E5F84B
-            , 0x5E2D58D8, 0xB3BCDF1A, 0xBADEC782, 0x9054F90D, 0xDA9805AA, 0xB56C7733, 0x3024B9D0, 0xA508B75C
-            , 0x00DA9B08, 0x172A9B6F, 0x0466A2DE, 0xFD817F2D, 0x7AB437E0, 0xD253CB53, 0x95A96386, 0x6B3574BE
-            , 0xD092F9D8, 0x60F1776A, 0x1F7412AD, 0x8A1EB50D, 0xACCC222B, 0xC8C0E26B, 0x2056DF2F, 0x273EFDEC }
-          , 32);
-      }
-      if (!evalTCOExpression(NULL, 0, input, 1+256+256+512, dag, type_dag, (size_t)len)) {
-        successes++;
-      } else {
-        failures++;
-        printf("Unexpected success of schnorrAssert evaluation 2.\n");
+        printf(expectedResult ? "Unexpected failure of evaluation.\n" : "Unexpected success of evaluation.\n");
       }
     }
     free(type_dag);
@@ -225,7 +230,16 @@ int main(void) {
   test_decodeUptoMaxInt();
   test_hashBlock();
   test_occursCheck();
-  test_schnorrAssert();
+  {
+    FILE* file = fmemopen_rb(schnorr1, sizeof_schnorr1);
+    test_program("schnorr1", file, true, schnorr1_cmr, schnorr1_wmr);
+    fclose(file);
+  }
+  {
+    FILE* file = fmemopen_rb(schnorr8, sizeof_schnorr8);
+    test_program("schnorr8", file, false, schnorr8_cmr, schnorr8_wmr);
+    fclose(file);
+  }
 
   printf("Successes: %d\n", successes);
   printf("Failures: %d\n", failures);
