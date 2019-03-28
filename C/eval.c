@@ -232,6 +232,69 @@ static void copyBits(frameItem* dst, const frameItem* src, size_t n) {
   dst->offset -= n;
 }
 
+/* Given the contents of a 'witness v : A |- B' expression, write the value 'v' to a write frame and advance its cursor.
+ * Cells in front of the '*dst's cursor's final position may be overwritten.
+ *
+ * Precondition: '*dst' is a valid write frame for 'bitSize(B)' more cells;
+ *               'type_dag[witness->typeAnnotation[1]]' is a type dag for the type B;
+ *               'witness->data' is a compact bitstring representation of a value 'v : B'.
+ */
+static void writeWitness(frameItem* dst, const witnessInfo* witness, type* type_dag) {
+  size_t cur = typeSkip(witness->typeAnnotation[1], type_dag);
+  size_t offset = witness->data.offset;
+  bool calling = true;
+  type_dag[cur].back = 0;
+  while (cur) {
+    if (SUM == type_dag[cur].kind) {
+      assert(calling);
+
+      /* Write one bit to the write frame and then skip over any padding bits. */
+      bool bit = 1 & (witness->data.arr[offset/CHAR_BIT] >> (CHAR_BIT - 1 - offset % CHAR_BIT));
+      offset++;
+      writeBit(dst, bit);
+      skip(dst, pad(bit, type_dag[type_dag[cur].typeArg[0]].bitSize, type_dag[type_dag[cur].typeArg[1]].bitSize));
+
+      size_t next = typeSkip(type_dag[cur].typeArg[bit], type_dag);
+      if (next) {
+        type_dag[next].back = type_dag[cur].back;
+        cur = next;
+      } else {
+        cur = type_dag[cur].back;
+        calling = false;
+      }
+    } else {
+      assert(PRODUCT == type_dag[cur].kind);
+      size_t next;
+      if (calling) {
+        next = typeSkip(type_dag[cur].typeArg[0], type_dag);
+        if (next) {
+          /* Travese the first element of the product type, if it has any data. */
+          type_dag[next].back = cur;
+          cur = next;
+          continue;
+        }
+      }
+      next = typeSkip(type_dag[cur].typeArg[1], type_dag);
+      if (next) {
+        /* Travese the second element of the product type, if it has any data. */
+        type_dag[next].back = type_dag[cur].back;
+        cur = next;
+        calling = true;
+      } else {
+        cur = type_dag[cur].back;
+        calling = false;
+      }
+    }
+  }
+  /* Note: Above we use 'typeSkip' to skip over long chains of products against trivial types
+   * This avoids a potential DOS vunlernability where a DAG of deeply nested products of unit types with sharing is traversed,
+   * taking exponential time.
+   * While traversing still could take exponential time in terms of the size of the type's dag,
+   * at least one bit of witness data is required per PRODUCT type encountered.
+   * This ought to limit the total number of times through the above loop to no more that 3 * dag[i].witness.data.len.
+   */
+}
+
 /* Our representation of the Bit Machine state consists of a gap buffer of 'frameItem's.
  * The gap buffer is allocated at 'frame'
  * The read frames of the gap buffer extends from the beginning of the buffer to '.activeReadFrame'.
@@ -270,7 +333,7 @@ typedef struct call {
  *               call stack[len];
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
  */
-static bool runTCO(evalState state, call* stack, const dag_node* dag, const type* type_dag, size_t len) {
+static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type_dag, size_t len) {
 /* The program counter, 'pc', is the current combinator being interpreted.  */
   size_t pc = len - 1;
 
@@ -414,12 +477,20 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, const type
       }
       break;
      case IDEN:
+     case WITNESS:
      case JET:
-      if (IDEN == dag[pc].tag) {
+      switch (dag[pc].tag) {
+       case IDEN:
          copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
-      } else {
-         assert(JET == dag[pc].tag);
+         break;
+       case WITNESS:
+         writeWitness(state.activeWriteFrame, &dag[pc].witness, type_dag);
+         break;
+       case JET:
          if(!dag[pc].jet(state.activeWriteFrame, *state.activeReadFrame)) return false;
+         break;
+       default:
+         assert(false);
       }
       /*@fallthrough@*/
      case UNIT:
@@ -434,10 +505,9 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, const type
       pc = stack[pc].return_to;
       break;
      case HIDDEN: return false; /* We have failed an 'ASSERTL' or 'ASSERTR' combinator. */
-     case WITNESS:
      default:
-      /* :TODO: Support witness, jets and primitives */
-      fprintf(stderr, "evalTCO for witness, jets, and primitives not yet implemented\n");
+      /* :TODO: Support jets and primitives */
+      fprintf(stderr, "evalTCO for jets, and primitives not yet implemented\n");
       exit(EXIT_FAILURE);
       break;
     }
@@ -566,7 +636,7 @@ static memBound computeEvalTCOBound(const dag_node* dag, const type* type_dag, c
  *               input == NULL or UWORD input[roundUWord(inputSize)];
  */
 bool evalTCOExpression( UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
-                      , const dag_node* dag, const type* type_dag, size_t len
+                      , const dag_node* dag, type* type_dag, size_t len
                       ) {
   memBound bound = computeEvalTCOBound(dag, type_dag, len);
   size_t cellsBound = bounded_add( bounded_add(roundUWord(inputSize), roundUWord(outputSize))

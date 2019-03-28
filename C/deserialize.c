@@ -246,7 +246,7 @@ int32_t decodeUptoMaxInt(bit_stream* stream) {
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
  *
- * :TODO: Decoding of witness, primitives and jets are not implemented yet.
+ * :TODO: Decoding of primitives and jets are not implemented yet.
  *
  * Precondition: dag_node dag[i + 1];
  *               i < 2^31 - 1
@@ -308,9 +308,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
         return getHash(&(dag[i].hash), stream);
        case 1:
         dag[i].tag = WITNESS;
-        // TODO: parse witness data
-        fprintf(stderr, "witness nodes not yet implemented\n");
-        exit(EXIT_FAILURE);
+        return 0;
       }
       assert(0);
     }
@@ -360,17 +358,18 @@ static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* c
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
- * Returns 0 if malloc fails.
+ * Returns 'ERR_MALLOC' if malloc fails.
  * In the above error cases, '*dag' is set to NULL.
  * If successful, returns a positive value equal to the length of an allocated array of (*dag).
  *
  * Precondition: NULL != dag
  *               NULL != stream
  *
- * Postcondition: (dag_node (*dag)[return_value] and '*dag' is a well-formed dag) when the return value of the function is positive;
+ * Postcondition: if the return value of the function is positive
+ *                  then (dag_node (*dag)[return_value] and '*dag' is a well-formed dag without witness data);
  *                '*census' contains a tally of the different tags that occur in 'dag' when the return value
- *                          of the function is positive and NULL != census;
- *                NULL == *dag when the return value is non-positive.
+ *                          of the function is positive and when NULL != census;
+ *                NULL == *dag when the return value is negative.
  */
 int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream* stream) {
   *dag = NULL;
@@ -379,7 +378,7 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream*
   /* :TODO: a consensus parameter limiting the maximum length of a DAG needs to be enforeced here */
   if (PTRDIFF_MAX / sizeof(dag_node) < (size_t)dagLen) return ERR_DATA_OUT_OF_RANGE;
   *dag = malloc(sizeof(dag_node[dagLen]));
-  if (!*dag) return 0;
+  if (!*dag) return ERR_MALLOC;
 
   if (census) *census = (combinator_counters){0};
   int32_t err = decodeDag(*dag, (size_t)dagLen, census, stream);
@@ -390,4 +389,53 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream*
   } else {
     return dagLen;
   }
+}
+
+/* Decode a string of up to 2^31 - 1 bits from 'stream'.
+ * This is the format in which the data for 'WITNESS' nodes are encoded.
+ * Returns 'ERR_DATA_OUT_OF_RANGE' if the encoded string of bits exceeds this decoder's limits.
+ * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 'ERR_MALLOC' if malloc fails.
+ * If successful, '*witness' is set to the decoded bitstring and 0 is returned.
+ *
+ * Precondition: NULL != witness;
+ *
+ * Postcondition: if 'result == 0' and '0 < witness->len' then
+ *                  'unsigned char witness->arr[(witness->len + witness->offset - 1) / CHAR_BIT + 1] and
+ *                  (*witness) represents a some bitstring;
+ *                if 'result < 0' or 'wintess->len == 0' then witness->arr == NULL;
+ */
+int32_t decodeMallocWitnessData(bitstring* witness, bit_stream* stream) {
+  *witness = (bitstring){ 0 };
+  int32_t bit = getBit(stream);
+  if (bit <= 0) return bit; /* Either an error was encountered or the witness data is the empty bitstring. */
+  int32_t witnessLen = decodeUptoMaxInt(stream);
+  if (witnessLen < 0) return witnessLen;
+  witness->len = (size_t)witnessLen;
+  /* :TODO: A consensus parameter limiting the maximum length of the witness data blob needs to be enforced here */
+  if (PTRDIFF_MAX - 1 <= witness->len / CHAR_BIT) return ERR_DATA_OUT_OF_RANGE;
+
+  /* We directly operate on the representation of 'stream' to quickly extract the bitstring from the underlying 'FILE'. */
+  int32_t err = ensureBuffer(stream);
+  if (err < 0) return err;
+
+  witness->offset = (size_t)(CHAR_BIT - stream->available);
+  size_t arrayLen = (witness->len - 1 + witness->offset) / CHAR_BIT + 1;
+  unsigned char* arr = malloc(arrayLen);
+  if (!arr) return ERR_MALLOC;
+
+  arr[0] = stream->byte;
+  size_t charRead = fread(arr + 1, 1, arrayLen - 1, stream->file);
+  if (charRead != arrayLen - 1) {
+    free(arr);
+    return ERR_BITSTREAM_EOF;
+  }
+
+  /* Rebuild 'stream's structure as if we read 'witnessLen' bits from the stream */
+  stream->byte = arr[arrayLen - 1];
+  /* Set stream->available to (stream->available - witnessLen) mod CHAR_BIT. */
+  stream->available = (stream->available + CHAR_BIT - 1 - (witnessLen - 1) % CHAR_BIT) % CHAR_BIT;
+
+  witness->arr = arr;
+  return 0;
 }

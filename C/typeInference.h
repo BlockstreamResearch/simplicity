@@ -19,7 +19,7 @@
  *               '*census' contains a tally of the different tags that occur in 'dag'.
  *
  * Postcondition: the return value is NULL
- *             or 'dag' is well-typed with the allocated return value.
+ *             or 'dag' is well-typed with the allocated return value and without witness values.
  */
 type* mallocTypeInference(dag_node* dag, size_t len, const combinator_counters* census);
 
