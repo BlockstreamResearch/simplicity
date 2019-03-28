@@ -69,6 +69,26 @@ static inline size_t numChildren(int32_t tag) {
   }
 }
 
+/* Represents a bitstring of length 'len' bits using an array of unsigned char.
+ * The bit at index 'n', where 0 <= 'n' < 'len', is located at bit '1 << (CHAR_BIT - 1 - (offset + n) % CHAR_BIT)' of
+ * array element 'arr[(offset + n) / CHAR_BIT]'.
+ * Other bits in the array may be any value.
+ *
+ * Invariant: 0 < len implies
+ *              unsigned char arr[(offset + len - 1) / CHAR_BIT + 1];
+ */
+typedef struct bitstring {
+  size_t len;
+  size_t offset;
+  const unsigned char* arr;
+} bitstring;
+
+/* The contents of a 'WITNESS' node that has witness data. */
+typedef struct witnessInfo {
+  size_t typeAnnotation[2]; /* A 'witness v : A |- B' expression has only 2 type annotations. */
+  bitstring data;           /* A compect bitstring representation for a value 'v' of type 'B'. */
+} witnessInfo;
+
 /* A node the the DAG of a Simplicity expression.
  * It consists of a 'tag' indicating the kind of expression the node represents.
  * The contents of a node depend on the kind of the expressions.
@@ -77,15 +97,18 @@ static inline size_t numChildren(int32_t tag) {
  * Invariant: 'tag' is a valid tag;
  *            sha256_midstate hash is active when tag == HIDDEN;
  *            jet_ptr jet is active when tag == JET;
- *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, JET};
+ *            witnessInfo witness is be active when tag == WITNESS and the node has witness data
+ *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, JET, WITNESS};
+ *                                        or when tag == WITNESS and the node is without witness data.
  */
 typedef struct dag_node {
   int32_t tag;
   union {
     struct {
-      size_t child[2];
       size_t typeAnnotation[4];
+      size_t child[2];
     };
+    witnessInfo witness;
     sha256_midstate hash;
     jet_ptr jet;
   };
@@ -142,7 +165,7 @@ void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, size_t
  * The WMR of the overall expression will be 'analysis[len - 1].witnessMerkleRoot'.
  *
  * Precondition: analyses analysis[len];
- *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
+ *               dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'.
  * Postconditon: analyses analysis[len] contains the witness Merkle roots of each subexpressions of 'dag'.
  */
 void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
@@ -154,9 +177,22 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
  * A 'filter' can be set to only force some kinds of jets.  This parameter is mostly used for testing purposes.
  * In produciton we expect 'filter' to be passed the 'JET_ALL' value.
  *
- * Precondition: dag_node dag[len] and 'dag' is well-typed;
+ * Precondition: dag_node dag[len] and 'dag' has witness data and is well-typed;
  *               analyses analysis[len] contains the witness Merkle roots for each subexpression of 'dag'.
  */
 void forceJets(dag_node* dag, const analyses* analysis, size_t len, JET_FLAG filter);
+
+/* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
+ * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
+ * to construct a compact representation of a witness value of type B.
+ * This funciton only returns 'true' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
+ *
+ * Precondition: dag_node dag[len] and 'dag' without witness data and is well-typed with 'type_dag';
+ *               witness is a valid bitstring;
+ *
+ * Postcondition: dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'
+ *                  when the result is 'true';
+ */
+bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring witness);
 
 #endif

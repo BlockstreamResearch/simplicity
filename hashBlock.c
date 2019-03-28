@@ -211,3 +211,14 @@ const unsigned char hashBlock[] = {
 };
 
 const size_t sizeof_hashBlock = sizeof(hashBlock);
+
+
+/* The commitment Merkle root of the above hashBlock Simplicity expression. */
+const uint32_t hashBlock_cmr[] = {
+  0xe26d71c3u, 0x18e61d3au, 0x9b31a9cdu, 0x8bee8d4du, 0x3ab0ab65u, 0x6e7759f0u, 0xaa10d1ddu, 0x089c8582u
+};
+
+/* The witness Merkle root of the above hashBlock Simplicity expression. */
+const uint32_t hashBlock_wmr[] = {
+  0xeeae47e2u, 0xf7876c3bu, 0x9cbcd404u, 0xa338b089u, 0xfdeadf1bu, 0x9bb382ecu, 0x6e69719du, 0x31baec9au
+};

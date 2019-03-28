@@ -609,6 +609,10 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
      case UNIT:
       FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, &(arrow[i].source));
       break;
+     case WITNESS:
+      FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, &(arrow[i].source));
+      FREEZE(&(dag[i].typeAnnotation[1]), type_dag, &type_dag_used, &(arrow[i].target));
+      break;
       #undef FREEZE
      /* Jets and Primitives do not have type annotations. */
     }
@@ -632,7 +636,7 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
  *               '*census' contains a tally of the different tags that occur in 'dag'.
  *
  * Postcondition: the return value is NULL
- *             or 'dag' is well-typed with the allocated return value.
+ *             or 'dag' is well-typed with the allocated return value and without witness values.
  */
 type* mallocTypeInference(dag_node* dag, const size_t len, const combinator_counters* census) {
   unification_var bound_var[] =

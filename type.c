@@ -34,17 +34,23 @@ static sha256_midstate tmrIV(typeName kind) {
   return (sha256_midstate){0};
 }
 
-/* Given a well-formed 'type_dag', compute the bitSizes and type Merkle roots of all subexpressions.
+/* Given a well-formed 'type_dag', compute the bitSizes, skips, and type Merkle roots of all subexpressions.
  * For all 'i', 0 <= 'i' < 'len',
  *   'type_dag[i].typeMerkleRoot' will be the TMR
  *   and 'type_dag[i].bitSize' will be the bitSize of the subexpression denoted by the slice
  *
  *     (type_dag[i + 1])type_dag.
  *
+ *   and when 'type_dag[i]' represents a non-trival 'PRODUCT' type, where one of the two type arguments a trivial type.
+ *       then 'type_dag[i].skip' is the index of the largest subexpression of 'type_dag[i]' such that
+ *        either 'type_dag[type_dag[i].skip]' is a 'SUM' type
+ *            or 'type_dag[type_dag[i].skip]' is a 'PRODUCT' type of two non-trival types.
+ *
  * Precondition: type type_dag[len] and 'type_dag' is well-formed.
  */
 void computeTypeAnalyses(type* type_dag, const size_t len) {
   for (size_t i = 0; i < len; ++i) {
+    type_dag[i].skip = i;
     switch (type_dag[i].kind) {
      case ONE:
       type_dag[i].bitSize = 0;
@@ -55,6 +61,11 @@ void computeTypeAnalyses(type* type_dag, const size_t len) {
       break;
      case PRODUCT:
       type_dag[i].bitSize = bounded_add(type_dag[type_dag[i].typeArg[0]].bitSize, type_dag[type_dag[i].typeArg[1]].bitSize);
+      if (0 == type_dag[type_dag[i].typeArg[0]].bitSize) {
+        type_dag[i].skip = type_dag[type_dag[i].typeArg[1]].skip;
+      } else if (0 == type_dag[type_dag[i].typeArg[1]].bitSize) {
+        type_dag[i].skip = type_dag[type_dag[i].typeArg[0]].skip;
+      }
     }
 
     type_dag[i].typeMerkleRoot = tmrIV(type_dag[i].kind);

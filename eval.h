@@ -25,7 +25,7 @@
  *               input == NULL or UWORD input[roundUWord(inputSize)];
  */
 bool evalTCOExpression( UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
-                      , const dag_node* dag, const type* type_dag, size_t len
+                      , const dag_node* dag, type* type_dag, size_t len
                       );
 
 /* Run the Bit Machine on the well-typed Simplicity program 'dag[len]'.
@@ -37,7 +37,7 @@ bool evalTCOExpression( UWORD* output, size_t outputSize, const UWORD* input, si
  *
  * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type 1 |- 1;
  */
-static inline bool evalTCOProgram(const dag_node* dag, const type* type_dag, size_t len) {
+static inline bool evalTCOProgram(const dag_node* dag, type* type_dag, size_t len) {
   return evalTCOExpression( NULL, 0, NULL, 0, dag, type_dag, len);
 }
 #endif
