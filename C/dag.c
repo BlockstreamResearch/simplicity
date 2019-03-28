@@ -138,24 +138,6 @@ static sha256_midstate wmrIV(int32_t tag) {
 
 /* Given a SHA-256 midstate, 's', of '*count / 512' blocks, and
  * a 'block' with '*count % 512' bits set and with the remaining bits set to 0,
- * push a new bit of value 'bit' onto the block.
- * If the block ends up full, compress and update the midstate.
- *
- * Precondition: uint32_t s[8];
- *               uint32_t block[16];
- *               NULL != count;
- */
-static void sha256_pushBit(uint32_t* s, uint32_t* block, size_t* count, bool bit) {
-  if (bit) block[*count / 32 % 16] |= (uint32_t)1 << (31 - *count % 32);
-  (*count)++;
-  if (0 == *count % 512) {
-    sha256_compression(s, block);
-    memset(block, 0, sizeof(uint32_t[16]));
-  }
-}
-
-/* Given a SHA-256 midstate, 's', of '*count / 512' blocks, and
- * a 'block' with '*count % 512' bits set and with the remaining bits set to 0,
  * finalize the SHA-256 computation by adding SHA-256 padding and set 's' to the resulting SHA-256 hash.
  *
  * Precondition: uint32_t s[8];
@@ -163,9 +145,8 @@ static void sha256_pushBit(uint32_t* s, uint32_t* block, size_t* count, bool bit
  *               NULL != count;
  */
 static void sha256_end(uint32_t* s, uint32_t* block, const size_t len) {
-  size_t count = len;
-  sha256_pushBit(s, block, &count, 1);
-  if (448 < count % 512) {
+  block[len / 32 % 16] |= (uint32_t)1 << (31 - len % 32);
+  if (448 <= len % 512) {
     sha256_compression(s, block);
     memset(block, 0, sizeof(uint32_t[14]));
   }
@@ -180,15 +161,53 @@ static void sha256_end(uint32_t* s, uint32_t* block, const size_t len) {
  *               (*witness) is a valid bitstring;
  */
 static void sha256_witnessData(uint32_t* s, const bitstring* witness) {
+  /* This static assert should never fail if uint32_t exists.
+   * But for more certainty, we note that the correctness of this implementation depends on CHAR_BIT being no more than 32.
+   */
+  _Static_assert(CHAR_BIT <= 32, "CHAR_BIT has to be less than 32 for uint32_t to even exist.");
+
   uint32_t block[16] = { 0 };
   size_t count = 0;
   sha256_iv(s);
-  /* :TODO: Optimize this loop. */
-  while (count < witness->len) {
-    sha256_pushBit(s, block, &count, 1 & witness->arr[(witness->offset + count)/CHAR_BIT]
-                                      >> (CHAR_BIT - 1 - (witness->offset + count) % CHAR_BIT));
+  if (witness->len) {
+    block[0] = witness->arr[witness->offset / CHAR_BIT];
+    if (witness->len < CHAR_BIT - witness->offset % CHAR_BIT) {
+      /* witness->len is so short that we don't even use a whole char.
+       * Zero out the low bits.
+       */
+      block[0] = block[0] >> (CHAR_BIT - witness->offset % CHAR_BIT - witness->len)
+                          << (CHAR_BIT - witness->offset % CHAR_BIT - witness->len);
+      count = witness->len;
+    } else {
+      count = CHAR_BIT - witness->offset % CHAR_BIT;
+    }
+    block[0] = 1U * block[0] << (32 - CHAR_BIT + witness->offset % CHAR_BIT);
+
+    while (count < witness->len) {
+      unsigned char ch = witness->arr[(witness->offset + count)/CHAR_BIT];
+      size_t delta = CHAR_BIT;
+      if (witness->len - count < CHAR_BIT) {
+        delta = witness->len - count;
+        /* Zero out any extra low bits that 'ch' may have. */
+        ch = (unsigned char)(ch >> (CHAR_BIT - delta) << (CHAR_BIT - delta));
+      }
+
+      if (count / 32 != (count + CHAR_BIT) / 32) {
+        /* The next character from witness->arr straddles (or almost staddles) the boundary of two elements of the block array. */
+        block[count / 32 % 16] |= (uint32_t)(ch >> (count + CHAR_BIT) % 32);
+        if (count / 512 != (count + delta) / 512) {
+          sha256_compression(s, block);
+          memset(block, 0, sizeof(uint32_t[16]));
+        }
+      }
+      if ((count + CHAR_BIT) % 32) {
+        block[(count + CHAR_BIT) / 32 % 16] |= 1U * ch << (32 - (count + CHAR_BIT) % 32);
+      }
+      count += delta;
+    }
   }
-  sha256_end(s, block, count);
+  assert(count == witness->len);
+  sha256_end(s, block, witness->len);
 }
 
 /* Given a well-formed dag representing a Simplicity expression, compute the commitment Merkle roots of all subexpressions.
