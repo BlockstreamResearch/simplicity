@@ -14,7 +14,7 @@
 #define COMMITMENT_TAG(s) "Simplicity\x1F" "Commitment\x1F" s
 #define WITNESS_TAG(s) "Simplicity\x1F" "Witness\x1F" s
 
-/* Given a tag for a core or witness expression node, return the SHA-256 hash of its assocaited CMR tag.
+/* Given a tag for a node, return the SHA-256 hash of its assocaited CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
  *
  * Precondition: 'tag' is a valid tag;
@@ -64,12 +64,16 @@ static sha256_midstate cmrIV(int32_t tag) {
    case UNIT: return unitIV;
    case WITNESS: return witnessIV;
   }
+  /* :TODO: Support jets and primitives */
+  fprintf(stderr, "Commitment Merkle root for jets and primitives not yet implemented\n");
+  exit(EXIT_FAILURE);
+
   /* Precondition violated. */
   assert(false);
   return (sha256_midstate){0};
 }
 
-/* Given a tag for a core or witness expression node, return the SHA-256 hash of its assocaited WMR tag.
+/* Given a tag for a node, return the SHA-256 hash of its assocaited WMR tag.
  * This is the "initial value" for computing the witness Merkle root for that expression.
  *
  * Precondition: 'tag' is a valid tag;
@@ -123,6 +127,10 @@ static sha256_midstate wmrIV(int32_t tag) {
    case UNIT: return unitIV;
    case WITNESS: return witnessIV;
   }
+  /* :TODO: Support jets and primitives */
+  fprintf(stderr, "Witness Merkle root for jets and primitives not yet implemented\n");
+  exit(EXIT_FAILURE);
+
   /* Precondition violated. */
   assert(false);
   return (sha256_midstate){0};
