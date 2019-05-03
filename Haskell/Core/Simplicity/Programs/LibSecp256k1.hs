@@ -36,7 +36,7 @@ import Simplicity.Programs.Generic
 import Simplicity.Programs.Word
 import Simplicity.Programs.Sha256
 import Simplicity.Ty
-import Simplicity.Term
+import Simplicity.Term.Core
 
 -- The number of elements in secp256k1's field.
 feOrder :: Integer

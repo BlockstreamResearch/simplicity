@@ -9,7 +9,7 @@ module Simplicity.Programs.Bit
 
 import Prelude hiding (drop, take, not, and, or)
 
-import Simplicity.MerkleRoot
+import Simplicity.MerkleRoot.Core
 import Simplicity.Ty.Bit
 import Simplicity.Term.Core
 

@@ -7,10 +7,10 @@ module Simplicity.Programs.Loop
 import Prelude hiding (take)
 
 import Simplicity.Digest
-import Simplicity.MerkleRoot
+import Simplicity.MerkleRoot.Core
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
-import Simplicity.Term
+import Simplicity.Term.Core
 import Simplicity.Tensor
 import Simplicity.Ty.Word
 

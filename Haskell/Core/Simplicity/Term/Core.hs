@@ -29,6 +29,7 @@ import Control.Monad ((>=>))
 import qualified Control.Monad.Fail as Fail
 
 import Simplicity.Digest
+import Simplicity.Tensor
 import Simplicity.Ty
 import Simplicity.Ty.Word
 
@@ -172,3 +173,25 @@ instance Monad m => Witness (Kleisli m) where
 -- | This class adds 'disconnect' expressions to the Simplicity language, which can be used for delegation.
 class Delegate term where
   disconnect :: (TyC a, TyC b, TyC c, TyC d) => term (a, Word256) (b, c) -> term c d -> term a (b, d)
+
+instance (Core p, Core q) => Core (Product p q) where
+  iden = Product iden iden
+  comp ~(Product rs fs) ~(Product rt ft) = Product (comp rs rt) (comp fs ft)
+  unit = Product unit unit
+  injl ~(Product rt ft) = Product (injl rt) (injl ft)
+  injr ~(Product rt ft) = Product (injr rt) (injr ft)
+  match ~(Product rs fs) ~(Product rt ft) = Product (match rs rt) (match fs ft)
+  pair ~(Product rs fs) ~(Product rt ft) = Product (pair rs rt) (pair fs ft)
+  take ~(Product rt ft) = Product (take rt) (take ft)
+  drop ~(Product rt ft) = Product (drop rt) (drop ft)
+
+instance (Assert p, Assert q) => Assert (Product p q) where
+  assertl ~(Product rs fs) t = Product (assertl rs t) (assertl fs t)
+  assertr s ~(Product rt ft) = Product (assertr s rt) (assertr s ft)
+  fail b = Product (fail b) (fail b)
+
+instance (Witness p, Witness q) => Witness (Product p q) where
+  witness b = Product (witness b) (witness b)
+
+instance (Delegate p, Delegate q) => Delegate (Product p q) where
+  disconnect ~(Product rs fs) ~(Product rt ft) = Product (disconnect rs rt) (disconnect fs ft)

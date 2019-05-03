@@ -1,4 +1,4 @@
-{-# LANGUAGE ExistentialQuantification, GADTs, TypeOperators, TypeFamilies, DeriveTraversable #-}
+{-# LANGUAGE UndecidableInstances, QuantifiedConstraints, RankNTypes, ExistentialQuantification, GADTs, TypeOperators, TypeFamilies, DeriveTraversable #-}
 -- | This module provides representations of Simplicity types in Haskell.
 --
 -- The 'TyC' class captures those Haskell types that correspond to Simplicity types.
@@ -25,6 +25,7 @@ import Prelude hiding (sum, prod)
 
 import Control.Unification.Types (Unifiable, zipMatch)
 import Data.Functor.Fixedpoint (Fix(..))
+import Data.Maybe (fromMaybe)
 import Data.MemoTrie (HasTrie(..), memo)
 import Data.Type.Equality ((:~:)(Refl))
 import Lens.Family2 ((&), (%~))
@@ -131,6 +132,15 @@ getValueR (ProdR a b) next = (,) <$> getValueR a next <*> getValueR b next
 
 -- | @SomeArrow arr@ captures the existential type @exists a b. (Ty a, TyC b) *> arr a b@.
 data SomeArrow arr = forall a b. (TyC a, TyC b) => SomeArrow (arr a b)
+
+instance (forall a b. (TyC a, TyC b) => Eq (arr a b)) => Eq (SomeArrow arr) where
+ (SomeArrow p0) == (SomeArrow p1) = fromMaybe False $ do
+   Refl <- equalTyReflect ra0 ra1
+   Refl <- equalTyReflect rb0 rb1
+   return $ p0 == p1
+  where
+   (ra0, rb0) = reifyArrow p0
+   (ra1, rb1) = reifyArrow p1
 
 -- | A pseudo-constructor for @SomeArrow@ that provides proxy arguments to help specify the type parameters.
 someArrowR :: (TyC a, TyC b) => proxy a -> proxy b -> arr a b -> SomeArrow arr

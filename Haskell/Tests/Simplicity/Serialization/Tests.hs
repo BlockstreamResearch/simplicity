@@ -107,7 +107,7 @@ compareDag compareWitness v1 v2 = (and $ zipWith compareNode v1 v2) && (length v
   compareNode (Disconnect _ _ _ _ x0 y0) (Disconnect _ _ _ _ x1 y1) = [x0,y0] == [x1,y1]
   compareNode (Hidden h0) (Hidden h1) = h0 == h1
   compareNode (Witness _ b0 w0) (Witness _ b1 w1) = compareWitness b0 w0 b1 w1
-  compareNode (Prim p0) (Prim p1) = somePrimEq p0 p1
+  compareNode (Prim p0) (Prim p1) = p0 == p1
   compareNode _ _ = False
 
 -- Check that 'BitString.putDag's serialization of 'SimplicityDag's works can be deserialized by a combination of 'BitString.getDagNoWitness' and 'BitString.getWitnessData'.

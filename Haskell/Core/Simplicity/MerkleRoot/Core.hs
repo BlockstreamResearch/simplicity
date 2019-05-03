@@ -1,12 +1,13 @@
 -- | This module provides functions for computing commitment Merkle roots and witness Merkle roots of Simplicity expressions and Merkle roots of Simplicity types.
 -- It also provides some other functions for other hashing schemes that will avoid collisions with the aforementioned Merkle roots.
-module Simplicity.MerkleRoot
+module Simplicity.MerkleRoot.Core
   ( typeRoot, typeRootR
   , CommitmentRoot, commitmentRoot
   , WitnessRoot, witnessRoot
   , hiddenRoot
   , signatureIv
   , cmrFail0
+  , tag, prefix, commit, observe
   ) where
 
 import qualified Data.ByteString as BS
@@ -17,8 +18,7 @@ import Data.Serialize (encode)
 import Data.Proxy (Proxy(..))
 
 import Simplicity.Digest
-import Simplicity.Primitive
-import Simplicity.Term
+import Simplicity.Term.Core
 import Simplicity.Ty.Word
 
 tag :: [String] -> IV
@@ -31,7 +31,6 @@ prefix = ["Simplicity"]
 typePrefix = prefix ++ ["Type"]
 commitmentPrefix = prefix ++ ["Commitment"]
 witnessPrefix = prefix ++ ["Witness"]
-primitivePrefix = prefix ++ ["Primitive", primPrefix]
 
 typeTag :: String -> IV
 typeTag x = tag $ typePrefix ++ [x]
@@ -41,12 +40,6 @@ commitmentTag x = tag $ commitmentPrefix ++ [x]
 
 witnessTag :: String -> IV
 witnessTag x = tag $ witnessPrefix ++ [x]
-
-primTag :: String -> IV
-primTag x = tag $ primitivePrefix ++ [x]
-
-jetTag :: IV
-jetTag = tag (prefix ++ ["Jet"])
 
 hiddenTag :: IV
 hiddenTag = tag $ (prefix ++ ["Hidden"])
@@ -110,20 +103,11 @@ instance Assert CommitmentRoot where
   assertr s (CommitmentRoot t) = commit $ compress (commitmentTag "case") (s, t)
   fail b = commit $ compress (commitmentTag "fail") b
 
-instance Primitive CommitmentRoot where
-  primitive = commit . primTag . primName
-
--- Jets commit to their types, so we use WitnessRoot here.
-instance Jet CommitmentRoot where
-  jet (WitnessRoot t) = commit $ compressHalf jetTag t
-
 instance Witness CommitmentRoot where
   witness _ = commit $ commitmentTag "witness"
 
 instance Delegate CommitmentRoot where
   disconnect (CommitmentRoot s) _ = commit $ compressHalf (commitmentTag "disconnect") s
-
-instance Simplicity CommitmentRoot where
 
 newtype WitnessRoot a b = WitnessRoot {
 -- | Interpret a Simplicity expression as a witness hash.
@@ -223,18 +207,6 @@ instance Assert WitnessRoot where
   -- This should never be called in practice, but we add it for completeness.
   fail b = observe $ compress (witnessTag "fail") b
 
-instance Primitive WitnessRoot where
-  primitive = observe . primTag . primName
-
-instance Jet WitnessRoot where
-  jet (WitnessRoot t) = observe $ compressHalf jetTag t
-  -- Idea for alternative WitnessRoot instance:
-  --     jet t = t
-  -- Trasparent jet witnesses would mean we could define the jet class as
-  --     jet :: (TyC a, TyC b) => (forall term0. (Assert term0, Primitive term0, Jet term0) => term0 a b) -> term a b
-  -- And then jets could contain jets such that their Sementics, WitnessRoots, and hence CommitmentRoots would all be transparent to jet sub-experssions.
-  -- Need to think carefully what this would mean for concensus, but I think it is okay.
-
 instance Witness WitnessRoot where
   witness v = result
    where
@@ -250,5 +222,3 @@ instance Delegate WitnessRoot where
     proxy :: proxy (a, w) (b, c) -> proxy c d -> (Proxy a, Proxy b, Proxy c, Proxy d)
     proxy _ _ = (Proxy, Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC, proxyD) = proxy ws wt
-
-instance Simplicity WitnessRoot where
