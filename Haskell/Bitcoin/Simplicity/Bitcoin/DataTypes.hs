@@ -1,5 +1,5 @@
 -- | This module defines the data structures that make up the signed data in a Bitcoin transaction.
-module Simplicity.Primitive.Bitcoin.DataTypes
+module Simplicity.Bitcoin.DataTypes
   ( Script, Lock, Value
   , Outpoint, opHash, opIndex
   , SigTxInput, sigTxiPreviousOutput, sigTxiValue, sigTxiSequence

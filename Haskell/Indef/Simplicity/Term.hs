@@ -4,24 +4,7 @@
 --
 -- This is a separate module from "Simplicity.Term.Core" so that the core language need not depend on the "Simplicity.Primitive" module.
 module Simplicity.Term
- ( module Simplicity.Ty
- , Core(..)
- -- * Notation for 'Core' terms
- , (>>>), (&&&)
- -- | The following expressions are for short sequences of 'take' and 'drop', with 'iden' that is used to access components of Simplicity inputs.
- --
- -- * @o@ means 'take'
- -- * @i@ means 'drop'
- -- * @h@ means 'iden'
- --
- -- For example, @'oih' = 'take' ('drop' 'iden')@.
- --
- -- The string of @i@'s and @o@'s is meant to resemble a binary number that denotes an index to the leaves of a perfect binary tree.
- , oh, ih, ooh, oih, ioh, iih, oooh, ooih, oioh, oiih, iooh, ioih, iioh, iiih
- -- * Language extensions
- , Assert(..), fail0
- , Witness(..)
- , Delegate(..)
+ ( module Simplicity.Term.Core
  , Primitive(..)
  , Jet(..)
  , Simplicity(..)
@@ -32,6 +15,7 @@ import Control.Monad.Reader.Class (MonadReader(..))
 import qualified Control.Monad.Fail as Fail
 
 import Simplicity.Digest
+import Simplicity.MerkleRoot.Impl
 import Simplicity.Primitive
 import Simplicity.Term.Core
 import Simplicity.Tensor
@@ -70,3 +54,26 @@ instance (Jet p, Jet q) => Jet (Product p q) where
   jet t = Product (jet t) (jet t)
 
 instance (Simplicity p, Simplicity q) => Simplicity (Product p q) where
+
+instance Primitive CommitmentRoot where
+  primitive = primitiveCommitmentImpl primPrefix primName
+
+-- Jets commit to their types, so we use WitnessRoot here.
+instance Jet CommitmentRoot where
+  jet t = jetCommitmentImpl (witnessRoot t)
+
+instance Simplicity CommitmentRoot where
+
+instance Primitive WitnessRoot where
+  primitive = primitiveWitnessImpl primPrefix primName
+
+instance Jet WitnessRoot where
+  jet t = jetWitnessImpl (witnessRoot t)
+  -- Idea for alternative WitnessRoot instance:
+  --     jet t = t
+  -- Trasparent jet witnesses would mean we could define the jet class as
+  --     jet :: (TyC a, TyC b) => (forall term0. (Assert term0, Primitive term0, Jet term0) => term0 a b) -> term a b
+  -- And then jets could contain jets such that their Sementics, WitnessRoots, and hence CommitmentRoots would all be transparent to jet sub-experssions.
+  -- Need to think carefully what this would mean for concensus, but I think it is okay.
+
+instance Simplicity WitnessRoot where

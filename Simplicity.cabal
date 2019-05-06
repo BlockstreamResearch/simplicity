@@ -21,7 +21,8 @@ library Simplicity-Core
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
                        Simplicity.Programs.Word, Simplicity.Programs.Bit, Simplicity.Programs.Generic, Simplicity.Programs.LibSecp256k1, Simplicity.Programs.Loop, Simplicity.Programs.Sha256,
-                       Simplicity.Digest, Simplicity.MerkleRoot.Core,
+                       Simplicity.Digest,
+                       Simplicity.MerkleRoot, Simplicity.MerkleRoot.Impl,
                        Simplicity.Serialization,
                        Simplicity.Word,
                        Simplicity.LibSecp256k1.Schnorr,
@@ -49,8 +50,7 @@ library Simplicity-Core
                        vector >=0.12 && <0.13
 
 library Simplicity-Bitcoin
-  exposed-modules:     Simplicity.Primitive.Bitcoin, Simplicity.Primitive.Bitcoin.DataTypes
-  reexported-modules:  Simplicity.Primitive.Bitcoin as Simplicity.Primitive
+  exposed-modules:     Simplicity.Bitcoin.Primitive, Simplicity.Bitcoin.DataTypes
   other-extensions:    GADTs, ScopedTypeVariables
   hs-source-dirs:      Haskell/Bitcoin
   default-language:    Haskell2010
@@ -63,7 +63,7 @@ library Simplicity-Bitcoin
 
 library Simplicity-Indef
   exposed-modules:     Simplicity.Term,
-                       Simplicity.MerkleRoot, Simplicity.Semantics,
+                       Simplicity.Semantics,
                        Simplicity.Dag, Simplicity.Inference
                        Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString
   signatures:          Simplicity.Primitive
@@ -85,7 +85,36 @@ library Simplicity-Indef
                        vector >=0.12 && <0.13
 
 library
-  exposed-modules:     Simplicity.Programs.CheckSigHashAll
+  exposed-modules:     Simplicity.Bitcoin.Programs.CheckSigHashAll
+  reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
+                       Simplicity.Term.Core,
+                       Simplicity.Tensor,
+                       Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
+                       Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
+                       Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
+                       Simplicity.Programs.Word, Simplicity.Programs.Bit, Simplicity.Programs.Generic, Simplicity.Programs.LibSecp256k1, Simplicity.Programs.Loop, Simplicity.Programs.Sha256,
+                       Simplicity.Digest,
+                       Simplicity.MerkleRoot,
+                       Simplicity.Serialization,
+                       Simplicity.Word,
+                       Simplicity.LibSecp256k1.Schnorr,
+                       Simplicity.LibSecp256k1.Spec,
+                       Simplicity.Bitcoin.Primitive, Simplicity.Bitcoin.DataTypes,
+                       Simplicity.Bitcoin.Term,
+                       Simplicity.Bitcoin.Semantics,
+                       Simplicity.Bitcoin.Dag,
+                       Simplicity.Bitcoin.Inference,
+                       Simplicity.Bitcoin.Serialization.BitString,
+                       Simplicity.Bitcoin.Serialization.ByteString
+  mixins:              Simplicity-Indef
+                         (Simplicity.Term as Simplicity.Bitcoin.Term,
+                          Simplicity.Semantics as Simplicity.Bitcoin.Semantics,
+                          Simplicity.Dag as Simplicity.Bitcoin.Dag,
+                          Simplicity.Inference as Simplicity.Bitcoin.Inference,
+                          Simplicity.Serialization.BitString as Simplicity.Bitcoin.Serialization.BitString,
+                          Simplicity.Serialization.ByteString as Simplicity.Bitcoin.Serialization.ByteString)
+                       requires
+                         (Simplicity.Primitive as Simplicity.Bitcoin.Primitive)
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
   ghc-options:         -O2
@@ -103,10 +132,10 @@ Test-Suite testsuite
   default-language:    Haskell2010
   ghc-options:         -O2
   other-modules:       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests,
-                       Simplicity.Serialization.Tests
+                       Simplicity.Bitcoin.Serialization.Tests
                        Simplicity.Programs.Tests,
                        Simplicity.Ty.Tests
-  build-depends:       Simplicity-Core, Simplicity-Bitcoin, Simplicity-Indef,
+  build-depends:       Simplicity,
                        base >=4.9 && <4.13,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,

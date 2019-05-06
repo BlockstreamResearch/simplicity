@@ -1,7 +1,7 @@
 -- | The module builds a Simplicity expression that mimics the behavour of a @CHECKSIG@ operation restricted to a @SIGHASH_ALL@ flag, for Bitcoin.
 -- This forms the mimial Simiplicity expression needed to secure funds in a Bitcoin-like blockchain.
 -- This uses Schnorr signature verification specified in "Simplicity.Programs.LibSecp256k1".
-module Simplicity.Programs.CheckSigHashAll
+module Simplicity.Bitcoin.Programs.CheckSigHashAll
   ( sigHashAll
   , checkSigHashAll
   , wCheckSigHashAll
@@ -13,13 +13,13 @@ import qualified Data.ByteString.Char8 as BSC
 import Simplicity.Digest
 import Simplicity.MerkleRoot
 import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
-import Simplicity.Primitive.Bitcoin
+import Simplicity.Bitcoin.Primitive
+import Simplicity.Bitcoin.Term
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Sha256
 import Simplicity.Programs.LibSecp256k1
 import Simplicity.Programs.Word
-import Simplicity.Term
 import Simplicity.Ty
 
 -- | This expression returns a hash of basic signed transaction data.

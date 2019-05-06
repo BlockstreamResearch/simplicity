@@ -1,13 +1,21 @@
 -- | This module provides functions for computing commitment Merkle roots and witness Merkle roots of Simplicity expressions and Merkle roots of Simplicity types.
 -- It also provides some other functions for other hashing schemes that will avoid collisions with the aforementioned Merkle roots.
-module Simplicity.MerkleRoot.Core
+--
+-- This module is internal only.  "Simplicity.MerkleRoot" is the public facing module.
+module Simplicity.MerkleRoot.Impl
   ( typeRoot, typeRootR
   , CommitmentRoot, commitmentRoot
   , WitnessRoot, witnessRoot
   , hiddenRoot
   , signatureIv
   , cmrFail0
-  , tag, prefix, commit, observe
+  -- * Internal functions
+  -- | These functions are use internally to define commitment and witness Merkle root instances for
+  -- Primitives and expressions that depend on Primitives.
+  , primitiveCommitmentImpl
+  , jetCommitmentImpl
+  , primitiveWitnessImpl
+  , jetWitnessImpl
   ) where
 
 import qualified Data.ByteString as BS
@@ -31,6 +39,7 @@ prefix = ["Simplicity"]
 typePrefix = prefix ++ ["Type"]
 commitmentPrefix = prefix ++ ["Commitment"]
 witnessPrefix = prefix ++ ["Witness"]
+primitivePrefix primPrefix = prefix ++ ["Primitive", primPrefix]
 
 typeTag :: String -> IV
 typeTag x = tag $ typePrefix ++ [x]
@@ -40,6 +49,12 @@ commitmentTag x = tag $ commitmentPrefix ++ [x]
 
 witnessTag :: String -> IV
 witnessTag x = tag $ witnessPrefix ++ [x]
+
+primTag :: String -> String -> IV
+primTag primPrefix x = tag $ primitivePrefix primPrefix ++ [x]
+
+jetTag :: IV
+jetTag = tag (prefix ++ ["Jet"])
 
 hiddenTag :: IV
 hiddenTag = tag $ (prefix ++ ["Hidden"])
@@ -222,3 +237,17 @@ instance Delegate WitnessRoot where
     proxy :: proxy (a, w) (b, c) -> proxy c d -> (Proxy a, Proxy b, Proxy c, Proxy d)
     proxy _ _ = (Proxy, Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC, proxyD) = proxy ws wt
+
+primitiveCommitmentImpl primPrefix primName = commit . primTag primPrefix . primName
+
+jetCommitmentImpl wrt = commit $ compressHalf jetTag wrt
+
+primitiveWitnessImpl primPrefix primName = observe . primTag primPrefix . primName
+
+jetWitnessImpl wrt = observe $ compressHalf jetTag wrt
+  -- Idea for alternative WitnessRoot instance:
+  --     jet t = t
+  -- Trasparent jet witnesses would mean we could define the jet class as
+  --     jet :: (TyC a, TyC b) => (forall term0. (Assert term0, Primitive term0, Jet term0) => term0 a b) -> term a b
+  -- And then jets could contain jets such that their Sementics, WitnessRoots, and hence CommitmentRoots would all be transparent to jet sub-experssions.
+  -- Need to think carefully what this would mean for concensus, but I think it is okay.

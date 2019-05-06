@@ -1,6 +1,6 @@
 {-# LANGUAGE GADTs, ScopedTypeVariables #-}
 -- | This module provides the Simplicity primitives specific for Bitcoin or Bitcoin-like applications.
-module Simplicity.Primitive.Bitcoin
+module Simplicity.Bitcoin.Primitive
   ( Prim(..), primPrefix, primName
   , getPrimBit, getPrimByte, putPrimBit, putPrimByte
   , PrimEnv, primSem
@@ -13,7 +13,7 @@ import Data.Serialize (Get, getWord8,
 import qualified Data.Word
 
 import Simplicity.Digest
-import Simplicity.Primitive.Bitcoin.DataTypes
+import Simplicity.Bitcoin.DataTypes
 import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Ty.Word

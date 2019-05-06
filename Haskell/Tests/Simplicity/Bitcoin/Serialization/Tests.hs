@@ -1,6 +1,6 @@
 {-# LANGUAGE RankNTypes, ScopedTypeVariables #-}
 -- This modules tests Simplicity's serialization and deserialization functions.
-module Simplicity.Serialization.Tests (tests) where
+module Simplicity.Bitcoin.Serialization.Tests (tests) where
 
 import Control.Arrow ((|||))
 import Data.Either (lefts)
@@ -11,17 +11,17 @@ import qualified Data.Vector as V
 import qualified Data.Vector.Unboxed as UV
 import Lens.Family2 (Traversal, (&), (.~))
 
-import Simplicity.Dag
-import Simplicity.Digest
-import Simplicity.Inference
+import Simplicity.Bitcoin.Dag
+import Simplicity.Bitcoin.Inference
 import Simplicity.MerkleRoot
-import Simplicity.Primitive
+import Simplicity.Bitcoin.Primitive
+import Simplicity.Bitcoin.Serialization.BitString as BitString
+import Simplicity.Bitcoin.Serialization.ByteString as ByteString
+import Simplicity.Bitcoin.Term
+import Simplicity.Digest
 import Simplicity.Programs.Word
 import Simplicity.Programs.Sha256
 import Simplicity.Serialization
-import Simplicity.Serialization.BitString as BitString
-import Simplicity.Serialization.ByteString as ByteString
-import Simplicity.Term
 import Simplicity.Ty.Tests hiding (tests)
 
 import Test.Tasty (TestTree, testGroup)
