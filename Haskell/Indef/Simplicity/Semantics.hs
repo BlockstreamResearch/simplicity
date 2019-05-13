@@ -32,8 +32,11 @@ data Delegator p a b = Delegator { delegatorRoot :: CommitmentRoot a b
 -- * Delegation via the 'Delegator' helper.
 type Semantics a b = Delegator (Kleisli (ReaderT PrimEnv Maybe)) a b
 
--- | Execute the fuctional semantics of the full Simplicity language.
--- The first argument is typically of type @(forall term. 'Simplicity' term => term a b)@, which @'Semantics' a b@ is an instance of.
+-- | @
+-- sem :: (forall term. Simplicity term => term a b) -> PrimEnv -> a -> Maybe b
+-- @
+--
+-- Execute the fuctional semantics of the full Simplicity language with delegation.
 sem :: Semantics a b -> PrimEnv -> a -> Maybe b
 sem = flip . (runReaderT .) . runKleisli . runDelegator
 

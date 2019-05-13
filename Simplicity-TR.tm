@@ -2377,7 +2377,7 @@
   We have chosen to go with option 2. We have reimplemented the exact same
   algorithms for field and elliptic curve operations that the most recent
   release of libsecp256k1 uses as of the time of this writing, including
-  computing of linear combinations of the form\ 
+  computing of linear combinations of the form
 
   <\equation*>
     n<rsub|\<cal-A\><rsub|>>*\<cal-A\>+n<rsub|\<cal-G\>>*\<cal-G\>
@@ -2414,7 +2414,7 @@
   </equation*>
 
   and a value <math|<around*|\<langle\>|x,y|\<rangle\>>\<of\>GE> represents
-  the point\ 
+  the point
 
   <\equation*>
     <around*|\<lceil\>|<around*|\<langle\>|x,y|\<rangle\>>|\<rceil\>><rsub|GE>\<assign\><around*|\<langle\>|<around*|\<lceil\>|x|\<rceil\>><rsub|FE>,<around*|\<lceil\>|y|\<rceil\>><rsub|FE>|\<rangle\>><text|.>
@@ -2552,7 +2552,7 @@
 
   <\theorem>
     For all Simplicity types <math|A> and <math|B>, and for all values
-    <math|a\<of\>A> and <math|b\<of\>B>,\ 
+    <math|a\<of\>A> and <math|b\<of\>B>,\
 
     <\equation*>
       <around*|\<llbracket\>|<math-ss|scribe><rsub|A,B><around*|(|b|)>|\<rrbracket\>><around*|(|a|)>=b<text|.>
@@ -2894,7 +2894,7 @@
   </theorem>
 
   In particular, for a well-typed core Simplicity program
-  <math|t:A\<vdash\>B>, we have\ 
+  <math|t:A\<vdash\>B>, we have
 
   <\equation*>
     <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>
@@ -2975,7 +2975,7 @@
   </theorem>
 
   In particular, for a well-typed core Simplicity program
-  <math|t:A\<vdash\>B>, we have\ 
+  <math|t:A\<vdash\>B>, we have
 
   <\equation*>
     <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>
@@ -4199,7 +4199,7 @@
   We know that <math|<around*|\<llbracket\>|<math-ss|eq><rsub|<2><rsup|256>>|\<rrbracket\>><around*|\<langle\>|h,<cmr|k>|\<rangle\>>=<math-tt|1><rsub|<2>>=\<eta\><rsup|S><around*|\<langle\>||\<rangle\>>>
   if and only if <math|h=<cmr|k>> and that
   <math|<around*|\<llbracket\>|<math-ss|eq><rsub|<2><rsup|256>>|\<rrbracket\>><around*|\<langle\>|h,<cmr|k>|\<rangle\>>=<math-tt|0><rsub|<2>>=\<emptyset\><rsup|S>>
-  if and only if <math|h\<neq\><cmr|k>>. When <math|h\<neq\><cmr|k>>, then\ 
+  if and only if <math|h\<neq\><cmr|k>>. When <math|h\<neq\><cmr|k>>, then
 
   <\equation*>
     <around*|\<llbracket\>|<math-ss|assert> <around*|(|<math-ss|OIH>
@@ -4360,7 +4360,7 @@
   above example; however, if the <math|t> expression contains <samp|witness>
   subexpressions, those witness values could be different for each instance
   of <math|t> shown above. Thus, more generally, the commitment can be
-  redeemed by\ 
+  redeemed by
 
   <\equation*>
     <math-ss|loop> t<rsub|0> <around*|(|<math-ss|loopBody> t<rsub|1>
@@ -5042,10 +5042,10 @@
 
   Notice that the <math|witnessDatum> does not use a prefix code, and the
   witnessData simply concatenates values without separating them with
-  deliminators. \ This works because during deserialization, type inference
+  deliminators. This works because during deserialization, type inference
   does not depend on witness data, and once type inference is complete, we
   can use the inference types of witness nodes to decode the witness values
-  in sequence. \ In fact we could even drop the prefix-code use in the
+  in sequence. In fact we could even drop the prefix-code use in the
   <math|witnessData> code itself, however we chose to put the block of all
   the witness values into a prefix-coded list so that one doesn't need to
   perform type inference to figure out where the the witness data ends.
@@ -5638,7 +5638,7 @@
   Machine. We make the injection of <verbatim|RunState> into <verbatim|State>
   a coercion.
 
-  It is sometimes useful to decompose the Bit Machine's state as\ 
+  It is sometimes useful to decompose the Bit Machine's state as
 
   <\equation*>
     <around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\<cdummy\><carr|<wide*|c<rsub|1>|\<bar\>>\<cdots\>*c<rsub|n<rsub|0>>>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><cearr|c<rsub|1>*\<cdots\>*c<rsub|n<rsub|1>>><carr|?><rsup|n<rsub|2>><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>
@@ -5824,16 +5824,25 @@
   but should not be relied upon for production development. For production
   development, formal developments in Coq should be created.
 
-  The Haskell development for Simplicity is found in the <verbatim|Haskell>
-  directory. The <verbatim|Haskell/Tests.hs> file imports the various test
-  modules throughout the development to build a testing executable to run
-  them all.
+  The Haskell Simplicity project is split up into multiple libraries in order
+  so that multiple different applications of Simplicity to different
+  Blockchains can be developed and used without conflicting with each other.
+  We use the Backpack feature of the Glasgow Haskell Compiler to parameterize
+  and reexport common functionally for different Simplicity applications.
 
-  <section|Simplicity Types>
+  <section|<verbatim|Simplicity-Core> library>
 
-  The <verbatim|Simplicity/Ty.hs> file contains the development of Simplicity
-  types. There are three different ways that Simplicity types are captured in
-  Haskell.
+  The first library, <verbatim|Simplicity-Core>, is found in the
+  <verbatim|Haskell/Core> directory. It defines the aspects of Simplicity
+  that are independent of any particular Blockchain application. This include
+  Simplicity's type system, Simplicity's core expression language and the
+  assertions, witness, and delegation extensions, and a few other components.
+
+  <subsection|Simplicity Types>
+
+  The <verbatim|Core/Simplicity/Ty.hs> file contains the development of
+  Simplicity types. There are three different ways that Simplicity types are
+  captured in Haskell.
 
   The primary way Simplicity types are captured is by the <verbatim|TyC>
   class which only has instances for the Haskell types that correspond to the
@@ -5847,7 +5856,7 @@
     <item><verbatim|instance (TyC a, TyC b) =\<gtr\> TyC (a, b)>
   </itemize-dot>
 
-  The <verbatim|TyC> class is crafted so that is methods are not exported.
+  The <verbatim|TyC> class is crafted so that its methods are not exported.
   This prevents anyone from adding further instances to the <verbatim|TyC>
   class.
 
@@ -5863,7 +5872,7 @@
     -\<gtr\> TyReflect (Either a b)
 
     \ \ ProdR :: (TyC a, TyC b) =\<gtr\> TyReflect a -\<gtr\> TyReflect b
-    -\<gtr\> TyReflect (a, b)\ 
+    -\<gtr\> TyReflect (a, b)
   </code>
 
   This data type provides a concrete, value-level representation of
@@ -5893,7 +5902,7 @@
   Generally speaking, we use <verbatim|TyC> to constrain Haskell types to
   Simplicity types when creating Simplicity expressions. This way Simplicity
   type errors are Haskell type errors and can be caught by the Haskell
-  compiler. We use the <verbatim|Ty> type when doing computations such asgg
+  compiler. We use the <verbatim|Ty> type when doing computations such as
   deserializing Simplicity expressions and performing unification for
   Simplicity's type inference. The <verbatim|TyReflect> GADT links these two
   representations. For example, the <verbatim|equalTyReflect> function can
@@ -5904,8 +5913,8 @@
 
   The <verbatim|Simplicity/Ty.hs> file also defines the
   <verbatim|UntypedValue> that represents data values of Simplicity's typed,
-  but in an untyped manner. \ This is mostly used for <samp|witness> nodes.
-  \ There are functions to convert to and from typed and
+  but in an untyped manner. This is mostly used for <samp|witness> nodes.
+  There are functions to convert to and from typed and
   <verbatim|UntypedValue>s.
 
   Within the <verbatim|Simplicity/Ty> directory, there are modules providing
@@ -5924,19 +5933,18 @@
   (modulo the size of the word). The file also provides specializations of
   these various functions for popular word sizes between 1 and 512 bits.
 
-  <section|Simplicity Terms>
+  <subsection|Simplicity Terms>
 
   Terms are represented in tagless-final style<nbsp><cite|Carette:2009>. This
   style is analogous to the ``final'' representation of terms that is defined
-  in the Coq library. The development of the term language for full
-  Simplicity is split into two files.
+  in the Coq library.
 
-  The <verbatim|Simplicity/Term/Core.hs> file develops the core Simplicity
-  term language plus a few extensions. The <verbatim|Core> type class
-  captures Simplicity algebras for core Simplicity expressions. Core
+  The <verbatim|Core/Simplicity/Term/Core.hs> file develops the core
+  Simplicity term language plus a few extensions. The <verbatim|Core> type
+  class captures Simplicity algebras for core Simplicity expressions. Core
   Simplicity expressions are represented in Haskell by expressions of type
-  <verbatim|Core term =\<gtr\> term a b> which are expressions that hold for
-  all Simplicity algebras.
+  <verbatim|forall a b. Core term =\<gtr\> term a b> which are expressions
+  that hold for all Simplicity algebras.
 
   This module provides infix operators, <verbatim|(\<gtr\>\<gtr\>\<gtr\>)>
   and <verbatim|(&&&)>, for the <verbatim|comp> and <verbatim|pair>
@@ -5950,26 +5958,16 @@
   <verbatim|Delegate> classes for the failure, witness, and delegation
   language extensions respectively. Terms that make use of these extension
   will have these class constraints added to their type signatures. For
-  example, a value of type <verbatim|(Core term, Witness term) =\<gtr\> term
-  a b> is a term in the language of Simplicity with witnesses.
+  example, a value of type <verbatim|forall a b. (Core term, Witness term)
+  =\<gtr\> term a b> is a term in the language of Simplicity with witnesses.
 
   This module provides <verbatim|(-\<gtr\>)> and <verbatim|Kleisli m>
   instances of these classes that provide denotational semantics of core
   Simplicity and some extensions. For example, one can take core Simplicity
   terms and directly use them as functions. The semantics of
   <verbatim|Delegate> depends on the commitment Merkle root; you can find
-  semantics for that extension in <verbatim|Simplicity/Semantics.hs> and it
-  is discussed in Section<nbsp><reference|ss:DenotationalSemanticsOfFullSimplicity>.
-
-  The <verbatim|Simplicity/Term.hs> module provides the blockchain primitives
-  and jet extensions, in addition to re-exporting the
-  <verbatim|Simplicity/Term/Core.hs> module. This separation lets
-  <verbatim|Simplicity/Term/Core.hs> remain independent of the blockchain
-  specific <verbatim|Simplicity/Primitive.hs> module. All the Simplicity
-  extensions are gathered together in the <verbatim|Simplicity> class, whose
-  associated values of type <verbatim|Simplicity term =\<gtr\> term a b> are
-  terms in the full Simplicity language with delegation. The semantics of
-  full Simplicity is discussed in Section<nbsp><reference|ss:DenotationalSemanticsOfFullSimplicity>.
+  semantics for that extension in <verbatim|Indef/Simplicity/Semantics.hs>
+  and it is discussed in Section<nbsp><reference|ss:DenotationalSemanticsOfFullSimplicity>.
 
   The primary purpose of using tagless-final style is to support transparent
   sharing of subexpressions in Simplicity. While subexpressions can be shared
@@ -5985,6 +5983,21 @@
   sharing for Simplicity expressions at exactly the points where we have
   sharing in the Haskell representation of the term.
 
+  <subsection|Merkle Roots>
+
+  The <verbatim|Core/Simplicity/MerkleRoot.hs> module reexports functionality
+  defined in <verbatim|Core/Simplicity/MerkleRoot/Impl.hs>, which provides
+  instances of Simplicity terms that compute the commitment and witness
+  Merkle roots. The <verbatim|commitmentRoot> and <verbatim|witnessRoot>
+  return these Merkle root values. The <verbatim|Simplicity/MerkleRoot.hs>
+  module also provides a memoized computation of the Merkle roots for
+  Simplicity types.
+
+  The SHA-256 implementation is provided through an abstract interface found
+  in <verbatim|Core/Simplicity/Digest.hs>, which in turn references an
+  implementation of a 256-bit word type defined in
+  <verbatim|Core/Simplicity/Word.hs>.
+
   <subsection|Tensors>
 
   The <verbatim|Simplicity/Tensor.hs> module provides a typed
@@ -5994,119 +6007,32 @@
   Section<nbsp><reference|ss:haskellLoop>) to simultaneously compute a
   commitment Merkle root alongside another interpretation.
 
-  <section|Blockchain Primitives>
+  <subsection|Example Simplicity Expressions>
 
-  We aim to keep the Haskell library of Simplicity modular over different
-  blockchain applications. Different blockchain applications are provided in
-  the <verbatim|Simplicity/Primitive> directory. At the moment only the
-  Bitcoin blockchain application is provided by the
-  <verbatim|Simplicity/Primitive/Bitcoin.hs>.
+  The <verbatim|Core/Simplicity/Programs> directory contains various
+  developments of Simplicity expressions in Haskell that are independent of
+  any particular blockchain application.
 
-  The <verbatim|Simplicity/Primitive.hs> module provides an interface to the
-  different possible primitives provided by different blockchain
-  applications. This module exports
+  <subsubsection|Bits>
 
-  <\itemize>
-    <item><verbatim|Prim a b>, a GADT for different primitive expressions,
+  The <verbatim|Core/Simplicity/Programs/Bit.hs> file has Simplicity
+  expressions for bit manipulation. <verbatim|false> and <verbatim|true> are
+  Simplicity expressions for the constant functions of those types and
+  <verbatim|cond> provides case analysis combinator for a single bit. There
+  are combinators for various logical operators. These logical operators are
+  short-circuited where possible. There are also a few trinary Boolean
+  Simplicity expressions that are used in hash functions such as SHA-256.
 
-    <item><verbatim|primPrefix> and <verbatim|primName> which are used to
-    generate unique names for the Merkle roots of primitive expressions,
+  <subsubsection|Multi-bit Words>
 
-    <item><verbatim|PrimEnv> and <verbatim|primSem>, which provides the type
-    of the context and the denotational semantics for evaluating primitive
-    expressions.
-  </itemize>
-
-  The library, by default, re-exports these values from the
-  <verbatim|Simplicity/Primitive/Bitcoin.hs> module. For other blockchain
-  applications, one can modify the file to re-export the other application's
-  module for primitives. The Kleisli morphisms over a reader monad over
-  <verbatim|PrimEnv> supports the semantics of primitive expressions.
-
-  <subsection|Bitcoin Primitives>
-
-  The <verbatim|Simplicity/Primitive/Bitcoin.hs> module provides the
-  primitive expressions and their semantics for Simplicity's Bitcoin
-  application. The <verbatim|Prim a b> GADT enumerates the list of primitive
-  Simplicity expressions for Bitcoin. The <verbatim|PrimEnv> provides the
-  context that a Simplicity expression is evaluated within, providing the
-  signed transaction data, the index of the input being considered for
-  redemption, and the commitment Merkle root of the Simplicity program
-  itself. The <verbatim|primSem> function is an interpreter for these
-  primitive expressions for the Bitcoin.
-
-  The <verbatim|Simplicity/Primitive/Bitcoin/DataTypes.hs> module provides
-  the data structures that make up the signed transaction data for Bitcoin.
-
-  <section|Merkle Roots>
-
-  The <verbatim|Simplicity/MerkleRoot.hs> module provides instances of
-  Simplicity terms that compute the commitment and witness Merkle roots. The
-  <verbatim|commitmentRoot> and <verbatim|witnessRoot> return these Merkle
-  root values. The <verbatim|Simplicity/MerkleRoot.hs> module also provides a
-  memoized computation of the Merkle roots for Simplicity types.
-
-  The SHA-256 implementation is provided through an abstract interface found
-  in <verbatim|Simplicity/Digest.hs>.
-
-  <section|Denotational Semantics of Full
-  Simplicity><label|ss:DenotationalSemanticsOfFullSimplicity>
-
-  The <verbatim|Simplicity/Term.hs> module provides <verbatim|(-\<gtr\>)> and
-  <verbatim|Kleisli m> instances for the full Simplicity language excluding
-  delegation. Semantics for the full Simplicity language with delegation,
-  which depends on computing commitment Merkle roots, is found in the
-  <verbatim|Simplicity/Semantics.hs> module.
-
-  The <verbatim|Delegator p a b> helper type bundles a commitment Merkle root
-  computation with the Simplicity semantics of <verbatim|disconnect>,
-  allowing commitment Merkle roots and semantics to be evaluated
-  concurrently. This allows us to create <verbatim|Delegate> and
-  <verbatim|Simplicity> instances using <verbatim|Delegator>.
-
-  The <verbatim|Semantics a b> is an instance of <verbatim|Delegator> for the
-  Kleisli semantics that support the Blockchain primitives, and thus is an
-  instance of the full Simplicity language with delegation. The
-  <verbatim|sem> function unwraps all the type wrappers of
-  <verbatim|Semantics a b> and provides a concrete function from
-  <verbatim|PrimEnv> and <verbatim|a> to <verbatim|Maybe b>.
-
-  <section|Example Simplicity Expressions>
-
-  The <verbatim|Simplicity/Programs> directory contains various developments
-  of Simplicity expressions in Haskell. The
-  <verbatim|Simplicity/Programs/Tests.hs> has some QuickCheck properties that
-  provide randomized testing for some of the programs defined in this
-  section.
-
-  <subsection|Bits>
-
-  The <verbatim|Simplicity/Programs/Bit.hs> file has Simplicity expressions
-  for bit manipulation. <verbatim|false> and <verbatim|true> are Simplicity
-  expressions for the constant functions of those types and <verbatim|cond>
-  provides case analysis combinator for a single bit. There are combinators
-  for various logical operators. These logical operators are short-circuited
-  where possible. There are also a few trinary Boolean Simplicity expressions
-  that are used in hash functions such as SHA-256.
-
-  <subsection|Multi-bit Words>
-
-  The <verbatim|Simplicity/Programs/Word.hs> file provides support for
-  multi-bit word expressions that operate on Simplicity's word types.
-
-  \;
-
-  <subsubsection|Arithmetic operations>
-
-  The <verbatim|Simplicity/Programs/Word.hs> file provides the standard
-  implementations of the <verbatim|zero>, <verbatim|adder>,
-  <verbatim|fullAdder>, <verbatim|subtractor>, <verbatim|fullSubtractor>,
-  <verbatim|multiplier>, and <verbatim|fullMultiplier> Simplicity
-  expressions. Notice that the implementation of these functions is careful
-  to use explicit sharing of Simplicity sub-expressions where possible
-  through the <verbatim|where> clauses.
-
-  <subsubsection|Bit-wise operations>
+  The <verbatim|Core/Simplicity/Programs/Word.hs> file provides support for
+  multi-bit word expressions that operate on Simplicity's word types. It
+  provides the standard implementations of the <verbatim|zero>,
+  <verbatim|adder>, <verbatim|fullAdder>, <verbatim|subtractor>,
+  <verbatim|fullSubtractor>, <verbatim|multiplier>, and
+  <verbatim|fullMultiplier> Simplicity expressions. Notice that the
+  implementation of these functions is careful to use explicit sharing of
+  Simplicity sub-expressions through the <verbatim|where> clauses.
 
   The <verbatim|shift> and <verbatim|rotate> functions create Simplicity
   expressions that do right shifts and rotates of multi-bit words by any
@@ -6119,19 +6045,19 @@
   bit-wise. There is also a variant, called <verbatim|bitwiseTri> the does
   the same thing for trinary bit operations.
 
-  <subsection|Generic>
+  <subsubsection|Generic>
 
-  The <verbatim|Simplicity/Programs/Generic.hs> file provides some Simplicity
-  expressions that can apply to any Simplicity type.
+  The <verbatim|Core/Simplicity/Programs/Generic.hs> file provides some
+  Simplicity expressions that can apply to any Simplicity type.
 
   The <verbatim|scribe> function produces a Simplicity expression denoting a
   constant function for any value for any Simplicity type. The <verbatim|eq>
   Simplicity expression compares any two values of the same Simplicity type
   and decides if they are equal or not.
 
-  <subsection|SHA-256>
+  <subsubsection|SHA-256>
 
-  The <verbatim|Simplicity/Programs/Sha256.hs> file provides Simplicity
+  The <verbatim|Core/Simplicity/Programs/Sha256.hs> file provides Simplicity
   expressions to help compute SHA-256 hashes. The <verbatim|iv> Simplicity
   expression is a constant function the returns the initial value to begin a
   SHA-256 computation. The <verbatim|hashBlock> Simplicity expression
@@ -6139,52 +6065,44 @@
   compress multiple blocks, multiple calls to the <verbatim|hashBlock>
   function can be chained together.
 
-  <subsection|LibSecp256k1>
+  <subsubsection|LibSecp256k1>
 
-  The <verbatim|Simplicity/Programs/LibSecp256k1.hs> file provides Simplicity
-  expressions that mimic the functional behaviour of the the libsecp256k1
-  elliptic curve library<nbsp><cite|libsecp256k1>. This includes Simplicity
-  types for, and operations on secp256k1's underlying finite field with the
-  <verbatim|10x26> limb representation, elliptic curve point operations in
-  affine and Jacobian coordinates, and linear combinations of points.
+  The <verbatim|Core/Simplicity/Programs/LibSecp256k1.hs> file provides
+  Simplicity expressions that mimic the functional behaviour of the the
+  libsecp256k1 elliptic curve library<nbsp><cite|libsecp256k1>. This includes
+  Simplicity types for, and operations on secp256k1's underlying finite field
+  with the <verbatim|10x26> limb representation, elliptic curve point
+  operations in affine and Jacobian coordinates, and linear combinations of
+  points.
 
   This module also include the <verbatim|schnorrVerify> and
   <verbatim|schnorrAssert> expressions that implement Schnorr signatures as
   specified in BIP-Schnorr<nbsp><cite|bip-schnorr>.
 
-  <subsection|CheckSigHashAll>
+  <subsubsection|Loop><label|ss:haskellLoop>
 
-  The <verbatim|Simplicity/Programs/CheckSigHashAll.hs> file provides the
-  <verbatim|checkSigHashAll> Simplicity expression that verifies Schnorr
-  signature over the transaction data hash produced by <verbatim|sigHashAll>
-  for a provided public key. Some variants of this expression are also
-  provided including <verbatim|pkwCheckSigHashAll> which builds a complete
-  Simplicity program from a given public key and signature.
-
-  <subsection|Loop><label|ss:haskellLoop>
-
-  The <verbatim|Simplicity/Programs/Loop.hs> files is a stub module for
+  The <verbatim|Core/Simplicity/Programs/Loop.hs> files is a stub module for
   holding operations for building unbounded loops via the self-delegation
   method described in Section<nbsp><reference|ss:unboundedLoop>. At the
   moment it can be used to build the <verbatim|CommitmentRoot> of an
   unbounded loop, but the code needed to redeem such a commitment has not
   been developed yet.
 
-  <section|The Bit Machine>
+  <subsection|The Bit Machine>
 
-  The <verbatim|Simplicity/BitMachine/> directory has modules related to the
-  Bit Machine and evaluation of Simplicity via the Bit Machine.
+  The <verbatim|Core/Simplicity/BitMachine/> directory has modules related to
+  the Bit Machine and evaluation of Simplicity via the Bit Machine.
 
-  The <verbatim|Simplicity/BitMachine/Ty.hs> file defines <verbatim|bitSize>,
-  <verbatim|padL>, and <verbatim|padR>, which define the <math|bitSize>,
-  <math|padR> and <math|padL> functions from
+  The <verbatim|Core/Simplicity/BitMachine/Ty.hs> file defines
+  <verbatim|bitSize>, <verbatim|padL>, and <verbatim|padR>, which define the
+  <math|bitSize>, <math|padR> and <math|padL> functions from
   Section<nbsp><reference|ss:RepresentingValuesAsCellArrays>. They operate on
   the <verbatim|Ty> type. The file also defines variants of these three
   function that operate on the <verbatim|TyReflect> GADT instead.
 
-  The <verbatim|Simplicity/BitMachine.hs> file (technically not in the
-  <verbatim|Simplicity/BitMachine/> directory) defines the canonical type of
-  a <verbatim|Cell> to be a <verbatim|Maybe Bool>, with the
+  The <verbatim|Core/Simplicity/BitMachine.hs> file (technically not in the
+  <verbatim|Core/Simplicity/BitMachine/> directory) defines the canonical
+  type of a <verbatim|Cell> to be a <verbatim|Maybe Bool>, with the
   <verbatim|Nothing> value representing undefined cell values. The
   <verbatim|encode> and <verbatim|decode> functions transform a value of a
   Simplicity type to and from a list of <verbatim|Cell>s that represent the
@@ -6206,13 +6124,13 @@
   provided by the <verbatim|(\|\|\|)> operator. The <verbatim|nop> program is
   an alias for the identity function.
 
-  The <verbatim|Simplicity/BitMachine/Authentic.hs> file is an implementation
-  of the Bit Machine that follows the formal definition of the Bit Machine
-  and fully tracks undefined values. The <verbatim|Frame> type is used for
-  both read frames and write frames. The <verbatim|Active> type is captures
-  the pair of active read and write frames, and the <verbatim|State> type
-  captures the entire state of the Bit Machine. Lenses are used to access the
-  components of the State.
+  The <verbatim|Core/Simplicity/BitMachine/Authentic.hs> file is an
+  implementation of the Bit Machine that follows the formal definition of the
+  Bit Machine and fully tracks undefined values. The <verbatim|Frame> type is
+  used for both read frames and write frames. The <verbatim|Active> type is
+  captures the pair of active read and write frames, and the <verbatim|State>
+  type captures the entire state of the Bit Machine. Lenses are used to
+  access the components of the State.
 
   The <verbatim|runMachine> function interprets <verbatim|MachineCode> in
   accordance with the semantics of the Bit Machine, and transforms an initial
@@ -6223,51 +6141,125 @@
   during the execution. It is used as part of the testing for static
   analysis.
 
-  <subsection|Translating Simplicity to the Bit Machine>
+  <subsubsection|Translating Simplicity to the Bit Machine>
 
-  The <verbatim|Simplicity/BitMachine/Translate.hs> file defines the naive
-  translation from Simplicity to the Bit Machine. The <verbatim|Translation>
-  type wraps the <verbatim|MachineCodeK> type with phantom type parameters in
-  order to make an instance suitable to be a Simplicity algebra. The
-  <verbatim|translate> function translates Simplicity terms to
-  <verbatim|MachineCode> via the <verbatim|Translation> algebra (recall that
-  a Simplicity term in tagless final form is a polymorphic value that can
-  become any Simplicity algebra). The <verbatim|Simplicity/BitMachine/Translate/TCO.hs>
-  file provides a similar <verbatim|Translation> Simplicity algebra and
-  <verbatim|translate> functions, but this translating using tail composition
-  optimization.
+  The <verbatim|Core/Simplicity/BitMachine/Translate.hs> file defines the
+  naive translation from Simplicity to the Bit Machine. The
+  <verbatim|Translation> type wraps the <verbatim|MachineCodeK> type with
+  phantom type parameters in order to make an instance suitable to be a
+  Simplicity algebra. The <verbatim|translate> function translates Simplicity
+  terms to <verbatim|MachineCode> via the <verbatim|Translation> algebra
+  (recall that a Simplicity term in tagless final form is a polymorphic value
+  that can become any Simplicity algebra). The
+  <verbatim|Simplicity/BitMachine/Translate/TCO.hs> file provides a similar
+  <verbatim|Translation> Simplicity algebra and <verbatim|translate>
+  functions, but this translating using tail composition optimization.
 
-  The <verbatim|Simplicity/BitMachine/Tests.hs> runs a few of the example
-  Simplicity expressions through the Bit Machine implementation to test that
-  the value computed by the Bit Machine matches that direct interpretation of
-  the same Simplicity expressions. In this file you can see an example of how
-  <verbatim|executeUsing (runMachine . translate) program> is used.
+  \;
 
-  <subsection|Static Analysis>
+  <subsubsection|Static Analysis>
 
-  The <verbatim|Simplicity/BitMachine/StaticAnalysis.hs> file has instances
-  to perform static analysis for bounding the maximum number of cells used by
-  the Bit Machine when executing the naive translation of Simplicity
-  expressions. The <verbatim|ExtraCellsBnd> type wraps the data needed for
-  the static analysis with phantom type parameters in order to make an
-  instance suitable for a Simplicity Algebra. The <verbatim|cellsBnd>
+  The <verbatim|Core/Simplicity/BitMachine/StaticAnalysis.hs> file has
+  instances to perform static analysis for bounding the maximum number of
+  cells used by the Bit Machine when executing the naive translation of
+  Simplicity expressions. The <verbatim|ExtraCellsBnd> type wraps the data
+  needed for the static analysis with phantom type parameters in order to
+  make an instance suitable for a Simplicity Algebra. The <verbatim|cellsBnd>
   function computes the bound on cell use from Simplicity terms via the
-  <verbatim|ExtraCellsBnd> Algebra. The <verbatim|Simplicity/BitMachine/StaticAnalysis/TCO.hs>
+  <verbatim|ExtraCellsBnd> Algebra. The <verbatim|Core/Simplicity/BitMachine/StaticAnalysis/TCO.hs>
   file provides a similar static analysis that bounds the maximum number of
   cells used by the Bit Machine when executing the TCO translation of
   Simplicity expressions.
 
-  The <verbatim|Simplicity/BitMachine/StaticAnalysis/Tests.hs> runs a few of
-  the example Simplicity expressions through the static analysis and compares
-  the result with the maximum cell count of executing the Bit Machine on
-  various inputs. In this file you can see an example of how
+  The <verbatim|Core/Simplicity/BitMachine/StaticAnalysis/Tests.hs> runs a
+  few of the example Simplicity expressions through the static analysis and
+  compares the result with the maximum cell count of executing the Bit
+  Machine on various inputs. In this file you can see an example of how
   <verbatim|executeUsing (instrumentMachine . translate) program> is used.
 
-  <section|Type Inference>
+  <section|<verbatim|Simplicity-Indef> libry>
 
-  The file <verbatim|Simplicity/Inference.hs> defines a concrete term data
-  type for Simplicity expressions in open recursive style via the
-  <verbatim|TermF ty> functor. The <verbatim|ty> parameter allows for these
+  To keep the Haskell library of Simplicity modular over different blockchain
+  applications we use the Glasgow Haskell Compiler's Backpack mechanism. The
+  next library, <verbatim|Simplicity-Indef>, is found in the
+  <verbatim|Haskell/Indef> directory. The
+  <verbatim|Indef/Simplicity/Primitive.hsig> file is a module signature that
+  defines the data types and functions that make up the interface that a
+  blockchain application needs to provide. The remained of the
+  <verbatim|Simplicity-Indef> library defines the aspects of Simplicity that
+  are generic over all different Blockchain application through this
+  <verbatim|Simplicity.Primitive> module signature. This includes the full
+  Simplicity language, including primitives and jets, the semantics of full
+  Simplicity, type inference for full Simplicity expressions, and generic
+  serialization and deserialization of Simplicity expressions.
+
+  Each different blockchain application needs to provide a module satifying
+  the <verbatim|Simplicity.Primitive> signature. At the moment only the
+  Bitcoin blockchain application is provided (see
+  Section<nbsp><reference|ss:BitcoinPrimitives>).
+
+  <subsection|Primitive Signature>
+
+  The <verbatim|Indef/Simplicity/Primitive.hsig> signature provides an
+  interface to the different possible primitives provided by different
+  blockchain applications. This signature requires
+
+  <\itemize>
+    <item><verbatim|Prim a b>, a GADT for primitives,
+
+    <item><verbatim|primPrefix> and <verbatim|primName> which are used to
+    generate unique names for the Merkle roots of primitive expressions,
+
+    <item><verbatim|getPrimBit>, <verbatim|putPrimBit>,
+    <verbatim|getPrimByte>, <verbatim|putPrimByte>, are provide for primitive
+    specific serialization and deserialization operations.
+
+    <item><verbatim|PrimEnv> and <verbatim|primSem>, which provides the type
+    of the context and the denotational semantics for evaluating primitive
+    expressions.
+  </itemize>
+
+  <subsection|Primitive Terms>
+
+  The <verbatim|Indef/Simplicity/Term.hs> module provides expressions for the
+  blockchain primitives and jet extensions, in addition to re-exporting the
+  <verbatim|Simplicity.Term.Core> module.
+
+  All the Simplicity extensions are gathered together in the
+  <verbatim|Simplicity> class, whose associated values of type
+  <verbatim|Simplicity term =\<gtr\> term a b> are terms in the full
+  Simplicity language with delegation. The semantics of full Simplicity is
+  discussed in Section<nbsp><reference|ss:DenotationalSemanticsOfFullSimplicity>.
+
+  <subsection|Denotational Semantics of Full
+  Simplicity><label|ss:DenotationalSemanticsOfFullSimplicity>
+
+  The <verbatim|Indef/Simplicity/Term.hs> module provides an
+  <verbatim|Kleisli m> instance which provides semantics for full Simplicity
+  (excluding delegation), where <verbatim|m> is both a reader monad over
+  <verbatim|PrimEnv> and <verbatim|MonadFail>. Semantics for the full
+  Simplicity language with delegation, which depends on computing commitment
+  Merkle roots, is found in the <verbatim|Indef/Simplicity/Semantics.hs>
+  module.
+
+  The <verbatim|Delegator p a b> helper type bundles a commitment Merkle root
+  computation with the Simplicity semantics of <verbatim|disconnect>,
+  allowing commitment Merkle roots and semantics to be evaluated
+  concurrently. This allows us to create <verbatim|Delegate> and
+  <verbatim|Simplicity> instances using <verbatim|Delegator>.
+
+  The <verbatim|Semantics a b> is a of <verbatim|Delegator> for the Kleisli
+  semantics that support the Blockchain primitives, and thus is an instance
+  the <verbatim|Simplicity> class for expressions of full Simplicity with
+  delegation. The <verbatim|sem> function defines the semantics of full
+  Simplicity with delegation by returning a concrete function from
+  <verbatim|PrimEnv> and <verbatim|a> to <verbatim|Maybe b>.
+
+  <subsection|Type Inference>
+
+  The file <verbatim|Indef/Simplicity/Inference.hs> defines a concrete term
+  data type for Simplicity expressions in open recursive style via the
+  <verbatim|TermF ty w> functor. The <verbatim|ty> parameter allows for these
   terms to be decorated with type annotations, though nothing in the data
   type itself enforces that the annotations are well-typed. When type
   annotations are unused, this <verbatim|ty> parameter is set to
@@ -6277,44 +6269,61 @@
   sometimes a vector or list of <verbatim|Bool>s, which may be used in
   intermediate computations when deserializing Simplicity expressions.
 
-  While the <verbatim|Data.Functor.Fixedpoint.Fix> of this <verbatim|TermF
-  ty> functor would yield a type for untyped, full Simplicity terms, instead
-  we usually use a list or vector of <verbatim|TermF ty Integer> values to
-  build a DAG structure, where the <verbatim|Integer> values are references
-  to other subexpressions withing the list or vector. This provides a
-  structure with explicit sharing of subexpressions. This structure is
-  captured by the <verbatim|SimplicityDag> type synonym.
+  While the fixed point of this <verbatim|TermF ty w> functor would yield a
+  type for untyped, full Simplicity terms, instead we usually use a list or
+  vector of <verbatim|TermF ty w Integer> values to build a DAG structure,
+  where the <verbatim|Integer> values are references to other subexpressions
+  withing the list or vector. This provides a structure with explicit sharing
+  of subexpressions. This structure is captured by the
+  <verbatim|SimplicityDag> type synonym.
 
-  The main functions of this module are the <verbatim|typeInference> and
-  <verbatim|typeCheck> functions. The <verbatim|typeInference> function
-  discards the type annotations of the input Simplicity DAG and performs
-  first-order unification to infer new, principle type annotations, with any
-  remaining type variables instantiated at the <verbatim|()> type. It also
-  adds unification constraints given the input and output types of the
-  intended Simplicity expression provided through the <verbatim|proxy a b>
-  argument. The <verbatim|typeCheck> function checks the type annotations
-  and, if everything is successful, a proper well-typed Simplicity expression
-  of is returned. \ Note that the one calling <verbatim|typeCheck> specifies
-  the type of the resulting Simplicity expression; it is not inferred from
-  the <verbatim|SimplicityDag>.
+  The main functions of this module are the <verbatim|typeInference>,
+  <verbatim|witnessData>, and <verbatim|typeCheck> functions. The normal
+  progression here is to first use the <verbatim|typeInference> function
+  which discards the type annotations of the input Simplicity DAG (if any)
+  and performs first-order unification to infer new, principle type
+  annotations, with any remaining type variables instantiated at the
+  <verbatim|()> type. It also adds unification constraints given the input
+  and output types of the intended Simplicity expression provided through the
+  <verbatim|proxy a b> argument.
 
-  <section|Serialization>
+  Next one would use <verbatim|traverse . witnessData> to use the infered
+  type information to decode the witness data into an
+  <verbatim|UntypedValue>.
+
+  Lastly, one would uses the <verbatim|typeCheck> function to type check the
+  inferred type annotations and, if everything is successful, a proper
+  well-typed Simplicity expression of is returned. Note that the one calling
+  <verbatim|typeCheck> specifies the type of the resulting Simplicity
+  expression; it is not inferred from the <verbatim|SimplicityDag>. The
+  <verbatim|typeCheck> function should never fail after
+  <verbatim|typeInference> provided the same type constrants in its proxy
+  argument and the witness data has been decoded to an
+  <verbatim|UntypedValue> that matches the infered witness type.
+
+  There are deserialization functions (see <reference|ss:Serialization>) that
+  go through this progression of type inference and type checking for you.
+
+  <subsection|Serialization><label|ss:Serialization>
 
   There are two main methods of serialization found in this Simplicity
-  library. The first methods is via the <verbatim|Get> and <verbatim|PutM>
-  monads from the <verbatim|cereal> package. These are used for
-  serializations to and from <verbatim|ByteStrings>. The second method is
-  serialization via a difference list of <verbatim|Bool>s and deserialization
-  via a free monad representation of a binary branching tree.
+  library. The primary method is serialization via a difference list of
+  <verbatim|Bool>s and deserialization via a free monad representation of a
+  binary branching tree. A difference list, represented within the type
+  <verbatim|[Bool] -\<gtr\> [Bool]> should be familiar to most Haskell
+  programmers. The same technique is used in the <verbatim|shows> function
+  using the <verbatim|ShowS> type synonym and is used to avoid quadratic time
+  complexity in some cases of nested appending of lists. A <verbatim|DList>
+  type synonym is defined in <verbatim|Core/Simplicity/Serialization.hs>. Our
+  free monad representation of binary trees is perhaps less familiar. See
+  Section<nbsp><reference|ss:FreeMonadicDeserialization> for details.
 
-  A difference list, represented within the type <verbatim|[Bool] -\<gtr\>
-  [Bool]> should be familiar to most Haskell programmers. The same technique
-  is used in the <verbatim|shows> function using the <verbatim|ShowS> type
-  synonym and is used to avoid quadratic time complexity in some cases of
-  nested appending of lists. A <verbatim|DList> type synonym is defined in
-  <verbatim|Simplicity/Serializaiton.hs>.
+  An alternative serializaiton method is via the <verbatim|Get> and
+  <verbatim|PutM> monads from the <verbatim|cereal> package. These are used
+  for serializations to and from <verbatim|ByteStrings>. The alternative
+  method is depricated and will probably be removed.
 
-  <subsection|Free Monadic Deserializaiton>
+  <subsubsection|Free Monadic Deserializaiton><label|ss:FreeMonadicDeserialization>
 
   Our free monad representation of binary trees is perhaps less familiar. A
   binary branching tree with leaves holding values of type <verbatim|a> can
@@ -6332,7 +6341,7 @@
   \ In the free monad representation the <verbatim|Pure> constructor creates
   a leaf holding an <verbatim|a> value while the <verbatim|Free> constructor
   builds a branch represented as a function <verbatim|Bool -\<gtr\>
-  BinaryTree a>, which is equivalent to a pair of binary trees.
+  BinaryTree a>, which is isomorphic to a pair of binary trees.
 
   Given a binary tree (represented as a free monad) we can ``execute'' this
   monad to produce a value <verbatim|a> by providing an executable
@@ -6423,7 +6432,7 @@
   binary trees. Similarly <verbatim|get256Bits> from
   <verbatim|Simplicity.Digest> is a decoder for a 256-bit hash value.
 
-  In <verbatim|Simplicity/Serializaiton.hs> there are several adapter
+  In <verbatim|Core/Simplicity/Serialization.hs> there are several adapter
   functions for executing these Van Laarhoven free monads within particular
   monads.
 
@@ -6445,27 +6454,108 @@
     consumed bytes.
   </itemize-dot>
 
-  <subsection|Serialization of Simplicity DAGs>
+  <subsubsection|Serialization of Simplicity DAGs>
 
-  The file <verbatim|Simplicity/Dag.hs> provides a <verbatim|sortDag> that
-  coverts Simplicity expressions into a topologically sorted DAG structure
-  with explicit sharing that is suitable for encoding. This conversion finds
-  and shares identical well-typed subexpressions. It also runs type inference
-  to determine the principle type annotations needed to optimal sharing. The
-  type inference is also used to prune away any unused witness data.
+  <with|font-series|bold|>The file <verbatim|Indef/Simplicity/Dag.hs>
+  provides a <verbatim|sortDag> that coverts Simplicity expressions into a
+  topologically sorted DAG structure with explicit sharing that is suitable
+  for encoding. This conversion finds and shares identical well-typed
+  subexpressions. It also runs type inference to determine the principle type
+  annotations needed to optimal sharing. The type inference is also used to
+  prune away any unused witness data.
 
-  The file <verbatim|Simplicity/Serialization/BitString.hs> provides
-  <verbatim|getTerm> and <verbatim|putTerm> functions that decode and encode
-  a Simplicity expression, as described in
-  Section<nbsp><reference|ss:Serialization>. It also provides,
+  The file <verbatim|Indef/Simplicity/Serialization/BitString.hs> provides
+  <verbatim|getTermLengthCode> and <verbatim|putTermLengthCode> functions
+  that decode and encode a Simplicity expression. The
+  <verbatim|putTermLengthCode> function executes <verbatim|sortDag> to
+  perform sharing, and the <verbatim|getTermLengthCode> executes
+  deserialization, type inference and type checking all together. The
+  <verbatim|getTermStopCode> and <verbatim|putTermStopCode> functions provide
+  the same functionality using a serialization format with a stop code
+  instead of a length code prefix. The module also provides,
   <verbatim|getDagNoWitness>, <verbatim|getWitnessData> and
-  <verbatim|putDag>, that are used to convert between Simplicity DAGs and
-  their serialized representation. The file
-  <verbatim|Simplicity/Serialization/ByteString.hs> provides similar
-  <verbatim|getDag> and <verbatim|putDag> functions for the encoding
-  described in Appendix<nbsp><reference|app:AltSerialization>.
+  <verbatim|putDag>, that are used by the <verbatim|getTerm*> and
+  <verbatim|putTerm*> functions to convert between Simplicity DAGs and their
+  serialized representation.
 
-  <chapter|C Library Guide>
+  The file <verbatim|Indef/Simplicity/Serialization/ByteString.hs> provides
+  similar <verbatim|getDag> and <verbatim|putDag> functions for the
+  alternative <verbatim|ByteString> encoding described in
+  Appendix<nbsp><reference|app:AltSerialization>.
+
+  <section|<verbatim|Simplicty-Bitcoin> Libary><label|ss:BitcoinPrimitives>
+
+  To instantiate the <verbatim|Simplicity-Indef> library, we need to provide
+  a blockchain specific implemenation of the <verbatim|Simplicity.Primitive>
+  signature. The <verbatim|Simplicity-Bitcoin> library provides primitives
+  used for Bitcoin applications. The <verbatim|Bitcoin/Simplicity/Bitcoin/Primitive.hs>
+  module implements the <verbatim|Simplicity.Primitive> signature by
+  providing the primitive expressions and their semantics for Simplicity's
+  Bitcoin application. The <verbatim|Prim a b> GADT enumerates the list of
+  primitive Simplicity expressions for Bitcoin. The <verbatim|PrimEnv>
+  provides the context that a Simplicity expression is evaluated within,
+  providing the signed transaction data, the index of the input being
+  considered for redemption, and the commitment Merkle root of the Simplicity
+  program itself. The <verbatim|primSem> function is an interpreter for these
+  primitive expressions for the Bitcoin.
+
+  The <verbatim|Bitcoin/Simplicity/Bitcoin/DataTypes.hs> module provides the
+  data structures that make up the signed transaction data for Bitcoin.
+
+  <section|<verbatim|Simplicity> Library>
+
+  The <verbatim|Simplicty> library assembles all of the previous libraries
+  together. The <verbatim|Simplicity-Indef> library is instantiated at all
+  available implemenations of the <verbatim|Simplicity.Primitive> signature,
+  which at the moment is only the <verbatim|Simplicity.Bitcoin.Primitive>
+  module. This Bitcoin instance of the <verbatim|Simplicity-Indef> library
+  has its modules reexported under the <verbatim|Simplicity.Bitcoin> prefix.
+  Specifically the following modules are rexported:
+
+  <\itemize-dot>
+    <item><verbatim|Simplicity.Term> as <verbatim|Simplicity.Bitcoin.Term>
+
+    <item><verbatim|Simplicity.Semantics> as
+    <verbatim|Simplicity.Bitcoin.Semantics>
+
+    <item><verbatim|Simplicity.Dag> as <verbatim|Simplicity.Bitcoin.Dag<samp|>>
+
+    <item><verbatim|Simplicity.Inference> as
+    <verbatim|Simplicity.Bitcoin.Inference>
+
+    <item><verbatim|Simplicity.Serialization.BitString> as
+    <verbatim|Simplicity.Bitcoin.Serialization.BitString>
+
+    <item><verbatim|Simplicity.Serialization.ByteString> as
+    <verbatim|Simplicity.Bitcoin.Serialization.ByteString>
+  </itemize-dot>
+
+  <subsection|CheckSigHashAll>
+
+  Some modules build on specific Simplicity blockchain applications. The
+  <verbatim|Simplicity/Bitcoin/Programs/CheckSigHashAll.hs> files provides a
+  <verbatim|checkSigHashAll> Simplicity expression that verifies Schnorr
+  signature over the Bitcoin specific transaction data hash produced by
+  <verbatim|sigHashAll> for a provided public key. Some variants of this
+  expression are also provided including <verbatim|pkwCheckSigHashAll> which
+  builds a complete Simplicity program from a given public key and signature.
+
+  <section|Simplicity <verbatim|testsuite>>
+
+  The <verbatim|Tests> directory has a collection of tests for a Simplicity
+  <verbatim|testsuite>. The <verbatim|Tests/Tests.hs> file imports the
+  various test modules to build a testing executable to run them all.
+
+  The <verbatim|Tests/Simplicity/Programs/Tests.hs> has some QuickCheck
+  properties that provide randomized testing for some of the Simplicity
+  expressions developed.
+
+  The <verbatim|Tests/Simplicity/BitMachine/Tests.hs> runs a few of the
+  Simplicity expressions through the Bit Machine implementation to test that
+  the value computed by the Bit Machine matches that direct interpretation of
+  the same Simplicity expressions. In this file you can see an example of how
+  <verbatim|executeUsing (runMachine . translate) program> is used.<chapter|C
+  Library Guide>
 
   <appendix|Alternative Serialization of Simplicity
   DAGs><label|app:AltSerialization>
@@ -6748,35 +6838,38 @@
     <associate|auto-13|<tuple|2.3|15>>
     <associate|auto-130|<tuple|9|75>>
     <associate|auto-131|<tuple|9.1|75>>
-    <associate|auto-132|<tuple|9.2|76>>
-    <associate|auto-133|<tuple|9.2.1|77>>
-    <associate|auto-134|<tuple|9.3|77>>
-    <associate|auto-135|<tuple|9.3.1|77>>
-    <associate|auto-136|<tuple|9.4|77>>
-    <associate|auto-137|<tuple|9.5|77>>
-    <associate|auto-138|<tuple|9.6|78>>
-    <associate|auto-139|<tuple|9.6.1|78>>
+    <associate|auto-132|<tuple|9.1.1|76>>
+    <associate|auto-133|<tuple|9.1.2|77>>
+    <associate|auto-134|<tuple|9.1.3|77>>
+    <associate|auto-135|<tuple|9.1.4|77>>
+    <associate|auto-136|<tuple|9.1.5|77>>
+    <associate|auto-137|<tuple|9.1.5.1|77>>
+    <associate|auto-138|<tuple|9.1.5.2|78>>
+    <associate|auto-139|<tuple|9.1.5.3|78>>
     <associate|auto-14|<tuple|2.3.1|15>>
-    <associate|auto-140|<tuple|9.6.2|78>>
-    <associate|auto-141|<tuple|9.6.2.1|78>>
-    <associate|auto-142|<tuple|9.6.2.2|78>>
-    <associate|auto-143|<tuple|9.6.3|78>>
-    <associate|auto-144|<tuple|9.6.4|78>>
-    <associate|auto-145|<tuple|9.6.5|79>>
-    <associate|auto-146|<tuple|9.6.6|79>>
-    <associate|auto-147|<tuple|9.6.7|79>>
-    <associate|auto-148|<tuple|9.7|79>>
-    <associate|auto-149|<tuple|9.7.1|80>>
+    <associate|auto-140|<tuple|9.1.5.4|78>>
+    <associate|auto-141|<tuple|9.1.5.5|78>>
+    <associate|auto-142|<tuple|9.1.5.6|78>>
+    <associate|auto-143|<tuple|9.1.6|78>>
+    <associate|auto-144|<tuple|9.1.6.1|78>>
+    <associate|auto-145|<tuple|9.1.6.2|79>>
+    <associate|auto-146|<tuple|9.2|79>>
+    <associate|auto-147|<tuple|9.2.1|79>>
+    <associate|auto-148|<tuple|9.2.2|79>>
+    <associate|auto-149|<tuple|9.2.3|80>>
     <associate|auto-15|<tuple|2.3.2|15>>
-    <associate|auto-150|<tuple|9.7.2|80>>
-    <associate|auto-151|<tuple|9.8|80>>
-    <associate|auto-152|<tuple|9.9|80>>
-    <associate|auto-153|<tuple|9.9.1|81>>
-    <associate|auto-154|<tuple|9.9.2|82>>
-    <associate|auto-155|<tuple|10|83>>
-    <associate|auto-156|<tuple|A|85>>
-    <associate|auto-157|<tuple|A|87>>
+    <associate|auto-150|<tuple|9.2.4|80>>
+    <associate|auto-151|<tuple|9.2.5|80>>
+    <associate|auto-152|<tuple|9.2.5.1|80>>
+    <associate|auto-153|<tuple|9.2.5.2|81>>
+    <associate|auto-154|<tuple|9.3|82>>
+    <associate|auto-155|<tuple|9.4|83>>
+    <associate|auto-156|<tuple|9.4.1|85>>
+    <associate|auto-157|<tuple|9.5|87>>
+    <associate|auto-158|<tuple|10|?>>
+    <associate|auto-159|<tuple|A|?>>
     <associate|auto-16|<tuple|2.3.3|16>>
+    <associate|auto-160|<tuple|A|?>>
     <associate|auto-17|<tuple|2.3.4|16>>
     <associate|auto-18|<tuple|2.3.4.1|17>>
     <associate|auto-19|<tuple|2.4|17>>
@@ -6904,18 +6997,20 @@
     <associate|ss:AssertMerkleRoot|<tuple|4.3.2|43>>
     <associate|ss:BTDenotationalSemantics|<tuple|4.4.1.1|47>>
     <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|48>>
+    <associate|ss:BitcoinPrimitives|<tuple|9.3|?>>
     <associate|ss:BitcoinTransactions|<tuple|4.4.1|45>>
     <associate|ss:DAGs|<tuple|7.1|57>>
-    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.5|77>>
+    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.2.3|77>>
     <associate|ss:Deserialization|<tuple|6.2|?>>
+    <associate|ss:FreeMonadicDeserialization|<tuple|9.2.5.1|?>>
     <associate|ss:MonadZero|<tuple|2.3.4|16>>
     <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|31>>
-    <associate|ss:Serialization|<tuple|7.2|62>>
+    <associate|ss:Serialization|<tuple|9.2.5|62>>
     <associate|ss:bitOps|<tuple|3.3.1|22>>
     <associate|ss:cmr|<tuple|3.7|39>>
     <associate|ss:coqArith|<tuple|8.3.2|67>>
     <associate|ss:coqInitial|<tuple|8.2.1|65>>
-    <associate|ss:haskellLoop|<tuple|9.6.7|79>>
+    <associate|ss:haskellLoop|<tuple|9.1.5.6|79>>
     <associate|ss:inflate|<tuple|7.1.2.2|61>>
     <associate|ss:monadicSemantics|<tuple|4.1|41>>
     <associate|ss:optionMonad|<tuple|2.3.4.1|17>>
@@ -7474,108 +7569,119 @@
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-130><vspace|0.5fn>
 
-      9.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      9.1<space|2spc>Simplicity-Core library
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-131>
 
-      9.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-132>
+      <with|par-left|<quote|1tab>|9.1.1<space|2spc>Simplicity Types
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-132>>
 
-      <with|par-left|<quote|1tab>|9.2.1<space|2spc>Tensors
+      <with|par-left|<quote|1tab>|9.1.2<space|2spc>Simplicity Terms
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-133>>
 
-      9.3<space|2spc>Blockchain Primitives
+      <with|par-left|<quote|1tab>|9.1.3<space|2spc>Merkle Roots
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-134>
+      <no-break><pageref|auto-134>>
 
-      <with|par-left|<quote|1tab>|9.3.1<space|2spc>Bitcoin Primitives
+      <with|par-left|<quote|1tab>|9.1.4<space|2spc>Tensors
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-135>>
 
-      9.4<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-136>
+      <with|par-left|<quote|1tab>|9.1.5<space|2spc>Example Simplicity
+      Expressions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-136>>
 
-      9.5<space|2spc>Denotational Semantics of Full Simplicity
+      <with|par-left|<quote|2tab>|9.1.5.1<space|2spc>Bits
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-137>
+      <no-break><pageref|auto-137>>
 
-      9.6<space|2spc>Example Simplicity Expressions
+      <with|par-left|<quote|2tab>|9.1.5.2<space|2spc>Multi-bit Words
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-138>
+      <no-break><pageref|auto-138>>
 
-      <with|par-left|<quote|1tab>|9.6.1<space|2spc>Bits
+      <with|par-left|<quote|2tab>|9.1.5.3<space|2spc>Generic
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-139>>
 
-      <with|par-left|<quote|1tab>|9.6.2<space|2spc>Multi-bit Words
+      <with|par-left|<quote|2tab>|9.1.5.4<space|2spc>SHA-256
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-140>>
 
-      <with|par-left|<quote|2tab>|9.6.2.1<space|2spc>Arithmetic operations
+      <with|par-left|<quote|2tab>|9.1.5.5<space|2spc>LibSecp256k1
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-141>>
 
-      <with|par-left|<quote|2tab>|9.6.2.2<space|2spc>Bit-wise operations
+      <with|par-left|<quote|2tab>|9.1.5.6<space|2spc>Loop
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-142>>
 
-      <with|par-left|<quote|1tab>|9.6.3<space|2spc>Generic
+      <with|par-left|<quote|1tab>|9.1.6<space|2spc>The Bit Machine
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-143>>
 
-      <with|par-left|<quote|1tab>|9.6.4<space|2spc>SHA-256
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|2tab>|9.1.6.1<space|2spc>Translating Simplicity
+      to the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-144>>
 
-      <with|par-left|<quote|1tab>|9.6.5<space|2spc>LibSecp256k1
+      <with|par-left|<quote|2tab>|9.1.6.2<space|2spc>Static Analysis
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-145>>
 
-      <with|par-left|<quote|1tab>|9.6.6<space|2spc>CheckSigHashAll
+      9.2<space|2spc>Simplicity-Indef libry
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-146>>
+      <no-break><pageref|auto-146>
 
-      <with|par-left|<quote|1tab>|9.6.7<space|2spc>Loop
+      <with|par-left|<quote|1tab>|9.2.1<space|2spc>Primitive Signature
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-147>>
 
-      9.7<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-148>
+      <with|par-left|<quote|1tab>|9.2.2<space|2spc>Primitive Terms
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-148>>
 
-      <with|par-left|<quote|1tab>|9.7.1<space|2spc>Translating Simplicity to
-      the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|9.2.3<space|2spc>Bitcoin Primitives
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-149>>
 
-      <with|par-left|<quote|1tab>|9.7.2<space|2spc>Static Analysis
+      <with|par-left|<quote|1tab>|9.2.4<space|2spc>CheckSigHashAll
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-150>>
 
-      9.8<space|2spc>Type Inference <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      9.3<space|2spc>Denotational Semantics of Full Simplicity
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-151>
 
-      9.9<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      9.4<space|2spc>Type Inference <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-152>
 
-      <with|par-left|<quote|1tab>|9.9.1<space|2spc>Free Monadic
-      Deserializaiton <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-153>>
+      9.5<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-153>
 
-      <with|par-left|<quote|1tab>|9.9.2<space|2spc>Serialization of
-      Simplicity DAGs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|9.5.1<space|2spc>Free Monadic
+      Deserializaiton <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-154>>
+
+      <with|par-left|<quote|1tab>|9.5.2<space|2spc>Serialization of
+      Simplicity DAGs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-155>>
+
+      9.6<space|2spc>Tests <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-156>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|10<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-155><vspace|0.5fn>
+      <no-break><pageref|auto-157><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       A<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-156><vspace|0.5fn>
+      <no-break><pageref|auto-158><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-157><vspace|0.5fn>
+      <no-break><pageref|auto-159><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
