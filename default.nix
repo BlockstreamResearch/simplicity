@@ -6,6 +6,12 @@ let hp = nixpkgs.haskell.packages.${compiler};
     inherit lens-family;
   };
 
+  haskellPackages = hp.override {
+    overrides = self: super: {
+      Simplicity = haskell;
+    };
+  };
+
   coq = nixpkgs.callPackage ./Simplicity.Coq.nix {
     inherit vst;
     coq = nixpkgs.${coqVersion};
