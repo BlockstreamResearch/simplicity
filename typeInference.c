@@ -649,9 +649,10 @@ type* mallocTypeInference(dag_node* dag, const size_t len, const combinator_coun
     , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[5], &bound_var[5] } } }
     , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[6], &bound_var[6] } } }
     , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[7], &bound_var[7] } } }
+    , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[8], &bound_var[8] } } }
     };
-  /* 'bound_var[8]' is bound to the type TWO^256. Eight non-trivial bindings were made. */
-  size_t bindings_used = 8;
+  /* 'bound_var[9]' is bound to the type TWO^256. Nine non-trivial bindings were made. */
+  size_t bindings_used = 9;
 
   /* :TODO: replace thise mallocs and all other mallocs with a checked_malloc like libsecp256k1 does. */
   /* :TODO: static assert that MAX_DAG size is small enough that these sizes fit within SIZE_T. */
@@ -661,7 +662,7 @@ type* mallocTypeInference(dag_node* dag, const size_t len, const combinator_coun
 
   type* type_dag = NULL;
   if (arrow && extra_var) {
-    if (typeInference(arrow, dag, len, extra_var, &(bound_var[8]), &bindings_used)) {
+    if (typeInference(arrow, dag, len, extra_var, &(bound_var[9]), &bindings_used)) {
       /* :TODO: constrain the root of the dag to be a Simplicity program: ONE |- ONE */
 
       /* :TODO: static assert that MAX_DAG size is small enough that this size fits within SIZE_T. */
