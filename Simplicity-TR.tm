@@ -358,7 +358,7 @@
     <no-break><pageref|auto-91>
 
     <with|par-left|1tab|6.1.1<space|2spc>Adding a <with|font-family|ss|loop>
-    primative to Simplicity? <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    primitive to Simplicity? <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-92>>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|7<space|2spc>Type
@@ -612,14 +612,14 @@
   <section|Bitcoin Script>
 
   Bitcoin<cite|bitcoin> was the first protocol that used a blockchain to
-  build a distributed ledger that allows anyone to transact a cyrptographic
+  build a distributed ledger that allows anyone to transact a cryptographic
   currency with minimal risk of their transaction being reversed or undone,
   and without relying on a trusted third party or central authority.
   Typically access to funds are controlled by a cryptographic private key.
   References to one or more of these funds, which may or may not have the
   same private keys, are assembled into a data structure, called a
   <dfn|transaction>, along with a set of one or more outputs which specify
-  which cyrptographic public keys that will control each output. This
+  which cryptographic public keys that will control each output. This
   transaction data is signed with each private key for each input and added
   to the transaction as <dfn|witness data>.
 
@@ -630,7 +630,7 @@
   language with conditionals operations for control flow and no loops.
   Bitcoin has stack manipulation operations, Boolean logic operations, and
   very simple arithmetic operations (without even multiplication). It also
-  has some cryptographic operations that include cyrptographic hash
+  has some cryptographic operations that include cryptographic hash
   functions, and digital signature verification operations. The
   <verbatim|CHECKSIG> operation does an ECDSA digital signature verification
   of transaction data.
@@ -1015,7 +1015,7 @@
   lists. Given a natural number <math|n\<of\>\<bbb-N\>> and either list
   <math|l\<of\>A<rsup|\<ast\>>> or a non-empty list <math|l\<of\>A<rsup|+>>,
   in both cases we define <math|l<around*|[|n|]>\<of\><maybe>A> to lookup the
-  <math|n>th value in <math|l>.\ 
+  <math|n>th value in <math|l>.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|<around*|(|\<emptyset\><rsup|<maybe>><rsub|A<rsup|+>>|)><around*|[|n|]>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><rsub|A>>>|<row|<cell|<around*|(|\<eta\><rsup|<maybe>><rsub|A<rsup|+>><around*|(|l|)>|)><around*|[|n|]>>|<cell|\<assign\>>|<cell|l<around*|[|n|]>>>|<row|<cell|<around*|\<langle\>|a,l|\<rangle\>><around*|[|0|]>>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><rsub|A><around*|(|a|)>>>|<row|<cell|<around*|\<langle\>|a,l|\<rangle\>><around*|[|1+n|]>>|<cell|\<assign\>>|<cell|l<around*|[|n|]>>>>>
@@ -1178,7 +1178,7 @@
   <subsection|Cartesian Strength>
 
   In addition to Kleisli composition we define a series of helper functions
-  for manipulating products.\ 
+  for manipulating products.
 
   \;
 
@@ -1333,7 +1333,7 @@
     <tformat|<table|<row|<cell|<around*|\<lceil\>|<math-tt|0><rsub|<2>>|\<rceil\>><rsub|1>>|<cell|\<assign\>>|<cell|0>>|<row|<cell|<around*|\<lceil\>|<math-tt|1><rsub|<2>>|\<rceil\>><rsub|1>>|<cell|\<assign\>>|<cell|1>>|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|2*n>>|<cell|\<assign\>>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>*2<rsup|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>>>>>
   </eqnarray*>
 
-  We also make use of the following variation of this value intepretation
+  We also make use of the following variation of this value interpretation
   function.
 
   <\equation*>
@@ -1971,7 +1971,7 @@
 
     Let us first consider the right hand side of equation
     <reference|full-adder-spec>. By the definition of our value function we
-    have that\ 
+    have that
 
     <\eqnarray*>
       <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>|<cell|=>|<cell|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|a<rsub|2>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|b<rsub|2>|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|a<rsub|2>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|2>|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>>>>
@@ -2333,7 +2333,7 @@
   need a representation of field elements and curve points that have
   redundant representations, but then the choice of which specific
   representative returned by Simplicity expressions becomes consensus
-  critical.\ 
+  critical.
 
   We see three possible ways of addressing this problem:
 
@@ -2386,7 +2386,7 @@
   which is used for Schnorr signature validation. Our jets will be tied to
   this specific version of libsecp256k1, and the commitment Merkle root (see
   Section<nbsp><reference|ss:cmr>) captures the formal specification of the
-  functional behavour of our jets. The libsecp256k1 is already reasonably
+  functional behaviour of our jets. The libsecp256k1 is already reasonably
   mature, so we are not expecting to lose out too much by missing future
   advances. When there are major improvements, new versions of Simplicity
   jets could be substituted in by using a versioning mechanism for
@@ -2567,7 +2567,7 @@
   define an operational semantics for Simplicity via an abstract machine we
   call the <dfn|Bit Machine>.
 
-  <subsection|Repesenting Values as Cell Arrays><label|ss:RepresentingValuesAsCellArrays>
+  <subsection|Representing Values as Cell Arrays><label|ss:RepresentingValuesAsCellArrays>
 
   <assign|carr|<macro|x|<verbatim|[<arg|x>]>>><assign|cearr|<macro|x|<verbatim|[<arg|x><underline|]>>>><assign|rep|<macro|x|y|<math|\<ulcorner\><arg|x>\<urcorner\><rsub|<arg|y>>>>>Values
   in the Bit Machine are represented by arrays of cells where each cell
@@ -3635,7 +3635,7 @@
   security properties of the overall smart contract.
 
   Of course, lots of variations of this <samp|salted> expression are
-  possible.\ 
+  possible.
 
   <section|Blockchain Primitives>
 
@@ -3682,7 +3682,7 @@
   <math|2<rsup|32>> by Bitcoin's deserialization implementation. Similarly,
   the length of <math|SigOutput>'s <math|pubScript> is limited to strictly
   less than <math|2<rsup|32>> bytes. We assume all transactions to adhere to
-  these limits when reasoning about Bitcoin transactions.\ 
+  these limits when reasoning about Bitcoin transactions.
 
   Furthermore, we assume that for every <math|e\<of\>BCEnv> that
   <math|<around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>\<less\><around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>>
@@ -4096,7 +4096,7 @@
   \<rightarrow\>A+B> on an input <math|A> until a <math|B> value is returned.
 
   Consider a Simplicity expression <math|t\<of\>A\<vdash\>A+B>, and a
-  continutation <math|k\<of\>A\<times\><2><rsup|256>\<vdash\>B>. We define
+  continuation <math|k\<of\>A\<times\><2><rsup|256>\<vdash\>B>. We define
   <math|<samp|loopBody> t k>:
 
   <\render-code>
@@ -4376,7 +4376,7 @@
   each data block into a <samp|witness> expression within the different
   <math|t<rsub|i>>'s.
 
-  <subsection|Adding a <samp|loop> primative to Simplicity?>
+  <subsection|Adding a <samp|loop> primitive to Simplicity?>
 
   The purpose of the above derivation of the <samp|loop> construction is to
   understand the theoretical expressiveness that Simplicity's delegation
@@ -4384,7 +4384,7 @@
   the delegation extension brings Simplicity's expressiveness beyond what is
   possible with full Simplicity without delegation.
 
-  While it is, in prinicple, possible to use the <samp|loop> construction in
+  While it is, in principle, possible to use the <samp|loop> construction in
   Simplicity applications (that support the delegation extension), the
   <samp|loop> construction is subject to all the same problems that using
   delegation entails: One cannot bound the computation costs of redemption at
@@ -4630,7 +4630,7 @@
   the node at index <math|k>. Each different node occurring at an index
   <math|k> in the DAG <math|l> implies a set of unification equations over
   these type variables, possibly requiring further fresh unification
-  variables.\ 
+  variables.
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`iden'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<alpha\><rsub|k>\<doteq\>\<beta\><rsub|k>|}>>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`unit'>|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|{|\<beta\><rsub|k>\<doteq\><1>|}>>>|<row|<cell|con<rsub|l><around*|\<langle\>|k,<math-ss|`injl'>
@@ -5220,7 +5220,7 @@
   To facilitate the construction of expression in the ``final''
   representation, the nine core combinators are defined as functions
   parameterized over all Simplicity algebras, and each combinator is proven
-  to be parameteric or to preserve parametericity. For the most part, these
+  to be parametric or to preserve parametericity. For the most part, these
   combinators can be used to write Simplicity expressions in the ``final''
   representation in the same way one would use constructors to write
   Simplicity expressions in the ``initial'' representation. On top of this,
@@ -5308,7 +5308,7 @@
     (S n))>
 
     <item><verbatim|fullMultiplier : forall n term,<next-line>term ((Word n *
-    Word n) * (Word n * Word n)) (Word (S n))>\ 
+    Word n) * (Word n * Word n)) (Word (S n))>
   </itemize-dot>
 
   The <verbatim|adder> expression defines the sum of two <math|2<rsup|n>>-bit
@@ -5533,7 +5533,7 @@
   Because <verbatim|<em|t>> is restricted to being a term from the
   <verbatim|Primitive> algebra, jets cannot contain <verbatim|witness> or
   <verbatim|disconnect> sub-expressions. While our generic definition of
-  <verbatim|jets> allows any term from the <verbatim|Primtiive> algebra to be
+  <verbatim|jets> allows any term from the <verbatim|Primitive> algebra to be
   a jet, we expect specific applications of Simplicity to limit themselves to
   a finite collection of jets through its serialization format.
 
@@ -5546,7 +5546,7 @@
   additional combinators. It defines the full Simplicity language. The
   <verbatim|SimplicityPrimSem> canonical structure provides the functional
   semantics of the full Simplicity language as the <verbatim|primSem M> type
-  family when <verbatim|M> is a monad zero.\ 
+  family when <verbatim|M> is a monad zero.
 
   The <verbatim|FullSimplicityWithDelegation> algebra is the the meet of the
   <verbatim|Jet> and the <verbatim|Delegation> algebras (equiv. the meet of
@@ -5903,8 +5903,8 @@
   into a <verbatim|Ty> value by forgetting about the type parameter.
 
   The <verbatim|Simplicity/Ty.hs> file also defines the
-  <verbatim|UntypedValue> that represents data values of Simplity's typed,
-  but in an untyped mannar. \ This is mostly used for <samp|witness> nodes.
+  <verbatim|UntypedValue> that represents data values of Simplicity's typed,
+  but in an untyped manner. \ This is mostly used for <samp|witness> nodes.
   \ There are functions to convert to and from typed and
   <verbatim|UntypedValue>s.
 
@@ -5979,7 +5979,7 @@
   making static analysis practical. Adding explicit sharing to the Simplicity
   language would make the language more complex and would risk incorrectly
   implementing the sharing combinator. Explicitly building memoization tables
-  could work, but will have overhead. For instance, we do this whenh
+  could work, but will have overhead. For instance, we do this when
   computing Merkle roots of Simplicity types. However, the solution of using
   tagless-final style lets us write terms in a natural manner and we get
   sharing for Simplicity expressions at exactly the points where we have
@@ -6007,7 +6007,7 @@
   applications. This module exports
 
   <\itemize>
-    <item><verbatim|Prim a b>, a GADT for different primitive expressions,\ 
+    <item><verbatim|Prim a b>, a GADT for different primitive expressions,
 
     <item><verbatim|primPrefix> and <verbatim|primName> which are used to
     generate unique names for the Merkle roots of primitive expressions,
@@ -6434,7 +6434,7 @@
 
     <item><verbatim|evalExactVector> evaluates a Van Laarhoven binary tree
     using a vector of bits and will return <verbatim|Nothing> unless the
-    vector is exactly entirely consumed.\ 
+    vector is exactly entirely consumed.
 
     <item><verbatim|evalStreamWithError> evaluates a Van Laarhoven bit
     decoder using a list of bits and returns an <verbatim|Error> if the
@@ -7327,7 +7327,7 @@
       <no-break><pageref|auto-91>
 
       <with|par-left|<quote|1tab>|6.1.1<space|2spc>Adding a
-      <with|font-family|<quote|ss>|loop> primative to Simplicity?
+      <with|font-family|<quote|ss>|loop> primitive to Simplicity?
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-92>>
 
