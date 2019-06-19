@@ -1,4 +1,5 @@
 Require Import Util.PackedClass.
+Import Coq.Strings.String.StringSyntax.
 
 Set Implicit Arguments.
 

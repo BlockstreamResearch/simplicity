@@ -1,6 +1,7 @@
 Require Import Util.Monad.
 Require Import Util.Option.
 Require Import Util.PackedClass.
+Import Coq.Strings.String.StringSyntax.
 
 Require Import Simplicity.Ty.
 Require Import Simplicity.Digest.
