@@ -17,6 +17,16 @@ Software artifacts can be built using [Nix](https://nixos.org/nix/).
 To build the Haskell project, run `nix-build -A haskell`.
 To build the Coq project, run `nix-build -A coq`.
 
+To build the Coq part without Nix, you can try:
+
+1. download and extract VST from the URL in `vst.nix`
+1. in the VST directory, do: `make compcert/lib/Integers.vo sha/SHA256.vo sha/functional_prog.vo`
+1. in the root Simplicity directory, do:
+1. `dune build Coq/Util`
+1. `dune build Coq/Simplicity`
+1. Proof General won't find the built `vo` files unless they are moved from the directory where Dune puts them: `for i in $(find _build/default/Coq -name '*.vo' ); do mv -v $i $(echo $i | cut -d/ -f3-); done`
+1. Now you can use Proof General to browse the proofs.
+
 ## Documentation
 
 Detailed documentation can be found in the `Simplicity-TR.tm` TeXmacs file.

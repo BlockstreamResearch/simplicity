@@ -1,0 +1,5 @@
+(coq.theory
+ (name Util)
+ (public_name Util)
+ (flags -R ../../../../VST-2.3/compcert/lib compcert.lib -R ../../../../VST-2.3/compcert/flocq compcert.flocq -R ../../../../VST-2.3/compcert/x86_32 compcert.x86_32 -R ../../../../VST-2.3/compcert/common compcert.common -R ../../../../VST-2.3/sha sha -R ../../../../VST-2.3/msl VST.msl -R ../../../../VST-2.3/veric VST.veric -R ../../../../VST-2.3/floyd VST.floyd))
+(include_subdirs qualified)
