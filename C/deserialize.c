@@ -6,6 +6,7 @@
 
 /* Ensure a non-zero amount of bits are 'available'.
  * If no more bits are available in the 'stream', returns 'ERR_BISTREAM_EOF'.
+ * If an I/O error occurs when reading from the 'stream', 'ERR_BISTRING_ERROR' is returned.
  * Returns 0 if successful.
  *
  * Precondition: NULL != stream
@@ -13,7 +14,10 @@
 static int32_t ensureBuffer(bit_stream* stream) {
   if (stream->available <= 0) {
     int ch = fgetc(stream->file);
-    if (ch < 0) return ERR_BITSTREAM_EOF;
+    if (ch == EOF) {
+      if (ferror(stream->file)) return ERR_BITSTREAM_ERROR;
+      if (feof(stream->file)) return ERR_BITSTREAM_EOF;
+    }
     stream->byte = (unsigned char)ch;
     stream->available = CHAR_BIT;
   }
@@ -23,6 +27,7 @@ static int32_t ensureBuffer(bit_stream* stream) {
 /* Fetches up to 31 bits from 'stream' as the 'n' least significant bits of return value.
  * The 'n' bits are set from the MSB to the LSB.
  * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available.
+ * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  *
  * Precondition: 0 <= n < 32
  *               NULL != stream
@@ -51,6 +56,7 @@ static int32_t getNBits(int n, bit_stream* stream) {
 
 /* Returns one bit from 'stream', 0 or 1.
  * Returns 'ERR_BITSTREAM_EOF' if no bits are available.
+ * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  *
  * Precondition: NULL != stream
  */
@@ -61,6 +67,7 @@ static int32_t getBit(bit_stream* stream) {
 /* Fetches 'len' 'uint32_t's from 'stream' into 'result'.
  * The bits in each 'uint32_t' are set from the MSB to the LSB and the 'uint32_t's of 'result' are set from 0 up to 'len'.
  * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available ('result' may be modified).
+ * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream' ('result' may be modified).
  * Returns 0 if successful.
  *
  * Precondition: uint32_t result[len];
@@ -81,6 +88,7 @@ static int32_t getWord32Array(uint32_t* result, const size_t len, bit_stream* st
 
 /* Fetches a 256-bit hash value from 'stream' into 'result'.
  * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available ('result' may be modified).
+ * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream' ('result' may be modified).
  * Returns 0 if successful.
  *
  * Precondition: NULL != result
@@ -96,6 +104,7 @@ static int32_t getHash(sha256_midstate* result, bit_stream* stream) {
  * Any remaining bits in 'result' are reset to 0.
  * If the decoded bitstring would be too long 'ERR_DATA_OUT_OF_RANGE' is returned ('result' may be modified).
  * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned ('result' may be modified).
+ * If an I/O error occurs when reading from the 'stream', 'ERR_BISTRING_ERROR' is returned ('result' may be modified).
  *
  * Precondition: NULL != result
  *               NULL != stream
@@ -117,6 +126,7 @@ static int32_t decodeUpto1Bit(int32_t* result, bit_stream* stream) {
  * When successful returns the decoded result.
  * If the decoded value would be too large, 'ERR_DATA_OUT_OF_RANGE' is returned.
  * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned.
+ * If an I/O error occurs when reading from the 'stream', 'ERR_BISTRING_ERROR' is returned.
  *
  * Precondition: NULL != stream
  */
@@ -134,6 +144,7 @@ static int32_t decodeUpto3(bit_stream* stream) {
  * Any remaining bits in 'result' are reset to 0.
  * If the decoded bitstring would be too long 'ERR_DATA_OUT_OF_RANGE' is returned ('result' may be modified).
  * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned ('result' may be modified).
+ * If an I/O error occurs when reading from the 'stream', 'ERR_BISTRING_ERROR' is returned ('result' may be modified).
  *
  * Precondition: NULL != result
  *               NULL != stream
@@ -159,6 +170,7 @@ static int32_t decodeUpto3Bits(int32_t* result, bit_stream* stream) {
  * When successful returns the decoded result.
  * If the decoded value would be too large, 'ERR_DATA_OUT_OF_RANGE' is returned.
  * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned.
+ * If an I/O error occurs when reading from the 'stream', 'ERR_BISTRING_ERROR' is returned.
  *
  * Precondition: NULL != stream
  */
@@ -176,6 +188,7 @@ static int32_t decodeUpto15(bit_stream* stream) {
  * Any remaining bits in 'result' are reset to 0.
  * If the decoded bitstring would be too long 'ERR_DATA_OUT_OF_RANGE' is returned ('result' may be modified).
  * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned ('result' may be modified).
+ * If an I/O error occurs when reading from the 'stream', 'ERR_BISTRING_ERROR' is returned ('result' may be modified).
  *
  * Precondition: NULL != result
  *               NULL != stream
@@ -201,6 +214,7 @@ static int32_t decodeUpto15Bits(int32_t* result, bit_stream* stream) {
  * When successful returns the decoded result.
  * If the decoded value would be too large, 'ERR_DATA_OUT_OF_RANGE' is returned.
  * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned.
+ * If an I/O error occurs when reading from the 'stream', 'ERR_BISTRING_ERROR' is returned.
  *
  * Precondition: NULL != stream
  */
@@ -216,6 +230,7 @@ static int32_t decodeUpto65535(bit_stream* stream) {
  * When successful returns the decoded result.
  * If the decoded value would be too large, 'ERR_DATA_OUT_OF_RANGE' is returned.
  * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned.
+ * If an I/O error occurs when reading from the 'stream', 'ERR_BISTRING_ERROR' is returned.
  *
  * Precondition: NULL != stream
  */
@@ -243,6 +258,7 @@ int32_t decodeUptoMaxInt(bit_stream* stream) {
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'ERR_HIDDEN' if the decoded node has illegal HIDDEN children.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
  *
@@ -333,6 +349,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
  *
@@ -358,6 +375,7 @@ static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* c
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * Returns 'ERR_MALLOC' if malloc fails.
  * In the above error cases, '*dag' is set to NULL.
  * If successful, returns a positive value equal to the length of an allocated array of (*dag).
@@ -395,6 +413,7 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream*
  * This is the format in which the data for 'WITNESS' nodes are encoded.
  * Returns 'ERR_DATA_OUT_OF_RANGE' if the encoded string of bits exceeds this decoder's limits.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * Returns 'ERR_MALLOC' if malloc fails.
  * If successful, '*witness' is set to the decoded bitstring and 0 is returned.
  *
@@ -428,7 +447,7 @@ int32_t decodeMallocWitnessData(bitstring* witness, bit_stream* stream) {
   size_t charRead = fread(arr + 1, 1, arrayLen - 1, stream->file);
   if (charRead != arrayLen - 1) {
     free(arr);
-    return ERR_BITSTREAM_EOF;
+    return ferror(stream->file) ? ERR_BITSTREAM_ERROR : ERR_BITSTREAM_EOF;
   }
 
   /* Rebuild 'stream's structure as if we read 'witnessLen' bits from the stream */
