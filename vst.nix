@@ -1,9 +1,9 @@
 {stdenv, fetchurl, coq} :
 stdenv.mkDerivation {
-  name = "vst-sha256-2.3";
+  name = "vst-sha256-2.4";
   src = fetchurl {
-    url = "https://github.com/PrincetonUniversity/VST/archive/v2.3.tar.gz";
-    sha256 = "1l4wf0nxbkmgg2kyh6viz3ds17smw9jb6ngamgimf2y7cqh6wq2k";
+    url = "https://github.com/PrincetonUniversity/VST/archive/v2.4.tar.gz";
+    sha256 = "19lxi3x7bxffcdswhmbyprfq883avdh4bvbbi2sjsgscy2abvr0n";
   };
 
   buildInputs = [ coq ];
