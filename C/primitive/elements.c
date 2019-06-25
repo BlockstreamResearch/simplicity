@@ -422,3 +422,76 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
 
   return tx;
 }
+
+/* Deserialize a Simplicity program from 'file' and execute it in the environment of the 'ix'th input of 'tx'.
+ * If the file isn't a proper encoding of a Simplicity program, '*success' is set to false.
+ * If EOF isn't encountered at the end of decoding, '*success' is set to false.
+ * If 'cmr != NULL' and the commitment Merkle root of the decoded expression doesn't match '*wmr' then '*success' is set to false.
+ * If 'wmr != NULL' and the witness Merkle root of the decoded expression doesn't match '*wmr' then '*success' is set to false.
+ * Otherwise evaluation proceeds and '*success' is set to the result of evaluation.
+ *
+ * If at any time there is a transient error, such as malloc failing or an I/O error reading from 'file'
+ * then 'false' is returned, and 'success' and 'file' may be modified.
+ * Otherwise, 'true' is returned.
+ *
+ * Precondition: NULL != success;
+ *               NULL != tx;
+ *               NULL != cmr implies uint32_t cmr[8]
+ *               NULL != wmr implies uint32_t wmr[8]
+ *               NULL != file;
+ */
+extern bool elements_simplicity_execSimplicity(bool* success, const transaction* tx, uint_fast32_t ix,
+                                               const uint32_t* cmr, const uint32_t* wmr, FILE* file) {
+  if (!success || !tx || !file) return false;
+
+  bool result = true;
+  combinator_counters census;
+  dag_node* dag = NULL;
+  void* witnessAlloc;
+  bitstring witness;
+  int32_t len;
+  {
+    bitstream stream = initializeBitstream(file);
+    len = decodeMallocDag(&dag, &census, &stream);
+    if (len < 0) {
+      *success = false;
+      return PERMANENT_FAILURE(len);
+    }
+    int32_t err = decodeMallocWitnessData(&witnessAlloc, &witness, &stream);
+    if (err < 0) {
+      *success = false;
+      return PERMANENT_FAILURE(err);
+    }
+
+    /* Check that we hit the end of 'file' */
+    if (EOF != getc(file)) {
+      *success = false;
+      return (!ferror(file));
+    }
+    if (ferror(file)) return false;
+  }
+
+  /* :TODO: Fold CMR calculation into dag to remove this VLA.  The CMR is needed to implement disconnect anyway.*/
+  analyses analysis[len];
+  computeCommitmentMerkleRoot(analysis, dag, (size_t)len);
+  *success = !cmr || 0 == memcmp(cmr, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
+  if (*success) {
+    type* type_dag;
+    size_t sourceIx, targetIx;
+    result = mallocTypeInference(&type_dag, &sourceIx, &targetIx, dag, (size_t)len, &census);
+    *success = result && type_dag && 0 == sourceIx && 0 == targetIx && fillWitnessData(dag, type_dag, (size_t)len, witness);
+    if (*success) {
+      computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
+      *success = !wmr || 0 == memcmp(wmr, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]));
+      if (*success) {
+        forceJets(dag, analysis, (size_t)len, JET_ALL);
+        result = evalTCOProgram(success, dag, type_dag, (size_t)len, &(txEnv){.tx = tx, .scriptCMR = cmr, .ix = ix});
+      }
+    }
+    free(type_dag);
+  }
+
+  free(dag);
+  free(witnessAlloc);
+  return result;
+}
