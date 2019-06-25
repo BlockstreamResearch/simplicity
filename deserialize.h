@@ -5,12 +5,18 @@
 #include <stdio.h>
 #include "dag.h"
 
-#define ERR_BITSTREAM_EOF (-1)
-#define ERR_DATA_OUT_OF_RANGE (-2)
-#define ERR_FAIL_CODE (-3)
-#define ERR_STOP_CODE (-4)
-#define ERR_HIDDEN (-5)
-#define ERR_MALLOC (-6)
+/* By convetion, odd error codes are transient failures (i.e. out of memory or I/O errors)
+ * while even error codes are permenent failures (i.e. unexpected end of file or parsing error, etc.)
+ */
+#define ERR_MALLOC (-1)
+#define ERR_BITSTREAM_EOF (-2)
+#define ERR_BITSTREAM_ERROR (-3)
+#define ERR_DATA_OUT_OF_RANGE (-4)
+#define ERR_FAIL_CODE (-6)
+#define ERR_STOP_CODE (-8)
+#define ERR_HIDDEN (-10)
+
+#define PERMANENT_FAILURE(err) (!((err) & 1))
 
 /* Datatype representing a bit stream.
  * Bits are streamed from MSB to LSB.
@@ -35,6 +41,7 @@ static inline bit_stream initializeBitStream(FILE* file) {
  * When successful returns the decoded result.
  * If the decoded value would be too large, 'ERR_DATA_OUT_OF_RANGE' is returned.
  * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned.
+ * If an I/O error occurs when reading from the 'stream', 'ERR_BISTRING_ERROR' is returned.
  *
  * Precondition: NULL != stream
  */
@@ -48,6 +55,7 @@ int32_t decodeUptoMaxInt(bit_stream* stream);
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * Returns 'ERR_MALLOC' if malloc fails.
  * In the above error cases, '*dag' is set to NULL.
  * If successful, returns a positive value equal to the length of an allocated array of (*dag).
@@ -67,6 +75,7 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream*
  * This is the format in which the data for 'WITNESS' nodes are encoded.
  * Returns 'ERR_DATA_OUT_OF_RANGE' if the encoded string of bits exceeds this decoder's limits.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * Returns 'ERR_MALLOC' if malloc fails.
  * If successful, '*witness' is set to the decoded bitstring and 0 is returned.
  *
