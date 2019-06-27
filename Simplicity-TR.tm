@@ -207,7 +207,7 @@
     3.5<space|2spc>Operational Semantics <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-51>
 
-    <with|par-left|1tab|3.5.1<space|2spc>Repesenting Values as Cell Arrays
+    <with|par-left|1tab|3.5.1<space|2spc>Representing Values as Cell Arrays
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-52>>
 
@@ -504,107 +504,149 @@
     Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-130><vspace|0.5fn>
 
-    9.1<space|2spc>Simplicity Types <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    9.1<space|2spc><with|font-family|tt|language|verbatim|Simplicity-Core>
+    library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-131>
 
-    9.2<space|2spc>Simplicity Terms <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-132>
+    <with|par-left|1tab|9.1.1<space|2spc>Simplicity Types
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-132>>
 
-    <with|par-left|1tab|9.2.1<space|2spc>Tensors
+    <with|par-left|1tab|9.1.2<space|2spc>Simplicity Terms
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-133>>
 
-    9.3<space|2spc>Blockchain Primitives <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-134>
+    <with|par-left|1tab|9.1.3<space|2spc>Merkle Roots
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-134>>
 
-    <with|par-left|1tab|9.3.1<space|2spc>Bitcoin Primitives
+    <with|par-left|1tab|9.1.4<space|2spc>Tensors
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-135>>
 
-    9.4<space|2spc>Merkle Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-136>
-
-    9.5<space|2spc>Denotational Semantics of Full Simplicity
+    <with|par-left|1tab|9.1.5<space|2spc>Example Simplicity Expressions
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-137>
+    <no-break><pageref|auto-136>>
 
-    9.6<space|2spc>Example Simplicity Expressions
+    <with|par-left|2tab|9.1.5.1<space|2spc>Bits
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-138>
+    <no-break><pageref|auto-137>>
 
-    <with|par-left|1tab|9.6.1<space|2spc>Bits
+    <with|par-left|2tab|9.1.5.2<space|2spc>Multi-bit Words
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-138>>
+
+    <with|par-left|2tab|9.1.5.3<space|2spc>Generic
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-139>>
 
-    <with|par-left|1tab|9.6.2<space|2spc>Multi-bit Words
+    <with|par-left|2tab|9.1.5.4<space|2spc>SHA-256
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-140>>
 
-    <with|par-left|2tab|9.6.2.1<space|2spc>Arithmetic operations
+    <with|par-left|2tab|9.1.5.5<space|2spc>LibSecp256k1
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-141>>
 
-    <with|par-left|2tab|9.6.2.2<space|2spc>Bit-wise operations
+    <with|par-left|2tab|9.1.5.6<space|2spc>Loop
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-142>>
 
-    <with|par-left|1tab|9.6.3<space|2spc>Generic
+    <with|par-left|1tab|9.1.6<space|2spc>The Bit Machine
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-143>>
 
-    <with|par-left|1tab|9.6.4<space|2spc>SHA-256
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|2tab|9.1.6.1<space|2spc>Translating Simplicity to the Bit
+    Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-144>>
 
-    <with|par-left|1tab|9.6.5<space|2spc>LibSecp256k1
+    <with|par-left|2tab|9.1.6.2<space|2spc>Static Analysis
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-145>>
 
-    <with|par-left|1tab|9.6.6<space|2spc>CheckSigHashAll
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-146>>
+    9.2<space|2spc><with|font-family|tt|language|verbatim|Simplicity-Indef>
+    library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-146>
 
-    <with|par-left|1tab|9.6.7<space|2spc>Loop
+    <with|par-left|1tab|9.2.1<space|2spc>Primitive Signature
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-147>>
 
-    9.7<space|2spc>The Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-148>
+    <with|par-left|1tab|9.2.2<space|2spc>Primitive Terms
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-148>>
 
-    <with|par-left|1tab|9.7.1<space|2spc>Translating Simplicity to the Bit
-    Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|1tab|9.2.3<space|2spc>Denotational Semantics of Full
+    Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-149>>
 
-    <with|par-left|1tab|9.7.2<space|2spc>Static Analysis
+    <with|par-left|1tab|9.2.4<space|2spc>Type Inference
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-150>>
 
-    9.8<space|2spc>Type Inference <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-151>
+    <with|par-left|1tab|9.2.5<space|2spc>Serialization
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-151>>
 
-    9.9<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-152>
+    <with|par-left|2tab|9.2.5.1<space|2spc>Free Monadic Deserializaiton
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-152>>
 
-    <with|par-left|1tab|9.9.1<space|2spc>Free Monadic Deserializaiton
+    <with|par-left|2tab|9.2.5.2<space|2spc>Serialization of Simplicity DAGs
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-153>>
 
-    <with|par-left|1tab|9.9.2<space|2spc>Serialization of Simplicity DAGs
+    9.3<space|2spc><with|font-family|tt|language|verbatim|Simplicity-Bitcoin>
+    Libary <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-154>
+
+    9.4<space|2spc><with|font-family|tt|language|verbatim|Simplicity> Library
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-154>>
+    <no-break><pageref|auto-155>
+
+    <with|par-left|1tab|9.4.1<space|2spc>CheckSigHashAll
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-156>>
+
+    9.5<space|2spc>Simplicity <with|font-family|tt|language|verbatim|testsuite>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-157>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|10<space|2spc>C
     Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-155><vspace|0.5fn>
+    <no-break><pageref|auto-158><vspace|0.5fn>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Appendix
-    A<space|2spc>Alternative Serialization of Simplicity DAGs>
+    A<space|2spc>Elements Application> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-159><vspace|0.5fn>
+
+    A.1<space|2spc>Denotational Semantics
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-156><vspace|0.5fn>
+    <no-break><pageref|auto-160>
+
+    <with|par-left|1tab|A.1.1<space|2spc>Null Data
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-161>>
+
+    <with|par-left|1tab|A.1.2<space|2spc>Merkle Roots
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-162>>
+
+    <with|par-left|1tab|A.1.3<space|2spc>Serialization
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-163>>
+
+    A.2<space|2spc>Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-164>
+
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|Appendix
+    B<space|2spc>Alternative Serialization of Simplicity DAGs>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-165><vspace|0.5fn>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Bibliography>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-157><vspace|0.5fn>
+    <no-break><pageref|auto-166><vspace|0.5fn>
   </table-of-contents>
 
   <chapter|Introduction>
@@ -2552,9 +2594,7 @@
 
   <\theorem>
     For all Simplicity types <math|A> and <math|B>, and for all values
-    <math|a\<of\>A> and <math|b\<of\>B>,\
-
-    <\equation*>
+    <math|a\<of\>A> and <math|b\<of\>B>, <\equation*>
       <around*|\<llbracket\>|<math-ss|scribe><rsub|A,B><around*|(|b|)>|\<rrbracket\>><around*|(|a|)>=b<text|.>
     </equation*>
   </theorem>
@@ -2567,7 +2607,8 @@
   define an operational semantics for Simplicity via an abstract machine we
   call the <dfn|Bit Machine>.
 
-  <subsection|Representing Values as Cell Arrays><label|ss:RepresentingValuesAsCellArrays>
+  <subsection|Representing Values as Cell
+  Arrays><label|ss:RepresentingValuesAsCellArrays>
 
   <assign|carr|<macro|x|<verbatim|[<arg|x>]>>><assign|cearr|<macro|x|<verbatim|[<arg|x><underline|]>>>><assign|rep|<macro|x|y|<math|\<ulcorner\><arg|x>\<urcorner\><rsub|<arg|y>>>>>Values
   in the Bit Machine are represented by arrays of cells where each cell
@@ -3654,8 +3695,9 @@
   monomorphic and have no parameters (i.e. they are not themselves
   combinators).
 
-  In this document we will be detailing the primitives used for Bitcoin, or a
-  Bitcoin-like application.
+  In the next section we will be detailing the primitives used for Bitcoin,
+  or a Bitcoin-like application. In Appendix<nbsp><reference|app:ElementsTransactions>
+  we describe the primitives used for the Elements sidechain.
 
   <subsection|Bitcoin Transactions><label|ss:BitcoinTransactions>
 
@@ -3663,10 +3705,12 @@
   focuses on accessing the <dfn|signed transaction data>, which is the data
   that is hashed and signed in Bitcoin.
 
-  We define a record type that captures this context, called <math|BCEnv>.
+  We define a record type that captures this environment, called
+  <math|BCEnv>.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|Lock>|<cell|\<assign\>>|<cell|<2><rsup|32>>>|<row|<cell|Value>|<cell|\<assign\>>|<cell|<2><rsup|64>>>|<row|<cell|Outpoint>|<cell|\<assign\>>|<cell|<2><rsup|256>\<times\><2><rsup|32>>>|<row|<cell|SigInput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|prevOutpoint\<of\>Outpoint>>|<row|<cell|value\<of\>Value>>|<row|<cell|sequence\<of\><2><rsup|32>>>>>>|}>>>|<row|<cell|SigOutput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|value\<of\>Value>>|<row|<cell|pubScript\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|SigTx>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|version\<of\><2><rsup|32>>>|<row|<cell|inputs\<of\>SigInput<rsup|+>>>|<row|<cell|outputs\<of\>SigOutput<rsup|+>>>|<row|<cell|lockTime\<of\>Lock>>>>>|}>>>|<row|<cell|BCEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|tx\<of\>SigTx>>|<row|<cell|ix\<of\><2><rsup|32>>>|<row|<cell|scriptCMR\<of\><2><rsup|256>>>>>>|}>>>>>
+    <tformat|<table|<row|<cell|Lock>|<cell|\<assign\>>|<cell|<2><rsup|32>>>|<row|<cell|Value>|<cell|\<assign\>>|<cell|<2><rsup|64>>>|<row|<cell|Outpoint>|<cell|\<assign\>>|<cell|<2><rsup|256>\<times\><2><rsup|32>>>|<row|<cell|SigInput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|prevOutpoint\<of\>Outpoint>>|<row|<cell|value\<of\>Value<with|color|red|<text|make
+    this SigOutput?>>>>|<row|<cell|sequence\<of\><2><rsup|32>>>>>>|}>>>|<row|<cell|SigOutput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|value\<of\>Value>>|<row|<cell|pubScript\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|SigTx>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|version\<of\><2><rsup|32>>>|<row|<cell|inputs\<of\>SigInput<rsup|+>>>|<row|<cell|outputs\<of\>SigOutput<rsup|+>>>|<row|<cell|lockTime\<of\>Lock>>>>>|}>>>|<row|<cell|BCEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|tx\<of\>SigTx>>|<row|<cell|ix\<of\><2><rsup|32>>>|<row|<cell|scriptCMR\<of\><2><rsup|256>>>>>>|}>>>>>
   </eqnarray*>
 
   The type <math|SigTx> contains the signed transaction data. Following a
@@ -3678,11 +3722,11 @@
 
   The <math|SigTx> type given above allows for an unbounded number of inputs
   and outputs. However, there are limits imposed by the Bitcoin protocol. The
-  number of inputs and outputs are limited to strictly less than
-  <math|2<rsup|32>> by Bitcoin's deserialization implementation. Similarly,
-  the length of <math|SigOutput>'s <math|pubScript> is limited to strictly
-  less than <math|2<rsup|32>> bytes. We assume all transactions to adhere to
-  these limits when reasoning about Bitcoin transactions.
+  number of inputs and outputs are limited to less than or equal to
+  <math|2<rsup|25>> by Bitcoin's deserialization implementation. Similarly,
+  the length of <math|SigOutput>'s <math|pubScript> is limited to less than
+  or equal to <math|2<rsup|25>> bytes. We assume all transactions to adhere
+  to these limits when reasoning about Bitcoin transactions.
 
   Furthermore, we assume that for every <math|e\<of\>BCEnv> that
   <math|<around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>\<less\><around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>>
@@ -5977,8 +6021,8 @@
   making static analysis practical. Adding explicit sharing to the Simplicity
   language would make the language more complex and would risk incorrectly
   implementing the sharing combinator. Explicitly building memoization tables
-  could work, but will have overhead. For instance, we do this when
-  computing Merkle roots of Simplicity types. However, the solution of using
+  could work, but will have overhead. For instance, we do this when computing
+  Merkle roots of Simplicity types. However, the solution of using
   tagless-final style lets us write terms in a natural manner and we get
   sharing for Simplicity expressions at exactly the points where we have
   sharing in the Haskell representation of the term.
@@ -6177,7 +6221,7 @@
   Machine on various inputs. In this file you can see an example of how
   <verbatim|executeUsing (instrumentMachine . translate) program> is used.
 
-  <section|<verbatim|Simplicity-Indef> libry>
+  <section|<verbatim|Simplicity-Indef> library>
 
   To keep the Haskell library of Simplicity modular over different blockchain
   applications we use the Glasgow Haskell Compiler's Backpack mechanism. The
@@ -6287,7 +6331,7 @@
   and output types of the intended Simplicity expression provided through the
   <verbatim|proxy a b> argument.
 
-  Next one would use <verbatim|traverse . witnessData> to use the infered
+  Next one would use <verbatim|traverse . witnessData> to use the inferred
   type information to decode the witness data into an
   <verbatim|UntypedValue>.
 
@@ -6297,14 +6341,15 @@
   <verbatim|typeCheck> specifies the type of the resulting Simplicity
   expression; it is not inferred from the <verbatim|SimplicityDag>. The
   <verbatim|typeCheck> function should never fail after
-  <verbatim|typeInference> provided the same type constrants in its proxy
+  <verbatim|typeInference> provided the same type constraints in its proxy
   argument and the witness data has been decoded to an
-  <verbatim|UntypedValue> that matches the infered witness type.
+  <verbatim|UntypedValue> that matches the inferred witness type.
 
-  There are deserialization functions (see <reference|ss:Serialization>) that
-  go through this progression of type inference and type checking for you.
+  There are deserialization functions (see
+  <reference|ss:Haskell-Serialization>) that go through this progression of
+  type inference and type checking for you.
 
-  <subsection|Serialization><label|ss:Serialization>
+  <subsection|Serialization><label|ss:Haskell-Serialization>
 
   There are two main methods of serialization found in this Simplicity
   library. The primary method is serialization via a difference list of
@@ -6318,10 +6363,10 @@
   free monad representation of binary trees is perhaps less familiar. See
   Section<nbsp><reference|ss:FreeMonadicDeserialization> for details.
 
-  An alternative serializaiton method is via the <verbatim|Get> and
+  An alternative serialization method is via the <verbatim|Get> and
   <verbatim|PutM> monads from the <verbatim|cereal> package. These are used
   for serializations to and from <verbatim|ByteStrings>. The alternative
-  method is depricated and will probably be removed.
+  method is deprecated and will probably be removed.
 
   <subsubsection|Free Monadic Deserializaiton><label|ss:FreeMonadicDeserialization>
 
@@ -6483,10 +6528,10 @@
   alternative <verbatim|ByteString> encoding described in
   Appendix<nbsp><reference|app:AltSerialization>.
 
-  <section|<verbatim|Simplicty-Bitcoin> Libary><label|ss:BitcoinPrimitives>
+  <section|<verbatim|Simplicity-Bitcoin> Libary><label|ss:BitcoinPrimitives>
 
   To instantiate the <verbatim|Simplicity-Indef> library, we need to provide
-  a blockchain specific implemenation of the <verbatim|Simplicity.Primitive>
+  a blockchain specific implementation of the <verbatim|Simplicity.Primitive>
   signature. The <verbatim|Simplicity-Bitcoin> library provides primitives
   used for Bitcoin applications. The <verbatim|Bitcoin/Simplicity/Bitcoin/Primitive.hs>
   module implements the <verbatim|Simplicity.Primitive> signature by
@@ -6506,11 +6551,11 @@
 
   The <verbatim|Simplicty> library assembles all of the previous libraries
   together. The <verbatim|Simplicity-Indef> library is instantiated at all
-  available implemenations of the <verbatim|Simplicity.Primitive> signature,
+  available implementations of the <verbatim|Simplicity.Primitive> signature,
   which at the moment is only the <verbatim|Simplicity.Bitcoin.Primitive>
   module. This Bitcoin instance of the <verbatim|Simplicity-Indef> library
   has its modules reexported under the <verbatim|Simplicity.Bitcoin> prefix.
-  Specifically the following modules are rexported:
+  Specifically the following modules are reexported:
 
   <\itemize-dot>
     <item><verbatim|Simplicity.Term> as <verbatim|Simplicity.Bitcoin.Term>
@@ -6557,8 +6602,417 @@
   <verbatim|executeUsing (runMachine . translate) program> is used.<chapter|C
   Library Guide>
 
-  <appendix|Alternative Serialization of Simplicity
-  DAGs><label|app:AltSerialization>
+  <appendix|Elements Application><label|app:ElementsTransactions>
+
+  The Elements application of Simplicity is based on the Bitcoin application
+  described in Section<nbsp><reference|ss:BitcoinTransactions>. The signed
+  transaction data for Elements is similar to Bitcoin's but with added
+  confidential amounts and assets, pegins, and asset issuances. Below we
+  define the record type <math|ELEnv> defining the environment in which
+  Simplicity expressions are evaluated within for the Elements application.
+  <with|color|red|TODO: consider using explicit 0 amounts in place of null
+  values for assetIssuanceAmounts, because explicit 0 amounts are otherwise
+  invalid in transactions.>
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|Lock>|<cell|\<assign\>>|<cell|<2><rsup|32>>>|<row|<cell|Outpoint>|<cell|\<assign\>>|<cell|<2><rsup|256>\<times\><2><rsup|32>>>|<row|<cell|Confidential>|<cell|\<assign\>
+    >|<cell|PubKey>>|<row|<cell|ExplicitAsset>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Asset>|<cell|\<assign\>>|<cell|Confidential+ExplicitAsset>>|<row|<cell|ExplicitAmount>|<cell|\<assign\>>|<cell|<2><rsup|64>>>|<row|<cell|Amount>|<cell|\<assign\>>|<cell|Confidential
+    + ExplicitAmount>>|<row|<cell|ExplicitNonce>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Nonce>|<cell|\<assign\>>|<cell|Confidential
+    + ExplicitNonce>>|<row|<cell|TokenAmount>|<cell|\<assign\>>|<cell|Amount>>|<row|<cell|NewIssuance>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|contractHash\<of\><2><rsup|256>>>|<row|<cell|amounts\<of\>
+    <around*|(|Amount+TokenAmount|)>+<around*|(|Amount\<times\>TokenAmount|)>>>>>>|}>>>|<row|<cell|Reissuance>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|blindingNonce\<of\>ExplicitNonce>>|<row|<cell|entropy\<of\><2><rsup|256>>>|<row|<cell|amount\<of\>
+    Amount>>>>>|}>>>|<row|<cell|Issuance>|<cell|\<assign\>>|<cell|NewIssuance+Reissuance>>|<row|<cell|ElementsSigOutput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|asset\<of\>Asset>>|<row|<cell|amount\<of\>Amount>>|<row|<cell|scriptPubKey\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>|<row|<cell|nonce\<of\><maybe><around*|(|Nonce|)>>>>>>|}>>>|<row|<cell|ElementsUTXO>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|asset\<of\>Asset>>|<row|<cell|amount\<of\>Amount>>|<row|<cell|scriptPubKey\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|ElementsSigInput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|isPegin\<of\><2>>>|<row|<cell|prevOutpoint\<of\>Outpoint>>|<row|<cell|txo\<of\>ElementsUTXO
+    <with|color|red|scriptPubKey is claim_script when
+    isPegin>>>|<row|<cell|sequence\<of\><2><rsup|32>>>|<row|<cell|issuance:<maybe><around*|(|Issuance|)>>>>>>|}>>>|<row|<cell|ElementsSigTx>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|version\<of\><2><rsup|32>>>|<row|<cell|inputs\<of\>ElementsSigInput<rsup|+>>>|<row|<cell|outputs\<of\>ElementsSigOutput<rsup|+>>>|<row|<cell|lockTime\<of\>Lock>>>>>|}>>>|<row|<cell|ELEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|tx\<of\>ElementsSigTx>>|<row|<cell|ix\<of\><2><rsup|32>>>|<row|<cell|scriptCMR\<of\><2><rsup|256>>>>>>|}>>>>>
+  </eqnarray*>
+
+  \;
+
+  The Elements protocol imposes limits and other constraints similar to
+  Bitcoin's for transactions to be valid. We will assume that for all
+  transactions the length of the <math|inputs> and <math|outputs> arrays are
+  less than or equal to <math|2<rsup|25>>, and the the length of the
+  scriptPubKeys lengths are also less than or equal to <math|2<rsup|25>>.
+  Also we will assume that for every <math|e\<of\>ELEnv> that
+  <math|<around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>\<less\><around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>>
+  so that ``current'' index being validated is, in fact, an input of the
+  transaction.
+
+  <assign|EL|<math|EL>>The monad we use for the Elements application provides
+  an environment effect (also known as a reader effect) that allows
+  read-access to the <math|ELEnv> value defining the Simplicity program's
+  evaluation context. We call this monad <value|EL>.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<EL>A>|<cell|\<assign\>>|<cell|ELEnv\<rightarrow\><maybe>A>>|<row|<cell|<EL>f<around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe>f<around*|(|a<around*|(|e|)>|)>>>>>
+  </eqnarray*>
+
+  \;
+
+  <EL> is a commutative, idempotent monad with zero:
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|\<eta\><rsup|<EL>><rsub|A><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><rsub|A><around*|(|a|)>>>|<row|<cell|\<mu\><rsup|<EL>><rsub|A><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<mu\><rsup|<maybe>><rsub|A><around*|(|<maybe><around*|(|\<lambda\>f\<point\>f<around*|(|e|)>|)><around*|(|a<around*|(|e|)>|)>|)>>>|<row|<cell|\<emptyset\><rsup|<EL>><rsub|A>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<emptyset\><rsup|<maybe>><rsub|A>>>>>
+  </eqnarray*>
+
+  \;
+
+  We define several new primitive expressions for reading data from a
+  <math|ELEnv> value. The language that uses this extension is called
+  <dfn|Simplicity with Elements>.
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|version>\<of\><value|1>\<vdash\><2><rsup|32>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|lockTime>\<of\><value|1>\<vdash\>Lock>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputsHash>\<of\><value|1>\<vdash\><2><rsup|256>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputsHash>\<of\><value|1>\<vdash\><2><rsup|256>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|numInputs>\<of\><value|1>\<vdash\><2><rsup|32>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputIsPegin>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<2>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputPrevOutpoint>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Outpoint|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputAsset>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Asset|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputAmount>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Amount|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputScriptHash>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputSequence>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|32>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputIssuanceBlinding>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitNonce|)>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputIssuanceContract>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputIssuanceEntropy>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputIssuanceAssetAmt>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|Amount|)>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputIssuanceTokenAmt>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|TokenAmount|)>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIndex>\<of\><value|1>\<vdash\><2><rsup|32>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIsPegin>\<of\><value|1>\<vdash\><2>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentPrevOutpoint>\<of\><value|1>\<vdash\>OutPoint>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentAsset>\<of\><value|1>\<vdash\>Asset>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentAmount>\<of\><value|1>\<vdash\>Amount>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentScriptHash>\<of\><value|1>\<vdash\><2><rsup|256>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentSequence>\<of\><value|1>\<vdash\><2><rsup|32>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIssuanceBlinding>\<of\><value|1>\<vdash\><maybe><around*|(|ExplicitNonce|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIssuanceContract>\<of\><value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIssuanceEntropy>\<of\><value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIssuanceAssetAmt>\<of\><value|1>\<vdash\><maybe><around*|(|Amount|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIssuanceTokenAmt>\<of\><value|1>\<vdash\><maybe><around*|(|TokenAmount|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|numOutputs>\<of\><value|1>\<vdash\><2><rsup|32>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputAsset>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Asset|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputAmount>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Amount|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputNonce>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|Nonce|)>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputScriptHash>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputNullDatum>\<of\><2><rsup|32>\<times\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|2>\<times\><2><rsup|256>+<around*|(|<2>+<2><rsup|4>|)>|)>|)>>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|totalFee>\<of\>ExplicitAsset\<vdash\>ExplicitAmount>>>>>>
+  </with>
+
+  \;
+
+  <\with|par-mode|center>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|scriptCMR>\<of\><value|1>\<vdash\><2><rsup|256>>>>>>>
+  </with>
+
+  <section|Denotational Semantics><label|ss:ELDenotationalSemantics>
+
+  We extend the formal semantics of these new expressions as follows.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|version>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|version|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|lockTime>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|lockTime|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputsHash>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>inputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputsHash>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>outputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numInputs>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIsPegin>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|isPegin|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputPrevOutpoint>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputAsset>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|asset|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputAmount>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|amount|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputScriptHash>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|txo|]><around*|[|scriptPubKey|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputSequence>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceBlinding>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|blindingNonce|)><around*|(|reissuance<around*|(|l|)>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceContract>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|contractHash|)><around*|(|newIssuance<around*|(|l|)>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceEntropy>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|entropy|)><around*|(|reissuance<around*|(|l|)>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceAssetAmt>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|issuanceAssetAmt|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceTokenAmt>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|issuanceTokenAmt|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIndex>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|ix|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIsPegin>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|isPegin|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentPrevOutpoint>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentAsset>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|asset|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentAmount>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|amount|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentScriptHash>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|txo|]><around*|[|scriptPubKey|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentSequence>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceBlinding>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|blindingNonce|)><around*|(|reissuance<around*|(|l|)>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceContract>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|contractHash|)><around*|(|newIssuance<around*|(|l|)>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceEntropy>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|entropy|)><around*|(|reissuance<around*|(|l|)>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceAssetAmt>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|issuanceAssetAmt|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceTokenAmt>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|issuanceTokenAmt|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numOutputs>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|outputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputAsset>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|asset|]>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputAmount>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|amount|]>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputScriptHash>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|scriptPubKey|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputNullDatum>>|\<rrbracket\>><rsup|EL><around*|\<langle\>|i,j|\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|\<mu\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>nullDatum<around*|\<langle\>|l<around*|[|scriptPubKey|]>,<around*|\<lceil\>|j|\<rceil\>>|\<rangle\>>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalFee>>|\<rrbracket\>><rsup|<EL>><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fee<around*|\<langle\>|e<around*|[|tx|]><around*|[|outputs|]>,a|\<rangle\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|scriptCMR>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|scriptCMR|]>|)>>>>>
+  </eqnarray*>
+
+  where
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|isNewIssuance<around*|(|\<eta\><rsup|S><around*|(|<injl|<around*|(|l|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|S><around*|(|l|)>>>|<row|<cell|isNewIssuance<around*|(|\<eta\><rsup|S><around*|(|<injr|<around*|(|r|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|isNewIssuance<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|isReissuance<around*|(|\<eta\><rsup|S><around*|(|<injl|<around*|(|l|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|isReissuance<around*|(|\<eta\><rsup|S><around*|(|<injr|<around*|(|r|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|S><around*|(|r|)>>>|<row|<cell|isReissuance<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|newIssuance<around*|(|l|)>>|<cell|\<assign\>>|<cell|isNewIssuance<around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|reissuance<around*|(|l|)>>|<cell|\<assign\>>|<cell|isReissuance<around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|hasAssetAmt<around*|(|<injl|<around*|(|<injl|<around*|(|a|)>>|)>>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><around*|(|a|)>>>|<row|<cell|hasAssetAmt<around*|(|<injl|<around*|(|<injr|<around*|(|t|)>>|)>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|hasAssetAmt<around*|(|<injr|<around*|\<langle\>|a,t|\<rangle\>>>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><around*|(|a|)>>>|<row|<cell|hasTokenAmt<around*|(|<injl|<around*|(|<injl|<around*|(|a|)>>|)>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|hasTokenAmt<around*|(|<injl|<around*|(|<injr|<around*|(|t|)>>|)>>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><around*|(|t|)>>>|<row|<cell|hasTokenAmt<around*|(|<injr|<around*|\<langle\>|a,t|\<rangle\>>>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><around*|(|t|)>>>|<row|<cell|hasIssuanceAssetAmt<around*|(|\<eta\><rsup|S><around*|(|<injl|<around*|(|l|)>>|)>|)>>|<cell|\<assign\>>|<cell|hasAssetAmt<around*|(|l<around*|[|amounts|]>|)>>>|<row|<cell|hasIssuanceAssetAmt<around*|(|\<eta\><rsup|S><around*|(|<injr|<around*|(|r|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><around*|(|r<around*|[|amount|]>|)>>>|<row|<cell|hasIssuanceAssetAmt<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|hasIssuanceTokenAmt<around*|(|\<eta\><rsup|S><around*|(|<injl|<around*|(|l|)>>|)>|)>>|<cell|\<assign\>>|<cell|hasTokenAmt<around*|(|l<around*|[|amounts|]>|)>>>|<row|<cell|hasIssuanceTokenAmt<around*|(|\<eta\><rsup|S><around*|(|<injr|<around*|(|r|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|hasIssuanceTokenAmt<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|issuanceAssetAmt<around*|(|l|)>>|<cell|\<assign\>>|<cell|hasIssuanceAssetAmt<around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|issuanceTokenAmt<around*|(|l|)>>|<cell|\<assign\>>|<cell|hasIssuanceTokenAmt<around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|fee<around*|\<langle\>|\<epsilon\>,a|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|\<lfloor\>|0|\<rfloor\>><rsub|64>>>|<row|<cell|fee<around*|\<langle\>|o\<blacktriangleleft\>l,a|\<rangle\>>>|<cell|\<assign\>>|<cell|fee<around*|\<langle\>|l,a|\<rangle\>><op|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>>
+    v<htab|5mm>when o<around*|[|asset|]>=<injr|<around*|(|a|)>><next-line><htab|5mm>and
+    o<around*|[|value|]>=<injr|<around*|(|v|)>><next-line><htab|5mm>and
+    o<around*|[|scriptPubKey|]>=\<epsilon\>>>|<row|<cell|fee<around*|\<langle\>|o\<blacktriangleleft\>l,a|\<rangle\>>>|<cell|\<assign\>>|<cell|fee<around*|\<langle\>|l,a|\<rangle\>><htab|5mm>when
+    o<around*|[|asset|]>\<neq\><injr|<around*|(|a|)>><next-line><htab|5mm>or
+    \<forall\>v\<point\>o<around*|[|value|]>\<neq\><injr|<around*|(|v|)>><next-line><htab|5mm>or
+    o<around*|[|scriptPubKey|]>\<neq\>\<epsilon\>>>|<row|<cell|encAsset<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|00>|]>><rsub|<2><rsup|8>>>>|<row|<cell|encAsset<around*|(|\<eta\><rsup|<maybe>><around*|(|<injr|<around*|(|a|)>>|)>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|01>|]>><rsub|<2><rsup|8>>\<cdummy\>BE<rsub|256><around*|(|a|)>>>|<row|<cell|encAsset<around*|(|\<eta\><rsup|<maybe>><around*|(|<injl|<around*|\<langle\>|<math-tt|0><rsub|<2>>,x|\<rangle\>>>|)>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|0a>|]>><rsub|<2><rsup|8>>\<cdummy\>BE<rsub|256><around*|(|x|)>>>|<row|<cell|encAsset<around*|(|\<eta\><rsup|<maybe>><around*|(|<injl|<around*|\<langle\>|<math-tt|1><rsub|<2>>,x|\<rangle\>>>|)>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|0b>|]>><rsub|<2><rsup|8>>\<cdummy\>BE<rsub|256><around*|(|x|)>>>|<row|<cell|encAmt<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|00>|]>><rsub|<2><rsup|8>>>>|<row|<cell|encAmt<around*|(|\<eta\><rsup|<maybe>><around*|(|<injr|<around*|(|v|)>>|)>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|01>|]>><rsub|<2><rsup|8>>\<cdummy\>BE<rsub|64><around*|(|v|)>>>|<row|<cell|encAmt<around*|(|\<eta\><rsup|<maybe>><around*|(|<injl|<around*|\<langle\>|<math-tt|0><rsub|<2>>,x|\<rangle\>>>|)>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|08>|]>><rsub|<2><rsup|8>>\<cdummy\>BE<rsub|256><around*|(|x|)>>>|<row|<cell|encAmtt<around*|(|\<eta\><rsup|<maybe>><around*|(|<injl|<around*|\<langle\>|<math-tt|1><rsub|<2>>,x|\<rangle\>>>|)>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|09>|]>><rsub|<2><rsup|8>>\<cdummy\>BE<rsub|256><around*|(|x|)>>>|<row|<cell|encNonce<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|00>|]>><rsub|<2><rsup|8>>>>|<row|<cell|encNonce<around*|(|\<eta\><rsup|<maybe>><around*|(|<injr|<around*|(|a|)>>|)>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|01>|]>><rsub|<2><rsup|8>>\<cdummy\>BE<rsub|256><around*|(|a|)>>>|<row|<cell|encNonce<around*|(|\<eta\><rsup|<maybe>><around*|(|<injl|<around*|\<langle\>|<math-tt|0><rsub|<2>>,x|\<rangle\>>>|)>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|02>|]>><rsub|<2><rsup|8>>\<cdummy\>BE<rsub|256><around*|(|x|)>>>|<row|<cell|encNonce<around*|(|\<eta\><rsup|<maybe>><around*|(|<injl|<around*|\<langle\>|<math-tt|1><rsub|<2>>,x|\<rangle\>>>|)>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|03>|]>><rsub|<2><rsup|8>>\<cdummy\>BE<rsub|256><around*|(|x|)>>>|<row|<cell|encIssuance<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|<verbatim|<around*|[|<math-tt|00>|]>><rsub|<2><rsup|8>>\<cdummy\><verbatim|<around*|[|<math-tt|00>|]>><rsub|<2><rsup|8>>>>|<row|<cell|encIssuance<around*|(|\<eta\><rsup|<maybe>><around*|(|<injl|<around*|(|x|)>>|)>|)>>|<cell|\<assign\>>|<cell|encAmt<around*|(|hasAssetAmt<around*|(|x<around*|[|amounts|]>|)>|)>\<cdummy\><next-line>encAmt<around*|(|hasTokenAmt<around*|(|x<around*|[|amounts|]>|)>|)>\<cdummy\><next-line>BE<rsub|256><around*|(|<around*|\<lfloor\>|0|\<rfloor\>><rsub|256>|)>\<cdummy\><next-line>BE<rsub|256><around*|(|x<around*|[|contractHash|]>|)>>>|<row|<cell|encIssuance<around*|(|\<eta\><rsup|<maybe>><around*|(|<injr|<around*|(|x|)>>|)>|)>>|<cell|\<assign\>>|<cell|encAmt<around*|(|\<eta\><rsup|S><around*|(|x<around*|[|amount|]>|)>|)>\<cdummy\><next-line>encAmt<around*|(|\<emptyset\><rsup|<maybe>>|)>\<cdummy\><next-line>BE<rsub|256><around*|(|x<around*|[|blindingNonce|]>|)>\<cdummy\><next-line>BE<rsub|256><around*|(|x<around*|[|entropy|]>|)>>>>>
+  </eqnarray*>
+
+  and
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|inputHash<around*|(|l|)>>|<cell|\<assign\>>|<cell|BE<rsub|256><around*|(|\<pi\><rsub|1><around*|(|l<around*|[|prevOutpoint|]>|)>|)>\<cdummy\>LE<rsub|32><around*|(|\<pi\><rsub|2><around*|(|l<around*|[|prevOutpoint|]>|)>|)>\<cdummy\>LE<rsub|32><around*|(|l<around*|[|sequence|]>|)>\<cdummy\><next-line>encIssuance<around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|ouputHash<around*|(|l|)>>|<cell|\<assign\>>|<cell|encAsset<around*|(|\<eta\><rsup|<maybe>><around*|(|l<around*|[|asset|]>|)>|)>\<cdummy\>encAmt<around*|(|\<eta\><rsup|<maybe>><around*|(|l<around*|[|amount|]>|)>|)>\<cdummy\>encNonce<around*|(|l<around*|[|nonce|]>|)>\<cdummy\><next-line>BE<rsub|256><around*|(|SHA256<around*|(|l<around*|[|pubScript|]>|)>|)>>>>>
+  </eqnarray*>
+
+  and where <math|nullDatum> is defined in the next section.
+
+  <subsection|Null Data>
+
+  An output's scriptPubKey is call a <verbatim|TX_NULL_DATA> script if it
+  consists of an <verbatim|OP_RETURN> opcode
+  (<math|<around*|\<lceil\>|<math-tt|6a><rsub|<2><rsup|8>>|\<rceil\>>>)
+  followed by ``<verbatim|PushOnly>'', operations, which are operations whose
+  opcode is <verbatim|OP_16> (96) or less (including <verbatim|OP_RESERVED>
+  (80)).
+
+  In Elements, pegouts have an instance of a <verbatim|TX_NULL_DATA>
+  scriptPubKey. For that reason we offer primitives for detecting and parsing
+  <verbatim|TX_NULL_DATA> scriptPubKeys. Below we define the function
+
+  <\equation*>
+    nullData\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>\<rightarrow\><maybe><around*|(|<around*|(|<2><rsup|2>\<times\><2><rsup|256>+<around*|(|<2>+<2><rsup|4>|)>|)><rsup|*\<ast\>>|)>
+  </equation*>
+
+  which,
+
+  <\enumerate-numeric>
+    <item>decides if a script is ``<verbatim|PushOnly>'', and
+
+    <item>if it is push only, returns a list of parsed opcodes in which the
+    pushed data is hashed.
+  </enumerate-numeric>
+
+  We also define
+
+  <\equation*>
+    nullData\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>\<times\>\<bbb-N\>\<rightarrow\><maybe><around*|(|<maybe><around*|(|<2><rsup|2>\<times\><2><rsup|256>+<around*|(|<2>+<2><rsup|4>|)>|)><rsup|>|)>
+  </equation*>
+
+  which decides if a script is <verbatim|TX_NULL_DATA> and returns the parsed
+  element at the given index for the parsed data, if length of the parsed
+  script is long enough. This is used to define the semantics of
+  <samp|outputNullDatum> above.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|nullData<around*|(|\<epsilon\><rsub|<2><rsup|8>>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|<maybe>><around*|(|\<epsilon\><rsub|<2><rsup|2>\<times\><2><rsup|256>+<around*|(|<2>+<2><rsup|4>|)>>|)>>>|<row|<cell|nullData<around*|(|n\<blacktriangleleft\>d\<cdummy\>l|)>>|<cell|\<assign\>>|<cell|\<mu\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>r.<injl|<around*|\<langle\>|<around*|\<lfloor\>|0|\<rfloor\>><rsub|2>,SHA256<around*|(|d|)>|\<rangle\>>>\<blacktriangleleft\>r|)><around*|(|nullData<around*|(|l|)>|)>|)><next-line><htab|5mm>when
+    <around*|\||d|\|>=<around*|\<lceil\>|n|\<rceil\>><rsub|8>\<less\>76>>|<row|<cell|nullData<around*|(|n\<blacktriangleleft\>l|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><htab|5mm>when
+    <around*|\||l|\|>\<less\><around*|\<lceil\>|n|\<rceil\>><rsub|8>\<less\>76>>|<row|<cell|nullData<around*|(|<math|<around*|\<lfloor\>|76|\<rfloor\>><rsub|8>>\<blacktriangleleft\>n\<blacktriangleleft\>d\<cdummy\>l|)>>|<cell|\<assign\>>|<cell|\<mu\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>r.<injl|<around*|\<langle\>|<around*|\<lfloor\>|1|\<rfloor\>><rsub|2>,SHA256<around*|(|d|)>|\<rangle\>>>\<blacktriangleleft\>r|)><around*|(|nullData<around*|(|l|)>|)>|)><next-line><htab|5mm>when
+    <around*|\||d|\|>=<around*|\<lceil\>|n|\<rceil\>><rsub|8>>>|<row|<cell|nullData<around*|(|<around*|\<lfloor\>|76|\<rfloor\>><rsub|8>\<blacktriangleleft\>n\<blacktriangleleft\>l|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><htab|5mm>when
+    <around*|\||l|\|>\<less\><around*|\<lceil\>|n|\<rceil\>><rsub|8>>>|<row|<cell|nullData<around*|(|<around*|\<lfloor\>|76|\<rfloor\>><rsub|8>\<blacktriangleleft\>\<varepsilon\>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|nullData<around*|(|<around*|\<lfloor\>|77|\<rfloor\>><rsub|8>\<blacktriangleleft\>n<rsub|1>\<blacktriangleleft\>n<rsub|0>\<blacktriangleleft\>d\<cdummy\>l|)>>|<cell|\<assign\>>|<cell|\<mu\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>r.<injl|<around*|\<langle\>|<around*|\<lfloor\>|2|\<rfloor\>><rsub|2>,SHA256<around*|(|d|)>|\<rangle\>>>\<blacktriangleleft\>r|)><around*|(|nullData<around*|(|l|)>|)>|)><next-line><htab|5mm>when
+    <around*|\||d|\|>=<around*|\<lceil\>|<around*|\<langle\>|n<rsub|0>,n<rsub|1>|\<rangle\>>|\<rceil\>><rsub|16>>>|<row|<cell|nullData<math|<around*|(|<around*|\<lfloor\>|77|\<rfloor\>><rsub|8>\<blacktriangleleft\>n<rsub|1>\<blacktriangleleft\>n<rsub|0>\<blacktriangleleft\>l|)>>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><htab|5mm>when
+    <around*|\||l|\|>\<less\><around*|\<lceil\>|<around*|\<langle\>|n<rsub|0>,n<rsub|1>|\<rangle\>>|\<rceil\>><rsub|16>>>|<row|<cell|nullData<around*|(|<math|<around*|\<lfloor\>|77|\<rfloor\>><rsub|8>>\<blacktriangleleft\>l|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><htab|5mm>when
+    <around*|\||l|\|>\<less\>2>>|<row|<cell|nullData<around*|(|<around*|\<lfloor\>|78|\<rfloor\>><rsub|8>\<blacktriangleleft\>n<rsub|3>\<blacktriangleleft\>n<rsub|2>\<blacktriangleleft\>n<rsub|1>\<blacktriangleleft\>n<rsub|0>\<blacktriangleleft\>d\<cdummy\>l|)>>|<cell|\<assign\>>|<cell|\<mu\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>r.<injl|<around*|\<langle\>|<around*|\<lfloor\>|3|\<rfloor\>><rsub|2>,SHA256<around*|(|d|)>|\<rangle\>>>\<blacktriangleleft\>r|)><around*|(|nullData<around*|(|l|)>|)>|)><next-line><htab|5mm>when
+    <around*|\||d|\|>=<around*|\<lceil\>|<around*|\<langle\>|<around*|\<langle\>|n<rsub|0>,n<rsub|1>|\<rangle\>>,<around*|\<langle\>|n<rsub|2>,n<rsub|3>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|32>>>|<row|<cell|nullData<around*|(|<around*|\<lfloor\>|78|\<rfloor\>><rsub|8>\<blacktriangleleft\>n<rsub|3>\<blacktriangleleft\>n<rsub|2>\<blacktriangleleft\>n<rsub|1>\<blacktriangleleft\>n<rsub|0>\<blacktriangleleft\>l|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><htab|5mm>when
+    <around*|\||l|\|>\<less\><around*|\<lceil\>|<around*|\<langle\>|<around*|\<langle\>|n<rsub|0>,n<rsub|1>|\<rangle\>>,<around*|\<langle\>|n<rsub|2>,n<rsub|3>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|32>>>|<row|<cell|nullData<around*|(|<around*|\<lfloor\>|78|\<rfloor\>><rsub|8>\<blacktriangleleft\>l|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><htab|5mm>when
+    <around*|\||l|\|>\<less\>4>>|<row|<cell|nullData<around*|(|<around*|\<lfloor\>|79|\<rfloor\>><rsub|8>\<blacktriangleleft\>l|)>>|<cell|\<assign\>>|<cell|\<mu\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>r.<injr|<around*|(|<injl|<around*|(|<math-tt|0><rsub|<2>>|)>>|)>>\<blacktriangleleft\>r|)><around*|(|nullData<around*|(|l|)>|)>|)>>>|<row|<cell|nullData<around*|(|<around*|\<lfloor\>|80|\<rfloor\>><rsub|8>\<blacktriangleleft\>l|)>>|<cell|\<assign\>>|<cell|\<mu\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>r.<injr|<around*|(|<injl|<around*|(|<math-tt|1><rsub|<2>>|)>>|)>>\<blacktriangleleft\>r|)><around*|(|nullData<around*|(|l|)>|)>|)>>>|<row|<cell|nullData<around*|(|x\<blacktriangleleft\>l|)>>|<cell|\<assign\>>|<cell|\<mu\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>r.<injr|<around*|(|<injr|<around*|\<lfloor\>|<around*|\<lceil\>|x|\<rceil\>><rsub|8>-81|\<rfloor\>><rsub|4>>|)>>\<blacktriangleleft\>r|)><around*|(|nullData<around*|(|l|)>|)>|)><next-line><htab|5mm>when
+    81\<leq\><around*|\<lceil\>|x|\<rceil\>><rsub|8>\<less\>97>>|<row|<cell|nullData<around*|(|x\<blacktriangleleft\>l|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><htab|5mm>when
+    97\<leq\><around*|\<lceil\>|x|\<rceil\>><rsub|8>>>|<row|<cell|nullDatum<around*|\<langle\>|<math-tt|6a><rsub|<2><rsup|8>>\<blacktriangleleft\>s,j|\<rangle\>>>|<cell|\<assign\>>|<cell|<maybe><around*|(|\<lambda\>l.l<around*|[|j|]>|)><around*|(|nullData<around*|(|s|)>|)>>>|<row|<cell|nullDatum<around*|\<langle\>|x\<blacktriangleleft\>s,j|\<rangle\>>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>><htab|5mm><text|when
+    <math|x\<neq\>><math|<math-tt|6a><rsub|<2><rsup|8>>>>>>|<row|<cell|nullDatum<around*|\<langle\>|\<epsilon\>,j|\<rangle\>>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>>>
+  </eqnarray*>
+
+  <subsection|Merkle Roots>
+
+  We extend the definition of the commitment Merkle root to support the new
+  expressions by hashing new unique byte strings.
+
+  <\small>
+    <\eqnarray*>
+      <tformat|<table|<row|<cell|<cmr|<math-ss|version>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[76657273696f6e]>|)>>>|<row|<cell|<cmr|<math-ss|lockTime>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[6c6f636b54696d65]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputsHash>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e7075747348617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputsHash>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[6f75747075747348617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|numInputs>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[6e756d496e70757473]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputIsPegin>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e7075744973506567696e]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputPrevOutpoint>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e707574507265764f7574706f696e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputAsset>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e7075744173736574]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputAmount>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e707574416d6f756e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputScriptHash>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e70757453637269707448617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputSequence>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e70757453657175656e6365]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceBlinding>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365426c696e64696e67]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceContract>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365436f6e7472616374]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceEntropy>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365456e74726f7079]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceAssetAmt>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e70757449737375616e63654173736574416d74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceTokenAmt>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365546f6b656e416d74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIndex>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e74496e646578]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIsPegin>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e744973506567696e]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentPrevOutpoint>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e74507265764f7574706f696e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentAsset>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e744173736574]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentAmount>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e74416d6f756e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentScriptHash>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e7453637269707448617368]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentSequence>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e7453657175656e6365]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceBlinding>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365426c696e64696e67]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceContract>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365436f6e7472616374]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceEntropy>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365456e74726f7079]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceAssetAmt>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e63654173736574416d74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceTokenAmt>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365546f6b656e416d74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|numOutput>s>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[6e756d784f757470757473]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputAsset>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[6f75747075744173736574]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputAmount>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[6f7574707574416d6f756e74]>|)>>>|<row|<cell|<cmr|<math-ss|<math|outputNonce>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[6f75747075744e6f6e6365]>|)>>>|<row|<cell|<cmr|<math-ss|outputScriptHash>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[6f757470757453637269707448617368]>|)>>>|<row|<cell|<cmr|<math-ss|outputNullDatum>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[6f75747075744e756c6c446174756d]>|)>>>|<row|<cell|<cmr|<math-ss|fee>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[666565]>|)>>>|<row|<cell|<cmr|<math-ss|<math|scriptCMR>>>>|<cell|\<assign\>>|<cell|SHA256<around*|(|ELprefix\<cdummy\><math-tt|[736372697074434d52]>|)>>>>>
+    </eqnarray*>
+  </small>
+
+  \;
+
+  where
+
+  <\equation*>
+    ELprefix\<assign\><math-tt|[53696d706c69636974791f5072696d69746976651f456c656d6e74731f]>
+  </equation*>
+
+  <subsection|Serialization>
+
+  Below we give codes for Elements primitive names. The prefix codes for
+  primitive names all begin with <math|<verbatim|[10]><rsub|<2>>>.
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<rep|<text|<samp|`version'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10000000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`lockTime'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10000001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIsPegin'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputPrevOutpoint'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000010|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputAsset'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputAmount'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10001000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputScriptHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10001001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputSequence'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceBlinding'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000110|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceContract'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000111|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceEntropy'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10010000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceAssetAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10010001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceTokenAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputAsset'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001010|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputAmount'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputNonce'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10011000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputScriptHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10011001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputNullDatum'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`scriptCMR'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001110|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIsPegin'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentPrevOutpoint'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentAsset'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010010|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentAmount'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentScriptHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentSequence'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceBlinding'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010110|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceContract'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010111|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceEntropy'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceAssetAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceTokenAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011010|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputsHash'>>|>>|<cell|=>|<cell|<rsub|><verbatim|<around*|[|1011011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputsHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`numInputs'>>|>>|<cell|=>|<verbatim|<around*|[|1011101|]>><rsub|<2>>>|<row|<cell|<rep|<text|<samp|`numOutputs'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011110|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`fee'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011111|]>><rsub|<2>>>>>>
+  </eqnarray*>
+
+  <section|Jets>
+
+  <with|color|red|UNDER DEVELOPMENT>
+
+  \;
+
+  <math|<samp|inputIssuance>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2>|)>|)>>
+
+  <math|<samp|inputIssuanceAsset>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitAsset|)>|)>>
+
+  <math|<samp|currentIssuance>\<of\><value|1>\<vdash\><maybe><around*|(|<2>|)>><with|color|red|Either
+  an issuance or reissuance or neither>
+
+  <math|<samp|currentIssuanceAsset>\<of\><value|1>\<vdash\><maybe><around*|(|ExplicitAsset|)>>
+
+  <math|<samp|outputIsFee>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<2>|)>>
+
+  \;
+
+  Notes: use <samp|IssuanceContractHash> and <samp|IssuanceEntropy> to decide
+  which issuance kind, if any, is being invoked.
+
+  <with|color|red|We also want jets for computing AssetIDs and TokenIDs from
+  entropy and probably also from contractHash.><appendix|Alternative
+  Serialization of Simplicity DAGs><label|app:AltSerialization>
+
+  <with|color|red|DEPRICATED>
 
   This appendix presents an alternative, byte-oriented prefix code for
   Simplicity DAGs. This code is not as compact as the bit-oriented code
@@ -6800,7 +7254,8 @@
     <associate|LC98|<tuple|6.2.2|?>>
     <associate|SS:Coq:MerkleRoots|<tuple|8.5|71>>
     <associate|Serialization|<tuple|2.8|?>>
-    <associate|app:AltSerialization|<tuple|A|85>>
+    <associate|app:AltSerialization|<tuple|B|91>>
+    <associate|app:ElementsTransactions|<tuple|A|87>>
     <associate|auto-1|<tuple|1|7>>
     <associate|auto-10|<tuple|2.2|13>>
     <associate|auto-100|<tuple|7.2.1|62>>
@@ -6838,16 +7293,16 @@
     <associate|auto-13|<tuple|2.3|15>>
     <associate|auto-130|<tuple|9|75>>
     <associate|auto-131|<tuple|9.1|75>>
-    <associate|auto-132|<tuple|9.1.1|76>>
-    <associate|auto-133|<tuple|9.1.2|77>>
+    <associate|auto-132|<tuple|9.1.1|75>>
+    <associate|auto-133|<tuple|9.1.2|76>>
     <associate|auto-134|<tuple|9.1.3|77>>
     <associate|auto-135|<tuple|9.1.4|77>>
     <associate|auto-136|<tuple|9.1.5|77>>
     <associate|auto-137|<tuple|9.1.5.1|77>>
-    <associate|auto-138|<tuple|9.1.5.2|78>>
-    <associate|auto-139|<tuple|9.1.5.3|78>>
+    <associate|auto-138|<tuple|9.1.5.2|77>>
+    <associate|auto-139|<tuple|9.1.5.3|77>>
     <associate|auto-14|<tuple|2.3.1|15>>
-    <associate|auto-140|<tuple|9.1.5.4|78>>
+    <associate|auto-140|<tuple|9.1.5.4|77>>
     <associate|auto-141|<tuple|9.1.5.5|78>>
     <associate|auto-142|<tuple|9.1.5.6|78>>
     <associate|auto-143|<tuple|9.1.6|78>>
@@ -6856,20 +7311,26 @@
     <associate|auto-146|<tuple|9.2|79>>
     <associate|auto-147|<tuple|9.2.1|79>>
     <associate|auto-148|<tuple|9.2.2|79>>
-    <associate|auto-149|<tuple|9.2.3|80>>
+    <associate|auto-149|<tuple|9.2.3|79>>
     <associate|auto-15|<tuple|2.3.2|15>>
     <associate|auto-150|<tuple|9.2.4|80>>
     <associate|auto-151|<tuple|9.2.5|80>>
     <associate|auto-152|<tuple|9.2.5.1|80>>
-    <associate|auto-153|<tuple|9.2.5.2|81>>
+    <associate|auto-153|<tuple|9.2.5.2|82>>
     <associate|auto-154|<tuple|9.3|82>>
-    <associate|auto-155|<tuple|9.4|83>>
-    <associate|auto-156|<tuple|9.4.1|85>>
-    <associate|auto-157|<tuple|9.5|87>>
-    <associate|auto-158|<tuple|10|?>>
-    <associate|auto-159|<tuple|A|?>>
+    <associate|auto-155|<tuple|9.4|82>>
+    <associate|auto-156|<tuple|9.4.1|83>>
+    <associate|auto-157|<tuple|9.5|83>>
+    <associate|auto-158|<tuple|10|85>>
+    <associate|auto-159|<tuple|A|87>>
     <associate|auto-16|<tuple|2.3.3|16>>
-    <associate|auto-160|<tuple|A|?>>
+    <associate|auto-160|<tuple|A.1|89>>
+    <associate|auto-161|<tuple|A.1.1|91>>
+    <associate|auto-162|<tuple|A.1.2|93>>
+    <associate|auto-163|<tuple|A.1.3|?>>
+    <associate|auto-164|<tuple|A.2|?>>
+    <associate|auto-165|<tuple|B|?>>
+    <associate|auto-166|<tuple|B|?>>
     <associate|auto-17|<tuple|2.3.4|16>>
     <associate|auto-18|<tuple|2.3.4.1|17>>
     <associate|auto-19|<tuple|2.4|17>>
@@ -6956,29 +7417,29 @@
     <associate|auto-92|<tuple|6.1.1|56>>
     <associate|auto-93|<tuple|7|57>>
     <associate|auto-94|<tuple|7.1|57>>
-    <associate|auto-95|<tuple|7.1.1|58>>
-    <associate|auto-96|<tuple|7.1.2|60>>
+    <associate|auto-95|<tuple|7.1.1|59>>
+    <associate|auto-96|<tuple|7.1.2|61>>
     <associate|auto-97|<tuple|7.1.2.1|61>>
-    <associate|auto-98|<tuple|7.1.2.2|61>>
+    <associate|auto-98|<tuple|7.1.2.2|62>>
     <associate|auto-99|<tuple|7.2|62>>
-    <associate|bib-Appel:2015|<tuple|1|87>>
-    <associate|bib-Carette:2009|<tuple|3|87>>
-    <associate|bib-Coq:manual|<tuple|5|87>>
-    <associate|bib-King1993|<tuple|8|87>>
-    <associate|bib-Mahboubi:2013|<tuple|9|87>>
-    <associate|bib-Mairson:1989|<tuple|10|87>>
-    <associate|bib-bip-schnorr|<tuple|17|87>>
-    <associate|bib-bitcoin|<tuple|11|87>>
-    <associate|bib-f-algebra|<tuple|16|87>>
-    <associate|bib-garillot:2009|<tuple|6|87>>
-    <associate|bib-gentzen|<tuple|7|87>>
-    <associate|bib-libsecp256k1|<tuple|18|87>>
-    <associate|bib-oconnor2014|<tuple|14|87>>
-    <associate|bib-satoshiScript|<tuple|12|87>>
-    <associate|bib-script|<tuple|2|87>>
-    <associate|bib-sec2|<tuple|4|87>>
-    <associate|bib-sha|<tuple|13|87>>
-    <associate|bib-unification|<tuple|15|87>>
+    <associate|bib-Appel:2015|<tuple|1|93>>
+    <associate|bib-Carette:2009|<tuple|3|93>>
+    <associate|bib-Coq:manual|<tuple|5|93>>
+    <associate|bib-King1993|<tuple|8|93>>
+    <associate|bib-Mahboubi:2013|<tuple|9|93>>
+    <associate|bib-Mairson:1989|<tuple|10|93>>
+    <associate|bib-bip-schnorr|<tuple|17|93>>
+    <associate|bib-bitcoin|<tuple|11|93>>
+    <associate|bib-f-algebra|<tuple|16|93>>
+    <associate|bib-garillot:2009|<tuple|6|93>>
+    <associate|bib-gentzen|<tuple|7|93>>
+    <associate|bib-libsecp256k1|<tuple|18|93>>
+    <associate|bib-oconnor2014|<tuple|14|93>>
+    <associate|bib-satoshiScript|<tuple|12|93>>
+    <associate|bib-script|<tuple|2|93>>
+    <associate|bib-sec2|<tuple|4|93>>
+    <associate|bib-sha|<tuple|13|93>>
+    <associate|bib-unification|<tuple|15|93>>
     <associate|chapter:preliminaries|<tuple|2|11>>
     <associate|cite_ref-Martelli.Montanari.1976_16-1|<tuple|6.1.1|?>>
     <associate|fig:inheritance|<tuple|8.1|68>>
@@ -6997,26 +7458,28 @@
     <associate|ss:AssertMerkleRoot|<tuple|4.3.2|43>>
     <associate|ss:BTDenotationalSemantics|<tuple|4.4.1.1|47>>
     <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|48>>
-    <associate|ss:BitcoinPrimitives|<tuple|9.3|?>>
+    <associate|ss:BitcoinPrimitives|<tuple|9.3|82>>
     <associate|ss:BitcoinTransactions|<tuple|4.4.1|45>>
     <associate|ss:DAGs|<tuple|7.1|57>>
-    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.2.3|77>>
+    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.2.3|79>>
     <associate|ss:Deserialization|<tuple|6.2|?>>
-    <associate|ss:FreeMonadicDeserialization|<tuple|9.2.5.1|?>>
+    <associate|ss:ELDenotationalSemantics|<tuple|A.1|?>>
+    <associate|ss:FreeMonadicDeserialization|<tuple|9.2.5.1|80>>
+    <associate|ss:Haskell-Serialization|<tuple|9.2.5|80>>
     <associate|ss:MonadZero|<tuple|2.3.4|16>>
     <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|31>>
-    <associate|ss:Serialization|<tuple|9.2.5|62>>
+    <associate|ss:Serialization|<tuple|7.2|62>>
     <associate|ss:bitOps|<tuple|3.3.1|22>>
     <associate|ss:cmr|<tuple|3.7|39>>
     <associate|ss:coqArith|<tuple|8.3.2|67>>
     <associate|ss:coqInitial|<tuple|8.2.1|65>>
-    <associate|ss:haskellLoop|<tuple|9.1.5.6|79>>
-    <associate|ss:inflate|<tuple|7.1.2.2|61>>
+    <associate|ss:haskellLoop|<tuple|9.1.5.6|78>>
+    <associate|ss:inflate|<tuple|7.1.2.2|62>>
     <associate|ss:monadicSemantics|<tuple|4.1|41>>
     <associate|ss:optionMonad|<tuple|2.3.4.1|17>>
     <associate|ss:pruning|<tuple|4.3.2.1|44>>
     <associate|ss:salted|<tuple|4.3.2.2|44>>
-    <associate|ss:typeInference|<tuple|7.1.1|58>>
+    <associate|ss:typeInference|<tuple|7.1.1|59>>
     <associate|ss:unboundedLoop|<tuple|6.1|54>>
     <associate|thm:CSCT|<tuple|3.3|30>>
     <associate|v:checkSigHashAll|<tuple|8.6.6|?>>
@@ -7269,8 +7732,8 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-51>
 
-      <with|par-left|<quote|1tab>|3.5.1<space|2spc>Repesenting Values as Cell
-      Arrays <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|3.5.1<space|2spc>Representing Values as
+      Cell Arrays <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-52>>
 
       <with|par-left|<quote|1tab>|3.5.2<space|2spc>Bit Machine
@@ -7569,8 +8032,8 @@
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-130><vspace|0.5fn>
 
-      9.1<space|2spc>Simplicity-Core library
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      9.1<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity-Core>
+      library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-131>
 
       <with|par-left|<quote|1tab>|9.1.1<space|2spc>Simplicity Types
@@ -7629,8 +8092,8 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-145>>
 
-      9.2<space|2spc>Simplicity-Indef libry
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      9.2<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity-Indef>
+      library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-146>
 
       <with|par-left|<quote|1tab>|9.2.1<space|2spc>Primitive Signature
@@ -7641,47 +8104,77 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-148>>
 
-      <with|par-left|<quote|1tab>|9.2.3<space|2spc>Bitcoin Primitives
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|9.2.3<space|2spc>Denotational Semantics of
+      Full Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-149>>
 
-      <with|par-left|<quote|1tab>|9.2.4<space|2spc>CheckSigHashAll
+      <with|par-left|<quote|1tab>|9.2.4<space|2spc>Type Inference
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-150>>
 
-      9.3<space|2spc>Denotational Semantics of Full Simplicity
+      <with|par-left|<quote|1tab>|9.2.5<space|2spc>Serialization
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-151>
+      <no-break><pageref|auto-151>>
 
-      9.4<space|2spc>Type Inference <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-152>
-
-      9.5<space|2spc>Serialization <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-153>
-
-      <with|par-left|<quote|1tab>|9.5.1<space|2spc>Free Monadic
+      <with|par-left|<quote|2tab>|9.2.5.1<space|2spc>Free Monadic
       Deserializaiton <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-154>>
+      <no-break><pageref|auto-152>>
 
-      <with|par-left|<quote|1tab>|9.5.2<space|2spc>Serialization of
+      <with|par-left|<quote|2tab>|9.2.5.2<space|2spc>Serialization of
       Simplicity DAGs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-155>>
+      <no-break><pageref|auto-153>>
 
-      9.6<space|2spc>Tests <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-156>
+      9.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity-Bitcoin>
+      Libary <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-154>
+
+      9.4<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity>
+      Library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-155>
+
+      <with|par-left|<quote|1tab>|9.4.1<space|2spc>CheckSigHashAll
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-156>>
+
+      9.5<space|2spc>Simplicity <with|font-family|<quote|tt>|language|<quote|verbatim>|testsuite>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-157>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|10<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-157><vspace|0.5fn>
+      <no-break><pageref|auto-158><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
-      A<space|2spc>Alternative Serialization of Simplicity DAGs>
+      A<space|2spc>Elements Application> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-159><vspace|0.5fn>
+
+      A.1<space|2spc>Denotational Semantics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-158><vspace|0.5fn>
+      <no-break><pageref|auto-160>
+
+      <with|par-left|<quote|1tab>|A.1.1<space|2spc>Null Data
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-161>>
+
+      <with|par-left|<quote|1tab>|A.1.2<space|2spc>Merkle Roots
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-162>>
+
+      <with|par-left|<quote|1tab>|A.1.3<space|2spc>Serialization
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-163>>
+
+      A.2<space|2spc>Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-164>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
+      B<space|2spc>Alternative Serialization of Simplicity DAGs>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-165><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-159><vspace|0.5fn>
+      <no-break><pageref|auto-166><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

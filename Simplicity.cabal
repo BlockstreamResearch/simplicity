@@ -61,6 +61,18 @@ library Simplicity-Bitcoin
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6
 
+library Simplicity-Elements
+  exposed-modules:     Simplicity.Elements.Primitive, Simplicity.Elements.DataTypes
+  other-extensions:    GADTs, ScopedTypeVariables
+  hs-source-dirs:      Haskell/Elements
+  default-language:    Haskell2010
+  ghc-options:         -O2
+  build-depends:       Simplicity-Core,
+                       array >=0.5 && <0.6,
+                       base >=4.9 && <4.13,
+                       bytestring >=0.10 && <0.11,
+                       cereal >=0.5 && <0.6
+
 library Simplicity-Indef
   exposed-modules:     Simplicity.Term,
                        Simplicity.Semantics,
@@ -86,6 +98,7 @@ library Simplicity-Indef
 
 library
   exposed-modules:     Simplicity.Bitcoin.Programs.CheckSigHashAll
+                       Simplicity.Elements.Programs.CheckSigHashAll
   reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
                        Simplicity.Term.Core,
                        Simplicity.Tensor,
@@ -105,7 +118,14 @@ library
                        Simplicity.Bitcoin.Dag,
                        Simplicity.Bitcoin.Inference,
                        Simplicity.Bitcoin.Serialization.BitString,
-                       Simplicity.Bitcoin.Serialization.ByteString
+                       Simplicity.Bitcoin.Serialization.ByteString,
+                       Simplicity.Elements.Primitive, Simplicity.Elements.DataTypes,
+                       Simplicity.Elements.Term,
+                       Simplicity.Elements.Semantics,
+                       Simplicity.Elements.Dag,
+                       Simplicity.Elements.Inference,
+                       Simplicity.Elements.Serialization.BitString,
+                       Simplicity.Elements.Serialization.ByteString
   mixins:              Simplicity-Indef
                          (Simplicity.Term as Simplicity.Bitcoin.Term,
                           Simplicity.Semantics as Simplicity.Bitcoin.Semantics,
@@ -114,11 +134,20 @@ library
                           Simplicity.Serialization.BitString as Simplicity.Bitcoin.Serialization.BitString,
                           Simplicity.Serialization.ByteString as Simplicity.Bitcoin.Serialization.ByteString)
                        requires
-                         (Simplicity.Primitive as Simplicity.Bitcoin.Primitive)
+                         (Simplicity.Primitive as Simplicity.Bitcoin.Primitive),
+                       Simplicity-Indef
+                         (Simplicity.Term as Simplicity.Elements.Term,
+                          Simplicity.Semantics as Simplicity.Elements.Semantics,
+                          Simplicity.Dag as Simplicity.Elements.Dag,
+                          Simplicity.Inference as Simplicity.Elements.Inference,
+                          Simplicity.Serialization.BitString as Simplicity.Elements.Serialization.BitString,
+                          Simplicity.Serialization.ByteString as Simplicity.Elements.Serialization.ByteString)
+                       requires
+                         (Simplicity.Primitive as Simplicity.Elements.Primitive)
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
   ghc-options:         -O2
-  build-depends:       Simplicity-Core, Simplicity-Bitcoin, Simplicity-Indef,
+  build-depends:       Simplicity-Core, Simplicity-Bitcoin, Simplicity-Elements, Simplicity-Indef,
                        base >=4.9 && <4.13,
                        bytestring >=0.10 && <0.11
 
