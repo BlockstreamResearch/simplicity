@@ -1,6 +1,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <simplicity/elements.h>
 #include "dag.h"
 #include "deserialize.h"
 #include "eval.h"
@@ -8,6 +9,7 @@
 #include "hashBlock.h"
 #include "schnorr1.h"
 #include "schnorr8.h"
+#include "primitive/elements/checkSigHashAllTx1.h"
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
 
@@ -236,10 +238,138 @@ static void test_occursCheck(void) {
   free(dag);
 }
 
+static void test_elements(void) {
+  printf("Test elements\n");
+  {
+    rawTransaction testTx1 = (rawTransaction)
+      { .input = (rawInput[])
+                 { { .prevTxid = (unsigned char[32]){"\xeb\x04\xb6\x8e\x9a\x26\xd1\x16\x04\x6c\x76\xe8\xff\x47\x33\x2f\xb7\x1d\xda\x90\xff\x4b\xef\x53\x70\xf2\x52\x26\xd3\xbc\x09\xfc"}
+                   , .prevIx = 0
+                   , .sequence = 0xfffffffe
+                   , .isPegin = false
+                   , .issuance = { .amount = (unsigned char[1]){"\x00"}
+                                 , .inflationKeys = (unsigned char[1]){"\x00"}
+                                 , .blindingNonce = (uint8_t[32]){0}
+                                 , .assetEntropy = (uint8_t[32]){0}
+                                 }
+                   , .txo = { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
+                            , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xe4\x00"}
+                            , .scriptPubKey = {0}
+                 } }        }
+      , .output = (rawOutput[])
+                  { { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
+                    , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xd7\x1c"}
+                    , .nonce = (unsigned char[1]){"\x00"}
+                    , .scriptPubKey = { .code = (unsigned char [26]){"\x19\x76\xa9\x14\x48\x63\x3e\x2c\x0e\xe9\x49\x5d\xd3\xf9\xc4\x37\x32\xc4\x7f\x47\x02\xa3\x62\xc8\x88\xac"}
+                                      , .len = 26
+                                      }
+                    }
+                  , { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
+                    , .value = (unsigned char[9]){"\x01\x00\x00\x00\x00\x00\x00\x0c\xe4"}
+                    , .nonce = (unsigned char[1]){"\x00"}
+                    , .scriptPubKey = {0}
+                  } }
+      , .numInputs = 1
+      , .numOutputs = 2
+      , .version = 0x00000002
+      , .lockTime = 0x00000000
+      };
+    transaction* tx1 = elements_simplicity_mallocTransaction(&testTx1);
+    if (tx1) {
+      successes++;
+      bool execResult;
+      {
+        FILE* file = fmemopen_rb(elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
+        if (elements_simplicity_execSimplicity(&execResult, tx1, 0, elementsCheckSigHashAllTx1_cmr, elementsCheckSigHashAllTx1_wmr, file) && execResult) {
+          successes++;
+        } else {
+          failures++;
+          printf("execSimplicity of elementsCheckSigHashAllTx1 on tx1 failed\n");
+        }
+        fclose(file);
+      }
+      {
+        /* test the same transaction with a erronous signature. */
+        unsigned char brokenSig[sizeof_elementsCheckSigHashAllTx1];
+        memcpy(brokenSig, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
+        brokenSig[sizeof_elementsCheckSigHashAllTx1 - 1] ^= 0x80;
+        FILE* file = fmemopen_rb(brokenSig, sizeof_elementsCheckSigHashAllTx1);
+        if (elements_simplicity_execSimplicity(&execResult, tx1, 0, NULL, NULL, file) && !execResult) {
+          successes++;
+        } else {
+          failures++;
+          printf("execSimplicity of brokenSig on tx1 unexpectedly succeeded\n");
+        }
+        fclose(file);
+      }
+    } else {
+      printf("mallocTransaction(&rawTx1) failed\n");
+      failures++;
+    }
+    free(tx1);
+  }
+  /* test a modified transaction with the same signature. */
+  {
+    rawTransaction testTx2 = (rawTransaction)
+      { .input = (rawInput[])
+                 { { .prevTxid = (unsigned char[32]){"\xeb\x04\xb6\x8e\x9a\x26\xd1\x16\x04\x6c\x76\xe8\xff\x47\x33\x2f\xb7\x1d\xda\x90\xff\x4b\xef\x53\x70\xf2\x52\x26\xd3\xbc\x09\xfc"}
+                   , .prevIx = 0
+                   , .sequence = 0xffffffff /* Here is the modification. */
+                   , .isPegin = false
+                   , .issuance = { .amount = (unsigned char[1]){"\x00"}
+                                 , .inflationKeys = (unsigned char[1]){"\x00"}
+                                 , .blindingNonce = (uint8_t[32]){0}
+                                 , .assetEntropy = (uint8_t[32]){0}
+                                 }
+                   , .txo = { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
+                            , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xe4\x00"}
+                            , .scriptPubKey = {0}
+                 } }        }
+      , .output = (rawOutput[])
+                  { { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
+                    , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xd7\x1c"}
+                    , .nonce = (unsigned char[1]){"\x00"}
+                    , .scriptPubKey = { .code = (unsigned char [26]){"\x19\x76\xa9\x14\x48\x63\x3e\x2c\x0e\xe9\x49\x5d\xd3\xf9\xc4\x37\x32\xc4\x7f\x47\x02\xa3\x62\xc8\x88\xac"}
+                                      , .len = 26
+                                      }
+                    }
+                  , { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
+                    , .value = (unsigned char[9]){"\x01\x00\x00\x00\x00\x00\x00\x0c\xe4"}
+                    , .nonce = (unsigned char[1]){"\x00"}
+                    , .scriptPubKey = {0}
+                  } }
+      , .numInputs = 1
+      , .numOutputs = 2
+      , .version = 0x00000002
+      , .lockTime = 0x00000000
+      };
+    transaction* tx2 = elements_simplicity_mallocTransaction(&testTx2);
+    if (tx2) {
+      successes++;
+      bool execResult;
+      {
+        FILE* file = fmemopen_rb(elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
+        if (elements_simplicity_execSimplicity(&execResult, tx2, 0, NULL, NULL, file) && !execResult) {
+          successes++;
+        } else {
+          failures++;
+          printf("execSimplicity of elementsCheckSigHashAllTx1 on tx2 unexpectedly succeeded\n");
+        }
+        fclose(file);
+      }
+    } else {
+      printf("mallocTransaction(&testTx2) failed\n");
+      failures++;
+    }
+    free(tx2);
+  }
+}
+
 int main(void) {
   test_decodeUptoMaxInt();
   test_hashBlock();
   test_occursCheck();
+  test_elements();
   {
     FILE* file = fmemopen_rb(schnorr1, sizeof_schnorr1);
     test_program("schnorr1", file, true, schnorr1_cmr, schnorr1_wmr);
