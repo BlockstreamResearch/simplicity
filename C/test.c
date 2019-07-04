@@ -112,7 +112,7 @@ static void test_hashBlock(void) {
         write32s(&frame, (uint32_t[16]){ [0] = 0x61626380, [15] = 0x18 }, 16);
       }
       bool evalSuccess;
-      if (evalTCOExpression(&evalSuccess, output, 256, input, 256+512, dag, type_dag, (size_t)len) && evalSuccess) {
+      if (evalTCOExpression(&evalSuccess, output, 256, input, 256+512, dag, type_dag, (size_t)len, NULL) && evalSuccess) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
                                          , 0xb00361a3ul, 0x96177a9cul, 0xb410ff61ul, 0xf20015adul };
@@ -191,7 +191,7 @@ static void test_program(char* name, FILE* file, bool expectedResult, const uint
       }
       forceJets(dag, analysis, (size_t)len, JET_ALL);
       bool evalSuccess;
-      if (evalTCOProgram(&evalSuccess, dag, type_dag, (size_t)len) && expectedResult == evalSuccess) {
+      if (evalTCOProgram(&evalSuccess, dag, type_dag, (size_t)len, NULL) && expectedResult == evalSuccess) {
         successes++;
       } else {
         failures++;

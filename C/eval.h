@@ -4,7 +4,7 @@
 #define EVAL_H
 
 #include "dag.h"
-#include "frame.h"
+#include "jetTable.h"
 
 /* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]'.
  * If 'NULL != input', initialize the active read frame's data with 'input[roundUWord(inputSize)]'.
@@ -26,9 +26,10 @@
  *               inputSize + UWORD_BIT - 1 <= SIZE_MAX;
  *               output == NULL or UWORD output[roundUWord(outputSize)];
  *               input == NULL or UWORD input[roundUWord(inputSize)];
+ *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
 bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
-                      , const dag_node* dag, type* type_dag, size_t len
+                      , const dag_node* dag, type* type_dag, size_t len, const txEnv* env
                       );
 
 /* Run the Bit Machine on the well-typed Simplicity program 'dag[len]'.
@@ -42,7 +43,7 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
  * Precondition: NULL != evalSuccess
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type 1 |- 1;
  */
-static inline bool evalTCOProgram(bool *evalSuccess, const dag_node* dag, type* type_dag, size_t len) {
-  return evalTCOExpression(evalSuccess, NULL, 0, NULL, 0, dag, type_dag, len);
+static inline bool evalTCOProgram(bool *evalSuccess, const dag_node* dag, type* type_dag, size_t len, const txEnv* env) {
+  return evalTCOExpression(evalSuccess, NULL, 0, NULL, 0, dag, type_dag, len, env);
 }
 #endif

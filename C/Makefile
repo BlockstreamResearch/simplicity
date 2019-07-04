@@ -13,6 +13,10 @@ jetTable.c: jetTable.gperf
 jetTable.o: jetTable.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
+# In some cases jets may not use their 'src' or 'env' parameters.
+jets.o: jets.c
+	$(CC) -c $(CFLAGS) $(CWARN) -Wno-unused-parameter $(CPPFLAGS) -o $@ $<
+
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<
 
