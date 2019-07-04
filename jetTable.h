@@ -18,6 +18,9 @@
 #define JET_SIG  (1 << 3)
 #define JET_ALL  ((JET_FLAG)-1)
 
+/* Forward declaration of the structure holding the environment in which a Simplicity expression is evaluated within. */
+typedef struct txEnv txEnv;
+
 /* A jet simulates the execution of some Simplicity expression (without witnesses or delegation) of A |- B.
  * It reads data from a read frame 'src', and writes its output to a write frame 'dst'.
  * If successful then 'true' is returned.
@@ -26,8 +29,9 @@
  *
  * Precondition: 'src' is a valid read frame for 'bitSize(A)' more cells;
  *               '*dst' is a valid write frame for 'bitSize(B)' more cells;
+ *               if the jet simulates a Simplicity expression with primitives then 'NULL != env';
  */
-typedef bool (*jet_ptr)(frameItem* dst, frameItem src);
+typedef bool (*jet_ptr)(frameItem* dst, frameItem src, const txEnv* env);
 
 /* Given a witness Merkle root for some Simplicity expression, find a jet that simulates it.
  * If such a jet is found, and that jet's type matches the 'filter' then the jet is returned.

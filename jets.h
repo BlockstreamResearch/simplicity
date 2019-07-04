@@ -6,14 +6,14 @@
 #ifndef JETS_H
 #define JETS_H
 
-#include "frame.h"
+#include "jetTable.h"
 
-bool adder32(frameItem* dst, frameItem src);
-bool fullAdder32(frameItem* dst, frameItem src);
-bool subtractor32(frameItem* dst, frameItem src);
-bool fullSubtractor32(frameItem* dst, frameItem src);
-bool multiplier32(frameItem* dst, frameItem src);
-bool fullMultiplier32(frameItem* dst, frameItem src);
-bool sha256_hashBlock(frameItem* dst, frameItem src);
+bool adder32(frameItem* dst, frameItem src, const txEnv* env);
+bool fullAdder32(frameItem* dst, frameItem src, const txEnv* env);
+bool subtractor32(frameItem* dst, frameItem src, const txEnv* env);
+bool fullSubtractor32(frameItem* dst, frameItem src, const txEnv* env);
+bool multiplier32(frameItem* dst, frameItem src, const txEnv* env);
+bool fullMultiplier32(frameItem* dst, frameItem src, const txEnv* env);
+bool sha256_hashBlock(frameItem* dst, frameItem src, const txEnv* env);
 
 #endif

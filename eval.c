@@ -332,9 +332,10 @@ typedef struct call {
  *               '*activeReadFrame(state)' is a valid read frame for 'bitSize(A)' more cells.
  *               '*activeWriteFrame(state)' is a valid write frame for 'bitSize(B)' more cells.
  *               call stack[len];
- *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
+ *               dag_node dag[len] and 'dag' is well-typed with 'type_dag';
+ *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
-static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type_dag, size_t len) {
+static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type_dag, size_t len, const txEnv* env) {
 /* The program counter, 'pc', is the current combinator being interpreted.  */
   size_t pc = len - 1;
 
@@ -488,7 +489,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
          writeWitness(state.activeWriteFrame, &dag[pc].witness, type_dag);
          break;
        case JET:
-         if(!dag[pc].jet(state.activeWriteFrame, *state.activeReadFrame)) return false;
+         if(!dag[pc].jet(state.activeWriteFrame, *state.activeReadFrame, env)) return false;
          break;
        default:
          assert(false);
@@ -645,9 +646,10 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
  *               inputSize + UWORD_BIT - 1 <= SIZE_MAX;
  *               output == NULL or UWORD output[roundUWord(outputSize)];
  *               input == NULL or UWORD input[roundUWord(inputSize)];
+ *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
 bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
-                      , const dag_node* dag, type* type_dag, size_t len
+                      , const dag_node* dag, type* type_dag, size_t len, const txEnv* env
                       ) {
   memBound bound;
   if (!computeEvalTCOBound(&bound, dag, type_dag, len)) return false;
@@ -679,7 +681,7 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
     *(state.activeReadFrame) = initReadFrame(inputSize, cells);
     *(state.activeWriteFrame) = initWriteFrame(outputSize, cells + cellsBound);
 
-    *evalSuccess = runTCO(state, stack, dag, type_dag, len);
+    *evalSuccess = runTCO(state, stack, dag, type_dag, len, env);
 
     assert(!*evalSuccess || state.activeReadFrame == frames);
     assert(!*evalSuccess || state.activeWriteFrame == frames + (stackBound - 1));

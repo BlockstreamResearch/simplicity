@@ -2,7 +2,7 @@
 
 #include "sha256/compression.h"
 
-bool adder32(frameItem* dst, frameItem src) {
+bool adder32(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
   writeBit(dst, 0xFFFFFFFF - y < x);
@@ -16,7 +16,7 @@ bool adder32(frameItem* dst, frameItem src) {
   return true;
 }
 
-bool fullAdder32(frameItem* dst, frameItem src) {
+bool fullAdder32(frameItem* dst, frameItem src, const txEnv* env) {
   /* :TODO: rewrite full adder so the carry bit comes first for better bit allignment */
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
@@ -32,7 +32,7 @@ bool fullAdder32(frameItem* dst, frameItem src) {
   return true;
 }
 
-bool subtractor32(frameItem* dst, frameItem src) {
+bool subtractor32(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
   writeBit(dst, x < y);
@@ -40,7 +40,7 @@ bool subtractor32(frameItem* dst, frameItem src) {
   return true;
 }
 
-bool fullSubtractor32(frameItem* dst, frameItem src) {
+bool fullSubtractor32(frameItem* dst, frameItem src, const txEnv* env) {
   /* :TODO: rewrite full subtractor so the borrow bit comes first for better bit allignment */
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
@@ -50,14 +50,14 @@ bool fullSubtractor32(frameItem* dst, frameItem src) {
   return true;
 }
 
-bool multiplier32(frameItem* dst, frameItem src) {
+bool multiplier32(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast64_t x = read32(&src);
   uint_fast64_t y = read32(&src);
   write64(dst, x * y);
   return true;
 }
 
-bool fullMultiplier32(frameItem* dst, frameItem src) {
+bool fullMultiplier32(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast64_t x = read32(&src);
   uint_fast64_t y = read32(&src);
   uint_fast64_t z = read32(&src);
@@ -66,7 +66,7 @@ bool fullMultiplier32(frameItem* dst, frameItem src) {
   return true;
 }
 
-bool sha256_hashBlock(frameItem* dst, frameItem src) {
+bool sha256_hashBlock(frameItem* dst, frameItem src, const txEnv* env) {
   uint32_t h[8];
   uint32_t block[16];
   read32s(h, 8, &src);
