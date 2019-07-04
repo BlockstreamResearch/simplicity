@@ -211,6 +211,7 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
 static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
   int32_t bit = getBit(stream);
   if (bit < 0) return bit;
+  dag[i] = (dag_node){0};
   if (0 == bit) {
     int32_t code = getNBits(2, stream);
     if (code < 0) return code;

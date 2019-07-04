@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include "bounded.h"
+#include "unreachable.h"
 
 /* :TODO: remove these includes after witnesses are supported, etc. */
 #include <stdio.h>
@@ -360,9 +361,15 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
 
   /* :TODO: Use static analysis to limit the number of iterations through this loop. */
   while(pc < len) {
+    int32_t tag = dag[pc].tag;
     assert(state.activeReadFrame < state.activeWriteFrame);
     assert(state.activeReadFrame->edge <= state.activeWriteFrame->edge);
-    switch (dag[pc].tag) {
+    if (dag[pc].jet) {
+      if(!dag[pc].jet(state.activeWriteFrame, *state.activeReadFrame, env)) return false;
+      /* Like IDEN and WITNESS, we want to "fallthrough" to the UNIT case. */
+      tag = UNIT;
+    }
+    switch (tag) {
      case COMP:
       if (calling) {
         /* NEW_FRAME(type_dag[dag[pc].typeAnnotation[1]].bitSize) */
@@ -480,19 +487,13 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
       break;
      case IDEN:
      case WITNESS:
-     case JET:
-      switch (dag[pc].tag) {
+      switch (tag) {
        case IDEN:
          copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
          break;
        case WITNESS:
          writeWitness(state.activeWriteFrame, &dag[pc].witness, type_dag);
          break;
-       case JET:
-         if(!dag[pc].jet(state.activeWriteFrame, *state.activeReadFrame, env)) return false;
-         break;
-       default:
-         assert(false);
       }
       /*@fallthrough@*/
      case UNIT:
@@ -508,10 +509,9 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
       break;
      case HIDDEN: return false; /* We have failed an 'ASSERTL' or 'ASSERTR' combinator. */
      default:
-      /* :TODO: Support jets and primitives */
-      fprintf(stderr, "evalTCO for jets, and primitives not yet implemented\n");
-      exit(EXIT_FAILURE);
-      break;
+      /* Jets (and primitives) should already have been processed by dag[i].jet already */
+      assert(false);
+      UNREACHABLE;
     }
   }
   assert(pc == len);

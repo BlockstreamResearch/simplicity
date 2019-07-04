@@ -13,7 +13,7 @@
 /* Unique numeric tags the various kinds of Simplicity combinators.
  * We choose to generate unique tags by using the reverse bit pattern used in Simplicity's bit-wise prefix code.
  * Thus all tags for core, witness, and hidden node are even numbers.
- * Jets and primitive tags are be odd numbers.
+ * Jets and primitive tags are odd numbers.
  * Assertions are not part of Simplicity's bit-wise prefix code, and instead make use of unused codes that extend the code for CASE.
  */
 #define COMP       0x00
@@ -30,7 +30,6 @@
 #define UNIT       0x12
 #define HIDDEN     0x06
 #define WITNESS    0x0e
-#define JET        0x03
 
 /* This structure is use to count the different kinds of combinators in a Simplicity DAG. */
 typedef struct combinator_counters {
@@ -82,13 +81,13 @@ typedef struct witnessInfo {
  * The node may have references to children, when it is a combinator kind of expression.
  *
  * Invariant: 'tag' is a valid tag;
+ *            If 'tag' is odd then NULL != jet;
  *            sha256_midstate hash is active when tag == HIDDEN;
- *            jet_ptr jet is active when tag == JET;
  *            witnessInfo witness is be active when tag == WITNESS and the node has witness data
- *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, JET, WITNESS};
- *                                        or when tag == WITNESS and the node is without witness data.
+ *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, WITNESS};
  */
 typedef struct dag_node {
+  jet_ptr jet;
   int32_t tag;
   union {
     struct {
@@ -97,7 +96,6 @@ typedef struct dag_node {
     };
     witnessInfo witness;
     sha256_midstate hash;
-    jet_ptr jet;
   };
 } dag_node;
 

@@ -265,11 +265,7 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
 void forceJets(dag_node* dag, const analyses* analysis, const size_t len, JET_FLAG filter) {
   if (!filter) return;
   for (size_t i = 0; i < len; ++i) {
-    jet_ptr jet = lookupJet(&analysis[i].witnessMerkleRoot, filter);
-    if (jet) {
-      dag[i].tag = JET;
-      dag[i].jet = jet;
-    }
+    if (!dag[i].jet) dag[i].jet = lookupJet(&analysis[i].witnessMerkleRoot, filter);
   }
 }
 
