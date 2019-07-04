@@ -525,22 +525,29 @@ typedef struct memBound {
 } memBound;
 
 /* :TODO: Document extraStackBoundTCO in the Tech Report (and implement it in Haskell) */
-/* Given a well-typed dag representing a Simplicity expression, compute the bounds on memory requirement for evaluation.
+/* Given a well-typed dag representing a Simplicity expression, set '*dag_bound' to the memory requirement for evaluation.
  * For all 'i', 0 <= 'i' < 'len', compute 'bound[i].extraCellsBoundTCO' and 'bound[i].extraStackBoundTCO'
  * for the subexpression denoted by the slice
  *
  *     (dag_nodes[i + 1])dag.
  *
- * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
- * Postcondition: 'max(result.extraCellsBoundTCO[0], result.extraCellsBoundTCO[1]) == SIZE_MAX'.
- *                  or 'result.extraCellsBoundTCO' characterizes the number of UWORDs needed
- *                    for the frames allocated during evaluation of 'dag';
- *                'result.extraStackBoundTCO[0] == SIZE_MAX'
- *                  or result.extraStackBoundTCO[0] bounds the the number of stack frames needed during execution of 'dag';
+ * Then '*dag_bound' is set to 'bound[len-1]'.
+ *
+ * If 'malloc' fails, then return false.
+ *
+ * Precondition: NULL != dag_bound
+ *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
+ * Postcondition: if the result is 'true'
+ *                then 'max(dag_bound->extraCellsBoundTCO[0], dag_bound->extraCellsBoundTCO[1]) == SIZE_MAX'.
+ *                       or 'dag_bound->extraCellsBoundTCO' characterizes the number of UWORDs needed
+ *                         for the frames allocated during evaluation of 'dag';
+ *                     'dag_bound->extraStackBoundTCO[0] == SIZE_MAX'
+ *                       or 'dag_bound->extraStackBoundTCO[0]' bounds the the number of stack frames needed
+ *                          during execution of 'dag';
  */
-static memBound computeEvalTCOBound(const dag_node* dag, const type* type_dag, const size_t len) {
+static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const type* type_dag, const size_t len) {
   memBound* bound = malloc(sizeof(memBound[len]));
-  if (!bound) return (memBound){ .extraCellsBoundTCO = { SIZE_MAX, SIZE_MAX }, .extraStackBound = { SIZE_MAX, SIZE_MAX } };
+  if (!bound) return false;
 
   size_t scratch;
   for (size_t i = 0; i < len; ++i) {
@@ -612,22 +619,25 @@ static memBound computeEvalTCOBound(const dag_node* dag, const type* type_dag, c
     }
   }
 
-  memBound result = bound[len-1];
+  *dag_bound = bound[len-1];
   free(bound);
-  return result;
+  return true;
 }
 
 /* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]'.
  * If 'NULL != input', initialize the active read frame's data with 'input[roundUWord(inputSize)]'.
  *
- * If static analysis results determines the bound on memory allocation requirements exceed the allowed limits, return 'false'.
- * If malloc fails, return 'false'.
- * If during execution an 'assertr' or 'assertl' combinator fails, return 'false'.
- * Otherwise return 'true'.
+ * If malloc fails, return 'false', otherwise return 'true'.
+ * If static analysis results determines the bound on memory allocation requirements exceed the allowed limits,
+ * '*evalSuccess' is set to 'false'.
+ * If during execution an 'assertr' or 'assertl' combinator fails, '*evalSuccess' is set to 'false'
+ * Otherwise '*evalSuccess' is set to 'true'.
  *
- * If the function returns 'true' and 'NULL != output', copy the final active write frame's data to 'output[roundWord(outputSize)]'.
+ * If the function returns 'true' and '*evalSuccess' and 'NULL != output',
+ * copy the final active write frame's data to 'output[roundWord(outputSize)]'.
  *
- * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type A |- B;
+ * Precondition: NULL != evalSuccess
+ *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type A |- B;
  *               inputSize == bitSize(A);
  *               outputSize == bitSize(B);
  *               outputSize + UWORD_BIT - 1 <= SIZE_MAX;
@@ -635,27 +645,30 @@ static memBound computeEvalTCOBound(const dag_node* dag, const type* type_dag, c
  *               output == NULL or UWORD output[roundUWord(outputSize)];
  *               input == NULL or UWORD input[roundUWord(inputSize)];
  */
-bool evalTCOExpression( UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
+bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
                       , const dag_node* dag, type* type_dag, size_t len
                       ) {
-  memBound bound = computeEvalTCOBound(dag, type_dag, len);
+  memBound bound;
+  if (!computeEvalTCOBound(&bound, dag, type_dag, len)) return false;
+
   size_t cellsBound = bounded_add( bounded_add(roundUWord(inputSize), roundUWord(outputSize))
                                  , max(bound.extraCellsBoundTCO[0], bound.extraCellsBoundTCO[1])
                                  );
   size_t stackBound = bounded_add(bound.extraStackBound[0], 2);
 
   /* :TODO: add reasonable, consensus critical limits to cells and stack bounds */
-  if (SIZE_MAX <= cellsBound || SIZE_MAX <= stackBound) return false;
+  if (SIZE_MAX <= cellsBound || SIZE_MAX <= stackBound) {
+    *evalSuccess = false;
+    return true;
+  }
 
   /* We use calloc for 'cells' because the frame data must be initialized before we can perform bitwise operations. */
-  /* :TODO: use a checked_malloc for heap allocations. */
   UWORD* cells = calloc(cellsBound ? cellsBound : 1, sizeof(UWORD));
   frameItem* frames = malloc(sizeof(frameItem[stackBound]));
   call* stack = malloc(sizeof(call[len]));
 
-  bool result = false;
-
-  if (cells && frames && stack) {
+  const bool result = cells && frames && stack;
+  if (result) {
     if (input) memcpy(cells, input, sizeof(UWORD[roundUWord(inputSize)]));
 
     evalState state =
@@ -665,12 +678,12 @@ bool evalTCOExpression( UWORD* output, size_t outputSize, const UWORD* input, si
     *(state.activeReadFrame) = initReadFrame(inputSize, cells);
     *(state.activeWriteFrame) = initWriteFrame(outputSize, cells + cellsBound);
 
-    result = runTCO(state, stack, dag, type_dag, len);
+    *evalSuccess = runTCO(state, stack, dag, type_dag, len);
 
-    assert(!result || state.activeReadFrame == frames);
-    assert(!result || state.activeWriteFrame == frames + (stackBound - 1));
+    assert(!*evalSuccess || state.activeReadFrame == frames);
+    assert(!*evalSuccess || state.activeWriteFrame == frames + (stackBound - 1));
 
-    if (result && output) {
+    if (*evalSuccess && output) {
       memcpy(output, state.activeWriteFrame->edge, sizeof(UWORD[roundUWord(outputSize)]));
     }
   }

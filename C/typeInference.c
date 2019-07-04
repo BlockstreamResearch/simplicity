@@ -623,22 +623,25 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
 }
 
 /* If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
- * then allocate and return a well-formed type DAG containing all the type annotations needed for the principal type of 'dag'
- * with all free type variables instantiated at ONE,
+ * then allocate a well-formed type DAG containing all the type annotations needed for the principal type of 'dag'
+ * with all free type variables instantiated at ONE, and set '*type_dag' to this allocation.
  * and update the .typeAnnotation array within each node of the 'dag' to refer to their type within the resulting type DAG.
  *
  * Recall that a well-formed type DAG is always non-empty because the first element of the array is guaranteed to be the type 'ONE'.
  *
- * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then NULL is returned.
- * If malloc fails, then NULL is returned.
+ * If malloc fails, return 'false', otherwise return 'true'.
+ * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL.
  *
- * Precondition: dag_node dag[len] is well-formed;
+ * Precondition: NULL != type_dag
+ *               dag_node dag[len] is well-formed;
  *               '*census' contains a tally of the different tags that occur in 'dag'.
  *
- * Postcondition: the return value is NULL
- *             or 'dag' is well-typed with the allocated return value and without witness values.
+ * Postcondition: if the return value is 'true'
+ *                then either NULL == '*type_dag'
+ *                     or 'dag' is well-typed with '*type_dag' and without witness values.
+ *                if the return value is 'false' then 'NULL == *type_dag'
  */
-type* mallocTypeInference(dag_node* dag, const size_t len, const combinator_counters* census) {
+bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census) {
   unification_var bound_var[] =
     { { .isBound = true, .bound = { .kind = ONE } }
     , { .isBound = true, .bound = { .kind = SUM,     .arg = { &bound_var[0], &bound_var[0] } } }
@@ -653,28 +656,31 @@ type* mallocTypeInference(dag_node* dag, const size_t len, const combinator_coun
     };
   /* 'bound_var[9]' is bound to the type TWO^256. Nine non-trivial bindings were made. */
   size_t bindings_used = 9;
+  *type_dag = NULL;
 
-  /* :TODO: replace thise mallocs and all other mallocs with a checked_malloc like libsecp256k1 does. */
   /* :TODO: static assert that MAX_DAG size is small enough that these sizes fit within SIZE_T. */
   /* These arrays could be allocated on the stack, but they are potentially large, so we allocate them on the heap instead. */
   unification_arrow* arrow = malloc(sizeof(unification_arrow[len]));
   unification_var* extra_var = malloc(sizeof(unification_var[max_extra_vars(census)]));
 
-  type* type_dag = NULL;
-  if (arrow && extra_var) {
+  bool result = arrow && extra_var;
+  if (result) {
     if (typeInference(arrow, dag, len, extra_var, &(bound_var[9]), &bindings_used)) {
       /* :TODO: constrain the root of the dag to be a Simplicity program: ONE |- ONE */
 
       /* :TODO: static assert that MAX_DAG size is small enough that this size fits within SIZE_T. */
-      type_dag = malloc(sizeof(type[1 + bindings_used]));
-      if(type_dag && !freezeTypes(type_dag, dag, arrow, len)) {
-        free(type_dag);
-        type_dag = NULL;
+      *type_dag = malloc(sizeof(type[1 + bindings_used]));
+      result = *type_dag;
+      if (result) {
+        if (!freezeTypes(*type_dag, dag, arrow, len)) {
+          free(*type_dag);
+          *type_dag = NULL;
+        }
       }
     }
   }
 
   free(arrow);
   free(extra_var);
-  return type_dag;
+  return result;
 }
