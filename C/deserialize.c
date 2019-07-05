@@ -2,67 +2,6 @@
 
 #include <assert.h>
 #include <limits.h>
-#include <stdlib.h>
-
-/* Ensure a non-zero amount of bits are 'available'.
- * If no more bits are available in the 'stream', returns 'ERR_BISTREAM_EOF'.
- * If an I/O error occurs when reading from the 'stream', 'ERR_BISTRING_ERROR' is returned.
- * Returns 0 if successful.
- *
- * Precondition: NULL != stream
- */
-static int32_t ensureBuffer(bit_stream* stream) {
-  if (stream->available <= 0) {
-    int ch = fgetc(stream->file);
-    if (ch == EOF) {
-      if (ferror(stream->file)) return ERR_BITSTREAM_ERROR;
-      if (feof(stream->file)) return ERR_BITSTREAM_EOF;
-    }
-    stream->byte = (unsigned char)ch;
-    stream->available = CHAR_BIT;
-  }
-  return 0;
-}
-
-/* Fetches up to 31 bits from 'stream' as the 'n' least significant bits of return value.
- * The 'n' bits are set from the MSB to the LSB.
- * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available.
- * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
- *
- * Precondition: 0 <= n < 32
- *               NULL != stream
- */
-static int32_t getNBits(int n, bit_stream* stream) {
-  if (0 < n) {
-    int32_t err = ensureBuffer(stream);
-    if (err < 0) return err;
-  } else {
-    return 0;
-  }
-  assert(n < 32);
-
-  uint32_t result = 0;
-  while (stream->available < n) {
-    n -= stream->available;
-    result |= (stream->byte & (((uint32_t)1 << stream->available) - 1)) << n;
-    stream->available = 0;
-    int32_t err = ensureBuffer(stream);
-    if (err < 0) return err;
-  }
-  stream->available -= n;
-  result |= (uint32_t)(stream->byte >> stream->available) & (((uint32_t)1 << n) - 1);
-  return (int32_t)result;
-}
-
-/* Returns one bit from 'stream', 0 or 1.
- * Returns 'ERR_BITSTREAM_EOF' if no bits are available.
- * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
- *
- * Precondition: NULL != stream
- */
-static int32_t getBit(bit_stream* stream) {
-  return getNBits(1, stream);
-}
 
 /* Fetches 'len' 'uint32_t's from 'stream' into 'result'.
  * The bits in each 'uint32_t' are set from the MSB to the LSB and the 'uint32_t's of 'result' are set from 0 up to 'len'.
@@ -73,7 +12,7 @@ static int32_t getBit(bit_stream* stream) {
  * Precondition: uint32_t result[len];
  *               NULL != stream
  */
-static int32_t getWord32Array(uint32_t* result, const size_t len, bit_stream* stream) {
+static int32_t getWord32Array(uint32_t* result, const size_t len, bitstream* stream) {
   for (size_t i = 0; i < len; ++i) {
     /* Due to error codes, getNBits cannot fetch 32 bits at once. Instead we fetch two groups of 16 bits. */
     int32_t bits16 = getNBits(16, stream);
@@ -94,7 +33,7 @@ static int32_t getWord32Array(uint32_t* result, const size_t len, bit_stream* st
  * Precondition: NULL != result
  *               NULL != stream
  */
-static int32_t getHash(sha256_midstate* result, bit_stream* stream) {
+static int32_t getHash(sha256_midstate* result, bitstream* stream) {
   return getWord32Array(result->s, 8, stream);
 }
 
@@ -109,7 +48,7 @@ static int32_t getHash(sha256_midstate* result, bit_stream* stream) {
  * Precondition: NULL != result
  *               NULL != stream
  */
-static int32_t decodeUpto1Bit(int32_t* result, bit_stream* stream) {
+static int32_t decodeUpto1Bit(int32_t* result, bitstream* stream) {
   *result = getBit(stream);
   if (*result <= 0) return *result;
 
@@ -130,7 +69,7 @@ static int32_t decodeUpto1Bit(int32_t* result, bit_stream* stream) {
  *
  * Precondition: NULL != stream
  */
-static int32_t decodeUpto3(bit_stream* stream) {
+static int32_t decodeUpto3(bitstream* stream) {
   int32_t result;
   int32_t len = decodeUpto1Bit(&result, stream);
   if (len < 0) return len;
@@ -149,7 +88,7 @@ static int32_t decodeUpto3(bit_stream* stream) {
  * Precondition: NULL != result
  *               NULL != stream
  */
-static int32_t decodeUpto3Bits(int32_t* result, bit_stream* stream) {
+static int32_t decodeUpto3Bits(int32_t* result, bitstream* stream) {
   int32_t bit = getBit(stream);
   if (bit < 0) return bit;
 
@@ -174,7 +113,7 @@ static int32_t decodeUpto3Bits(int32_t* result, bit_stream* stream) {
  *
  * Precondition: NULL != stream
  */
-static int32_t decodeUpto15(bit_stream* stream) {
+static int32_t decodeUpto15(bitstream* stream) {
   int32_t result;
   int32_t len = decodeUpto3Bits(&result, stream);
   if (len < 0) return len;
@@ -193,7 +132,7 @@ static int32_t decodeUpto15(bit_stream* stream) {
  * Precondition: NULL != result
  *               NULL != stream
  */
-static int32_t decodeUpto15Bits(int32_t* result, bit_stream* stream) {
+static int32_t decodeUpto15Bits(int32_t* result, bitstream* stream) {
   int32_t bit = getBit(stream);
   if (bit < 0) return bit;
 
@@ -218,7 +157,7 @@ static int32_t decodeUpto15Bits(int32_t* result, bit_stream* stream) {
  *
  * Precondition: NULL != stream
  */
-static int32_t decodeUpto65535(bit_stream* stream) {
+static int32_t decodeUpto65535(bitstream* stream) {
   int32_t result;
   int32_t len = decodeUpto15Bits(&result, stream);
   if (len < 0) return len;
@@ -234,7 +173,7 @@ static int32_t decodeUpto65535(bit_stream* stream) {
  *
  * Precondition: NULL != stream
  */
-int32_t decodeUptoMaxInt(bit_stream* stream) {
+int32_t decodeUptoMaxInt(bitstream* stream) {
   int32_t bit = getBit(stream);
   if (bit < 0) return bit;
   if (0 == bit) {
@@ -268,7 +207,7 @@ int32_t decodeUptoMaxInt(bit_stream* stream) {
  *               i < 2^31 - 1
  *               NULL != stream
  */
-static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
+static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
   int32_t bit = getBit(stream);
   if (bit < 0) return bit;
   if (0 == bit) {
@@ -357,7 +296,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
  *               len < 2^31
  *               NULL != stream
  */
-static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* census, bit_stream* stream) {
+static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* census, bitstream* stream) {
   for (size_t i = 0; i < len; ++i) {
     int32_t err = decodeNode(dag, i, stream);
     if (err < 0) return err;
@@ -389,7 +328,7 @@ static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* c
  *                          of the function is positive and when NULL != census;
  *                NULL == *dag when the return value is negative.
  */
-int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream* stream) {
+int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* stream) {
   *dag = NULL;
   int32_t dagLen = decodeUptoMaxInt(stream);
   if (dagLen <= 0) return dagLen;
@@ -415,46 +354,29 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream*
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * Returns 'ERR_MALLOC' if malloc fails.
- * If successful, '*witness' is set to the decoded bitstring and 0 is returned.
+ * If successful, '*witness' is set to the decoded bitstring,
+ *                '*allocation' points to memory allocated for this bitstring,
+ *                and 0 is returned.
  *
- * Precondition: NULL != witness;
+ * If an error is returned '*allocation' is set to 'NULL' and '*witness' might be modified.
  *
- * Postcondition: if 'result == 0' and '0 < witness->len' then
- *                  'unsigned char witness->arr[(witness->len + witness->offset - 1) / CHAR_BIT + 1] and
- *                  (*witness) represents a some bitstring;
- *                if 'result < 0' or 'wintess->len == 0' then witness->arr == NULL;
+ * Precondition: NULL != allocation;
+ *               NULL != witness;
+ *               NULL != stream;
+ *
+ * Postcondition: if the function returns '0'
+ *                  '*witness' represents a some bitstring
+ *                   and '*allocation' points to allocated memory sufficient for at least the 'witness->arr' array.
+ *                       (Note that '*allocation' may be 'NULL' if 'n == 0')
+ *                if the function returns a negative value then '*allocation == NULL'
  */
-int32_t decodeMallocWitnessData(bitstring* witness, bit_stream* stream) {
-  *witness = (bitstring){ 0 };
-  int32_t bit = getBit(stream);
-  if (bit <= 0) return bit; /* Either an error was encountered or the witness data is the empty bitstring. */
-  int32_t witnessLen = decodeUptoMaxInt(stream);
+int32_t decodeMallocWitnessData(void** allocation, bitstring* witness, bitstream* stream) {
+  int32_t witnessLen = getBit(stream);
   if (witnessLen < 0) return witnessLen;
-  witness->len = (size_t)witnessLen;
+  if (0 < witnessLen) witnessLen = decodeUptoMaxInt(stream);
+  if (witnessLen < 0) return witnessLen;
   /* :TODO: A consensus parameter limiting the maximum length of the witness data blob needs to be enforced here */
-  if (PTRDIFF_MAX - 1 <= witness->len / CHAR_BIT) return ERR_DATA_OUT_OF_RANGE;
+  if (PTRDIFF_MAX - 1 <= (size_t)witnessLen / CHAR_BIT) return ERR_DATA_OUT_OF_RANGE;
 
-  /* We directly operate on the representation of 'stream' to quickly extract the bitstring from the underlying 'FILE'. */
-  int32_t err = ensureBuffer(stream);
-  if (err < 0) return err;
-
-  witness->offset = (size_t)(CHAR_BIT - stream->available);
-  size_t arrayLen = (witness->len - 1 + witness->offset) / CHAR_BIT + 1;
-  unsigned char* arr = malloc(arrayLen);
-  if (!arr) return ERR_MALLOC;
-
-  arr[0] = stream->byte;
-  size_t charRead = fread(arr + 1, 1, arrayLen - 1, stream->file);
-  if (charRead != arrayLen - 1) {
-    free(arr);
-    return ferror(stream->file) ? ERR_BITSTREAM_ERROR : ERR_BITSTREAM_EOF;
-  }
-
-  /* Rebuild 'stream's structure as if we read 'witnessLen' bits from the stream */
-  stream->byte = arr[arrayLen - 1];
-  /* Set stream->available to (stream->available - witnessLen) mod CHAR_BIT. */
-  stream->available = (stream->available + CHAR_BIT - 1 - (witnessLen - 1) % CHAR_BIT) % CHAR_BIT;
-
-  witness->arr = arr;
-  return 0;
+  return getMallocBitstring(allocation, witness, (size_t)witnessLen, stream);
 }
