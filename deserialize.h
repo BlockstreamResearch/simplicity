@@ -2,40 +2,9 @@
 #ifndef DESERIALIZE_H
 #define DESERIALIZE_H
 
-#include <stdio.h>
+#include "bitstream.h"
 #include "dag.h"
-
-/* By convetion, odd error codes are transient failures (i.e. out of memory or I/O errors)
- * while even error codes are permenent failures (i.e. unexpected end of file or parsing error, etc.)
- */
-#define ERR_MALLOC (-1)
-#define ERR_BITSTREAM_EOF (-2)
-#define ERR_BITSTREAM_ERROR (-3)
-#define ERR_DATA_OUT_OF_RANGE (-4)
-#define ERR_FAIL_CODE (-6)
-#define ERR_STOP_CODE (-8)
-#define ERR_HIDDEN (-10)
-
-#define PERMANENT_FAILURE(err) (!((err) & 1))
-
-/* Datatype representing a bit stream.
- * Bits are streamed from MSB to LSB.
- *
- * Invariant: NULL != file
- *            0 <= available <= CHAR_BIT
- */
-typedef struct bit_stream {
-  FILE* file;          /* Underlying byte stream */
-  int available;       /* Number of bits unparsed from 'byte' */
-  unsigned char byte;  /* Current, partially parsed byte */
-} bit_stream;
-
-/* Initialize a bit stream, 'stream', from a given byte stream, 'file'.
- * Precondition: NULL != file
- */
-static inline bit_stream initializeBitStream(FILE* file) {
-  return (bit_stream){ .file = file, .available = 0 };
-}
+#include "errorCodes.h"
 
 /* Decode an encoded number between 1 and 2^31 - 1 inclusive.
  * When successful returns the decoded result.
@@ -45,7 +14,7 @@ static inline bit_stream initializeBitStream(FILE* file) {
  *
  * Precondition: NULL != stream
  */
-int32_t decodeUptoMaxInt(bit_stream* stream);
+int32_t decodeUptoMaxInt(bitstream* stream);
 
 /* Decode a length-prefixed Simplicity DAG from 'stream'.
  * Returns 'ERR_DATA_OUT_OF_RANGE' the length prefix's value is too large.
@@ -69,7 +38,7 @@ int32_t decodeUptoMaxInt(bit_stream* stream);
  *                          of the function is positive and when NULL != census;
  *                NULL == *dag when the return value is negative.
  */
-int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream* stream);
+int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* stream);
 
 /* Decode a string of up to 2^31 - 1 bits from 'stream'.
  * This is the format in which the data for 'WITNESS' nodes are encoded.
@@ -77,15 +46,22 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream*
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * Returns 'ERR_MALLOC' if malloc fails.
- * If successful, '*witness' is set to the decoded bitstring and 0 is returned.
+ * If successful, '*witness' is set to the decoded bitstring,
+ *                '*allocation' points to memory allocated for this bitstring,
+ *                and 0 is returned.
  *
- * Precondition: NULL != witness;
+ * If an error is returned '*allocation' is set to 'NULL' and '*witness' might be modified.
  *
- * Postcondition: if 'result == 0' and '0 < witness->len' then
- *                  'unsigned char witness->arr[(witness->len + witness->offset - 1) / CHAR_BIT + 1] and
- *                  (*witness) represents a some bitstring;
- *                if 'result < 0' or 'wintess->len == 0' then witness->arr == NULL;
+ * Precondition: NULL != allocation;
+ *               NULL != witness;
+ *               NULL != stream;
+ *
+ * Postcondition: if the function returns '0'
+ *                  '*witness' represents a some bitstring
+ *                   and '*allocation' points to allocated memory sufficient for at least the 'witness->arr' array.
+ *                       (Note that '*allocation' may be 'NULL' if 'n == 0')
+ *                if the function returns a negative value then '*allocation == NULL'
  */
-int32_t decodeMallocWitnessData(bitstring* witness, bit_stream* stream);
+int32_t decodeMallocWitnessData(void** allocation, bitstring* witness, bitstream* stream);
 
 #endif

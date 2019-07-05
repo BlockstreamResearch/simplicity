@@ -36,7 +36,7 @@ static void test_decodeUptoMaxInt(void) {
   };
 
   FILE* file = fmemopen_rb(buf, sizeof(buf));
-  bit_stream stream = initializeBitStream(file);
+  bitstream stream = initializeBitstream(file);
   for (size_t i = 0; i < sizeof(expected)/sizeof(expected[0]); ++i) {
     int32_t result = decodeUptoMaxInt(&stream);
     if (expected[i] == result) {
@@ -54,16 +54,17 @@ static void test_hashBlock(void) {
   dag_node* dag = NULL;
   combinator_counters census;
   int32_t len, err = 0;
+  void* witnessAlloc;
   bitstring witness;
   {
     FILE* file = fmemopen_rb(hashBlock, sizeof_hashBlock);
-    bit_stream stream = initializeBitStream(file);
+    bitstream stream = initializeBitstream(file);
     len = decodeMallocDag(&dag, &census, &stream);
     if (!dag) {
       failures++;
       printf("Error parsing dag: %d\n", len);
     } else {
-      err = decodeMallocWitnessData(&witness, &stream);
+      err = decodeMallocWitnessData(&witnessAlloc, &witness, &stream);
       if (err < 0) {
         failures++;
         printf("Error parsing witness: %d\n", err);
@@ -133,6 +134,7 @@ static void test_hashBlock(void) {
     }
   }
   free(dag);
+  free(witnessAlloc);
 }
 
 static void test_program(char* name, FILE* file, bool expectedResult, const uint32_t* expectedCMR, const uint32_t* expectedWMR) {
@@ -140,15 +142,16 @@ static void test_program(char* name, FILE* file, bool expectedResult, const uint
   dag_node* dag = NULL;
   combinator_counters census;
   int32_t len, err = 0;
+  void* witnessAlloc;
   bitstring witness;
   {
-    bit_stream stream = initializeBitStream(file);
+    bitstream stream = initializeBitstream(file);
     len = decodeMallocDag(&dag, &census, &stream);
     if (!dag) {
       failures++;
       printf("Error parsing dag: %d\n", len);
     } else {
-      err = decodeMallocWitnessData(&witness, &stream);
+      err = decodeMallocWitnessData(&witnessAlloc, &witness, &stream);
       if (err < 0) {
         failures++;
         printf("Error parsing witness: %d\n", err);
@@ -198,6 +201,7 @@ static void test_program(char* name, FILE* file, bool expectedResult, const uint
     free(type_dag);
   }
   free(dag);
+  free(witnessAlloc);
 }
 
 static void test_occursCheck(void) {
@@ -209,7 +213,7 @@ static void test_occursCheck(void) {
   int32_t len;
   {
     FILE* file = fmemopen_rb(buf, sizeof(buf));
-    bit_stream stream = initializeBitStream(file);
+    bitstream stream = initializeBitstream(file);
     len = decodeMallocDag(&dag, &census, &stream);
     fclose(file);
   }

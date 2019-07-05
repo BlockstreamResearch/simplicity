@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "bitstring.h"
 #include "type.h"
 #include "jetTable.h"
 
@@ -68,20 +69,6 @@ static inline size_t numChildren(int32_t tag) {
    default: return 0;
   }
 }
-
-/* Represents a bitstring of length 'len' bits using an array of unsigned char.
- * The bit at index 'n', where 0 <= 'n' < 'len', is located at bit '1 << (CHAR_BIT - 1 - (offset + n) % CHAR_BIT)' of
- * array element 'arr[(offset + n) / CHAR_BIT]'.
- * Other bits in the array may be any value.
- *
- * Invariant: 0 < len implies
- *              unsigned char arr[(offset + len - 1) / CHAR_BIT + 1];
- */
-typedef struct bitstring {
-  size_t len;
-  size_t offset;
-  const unsigned char* arr;
-} bitstring;
 
 /* The contents of a 'WITNESS' node that has witness data. */
 typedef struct witnessInfo {
