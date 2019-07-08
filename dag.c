@@ -6,6 +6,7 @@
 #include "tag.h"
 #include "sha256.h"
 #include "uword.h"
+#include "unreachable.h"
 
 /* :TODO: remove these includes after witnesses are supported, etc. */
 #include <stdio.h>
@@ -71,7 +72,7 @@ static sha256_midstate cmrIV(int32_t tag) {
 
   /* Precondition violated. */
   assert(false);
-  return (sha256_midstate){0};
+  UNREACHABLE;
 }
 
 /* Given a tag for a node, return the SHA-256 hash of its associated WMR tag.
@@ -134,7 +135,7 @@ static sha256_midstate wmrIV(int32_t tag) {
 
   /* Precondition violated. */
   assert(false);
-  return (sha256_midstate){0};
+  UNREACHABLE;
 }
 
 /* Given a well-formed dag representing a Simplicity expression, compute the commitment Merkle roots of all subexpressions.
