@@ -361,7 +361,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
 
   /* :TODO: Use static analysis to limit the number of iterations through this loop. */
   while(pc < len) {
-    int32_t tag = dag[pc].tag;
+    tag_t tag = dag[pc].tag;
     assert(state.activeReadFrame < state.activeWriteFrame);
     assert(state.activeReadFrame->edge <= state.activeWriteFrame->edge);
     if (dag[pc].jet) {
@@ -487,13 +487,11 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
       break;
      case IDEN:
      case WITNESS:
-      switch (tag) {
-       case IDEN:
+      if (IDEN == tag) {
          copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
-         break;
-       case WITNESS:
+      } else {
+         assert(WITNESS == tag);
          writeWitness(state.activeWriteFrame, &dag[pc].witness, type_dag);
-         break;
       }
       /*@fallthrough@*/
      case UNIT:
@@ -508,7 +506,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
       pc = stack[pc].return_to;
       break;
      case HIDDEN: return false; /* We have failed an 'ASSERTL' or 'ASSERTR' combinator. */
-     default:
+     case JET:
       /* Jets (and primitives) should already have been processed by dag[i].jet already */
       assert(false);
       UNREACHABLE;
@@ -615,7 +613,11 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
       bound[i].extraStackBound[0] = bound[dag[i].child[0]].extraStackBound[0];
       bound[i].extraStackBound[1] = bound[dag[i].child[0]].extraStackBound[1];
       break;
-     default:
+     case IDEN:
+     case UNIT:
+     case HIDDEN:
+     case WITNESS:
+     case JET:
       bound[i].extraCellsBoundTCO[0] = bound[i].extraCellsBoundTCO[1] = 0;
       bound[i].extraStackBound[0] = bound[i].extraStackBound[1] = 0;
     }

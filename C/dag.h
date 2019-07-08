@@ -10,26 +10,24 @@
 #include "type.h"
 #include "jetTable.h"
 
-/* Unique numeric tags the various kinds of Simplicity combinators.
- * We choose to generate unique tags by using the reverse bit pattern used in Simplicity's bit-wise prefix code.
- * Thus all tags for core, witness, and hidden node are even numbers.
- * Jets and primitive tags are odd numbers.
- * Assertions are not part of Simplicity's bit-wise prefix code, and instead make use of unused codes that extend the code for CASE.
- */
-#define COMP       0x00
-#define CASE       0x10
-#define ASSERTL    0x30
-#define ASSERTR    0x70
-#define PAIR       0x08
-#define DISCONNECT 0x18
-#define INJL       0x04
-#define INJR       0x14
-#define TAKE       0x0c
-#define DROP       0x1c
-#define IDEN       0x02
-#define UNIT       0x12
-#define HIDDEN     0x06
-#define WITNESS    0x0e
+/* An enumeration of the various kinds of Simplicity nodes. */
+typedef enum tag_t
+{ COMP
+, CASE
+, ASSERTL
+, ASSERTR
+, PAIR
+, DISCONNECT
+, INJL
+, INJR
+, TAKE
+, DROP
+, IDEN
+, UNIT
+, HIDDEN
+, WITNESS
+, JET
+} tag_t;
 
 /* This structure is use to count the different kinds of combinators in a Simplicity DAG. */
 typedef struct combinator_counters {
@@ -38,10 +36,8 @@ typedef struct combinator_counters {
 } combinator_counters;
 
 /* Given a tag for an expression, add it to the 'census'.
- *
- * Precondition: 'tag' is a valid tag.
  */
-static inline void enumerator(combinator_counters* census, int32_t tag) {
+static inline void enumerator(combinator_counters* census, tag_t tag) {
   if (!census) return;
   switch (tag) {
    case COMP: census->comp_cnt++; return;
@@ -54,18 +50,39 @@ static inline void enumerator(combinator_counters* census, int32_t tag) {
    case INJR: census->injr_cnt++; return;
    case TAKE: census->take_cnt++; return;
    case DROP: census->drop_cnt++; return;
+
+   /* These tags are not accounted for in the census. */
+   case IDEN:
+   case UNIT:
+   case HIDDEN:
+   case WITNESS:
+   case JET:
+    return;
   }
 }
 
 /* Returns the number of children that a Simplicity combinator of the 'tag' kind has.
- *
- * Precondition: 'tag' is a valid tag.
  */
-static inline size_t numChildren(int32_t tag) {
-  switch (tag & 0x7) {
-   case 0x00: return 2;
-   case 0x04: return 1;
-   default: return 0;
+static inline size_t numChildren(tag_t tag) {
+  switch (tag) {
+   case COMP:
+   case ASSERTL:
+   case ASSERTR:
+   case CASE:
+   case PAIR:
+   case DISCONNECT:
+    return 2;
+   case INJL:
+   case INJR:
+   case TAKE:
+   case DROP:
+    return 1;
+   case IDEN:
+   case UNIT:
+   case HIDDEN:
+   case WITNESS:
+   case JET:
+    return 0;
   }
 }
 
@@ -80,15 +97,13 @@ typedef struct witnessInfo {
  * The contents of a node depend on the kind of the expressions.
  * The node may have references to children, when it is a combinator kind of expression.
  *
- * Invariant: 'tag' is a valid tag;
- *            If 'tag' is odd then NULL != jet;
+ * Invariant: 'NULL != jet' when 'tag == JET';
  *            sha256_midstate hash is active when tag == HIDDEN;
  *            witnessInfo witness is be active when tag == WITNESS and the node has witness data
- *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, WITNESS};
+ *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, WITNESS, JET};
  */
 typedef struct dag_node {
   jet_ptr jet;
-  int32_t tag;
   union {
     struct {
       size_t typeAnnotation[4];
@@ -97,6 +112,7 @@ typedef struct dag_node {
     witnessInfo witness;
     sha256_midstate hash;
   };
+  tag_t tag;
 } dag_node;
 
 /* A well-formed Simplicity DAG is an array of 'dag_node's,

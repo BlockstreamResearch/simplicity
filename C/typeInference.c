@@ -422,8 +422,8 @@ static bool typeInference(unification_arrow* arrow, const dag_node* dag, const s
      case WITNESS:
       arrow[i] = (unification_arrow){0};
       break;
-     default:
-      /* :TODO: Support primitives and jets */
+     case JET:
+      /* :TODO: Support jets */
       fprintf(stderr, "type inference for primitives and jets not yet implemented\n");
       exit(EXIT_FAILURE);
       #undef APPLY_BINDING
@@ -613,8 +613,11 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
       FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, &(arrow[i].source));
       FREEZE(&(dag[i].typeAnnotation[1]), type_dag, &type_dag_used, &(arrow[i].target));
       break;
+     case HIDDEN:
+     case JET:
+      /* Jets and hidden nodes do not have type annotations. */
+      break;
       #undef FREEZE
-     /* Jets and Primitives do not have type annotations. */
     }
   }
   computeTypeAnalyses(type_dag, type_dag_used);
