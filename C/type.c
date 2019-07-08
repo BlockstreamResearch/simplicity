@@ -5,6 +5,7 @@
 
 #include "bounded.h"
 #include "tag.h"
+#include "unreachable.h"
 
 /* Prepends the Simplicity TMR tag prefix to a string literal 's'. */
 #define TYPE_TAG(s) "Simplicity\x1F" "Type\x1F" s
@@ -32,7 +33,7 @@ static sha256_midstate tmrIV(typeName kind) {
   }
   /* Impossible to reach here (unless you call with uninitialized values). */
   assert(false);
-  return (sha256_midstate){0};
+  UNREACHABLE;
 }
 
 /* Given a well-formed 'type_dag', compute the bitSizes, skips, and type Merkle roots of all subexpressions.

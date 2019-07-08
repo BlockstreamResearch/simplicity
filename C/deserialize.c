@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <limits.h>
+#include "unreachable.h"
 
 /* Fetches 'len' 'uint32_t's from 'stream' into 'result'.
  * The bits in each 'uint32_t' are set from the MSB to the LSB and the 'uint32_t's of 'result' are set from 0 up to 'len'.
@@ -255,7 +256,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
        case 3: return ERR_STOP_CODE;
       }
       assert(0);
-      /*@fallthrough@*/
+      UNREACHABLE;
      case 3:
       switch (subcode) {
        case 0:
@@ -266,6 +267,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
         return 0;
       }
       assert(0);
+      UNREACHABLE;
     }
 
     /* Verify that there are no illegal HIDDEN children. */
