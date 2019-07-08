@@ -19,10 +19,9 @@
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
  *
- * Precondition: 'tag' is a valid tag;
- *               HIDDEN != 'tag'
+ * Precondition: 'tag' \notin {HIDDEN, JET}
  */
-static sha256_midstate cmrIV(int32_t tag) {
+static sha256_midstate cmrIV(tag_t tag) {
   /* Cache the initial values for all the tags. */
   static bool static_initialized = false;
   static sha256_midstate compIV,
@@ -65,12 +64,11 @@ static sha256_midstate cmrIV(int32_t tag) {
    case IDEN: return idenIV;
    case UNIT: return unitIV;
    case WITNESS: return witnessIV;
+   /* Precondition violated. */
+   case HIDDEN:
+   case JET:
+    break;
   }
-  /* :TODO: Support jets and primitives */
-  fprintf(stderr, "Commitment Merkle root for jets and primitives not yet implemented\n");
-  exit(EXIT_FAILURE);
-
-  /* Precondition violated. */
   assert(false);
   UNREACHABLE;
 }
@@ -78,10 +76,9 @@ static sha256_midstate cmrIV(int32_t tag) {
 /* Given a tag for a node, return the SHA-256 hash of its associated WMR tag.
  * This is the "initial value" for computing the witness Merkle root for that expression.
  *
- * Precondition: 'tag' is a valid tag;
- *               HIDDEN != 'tag'
+ * Precondition: 'tag' \notin {HIDDEN, JET}
  */
-static sha256_midstate wmrIV(int32_t tag) {
+static sha256_midstate wmrIV(tag_t tag) {
   /* Cache the initial values for all the tags. */
   static bool static_initialized = false;
   static sha256_midstate compIV,
@@ -128,12 +125,11 @@ static sha256_midstate wmrIV(int32_t tag) {
    case IDEN: return idenIV;
    case UNIT: return unitIV;
    case WITNESS: return witnessIV;
+   /* Precondition violated. */
+   case HIDDEN:
+   case JET:
+    break;
   }
-  /* :TODO: Support jets and primitives */
-  fprintf(stderr, "Witness Merkle root for jets and primitives not yet implemented\n");
-  exit(EXIT_FAILURE);
-
-  /* Precondition violated. */
   assert(false);
   UNREACHABLE;
 }
@@ -150,31 +146,38 @@ static sha256_midstate wmrIV(int32_t tag) {
  */
 void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, const size_t len) {
   for (size_t i = 0; i < len; ++i) {
-    if (HIDDEN == dag[i].tag) {
-      analysis[i].commitmentMerkleRoot = dag[i].hash;
-    } else {
-      analysis[i].commitmentMerkleRoot = cmrIV(dag[i].tag);
+    uint32_t block[16] = {0};
+    size_t j = 8;
+    if (JET == dag[i].tag) {
+      /* :TODO: Support jets and primitives */
+      fprintf(stderr, "Witness Merkle root for jets and primitives not yet implemented\n");
+      exit(EXIT_FAILURE);
+    }
+    analysis[i].commitmentMerkleRoot = HIDDEN == dag[i].tag ? dag[i].hash : cmrIV(dag[i].tag);
 
-      /* Hash the child sub-expression's CMRs (if there are any children). */
-      uint32_t block[16] = {0};
-      size_t j = 8;
-      switch (dag[i].tag) {
-       case COMP:
-       case ASSERTL:
-       case ASSERTR:
-       case CASE:
-       case PAIR:
-        memcpy(block + j, analysis[dag[i].child[1]].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
-        j = 0;
-        /* Fall through. */
-       case DISCONNECT: /* Only the first child is used in the CMR. */
-       case INJL:
-       case INJR:
-       case TAKE:
-       case DROP:
-        memcpy(block + j, analysis[dag[i].child[0]].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].commitmentMerkleRoot.s, block);
-      }
+    /* Hash the child sub-expression's CMRs (if there are any children). */
+    switch (dag[i].tag) {
+     case COMP:
+     case ASSERTL:
+     case ASSERTR:
+     case CASE:
+     case PAIR:
+      memcpy(block + j, analysis[dag[i].child[1]].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
+      j = 0;
+      /*@fallthrough@*/
+     case DISCONNECT: /* Only the first child is used in the CMR. */
+     case INJL:
+     case INJR:
+     case TAKE:
+     case DROP:
+      memcpy(block + j, analysis[dag[i].child[0]].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].commitmentMerkleRoot.s, block);
+     case IDEN:
+     case UNIT:
+     case WITNESS:
+     case HIDDEN:
+     case JET:
+      break;
     }
   }
 }
@@ -192,62 +195,66 @@ void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, const 
  */
 void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, const size_t len) {
   for (size_t i = 0; i < len; ++i) {
-    if (HIDDEN == dag[i].tag) {
-      analysis[i].witnessMerkleRoot = dag[i].hash;
-    } else {
-      analysis[i].witnessMerkleRoot = wmrIV(dag[i].tag);
+    uint32_t block[16] = {0};
+    if (JET == dag[i].tag) {
+      /* :TODO: Support jets and primitives */
+      fprintf(stderr, "Witness Merkle root for jets and primitives not yet implemented\n");
+      exit(EXIT_FAILURE);
+    }
+    analysis[i].witnessMerkleRoot = HIDDEN == dag[i].tag ? dag[i].hash : wmrIV(dag[i].tag);
 
-      uint32_t block[16] = {0};
-      switch (dag[i].tag) {
-       case ASSERTL:
-       case ASSERTR:
-       case CASE:
-       case DISCONNECT:
-        memcpy(block, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        memcpy(block + 8, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        memcpy(block, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        memcpy(block + 8, type_dag[dag[i].typeAnnotation[3]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        memcpy(block, analysis[dag[i].child[0]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
-        memcpy(block + 8, analysis[dag[i].child[1]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        break;
-       case COMP:
-       case PAIR:
-        memcpy(block + 8, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        memcpy(block, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        memcpy(block + 8, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        memcpy(block, analysis[dag[i].child[0]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
-        memcpy(block + 8, analysis[dag[i].child[1]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        break;
-       case INJL:
-       case INJR:
-       case TAKE:
-       case DROP:
-        memcpy(block, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        memcpy(block + 8, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        memcpy(block, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        memcpy(block + 8, analysis[dag[i].child[0]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        break;
-       case IDEN:
-       case UNIT:
-        memcpy(block + 8, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        break;
-       case WITNESS:
-        memcpy(block + 8, type_dag[dag[i].witness.typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        memcpy(block, type_dag[dag[i].witness.typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_bitstring(block + 8, &dag[i].witness.data);
-        sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-        break;
-      }
+    switch (dag[i].tag) {
+     case ASSERTL:
+     case ASSERTR:
+     case CASE:
+     case DISCONNECT:
+      memcpy(block, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      memcpy(block, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[dag[i].typeAnnotation[3]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      memcpy(block, analysis[dag[i].child[0]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, analysis[dag[i].child[1]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      break;
+     case COMP:
+     case PAIR:
+      memcpy(block + 8, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      memcpy(block, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      memcpy(block, analysis[dag[i].child[0]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, analysis[dag[i].child[1]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      break;
+     case INJL:
+     case INJR:
+     case TAKE:
+     case DROP:
+      memcpy(block, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      memcpy(block, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, analysis[dag[i].child[0]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      break;
+     case IDEN:
+     case UNIT:
+      memcpy(block + 8, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      break;
+     case WITNESS:
+      memcpy(block + 8, type_dag[dag[i].witness.typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      memcpy(block, type_dag[dag[i].witness.typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_bitstring(block + 8, &dag[i].witness.data);
+      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      break;
+     case HIDDEN:
+     case JET:
+      break;
     }
   }
 }
