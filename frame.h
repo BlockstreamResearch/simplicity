@@ -65,9 +65,15 @@ static inline bool readBit(frameItem* frame) {
 /* Given a write frame, set its cursor's cell to 'bit' and advance the cursor by one cell.
  * Cells in front of the cursor's final position may be overwritten.
  *
+ * The function returns the same value as bit.  This facilitates using 'writeBit' within an 'if' statement
+ *
+ *     if (writeBit(frame, bit)) { ... } else { ... }
+ *
+ * so that one can both decide conditions based on a Boolean value while at the same time writing to the frame the choice made.
+ *
  * Precondition: '*frame' is a valid write frame for 1 more cell.
  */
-static inline void writeBit(frameItem* frame, bool bit) {
+static inline bool writeBit(frameItem* frame, bool bit) {
   assert(0 < frame->offset);
   frame->offset--;
   UWORD* dst_ptr = frame->edge + frame->offset / UWORD_BIT;
@@ -76,6 +82,16 @@ static inline void writeBit(frameItem* frame, bool bit) {
   } else {
     *dst_ptr = LSBclear(*dst_ptr, frame->offset % UWORD_BIT + 1);
   }
+  return bit;
+}
+
+/* Given a write frame, advance the cursor by 'n' cells.
+ *
+ * Precondition: '*frame' is a valid write frame for 'n' more cells.
+ */
+static inline void skipBits(frameItem* frame, size_t n) {
+  assert(n <= frame->offset);
+  frame->offset -= n;
 }
 
 /* Given a read frame, the 'readN' function returns the value of the 'N' cells after the cursor and
@@ -105,7 +121,7 @@ static inline void read32s(uint32_t* x, size_t n, frameItem* frame) {
   for(; n; --n) *(x++) = (uint32_t)read32(frame);
 }
 
-static inline void write32s(frameItem* frame, uint32_t* x, size_t n) {
+static inline void write32s(frameItem* frame, const uint32_t* x, size_t n) {
   for(; n; --n) write32(frame, *(x++));
 }
 #endif
