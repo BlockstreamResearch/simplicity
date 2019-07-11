@@ -5,12 +5,6 @@
 #include "sha256/compression.h"
 #include "ascii.h"
 
-/* A struct holding the 256-bit array of a SHA-256 hash or midstate.
- */
-typedef struct sha256_midstate {
-  uint32_t s[8];
-} sha256_midstate;
-
 /* The length of a string literal is one less than its sizeof due to the terminating 'NULL' character. */
 #define LENGTH_OF(s) (sizeof("" s) - 1)
 

@@ -1,11 +1,13 @@
 %{
 #include "jetTable.h"
 
+#include "sha256/compression.h"
 #include "jets.h"
 
 /* Give the generated 'jetTable' function static scope. */
 static const struct jetEntry * jetTable (register const char *str, register size_t len);
 %}
+%includes
 /* %compare-lengths is required when keys contain \x00 characters. Merkle roots could contain such characters. */
 %compare-lengths
 %readonly-tables

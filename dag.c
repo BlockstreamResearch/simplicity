@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "bounded.h"
 #include "tag.h"
+#include "sha256.h"
 #include "uword.h"
 
 /* :TODO: remove these includes after witnesses are supported, etc. */
@@ -136,80 +137,6 @@ static sha256_midstate wmrIV(int32_t tag) {
   return (sha256_midstate){0};
 }
 
-/* Given a SHA-256 midstate, 's', of '*count / 512' blocks, and
- * a 'block' with '*count % 512' bits set and with the remaining bits set to 0,
- * finalize the SHA-256 computation by adding SHA-256 padding and set 's' to the resulting SHA-256 hash.
- *
- * Precondition: uint32_t s[8];
- *               uint32_t block[16];
- *               NULL != count;
- */
-static void sha256_end(uint32_t* s, uint32_t* block, const size_t len) {
-  block[len / 32 % 16] |= (uint32_t)1 << (31 - len % 32);
-  if (448 <= len % 512) {
-    sha256_compression(s, block);
-    memset(block, 0, sizeof(uint32_t[14]));
-  }
-  block[14] = (uint32_t)(len >> 32);
-  block[15] = (uint32_t)len;
-  sha256_compression(s, block);
-}
-
-/* Compute the SHA-256 hash, 's', of the bitstring represented by 'witness'.
- *
- * Precondition: uint32_t s[8];
- *               (*witness) is a valid bitstring;
- */
-static void sha256_witnessData(uint32_t* s, const bitstring* witness) {
-  /* This static assert should never fail if uint32_t exists.
-   * But for more certainty, we note that the correctness of this implementation depends on CHAR_BIT being no more than 32.
-   */
-  _Static_assert(CHAR_BIT <= 32, "CHAR_BIT has to be less than 32 for uint32_t to even exist.");
-
-  uint32_t block[16] = { 0 };
-  size_t count = 0;
-  sha256_iv(s);
-  if (witness->len) {
-    block[0] = witness->arr[witness->offset / CHAR_BIT];
-    if (witness->len < CHAR_BIT - witness->offset % CHAR_BIT) {
-      /* witness->len is so short that we don't even use a whole char.
-       * Zero out the low bits.
-       */
-      block[0] = block[0] >> (CHAR_BIT - witness->offset % CHAR_BIT - witness->len)
-                          << (CHAR_BIT - witness->offset % CHAR_BIT - witness->len);
-      count = witness->len;
-    } else {
-      count = CHAR_BIT - witness->offset % CHAR_BIT;
-    }
-    block[0] = 1U * block[0] << (32 - CHAR_BIT + witness->offset % CHAR_BIT);
-
-    while (count < witness->len) {
-      unsigned char ch = witness->arr[(witness->offset + count)/CHAR_BIT];
-      size_t delta = CHAR_BIT;
-      if (witness->len - count < CHAR_BIT) {
-        delta = witness->len - count;
-        /* Zero out any extra low bits that 'ch' may have. */
-        ch = (unsigned char)(ch >> (CHAR_BIT - delta) << (CHAR_BIT - delta));
-      }
-
-      if (count / 32 != (count + CHAR_BIT) / 32) {
-        /* The next character from witness->arr straddles (or almost staddles) the boundary of two elements of the block array. */
-        block[count / 32 % 16] |= (uint32_t)(ch >> (count + CHAR_BIT) % 32);
-        if (count / 512 != (count + delta) / 512) {
-          sha256_compression(s, block);
-          memset(block, 0, sizeof(uint32_t[16]));
-        }
-      }
-      if ((count + CHAR_BIT) % 32) {
-        block[(count + CHAR_BIT) / 32 % 16] |= 1U * ch << (32 - (count + CHAR_BIT) % 32);
-      }
-      count += delta;
-    }
-  }
-  assert(count == witness->len);
-  sha256_end(s, block, witness->len);
-}
-
 /* Given a well-formed dag representing a Simplicity expression, compute the commitment Merkle roots of all subexpressions.
  * For all 'i', 0 <= 'i' < 'len', 'analysis[i].commitmentMerkleRoot' will be the CMR of the subexpression denoted by the slice
  *
@@ -316,7 +243,7 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
         memcpy(block + 8, type_dag[dag[i].witness.typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
         sha256_compression(analysis[i].witnessMerkleRoot.s, block);
         memcpy(block, type_dag[dag[i].witness.typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-        sha256_witnessData(block + 8, &dag[i].witness.data);
+        sha256_bitstring(block + 8, &dag[i].witness.data);
         sha256_compression(analysis[i].witnessMerkleRoot.s, block);
         break;
       }
