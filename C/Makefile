@@ -17,10 +17,13 @@ jetTable.o: jetTable.c
 jets.o: jets.c
 	$(CC) -c $(CFLAGS) $(CWARN) -Wno-unused-parameter $(CPPFLAGS) -o $@ $<
 
+primitive/elements/jets.o: primitive/elements/jets.c
+	$(CC) -c $(CFLAGS) $(CWARN) -Wno-unused-parameter -Wno-switch-enum -Wswitch $(CPPFLAGS) -o $@ $<
+
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<
 
-test: test.o bitstream.o dag.o deserialize.o eval.o frame.o hashBlock.o jets.o jetTable.o schnorr1.o schnorr8.o sha256.o type.o typeInference.o
+test: test.o bitstream.o dag.o deserialize.o eval.o frame.o hashBlock.o jets.o jetTable.o schnorr1.o schnorr8.o sha256.o type.o typeInference.o primitive/elements/jets.o
 	$(CC) $^ -o $@ $(LDLIBS)
 
 install: test
