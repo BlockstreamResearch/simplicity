@@ -3,7 +3,7 @@
 #define TYPE_H
 
 #include <stddef.h>
-#include "tag.h"
+#include "sha256.h"
 
 typedef enum typeName
   { ONE, SUM, PRODUCT }

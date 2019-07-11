@@ -3,7 +3,7 @@
 #define JETTABLE_H
 
 #include "frame.h"
-#include "tag.h"
+#include "sha256.h"
 
 /* 'JET_FLAG's are used to characterize different groups of jets.
  * This allows some jets to be selectively enabled.

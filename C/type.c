@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "bounded.h"
+#include "tag.h"
 
 /* Prepends the Simplicity TMR tag prefix to a string literal 's'. */
 #define TYPE_TAG(s) "Simplicity\x1F" "Type\x1F" s

@@ -1,5 +1,6 @@
 #include "eval.h"
 
+#include <string.h>
 #include "bounded.h"
 
 /* :TODO: remove these includes after witnesses are supported, etc. */
