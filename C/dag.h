@@ -100,11 +100,13 @@ typedef struct witnessInfo {
  * Invariant: 'NULL != jet' when 'tag == JET';
  *            sha256_midstate hash is active when tag == HIDDEN;
  *            witnessInfo witness is be active when tag == WITNESS and the node has witness data
+ *            sha256_midstate wmr is active when tag == JET;
  *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, WITNESS, JET};
  */
 typedef struct dag_node {
   jet_ptr jet;
   union {
+    sha256_midstate wmr;
     struct {
       size_t typeAnnotation[4];
       size_t child[2];

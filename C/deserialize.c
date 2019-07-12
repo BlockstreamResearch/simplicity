@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <limits.h>
+#include "primitive.h"
 #include "unreachable.h"
 
 /* Fetches 'len' 'uint32_t's from 'stream' into 'result'.
@@ -192,17 +193,18 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
 }
 
 /* Decode a single node of a Simplicity dag from 'stream' into 'dag'['i'].
- * Returns 'ERR_DATA_OUT_OF_RANGE' if the node's child isn't a reference to one of the preceeding nodes.
  * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered
- *   (all fail subexpressions ought to have been pruned prior to deserialization).
+ *   (all fail subexpressions ought to have been pruned prior to serialization).
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'ERR_HIDDEN' if the decoded node has illegal HIDDEN children.
+ * Returns 'ERR_DATA_OUT_OF_RANGE' if the node's child isn't a reference to one of the preceding nodes.
+ *                                 or some encoding for a non-existent jet is encountered.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
  *
- * :TODO: Decoding of primitives and jets are not implemented yet.
+ * :TODO: Decoding of jets are not implemented yet.
  *
  * Precondition: dag_node dag[i + 1];
  *               i < 2^31 - 1
@@ -212,7 +214,17 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
   int32_t bit = getBit(stream);
   if (bit < 0) return bit;
   dag[i] = (dag_node){0};
-  if (0 == bit) {
+  if (bit) {
+    bit = getBit(stream);
+    if (bit < 0) return bit;
+    if (bit) {
+      // TODO: Decode jets
+      fprintf(stderr, "jets nodes not yet implemented\n");
+      exit(EXIT_FAILURE);
+    } else {
+      return decodeJet(&dag[i], stream);
+    }
+  } else {
     int32_t code = getNBits(2, stream);
     if (code < 0) return code;
     int32_t subcode = getNBits(code < 3 ? 2 : 1, stream);
@@ -277,10 +289,6 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
     }
 
     return 0;
-  } else {
-    // TODO: Decode primitives and jets
-    fprintf(stderr, "primitives and jets nodes not yet implemented\n");
-    exit(EXIT_FAILURE);
   }
 }
 
