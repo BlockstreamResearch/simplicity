@@ -8,10 +8,6 @@
 #include "uword.h"
 #include "unreachable.h"
 
-/* :TODO: remove these includes after witnesses are supported, etc. */
-#include <stdio.h>
-#include <stdlib.h>
-
 /* Prepends Simplicity tag prefixes to a string literal 's'. */
 #define COMMITMENT_TAG(s) "Simplicity\x1F" "Commitment\x1F" s
 #define WITNESS_TAG(s) "Simplicity\x1F" "Witness\x1F" s
@@ -148,12 +144,11 @@ void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, const 
   for (size_t i = 0; i < len; ++i) {
     uint32_t block[16] = {0};
     size_t j = 8;
-    if (JET == dag[i].tag) {
-      /* :TODO: Support jets and primitives */
-      fprintf(stderr, "Witness Merkle root for jets and primitives not yet implemented\n");
-      exit(EXIT_FAILURE);
-    }
-    analysis[i].commitmentMerkleRoot = HIDDEN == dag[i].tag ? dag[i].hash : cmrIV(dag[i].tag);
+
+    /* For jets and primitives, their commitment Merkle root is the same as their witness Merkle root. */
+    analysis[i].commitmentMerkleRoot = HIDDEN == dag[i].tag ? dag[i].hash
+                                     : JET == dag[i].tag ? dag[i].wmr
+                                     : cmrIV(dag[i].tag);
 
     /* Hash the child sub-expression's CMRs (if there are any children). */
     switch (dag[i].tag) {
@@ -196,13 +191,10 @@ void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, const 
 void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, const size_t len) {
   for (size_t i = 0; i < len; ++i) {
     uint32_t block[16] = {0};
-    if (JET == dag[i].tag) {
-      /* :TODO: Support jets and primitives */
-      fprintf(stderr, "Witness Merkle root for jets and primitives not yet implemented\n");
-      exit(EXIT_FAILURE);
-    }
-    analysis[i].witnessMerkleRoot = HIDDEN == dag[i].tag ? dag[i].hash : wmrIV(dag[i].tag);
 
+    analysis[i].witnessMerkleRoot = HIDDEN == dag[i].tag ? dag[i].hash
+                                  : JET == dag[i].tag ? dag[i].wmr
+                                  : wmrIV(dag[i].tag);
     switch (dag[i].tag) {
      case ASSERTL:
      case ASSERTR:

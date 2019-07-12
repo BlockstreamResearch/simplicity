@@ -5,6 +5,7 @@
 #ifndef PRIMITIVE_ELEMENTS_H
 #define PRIMITIVE_ELEMENTS_H
 
+#include "../../primitive.h"
 #include "../../sha256.h"
 
 /* An Elements 'outpoint' consists of a transaction id and output index within that transaction.
