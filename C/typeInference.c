@@ -3,8 +3,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
-
-#include <stdio.h>
+#include "primitive.h"
 
 /* Every subexpression in a Simplicity expression has a unification variable for its inferred source and target type. */
 typedef struct unification_arrow {
@@ -236,10 +235,12 @@ static size_t max_extra_vars(const combinator_counters* census) {
  *               dag_node dag[len] is well-formed;
  *               unification_var extra_var[max_extra_vars(&census)]
  *                 where 'census' contains a tally of the different tags that occur in 'dag';
- *               NULL != word256Type;
- *               NULL != bindings_used;
- *               *bindings_used is the number of unification variables that have
- *                 non-trivial bindings that are accessible from the 'word256Type'.
+ *               unification_var bound_var[N];
+ *               forall '0 <= i < len', if 'dag[i].tag == JET'
+ *                                      then 'dag[i].sourceIx < N' and 'dag[i].targetIx < N'
+ *               word256_ix < N and 'bound_var[word256_ix]' is bound to the type 'TWO^256';
+ *               '*bindings_used' is at least the number of unification variables that have
+ *                 non-trivial bindings that are accessible from the 'bound_var' array.
  *
  * Postcondition: if 'true' is returned
  *                  then '*bindings_used' is at least the number of unification variables that have non-trivial bindings
@@ -247,7 +248,7 @@ static size_t max_extra_vars(const combinator_counters* census) {
  *                  and 'arrow' is a graph of bindings that satisfies the typing constraints of imposed by 'dag'.
  */
 static bool typeInference(unification_arrow* arrow, const dag_node* dag, const size_t len,
-                          unification_var* extra_var, unification_var* word256Type, size_t* bindings_used) {
+                          unification_var* extra_var, unification_var* bound_var, size_t word256_ix, size_t* bindings_used) {
   for (size_t i = 0; i < len; ++i) {
     switch (dag[i].tag) {
       #define UNIFY(a, b) { if (!unify((a), (b), bindings_used)) return false; }
@@ -310,7 +311,7 @@ static bool typeInference(unification_arrow* arrow, const dag_node* dag, const s
         }          } };
       APPLY_BINDING(&(arrow[dag[i].child[0]].source), &((binding)
         { .kind = PRODUCT
-        , .arg = { &(arrow[i].source), word256Type }
+        , .arg = { &(arrow[i].source), &(bound_var[word256_ix]) }
         }));
       APPLY_BINDING(&(arrow[dag[i].child[0]].target), &((binding)
         { .kind = PRODUCT
@@ -357,9 +358,9 @@ static bool typeInference(unification_arrow* arrow, const dag_node* dag, const s
       arrow[i] = (unification_arrow){0};
       break;
      case JET:
-      /* :TODO: Support jets */
-      fprintf(stderr, "type inference for primitives and jets not yet implemented\n");
-      exit(EXIT_FAILURE);
+      arrow[i] = (unification_arrow){0};
+      UNIFY(&(bound_var[dag[i].sourceIx]),&arrow[i].source);
+      UNIFY(&(bound_var[dag[i].targetIx]),&arrow[i].target);
       #undef APPLY_BINDING
       #undef UNIFY
     }
@@ -549,7 +550,7 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
       break;
      case HIDDEN:
      case JET:
-      /* Jets and hidden nodes do not have type annotations. */
+      /* Jets and Hidden nodes do not have type annotations. */
       break;
       #undef FREEZE
     }
@@ -579,30 +580,19 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
  *                if the return value is 'false' then 'NULL == *type_dag'
  */
 bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census) {
-  unification_var bound_var[] =
-    { { .isBound = true, .bound = { .kind = ONE } }
-    , { .isBound = true, .bound = { .kind = SUM,     .arg = { &bound_var[0], &bound_var[0] } } }
-    , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[1], &bound_var[1] } } }
-    , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[2], &bound_var[2] } } }
-    , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[3], &bound_var[3] } } }
-    , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[4], &bound_var[4] } } }
-    , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[5], &bound_var[5] } } }
-    , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[6], &bound_var[6] } } }
-    , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[7], &bound_var[7] } } }
-    , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[8], &bound_var[8] } } }
-    };
-  /* 'bound_var[9]' is bound to the type TWO^256. Nine non-trivial bindings were made. */
-  size_t bindings_used = 9;
   *type_dag = NULL;
 
   /* :TODO: static assert that MAX_DAG size is small enough that these sizes fit within SIZE_T. */
   /* These arrays could be allocated on the stack, but they are potentially large, so we allocate them on the heap instead. */
   unification_arrow* arrow = malloc(sizeof(unification_arrow[len]));
   unification_var* extra_var = malloc(sizeof(unification_var[max_extra_vars(census)]));
+  unification_var* bound_var;
+  size_t word256_ix;
+  size_t bindings_used = mallocBoundVars(&bound_var, &word256_ix);
 
-  bool result = arrow && extra_var;
+  bool result = arrow && extra_var && bound_var;
   if (result) {
-    if (typeInference(arrow, dag, len, extra_var, &(bound_var[9]), &bindings_used)) {
+    if (typeInference(arrow, dag, len, extra_var, bound_var, word256_ix, &bindings_used)) {
       /* :TODO: constrain the root of the dag to be a Simplicity program: ONE |- ONE */
 
       /* :TODO: static assert that MAX_DAG size is small enough that this size fits within SIZE_T. */
@@ -619,5 +609,6 @@ bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const
 
   free(arrow);
   free(extra_var);
+  free(bound_var);
   return result;
 }
