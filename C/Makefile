@@ -5,6 +5,8 @@ ifneq ($(doCheck), 1)
 CPPFLAGS := $(CPPFLAGS) -DNDEBUG
 endif
 
+CFLAGS := -I include
+
 LDLIBS := -lsha256compression
 
 jetTable.c: jetTable.gperf
@@ -23,7 +25,7 @@ primitive/elements/jets.o: primitive/elements/jets.c
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<
 
-libElementsSimplicity.a: bitstream.o dag.o deserialize.o eval.o frame.o jets.o jetTable.o sha256.o type.o typeInference.o primitive/elements/jets.o primitive/elements/primitive.o
+libElementsSimplicity.a: bitstream.o dag.o deserialize.o eval.o frame.o jets.o jetTable.o sha256.o type.o typeInference.o primitive/elements.o primitive/elements/jets.o primitive/elements/primitive.o
 	ar rcs $@ $^
 
 test: test.o hashBlock.o schnorr1.o schnorr8.o libElementsSimplicity.a
@@ -32,6 +34,7 @@ test: test.o hashBlock.o schnorr1.o schnorr8.o libElementsSimplicity.a
 install: libElementsSimplicity.a
 	mkdir -p $(out)/lib
 	cp $^ $(out)/lib/
+	cp -R include $(out)/include
 
 check: test
 	./test
