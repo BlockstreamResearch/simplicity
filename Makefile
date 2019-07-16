@@ -23,12 +23,15 @@ primitive/elements/jets.o: primitive/elements/jets.c
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<
 
-test: test.o bitstream.o dag.o deserialize.o eval.o frame.o hashBlock.o jets.o jetTable.o schnorr1.o schnorr8.o sha256.o type.o typeInference.o primitive/elements/jets.o primitive/elements/primitive.o
+libElementsSimplicity.a: bitstream.o dag.o deserialize.o eval.o frame.o jets.o jetTable.o sha256.o type.o typeInference.o primitive/elements/jets.o primitive/elements/primitive.o
+	ar rcs $@ $^
+
+test: test.o hashBlock.o schnorr1.o schnorr8.o libElementsSimplicity.a
 	$(CC) $^ -o $@ $(LDLIBS)
 
-install: test
-	mkdir -p $(out)/bin
-	cp $^ $(out)/bin/
+install: libElementsSimplicity.a
+	mkdir -p $(out)/lib
+	cp $^ $(out)/lib/
 
 check: test
 	./test
