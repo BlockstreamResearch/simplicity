@@ -2,8 +2,6 @@
 
 #include <assert.h>
 #include <limits.h>
-#include <string.h>
-#include <sha256/compression.h>
 
 /* Given a SHA-256 midstate, 'h', of '*count / 512' blocks, and
  * a 'block' with 'len % 512' bits set and with the remaining bits set to 0,
