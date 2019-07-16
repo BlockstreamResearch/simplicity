@@ -8,6 +8,117 @@
 
 #define PRIMITIVE_TAG(s) "Simplicity\x1F" "Primitive\x1F" "Elements\x1F" s
 
+/* An enumeration of all the types we need to construct to specify the input and output types of all jets created by 'decodeJet'. */
+enum TypeNamesForJets {
+  one,
+  two,
+  word2,
+  word4,
+  word8,
+  word16,
+  word32,
+  word64,
+  word128,
+  word256,
+  pubkey,
+  sTwo,
+  outpnt,
+  sOutpnt,
+  confWord256,
+  sConfWord256,
+  sSConfWord256,
+  confWord64,
+  sConfWord64,
+  sSConfWord64,
+  sWord256,
+  sSWord256,
+  sWord32,
+  twoPlusWord4,
+  pubKeyPlusBitPlusWord4,
+  sPubKeyPlusBitPlusWord4,
+  sSPubKeyPlusBitPlusWord4,
+  NumberOfTypeNames
+};
+
+/* Allocate a fresh set of unification variables bound to at least all the types necessary
+ * for all the jets that can be created by 'decodeJet', and also the type 'TWO^256'.
+ * Return the number of non-trivial bindings created.
+ *
+ * However, if malloc fails, then return 0.
+ *
+ * Precondition: NULL != bound_var;
+ *               NULL != word256_ix;
+ *
+ * Postcondition: Either '*bound_var == NULL' and the function returns 0
+ *                or 'unification_var (*bound_var)[N]' is an array of fresh unification variables bound to various types
+ *                   such that for any 'jet : A |- B' there is some 'i < N' and 'j < N' such that '(*bound_var)[i]' is bound to 'A'
+ *                                                                                            and '(*bound_var)[j]' is bound to 'B'
+ *                   and, in particular, '*word256_ix < N' and '(*bound_var)[*word256_ix]' is bound the type 'TWO^256'
+ */
+size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix) {
+  *bound_var = malloc(sizeof(unification_var[NumberOfTypeNames]));
+  if (!(*bound_var)) return 0;
+  (*bound_var)[one] = (unification_var){ .isBound = true,
+      .bound = { .kind = ONE } };
+  (*bound_var)[two] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[one] } } };
+  (*bound_var)[word2] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[two], &(*bound_var)[two] } } };
+  (*bound_var)[word4] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word2], &(*bound_var)[word2] } } };
+  (*bound_var)[word8] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word4], &(*bound_var)[word4] } } };
+  (*bound_var)[word16] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word8], &(*bound_var)[word8] } } };
+  (*bound_var)[word32] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word16], &(*bound_var)[word16] } } };
+  (*bound_var)[word64] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word32], &(*bound_var)[word32] } } };
+  (*bound_var)[word128] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word64], &(*bound_var)[word64] } } };
+  (*bound_var)[word256] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word128], &(*bound_var)[word128] } } };
+  (*bound_var)[pubkey] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[two], &(*bound_var)[word256] } } };
+  (*bound_var)[sTwo] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[two] } } };
+  (*bound_var)[outpnt] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word256], &(*bound_var)[word32] } } };
+  (*bound_var)[sOutpnt] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[outpnt] } } };
+  (*bound_var)[confWord256] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[pubkey], &(*bound_var)[word256] } } };
+  (*bound_var)[sConfWord256] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[confWord256] } } };
+  (*bound_var)[sSConfWord256] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sConfWord256] } } };
+  (*bound_var)[confWord64] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[pubkey], &(*bound_var)[word64] } } };
+  (*bound_var)[sConfWord64] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[confWord64] } } };
+  (*bound_var)[sSConfWord64] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sConfWord64] } } };
+  (*bound_var)[sWord256] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[word256] } } };
+  (*bound_var)[sSWord256] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sWord256] } } };
+  (*bound_var)[sWord32] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[word32] } } };
+  (*bound_var)[twoPlusWord4] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[two], &(*bound_var)[word4] } } };
+  (*bound_var)[pubKeyPlusBitPlusWord4] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[pubkey], &(*bound_var)[twoPlusWord4] } } };
+  (*bound_var)[sPubKeyPlusBitPlusWord4] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[pubKeyPlusBitPlusWord4] } } };
+  (*bound_var)[sSPubKeyPlusBitPlusWord4] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sPubKeyPlusBitPlusWord4] } } };
+
+  *word256_ix = word256;
+
+  /* 'one' is a trivial binding, so we made 'NumberOfTypeNames - 1' non-trivial bindings. */
+  return NumberOfTypeNames - 1;
+};
+
 /* An enumeration of the names of Elements specific jets and primitives. */
 typedef enum jetName
 { VERSION
@@ -120,146 +231,218 @@ static dag_node jetNode(jetName name) {
    [VERSION] =
       { .tag = JET
       , .jet = version
+      , .sourceIx = one
+      , .targetIx = word32
       },
    [LOCKTIME] =
       { .tag = JET
       , .jet = lockTime
+      , .sourceIx = one
+      , .targetIx = word32
       },
    [INPUTISPEGIN] =
       { .tag = JET
       , .jet = inputIsPegin
+      , .sourceIx = word32
+      , .targetIx = sTwo
       },
    [INPUTPREVOUTPOINT] =
       { .tag = JET
       , .jet = inputPrevOutpoint
+      , .sourceIx = word32
+      , .targetIx = sOutpnt
       },
    [INPUTASSET] =
       { .tag = JET
       , .jet = inputAsset
+      , .sourceIx = word32
+      , .targetIx = sConfWord256
       },
    [INPUTAMOUNT] =
       { .tag = JET
       , .jet = inputAmount
+      , .sourceIx = word32
+      , .targetIx = sConfWord64
       },
    [INPUTSCRIPTHASH] =
       { .tag = JET
       , .jet = inputScriptHash
+      , .sourceIx = word32
+      , .targetIx = sWord256
       },
    [INPUTSEQUENCE] =
       { .tag = JET
       , .jet = inputSequence
+      , .sourceIx = word32
+      , .targetIx = sWord32
       },
    [INPUTISSUANCEBLINDING] =
       { .tag = JET
       , .jet = inputIssuanceBlinding
+      , .sourceIx = word32
+      , .targetIx = sSWord256
       },
    [INPUTISSUANCECONTRACT] =
       { .tag = JET
       , .jet = inputIssuanceContract
+      , .sourceIx = word32
+      , .targetIx = sSWord256
       },
    [INPUTISSUANCEENTROPY] =
       { .tag = JET
       , .jet = inputIssuanceEntropy
+      , .sourceIx = word32
+      , .targetIx = sSWord256
       },
    [INPUTISSUANCEASSETAMT] =
       { .tag = JET
       , .jet = inputIssuanceAssetAmt
+      , .sourceIx = word32
+      , .targetIx = sSConfWord64
       },
    [INPUTISSUANCETOKENAMT] =
       { .tag = JET
       , .jet = inputIssuanceTokenAmt
+      , .sourceIx = word32
+      , .targetIx = sSConfWord64
       },
    [OUTPUTASSET] =
       { .tag = JET
       , .jet = outputAsset
+      , .sourceIx = word32
+      , .targetIx = sConfWord256
       },
    [OUTPUTAMOUNT] =
       { .tag = JET
       , .jet = outputAmount
+      , .sourceIx = word32
+      , .targetIx = sConfWord64
       },
    [OUTPUTNONCE] =
       { .tag = JET
       , .jet = outputNonce
+      , .sourceIx = word32
+      , .targetIx = sSConfWord256
       },
    [OUTPUTSCRIPTHASH] =
       { .tag = JET
       , .jet = outputScriptHash
+      , .sourceIx = word32
+      , .targetIx = sWord256
       },
    [OUTPUTNULLDATUM] =
       { .tag = JET
       , .jet = outputNullDatum
+      , .sourceIx = word64
+      , .targetIx = sSPubKeyPlusBitPlusWord4
       },
    [SCRIPTCMR] =
       { .tag = JET
       , .jet = scriptCMR
+      , .sourceIx = one
+      , .targetIx = word256
       },
    [CURRENTINDEX] =
       { .tag = JET
       , .jet = currentIndex
+      , .sourceIx = one
+      , .targetIx = word32
       },
    [CURRENTISPEGIN] =
       { .tag = JET
       , .jet = currentIsPegin
+      , .sourceIx = one
+      , .targetIx = two
       },
    [CURRENTPREVOUTPOINT] =
       { .tag = JET
       , .jet = currentPrevOutpoint
+      , .sourceIx = one
+      , .targetIx = outpnt
       },
    [CURRENTASSET] =
       { .tag = JET
       , .jet = currentAsset
+      , .sourceIx = one
+      , .targetIx = confWord256
       },
    [CURRENTAMOUNT] =
       { .tag = JET
       , .jet = currentAmount
+      , .sourceIx = one
+      , .targetIx = confWord64
       },
    [CURRENTSCRIPTHASH] =
       { .tag = JET
       , .jet = currentScriptHash
+      , .sourceIx = one
+      , .targetIx = word256
       },
    [CURRENTSEQUENCE] =
       { .tag = JET
       , .jet = currentSequence
+      , .sourceIx = one
+      , .targetIx = word32
       },
    [CURRENTISSUANCEBLINDING] =
       { .tag = JET
       , .jet = currentIssuanceBlinding
+      , .sourceIx = one
+      , .targetIx = sWord256
       },
    [CURRENTISSUANCECONTRACT] =
       { .tag = JET
       , .jet = currentIssuanceContract
+      , .sourceIx = one
+      , .targetIx = sWord256
       },
    [CURRENTISSUANCEENTROPY] =
       { .tag = JET
       , .jet = currentIssuanceEntropy
+      , .sourceIx = one
+      , .targetIx = sWord256
       },
    [CURRENTISSUANCEASSETAMT] =
       { .tag = JET
       , .jet = currentIssuanceAssetAmt
+      , .sourceIx = one
+      , .targetIx = sConfWord64
       },
    [CURRENTISSUANCETOKENAMT] =
       { .tag = JET
       , .jet = currentIssuanceTokenAmt
+      , .sourceIx = one
+      , .targetIx = sConfWord64
       },
    [INPUTSHASH] =
       { .tag = JET
       , .jet = inputsHash
+      , .sourceIx = one
+      , .targetIx = word256
       },
    [OUTPUTSHASH] =
       { .tag = JET
       , .jet = outputsHash
+      , .sourceIx = one
+      , .targetIx = word256
       },
    [NUMINPUTS] =
       { .tag = JET
       , .jet = numInputs
+      , .sourceIx = one
+      , .targetIx = word32
       },
    [NUMOUTPUTS] =
       { .tag = JET
       , .jet = numOutputs
+      , .sourceIx = one
+      , .targetIx = word32
       },
    [FEE] =
       { .tag = JET
       , .jet = NULL /* :TODO: FEE not yet implemented. */
+      , .sourceIx = word256
+      , .targetIx = word64
       }
    };
 
