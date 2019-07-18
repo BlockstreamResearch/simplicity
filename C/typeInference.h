@@ -72,24 +72,33 @@ struct unification_var {
 };
 
 /* If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
- * then allocate a well-formed type DAG containing all the type annotations needed for the principal type of 'dag'
+ * then allocate a well-formed type DAG containing all the type annotations needed for the principal type of 'dag',
+ * and the input and output types of whole expression,
  * with all free type variables instantiated at ONE, and set '*type_dag' to this allocation.
  * and update the .typeAnnotation array within each node of the 'dag' to refer to their type within the resulting type DAG.
+ * and set '*sourceIx' and '*targetIx' such that 'type_dag[*sourceIx]' and 'type_dag[*targetIx]' are the inferred types of the
+ * Simplicity expression.
  *
  * Recall that a well-formed type DAG is always non-empty because the first element of the array is guaranteed to be the type 'ONE'.
+ * If the expression is a Simplicity program then '*sourceIx' and '*targetIx' will be set to the index 0.
  *
  * If malloc fails, return 'false', otherwise return 'true'.
- * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL.
+ * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL and
+ * '*sourceIx' and '*targetIx' may be modified.
  *
- * Precondition: NULL != type_dag
+ * Precondition: NULL != type_dag;
+ *               NULL != sourceIx;
+ *               NULL != targetIx;
  *               dag_node dag[len] is well-formed;
  *               '*census' contains a tally of the different tags that occur in 'dag'.
  *
  * Postcondition: if the return value is 'true'
  *                then either NULL == '*type_dag'
- *                     or 'dag' is well-typed with '*type_dag' and without witness values.
+ *                     or 'dag' is well-typed with '*type_dag' and without witness values
+ *                         and '(*type_dag)[*sourceIx]' and '(*type_dag)[*targetIx]' are both defined.
  *                if the return value is 'false' then 'NULL == *type_dag'
  */
-bool mallocTypeInference(type** type_dag, dag_node* dag, size_t len, const combinator_counters* census);
+bool mallocTypeInference(type** type_dag, size_t *sourceIx, size_t *targetIx,
+                         dag_node* dag, const size_t len, const combinator_counters* census);
 
 #endif
