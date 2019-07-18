@@ -468,15 +468,19 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
   return true;
 }
 
-/* Create a type DAG that supports all the type annotations of the Simplicity expression, 'dag'.
+/* Create a type DAG that supports all the type annotations of the Simplicity expression, 'dag',
+ * and the input and output types of whole expression.
  *
  * If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
  * and 'arrow[i]'s and 'source' and 'target' field's unification variables are bound to the principal source and target types
  * of subexpression denoted by the slice '(dag_nodes[i + 1])dag', then we create a well-formed 'type_dag' (see 'type.h')
- * that includes the type annotations for every combinator and expression in 'dag' of the principal type
+ * that includes the type annotations for every combinator and expression in 'dag' of the principal type,
+ * and the input and output types of whole expression,
  * with all free type variables instantiated to the type 'ONE' and add references to these type annotations to 'dag'
  * and return 'true'.
  * The type Merkle roots of the 'type_dag' are also filled in.
+ *
+ * If the Simplicity expression is a program then '*sourceIx' and '*targetIx' will be set to the index 0.
  *
  * We say 'dag' is "well-typed" if it is a well-formed 'dag' with type annotations referencing a well-formed 'type_dag'
  * that satisfies all the typing constraints of Simplicity.
@@ -486,22 +490,26 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
  *
  * In either case, '*arrow', and values referenced by these structures may be modified.
  *
- * If 'false' is returned, then the 'type_dag' array, and the '.typeAnnotation' fields within the 'dag' array may be modified.
+ * If 'false' is returned, then the '*sourceIx', '*targetIx', 'type_dag' array, and
+ * the '.typeAnnotation' fields within the 'dag' array may be modified.
  *
  * Precondition: type type_dag[1 + n]
  *                 where 'n' is the number of unification variables that have non-trivial bindings
  *                   that are accessible from the 'arrow' array;
+ *               NULL != sourceIx;
+ *               NULL != targetIx;
  *               dag_node dag[len] is well-formed;
  *               unification_arrow arrow[len] is a graph of bindings that satisfies the typing constraints of imposed by 'dag'.
  */
-static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow, const size_t len) {
+static bool freezeTypes(type* type_dag, size_t* sourceIx, size_t* targetIx,
+                        dag_node* dag, unification_arrow* arrow, const size_t len) {
   /* First entry of type_dag gets assigned to the ONE type. */
   type_dag[0] = (type){ .kind = ONE };
   size_t type_dag_used = 1;
 
+  #define FREEZE(a, b, c, d) { if (!freeze((a), (b), (c), (d))) return false; }
   for (size_t i = 0; i < len; ++i) {
     switch (dag[i].tag) {
-      #define FREEZE(a, b, c, d) { if (!freeze((a), (b), (c), (d))) return false; }
      case COMP:
       FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, &(arrow[i].source));
       FREEZE(&(dag[i].typeAnnotation[1]), type_dag, &type_dag_used, &(arrow[dag[i].child[0]].target));
@@ -552,36 +560,45 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
      case JET:
       /* Jets and Hidden nodes do not have type annotations. */
       break;
-      #undef FREEZE
     }
   }
+  FREEZE(sourceIx, type_dag, &type_dag_used, &(arrow[len-1].source));
+  FREEZE(targetIx, type_dag, &type_dag_used, &(arrow[len-1].target));
+  #undef FREEZE
   computeTypeAnalyses(type_dag, type_dag_used);
 
   return true;
 }
 
 /* If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
- * then allocate a well-formed type DAG containing all the type annotations needed for the principal type of 'dag'
+ * then allocate a well-formed type DAG containing all the type annotations needed for the principal type of 'dag',
+ * and the input and output types of whole expression,
  * with all free type variables instantiated at ONE, and set '*type_dag' to this allocation.
  * and update the .typeAnnotation array within each node of the 'dag' to refer to their type within the resulting type DAG.
+ * and set '*sourceIx' and '*targetIx' such that 'type_dag[*sourceIx]' and 'type_dag[*targetIx]' are the inferred types of the
+ * Simplicity expression.
  *
  * Recall that a well-formed type DAG is always non-empty because the first element of the array is guaranteed to be the type 'ONE'.
+ * If the expression is a Simplicity program then '*sourceIx' and '*targetIx' will be set to the index 0.
  *
  * If malloc fails, return 'false', otherwise return 'true'.
- * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL.
+ * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL and
+ * '*sourceIx' and '*targetIx' may be modified.
  *
- * Precondition: NULL != type_dag
+ * Precondition: NULL != type_dag;
+ *               NULL != sourceIx;
+ *               NULL != targetIx;
  *               dag_node dag[len] is well-formed;
  *               '*census' contains a tally of the different tags that occur in 'dag'.
  *
  * Postcondition: if the return value is 'true'
  *                then either NULL == '*type_dag'
- *                     or 'dag' is well-typed with '*type_dag' and without witness values.
+ *                     or 'dag' is well-typed with '*type_dag' and without witness values
+ *                         and '(*type_dag)[*sourceIx]' and '(*type_dag)[*targetIx]' are both defined.
  *                if the return value is 'false' then 'NULL == *type_dag'
  */
-bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census) {
-  *type_dag = NULL;
-
+bool mallocTypeInference(type** type_dag, size_t *sourceIx, size_t *targetIx,
+                         dag_node* dag, const size_t len, const combinator_counters* census) {
   /* :TODO: static assert that MAX_DAG size is small enough that these sizes fit within SIZE_T. */
   /* These arrays could be allocated on the stack, but they are potentially large, so we allocate them on the heap instead. */
   unification_arrow* arrow = malloc(sizeof(unification_arrow[len]));
@@ -599,7 +616,7 @@ bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const
       *type_dag = malloc(sizeof(type[1 + bindings_used]));
       result = *type_dag;
       if (result) {
-        if (!freezeTypes(*type_dag, dag, arrow, len)) {
+        if (!freezeTypes(*type_dag, sourceIx, targetIx, dag, arrow, len)) {
           free(*type_dag);
           *type_dag = NULL;
         }
