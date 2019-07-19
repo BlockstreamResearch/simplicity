@@ -15,7 +15,7 @@
  * the last bits in the first element of the array.
  * Within a 'UWORD' array element, the bits of the frame are stored with the first bits in the most significant positions
  * and the last bits in the least significant positions.
- * We chooose to put padding bits entirely within the most significant bits of the last element of the array.
+ * We choose to put padding bits entirely within the most significant bits of the last element of the array.
  *
  * Thus the last bit of the frame will always be the least significant bit of the first element of the array.
  * When there are no padding bits, the first bit of the frame will be the most significant bit of the last element of the array.
@@ -38,7 +38,7 @@
  * by itself as the least significant bit of the last element of the frame's array (as long as 'UWORD_BIT' divides 64).
  * When this frame contains a value of the right-hand type, 'TWO^64', this value entirely fits perfectly within
  * the within the first elements of the array (again, as long as 'UWORD_BIT' divides 64).
- * Futhermore, if 'UWORD_BIT == 8', then this representation place this value of type 'TWO^64'
+ * Furthermore, if 'UWORD_BIT == 8', then this representation place this value of type 'TWO^64'
  * into the machine's memory in little endian byte order.
  *
  * All of the above means that when jets need to marshal values from the Bit Machine's representation
@@ -49,11 +49,11 @@
  * Only the case when 'UWORD_BIT == 8' and architecture's processor is big-endian will the compiler need to emit
  * byte-swapping instructions.
  *
- * Nevertheless, our implmementation is independent of architecture and will function correctly on all architectures
+ * Nevertheless, our implementation is independent of architecture and will function correctly on all architectures
  * for any value of UWORD_BIT.
  *
- * Note: while we do attempt make the fast path for marshalling values for jets common, when assigning discounts to jets
- * it is important to only consider the worst case, slow path, behaviour, as good byte or bit alignment is not guarenteed in
+ * Note: while we do attempt make the fast path for marshaling values for jets common, when assigning discounts to jets
+ * it is important to only consider the worst case, slow path, behaviour, as good byte or bit alignment is not guaranteed in
  * presence of oddly shaped pairs of values.
  */
 
@@ -62,9 +62,9 @@
  * The read and write frames used by the Bit Machine during execution are slices of this single array allocation.
  * We represent the read frame and write frame stacks within 'cells' using a [gap buffer](https://en.wikipedia.org/wiki/Gap_buffer).
  * The frames of the read frame stack are assigned to the beginning of the cell array
- * with the active read frame occuring as the last of these frames.
+ * with the active read frame occurring as the last of these frames.
  * The frames of the write frame stack are assigned to the end of the cell array
- * with the active write frame occuring as the first of these frames.
+ * with the active write frame occurring as the first of these frames.
  * This leaves a (possibly empty) gap of unused UWORDs between the '.edge' of the active read frame
  * and the '.edge' of the active write frame.
  * This gap will shrink / grow / move during the execution of the Bit Machine.
@@ -75,9 +75,9 @@
 /* To keep track of the individual frames of the read frame and write frame stacks we another single allocation of
  * an array of 'frameItem's called 'frames'.
  * This 'frames' array is another instance of a [gap buffer](https://en.wikipedia.org/wiki/Gap_buffer).
- * The read frames are tracked by 'frameItem's occuring at the beginning of the 'frames' array
+ * The read frames are tracked by 'frameItem's occurring at the beginning of the 'frames' array
  * with the active read frame tracked the last of these 'frameItem's.
- * The write frames are tracked by 'frameItem's occuring at the end of the 'frames' array
+ * The write frames are tracked by 'frameItem's occurring at the end of the 'frames' array
  * with the active write frame tracked the first of these 'frameItem's.
  * This leaves a (possibly empty) gap of unused 'frameItem's between the item that tracks active read frame
  * and the item that tracks the active write frame.
@@ -197,7 +197,7 @@ static void copyBitsHelper(const frameItem* dst, const frameItem *src, size_t n)
     /* If we when through the previous 'if (dst_shift)' block then 'src_shift == 0' and we need to decrement src_ptr.
      * If we did not go through the previous 'if (dst_shift)' block then 'src_shift == UWORD_BIT'
      * and we do not need to decrement src_ptr.
-     * We have folded this conditional decriment into the equation applied to 'src_ptr' below.
+     * We have folded this conditional decrement into the equation applied to 'src_ptr' below.
      */
     memcpy(dst_ptr - (m - 1), src_ptr - (m - src_shift / UWORD_BIT), sizeof(UWORD[m]));
   } else {
@@ -287,7 +287,7 @@ static void writeWitness(frameItem* dst, const witnessInfo* witness, type* type_
     }
   }
   /* Note: Above we use 'typeSkip' to skip over long chains of products against trivial types
-   * This avoids a potential DOS vunlernability where a DAG of deeply nested products of unit types with sharing is traversed,
+   * This avoids a potential DOS vulnerability where a DAG of deeply nested products of unit types with sharing is traversed,
    * taking exponential time.
    * While traversing still could take exponential time in terms of the size of the type's dag,
    * at least one bit of witness data is required per PRODUCT type encountered.
@@ -324,8 +324,8 @@ typedef struct call {
  *
  * ** No heap allocations are allowed in 'runTCO' or any of its subroutines. **
  *
- * Precondition: The gap between 'state.activeReadFrame' and 'state.activeWriteFrame' is sufficent for execution of 'dag'
- *                 and the values are initalized;
+ * Precondition: The gap between 'state.activeReadFrame' and 'state.activeWriteFrame' is sufficient for execution of 'dag'
+ *                 and the values are initialized;
  *               The gap between 'activeReadFrame(state)->edge' and 'activeWriteFrame(state)->edge'
  *                 is sufficent for execution of 'dag';
  *               '*activeReadFrame(state)' is a valid read frame for 'bitSize(A)' more cells.
@@ -340,7 +340,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
 /* 'stack' represents the interpreter's call stack.
  * However, the stack is not directly represented as an array.
  * Instead, the bottom of the call stack is located at 'stack[len - 1]' and the top of the call stack is located at 'stack[pc]'.
- * The intermetate call stack items are somewhere between 'pc' and 'len - 1'.
+ * The intermediate call stack items are somewhere between 'pc' and 'len - 1'.
  * The each call stack item references the one below it through the 'stack[i].return_to' values.
  * The bottom of the stack's '.return_to' value is set to 'len' which is an out-of-bounds index.
  *

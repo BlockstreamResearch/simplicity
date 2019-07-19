@@ -14,7 +14,7 @@
 #define COMMITMENT_TAG(s) "Simplicity\x1F" "Commitment\x1F" s
 #define WITNESS_TAG(s) "Simplicity\x1F" "Witness\x1F" s
 
-/* Given a tag for a node, return the SHA-256 hash of its assocaited CMR tag.
+/* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
  *
  * Precondition: 'tag' is a valid tag;
@@ -73,7 +73,7 @@ static sha256_midstate cmrIV(int32_t tag) {
   return (sha256_midstate){0};
 }
 
-/* Given a tag for a node, return the SHA-256 hash of its assocaited WMR tag.
+/* Given a tag for a node, return the SHA-256 hash of its associated WMR tag.
  * This is the "initial value" for computing the witness Merkle root for that expression.
  *
  * Precondition: 'tag' is a valid tag;
@@ -329,7 +329,7 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
  * If all jets are discounted jets, one might not even use this function in production.
  *
  * A 'filter' can be set to only force some kinds of jets.  This parameter is mostly used for testing purposes.
- * In produciton we expect 'filter' to be passed the 'JET_ALL' value.
+ * In production we expect 'filter' to be passed the 'JET_ALL' value.
  *
  * Precondition: dag_node dag[len] and 'dag' has witness data and is well-typed;
  *               analyses analysis[len] contains the witness Merkle roots for each subexpression of 'dag'.
@@ -399,7 +399,7 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
             if (calling) {
               next = typeSkip(type_dag[cur].typeArg[0], type_dag);
               if (next) {
-                /* Travese the first element of the product type, if it has any data. */
+                /* Traverse the first element of the product type, if it has any data. */
                 type_dag[next].back = cur;
                 cur = next;
                 continue;
@@ -407,7 +407,7 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
             }
             next = typeSkip(type_dag[cur].typeArg[1], type_dag);
             if (next) {
-              /* Travese the second element of the product type, if it has any data. */
+              /* Traverse the second element of the product type, if it has any data. */
               type_dag[next].back = type_dag[cur].back;
               cur = next;
               calling = true;
@@ -418,12 +418,12 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
           }
         }
         /* The length of this 'WITNESS' node's witness value is
-         * the difference between the remaning witness length from before and after parsing.
+         * the difference between the remaining witness length from before and after parsing.
          */
         dag[i].witness.data.len -= witness.len;
 
         /* Note: Above we use 'typeSkip' to skip over long chains of products against trivial types
-         * This avoids a potential DOS vunlernability where a DAG of deeply nested products of unit types with sharing is traversed,
+         * This avoids a potential DOS vulnerability where a DAG of deeply nested products of unit types with sharing is traversed,
          * taking exponential time.
          * While traversing still could take exponential time in terms of the size of the type's dag,
          * at least one bit of witness data is required per PRODUCT type encountered.

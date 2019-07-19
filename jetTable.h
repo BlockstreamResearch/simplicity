@@ -5,9 +5,9 @@
 #include "frame.h"
 #include "tag.h"
 
-/* 'JET_FLAG's are used to charaterise different groups of jets.
+/* 'JET_FLAG's are used to characterize different groups of jets.
  * This allows some jets to be selectively enabled.
- * The primary purpose of this is to allow the testing of the Simplicity specifications that characterise jets.
+ * The primary purpose of this is to allow the testing of the Simplicity specifications that characterize jets.
  * This allows you to enable (already tested) jets in the body of such specifications without
  * turning the specification itself into a jet.
  */

@@ -59,7 +59,7 @@ static int32_t getBit(bit_stream* stream) {
 }
 
 /* Fetches 'len' 'uint32_t's from 'stream' into 'result'.
- * The bits in each 'uint32_t' are set from the MSB to the LSB and the 'uint32_t's of 'result' are set from 0 upto 'len'.
+ * The bits in each 'uint32_t' are set from the MSB to the LSB and the 'uint32_t's of 'result' are set from 0 up to 'len'.
  * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available ('result' may be modified).
  * Returns 0 if successful.
  *
@@ -93,9 +93,9 @@ static int32_t getHash(sha256_midstate* result, bit_stream* stream) {
 /* Decode an encoded bitstring up to length 1.
  * If successful returns the length of the bitstring and 'result' contains the decoded bits.
  * The decoded bitstring is stored in the LSBs of 'result', with the LSB being the last bit decoded.
- * Any remaing bits in 'result' are reset to 0.
+ * Any remaining bits in 'result' are reset to 0.
  * If the decoded bitstring would be too long 'ERR_DATA_OUT_OF_RANGE' is returned ('result' may be modified).
- * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is retured ('result' may be modified).
+ * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned ('result' may be modified).
  *
  * Precondition: NULL != result
  *               NULL != stream
@@ -116,7 +116,7 @@ static int32_t decodeUpto1Bit(int32_t* result, bit_stream* stream) {
 /* Decode an encoded number between 1 and 3 inclusive.
  * When successful returns the decoded result.
  * If the decoded value would be too large, 'ERR_DATA_OUT_OF_RANGE' is returned.
- * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is retured.
+ * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned.
  *
  * Precondition: NULL != stream
  */
@@ -131,9 +131,9 @@ static int32_t decodeUpto3(bit_stream* stream) {
 /* Decode an encoded bitstring up to length 3.
  * If successful returns the length of the bitstring and 'result' contains the decoded bits.
  * The decoded bitstring is stored in the LSBs of 'result', with the LSB being the last bit decoded.
- * Any remaing bits in 'result' are reset to 0.
+ * Any remaining bits in 'result' are reset to 0.
  * If the decoded bitstring would be too long 'ERR_DATA_OUT_OF_RANGE' is returned ('result' may be modified).
- * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is retured ('result' may be modified).
+ * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned ('result' may be modified).
  *
  * Precondition: NULL != result
  *               NULL != stream
@@ -158,7 +158,7 @@ static int32_t decodeUpto3Bits(int32_t* result, bit_stream* stream) {
 /* Decode an encoded number between 1 and 15 inclusive.
  * When successful returns the decoded result.
  * If the decoded value would be too large, 'ERR_DATA_OUT_OF_RANGE' is returned.
- * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is retured.
+ * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned.
  *
  * Precondition: NULL != stream
  */
@@ -173,9 +173,9 @@ static int32_t decodeUpto15(bit_stream* stream) {
 /* Decode an encoded bitstring up to length 15.
  * If successful returns the length of the bitstring and 'result' contains the decoded bits.
  * The decoded bitstring is stored in the LSBs of 'result', with the LSB being the last bit decoded.
- * Any remaing bits in 'result' are reset to 0.
+ * Any remaining bits in 'result' are reset to 0.
  * If the decoded bitstring would be too long 'ERR_DATA_OUT_OF_RANGE' is returned ('result' may be modified).
- * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is retured ('result' may be modified).
+ * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned ('result' may be modified).
  *
  * Precondition: NULL != result
  *               NULL != stream
@@ -200,7 +200,7 @@ static int32_t decodeUpto15Bits(int32_t* result, bit_stream* stream) {
 /* Decode an encoded number between 1 and 65535 inclusive.
  * When successful returns the decoded result.
  * If the decoded value would be too large, 'ERR_DATA_OUT_OF_RANGE' is returned.
- * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is retured.
+ * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned.
  *
  * Precondition: NULL != stream
  */
@@ -215,7 +215,7 @@ static int32_t decodeUpto65535(bit_stream* stream) {
 /* Decode an encoded number between 1 and 2^31 - 1 inclusive.
  * When successful returns the decoded result.
  * If the decoded value would be too large, 'ERR_DATA_OUT_OF_RANGE' is returned.
- * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is retured.
+ * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned.
  *
  * Precondition: NULL != stream
  */
@@ -327,7 +327,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bit_stream* stream) {
 }
 
 /* Decode a Simplicity DAG consisting of 'len' nodes from 'stream' into 'dag'.
- * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceeding nodes.
+ * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceding nodes.
  * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered
  *   (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
@@ -352,7 +352,7 @@ static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* c
 
 /* Decode a length-prefixed Simplicity DAG from 'stream'.
  * Returns 'ERR_DATA_OUT_OF_RANGE' the length prefix's value is too large.
- * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceeding nodes.
+ * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceding nodes.
  * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered
  *  (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.
@@ -375,7 +375,7 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bit_stream*
   *dag = NULL;
   int32_t dagLen = decodeUptoMaxInt(stream);
   if (dagLen <= 0) return dagLen;
-  /* :TODO: a consensus parameter limiting the maximum length of a DAG needs to be enforeced here */
+  /* :TODO: a consensus parameter limiting the maximum length of a DAG needs to be enforced here */
   if (PTRDIFF_MAX / sizeof(dag_node) < (size_t)dagLen) return ERR_DATA_OUT_OF_RANGE;
   *dag = malloc(sizeof(dag_node[dagLen]));
   if (!*dag) return ERR_MALLOC;

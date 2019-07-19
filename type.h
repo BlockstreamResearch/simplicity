@@ -1,4 +1,4 @@
-/* This module defines the stucture for Simplicity type DAGs and computes type Merkle roots. */
+/* This module defines the structure for Simplicity type DAGs and computes type Merkle roots. */
 #ifndef TYPE_H
 #define TYPE_H
 
@@ -20,13 +20,13 @@ typedef struct type {
   size_t bitSize;
   union {
     size_t skip; /* Used by 'typeSkip'. */
-    size_t back; /* Sometimes used as scratch space when travesing types. */
+    size_t back; /* Sometimes used as scratch space when traversing types. */
   };
   sha256_midstate typeMerkleRoot;
   typeName kind;
 } type;
 
-/* We say a Simplicity type is trivial if it is the 'ONE' type, or the 'PRODUCT' of two trival types.
+/* We say a Simplicity type is trivial if it is the 'ONE' type, or the 'PRODUCT' of two trivial types.
  * A Simplicity type is a trivial type if and only if its bitSize is 0.
  */
 
@@ -54,10 +54,10 @@ typedef struct type {
  *
  *     (type_dag[i + 1])type_dag.
  *
- *   and when 'type_dag[i]' represents a non-trival 'PRODUCT' type, where one of the two type arguments a trivial type.
+ *   and when 'type_dag[i]' represents a non-trivial 'PRODUCT' type, where one of the two type arguments a trivial type.
  *       then 'type_dag[i].skip' is the index of the largest subexpression of 'type_dag[i]' such that
  *        either 'type_dag[type_dag[i].skip]' is a 'SUM' type
- *            or 'type_dag[type_dag[i].skip]' is a 'PRODUCT' type of two non-trival types.
+ *            or 'type_dag[type_dag[i].skip]' is a 'PRODUCT' type of two non-trivial types.
  *
  * Precondition: type type_dag[len] and 'type_dag' is well-formed.
  */

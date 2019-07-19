@@ -28,11 +28,11 @@ struct unification_cont {
 
 /* A binding for a bound unification variable.
  * 'kind' is the kind of Simplicity type for this binding.
- * When 'kind' is 'ONE' then this is a called "trival" binding and 'arg' is not used.
- * When 'kind' is in { 'SUM', 'PRODUCT' } then this is called a "non-trival" binding
+ * When 'kind' is 'ONE' then this is a called "trivial" binding and 'arg' is not used.
+ * When 'kind' is in { 'SUM', 'PRODUCT' } then this is called a "non-trivial" binding
  * and 'arg[0]' and 'arg[1]' are pointers to variables for the type's arguments.
  *
- * During freezing, the 'occursCheck' flag may be set to help detect occurs check failurs (a.k.a cyclic types).
+ * During freezing, the 'occursCheck' flag may be set to help detect occurs check failures (a.k.a cyclic types).
  * After freezing, 'frozen_ix' refers to the index within some 'type' array that holds the frozen version of this binding.
  *
  * When a binding is unused (e.g. when a unification_var has a non-NULL 'parent'), unification may activate 'cont' as scratch space;
@@ -79,7 +79,7 @@ typedef struct unification_arrow {
 
 /* Returns the representative of this variable's equivalence class.
  * Note: the 'parent' pointers of some variables within this equivalence class may be adjusted (to point more directly to the
- * representitive).
+ * representative).
  *
  * Precondition: NULL != alpha
  *
@@ -88,16 +88,16 @@ typedef struct unification_arrow {
 static unification_var* findRoot(unification_var* alpha) {
   /* During unification, when '.rank' fields are active, the value of 'alpha->rank' strictly increases during this loop.
    * If 'alpha->rank' = 'i', then there must be at least 2^'i' unification variables referencing (indirectly) 'alpha'.
-   * Therefore, this loop terminates in at most log_2('n')/2 steps where 'n' is the number of unificaiton variables in 'alpha's
+   * Therefore, this loop terminates in at most log_2('n')/2 steps where 'n' is the number of unification variables in 'alpha's
    * equivalence class.
    * This bound holds even during freezing when 'alpha->rank' may not be activated.
    *
    * Note: the total number of unification variables created for type inference is linearly bounded by the number of nodes
-   * in the Simplicity expression being infered's DAG.
+   * in the Simplicity expression being inferred's DAG.
    *
    * According to ``Worst-Case Analysis of Set Union Algorithms'' by Robert E. Tarjan and Jan van Leeuwen (1984)
-   * the "path halving" method used in this implementaiton is adequate to ensure that the amortized time complexity is
-   * O(InvAck('n')) and ``for all pratical purposes InvAck('n') a constant no larger than four''.
+   * the "path halving" method used in this implementation is adequate to ensure that the amortized time complexity is
+   * O(InvAck('n')) and ``for all practical purposes InvAck('n') a constant no larger than four''.
    */
   while (alpha->parent != NULL) {
     if (alpha->parent->parent != NULL) alpha->parent = alpha->parent->parent;
@@ -106,12 +106,12 @@ static unification_var* findRoot(unification_var* alpha) {
   return alpha;
 }
 
-/* Begin attempt to add a new binding, 'bound', to a unification varaible 'alpha' representing its equivalence class.
+/* Begin attempt to add a new binding, 'bound', to a unification variable 'alpha' representing its equivalence class.
  * If 'alpha' is a free variable, it becomes a bound to a copy of 'bound' and 'true' is returned.
  * If 'alpha' is already bound to the same kind of type, new unification constraints may be added by overwriting '**cont'
  * and putting more elements into the '*cont' stack and 'true' is returned.
  * Hence, '*cont' must be a non-empty stack whose top element is scratch space available to be overwritten.
- * If 'alpha' is already bound to the same kind of non-trival binding then '*bindings_used' is decremented
+ * If 'alpha' is already bound to the same kind of non-trivial binding then '*bindings_used' is decremented
  * and 'bound->cont' may become active.
  *
  * In cases where no new unification constraints are need, the top element of '*cont' is popped off the stack,
@@ -140,11 +140,11 @@ static bool applyBinding_cont(unification_var* alpha, binding* bound, unificatio
   /* Otherwise 'bound' is bound to the same kind of type as 'alpha's. */
 
   if (ONE == bound->kind) {
-    /* 'bound' is a trival binding. */
+    /* 'bound' is a trivial binding. */
     *cont = (*cont)->next;
     return true;
   } else {
-    /* 'bound' is a non-trival binding.
+    /* 'bound' is a non-trivial binding.
      * Push two new pairs of the 'alpha->bound' and 'bound' type's unification variables to the stack of variables to be unified
      * by overwriting the top of the stack and slipping a new stack item underneath it.
      */
@@ -165,14 +165,14 @@ static bool applyBinding_cont(unification_var* alpha, binding* bound, unificatio
 
 /* Unify a stack of pairs of unification variables.
  * If any unification fails, then NULL is returned.
- * If all unifications are successful, the represenative of the equivalence class of the top pair of unified variables
+ * If all unifications are successful, the representative of the equivalence class of the top pair of unified variables
  * from the stack is returned.
- * '*bindings_used' is decremented by the number of pairs of (non-trival) bindings that are successfully unified.
+ * '*bindings_used' is decremented by the number of pairs of (non-trivial) bindings that are successfully unified.
  *
  * If 'NULL' is returned, then '*cont', '*bindings_used', and values referenced by these structures may be modified.
  *
  * Precondition: 'cont' is a non-empty stack;
- *               All of the 'unification_var's accessbile through 'cont' have their '.rank' fields active;
+ *               All of the 'unification_var's accessible through 'cont' have their '.rank' fields active;
  *               NULL != bindings_used
  */
 static unification_var* unify_cont(unification_cont* cont, size_t* bindings_used) {
@@ -226,7 +226,7 @@ static unification_var* unify_cont(unification_cont* cont, size_t* bindings_used
       if (alpha->rank == beta->rank) alpha->rank++;
     }
 
-    /* Return the represenatitive of the unified variable of the two inputs that was on the top of the stack
+    /* Return the representative of the unified variable of the two inputs that was on the top of the stack
      * (as long as all other unifications are successful).
      */
     if (!result) result = alpha;
@@ -235,16 +235,16 @@ static unification_var* unify_cont(unification_cont* cont, size_t* bindings_used
   return result;
 }
 
-/* Add a new binding, 'bound', to a unification varaible 'alpha'.
+/* Add a new binding, 'bound', to a unification variable 'alpha'.
  * If 'alpha' is already bound to a type that doesn't unify with 'bound', then 'false' is returned.
  * Otherwise variables of 'bound's bindings and 'alpha's bindings (if any) are recursively unified and 'true' is returned.
- * '*bindings_used' is decremented by the number of pairs of (non-trival) bindings that are successfully unified.
+ * '*bindings_used' is decremented by the number of pairs of (non-trivial) bindings that are successfully unified.
  *
  * If 'false' is returned, then '*alpha', '*bound', '*bindings_used', and values referenced by these structures may be modified.
  *
  * Precondition: NULL != alpha;
  *               NULL != bound;
- *               All of the 'unification_var's accessbile through 'alpha' and 'bound' (including 'alpha' itself)
+ *               All of the 'unification_var's accessible through 'alpha' and 'bound' (including 'alpha' itself)
  *                 have their '.rank' fields active;
  *               NULL != bindings_used
  */
@@ -257,15 +257,15 @@ static bool applyBinding(unification_var* alpha, binding* bound, size_t* binding
 
 /* Unify a pair of unification variables.
  * If unification fails, then NULL is returned.
- * If unification is successful, the represenative of the equivalence class of unified pair of variables is returned.
+ * If unification is successful, the representative of the equivalence class of unified pair of variables is returned.
  * If alpha or beta is NULL, then NULL is returned.  This allows you to chain calls to 'unify'.
  *
- * '*bindings_used' is decremented by the number of pairs of (non-trival) bindings that are successfully unified.
+ * '*bindings_used' is decremented by the number of pairs of (non-trivial) bindings that are successfully unified.
  *
  * If unification fails, then '*alpha', '*beta', '*bindings_used', and values referenced by these structures may be modified.
  *
  * Precondition: NULL != bindings_used;
- *               All of the 'unification_var's accessbile through 'alpha' and 'beta' (including themselves if they are not NULL)
+ *               All of the 'unification_var's accessible through 'alpha' and 'beta' (including themselves if they are not NULL)
  *                 have their '.rank' fields active.
  */
 static unification_var* unify(unification_var* alpha, unification_var* beta, size_t* bindings_used) {
@@ -293,7 +293,7 @@ static size_t max_extra_vars(const combinator_counters* census) {
  * then 'arrow[i]'s and 'source' and 'target' fields are set to unification variables
  * that are bound to the principal source and target types of subexpression denoted by the slice '(dag_nodes[i + 1])dag'.
  * If the 'dag' does not have a principal type then either 'false' is returned
- * or there will be a cycle in the graph of the bindings of the unification variables accessable from the resulting 'arrows' array.
+ * or there will be a cycle in the graph of the bindings of the unification variables accessible from the resulting 'arrows' array.
  *
  * If 'false' is returned, then '*arrow', '*extra_var', '*word256Type', '*bindings_used', and values referenced by these structures
  * may be modified.
@@ -305,11 +305,11 @@ static size_t max_extra_vars(const combinator_counters* census) {
  *               NULL != word256Type;
  *               NULL != bindings_used;
  *               *bindings_used is the number of unification variables that have
- *                 non-trivial bindings that are accessable from the 'word256Type'.
+ *                 non-trivial bindings that are accessible from the 'word256Type'.
  *
  * Postcondition: if 'true' is returned
- *                  then '*bindings_used' is the number of unification variables that have non-trivial bindings
- *                    that are accessable from the 'arrow' array and 'word256Type'
+ *                  then '*bindings_used' is at least the number of unification variables that have non-trivial bindings
+ *                    that are accessible from the 'arrow' array and 'bound_var' array.
  *                  and 'arrow' is a graph of bindings that satisfies the typing constraints of imposed by 'dag'.
  */
 static bool typeInference(unification_arrow* arrow, const dag_node* dag, const size_t len,
@@ -483,7 +483,7 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
     return true;
   }
 
-  /* 'var' is not frozen, and therefore it must have a non-trival binding.
+  /* 'var' is not frozen, and therefore it must have a non-trivial binding.
    * Create a one item stack of unification variables 'var' to be frozen.
    */
   var->next = NULL;
@@ -492,13 +492,13 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
 
   /* Attempt to freeze all variables on the stack, pushing new variables onto the stack to recursively freeze them if needed.
    *
-   * All variables in the stack are represenatives of their equivalence class and have just had their 'occursCheck' flag changed
+   * All variables in the stack are representatives of their equivalence class and have just had their 'occursCheck' flag changed
    * from 'false' to 'true'.
    * Variables never change their 'occursCheck' flag back from 'true' to 'false'.
    * Variables are only removed from the stack after being frozen.
    * Each time we go through this loop, the stack size either increases by 1 or decreases by 1.
    * Therefore the total number of times this loop iterates summed over all calls to 'freeze' is bounded by
-   * twice the number of unification variable (representatives) with non-trival bindings.
+   * twice the number of unification variable (representatives) with non-trivial bindings.
    * ("twice" because once to add the variable to the stack and once to remove the variable from the stack).
    *
    * Note that number of unification_variables is bound linearly in the number of nodes in the Simplicity DAG.
@@ -535,7 +535,7 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
 
 /* Create a type DAG that supports all the type annotations of the Simplicity expression, 'dag'.
  *
- * If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexprssions),
+ * If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
  * and 'arrow[i]'s and 'source' and 'target' field's unification variables are bound to the principal source and target types
  * of subexpression denoted by the slice '(dag_nodes[i + 1])dag', then we create a well-formed 'type_dag' (see 'type.h')
  * that includes the type annotations for every combinator and expression in 'dag' of the principal type
@@ -544,10 +544,10 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
  * The type Merkle roots of the 'type_dag' are also filled in.
  *
  * We say 'dag' is "well-typed" if it is a well-formed 'dag' with type annotations referencing a well-formed 'type_dag'
- * that satifies all the typing constraints of Simplicity.
+ * that satisfies all the typing constraints of Simplicity.
  *
- * If the Simplicity DAG, 'dag' does not have a principal type, yet the precondition on 'arrow' below is still satified,
- * then there must be a cycle in the graph of bindings accessable through the 'arrow' array, and in this case we return 'false'.
+ * If the Simplicity DAG, 'dag' does not have a principal type, yet the precondition on 'arrow' below is still satisfied,
+ * then there must be a cycle in the graph of bindings accessible through the 'arrow' array, and in this case we return 'false'.
  *
  * In either case, '*arrow', and values referenced by these structures may be modified.
  *
@@ -555,7 +555,7 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
  *
  * Precondition: type type_dag[1 + n]
  *                 where 'n' is the number of unification variables that have non-trivial bindings
- *                   that are accessable from the 'arrow' array;
+ *                   that are accessible from the 'arrow' array;
  *               dag_node dag[len] is well-formed;
  *               unification_arrow arrow[len] is a graph of bindings that satisfies the typing constraints of imposed by 'dag'.
  */
@@ -622,12 +622,12 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
   return true;
 }
 
-/* If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexprssions),
- * Then allocate an return a well-formed type DAG containing all the type annotations needed for the principal type of 'dag'
+/* If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
+ * then allocate and return a well-formed type DAG containing all the type annotations needed for the principal type of 'dag'
  * with all free type variables instantiated at ONE,
- * and update the .typeAnnotation array within each node of the 'dag' to referer to their type withing the resulting type DAG.
+ * and update the .typeAnnotation array within each node of the 'dag' to refer to their type within the resulting type DAG.
  *
- * Recall that a well-formed type DAG is always non-empty because the first element of the array is guarenteed to be the type 'ONE'.
+ * Recall that a well-formed type DAG is always non-empty because the first element of the array is guaranteed to be the type 'ONE'.
  *
  * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then NULL is returned.
  * If malloc fails, then NULL is returned.
@@ -650,7 +650,7 @@ type* mallocTypeInference(dag_node* dag, const size_t len, const combinator_coun
     , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[6], &bound_var[6] } } }
     , { .isBound = true, .bound = { .kind = PRODUCT, .arg = { &bound_var[7], &bound_var[7] } } }
     };
-  /* 'bound_var[8]' is bound to the type TWO^256. Eight non-trival bindings were made. */
+  /* 'bound_var[8]' is bound to the type TWO^256. Eight non-trivial bindings were made. */
   size_t bindings_used = 8;
 
   /* :TODO: replace thise mallocs and all other mallocs with a checked_malloc like libsecp256k1 does. */

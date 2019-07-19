@@ -18,7 +18,7 @@
 
 /* UWORD can be any unsigned integer type.
  * The default ought to be 'unsigned int', but unfortunately that tends to be 32-bits on 64-bit platforms.
- * Instead we select 'uint_fast16_t' as our default (with the disadvantange that it is again 32-bits for the x32 target).
+ * Instead we select 'uint_fast16_t' as our default (with the disadvantage that it is again 32-bits for the x32 target).
  */
 #ifndef UWORD
 #define UWORD uint_fast16_t

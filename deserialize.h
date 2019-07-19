@@ -34,7 +34,7 @@ static inline bit_stream initializeBitStream(FILE* file) {
 /* Decode an encoded number between 1 and 2^31 - 1 inclusive.
  * When successful returns the decoded result.
  * If the decoded value would be too large, 'ERR_DATA_OUT_OF_RANGE' is returned.
- * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is retured.
+ * If more bits are needed than available in the 'stream', 'ERR_BITSTRING_EOF' is returned.
  *
  * Precondition: NULL != stream
  */
@@ -42,7 +42,7 @@ int32_t decodeUptoMaxInt(bit_stream* stream);
 
 /* Decode a length-prefixed Simplicity DAG from 'stream'.
  * Returns 'ERR_DATA_OUT_OF_RANGE' the length prefix's value is too large.
- * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceeding nodes.
+ * Returns 'ERR_DATA_OUT_OF_RANGE' if some node's child isn't a reference to one of the preceding nodes.
  * Returns 'ERR_FAIL_CODE' if the encoding of a fail expression is encountered
  *  (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'ERR_STOP_CODE' if the encoding of a stop tag is encountered.

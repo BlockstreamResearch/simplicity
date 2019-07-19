@@ -31,4 +31,4 @@ _Static_assert(
   0x3d == '='  && 0x5d == ']'  && 0x7d == '}' &&
   0x3e == '>'  && 0x5e == '^'  && 0x7e == '~' &&
   0x3f == '?'  && 0x5f == '_'
-, "ASCII charater set required");
+, "ASCII character set required");
