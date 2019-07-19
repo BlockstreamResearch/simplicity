@@ -41,10 +41,10 @@ static sha256_midstate tmrIV(typeName kind) {
  *
  *     (type_dag[i + 1])type_dag.
  *
- *   and when 'type_dag[i]' represents a non-trival 'PRODUCT' type, where one of the two type arguments a trivial type.
+ *   and when 'type_dag[i]' represents a non-trivial 'PRODUCT' type, where one of the two type arguments a trivial type.
  *       then 'type_dag[i].skip' is the index of the largest subexpression of 'type_dag[i]' such that
  *        either 'type_dag[type_dag[i].skip]' is a 'SUM' type
- *            or 'type_dag[type_dag[i].skip]' is a 'PRODUCT' type of two non-trival types.
+ *            or 'type_dag[type_dag[i].skip]' is a 'PRODUCT' type of two non-trivial types.
  *
  * Precondition: type type_dag[len] and 'type_dag' is well-formed.
  */

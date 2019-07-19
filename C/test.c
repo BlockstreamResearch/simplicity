@@ -9,7 +9,7 @@
 #include "schnorr1.h"
 #include "schnorr8.h"
 
-_Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen persume 8 bit chars");
+_Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
 
 static FILE* fmemopen_rb(const void *buf, size_t size) {
   FILE* result = fmemopen((void *)(uintptr_t)buf, size, "rb"); /* Casting away const. */

@@ -86,7 +86,7 @@ typedef struct bitstring {
 /* The contents of a 'WITNESS' node that has witness data. */
 typedef struct witnessInfo {
   size_t typeAnnotation[2]; /* A 'witness v : A |- B' expression has only 2 type annotations. */
-  bitstring data;           /* A compect bitstring representation for a value 'v' of type 'B'. */
+  bitstring data;           /* A compact bitstring representation for a value 'v' of type 'B'. */
 } witnessInfo;
 
 /* A node the the DAG of a Simplicity expression.
@@ -134,7 +134,7 @@ typedef struct dag_node {
  *
  *     if dag[dag[i].child[1]].tag == HIDDEN then dag[i].tag == ASSERTL
  *
- * Note that a well-formed Simplicity DAG is not neccesarily a well-typed Simplicity DAG.
+ * Note that a well-formed Simplicity DAG is not necessarily a well-typed Simplicity DAG.
  */
 
 /* A structure of static analyses for a particular node of a Simplicity DAG.
@@ -175,7 +175,7 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
  * If all jets are discounted jets, one might not even use this function in production.
  *
  * A 'filter' can be set to only force some kinds of jets.  This parameter is mostly used for testing purposes.
- * In produciton we expect 'filter' to be passed the 'JET_ALL' value.
+ * In production we expect 'filter' to be passed the 'JET_ALL' value.
  *
  * Precondition: dag_node dag[len] and 'dag' has witness data and is well-typed;
  *               analyses analysis[len] contains the witness Merkle roots for each subexpression of 'dag'.
@@ -185,7 +185,7 @@ void forceJets(dag_node* dag, const analyses* analysis, size_t len, JET_FLAG fil
 /* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
  * to construct a compact representation of a witness value of type B.
- * This funciton only returns 'true' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
+ * This function only returns 'true' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
  *
  * Precondition: dag_node dag[len] and 'dag' without witness data and is well-typed with 'type_dag';
  *               witness is a valid bitstring;

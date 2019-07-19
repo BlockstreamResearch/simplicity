@@ -1,6 +1,6 @@
 /* This module provides functions writing initial data to and reading results from the frame used during evaluation
  * of Simplicity expressions.
- * These helper functions are also used for marshalling data to and from jets.
+ * These helper functions are also used for marshaling data to and from jets.
  */
 #ifndef FRAME_H
 #define FRAME_H
@@ -13,7 +13,7 @@
  * The '.offset' is used to represent the cursors position.
  * For a read frame, the '.edge' points to one-past-the-end of the slice of the UWORDs array for the frame's cells,
  * and the '.offset' value is equal to the frame's cursor position plus the amount of padding used in the frame.
- * For a write frame, the '.edge' points to the begining of the slice of the UWORDs array for the frame's cells,
+ * For a write frame, the '.edge' points to the beginning of the slice of the UWORDs array for the frame's cells,
  * and the '.offset' value is equal to the total number of cells minus the frame's cursor position.
  */
 typedef struct frameItem {
@@ -89,7 +89,7 @@ uint_fast16_t read16(frameItem* frame);
 uint_fast32_t read32(frameItem* frame);
 uint_fast64_t read64(frameItem* frame);
 
-/* Given a write frame, the 'writeN' funciton sets the value of the 'N' cells after the cursor and
+/* Given a write frame, the 'writeN' function sets the value of the 'N' cells after the cursor and
  * advances the frame's cursor by 'N'.
  * The first cell is set to the value of the MSB of 'x' and the last cell is set to the LSB of 'x'.
  * Cells in front of the cursor's final position may be overwritten.

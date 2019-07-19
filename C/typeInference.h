@@ -5,12 +5,12 @@
 #include "dag.h"
 #include "type.h"
 
-/* If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexprssions),
- * Then allocate an return a well-formed type DAG containing all the type annotations needed for the principal type of 'dag'
+/* If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
+ * then allocate and return a well-formed type DAG containing all the type annotations needed for the principal type of 'dag'
  * with all free type variables instantiated at ONE,
- * and update the .typeAnnotation array within each node of the 'dag' to referer to their type withing the resulting type DAG.
+ * and update the .typeAnnotation array within each node of the 'dag' to refer to their type within the resulting type DAG.
  *
- * Recall that a well-formed type DAG is always non-empty because the first element of the array is guarenteed to be the type 'ONE'.
+ * Recall that a well-formed type DAG is always non-empty because the first element of the array is guaranteed to be the type 'ONE'.
  *
  * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then NULL is returned.
  * If malloc fails, then NULL is returned.
