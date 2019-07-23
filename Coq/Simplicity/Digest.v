@@ -2,6 +2,7 @@ Require Import Logic.Eqdep_dec.
 Require Import Strings.String.
 Require Import List.
 Require BinInt.
+Import Coq.ZArith.BinIntDef.
 
 Require compcert.lib.Integers.
 Require sha.SHA256.

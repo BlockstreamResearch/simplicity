@@ -1,5 +1,6 @@
 Require Import List.
 Require Import Coq.Strings.String.
+Import Coq.Strings.Ascii.AsciiSyntax.
 
 Require Import Simplicity.Alg.
 Require Export Simplicity.Digest.

@@ -4,6 +4,7 @@ Require Import List.
 Require sha.SHA256.
 Require Import compcert.lib.Integers.
 Global Unset Asymmetric Patterns. (* the VST library does a Global Set so we must unset it. *)
+Import Coq.Strings.String.StringSyntax.
 
 Require Import Simplicity.Alg.
 Require Import Simplicity.Bit.
