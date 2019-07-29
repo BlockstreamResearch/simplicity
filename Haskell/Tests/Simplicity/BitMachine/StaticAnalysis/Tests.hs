@@ -13,7 +13,7 @@ import Simplicity.BitMachine.StaticAnalysis.TCO as AnalysisTCO
 import Simplicity.BitMachine.Translate as Translate
 import Simplicity.BitMachine.Translate.TCO as TranslateTCO
 import Simplicity.Programs.Word
-import Simplicity.Programs.Sha256
+import Simplicity.Programs.Sha256.Lib
 import Simplicity.Term.Core
 
 import Test.Tasty (TestTree, testGroup)

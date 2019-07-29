@@ -1,13 +1,16 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE RankNTypes, RecordWildCards #-}
 -- | This module defines Simplicity expression and types that can be used for computing SHA-256 hashes.
 -- Be aware that SHA-256 padding isn't provided and messages should be manually padded.
 module Simplicity.Programs.Sha256
- ( Block, Hash
+ ( Lib(Lib), lib
+ -- * Operations
+ , Block, Hash
  , iv, hashBlock
  ) where
 
 import Prelude hiding (Word, drop, not, take)
 
+import Simplicity.Functor
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Word
@@ -19,17 +22,35 @@ type Block = Word512
 -- | In SHA-256, the inital vector and hash value are 256-bit 'Word's.
 type Hash = Word256
 
--- | Simplicity expression for the constant function that returns the SHA-256 initial vector.
-iv :: (Core term, TyC a) => term a Hash
-iv = scribe . toWord256 $ 0x6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19
+-- | A collection of core Simplicity expressions for SHA-256.
+-- Use 'lib' to construct an instance of this library.
+data Lib term =
+ Lib
+  { -- | Simplicity expression for the constant function that returns the SHA-256 initial vector.
+    iv :: forall a. (TyC a) => term a Hash
+    -- | Simplicity expression for the SHA-256 compression function which takes a midstate (or initial vector) and a message block and outputs a hash value (which is used as a midstate if there are further message blocks).
+  , hashBlock :: term (Hash, Block) Hash
+  }
 
--- | Simplicity expression for the SHA-256 compression function which takes a midstate (or initial vector) and a message block and outputs a hash value (which is used as a midstate if there are further message blocks).
-hashBlock :: forall term. Core term => term (Hash, Block) Hash
-hashBlock = oh &&& compression >>>
-            ((collate oooh &&& collate ooih)
-        &&&  (collate oioh &&& collate oiih))
-        &&& ((collate iooh &&& collate ioih)
-        &&&  (collate iioh &&& collate iiih))
+instance SimplicityFunctor Lib where
+  sfmap m Lib{..} =
+   Lib
+    { iv = m iv
+    , hashBlock = m hashBlock
+    }
+
+
+-- | Build the Sha256 'Lib' library.
+lib :: Core term => Lib term
+lib =
+  Lib
+   { iv = scribe . toWord256 $ 0x6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19
+   , hashBlock = oh &&& compression
+             >>> ((collate oooh &&& collate ooih)
+             &&&  (collate oioh &&& collate oiih))
+             &&& ((collate iooh &&& collate ioih)
+             &&&  (collate iioh &&& collate iiih))
+   }
  where
   collate x = take x &&& drop x >>> add32
   compression = scribe32 k0 &&& iden >>> foldr (\k rec -> scribe32 k &&& step >>> rec) round ks
@@ -42,8 +63,7 @@ hashBlock = oh &&& compression >>>
           ,0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3
           ,0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2]
   step = round &&& (drop (drop schedule))
-  scribe32 :: TyC a => Integer -> term a Word32
-  scribe32 = scribe . toWord32
+  scribe32 x = scribe (toWord32 x)
   round = part1 >>> part2
    where
     part1 = ((t1 &&& io oooh) &&& io odiag)

@@ -16,8 +16,8 @@ import Simplicity.Digest
 import Simplicity.LibSecp256k1.Spec ((.*.))
 import qualified Simplicity.LibSecp256k1.Spec as LibSecp
 import Simplicity.Programs.Bit
-import Simplicity.Programs.LibSecp256k1
-import Simplicity.Programs.Sha256
+import Simplicity.Programs.LibSecp256k1.Lib
+import Simplicity.Programs.Sha256.Lib
 import Simplicity.Programs.Word
 import Simplicity.Term.Core
 import qualified Simplicity.Ty.Word as Ty

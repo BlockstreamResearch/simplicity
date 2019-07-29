@@ -13,7 +13,7 @@ import Test.Tasty.HUnit (assertBool, assertEqual, testCase)
 import Simplicity.Digest
 import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Primitive
-import Simplicity.Elements.Programs.CheckSigHashAll
+import Simplicity.Elements.Programs.CheckSigHashAll.Lib
 import Simplicity.Elements.Semantics
 import Simplicity.MerkleRoot
 import Simplicity.Ty.Word

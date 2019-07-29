@@ -6099,30 +6099,6 @@
   Simplicity expression compares any two values of the same Simplicity type
   and decides if they are equal or not.
 
-  <subsubsection|SHA-256>
-
-  The <verbatim|Core/Simplicity/Programs/Sha256.hs> file provides Simplicity
-  expressions to help compute SHA-256 hashes. The <verbatim|iv> Simplicity
-  expression is a constant function the returns the initial value to begin a
-  SHA-256 computation. The <verbatim|hashBlock> Simplicity expression
-  computes the SHA-256 compression function on a single block of data. To
-  compress multiple blocks, multiple calls to the <verbatim|hashBlock>
-  function can be chained together.
-
-  <subsubsection|LibSecp256k1>
-
-  The <verbatim|Core/Simplicity/Programs/LibSecp256k1.hs> file provides
-  Simplicity expressions that mimic the functional behaviour of the the
-  libsecp256k1 elliptic curve library<nbsp><cite|libsecp256k1>. This includes
-  Simplicity types for, and operations on secp256k1's underlying finite field
-  with the <verbatim|10x26> limb representation, elliptic curve point
-  operations in affine and Jacobian coordinates, and linear combinations of
-  points.
-
-  This module also include the <verbatim|schnorrVerify> and
-  <verbatim|schnorrAssert> expressions that implement Schnorr signatures as
-  specified in BIP-Schnorr<nbsp><cite|bip-schnorr>.
-
   <subsubsection|Loop><label|ss:haskellLoop>
 
   The <verbatim|Core/Simplicity/Programs/Loop.hs> files is a stub module for
@@ -6131,6 +6107,82 @@
   moment it can be used to build the <verbatim|CommitmentRoot> of an
   unbounded loop, but the code needed to redeem such a commitment has not
   been developed yet.
+
+  <subsection|Libraries of Simplicity Expressions>
+
+  The tagless-final style used for Simplicity expressions is designed to
+  perform efficently for some interpretations of Simplicity when
+  subexpressions are shared. In particular the computation of Merkle roots
+  and serialization (see <reference|ss:Haskell-DAG>) are much faster to
+  compute when subexpressions are shared. However the polymorphism in the
+  tagless-final type used for expression is at odds with subexpression
+  sharing in a naive implementation of Simplicity expressions.
+
+  In order to realize subexpression sharing between Simplicity expressions,
+  we build libraries of Simplicity expressions as a record type. We use the
+  <verbatim|RecordWildcards> language extension to bring all function of a
+  library in scope with a single <verbatim|Lib{..}> pattern. This approach is
+  similar to ``<hlink|First-class modules without
+  defaults|http://www.haskellforall.com/2012/07/first-class-modules-without-defaults.html>''
+  by <hlink|Gabriel Gonzalez|https://www.blogger.com/profile/01917800488530923694>.
+  Generating several Simplicity expressions together allows us to share
+  common subexpressions between the different library functions all within a
+  single intepretation.
+
+  Libraries typically come with some kind of <verbatim|mkLib> function that
+  given a set library dependencies, constructs an instance of the library of
+  functions. Building a library from a set of dependencies allows us to share
+  dependencies between different libraries when we want to use multiple
+  different libraries.
+
+  The general approach to using the libraries for your own expressions is to
+  create a <verbatim|where> clause containing the <verbatim|mkLib> expression
+  for all the libraries that you want to use and their dependencies that are
+  bound to <verbatim|name@Lib{..}> patterns to bring all the library function
+  into scope. Then you can build your expression using any of the library
+  functions.
+
+  <subsubsection|SHA-256>
+
+  The <verbatim|Core/Simplicity/Programs/Sha256.hs> file provides a library
+  of Simplicity expressions to help compute SHA-256 hashes. The <verbatim|iv>
+  expression is a constant function the returns the initial value to begin a
+  SHA-256 computation. The <verbatim|hashBlock> expression computes the
+  SHA-256 compression function on a single block of data. To compress
+  multiple blocks, multiple calls to the <verbatim|hashBlock> function can be
+  chained together.
+
+  This library has no dependencies and you can use the <verbatim|lib> library
+  value directly.
+
+  The <verbatim|Core/Simplicity/Programs/Sha256/Lib.hs> file provides an
+  unpacked module version of the library. However use of this module will
+  lose the subexpression sharing. Therefore this should only be used for
+  testing purposes.
+
+  <subsubsection|LibSecp256k1>
+
+  The <verbatim|Core/Simplicity/Programs/LibSecp256k1.hs> file provides a
+  library of Simplicity expressions that mimic the functional behaviour of
+  the the libsecp256k1 elliptic curve library<nbsp><cite|libsecp256k1>. This
+  includes Simplicity types for, and operations on secp256k1's underlying
+  finite field with the <verbatim|10x26> limb representation, elliptic curve
+  point operations in affine and Jacobian coordinates, and linear
+  combinations of points.
+
+  This module also include the <verbatim|schnorrVerify> and
+  <verbatim|schnorrAssert> expressions that implement Schnorr signatures as
+  specified in BIP-Schnorr<nbsp><cite|bip-schnorr>.
+
+  The <verbatim|mkLib> function builds the library from the its dependency,
+  the SHA-256 library. The <verbatim|lib> value illustrates how to build the
+  library, but using the <verbatim|lib> value will not allow you to share the
+  dependency, so it should only be used for testing purposed.
+
+  The <verbatim|Core/Simplicity/Programs/LibSecp256k1/Lib.hs> file provides
+  an unpacked module version of the library. However use of this module will
+  lose the subexpression sharing. Therefore this should only be used for
+  testing purposes.
 
   <subsection|The Bit Machine>
 
@@ -6499,7 +6551,7 @@
     consumed bytes.
   </itemize-dot>
 
-  <subsubsection|Serialization of Simplicity DAGs>
+  <subsubsection|Serialization of Simplicity DAGs><label|ss:Haskell-DAG>
 
   <with|font-series|bold|>The file <verbatim|Indef/Simplicity/Dag.hs>
   provides a <verbatim|sortDag> that coverts Simplicity expressions into a
@@ -6578,10 +6630,10 @@
   <subsection|CheckSigHashAll>
 
   Some modules build on specific Simplicity blockchain applications. The
-  <verbatim|Simplicity/Bitcoin/Programs/CheckSigHashAll.hs> files provides a
-  <verbatim|checkSigHashAll> Simplicity expression that verifies Schnorr
-  signature over the Bitcoin specific transaction data hash produced by
-  <verbatim|sigHashAll> for a provided public key. Some variants of this
+  <verbatim|Simplicity/Bitcoin/Programs/CheckSigHashAll.hs> file provides a
+  <verbatim|checkSigHashAll> Simplicity expression library that verifies
+  Schnorr signature over the Bitcoin specific transaction data hash produced
+  by <verbatim|sigHashAll> for a provided public key. Some variants of this
   expression are also provided including <verbatim|pkwCheckSigHashAll> which
   builds a complete Simplicity program from a given public key and signature.
 
@@ -7303,34 +7355,36 @@
     <associate|auto-139|<tuple|9.1.5.3|77>>
     <associate|auto-14|<tuple|2.3.1|15>>
     <associate|auto-140|<tuple|9.1.5.4|77>>
-    <associate|auto-141|<tuple|9.1.5.5|78>>
-    <associate|auto-142|<tuple|9.1.5.6|78>>
-    <associate|auto-143|<tuple|9.1.6|78>>
-    <associate|auto-144|<tuple|9.1.6.1|78>>
-    <associate|auto-145|<tuple|9.1.6.2|79>>
-    <associate|auto-146|<tuple|9.2|79>>
-    <associate|auto-147|<tuple|9.2.1|79>>
-    <associate|auto-148|<tuple|9.2.2|79>>
-    <associate|auto-149|<tuple|9.2.3|79>>
+    <associate|auto-141|<tuple|9.1.6|78>>
+    <associate|auto-142|<tuple|9.1.6.1|78>>
+    <associate|auto-143|<tuple|9.1.6.2|78>>
+    <associate|auto-144|<tuple|9.1.7|78>>
+    <associate|auto-145|<tuple|9.1.7.1|79>>
+    <associate|auto-146|<tuple|9.1.7.2|79>>
+    <associate|auto-147|<tuple|9.2|79>>
+    <associate|auto-148|<tuple|9.2.1|79>>
+    <associate|auto-149|<tuple|9.2.2|79>>
     <associate|auto-15|<tuple|2.3.2|15>>
-    <associate|auto-150|<tuple|9.2.4|80>>
-    <associate|auto-151|<tuple|9.2.5|80>>
-    <associate|auto-152|<tuple|9.2.5.1|80>>
-    <associate|auto-153|<tuple|9.2.5.2|82>>
-    <associate|auto-154|<tuple|9.3|82>>
-    <associate|auto-155|<tuple|9.4|82>>
-    <associate|auto-156|<tuple|9.4.1|83>>
-    <associate|auto-157|<tuple|9.5|83>>
-    <associate|auto-158|<tuple|10|85>>
-    <associate|auto-159|<tuple|A|87>>
+    <associate|auto-150|<tuple|9.2.3|80>>
+    <associate|auto-151|<tuple|9.2.4|80>>
+    <associate|auto-152|<tuple|9.2.5|80>>
+    <associate|auto-153|<tuple|9.2.5.1|82>>
+    <associate|auto-154|<tuple|9.2.5.2|82>>
+    <associate|auto-155|<tuple|9.3|82>>
+    <associate|auto-156|<tuple|9.4|83>>
+    <associate|auto-157|<tuple|9.4.1|83>>
+    <associate|auto-158|<tuple|9.5|85>>
+    <associate|auto-159|<tuple|10|87>>
     <associate|auto-16|<tuple|2.3.3|16>>
-    <associate|auto-160|<tuple|A.1|89>>
-    <associate|auto-161|<tuple|A.1.1|91>>
-    <associate|auto-162|<tuple|A.1.2|93>>
-    <associate|auto-163|<tuple|A.1.3|?>>
-    <associate|auto-164|<tuple|A.2|?>>
-    <associate|auto-165|<tuple|B|?>>
+    <associate|auto-160|<tuple|A|89>>
+    <associate|auto-161|<tuple|A.1|91>>
+    <associate|auto-162|<tuple|A.1.1|93>>
+    <associate|auto-163|<tuple|A.1.2|?>>
+    <associate|auto-164|<tuple|A.1.3|?>>
+    <associate|auto-165|<tuple|A.2|?>>
     <associate|auto-166|<tuple|B|?>>
+    <associate|auto-167|<tuple|B|?>>
+    <associate|auto-168|<tuple|B|?>>
     <associate|auto-17|<tuple|2.3.4|16>>
     <associate|auto-18|<tuple|2.3.4.1|17>>
     <associate|auto-19|<tuple|2.4|17>>
@@ -7465,6 +7519,7 @@
     <associate|ss:Deserialization|<tuple|6.2|?>>
     <associate|ss:ELDenotationalSemantics|<tuple|A.1|?>>
     <associate|ss:FreeMonadicDeserialization|<tuple|9.2.5.1|80>>
+    <associate|ss:Haskell-DAG|<tuple|9.2.5.2|?>>
     <associate|ss:Haskell-Serialization|<tuple|9.2.5|80>>
     <associate|ss:MonadZero|<tuple|2.3.4|16>>
     <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|31>>
@@ -7473,7 +7528,7 @@
     <associate|ss:cmr|<tuple|3.7|39>>
     <associate|ss:coqArith|<tuple|8.3.2|67>>
     <associate|ss:coqInitial|<tuple|8.2.1|65>>
-    <associate|ss:haskellLoop|<tuple|9.1.5.6|78>>
+    <associate|ss:haskellLoop|<tuple|9.1.5.4|78>>
     <associate|ss:inflate|<tuple|7.1.2.2|62>>
     <associate|ss:monadicSemantics|<tuple|4.1|41>>
     <associate|ss:optionMonad|<tuple|2.3.4.1|17>>
@@ -8068,113 +8123,117 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-139>>
 
-      <with|par-left|<quote|2tab>|9.1.5.4<space|2spc>SHA-256
+      <with|par-left|<quote|2tab>|9.1.5.4<space|2spc>Loop
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-140>>
 
-      <with|par-left|<quote|2tab>|9.1.5.5<space|2spc>LibSecp256k1
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|9.1.6<space|2spc>Libraries of Simplicity
+      Expressions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-141>>
 
-      <with|par-left|<quote|2tab>|9.1.5.6<space|2spc>Loop
+      <with|par-left|<quote|2tab>|9.1.6.1<space|2spc>SHA-256
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-142>>
 
-      <with|par-left|<quote|1tab>|9.1.6<space|2spc>The Bit Machine
+      <with|par-left|<quote|2tab>|9.1.6.2<space|2spc>LibSecp256k1
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-143>>
 
-      <with|par-left|<quote|2tab>|9.1.6.1<space|2spc>Translating Simplicity
-      to the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|9.1.7<space|2spc>The Bit Machine
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-144>>
 
-      <with|par-left|<quote|2tab>|9.1.6.2<space|2spc>Static Analysis
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|2tab>|9.1.7.1<space|2spc>Translating Simplicity
+      to the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-145>>
+
+      <with|par-left|<quote|2tab>|9.1.7.2<space|2spc>Static Analysis
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-146>>
 
       9.2<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity-Indef>
       library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-146>
+      <no-break><pageref|auto-147>
 
       <with|par-left|<quote|1tab>|9.2.1<space|2spc>Primitive Signature
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-147>>
+      <no-break><pageref|auto-148>>
 
       <with|par-left|<quote|1tab>|9.2.2<space|2spc>Primitive Terms
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-148>>
+      <no-break><pageref|auto-149>>
 
       <with|par-left|<quote|1tab>|9.2.3<space|2spc>Denotational Semantics of
       Full Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-149>>
+      <no-break><pageref|auto-150>>
 
       <with|par-left|<quote|1tab>|9.2.4<space|2spc>Type Inference
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-150>>
+      <no-break><pageref|auto-151>>
 
       <with|par-left|<quote|1tab>|9.2.5<space|2spc>Serialization
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-151>>
+      <no-break><pageref|auto-152>>
 
       <with|par-left|<quote|2tab>|9.2.5.1<space|2spc>Free Monadic
       Deserializaiton <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-152>>
+      <no-break><pageref|auto-153>>
 
       <with|par-left|<quote|2tab>|9.2.5.2<space|2spc>Serialization of
       Simplicity DAGs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-153>>
+      <no-break><pageref|auto-154>>
 
       9.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity-Bitcoin>
       Libary <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-154>
+      <no-break><pageref|auto-155>
 
       9.4<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity>
       Library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-155>
+      <no-break><pageref|auto-156>
 
       <with|par-left|<quote|1tab>|9.4.1<space|2spc>CheckSigHashAll
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-156>>
+      <no-break><pageref|auto-157>>
 
       9.5<space|2spc>Simplicity <with|font-family|<quote|tt>|language|<quote|verbatim>|testsuite>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-157>
+      <no-break><pageref|auto-158>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|10<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-158><vspace|0.5fn>
+      <no-break><pageref|auto-159><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       A<space|2spc>Elements Application> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-159><vspace|0.5fn>
+      <no-break><pageref|auto-160><vspace|0.5fn>
 
       A.1<space|2spc>Denotational Semantics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-160>
+      <no-break><pageref|auto-161>
 
       <with|par-left|<quote|1tab>|A.1.1<space|2spc>Null Data
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-161>>
+      <no-break><pageref|auto-162>>
 
       <with|par-left|<quote|1tab>|A.1.2<space|2spc>Merkle Roots
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-162>>
+      <no-break><pageref|auto-163>>
 
       <with|par-left|<quote|1tab>|A.1.3<space|2spc>Serialization
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-163>>
+      <no-break><pageref|auto-164>>
 
       A.2<space|2spc>Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-164>
+      <no-break><pageref|auto-165>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       B<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-165><vspace|0.5fn>
+      <no-break><pageref|auto-166><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-166><vspace|0.5fn>
+      <no-break><pageref|auto-167><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
