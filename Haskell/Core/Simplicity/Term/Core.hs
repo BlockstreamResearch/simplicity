@@ -195,3 +195,25 @@ instance (Witness p, Witness q) => Witness (Product p q) where
 
 instance (Delegate p, Delegate q) => Delegate (Product p q) where
   disconnect ~(Product rs fs) ~(Product rt ft) = Product (disconnect rs rt) (disconnect fs ft)
+
+instance Core Unit where
+  iden = Unit
+  comp _ _ = Unit
+  unit = Unit
+  injl _ = Unit
+  injr _ = Unit
+  match _ _ = Unit
+  pair _ _ = Unit
+  take _ = Unit
+  drop _ = Unit
+
+instance Assert Unit where
+  assertl _ _ = Unit
+  assertr _ _ = Unit
+  fail _ = Unit
+
+instance Witness Unit where
+  witness _ = Unit
+
+instance Delegate Unit where
+  disconnect _ _ = Unit

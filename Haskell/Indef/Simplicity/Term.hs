@@ -55,6 +55,14 @@ instance (Jet p, Jet q) => Jet (Product p q) where
 
 instance (Simplicity p, Simplicity q) => Simplicity (Product p q) where
 
+instance Primitive Unit where
+  primitive _ = Unit
+
+instance Jet Unit where
+  jet _ = Unit
+
+instance Simplicity Unit where
+
 instance Primitive CommitmentRoot where
   primitive = primitiveCommitmentImpl primPrefix primName
 
