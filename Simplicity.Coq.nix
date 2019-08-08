@@ -2,14 +2,14 @@
 stdenv.mkDerivation {
   name = "Simplicity-coq-0.0.0";
   src = lib.sourceFilesBySuffices
-      (lib.sourceByRegex ./Coq ["Simplicity" "Simplicity/.*" "Util" "Util/.*"])
-    [".v"];
+      (lib.sourceByRegex ./Coq ["_CoqProject" "Simplicity" "Simplicity/.*" "Util" "Util/.*"])
+    ["_CoqProject" ".v"];
   postConfigure = ''
-    shopt -s globstar
-    coq_makefile -Q Simplicity Simplicity -Q Util Util **/*.v > Makefile
+    coq_makefile -f _CoqProject -o CoqMakefile
   '';
   buildInputs = [ coq ];
   propagatedBuildInputs = [ vst ];
+  makefile = "CoqMakefile";
   installFlags = "COQLIB=$(out)/lib/coq/${coq.coq-version}/";
   meta = {
     license = lib.licenses.mit;
