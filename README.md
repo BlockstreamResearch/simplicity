@@ -13,11 +13,30 @@ This project contains
 
 ## Build
 
+### Building with Nix
+
 Software artifacts can be built using [Nix](https://nixos.org/nix/).
 
 * To build the Haskell project, run `nix-build -A haskell`.
 * To use the Haskell project, try `nix-shell -p "(import ./default.nix {}).haskellPackages.ghcWithPackages (pkgs: [pkgs.Simplicity])"`.
 * To build the Coq project, run `nix-build -A coq`.
+
+### Building without Nix
+
+To build the Coq project, we first need to build the VST dependency.
+
+1. Download and extract the lastest VST from <https://github.com/PrincetonUniversity/VST/archive/v2.4.tar.gz>.
+1. Build the VST project by running `make` in the extracted directory.  If you are in a rush it is sufficent to run `make sha/functional_prog.vo`.
+(Tip: if you have a newer version of Coq, you can try setting the environment variable `IGNORECOQVERSION=true`.)
+1. Install the VST project into your user's `.local/share` (or `XDG_DATA_HOME`) directory by running
+    1. `mkdir -p ${XDG_DATA_HOME:-$HOME/.local/share}/coq/VST`
+    1. `cp -r msl sepcomp veric floyd ${XDG_DATA_HOME:-$HOME/.local/share}/coq/VST`
+    1. `cp -r compcert sha ${XDG_DATA_HOME:-$HOME/.local/share}/coq`
+
+Now we can build the Simplicity project.
+1. Enter the `Coq` directory.
+1. Execute `coq_makefile -f _CoqProject -o CoqMakefile`.
+1. Build the project by executing `make -f CoqMakefile`.
 
 ## Documentation
 
