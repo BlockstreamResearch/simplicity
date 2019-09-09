@@ -891,7 +891,7 @@
     \<lambda\>x:A\<point\>e\<of\>A\<rightarrow\>B
   </equation*>
 
-  where <math|e> is an expression with <math|x\<of\>A> as a free variable
+  where <math|e> is an expression with <math|x\<of\>A> as a bound variable
   (that may occur or zero or more times in <math|e>). Given
   <math|f\<of\>A\<rightarrow\>B> and <math|a\<of\>A>, then ordinary function
   application retrieves a value of type <math|B>:
@@ -908,25 +908,47 @@
 
   \;
 
-  We define the identity function <math|id<rsub|A>\<of\>A\<rightarrow\>A> by
+  We define the identity function <math|id<rsub|A>\<of\>A\<rightarrow\>A> as
 
   <\equation*>
-    id<rsub|A><around*|(|a|)>\<assign\>a
+    id<rsub|A>\<assign\>\<lambda\>a:A\<point\>a
   </equation*>
 
   and given <math|f\<of\>A\<rightarrow\>B> and <math|g\<of\>B\<rightarrow\>C>
   we define their composition <math|g\<circ\>f\<of\>A\<rightarrow\>C> as
 
   <\equation*>
-    <around*|(|g\<circ\>f|)><around*|(|a|)>\<assign\>g<around*|(|f<around*|(|a|)>|)>
+    g\<circ\>f\<assign\>\<lambda\>a:A\<point\>g<around*|(|f<around*|(|a|)>|)><text|.>
   </equation*>
 
-  To access components of sum and product types we use pattern matching. For
-  example, we define the first and second projection functions as
+  \;
+
+  We may also write function definitions in ``application'' style where we
+  implicitly define a function in terms of function application. In this
+  style we would write the above definitions of the identity function and
+  function composition as
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|\<pi\><rsup|A,B><rsub|1><around*|\<langle\>|a,b|\<rangle\>>>|<cell|\<assign\>>|<cell|a>>|<row|<cell|\<pi\><rsup|A,B><rsub|2><around*|\<langle\>|a,b|\<rangle\>>>|<cell|\<assign\>>|<cell|b<text|.>>>>>
+    <tformat|<table|<row|<cell|id<rsub|A><around*|(|a|)>>|<cell|\<assign\>>|<cell|a>>|<row|<cell|<around*|(|g\<circ\>f|)><around*|(|a|)>>|<cell|\<assign\>>|<cell|g<around*|(|f<around*|(|a|)>|)><text|.>>>>>
   </eqnarray*>
+
+  To access components of sum and product types we define functions using
+  pattern matching in application style. For example given <math|a\<of\>A>
+  and <math|b\<of\>B>, we define the first and second projection functions as
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|\<pi\><rsup|A,B><rsub|1><around*|\<langle\>|a,b|\<rangle\>>>|<cell|\<assign\>>|<cell|a>>|<row|<cell|\<pi\><rsup|A,B><rsub|2><around*|\<langle\>|a,b|\<rangle\>>>|<cell|\<assign\>>|<cell|b>>>>
+  </eqnarray*>
+
+  and given <math|f\<of\>A\<rightarrow\>C> and
+  <math|g\<of\>B\<rightarrow\>C>, we define their copair
+  <math|<around*|[|f,g|]>\<of\>A+B\<rightarrow\>C> by the pair of equations
+
+  <\eqnarray*>
+    <tformat|<table|<row|<cell|<around*|[|f,g|]><around*|(|<injl|<around*|(|a|)>>|)>>|<cell|\<assign\>>|<cell|f<around*|(|a|)>>>|<row|<cell|<around*|[|f,g|]><around*|(|<injr|<around*|(|b|)>>|)>>|<cell|\<assign\>>|<cell|g<around*|(|b|)><text|.>>>>>
+  </eqnarray*>
+
+  \;
 
   When we take a product type with itself, we form a square and denote it by
   exponential notation accordingly:
@@ -1543,11 +1565,22 @@
   </with>
 
   <\equation*>
-    <around*|\<llbracket\>|<samp|iden><rsub|A>|\<rrbracket\>><around*|(|a|)>\<assign\>a
+    <around*|\<llbracket\>|<samp|iden><rsub|A>|\<rrbracket\>>\<assign\>\<lambda\>a\<point\>a
   </equation*>
 
   For every Simplicity type <math|A>, we have an identity term that denotes
   the identity function for that type.
+
+  We can also write the semantics in application style as
+
+  <\equation*>
+    <around*|\<llbracket\>|<samp|iden><rsub|A>|\<rrbracket\>><around*|(|a|)>\<assign\>a
+  </equation*>
+
+  which is just a different way of writing the same definition. \ However,
+  please note that the <math|a> argument is an argument of the function
+  denoted by <math|<samp|iden><rsub|A>> and is not an argument to the
+  Simplicity term itself.
 
   <subsection|Composition>
 
@@ -1558,7 +1591,7 @@
 
   <\equation*>
     <around*|\<llbracket\>|<math-ss|comp><rsub|A,B,C> s
-    t|\<rrbracket\>><around*|(|a|)>\<assign\><around*|(|<around*|\<llbracket\>|t|\<rrbracket\>>\<circ\><around*|\<llbracket\>|s|\<rrbracket\>>|)><around*|(|a|)>
+    t|\<rrbracket\>>\<assign\><around*|\<llbracket\>|t|\<rrbracket\>>\<circ\><around*|\<llbracket\>|s|\<rrbracket\>>
   </equation*>
 
   The composition combinator functionally composes its two arguments,
@@ -1572,12 +1605,24 @@
   </with>
 
   <\equation*>
-    <around*|\<llbracket\>|<math-ss|unit><rsub|A>|\<rrbracket\>><around*|(|a|)>\<assign\><around*|\<langle\>||\<rangle\>>
+    <around*|\<llbracket\>|<math-ss|unit><rsub|A>|\<rrbracket\>>\<assign\>\<lambda\>a\<point\><around*|\<langle\>||\<rangle\>>
   </equation*>
 
-  The constant unit term ignores its argument and always returns
+  The unit term denotes the constant function that always returns
   <math|<around*|\<langle\>||\<rangle\>>>, the unique value of the unit type.
-  The argument is ignored so we have a constant unit term for every type.
+  The function's argument is ignored and we have a constant unit term for
+  every type of input.
+
+  We can also write semantics in application style as
+
+  <\equation*>
+    <around*|\<llbracket\>|<samp|unit><rsub|A>|\<rrbracket\>><around*|(|a|)>\<assign\><around*|\<langle\>||\<rangle\>><text|.>
+  </equation*>
+
+  We will use application style when writing the definition of the remaining
+  combinators, trusting that the reader will be mindful of the distinction
+  between arguments of the combinators versus the argument of the function
+  that the Simplicity term denotes.
 
   <subsection|Left Injection>
 
