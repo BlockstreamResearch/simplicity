@@ -247,11 +247,7 @@ static void test_elements(void) {
                    , .prevIx = 0
                    , .sequence = 0xfffffffe
                    , .isPegin = false
-                   , .issuance = { .amount = (unsigned char[1]){"\x00"}
-                                 , .inflationKeys = (unsigned char[1]){"\x00"}
-                                 , .blindingNonce = (uint8_t[32]){0}
-                                 , .assetEntropy = (uint8_t[32]){0}
-                                 }
+                   , .issuance = {0}
                    , .txo = { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
                             , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xe4\x00"}
                             , .scriptPubKey = {0}
@@ -259,14 +255,14 @@ static void test_elements(void) {
       , .output = (rawOutput[])
                   { { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
                     , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xd7\x1c"}
-                    , .nonce = (unsigned char[1]){"\x00"}
+                    , .nonce = NULL
                     , .scriptPubKey = { .code = (unsigned char [26]){"\x19\x76\xa9\x14\x48\x63\x3e\x2c\x0e\xe9\x49\x5d\xd3\xf9\xc4\x37\x32\xc4\x7f\x47\x02\xa3\x62\xc8\x88\xac"}
                                       , .len = 26
                                       }
                     }
                   , { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
                     , .value = (unsigned char[9]){"\x01\x00\x00\x00\x00\x00\x00\x0c\xe4"}
-                    , .nonce = (unsigned char[1]){"\x00"}
+                    , .nonce = NULL
                     , .scriptPubKey = {0}
                   } }
       , .numInputs = 1
@@ -316,11 +312,7 @@ static void test_elements(void) {
                    , .prevIx = 0
                    , .sequence = 0xffffffff /* Here is the modification. */
                    , .isPegin = false
-                   , .issuance = { .amount = (unsigned char[1]){"\x00"}
-                                 , .inflationKeys = (unsigned char[1]){"\x00"}
-                                 , .blindingNonce = (uint8_t[32]){0}
-                                 , .assetEntropy = (uint8_t[32]){0}
-                                 }
+                   , .issuance = {0}
                    , .txo = { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
                             , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xe4\x00"}
                             , .scriptPubKey = {0}
@@ -328,14 +320,14 @@ static void test_elements(void) {
       , .output = (rawOutput[])
                   { { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
                     , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xd7\x1c"}
-                    , .nonce = (unsigned char[1]){"\x00"}
+                    , .nonce = NULL
                     , .scriptPubKey = { .code = (unsigned char [26]){"\x19\x76\xa9\x14\x48\x63\x3e\x2c\x0e\xe9\x49\x5d\xd3\xf9\xc4\x37\x32\xc4\x7f\x47\x02\xa3\x62\xc8\x88\xac"}
                                       , .len = 26
                                       }
                     }
                   , { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
                     , .value = (unsigned char[9]){"\x01\x00\x00\x00\x00\x00\x00\x0c\xe4"}
-                    , .nonce = (unsigned char[1]){"\x00"}
+                    , .nonce = NULL
                     , .scriptPubKey = {0}
                   } }
       , .numInputs = 1

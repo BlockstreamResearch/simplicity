@@ -133,38 +133,36 @@ static void hashScriptPubKey(sha256_midstate* result, const rawScript* scriptPub
 /* Initialize a 'confidential' asset or 'confidential' nonce from an unsigned char array from a 'rawTransaction'.
  *
  * Precondition: NULL != conf;
- *               unsigned char rawConf[rawConf[0] == 0x00 ? 1 : 33]
+ *               unsigned char rawConf[33] or rawConf == NULL;
  */
 static void copyRawConfidential(confidential* conf, const unsigned char* rawConf) {
-  if (0 == rawConf[0]) {
+  if (rawConf) {
+    *conf = (confidential){ .prefix = 0x01 == rawConf[0] ? EXPLICIT
+                                    : 0x01 == (0x01 & rawConf[0]) ? ODD_Y
+                                    : EVEN_Y
+                          };
+    sha256_toMidstate(conf->data.s, &rawConf[1]);
+  } else {
     *conf = (confidential){0};
-    return;
   }
-  *conf = (confidential){ .prefix = 0x01 == rawConf[0] ? EXPLICIT
-                                  : 0x01 == (0x01 & rawConf[0]) ? ODD_Y
-                                  : EVEN_Y
-                        };
-  sha256_toMidstate(conf->data.s, &rawConf[1]);
 }
 
 /* Initialize a 'confAmount' from an unsigned char array from a 'rawTransaction'.
  *
  * Precondition: NULL != amt;
- *               unsigned char rawAmt[rawAmt[0] == 0x00 ? 1 :
- *                                    rawAmt[0] == 0x01 ? 9 : 33]
+ *               unsigned char rawAmt[rawAmt[0] == 0x01 ? 9 : 33] or rawAmt == NULL
  */
 static void copyRawAmt(confAmount* amt, const unsigned char* rawAmt) {
-  switch (rawAmt[0]) {
-   case 0x00:
+  if (rawAmt) {
+    if (0x01 == rawAmt[0]) {
+      amt->prefix = EXPLICIT;
+      amt->explicit = ReadBE64(&rawAmt[1]);
+    } else {
+      amt->prefix = 0x01 == (0x01 & rawAmt[0]) ? ODD_Y : EVEN_Y;
+      sha256_toMidstate(amt->confidential.s, &rawAmt[1]);
+    }
+  } else {
     amt->prefix = NONE;
-    return;
-   case 0x01:
-    amt->prefix = EXPLICIT;
-    amt->explicit = ReadBE64(&rawAmt[1]);
-    return;
-   default:
-    amt->prefix = 0x01 == (0x01 & rawAmt[0]) ? ODD_Y : EVEN_Y;
-    sha256_toMidstate(amt->confidential.s, &rawAmt[1]);
   }
 }
 
@@ -182,7 +180,7 @@ static void copyInput(sigInput* result, const rawInput* input) {
   hashScriptPubKey(&result->txo.scriptPubKey, &input->txo.scriptPubKey);
   copyRawConfidential(&result->txo.asset, input->txo.asset);
   copyRawAmt(&result->txo.amt, input->txo.value);
-  if (input->issuance.amount[0] || input->issuance.inflationKeys[0]) {
+  if (input->issuance.amount || input->issuance.inflationKeys) {
     sha256_toMidstate(result->issuance.blindingNonce.s, input->issuance.blindingNonce);
     if (0 == result->issuance.blindingNonce.s[0] && 0 == result->issuance.blindingNonce.s[1] &&
         0 == result->issuance.blindingNonce.s[2] && 0 == result->issuance.blindingNonce.s[3] &&
