@@ -22,10 +22,9 @@ typedef struct rawScript {
 
 /* A structure representing data for one output from an Elements transaction.
  *
- * Invariant: unsigned char asset[asset[0] == 0 ? 1 : 33];
- *            unsigned char value[value[0] == 0 ? 1 :
- *                                value[0] == 1 ? 9 : 33];
- *            unsigned char nonce[nonce[0] == 0 ? 1 : 33];
+ * Invariant: unsigned char asset[33] or asset == NULL;
+ *            unsigned char value[value[0] == 1 ? 9 : 33] or value == NULL;
+ *            unsigned char nonce[33] or nonce == NULL;
  */
 typedef struct rawOutput {
   const unsigned char* asset;
@@ -37,15 +36,12 @@ typedef struct rawOutput {
 /* A structure representing data for one input from an Elements transaction, plus the TXO data of the output being redeemed.
  *
  * Invariant: uint8_t prevTxid[32];
- *            uint8_t issuance.blindingNonce[32];
- *            uint8_t issuance.assetEntropy[32];
- *            unsigned char issuance.amount[issuance.amount[0] == 0 ? 1 :
- *                                          issuance.amount[0] == 1 ? 9 : 33];
- *            unsigned char issuance.inflationKeys[issuance.inflationKeys[0] == 0 ? 1 :
- *                                                 issuance.inflaitonKeys[0] == 1 ? 9 : 33];
- *            unsigned char txo.asset[txo.asset[0] == 0 ? 1 : 33];
- *            unsigned char txo.value[txo.value[0] == 0 ? 1 :
- *                                    txo.value[0] == 1 ? 9 : 33];
+ *            uint8_t issuance.blindingNonce[32] or (issuance.amount == NULL and issuance.inflationKeys == NULL);
+ *            uint8_t issuance.assetEntropy[32] or (issuance.amount == NULL and issuance.inflationKeys == NULL);
+ *            unsigned char issuance.amount[issuance.amount[0] == 1 ? 9 : 33] or issuance.amount == NULL;
+ *            unsigned char issuance.inflationKeys[issuance.inflaitonKeys[0] == 1 ? 9 : 33] or issuance.inflationKeys == NULL;
+ *            unsigned char txo.asset[33] or txo.asset == NULL;
+ *            unsigned char txo.value[txo.value[0] == 1 ? 9 : 33] or txo.value == NULL;
  */
 typedef struct rawInput {
   const uint8_t* prevTxid;
