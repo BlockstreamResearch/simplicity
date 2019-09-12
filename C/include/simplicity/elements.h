@@ -98,10 +98,10 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
  *
  * Precondition: NULL != success;
  *               NULL != tx;
- *               NULL != cmr implies uint32_t cmr[8]
- *               NULL != wmr implies uint32_t wmr[8]
+ *               NULL != cmr implies unsigned char cmr[32]
+ *               NULL != wmr implies unsigned char wmr[32]
  *               NULL != file;
  */
 extern bool elements_simplicity_execSimplicity(bool* success, const transaction* tx, uint_fast32_t ix,
-                                               const uint32_t* cmr, const uint32_t* wmr, FILE* file);
+                                               const unsigned char* cmr, const unsigned char* wmr, FILE* file);
 #endif

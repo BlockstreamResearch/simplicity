@@ -239,6 +239,8 @@ static void test_occursCheck(void) {
 }
 
 static void test_elements(void) {
+  unsigned char cmr[32], wmr[32];
+
   printf("Test elements\n");
   {
     rawTransaction testTx1 = (rawTransaction)
@@ -271,12 +273,14 @@ static void test_elements(void) {
       , .lockTime = 0x00000000
       };
     transaction* tx1 = elements_simplicity_mallocTransaction(&testTx1);
+    sha256_fromMidstate(cmr, elementsCheckSigHashAllTx1_cmr);
+    sha256_fromMidstate(wmr, elementsCheckSigHashAllTx1_wmr);
     if (tx1) {
       successes++;
       bool execResult;
       {
         FILE* file = fmemopen_rb(elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
-        if (elements_simplicity_execSimplicity(&execResult, tx1, 0, elementsCheckSigHashAllTx1_cmr, elementsCheckSigHashAllTx1_wmr, file) && execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, tx1, 0, cmr, wmr, file) && execResult) {
           successes++;
         } else {
           failures++;
