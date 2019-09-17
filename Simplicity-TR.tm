@@ -1048,7 +1048,7 @@
   This notation is designed to coincide with the monadic notation that we
   will define in Section<nbsp><reference|ss:MonadZero>.
 
-  <subsection|List Functors>
+  <subsection|List Functors><label|ss:ListFunctors>
 
   Given a type <math|A>, we recursively define the list functor
   <math|A<rsup|\<ast\>>> and the non-empty list functor <math|A<rsup|+>>,
@@ -4636,7 +4636,8 @@
   assertions.
 
   A Simplicity DAG is represented as a topologically sorted, (non-empty) list
-  of Nodes.
+  of Nodes. \ (You may wish to review Section<nbsp><reference|ss:ListFunctors>
+  to recall our notation for list related operators.)
 
   <\equation*>
     DAG\<assign\>Node<rsup|+>
@@ -7566,6 +7567,7 @@
     <associate|ss:FreeMonadicDeserialization|<tuple|9.2.5.1|80>>
     <associate|ss:Haskell-DAG|<tuple|9.2.5.2|?>>
     <associate|ss:Haskell-Serialization|<tuple|9.2.5|80>>
+    <associate|ss:ListFunctors|<tuple|2.2.2|?>>
     <associate|ss:MonadZero|<tuple|2.3.4|16>>
     <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|31>>
     <associate|ss:Serialization|<tuple|7.2|62>>
