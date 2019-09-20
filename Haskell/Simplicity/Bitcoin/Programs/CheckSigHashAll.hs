@@ -100,7 +100,7 @@ pkwCheckSigHashAll Lib{..} (Schnorr.PubKey y x) ~(Schnorr.Sig r s) =
    scribe (toBit y, toWord256 . toInteger $ x) &&& (witness (toWord256 . toInteger $ r, toWord256 . toInteger $ s))
    >>> checkSigHashAll
 
--- | An instance of the Elements checkSigHash 'Lib' library.
+-- | An instance of the Bitcoin checkSigHash 'Lib' library.
 -- This instance does not share its dependencies.
 -- Users should prefer to use 'mkLib' in order to share library dependencies.
 -- This instance is provided mostly for testing purposes.

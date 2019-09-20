@@ -1,6 +1,6 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
--- | This module unpacks the 'Simplicity.Elements.Programs.CheckSigHashAll.libCore' and 'Simplicity.Elements.Programs.CheckSigHashAll.libAssert' library instances into individual functions.
--- Users should prefer to use 'Simplicity.Elements.Programs.CheckSigHashAll.mkLibCore' and 'Simplicity.Elements.Programs.CheckSigHashAll.mkLibAssert' in order to share library dependencies.
+-- | This module unpacks the 'Simplicity.Bitcoin.Programs.CheckSigHashAll.lib' library instances into individual functions.
+-- Users should prefer to use 'Simplicity.Bitcoin.Programs.CheckSigHashAll.mkLib' in order to share library dependencies.
 -- This module is provided mostly for testing purposes.
 module Simplicity.Bitcoin.Programs.CheckSigHashAll.Lib
   (
