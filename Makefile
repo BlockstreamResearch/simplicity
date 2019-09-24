@@ -28,7 +28,7 @@ primitive/elements/jets.o: primitive/elements/jets.c
 libElementsSimplicity.a: bitstream.o dag.o deserialize.o eval.o frame.o jets.o jetTable.o sha256.o type.o typeInference.o primitive/elements.o primitive/elements/jets.o primitive/elements/primitive.o
 	ar rcs $@ $^
 
-test: test.o hashBlock.o schnorr1.o schnorr8.o primitive/elements/checkSigHashAllTx1.o libElementsSimplicity.a
+test: test.o hashBlock.o schnorr0.o schnorr6.o primitive/elements/checkSigHashAllTx1.o libElementsSimplicity.a
 	$(CC) $^ -o $@ $(LDLIBS)
 
 install: libElementsSimplicity.a

@@ -7,8 +7,8 @@
 #include "eval.h"
 #include "typeInference.h"
 #include "hashBlock.h"
-#include "schnorr1.h"
-#include "schnorr8.h"
+#include "schnorr0.h"
+#include "schnorr6.h"
 #include "primitive/elements/checkSigHashAllTx1.h"
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
@@ -365,17 +365,17 @@ int main(void) {
   test_decodeUptoMaxInt();
   test_hashBlock();
   test_occursCheck();
+  {
+    FILE* file = fmemopen_rb(schnorr0, sizeof_schnorr0);
+    test_program("schnorr0", file, true, schnorr0_cmr, schnorr0_wmr);
+    fclose(file);
+  }
+  {
+    FILE* file = fmemopen_rb(schnorr6, sizeof_schnorr6);
+    test_program("schnorr6", file, false, schnorr6_cmr, schnorr6_wmr);
+    fclose(file);
+  }
   test_elements();
-  {
-    FILE* file = fmemopen_rb(schnorr1, sizeof_schnorr1);
-    test_program("schnorr1", file, true, schnorr1_cmr, schnorr1_wmr);
-    fclose(file);
-  }
-  {
-    FILE* file = fmemopen_rb(schnorr8, sizeof_schnorr8);
-    test_program("schnorr8", file, false, schnorr8_cmr, schnorr8_wmr);
-    fclose(file);
-  }
 
   printf("Successes: %d\n", successes);
   printf("Failures: %d\n", failures);
