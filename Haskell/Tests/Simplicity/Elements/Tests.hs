@@ -18,8 +18,6 @@ import Simplicity.Elements.Semantics
 import Simplicity.MerkleRoot
 import Simplicity.Ty.Word
 
-import Debug.Trace
-
 tests :: TestTree
 tests = testGroup "Elements"
         [ testCase "sigHashAll" (assertBool "sigHashAll_matches" hunit_sigHashAll)
