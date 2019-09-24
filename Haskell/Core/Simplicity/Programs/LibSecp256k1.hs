@@ -20,7 +20,7 @@ module Simplicity.Programs.LibSecp256k1
   , wnaf5, wnaf16
   , ecMult
   -- * Schnorr signature operations
-  , PubKey, pkPoint
+  , XOnlyPubKey, pkPoint
   , Sig, sigUnpack
   , scalarUnrepr
   , schnorrVerify, schnorrAssert
@@ -74,10 +74,10 @@ type Scalar = Word256
 type Wnaf5State = (Either Word2 (), Bit) -- state consists of a counter for skiping upto for places and a bit indicating the current carry bit.
 type Wnaf5Env b = (b, Vector4 b) -- the environment consists of the current bit in the scalar being considered and the following 4 bits afterwards (zero padded).
 
--- | A format for (Schnorr) elliptic curve public keys.
--- It consists of the least significant bit of the y-coordinate and the packed format for the x-coordinate.
+-- | A format for (Schnorr) elliptic curve x-only public keys.
+-- The y-coordinate is implicity the one on the curve that is positive (i.e it is a quadratic residue).
 -- The point at infinity isn't representable (nor is it a valid public key to begin with).
-type PubKey = (Bit, Word256)
+type XOnlyPubKey = Word256
 
 -- | A format for Schnorr signatures.
 type Sig = (Word256, Word256)
@@ -241,11 +241,11 @@ data Lib term =
     -- If the result is the point at infinity, it is returned in canonical form.
   , ecMult :: term ((GEJ, Scalar), Scalar) GEJ
 
-    -- | This function unpacks a 'PubKey' as a elliptic curve point in Jacobian coordinates.
+    -- | This function unpacks a 'XOnlyPubKey' as a elliptic curve point in Jacobian coordinates.
     --
     -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
     -- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
-  , pkPoint :: term PubKey (Either () GEJ)
+  , pkPoint :: term XOnlyPubKey (Either () GEJ)
 
     -- | This function unpackes a 'Sig' as a pair of a field element and a scalar value.
     --
@@ -257,7 +257,7 @@ data Lib term =
   , scalarUnrepr :: term Word256 Scalar
 
     -- | This function is given a public key, a 256-bit message, and a signature, and checks if the signature is valid for the given message and public key.
-  , schnorrVerify :: term ((PubKey, Word256), Sig) Bit
+  , schnorrVerify :: term ((XOnlyPubKey, Word256), Sig) Bit
   }
 
 instance SimplicityFunctor Lib where
@@ -699,12 +699,12 @@ mkLib Sha256.Lib{..} = lib
 
   , pkPoint =
      let
-      k1 = take (feSeven &&& (iden &&& sqr >>> mul) >>> add >>> sqrt) &&& iden
+      k1 = (feSeven &&& (iden &&& sqr >>> mul) >>> add >>> sqrt) &&& iden
        >>> match (injl unit) (injr k2)
-      k2 = (ioh &&& (take normalize &&& iih >>> (take (take (drop (drop iiih))) &&& ih >>> eq) &&& oh >>> cond iden (neg 1))) &&& feOne
+      k2 = (ih &&& oh) &&& feOne
       lt = subtractor word256 >>> oh
      in
-      (ih &&& scribe (toWord256 feOrder) >>> lt) &&& (drop feUnpack &&& oh)
+      (iden &&& scribe (toWord256 feOrder) >>> lt) &&& feUnpack
   >>> cond k1 (injl unit)
 
   , sigUnpack =
@@ -727,12 +727,9 @@ mkLib Sha256.Lib{..} = lib
       k2 = iioh &&& ((oh &&& ioh) &&& iiih >>> ecMult)
        >>> and eqXCoord (drop hasQuadY)
       nege = (scribe (toWord256 scalarOrder) &&& (h >>> scalarUnrepr) >>> sub256)
+      iv = scribe (toWord256 0x048d9a59fe39fb0528479648e4a660f9814b9e660469e80183909280b329e454)
       h = m >>> (iv &&& oh >>> hashBlock) &&& ih >>> hashBlock
-      m = (ioh
-         &&& take (take (((((y &&& drop (take (take oooh))) &&& drop (take (take (take (oih &&& ioh))))) &&& drop (take (take ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop (take (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop ((((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh)))) &&& drop (take ((oiih &&& iooh) &&& drop (oih &&& ioh)))) &&& drop (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh)))))))
-        &&& take ((((((take (drop (drop (drop iiih))) &&& drop (take (take oooh))) &&& drop (take (take (take (oih &&& ioh))))) &&& drop (take (take ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop (take (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh))))) &&& drop ((((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh)))) &&& drop (take ((oiih &&& iooh) &&& drop (oih &&& ioh)))) &&& drop (((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh))) &&& drop ((oiih &&& iooh) &&& drop (oih &&& ioh)))))
-        &&& (((((drop (drop (drop iiih)) &&& scribe8 0x80) &&& zero word16) &&& zero word32) &&& zero word64) &&& scribe (toWord128 (256+8+256+256))))
-      y = cond (scribe8 3) (scribe8 2)
+      m = (ioh &&& ooh) &&& (oih &&& (scribe (toWord256 0x8000000000000000000000000000000000000000000000000000000000000500)))
      in
       drop sigUnpack &&& (take (take pkPoint) &&& nege)
   >>> match false k1
@@ -834,7 +831,7 @@ mkLib Sha256.Lib{..} = lib
       negator = zero word16 &&& iden >>> subtractor word16 >>> ih
 
 -- | This function is given a public key, a 256-bit message, and a signature, and asserts that the signature is valid for the given message and public key.
-schnorrAssert :: Assert term => Lib term -> term ((PubKey, Word256), Sig) ()
+schnorrAssert :: Assert term => Lib term -> term ((XOnlyPubKey, Word256), Sig) ()
 schnorrAssert m = assert (schnorrVerify m)
 
 -- | An instance of the Sha256 'Lib' library.

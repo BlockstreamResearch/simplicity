@@ -9,7 +9,7 @@ module Simplicity.LibSecp256k1.Spec
  , eqXCoord, hasQuadY
  , scalarNegate
  , wnaf, ecMult
- , PubKey(..), pkPoint
+ , XOnlyPubKey(..), pkPoint
  , Sig(..), sigUnpack
  , schnorr
  ) where
@@ -19,6 +19,7 @@ import Control.Monad (guard)
 import Control.Monad.Trans.State (state, evalState)
 import Data.Bits ((.&.), (.|.), complement, shiftL, shiftR, testBit)
 import Data.ByteString.Short (ShortByteString, pack)
+import qualified Data.ByteString.Char8 as BSC
 import Data.Ix (inRange)
 import Data.List (mapAccumL, mapAccumR, unfoldr)
 import Data.Maybe (isJust)
@@ -466,12 +467,12 @@ tableG = t & traverse %~ norm
   zinv3 = zinv2 .*. zinv
   norm (GE x y) = GE (normalize (x .*. zinv2)) (normalize (y .*. zinv3))
 
-pkPoint :: PubKey -> Maybe GEJ
-pkPoint (PubKey py px) = do
+pkPoint :: XOnlyPubKey -> Maybe GEJ
+pkPoint (XOnlyPubKey px) = do
   let x = feUnpack px
   guard $ (normalize x^.._fe) == (x^.._fe)
-  y0 <- normalize <$> sqrt (sqr x .*. x .+. feSeven)
-  return $ GEJ x (if py == odd (repr y0) then y0 else neg 1 y0) feOne
+  y <- normalize <$> sqrt (sqr x .*. x .+. feSeven)
+  return $ GEJ x y feOne
 
 sigUnpack :: Sig -> Maybe (FE, Scalar)
 sigUnpack (Sig r0 s0) = do
@@ -482,14 +483,15 @@ sigUnpack (Sig r0 s0) = do
   r = feUnpack r0
   s = Scalar s0
 
-schnorr :: PubKey  -- ^ pubkey
-        -> Hash256 -- ^ message
-        -> Sig     -- ^ signature
+schnorr :: XOnlyPubKey  -- ^ public key
+        -> Hash256      -- ^ message
+        -> Sig          -- ^ signature
         -> Bool
 schnorr pk m sg = Just () == do
   p <- pkPoint pk
   (rx, s) <- sigUnpack sg
-  let h = bsHash . runPut $ putShortByteString (fePack rx) >> put pk >> put m
+  let tag = bsHash (BSC.pack "BIPSchnorr")
+  let h = bsHash . runPut $ put tag >> put tag >> putShortByteString (fePack rx) >> put pk >> put m
   let nege = scalarNegate . scalarUnrepr . integerHash256 $ h
   let r = ecMult p nege s
   guard $ hasQuadY r

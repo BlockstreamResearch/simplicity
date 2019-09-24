@@ -11,7 +11,7 @@ module Simplicity.Elements.Programs.CheckSigHashAll.Lib
   , wCheckSigHashAll
   , pkwCheckSigHashAll
   -- * Types
-  , CheckSigHashAll.Hash, CheckSigHashAll.PubKey, CheckSigHashAll.Sig
+  , CheckSigHashAll.Hash, CheckSigHashAll.XOnlyPubKey, CheckSigHashAll.Sig
   ) where
 
 import Simplicity.Tensor

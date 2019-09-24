@@ -22,13 +22,11 @@ import qualified Data.Word
 import Simplicity.Digest
 import Simplicity.Elements.DataTypes
 import Simplicity.Serialization
-import Simplicity.LibSecp256k1.Schnorr
-import qualified Simplicity.Programs.LibSecp256k1
 import Simplicity.Ty
 import Simplicity.Ty.Bit
 import Simplicity.Ty.Word
 
-type Conf a = Either Simplicity.Programs.LibSecp256k1.PubKey a
+type Conf a = Either (Bit, Word256) a
 
 type S a = Either () a
 

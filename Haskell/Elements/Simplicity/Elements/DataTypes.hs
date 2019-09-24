@@ -1,7 +1,8 @@
 {-# LANGUAGE DeriveTraversable #-}
 -- | This module defines the data structures that make up the signed data in a Bitcoin transaction.
 module Simplicity.Elements.DataTypes
-  ( Script
+  ( PubKey(..)
+  , Script
   , TxNullDatumF(..), TxNullDatum, TxNullData, txNullData
   , Lock, Value
   , Confidential(..)
@@ -31,8 +32,9 @@ import Data.Serialize ( Serialize
                       )
 
 import Simplicity.Digest
-import Simplicity.LibSecp256k1.Schnorr
 import Simplicity.Word
+
+data PubKey = PubKey Bool Word256 deriving Show
 
 -- | Unparsed Bitcoin Script.
 -- Script in transactions outputs do not have to be parsable, so we encode this as a raw 'Data.ByteString.ByteString'.
@@ -148,12 +150,12 @@ newtype Nonce = Nonce { nonce :: Confidential Hash256 } deriving Show
 
 instance Serialize Nonce where
   put (Nonce (Explicit h)) = putWord8 0x01 >> put h
-  put (Nonce (Confidential pk)) = put pk
+  put (Nonce (Confidential (PubKey by x))) = putWord8 (if by then 0x03 else 0x02) >> put x
   get = lookAhead getWord8 >>= go
    where
     go 0x01 = getWord8 *> (Nonce . Explicit <$> get)
-    go 0x02 = Nonce . Confidential <$> get
-    go 0x03 = Nonce . Confidential <$> get
+    go 0x02 = Nonce . Confidential . PubKey False <$> get
+    go 0x03 = Nonce . Confidential . PubKey True <$> get
     go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Nonce}: bad prefix."
 
 putMaybeConfidential :: Putter a -> Putter (Maybe a)

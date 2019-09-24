@@ -19,7 +19,7 @@ module Simplicity.Programs.LibSecp256k1.Lib
   , wnaf5, wnaf16
   , ecMult
   -- * Schnorr signature operations
-  , LibSecp256k1.PubKey, pkPoint
+  , LibSecp256k1.XOnlyPubKey, pkPoint
   , LibSecp256k1.Sig, sigUnpack
   , scalarUnrepr
   , schnorrVerify, schnorrAssert
