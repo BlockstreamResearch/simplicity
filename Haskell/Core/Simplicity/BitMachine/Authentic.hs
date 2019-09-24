@@ -100,7 +100,7 @@ type StateTrans m = State -> m State
 
 -- Below are functions used in 'runMachineF' to implement the instructions for the Bit Machine.
 abort :: MonadFail m => StateTrans m
-abort = fail "explicit abort"
+abort _ = fail "explicit abort"
 
 copy :: MonadFail m => Int -> StateTrans m
 copy n st = do
@@ -129,13 +129,13 @@ runMachineF End = return
 runMachineF Abort = abort
 runMachineF (Write b k) = (act.wf) (fWrite (Just b)) >=> k
 runMachineF (Copy n k) | 0 <= n = copy n >=> k
-                       | otherwise = fail "runMachineF Copy: negative index"
+                       | otherwise = \_ -> fail "runMachineF Copy: negative index"
 runMachineF (Skip n k) | 0 <= n = (act.wf) (fMove n) >=> k
-                       | otherwise = fail "runMachineF Skip: negative index"
+                       | otherwise = \_ -> fail "runMachineF Skip: negative index"
 runMachineF (Fwd n k) | 0 <= n = (act.rf) (fMove n) >=> k
-                      | otherwise = fail "runMachineF Fwd: negative index"
+                      | otherwise = \_ -> fail "runMachineF Fwd: negative index"
 runMachineF (Bwd n k) | 0 <= n = (act.rf) (fMove (-n)) >=> k
-                      | otherwise = fail "runMachineF Bwd: negative index"
+                      | otherwise = \_ -> fail "runMachineF Bwd: negative index"
 runMachineF (NewFrame n k) = newFrame n >=> k
 runMachineF (MoveFrame k) = moveFrame >=> k
 runMachineF (DropFrame k) = dropFrame >=> k
