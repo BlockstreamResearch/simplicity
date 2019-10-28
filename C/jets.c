@@ -3,6 +3,7 @@
 #include "sha256/compression.h"
 
 bool adder32(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
   writeBit(dst, 0xFFFFFFFF - y < x);
@@ -17,6 +18,7 @@ bool adder32(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 bool fullAdder32(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
   /* :TODO: rewrite full adder so the carry bit comes first for better bit allignment */
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
@@ -33,6 +35,7 @@ bool fullAdder32(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 bool subtractor32(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
   writeBit(dst, x < y);
@@ -41,6 +44,7 @@ bool subtractor32(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 bool fullSubtractor32(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
   /* :TODO: rewrite full subtractor so the borrow bit comes first for better bit allignment */
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
@@ -51,6 +55,7 @@ bool fullSubtractor32(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 bool multiplier32(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
   uint_fast64_t x = read32(&src);
   uint_fast64_t y = read32(&src);
   write64(dst, x * y);
@@ -58,6 +63,7 @@ bool multiplier32(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 bool fullMultiplier32(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
   uint_fast64_t x = read32(&src);
   uint_fast64_t y = read32(&src);
   uint_fast64_t z = read32(&src);
@@ -67,6 +73,7 @@ bool fullMultiplier32(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 bool sha256_hashBlock(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
   uint32_t h[8];
   uint32_t block[16];
   read32s(h, 8, &src);
