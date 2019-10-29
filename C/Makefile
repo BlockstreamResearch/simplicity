@@ -15,13 +15,17 @@ jetTable.c: jetTable.gperf
 jetTable.o: jetTable.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
+# libsecp256k1 is full of conversion warnings, so we compile jets-secp256k1.c separately.
+jets-secp256k1.o: jets-secp256k1.c
+	$(CC) -c $(CFLAGS) $(CWARN) -Wno-conversion $(CPPFLAGS) -o $@ $<
+
 primitive/elements/jets.o: primitive/elements/jets.c
 	$(CC) -c $(CFLAGS) $(CWARN) -Wno-switch-enum -Wswitch $(CPPFLAGS) -o $@ $<
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<
 
-libElementsSimplicity.a: bitstream.o dag.o deserialize.o eval.o frame.o jets.o jetTable.o sha256.o type.o typeInference.o primitive/elements.o primitive/elements/jets.o primitive/elements/primitive.o
+libElementsSimplicity.a: bitstream.o dag.o deserialize.o eval.o frame.o jets.o jets-secp256k1.o jetTable.o sha256.o type.o typeInference.o primitive/elements.o primitive/elements/jets.o primitive/elements/primitive.o
 	ar rcs $@ $^
 
 test: test.o hashBlock.o schnorr0.o schnorr6.o primitive/elements/checkSigHashAllTx1.o libElementsSimplicity.a
