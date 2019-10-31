@@ -3,7 +3,8 @@
 module Simplicity.Bitcoin.Primitive
   ( Prim(..), primPrefix, primName
   , getPrimBit, getPrimByte, putPrimBit, putPrimByte
-  , PrimEnv, primSem
+  , PrimEnv, primEnv
+  , primSem
   ) where
 
 import Data.Array (Array, (!), bounds, elems, inRange)
@@ -172,22 +173,12 @@ primEnv :: SigTx -> Data.Word.Word32 -> Hash256 -> Maybe PrimEnv
 primEnv tx ix scmr | cond = Just $ PrimEnv { envTx = tx
                                            , envIx = ix
                                            , envScriptCMR = scmr
-                                           , envInputsHash = inputsHash
-                                           , envOutputsHash = outputsHash
+                                           , envInputsHash = sigTxInputsHash tx
+                                           , envOutputsHash = sigTxOutputsHash tx
                                            }
                    | otherwise = Nothing
  where
   cond = inRange (bounds (sigTxIn tx)) ix
-  -- Perhaps the inputs and outputs should be hashed into a binary tree instead?
-  outputsHash = bslHash . runPutLazy $ mapM_ go (elems (sigTxOut tx))
-   where
-    go txo = putWord64le (txoValue txo)
-          >> put (bslHash (txoScript txo))
-  inputsHash = bslHash . runPutLazy $ mapM_ go (elems (sigTxIn tx))
-   where
-    go txi = put (sigTxiPreviousOutput txi)
-          >> putWord64le (sigTxiValue txi)
-          >> putWord32le (sigTxiSequence txi)
 
 primSem :: Prim a b -> a -> PrimEnv -> Maybe b
 primSem p a env = interpret p a
@@ -210,18 +201,19 @@ primSem p a env = interpret p a
   atInput f = cast . fmap f . lookupInput . fromInteger . fromWord32
   atOutput :: (TxOutput -> a) -> Word32 -> Either () a
   atOutput f = cast . fmap f . lookupOutput . fromInteger . fromWord32
+  encodeHash = toWord256 . integerHash256
   encodeOutpoint op = (toWord256 . integerHash256 $ opHash op, toWord32 . fromIntegral $ opIndex op)
   interpret Version = const . return . toWord32 . toInteger $ sigTxVersion tx
   interpret LockTime = const . return . toWord32 . toInteger $ sigTxLock tx
-  interpret InputsHash = const . return . toWord256 . integerHash256 $ envInputsHash env
-  interpret OutputsHash = const . return . toWord256 . integerHash256 $ envOutputsHash env
+  interpret InputsHash = const . return . encodeHash $ envInputsHash env
+  interpret OutputsHash = const . return . encodeHash $ envOutputsHash env
   interpret NumInputs = const . return . toWord32 . toInteger $ 1 + maxInput
   interpret TotalInputValue = const . return . toWord64 . fromIntegral . List.sum $ sigTxiValue <$> elems (sigTxIn tx)
-  interpret CurrentPrevOutpoint = const $ encodeOutpoint . sigTxiPreviousOutput <$> currentInput
+  interpret CurrentPrevOutpoint = const $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
   interpret CurrentValue = const $ toWord64 . toInteger . sigTxiValue <$> currentInput
   interpret CurrentSequence = const $ toWord32 . toInteger . sigTxiSequence <$> currentInput
   interpret CurrentIndex = const . return . toWord32 . toInteger $ ix
-  interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutput)
+  interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutpoint)
   interpret InputValue = return . (atInput $ toWord64 . toInteger . sigTxiValue)
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
   interpret NumOutputs = const . return . toWord32 . toInteger $ 1 + maxOutput

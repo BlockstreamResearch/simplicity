@@ -1,20 +1,20 @@
 -- | This module defines the data structures that make up the signed data in a Bitcoin transaction.
 module Simplicity.Bitcoin.DataTypes
   ( Script, Lock, Value
-  , Outpoint, opHash, opIndex
-  , SigTxInput, sigTxiPreviousOutput, sigTxiValue, sigTxiSequence
-  , TxOutput, txoValue, txoScript
-  , SigTx, sigTxVersion, sigTxIn, sigTxOut, sigTxLock
+  , Outpoint(Outpoint), opHash, opIndex
+  , SigTxInput(SigTxInput), sigTxiPreviousOutpoint, sigTxiValue, sigTxiSequence
+  , TxOutput(TxOutput), txoValue, txoScript
+  , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
   ) where
 
 import Control.Monad (guard)
-import Data.Array (Array)
+import Data.Array (Array, elems)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 import Data.Word (Word64, Word32, Word8)
 import Data.Serialize ( Serialize
                       , Get, get, getWord8, getWord16le, getWord32le, getWord64le, getLazyByteString
-                      , Put, put, putWord8, putWord16le, putWord32le, putWord64le, putLazyByteString
+                      , Put, put, putWord8, putWord16le, putWord32le, putWord64le, putLazyByteString, runPutLazy
                       )
 
 import Simplicity.Digest
@@ -80,7 +80,7 @@ instance Serialize Outpoint where
 
 -- | The data type for signed transaction inputs.
 -- Note that signed transaction inputs for BIP 143 include the value of the input, which doesn't appear in the serialized transaction input format.
-data SigTxInput = SigTxInput { sigTxiPreviousOutput :: Outpoint
+data SigTxInput = SigTxInput { sigTxiPreviousOutpoint :: Outpoint
                              , sigTxiValue :: Value
                              , sigTxiSequence :: Word32
                              } deriving Show
@@ -116,3 +116,14 @@ instance Serialize Tx where
   get = Tx <$> getWord32le <*> getList <*> getList <*> get
   put (Tx v is os t) = putWord32le v >> putList is >> putList os >> put t
 -}
+
+sigTxInputsHash tx = bslHash . runPutLazy $ mapM_ go (elems (sigTxIn tx))
+ where
+  go txi = put (sigTxiPreviousOutpoint txi)
+        >> putWord64le (sigTxiValue txi)
+        >> putWord32le (sigTxiSequence txi)
+
+sigTxOutputsHash tx = bslHash . runPutLazy $ mapM_ go (elems (sigTxOut tx))
+ where
+  go txo = putWord64le (txoValue txo)
+        >> put (bslHash (txoScript txo))
