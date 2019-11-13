@@ -33,10 +33,11 @@ enum TypeNamesForJets {
   sWord256,
   sSWord256,
   sWord32,
+  word2TimesWord256,
   twoPlusWord4,
-  pubKeyPlusBitPlusWord4,
-  sPubKeyPlusBitPlusWord4,
-  sSPubKeyPlusBitPlusWord4,
+  word2TimesWord256PlusTwoPlusWord4,
+  sWord2TimesWord256PlusTwoPlusWord4,
+  sSWord2TimesWord256PlusTwoPlusWord4,
   NumberOfTypeNames
 };
 
@@ -104,14 +105,16 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix) {
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sWord256] } } };
   (*bound_var)[sWord32] = (unification_var){ .isBound = true,
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[word32] } } };
+  (*bound_var)[word2TimesWord256] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word2], &(*bound_var)[word256] } } };
   (*bound_var)[twoPlusWord4] = (unification_var){ .isBound = true,
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[two], &(*bound_var)[word4] } } };
-  (*bound_var)[pubKeyPlusBitPlusWord4] = (unification_var){ .isBound = true,
-      .bound = { .kind = SUM,     .arg = { &(*bound_var)[pubkey], &(*bound_var)[twoPlusWord4] } } };
-  (*bound_var)[sPubKeyPlusBitPlusWord4] = (unification_var){ .isBound = true,
-      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[pubKeyPlusBitPlusWord4] } } };
-  (*bound_var)[sSPubKeyPlusBitPlusWord4] = (unification_var){ .isBound = true,
-      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sPubKeyPlusBitPlusWord4] } } };
+  (*bound_var)[word2TimesWord256PlusTwoPlusWord4] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM, .arg = { &(*bound_var)[word2TimesWord256], &(*bound_var)[twoPlusWord4] } } };
+  (*bound_var)[sWord2TimesWord256PlusTwoPlusWord4] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[word2TimesWord256PlusTwoPlusWord4] } } };
+  (*bound_var)[sSWord2TimesWord256PlusTwoPlusWord4] = (unification_var){ .isBound = true,
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sWord2TimesWord256PlusTwoPlusWord4] } } };
 
   *word256_ix = word256;
 
@@ -334,7 +337,7 @@ static dag_node jetNode(jetName name) {
       { .tag = JET
       , .jet = outputNullDatum
       , .sourceIx = word64
-      , .targetIx = sSPubKeyPlusBitPlusWord4
+      , .targetIx = sSWord2TimesWord256PlusTwoPlusWord4
       },
    [SCRIPTCMR] =
       { .tag = JET
