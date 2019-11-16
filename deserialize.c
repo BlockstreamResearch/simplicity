@@ -220,7 +220,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
     if (bit) {
       // TODO: Decode jets
       fprintf(stderr, "jets nodes not yet implemented\n");
-      exit(EXIT_FAILURE);
+      return ERR_NOT_YET_IMPLEMENTED;
     } else {
       return decodeJet(&dag[i], stream);
     }

@@ -11,6 +11,7 @@
 #define ERR_BITSTREAM_EOF (-2)
 #define ERR_BITSTREAM_ERROR (-3)
 #define ERR_DATA_OUT_OF_RANGE (-4)
+#define ERR_NOT_YET_IMPLEMENTED (-5)
 #define ERR_FAIL_CODE (-6)
 #define ERR_STOP_CODE (-8)
 #define ERR_HIDDEN (-10)
