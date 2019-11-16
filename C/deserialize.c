@@ -345,7 +345,7 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
   if (dagLen <= 0) return dagLen;
   /* :TODO: a consensus parameter limiting the maximum length of a DAG needs to be enforced here */
   if (PTRDIFF_MAX / sizeof(dag_node) < (size_t)dagLen) return ERR_DATA_OUT_OF_RANGE;
-  *dag = malloc(sizeof(dag_node[dagLen]));
+  *dag = malloc((size_t)dagLen * sizeof(dag_node));
   if (!*dag) return ERR_MALLOC;
 
   if (census) *census = (combinator_counters){0};
