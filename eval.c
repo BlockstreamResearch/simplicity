@@ -691,9 +691,6 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
 
     *evalSuccess = runTCO(state, stack, dag, type_dag, len, env);
 
-    assert(!*evalSuccess || state.activeReadFrame == frames);
-    assert(!*evalSuccess || state.activeWriteFrame == frames + (stackBound - 1));
-
     if (*evalSuccess && output) {
       memcpy(output, state.activeWriteFrame->edge, roundUWord(outputSize) * sizeof(UWORD));
     }
