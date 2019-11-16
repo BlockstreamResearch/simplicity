@@ -442,10 +442,10 @@ extern bool elements_simplicity_execSimplicity(bool* success, const transaction*
                                                const unsigned char* cmr, const unsigned char* wmr, FILE* file) {
   if (!success || !tx || !file) return false;
 
-  bool result = true;
+  bool result;
   combinator_counters census;
-  dag_node* dag = NULL;
-  void* witnessAlloc;
+  dag_node* dag;
+  void* witnessAlloc = NULL;
   bitstring witness;
   int32_t len;
   sha256_midstate cmr_hash, wmr_hash;
@@ -460,38 +460,39 @@ extern bool elements_simplicity_execSimplicity(bool* success, const transaction*
       *success = false;
       return PERMANENT_FAILURE(len);
     }
+
     int32_t err = decodeMallocWitnessData(&witnessAlloc, &witness, &stream);
     if (err < 0) {
       *success = false;
-      return PERMANENT_FAILURE(err);
-    }
-
-    /* Check that we hit the end of 'file' */
-    if (EOF != getc(file)) {
+      result = PERMANENT_FAILURE(err);
+    } else if (EOF != getc(file)) { /* Check that we hit the end of 'file' */
       *success = false;
-      return (!ferror(file));
+      result = !ferror(file);
+    } else {
+      *success = result = !ferror(file);
     }
-    if (ferror(file)) return false;
   }
 
-  /* :TODO: Fold CMR calculation into dag to remove this VLA.  The CMR is needed to implement disconnect anyway.*/
-  analyses analysis[len];
-  computeCommitmentMerkleRoot(analysis, dag, (size_t)len);
-  *success = !cmr || 0 == memcmp(cmr_hash.s, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
   if (*success) {
-    type* type_dag;
-    size_t sourceIx, targetIx;
-    result = mallocTypeInference(&type_dag, &sourceIx, &targetIx, dag, (size_t)len, &census);
-    *success = result && type_dag && 0 == sourceIx && 0 == targetIx && fillWitnessData(dag, type_dag, (size_t)len, witness);
+    /* :TODO: Fold CMR calculation into dag to remove this VLA.  The CMR is needed to implement disconnect anyway.*/
+    analyses analysis[len];
+    computeCommitmentMerkleRoot(analysis, dag, (size_t)len);
+    *success = !cmr || 0 == memcmp(cmr_hash.s, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
     if (*success) {
-      computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
-      *success = !wmr || 0 == memcmp(wmr_hash.s, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]));
+      type* type_dag;
+      size_t sourceIx, targetIx;
+      result = mallocTypeInference(&type_dag, &sourceIx, &targetIx, dag, (size_t)len, &census);
+      *success = result && type_dag && 0 == sourceIx && 0 == targetIx && fillWitnessData(dag, type_dag, (size_t)len, witness);
       if (*success) {
-        forceJets(dag, analysis, (size_t)len, JET_ALL);
-        result = evalTCOProgram(success, dag, type_dag, (size_t)len, &(txEnv){.tx = tx, .scriptCMR = cmr_hash.s, .ix = ix});
+        computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
+        *success = !wmr || 0 == memcmp(wmr_hash.s, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]));
+        if (*success) {
+          forceJets(dag, analysis, (size_t)len, JET_ALL);
+          result = evalTCOProgram(success, dag, type_dag, (size_t)len, &(txEnv){.tx = tx, .scriptCMR = cmr_hash.s, .ix = ix});
+        }
       }
+      free(type_dag);
     }
-    free(type_dag);
   }
 
   free(dag);
