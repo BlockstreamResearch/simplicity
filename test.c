@@ -53,10 +53,10 @@ static void test_decodeUptoMaxInt(void) {
 
 static void test_hashBlock(void) {
   printf("Test hashBlock\n");
-  dag_node* dag = NULL;
+  dag_node* dag;
   combinator_counters census;
   int32_t len, err = 0;
-  void* witnessAlloc;
+  void* witnessAlloc = NULL;
   bitstring witness;
   {
     FILE* file = fmemopen_rb(hashBlock, sizeof_hashBlock);
@@ -133,9 +133,8 @@ static void test_hashBlock(void) {
         failures++;
         printf("Unexpected failure of hashblock evaluation\n");
       }
-
-      free(type_dag);
     }
+    free(type_dag);
   }
   free(dag);
   free(witnessAlloc);
@@ -143,10 +142,10 @@ static void test_hashBlock(void) {
 
 static void test_program(char* name, FILE* file, bool expectedResult, const uint32_t* expectedCMR, const uint32_t* expectedWMR) {
   printf("Test %s\n", name);
-  dag_node* dag = NULL;
+  dag_node* dag;
   combinator_counters census;
   int32_t len, err = 0;
-  void* witnessAlloc;
+  void* witnessAlloc = NULL;
   bitstring witness;
   {
     bitstream stream = initializeBitstream(file);
@@ -181,7 +180,6 @@ static void test_program(char* name, FILE* file, bool expectedResult, const uint
         sourceIx != 0 || targetIx != 0) {
       failures++;
       printf("Unexpected failure of type inference.\n");
-      return;
     } else if (!fillWitnessData(dag, type_dag, (size_t)len, witness)) {
       failures++;
       printf("Unexpected failure of fillWitnessData.\n");
@@ -214,8 +212,8 @@ static void test_occursCheck(void) {
   printf("Test occursCheck\n");
   /* The untyped Simplicity term (case (drop iden) iden) ought to cause an occurs check failure. */
   const unsigned char buf[] = { 0xc1, 0x07, 0x20, 0x30 };
-  dag_node* dag = NULL;
-  combinator_counters census = {0};
+  dag_node* dag;
+  combinator_counters census;
   int32_t len;
   {
     FILE* file = fmemopen_rb(buf, sizeof(buf));

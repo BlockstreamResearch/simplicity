@@ -600,6 +600,7 @@ static bool freezeTypes(type* type_dag, size_t* sourceIx, size_t* targetIx,
  */
 bool mallocTypeInference(type** type_dag, size_t *sourceIx, size_t *targetIx,
                          dag_node* dag, const size_t len, const combinator_counters* census) {
+  *type_dag = NULL;
   /* :TODO: static assert that MAX_DAG size is small enough that these sizes fit within SIZE_T. */
   /* These arrays could be allocated on the stack, but they are potentially large, so we allocate them on the heap instead. */
   unification_arrow* arrow = len <= SIZE_MAX / sizeof(unification_arrow)

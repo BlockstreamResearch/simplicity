@@ -382,6 +382,7 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
  *                if the function returns a negative value then '*allocation == NULL'
  */
 int32_t decodeMallocWitnessData(void** allocation, bitstring* witness, bitstream* stream) {
+  *allocation = NULL;
   int32_t witnessLen = getBit(stream);
   if (witnessLen < 0) return witnessLen;
   if (0 < witnessLen) witnessLen = decodeUptoMaxInt(stream);
