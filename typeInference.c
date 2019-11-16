@@ -605,17 +605,13 @@ bool mallocTypeInference(type** type_dag, size_t *sourceIx, size_t *targetIx,
   unification_arrow* arrow = len <= SIZE_MAX / sizeof(unification_arrow)
                            ? malloc(len * sizeof(unification_arrow))
                            : NULL;
-  /* :TODO: handle the case when max_extra_vars(census) = 0 */
-  unification_var* extra_var = max_extra_vars(census) <= SIZE_MAX / sizeof(unification_var)
-                             ? malloc(max_extra_vars(census) * sizeof(unification_var))
-                             : NULL;
   unification_var* bound_var;
-  size_t word256_ix;
-  size_t bindings_used = mallocBoundVars(&bound_var, &word256_ix);
+  size_t word256_ix, extra_var_start;
+  size_t bindings_used = mallocBoundVars(&bound_var, &word256_ix, &extra_var_start, max_extra_vars(census));
 
-  bool result = arrow && extra_var && bound_var;
+  bool result = arrow && bound_var;
   if (result) {
-    if (typeInference(arrow, dag, len, extra_var, bound_var, word256_ix, &bindings_used)) {
+    if (typeInference(arrow, dag, len, bound_var + extra_var_start, bound_var, word256_ix, &bindings_used)) {
       /* :TODO: constrain the root of the dag to be a Simplicity program: ONE |- ONE */
 
       /* :TODO: static assert that MAX_DAG size is small enough that this size fits within SIZE_T. */
@@ -633,7 +629,6 @@ bool mallocTypeInference(type** type_dag, size_t *sourceIx, size_t *targetIx,
   }
 
   free(arrow);
-  free(extra_var);
   free(bound_var);
   return result;
 }

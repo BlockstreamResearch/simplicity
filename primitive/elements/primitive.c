@@ -49,15 +49,19 @@ enum TypeNamesForJets {
  *
  * Precondition: NULL != bound_var;
  *               NULL != word256_ix;
+ *               NULL != extra_var_start;
  *
  * Postcondition: Either '*bound_var == NULL' and the function returns 0
- *                or 'unification_var (*bound_var)[N]' is an array of fresh unification variables bound to various types
- *                   such that for any 'jet : A |- B' there is some 'i < N' and 'j < N' such that '(*bound_var)[i]' is bound to 'A'
- *                                                                                            and '(*bound_var)[j]' is bound to 'B'
- *                   and, in particular, '*word256_ix < N' and '(*bound_var)[*word256_ix]' is bound the type 'TWO^256'
+ *                or 'unification_var (*bound_var)[*extra_var_start + extra_var_len]' is an array of unification variables
+ *                   such that for any 'jet : A |- B' there is some 'i < *extra_var_start' and 'j < *extra_var_start' such that
+ *                      '(*bound_var)[i]' is bound to 'A' and '(*bound_var)[j]' is bound to 'B'
+ *                   and, '*word256_ix < *extra_var_start' and '(*bound_var)[*word256_ix]' is bound the type 'TWO^256'
  */
-size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix) {
-  *bound_var = malloc(sizeof(unification_var[NumberOfTypeNames]));
+size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* extra_var_start, size_t extra_var_len) {
+  _Static_assert(NumberOfTypeNames <= SIZE_MAX / sizeof(unification_var), "NumberOfTypeNames is too large");
+  *bound_var = extra_var_len <= SIZE_MAX / sizeof(unification_var) - NumberOfTypeNames
+             ? malloc((NumberOfTypeNames + extra_var_len) * sizeof(unification_var))
+             : NULL;
   if (!(*bound_var)) return 0;
   (*bound_var)[one] = (unification_var){ .isBound = true,
       .bound = { .kind = ONE } };
@@ -117,6 +121,7 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix) {
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sWord2TimesWord256PlusTwoPlusWord4] } } };
 
   *word256_ix = word256;
+  *extra_var_start = NumberOfTypeNames;
 
   /* 'one' is a trivial binding, so we made 'NumberOfTypeNames - 1' non-trivial bindings. */
   return NumberOfTypeNames - 1;
