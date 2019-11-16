@@ -196,12 +196,12 @@ static void copyBitsHelper(const frameItem* dst, const frameItem *src, size_t n)
      * We can use 'memcpy' to copy data in bulk.
      */
     size_t m = roundUWord(n);
-    /* If we when through the previous 'if (dst_shift)' block then 'src_shift == 0' and we need to decrement src_ptr.
+    /* If we went through the previous 'if (dst_shift)' block then 'src_shift == 0' and we need to decrement src_ptr.
      * If we did not go through the previous 'if (dst_shift)' block then 'src_shift == UWORD_BIT'
      * and we do not need to decrement src_ptr.
      * We have folded this conditional decrement into the equation applied to 'src_ptr' below.
      */
-    memcpy(dst_ptr - (m - 1), src_ptr - (m - src_shift / UWORD_BIT), sizeof(UWORD[m]));
+    memcpy(dst_ptr - (m - 1), src_ptr - (m - src_shift / UWORD_BIT), m * sizeof(UWORD));
   } else {
     while(1) {
       /* Fill the write frame's UWORD by copying the LSBs of the read frame's current UWORD
@@ -384,7 +384,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
 
         /* MOVE_FRAME */
         memmove( state.activeReadFrame->edge, state.activeWriteFrame->edge
-               , sizeof(UWORD[(state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge])
+               , (size_t)((state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge) * sizeof(UWORD)
                );
         *(state.activeReadFrame + 1) = initReadFrame(type_dag[dag[pc].typeAnnotation[1]].bitSize, state.activeReadFrame->edge);
         state.activeWriteFrame++; state.activeReadFrame++;
@@ -546,7 +546,9 @@ typedef struct memBound {
  *                          during execution of 'dag';
  */
 static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const type* type_dag, const size_t len) {
-  memBound* bound = malloc(sizeof(memBound[len]));
+  memBound* bound = len <= SIZE_MAX / sizeof(memBound)
+                  ? malloc(len * sizeof(memBound))
+                  : NULL;
   if (!bound) return false;
 
   size_t scratch;
@@ -669,12 +671,16 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
 
   /* We use calloc for 'cells' because the frame data must be initialized before we can perform bitwise operations. */
   UWORD* cells = calloc(cellsBound ? cellsBound : 1, sizeof(UWORD));
-  frameItem* frames = malloc(sizeof(frameItem[stackBound]));
-  call* stack = malloc(sizeof(call[len]));
+  frameItem* frames = stackBound <= SIZE_MAX / sizeof(frameItem)
+                    ? malloc(stackBound * sizeof(frameItem))
+                    : NULL;
+  call* stack = len <= SIZE_MAX / sizeof(call)
+              ? malloc(len * sizeof(call))
+              : NULL;
 
   const bool result = cells && frames && stack;
   if (result) {
-    if (input) memcpy(cells, input, sizeof(UWORD[roundUWord(inputSize)]));
+    if (input) memcpy(cells, input, roundUWord(inputSize) * sizeof(UWORD));
 
     evalState state =
       { .activeReadFrame = frames
@@ -689,7 +695,7 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
     assert(!*evalSuccess || state.activeWriteFrame == frames + (stackBound - 1));
 
     if (*evalSuccess && output) {
-      memcpy(output, state.activeWriteFrame->edge, sizeof(UWORD[roundUWord(outputSize)]));
+      memcpy(output, state.activeWriteFrame->edge, roundUWord(outputSize) * sizeof(UWORD));
     }
   }
 

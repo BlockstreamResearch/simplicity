@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include "bounded.h"
 #include "primitive.h"
 
 /* Every subexpression in a Simplicity expression has a unification variable for its inferred source and target type. */
@@ -601,8 +602,13 @@ bool mallocTypeInference(type** type_dag, size_t *sourceIx, size_t *targetIx,
                          dag_node* dag, const size_t len, const combinator_counters* census) {
   /* :TODO: static assert that MAX_DAG size is small enough that these sizes fit within SIZE_T. */
   /* These arrays could be allocated on the stack, but they are potentially large, so we allocate them on the heap instead. */
-  unification_arrow* arrow = malloc(sizeof(unification_arrow[len]));
-  unification_var* extra_var = malloc(sizeof(unification_var[max_extra_vars(census)]));
+  unification_arrow* arrow = len <= SIZE_MAX / sizeof(unification_arrow)
+                           ? malloc(len * sizeof(unification_arrow))
+                           : NULL;
+  /* :TODO: handle the case when max_extra_vars(census) = 0 */
+  unification_var* extra_var = max_extra_vars(census) <= SIZE_MAX / sizeof(unification_var)
+                             ? malloc(max_extra_vars(census) * sizeof(unification_var))
+                             : NULL;
   unification_var* bound_var;
   size_t word256_ix;
   size_t bindings_used = mallocBoundVars(&bound_var, &word256_ix);
@@ -613,7 +619,9 @@ bool mallocTypeInference(type** type_dag, size_t *sourceIx, size_t *targetIx,
       /* :TODO: constrain the root of the dag to be a Simplicity program: ONE |- ONE */
 
       /* :TODO: static assert that MAX_DAG size is small enough that this size fits within SIZE_T. */
-      *type_dag = malloc(sizeof(type[1 + bindings_used]));
+      *type_dag = bindings_used < SIZE_MAX / sizeof(type)
+                ? malloc((1 + bindings_used) * sizeof(type))
+                : NULL;
       result = *type_dag;
       if (result) {
         if (!freezeTypes(*type_dag, sourceIx, targetIx, dag, arrow, len)) {
