@@ -42,6 +42,7 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
  *
  * Precondition: NULL != evalSuccess
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type 1 |- 1;
+ *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
 static inline bool evalTCOProgram(bool *evalSuccess, const dag_node* dag, type* type_dag, size_t len, const txEnv* env) {
   return evalTCOExpression(evalSuccess, NULL, 0, NULL, 0, dag, type_dag, len, env);
