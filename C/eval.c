@@ -570,8 +570,8 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
      case DISCONNECT:
       /* :TODO: Support disconnect */
       fprintf(stderr, "EvalTCOBounds for disconnect not yet implemented\n");
-      exit(EXIT_FAILURE);
-      break;
+      free(bound);
+      return false;
      case COMP:
       /* :TODO: replace this check with a consensus critical limit. */
       if (UWORD_BIT - 1 <= SIZE_MAX - type_dag[dag[i].typeAnnotation[1]].bitSize) {
