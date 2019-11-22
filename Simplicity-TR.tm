@@ -6403,8 +6403,9 @@
   data type for Simplicity expressions in open recursive style via the
   <verbatim|TermF ty w> functor. The <verbatim|ty> parameter allows for these
   terms to be decorated with type annotations, though nothing in the data
-  type itself enforces that the annotations are well-typed. When type
-  annotations are unused, this <verbatim|ty> parameter is set to
+  type itself enforces that the annotations are well-typed. The
+  <verbatim|tyAnnotation> traversal provides access to the type annotations.
+  When type annotations are unused, this <verbatim|ty> parameter is set to
   <verbatim|()>, as is the case for the <verbatim|UntypedTermF> functor
   synonym. The <verbatim|w> parameter determines the type of data held by
   <verbatim|Witness> nodes. This is often <verbatim|UntypedValue>, but is

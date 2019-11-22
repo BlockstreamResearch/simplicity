@@ -8,6 +8,7 @@ module Simplicity.Inference
   -- * Type checking untyped Simplicity
     typeInference
   , witnessData
+  , tyAnnotation
   , typeCheck
   -- * Simplicity with type annotations
   , TermF(..)
@@ -154,6 +155,10 @@ instance Traversable (FocusTy w a)  where
   traverse f (FocusTy (Hidden x)) = pure (FocusTy (Hidden x))
   traverse f (FocusTy (Witness a b x)) = fmap FocusTy $ Witness <$> f a <*> f b <*> pure x
   traverse f (FocusTy (Prim p)) = pure (FocusTy (Prim p))
+
+-- | A traversal of the type annotations of 'TermF'.
+tyAnnotation :: Applicative f => (ty0 -> f ty1) -> TermF ty0 w a -> f (TermF ty1 w a)
+tyAnnotation f = fmap unFocusTy . traverse f . FocusTy
 
 -- InferenceError holds the possible errors that can occur during the 'inference' step.
 data InferenceError s = UnificationFailure (UFailure TyF (STVar s TyF))
