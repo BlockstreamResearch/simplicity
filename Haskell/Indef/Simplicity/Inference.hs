@@ -7,13 +7,13 @@ module Simplicity.Inference
   (
   -- * Type checking untyped Simplicity
     typeInference
-  , witnessData
-  , tyAnnotation
   , typeCheck
   -- * Simplicity with type annotations
   , TermF(..)
   , UntypedTermF
   , SimplicityDag
+  -- *  optical (like) accessors for TermF data.
+  , tyAnnotation, witnessData, jetData
   -- * Constructors for 'UntypedTermF'.
   -- | There is no @uPrim@.  You must use 'Simplicity.Inference.Prim' instead.
   , uIden, uUnit, uInjl, uInjr
@@ -55,25 +55,26 @@ unital (UTerm t) = Fix (unital <$> t)
 
 -- | An open recursive type for untyped Simplicity terms with type annotations.
 -- The 'ty' parameter holds the typing annotations, which can be, for example, 'Ty', or @()@ for untyped Simplicity terms without annotations.
+-- The 'j' parameter holds the data held by 'Jet' nodes.
 -- The 'w' parameter holds the data held by 'Witness' nodes.
 -- The 'a' parameter holds the (open) recursive subexpressions.
-data TermF ty w a = Iden ty
-                  | Unit ty
-                  | Injl ty ty ty a
-                  | Injr ty ty ty a
-                  | Take ty ty ty a
-                  | Drop ty ty ty a
-                  | Comp ty ty ty a a
-                  | Case ty ty ty ty a a
-                  | Pair ty ty ty a a
-                  | Disconnect ty ty ty ty a a
-                  | Hidden Hash256
-                  | Witness ty ty w
-                  | Prim (SomeArrow Prim)
---                | Jet JetID
+data TermF ty j w a = Iden ty
+                    | Unit ty
+                    | Injl ty ty ty a
+                    | Injr ty ty ty a
+                    | Take ty ty ty a
+                    | Drop ty ty ty a
+                    | Comp ty ty ty a a
+                    | Case ty ty ty ty a a
+                    | Pair ty ty ty a a
+                    | Disconnect ty ty ty ty a a
+                    | Hidden Hash256
+                    | Witness ty ty w
+                    | Prim (SomeArrow Prim)
+                    | Jet j
   deriving (Functor, Foldable, Traversable)
 
-instance (Show ty, Show w, Show a) => Show (TermF ty w a) where
+instance (Show ty, Show j, Show w, Show a) => Show (TermF ty j w a) where
   showsPrec p (Iden a) = showParen (10 < p) $ showString "Iden " . showsPrec 11 a
   showsPrec p (Unit a) = showParen (10 < p) $ showString "Unit " . showsPrec 11 a
   showsPrec p (Injl a b c t) = showParen (10 < p)
@@ -131,17 +132,19 @@ instance (Show ty, Show w, Show a) => Show (TermF ty w a) where
   showsPrec p (Prim (SomeArrow prim)) = showParen (10 < p)
                                       $ showString "Prim "
                                       . (showParen True $ showString "someArrow " . showString (primName prim))
+  showsPrec p (Jet j) = showParen (10 < p)
+                      $ showString "Jet " . showsPrec 11 j
 
--- 'FocusTy w a ty' is isomorphic to 'TermF ty w a'.  Its purpose is to provide functor instances to 'TermF's ty parameter.
-newtype FocusTy w a ty = FocusTy { unFocusTy :: TermF ty w a }
+-- 'FocusTy j w a ty' is isomorphic to 'TermF ty j w a'.  Its purpose is to provide functor instances to 'TermF's ty parameter.
+newtype FocusTy j w a ty = FocusTy { unFocusTy :: TermF ty j w a }
 
-instance Functor (FocusTy w a)  where
+instance Functor (FocusTy j w a)  where
   fmap = fmapDefault
 
-instance Foldable (FocusTy w a) where
+instance Foldable (FocusTy j w a) where
   foldMap = foldMapDefault
 
-instance Traversable (FocusTy w a)  where
+instance Traversable (FocusTy j w a)  where
   traverse f (FocusTy (Iden a)) = FocusTy . Iden <$> f a
   traverse f (FocusTy (Unit a)) = FocusTy . Unit <$> f a
   traverse f (FocusTy (Injl a b c x)) = fmap FocusTy $ Injl <$> f a <*> f b <*> f c <*> pure x
@@ -155,10 +158,49 @@ instance Traversable (FocusTy w a)  where
   traverse f (FocusTy (Hidden x)) = pure (FocusTy (Hidden x))
   traverse f (FocusTy (Witness a b x)) = fmap FocusTy $ Witness <$> f a <*> f b <*> pure x
   traverse f (FocusTy (Prim p)) = pure (FocusTy (Prim p))
+  traverse f (FocusTy (Jet j)) = pure (FocusTy (Jet j))
 
 -- | A traversal of the type annotations of 'TermF'.
-tyAnnotation :: Applicative f => (ty0 -> f ty1) -> TermF ty0 w a -> f (TermF ty1 w a)
+tyAnnotation :: Applicative f => (ty0 -> f ty1) -> TermF ty0 j w a -> f (TermF ty1 j w a)
 tyAnnotation f = fmap unFocusTy . traverse f . FocusTy
+
+-- | A Traversal-like operation for 'TermF' that can be use to modify witness data in the context of witnesses type annotations.
+-- The 'witnessData' is to let you take @TermF Ty j (Vector Bool) a@ values and turn them into @TermF Ty j UntypedValue a@ values
+-- by parsing witness data stored as bit vector into Simplicity values after type inference.
+-- Alternatively, 'witnessData' can help build a @TermF Ty j () a -> m Bool -> m (TermF Ty j Untyped a)@ function that parses witness data
+-- after type inference from a 'Bool' stream accessable via a monadic effect.
+witnessData :: Applicative m => (ty -> w0 -> m w1) -> TermF ty j w0 a -> m (TermF ty j w1 a)
+witnessData f (Iden a) = pure $ Iden a
+witnessData f (Unit a) = pure $ Unit a
+witnessData f (Injl a b c x) = pure $ Injl a b c x
+witnessData f (Injr a b c x) = pure $ Injr a b c x
+witnessData f (Take a b c x) = pure $ Take a b c x
+witnessData f (Drop a b c x) = pure $ Drop a b c x
+witnessData f (Comp a b c x y) = pure $ Comp a b c x y
+witnessData f (Case a b c d x y) = pure $ Case a b c d x y
+witnessData f (Pair a b c x y) = pure $ Pair a b c x y
+witnessData f (Disconnect a b c d x y) = pure $ Disconnect a b c d x y
+witnessData f (Hidden x) = pure $ Hidden x
+witnessData f (Witness a b x) = Witness a b <$> f b x
+witnessData f (Prim p) = pure $ Prim p
+witnessData f (Jet p) = pure $ Jet p
+
+-- | An (affine) traversal for the 'Jet' values of a 'TermF'.
+jetData :: Applicative f => (j0 -> f j1) -> TermF ty j0 w a -> f (TermF ty j1 w a)
+jetData f (Iden a) = pure $ Iden a
+jetData f (Unit a) = pure $ Unit a
+jetData f (Injl a b c x) = pure $ Injl a b c x
+jetData f (Injr a b c x) = pure $ Injr a b c x
+jetData f (Take a b c x) = pure $ Take a b c x
+jetData f (Drop a b c x) = pure $ Drop a b c x
+jetData f (Comp a b c x y) = pure $ Comp a b c x y
+jetData f (Case a b c d x y) = pure $ Case a b c d x y
+jetData f (Pair a b c x y) = pure $ Pair a b c x y
+jetData f (Disconnect a b c d x y) = pure $ Disconnect a b c d x y
+jetData f (Hidden x) = pure $ Hidden x
+jetData f (Witness a b x) = pure $ Witness a b x
+jetData f (Prim p) = pure $ Prim p
+jetData f (Jet j) = Jet <$> f j
 
 -- InferenceError holds the possible errors that can occur during the 'inference' step.
 data InferenceError s = UnificationFailure (UFailure TyF (STVar s TyF))
@@ -172,54 +214,54 @@ instance Fallible TyF (STVar s TyF) (InferenceError s) where
   mismatchFailure t1 t2 = UnificationFailure (mismatchFailure t1 t2)
 
 -- | A type synonym for Simplicity terms without type annotations.
-type UntypedTermF w a = TermF () w a
+type UntypedTermF j w a = TermF () j w a
 
 -- Constructors for untyped 'TermF'.
-uIden :: UntypedTermF w a
+uIden :: UntypedTermF j w a
 uIden = Iden ()
 
-uUnit :: UntypedTermF w a
+uUnit :: UntypedTermF j w a
 uUnit = Unit ()
 
-uInjl :: a -> UntypedTermF w a
+uInjl :: a -> UntypedTermF j w a
 uInjl = Injl () () ()
 
-uInjr :: a -> UntypedTermF w a
+uInjr :: a -> UntypedTermF j w a
 uInjr = Injr () () ()
 
-uTake :: a -> UntypedTermF w a
+uTake :: a -> UntypedTermF j w a
 uTake = Take () () ()
 
-uDrop :: a -> UntypedTermF w a
+uDrop :: a -> UntypedTermF j w a
 uDrop = Drop () () ()
 
-uComp :: a -> a -> UntypedTermF w a
+uComp :: a -> a -> UntypedTermF j w a
 uComp = Comp () () ()
 
-uCase :: a -> a -> UntypedTermF w a
+uCase :: a -> a -> UntypedTermF j w a
 uCase = Case () () () ()
 
-uPair :: a -> a -> UntypedTermF w a
+uPair :: a -> a -> UntypedTermF j w a
 uPair = Pair () () ()
 
-uDisconnect :: a -> a -> UntypedTermF w a
+uDisconnect :: a -> a -> UntypedTermF j w a
 uDisconnect = Disconnect () () () ()
 
-uHidden :: Hash256 -> UntypedTermF w a
+uHidden :: Hash256 -> UntypedTermF j w a
 uHidden = Hidden
 
-uWitness :: w -> UntypedTermF w a
+uWitness :: w -> UntypedTermF j w a
 uWitness = Witness () ()
 
--- | :TODO: NOT YET IMPLEMENTED
-uJet = error "uJet: :TODO: NOT YET IMPLEMENTED"
+uJet :: j -> UntypedTermF j w a
+uJet = Jet
 
 -- | :TODO: NOT YET IMPLEMENTED
-uFail :: Block512 -> UntypedTermF w a
+uFail :: Block512 -> UntypedTermF j w a
 uFail = error "uFail: :TODO: NOT YET IMPLEMENTED"
 
 -- Given a @'UTy' v@ annonated Simplicity 'TermF', return the implied input and output types given the annotations.
-termFArrow :: Monad m => TermF (UTy v) w a -> ExceptT (InferenceError s) m (UTy v, UTy v)
+termFArrow :: Monad m => TermF (UTy v) (SomeArrow j) w a -> ExceptT (InferenceError s) m (UTy v, UTy v)
 termFArrow (Iden a) = return (a, a)
 termFArrow (Unit a) = return (a, UTerm One)
 termFArrow (Injl a b c _) = return (a, UTerm (Sum b c))
@@ -235,6 +277,9 @@ termFArrow (Witness a b _) = return (a, b)
 termFArrow (Prim (SomeArrow p)) = return (unfreeze (unreflect ra), unfreeze (unreflect rb))
  where
   (ra, rb) = reifyArrow p
+termFArrow (Jet (SomeArrow j)) = return (unfreeze (unreflect ra), unfreeze (unreflect rb))
+ where
+  (ra, rb) = reifyArrow j
 
 -- | Simplicity terms with explicit sharing of subexpressions to form a topologically sorted DAG (directed acyclic graph).
 --
@@ -249,19 +294,19 @@ termFArrow (Prim (SomeArrow p)) = return (unfreeze (unreflect ra), unfreeze (unr
 -- @
 --     0 \<= /i/ && /i/ \< 'Foldable.length' /v/ ==> 'Foldable.all' (\\x -> 0 < x && x <= /i/) ('Foldable.toList' /v/ '!!' /i/)
 -- @
-type SimplicityDag f ty w = f (TermF ty w Integer)
+type SimplicityDag f ty j w = f (TermF ty j w Integer)
 
--- 'inference' takes an 'SimplicityDag' and adds suitiable type annotations to the nodes in the DAG as well as unification constraints.
+-- 'inference' takes a 'SimplicityDag' and adds suitiable type annotations to the nodes in the DAG as well as unification constraints.
 -- This can cause unification failures, however the occurs check isn't performed in this step.
 -- This function also checks that the provided DAG is sorted in topological order.
-inference :: Foldable f => SimplicityDag f x w ->
-             ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) w Int))
+inference :: Foldable f => SimplicityDag f x (SomeArrow j) w ->
+             ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) (SomeArrow j) w Int))
 inference = foldM loop empty
  where
   tyWord256 = unreflect (reify :: TyReflect Word256)
-  loop :: Seq (TermF (UTy (STVar s TyF)) w Int)
-       -> TermF x w Integer
-       -> ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) w Int))
+  loop :: Seq (TermF (UTy (STVar s TyF)) (SomeArrow j) w Int)
+       -> TermF x (SomeArrow j) w Integer
+       -> ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) (SomeArrow j) w Int))
   loop output node = (output |>) <$> go node
    where
     fresh :: ExceptT (InferenceError s) (STBinding s) (UTy (STVar s TyF))
@@ -329,14 +374,15 @@ inference = foldM loop empty
     go (Hidden h) = pure (Hidden h)
     go (Witness _ _ w) = Witness <$> fresh <*> fresh <*> pure w
     go (Prim p) = pure (Prim p)
+    go (Jet j) = pure (Jet j)
 
 -- Given the output of 'inference', execute unification and return the container of type annotated Simplicity nodes.
 -- Any free type variables left over after unification are instantiated at the unit type.
 -- Errors, such as unification errors or occurs errors are retuned as 'String's.
-runUnification :: Traversable t => (forall s. ExceptT (InferenceError s) (STBinding s) (t (TermF (UTy (STVar s TyF)) w i))) -> Either String (t (TermF Ty w i))
+runUnification :: Traversable t => (forall s. ExceptT (InferenceError s) (STBinding s) (t (TermF (UTy (STVar s TyF)) j w i))) -> Either String (t (TermF Ty j w i))
 runUnification mv = runSTBinding $ left show <$> runExceptT (bindV mv)
  where
-  bindV :: Traversable t => ExceptT (InferenceError s) (STBinding s) (t (TermF (UTy (STVar s TyF)) w i)) -> ExceptT (InferenceError s) (STBinding s) (t (TermF Ty w i))
+  bindV :: Traversable t => ExceptT (InferenceError s) (STBinding s) (t (TermF (UTy (STVar s TyF)) j w i)) -> ExceptT (InferenceError s) (STBinding s) (t (TermF Ty j w i))
   bindV mv = do
     v <- mv
     bv <- applyBindingsAll (Compose (FocusTy <$> v))
@@ -345,10 +391,10 @@ runUnification mv = runSTBinding $ left show <$> runExceptT (bindV mv)
 -- | Given a 'SimplicityDag', throw away the existing type annotations, if any, and run type inference to compute a new set of type annotations.
 -- The Simplicity types, @a@ and @b@, provides further constraints for the Simplicity expression for the 'SimplicityDag'.
 -- If type inference fails, such as a unification error or an occurs error, return an error message.
-typeInference :: forall proxy a b f x w. (Foldable f, TyC a, TyC b) => proxy a b -> SimplicityDag f x w -> Either String (SimplicityDag Seq Ty w)
+typeInference :: forall proxy a b f x j w. (Foldable f, TyC a, TyC b) => proxy a b -> SimplicityDag f x (SomeArrow j) w -> Either String (SimplicityDag Seq Ty (SomeArrow j) w)
 typeInference p v = fmap (fmap toInteger) <$> runUnification inferenced
  where
-  inferenced :: forall s. ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) w Int))
+  inferenced :: forall s. ExceptT (InferenceError s) (STBinding s) (Seq (TermF (UTy (STVar s TyF)) (SomeArrow j) w Int))
   inferenced = do
     ev <- inference v
     _ <- case viewr ev of
@@ -361,33 +407,17 @@ typeInference p v = fmap (fmap toInteger) <$> runUnification inferenced
           return ()
     return ev
 
--- | A Traversal-like operation for 'TermF' that can be use to modify witness data in the context of witnesses type annotations.
--- The 'witnessData' is to let you take @TermF Ty (Vector Bool) a@ values and turn them into @TermF Ty UntypedValue a@ values
--- by parsing witness data stored as bit vector into Simplicity values after type inference.
--- Alternatively, 'witnessData' can help build a @TermF Ty () a -> m Bool -> m (TermF Ty Untyped a)@ function that parses witness data
--- after type inference from a 'Bool' stream accessable via a monadic effect.
-witnessData :: Applicative m => (ty -> w0 -> m w1) -> TermF ty w0 a -> m (TermF ty w1 a)
-witnessData f (Iden a) = pure $ Iden a
-witnessData f (Unit a) = pure $ Unit a
-witnessData f (Injl a b c x) = pure $ Injl a b c x
-witnessData f (Injr a b c x) = pure $ Injr a b c x
-witnessData f (Take a b c x) = pure $ Take a b c x
-witnessData f (Drop a b c x) = pure $ Drop a b c x
-witnessData f (Comp a b c x y) = pure $ Comp a b c x y
-witnessData f (Case a b c d x y) = pure $ Case a b c d x y
-witnessData f (Pair a b c x y) = pure $ Pair a b c x y
-witnessData f (Disconnect a b c d x y) = pure $ Disconnect a b c d x y
-witnessData f (Hidden x) = pure $ Hidden x
-witnessData f (Witness a b x) = Witness a b <$> f b x
-witnessData f (Prim p) = pure $ Prim p
-
 -- | Transform a well-typed-annotated 'SimplicityDag' into a Simplicity expression of a specified type.
+--
+-- 'Jet' nodes must be contain @'SomeArrow' 'JetSpec'@ values.
+-- 'Witness' nodes must contain 'UntypedValue's.
+--
 -- If type checking fails, return an error message.
 --
 -- Note: The one calling 'typeCheck' determines the input and output Simplicity types of the resulting Simplicity expression.
 -- They are __not__ inferered from the DAG input.
 -- Instead the types @a@ and @b@ are used as constraints during type inference.
-typeCheck :: forall term a b. (Simplicity term, TyC a, TyC b) => SimplicityDag Seq Ty UntypedValue -> Either String (term a b)
+typeCheck :: forall term a b. (Simplicity term, TyC a, TyC b) => SimplicityDag Seq Ty (SomeArrow JetSpec) UntypedValue -> Either String (term a b)
 typeCheck s = result
  where
   resultProxy = let Right x = result in undefined `asTypeOf` x
@@ -405,7 +435,7 @@ typeCheck s = result
      where
       err = Left "Simplicity.Inference.typeCheck: unexpected mismatched type"
     typeCheckedDag = mapWithIndex (\i -> left (++ " at index " ++ show i ++ ".") . typeCheckTermIx i) s
-    typeCheckTermIx :: Int -> TermF Ty UntypedValue Integer -> Either String (SomeArrow term)
+    typeCheckTermIx :: Int -> TermF Ty (SomeArrow JetSpec) UntypedValue Integer -> Either String (SomeArrow term)
     typeCheckTermIx i = typeCheckTerm . fmap fromInteger
      where
       lookup j = index typeCheckedDag (i - j)
@@ -484,3 +514,4 @@ typeCheck s = result
        where
         err = Left "Simplicity.Inference.typeCheck: decode error in Witness value"
       typeCheckTerm (Prim (SomeArrow p)) = return (SomeArrow (primitive p))
+      typeCheckTerm (Jet (SomeArrow j)) = return (SomeArrow (jet j))

@@ -25,7 +25,7 @@ import Simplicity.Ty
 -- Decodes a single node and references for a 'UntypedSimplicityDag'.
 -- 'Nothing' is returned when then end-of-stream code is encountered.
 -- @abort@ is invoked if an invalid code is encountered.
-getNode :: Monad m => m Void -> m Bool -> m (Maybe (TermF () () Integer))
+getNode :: Monad m => m Void -> m Bool -> m (Maybe (TermF () j () Integer))
 getNode abort next = (getBody >>= traverse (traverse (\_ -> getPositive next)))
                    & ((Just . Prim <$> getPrimBit next) & error "Simplicity.Serialization.BitString.getNode: TODO uJet.")
  where
@@ -51,7 +51,7 @@ getNode abort next = (getBody >>= traverse (traverse (\_ -> getPositive next)))
 getDagNoWitnessStopCode :: Monad m
                         => m Void -- ^ @abort@
                         -> m Bool -- ^ @next@
-                        -> m (SimplicityDag V.Vector () ())
+                        -> m (SimplicityDag V.Vector () j ())
 getDagNoWitnessStopCode abort next = V.unfoldrM (\_ -> fmap noState <$> getNode abort next) ()
  where
   noState x = (x, ())
@@ -69,7 +69,7 @@ getDagNoWitnessStopCode abort next = V.unfoldrM (\_ -> fmap noState <$> getNode 
 getDagNoWitnessLengthCode :: Monad m
                           => m Void -- ^ @abort@
                           -> m Bool -- ^ @next@
-                          -> m (SimplicityDag V.Vector () ())
+                          -> m (SimplicityDag V.Vector () j ())
 getDagNoWitnessLengthCode abort next = do
   len <- getPositive next
   V.replicateM (fromInteger len) $ do
@@ -85,10 +85,10 @@ getDagNoWitnessLengthCode abort next = do
 -- Note that the type @forall m. Monad m => m Void -> m Bool -> m a@ is isomorphic to the free monad over the @X² + 1@ functor at @a@.
 -- In other words, @'getWitnessData' dag@ has the type of a binary branching tree with leaves either containing 'SimplicityDag' values or no value.
 -- See "Simplicity.Serialization" for functions to execute this free monad.
-getWitnessData :: (Traversable f, Monad m) => SimplicityDag f Ty w
+getWitnessData :: (Traversable f, Monad m) => SimplicityDag f Ty j w
                -> m Void -- ^ @abort@
                -> m Bool -- ^ @next@
-               -> m (SimplicityDag f Ty UntypedValue)
+               -> m (SimplicityDag f Ty j UntypedValue)
 getWitnessData dag abort next = do
   witnessBlob <- UV.fromList <$> getBitString next
   maybe (vacuous abort) return $ evalExactVector (\next -> traverse (witnessData (witnessDecoder next)) dag) witnessBlob
@@ -150,7 +150,7 @@ getTermLengthCode abort next = do
 
 -- Encodes a single node from as a self-delimiting bit-stream encoding as a difference list.
 -- Witness data is not encoded.
-putNode :: TermF Ty w Integer -> DList Bool
+putNode :: TermF Ty j w Integer -> DList Bool
 putNode = go
  where
   go (Comp _ _ _ x y)         = ([o,o,o,o,o]++) . putPositive x . putPositive y
@@ -166,6 +166,7 @@ putNode = go
   go (Hidden h)               = ([o,i,i,o]++) . put256Bits h
   go (Witness _ _ _)          = ([o,i,i,i]++)
   go (Prim (SomeArrow p))     = ([i,o]++) . putPrimBit p
+  go (Jet j)                  = ([i,i]++) . (error ":TODO: Implement bitstring serialization of discounted jets")
   (o,i) = (False,True)
 
 -- Caution: Maybe [Bool] is a type that might cause space leaks.  Investiagte alternatives.
@@ -173,7 +174,7 @@ putNode = go
 --
 -- Encoding of witness data requires that its type annotation be the value's principle type.
 -- This function may return 'Nothing' if witness data cannot be encoded using the witnesses' type annoation.
-putDagStopCode :: Foldable f => SimplicityDag f Ty UntypedValue -> Maybe [Bool]
+putDagStopCode :: Foldable f => SimplicityDag f Ty j UntypedValue -> Maybe [Bool]
 putDagStopCode v = do
   wd <- foldr (\x y -> encodeWitnessDatum x <*> y) (Just []) v
   return $ foldr putNode ([o,i,o,i,i] ++ putBitString wd []) v
@@ -189,7 +190,7 @@ encodeWitnessDatum _ = Just id
 --
 -- Encoding of witness data requires that its type annotation be the value's principle type.
 -- This function may return 'Nothing' if witness data cannot be encoded using the witnesses' type annoation.
-putDagLengthCode :: Foldable f => SimplicityDag f Ty UntypedValue -> Maybe [Bool]
+putDagLengthCode :: Foldable f => SimplicityDag f Ty j UntypedValue -> Maybe [Bool]
 putDagLengthCode v = do
   wd <- foldr (\x y -> encodeWitnessDatum x <*> y) (Just []) v
   return . putPositive len $ foldr putNode (putBitString wd []) v

@@ -1577,7 +1577,7 @@
     <around*|\<llbracket\>|<samp|iden><rsub|A>|\<rrbracket\>><around*|(|a|)>\<assign\>a
   </equation*>
 
-  which is just a different way of writing the same definition. \ However,
+  which is just a different way of writing the same definition. However,
   please note that the <math|a> argument is an argument of the function
   denoted by <math|<samp|iden><rsub|A>> and is not an argument to the
   Simplicity term itself.
@@ -4636,7 +4636,7 @@
   assertions.
 
   A Simplicity DAG is represented as a topologically sorted, (non-empty) list
-  of Nodes. \ (You may wish to review Section<nbsp><reference|ss:ListFunctors>
+  of Nodes. (You may wish to review Section<nbsp><reference|ss:ListFunctors>
   to recall our notation for list related operators.)
 
   <\equation*>
@@ -6367,6 +6367,14 @@
   blockchain primitives and jet extensions, in addition to re-exporting the
   <verbatim|Simplicity.Term.Core> module.
 
+  Discounted jets are characterized by their specification,
+  <verbatim|JetSpec>, which consists of a Simplicity expression with
+  assertions and primitives, but not witness nor delegation.
+  <with|color|red|Later a discounted cost will be added as a parameter.> Be
+  aware that universal quantifiers in <verbatim|JetSpec> means that
+  subexpressions within its specificaiton cannot be shared outside of the
+  specification itself.
+
   All the Simplicity extensions are gathered together in the
   <verbatim|Simplicity> class, whose associated values of type
   <verbatim|Simplicity term =\<gtr\> term a b> are terms in the full
@@ -6401,34 +6409,44 @@
 
   The file <verbatim|Indef/Simplicity/Inference.hs> defines a concrete term
   data type for Simplicity expressions in open recursive style via the
-  <verbatim|TermF ty w> functor. The <verbatim|ty> parameter allows for these
-  terms to be decorated with type annotations, though nothing in the data
-  type itself enforces that the annotations are well-typed. The
+  <verbatim|TermF ty j w> functor. The <verbatim|ty> parameter allows for
+  these terms to be decorated with type annotations, though nothing in the
+  data type itself enforces that the annotations are well-typed. The
   <verbatim|tyAnnotation> traversal provides access to the type annotations.
   When type annotations are unused, this <verbatim|ty> parameter is set to
   <verbatim|()>, as is the case for the <verbatim|UntypedTermF> functor
-  synonym. The <verbatim|w> parameter determines the type of data held by
+  synonym.
+
+  The <verbatim|j> parameter determines the type of data held by
+  <verbatim|Jet> nodes. This is usually of the form <verbatim|SomeArrow arr>
+  for some type annotated data structure <verbatim|arr> that represents a
+  type for known jets. We will see that the <verbatim|typeCheck> function
+  specifically requires <verbatim|SomeArrow JetSpec> data here. The
+  <verbatim|jetData> traversal provides access to the jet data.
+
+  The <verbatim|w> parameter determines the type of data held by
   <verbatim|Witness> nodes. This is often <verbatim|UntypedValue>, but is
   sometimes a vector or list of <verbatim|Bool>s, which may be used in
-  intermediate computations when deserializing Simplicity expressions.
+  intermediate computations when deserializing Simplicity expressions. The
+  <verbatim|witnessData> combinator is a traversal indexed by type
+  annotations for accessing this <verbatim|Witness> data.
 
-  While the fixed point of this <verbatim|TermF ty w> functor would yield a
+  While the fixed point of this <verbatim|TermF ty j w> functor would yield a
   type for untyped, full Simplicity terms, instead we usually use a list or
-  vector of <verbatim|TermF ty w Integer> values to build a DAG structure,
+  vector of <verbatim|TermF ty j w Integer> values to build a DAG structure,
   where the <verbatim|Integer> values are references to other subexpressions
-  withing the list or vector. This provides a structure with explicit sharing
-  of subexpressions. This structure is captured by the
-  <verbatim|SimplicityDag> type synonym.
+  within a list or vector. This provides a structure with explicit sharing of
+  subexpressions. This structure is captured by the <verbatim|SimplicityDag>
+  type synonym.
 
-  The main functions of this module are the <verbatim|typeInference>,
-  <verbatim|witnessData>, and <verbatim|typeCheck> functions. The normal
-  progression here is to first use the <verbatim|typeInference> function
-  which discards the type annotations of the input Simplicity DAG (if any)
-  and performs first-order unification to infer new, principle type
-  annotations, with any remaining type variables instantiated at the
-  <verbatim|()> type. It also adds unification constraints given the input
-  and output types of the intended Simplicity expression provided through the
-  <verbatim|proxy a b> argument.
+  The main functions of this module are the <verbatim|typeInference> and
+  <verbatim|typeCheck> functions. The normal progression here is to first use
+  the <verbatim|typeInference> function which discards the type annotations
+  of the input Simplicity DAG (if any) and performs first-order unification
+  to infer new, principle type annotations, with any remaining type variables
+  instantiated at the <verbatim|()> type. It also adds unification
+  constraints given the input and output types of the intended Simplicity
+  expression provided through the <verbatim|proxy a b> argument.
 
   Next one would use <verbatim|traverse . witnessData> to use the inferred
   type information to decode the witness data into an
