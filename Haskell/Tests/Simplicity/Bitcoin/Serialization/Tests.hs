@@ -54,7 +54,7 @@ prop_getPutPositive :: Positive Integer -> Bool
 prop_getPutPositive (Positive n) = evalExactVector getPositive (UV.fromList (putPositive n [])) == Just n
 
 -- Test a 'SimplicityDag' predicate over suitable Arbitrary inputs.
-forallSimplicityDag :: Testable prop => (SimplicityDag [] Ty UntypedValue -> prop) -> Property
+forallSimplicityDag :: (Show j, Testable prop) => (SimplicityDag [] Ty j UntypedValue -> prop) -> Property
 forallSimplicityDag = forAll gen_UntypedTermF_list
  where
   gen_UntypedTermF_list = do
@@ -66,7 +66,7 @@ forallSimplicityDag = forAll gen_UntypedTermF_list
     f (i, term) = traverse (const (choose (1,i))) term
   -- We are subverting putDag's type annotation requirement.  It is for purpose of testing the 'putDag' function, so maybe it is okay to do.
   -- :TODO: replace this with a proper generator for well-typed Simplicity terms.
-  gen_UntypedTermF :: Gen (TermF Ty UntypedValue ())
+  gen_UntypedTermF :: Gen (TermF Ty j UntypedValue ())
   gen_UntypedTermF = oneof
     [ pure $ Iden one
     , pure $ Unit one
@@ -92,7 +92,7 @@ forallSimplicityDag = forAll gen_UntypedTermF_list
 
 -- Compare 'SimplicityDag' disregarding most type annotations.
 -- Witness nodes are compared using the 'compareWitness' function which may or may not consider type annotations.
-compareDag :: Eq a => (ty0 -> w0 -> ty1 -> w1 -> Bool) -> [TermF ty0 w0 a] -> [TermF ty1 w1 a] -> Bool
+compareDag :: (Eq a, Eq j) => (ty0 -> w0 -> ty1 -> w1 -> Bool) -> [TermF ty0 j w0 a] -> [TermF ty1 j w1 a] -> Bool
 compareDag compareWitness v1 v2 = (and $ zipWith compareNode v1 v2) && (length v1 == length v2)
  where
   compareNode (Iden _) (Iden _) = True
@@ -108,6 +108,7 @@ compareDag compareWitness v1 v2 = (and $ zipWith compareNode v1 v2) && (length v
   compareNode (Hidden h0) (Hidden h1) = h0 == h1
   compareNode (Witness _ b0 w0) (Witness _ b1 w1) = compareWitness b0 w0 b1 w1
   compareNode (Prim p0) (Prim p1) = p0 == p1
+  compareNode (Jet j0) (Jet j1) = j0 == j1
   compareNode _ _ = False
 
 -- Check that 'BitString.putDag's serialization of 'SimplicityDag's works can be deserialized by a combination of 'BitString.getDagNoWitness' and 'BitString.getWitnessData'.
@@ -117,6 +118,7 @@ prop_getPutBitStringDag :: Bool -> Property
 prop_getPutBitStringDag stopCode = forallSimplicityDag prop
  where
   compareWitness _ w0 _ w1 = w0 == w1
+  prop :: SimplicityDag [] Ty () UntypedValue -> Result
   prop v = case eval of
     Left msg -> failed { reason = show msg }
     Right (pdag, wdag) | not (compareDag (\_ _ _ _ -> True) v (toList pdag)) -> failed { reason = "Bitstring.getDagNoWiness returned bad value" }
@@ -130,7 +132,7 @@ prop_getPutBitStringDag stopCode = forallSimplicityDag prop
      return (pdag, wdag)
     vStripped = v & traverse . witness_ .~ ()
      where
-      witness_ :: Traversal (TermF ty w0 a) (TermF ty w1 a) w0 w1
+      witness_ :: Traversal (TermF ty j w0 a) (TermF ty j w1 a) w0 w1
       witness_ = witnessData . const
 
 -- Check that deserialization of serialization of 'SimplicityDag's works for the byte-string serialization.
@@ -141,7 +143,7 @@ prop_getPutByteStringDag = forallSimplicityDag prop
                                SomeTy rb -> fromMaybe False $ (==) <$> castUntypedValueR rb w0 <*> evalExactVector (getValueR rb) w1
   prop v = case runGetState (toList <$> ByteString.getDag) bs 0 of
             Left _ -> False
-            Right (v', rest) -> rest == mempty && compareDag compareWitness v v'
+            Right (v', rest) -> rest == mempty && compareDag compareWitness v (v' :: SimplicityDag [] () () (UV.Vector Bool))
    where
     Just bs = runPut <$> ByteString.putDag v -- generation is designed to create terms that always succeed at serializaiton.
 

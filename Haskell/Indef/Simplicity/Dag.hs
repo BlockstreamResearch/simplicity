@@ -23,13 +23,13 @@ import Simplicity.MerkleRoot
 import Simplicity.Term
 
 -- A monad used in the implementation of linearizeDag.
-type LinearM w a = StateT (Map.Map Hash256 Integer) (Writer (SimplicityDag [] () w)) a
+type LinearM j w a = StateT (Map.Map Hash256 Integer) (Writer (SimplicityDag [] () j w)) a
 
-execLinearM :: LinearM w a -> SimplicityDag [] () w
+execLinearM :: LinearM j w a -> SimplicityDag [] () j w
 execLinearM m = execWriter (evalStateT m Map.empty)
 
 -- Emit a new node and add insert it into the state's map.
-tellNode :: Hash256 -> TermF () w Integer -> LinearM w Integer
+tellNode :: Hash256 -> TermF () j w Integer -> LinearM j w Integer
 tellNode h iterm = StateT go
  where
   go map = do
@@ -42,13 +42,13 @@ tellNode h iterm = StateT go
 -- | A 'Simplicity' instance used with 'sortDag'.
 -- This instance merges identical typed Simplicity sub-expressions to create a DAG (directed acyclic graph) structure that represents the expression.
 data Dag a b = Dag { dagRoot :: WitnessRoot a b
-                   , dagMap :: Map.Map Hash256 (TermF () UntypedValue Hash256)
+                   , dagMap :: Map.Map Hash256 (TermF () (SomeArrow JetSpec) UntypedValue Hash256)
                    }
 
 -- Topologically sort the 'Dag'.
 -- The type annotations are also stripped in order to ensure the result isn't accidentally serialized before inference of principle type annotations.
 -- All sharing of subexpressions remains monomorphic to ensure that types can be infered in (quasi-)linear time.
-linearizeDag :: Dag a b -> SimplicityDag [] () UntypedValue
+linearizeDag :: Dag a b -> SimplicityDag [] () (SomeArrow JetSpec) UntypedValue
 linearizeDag dag = execLinearM . go . witnessRoot . dagRoot $ dag
  where
   dmap = dagMap dag
@@ -64,7 +64,7 @@ linearizeDag dag = execLinearM . go . witnessRoot . dagRoot $ dag
 --
 -- This function invokes type inference to ensure that the type annotations are principle types (with type variables instantiated at unit types).
 -- Therefore the 'WitnessRoot' of the result may not match the 'WitnessRoot' of the input.
-sortDag :: forall a b. (TyC a, TyC b) => Dag a b -> SimplicityDag [] Ty UntypedValue
+sortDag :: forall a b. (TyC a, TyC b) => Dag a b -> SimplicityDag [] Ty (SomeArrow JetSpec) UntypedValue
 sortDag t = toList pass2
  where
   pass1 :: Dag a b
@@ -136,6 +136,6 @@ instance Primitive Dag where
   primitive p = mkLeaf (primitive p) (Prim (SomeArrow p))
 
 instance Jet Dag where
-  jet t = error ":TODO: serialization of jet nodes not yet implemented"
+  jet t = mkLeaf (jet t) (Jet (SomeArrow t))
 
 instance Simplicity Dag where

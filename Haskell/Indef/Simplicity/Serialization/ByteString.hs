@@ -37,7 +37,7 @@ putBoolVector = putBitStream . UV.toList
    see https://github.com/mokus0/bitvec/issues/3 & https://github.com/mokus0/bitvec/issues/4. -}
 -- Decodes a single node for a 'SimplicityDag'.
 -- The first byte is given as an argument, but if needed, more bytes may be consumed from the stream.
-decodeNode :: W.Word8 -> Get (TermF () (UV.Vector Bool) Bool)
+decodeNode :: W.Word8 -> Get (TermF () j (UV.Vector Bool) Bool)
 decodeNode 0x20 = return uIden
 decodeNode 0x21 = return uUnit
 decodeNode 0x23 = uHidden <$> get
@@ -83,7 +83,7 @@ getIx True = do
 
 -- Decodes a single node and references for a 'SimplicityDag'.
 -- 'Nothing' is returned when then end-of-stream code is encountered.
-getNode :: DeserializeM (Maybe (TermF () (UV.Vector Bool) Integer))
+getNode :: DeserializeM (Maybe (TermF () j (UV.Vector Bool) Integer))
 getNode = do
   w <- lift getWord8
   case w of
@@ -95,7 +95,7 @@ getNode = do
 -- | Decodes a self-delimiting byte-stream encoding of 'SimplicityDag'.
 --
 -- Type annotations are not part of the encoding.  After deserialization you will want to run type inference from "Simplicity.Inference".
-getDag :: Get (SimplicityDag V.Vector () (UV.Vector Bool))
+getDag :: Get (SimplicityDag V.Vector () j (UV.Vector Bool))
 getDag = V.unfoldrM (fmap f . runStateT getNode) 0
  where
   f (mnode, i) = do
@@ -107,7 +107,7 @@ putIx bound i | bound <= 0 = return ()
 
 -- Encode a Simplicity node that occurs at position 'bnd'.
 -- Caution: 'Maybe Put' might lead to space-leaks.  Invesigate alternative formulations of this function.
-putNode :: Int -> TermF Ty UntypedValue Integer -> Maybe Put
+putNode :: Int -> TermF Ty j UntypedValue Integer -> Maybe Put
 putNode bnd = go
  where
   go (Comp _ _ _ x y)         = Just $ putBinary x y 0x00
@@ -124,6 +124,7 @@ putNode bnd = go
   go (Witness _ b w) = case reflect b of
                         SomeTy rb -> putWitness . UV.fromList . putValueR rb <$> castUntypedValue w
   go (Prim (SomeArrow p)) = Just $ putPrimByte p
+  go (Jet j)              = error ":TODO: Implement bytestring serialization of discounted jets"
   putUnary 1 z = putWord8 z
   putUnary i z | 2 <= i = putWord8 (setBit z 3) >> putIx (bnd - 2) (i - 2)
   putBinary x 1 z = putUnary x z
@@ -140,5 +141,5 @@ putNode bnd = go
 -- Encoding of witness values require that its type annotation be the value's principle type.
 -- 'putDag' requires a type annotated 'SimplicityDag' in order to pursuade the user to run 'typeInference' first.
 -- This function may return 'Nothing' if witness values cannot be encoded using the witnesses' type annoation.
-putDag :: Foldable f => SimplicityDag f Ty UntypedValue -> Maybe Put
+putDag :: Foldable f => SimplicityDag f Ty j UntypedValue -> Maybe Put
 putDag v = fmap sequence_ . sequence $ zipWith putNode [0..] (toList v) ++ [Just (putWord8 0x1f)]
