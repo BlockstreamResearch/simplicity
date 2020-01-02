@@ -38,8 +38,9 @@ import Data.Type.Equality ((:~:)(Refl))
 import qualified Data.Vector.Unboxed as UV
 
 import Simplicity.Digest
-import Simplicity.Primitive
+import Simplicity.JetType
 import Simplicity.MerkleRoot
+import Simplicity.Primitive
 import Simplicity.Term
 import Simplicity.Ty
 import Simplicity.Ty.Word
@@ -407,9 +408,15 @@ typeInference p v = fmap (fmap toInteger) <$> runUnification inferenced
           return ()
     return ev
 
+-- Note: we could make a variant of this function taking a @SimplicityDag Seq Ty (SomeArrow JetSpec) UntypedValue@ argument if that is needed, where
+--
+-- @
+--    newtype JetSpec a b = JetSpec (forall term. (Assert term, Primitive term) => term a b)
+-- @
+--
 -- | Transform a well-typed-annotated 'SimplicityDag' into a Simplicity expression of a specified type.
 --
--- 'Jet' nodes must be contain @'SomeArrow' 'JetSpec'@ values.
+-- 'Jet' nodes must be contain @'SomeArrow' 'jt'@ value for a 'JetType'.
 -- 'Witness' nodes must contain 'UntypedValue's.
 --
 -- If type checking fails, return an error message.
@@ -417,7 +424,7 @@ typeInference p v = fmap (fmap toInteger) <$> runUnification inferenced
 -- Note: The one calling 'typeCheck' determines the input and output Simplicity types of the resulting Simplicity expression.
 -- They are __not__ inferered from the DAG input.
 -- Instead the types @a@ and @b@ are used as constraints during type inference.
-typeCheck :: forall term a b. (Simplicity term, TyC a, TyC b) => SimplicityDag Seq Ty (SomeArrow JetSpec) UntypedValue -> Either String (term a b)
+typeCheck :: forall term jt a b. (Simplicity term, JetType jt, TyC a, TyC b) => SimplicityDag Seq Ty (SomeArrow jt) UntypedValue -> Either String (term a b)
 typeCheck s = result
  where
   resultProxy = let Right x = result in undefined `asTypeOf` x
@@ -435,7 +442,7 @@ typeCheck s = result
      where
       err = Left "Simplicity.Inference.typeCheck: unexpected mismatched type"
     typeCheckedDag = mapWithIndex (\i -> left (++ " at index " ++ show i ++ ".") . typeCheckTermIx i) s
-    typeCheckTermIx :: Int -> TermF Ty (SomeArrow JetSpec) UntypedValue Integer -> Either String (SomeArrow term)
+    typeCheckTermIx :: Int -> TermF Ty (SomeArrow jt) UntypedValue Integer -> Either String (SomeArrow term)
     typeCheckTermIx i = typeCheckTerm . fmap fromInteger
      where
       lookup j = index typeCheckedDag (i - j)
@@ -514,4 +521,4 @@ typeCheck s = result
        where
         err = Left "Simplicity.Inference.typeCheck: decode error in Witness value"
       typeCheckTerm (Prim (SomeArrow p)) = return (SomeArrow (primitive p))
-      typeCheckTerm (Jet (SomeArrow j)) = return (SomeArrow (jet j))
+      typeCheckTerm (Jet (SomeArrow j)) = return . SomeArrow $ jet (specification j)

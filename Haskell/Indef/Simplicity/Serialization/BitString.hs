@@ -15,6 +15,7 @@ import Data.Void (Void, vacuous)
 import Simplicity.Dag
 import Simplicity.Digest
 import Simplicity.Inference
+import Simplicity.JetType
 import Simplicity.Primitive
 import Simplicity.Serialization
 import Simplicity.Term
@@ -114,7 +115,7 @@ getTermStopCode :: forall m term a b. (Monad m, Simplicity term, TyC a, TyC b)
                 -> m Bool -- ^ @next@
                 -> m (term a b)
 getTermStopCode abort next = do
-  dag <- getDagNoWitnessStopCode abort next
+  dag <- getDagNoWitnessStopCode abort next :: m (SimplicityDag V.Vector () (SomeArrow NoJets) ())
   tyDag <- either (\err -> vacuous abort) return $ typeInference proxy dag
   wTyDag <- getWitnessData tyDag abort next
   either (\err -> vacuous abort) return $ typeCheck wTyDag
@@ -140,7 +141,7 @@ getTermLengthCode :: forall m term a b. (Monad m, Simplicity term, TyC a, TyC b)
                   -> m Bool -- ^ @next@
                   -> m (term a b)
 getTermLengthCode abort next = do
-  dag <- getDagNoWitnessLengthCode abort next
+  dag <- getDagNoWitnessLengthCode abort next :: m (SimplicityDag V.Vector () (SomeArrow NoJets) ())
   tyDag <- either (\err -> vacuous abort) return $ typeInference proxy dag
   wTyDag <- getWitnessData tyDag abort next
   either (\err -> vacuous abort) return $ typeCheck wTyDag
@@ -198,15 +199,15 @@ putDagLengthCode v = do
   len = toInteger $ length v
 
 -- | Encodes a Simplicity expression as a self-delimiting, stop-code based, bit-stream encoding.
-putTermStopCode :: (TyC a, TyC b) => Dag a b -> [Bool]
+putTermStopCode :: (TyC a, TyC b) => NoJetDag a b -> [Bool]
 putTermStopCode dag = result
  where
-  {- sortDag ought not to ever produce a value where putDag fails. -}
-  Just result = putDagStopCode (sortDag dag)
+  {- noJetDag ought not to ever produce a value where putDag fails. -}
+  Just result = putDagStopCode (noJetDag dag)
 
 -- | Encodes a Simplicity expression as a self-delimiting, length-code based, bit-stream encoding.
-putTermLengthCode :: (TyC a, TyC b) => Dag a b -> [Bool]
+putTermLengthCode :: (TyC a, TyC b) => NoJetDag a b -> [Bool]
 putTermLengthCode dag = result
  where
-  {- sortDag ought not to ever produce a value where putDag fails. -}
-  Just result = putDagLengthCode (sortDag dag)
+  {- noJetDag ought not to ever produce a value where putDag fails. -}
+  Just result = putDagLengthCode (noJetDag dag)

@@ -9,7 +9,7 @@ module Simplicity.Ty
  , TyReflect(..)
  , reify, reifyProxy, reifyArrow
  , equalTyReflect
- , SomeArrow(..), someArrowR
+ , SomeArrow(..), someArrowR, someArrowMap
  , Ty, TyF(..)
  , one, sum, prod
  , unreflect
@@ -134,17 +134,24 @@ getValueR (ProdR a b) next = (,) <$> getValueR a next <*> getValueR b next
 data SomeArrow arr = forall a b. (TyC a, TyC b) => SomeArrow (arr a b)
 
 instance (forall a b. (TyC a, TyC b) => Eq (arr a b)) => Eq (SomeArrow arr) where
- (SomeArrow p0) == (SomeArrow p1) = fromMaybe False $ do
-   Refl <- equalTyReflect ra0 ra1
-   Refl <- equalTyReflect rb0 rb1
-   return $ p0 == p1
-  where
-   (ra0, rb0) = reifyArrow p0
-   (ra1, rb1) = reifyArrow p1
+  (SomeArrow p0) == (SomeArrow p1) = fromMaybe False $ do
+    Refl <- equalTyReflect ra0 ra1
+    Refl <- equalTyReflect rb0 rb1
+    return $ p0 == p1
+   where
+    (ra0, rb0) = reifyArrow p0
+    (ra1, rb1) = reifyArrow p1
 
--- | A pseudo-constructor for @SomeArrow@ that provides proxy arguments to help specify the type parameters.
+instance (forall a b. (TyC a, TyC b) => Show (arr a b)) => Show (SomeArrow arr) where
+  showsPrec d (SomeArrow p) = showParen (d > 10) $ showString "SomeArrow " . showsPrec 11 p
+
+-- | A pseudo-constructor for 'SomeArrow' that provides proxy arguments to help specify the type parameters.
 someArrowR :: (TyC a, TyC b) => proxy a -> proxy b -> arr a b -> SomeArrow arr
 someArrowR _ _ x = SomeArrow x
+
+-- | The functor operation on 'SomeArrow'.
+someArrowMap :: (forall a b. (TyC a, TyC b) => arr0 a b -> arr1 a b) -> SomeArrow arr0 -> SomeArrow arr1
+someArrowMap f (SomeArrow x) = SomeArrow (f x)
 
 -- | A Haskell data type for representing Simplicity types.
 -- It uses an explicit 'Fix'edpoint of the 'TyF' functor.
