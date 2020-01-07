@@ -1,7 +1,7 @@
 {-# LANGUAGE EmptyCase, RankNTypes, ScopedTypeVariables #-}
 -- | This module provides the 'sortDag' function for converting a Simplicity expression into an topologically sorted, DAG representation.
 module Simplicity.Dag
-  ( jetDag, noJetDag
+  ( jetDag
   , JetDag, NoJetDag
   -- * Type annoated, open recursive Simplicity terms.
   , TermF(..), SimplicityDag
@@ -100,12 +100,6 @@ jetDag t = toList pass2
   pass2 = case typeInference pass1 linearize2 of
             Right pass -> pass
             Left e -> error $ "sortDag.pass2: " ++ e
-
--- | A specialization of 'jetDag' that does not match any jets.
-noJetDag :: (TyC a, TyC b) => NoJetDag a b -> SimplicityDag [] Ty void UntypedValue
-noJetDag t = jetDag t & (traverse.jetData) %~ absurd
- where
-  absurd (SomeArrow noJets) = case noJets of {}
 
 -- These combinators are used in to assist making 'Dag' instances.
 mkLeaf wComb jmComb uComb =

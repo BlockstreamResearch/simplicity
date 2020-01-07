@@ -6421,11 +6421,14 @@
   represent sets of known discounted jets. \ The <verbatim|specification>
   method define the specification of discounted jets and the
   <verbatim|matcher> method decides if a given Simplicity expression is known
-  to be substitutable by a some discounted jet. Because the set of discounted
-  jets in use could vary over time, the <verbatim|JetType> class allows for
-  different types to represent different sets of discounted jets. \ You can
-  have a different <verbatim|JetType> instance for each version of the set of
-  discounted jets.
+  to be substitutable by a some discounted jet. There are also
+  <verbatim|putJetBit> and <verbatim|getJetBit> used for Serialization (see
+  Section<nbsp><reference|ss:Haskell-Serialization>)
+
+  Because the set of discounted jets in use could vary over time, the
+  <verbatim|JetType> class allows for different types to represent different
+  sets of discounted jets. \ You can have a different <verbatim|JetType>
+  instance for each version of the set of discounted jets.
 
   <subsection|Type Inference>
 
@@ -6640,26 +6643,31 @@
   <subsubsection|Serialization of Simplicity DAGs><label|ss:Haskell-DAG>
 
   <with|font-series|bold|>The file <verbatim|Indef/Simplicity/Dag.hs>
-  provides a <verbatim|noJetDag> that coverts Simplicity expressions into a
+  provides a <verbatim|jetDag> that coverts Simplicity expressions into a
   topologically sorted DAG structure with explicit sharing that is suitable
-  for encoding. This conversion finds and shares identical well-typed
-  subexpressions. It also runs type inference to determine the principle type
-  annotations needed to optimal sharing. The type inference is also used to
-  prune away any unused witness data.
+  for encoding. This conversion
 
-  The <verbatim|jetDag> variant of <verbatim|noJetDag> uses a
-  <verbatim|JetType jt> to find subexpressions matching jets and substitutes
-  them with <verbatim|Jet> nodes holding the <verbatim|jt> values.
+  <\itemize-dot>
+    <item>finds and shares identical well-typed subexpressions,
+
+    <item>runs type inference to determine the principle type annotations
+    needed to optimal sharing and pruning of unused witness data,
+
+    <item>finds subexpressions that matches known jets and replaces them with
+    <verbatim|Jet> nodes.
+  </itemize-dot>
+
+  \;
 
   The file <verbatim|Indef/Simplicity/Serialization/BitString.hs> provides
   <verbatim|getTermLengthCode> and <verbatim|putTermLengthCode> functions
   that decode and encode a Simplicity expression. The
-  <verbatim|putTermLengthCode> function executes <verbatim|noJetDag> to
-  perform sharing, and the <verbatim|getTermLengthCode> executes
-  deserialization, type inference and type checking all together. The
-  <verbatim|getTermStopCode> and <verbatim|putTermStopCode> functions provide
-  the same functionality using a serialization format with a stop code
-  instead of a length code prefix. The module also provides,
+  <verbatim|putTermLengthCode> function executes <verbatim|jetDag> to perform
+  sharing and substitution of jets, and the <verbatim|getTermLengthCode>
+  executes deserialization, type inference and type checking all together.
+  The <verbatim|getTermStopCode> and <verbatim|putTermStopCode> functions
+  provide the same functionality using a serialization format with a stop
+  code instead of a length code prefix. The module also provides,
   <verbatim|getDagNoWitness>, <verbatim|getWitnessData> and
   <verbatim|putDag>, that are used by the <verbatim|getTerm*> and
   <verbatim|putTerm*> functions to convert between Simplicity DAGs and their
