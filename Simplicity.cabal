@@ -16,6 +16,7 @@ tested-with:         GHC ==8.6.4
 library Simplicity-Core
   exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
                        Simplicity.Term.Core,
+                       Simplicity.CoreJets,
                        Simplicity.Functor, Simplicity.Tensor,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
@@ -31,7 +32,7 @@ library Simplicity-Core
                        Simplicity.LibSecp256k1.Spec
   other-extensions:    BangPatterns,
                        FlexibleContexts,
-                       GADTs,
+                       GADTs, StandaloneDeriving, TypeFamilies
                        NoMonomorphismRestriction,
                        UndecidableInstances, QuantifiedConstraints, RankNTypes, ExistentialQuantification, TypeOperators, TypeFamilies, DeriveTraversable,
                        ScopedTypeVariables,
@@ -42,6 +43,7 @@ library Simplicity-Core
   build-depends:       base >=4.9 && <4.14,
                        binary >=0.7 && <0.9,
                        bytestring >=0.10 && <0.11,
+                       containers >=0.5.10 && <0.7,
                        cereal >=0.5 && <0.6,
                        lens-family >=2.0 && <2.1,
                        mtl >=2.2 && <2.3,
@@ -102,8 +104,9 @@ library Simplicity-Indef
                        vector >=0.12 && <0.13
 
 library
-  exposed-modules:     Simplicity.Bitcoin.Programs.CheckSigHashAll, Simplicity.Bitcoin.Programs.CheckSigHashAll.Lib
-                       Simplicity.Elements.Programs.CheckSigHashAll, Simplicity.Elements.Programs.CheckSigHashAll.Lib
+  exposed-modules:     Simplicity.Bitcoin.Programs.CheckSigHashAll, Simplicity.Elements.Programs.CheckSigHashAll,
+                       Simplicity.Bitcoin.Programs.CheckSigHashAll.Lib, Simplicity.Elements.Programs.CheckSigHashAll.Lib,
+                       Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets
   reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
                        Simplicity.Term.Core,
                        Simplicity.Functor, Simplicity.Tensor,
@@ -155,12 +158,14 @@ library
                           Simplicity.Serialization.ByteString as Simplicity.Elements.Serialization.ByteString)
                        requires
                          (Simplicity.Primitive as Simplicity.Elements.Primitive)
+  other-extensions:    GADTs, StandaloneDeriving, TypeFamilies
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core, Simplicity-Bitcoin, Simplicity-Elements, Simplicity-Indef,
                        base >=4.9 && <4.14,
-                       bytestring >=0.10 && <0.11
+                       bytestring >=0.10 && <0.11,
+                       containers >=0.5.10 && <0.7
 
 Test-Suite testsuite
   Type:                exitcode-stdio-1.0

@@ -32,6 +32,8 @@ module Simplicity.Ty.Word
   , word256, fromWord256, toWord256
   -- ** Word512
   , word512, fromWord512, toWord512
+  -- ** Bit
+  , module Simplicity.Ty.Bit
   ) where
 
 import Prelude hiding (Word)
