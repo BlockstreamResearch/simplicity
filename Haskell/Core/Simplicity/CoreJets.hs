@@ -12,11 +12,11 @@ module Simplicity.CoreJets
 import Prelude hiding (fail, drop, take)
 
 import qualified Data.Map as Map
-import Data.Void (Void, vacuous)
 
 import Simplicity.Digest
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
+import qualified Simplicity.Programs.LibSecp256k1.Lib as LibSecp256k1
 import qualified Simplicity.Programs.Sha256.Lib as Sha256
 import Simplicity.Programs.Word
 import Simplicity.Term.Core
@@ -32,6 +32,7 @@ data CoreJet a b where
   Multiplier32 :: CoreJet (Word32, Word32) Word64
   FullMultiplier32 :: CoreJet ((Word32, Word32), (Word32, Word32)) Word64
   Sha256HashBlock :: CoreJet (Sha256.Hash, Sha256.Block) Sha256.Hash
+  SchnorrAssert :: CoreJet ((LibSecp256k1.XOnlyPubKey, Word256), LibSecp256k1.Sig) ()
 
 deriving instance Eq (CoreJet a b)
 deriving instance Show (CoreJet a b)
@@ -45,17 +46,18 @@ specification FullSubtractor32 = fullSubtractor word32
 specification Multiplier32 = multiplier word32
 specification FullMultiplier32 = fullMultiplier word32
 specification Sha256HashBlock = Sha256.hashBlock
+specification SchnorrAssert = LibSecp256k1.schnorrAssert
 
 -- | A canonical deserialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.getJetBit' method.
-getJetBit :: (Monad m) => m Void -> m Bool -> m (SomeArrow CoreJet)
-getJetBit abort next = (getWordJet & getFullWordJet) & (getHashJet & getEcJet)
+getJetBit :: (Monad m) => mVoid -> m Bool -> m (SomeArrow CoreJet)
+getJetBit _abort next = (getWordJet & getFullWordJet) & (getHashJet & getEcJet)
  where
   getWordJet = (makeArrow Adder32 & makeArrow Subtractor32)
              & makeArrow Multiplier32
   getFullWordJet = (makeArrow FullAdder32 & makeArrow FullSubtractor32)
                  & makeArrow FullMultiplier32
   getHashJet = makeArrow Sha256HashBlock
-  getEcJet = vacuous abort -- TODO
+  getEcJet = makeArrow SchnorrAssert
   l & r = next >>= \b -> if b then r else l
   -- makeArrow :: (TyC a, TyC b, Monad m) => (forall term. (Core term) => term a b) -> m (SomeArrow JetSpec)
   makeArrow p = return (SomeArrow p)
@@ -69,6 +71,7 @@ putJetBit FullAdder32      = ([o,i,o,o]++)
 putJetBit FullSubtractor32 = ([o,i,o,i]++)
 putJetBit FullMultiplier32 = ([o,i,i]++)
 putJetBit Sha256HashBlock  = ([i,o]++)
+putJetBit SchnorrAssert    = ([i,i]++)
 
 -- | A 'Map.Map' from the witness roots of the "core" jet specification to their corresponding token.
 -- This can be used to help instantiate the 'Simplicity.JetType.matcher' method.
@@ -81,6 +84,7 @@ coreJetMap = Map.fromList
   , mkAssoc FullSubtractor32
   , mkAssoc FullMultiplier32
   , mkAssoc Sha256HashBlock
+  , mkAssoc SchnorrAssert
   ]
  where
   mkAssoc :: (TyC a, TyC b) => CoreJet a b -> (Hash256, (SomeArrow CoreJet))

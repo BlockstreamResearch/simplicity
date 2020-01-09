@@ -6754,6 +6754,9 @@
 
     <item>Jets for hash functions, including the SHA-256 compression
     function.
+
+    <item>Jets for elliptic curve functions, including Schnorr signature
+    verification.
   </itemize>
 
   <section|Simplicity <verbatim|testsuite>>
