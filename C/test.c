@@ -193,7 +193,6 @@ static void test_program(char* name, FILE* file, bool expectedResult, const uint
           printf("Unexpected WMR.\n");
         }
       }
-      forceJets(dag, analysis, (size_t)len, JET_ALL);
       bool evalSuccess;
       if (evalTCOProgram(&evalSuccess, dag, type_dag, (size_t)len, NULL) && expectedResult == evalSuccess) {
         successes++;

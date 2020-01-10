@@ -4,7 +4,6 @@
 #define EVAL_H
 
 #include "dag.h"
-#include "jetTable.h"
 
 /* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]'.
  * If 'NULL != input', initialize the active read frame's data with 'input[roundUWord(inputSize)]'.

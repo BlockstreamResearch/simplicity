@@ -6,7 +6,22 @@
 #ifndef JETS_H
 #define JETS_H
 
-#include "jetTable.h"
+#include "frame.h"
+
+/* Forward declaration of the structure holding the environment in which a Simplicity expression is evaluated within. */
+typedef struct txEnv txEnv;
+
+/* A jet simulates the execution of some Simplicity expression (without witnesses or delegation) of A |- B.
+ * It reads data from a read frame 'src', and writes its output to a write frame 'dst'.
+ * If successful then 'true' is returned.
+ * If the expression being simulated would fail an 'ASSERTL' or 'ASSERTR' combinator, then 'false' is returned.
+ * Cells in front of 'dst's cursor's final position may be overwritten.
+ *
+ * Precondition: 'src' is a valid read frame for 'bitSize(A)' more cells;
+ *               '*dst' is a valid write frame for 'bitSize(B)' more cells;
+ *               if the jet simulates a Simplicity expression with primitives then 'NULL != env';
+ */
+typedef bool (*jet_ptr)(frameItem* dst, frameItem src, const txEnv* env);
 
 bool adder32(frameItem* dst, frameItem src, const txEnv* env);
 bool fullAdder32(frameItem* dst, frameItem src, const txEnv* env);
