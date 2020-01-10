@@ -7,8 +7,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "bitstring.h"
+#include "jets.h"
 #include "type.h"
-#include "jetTable.h"
 
 /* An enumeration of the various kinds of Simplicity nodes. */
 typedef enum tag_t
@@ -175,18 +175,6 @@ void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, size_t
  * Postconditon: analyses analysis[len] contains the witness Merkle roots of each subexpressions of 'dag'.
  */
 void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
-
-/* This function finds subexpressions in 'dag' that have known jetted implementations and replaces them by those jets.
- * For jets that have a discount, one would normally have jets deserialized via a code for the specific jet.
- * If all jets are discounted jets, one might not even use this function in production.
- *
- * A 'filter' can be set to only force some kinds of jets.  This parameter is mostly used for testing purposes.
- * In production we expect 'filter' to be passed the 'JET_ALL' value.
- *
- * Precondition: dag_node dag[len] and 'dag' has witness data and is well-typed;
- *               analyses analysis[len] contains the witness Merkle roots for each subexpression of 'dag'.
- */
-void forceJets(dag_node* dag, const analyses* analysis, size_t len, JET_FLAG filter);
 
 /* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn

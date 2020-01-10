@@ -487,7 +487,6 @@ extern bool elements_simplicity_execSimplicity(bool* success, const transaction*
         computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
         *success = !wmr || 0 == memcmp(wmr_hash.s, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]));
         if (*success) {
-          forceJets(dag, analysis, (size_t)len, JET_ALL);
           result = evalTCOProgram(success, dag, type_dag, (size_t)len, &(txEnv){.tx = tx, .scriptCMR = cmr_hash.s, .ix = ix});
         }
       }

@@ -19,19 +19,13 @@ endif
 
 LDLIBS := -lsha256compression
 
-jetTable.c: jetTable.gperf
-	gperf --output-file=$@ $^
-
-jetTable.o: jetTable.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
-
 primitive/elements/jets.o: primitive/elements/jets.c
 	$(CC) -c $(CFLAGS) $(CWARN) -Wno-switch-enum -Wswitch $(CPPFLAGS) -o $@ $<
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<
 
-libElementsSimplicity.a: bitstream.o dag.o deserialize.o eval.o frame.o jets.o jetTable.o sha256.o type.o typeInference.o primitive/elements.o primitive/elements/jets.o primitive/elements/primitive.o
+libElementsSimplicity.a: bitstream.o dag.o deserialize.o eval.o frame.o jets.o sha256.o type.o typeInference.o primitive/elements.o primitive/elements/jets.o primitive/elements/primitive.o
 	ar rcs $@ $^
 
 test: test.o hashBlock.o schnorr0.o schnorr6.o primitive/elements/checkSigHashAllTx1.o libElementsSimplicity.a
