@@ -31,4 +31,9 @@ bool multiplier32(frameItem* dst, frameItem src, const txEnv* env);
 bool fullMultiplier32(frameItem* dst, frameItem src, const txEnv* env);
 bool sha256_hashBlock(frameItem* dst, frameItem src, const txEnv* env);
 
+bool fe_sqrt(frameItem* dst, frameItem src, const txEnv* env);
+bool offsetPoint(frameItem* dst, frameItem src, const txEnv* env);
+bool ecmult(frameItem* dst, frameItem src, const txEnv* env);
+bool schnorrAssert(frameItem* dst, frameItem src, const txEnv* env);
+
 #endif
