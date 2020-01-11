@@ -215,15 +215,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
   if (bit < 0) return bit;
   dag[i] = (dag_node){0};
   if (bit) {
-    bit = getBit(stream);
-    if (bit < 0) return bit;
-    if (bit) {
-      // TODO: Decode jets
-      fprintf(stderr, "jets nodes not yet implemented\n");
-      return ERR_NOT_YET_IMPLEMENTED;
-    } else {
-      return decodeJet(&dag[i], stream);
-    }
+    return decodeJet(&dag[i], stream);
   } else {
     int32_t code = getNBits(2, stream);
     if (code < 0) return code;
