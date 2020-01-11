@@ -5,7 +5,17 @@ ifneq ($(doCheck), 1)
 CPPFLAGS := $(CPPFLAGS) -DNDEBUG
 endif
 
+ifneq ($(strip $(SINGLE_THREADED)),)
+  # SINGLE_THREADED is non-empty
+  CPPFLAGS := $(CPPFLAGS) -DSINGLE_THREADED
+endif
+
 CFLAGS := -I include
+
+ifeq ($(strip $(SINGLE_THREADED)),)
+  # SINGLE_THREADED is empty
+  LDFLAGS := -pthread
+endif
 
 LDLIBS := -lsha256compression
 
@@ -25,7 +35,7 @@ libElementsSimplicity.a: bitstream.o dag.o deserialize.o eval.o frame.o jets.o j
 	ar rcs $@ $^
 
 test: test.o hashBlock.o schnorr0.o schnorr6.o primitive/elements/checkSigHashAllTx1.o libElementsSimplicity.a
-	$(CC) $^ -o $@ $(LDLIBS)
+	$(CC) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
 install: libElementsSimplicity.a
 	mkdir -p $(out)/lib

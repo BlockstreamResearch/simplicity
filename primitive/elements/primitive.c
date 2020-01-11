@@ -2,6 +2,7 @@
  */
 #include "primitive.h"
 
+#include "../../callonce.h"
 #include "jets.h"
 #include "../../tag.h"
 #include "../../unreachable.h"
@@ -230,271 +231,273 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
   UNREACHABLE;
 }
 
+/* Cached copy of each node for all the Elements specific jets.
+ * Only to be accessed through 'jetNode'.
+ */
+static once_flag static_initialized = ONCE_FLAG_INIT;
+static dag_node jet_node[] = {
+ [VERSION] =
+    { .tag = JET
+    , .jet = version
+    , .sourceIx = one
+    , .targetIx = word32
+    },
+ [LOCKTIME] =
+    { .tag = JET
+    , .jet = lockTime
+    , .sourceIx = one
+    , .targetIx = word32
+    },
+ [INPUTISPEGIN] =
+    { .tag = JET
+    , .jet = inputIsPegin
+    , .sourceIx = word32
+    , .targetIx = sTwo
+    },
+ [INPUTPREVOUTPOINT] =
+    { .tag = JET
+    , .jet = inputPrevOutpoint
+    , .sourceIx = word32
+    , .targetIx = sOutpnt
+    },
+ [INPUTASSET] =
+    { .tag = JET
+    , .jet = inputAsset
+    , .sourceIx = word32
+    , .targetIx = sConfWord256
+    },
+ [INPUTAMOUNT] =
+    { .tag = JET
+    , .jet = inputAmount
+    , .sourceIx = word32
+    , .targetIx = sConfWord64
+    },
+ [INPUTSCRIPTHASH] =
+    { .tag = JET
+    , .jet = inputScriptHash
+    , .sourceIx = word32
+    , .targetIx = sWord256
+    },
+ [INPUTSEQUENCE] =
+    { .tag = JET
+    , .jet = inputSequence
+    , .sourceIx = word32
+    , .targetIx = sWord32
+    },
+ [INPUTISSUANCEBLINDING] =
+    { .tag = JET
+    , .jet = inputIssuanceBlinding
+    , .sourceIx = word32
+    , .targetIx = sSWord256
+    },
+ [INPUTISSUANCECONTRACT] =
+    { .tag = JET
+    , .jet = inputIssuanceContract
+    , .sourceIx = word32
+    , .targetIx = sSWord256
+    },
+ [INPUTISSUANCEENTROPY] =
+    { .tag = JET
+    , .jet = inputIssuanceEntropy
+    , .sourceIx = word32
+    , .targetIx = sSWord256
+    },
+ [INPUTISSUANCEASSETAMT] =
+    { .tag = JET
+    , .jet = inputIssuanceAssetAmt
+    , .sourceIx = word32
+    , .targetIx = sSConfWord64
+    },
+ [INPUTISSUANCETOKENAMT] =
+    { .tag = JET
+    , .jet = inputIssuanceTokenAmt
+    , .sourceIx = word32
+    , .targetIx = sSConfWord64
+    },
+ [OUTPUTASSET] =
+    { .tag = JET
+    , .jet = outputAsset
+    , .sourceIx = word32
+    , .targetIx = sConfWord256
+    },
+ [OUTPUTAMOUNT] =
+    { .tag = JET
+    , .jet = outputAmount
+    , .sourceIx = word32
+    , .targetIx = sConfWord64
+    },
+ [OUTPUTNONCE] =
+    { .tag = JET
+    , .jet = outputNonce
+    , .sourceIx = word32
+    , .targetIx = sSConfWord256
+    },
+ [OUTPUTSCRIPTHASH] =
+    { .tag = JET
+    , .jet = outputScriptHash
+    , .sourceIx = word32
+    , .targetIx = sWord256
+    },
+ [OUTPUTNULLDATUM] =
+    { .tag = JET
+    , .jet = outputNullDatum
+    , .sourceIx = word64
+    , .targetIx = sSWord2TimesWord256PlusTwoPlusWord4
+    },
+ [SCRIPTCMR] =
+    { .tag = JET
+    , .jet = scriptCMR
+    , .sourceIx = one
+    , .targetIx = word256
+    },
+ [CURRENTINDEX] =
+    { .tag = JET
+    , .jet = currentIndex
+    , .sourceIx = one
+    , .targetIx = word32
+    },
+ [CURRENTISPEGIN] =
+    { .tag = JET
+    , .jet = currentIsPegin
+    , .sourceIx = one
+    , .targetIx = two
+    },
+ [CURRENTPREVOUTPOINT] =
+    { .tag = JET
+    , .jet = currentPrevOutpoint
+    , .sourceIx = one
+    , .targetIx = outpnt
+    },
+ [CURRENTASSET] =
+    { .tag = JET
+    , .jet = currentAsset
+    , .sourceIx = one
+    , .targetIx = confWord256
+    },
+ [CURRENTAMOUNT] =
+    { .tag = JET
+    , .jet = currentAmount
+    , .sourceIx = one
+    , .targetIx = confWord64
+    },
+ [CURRENTSCRIPTHASH] =
+    { .tag = JET
+    , .jet = currentScriptHash
+    , .sourceIx = one
+    , .targetIx = word256
+    },
+ [CURRENTSEQUENCE] =
+    { .tag = JET
+    , .jet = currentSequence
+    , .sourceIx = one
+    , .targetIx = word32
+    },
+ [CURRENTISSUANCEBLINDING] =
+    { .tag = JET
+    , .jet = currentIssuanceBlinding
+    , .sourceIx = one
+    , .targetIx = sWord256
+    },
+ [CURRENTISSUANCECONTRACT] =
+    { .tag = JET
+    , .jet = currentIssuanceContract
+    , .sourceIx = one
+    , .targetIx = sWord256
+    },
+ [CURRENTISSUANCEENTROPY] =
+    { .tag = JET
+    , .jet = currentIssuanceEntropy
+    , .sourceIx = one
+    , .targetIx = sWord256
+    },
+ [CURRENTISSUANCEASSETAMT] =
+    { .tag = JET
+    , .jet = currentIssuanceAssetAmt
+    , .sourceIx = one
+    , .targetIx = sConfWord64
+    },
+ [CURRENTISSUANCETOKENAMT] =
+    { .tag = JET
+    , .jet = currentIssuanceTokenAmt
+    , .sourceIx = one
+    , .targetIx = sConfWord64
+    },
+ [INPUTSHASH] =
+    { .tag = JET
+    , .jet = inputsHash
+    , .sourceIx = one
+    , .targetIx = word256
+    },
+ [OUTPUTSHASH] =
+    { .tag = JET
+    , .jet = outputsHash
+    , .sourceIx = one
+    , .targetIx = word256
+    },
+ [NUMINPUTS] =
+    { .tag = JET
+    , .jet = numInputs
+    , .sourceIx = one
+    , .targetIx = word32
+    },
+ [NUMOUTPUTS] =
+    { .tag = JET
+    , .jet = numOutputs
+    , .sourceIx = one
+    , .targetIx = word32
+    },
+ [FEE] =
+    { .tag = JET
+    , .jet = NULL /* :TODO: FEE not yet implemented. */
+    , .sourceIx = word256
+    , .targetIx = word64
+    }
+ };
+static void static_initialize(void) {
+  MK_TAG(jet_node[VERSION].wmr.s, PRIMITIVE_TAG("version"));
+  MK_TAG(jet_node[LOCKTIME].wmr.s, PRIMITIVE_TAG("lockTime"));
+  MK_TAG(jet_node[INPUTISPEGIN].wmr.s, PRIMITIVE_TAG("inputIsPegin"));
+  MK_TAG(jet_node[INPUTPREVOUTPOINT].wmr.s, PRIMITIVE_TAG("inputPrevOutpoint"));
+  MK_TAG(jet_node[INPUTASSET].wmr.s, PRIMITIVE_TAG("inputAsset"));
+  MK_TAG(jet_node[INPUTAMOUNT].wmr.s, PRIMITIVE_TAG("inputAmount"));
+  MK_TAG(jet_node[INPUTSCRIPTHASH].wmr.s, PRIMITIVE_TAG("inputScriptHash"));
+  MK_TAG(jet_node[INPUTSEQUENCE].wmr.s, PRIMITIVE_TAG("inputSequence"));
+  MK_TAG(jet_node[INPUTISSUANCEBLINDING].wmr.s, PRIMITIVE_TAG("inputIssuanceBlinding"));
+  MK_TAG(jet_node[INPUTISSUANCECONTRACT].wmr.s, PRIMITIVE_TAG("inputIssuanceContract"));
+  MK_TAG(jet_node[INPUTISSUANCEENTROPY].wmr.s, PRIMITIVE_TAG("inputIssuanceEntropy"));
+  MK_TAG(jet_node[INPUTISSUANCEASSETAMT].wmr.s, PRIMITIVE_TAG("inputIssuanceAssetAmt"));
+  MK_TAG(jet_node[INPUTISSUANCETOKENAMT].wmr.s, PRIMITIVE_TAG("inputIssuanceTokenAmt"));
+  MK_TAG(jet_node[OUTPUTASSET].wmr.s, PRIMITIVE_TAG("outputAsset"));
+  MK_TAG(jet_node[OUTPUTAMOUNT].wmr.s, PRIMITIVE_TAG("outputAmount"));
+  MK_TAG(jet_node[OUTPUTNONCE].wmr.s, PRIMITIVE_TAG("outputNonce"));
+  MK_TAG(jet_node[OUTPUTSCRIPTHASH].wmr.s, PRIMITIVE_TAG("outputScriptHash"));
+  MK_TAG(jet_node[OUTPUTNULLDATUM].wmr.s, PRIMITIVE_TAG("outputNullDatum"));
+  MK_TAG(jet_node[SCRIPTCMR].wmr.s, PRIMITIVE_TAG("scriptCMR"));
+  MK_TAG(jet_node[CURRENTINDEX].wmr.s, PRIMITIVE_TAG("currentIndex"));
+  MK_TAG(jet_node[CURRENTISPEGIN].wmr.s, PRIMITIVE_TAG("currentIsPegin"));
+  MK_TAG(jet_node[CURRENTPREVOUTPOINT].wmr.s, PRIMITIVE_TAG("currentPrevOutpoint"));
+  MK_TAG(jet_node[CURRENTASSET].wmr.s, PRIMITIVE_TAG("currentAsset"));
+  MK_TAG(jet_node[CURRENTAMOUNT].wmr.s, PRIMITIVE_TAG("currentAmount"));
+  MK_TAG(jet_node[CURRENTSCRIPTHASH].wmr.s, PRIMITIVE_TAG("currentScriptHash"));
+  MK_TAG(jet_node[CURRENTSEQUENCE].wmr.s, PRIMITIVE_TAG("currentSequence"));
+  MK_TAG(jet_node[CURRENTISSUANCEBLINDING].wmr.s, PRIMITIVE_TAG("currentIssuanceBlinding"));
+  MK_TAG(jet_node[CURRENTISSUANCECONTRACT].wmr.s, PRIMITIVE_TAG("currentIssuanceContract"));
+  MK_TAG(jet_node[CURRENTISSUANCEENTROPY].wmr.s, PRIMITIVE_TAG("currentIssuanceEntropy"));
+  MK_TAG(jet_node[CURRENTISSUANCEASSETAMT].wmr.s, PRIMITIVE_TAG("currentIssuanceAssetAmt"));
+  MK_TAG(jet_node[CURRENTISSUANCETOKENAMT].wmr.s, PRIMITIVE_TAG("currentIssuanceTokenAmt"));
+  MK_TAG(jet_node[INPUTSHASH].wmr.s, PRIMITIVE_TAG("inputsHash"));
+  MK_TAG(jet_node[OUTPUTSHASH].wmr.s, PRIMITIVE_TAG("outputsHash"));
+  MK_TAG(jet_node[NUMINPUTS].wmr.s, PRIMITIVE_TAG("numInputs"));
+  MK_TAG(jet_node[NUMOUTPUTS].wmr.s, PRIMITIVE_TAG("numOutputs"));
+  MK_TAG(jet_node[FEE].wmr.s, PRIMITIVE_TAG("fee"));
+}
+
 /* Return a copy of the Simplicity node corresponding to the given Elements specific jet 'name'.
  */
 static dag_node jetNode(jetName name) {
-  /* Cache a copy of each node for all the Elements specific jets. */
-  static bool static_initialized = false;
-  static dag_node node[] = {
-   [VERSION] =
-      { .tag = JET
-      , .jet = version
-      , .sourceIx = one
-      , .targetIx = word32
-      },
-   [LOCKTIME] =
-      { .tag = JET
-      , .jet = lockTime
-      , .sourceIx = one
-      , .targetIx = word32
-      },
-   [INPUTISPEGIN] =
-      { .tag = JET
-      , .jet = inputIsPegin
-      , .sourceIx = word32
-      , .targetIx = sTwo
-      },
-   [INPUTPREVOUTPOINT] =
-      { .tag = JET
-      , .jet = inputPrevOutpoint
-      , .sourceIx = word32
-      , .targetIx = sOutpnt
-      },
-   [INPUTASSET] =
-      { .tag = JET
-      , .jet = inputAsset
-      , .sourceIx = word32
-      , .targetIx = sConfWord256
-      },
-   [INPUTAMOUNT] =
-      { .tag = JET
-      , .jet = inputAmount
-      , .sourceIx = word32
-      , .targetIx = sConfWord64
-      },
-   [INPUTSCRIPTHASH] =
-      { .tag = JET
-      , .jet = inputScriptHash
-      , .sourceIx = word32
-      , .targetIx = sWord256
-      },
-   [INPUTSEQUENCE] =
-      { .tag = JET
-      , .jet = inputSequence
-      , .sourceIx = word32
-      , .targetIx = sWord32
-      },
-   [INPUTISSUANCEBLINDING] =
-      { .tag = JET
-      , .jet = inputIssuanceBlinding
-      , .sourceIx = word32
-      , .targetIx = sSWord256
-      },
-   [INPUTISSUANCECONTRACT] =
-      { .tag = JET
-      , .jet = inputIssuanceContract
-      , .sourceIx = word32
-      , .targetIx = sSWord256
-      },
-   [INPUTISSUANCEENTROPY] =
-      { .tag = JET
-      , .jet = inputIssuanceEntropy
-      , .sourceIx = word32
-      , .targetIx = sSWord256
-      },
-   [INPUTISSUANCEASSETAMT] =
-      { .tag = JET
-      , .jet = inputIssuanceAssetAmt
-      , .sourceIx = word32
-      , .targetIx = sSConfWord64
-      },
-   [INPUTISSUANCETOKENAMT] =
-      { .tag = JET
-      , .jet = inputIssuanceTokenAmt
-      , .sourceIx = word32
-      , .targetIx = sSConfWord64
-      },
-   [OUTPUTASSET] =
-      { .tag = JET
-      , .jet = outputAsset
-      , .sourceIx = word32
-      , .targetIx = sConfWord256
-      },
-   [OUTPUTAMOUNT] =
-      { .tag = JET
-      , .jet = outputAmount
-      , .sourceIx = word32
-      , .targetIx = sConfWord64
-      },
-   [OUTPUTNONCE] =
-      { .tag = JET
-      , .jet = outputNonce
-      , .sourceIx = word32
-      , .targetIx = sSConfWord256
-      },
-   [OUTPUTSCRIPTHASH] =
-      { .tag = JET
-      , .jet = outputScriptHash
-      , .sourceIx = word32
-      , .targetIx = sWord256
-      },
-   [OUTPUTNULLDATUM] =
-      { .tag = JET
-      , .jet = outputNullDatum
-      , .sourceIx = word64
-      , .targetIx = sSWord2TimesWord256PlusTwoPlusWord4
-      },
-   [SCRIPTCMR] =
-      { .tag = JET
-      , .jet = scriptCMR
-      , .sourceIx = one
-      , .targetIx = word256
-      },
-   [CURRENTINDEX] =
-      { .tag = JET
-      , .jet = currentIndex
-      , .sourceIx = one
-      , .targetIx = word32
-      },
-   [CURRENTISPEGIN] =
-      { .tag = JET
-      , .jet = currentIsPegin
-      , .sourceIx = one
-      , .targetIx = two
-      },
-   [CURRENTPREVOUTPOINT] =
-      { .tag = JET
-      , .jet = currentPrevOutpoint
-      , .sourceIx = one
-      , .targetIx = outpnt
-      },
-   [CURRENTASSET] =
-      { .tag = JET
-      , .jet = currentAsset
-      , .sourceIx = one
-      , .targetIx = confWord256
-      },
-   [CURRENTAMOUNT] =
-      { .tag = JET
-      , .jet = currentAmount
-      , .sourceIx = one
-      , .targetIx = confWord64
-      },
-   [CURRENTSCRIPTHASH] =
-      { .tag = JET
-      , .jet = currentScriptHash
-      , .sourceIx = one
-      , .targetIx = word256
-      },
-   [CURRENTSEQUENCE] =
-      { .tag = JET
-      , .jet = currentSequence
-      , .sourceIx = one
-      , .targetIx = word32
-      },
-   [CURRENTISSUANCEBLINDING] =
-      { .tag = JET
-      , .jet = currentIssuanceBlinding
-      , .sourceIx = one
-      , .targetIx = sWord256
-      },
-   [CURRENTISSUANCECONTRACT] =
-      { .tag = JET
-      , .jet = currentIssuanceContract
-      , .sourceIx = one
-      , .targetIx = sWord256
-      },
-   [CURRENTISSUANCEENTROPY] =
-      { .tag = JET
-      , .jet = currentIssuanceEntropy
-      , .sourceIx = one
-      , .targetIx = sWord256
-      },
-   [CURRENTISSUANCEASSETAMT] =
-      { .tag = JET
-      , .jet = currentIssuanceAssetAmt
-      , .sourceIx = one
-      , .targetIx = sConfWord64
-      },
-   [CURRENTISSUANCETOKENAMT] =
-      { .tag = JET
-      , .jet = currentIssuanceTokenAmt
-      , .sourceIx = one
-      , .targetIx = sConfWord64
-      },
-   [INPUTSHASH] =
-      { .tag = JET
-      , .jet = inputsHash
-      , .sourceIx = one
-      , .targetIx = word256
-      },
-   [OUTPUTSHASH] =
-      { .tag = JET
-      , .jet = outputsHash
-      , .sourceIx = one
-      , .targetIx = word256
-      },
-   [NUMINPUTS] =
-      { .tag = JET
-      , .jet = numInputs
-      , .sourceIx = one
-      , .targetIx = word32
-      },
-   [NUMOUTPUTS] =
-      { .tag = JET
-      , .jet = numOutputs
-      , .sourceIx = one
-      , .targetIx = word32
-      },
-   [FEE] =
-      { .tag = JET
-      , .jet = NULL /* :TODO: FEE not yet implemented. */
-      , .sourceIx = word256
-      , .targetIx = word64
-      }
-   };
+  call_once(&static_initialized, &static_initialize);
 
-  if (!static_initialized) {
-    MK_TAG(node[VERSION].wmr.s, PRIMITIVE_TAG("version"));
-    MK_TAG(node[LOCKTIME].wmr.s, PRIMITIVE_TAG("lockTime"));
-    MK_TAG(node[INPUTISPEGIN].wmr.s, PRIMITIVE_TAG("inputIsPegin"));
-    MK_TAG(node[INPUTPREVOUTPOINT].wmr.s, PRIMITIVE_TAG("inputPrevOutpoint"));
-    MK_TAG(node[INPUTASSET].wmr.s, PRIMITIVE_TAG("inputAsset"));
-    MK_TAG(node[INPUTAMOUNT].wmr.s, PRIMITIVE_TAG("inputAmount"));
-    MK_TAG(node[INPUTSCRIPTHASH].wmr.s, PRIMITIVE_TAG("inputScriptHash"));
-    MK_TAG(node[INPUTSEQUENCE].wmr.s, PRIMITIVE_TAG("inputSequence"));
-    MK_TAG(node[INPUTISSUANCEBLINDING].wmr.s, PRIMITIVE_TAG("inputIssuanceBlinding"));
-    MK_TAG(node[INPUTISSUANCECONTRACT].wmr.s, PRIMITIVE_TAG("inputIssuanceContract"));
-    MK_TAG(node[INPUTISSUANCEENTROPY].wmr.s, PRIMITIVE_TAG("inputIssuanceEntropy"));
-    MK_TAG(node[INPUTISSUANCEASSETAMT].wmr.s, PRIMITIVE_TAG("inputIssuanceAssetAmt"));
-    MK_TAG(node[INPUTISSUANCETOKENAMT].wmr.s, PRIMITIVE_TAG("inputIssuanceTokenAmt"));
-    MK_TAG(node[OUTPUTASSET].wmr.s, PRIMITIVE_TAG("outputAsset"));
-    MK_TAG(node[OUTPUTAMOUNT].wmr.s, PRIMITIVE_TAG("outputAmount"));
-    MK_TAG(node[OUTPUTNONCE].wmr.s, PRIMITIVE_TAG("outputNonce"));
-    MK_TAG(node[OUTPUTSCRIPTHASH].wmr.s, PRIMITIVE_TAG("outputScriptHash"));
-    MK_TAG(node[OUTPUTNULLDATUM].wmr.s, PRIMITIVE_TAG("outputNullDatum"));
-    MK_TAG(node[SCRIPTCMR].wmr.s, PRIMITIVE_TAG("scriptCMR"));
-    MK_TAG(node[CURRENTINDEX].wmr.s, PRIMITIVE_TAG("currentIndex"));
-    MK_TAG(node[CURRENTISPEGIN].wmr.s, PRIMITIVE_TAG("currentIsPegin"));
-    MK_TAG(node[CURRENTPREVOUTPOINT].wmr.s, PRIMITIVE_TAG("currentPrevOutpoint"));
-    MK_TAG(node[CURRENTASSET].wmr.s, PRIMITIVE_TAG("currentAsset"));
-    MK_TAG(node[CURRENTAMOUNT].wmr.s, PRIMITIVE_TAG("currentAmount"));
-    MK_TAG(node[CURRENTSCRIPTHASH].wmr.s, PRIMITIVE_TAG("currentScriptHash"));
-    MK_TAG(node[CURRENTSEQUENCE].wmr.s, PRIMITIVE_TAG("currentSequence"));
-    MK_TAG(node[CURRENTISSUANCEBLINDING].wmr.s, PRIMITIVE_TAG("currentIssuanceBlinding"));
-    MK_TAG(node[CURRENTISSUANCECONTRACT].wmr.s, PRIMITIVE_TAG("currentIssuanceContract"));
-    MK_TAG(node[CURRENTISSUANCEENTROPY].wmr.s, PRIMITIVE_TAG("currentIssuanceEntropy"));
-    MK_TAG(node[CURRENTISSUANCEASSETAMT].wmr.s, PRIMITIVE_TAG("currentIssuanceAssetAmt"));
-    MK_TAG(node[CURRENTISSUANCETOKENAMT].wmr.s, PRIMITIVE_TAG("currentIssuanceTokenAmt"));
-    MK_TAG(node[INPUTSHASH].wmr.s, PRIMITIVE_TAG("inputsHash"));
-    MK_TAG(node[OUTPUTSHASH].wmr.s, PRIMITIVE_TAG("outputsHash"));
-    MK_TAG(node[NUMINPUTS].wmr.s, PRIMITIVE_TAG("numInputs"));
-    MK_TAG(node[NUMOUTPUTS].wmr.s, PRIMITIVE_TAG("numOutputs"));
-    MK_TAG(node[FEE].wmr.s, PRIMITIVE_TAG("fee"));
-    static_initialized = true;
-  }
-
-  return node[name];
+  return jet_node[name];
 }
 
 /* Decode an Elements specific jet from 'stream' into 'node'.

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "bounded.h"
+#include "callonce.h"
 #include "tag.h"
 #include "sha256.h"
 #include "uword.h"
@@ -12,54 +13,82 @@
 #define COMMITMENT_TAG(s) "Simplicity\x1F" "Commitment\x1F" s
 #define WITNESS_TAG(s) "Simplicity\x1F" "Witness\x1F" s
 
+/* Cached initial values for all the tags.
+ * Only to be accessed through 'cmrIV' or 'wmrIV'.
+ */
+static once_flag static_initialized = ONCE_FLAG_INIT;
+static sha256_midstate cmr_compIV,
+                       cmr_caseIV,
+                       cmr_pairIV,
+                       cmr_disconnectIV,
+                       cmr_injlIV,
+                       cmr_injrIV,
+                       cmr_takeIV,
+                       cmr_dropIV,
+                       cmr_idenIV,
+                       cmr_unitIV,
+                       cmr_witnessIV;
+static sha256_midstate wmr_compIV,
+                       wmr_assertlIV,
+                       wmr_assertrIV,
+                       wmr_caseIV,
+                       wmr_pairIV,
+                       wmr_disconnectIV,
+                       wmr_injlIV,
+                       wmr_injrIV,
+                       wmr_takeIV,
+                       wmr_dropIV,
+                       wmr_idenIV,
+                       wmr_unitIV,
+                       wmr_witnessIV;
+static void static_initialize(void) {
+  MK_TAG(cmr_compIV.s, COMMITMENT_TAG("comp"));
+  MK_TAG(cmr_caseIV.s, COMMITMENT_TAG("case"));
+  MK_TAG(cmr_pairIV.s, COMMITMENT_TAG("pair"));
+  MK_TAG(cmr_disconnectIV.s, COMMITMENT_TAG("disconnect"));
+  MK_TAG(cmr_injlIV.s, COMMITMENT_TAG("injl"));
+  MK_TAG(cmr_injrIV.s, COMMITMENT_TAG("injr"));
+  MK_TAG(cmr_takeIV.s, COMMITMENT_TAG("take"));
+  MK_TAG(cmr_dropIV.s, COMMITMENT_TAG("drop"));
+  MK_TAG(cmr_idenIV.s, COMMITMENT_TAG("iden"));
+  MK_TAG(cmr_unitIV.s, COMMITMENT_TAG("unit"));
+  MK_TAG(cmr_witnessIV.s, COMMITMENT_TAG("witness"));
+  MK_TAG(wmr_compIV.s, WITNESS_TAG("comp"));
+  MK_TAG(wmr_assertlIV.s, WITNESS_TAG("assertl"));
+  MK_TAG(wmr_assertrIV.s, WITNESS_TAG("assertr"));
+  MK_TAG(wmr_caseIV.s, WITNESS_TAG("case"));
+  MK_TAG(wmr_pairIV.s, WITNESS_TAG("pair"));
+  MK_TAG(wmr_disconnectIV.s, WITNESS_TAG("disconnect"));
+  MK_TAG(wmr_injlIV.s, WITNESS_TAG("injl"));
+  MK_TAG(wmr_injrIV.s, WITNESS_TAG("injr"));
+  MK_TAG(wmr_takeIV.s, WITNESS_TAG("take"));
+  MK_TAG(wmr_dropIV.s, WITNESS_TAG("drop"));
+  MK_TAG(wmr_idenIV.s, WITNESS_TAG("iden"));
+  MK_TAG(wmr_unitIV.s, WITNESS_TAG("unit"));
+  MK_TAG(wmr_witnessIV.s, WITNESS_TAG("witness"));
+}
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
  *
  * Precondition: 'tag' \notin {HIDDEN, JET}
  */
 static sha256_midstate cmrIV(tag_t tag) {
-  /* Cache the initial values for all the tags. */
-  static bool static_initialized = false;
-  static sha256_midstate compIV,
-                         caseIV,
-                         pairIV,
-                         disconnectIV,
-                         injlIV,
-                         injrIV,
-                         takeIV,
-                         dropIV,
-                         idenIV,
-                         unitIV,
-                         witnessIV;
-  if (!static_initialized) {
-    MK_TAG(compIV.s, COMMITMENT_TAG("comp"));
-    MK_TAG(caseIV.s, COMMITMENT_TAG("case"));
-    MK_TAG(pairIV.s, COMMITMENT_TAG("pair"));
-    MK_TAG(disconnectIV.s, COMMITMENT_TAG("disconnect"));
-    MK_TAG(injlIV.s, COMMITMENT_TAG("injl"));
-    MK_TAG(injrIV.s, COMMITMENT_TAG("injr"));
-    MK_TAG(takeIV.s, COMMITMENT_TAG("take"));
-    MK_TAG(dropIV.s, COMMITMENT_TAG("drop"));
-    MK_TAG(idenIV.s, COMMITMENT_TAG("iden"));
-    MK_TAG(unitIV.s, COMMITMENT_TAG("unit"));
-    MK_TAG(witnessIV.s, COMMITMENT_TAG("witness"));
-    static_initialized = true;
-  }
+  call_once(&static_initialized, &static_initialize);
 
   switch (tag) {
-   case COMP: return compIV;
+   case COMP: return cmr_compIV;
    case ASSERTL:
    case ASSERTR:
-   case CASE: return caseIV;
-   case PAIR: return pairIV;
-   case DISCONNECT: return disconnectIV;
-   case INJL: return injlIV;
-   case INJR: return injrIV;
-   case TAKE: return takeIV;
-   case DROP: return dropIV;
-   case IDEN: return idenIV;
-   case UNIT: return unitIV;
-   case WITNESS: return witnessIV;
+   case CASE: return cmr_caseIV;
+   case PAIR: return cmr_pairIV;
+   case DISCONNECT: return cmr_disconnectIV;
+   case INJL: return cmr_injlIV;
+   case INJR: return cmr_injrIV;
+   case TAKE: return cmr_takeIV;
+   case DROP: return cmr_dropIV;
+   case IDEN: return cmr_idenIV;
+   case UNIT: return cmr_unitIV;
+   case WITNESS: return cmr_witnessIV;
    /* Precondition violated. */
    case HIDDEN:
    case JET:
@@ -75,52 +104,22 @@ static sha256_midstate cmrIV(tag_t tag) {
  * Precondition: 'tag' \notin {HIDDEN, JET}
  */
 static sha256_midstate wmrIV(tag_t tag) {
-  /* Cache the initial values for all the tags. */
-  static bool static_initialized = false;
-  static sha256_midstate compIV,
-                         assertlIV,
-                         assertrIV,
-                         caseIV,
-                         pairIV,
-                         disconnectIV,
-                         injlIV,
-                         injrIV,
-                         takeIV,
-                         dropIV,
-                         idenIV,
-                         unitIV,
-                         witnessIV;
-  if (!static_initialized) {
-    MK_TAG(compIV.s, WITNESS_TAG("comp"));
-    MK_TAG(assertlIV.s, WITNESS_TAG("assertl"));
-    MK_TAG(assertrIV.s, WITNESS_TAG("assertr"));
-    MK_TAG(caseIV.s, WITNESS_TAG("case"));
-    MK_TAG(pairIV.s, WITNESS_TAG("pair"));
-    MK_TAG(disconnectIV.s, WITNESS_TAG("disconnect"));
-    MK_TAG(injlIV.s, WITNESS_TAG("injl"));
-    MK_TAG(injrIV.s, WITNESS_TAG("injr"));
-    MK_TAG(takeIV.s, WITNESS_TAG("take"));
-    MK_TAG(dropIV.s, WITNESS_TAG("drop"));
-    MK_TAG(idenIV.s, WITNESS_TAG("iden"));
-    MK_TAG(unitIV.s, WITNESS_TAG("unit"));
-    MK_TAG(witnessIV.s, WITNESS_TAG("witness"));
-    static_initialized = true;
-  }
+  call_once(&static_initialized, &static_initialize);
 
   switch (tag) {
-   case COMP: return compIV;
-   case ASSERTL: return assertlIV;
-   case ASSERTR: return assertrIV;
-   case CASE: return caseIV;
-   case PAIR: return pairIV;
-   case DISCONNECT: return disconnectIV;
-   case INJL: return injlIV;
-   case INJR: return injrIV;
-   case TAKE: return takeIV;
-   case DROP: return dropIV;
-   case IDEN: return idenIV;
-   case UNIT: return unitIV;
-   case WITNESS: return witnessIV;
+   case COMP: return wmr_compIV;
+   case ASSERTL: return wmr_assertlIV;
+   case ASSERTR: return wmr_assertrIV;
+   case CASE: return wmr_caseIV;
+   case PAIR: return wmr_pairIV;
+   case DISCONNECT: return wmr_disconnectIV;
+   case INJL: return wmr_injlIV;
+   case INJR: return wmr_injrIV;
+   case TAKE: return wmr_takeIV;
+   case DROP: return wmr_dropIV;
+   case IDEN: return wmr_idenIV;
+   case UNIT: return wmr_unitIV;
+   case WITNESS: return wmr_witnessIV;
    /* Precondition violated. */
    case HIDDEN:
    case JET:
