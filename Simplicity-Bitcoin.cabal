@@ -1,0 +1,109 @@
+name:                Simplicity-Bitcoin
+version:             0.0.0
+-- synopsis:
+-- description:
+license:             MIT
+license-file:        LICENSE
+author:              Russell O'Connor
+maintainer:          roconnor@blockstream.com
+copyright:           (c) 2018-2020 Blockstream
+category:            Language
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.25
+tested-with:         GHC ==8.6.4
+
+library
+  exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
+                       Simplicity.Term.Core,
+                       Simplicity.CoreJets,
+                       Simplicity.Functor, Simplicity.Tensor,
+                       Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
+                       Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
+                       Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
+                       Simplicity.Programs.Word, Simplicity.Programs.Bit, Simplicity.Programs.Generic, Simplicity.Programs.Loop,
+                       Simplicity.Programs.Sha256, Simplicity.Programs.Sha256.Lib,
+                       Simplicity.Programs.LibSecp256k1, Simplicity.Programs.LibSecp256k1.Lib,
+                       Simplicity.Digest,
+                       Simplicity.MerkleRoot, Simplicity.MerkleRoot.Impl,
+                       Simplicity.Serialization,
+                       Simplicity.Word,
+                       Simplicity.LibSecp256k1.Schnorr,
+                       Simplicity.LibSecp256k1.Spec,
+                       Simplicity.Term,
+                       Simplicity.Semantics,
+                       Simplicity.Dag, Simplicity.Inference,
+                       Simplicity.JetType,
+                       Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString,
+                       Simplicity.Bitcoin.Primitive, Simplicity.Bitcoin.DataTypes
+                       Simplicity.Bitcoin.Programs.CheckSigHashAll, Simplicity.Bitcoin.Programs.CheckSigHashAll.Lib,
+                       Simplicity.Bitcoin.Jets,
+                       Simplicity.Bitcoin.Serialization.BitString
+  other-modules:       Simplicity.Primitive,
+                       Simplicity.Bitcoin.Dag, Simplicity.Bitcoin.JetType, Simplicity.Bitcoin.Term
+  other-extensions:    BangPatterns,
+                       FlexibleContexts,
+                       GADTs, StandaloneDeriving, TypeFamilies
+                       NoMonomorphismRestriction,
+                       UndecidableInstances, QuantifiedConstraints, RankNTypes, ExistentialQuantification, TypeOperators, TypeFamilies, DeriveTraversable,
+                       ScopedTypeVariables,
+                       RecordWildCards,
+                       EmptyCase, EmptyDataDecls, EmptyDataDeriving,
+                       ScopedTypeVariables,
+                       DeriveTraversable, FlexibleInstances, GADTs, TypeFamilies, MultiParamTypeClasses, RankNTypes,
+                       UndecidableInstances
+
+  hs-source-dirs:      Haskell,
+                       Haskell/Core,
+                       Haskell/Indef,
+                       Haskell/Bitcoin,
+                       Haskell/Bitcoin-Adapter
+  default-language:    Haskell2010
+  ghc-options:         -O2
+  build-depends:       base >=4.9 && <4.14,
+                       binary >=0.7 && <0.9,
+                       bytestring >=0.10 && <0.11,
+                       containers >=0.5.10 && <0.7,
+                       cereal >=0.5 && <0.6,
+                       lens-family >=2.0 && <2.1,
+                       mtl >=2.2 && <2.3,
+                       MemoTrie >=0.6 && <0.7,
+                       SHA >=1.6 && <1.7,
+                       split >=0.2.3 && <0.3,
+                       transformers >=0.5 && <0.6,
+                       unification-fd >=0.10 && <0.11,
+                       vector >=0.12 && <0.13,
+                       array >=0.5 && <0.6,
+                       base >=4.9 && <4.14,
+                       bytestring >=0.10 && <0.11,
+                       cereal >=0.5 && <0.6
+
+
+Test-Suite testsuite
+  Type:                exitcode-stdio-1.0
+  main-is:             Bitcoin-Tests.hs
+  other-extensions:    RankNTypes,
+                       GADTs,
+                       ScopedTypeVariables
+  hs-source-dirs:      Haskell/Tests,
+                       Haskell/Bitcoin-Adapter
+  default-language:    Haskell2010
+  ghc-options:         -O2
+  other-modules:       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests,
+                       Simplicity.Serialization.Tests,
+                       Simplicity.Programs.Tests,
+                       Simplicity.Ty.Tests,
+                       Simplicity.Primitive
+  build-depends:       Simplicity-Bitcoin,
+                       array >=0.5 && <0.6,
+                       base >=4.9 && <4.14,
+                       bytestring >=0.10 && <0.11,
+                       cereal >=0.5 && <0.6,
+                       lens-family >=2.0 && <2.1,
+                       QuickCheck >=2.10 && <2.14,
+                       SHA >=1.6 && <1.7,
+                       tasty >=0.11 && <1.3,
+                       tasty-hunit >=0.9 && <0.11,
+                       tasty-quickcheck >=0.8 && <0.11,
+                       transformers >=0.5 && <0.6,
+                       vector >=0.12 && <0.13
