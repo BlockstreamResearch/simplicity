@@ -50,7 +50,7 @@ import Simplicity.Term
 -- @
 --     'putJetBit' j === (l ++)
 -- @
-class Jet (MatcherInfo jt) => JetType jt where
+class (Assert (MatcherInfo jt), Primitive (MatcherInfo jt)) => JetType jt where
   type MatcherInfo jt :: * -> * -> *
   specification :: (TyC a, TyC b, Assert term, Primitive term) => jt a b -> term a b
   implementation :: (TyC a, TyC b) => jt a b -> PrimEnv -> a -> Maybe b

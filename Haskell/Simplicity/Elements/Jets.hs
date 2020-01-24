@@ -98,8 +98,3 @@ instance Assert MatcherInfo where
 
 instance Primitive MatcherInfo where
   primitive p = MatcherInfo (primitive p)
-
-instance Jet MatcherInfo where
-  -- Please notice we WitnessRoot of the jet's specification rather that the witness root rather than of (jet j)!
-  -- This lets match subexpressions that contain marked jets as if they didn't have marked jets.
-  jet j = j

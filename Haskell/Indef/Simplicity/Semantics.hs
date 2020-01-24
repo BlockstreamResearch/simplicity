@@ -138,8 +138,8 @@ instance JetType jt => Jet (FastEval jt) where
   jet t = result
    where
     result = FastEval { fastEvalSem = Delegator (jet t) fs
-                      , fastEvalMatcher = Just (jet t)
+                      , fastEvalMatcher = jm
                       }
-    FastEval (Delegator _ fs) _ = t `asTypeOf` result
+    FastEval (Delegator _ fs) jm = t `asTypeOf` result
 
 instance JetType jt => Simplicity (FastEval jt) where

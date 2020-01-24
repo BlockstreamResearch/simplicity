@@ -177,7 +177,7 @@ instance Primitive jm => Primitive (Dag jt jm)  where
   primitive p = mkLeaf (primitive p) (pure (primitive p)) (Prim (SomeArrow p))
 
 -- Exisiting jets are discarded when coverting to a dag.  They are reconstructed using a jet matcher.
-instance Jet jm => Jet (Dag jt jm) where
+instance (Assert jm, Primitive jm) => Jet (Dag jt jm) where
   jet t = Dag { dagRoot = root
               -- We make this witness root point to the same subexpression as the root of t.
               -- This lets the jet matcher match on nodes marked as jets, but otherwise the JetDag ignores marked jets.
@@ -188,7 +188,7 @@ instance Jet jm => Jet (Dag jt jm) where
    where
     dag = t
     root = jet t
-    jm = pure (jet t)
+    jm = dagMatcher dag
     map = dagMap dag
 
-instance Jet jm => Simplicity (Dag jt jm) where
+instance (Assert jm, Primitive jm) => Simplicity (Dag jt jm) where
