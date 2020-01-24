@@ -5,8 +5,11 @@ module Simplicity.JetType
   , NoJets(..)
   ) where
 
+import Control.Arrow (runKleisli)
+import Control.Monad.Trans.Reader (runReaderT)
 import Data.Void (Void, vacuous)
 
+import Simplicity.Primitive
 import Simplicity.Serialization
 import Simplicity.Tensor
 import Simplicity.Term
@@ -50,6 +53,8 @@ import Simplicity.Term
 class Jet (MatcherInfo jt) => JetType jt where
   type MatcherInfo jt :: * -> * -> *
   specification :: (TyC a, TyC b, Assert term, Primitive term) => jt a b -> term a b
+  implementation :: (TyC a, TyC b) => jt a b -> PrimEnv -> a -> Maybe b
+  implementation jt = flip $ runReaderT . runKleisli (specification jt)
   matcher :: (TyC a, TyC b) => MatcherInfo jt a b -> Maybe (jt a b)
   getJetBit :: Monad m => m Void -> m Bool -> m (SomeArrow jt)
   putJetBit :: (TyC a, TyC b) => jt a b -> DList Bool
