@@ -1,3 +1,6 @@
+OBJS := bitstream.o dag.o deserialize.o eval.o frame.o jets.o jetTable.o sha256.o type.o typeInference.o primitive/elements.o primitive/elements/jets.o primitive/elements/primitive.o
+TEST_OBJS := test.o hashBlock.o schnorr0.o schnorr6.o primitive/elements/checkSigHashAllTx1.o
+
 # From https://fastcompression.blogspot.com/2019/01/compiler-warnings.html
 CWARN := -Werror -Wall -Wextra -Wcast-qual -Wcast-align -Wstrict-aliasing -Wpointer-arith -Winit-self -Wshadow -Wswitch-enum -Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls -Wfloat-equal -Wundef -Wconversion
 
@@ -31,10 +34,10 @@ primitive/elements/jets.o: primitive/elements/jets.c
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<
 
-libElementsSimplicity.a: bitstream.o dag.o deserialize.o eval.o frame.o jets.o jetTable.o sha256.o type.o typeInference.o primitive/elements.o primitive/elements/jets.o primitive/elements/primitive.o
+libElementsSimplicity.a: $(OBJS)
 	ar rcs $@ $^
 
-test: test.o hashBlock.o schnorr0.o schnorr6.o primitive/elements/checkSigHashAllTx1.o libElementsSimplicity.a
+test: $(TEST_OBJS) libElementsSimplicity.a
 	$(CC) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
 install: libElementsSimplicity.a
@@ -44,3 +47,8 @@ install: libElementsSimplicity.a
 
 check: test
 	./test
+
+clean:
+	-rm -f test libElementsSimplicity.a $(TEST_OBJS) $(OBJS) jetTable.c
+
+.PHONY: install check clean
