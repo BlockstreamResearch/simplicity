@@ -1,25 +1,29 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE EmptyCase, RankNTypes, ScopedTypeVariables #-}
 -- | This module provides the 'sortDag' function for converting a Simplicity expression into an topologically sorted, DAG representation.
 module Simplicity.Dag
-  ( Dag
-  , sortDag
+  ( jetDag, noJetDag
+  , JetDag, NoJetDag
   -- * Type annoated, open recursive Simplicity terms.
   , TermF(..), SimplicityDag
   ) where
 
 import Prelude hiding (fail, drop, take)
 
+import Control.Applicative (empty)
 import Control.Monad.Trans.State (StateT(..), evalStateT)
 import Control.Monad.Trans.Writer (Writer, execWriter, tell)
 import Data.Foldable (toList)
 import Data.Map.Strict ((!))
 import qualified Data.Map.Strict as Map
+import Lens.Family2 ((&), (%~))
 import Lens.Family2.State (use)
 import Lens.Family2.Stock (at)
 
 import Simplicity.Digest
 import Simplicity.Inference
+import Simplicity.JetType
 import Simplicity.MerkleRoot
+import Simplicity.Tensor
 import Simplicity.Term
 
 -- A monad used in the implementation of linearizeDag.
@@ -39,103 +43,157 @@ tellNode h iterm = StateT go
     sz = toInteger (Map.size map)
     f i = sz - i -- transform indexes to offsets
 
--- | A 'Simplicity' instance used with 'sortDag'.
+
+-- | A 'Simplicity' instance used with 'jetDag'.
 -- This instance merges identical typed Simplicity sub-expressions to create a DAG (directed acyclic graph) structure that represents the expression.
-data Dag a b = Dag { dagRoot :: WitnessRoot a b
-                   , dagMap :: Map.Map Hash256 (TermF () (SomeArrow JetSpec) UntypedValue Hash256)
-                   }
+--
+-- @'JetDag' jt@ is used to create DAGs containing jets of @'JetType' jt@ by finding subexpressions that match the jet specifications of @jt@.
+data JetDag jt a b = Dag { dagRoot :: WitnessRoot a b
+                         , dagMap :: Map.Map Hash256 (DagMapContents jt)
+                         , dagMatcher :: Maybe (MatcherInfo jt a b)
+                         }
+
+-- Each entry in the 'dagMap' contains an untyped term with references to the map index of its subexpressions, and the 'MatcherInfo' of some 'JetType'.
+data DagMapContents jt = JDMC { jdmcTerm :: UntypedTermF (SomeArrow jt) UntypedValue Hash256, jdmcMatcher :: Maybe (SomeArrow (MatcherInfo jt)) }
+
+-- | A 'JetDag' instance that matches 'NoJets'.
+type NoJetDag a b = JetDag NoJets a b
 
 -- Topologically sort the 'Dag'.
 -- The type annotations are also stripped in order to ensure the result isn't accidentally serialized before inference of principle type annotations.
 -- All sharing of subexpressions remains monomorphic to ensure that types can be infered in (quasi-)linear time.
-linearizeDag :: Dag a b -> SimplicityDag [] () (SomeArrow JetSpec) UntypedValue
+-- Any jets found are condensed into 'uJet' nodes.
+linearizeDag :: JetType jt => JetDag jt a b -> SimplicityDag [] () (SomeArrow jt) UntypedValue
 linearizeDag dag = execLinearM . go . witnessRoot . dagRoot $ dag
  where
+  someArrowMatcher (SomeArrow jm) = SomeArrow <$> matcher jm
   dmap = dagMap dag
   go h = do
     mi <- use (at h)
     case mi of
      Just i -> return i
-     Nothing -> traverse go uterm >>= tellNode h
+     Nothing -> case someArrowMatcher =<< jdmcMatcher contents of
+                  Just jt -> tellNode h (uJet jt)
+                  Nothing -> traverse go (jdmcTerm contents) >>= tellNode h
    where
-    uterm = dmap ! h
+    contents = dmap ! h
 
--- | Given a Simplicity expression, return a type annotated 'SimplicityDag', with shared subexpressions, that is suitable for serialization by 'Simplicity.Serialization.BitString.putDag'.
+-- | Given a Simplicity expression, return a type annotated 'SimplicityDag', with shared subexpressions and @'JetType' jt@ jets, that is suitable for serialization using "Simplicity.Serialization.BitString".
 --
+-- Any discounted jets marked in the original expression are discarded and replaced with their specification.
+-- After the discounted jets are replaced, the Simplicity expression is scanned for jets matching the 'JetType' @jt@, which will introduce a new set of jets.
 -- This function invokes type inference to ensure that the type annotations are principle types (with type variables instantiated at unit types).
--- Therefore the 'WitnessRoot' of the result may not match the 'WitnessRoot' of the input.
-sortDag :: forall a b. (TyC a, TyC b) => Dag a b -> SimplicityDag [] Ty (SomeArrow JetSpec) UntypedValue
-sortDag t = toList pass2
+-- For these reasons the 'WitnessRoot' of the result may not match the 'WitnessRoot' of the input.
+-- If a different set of jets are introduced, then the 'CommitmentRoot' of the result might also not match the 'CommitmentRoot' of the input.
+jetDag :: forall jt a b. (JetType jt, TyC a, TyC b) => JetDag jt a b -> SimplicityDag [] Ty (SomeArrow jt) UntypedValue
+jetDag t = toList pass2
  where
-  pass1 :: Dag a b
+  pass1 :: JetDag jt a b
   -- The patterns should never fail as we are running type inference on terms that are already known to be well typed.
   -- A failure of a pattern match here suggests there is an error in the type inference engine.
+  -- The first pass matches jets and wraps them in a uJet combinator to ensure their types are not simplified by the type inference pass, which could possibly destroy the structure of the jets.
   pass1 = case typeCheck =<< typeInference pass1 (linearizeDag t) of
             Right pass -> pass
             Left e -> error $ "sortDag.pass1: " ++ e
-  pass2 = case typeInference pass1 (linearizeDag pass1) of
+  linearize2 = linearizeDag pass1
+  pass2 = case typeInference pass1 linearize2 of
             Right pass -> pass
             Left e -> error $ "sortDag.pass2: " ++ e
 
-mkLeaf comb uComb = Dag { dagRoot = root
-                        , dagMap = Map.singleton (witnessRoot root) uComb
-                        }
-  where
-   root = comb
+-- | A specialization of 'jetDag' that does not match any jets.
+noJetDag :: (TyC a, TyC b) => NoJetDag a b -> SimplicityDag [] Ty void UntypedValue
+noJetDag t = jetDag t & (traverse.jetData) %~ absurd
+ where
+  absurd (SomeArrow noJets) = case noJets of {}
 
-mkUnary comb uComb t = Dag { dagRoot = root
-                           , dagMap = Map.insert (witnessRoot root) (uComb (witnessRoot (dagRoot t))) (dagMap t)
-                           }
+-- These combinators are used in to assist making 'Dag' instances.
+mkLeaf wComb jmComb uComb =
+   Dag { dagRoot = root
+       , dagMap = Map.singleton (witnessRoot root) (JDMC uComb (SomeArrow <$> jm))
+       , dagMatcher = jm
+       }
   where
-   root = comb (dagRoot t)
+   root = wComb
+   jm = jmComb
 
-mkBinary comb uComb s t = Dag { dagRoot = root
-                              , dagMap = Map.insert (witnessRoot root) (uComb (witnessRoot (dagRoot s)) (witnessRoot (dagRoot t))) union
-                              }
+mkUnary wComb jmComb uComb t =
+   Dag { dagRoot = root
+       , dagMap = Map.insert (witnessRoot root) (JDMC (uComb (witnessRoot (dagRoot t))) (SomeArrow <$> jm))
+                   $ dagMap t
+       , dagMatcher = jm
+       }
   where
-   root = comb (dagRoot s) (dagRoot t)
+   root = wComb (dagRoot t)
+   jm = jmComb <*> dagMatcher t
+
+mkBinary wComb jmComb uComb s t =
+   Dag { dagRoot = root
+       , dagMap = Map.insert (witnessRoot root) (JDMC (uComb (witnessRoot (dagRoot s)) (witnessRoot (dagRoot t))) (SomeArrow <$> jm))
+                   $ union
+       , dagMatcher = jm
+       }
+  where
+   root = wComb (dagRoot s) (dagRoot t)
+   jm = jmComb <*> dagMatcher s <*> dagMatcher t
    union = Map.union (dagMap s) (dagMap t)
 
-instance Core Dag where
-  iden = mkLeaf iden uIden
-  comp = mkBinary comp uComp
-  unit = mkLeaf unit uUnit
-  injl = mkUnary injl uInjl
-  injr = mkUnary injr uInjr
-  match = mkBinary match uCase
-  pair = mkBinary pair uPair
-  take = mkUnary take uTake
-  drop = mkUnary drop uDrop
+-- 'Dag' instances for Simplicity expressions.
+instance JetType jt => Core (JetDag jt) where
+  iden = mkLeaf iden (pure iden) uIden
+  comp = mkBinary comp (pure comp) uComp
+  unit = mkLeaf unit (pure unit) uUnit
+  injl = mkUnary injl (pure injl) uInjl
+  injr = mkUnary injr (pure injr) uInjr
+  match = mkBinary match (pure match) uCase
+  pair = mkBinary pair (pure pair) uPair
+  take = mkUnary take (pure take) uTake
+  drop = mkUnary drop (pure drop) uDrop
 
-instance Assert Dag where
+instance JetType jt => Assert (JetDag jt) where
   assertl s h = Dag { dagRoot = root
-                    , dagMap = Map.insert (witnessRoot root) (uCase (witnessRoot (dagRoot s)) hRoot)
-                             . Map.insert hRoot (uHidden h)
+                    , dagMap = Map.insert (witnessRoot root) (JDMC (uCase (witnessRoot (dagRoot s)) hRoot) (SomeArrow <$> jm))
+                             . Map.insert hRoot (JDMC (uHidden h) Nothing)
                              $ dagMap s
+                    , dagMatcher = jm
                     }
    where
     hRoot = hiddenRoot h
     root = assertl (dagRoot s) h
+    jm = assertl <$> dagMatcher s <*> pure h
   assertr h t = Dag { dagRoot = root
-                    , dagMap = Map.insert (witnessRoot root) (uCase hRoot (witnessRoot (dagRoot t)))
-                             . Map.insert hRoot (uHidden h)
+                    , dagMap = Map.insert (witnessRoot root) (JDMC (uCase hRoot (witnessRoot (dagRoot t))) (SomeArrow <$> jm))
+                             . Map.insert hRoot (JDMC (uHidden h) Nothing)
                              $ dagMap t
+                    , dagMatcher = jm
                     }
    where
     hRoot = hiddenRoot h
     root = assertr h (dagRoot t)
-  fail b = mkLeaf (fail b) (uFail b)
+    jm = assertr h <$> dagMatcher t
+  fail b = mkLeaf (fail b) (pure (fail b)) (uFail b)
 
-instance Witness Dag where
-  witness v = mkLeaf (witness v) (uWitness (untypedValue v))
+instance Witness (JetDag jt) where
+  witness v = mkLeaf (witness v) empty (uWitness (untypedValue v))
 
-instance Delegate Dag where
-  disconnect = mkBinary disconnect uDisconnect
+instance Delegate (JetDag jt) where
+  disconnect = mkBinary disconnect empty uDisconnect
 
-instance Primitive Dag where
-  primitive p = mkLeaf (primitive p) (Prim (SomeArrow p))
+instance JetType jt => Primitive (JetDag jt)  where
+  primitive p = mkLeaf (primitive p) (pure (primitive p)) (Prim (SomeArrow p))
 
-instance Jet Dag where
-  jet t = mkLeaf (jet t) (Jet (SomeArrow t))
+-- Exisiting jets are discarded when coverting to a dag.  They are reconstructed using a jet matcher.
+instance JetType jt => Jet (JetDag jt) where
+  jet t = Dag { dagRoot = root
+              -- We make this witness root point to the same subexpression as the root of t.
+              -- This lets the jet matcher match on nodes marked as jets, but otherwise the JetDag ignores marked jets.
+              , dagMap = Map.insert (witnessRoot root) (JDMC (jdmcTerm (map ! witnessRoot (dagRoot dag))) (SomeArrow <$> jm))
+                       $ map
+              , dagMatcher = jm
+              }
+   where
+    dag = t
+    root = jet t
+    jm = dagMatcher dag
+    map = dagMap dag
 
-instance Simplicity Dag where
+instance JetType jt => Simplicity (JetDag jt) where

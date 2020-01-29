@@ -15,6 +15,7 @@ import Simplicity.Bitcoin.Dag
 import Simplicity.Bitcoin.Inference
 import Simplicity.MerkleRoot
 import Simplicity.Bitcoin.Primitive
+import Simplicity.Bitcoin.JetType
 import Simplicity.Bitcoin.Serialization.BitString as BitString
 import Simplicity.Bitcoin.Serialization.ByteString as ByteString
 import Simplicity.Bitcoin.Term
@@ -54,7 +55,7 @@ prop_getPutPositive :: Positive Integer -> Bool
 prop_getPutPositive (Positive n) = evalExactVector getPositive (UV.fromList (putPositive n [])) == Just n
 
 -- Test a 'SimplicityDag' predicate over suitable Arbitrary inputs.
-forallSimplicityDag :: (Show j, Testable prop) => (SimplicityDag [] Ty j UntypedValue -> prop) -> Property
+forallSimplicityDag :: Testable prop => (SimplicityDag [] Ty (SomeArrow NoJets) UntypedValue -> prop) -> Property
 forallSimplicityDag = forAll gen_UntypedTermF_list
  where
   gen_UntypedTermF_list = do
@@ -118,7 +119,7 @@ prop_getPutBitStringDag :: Bool -> Property
 prop_getPutBitStringDag stopCode = forallSimplicityDag prop
  where
   compareWitness _ w0 _ w1 = w0 == w1
-  prop :: SimplicityDag [] Ty () UntypedValue -> Result
+  prop :: SimplicityDag [] Ty (SomeArrow NoJets) UntypedValue -> Result
   prop v = case eval of
     Left msg -> failed { reason = show msg }
     Right (pdag, wdag) | not (compareDag (\_ _ _ _ -> True) v (toList pdag)) -> failed { reason = "Bitstring.getDagNoWiness returned bad value" }
@@ -143,7 +144,7 @@ prop_getPutByteStringDag = forallSimplicityDag prop
                                SomeTy rb -> fromMaybe False $ (==) <$> castUntypedValueR rb w0 <*> evalExactVector (getValueR rb) w1
   prop v = case runGetState (toList <$> ByteString.getDag) bs 0 of
             Left _ -> False
-            Right (v', rest) -> rest == mempty && compareDag compareWitness v (v' :: SimplicityDag [] () () (UV.Vector Bool))
+            Right (v', rest) -> rest == mempty && compareDag compareWitness v (v' :: SimplicityDag [] () (SomeArrow NoJets) (UV.Vector Bool))
    where
     Just bs = runPut <$> ByteString.putDag v -- generation is designed to create terms that always succeed at serializaiton.
 
@@ -151,13 +152,13 @@ prop_getPutByteStringDag = forallSimplicityDag prop
 testInference :: forall a b. (TyC a, TyC b) => String -> (forall term. (Core term) => term a b) -> TestTree
 testInference name program = testGroup name [testProperty "CommitmentRoot" assertion1, testProperty "WitnessRoot" assertion2]
  where
-  dag :: Dag a b
+  dag :: NoJetDag a b
   dag = program
   -- type inference on first pass is not necessarily equal to the orginal program because the Haskell type of internal nodes in the original program might not have the term's principle type.
   pass1 :: forall term. Simplicity term => Either String (term a b)
-  pass1 = typeCheck =<< typeInference dag (sortDag dag)
+  pass1 = typeCheck =<< typeInference dag (jetDag dag)
   -- Type inference on the second pass ought to always be equal to the first pass.
   pass2 :: forall term. Simplicity term => Either String (term a b)
-  pass2 = typeCheck =<< (typeInference dag . sortDag) =<< pass1
+  pass2 = typeCheck =<< (typeInference dag . jetDag) =<< (pass1 :: Either String (NoJetDag a b))
   assertion1 = pass1 == Right (program :: CommitmentRoot a b)
   assertion2 = pass2 == (pass1 :: Either String (WitnessRoot a b))
