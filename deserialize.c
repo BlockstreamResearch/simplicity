@@ -204,8 +204,6 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
  *
- * :TODO: Decoding of jets are not implemented yet.
- *
  * Precondition: dag_node dag[i + 1];
  *               i < 2^31 - 1
  *               NULL != stream
@@ -215,15 +213,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
   if (bit < 0) return bit;
   dag[i] = (dag_node){0};
   if (bit) {
-    bit = getBit(stream);
-    if (bit < 0) return bit;
-    if (bit) {
-      // TODO: Decode jets
-      fprintf(stderr, "jets nodes not yet implemented\n");
-      return ERR_NOT_YET_IMPLEMENTED;
-    } else {
-      return decodeJet(&dag[i], stream);
-    }
+    return decodeJet(&dag[i], stream);
   } else {
     int32_t code = getNBits(2, stream);
     if (code < 0) return code;

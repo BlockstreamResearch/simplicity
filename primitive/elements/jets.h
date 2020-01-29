@@ -3,8 +3,7 @@
 #ifndef PRIMITIVE_ELEMENTS_JETS_H
 #define PRIMITIVE_ELEMENTS_JETS_H
 
-#include "../../frame.h"
-#include "primitive.h"
+#include "../../jets.h"
 
 /* Primitives for the Elements application of Simplicity. */
 bool version(frameItem* dst, frameItem src, const txEnv* env);
