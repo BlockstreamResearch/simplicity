@@ -9,7 +9,7 @@ module Simplicity.Ty
  , TyReflect(..)
  , reify, reifyProxy, reifyArrow
  , equalTyReflect
- , SomeArrow(..), someArrowR
+ , SomeArrow(..), someArrowR, someArrowMap
  , Ty, TyF(..)
  , one, sum, prod
  , unreflect
@@ -148,6 +148,10 @@ instance (forall a b. (TyC a, TyC b) => Show (arr a b)) => Show (SomeArrow arr) 
 -- | A pseudo-constructor for 'SomeArrow' that provides proxy arguments to help specify the type parameters.
 someArrowR :: (TyC a, TyC b) => proxy a -> proxy b -> arr a b -> SomeArrow arr
 someArrowR _ _ x = SomeArrow x
+
+-- | The functor operation on 'SomeArrow'.
+someArrowMap :: (forall a b. (TyC a, TyC b) => arr0 a b -> arr1 a b) -> SomeArrow arr0 -> SomeArrow arr1
+someArrowMap f (SomeArrow x) = SomeArrow (f x)
 
 -- | A Haskell data type for representing Simplicity types.
 -- It uses an explicit 'Fix'edpoint of the 'TyF' functor.

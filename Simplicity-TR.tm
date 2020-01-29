@@ -6412,7 +6412,7 @@
   Simplicity with delegation by returning a concrete function from
   <verbatim|PrimEnv> and <verbatim|a> to <verbatim|Maybe b>.
 
-  <subsection|Known Discounted Jets>
+  <subsection|<verbatim|JetType> class>
 
   While the <verbatim|Jet> class allows any expression to be a jet, in
   reality there we will have a specific set of known jets that we have
@@ -6734,6 +6734,27 @@
   by <verbatim|sigHashAll> for a provided public key. Some variants of this
   expression are also provided including <verbatim|pkwCheckSigHashAll> which
   builds a complete Simplicity program from a given public key and signature.
+
+  <subsection|Known Discounted Jets>
+
+  The <verbatim|Simplicity.Bitcoin.Jets> and
+  <verbatim|Simplicity.Elements.Jets> provide a canonical <verbatim|JetType>
+  of known jets. <with|color|red|Currently this only consists of
+  <verbatim|CoreJets>.> These modules also provide <verbatim|getTerm*> and
+  <verbatim|putTerm*> function that specifically encode and decode this set
+  of jets.
+
+  Both sets of jets draw upon the <verbatim|Simplicity.CoreJets> module which
+  provides ``core'' jets that are jets that do not depend on any primitives.
+  \ These ``core'' jets include
+
+  <\itemize>
+    <item>Jets for arithmetic, including 32-bit addition, subtraction and
+    multiplication
+
+    <item>Jets for hash functions, including the SHA-256 compression
+    function.
+  </itemize>
 
   <section|Simplicity <verbatim|testsuite>>
 
@@ -7472,17 +7493,18 @@
     <associate|auto-156|<tuple|9.3|83>>
     <associate|auto-157|<tuple|9.4|84>>
     <associate|auto-158|<tuple|9.4.1|84>>
-    <associate|auto-159|<tuple|9.5|84>>
+    <associate|auto-159|<tuple|9.4.2|84>>
     <associate|auto-16|<tuple|2.3.3|16>>
-    <associate|auto-160|<tuple|10|85>>
-    <associate|auto-161|<tuple|A|87>>
-    <associate|auto-162|<tuple|A.1|89>>
-    <associate|auto-163|<tuple|A.1.1|92>>
-    <associate|auto-164|<tuple|A.1.2|93>>
-    <associate|auto-165|<tuple|A.1.3|93>>
-    <associate|auto-166|<tuple|A.2|94>>
-    <associate|auto-167|<tuple|B|95>>
+    <associate|auto-160|<tuple|9.5|85>>
+    <associate|auto-161|<tuple|10|87>>
+    <associate|auto-162|<tuple|A|89>>
+    <associate|auto-163|<tuple|A.1|92>>
+    <associate|auto-164|<tuple|A.1.1|93>>
+    <associate|auto-165|<tuple|A.1.2|93>>
+    <associate|auto-166|<tuple|A.1.3|94>>
+    <associate|auto-167|<tuple|A.2|95>>
     <associate|auto-168|<tuple|B|97>>
+    <associate|auto-169|<tuple|B|?>>
     <associate|auto-17|<tuple|2.3.4|16>>
     <associate|auto-18|<tuple|2.3.4.1|17>>
     <associate|auto-19|<tuple|2.4|17>>
