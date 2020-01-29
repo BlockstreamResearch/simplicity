@@ -1,5 +1,6 @@
 #include "jets.h"
 
+#include "primitive.h"
 #include "../../unreachable.h"
 
 /* Write a 256-bit hash value to the 'dst' frame, advancing the cursor 256 cells.

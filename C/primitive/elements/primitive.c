@@ -2,12 +2,13 @@
  */
 #include "primitive.h"
 
-#include "../../callonce.h"
 #include "jets.h"
+#include "../../callonce.h"
 #include "../../tag.h"
 #include "../../unreachable.h"
 
 #define PRIMITIVE_TAG(s) "Simplicity\x1F" "Primitive\x1F" "Elements\x1F" s
+#define JET_TAG "Simplicity\x1F" "Jet"
 
 /* An enumeration of all the types we need to construct to specify the input and output types of all jets created by 'decodeJet'. */
 enum TypeNamesForJets {
@@ -21,6 +22,7 @@ enum TypeNamesForJets {
   word64,
   word128,
   word256,
+  word512,
   pubkey,
   sTwo,
   outpnt,
@@ -39,11 +41,15 @@ enum TypeNamesForJets {
   word2TimesWord256PlusTwoPlusWord4,
   sWord2TimesWord256PlusTwoPlusWord4,
   sSWord2TimesWord256PlusTwoPlusWord4,
+  twoTimesWord32,
+  word64TimesTwo,
+  word256TimesWord512,
   NumberOfTypeNames
 };
 
 /* Allocate a fresh set of unification variables bound to at least all the types necessary
- * for all the jets that can be created by 'decodeJet', and also the type 'TWO^256'.
+ * for all the jets that can be created by 'decodeJet', and also the type 'TWO^256',
+ * and also allocate space for 'extra_var_len' many unification variables.
  * Return the number of non-trivial bindings created.
  *
  * However, if malloc fails, then return 0.
@@ -84,6 +90,8 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* 
       .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word64], &(*bound_var)[word64] } } };
   (*bound_var)[word256] = (unification_var){ .isBound = true,
       .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word128], &(*bound_var)[word128] } } };
+  (*bound_var)[word512] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word256], &(*bound_var)[word256] } } };
   (*bound_var)[pubkey] = (unification_var){ .isBound = true,
       .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[two], &(*bound_var)[word256] } } };
   (*bound_var)[sTwo] = (unification_var){ .isBound = true,
@@ -120,6 +128,12 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* 
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[word2TimesWord256PlusTwoPlusWord4] } } };
   (*bound_var)[sSWord2TimesWord256PlusTwoPlusWord4] = (unification_var){ .isBound = true,
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sWord2TimesWord256PlusTwoPlusWord4] } } };
+  (*bound_var)[twoTimesWord32] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[two], &(*bound_var)[word32] } } };
+  (*bound_var)[word64TimesTwo] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word64], &(*bound_var)[two] } } };
+  (*bound_var)[word256TimesWord512] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word256], &(*bound_var)[word512] } } };
 
   *word256_ix = word256;
   *extra_var_start = NumberOfTypeNames;
@@ -130,7 +144,14 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* 
 
 /* An enumeration of the names of Elements specific jets and primitives. */
 typedef enum jetName
-{ VERSION
+{ ADDER32
+, SUBTRACTOR32
+, MULTIPLIER32
+, FULLADDER32
+, FULLSUBTRACTOR32
+, FULLMULTIPLIER32
+, SHA256_HASHBLOCK
+, VERSION
 , LOCKTIME
 , INPUTISPEGIN
 , INPUTPREVOUTPOINT
@@ -177,7 +198,7 @@ static int32_t either(jetName* result, jetName a, jetName b, bitstream* stream) 
 }
 
 /* Decode an Elements specific jet name from 'stream' into 'result'.
- * All application specific jets begin with a bit prefix of '10' which needs to have already been consumed from the 'stream'.
+ * All jets begin with a bit prefix of '1' which needs to have already been consumed from the 'stream'.
  * Returns 'ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
@@ -188,47 +209,77 @@ static int32_t either(jetName* result, jetName a, jetName b, bitstream* stream) 
  *               NULL != stream
  */
 static int32_t decodePrimitive(jetName* result, bitstream* stream) {
-  int32_t code = getNBits(5, stream);
-  if (code < 0) return code;
+  int32_t bit = getBit(stream);
+  if (bit < 0) return bit;
+  if (!bit) {
+    int32_t code = getNBits(5, stream);
+    if (code < 0) return code;
 
-  switch (code) {
-   case 0x0: return either(result, VERSION, LOCKTIME, stream);
-   case 0x1: *result = INPUTISPEGIN; return 0;
-   case 0x2: *result = INPUTPREVOUTPOINT; return 0;
-   case 0x3: *result = INPUTASSET; return 0;
-   case 0x4: return either(result, INPUTAMOUNT, INPUTSCRIPTHASH, stream);
-   case 0x5: *result = INPUTSEQUENCE; return 0;
-   case 0x6: *result = INPUTISSUANCEBLINDING; return 0;
-   case 0x7: *result = INPUTISSUANCECONTRACT; return 0;
-   case 0x8: return either(result, INPUTISSUANCEENTROPY, INPUTISSUANCEASSETAMT, stream);
-   case 0x9: *result = INPUTISSUANCETOKENAMT; return 0;
-   case 0xa: *result = OUTPUTASSET; return 0;
-   case 0xb: *result = OUTPUTAMOUNT; return 0;
-   case 0xc: return either(result, OUTPUTNONCE, OUTPUTSCRIPTHASH, stream);
-   case 0xd: *result = OUTPUTNULLDATUM; return 0;
-   case 0xe: *result = SCRIPTCMR; return 0;
-   case 0xf: *result = CURRENTINDEX; return 0;
-   case 0x10: *result = CURRENTISPEGIN; return 0;
-   case 0x11: *result = CURRENTPREVOUTPOINT; return 0;
-   case 0x12: *result = CURRENTASSET; return 0;
-   case 0x13: *result = CURRENTAMOUNT; return 0;
-   case 0x14: *result = CURRENTSCRIPTHASH; return 0;
-   case 0x15: *result = CURRENTSEQUENCE; return 0;
-   case 0x16: *result = CURRENTISSUANCEBLINDING; return 0;
-   case 0x17: *result = CURRENTISSUANCECONTRACT; return 0;
-   case 0x18: *result = CURRENTISSUANCEENTROPY; return 0;
-   case 0x19: *result = CURRENTISSUANCEASSETAMT; return 0;
-   case 0x1a: *result = CURRENTISSUANCETOKENAMT; return 0;
-   case 0x1b: *result = INPUTSHASH; return 0;
-   case 0x1c: *result = OUTPUTSHASH; return 0;
-   case 0x1d: *result = NUMINPUTS; return 0;
-   case 0x1e: *result = NUMOUTPUTS; return 0;
-   case 0x1f:
-    /* FEE is not yet implemented.  Disable it. */
-    *result = FEE; return ERR_DATA_OUT_OF_RANGE;
+    switch (code) {
+     case 0x0: return either(result, VERSION, LOCKTIME, stream);
+     case 0x1: *result = INPUTISPEGIN; return 0;
+     case 0x2: *result = INPUTPREVOUTPOINT; return 0;
+     case 0x3: *result = INPUTASSET; return 0;
+     case 0x4: return either(result, INPUTAMOUNT, INPUTSCRIPTHASH, stream);
+     case 0x5: *result = INPUTSEQUENCE; return 0;
+     case 0x6: *result = INPUTISSUANCEBLINDING; return 0;
+     case 0x7: *result = INPUTISSUANCECONTRACT; return 0;
+     case 0x8: return either(result, INPUTISSUANCEENTROPY, INPUTISSUANCEASSETAMT, stream);
+     case 0x9: *result = INPUTISSUANCETOKENAMT; return 0;
+     case 0xa: *result = OUTPUTASSET; return 0;
+     case 0xb: *result = OUTPUTAMOUNT; return 0;
+     case 0xc: return either(result, OUTPUTNONCE, OUTPUTSCRIPTHASH, stream);
+     case 0xd: *result = OUTPUTNULLDATUM; return 0;
+     case 0xe: *result = SCRIPTCMR; return 0;
+     case 0xf: *result = CURRENTINDEX; return 0;
+     case 0x10: *result = CURRENTISPEGIN; return 0;
+     case 0x11: *result = CURRENTPREVOUTPOINT; return 0;
+     case 0x12: *result = CURRENTASSET; return 0;
+     case 0x13: *result = CURRENTAMOUNT; return 0;
+     case 0x14: *result = CURRENTSCRIPTHASH; return 0;
+     case 0x15: *result = CURRENTSEQUENCE; return 0;
+     case 0x16: *result = CURRENTISSUANCEBLINDING; return 0;
+     case 0x17: *result = CURRENTISSUANCECONTRACT; return 0;
+     case 0x18: *result = CURRENTISSUANCEENTROPY; return 0;
+     case 0x19: *result = CURRENTISSUANCEASSETAMT; return 0;
+     case 0x1a: *result = CURRENTISSUANCETOKENAMT; return 0;
+     case 0x1b: *result = INPUTSHASH; return 0;
+     case 0x1c: *result = OUTPUTSHASH; return 0;
+     case 0x1d: *result = NUMINPUTS; return 0;
+     case 0x1e: *result = NUMOUTPUTS; return 0;
+     case 0x1f:
+      /* FEE is not yet implemented.  Disable it. */
+      *result = FEE; return ERR_DATA_OUT_OF_RANGE;
+    }
+    assert(false);
+    UNREACHABLE;
+  } else {
+    bit = getBit(stream);
+    if (bit < 0) return bit;
+    if (!bit) {
+      int32_t code = getNBits(2, stream);
+      if (code < 0) return code;
+
+      switch (code) {
+        case 0x0: return either(result, ADDER32, SUBTRACTOR32, stream);
+        case 0x1: *result = MULTIPLIER32; return 0;
+        case 0x2: return either(result, FULLADDER32, FULLSUBTRACTOR32, stream);
+        case 0x3: *result = FULLMULTIPLIER32; return 0;
+      }
+
+      assert(false);
+      UNREACHABLE;
+    } else {
+      bit = getBit(stream);
+      if (bit < 0) return bit;
+      if (!bit) {
+        *result = SHA256_HASHBLOCK; return 0;
+      } else {
+        fprintf(stderr, "EC jets nodes not yet implemented.\n");
+        return ERR_DATA_OUT_OF_RANGE;
+      }
+    }
   }
-  assert(false);
-  UNREACHABLE;
 }
 
 /* Cached copy of each node for all the Elements specific jets.
@@ -236,6 +287,48 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
  */
 static once_flag static_initialized = ONCE_FLAG_INIT;
 static dag_node jet_node[] = {
+ [ADDER32] =
+    { .tag = JET
+    , .jet = adder32
+    , .sourceIx = word64
+    , .targetIx = twoTimesWord32
+    },
+ [SUBTRACTOR32] =
+    { .tag = JET
+    , .jet = subtractor32
+    , .sourceIx = word64
+    , .targetIx = twoTimesWord32
+    },
+ [MULTIPLIER32] =
+    { .tag = JET
+    , .jet = multiplier32
+    , .sourceIx = word64
+    , .targetIx = word64
+    },
+ [FULLADDER32] =
+    { .tag = JET
+    , .jet = fullAdder32
+    , .sourceIx = word64TimesTwo
+    , .targetIx = twoTimesWord32
+    },
+ [FULLSUBTRACTOR32] =
+    { .tag = JET
+    , .jet = fullSubtractor32
+    , .sourceIx = word64TimesTwo
+    , .targetIx = twoTimesWord32
+    },
+ [FULLMULTIPLIER32] =
+    { .tag = JET
+    , .jet = fullMultiplier32
+    , .sourceIx = word128
+    , .targetIx = word64
+    },
+ [SHA256_HASHBLOCK] =
+    { .tag = JET
+    , .jet = sha256_hashBlock
+    , .sourceIx = word256TimesWord512
+    , .targetIx = word256
+    },
  [VERSION] =
     { .tag = JET
     , .jet = version
@@ -454,6 +547,26 @@ static dag_node jet_node[] = {
     }
  };
 static void static_initialize(void) {
+  {
+    sha256_midstate jet_iv;
+    MK_TAG(jet_iv.s, JET_TAG);
+
+#define MK_JET(name, h0, h1, h2, h3, h4, h5, h6, h7) \
+  do { \
+    jet_node[name].wmr = jet_iv; \
+    sha256_compression(jet_node[name].wmr.s, (uint32_t[16]){ [8] = h0, h1, h2, h3, h4, h5, h6, h7 }); \
+  } while(0)
+
+    MK_JET(ADDER32,          0x8e389a7d, 0x75429a8a, 0x6f5b448e, 0xc8e84585, 0x20e276fc, 0x8e09ef5a, 0x68f3f32d, 0x9fb97935);
+    MK_JET(FULLADDER32,      0xb914e4b5, 0x9f8eded4, 0xcd036e03, 0xffa5f11a, 0xa8668ae4, 0x9863bbb4, 0x3a0d7c3a, 0x14c916f0);
+    MK_JET(SUBTRACTOR32,     0x75ebd569, 0xbfce7af8, 0x030c49c7, 0x3e104c03, 0x65de898e, 0xa8d52670, 0xbffe9f6e, 0x312ff6e6);
+    MK_JET(FULLSUBTRACTOR32, 0x7a52e83e, 0x253ae776, 0xb0b948f1, 0x5083528e, 0x1c5d58cd, 0x5e03d4f2, 0xf04a9626, 0xe0476aeb);
+    MK_JET(MULTIPLIER32,     0x405914c9, 0x524c4873, 0xce5ddb06, 0xfd30d6d5, 0xfc4ac1fa, 0xc0eef8d8, 0x2de6c622, 0x7fb2d2cd);
+    MK_JET(FULLMULTIPLIER32, 0x89a0ae09, 0x8aff5e9c, 0x40907447, 0x91ff5c8e, 0xe17a8ceb, 0x9e494224, 0xe919deb1, 0x1c5b8af4);
+    MK_JET(SHA256_HASHBLOCK, 0xeeae47e2, 0xf7876c3b, 0x9cbcd404, 0xa338b089, 0xfdeadf1b, 0x9bb382ec, 0x6e69719d, 0x31baec9a);
+#undef MK_JET
+
+  }
   MK_TAG(jet_node[VERSION].wmr.s, PRIMITIVE_TAG("version"));
   MK_TAG(jet_node[LOCKTIME].wmr.s, PRIMITIVE_TAG("lockTime"));
   MK_TAG(jet_node[INPUTISPEGIN].wmr.s, PRIMITIVE_TAG("inputIsPegin"));
@@ -501,7 +614,7 @@ static dag_node jetNode(jetName name) {
 }
 
 /* Decode an Elements specific jet from 'stream' into 'node'.
- * All application specific jets begin with a bit prefix of '10' which needs to have already been consumed from the 'stream'.
+ * All jets begin with a bit prefix of '1' which needs to have already been consumed from the 'stream'.
  * Returns 'ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
  * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
