@@ -122,7 +122,7 @@ static void sha256_issuance(sha256_context* ctx, const assetIssuance* issuance) 
 /* Compute the SHA-256 hash of a scriptPubKey and write it into 'result'.
  *
  * Precondition: NULL != result;
- *               unsigned char scriptPubKey[scriptLen];
+ *               NULL != scriptPubKey;
  */
 static void hashScriptPubKey(sha256_midstate* result, const rawScript* scriptPubKey) {
   sha256_context ctx = sha256_init(result);

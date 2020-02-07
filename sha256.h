@@ -90,14 +90,23 @@ static inline sha256_context sha256_init(sha256_midstate* output) {
 /* Add an array of bytes to be consumed by an ongoing SHA-256 evaluation.
  *
  * Precondition: NULL != ctx;
- *               unsigned char arr[len];
+ *               if 0 < len then unsigned char arr[len];
  */
 static inline void sha256_uchars(sha256_context* ctx, const unsigned char* arr, size_t len) {
-  /* :TODO: Optimize this with memcpy. */
-  for(; len; --len) {
-    ctx->block[ctx->counter++ % 64] = *arr++;
-    if (0 == ctx->counter % 64) sha256_compression_uchar(ctx->output, ctx->block);
+  size_t delta = 64 - ctx->counter % 64;
+  unsigned char *block = ctx->block + ctx->counter % 64;
+  ctx->counter += len;
+
+  while (delta <= len) {
+    memcpy(block, arr, delta);
+    arr += delta;
+    len -= delta;
+    sha256_compression_uchar(ctx->output, ctx->block);
+    block = ctx->block;
+    delta = 64;
   }
+
+  if (len) memcpy(block, arr, len);
 }
 
 /* Add one bytes to be consumed by an ongoing SHA-256 evaluation.

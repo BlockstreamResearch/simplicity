@@ -13,7 +13,7 @@
 
 /* A type for a Bitcoin script with its length.
  *
- * Invariant: unsigned char code[len]
+ * Invariant: if 0 < len then unsigned char code[len]
  */
 typedef struct rawScript {
   const unsigned char* code;
