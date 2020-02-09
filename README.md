@@ -18,8 +18,9 @@ This project contains
 Software artifacts can be built using [Nix](https://nixos.org/nix/).
 
 * To build the Haskell project, run `nix-build -A haskell`.
-* To use the Haskell project, try `nix-shell -p "(import ./default.nix {}).haskellPackages.ghcWithPackages (pkgs: [pkgs.Simplicity])"`.
 * To build the Coq project, run `nix-build -A coq`.
+* For a Simplicity-Haskell development environment, type `nix-shell --arg coq false`.
+* Typing `nix-shell` will provide a full C, Coq and Haskell development environment.
 
 ### Building without Nix
 
