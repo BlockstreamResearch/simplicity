@@ -1,4 +1,6 @@
 Simplicity-TR.pdf
 Haskell/*.pdf
 *.eps
+Simplicity.cabal
+dist-newstyle/
 result-doc
