@@ -4,8 +4,9 @@
 -- The other exports of this library aid in building an instance of 'Simplicity.JetType.JetType' for those that make use of 'CoreJet' as a substructure.
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.CoreJets
- ( CoreJet
+ ( CoreJet(..)
  , specification, coreJetMap
+ , implementation
  , putJetBit, getJetBit
  ) where
 
@@ -15,6 +16,7 @@ import qualified Data.Map as Map
 import Data.Void (Void, vacuous)
 
 import Simplicity.Digest
+import Simplicity.FFI.Jets as FFI
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import qualified Simplicity.Programs.Sha256.Lib as Sha256
@@ -45,6 +47,27 @@ specification FullSubtractor32 = fullSubtractor word32
 specification Multiplier32 = multiplier word32
 specification FullMultiplier32 = fullMultiplier word32
 specification Sha256HashBlock = Sha256.hashBlock
+
+implementation :: CoreJet a b -> a -> Maybe b
+implementation Adder32 = \(x, y) -> do
+  let z = fromWord32 x + fromWord32 y
+  return (toBit (z >= 2 ^ 32), toWord32 z)
+implementation FullAdder32 = \((x, y), c) -> do
+  let z = fromWord32 x + fromWord32 y + fromWord1 c
+  return (toBit (z >= 2 ^ 32), toWord32 z)
+implementation Subtractor32 = \(x, y) -> do
+  let z = fromWord32 x - fromWord32 y
+  return (toBit (z < 0), toWord32 z)
+implementation FullSubtractor32 = \((x, y), b) -> do
+  let z = fromWord32 x - fromWord32 y - fromWord1 b
+  return (toBit (z < 0), toWord32 z)
+implementation Multiplier32 = \(x, y) -> do
+  let z = fromWord32 x * fromWord32 y
+  return (toWord64 z)
+implementation FullMultiplier32 = \((x, y), (a, b)) -> do
+  let z = fromWord32 x * fromWord32 y + fromWord32 a + fromWord32 b
+  return (toWord64 z)
+implementation Sha256HashBlock = FFI.sha256_hashBlock
 
 -- | A canonical deserialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.getJetBit' method.
 getJetBit :: (Monad m) => m Void -> m Bool -> m (SomeArrow CoreJet)
