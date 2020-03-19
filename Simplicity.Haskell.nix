@@ -3,8 +3,11 @@ mkDerivation (rec {
   pname = "Simplicity";
   version = "0.0.0";
   src = lib.sourceFilesBySuffices
-      (lib.sourceByRegex ./. ["^LICENSE$" "^Simplicity\.cabal$" "^Setup.hs$" "^Tests.hs$" "^Haskell$" "^Haskell/.*"])
-    ["LICENSE" ".cabal" ".hs" ".hsig"];
+      (lib.sourceByRegex ./. ["^LICENSE$" "^Simplicity\.cabal$" "^Setup.hs$" "^Tests.hs$" "^Haskell$" "^Haskell/.*"
+                              "^libsha256compression$" "^libsha256compression/.*"
+                              "^C$" "^C/uword.h" "^C/bitstring.h" "^C/frame.*" "^C/jets.*" "^C/sha256.h"
+                              "^C/secp256k1$" "^C/secp256k1/.*\.h$"]  )
+    ["LICENSE" ".cabal" ".hs" ".hsig" ".h" ".c"];
   libraryHaskellDepends = [ base binary cereal lens-family MemoTrie mtl SHA split unification-fd vector ];
   testHaskellDepends = libraryHaskellDepends ++ [ QuickCheck tasty tasty-hunit tasty-quickcheck ];
   testTarget = ''--test-option="--quickcheck-replay=582534"'';

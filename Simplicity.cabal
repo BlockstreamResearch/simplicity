@@ -14,10 +14,18 @@ cabal-version:       >=1.25
 tested-with:         GHC ==8.6.4
 
 library Simplicity-Core
+  C-sources:           libsha256compression/sha256/compression.c,
+                       C/frame.c, C/jets.c, C/jets-secp256k1.c,
+                       Haskell/cbits/frame.c, Haskell/cbits/jets.c
+  Include-dirs:        libsha256compression/include,
+                       C
+  Includes:            sha256/compression.h,
+                       frame.h, jets.h
   exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
                        Simplicity.Term.Core,
                        Simplicity.CoreJets,
                        Simplicity.Functor, Simplicity.Tensor,
+                       Simplicity.FFI.Frame, Simplicity.FFI.Jets,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
@@ -36,7 +44,8 @@ library Simplicity-Core
                        NoMonomorphismRestriction,
                        UndecidableInstances, QuantifiedConstraints, RankNTypes, ExistentialQuantification, TypeOperators, TypeFamilies, DeriveTraversable,
                        ScopedTypeVariables,
-                       RecordWildCards
+                       RecordWildCards,
+                       ForeignFunctionInterface
   hs-source-dirs:      Haskell/Core
   default-language:    Haskell2010
   ghc-options:         -O2
