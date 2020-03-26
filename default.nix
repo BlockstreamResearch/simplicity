@@ -2,9 +2,7 @@
 let hp = nixpkgs.haskell.packages.${compiler};
  in rec
 {
-  haskell = hp.callPackage ./Simplicity.Haskell.nix {
-    inherit lens-family;
-  };
+  haskell = hp.callPackage ./Simplicity.Haskell.nix {};
 
   haskellPackages = hp.override {
     overrides = self: super: {
@@ -34,16 +32,5 @@ let hp = nixpkgs.haskell.packages.${compiler};
   # e.g. $ nix-build --arg secp256k1git ~/secp256k1 -A mylibsecp256k1 -o libsecp256k1.o
   mylibsecp256k1 = nixpkgs.callPackage ./mylibsecp256k1.nix {
     inherit secp256k1git;
-  };
-
-  lens-family-core = import ./lens-family-core.nix {
-    pkgs = nixpkgs;
-    inherit hp;
-  };
-
-  lens-family = import ./lens-family.nix {
-     pkgs = nixpkgs;
-     inherit hp;
-     lfc = lens-family-core;
   };
 }
