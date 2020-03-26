@@ -1,4 +1,4 @@
-{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc865", coqVersion ? "coq_8_9", secp256k1git ? null}:
+{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc865", coqVersion ? "coq_8_10", secp256k1git ? null}:
 let hp = nixpkgs.haskell.packages.${compiler};
  in rec
 {

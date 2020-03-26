@@ -242,7 +242,7 @@ Lemma from_to_hash256 (h : Word256) : from_hash256 (to_hash256 h) = h.
 Proof.
 assert (H32 : forall x : Word32, (0 <= toZ x <= Integers.Int.max_unsigned)%Z).
  intros x.
- change Integers.Int.max_unsigned with (Zpred Integers.Int.modulus).
+ change Integers.Int.max_unsigned with (Z.pred Integers.Int.modulus).
  rewrite <- Z.lt_le_pred, toZ_mod.
  apply Z.mod_pos_bound.
  reflexivity.
@@ -634,7 +634,7 @@ induction m.
 destruct x as [xhi xlo]; simpl.
 rewrite testbitToZLo.
  apply IHm; assumption.
-eapply Zlt_le_trans;[apply Hi|].
+eapply Z.lt_le_trans;[apply Hi|].
 auto using two_power_nat_le with arith.
 Qed.
 
@@ -727,7 +727,7 @@ Lemma subseqWrap0_ge_correct n m : subseqWrapSpec (m + n) n 0 subseq0_ge.
 Proof.
 intros x i Hi.
 rewrite Z.mod_small;[apply subseq0_ge_correct|split]; auto with zarith.
-apply Zlt_le_trans with (two_power_nat n);
+apply Z.lt_le_trans with (two_power_nat n);
 auto using two_power_nat_le with zarith.
 Qed.
 

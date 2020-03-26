@@ -45,7 +45,7 @@ Lemma repr_Block_inj (b : Word512) : repr_Block_inv (repr_Block b) = b.
 Proof.
 assert (H32 : forall x : Word32, (0 <= toZ x <= Int.max_unsigned)%Z).
  intros x.
- change Int.max_unsigned with (Zpred Int.modulus).
+ change Int.max_unsigned with (Z.pred Int.modulus).
  rewrite <- Z.lt_le_pred, toZ_mod.
  apply Z.mod_pos_bound.
  reflexivity.
@@ -334,7 +334,7 @@ split.
   rewrite to_fromZ.
   symmetry.
   apply Int.eqm_samerepr.
-  apply Int.eqmod_mod.
+  apply Zbits.eqmod_mod.
   reflexivity.
  repeat f_equal;
   rewrite !add32_correct, ?majWord32_Maj, chWord32_Ch,
