@@ -4,10 +4,6 @@
 #include "bounded.h"
 #include "unreachable.h"
 
-/* :TODO: remove these includes after witnesses are supported, etc. */
-#include <stdio.h>
-#include <stdlib.h>
-
 /* We choose an unusual representation for frames of the Bit Machine.
  *
  * An 'n'-bit frame is stored in the array of 'UWORD's of length 'l' where 'l' is the least value such that 'n <= l * UWORD_BIT'.
@@ -370,7 +366,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
     switch (tag) {
      case COMP:
       if (calling) {
-        /* NEW_FRAME(type_dag[dag[pc].typeAnnotation[1]].bitSize) */
+        /* NEW_FRAME(BITSIZE(B)) */
         *(state.activeWriteFrame - 1) = initWriteFrame(type_dag[dag[pc].typeAnnotation[1]].bitSize, state.activeWriteFrame->edge);
         state.activeWriteFrame--;
 
@@ -378,9 +374,8 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
         stack[dag[pc].child[0]] = (call){ .return_to = pc, .tcoOn = stack[pc].tcoOn };
         pc = dag[pc].child[0];
       } else {
-        assert(0 == state.activeWriteFrame->offset);
-
         /* MOVE_FRAME */
+        assert(0 == state.activeWriteFrame->offset);
         memmove( state.activeReadFrame->edge, state.activeWriteFrame->edge
                , (size_t)((state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge) * sizeof(UWORD)
                );
@@ -441,9 +436,63 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
       }
       break;
      case DISCONNECT:
-      /* :TODO: Support disconnect */
-      fprintf(stderr, "evalTCO for disconnect not yet implemented\n");
-      exit(EXIT_FAILURE);
+      if (calling) {
+        /* NEW_FRAME(BITSIZE(WORD256 * A)) */
+        *(state.activeWriteFrame - 1) = initWriteFrame(256 + type_dag[dag[pc].typeAnnotation[0]].bitSize,
+                                                       state.activeWriteFrame->edge);
+        state.activeWriteFrame--;
+
+        /* WRITE_HASH(dag[dag[pc].child[1]].cmr) */
+        write32s(state.activeWriteFrame, dag[dag[pc].child[1]].cmr.s, 8);
+
+        /* COPY(BITSIZE(A)) */
+        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
+
+        if (stack[pc].tcoOn) {
+          /* DROP_FRAME */
+          state.activeReadFrame--;
+        }
+
+        /* MOVE_FRAME */
+        assert(0 == state.activeWriteFrame->offset);
+        memmove( state.activeReadFrame->edge, state.activeWriteFrame->edge
+               , (size_t)((state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge) * sizeof(UWORD)
+               );
+        *(state.activeReadFrame + 1) = initReadFrame(256 + type_dag[dag[pc].typeAnnotation[0]].bitSize,
+                                                     state.activeReadFrame->edge);
+        state.activeWriteFrame++; state.activeReadFrame++;
+
+        /* NEW_FRAME(BITSIZE(B * C)) */
+        *(state.activeWriteFrame - 1) = initWriteFrame(type_dag[dag[pc].typeAnnotation[1]].bitSize +
+                                                       type_dag[dag[pc].typeAnnotation[2]].bitSize,
+                                                       state.activeWriteFrame->edge);
+        state.activeWriteFrame--;
+
+        /* CALL(dag[pc].child[0], true) */
+        stack[dag[pc].child[0]] = (call){ .return_to = pc, .tcoOn = true };
+        pc = dag[pc].child[0];
+      } else {
+        /* MOVE_FRAME */
+        assert(0 == state.activeWriteFrame->offset);
+        memmove( state.activeReadFrame->edge, state.activeWriteFrame->edge
+               , (size_t)((state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge) * sizeof(UWORD)
+               );
+        *(state.activeReadFrame + 1) = initReadFrame(type_dag[dag[pc].typeAnnotation[1]].bitSize +
+                                                     type_dag[dag[pc].typeAnnotation[2]].bitSize,
+                                                     state.activeReadFrame->edge);
+        state.activeWriteFrame++; state.activeReadFrame++;
+
+        /* COPY(BITSIZE(B)) */
+        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[1]].bitSize);
+
+        /* FWD(BITSIZE(B)) */
+        forward(state.activeReadFrame, type_dag[dag[pc].typeAnnotation[1]].bitSize);
+
+        /* TAIL_CALL(dag[pc].child[1], true) */
+        calling = true;
+        stack[dag[pc].child[1]] = (call){ .return_to = stack[pc].return_to, .tcoOn = true };
+        pc = dag[pc].child[1];
+      }
       break;
      case INJL:
      case INJR:
@@ -486,10 +535,11 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
      case IDEN:
      case WITNESS:
       if (IDEN == tag) {
-         copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
+        /* COPY(BITSIZE(A)) */
+        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
       } else {
-         assert(WITNESS == tag);
-         writeWitness(state.activeWriteFrame, &dag[pc].witness, type_dag);
+        assert(WITNESS == tag);
+        writeWitness(state.activeWriteFrame, &dag[pc].witness, type_dag);
       }
       /*@fallthrough@*/
      case UNIT:
@@ -565,10 +615,26 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
                                        , bound[dag[i].child[1]].extraStackBound[1] );
       break;
      case DISCONNECT:
-      /* :TODO: Support disconnect */
-      fprintf(stderr, "EvalTCOBounds for disconnect not yet implemented\n");
-      free(bound);
-      return false;
+      /* :TODO: replace this check with a consensus critical limit. */
+      if (SIZE_MAX - 256 <= type_dag[dag[i].typeAnnotation[0]].bitSize ||
+          SIZE_MAX - type_dag[dag[i].typeAnnotation[1]].bitSize <= type_dag[dag[i].typeAnnotation[2]].bitSize) {
+        /* 'BITSIZE(A * WORD256) or BITSIZE(B * C)' has exceeded our limits. */
+        bound[i].extraCellsBoundTCO[0] = SIZE_MAX;
+        bound[i].extraCellsBoundTCO[1] = SIZE_MAX;
+      } else {
+        bound[i].extraCellsBoundTCO[1] = ROUND_UWORD(256 + type_dag[dag[i].typeAnnotation[0]].bitSize);
+        bound[i].extraCellsBoundTCO[0] = max(
+          bounded_add(
+            ROUND_UWORD(type_dag[dag[i].typeAnnotation[1]].bitSize + type_dag[dag[i].typeAnnotation[2]].bitSize),
+            max( bounded_add(bound[i].extraCellsBoundTCO[1], bound[dag[i].child[0]].extraCellsBoundTCO[1])
+               , max(bound[dag[i].child[0]].extraCellsBoundTCO[0], bound[dag[i].child[1]].extraCellsBoundTCO[1]))),
+          bound[dag[i].child[1]].extraCellsBoundTCO[0]);
+      }
+      bound[i].extraStackBound[0] = bound[i].extraStackBound[1]
+                                  = max( bounded_add(1, bound[dag[i].child[0]].extraStackBound[1])
+                                       , bound[dag[i].child[1]].extraStackBound[1]);
+      bounded_inc(&bound[i].extraStackBound[0]);
+      break;
      case COMP:
       /* :TODO: replace this check with a consensus critical limit. */
       if (SIZE_MAX <= type_dag[dag[i].typeAnnotation[1]].bitSize) {
