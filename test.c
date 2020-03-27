@@ -77,9 +77,7 @@ static void test_hashBlock(void) {
   if (dag && 0 <= err) {
     successes++;
 
-    analyses analysis[len];
-    computeCommitmentMerkleRoot(analysis, dag, (size_t)len);
-    if (0 == memcmp(hashBlock_cmr, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]))) {
+    if (0 == memcmp(hashBlock_cmr, dag[len-1].cmr.s, sizeof(uint32_t[8]))) {
       successes++;
     } else {
       failures++;
@@ -96,6 +94,7 @@ static void test_hashBlock(void) {
       failures++;
       printf("Unexpected failure of fillWitnessData for hashblock\n");
     } else {
+      analyses analysis[len];
       computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
       if (0 == memcmp(hashBlock_wmr, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]))) {
         successes++;
@@ -164,10 +163,8 @@ static void test_program(char* name, FILE* file, bool expectedResult, const uint
   if (dag && 0 <= err) {
     successes++;
 
-    analyses analysis[len];
-    computeCommitmentMerkleRoot(analysis, dag, (size_t)len);
     if (expectedCMR) {
-      if (0 == memcmp(expectedCMR, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]))) {
+      if (0 == memcmp(expectedCMR, dag[len-1].cmr.s, sizeof(uint32_t[8]))) {
         successes++;
       } else {
         failures++;
@@ -184,6 +181,7 @@ static void test_program(char* name, FILE* file, bool expectedResult, const uint
       failures++;
       printf("Unexpected failure of fillWitnessData.\n");
     } else {
+      analyses analysis[len];
       computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
       if (expectedWMR) {
         if (0 == memcmp(expectedWMR, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]))) {

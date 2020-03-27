@@ -129,50 +129,47 @@ static sha256_midstate wmrIV(tag_t tag) {
   UNREACHABLE;
 }
 
-/* Given a well-formed dag representing a Simplicity expression, compute the commitment Merkle roots of all subexpressions.
- * For all 'i', 0 <= 'i' < 'len', 'analysis[i].commitmentMerkleRoot' will be the CMR of the subexpression denoted by the slice
+/* Given a well-formed dag[i + 1], such that for all 'j', 0 <= 'j' < 'i',
+ * 'dag[j].cmr' is the CMR of the subexpression denoted by the slice
  *
- *     (dag_nodes[i + 1])dag.
+ *     (dag_nodes[j + 1])dag,
  *
- * The CMR of the overall expression will be 'analysis[len - 1].commitmentMerkleRoot'.
+ * then we set the value of 'dag[i].cmr' to be the CMR of the subexpression denoted by 'dag'.
  *
- * Precondition: analyses analysis[len];
- *               dag_node dag[len] and 'dag' is well-formed.
+ * Precondition: dag_node dag[i + 1] and 'dag' is well-formed.
  */
-void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, const size_t len) {
-  for (size_t i = 0; i < len; ++i) {
-    uint32_t block[16] = {0};
-    size_t j = 8;
+void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
+  uint32_t block[16] = {0};
+  size_t j = 8;
 
-    /* For jets and primitives, their commitment Merkle root is the same as their witness Merkle root. */
-    analysis[i].commitmentMerkleRoot = HIDDEN == dag[i].tag ? dag[i].hash
-                                     : JET == dag[i].tag ? dag[i].wmr
-                                     : cmrIV(dag[i].tag);
+  /* For jets and primitives, their commitment Merkle root is the same as their witness Merkle root. */
+  dag[i].cmr = HIDDEN == dag[i].tag ? dag[i].hash
+             : JET == dag[i].tag ? dag[i].wmr
+             : cmrIV(dag[i].tag);
 
-    /* Hash the child sub-expression's CMRs (if there are any children). */
-    switch (dag[i].tag) {
-     case COMP:
-     case ASSERTL:
-     case ASSERTR:
-     case CASE:
-     case PAIR:
-      memcpy(block + j, analysis[dag[i].child[1]].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
-      j = 0;
-      /*@fallthrough@*/
-     case DISCONNECT: /* Only the first child is used in the CMR. */
-     case INJL:
-     case INJR:
-     case TAKE:
-     case DROP:
-      memcpy(block + j, analysis[dag[i].child[0]].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].commitmentMerkleRoot.s, block);
-     case IDEN:
-     case UNIT:
-     case WITNESS:
-     case HIDDEN:
-     case JET:
-      break;
-    }
+  /* Hash the child sub-expression's CMRs (if there are any children). */
+  switch (dag[i].tag) {
+   case COMP:
+   case ASSERTL:
+   case ASSERTR:
+   case CASE:
+   case PAIR:
+    memcpy(block + j, dag[dag[i].child[1]].cmr.s, sizeof(uint32_t[8]));
+    j = 0;
+    /*@fallthrough@*/
+   case DISCONNECT: /* Only the first child is used in the CMR. */
+   case INJL:
+   case INJR:
+   case TAKE:
+   case DROP:
+    memcpy(block + j, dag[dag[i].child[0]].cmr.s, sizeof(uint32_t[8]));
+    sha256_compression(dag[i].cmr.s, block);
+   case IDEN:
+   case UNIT:
+   case WITNESS:
+   case HIDDEN:
+   case JET:
+    break;
   }
 }
 

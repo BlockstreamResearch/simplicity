@@ -105,6 +105,7 @@ typedef struct witnessInfo {
  */
 typedef struct dag_node {
   jet_ptr jet;
+  sha256_midstate cmr;
   union {
     struct {
       sha256_midstate wmr;
@@ -147,21 +148,19 @@ typedef struct dag_node {
  * 'commitmentMerkleRoot' is the commitment Merkle root of the subexpressions represented by the node.
  */
 typedef struct analyses {
-  sha256_midstate commitmentMerkleRoot;
   sha256_midstate witnessMerkleRoot;
 } analyses;
 
-/* Given a well-formed dag representing a Simplicity expression, compute the commitment Merkle roots of all subexpressions.
- * For all 'i', 0 <= 'i' < 'len', 'analysis[i].commitmentMerkleRoot' will be the CMR of the subexpression denoted by the slice
+/* Given a well-formed dag[i + 1], such that for all 'j', 0 <= 'j' < 'i',
+ * 'dag[j].cmr' is the CMR of the subexpression denoted by the slice
  *
- *     (dag_nodes[i + 1])dag.
+ *     (dag_nodes[j + 1])dag,
  *
- * The CMR of the overall expression will be 'analysis[len - 1].commitmentMerkleRoot'.
+ * then we set the value of 'dag[i].cmr' to be the CMR of the subexpression denoted by 'dag'.
  *
- * Precondition: analyses analysis[len];
- *               dag_node dag[len] and 'dag' is well-formed.
+ * Precondition: dag_node dag[i + 1] and 'dag' is well-formed.
  */
-void computeCommitmentMerkleRoot(analyses* analysis, const dag_node* dag, size_t len);
+void computeCommitmentMerkleRoot(dag_node* dag, size_t i);
 
 /* Given a well-typed dag representing a Simplicity expression, compute the witness Merkle roots of all subexpressions.
  * For all 'i', 0 <= 'i' < 'len', 'analysis[i].witnessMerkleRoot' will be the WMR of the subexpression denoted by the slice
