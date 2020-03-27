@@ -474,18 +474,26 @@ extern bool elements_simplicity_execSimplicity(bool* success, const transaction*
   }
 
   if (*success) {
-    /* :TODO: Fold CMR calculation into dag to remove this VLA.  The CMR is needed to implement disconnect anyway.*/
-    analyses analysis[len];
-    computeCommitmentMerkleRoot(analysis, dag, (size_t)len);
-    *success = !cmr || 0 == memcmp(cmr_hash.s, analysis[len-1].commitmentMerkleRoot.s, sizeof(uint32_t[8]));
+    *success = !cmr || 0 == memcmp(cmr_hash.s, dag[len-1].cmr.s, sizeof(uint32_t[8]));
     if (*success) {
       type* type_dag;
       size_t sourceIx, targetIx;
       result = mallocTypeInference(&type_dag, &sourceIx, &targetIx, dag, (size_t)len, &census);
       *success = result && type_dag && 0 == sourceIx && 0 == targetIx && fillWitnessData(dag, type_dag, (size_t)len, witness);
       if (*success) {
-        computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
-        *success = !wmr || 0 == memcmp(wmr_hash.s, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]));
+        if (wmr) {
+          analyses *analysis = (size_t)len <= SIZE_MAX / sizeof(analyses)
+                             ? malloc((size_t)len * sizeof(analyses))
+                             : NULL;
+          if (analysis) {
+            computeWitnessMerkleRoot(analysis, dag, type_dag, (size_t)len);
+            *success = 0 == memcmp(wmr_hash.s, analysis[len-1].witnessMerkleRoot.s, sizeof(uint32_t[8]));
+          } else {
+            /* malloc failed which counts as a transient error. */
+            *success = result = false;
+          }
+          free(analysis);
+        }
         if (*success) {
           result = evalTCOProgram(success, dag, type_dag, (size_t)len, &(txEnv){.tx = tx, .scriptCMR = cmr_hash.s, .ix = ix});
         }

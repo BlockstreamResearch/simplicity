@@ -302,6 +302,7 @@ static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* c
     int32_t err = decodeNode(dag, i, stream);
     if (err < 0) return err;
 
+    computeCommitmentMerkleRoot(dag, i);
     enumerator(census, dag[i].tag);
   }
   return 0;
