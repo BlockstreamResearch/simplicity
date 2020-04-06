@@ -69,6 +69,6 @@ instance Core p => Delegate (Delegator p) where
   disconnect ~(Delegator rs fs) ~(Delegator rt ft) = Delegator (disconnect rs rt) f
    where
     root256 = toWord256 . integerHash256 $ commitmentRoot rt
-    f = iden &&& scribe root256 >>> fs >>> take iden &&& drop ft
+    f = scribe root256 &&& iden >>> fs >>> take iden &&& drop ft
 
 instance (Jet p, Witness p) => Simplicity (Delegator p) where

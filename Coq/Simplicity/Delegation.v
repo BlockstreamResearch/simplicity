@@ -14,7 +14,7 @@ Module Delegation.
 
 Record mixin (term : Ty -> Ty -> Type) := Mixin
 { disconnect : forall {A B C D},
-    term (A * Word256) (B * C) -> term C D -> term A (B * D)
+    term (Word256 * A) (B * C) -> term C D -> term A (B * D)
 }.
 
 Record class (term : Ty -> Ty -> Type) := Class
@@ -37,7 +37,7 @@ Canonical Structure toWitness (alg : Algebra) : Witness.Algebra := Witness.Pack 
 
 Module Combinators.
 
-Definition disconnect {A B C D : Ty} {alg : Algebra} : alg (A * Word256) (B * C) -> alg C D -> alg A (B * D) :=
+Definition disconnect {A B C D : Ty} {alg : Algebra} : alg (Word256 * A) (B * C) -> alg C D -> alg A (B * D) :=
   disconnect (class_of alg).
 
 End Combinators.
@@ -80,7 +80,7 @@ Canonical Structure Delegation.toCore.
 Canonical Structure Delegation.toWitness.
 
 Lemma disconnect_Parametric {alg1 alg2 : Delegation.Algebra} (R : Delegation.Parametric.Rel alg1 alg2)
-  {A B C D} s1 s2 t1 t2 : R (A * Word256) (B * C) s1 s2 -> R C D t1 t2 -> R A (B * D) (disconnect s1 t1) (disconnect s2 t2).
+  {A B C D} s1 s2 t1 t2 : R (Word256 * A) (B * C) s1 s2 -> R C D t1 t2 -> R A (B * D) (disconnect s1 t1) (disconnect s2 t2).
 Proof.
 destruct R as [R [Rb []]].
 cbn; auto.
@@ -217,7 +217,7 @@ Definition WitnessDelegator_mixin (alg : Witness.Algebra) : Witness.mixin (Deleg
 Definition DelegationDelegator_mixin (alg : Core.Algebra) : Delegation.mixin (Delegator alg) :=
   {| Delegation.disconnect A B C D s t :=
      {| delegatorRoot := @disconnect A B C D _ (delegatorRoot s) (delegatorRoot t)
-      ; runDelegator := iden &&& scribe (from_hash256 (delegatorRoot t))
+      ; runDelegator := scribe (from_hash256 (delegatorRoot t)) &&& iden
                     >>> runDelegator s >>> take iden &&& drop (runDelegator t)
       |}
    |}.

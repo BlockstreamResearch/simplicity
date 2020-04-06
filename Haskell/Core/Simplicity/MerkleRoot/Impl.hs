@@ -234,7 +234,7 @@ instance Delegate WitnessRoot where
     result = observe $ compress (compress (compress (witnessTag "disconnect") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
                                           (typeRootR (reifyProxy proxyC), typeRootR (reifyProxy proxyD)))
                                 (s, t)
-    proxy :: proxy (a, w) (b, c) -> proxy c d -> (Proxy a, Proxy b, Proxy c, Proxy d)
+    proxy :: proxy (w, a) (b, c) -> proxy c d -> (Proxy a, Proxy b, Proxy c, Proxy d)
     proxy _ _ = (Proxy, Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC, proxyD) = proxy ws wt
 

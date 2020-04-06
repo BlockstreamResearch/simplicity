@@ -312,7 +312,7 @@ static bool typeInference(unification_arrow* arrow, const dag_node* dag, const s
         }          } };
       APPLY_BINDING(&(arrow[dag[i].child[0]].source), &((binding)
         { .kind = PRODUCT
-        , .arg = { &(arrow[i].source), &(bound_var[word256_ix]) }
+        , .arg = { &(bound_var[word256_ix]), &(arrow[i].source) }
         }));
       APPLY_BINDING(&(arrow[dag[i].child[0]].target), &((binding)
         { .kind = PRODUCT

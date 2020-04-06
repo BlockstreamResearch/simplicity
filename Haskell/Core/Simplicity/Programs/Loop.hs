@@ -18,7 +18,7 @@ import Simplicity.Ty.Word
 -- Thanks to Haskell's laziness, this is feasable.
 loopBody :: (Assert term, Delegate term, TyC a, TyC b) => term a (Either a b) -> term (a, Word256) b
 loopBody t = take t &&& ih
-         >>> match (disconnect (assert (oih &&& ih >>> eq) &&& oh) (loopBody t) >>> ih) oh
+         >>> match (disconnect (assert (iih &&& oh >>> eq) &&& ih) (loopBody t) >>> ih) oh
 
 -- | Builds an unbounded loop via a self-delegation construction.
 loop :: (Assert term, Delegate term, TyC a, TyC b) => Product CommitmentRoot term a (Either a b) -> Product CommitmentRoot term a b

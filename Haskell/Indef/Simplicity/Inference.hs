@@ -369,7 +369,7 @@ inference = foldM loop empty
       (c,d) <- termFArrow =<< lookup it
       a <- fresh
       b <- fresh
-      _ <- UTerm (Prod a (unfreeze tyWord256)) =:= aw
+      _ <- UTerm (Prod (unfreeze tyWord256) a) =:= aw
       _ <- UTerm (Prod b c) =:= bc
       return (Disconnect a b c d (fromInteger is) (fromInteger it))
     go (Hidden h) = pure (Hidden h)
@@ -509,7 +509,7 @@ typeCheck s = result
                                                     SomeArrow t <- lookup it
                                                     let (rc1, rd) = reifyArrow t
                                                     case reifyArrow s of
-                                                      ((ProdR ra rw), (ProdR rb rc0)) -> do
+                                                      ((ProdR rw ra), (ProdR rb rc0)) -> do
                                                         Refl <- assertEqualTyReflect rw (reify :: TyReflect Word256)
                                                         Refl <- assertEqualTyReflect rc0 rc1
                                                         return (someArrowR ra (ProdR rb rd) (disconnect s t))

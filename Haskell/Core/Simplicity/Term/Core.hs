@@ -172,7 +172,7 @@ instance Monad m => Witness (Kleisli m) where
 
 -- | This class adds 'disconnect' expressions to the Simplicity language, which can be used for delegation.
 class Delegate term where
-  disconnect :: (TyC a, TyC b, TyC c, TyC d) => term (a, Word256) (b, c) -> term c d -> term a (b, d)
+  disconnect :: (TyC a, TyC b, TyC c, TyC d) => term (Word256, a) (b, c) -> term c d -> term a (b, d)
 
 instance (Core p, Core q) => Core (Product p q) where
   iden = Product iden iden

@@ -4104,7 +4104,7 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\>A\<times\><2><rsup|256>\<vdash\>B\<times\>C>>|<cell|<math|t\<of\>C\<vdash\>D>>>>>>>>|<row|<cell|<math|<math-ss|disconnect><rsub|A,B,C,D>
+    <tabular*|<tformat|<cwith|2|2|1|1|cell-tborder|1pt>|<cwith|2|2|1|1|cell-hyphen|n>|<cwith|1|1|1|1|cell-width|>|<cwith|1|1|1|1|cell-hmode|auto>|<cwith|2|2|1|1|cell-col-span|1>|<table|<row|<cell|<subtable|<tformat|<cwith|1|1|2|2|cell-halign|c>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|<math|s\<of\><2><rsup|256>\<times\>A\<vdash\>B\<times\>C>>|<cell|<math|t\<of\>C\<vdash\>D>>>>>>>>|<row|<cell|<math|<math-ss|disconnect><rsub|A,B,C,D>
     s t\<of\>A\<vdash\>B\<times\>D>>>>>>
   </with>
 
@@ -4119,7 +4119,7 @@
     <around*|\<llbracket\>|<math-ss|disconnect><rsub|A,B,C,D> s
     t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>\<assign\><around*|\<llbracket\>|s;<math-ss|take>
     <math-ss|iden> \<vartriangle\> <math-ss|drop>
-    t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a,<cmr|t>|\<rangle\>>
+    t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<cmr|t>,a|\<rangle\>>
   </equation*>
 
   Like a <samp|witness> expression, the real significance comes from the form
@@ -4203,8 +4203,8 @@
     t k>>|<cell|:=>|<cell|<math|<math-ss|take> t \<vartriangle\>
     <math-ss|IH>>>>|<row|<cell|>|<cell|;>|<cell|<samp|case>
     <math|<around*|(|<math-ss|disconnect> <around*|(|<math-ss|assert>
-    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IH>
-    ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\> <math-ss|OH>|)> k;
+    <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
+    ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\> <math-ss|IH>|)> k;
     <math|<math-ss|IH>>|)>> <math|<math-ss|OH>>>>>>>>>>>>
   </render-code>
 
@@ -4249,48 +4249,48 @@
   <\eqnarray*>
     <tformat|<table|<row|<cell|>|<cell|>|<cell|<around*|\<llbracket\>|<samp|case>
     <math|<around*|(|<math-ss|disconnect> <around*|(|<math-ss|assert>
-    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IH>
-    ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\> <math-ss|OH>|)> k;
+    <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
+    ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\> <math-ss|IH>|)> k;
     <math|<math-ss|IH>>|)>> <math|<math-ss|OH>>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<injl|<around*|(|a<rsub|1>|)>>,h|\<rangle\>>>>|<row||<cell|=>|<cell|<around*|\<llbracket\>|<math|<math-ss|disconnect>
-    <around*|(|<math-ss|assert> <around*|(|<math-ss|OIH> \<vartriangle\>
-    <math-ss|IH> ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|OH>|)> k; <math|<math-ss|IH>>>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|IH>>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math|<math-ss|disconnect>
-    <around*|(|<math-ss|assert> <around*|(|<math-ss|OIH> \<vartriangle\>
-    <math-ss|IH> ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|OH>|)> k>|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|IH>>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|assert>
-    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IH>
+    <around*|(|<math-ss|assert> <around*|(|<math-ss|IIH> \<vartriangle\>
+    <math-ss|OH> ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
+    <math-ss|IH>|)> k; <math|<math-ss|IH>>>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|IH>>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math|<math-ss|disconnect>
+    <around*|(|<math-ss|assert> <around*|(|<math-ss|IIH> \<vartriangle\>
+    <math-ss|OH> ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
+    <math-ss|IH>|)> k>|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|IH>>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|assert>
+    <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
     ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|OH>;<math-ss|take> <math-ss|iden> \<vartriangle\> <math-ss|drop>
-    k|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|IH>>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|take>
+    <math-ss|IH>;<math-ss|take> <math-ss|iden> \<vartriangle\> <math-ss|drop>
+    k|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|<cmr|k>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|IH>>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|take>
     <math-ss|iden> \<vartriangle\> <math-ss|drop>
     k|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|assert>
-    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IH>
+    <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
     ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|OH>|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math-ss|take>
+    <math-ss|IH>|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|<cmr|k>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math-ss|take>
     <math-ss|iden> \<vartriangle\> <math-ss|drop>
     k;<math-ss|IH>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|assert>
-    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IH>
+    <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
     ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|OH>|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math-ss|drop>
+    <math-ss|IH>|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|<cmr|k>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math-ss|drop>
     k|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|assert>
-    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IH>
+    <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
     ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|OH>|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>>>>>
+    <math-ss|IH>|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|<cmr|k>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>>>>>
   </eqnarray*>
 
   For the first part we have
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|>|<cell|>|<cell|<around*|\<llbracket\>|<math-ss|assert>
-    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IH>
+    <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
     ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|OH>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>><around*|(|<around*|\<llbracket\>|<math-ss|assert>
-    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IH>
+    <math-ss|IH>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<cmr|k>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>><around*|(|<around*|\<llbracket\>|<math-ss|assert>
+    <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
     ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|OH>|\<rrbracket\>><rsup|<maybe>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>|)>>>|<row|<cell|>|<cell|=>|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>><around*|(|\<phi\><rsup|<maybe>><around*|\<langle\>|<around*|\<llbracket\>|<math-ss|assert>
-    <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IH>
-    ;<math-ss|eq><rsub|<2><rsup|256>>|)>|\<rrbracket\>><rsup|<maybe>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>,\<eta\><rsup|S><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>|)>>>|<row|<cell|>|<cell|=>|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>><around*|(|\<phi\><rsup|<maybe>><around*|\<langle\>|<around*|\<llbracket\>|<math-ss|OIH>
-    \<vartriangle\> <math-ss|IH> ;<math-ss|eq><rsub|<2><rsup|256>>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>,\<eta\><rsup|S><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>|)>>>|<row|<cell|>|<cell|=>|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>><around*|(|\<phi\><rsup|<maybe>><around*|\<langle\>|<around*|\<llbracket\>|<math-ss|eq><rsub|<2><rsup|256>>|\<rrbracket\>><around*|\<langle\>|h,<cmr|k>|\<rangle\>>,\<eta\><rsup|S><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>|)>>>>>
+    <math-ss|IH>|\<rrbracket\>><rsup|<maybe>><around*|\<langle\>|<cmr|k>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>|)>>>|<row|<cell|>|<cell|=>|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>><around*|(|\<phi\><rsup|<maybe>><around*|\<langle\>|<around*|\<llbracket\>|<math-ss|assert>
+    <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
+    ;<math-ss|eq><rsub|<2><rsup|256>>|)>|\<rrbracket\>><rsup|<maybe>><around*|\<langle\>|<cmr|k>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>,\<eta\><rsup|S><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>|)>>>|<row|<cell|>|<cell|=>|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>><around*|(|\<phi\><rsup|<maybe>><around*|\<langle\>|<around*|\<llbracket\>|<math-ss|IIH>
+    \<vartriangle\> <math-ss|OH> ;<math-ss|eq><rsub|<2><rsup|256>>|\<rrbracket\>><around*|\<langle\>|<cmr|k>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>,\<eta\><rsup|S><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>|)>>>|<row|<cell|>|<cell|=>|<cell|\<iota\><rsup|\<cal-M\>><rsub|<maybe>><around*|(|\<phi\><rsup|<maybe>><around*|\<langle\>|<around*|\<llbracket\>|<math-ss|eq><rsub|<2><rsup|256>>|\<rrbracket\>><around*|\<langle\>|h,<cmr|k>|\<rangle\>>,\<eta\><rsup|S><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>|)>>>>>
   </eqnarray*>
 
   We know that <math|<around*|\<llbracket\>|<math-ss|eq><rsub|<2><rsup|256>>|\<rrbracket\>><around*|\<langle\>|h,<cmr|k>|\<rangle\>>=<math-tt|1><rsub|<2>>=\<eta\><rsup|S><around*|\<langle\>||\<rangle\>>>
@@ -4299,9 +4299,9 @@
   if and only if <math|h\<neq\><cmr|k>>. When <math|h\<neq\><cmr|k>>, then
 
   <\equation*>
-    <around*|\<llbracket\>|<math-ss|assert> <around*|(|<math-ss|OIH>
-    \<vartriangle\> <math-ss|IH> ;<math-ss|eq><rsub|<2><rsup|256>>|)>
-    \<vartriangle\> <math-ss|OH>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>=\<emptyset\><rsup|\<cal-M\>>
+    <around*|\<llbracket\>|<math-ss|assert> <around*|(|<math-ss|IIH>
+    \<vartriangle\> <math-ss|OH> ;<math-ss|eq><rsub|<2><rsup|256>>|)>
+    \<vartriangle\> <math-ss|IH>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>=\<emptyset\><rsup|\<cal-M\>>
   </equation*>
 
   and the whole <samp|loopBody> expression fails with a
@@ -4309,9 +4309,9 @@
   <math|h=<cmr|k>> we have that
 
   <\equation*>
-    <around*|\<llbracket\>|<math-ss|assert> <around*|(|<math-ss|OIH>
-    \<vartriangle\> <math-ss|IH> ;<math-ss|eq><rsub|<2><rsup|256>>|)>
-    \<vartriangle\> <math-ss|OH>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>=\<eta\><rsup|\<cal-M\>><around*|\<langle\>|<around*|\<langle\>||\<rangle\>>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>
+    <around*|\<llbracket\>|<math-ss|assert> <around*|(|<math-ss|IIH>
+    \<vartriangle\> <math-ss|OH> ;<math-ss|eq><rsub|<2><rsup|256>>|)>
+    \<vartriangle\> <math-ss|IH>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>,<cmr|k>|\<rangle\>>=\<eta\><rsup|\<cal-M\>><around*|\<langle\>|<around*|\<langle\>||\<rangle\>>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>
   </equation*>
 
   and we can continue with
@@ -4325,9 +4325,9 @@
 
   <\equation*>
     <around*|\<llbracket\>|<samp|case> <math|<around*|(|<math-ss|disconnect>
-    <around*|(|<math-ss|assert> <around*|(|<math-ss|OIH> \<vartriangle\>
-    <math-ss|IH> ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|OH>|)> k; <math|<math-ss|IH>>|)>>
+    <around*|(|<math-ss|assert> <around*|(|<math-ss|IIH> \<vartriangle\>
+    <math-ss|OH> ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
+    <math-ss|IH>|)> k; <math|<math-ss|IH>>|)>>
     <math|<math-ss|OH>>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<injl|<around*|(|a<rsub|1>|)>>,h|\<rangle\>>=<around*|\<llbracket\>|k|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a<rsub|1>,h|\<rangle\>><text|.>
   </equation*>
 
@@ -4365,9 +4365,9 @@
       <tformat|<table|<row|<cell|loopTail>|<cell|\<assign\>>|<cell|SHA256<rsub|Block><around*|\<langle\>|tag<rsup|c><rsub|<math-ss|comp>>\<comma\>
       <around*|\<langle\>|SHA256<rsub|Block><around*|\<langle\>|tag<rsup|c><rsub|<math-ss|disconnect>>\<comma\>
       <around*|\<langle\>|<around*|\<lfloor\>|0|\<rfloor\>><rsub|256>,<cmr|<math-ss|assert>
-      <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IH>
+      <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
       ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-      <math-ss|OH>>|\<rangle\>>|\<rangle\>>,<cmr|<math-ss|IH>>|\<rangle\>>|\<rangle\>><text|.>>>>>
+      <math-ss|IH>>|\<rangle\>>|\<rangle\>>,<cmr|<math-ss|IH>>|\<rangle\>>|\<rangle\>><text|.>>>>>
     </eqnarray*>
   </lemma>
 
@@ -8288,8 +8288,8 @@
       Full Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-150>>
 
-      <with|par-left|<quote|1tab>|9.2.4<space|2spc>Known Discounted Jets
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|9.2.4<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|JetType>
+      class <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-151>>
 
       <with|par-left|<quote|1tab>|9.2.5<space|2spc>Type Inference
@@ -8320,45 +8320,49 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-158>>
 
+      <with|par-left|<quote|1tab>|9.4.2<space|2spc>Known Discounted Jets
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-159>>
+
       9.5<space|2spc>Simplicity <with|font-family|<quote|tt>|language|<quote|verbatim>|testsuite>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-159>
+      <no-break><pageref|auto-160>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|10<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-160><vspace|0.5fn>
+      <no-break><pageref|auto-161><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       A<space|2spc>Elements Application> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-161><vspace|0.5fn>
+      <no-break><pageref|auto-162><vspace|0.5fn>
 
       A.1<space|2spc>Denotational Semantics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-162>
+      <no-break><pageref|auto-163>
 
       <with|par-left|<quote|1tab>|A.1.1<space|2spc>Null Data
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-163>>
+      <no-break><pageref|auto-164>>
 
       <with|par-left|<quote|1tab>|A.1.2<space|2spc>Merkle Roots
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-164>>
+      <no-break><pageref|auto-165>>
 
       <with|par-left|<quote|1tab>|A.1.3<space|2spc>Serialization
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-165>>
+      <no-break><pageref|auto-166>>
 
       A.2<space|2spc>Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-166>
+      <no-break><pageref|auto-167>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       B<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-167><vspace|0.5fn>
+      <no-break><pageref|auto-168><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-168><vspace|0.5fn>
+      <no-break><pageref|auto-169><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
