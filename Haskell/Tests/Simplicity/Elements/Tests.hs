@@ -16,6 +16,8 @@ import Simplicity.Elements.Primitive
 import Simplicity.Elements.Programs.CheckSigHashAll.Lib
 import Simplicity.Elements.Semantics
 import Simplicity.MerkleRoot
+import Simplicity.Programs.CheckSigHash
+import qualified Simplicity.Programs.Sha256 as Sha256
 import Simplicity.Ty.Word
 
 tests :: TestTree
@@ -59,20 +61,22 @@ tx1 = SigTx
     }
 
 hunit_sigHashAll :: Bool
-hunit_sigHashAll = Just (integerHash256 (bslHash sigAll)) == (fromWord256 <$> (sem sigHashAll txEnv ()))
+hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
+                   [fromWord256 <$> (sem sigHashAll txEnv ()), fromWord256 <$> (sem (sigHash Sha256.lib hashAll) txEnv ())]
  where
   ix = 0
-  cmr = commitmentRoot sigHashAll
-  Just txEnv = primEnv tx1 ix cmr
-  sigAll = runPutLazy
-         $ putLazyByteString (padSHA1 . BSL.fromStrict $ BSC.pack "Simplicity\USSignature\GS" <> encode sigAllCMR)
-        >> put (sigTxInputsHash tx1)
-        >> put (sigTxOutputsHash tx1)
-        >> putWord32be (sigTxVersion tx1)
-        >> putWord32be (sigTxLock tx1)
-        >> putWord32be ix
-        >> put (utxoAsset txo)
-        >> put (utxoAmount txo)
-   where
-    ix = 0
-    txo = sigTxiTxo (sigTxIn tx1 ! ix)
+  txo = sigTxiTxo (sigTxIn tx1 ! ix)
+  Just txEnv = primEnv tx1 ix undefined
+  hashAll_spec = bslHash . runPutLazy
+               $ putLazyByteString (padSHA1 . BSL.fromStrict $ BSC.pack "Simplicity\USSigHash")
+              >> put (sigTxInputsHash tx1)
+              >> put (sigTxOutputsHash tx1)
+              >> putWord32be (sigTxVersion tx1)
+              >> putWord32be (sigTxLock tx1)
+              >> putWord32be ix
+              >> put (utxoAsset txo)
+              >> put (utxoAmount txo)
+  sigHashAll_spec = bslHash . runPutLazy
+                  $ putLazyByteString (padSHA1 . BSL.fromStrict $ BSC.pack "Simplicity\USSignature")
+                 >> put (commitmentRoot hashAll)
+                 >> put hashAll_spec

@@ -7,7 +7,7 @@ module Simplicity.MerkleRoot.Impl
   , CommitmentRoot, commitmentRoot
   , WitnessRoot, witnessRoot
   , hiddenRoot
-  , signatureIv
+  , signatureTag, signatureHash, sigHashTag
   , cmrFail0
   -- * Internal functions
   -- | These functions are use internally to define commitment and witness Merkle root instances for
@@ -59,15 +59,21 @@ jetTag = tag (prefix ++ ["Jet"])
 hiddenTag :: IV
 hiddenTag = tag $ (prefix ++ ["Hidden"])
 
+signatureTag :: IV
+signatureTag = tag $ (prefix ++ ["Signature"])
+
+sigHashTag :: IV
+sigHashTag = tag $ (prefix ++ ["SigHash"])
+
 -- | This function hashes a hash such that it will not collide with any 'typeRoot', 'commitmentRoot' or 'witnessRoot'.
 --
 -- This function is mainly designed for internal use within this Simplicity library.
 hiddenRoot :: Hash256 -> Hash256
 hiddenRoot = ivHash . compressHalf hiddenTag
 
--- | This function produces an initial value suitable for signatures such that it will not collide with any other of Simplicity's Merkle root construction.
-signatureIv :: Hash256 -> IV
-signatureIv h = tag $ (prefix ++ ["Signature\GS" ++ (BSC.unpack . BSL.fromStrict . encode $ h)])
+-- | This function produces an initial value sigHashes given a Commitment Root
+signatureHash :: CommitmentRoot () Word256 -> Hash256 -> Hash256
+signatureHash cmr h = ivHash $ compress signatureTag (commitmentRoot cmr, h)
 
 -- | Computes a hash committing to a Simplicity type.
 -- This function is memoized.

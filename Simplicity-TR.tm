@@ -4737,7 +4737,7 @@
   the two <samp|loop> constructors (with the same <math|t> parameter). This
   would somewhat reduce the overhead of using unbounded loops.
 
-  <section|Universal Signature Hash Modes>
+  <section|Universal Signature Hash Modes><label|ss:UniversalSignatureHashModes>
 
   In Section<nbsp><reference|ss:checkSigHashAll> we defined a Simplicity
   Program for a single signature check with over fixed <samp|hashAll>
@@ -6587,6 +6587,17 @@
   lose the subexpression sharing. Therefore this should only be used for
   testing purposes.
 
+  <subsubsection|CheckSigHash><label|ss:Haskell-CheckSigHash>
+
+  The <verbatim|Core/Simplicity/Programs/CheckSigHash.hs>, while not
+  technically a library, provides a <verbatim|checkSigHash> Simplicity
+  program that is similiar to the <samp|CHECKSIG> operation of Bitcoin script
+  except with ``Universal signature hash modes'' (see
+  Section<nbsp><reference|ss:UniversalSignatureHashModes>). \ The
+  <verbatim|sigHash> combinator uses <samp|disconnect> to pair the commitment
+  root of a given hash mode with its output and produces the message that
+  <verbatim|checkSigHash> checks its siganture against.
+
   <subsection|The Bit Machine>
 
   The <verbatim|Core/Simplicity/BitMachine/> directory has modules related to
@@ -7078,11 +7089,22 @@
 
   Some modules build on specific Simplicity blockchain applications. The
   <verbatim|Simplicity/Bitcoin/Programs/CheckSigHashAll.hs> file provides a
-  <verbatim|checkSigHashAll> Simplicity expression library that verifies
-  Schnorr signature over the Bitcoin specific transaction data hash produced
-  by <verbatim|sigHashAll> for a provided public key. Some variants of this
-  expression are also provided including <verbatim|pkwCheckSigHashAll> which
-  builds a complete Simplicity program from a given public key and signature.
+  library for a <verbatim|hashAll> signature hash mode for creating a Bitcoin
+  specific transaction digest and a <verbatim|checkSigHashAll> Simplicity
+  program that verifies Schnorr signature over that digest for a given public
+  key. The <verbatim|sigHashAll> function hashes the pair of the commitment
+  root of <verbatim|hashAll> with the output of <verbatim|hashAll> producing
+  the message that needs to be signed. \ This signature is compatible with
+  using the <verbatim|hashAll> mode with the <verbatim|checkSigHash> program
+  from Section<nbsp><reference|ss:Haskell-CheckSigHash>.
+
+  The <verbatim|Simplicity/Bitcoin/Programs/CheckSigHashAll/Lib.hs> file
+  provides an unpacked module version of the library. However use of this
+  module will lose the subexpression sharing. Therefore this should only be
+  used for testing purposes.
+
+  The <verbatim|Simplicity/Elements/Programs/CheckSigHashAll.hs> file
+  provides similar functionality for the Elements blockchain application.
 
   <subsection|Known Discounted Jets>
 
@@ -7831,35 +7853,36 @@
     <associate|auto-146|<tuple|9.1.6|79>>
     <associate|auto-147|<tuple|9.1.6.1|80>>
     <associate|auto-148|<tuple|9.1.6.2|80>>
-    <associate|auto-149|<tuple|9.1.7|80>>
+    <associate|auto-149|<tuple|9.1.6.3|80>>
     <associate|auto-15|<tuple|2.3.2|16>>
-    <associate|auto-150|<tuple|9.1.7.1|80>>
-    <associate|auto-151|<tuple|9.1.7.2|81>>
-    <associate|auto-152|<tuple|9.2|81>>
-    <associate|auto-153|<tuple|9.2.1|81>>
-    <associate|auto-154|<tuple|9.2.2|82>>
-    <associate|auto-155|<tuple|9.2.3|83>>
-    <associate|auto-156|<tuple|9.2.4|83>>
-    <associate|auto-157|<tuple|9.2.5|84>>
-    <associate|auto-158|<tuple|9.2.6|84>>
-    <associate|auto-159|<tuple|9.2.6.1|84>>
+    <associate|auto-150|<tuple|9.1.7|80>>
+    <associate|auto-151|<tuple|9.1.7.1|81>>
+    <associate|auto-152|<tuple|9.1.7.2|81>>
+    <associate|auto-153|<tuple|9.2|81>>
+    <associate|auto-154|<tuple|9.2.1|82>>
+    <associate|auto-155|<tuple|9.2.2|83>>
+    <associate|auto-156|<tuple|9.2.3|83>>
+    <associate|auto-157|<tuple|9.2.4|84>>
+    <associate|auto-158|<tuple|9.2.5|84>>
+    <associate|auto-159|<tuple|9.2.6|84>>
     <associate|auto-16|<tuple|2.3.3|16>>
-    <associate|auto-160|<tuple|9.2.6.2|85>>
-    <associate|auto-161|<tuple|9.3|87>>
-    <associate|auto-162|<tuple|9.4|89>>
-    <associate|auto-163|<tuple|9.4.1|92>>
-    <associate|auto-164|<tuple|9.4.2|93>>
-    <associate|auto-165|<tuple|9.5|93>>
-    <associate|auto-166|<tuple|10|94>>
-    <associate|auto-167|<tuple|A|95>>
-    <associate|auto-168|<tuple|A.1|97>>
-    <associate|auto-169|<tuple|A.1.1|?>>
+    <associate|auto-160|<tuple|9.2.6.1|85>>
+    <associate|auto-161|<tuple|9.2.6.2|87>>
+    <associate|auto-162|<tuple|9.3|89>>
+    <associate|auto-163|<tuple|9.4|92>>
+    <associate|auto-164|<tuple|9.4.1|93>>
+    <associate|auto-165|<tuple|9.4.2|93>>
+    <associate|auto-166|<tuple|9.5|94>>
+    <associate|auto-167|<tuple|10|95>>
+    <associate|auto-168|<tuple|A|97>>
+    <associate|auto-169|<tuple|A.1|?>>
     <associate|auto-17|<tuple|2.3.4|16>>
-    <associate|auto-170|<tuple|A.1.2|?>>
-    <associate|auto-171|<tuple|A.1.3|?>>
-    <associate|auto-172|<tuple|A.2|?>>
-    <associate|auto-173|<tuple|B|?>>
+    <associate|auto-170|<tuple|A.1.1|?>>
+    <associate|auto-171|<tuple|A.1.2|?>>
+    <associate|auto-172|<tuple|A.1.3|?>>
+    <associate|auto-173|<tuple|A.2|?>>
     <associate|auto-174|<tuple|B|?>>
+    <associate|auto-175|<tuple|B|?>>
     <associate|auto-18|<tuple|2.3.4.1|17>>
     <associate|auto-19|<tuple|2.4|17>>
     <associate|auto-2|<tuple|1.1|7>>
@@ -7988,17 +8011,20 @@
     <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|48>>
     <associate|ss:BitcoinPrimitives|<tuple|9.3|83>>
     <associate|ss:BitcoinTransactions|<tuple|4.4.1|45>>
+    <associate|ss:CheckSigHash-Haskell|<tuple|9.1.6.3|?>>
     <associate|ss:DAGs|<tuple|7.1|57>>
     <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.2.3|80>>
     <associate|ss:Deserialization|<tuple|6.2|?>>
     <associate|ss:ELDenotationalSemantics|<tuple|A.1|89>>
     <associate|ss:FreeMonadicDeserialization|<tuple|9.2.6.1|82>>
+    <associate|ss:Haskell-CheckSigHash|<tuple|9.1.6.3|?>>
     <associate|ss:Haskell-DAG|<tuple|9.2.6.2|83>>
     <associate|ss:Haskell-Serialization|<tuple|9.2.6|81>>
     <associate|ss:ListFunctors|<tuple|2.2.2|13>>
     <associate|ss:MonadZero|<tuple|2.3.4|16>>
     <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|31>>
     <associate|ss:Serialization|<tuple|7.2|62>>
+    <associate|ss:UniversalSignatureHashModes|<tuple|6.3|?>>
     <associate|ss:bitOps|<tuple|3.3.1|22>>
     <associate|ss:checkSigHashAll|<tuple|4.5.1|?>>
     <associate|ss:cmr|<tuple|3.7|39>>

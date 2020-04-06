@@ -5,7 +5,7 @@ module Simplicity.MerkleRoot
   , CommitmentRoot, commitmentRoot
   , WitnessRoot, witnessRoot
   , hiddenRoot
-  , signatureIv
+  , signatureTag, signatureHash, sigHashTag
   , cmrFail0
   ) where
 
