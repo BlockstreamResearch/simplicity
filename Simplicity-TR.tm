@@ -4113,13 +4113,23 @@
   Semantically, the <samp|disconnect> combinator behaves similar to the
   composition combinator, but where the commitment Merkle root of the
   expression <math|t> is passed as an argument to the expression <math|s>. We
-  extend the formal semantics to the <samp|disconnect> combinator as follows.
+  extend our formal semantics to the <samp|disconnect> combinator by defining
+  it in terms of core Simplicity as follows.
 
   <\equation*>
     <around*|\<llbracket\>|<math-ss|disconnect><rsub|A,B,C,D> s
-    t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>\<assign\><around*|\<llbracket\>|s;<math-ss|take>
+    t|\<rrbracket\>><rsup|\<cal-M\>>\<assign\><around*|\<llbracket\>|<math-ss|scribe><rsub|A,<2><rsup|256>><around*|(|<cmr|t>|)>\<vartriangle\>
+    <math|<math-ss|iden>>;s;<math-ss|take> <math-ss|iden> \<vartriangle\>
+    <math-ss|drop> t|\<rrbracket\>><rsup|\<cal-M\>>
+  </equation*>
+
+  We can simplify the semantics as follows.
+
+  <\equation*>
+    <math|<around*|\<llbracket\>|<math-ss|disconnect><rsub|A,B,C,D> s
+    t|\<rrbracket\>><rsup|\<cal-M\>><around*|(|a|)>=<around*|(|<math|<around*|\<llbracket\>|<math-ss|take>
     <math-ss|iden> \<vartriangle\> <math-ss|drop>
-    t|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|<cmr|t>,a|\<rangle\>>
+    t|\<rrbracket\>><rsup|\<cal-M\>>>\<leftarrowtail\><around*|\<llbracket\>|s|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|<cmr|t>,a|\<rangle\>>>
   </equation*>
 
   Like a <samp|witness> expression, the real significance comes from the form
@@ -4182,6 +4192,238 @@
   provided and usual static analysis can proceed. Static analysis can still
   be part of the consensus protocol, even when the <samp|disconnect>
   expression is used.
+
+  <section|Implementing <samp|disconnect> on the Bit Machine>
+
+  The semantics of the <samp|disconnect> combinator can tell us how to
+  implement it on the Bit Machine. \ We simply define the translation of the
+  <samp|disconnect> combinator to be the translation of its semantics.
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<table|<row|<cell|<math|<around*|\<llangle\>|<math-ss|disconnect><rsub|A,B,C,D>
+    s t|\<rrangle\>>>>|<cell|\<assign\>>|<cell|<around*|\<llangle\>|<math-ss|scribe><rsub|A,<2><rsup|256>><around*|(|<cmr|t>|)>\<vartriangle\>
+    <math|<math-ss|iden>>;<around*|(|s;<math-ss|take> <math-ss|iden>
+    \<vartriangle\> <math-ss|drop> t|)>|\<rrangle\>>>>|<row|<cell|<TCOoff|<math|<math-ss|disconnect><rsub|A,B,C,D>
+    s t>>>|<cell|\<assign\>>|<cell|<TCOoff|<math-ss|scribe><rsub|A,<2><rsup|256>><around*|(|<cmr|t>|)>\<vartriangle\>
+    <math|<math-ss|iden>>;<around*|(|s;<math-ss|take> <math-ss|iden>
+    \<vartriangle\> <math-ss|drop> t|)>>>>|<row|<cell|<TCOon|<math|<math-ss|disconnect><rsub|A,B,C,D>
+    s t>>>|<cell|\<assign\>>|<cell|<TCOon|<math-ss|scribe><rsub|A,<2><rsup|256>><around*|(|<cmr|t>|)>\<vartriangle\>
+    <math|<math-ss|iden>>;<around*|(|s;<math-ss|take> <math-ss|iden>
+    \<vartriangle\> <math-ss|drop> t|)>>>>>>
+  </eqnarray*>
+
+  We can expand out each of these definitions in turn to see their definition
+  in terms of Bit Machine operations:
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|7|7|2|2|cell-halign|r>|<cwith|8|8|2|2|cell-halign|r>|<cwith|1|5|2|2|cell-halign|r>|<cwith|4|8|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<cwith|9|9|2|2|cell-halign|r>|<cwith|9|9|2|2|cell-halign|r>|<cwith|9|9|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<llangle\>|<math-ss|disconnect><rsub|A,B,C,D>
+    s t|\<rrangle\>>>|<cell|=>|<cell|newFrame<around*|(|256+bitSize<around*|(|A|)>|)>>>|<row|<cell|>|<cell|;>|<cell|write<rsub|<2><rsup|256>><around*|(|<cmr|t>|)>;copy<around*|(|bitSize<around*|(|A|)>|)>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|newFrame<around*|(|bitSize<around*|(|B|)>+bitSize<around*|(|C|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<around*|\<llangle\>|s|\<rrangle\>>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|copy<around*|(|bitSize<around*|(|B|)>|)>;bitSize<around*|(|B|)>\<star\><around*|\<llangle\>|t|\<rrangle\>>>>|<row|<cell|>|<cell|;>|<cell|dropFrame>>|<row|<cell|>|<cell|;>|<cell|dropFrame>>>>
+  </eqnarray*>
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|7|7|2|2|cell-halign|r>|<cwith|1|5|2|2|cell-halign|r>|<cwith|4|8|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<table|<row|<cell|<TCOoff|<math|<math-ss|disconnect><rsub|A,B,C,D>
+    s t>>>|<cell|=>|<cell|newFrame<around*|(|256+bitSize<around*|(|A|)>|)>>>|<row|<cell|>|<cell|;>|<cell|write<rsub|<2><rsup|256>><around*|(|<cmr|t>|)>;copy<around*|(|bitSize<around*|(|A|)>|)>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|newFrame<around*|(|bitSize<around*|(|B|)>+bitSize<around*|(|C|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<TCOon|s>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|copy<around*|(|bitSize<around*|(|B|)>|)>;fwd<around*|(|bitSize<around*|(|B|)>|)>;<TCOon|t>>>>>
+  </eqnarray*>
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|8|8|2|2|cell-halign|r>|<cwith|1|6|2|2|cell-halign|r>|<cwith|5|9|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<table|<row|<cell|<TCOon|<math|<math-ss|disconnect><rsub|A,B,C,D>
+    s t>>>|<cell|=>|<cell|newFrame<around*|(|256+bitSize<around*|(|A|)>|)>>>|<row|<cell|>|<cell|;>|<cell|write<rsub|<2><rsup|256>><around*|(|<cmr|t>|)>;copy<around*|(|bitSize<around*|(|A|)>|)>>>|<row|<cell|>|<cell|;>|<cell|dropFrame>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|newFrame<around*|(|bitSize<around*|(|B|)>+bitSize<around*|(|C|)>|)>>>|<row|<cell|>|<cell|;>|<cell|<TCOon|s>>>|<row|<cell|>|<cell|;>|<cell|moveFrame>>|<row|<cell|>|<cell|;>|<cell|copy<around*|(|bitSize<around*|(|B|)>|)>;fwd<around*|(|bitSize<around*|(|B|)>|)>;<TCOon|t>>>>>
+  </eqnarray*>
+
+  where
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|1|4|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<table|<row|<cell|write<rsub|<2><rsup|1>><around*|(|<math-tt|0><rsub|<2>>|)>>|<cell|\<assign\>>|<cell|write<around*|(|0|)>;skip<around*|(|0|)>;nop>>|<row|<cell|write<rsub|<2><rsup|1>><around*|(|<math-tt|1><rsub|<2>>|)>>|<cell|\<assign\>>|<cell|write<around*|(|1|)>;skip<around*|(|0|)>;nop>>|<row|<cell|write<rsub|<2><rsup|2n>><around*|(|<around*|\<langle\>|a,b|\<rangle\>>|)>>|<cell|\<assign\>>|<cell|write<rsub|<2><rsup|n>><around*|(|a|)>;write<rsub|<2><rsup|n>><around*|(|b|)>>>>>
+  </eqnarray*>
+
+  Of course, in an optimized implementation of <samp|disconnect> we would
+  discard the <math|skip<around*|(|0|)>> and <math|nop> operations from the
+  definition of <math|write<rsub|<2><rsup|256>>>. <with|color|red|TODO:
+  before doing Time Resource static analysis we may need to formally define
+  this optimized implemenation of <samp|disconnect>.>
+
+  Because the Bit Machine instructions are directly derived from the
+  semantics of <samp|disconnect> the correctness theorems for the Bit Machine
+  still hold.
+
+  <\theorem>
+    Given a well-typed Simplicity program with delegation
+    <math|t:A\<vdash\>B> and an input <math|a:A>, then
+
+    <\equation*>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
+    </equation*>
+
+    for any cell arrays <math|r<rsub|0>>, <math|r<rsub|0><rprime|'>>,
+    <math|w<rsub|0>>, any stacks <math|\<Theta\>>, <math|\<Xi\>>, and any
+    natural number <math|m>.
+  </theorem>
+
+  In particular, for a well-typed Simplicity program with delegation
+  <math|t:A\<vdash\>B>, we have
+
+  <\equation*>
+    <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>
+  </equation*>
+
+  <\theorem>
+    Given a well-typed Simplicity program with delegation
+    <math|t:A\<vdash\>B> and an input <math|a:A>, then
+
+    <\equation*>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<TCOoff|t>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0><emptyFrame><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
+    </equation*>
+
+    and
+
+    <\equation*>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\<vartriangleright\>r<rsub|0><emptyFrame><rep|a|>\<cdummy\>r<rsub|0><rprime|'>\|w<rsub|0><emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>+m>\<vartriangleleft\>\<Xi\>|]>|<TCOon|t>|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|1>\|w<rsub|0>\<cdummy\><rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame><carr|?><rsup|m>\<vartriangleleft\>\<Xi\>|]>>
+    </equation*>
+
+    for any cell arrays <math|r<rsub|0>>, <math|r<rsub|0><rprime|'>>,
+    <math|w<rsub|0>>, any frame <math|r<rsub|1>>, any stacks
+    <math|\<Theta\>>, <math|\<Xi\>>, and any natural number <math|m>.
+  </theorem>
+
+  In particular, for a well-typed Simplicity program with delegation
+  <math|t:A\<vdash\>B>, we have
+
+  <\equation*>
+    <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>
+  </equation*>
+
+  <subsection|Static Analysis of <samp|disconnect>>
+
+  <subsubsection|Space Resources>
+
+  Because the Bit Machine implementation of the <samp|disconnect> combinator
+  is derived from its semantics in core Simplicity, we can derive the static
+  analysis of the space resources used by the Bit Machine implementation of
+  the <samp|disconnect> combintor from its definining Simplicity expression.
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<table|<row|<cell|extraCellsBound<around*|(|<math-ss|disconnect><rsub|A,B,C,D>
+    s t|)><math|>>|<cell|\<assign\>>|<cell|extraCellsBound<next-line><htab|5mm><around*|(|<math-ss|scribe><rsub|A,<2><rsup|256>><around*|(|<cmr|t>|)>\<vartriangle\>
+    <math|<math-ss|iden>>;<around*|(|s;<math-ss|take> <math-ss|iden>
+    \<vartriangle\> <math-ss|drop> t|)>|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|disconnect><rsub|A,B,C,D>
+    s t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|dyn><next-line><htab|5mm><around*|(|<math-ss|scribe><rsub|A,<2><rsup|256>><around*|(|<cmr|t>|)>\<vartriangle\>
+    <math|<math-ss|iden>>;<around*|(|s;<math-ss|take> <math-ss|iden>
+    \<vartriangle\> <math-ss|drop> t|)>|)>>>|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|disconnect><rsub|A,B,C,D>
+    s t|)>>|<cell|\<assign\>>|<cell|extraCellsBound<rsup|TCO><rsub|static><next-line><htab|5mm><around*|(|<math-ss|scribe><rsub|A,<2><rsup|256>><around*|(|<cmr|t>|)>\<vartriangle\>
+    <math|<math-ss|iden>>;<around*|(|s;<math-ss|take> <math-ss|iden>
+    \<vartriangle\> <math-ss|drop> t|)>|)>>>>>
+  </eqnarray*>
+
+  We can expand out each of these definitions in turn:
+
+  \;
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|1|3|2|2|cell-halign|r>|<cwith|2|4|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<table|<row|<cell|extraCellsBound<around*|(|<math-ss|disconnect><rsub|A,B,C,D>
+    s t|)><math|>>|<cell|=>|<cell|256+bitSize<around*|(|A|)>>>|<row|<cell|>|<cell|+>|<cell|bitSize<around*|(|B|)>+bitSize<around*|(|C|)>>>|<row|<cell|>|<cell|+>|<cell|max<around*|(|extraCellsBound<around*|(|s|)>,extraCellsBound<around*|(|t|)>|)>>>>>
+  </eqnarray*>
+
+  \;
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|1|3|2|2|cell-halign|r>|<cwith|2|6|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|1|5|2|2|cell-halign|r>|<cwith|1|3|2|2|cell-halign|r>|<cwith|2|5|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|2|3|2|2|cell-halign|r>|<cwith|2|3|2|2|cell-halign|r>|<cwith|2|3|2|2|cell-halign|c>|<cwith|2|2|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<cwith|1|1|2|2|cell-halign|c>|<cwith|4|4|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|c>|<cwith|4|4|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|c>|<cwith|5|5|2|2|cell-halign|r>|<table|<row|<cell|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|<math-ss|disconnect><rsub|A,B,C,D>
+    s t|)>>|<cell|=>|<cell|r<rsub|a>+max<around*|(|0,
+    r<rsub|b>+max<around*|(|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|s|)><around*|(|r<rsub|a>|)>,<next-line><htab|5mm>extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|r<rsub|b>|)>-r<rsub|a>|)>-r|)>>>|<row|<cell|>|<cell|where>|<cell|<around*|\<langle\>|n<rsub|s>,m<rsub|s>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|s|)>>>|<row|<cell|>|<cell|and>|<cell|<around*|\<langle\>|n<rsub|t>,m<rsub|t>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|>|<cell|and>|<cell|r<rsub|a>\<assign\>256+bitSize<around*|(|A|)>>>|<row|<cell|>|<cell|and>|<cell|r<rsub|b>\<assign\>bitSize<around*|(|B|)>+bitSize<around*|(|C|)>>>>>
+  </eqnarray*>
+
+  \;
+
+  <\eqnarray*>
+    <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|1|3|2|2|cell-halign|r>|<cwith|2|6|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|2|3|2|2|cell-halign|r>|<cwith|2|3|2|2|cell-halign|r>|<cwith|2|3|2|2|cell-halign|c>|<cwith|2|2|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<cwith|1|1|2|2|cell-halign|c>|<cwith|4|4|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|c>|<cwith|4|4|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|c>|<cwith|5|5|2|2|cell-halign|r>|<table|<row|<cell|extraCellsBound<rsup|TCO><rsub|static><around*|(|<math-ss|disconnect><rsub|A,B,C,D>
+    s t|)><math|>>|<cell|=>|<cell|<around*|\<langle\>|max<around*|(|n<rsub|t>,r<rsub|b>+max<around*|(|n<rsub|s>,m<rsub|t>,r<rsub|a>+m<rsub|s>|)>|)>,r<rsub|a>|\<rangle\>>>>|<row|<cell|>|<cell|where>|<cell|<around*|\<langle\>|n<rsub|s>,m<rsub|s>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|s|)>>>|<row|<cell|>|<cell|and>|<cell|<around*|\<langle\>|n<rsub|t>,m<rsub|t>|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>>|<row|<cell|>|<cell|and>|<cell|r<rsub|a>\<assign\>256+bitSize<around*|(|A|)>>>|<row|<cell|>|<cell|and>|<cell|r<rsub|b>\<assign\>bitSize<around*|(|B|)>+bitSize<around*|(|C|)>>>>>
+  </eqnarray*>
+
+  The correctness theorems about these analyses still holds:
+
+  <\lemma>
+    For any Simplicity expression with delegation <math|t:A\<vdash\>B>, such
+    that
+
+    <\equation*>
+      <prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>
+    </equation*>
+
+    we have that
+
+    <\enumerate>
+      <item><math|cellCount<around*|(|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|)>=cellCount<around*|(|<around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>|)>>
+
+      <item><math|cellsReq<around*|(|<prog|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|<around*|\<llangle\>|t|\<rrangle\>>|<around*|[|\<Theta\><rprime|'>\<vartriangleright\>r<rsub|0><rprime|'>\|w<rsub|0><rprime|'>\<vartriangleleft\>\<Xi\><rprime|'>|]>>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\>\<vartriangleright\>r<rsub|0>\|w<rsub|0>\<vartriangleleft\>\<Xi\>|]>|)>+extraCellsBound<around*|(|t|)>>.
+    </enumerate>
+
+    In particular for <math|a:A> and
+
+    <\equation*>
+      <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<around*|\<llangle\>|t|\<rrangle\>>|><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>
+    </equation*>
+
+    we have that
+
+    <math|cellsReq<around*|(|<prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<around*|\<llangle\>|t|\<rrangle\>>|><around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+extraCellsBound<around*|(|t|)>>.
+  </lemma>
+
+  <\lemma>
+    For any Simplicity expression with delegation <math|t:A\<vdash\>B>, such
+    that
+
+    <\equation*>
+      <prog|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|<TCOon|t>|<around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>><rsup|\<nosymbol\>>
+    </equation*>
+
+    and
+
+    <\equation*>
+      <prog|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|<TCOoff|t><rsup|\<nosymbol\>>|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>>
+    </equation*>
+
+    we have that
+
+    <\enumerate>
+      <item><math|cellCount<around*|(|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|)>=cellCount<around*|(|r<rsub|on,0>|)>+cellCount<around*|(|<around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>|)>>
+      and<next-line><math|cellCount<around*|(|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|)>=cellCount<around*|(|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>|)>>
+
+      <item><math|cellsReq<around*|(|<prog|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|<TCOon|t>|<around*|[|\<Theta\><rsub|on><rprime|'>\<vartriangleright\>r<rsub|on,0><rprime|'>\|w<rsub|on,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|on><rprime|'>|]>>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|on>\<vartriangleright\>r<rsub|on,0>\|w<rsub|on,0>\<vartriangleleft\>\<Xi\><rsub|on>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|cellCount<around*|(|r<rsub|on,0>|)>|)>>
+      and<next-line><math|cellsReq<around*|(|<prog|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|<TCOoff|t><rsup|\<nosymbol\>>|<around*|[|\<Theta\><rsub|off><rprime|'>\<vartriangleright\>r<rsub|off,0><rprime|'>\|w<rsub|off,0><rprime|'>\<vartriangleleft\>\<Xi\><rsub|off><rprime|'>|]>>|)>\<leq\><next-line><htab|5mm>cellCount<around*|(|<around*|[|\<Theta\><rsub|off>\<vartriangleright\>r<rsub|off,0>\|w<rsub|off,0>\<vartriangleleft\>\<Xi\><rsub|off>|]>|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)>>.
+    </enumerate>
+
+    In particular for <math|a:A> and
+
+    <\equation*>
+      <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>
+    </equation*>
+
+    we have that
+
+    <math|cellsReq<around*|(|<prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>|)>\<leq\><next-line><htab|5mm>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)><around*|(|0|)>>.
+  </lemma>
+
+  <\lemma>
+    For any Simplicity expression with delegation <math|t:A\<vdash\>B>,
+
+    <\equation*>
+      <math|extraCellsBound<rsup|TCO><rsub|dyn><around*|(|t|)>=interp<rsup|TCO><around*|(|extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>|)>><text|.>
+    </equation*>
+  </lemma>
+
+  <\corollary>
+    For any Simplicity expression with delegation <math|t:A\<vdash\>B> and
+    <math|a:A> such that
+
+    <\equation*>
+      <prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>
+    </equation*>
+
+    we have that
+
+    <math|cellsReq<around*|(|<prog|<around*|[|<emptyFrame><rep|a|>\|<emptyFrame><carr|?><rsup|bitSize<around*|(|B|)>>|]>|<TCOoff|t>|<around*|[|<emptyFrame><rep|a|>\|<rep|<around*|\<llbracket\>|t|\<rrbracket\>><around*|(|a|)>|><emptyFrame>|]>>|)>\<leq\>bitSize<around*|(|A|)>+bitSize<around*|(|B|)>+max<around*|(|n,m|)>>
+
+    <no-indent>where <math|<around*|\<langle\>|n,m|\<rangle\>>\<assign\>extraCellsBound<rsup|TCO><rsub|static><around*|(|t|)>>.
+  </corollary>
 
   <section|Unbounded Loops><label|ss:unboundedLoop>
 
@@ -4257,11 +4499,7 @@
     <math-ss|IH>|)> k; <math|<math-ss|IH>>>|\<rrbracket\>><rsup|\<cal-M\>><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|IH>>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math|<math-ss|disconnect>
     <around*|(|<math-ss|assert> <around*|(|<math-ss|IIH> \<vartriangle\>
     <math-ss|OH> ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|IH>|)> k>|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|IH>>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|assert>
-    <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
-    ;<math-ss|eq><rsub|<2><rsup|256>>|)> \<vartriangle\>
-    <math-ss|IH>;<math-ss|take> <math-ss|iden> \<vartriangle\> <math-ss|drop>
-    k|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|<cmr|k>,<around*|\<langle\>|a<rsub|1>,h|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|IH>>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|take>
+    <math-ss|IH>|)> k>|\<rrbracket\>><rsup|\<cal-M\>>|)><around*|\<langle\>|a<rsub|1>,h|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|IH>>|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|take>
     <math-ss|iden> \<vartriangle\> <math-ss|drop>
     k|\<rrbracket\>><rsup|\<cal-M\>>\<leftarrowtail\><around*|\<llbracket\>|<math-ss|assert>
     <around*|(|<math-ss|IIH> \<vartriangle\> <math-ss|OH>
@@ -7429,83 +7667,86 @@
     <associate|app:ElementsTransactions|<tuple|A|87>>
     <associate|auto-1|<tuple|1|7>>
     <associate|auto-10|<tuple|2.2|13>>
-    <associate|auto-100|<tuple|7.2.1|62>>
-    <associate|auto-101|<tuple|7.2.2|63>>
-    <associate|auto-102|<tuple|8|65>>
-    <associate|auto-103|<tuple|8.1|65>>
-    <associate|auto-104|<tuple|8.2|65>>
-    <associate|auto-105|<tuple|8.2.1|65>>
-    <associate|auto-106|<tuple|8.2.2|65>>
-    <associate|auto-107|<tuple|8.2.2.1|66>>
-    <associate|auto-108|<tuple|8.2.2.2|66>>
-    <associate|auto-109|<tuple|8.2.2.3|67>>
+    <associate|auto-100|<tuple|7.1.2.1|62>>
+    <associate|auto-101|<tuple|7.1.2.2|63>>
+    <associate|auto-102|<tuple|7.2|65>>
+    <associate|auto-103|<tuple|7.2.1|65>>
+    <associate|auto-104|<tuple|7.2.2|65>>
+    <associate|auto-105|<tuple|8|65>>
+    <associate|auto-106|<tuple|8.1|65>>
+    <associate|auto-107|<tuple|8.2|66>>
+    <associate|auto-108|<tuple|8.2.1|66>>
+    <associate|auto-109|<tuple|8.2.2|67>>
     <associate|auto-11|<tuple|2.2.1|13>>
-    <associate|auto-110|<tuple|8.2.3|67>>
-    <associate|auto-111|<tuple|8.3|67>>
-    <associate|auto-112|<tuple|8.3.1|67>>
-    <associate|auto-113|<tuple|8.3.2|67>>
-    <associate|auto-114|<tuple|8.3.3|68>>
-    <associate|auto-115|<tuple|8.4|68>>
-    <associate|auto-116|<tuple|8.1|68>>
-    <associate|auto-117|<tuple|8.4.1|69>>
-    <associate|auto-118|<tuple|8.4.2|69>>
-    <associate|auto-119|<tuple|8.4.3|69>>
+    <associate|auto-110|<tuple|8.2.2.1|67>>
+    <associate|auto-111|<tuple|8.2.2.2|67>>
+    <associate|auto-112|<tuple|8.2.2.3|67>>
+    <associate|auto-113|<tuple|8.2.3|67>>
+    <associate|auto-114|<tuple|8.3|68>>
+    <associate|auto-115|<tuple|8.3.1|68>>
+    <associate|auto-116|<tuple|8.3.2|68>>
+    <associate|auto-117|<tuple|8.3.3|69>>
+    <associate|auto-118|<tuple|8.4|69>>
+    <associate|auto-119|<tuple|8.1|69>>
     <associate|auto-12|<tuple|2.2.2|13>>
-    <associate|auto-120|<tuple|8.4.4|70>>
-    <associate|auto-121|<tuple|8.4.4.1|70>>
-    <associate|auto-122|<tuple|8.4.5|70>>
-    <associate|auto-123|<tuple|8.4.6|71>>
-    <associate|auto-124|<tuple|8.5|71>>
-    <associate|auto-125|<tuple|8.6|71>>
-    <associate|auto-126|<tuple|8.6.1|72>>
-    <associate|auto-127|<tuple|8.6.1.1|72>>
-    <associate|auto-128|<tuple|8.6.2|73>>
-    <associate|auto-129|<tuple|8.6.3|73>>
+    <associate|auto-120|<tuple|8.4.1|70>>
+    <associate|auto-121|<tuple|8.4.2|70>>
+    <associate|auto-122|<tuple|8.4.3|70>>
+    <associate|auto-123|<tuple|8.4.4|71>>
+    <associate|auto-124|<tuple|8.4.4.1|71>>
+    <associate|auto-125|<tuple|8.4.5|71>>
+    <associate|auto-126|<tuple|8.4.6|72>>
+    <associate|auto-127|<tuple|8.5|72>>
+    <associate|auto-128|<tuple|8.6|73>>
+    <associate|auto-129|<tuple|8.6.1|73>>
     <associate|auto-13|<tuple|2.3|15>>
-    <associate|auto-130|<tuple|9|75>>
-    <associate|auto-131|<tuple|9.1|75>>
-    <associate|auto-132|<tuple|9.1.1|75>>
-    <associate|auto-133|<tuple|9.1.2|76>>
-    <associate|auto-134|<tuple|9.1.3|77>>
-    <associate|auto-135|<tuple|9.1.4|77>>
-    <associate|auto-136|<tuple|9.1.5|77>>
-    <associate|auto-137|<tuple|9.1.5.1|77>>
-    <associate|auto-138|<tuple|9.1.5.2|77>>
-    <associate|auto-139|<tuple|9.1.5.3|77>>
+    <associate|auto-130|<tuple|8.6.1.1|75>>
+    <associate|auto-131|<tuple|8.6.2|75>>
+    <associate|auto-132|<tuple|8.6.3|75>>
+    <associate|auto-133|<tuple|9|76>>
+    <associate|auto-134|<tuple|9.1|77>>
+    <associate|auto-135|<tuple|9.1.1|77>>
+    <associate|auto-136|<tuple|9.1.2|77>>
+    <associate|auto-137|<tuple|9.1.3|77>>
+    <associate|auto-138|<tuple|9.1.4|77>>
+    <associate|auto-139|<tuple|9.1.5|77>>
     <associate|auto-14|<tuple|2.3.1|15>>
-    <associate|auto-140|<tuple|9.1.5.4|78>>
-    <associate|auto-141|<tuple|9.1.6|78>>
-    <associate|auto-142|<tuple|9.1.6.1|78>>
-    <associate|auto-143|<tuple|9.1.6.2|78>>
-    <associate|auto-144|<tuple|9.1.7|79>>
-    <associate|auto-145|<tuple|9.1.7.1|79>>
-    <associate|auto-146|<tuple|9.1.7.2|79>>
-    <associate|auto-147|<tuple|9.2|80>>
-    <associate|auto-148|<tuple|9.2.1|80>>
-    <associate|auto-149|<tuple|9.2.2|80>>
+    <associate|auto-140|<tuple|9.1.5.1|78>>
+    <associate|auto-141|<tuple|9.1.5.2|78>>
+    <associate|auto-142|<tuple|9.1.5.3|78>>
+    <associate|auto-143|<tuple|9.1.5.4|78>>
+    <associate|auto-144|<tuple|9.1.6|79>>
+    <associate|auto-145|<tuple|9.1.6.1|79>>
+    <associate|auto-146|<tuple|9.1.6.2|79>>
+    <associate|auto-147|<tuple|9.1.7|80>>
+    <associate|auto-148|<tuple|9.1.7.1|80>>
+    <associate|auto-149|<tuple|9.1.7.2|80>>
     <associate|auto-15|<tuple|2.3.2|16>>
-    <associate|auto-150|<tuple|9.2.3|80>>
-    <associate|auto-151|<tuple|9.2.4|81>>
-    <associate|auto-152|<tuple|9.2.5|81>>
-    <associate|auto-153|<tuple|9.2.6|81>>
-    <associate|auto-154|<tuple|9.2.6.1|82>>
-    <associate|auto-155|<tuple|9.2.6.2|83>>
-    <associate|auto-156|<tuple|9.3|83>>
-    <associate|auto-157|<tuple|9.4|84>>
-    <associate|auto-158|<tuple|9.4.1|84>>
-    <associate|auto-159|<tuple|9.4.2|84>>
+    <associate|auto-150|<tuple|9.2|80>>
+    <associate|auto-151|<tuple|9.2.1|81>>
+    <associate|auto-152|<tuple|9.2.2|81>>
+    <associate|auto-153|<tuple|9.2.3|81>>
+    <associate|auto-154|<tuple|9.2.4|82>>
+    <associate|auto-155|<tuple|9.2.5|83>>
+    <associate|auto-156|<tuple|9.2.6|83>>
+    <associate|auto-157|<tuple|9.2.6.1|84>>
+    <associate|auto-158|<tuple|9.2.6.2|84>>
+    <associate|auto-159|<tuple|9.3|84>>
     <associate|auto-16|<tuple|2.3.3|16>>
-    <associate|auto-160|<tuple|9.5|85>>
-    <associate|auto-161|<tuple|10|87>>
-    <associate|auto-162|<tuple|A|89>>
-    <associate|auto-163|<tuple|A.1|92>>
-    <associate|auto-164|<tuple|A.1.1|93>>
-    <associate|auto-165|<tuple|A.1.2|93>>
-    <associate|auto-166|<tuple|A.1.3|94>>
-    <associate|auto-167|<tuple|A.2|95>>
-    <associate|auto-168|<tuple|B|97>>
-    <associate|auto-169|<tuple|B|?>>
+    <associate|auto-160|<tuple|9.4|85>>
+    <associate|auto-161|<tuple|9.4.1|87>>
+    <associate|auto-162|<tuple|9.4.2|89>>
+    <associate|auto-163|<tuple|9.5|92>>
+    <associate|auto-164|<tuple|10|93>>
+    <associate|auto-165|<tuple|A|93>>
+    <associate|auto-166|<tuple|A.1|94>>
+    <associate|auto-167|<tuple|A.1.1|95>>
+    <associate|auto-168|<tuple|A.1.2|97>>
+    <associate|auto-169|<tuple|A.1.3|?>>
     <associate|auto-17|<tuple|2.3.4|16>>
+    <associate|auto-170|<tuple|A.2|?>>
+    <associate|auto-171|<tuple|B|?>>
+    <associate|auto-172|<tuple|B|?>>
     <associate|auto-18|<tuple|2.3.4.1|17>>
     <associate|auto-19|<tuple|2.4|17>>
     <associate|auto-2|<tuple|1.1|7>>
@@ -7589,13 +7830,13 @@
     <associate|auto-90|<tuple|6|53>>
     <associate|auto-91|<tuple|6.1|54>>
     <associate|auto-92|<tuple|6.1.1|56>>
-    <associate|auto-93|<tuple|7|57>>
-    <associate|auto-94|<tuple|7.1|57>>
-    <associate|auto-95|<tuple|7.1.1|59>>
-    <associate|auto-96|<tuple|7.1.2|61>>
-    <associate|auto-97|<tuple|7.1.2.1|61>>
-    <associate|auto-98|<tuple|7.1.2.2|62>>
-    <associate|auto-99|<tuple|7.2|62>>
+    <associate|auto-93|<tuple|6.1.1.1|57>>
+    <associate|auto-94|<tuple|6.2|57>>
+    <associate|auto-95|<tuple|6.2.1|59>>
+    <associate|auto-96|<tuple|7|61>>
+    <associate|auto-97|<tuple|7.1|61>>
+    <associate|auto-98|<tuple|7.1.1|62>>
+    <associate|auto-99|<tuple|7.1.2|62>>
     <associate|bib-Appel:2015|<tuple|1|97>>
     <associate|bib-Carette:2009|<tuple|3|97>>
     <associate|bib-Coq:manual|<tuple|5|97>>
@@ -7656,7 +7897,7 @@
     <associate|ss:pruning|<tuple|4.3.2.1|44>>
     <associate|ss:salted|<tuple|4.3.2.2|44>>
     <associate|ss:typeInference|<tuple|7.1.1|59>>
-    <associate|ss:unboundedLoop|<tuple|6.1|54>>
+    <associate|ss:unboundedLoop|<tuple|6.2|54>>
     <associate|thm:CSCT|<tuple|3.3|30>>
     <associate|v:checkSigHashAll|<tuple|8.6.6|?>>
   </collection>
