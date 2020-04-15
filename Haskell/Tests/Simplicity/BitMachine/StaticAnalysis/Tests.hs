@@ -15,28 +15,39 @@ import Simplicity.BitMachine.Translate.TCO as TranslateTCO
 import Simplicity.Programs.Word
 import Simplicity.Programs.Sha256.Lib
 import Simplicity.Term.Core
+import qualified Simplicity.Word
 
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.QuickCheck (Arbitrary, Property, Testable, property, testProperty, withMaxSuccess)
+import Test.Tasty.QuickCheck ( Gen, Property, Testable
+                             , arbitrary, arbitraryBoundedIntegral
+                             , property, testProperty
+                             , withMaxSuccess
+                             )
 import Test.Tasty.HUnit (testCase, assert)
 
 -- Run the static analysis tests on a small set of Simplicity expressions.
 tests :: TestTree
 tests = testGroup "StaticAnalysis"
       [ testGroup "memSize"
-        [ testSquare "fullAdder word8" (fullAdder word8)
-        , testSquare "adder word8" (adder word8)
-        , testSquare "fullMultiplier word8" (fullMultiplier word8)
-        , testSquare "multiplier word8" (multiplier word8)
-        , testSquareAdj (withMaxSuccess 10) "hashBlock" hashBlock
+        [ testSquare "fullAdder word8" (fullAdder word8) (gen16 <×> arbitrary)
+        , testSquare "adder word8" (adder word8) gen16
+        , testSquare "fullMultiplier word8" (fullMultiplier word8) gen32
+        , testSquare "multiplier word8" (multiplier word8) gen16
+        , testSquareAdj (withMaxSuccess 10) "hashBlock" hashBlock (gen256 <×> gen512)
         ]
       ]
+ where
+  gen16 = (toWord16 . fromIntegral) <$> (arbitraryBoundedIntegral :: Gen Simplicity.Word.Word16)
+  gen32 = (toWord32 . fromIntegral) <$> (arbitraryBoundedIntegral :: Gen Simplicity.Word.Word32)
+  gen256 = (toWord256 . fromIntegral) <$> (arbitraryBoundedIntegral :: Gen Simplicity.Word.Word256)
+  gen512 =  gen256 <×> gen256
+  a <×> b = (,) <$> a <*> b
 
 -- For a given program we expect the static analysis of Cell use to bound the dynamic analysis of Cell use for both naive and TCO translation.
 -- We also expect TCO translation's static and dynamic analysis to be no greater than the same analysis of naive translation.
 -- Together these two pairs of tests for a square of comparisions that we expect to hold.
-testSquareAdj :: (Arbitrary a, TyC a, TyC b) => (forall prop. Testable prop => prop -> Property) -> String -> (forall term. (Core term) => term a b) -> TestTree
-testSquareAdj adj name program = testProperty name (adj assertion)
+testSquareAdj :: (TyC a, TyC b) => (forall prop. Testable prop => prop -> Property) -> String -> (forall term. (Core term) => term a b) -> Gen a -> TestTree
+testSquareAdj adj name program gen = testProperty name (adj (assertion <$> gen))
  where
   staticMem = Analysis.cellsBnd program
   staticMemTCO = AnalysisTCO.cellsBnd program
@@ -46,5 +57,5 @@ testSquareAdj adj name program = testProperty name (adj assertion)
   assertion i = square (dynamicMemTCO i) (dynamicMem i) staticMemTCO staticMem
   fold l = foldl' mappend mempty l
 
-testSquare :: (Arbitrary a, TyC a, TyC b) => String -> (forall term. (Core term) => term a b) -> TestTree
+testSquare :: (TyC a, TyC b) => String -> (forall term. (Core term) => term a b) -> Gen a -> TestTree
 testSquare = testSquareAdj property
