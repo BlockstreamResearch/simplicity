@@ -8,7 +8,7 @@
 #
 packages:
 - .
-resolver: lts-13.19
+resolver: lts-14.27
 extra-deps:
   - lens-family-2.0.0
   - lens-family-core-2.0.0

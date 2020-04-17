@@ -4,3 +4,5 @@ Haskell/*.pdf
 Simplicity.cabal
 dist-newstyle/
 result-doc
+.stack-work/*
+stack.yaml.lock

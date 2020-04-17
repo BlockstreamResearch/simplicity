@@ -11,7 +11,7 @@ category:            Language
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.25
-tested-with:         GHC ==8.6.4
+tested-with:         GHC ==8.6.5
 
 library
   exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
