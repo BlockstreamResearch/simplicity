@@ -16,8 +16,9 @@ module Simplicity.Term.Core
  --
  -- The string of @i@'s and @o@'s is meant to resemble a binary number that denotes an index to the leaves of a perfect binary tree.
  , oh, ih, ooh, oih, ioh, iih, oooh, ooih, oioh, oiih, iooh, ioih, iioh, iiih
- , swapP {- product swap -}, swapS {- sum swap -}
- , cnf2dnf {- distribute -}, dnf2cnf {- factor -}
+ , swapP, swapS
+ , cnf2dnf, dnf2cnf
+ , copair
  -- * Language extensions
  , Assert(..), fail0
  , Witness(..)
@@ -121,7 +122,11 @@ cnf2dnf = swapP >>> (match (injl swapP) (injr swapP))
 
 -- | Term for factoring common products out of sums (sum of products "DNF" to product of sums "CNF")
 dnf2cnf :: (Core term, TyC a, TyC b, TyC c) => term (Either (a, b) (a, c)) (a, Either b c)
-dnf2cnf = iden &&& unit >>> match (ooh &&& injl oih) (ooh &&& injr oih)
+dnf2cnf = copair (oh &&& injl ih) (oh &&& injr ih)
+
+-- | Categorical dual of 'pair'
+copair :: (Core term, TyC a, TyC b, TyC c) => term a c -> term b c -> term (Either a b) c
+copair s t = iden &&& unit >>> match (take s) (take t)
 
 instance Core (->) where
   iden = id
