@@ -17,6 +17,7 @@ module Simplicity.Term.Core
  -- The string of @i@'s and @o@'s is meant to resemble a binary number that denotes an index to the leaves of a perfect binary tree.
  , oh, ih, ooh, oih, ioh, iih, oooh, ooih, oioh, oiih, iooh, ioih, iioh, iiih
  , swapP {- product swap -}, swapS {- sum swap -}
+ , cnf2dnf {- distribute -}, dnf2cnf {- factor -}
  -- * Language extensions
  , Assert(..), fail0
  , Witness(..)
