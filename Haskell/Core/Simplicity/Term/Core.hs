@@ -114,7 +114,7 @@ swapP = pair (drop iden) (take iden)
 
 -- | Term for swapping positions in sums (Commutativity of Addition): A + B |- B + A
 swapS :: (Core term, TyC a, TyC b) => term (Either a b) (Either b a)
-swapS = iden &&& unit >>> (match (take (injr iden)) (take (injl iden)))
+swapS = copair (injr iden)) (injl iden)
 
 -- | Term for distributing products over sums (product of sums "CNF" to sum of products "DNF")
 cnf2dnf :: (Core term, TyC a, TyC b, TyC c) => term (a, Either b c) (Either (a, b) (a, c))
