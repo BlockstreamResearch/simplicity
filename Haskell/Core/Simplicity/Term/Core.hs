@@ -16,6 +16,7 @@ module Simplicity.Term.Core
  --
  -- The string of @i@'s and @o@'s is meant to resemble a binary number that denotes an index to the leaves of a perfect binary tree.
  , oh, ih, ooh, oih, ioh, iih, oooh, ooih, oioh, oiih, iooh, ioih, iioh, iiih
+ , swapP {- product swap -}, swapS {- sum swap -}
  -- * Language extensions
  , Assert(..), fail0
  , Witness(..)
@@ -104,6 +105,22 @@ iioh = drop ioh
 
 iiih :: (Core term, TyC a, TyC b, TyC c, TyC x) => term (a, (b, (c, x))) x
 iiih = drop iih
+
+-- | Term for swapping positions in products (Commutativity of Multiplication): A x B |- B x A
+swapP :: (Core term, TyC a, TyC b) => term (a, b) (b, a)
+swapP = pair (drop iden) (take iden)
+
+-- | Term for swapping positions in sums (Commutativity of Addition): A + B |- B + A
+swapS :: (Core term, TyC a, TyC b) => term (Either a b) (Either b a)
+swapS = iden &&& unit >>> (match (take (injr iden)) (take (injl iden)))
+
+-- | Term for distributing products over sums (product of sums "CNF" to sum of products "DNF")
+cnf2dnf :: (Core term, TyC a, TyC b, TyC c) => term (a, Either b c) (Either (a, b) (a, c))
+cnf2dnf = swapP >>> (match (injl swapP) (injr swapP))
+
+-- | Term for factoring common products out of sums (sum of products "DNF" to product of sums "CNF")
+dnf2cnf :: (Core term, TyC a, TyC b, TyC c) => term (Either (a, b) (a, c)) (a, Either b c)
+dnf2cnf = iden &&& unit >>> match (ooh &&& injl oih) (ooh &&& injr oih)
 
 instance Core (->) where
   iden = id
