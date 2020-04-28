@@ -85,17 +85,18 @@ instance Core Translation where
                     . tcoOff t
            }
 
-  match s t = Translation
-            { tcoOn  = (fwd padl . tcoOn s) ||| (fwd padr . tcoOn t)
-            , tcoOff = bump padl (tcoOff s) ||| bump padr (tcoOff t)
-            }
+  match s t = result
    where
-    proxy :: arr (a,b) d -> Proxy b
-    proxy _ = Proxy
-    b = reifyProxy (proxy s)
-    c = reifyProxy (proxy t)
-    padl = 1 + padLR b c
-    padr = 1 + padRR b c
+    result = Translation
+           { tcoOn  = (fwd padl . tcoOn s) ||| (fwd padr . tcoOn t)
+           , tcoOff = bump padl (tcoOff s) ||| bump padr (tcoOff t)
+           }
+    proxy :: arr (Either a b, c) d -> (Proxy a, Proxy b)
+    proxy _ = (Proxy, Proxy)
+    a = reifyProxy . fst $ proxy result
+    b = reifyProxy . snd $ proxy result
+    padl = 1 + padLR a b
+    padr = 1 + padRR a b
 
   pair s t = Translation
            { tcoOn  = tcoOff s
@@ -119,3 +120,30 @@ instance Core Translation where
                     . tcoOn t
            , tcoOff = bump bs (tcoOff t)
            }
+
+instance Assert Translation where
+  assertl s _ = result
+   where
+    result = Translation
+           { tcoOn  = (fwd padl . tcoOn s) ||| abort
+           , tcoOff = bump padl (tcoOff s) ||| abort
+           }
+    proxy :: arr (Either a b, c) d -> (Proxy a, Proxy b)
+    proxy _ = (Proxy, Proxy)
+    a = reifyProxy . fst $ proxy result
+    b = reifyProxy . snd $ proxy result
+    padl = 1 + padLR a b
+
+  assertr _ t = result
+   where
+    result = Translation
+           { tcoOn  = abort ||| (fwd padr . tcoOn t)
+           , tcoOff = abort ||| bump padr (tcoOff t)
+           }
+    proxy :: arr (Either a b, c) d -> (Proxy a, Proxy b)
+    proxy _ = (Proxy, Proxy)
+    a = reifyProxy . fst $ proxy result
+    b = reifyProxy . snd $ proxy result
+    padr = 1 + padRR a b
+
+  fail _  = Translation { tcoOn = abort, tcoOff = abort }

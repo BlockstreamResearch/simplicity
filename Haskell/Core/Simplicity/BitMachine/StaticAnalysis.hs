@@ -30,3 +30,8 @@ instance Core ExtraCellsBnd where
   pair (ExtraCellsBnd s) (ExtraCellsBnd t) = ExtraCellsBnd (max s t)
   take (ExtraCellsBnd t) = ExtraCellsBnd t
   drop (ExtraCellsBnd t) = ExtraCellsBnd t
+
+instance Assert ExtraCellsBnd where
+  assertl (ExtraCellsBnd s) _ = ExtraCellsBnd s
+  assertr _ (ExtraCellsBnd t) = ExtraCellsBnd t
+  fail _ = ExtraCellsBnd 0

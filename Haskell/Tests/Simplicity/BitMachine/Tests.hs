@@ -2,6 +2,8 @@
 -- This module tests the Bit Machine evaluation by comparing its results with Simplicity's denotational semantics.
 module Simplicity.BitMachine.Tests (tests) where
 
+import Control.Arrow (runKleisli)
+
 import Simplicity.BitMachine
 import Simplicity.BitMachine.Authentic
 import Simplicity.BitMachine.Translate as Translate
@@ -22,11 +24,11 @@ tests = testGroup "BitMachine"
       ]
 
 -- Given a translator and a Simplicity expression, test that execuing using the authentic Bit Machine is equivalent to denoational semantics of the Simplicity expression.
-testUsing :: (Core trans, TyC a, TyC b) => (trans a b -> MachineCode) -> (forall term. Core term => term a b) -> a -> Bool
-testUsing translator program x = executeUsing (runMachine . translator) program x == Just (program x)
+testUsing :: (Assert trans, TyC a, TyC b) => (trans a b -> MachineCode) -> (forall term. Assert term => term a b) -> a -> Bool
+testUsing translator program x = executeUsing (runMachine . translator) program x == (runKleisli program x `asTypeOf` Nothing)
 
 -- Run the 'testUsing' test with a given translator on a small set of Simplicity expressions.
-testCompiler :: Core trans => String -> (forall a b. (TyC a, TyC b) => trans a b -> MachineCode) -> TestTree
+testCompiler :: Assert trans => String -> (forall a b. (TyC a, TyC b) => trans a b -> MachineCode) -> TestTree
 testCompiler name translator = testGroup name
                   [ testProperty "fullAdder word8" (testUsing translator (fullAdder word8) <$> (gen16 <×> arbitrary))
                   , testProperty "adder word8" (testUsing translator (adder word8) <$> gen16)

@@ -63,15 +63,15 @@ instance Core Translation where
            . skip pad
            . t
 
-  match arrS@(Translation s) arrT@(Translation t) =
-    Translation $ bump padl s ||| bump padr t
+  match (Translation s) (Translation t) = result
    where
-    proxy :: arr (a,b) d -> Proxy b
-    proxy _ = Proxy
-    b = reifyProxy (proxy arrS)
-    c = reifyProxy (proxy arrT)
-    padl = 1 + padLR b c
-    padr = 1 + padRR b c
+    result = Translation $ bump padl s ||| bump padr t
+    proxy :: arr (Either a b, c) d -> (Proxy a, Proxy b)
+    proxy _ = (Proxy, Proxy)
+    a = reifyProxy . fst $ proxy result
+    b = reifyProxy . snd $ proxy result
+    padl = 1 + padLR a b
+    padr = 1 + padRR a b
 
   pair (Translation s) (Translation t) =
    Translation $ s . t
@@ -85,3 +85,24 @@ instance Core Translation where
     bs = bitSizeR (reifyProxy (proxyA result))
     result = Translation
            $ bump bs t
+
+instance Assert Translation where
+  assertl (Translation s) _ = result
+   where
+    result = Translation $ bump padl s ||| abort
+    proxy :: arr (Either a b, c) d -> (Proxy a, Proxy b)
+    proxy _ = (Proxy, Proxy)
+    a = reifyProxy . fst $ proxy result
+    b = reifyProxy . snd $ proxy result
+    padl = 1 + padLR a b
+
+  assertr _ (Translation t) = result
+   where
+    result = Translation $ abort ||| bump padr t
+    proxy :: arr (Either a b, c) d -> (Proxy a, Proxy b)
+    proxy _ = (Proxy, Proxy)
+    a = reifyProxy . fst $ proxy result
+    b = reifyProxy . snd $ proxy result
+    padr = 1 + padRR a b
+
+  fail _ = Translation $ abort

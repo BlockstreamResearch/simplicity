@@ -36,3 +36,8 @@ instance Core ExtraCellsBnd where
   take (ExtraCellsBnd tn tm) = ExtraCellsBnd tn tm
   drop (ExtraCellsBnd tn tm) = ExtraCellsBnd tn tm
 
+instance Assert ExtraCellsBnd where
+  assertl (ExtraCellsBnd sn sm) _ = ExtraCellsBnd sn sm
+  assertr _ (ExtraCellsBnd tn tm) = ExtraCellsBnd tn tm
+  fail _ = ExtraCellsBnd 0 0
+
