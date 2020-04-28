@@ -9,9 +9,10 @@ import Simplicity.BitMachine.Translate.TCO as TCO
 import Simplicity.Programs.Sha256.Lib
 import Simplicity.Term.Core
 import Simplicity.Programs.Word
+import qualified Simplicity.Word
 
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.QuickCheck (testProperty)
+import Test.Tasty.QuickCheck (Gen, arbitrary, arbitraryBoundedIntegral, testProperty)
 
 -- Run tests comparing Bit Machine execution with Simplicity's denotational semantics using both naive and TCO translation.
 tests :: TestTree
@@ -27,9 +28,15 @@ testUsing translator program x = executeUsing (runMachine . translator) program 
 -- Run the 'testUsing' test with a given translator on a small set of Simplicity expressions.
 testCompiler :: Core trans => String -> (forall a b. (TyC a, TyC b) => trans a b -> MachineCode) -> TestTree
 testCompiler name translator = testGroup name
-                  [ testProperty "fullAdder word8" (testUsing translator (fullAdder word8))
-                  , testProperty "adder word8" (testUsing translator (adder word8))
-                  , testProperty "fullMultiplier word8" (testUsing translator (fullMultiplier word8))
-                  , testProperty "multiplier word8" (testUsing translator (multiplier word8))
-                  , testProperty "hashBlock" (testUsing translator hashBlock)
+                  [ testProperty "fullAdder word8" (testUsing translator (fullAdder word8) <$> (gen16 <×> arbitrary))
+                  , testProperty "adder word8" (testUsing translator (adder word8) <$> gen16)
+                  , testProperty "fullMultiplier word8" (testUsing translator (fullMultiplier word8) <$> gen32)
+                  , testProperty "multiplier word8" (testUsing translator (multiplier word8) <$> gen16)
+                  , testProperty "hashBlock" (testUsing translator hashBlock <$> (gen256 <×> gen512))
                   ]
+ where
+  gen16 = (toWord16 . fromIntegral) <$> (arbitraryBoundedIntegral :: Gen Simplicity.Word.Word16)
+  gen32 = (toWord32 . fromIntegral) <$> (arbitraryBoundedIntegral :: Gen Simplicity.Word.Word32)
+  gen256 = (toWord256 . fromIntegral) <$> (arbitraryBoundedIntegral :: Gen Simplicity.Word.Word256)
+  gen512 =  gen256 <×> gen256
+  a <×> b = (,) <$> a <*> b
