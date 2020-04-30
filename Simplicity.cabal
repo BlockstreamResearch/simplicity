@@ -178,7 +178,8 @@ Test-Suite testsuite
   hs-source-dirs:      Haskell/Tests
   default-language:    Haskell2010
   ghc-options:         -O2 -with-rtsopts=-c
-  other-modules:       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests,
+  other-modules:       Simplicity.Programs.Example,
+                       Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests,
                        Simplicity.Bitcoin.Serialization.Tests,
                        Simplicity.Elements.Tests,
                        Simplicity.Programs.Tests,

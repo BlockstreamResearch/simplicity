@@ -12,6 +12,7 @@ import Simplicity.BitMachine.StaticAnalysis as Analysis
 import Simplicity.BitMachine.StaticAnalysis.TCO as AnalysisTCO
 import Simplicity.BitMachine.Translate as Translate
 import Simplicity.BitMachine.Translate.TCO as TranslateTCO
+import Simplicity.Programs.Example
 import Simplicity.Programs.Word
 import Simplicity.Programs.Sha256.Lib
 import Simplicity.Term.Core
@@ -34,6 +35,7 @@ tests = testGroup "StaticAnalysis"
         , testSquare "fullMultiplier word8" (fullMultiplier word8) gen32
         , testSquare "multiplier word8" (multiplier word8) gen16
         , testSquareAdj (withMaxSuccess 10) "hashBlock" hashBlock (gen256 <×> gen512)
+        , testSquareAdj (withMaxSuccess 10) "fib" fib (arbitrary <×> gen32)
         ]
       ]
  where
@@ -46,7 +48,7 @@ tests = testGroup "StaticAnalysis"
 -- For a given program we expect the static analysis of Cell use to bound the dynamic analysis of Cell use for both naive and TCO translation.
 -- We also expect TCO translation's static and dynamic analysis to be no greater than the same analysis of naive translation.
 -- Together these two pairs of tests for a square of comparisions that we expect to hold.
-testSquareAdj :: (TyC a, TyC b) => (forall prop. Testable prop => prop -> Property) -> String -> (forall term. (Assert term) => term a b) -> Gen a -> TestTree
+testSquareAdj :: (TyC a, TyC b) => (forall prop. Testable prop => prop -> Property) -> String -> (forall term. (Delegate term, Assert term) => term a b) -> Gen a -> TestTree
 testSquareAdj adj name program gen = testProperty name (adj (assertion <$> gen))
  where
   staticMem = Analysis.cellsBnd program
@@ -57,5 +59,5 @@ testSquareAdj adj name program gen = testProperty name (adj (assertion <$> gen))
   assertion i = square (dynamicMemTCO i) (dynamicMem i) staticMemTCO staticMem
   fold l = foldl' mappend mempty l
 
-testSquare :: (TyC a, TyC b) => String -> (forall term. (Assert term) => term a b) -> Gen a -> TestTree
+testSquare :: (TyC a, TyC b) => String -> (forall term. (Delegate term, Assert term) => term a b) -> Gen a -> TestTree
 testSquare = testSquareAdj property

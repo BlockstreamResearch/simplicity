@@ -8,8 +8,10 @@ import Simplicity.BitMachine
 import Simplicity.BitMachine.Authentic
 import Simplicity.BitMachine.Translate as Translate
 import Simplicity.BitMachine.Translate.TCO as TCO
+import Simplicity.Delegator
 import Simplicity.Programs.Sha256.Lib
 import Simplicity.Term.Core
+import Simplicity.Programs.Example
 import Simplicity.Programs.Word
 import qualified Simplicity.Word
 
@@ -24,17 +26,18 @@ tests = testGroup "BitMachine"
       ]
 
 -- Given a translator and a Simplicity expression, test that execuing using the authentic Bit Machine is equivalent to denoational semantics of the Simplicity expression.
-testUsing :: (Assert trans, TyC a, TyC b) => (trans a b -> MachineCode) -> (forall term. Assert term => term a b) -> a -> Bool
-testUsing translator program x = executeUsing (runMachine . translator) program x == (runKleisli program x `asTypeOf` Nothing)
+testUsing :: (Delegate trans, Assert trans, TyC a, TyC b) => (trans a b -> MachineCode) -> (forall term. (Delegate term, Assert term) => term a b) -> a -> Bool
+testUsing translator program x = executeUsing (runMachine . translator) program x == (runDelegatorKleisli program x `asTypeOf` Nothing)
 
 -- Run the 'testUsing' test with a given translator on a small set of Simplicity expressions.
-testCompiler :: Assert trans => String -> (forall a b. (TyC a, TyC b) => trans a b -> MachineCode) -> TestTree
+testCompiler :: (Delegate trans, Assert trans) => String -> (forall a b. (TyC a, TyC b) => trans a b -> MachineCode) -> TestTree
 testCompiler name translator = testGroup name
                   [ testProperty "fullAdder word8" (testUsing translator (fullAdder word8) <$> (gen16 <×> arbitrary))
                   , testProperty "adder word8" (testUsing translator (adder word8) <$> gen16)
                   , testProperty "fullMultiplier word8" (testUsing translator (fullMultiplier word8) <$> gen32)
                   , testProperty "multiplier word8" (testUsing translator (multiplier word8) <$> gen16)
                   , testProperty "hashBlock" (testUsing translator hashBlock <$> (gen256 <×> gen512))
+                  , testProperty "fib" (testUsing translator fib <$> (arbitrary <×> gen32))
                   ]
  where
   gen16 = (toWord16 . fromIntegral) <$> (arbitraryBoundedIntegral :: Gen Simplicity.Word.Word16)
