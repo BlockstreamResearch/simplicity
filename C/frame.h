@@ -25,23 +25,26 @@ typedef struct frameItem {
  * 'n' is the number of cells for the read frame.
  * 'from' is a pointer to the beginning of the new slice for the array of UWORDS to hold the frame's cells.
  *
- * Precondition: n + UWORD_BIT - 1 <= SIZE_MAX;
- *               UWORD from[roundUWord(n)];
+ * Precondition: UWORD from[ROUND_UWORD(n)];
  */
 static inline frameItem initReadFrame(size_t n, UWORD* from) {
-/* 'UWORD_BIT - 1 - (n + (UWORD_BIT - 1)) % UWORD_BIT' equals the numer of padding bits in a frame of size 'n'. */
-  return (frameItem){ .edge = from + roundUWord(n), .offset = UWORD_BIT - 1 - (n + (UWORD_BIT - 1)) % UWORD_BIT };
+  const size_t len = ROUND_UWORD(n);
+/* '(1U * len) * UWORD_BIT - n' equals the numer of padding bits in a frame of size 'n'.
+ * Note that even if (len * UWORD_BIT) overflows,
+ * (1) We have ensured an unsigned computation by multiplying by 1U so the behaviour is well-defined.
+ * (2) after subtracting 'n' we are left with a value in the range 0 .. UWORD-BIT - 1.
+ */
+  return (frameItem){ .edge = from + len, .offset = (1U * len) * UWORD_BIT - n };
 }
 
 /* Initialize a new write frame.
  * 'n' is the number of cells for the write frame.
  * 'from' is a pointer to the one-past-the-end of the new slice for the array of UWORDS to hold the frame's cells.
  *
- * Precondition: n + UWORD_BIT - 1 <= SIZE_MAX
- *               UWORD (from - roundUWord(n))[roundUWord(n)];
+ * Precondition: UWORD (from - ROUND_UWORD(n))[ROUND_UWORD(n)];
  */
 static inline frameItem initWriteFrame(size_t n, UWORD* from) {
-  return (frameItem){ .edge = from - roundUWord(n), .offset = n };
+  return (frameItem){ .edge = from - ROUND_UWORD(n), .offset = n };
 }
 
 /* Given a read frame, return the value of the cell at the cursor.

@@ -100,8 +100,8 @@
  * For each subsequent cursor position within the read frame, the '.offset' increments by one.
  * When the cursor is at (one-cell past) the end of the read frame, the '.offset' value will be equal to the total number of bits
  * allocated for the frame (including padding bits), which is necessarily some multiple of (UWORD_BIT).
- * We say "a read frame is valid for /n/ more cells" when '.edge - roundUWord(.offset + n)' points to a
- * 'UWORD[roundUWord(.offset + n)]' array of initialized values.
+ * We say "a read frame is valid for /n/ more cells" when '.edge - ROUND_UWORD(.offset + n)' points to a
+ * 'UWORD[ROUND_UWORD(.offset + n)]' array of initialized values.
  * We say "a read frame is valid" if it is valid for 0 more cells.
  *
  * When a 'frameItem' tracks a write frame, its '.edge' field points the UWORD from 'cell' that is
@@ -111,7 +111,7 @@
  * that frame's number of bits (excluding padding).
  * For each subsequent cursor position within the write frame, the '.offset' decrements by one.
  * When the cursor is at (one-cell past) the end of the write frame, the '.offset' value will be equal to 0.
- * We say "a write frame is valid for /n/ more cells" when '.edge' points to an 'UWORD[roundUWord(.offset)]' array of
+ * We say "a write frame is valid for /n/ more cells" when '.edge' points to an 'UWORD[ROUND_UWORD(.offset)]' array of
  * initialized values and 'n <= .offset'.
  * We say "a write frame is valid" if it is valid for 0 more cells.
  *
@@ -151,7 +151,6 @@ static void skip(frameItem* frame, size_t n) {
  * Precondition: '*dst' is a valid write frame for 'n' more cells;
  *               '*src' is a valid read frame for 'n' more cells;
  *               '0 < n';
- *               n + UWORD_BIT - 1 <= SIZE_MAX;
  */
 static void copyBitsHelper(const frameItem* dst, const frameItem *src, size_t n) {
   /* Pointers to the UWORDs of the read and write frame that contain the frame's cursor. */
@@ -195,7 +194,7 @@ static void copyBitsHelper(const frameItem* dst, const frameItem *src, size_t n)
     /* The next cell in the read frame to be filled also begins at the boundary of a UWORD.
      * We can use 'memcpy' to copy data in bulk.
      */
-    size_t m = roundUWord(n);
+    size_t m = ROUND_UWORD(n);
     /* If we went through the previous 'if (dst_shift)' block then 'src_shift == 0' and we need to decrement src_ptr.
      * If we did not go through the previous 'if (dst_shift)' block then 'src_shift == UWORD_BIT'
      * and we do not need to decrement src_ptr.
@@ -226,7 +225,6 @@ static void copyBitsHelper(const frameItem* dst, const frameItem *src, size_t n)
  *
  * Precondition: '*dst' is a valid write frame for 'n' more cells;
  *               '*src' is a valid read frame for 'n' more cells;
- *               n + UWORD_BIT - 1 <= SIZE_MAX;
  */
 static void copyBits(frameItem* dst, const frameItem* src, size_t n) {
   if (0 == n) return;
@@ -574,18 +572,17 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
       return false;
      case COMP:
       /* :TODO: replace this check with a consensus critical limit. */
-      if (UWORD_BIT - 1 <= SIZE_MAX - type_dag[dag[i].typeAnnotation[1]].bitSize) {
-        scratch = roundUWord(type_dag[dag[i].typeAnnotation[1]].bitSize);
+      if (SIZE_MAX <= type_dag[dag[i].typeAnnotation[1]].bitSize) {
+        /* 'type_dag[dag[i].typeAnnotation[1]].bitSize' has exceeded our limits. */
+        bound[i].extraCellsBoundTCO[0] = SIZE_MAX;
+        bound[i].extraCellsBoundTCO[1] = SIZE_MAX;
+      } else {
+        scratch = ROUND_UWORD(type_dag[dag[i].typeAnnotation[1]].bitSize);
         bound[i].extraCellsBoundTCO[0] = max( bounded_add( scratch
                                                          , max( bound[dag[i].child[0]].extraCellsBoundTCO[0]
                                                               , bound[dag[i].child[1]].extraCellsBoundTCO[1] ))
                                             , bound[dag[i].child[1]].extraCellsBoundTCO[0] );
         bound[i].extraCellsBoundTCO[1] = bounded_add(scratch, bound[dag[i].child[0]].extraCellsBoundTCO[1]);
-
-      } else {
-        /* 'type_dag[dag[i].typeAnnotation[1]].bitSize' has exceeded our limits. */
-        bound[i].extraCellsBoundTCO[0] = SIZE_MAX;
-        bound[i].extraCellsBoundTCO[1] = SIZE_MAX;
       }
       bound[i].extraStackBound[0] = max( bound[dag[i].child[0]].extraStackBound[0]
                                        , bound[dag[i].child[1]].extraStackBound[1] );
@@ -631,7 +628,7 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
 }
 
 /* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]'.
- * If 'NULL != input', initialize the active read frame's data with 'input[roundUWord(inputSize)]'.
+ * If 'NULL != input', initialize the active read frame's data with 'input[ROUND_UWORD(inputSize)]'.
  *
  * If malloc fails, return 'false', otherwise return 'true'.
  * If static analysis results determines the bound on memory allocation requirements exceed the allowed limits,
@@ -646,10 +643,8 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type A |- B;
  *               inputSize == bitSize(A);
  *               outputSize == bitSize(B);
- *               outputSize + UWORD_BIT - 1 <= SIZE_MAX;
- *               inputSize + UWORD_BIT - 1 <= SIZE_MAX;
- *               output == NULL or UWORD output[roundUWord(outputSize)];
- *               input == NULL or UWORD input[roundUWord(inputSize)];
+ *               output == NULL or UWORD output[ROUND_UWORD(outputSize)];
+ *               input == NULL or UWORD input[ROUND_UWORD(inputSize)];
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
 bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
@@ -658,13 +653,13 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
   memBound bound;
   if (!computeEvalTCOBound(&bound, dag, type_dag, len)) return false;
 
-  size_t cellsBound = bounded_add( bounded_add(roundUWord(inputSize), roundUWord(outputSize))
+  size_t cellsBound = bounded_add( bounded_add(ROUND_UWORD(inputSize), ROUND_UWORD(outputSize))
                                  , max(bound.extraCellsBoundTCO[0], bound.extraCellsBoundTCO[1])
                                  );
   size_t stackBound = bounded_add(bound.extraStackBound[0], 2);
 
   /* :TODO: add reasonable, consensus critical limits to cells and stack bounds */
-  if (SIZE_MAX <= cellsBound || SIZE_MAX <= stackBound) {
+  if (SIZE_MAX <= outputSize || SIZE_MAX <= inputSize || SIZE_MAX <= cellsBound || SIZE_MAX <= stackBound) {
     *evalSuccess = false;
     return true;
   }
@@ -680,7 +675,7 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
 
   const bool result = cells && frames && stack;
   if (result) {
-    if (input) memcpy(cells, input, roundUWord(inputSize) * sizeof(UWORD));
+    if (input) memcpy(cells, input, ROUND_UWORD(inputSize) * sizeof(UWORD));
 
     evalState state =
       { .activeReadFrame = frames
@@ -692,7 +687,7 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
     *evalSuccess = runTCO(state, stack, dag, type_dag, len, env);
 
     if (*evalSuccess && output) {
-      memcpy(output, state.activeWriteFrame->edge, roundUWord(outputSize) * sizeof(UWORD));
+      memcpy(output, state.activeWriteFrame->edge, ROUND_UWORD(outputSize) * sizeof(UWORD));
     }
   }
 
