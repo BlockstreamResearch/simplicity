@@ -6,7 +6,7 @@
 #include "dag.h"
 
 /* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]'.
- * If 'NULL != input', initialize the active read frame's data with 'input[roundUWord(inputSize)]'.
+ * If 'NULL != input', initialize the active read frame's data with 'input[ROUND_UWORD(inputSize)]'.
  *
  * If malloc fails, return 'false', otherwise return 'true'.
  * If static analysis results determines the bound on memory allocation requirements exceed the allowed limits,
@@ -21,10 +21,8 @@
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type A |- B;
  *               inputSize == bitSize(A);
  *               outputSize == bitSize(B);
- *               outputSize + UWORD_BIT - 1 <= SIZE_MAX;
- *               inputSize + UWORD_BIT - 1 <= SIZE_MAX;
- *               output == NULL or UWORD output[roundUWord(outputSize)];
- *               input == NULL or UWORD input[roundUWord(inputSize)];
+ *               output == NULL or UWORD output[ROUND_UWORD(outputSize)];
+ *               input == NULL or UWORD input[ROUND_UWORD(inputSize)];
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
 bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize

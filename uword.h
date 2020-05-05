@@ -32,11 +32,11 @@ _Static_assert(UWORD_BIT <= SIZE_MAX, "UWORD_BIT must fit into size_t.");
 
 /* For all 'x' and 'y',
  *
- *    'x <= UWORD_BIT * y' if and only if 'roundUWord(x) <= y'
+ *    'x <= UWORD_BIT * y' if and only if 'ROUND_UWORD(x) <= y'
  *
- * Precondition: bitSize + UWORD_BIT - 1 <= SIZE_MAX
+ * Precondition: 0 <= bitSize
  */
-#define roundUWord(bitSize) ((bitSize + (UWORD_BIT - 1)) / UWORD_BIT)
+#define ROUND_UWORD(bitSize) ((bitSize) / UWORD_BIT + !!((bitSize) % UWORD_BIT))
 
 /* Clear the 'n' least significant bits of a UWORD.
  * Precondition: 0 < n <= UWORD_BIT
