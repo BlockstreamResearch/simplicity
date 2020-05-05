@@ -549,7 +549,6 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
                   : NULL;
   if (!bound) return false;
 
-  size_t scratch;
   for (size_t i = 0; i < len; ++i) {
     switch (dag[i].tag) {
      case ASSERTL:
@@ -577,7 +576,7 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
         bound[i].extraCellsBoundTCO[0] = SIZE_MAX;
         bound[i].extraCellsBoundTCO[1] = SIZE_MAX;
       } else {
-        scratch = ROUND_UWORD(type_dag[dag[i].typeAnnotation[1]].bitSize);
+        size_t scratch = ROUND_UWORD(type_dag[dag[i].typeAnnotation[1]].bitSize);
         bound[i].extraCellsBoundTCO[0] = max( bounded_add( scratch
                                                          , max( bound[dag[i].child[0]].extraCellsBoundTCO[0]
                                                               , bound[dag[i].child[1]].extraCellsBoundTCO[1] ))
@@ -587,9 +586,7 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
       bound[i].extraStackBound[0] = max( bound[dag[i].child[0]].extraStackBound[0]
                                        , bound[dag[i].child[1]].extraStackBound[1] );
       bounded_inc(&bound[i].extraStackBound[0]);
-      scratch = bound[dag[i].child[0]].extraStackBound[1];
-      bounded_inc(&scratch);
-      bound[i].extraStackBound[1] = max( scratch
+      bound[i].extraStackBound[1] = max( bounded_add(1, bound[dag[i].child[0]].extraStackBound[1])
                                        , bound[dag[i].child[1]].extraStackBound[1] );
       break;
      case PAIR:
