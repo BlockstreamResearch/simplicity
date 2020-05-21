@@ -70,7 +70,7 @@ putJetBit FullSubtractor32 = ([o,i,o,i]++)
 putJetBit FullMultiplier32 = ([o,i,i]++)
 putJetBit Sha256HashBlock  = ([i,o]++)
 
--- | A 'Map.Map' from the witness roots of the "core" jet specification to their corresponding token.
+-- | A 'Map.Map' from the identity roots of the "core" jet specification to their corresponding token.
 -- This can be used to help instantiate the 'Simplicity.JetType.matcher' method.
 coreJetMap :: Map.Map Hash256 (SomeArrow CoreJet)
 coreJetMap = Map.fromList
@@ -84,6 +84,6 @@ coreJetMap = Map.fromList
   ]
  where
   mkAssoc :: (TyC a, TyC b) => CoreJet a b -> (Hash256, (SomeArrow CoreJet))
-  mkAssoc jt = (witnessRoot (specification jt), SomeArrow jt)
+  mkAssoc jt = (identityRoot (specification jt), SomeArrow jt)
 
 (o, i) = (False, True)

@@ -4,7 +4,7 @@ module Simplicity.Digest
   ( Hash256, be256, be256_
   , get256Bits, put256Bits
   , integerHash256, hash0
-  , IV, bsIv, ivHash, bslHash, bsHash, bitStringHash
+  , IV, tagIv, ivHash, bslHash, bsHash, bitStringHash
   , Block512, compress, compressHalf
   ) where
 
@@ -14,6 +14,7 @@ import Data.Binary.Get (Decoder(..), pushChunk, pushChunks, pushEndOfInput)
 import qualified Data.Binary as Binary
 import Data.Bits ((.|.), bit, shiftL, testBit, zeroBits)
 import qualified Data.ByteString as BS
+import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Short as BSS
 import qualified Data.ByteString.Lazy as BSL
 import Data.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
@@ -63,7 +64,6 @@ put256Bits h k = (h^..be256_.bend_) ++ k
 integerHash256 :: Hash256 -> Integer
 integerHash256 h = toInteger $ h^.be256_
 
-
 -- | A hash value with all bits set to 0.
 --
 -- @ integerHash256 hash0 = 0 @
@@ -75,9 +75,15 @@ hash0 = review (over be256) 0
 -- function.
 newtype IV = IV (Decoder SHA256State)
 
--- | Computes a SHA-256 hash from a lazy 'BSL.ByteString' representing an initial value.
-bsIv :: BSL.ByteString -> IV
-bsIv = IV . pushChunks sha256Incremental . padSHA1
+iv :: IV
+iv = IV sha256Incremental
+
+-- | Return the SHA-256 midstate after compression of a block of the SHA256 digest of the given tag name twice.
+-- This twice repeated SHA256 digest is the tagged hash format used by BIP-340 and BIP-341.
+tagIv :: String -> IV
+tagIv tag = compress iv (tagDigest, tagDigest)
+ where
+  tagDigest = bsHash . BSC.pack $ tag
 
 -- | Realize a initial value as a concrete Hash.
 ivHash :: IV -> Hash256
@@ -87,7 +93,7 @@ ivHash (IV state) =  case pushEndOfInput state of
 
 -- | Computes a SHA-256 hash from a lazy 'BSL.ByteString'.
 bslHash :: BSL.ByteString -> Hash256
-bslHash = ivHash . bsIv
+bslHash = ivHash . IV . pushChunks sha256Incremental . padSHA1
 
 -- | Computes a SHA-256 hash from a 'BS.ByteString'.
 bsHash :: BS.ByteString -> Hash256
@@ -121,8 +127,6 @@ type Block512 = (Hash256, Hash256)
 compress :: IV -> Block512 -> IV
 compress (IV state) (h1, h2) = IV $ state `pushChunk` BSS.fromShort (hash256 h1) `pushChunk` BSS.fromShort (hash256 h2)
 
--- | Given an initial value and a block of data consisting of a one hash followed by 256-bits of zeros, apply the SHA-256 compression function.
+-- | Given an initial value and a block of data consisting of a one hash preceeded by 256-bits of zeros, apply the SHA-256 compression function.
 compressHalf :: IV -> Hash256 -> IV
-compressHalf iv h = compress iv (zero, h)
- where
-  zero = Hash256 . BSS.pack $ replicate 32 0
+compressHalf iv h = compress iv (hash0, h)

@@ -3,9 +3,10 @@
 module Simplicity.MerkleRoot
   ( typeRoot, typeRootR
   , CommitmentRoot, commitmentRoot
+  , IdentityRoot, identityRoot
   , WitnessRoot, witnessRoot
   , hiddenRoot
-  , signatureTag, signatureHash, sigHashTag
+  , signatureTag, sigHashTag
   , cmrFail0
   ) where
 

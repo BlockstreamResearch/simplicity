@@ -66,22 +66,29 @@ instance Simplicity Unit where
 instance Primitive CommitmentRoot where
   primitive = primitiveCommitmentImpl primPrefix primName
 
--- Jets commit to their types, so we use WitnessRoot here.
 instance Jet CommitmentRoot where
-  jet t = jetCommitmentImpl (witnessRoot t)
+  jet t = jetCommitmentImpl t
 
 instance Simplicity CommitmentRoot where
+
+instance Primitive IdentityRoot where
+  primitive = primitiveIdentityImpl primPrefix primName
+
+instance Jet IdentityRoot where
+  jet t = jetIdentityImpl t
+  -- Idea for alternative IdentityRoot instance:
+  --     jet t = t
+  -- Trasparent jet identites would mean we could define the jet class as
+  --     jet :: (TyC a, TyC b) => (forall term0. (Assert term0, Primitive term0, Jet term0) => term0 a b) -> term a b
+  -- And then jets could contain jets such that their Sementics, IdentityRoots, and hence CommitmentRoots would all be transparent to jet sub-experssions.
+  -- Need to think carefully what this would mean for concensus, but I think it is okay.
+
+instance Simplicity IdentityRoot where
 
 instance Primitive WitnessRoot where
   primitive = primitiveWitnessImpl primPrefix primName
 
 instance Jet WitnessRoot where
-  jet t = jetWitnessImpl (witnessRoot t)
-  -- Idea for alternative WitnessRoot instance:
-  --     jet t = t
-  -- Trasparent jet witnesses would mean we could define the jet class as
-  --     jet :: (TyC a, TyC b) => (forall term0. (Assert term0, Primitive term0, Jet term0) => term0 a b) -> term a b
-  -- And then jets could contain jets such that their Sementics, WitnessRoots, and hence CommitmentRoots would all be transparent to jet sub-experssions.
-  -- Need to think carefully what this would mean for concensus, but I think it is okay.
+  jet t = jetWitnessImpl t
 
 instance Simplicity WitnessRoot where
