@@ -10,19 +10,6 @@ Set Implicit Arguments.
 
 Import ListNotations.
 
-(* TODO remove when we update to lastest version of Coq.Strings.String *)
-(** *** Concatenating lists of strings *)
-
-(** [concat sep sl] concatenates the list of strings [sl], inserting
-    the separator string [sep] between each. *)
-
-Local Fixpoint concat (sep : string) (ls : list string) :=
-  match ls with
-  | nil => EmptyString
-  | cons x nil => x
-  | cons x xs => (x ++ sep ++ concat sep xs)%string
-end.
-
 Definition tag (ws : list string) :=
  let str := concat (String "031" EmptyString) ws in
    fun (_precondition : length str - 55 = 0) => normalizeHash (stringHash str).
