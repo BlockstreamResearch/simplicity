@@ -98,7 +98,6 @@ typedef struct witnessInfo {
  * The node may have references to children, when it is a combinator kind of expression.
  *
  * Invariant: 'NULL != jet' when 'tag == JET';
- *            sha256_midstate hash is active when tag == HIDDEN;
  *            witnessInfo witness is be active when tag == WITNESS and the node has witness data;
  *            sha256_midstate wmr and size_t sourceIx, targetIx are active when tag == JET;
  *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, WITNESS, JET};
@@ -116,7 +115,6 @@ typedef struct dag_node {
       size_t child[2];
     };
     witnessInfo witness;
-    sha256_midstate hash;
   };
   tag_t tag;
 } dag_node;
