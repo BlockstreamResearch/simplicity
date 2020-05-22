@@ -264,7 +264,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
       switch (subcode) {
        case 0:
         dag[i].tag = HIDDEN;
-        return getHash(&(dag[i].hash), stream);
+        return getHash(&(dag[i].cmr), stream);
        case 1:
         dag[i].tag = WITNESS;
         return 0;
