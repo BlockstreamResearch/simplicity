@@ -143,10 +143,9 @@ void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
   size_t j = 8;
 
   if (HIDDEN == dag[i].tag) return;
+  if (JET == dag[i].tag) return;
 
-  /* For jets and primitives, their commitment Merkle root is the same as their witness Merkle root. */
-  dag[i].cmr = JET == dag[i].tag ? dag[i].wmr
-             : cmrIV(dag[i].tag);
+  dag[i].cmr = cmrIV(dag[i].tag);
 
   /* Hash the child sub-expression's CMRs (if there are any children). */
   switch (dag[i].tag) {
@@ -189,8 +188,9 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
   for (size_t i = 0; i < len; ++i) {
     uint32_t block[16] = {0};
 
+    /* For jets and primitives, their witness Merkle root is the same as their commitment Merkle root. */
     analysis[i].witnessMerkleRoot = HIDDEN == dag[i].tag ? dag[i].cmr
-                                  : JET == dag[i].tag ? dag[i].wmr
+                                  : JET == dag[i].tag ? dag[i].cmr
                                   : wmrIV(dag[i].tag);
     switch (dag[i].tag) {
      case ASSERTL:

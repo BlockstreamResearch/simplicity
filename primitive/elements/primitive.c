@@ -553,8 +553,8 @@ static void static_initialize(void) {
 
 #define MK_JET(name, h0, h1, h2, h3, h4, h5, h6, h7) \
   do { \
-    jet_node[name].wmr = jet_iv; \
-    sha256_compression(jet_node[name].wmr.s, (uint32_t[16]){ [8] = h0, h1, h2, h3, h4, h5, h6, h7 }); \
+    jet_node[name].cmr = jet_iv; \
+    sha256_compression(jet_node[name].cmr.s, (uint32_t[16]){ [8] = h0, h1, h2, h3, h4, h5, h6, h7 }); \
   } while(0)
 
     MK_JET(ADDER32,          0x8e389a7d, 0x75429a8a, 0x6f5b448e, 0xc8e84585, 0x20e276fc, 0x8e09ef5a, 0x68f3f32d, 0x9fb97935);
@@ -567,42 +567,42 @@ static void static_initialize(void) {
 #undef MK_JET
 
   }
-  MK_TAG(jet_node[VERSION].wmr.s, PRIMITIVE_TAG("version"));
-  MK_TAG(jet_node[LOCKTIME].wmr.s, PRIMITIVE_TAG("lockTime"));
-  MK_TAG(jet_node[INPUTISPEGIN].wmr.s, PRIMITIVE_TAG("inputIsPegin"));
-  MK_TAG(jet_node[INPUTPREVOUTPOINT].wmr.s, PRIMITIVE_TAG("inputPrevOutpoint"));
-  MK_TAG(jet_node[INPUTASSET].wmr.s, PRIMITIVE_TAG("inputAsset"));
-  MK_TAG(jet_node[INPUTAMOUNT].wmr.s, PRIMITIVE_TAG("inputAmount"));
-  MK_TAG(jet_node[INPUTSCRIPTHASH].wmr.s, PRIMITIVE_TAG("inputScriptHash"));
-  MK_TAG(jet_node[INPUTSEQUENCE].wmr.s, PRIMITIVE_TAG("inputSequence"));
-  MK_TAG(jet_node[INPUTISSUANCEBLINDING].wmr.s, PRIMITIVE_TAG("inputIssuanceBlinding"));
-  MK_TAG(jet_node[INPUTISSUANCECONTRACT].wmr.s, PRIMITIVE_TAG("inputIssuanceContract"));
-  MK_TAG(jet_node[INPUTISSUANCEENTROPY].wmr.s, PRIMITIVE_TAG("inputIssuanceEntropy"));
-  MK_TAG(jet_node[INPUTISSUANCEASSETAMT].wmr.s, PRIMITIVE_TAG("inputIssuanceAssetAmt"));
-  MK_TAG(jet_node[INPUTISSUANCETOKENAMT].wmr.s, PRIMITIVE_TAG("inputIssuanceTokenAmt"));
-  MK_TAG(jet_node[OUTPUTASSET].wmr.s, PRIMITIVE_TAG("outputAsset"));
-  MK_TAG(jet_node[OUTPUTAMOUNT].wmr.s, PRIMITIVE_TAG("outputAmount"));
-  MK_TAG(jet_node[OUTPUTNONCE].wmr.s, PRIMITIVE_TAG("outputNonce"));
-  MK_TAG(jet_node[OUTPUTSCRIPTHASH].wmr.s, PRIMITIVE_TAG("outputScriptHash"));
-  MK_TAG(jet_node[OUTPUTNULLDATUM].wmr.s, PRIMITIVE_TAG("outputNullDatum"));
-  MK_TAG(jet_node[SCRIPTCMR].wmr.s, PRIMITIVE_TAG("scriptCMR"));
-  MK_TAG(jet_node[CURRENTINDEX].wmr.s, PRIMITIVE_TAG("currentIndex"));
-  MK_TAG(jet_node[CURRENTISPEGIN].wmr.s, PRIMITIVE_TAG("currentIsPegin"));
-  MK_TAG(jet_node[CURRENTPREVOUTPOINT].wmr.s, PRIMITIVE_TAG("currentPrevOutpoint"));
-  MK_TAG(jet_node[CURRENTASSET].wmr.s, PRIMITIVE_TAG("currentAsset"));
-  MK_TAG(jet_node[CURRENTAMOUNT].wmr.s, PRIMITIVE_TAG("currentAmount"));
-  MK_TAG(jet_node[CURRENTSCRIPTHASH].wmr.s, PRIMITIVE_TAG("currentScriptHash"));
-  MK_TAG(jet_node[CURRENTSEQUENCE].wmr.s, PRIMITIVE_TAG("currentSequence"));
-  MK_TAG(jet_node[CURRENTISSUANCEBLINDING].wmr.s, PRIMITIVE_TAG("currentIssuanceBlinding"));
-  MK_TAG(jet_node[CURRENTISSUANCECONTRACT].wmr.s, PRIMITIVE_TAG("currentIssuanceContract"));
-  MK_TAG(jet_node[CURRENTISSUANCEENTROPY].wmr.s, PRIMITIVE_TAG("currentIssuanceEntropy"));
-  MK_TAG(jet_node[CURRENTISSUANCEASSETAMT].wmr.s, PRIMITIVE_TAG("currentIssuanceAssetAmt"));
-  MK_TAG(jet_node[CURRENTISSUANCETOKENAMT].wmr.s, PRIMITIVE_TAG("currentIssuanceTokenAmt"));
-  MK_TAG(jet_node[INPUTSHASH].wmr.s, PRIMITIVE_TAG("inputsHash"));
-  MK_TAG(jet_node[OUTPUTSHASH].wmr.s, PRIMITIVE_TAG("outputsHash"));
-  MK_TAG(jet_node[NUMINPUTS].wmr.s, PRIMITIVE_TAG("numInputs"));
-  MK_TAG(jet_node[NUMOUTPUTS].wmr.s, PRIMITIVE_TAG("numOutputs"));
-  MK_TAG(jet_node[FEE].wmr.s, PRIMITIVE_TAG("fee"));
+  MK_TAG(jet_node[VERSION].cmr.s, PRIMITIVE_TAG("version"));
+  MK_TAG(jet_node[LOCKTIME].cmr.s, PRIMITIVE_TAG("lockTime"));
+  MK_TAG(jet_node[INPUTISPEGIN].cmr.s, PRIMITIVE_TAG("inputIsPegin"));
+  MK_TAG(jet_node[INPUTPREVOUTPOINT].cmr.s, PRIMITIVE_TAG("inputPrevOutpoint"));
+  MK_TAG(jet_node[INPUTASSET].cmr.s, PRIMITIVE_TAG("inputAsset"));
+  MK_TAG(jet_node[INPUTAMOUNT].cmr.s, PRIMITIVE_TAG("inputAmount"));
+  MK_TAG(jet_node[INPUTSCRIPTHASH].cmr.s, PRIMITIVE_TAG("inputScriptHash"));
+  MK_TAG(jet_node[INPUTSEQUENCE].cmr.s, PRIMITIVE_TAG("inputSequence"));
+  MK_TAG(jet_node[INPUTISSUANCEBLINDING].cmr.s, PRIMITIVE_TAG("inputIssuanceBlinding"));
+  MK_TAG(jet_node[INPUTISSUANCECONTRACT].cmr.s, PRIMITIVE_TAG("inputIssuanceContract"));
+  MK_TAG(jet_node[INPUTISSUANCEENTROPY].cmr.s, PRIMITIVE_TAG("inputIssuanceEntropy"));
+  MK_TAG(jet_node[INPUTISSUANCEASSETAMT].cmr.s, PRIMITIVE_TAG("inputIssuanceAssetAmt"));
+  MK_TAG(jet_node[INPUTISSUANCETOKENAMT].cmr.s, PRIMITIVE_TAG("inputIssuanceTokenAmt"));
+  MK_TAG(jet_node[OUTPUTASSET].cmr.s, PRIMITIVE_TAG("outputAsset"));
+  MK_TAG(jet_node[OUTPUTAMOUNT].cmr.s, PRIMITIVE_TAG("outputAmount"));
+  MK_TAG(jet_node[OUTPUTNONCE].cmr.s, PRIMITIVE_TAG("outputNonce"));
+  MK_TAG(jet_node[OUTPUTSCRIPTHASH].cmr.s, PRIMITIVE_TAG("outputScriptHash"));
+  MK_TAG(jet_node[OUTPUTNULLDATUM].cmr.s, PRIMITIVE_TAG("outputNullDatum"));
+  MK_TAG(jet_node[SCRIPTCMR].cmr.s, PRIMITIVE_TAG("scriptCMR"));
+  MK_TAG(jet_node[CURRENTINDEX].cmr.s, PRIMITIVE_TAG("currentIndex"));
+  MK_TAG(jet_node[CURRENTISPEGIN].cmr.s, PRIMITIVE_TAG("currentIsPegin"));
+  MK_TAG(jet_node[CURRENTPREVOUTPOINT].cmr.s, PRIMITIVE_TAG("currentPrevOutpoint"));
+  MK_TAG(jet_node[CURRENTASSET].cmr.s, PRIMITIVE_TAG("currentAsset"));
+  MK_TAG(jet_node[CURRENTAMOUNT].cmr.s, PRIMITIVE_TAG("currentAmount"));
+  MK_TAG(jet_node[CURRENTSCRIPTHASH].cmr.s, PRIMITIVE_TAG("currentScriptHash"));
+  MK_TAG(jet_node[CURRENTSEQUENCE].cmr.s, PRIMITIVE_TAG("currentSequence"));
+  MK_TAG(jet_node[CURRENTISSUANCEBLINDING].cmr.s, PRIMITIVE_TAG("currentIssuanceBlinding"));
+  MK_TAG(jet_node[CURRENTISSUANCECONTRACT].cmr.s, PRIMITIVE_TAG("currentIssuanceContract"));
+  MK_TAG(jet_node[CURRENTISSUANCEENTROPY].cmr.s, PRIMITIVE_TAG("currentIssuanceEntropy"));
+  MK_TAG(jet_node[CURRENTISSUANCEASSETAMT].cmr.s, PRIMITIVE_TAG("currentIssuanceAssetAmt"));
+  MK_TAG(jet_node[CURRENTISSUANCETOKENAMT].cmr.s, PRIMITIVE_TAG("currentIssuanceTokenAmt"));
+  MK_TAG(jet_node[INPUTSHASH].cmr.s, PRIMITIVE_TAG("inputsHash"));
+  MK_TAG(jet_node[OUTPUTSHASH].cmr.s, PRIMITIVE_TAG("outputsHash"));
+  MK_TAG(jet_node[NUMINPUTS].cmr.s, PRIMITIVE_TAG("numInputs"));
+  MK_TAG(jet_node[NUMOUTPUTS].cmr.s, PRIMITIVE_TAG("numOutputs"));
+  MK_TAG(jet_node[FEE].cmr.s, PRIMITIVE_TAG("fee"));
 }
 
 /* Return a copy of the Simplicity node corresponding to the given Elements specific jet 'name'.
