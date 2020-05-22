@@ -137,13 +137,14 @@ static sha256_midstate wmrIV(tag_t tag) {
  * then we set the value of 'dag[i].cmr' to be the CMR of the subexpression denoted by 'dag'.
  *
  * Precondition: dag_node dag[i + 1] and 'dag' is well-formed.
+ *               dag[i].'tag' \notin {HIDDEN, JET}
  */
 void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
   uint32_t block[16] = {0};
   size_t j = 8;
 
-  if (HIDDEN == dag[i].tag) return;
-  if (JET == dag[i].tag) return;
+  assert (HIDDEN != dag[i].tag);
+  assert (JET != dag[i].tag);
 
   dag[i].cmr = cmrIV(dag[i].tag);
 

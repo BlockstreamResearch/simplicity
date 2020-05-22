@@ -230,15 +230,10 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
       switch (subcode) {
        case 0: dag[i].tag = COMP; break;
        case 1:
-        if (HIDDEN == dag[dag[i].child[0]].tag) {
-          if (HIDDEN == dag[dag[i].child[1]].tag) return ERR_HIDDEN;
-          dag[i].tag = ASSERTR; return 0;
-        }
-        if (HIDDEN == dag[dag[i].child[1]].tag) {
-          if (HIDDEN == dag[dag[i].child[0]].tag) return ERR_HIDDEN;
-          dag[i].tag = ASSERTL; return 0;
-        }
-        dag[i].tag = CASE; return 0;
+        dag[i].tag = (HIDDEN == dag[dag[i].child[0]].tag) ? ASSERTR
+                   : (HIDDEN == dag[dag[i].child[1]].tag) ? ASSERTL
+                   : CASE;
+        break;
        case 2: dag[i].tag = PAIR; break;
        case 3: dag[i].tag = DISCONNECT; break;
       }
@@ -253,13 +248,12 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
       break;
      case 2:
       switch (subcode) {
-       case 0: dag[i].tag = IDEN; return 0;
-       case 1: dag[i].tag = UNIT; return 0;
+       case 0: dag[i].tag = IDEN; break;
+       case 1: dag[i].tag = UNIT; break;
        case 2: return ERR_FAIL_CODE;
        case 3: return ERR_STOP_CODE;
       }
-      assert(0);
-      UNREACHABLE;
+      break;
      case 3:
       switch (subcode) {
        case 0:
@@ -267,16 +261,17 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
         return getHash(&(dag[i].cmr), stream);
        case 1:
         dag[i].tag = WITNESS;
-        return 0;
+        break;
       }
-      assert(0);
-      UNREACHABLE;
+      break;
     }
 
     /* Verify that there are no illegal HIDDEN children. */
     for (int32_t j = 0; j < 2 - code; ++j) {
-       if (HIDDEN == dag[dag[i].child[j]].tag) return ERR_HIDDEN;
+       if (HIDDEN == dag[dag[i].child[j]].tag && dag[i].tag != (j ? ASSERTL : ASSERTR)) return ERR_HIDDEN;
     }
+
+    computeCommitmentMerkleRoot(dag, i);
 
     return 0;
   }
@@ -302,7 +297,6 @@ static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* c
     int32_t err = decodeNode(dag, i, stream);
     if (err < 0) return err;
 
-    computeCommitmentMerkleRoot(dag, i);
     enumerator(census, dag[i].tag);
   }
   return 0;
