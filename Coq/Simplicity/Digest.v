@@ -71,6 +71,8 @@ Definition byteStringHash (x : list Integers.byte) : hash256 :=
 
 Definition stringHash (x : string) : hash256 := byteStringHash (SHA256.str_to_bytes x).
 
+Definition sha256_iv : hash256 := Hash256 SHA256.init_registers refl_equal.
+
 Definition compress (iv h1 h2 : hash256) : hash256 :=
   Hash256 (process_block iv (List.rev (hash256_reg h1 ++ hash256_reg h2)))
    (length_process_block _ _ (hash256_len iv)).

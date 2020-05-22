@@ -14,7 +14,7 @@ Set Implicit Arguments.
 Import ListNotations.
 
 Definition primitivePrefix primName := (MerkleRoot.prefix ++ ["Primitive"%string; primName])%list.
-Definition jetTag := Eval vm_compute in tag (MerkleRoot.prefix ++ ["Jet"%string]) refl_equal.
+Definition jetTag := Eval vm_compute in tag (MerkleRoot.prefix ++ ["Jet"%string]).
 
 Module Type PrimitiveSig.
 
@@ -135,12 +135,12 @@ Definition CommitmentRoot_Primitive_mixin : mixin CommitmentRoot :=
 Canonical Structure CommitmentRoot_Primitive_alg : Algebra :=
   Pack CommitmentRoot CommitmentRoot_Primitive_mixin.
 
-Definition WitnessRoot_Primitive_mixin : mixin WitnessRoot :=
+Definition IdentityRoot_Primitive_mixin : mixin IdentityRoot :=
  {| Primitive.prim A B p := Prim.tag p
   |}.
 
-Canonical Structure WitnessRoot_Primitive_alg : Algebra :=
-  Pack WitnessRoot WitnessRoot_Primitive_mixin.
+Canonical Structure IdentityRoot_Primitive_alg : Algebra :=
+  Pack IdentityRoot IdentityRoot_Primitive_mixin.
 
 Definition Delegator_Primitive_mixin (alg : Algebra) : mixin (Delegator alg) :=
   {| Primitive.prim A B p := {| delegatorRoot := prim p
@@ -251,18 +251,18 @@ Canonical Structure JetPrimSem (M : CIMonadZero) : Algebra :=
   Pack (primSem M) (PrimSem_jet_mixin M).
 
 Definition CommitmentRoot_Jet_mixin : mixin CommitmentRoot :=
- {| Jet.jet A B t p := compress_half jetTag (witnessRoot (t _))
+ {| Jet.jet A B t p := compress_half jetTag (identityRoot (t _))
   |}.
 
 Canonical Structure CommitmentRoot_Jet_alg : Algebra :=
   Pack CommitmentRoot CommitmentRoot_Jet_mixin.
 
-Definition WitnessRoot_Jet_mixin : mixin WitnessRoot :=
- {| Jet.jet A B t p := compress_half jetTag (witnessRoot (t _))
+Definition IdentityRoot_Jet_mixin : mixin IdentityRoot :=
+ {| Jet.jet A B t p := compress_half jetTag (identityRoot (t _))
   |}.
 
-Canonical Structure WitenssRoot_Jet_alg : Algebra :=
-  Pack WitnessRoot WitnessRoot_Jet_mixin.
+Canonical Structure IdentityRoot_Jet_alg : Algebra :=
+  Pack IdentityRoot IdentityRoot_Jet_mixin.
 
 Definition Delegator_Jet_mixin (alg : Algebra) : mixin (Delegator alg) :=
   {| Jet.jet A B t p := {| delegatorRoot := jet p
