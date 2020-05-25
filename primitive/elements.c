@@ -125,7 +125,7 @@ static void sha256_issuance(sha256_context* ctx, const assetIssuance* issuance) 
  *               NULL != scriptPubKey;
  */
 static void hashScriptPubKey(sha256_midstate* result, const rawScript* scriptPubKey) {
-  sha256_context ctx = sha256_init(result);
+  sha256_context ctx = sha256_init(result->s);
   sha256_uchars(&ctx, scriptPubKey->code, scriptPubKey->len);
   sha256_finalize(&ctx);
 }
@@ -302,7 +302,7 @@ static void parseNullData(parsedNullData* result, opcode** allocation, size_t* a
       }
       if (scriptPubKey->len - i < skip) { result->op = NULL; return; }
       {
-        sha256_context ctx = sha256_init(&(*allocation)[result->len].dataHash);
+        sha256_context ctx = sha256_init((*allocation)[result->len].dataHash.s);
         sha256_uchars(&ctx, &scriptPubKey->code[i], skip);
         sha256_finalize(&ctx);
       }
@@ -396,7 +396,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
                      };
 
   {
-    sha256_context ctx = sha256_init(&tx->inputsHash);
+    sha256_context ctx = sha256_init(tx->inputsHash.s);
     for (uint_fast32_t i = 0; i < tx->numInputs; ++i) {
       copyInput(&input[i], &rawTx->input[i]);
       sha256_outpoint(&ctx, &input[i].prevOutpoint);
@@ -407,7 +407,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
   }
 
   {
-    sha256_context ctx = sha256_init(&tx->outputsHash);
+    sha256_context ctx = sha256_init(tx->outputsHash.s);
     for (uint_fast32_t i = 0; i < tx->numOutputs; ++i) {
       copyOutput(&output[i], &ops, &opsLen, &rawTx->output[i]);
       sha256_confAsset(&ctx, &output[i].asset);

@@ -80,11 +80,11 @@ typedef struct sha256_context {
 /* Initialize a sha256_context given a buffer in which the final output will be written to.
  * Note that the 'output' buffer may be updated during the computation to hold a SHA-256 midstate.
  *
- * Precondition: NULL != output
+ * Precondition: unit32_t output[8]
  */
-static inline sha256_context sha256_init(sha256_midstate* output) {
-  sha256_iv(output->s);
-  return (sha256_context){ .output = output->s };
+static inline sha256_context sha256_init(uint32_t* output) {
+  sha256_iv(output);
+  return (sha256_context){ .output = output };
 }
 
 /* Add an array of bytes to be consumed by an ongoing SHA-256 evaluation.
