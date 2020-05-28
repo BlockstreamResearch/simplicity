@@ -596,12 +596,12 @@ const unsigned char schnorr0[] = {
 
 const size_t sizeof_schnorr0 = sizeof(schnorr0);
 
-/* The commitment Merkle root of the above schnorr1 Simplicity expression. */
+/* The commitment Merkle root of the above schnorr0 Simplicity expression. */
 const uint32_t schnorr0_cmr[] = {
   0x0b28f637u, 0x704abf5eu, 0xc825452bu, 0xf64c26a3u, 0xf8abbd62u, 0x8fa32099u, 0x13cd8178u, 0x5462092fu
 };
 
-/* The witness Merkle root of the above schnorr1 Simplicity expression. */
-const uint32_t schnorr0_wmr[] = {
-  0xc86b05d4u, 0x7b5008c7u, 0x82e79f70u, 0xf715dde1u, 0x2e977634u, 0x934606bdu, 0x66f4bf87u, 0x66eb028fu
+/* The annotated Merkle root of the above schnorr0 Simplicity expression. */
+const uint32_t schnorr0_amr[] = {
+  0xa9d4e516u, 0x74a38c7au, 0x242d8480u, 0x09aaf40eu, 0xf2333dbcu, 0xdc071eebu, 0xd89dc217u, 0x9c16b99cu
 };

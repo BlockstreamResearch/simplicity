@@ -11,10 +11,10 @@
 
 /* Prepends Simplicity tag prefixes to a string literal 's'. */
 #define COMMITMENT_TAG(s) "Simplicity\x1F" "Commitment\x1F" s
-#define WITNESS_TAG(s) "Simplicity\x1F" "Witness\x1F" s
+#define ANNOTATED_TAG(s) "Simplicity\x1F" "Annotated\x1F" s
 
 /* Cached initial values for all the tags.
- * Only to be accessed through 'cmrIV' or 'wmrIV'.
+ * Only to be accessed through 'cmrIV' or 'amrIV'.
  */
 static once_flag static_initialized = ONCE_FLAG_INIT;
 static sha256_midstate cmr_compIV,
@@ -28,19 +28,19 @@ static sha256_midstate cmr_compIV,
                        cmr_idenIV,
                        cmr_unitIV,
                        cmr_witnessIV;
-static sha256_midstate wmr_compIV,
-                       wmr_assertlIV,
-                       wmr_assertrIV,
-                       wmr_caseIV,
-                       wmr_pairIV,
-                       wmr_disconnectIV,
-                       wmr_injlIV,
-                       wmr_injrIV,
-                       wmr_takeIV,
-                       wmr_dropIV,
-                       wmr_idenIV,
-                       wmr_unitIV,
-                       wmr_witnessIV;
+static sha256_midstate amr_compIV,
+                       amr_assertlIV,
+                       amr_assertrIV,
+                       amr_caseIV,
+                       amr_pairIV,
+                       amr_disconnectIV,
+                       amr_injlIV,
+                       amr_injrIV,
+                       amr_takeIV,
+                       amr_dropIV,
+                       amr_idenIV,
+                       amr_unitIV,
+                       amr_witnessIV;
 static void static_initialize(void) {
   MK_TAG(&cmr_compIV, COMMITMENT_TAG("comp"));
   MK_TAG(&cmr_caseIV, COMMITMENT_TAG("case"));
@@ -53,19 +53,19 @@ static void static_initialize(void) {
   MK_TAG(&cmr_idenIV, COMMITMENT_TAG("iden"));
   MK_TAG(&cmr_unitIV, COMMITMENT_TAG("unit"));
   MK_TAG(&cmr_witnessIV, COMMITMENT_TAG("witness"));
-  MK_TAG(&wmr_compIV, WITNESS_TAG("comp"));
-  MK_TAG(&wmr_assertlIV, WITNESS_TAG("assertl"));
-  MK_TAG(&wmr_assertrIV, WITNESS_TAG("assertr"));
-  MK_TAG(&wmr_caseIV, WITNESS_TAG("case"));
-  MK_TAG(&wmr_pairIV, WITNESS_TAG("pair"));
-  MK_TAG(&wmr_disconnectIV, WITNESS_TAG("disconnect"));
-  MK_TAG(&wmr_injlIV, WITNESS_TAG("injl"));
-  MK_TAG(&wmr_injrIV, WITNESS_TAG("injr"));
-  MK_TAG(&wmr_takeIV, WITNESS_TAG("take"));
-  MK_TAG(&wmr_dropIV, WITNESS_TAG("drop"));
-  MK_TAG(&wmr_idenIV, WITNESS_TAG("iden"));
-  MK_TAG(&wmr_unitIV, WITNESS_TAG("unit"));
-  MK_TAG(&wmr_witnessIV, WITNESS_TAG("witness"));
+  MK_TAG(&amr_compIV, ANNOTATED_TAG("comp"));
+  MK_TAG(&amr_assertlIV, ANNOTATED_TAG("assertl"));
+  MK_TAG(&amr_assertrIV, ANNOTATED_TAG("assertr"));
+  MK_TAG(&amr_caseIV, ANNOTATED_TAG("case"));
+  MK_TAG(&amr_pairIV, ANNOTATED_TAG("pair"));
+  MK_TAG(&amr_disconnectIV, ANNOTATED_TAG("disconnect"));
+  MK_TAG(&amr_injlIV, ANNOTATED_TAG("injl"));
+  MK_TAG(&amr_injrIV, ANNOTATED_TAG("injr"));
+  MK_TAG(&amr_takeIV, ANNOTATED_TAG("take"));
+  MK_TAG(&amr_dropIV, ANNOTATED_TAG("drop"));
+  MK_TAG(&amr_idenIV, ANNOTATED_TAG("iden"));
+  MK_TAG(&amr_unitIV, ANNOTATED_TAG("unit"));
+  MK_TAG(&amr_witnessIV, ANNOTATED_TAG("witness"));
 }
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
@@ -98,28 +98,28 @@ static sha256_midstate cmrIV(tag_t tag) {
   UNREACHABLE;
 }
 
-/* Given a tag for a node, return the SHA-256 hash of its associated WMR tag.
- * This is the "initial value" for computing the witness Merkle root for that expression.
+/* Given a tag for a node, return the SHA-256 hash of its associated AMR tag.
+ * This is the "initial value" for computing the annotated Merkle root for that expression.
  *
  * Precondition: 'tag' \notin {HIDDEN, JET}
  */
-static sha256_midstate wmrIV(tag_t tag) {
+static sha256_midstate amrIV(tag_t tag) {
   call_once(&static_initialized, &static_initialize);
 
   switch (tag) {
-   case COMP: return wmr_compIV;
-   case ASSERTL: return wmr_assertlIV;
-   case ASSERTR: return wmr_assertrIV;
-   case CASE: return wmr_caseIV;
-   case PAIR: return wmr_pairIV;
-   case DISCONNECT: return wmr_disconnectIV;
-   case INJL: return wmr_injlIV;
-   case INJR: return wmr_injrIV;
-   case TAKE: return wmr_takeIV;
-   case DROP: return wmr_dropIV;
-   case IDEN: return wmr_idenIV;
-   case UNIT: return wmr_unitIV;
-   case WITNESS: return wmr_witnessIV;
+   case COMP: return amr_compIV;
+   case ASSERTL: return amr_assertlIV;
+   case ASSERTR: return amr_assertrIV;
+   case CASE: return amr_caseIV;
+   case PAIR: return amr_pairIV;
+   case DISCONNECT: return amr_disconnectIV;
+   case INJL: return amr_injlIV;
+   case INJR: return amr_injrIV;
+   case TAKE: return amr_takeIV;
+   case DROP: return amr_dropIV;
+   case IDEN: return amr_idenIV;
+   case UNIT: return amr_unitIV;
+   case WITNESS: return amr_witnessIV;
    /* Precondition violated. */
    case HIDDEN:
    case JET:
@@ -174,25 +174,25 @@ void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
   }
 }
 
-/* Given a well-typed dag representing a Simplicity expression, compute the witness Merkle roots of all subexpressions.
- * For all 'i', 0 <= 'i' < 'len', 'analysis[i].witnessMerkleRoot' will be the WMR of the subexpression denoted by the slice
+/* Given a well-typed dag representing a Simplicity expression, compute the annotated Merkle roots of all subexpressions.
+ * For all 'i', 0 <= 'i' < 'len', 'analysis[i].annotatedMerkleRoot' will be the AMR of the subexpression denoted by the slice
  *
  *     (dag_nodes[i + 1])dag.
  *
- * The WMR of the overall expression will be 'analysis[len - 1].witnessMerkleRoot'.
+ * The AMR of the overall expression will be 'analysis[len - 1].annotatedMerkleRoot'.
  *
  * Precondition: analyses analysis[len];
  *               dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'.
- * Postconditon: analyses analysis[len] contains the witness Merkle roots of each subexpressions of 'dag'.
+ * Postconditon: analyses analysis[len] contains the annotated Merkle roots of each subexpressions of 'dag'.
  */
-void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, const size_t len) {
+void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, const size_t len) {
   for (size_t i = 0; i < len; ++i) {
     uint32_t block[16] = {0};
 
-    /* For jets and primitives, their witness Merkle root is the same as their commitment Merkle root. */
-    analysis[i].witnessMerkleRoot = HIDDEN == dag[i].tag ? dag[i].cmr
-                                  : JET == dag[i].tag ? dag[i].cmr
-                                  : wmrIV(dag[i].tag);
+    /* For jets and primitives, their annotated Merkle root is the same as their commitment Merkle root. */
+    analysis[i].annotatedMerkleRoot = HIDDEN == dag[i].tag ? dag[i].cmr
+                                    : JET == dag[i].tag ? dag[i].cmr
+                                    : amrIV(dag[i].tag);
     switch (dag[i].tag) {
      case ASSERTL:
      case ASSERTR:
@@ -200,24 +200,24 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
      case DISCONNECT:
       memcpy(block, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[dag[i].typeAnnotation[3]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-      memcpy(block, analysis[dag[i].child[0]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
-      memcpy(block + 8, analysis[dag[i].child[1]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      memcpy(block, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, analysis[dag[i].child[1]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case COMP:
      case PAIR:
       memcpy(block + 8, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
-      memcpy(block, analysis[dag[i].child[0]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
-      memcpy(block + 8, analysis[dag[i].child[1]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      memcpy(block, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, analysis[dag[i].child[1]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case INJL:
      case INJR:
@@ -225,22 +225,22 @@ void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const typ
      case DROP:
       memcpy(block, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      memcpy(block + 8, analysis[dag[i].child[0]].witnessMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      memcpy(block + 8, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case IDEN:
      case UNIT:
       memcpy(block + 8, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case WITNESS:
       memcpy(block + 8, type_dag[dag[i].witness.typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[dag[i].witness.typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_bitstring(block + 8, &dag[i].witness.data);
-      sha256_compression(analysis[i].witnessMerkleRoot.s, block);
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case HIDDEN:
      case JET:

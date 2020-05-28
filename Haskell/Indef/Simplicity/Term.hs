@@ -85,10 +85,10 @@ instance Jet IdentityRoot where
 
 instance Simplicity IdentityRoot where
 
-instance Primitive WitnessRoot where
-  primitive = primitiveWitnessImpl primPrefix primName
+instance Primitive AnnotatedRoot where
+  primitive = primitiveAnnotatedImpl primPrefix primName
 
-instance Jet WitnessRoot where
-  jet t = jetWitnessImpl t
+instance Jet AnnotatedRoot where
+  jet t = jetAnnotatedImpl t
 
-instance Simplicity WitnessRoot where
+instance Simplicity AnnotatedRoot where

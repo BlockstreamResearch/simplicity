@@ -217,7 +217,7 @@ const uint32_t hashBlock_cmr[] = {
   0x818e6724u, 0xdd7a814au, 0xf8ef8560u, 0xf6d7a56bu, 0x6421872au, 0xf9e8bf77u, 0xb429598du, 0x9f2fecfeu
 };
 
-/* The witness Merkle root of the above hashBlock Simplicity expression. */
-const uint32_t hashBlock_wmr[] = {
-  0x50a6b44cu, 0xca24ce98u, 0xf2e19185u, 0x6cd70d3bu, 0x143e4410u, 0xf10aad3eu, 0x39bfc86cu, 0x01106bccu
+/* The annotated Merkle root of the above hashBlock Simplicity expression. */
+const uint32_t hashBlock_amr[] = {
+  0xd0b7e876u, 0xdb3e943fu, 0xa11189d1u, 0x097beb9eu, 0x4952e6f0u, 0xa1c46255u, 0x34948035u, 0xe6806f98u
 };

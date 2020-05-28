@@ -89,7 +89,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
  * If the file isn't a proper encoding of a Simplicity program, '*success' is set to false.
  * If EOF isn't encountered at the end of decoding, '*success' is set to false.
  * If 'cmr != NULL' and the commitment Merkle root of the decoded expression doesn't match 'cmr' then '*success' is set to false.
- * If 'wmr != NULL' and the witness Merkle root of the decoded expression doesn't match 'wmr' then '*success' is set to false.
+ * If 'amr != NULL' and the annotated Merkle root of the decoded expression doesn't match 'amr' then '*success' is set to false.
  * Otherwise evaluation proceeds and '*success' is set to the result of evaluation.
  *
  * If at any time there is a transient error, such as malloc failing or an I/O error reading from 'file'
@@ -99,9 +99,9 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
  * Precondition: NULL != success;
  *               NULL != tx;
  *               NULL != cmr implies unsigned char cmr[32]
- *               NULL != wmr implies unsigned char wmr[32]
+ *               NULL != amr implies unsigned char amr[32]
  *               NULL != file;
  */
 extern bool elements_simplicity_execSimplicity(bool* success, const transaction* tx, uint_fast32_t ix,
-                                               const unsigned char* cmr, const unsigned char* wmr, FILE* file);
+                                               const unsigned char* cmr, const unsigned char* amr, FILE* file);
 #endif
