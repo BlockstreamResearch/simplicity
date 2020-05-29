@@ -5,6 +5,7 @@ module Simplicity.Elements.Jets
   , jetSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
+  , fastEval
   -- * Re-exports
   , unwrap
   ) where
@@ -24,6 +25,7 @@ import qualified Simplicity.Elements.Dag as Dag
 import Simplicity.Elements.Term
 import qualified Simplicity.Elements.JetType
 import qualified Simplicity.Elements.Serialization.BitString as BitString
+import qualified Simplicity.Elements.Semantics as Semantics
 import Simplicity.MerkleRoot
 import Simplicity.Ty
 
@@ -42,6 +44,8 @@ instance Simplicity.Elements.JetType.JetType JetType where
   type MatcherInfo JetType = MatcherInfo
 
   specification (CoreJet jt) = CoreJets.specification jt
+
+  implementation (CoreJet jt) _env = CoreJets.implementation jt
 
   matcher (MatcherInfo ir) = do
     SomeArrow jt <- Map.lookup (identityRoot ir) jetMap
@@ -83,6 +87,16 @@ putTermStopCode = BitString.putTermStopCode
 -- | This is an instance of 'BitString.putTermLengthCode' that specifically encodes the canonical 'JetType' set of known jets.
 putTermLengthCode :: (TyC a, TyC b) => JetDag JetType a b -> [Bool]
 putTermLengthCode = BitString.putTermLengthCode
+
+-- | 'fastEval' optimizes Simplicity evaluation using Elements jets.
+-- Unlike using 'Simplicity.Dag.jetSubst', 'fastEval' will not modify the commitment roots and therefore will always return the same
+-- result as 'sem' in the presence of 'disconnect'.
+--
+-- @
+-- 'fastEval' t === 'sem' t
+-- @
+fastEval :: Semantics.FastEval JetType a b -> Semantics.PrimEnv -> a -> Maybe b
+fastEval = Semantics.fastEval
 
 instance Core MatcherInfo where
   iden = MatcherInfo iden
