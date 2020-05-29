@@ -5,6 +5,7 @@ module Simplicity.Bitcoin.Jets
   , jetSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
+  , fastEval
   ) where
 
 import Prelude hiding (fail, drop, take)
@@ -22,6 +23,7 @@ import qualified Simplicity.Bitcoin.Dag as Dag
 import Simplicity.Bitcoin.Term
 import qualified Simplicity.Bitcoin.JetType
 import qualified Simplicity.Bitcoin.Serialization.BitString as BitString
+import qualified Simplicity.Bitcoin.Semantics as Semantics
 import Simplicity.MerkleRoot
 import Simplicity.Ty
 
@@ -40,6 +42,8 @@ instance Simplicity.Bitcoin.JetType.JetType JetType where
   type MatcherInfo JetType = MatcherInfo
 
   specification (CoreJet jt) = CoreJets.specification jt
+
+  implementation (CoreJet jt) _env = CoreJets.implementation jt
 
   matcher (MatcherInfo ir) = do
     SomeArrow jt <- Map.lookup (identityRoot ir) jetMap
@@ -77,6 +81,9 @@ putTermStopCode = BitString.putTermStopCode
 -- | This is an instance of 'BitString.putTermLengthCode' that specifically encodes the canonical 'JetType' set of known jets.
 putTermLengthCode :: (TyC a, TyC b) => JetDag JetType a b -> [Bool]
 putTermLengthCode = BitString.putTermLengthCode
+
+fastEval :: Semantics.FastEval JetType a b -> Semantics.PrimEnv -> a -> Maybe b
+fastEval = Semantics.fastEval
 
 instance Core MatcherInfo where
   iden = MatcherInfo iden
