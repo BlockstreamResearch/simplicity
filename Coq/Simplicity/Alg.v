@@ -40,6 +40,15 @@ Definition pair {A B C} {alg : Algebra} : alg A B -> alg A C -> alg A (B * C) :=
 Definition take {A B C} {alg : Algebra} : alg A C -> alg (A * B) C := take (class_of alg).
 Definition drop {A B C} {alg : Algebra} : alg B C -> alg (A * B) C := drop (class_of alg).
 
+Definition elimS {A B C D} {alg : Algebra} (r : alg A (B + C)) (s : alg B D) (t : alg C D) : alg A D :=
+  comp (pair r unit) (case (take s) (take t)).
+Definition copair {A B C} {alg : Algebra} : alg A C -> alg B C -> alg (A + B) C :=
+  elimS iden.
+Definition swapS {A B} {alg : Algebra} : alg (A + B) (B + A) :=
+  copair (injr iden) (injl iden).
+Definition swapP {A B} {alg : Algebra} : alg (A * B) (B * A) :=
+  pair (drop iden) (take iden).
+
 Notation "s &&& t" := (pair s t) (at level 70, right associativity) : term_scope.
 Notation "s >>> t" := (comp s t) (at level 90, right associativity) : term_scope.
 
@@ -210,6 +219,40 @@ Hint Resolve case_Parametric : parametricity.
 Hint Resolve pair_Parametric : parametricity.
 Hint Resolve take_Parametric : parametricity.
 Hint Resolve drop_Parametric : parametricity.
+
+Lemma elimS_Parametric {alg1 alg2 : Core.Algebra} (R : Core.Parametric.Rel alg1 alg2)
+  {A B C D} r1 r2 s1 s2 t1 t2 : R A (B + C) r1 r2 -> R B D s1 s2 -> R C D t1 t2
+                             -> R A D (elimS r1 s1 t1) (elimS r2 s2 t2).
+Proof.
+unfold elimS.
+auto with parametricity.
+Qed.
+Hint Resolve elimS_Parametric : parametricity.
+
+Lemma copair_Parametric {alg1 alg2 : Core.Algebra} (R : Core.Parametric.Rel alg1 alg2)
+  {A B C} s1 s2 t1 t2 : R A C s1 s2 -> R B C t1 t2
+                     -> R (A + B) C (copair s1 t1) (copair s2 t2).
+Proof.
+unfold copair.
+auto with parametricity.
+Qed.
+Hint Resolve copair_Parametric : parametricity.
+
+Lemma swapS_Parametric {alg1 alg2 : Core.Algebra} (R : Core.Parametric.Rel alg1 alg2)
+  {A B} : R (A + B) (B + A) swapS swapS.
+Proof.
+unfold swapS.
+auto with parametricity.
+Qed.
+Hint Resolve swapS_Parametric : parametricity.
+
+Lemma swapP_Parametric {alg1 alg2 : Core.Algebra} (R : Core.Parametric.Rel alg1 alg2)
+  {A B} : R (A * B) (B * A) swapP swapP.
+Proof.
+unfold swapP.
+auto with parametricity.
+Qed.
+Hint Resolve swapP_Parametric : parametricity.
 
 Section CoreSem.
 

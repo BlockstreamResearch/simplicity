@@ -12,7 +12,7 @@ import Simplicity.Programs.Bit
 import Simplicity.Term.Core
 
 -- | For any Simplicity value, a Simplicity expression for a constant function returning that value.
--- 
+--
 -- @'scribe' v _ = v@
 scribe :: (Core term, TyC a, TyC b) => b -> term a b
 scribe = go reify
@@ -29,8 +29,8 @@ eq = go reify
  where
   go :: (TyC a, Core term) => TyReflect a -> term (a, a) Bit
   go OneR          = true
-  go (SumR l r)    = match (pair (drop iden) (take iden) >>> match (go l) false)
-                           (pair (drop iden) (take iden) >>> match false (go r))
+  go (SumR l r)    = match (swapP >>> match (go l) false)
+                           (swapP >>> match false (go r))
   go (ProdR a1 a2) = pair (pair (take (take iden)) (drop (take iden)) >>> (go a1))
                           (pair (take (drop iden)) (drop (drop iden)))
                      >>> cond (go a2) false

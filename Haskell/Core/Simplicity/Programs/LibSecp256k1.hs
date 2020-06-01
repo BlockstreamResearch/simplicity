@@ -558,7 +558,7 @@ mkLib Sha256.Lib{..} = lib
        >>> (oh &&& drop (sqr >>> neg 1) >>> add >>> feIsZero) &&& ih
        >>> cond (injr iden) (injl unit)
 
-  , isQuad = sqrt &&& unit >>> match false true
+  , isQuad = elimS sqrt false true
 
   , inf =
      let
@@ -701,7 +701,7 @@ mkLib Sha256.Lib{..} = lib
      let
       k1 = (feSeven &&& (iden &&& sqr >>> mul) >>> add >>> sqrt) &&& iden
        >>> match (injl unit) (injr k2)
-      k2 = (ih &&& oh) &&& feOne
+      k2 = swapP &&& feOne
       lt = subtractor word256 >>> oh
      in
       (iden &&& scribe (toWord256 feOrder) >>> lt) &&& feUnpack
@@ -779,7 +779,7 @@ mkLib Sha256.Lib{..} = lib
                >>> iih &&& (((ooh &&& iih >>> scaleZ) &&& oih) &&& ioh) -- (dz, (a', (dx,dy)))
                >>> oh &&& drop pass1
                >>> (oh &&& drop oiih >>> mul) &&& drop (pass2
-                   >>> (drop (drop (drop (drop (drop (drop (ih &&& oh)) &&& (ioh &&& oh)))))) &&&
+                   >>> (drop (drop (drop (drop (drop (drop swapP) &&& (ioh &&& oh)))))) &&&
                        ((drop (drop (ioh &&& oh))) &&& (ioh &&& oh)))
      where
       scaleZ = oh &&& (ih &&& (ih >>> sqr) >>> ih &&& mul) >>> (ooh &&& ioh >>> mul) &&& (oih &&& iih >>> mul)
