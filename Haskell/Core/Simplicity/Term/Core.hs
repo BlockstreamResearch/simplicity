@@ -4,6 +4,8 @@
 module Simplicity.Term.Core
  ( module Simplicity.Ty
  , Core(..)
+ , elimS, copair
+ , swapP, swapS
  -- * Notation for 'Core' terms
  , (>>>), (&&&)
  -- | The following expressions are for short sequences of 'take' and 'drop', with 'iden' that is used to access components of Simplicity inputs.
@@ -16,8 +18,6 @@ module Simplicity.Term.Core
  --
  -- The string of @i@'s and @o@'s is meant to resemble a binary number that denotes an index to the leaves of a perfect binary tree.
  , oh, ih, ooh, oih, ioh, iih, oooh, ooih, oioh, oiih, iooh, ioih, iioh, iiih
- , swapP, swapS
- , copair
  -- * Language extensions
  , Assert(..), fail0
  , Witness(..)
@@ -50,6 +50,22 @@ class Core term where
   pair :: (TyC a, TyC b, TyC c) => term a b -> term a c -> term a (b, c)
   take :: (TyC a, TyC b, TyC c) => term a c -> term (a, b) c
   drop :: (TyC a, TyC b, TyC c) => term b c -> term (a, b) c
+
+-- | Natural deduction style elimination rule for Sums.
+elimS :: (Core term, TyC a, TyC b, TyC c, TyC d) => term a (Either b c) -> term b d -> term c d -> term a d
+elimS r s t = r &&& unit >>> match (take s) (take t)
+
+-- | Categorical dual of 'pair'
+copair :: (Core term, TyC a, TyC b, TyC c) => term a c -> term b c -> term (Either a b) c
+copair = elimS iden
+
+-- | Term for swapping positions in products (Commutativity of Multiplication): A * B |- B * A
+swapP :: (Core term, TyC a, TyC b) => term (a, b) (b, a)
+swapP = pair (drop iden) (take iden)
+
+-- | Term for swapping positions in sums (Commutativity of Addition): A + B |- B + A
+swapS :: (Core term, TyC a, TyC b) => term (Either a b) (Either b a)
+swapS = copair (injr iden) (injl iden)
 
 -- same precidence as in Control.Category.
 infixr 1 >>>
@@ -106,18 +122,6 @@ iioh = drop ioh
 
 iiih :: (Core term, TyC a, TyC b, TyC c, TyC x) => term (a, (b, (c, x))) x
 iiih = drop iih
-
--- | Term for swapping positions in products (Commutativity of Multiplication): A x B |- B x A
-swapP :: (Core term, TyC a, TyC b) => term (a, b) (b, a)
-swapP = pair (drop iden) (take iden)
-
--- | Term for swapping positions in sums (Commutativity of Addition): A + B |- B + A
-swapS :: (Core term, TyC a, TyC b) => term (Either a b) (Either b a)
-swapS = copair (injr iden) (injl iden)
-
--- | Categorical dual of 'pair'
-copair :: (Core term, TyC a, TyC b, TyC c) => term a c -> term b c -> term (Either a b) c
-copair s t = iden &&& unit >>> match (take s) (take t)
 
 instance Core (->) where
   iden = id
