@@ -31,9 +31,9 @@ import Simplicity.Term.Core
 -- A core jet is a jet that doesn't use primitives.
 data CoreJet a b where
   Adder32 :: CoreJet (Word32, Word32) (Bit, Word32)
-  FullAdder32 :: CoreJet ((Word32, Word32), Bit) (Bit, Word32)
+  FullAdder32 :: CoreJet (Bit, (Word32, Word32)) (Bit, Word32)
   Subtractor32 :: CoreJet (Word32, Word32) (Bit, Word32)
-  FullSubtractor32 :: CoreJet ((Word32, Word32), Bit) (Bit, Word32)
+  FullSubtractor32 :: CoreJet (Bit, (Word32, Word32)) (Bit, Word32)
   Multiplier32 :: CoreJet (Word32, Word32) Word64
   FullMultiplier32 :: CoreJet ((Word32, Word32), (Word32, Word32)) Word64
   Sha256HashBlock :: CoreJet (Sha256.Hash, Sha256.Block) Sha256.Hash
@@ -55,13 +55,13 @@ implementation :: CoreJet a b -> a -> Maybe b
 implementation Adder32 = \(x, y) -> do
   let z = fromWord32 x + fromWord32 y
   return (toBit (z >= 2 ^ 32), toWord32 z)
-implementation FullAdder32 = \((x, y), c) -> do
+implementation FullAdder32 = \(c, (x, y)) -> do
   let z = fromWord32 x + fromWord32 y + fromWord1 c
   return (toBit (z >= 2 ^ 32), toWord32 z)
 implementation Subtractor32 = \(x, y) -> do
   let z = fromWord32 x - fromWord32 y
   return (toBit (z < 0), toWord32 z)
-implementation FullSubtractor32 = \((x, y), b) -> do
+implementation FullSubtractor32 = \(b, (x, y)) -> do
   let z = fromWord32 x - fromWord32 y - fromWord1 b
   return (toBit (z < 0), toWord32 z)
 implementation Multiplier32 = \(x, y) -> do

@@ -41,12 +41,7 @@ zero (DoubleV w) = rec &&& rec
 -- @
 adder :: Core term => Word a -> term (a, a) (Bit, a)
 adder SingleV = cond (iden &&& not iden) (false &&& iden)
-adder (DoubleV w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
-                >>> iih &&& (oh &&& ioh >>> fa)
-                >>> ioh &&& (iih &&& oh)
- where
-  rec = adder w
-  fa = fullAdder w
+adder w@(DoubleV _) = false &&& iden >>> fullAdder w
 
 -- | Simplicity expression for computing the difference of two words, also returning the borrow bit.
 --
@@ -55,14 +50,8 @@ adder (DoubleV w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
 --  where
 --   (b, z) = 'subtractor' w (x, y)
 -- @
-subtractor :: Core term => Word a -> term (a, a) (Bit, a)
-subtractor SingleV = cond (false &&& not iden) (iden &&& iden)
-subtractor (DoubleV w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
-                     >>> iih &&& (oh &&& ioh >>> fs)
-                     >>> ioh &&& (iih &&& oh)
- where
-  rec = subtractor w
-  fs = fullSubtractor w
+subtractor :: (Core term, TyC a) => Word a -> term (a, a) (Bit, a)
+subtractor w = false &&& iden >>> fullSubtractor w
 
 -- | Simplicity expression for computing the sum of two words and a carry input bit, including the carry output bit.
 --
@@ -71,14 +60,14 @@ subtractor (DoubleV w) = (ooh &&& ioh) &&& (oih &&& iih >>> rec)
 --  where
 --   (cout, z) = 'fullAdder' w ((x, y), cin)
 -- @
-fullAdder :: Core term => Word a -> term ((a, a), Bit) (Bit, a)
-fullAdder SingleV = take add &&& ih
+fullAdder :: Core term => Word a -> term (Bit, (a, a)) (Bit, a)
+fullAdder SingleV = drop add &&& oh
              >>> ooh &&& (oih &&& ih >>> add)
              >>> cond true oh &&& iih
  where
   add = adder SingleV
-fullAdder (DoubleV w) = take (ooh &&& ioh) &&& (take (oih &&& iih) &&& ih >>> rec)
-                    >>> iih &&& (oh &&& ioh >>> rec)
+fullAdder (DoubleV w) = drop (ooh &&& ioh) &&& (oh &&& drop (oih &&& iih) >>> rec)
+                    >>> iih &&& (ioh &&& oh >>> rec)
                     >>> ioh &&& (iih &&& oh)
  where
   rec = fullAdder w
@@ -90,17 +79,8 @@ fullAdder (DoubleV w) = take (ooh &&& ioh) &&& (take (oih &&& iih) &&& ih >>> re
 --  where
 --   (bout, z) = 'fullSubtractor' w ((x, y), bin)
 -- @
-fullSubtractor :: Core term => Word a -> term ((a, a), Bit) (Bit, a)
-fullSubtractor SingleV = take sub &&& ih
-                  >>> ooh &&& (oih &&& ih >>> sub)
-                  >>> cond true oh &&& iih
- where
-  sub = subtractor SingleV
-fullSubtractor (DoubleV w) = take (ooh &&& ioh) &&& (take (oih &&& iih) &&& ih >>> rec)
-                         >>> iih &&& (oh &&& ioh >>> rec)
-                         >>> ioh &&& (iih &&& oh)
- where
-  rec = fullSubtractor w
+fullSubtractor :: (Core term, TyC a) => Word a -> term (Bit, (a, a)) (Bit, a)
+fullSubtractor w = (take (not iden) &&& drop (oh &&& drop (bitwiseNot w))) >>> fullAdder w >>> take (not iden) &&& ih
 
 -- | 'fullMultiplier' is a Simplicity expression that helps compute products of larger word sizes from smaller word sizes.
 --
@@ -108,7 +88,7 @@ fullSubtractor (DoubleV w) = take (ooh &&& ioh) &&& (take (oih &&& iih) &&& ih >
 -- 'fromWord' ('DoubleV' w) ('fullMultiplier' w ((a, b), (c, d))) = 'fromWord' w a * 'fromWord' w b  + 'fromWord' w c + 'fromWord' w d
 -- @
 fullMultiplier :: Core term => Word a -> term ((a, a), (a, a)) (a, a)
-fullMultiplier SingleV = ih &&& take (cond iden false)
+fullMultiplier SingleV = take (cond iden false) &&& ih
                   >>> fullAdder SingleV
 fullMultiplier (DoubleV w) = take (ooh &&& (ioh &&& oih))
                          &&& ((take (ooh &&& iih) &&& drop (ooh &&& ioh) >>> rec)
@@ -124,16 +104,8 @@ fullMultiplier (DoubleV w) = take (ooh &&& (ioh &&& oih))
 -- @
 -- 'fromWord' ('DoubleV' w) ('multiplier' w (x, y)) = 'fromWord' w x * 'fromWord' w y
 -- @
-multiplier :: Core term => Word a -> term (a, a) (a, a)
-multiplier SingleV = false &&& cond iden false
-multiplier (DoubleV w) = (ooh &&& (ioh &&& oih))
-                     &&& ((ooh &&& iih >>> rec) &&& (oih &&& iih >>> rec))
-                     >>> take (oh &&& ioh)
-                     &&& (drop (ooh &&& iih) &&& (oih &&& drop (oih &&& ioh) >>> fm))
-                     >>> (oh &&& drop (ioh &&& ooh) >>> fm) &&& drop (iih &&& oih)
- where
-  rec = multiplier w
-  fm = fullMultiplier w
+multiplier :: (Core term, TyC a) => Word a -> term (a, a) (a, a)
+multiplier w = iden &&& zero (DoubleV w) >>> fullMultiplier w
 
 -- | A Simplicity combinator for computing the bitwise complement of a binary word.
 bitwiseNot :: forall term a. Core term => Word a -> term a a

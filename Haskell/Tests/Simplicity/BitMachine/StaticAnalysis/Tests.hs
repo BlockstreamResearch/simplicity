@@ -30,7 +30,7 @@ import Test.Tasty.HUnit (testCase, assert)
 tests :: TestTree
 tests = testGroup "StaticAnalysis"
       [ testGroup "memSize"
-        [ testSquare "fullAdder word8" (fullAdder word8) (gen16 <×> arbitrary)
+        [ testSquare "fullAdder word8" (fullAdder word8) (arbitrary <×> gen16)
         , testSquare "adder word8" (adder word8) gen16
         , testSquare "fullMultiplier word8" (fullMultiplier word8) gen32
         , testSquare "multiplier word8" (multiplier word8) gen16
