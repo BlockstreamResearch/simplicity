@@ -43,10 +43,10 @@ tests = testGroup "Programs"
       ]
 
 -- The specification for full adder on Word8
-prop_fullAdder8 :: Word8 -> Word8 -> Bit -> Bool
-prop_fullAdder8 x y z = (if fromBit carry then 2^8 else 0) + fromWord8 result8 == fromWord8 x + fromWord8 y + if fromBit z then 1 else 0
+prop_fullAdder8 :: Bit -> Word8 -> Word8 -> Bool
+prop_fullAdder8 z x y = (if fromBit carry then 2^8 else 0) + fromWord8 result8 == fromWord8 x + fromWord8 y + if fromBit z then 1 else 0
  where
-  (carry, result8) = fullAdder word8 ((x, y), z)
+  (carry, result8) = fullAdder word8 (z, (x, y))
 
 -- The specification for adder on Word8
 prop_adder8 :: Word8 -> Word8 -> Bool
@@ -55,10 +55,10 @@ prop_adder8 x y = (if fromBit carry then 2^8 else 0) + fromWord8 result8 == from
   (carry, result8) = adder word8 (x, y)
 
 -- The specification for full subtractor on Word8
-prop_fullSubtractor8 :: Word8 -> Word8 -> Bit -> Bool
-prop_fullSubtractor8 x y z =  fromWord8 result8 == (if fromBit borrow then 2^8 else 0) + fromWord8 x - fromWord8 y - if fromBit z then 1 else 0
+prop_fullSubtractor8 :: Bit -> Word8 -> Word8 -> Bool
+prop_fullSubtractor8 z x y =  fromWord8 result8 == (if fromBit borrow then 2^8 else 0) + fromWord8 x - fromWord8 y - if fromBit z then 1 else 0
  where
-  (borrow, result8) = fullSubtractor word8 ((x, y), z)
+  (borrow, result8) = fullSubtractor word8 (z, (x, y))
 
 -- The specification for subtractor on Word8
 prop_subtractor8 :: Word8 -> Word8 -> Bool

@@ -43,7 +43,7 @@ enum TypeNamesForJets {
   sWord2TimesWord256PlusTwoPlusWord4,
   sSWord2TimesWord256PlusTwoPlusWord4,
   twoTimesWord32,
-  word64TimesTwo,
+  twoTimesWord64,
   word256TimesWord512,
   NumberOfTypeNames
 };
@@ -131,8 +131,8 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* 
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sWord2TimesWord256PlusTwoPlusWord4] } } };
   (*bound_var)[twoTimesWord32] = (unification_var){ .isBound = true,
       .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[two], &(*bound_var)[word32] } } };
-  (*bound_var)[word64TimesTwo] = (unification_var){ .isBound = true,
-      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word64], &(*bound_var)[two] } } };
+  (*bound_var)[twoTimesWord64] = (unification_var){ .isBound = true,
+      .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[two], &(*bound_var)[word64] } } };
   (*bound_var)[word256TimesWord512] = (unification_var){ .isBound = true,
       .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word256], &(*bound_var)[word512] } } };
 
@@ -309,13 +309,13 @@ static dag_node jet_node[] = {
  [FULLADDER32] =
     { .tag = JET
     , .jet = fullAdder32
-    , .sourceIx = word64TimesTwo
+    , .sourceIx = twoTimesWord64
     , .targetIx = twoTimesWord32
     },
  [FULLSUBTRACTOR32] =
     { .tag = JET
     , .jet = fullSubtractor32
-    , .sourceIx = word64TimesTwo
+    , .sourceIx = twoTimesWord64
     , .targetIx = twoTimesWord32
     },
  [FULLMULTIPLIER32] =
@@ -559,13 +559,13 @@ static void static_initialize(void) {
   } while(0)
 
     /* Jets are identified by their specification's identity Merkle roots. */
-    MK_JET(ADDER32,          0x6cd61593u, 0xe8e243e5u, 0xb7544d2au, 0x129315a0u, 0x192dc566u, 0xb2d80926u, 0x333b7edau, 0x5c377978u);
-    MK_JET(FULLADDER32,      0x154f440cu, 0x3bb4663cu, 0xfbf795dcu, 0xde410b09u, 0x22528582u, 0x5f3b3e6fu, 0xab364569u, 0x643f50ebu);
-    MK_JET(SUBTRACTOR32,     0x90dd6022u, 0xe86bf2e9u, 0x679d6316u, 0x786d5e97u, 0x4a42be02u, 0xda96354cu, 0x0ba1ae6bu, 0x762b2e65u);
-    MK_JET(FULLSUBTRACTOR32, 0x5244cbdau, 0xe2dcbd1au, 0x9ccf93adu, 0x9df902ceu, 0x00de3ec5u, 0xfe163be4u, 0x1e1fd5bcu, 0xe4db6d9bu);
-    MK_JET(MULTIPLIER32,     0x2383d301u, 0x3c15f748u, 0xd8aaa8b6u, 0xcb4bff29u, 0xfe4645c8u, 0x5a34e27bu, 0xa85c52d5u, 0xc88e5ec3u);
-    MK_JET(FULLMULTIPLIER32, 0x40d2d461u, 0x8b844ffcu, 0x562fbef6u, 0x9e01bd91u, 0x471be4d9u, 0x8638c6b5u, 0xe2deea23u, 0xd583e2f5u);
-    MK_JET(SHA256_HASHBLOCK, 0x593b9df9u, 0x727fe298u, 0x66da104cu, 0x93322616u, 0x72c095e6u, 0x77d00001u, 0x99785674u, 0x04476dd8u);
+    MK_JET(ADDER32,          0x73b3315bu, 0xdec731edu, 0xb09c5187u, 0x2782249cu, 0x9515e149u, 0x078c0e61u, 0x95b8e546u, 0x532e5584u);
+    MK_JET(FULLADDER32,      0xa20bf848u, 0xb6cd6637u, 0x5469a520u, 0x1f41507bu, 0xf24dadc8u, 0xd5d3aeacu, 0x07c8ddc9u, 0x278e3041u);
+    MK_JET(SUBTRACTOR32,     0x51b9d49cu, 0x79e50235u, 0xb40333a8u, 0xa1d3cf56u, 0x54ff583eu, 0x65109570u, 0xc3d9202bu, 0x5080cd9au);
+    MK_JET(FULLSUBTRACTOR32, 0xbbf14525u, 0xa1bdfa57u, 0x373772c8u, 0xc12202adu, 0x918e43f2u, 0x178f2be7u, 0x33c3c365u, 0x3fd58cedu);
+    MK_JET(MULTIPLIER32,     0xfca03a42u, 0xe8f84210u, 0xb0bebe3fu, 0xbdc10628u, 0x670ba7b2u, 0x96926316u, 0x121131a5u, 0x9375a9d8u);
+    MK_JET(FULLMULTIPLIER32, 0x342e643fu, 0x60a1fc90u, 0xe4488d3du, 0xeea7e9a0u, 0xb6bfabe9u, 0xd0e0e7a8u, 0xc9ce2535u, 0x8a86db87u);
+    MK_JET(SHA256_HASHBLOCK, 0xda10f0e8u, 0x530695d0u, 0x7564f0b3u, 0x2feebe77u, 0x265a1d69u, 0xcf802e22u, 0xd77289dau, 0xf6641b8du);
 #undef MK_JET
 
   }

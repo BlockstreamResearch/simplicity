@@ -641,7 +641,7 @@ mkLib Sha256.Lib{..} = lib
                >>> match (count &&& injl unit) (drop body)
        where
         count = (zero word4 &&& oh >>> eq) &&& (oh &&& ioh)
-            >>> cond (injr unit &&& ih) (injl ((oh &&& zero word4) &&& true >>> fullSubtractor word4 >>> ih) &&& ih)
+            >>> cond (injr unit &&& ih) (injl (true &&& (oh &&& zero word4) >>> fullSubtractor word4 >>> ih) &&& ih)
         body = ((oh &&& drop (drop iiih) >>> eq) &&& iden)
            >>> cond ((injr unit &&& oh) &&& injl unit)
                     ((injl (scribe (toWord word4 14)) &&& drop (take oooh)) &&& (injr (drop setLowBit)))

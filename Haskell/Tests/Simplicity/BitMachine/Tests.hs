@@ -32,7 +32,7 @@ testUsing translator program x = executeUsing (runMachine . translator) program 
 -- Run the 'testUsing' test with a given translator on a small set of Simplicity expressions.
 testCompiler :: (Delegate trans, Assert trans) => String -> (forall a b. (TyC a, TyC b) => trans a b -> MachineCode) -> TestTree
 testCompiler name translator = testGroup name
-                  [ testProperty "fullAdder word8" (testUsing translator (fullAdder word8) <$> (gen16 <×> arbitrary))
+                  [ testProperty "fullAdder word8" (testUsing translator (fullAdder word8) <$> (arbitrary <×> gen16))
                   , testProperty "adder word8" (testUsing translator (adder word8) <$> gen16)
                   , testProperty "fullMultiplier word8" (testUsing translator (fullMultiplier word8) <$> gen32)
                   , testProperty "multiplier word8" (testUsing translator (multiplier word8) <$> gen16)

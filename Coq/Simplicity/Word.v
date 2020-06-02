@@ -276,39 +276,32 @@ end.
 Definition adderBit {term : Core.Algebra} : term (Bit * Bit) (Bit * Bit) :=
   cond (iden &&& not iden) (false &&& iden).
 
-Definition fullAdderBit {term : Core.Algebra} : term ((Bit * Bit) * Bit) (Bit * Bit) :=
+Definition fullAdderBit {term : Core.Algebra} : term (Bit * (Bit * Bit)) (Bit * Bit) :=
   let add := adderBit in
-    take add &&& I H
+    drop add &&& O H
 >>> O O H &&& (O I H &&& I H >>> add)
 >>> cond true O H &&& I I H.
 
-Definition buildFullAdder {W} {term : Core.Algebra} (rec : term ((W * W) * Bit) (Bit * W)) :
-  term (((W * W) * (W * W)) * Bit) (Bit * (W * W)) :=
-    take (O O H &&& I O H) &&& (take (O I H &&& I I H) &&& I H >>> rec)
->>> I I H &&& (O H &&& I O H >>> rec)
+Definition buildFullAdder {W} {term : Core.Algebra} (rec : term (Bit * (W * W)) (Bit * W)) :
+  term (Bit * ((W * W) * (W * W))) (Bit * (W * W)) :=
+    drop (O O H &&& I O H) &&& (O H &&& drop (O I H &&& I I H) >>> rec)
+>>> I I H &&& (I O H &&& O H >>> rec)
 >>> I O H &&& (I I H &&& O H).
 
-Fixpoint fullAdder {n : nat} {term : Core.Algebra} : term ((Word n * Word n) * Bit) (Bit * Word n) :=
+Fixpoint fullAdder {n : nat} {term : Core.Algebra} : term (Bit * (Word n * Word n)) (Bit * Word n) :=
 match n with
 | 0 => fullAdderBit
 | S n => buildFullAdder fullAdder
 end.
 
-Definition buildAdder {W} {term : Core.Algebra} (fa : term ((W * W) * Bit) (Bit * W)) (rec : term (W * W) (Bit * W)) :
-  term ((W * W) * (W * W)) (Bit * (W * W)) :=
-    (O O H &&& I O H)
-&&& (O I H &&& I I H >>> rec)
->>> I I H &&& (O H &&& I O H >>> fa)
->>> I O H &&& (I I H &&& O H).
-
-Fixpoint adder {n : nat} {term : Core.Algebra} : term (Word n * Word n) (Bit * Word n) :=
+Definition adder {n : nat} {term : Core.Algebra} : term (Word n * Word n) (Bit * Word n) :=
 match n with
 | 0 => adderBit
-| S n => buildAdder fullAdder adder
+| S n => false &&& iden >>> fullAdder
 end.
 
 Definition fullMultiplierBit {term : Core.Algebra} : term ((Bit * Bit) * (Bit * Bit)) (Word 1) :=
-    drop iden &&& take (cond iden false)
+    take (cond iden false) &&& drop iden
 >>> fullAdderBit.
 
 Definition buildFullMultiplier {W} {term : Core.Algebra} (rec : term ((W * W) * (W * W)) (W * W)) :
@@ -326,22 +319,8 @@ match n with
 | S n => buildFullMultiplier fullMultiplier
 end.
 
-Definition multiplierBit {term : Core.Algebra} : term (Bit * Bit) (Word 1) :=
-    false &&& cond iden false.
-
-Definition buildMultiplier {W} {term : Core.Algebra} (fm : term ((W * W) * (W * W)) (W * W)) (rec : term (W * W) (W * W)) :
-  term ((W * W) * (W * W)) ((W * W) * (W * W)) :=
-    (O O H &&& (I O H &&& O I H))
-&&& ((O O H &&& I I H >>> rec) &&& (O I H &&& I I H >>> rec))
->>> take (O H &&& I O H)
-&&& (drop (O O H &&& I I H) &&& (O I H &&& drop (O I H &&& I O H) >>> fm))
->>> (O H &&& drop (I O H &&& O O H) >>> fm) &&& drop (I I H &&& O I H).
-
-Fixpoint multiplier {n : nat} {term : Core.Algebra} : term (Word n * Word n) (Word (S n)) :=
-match n with
-| 0 => multiplierBit
-| S n => buildMultiplier fullMultiplier multiplier
-end.
+Definition multiplier {n : nat} {term : Core.Algebra} : term (Word n * Word n) (Word (S n)) :=
+   iden &&& (zero &&& zero) >>> fullMultiplier.
 
 End Arith.
 
@@ -479,7 +458,7 @@ induction n; cbn;[|rewrite IHn];reflexivity.
 Qed.
 
 Lemma fullAdder_correct n : forall (a b : Word n) (c : Bit),
-  (toZ (|[fullAdder]| ((a, b), c)) = toZ a + toZ b  + toZ c)%Z.
+  (toZ (|[fullAdder]| (c, (a, b))) = toZ a + toZ b  + toZ c)%Z.
 Proof.
 induction n. { intros [[] | []] [[] | []] [[] | []]; reflexivity. }
 intros [ahi alo] [bhi blo] c.
@@ -488,13 +467,13 @@ rewrite (toZ_Pair ahi alo), (toZ_Pair bhi blo).
 set (C := two_power_nat _).
 transitivity ((toZ ahi + toZ bhi) * C + (toZ alo + toZ blo + toZ c))%Z;[|ring].
 rewrite <- IHn.
-destruct (|[fullAdder]| (alo, blo, c)) as [c0 rlo]; clear alo blo c.
+destruct (|[fullAdder]| (c, (alo, blo))) as [c0 rlo]; clear alo blo c.
 cbn [fst snd].
 rewrite (toZ_Pair c0 rlo).
 fold C.
 transitivity ((toZ ahi + toZ bhi + toZ c0) * C + toZ rlo)%Z;[|ring].
 rewrite <- IHn.
-destruct (|[fullAdder]| (ahi, bhi, c0)) as [c1 rhi]; clear ahi bhi c0.
+destruct (|[fullAdder]| (c0, (ahi, bhi))) as [c1 rhi]; clear ahi bhi c0.
 cbn [fst snd].
 rewrite (toZ_Pair c1 rhi); fold C.
 rewrite (toZ_Pair c1 _).
@@ -506,26 +485,12 @@ Qed.
 
 Lemma adder_correct n : forall (a b : Word n),
   (toZ (|[adder]| (a, b)) = toZ a + toZ b)%Z.
-induction n. { intros [[] | []] [[] | []]; reflexivity. }
-intros [ahi alo] [bhi blo].
-cbn -[toZ]; fold tySem; fold (tySem Bit).
-rewrite (toZ_Pair ahi alo), (toZ_Pair bhi blo).
-set (C := two_power_nat _).
-transitivity ((toZ ahi + toZ bhi) * C + (toZ alo + toZ blo))%Z;[|ring].
-rewrite <- (IHn alo).
-destruct (|[adder]| (alo, blo)) as [c0 rlo]; clear alo blo.
-cbn [fst snd].
-rewrite (toZ_Pair c0 rlo).
-fold C.
-transitivity ((toZ ahi + toZ bhi + toZ c0) * C + toZ rlo)%Z;[|ring].
-rewrite <- fullAdder_correct.
-destruct (|[fullAdder]| (ahi, bhi, c0)) as [c1 rhi]; clear ahi bhi c0.
-cbn [fst snd].
-rewrite (toZ_Pair c1 rhi); fold C.
-rewrite (toZ_Pair c1 _).
-rewrite (bitSize_Pair (WordToZ n) (WordToZ n)).
-rewrite two_power_nat_correct, Zpower_nat_is_exp, <- two_power_nat_correct; fold C.
-rewrite (toZ_Pair rhi rlo); fold C.
+destruct n. { intros [[] | []] [[] | []]; reflexivity. }
+unfold adder.
+generalize (S n); clear n; intros n a b.
+cbn -[toZ].
+rewrite fullAdder_correct.
+cbn.
 ring.
 Qed.
 
@@ -565,34 +530,10 @@ Qed.
 Lemma multiplier_correct n : forall (a b : Word n),
   (toZ (|[multiplier]| (a, b)) = toZ a * toZ b)%Z.
 Proof.
-induction n. { intros [[] | []] [[] | []]; reflexivity. }
-intros [ahi alo] [bhi blo].
-cbn -[toZ]; fold tySem; fold (tySem Bit).
-rewrite (toZ_Pair ahi alo), (toZ_Pair bhi blo).
-set (C := two_power_nat _).
-transitivity ((toZ ahi * C + toZ alo) * toZ bhi * C +
- ((toZ ahi * toZ blo) * C) + (toZ alo * toZ blo))%Z;
- [|ring].
-rewrite <- 2!IHn.
-destruct (|[multiplier]| (alo, blo)) as [c0 rOO].
-destruct (|[multiplier]| (ahi, blo)) as [c1 c2]; clear blo.
-cbn [fst snd].
-rewrite (toZ_Pair c1 c2), (toZ_Pair c0 rOO); fold C.
-transitivity ((toZ ahi * toZ bhi + toZ c1) * C * C +
- (toZ bhi * toZ alo + toZ c2 + toZ c0) * C + toZ rOO)%Z;
- [|ring].
-rewrite <- fullMultiplier_correct.
-destruct (|[fullMultiplier]| ((bhi, alo), (c2, c0))) as [c3 rOI]; clear c2 c0 alo.
-cbn [fst snd].
-rewrite (toZ_Pair c3 rOI); fold C.
-transitivity ((toZ ahi * toZ bhi + toZ c3 + toZ c1) * C * C + toZ rOI * C + toZ rOO)%Z;
- [|ring].
-rewrite <- fullMultiplier_correct.
-destruct (|[fullMultiplier]| ((ahi, bhi), (c3, c1))) as [rII rIO]; clear c3 c1 ahi bhi.
-rewrite (@toZ_Pair (WordToZ (S n)) (WordToZ (S n))), (toZ_Pair rOI rOO); fold C.
-rewrite (bitSize_Pair (WordToZ n) (WordToZ n)).
-rewrite two_power_nat_correct, Zpower_nat_is_exp, <- two_power_nat_correct; fold C.
-set (X := toZ _); ring.
+intros a b.
+cbn -[toZ].
+rewrite fullMultiplier_correct, zero_correct.
+ring.
 Qed.
 
 Definition TrinarySpec {n} (f : bool -> bool -> bool -> bool) (term : Arrow (Word n * (Word n * Word n)) (Word n)) :=
@@ -859,14 +800,6 @@ induction n; simpl; auto with parametricity.
 Qed.
 Hint Immediate fullAdder_Parametric : parametricity.
 
-Lemma buildAdder_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
-  {W} s1 s2 t1 t2 : R _ (Bit * W) s1 s2 -> R _ (Bit * W) t1 t2 -> R _ _ (buildAdder s1 t1) (buildAdder s2 t2).
-Proof.
-unfold buildAdder.
-auto 10 with parametricity.
-Qed.
-Hint Resolve buildAdder_Parametric : parametricity.
-
 Lemma adder_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {n} : R _ _ adder (@adder n _).
 Proof.
@@ -896,26 +829,11 @@ induction n; simpl; auto with parametricity.
 Qed.
 Hint Immediate fullMultiplier_Parametric : parametricity.
 
-Lemma multiplierBit_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) : R _ _ multiplierBit multiplierBit.
-Proof.
-simpl.
-unfold multiplierBit.
-auto with parametricity.
-Qed.
-Hint Immediate multiplierBit_Parametric : parametricity.
-
-Lemma buildMultiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
-  {W} s1 s2 t1 t2 : R _ (W * W) s1 s2 -> R _ (W * W) t1 t2 -> R _ _ (buildMultiplier s1 t1) (buildMultiplier s2 t2).
-Proof.
-unfold buildMultiplier.
-auto 15 with parametricity.
-Qed.
-Hint Resolve buildMultiplier_Parametric : parametricity.
-
 Lemma multiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {n} : R _ _ multiplier (@multiplier n _).
 Proof.
-induction n; simpl; auto with parametricity.
+unfold multiplier.
+simpl; auto with parametricity.
 Qed.
 Hint Immediate multiplier_Parametric : parametricity.
 
