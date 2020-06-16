@@ -120,6 +120,7 @@ library
                        Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets
   reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
                        Simplicity.Term.Core,
+                       Simplicity.CoreJets,
                        Simplicity.Functor, Simplicity.Tensor,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,

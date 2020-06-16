@@ -7,12 +7,15 @@ module Simplicity.CoreJets
  ( CoreJet(..)
  , specification, coreJetMap
  , implementation
+ , fastCoreEval
  , putJetBit, getJetBit
  ) where
 
 import Prelude hiding (fail, drop, take)
 
+import Control.Arrow (Kleisli(Kleisli), runKleisli)
 import qualified Data.Map as Map
+import Data.Type.Equality ((:~:)(Refl))
 import Data.Void (Void, vacuous)
 
 import Simplicity.Digest
@@ -109,4 +112,58 @@ coreJetMap = Map.fromList
   mkAssoc :: (TyC a, TyC b) => CoreJet a b -> (Hash256, (SomeArrow CoreJet))
   mkAssoc jt = (identityRoot (specification jt), SomeArrow jt)
 
+coreJetLookup :: (TyC a, TyC b) => IdentityRoot a b -> Maybe (CoreJet a b)
+coreJetLookup ir = do
+  SomeArrow jt <- Map.lookup (identityRoot ir) coreJetMap
+  let (ira, irb) = reifyArrow ir
+  let (jta, jtb) = reifyArrow jt
+  case (equalTyReflect ira jta, equalTyReflect irb jtb) of
+    (Just Refl, Just Refl) -> return jt
+    otherwise -> error "Simplicity.CoreJets.coreJetLookup: type match error"
+
 (o, i) = (False, True)
+
+-- :TODO: we could move matcher into an argument to fastCoreEvalSem which cannot benefit from sharing anyways.
+-- This lets us unify FastCoreEval and FastEval.
+data FastCoreEval a b = FastCoreEval { fastCoreEvalSem :: Kleisli Maybe a b
+                                     , fastCoreEvalMatcher :: IdentityRoot a b
+                                     }
+
+fastCoreEval = runKleisli . fastCoreEvalSem
+
+withJets :: (TyC a, TyC b) => FastCoreEval a b -> FastCoreEval a b
+withJets ~(FastCoreEval _ ir) | Just cj <- coreJetLookup ir =
+  FastCoreEval { fastCoreEvalSem = Kleisli $ implementation cj
+               , fastCoreEvalMatcher = ir
+               }
+withJets fe | otherwise = fe
+
+mkLeaf sComb jmComb = withJets $
+  FastCoreEval { fastCoreEvalSem = sComb
+               , fastCoreEvalMatcher = jmComb
+               }
+
+mkUnary sComb jmComb t = withJets $
+  FastCoreEval { fastCoreEvalSem = sComb (fastCoreEvalSem t)
+               , fastCoreEvalMatcher = jmComb (fastCoreEvalMatcher t)
+               }
+mkBinary sComb jmComb s t = withJets $
+  FastCoreEval { fastCoreEvalSem = sComb (fastCoreEvalSem s) (fastCoreEvalSem t)
+               , fastCoreEvalMatcher = jmComb (fastCoreEvalMatcher s) (fastCoreEvalMatcher t)
+               }
+
+instance Core FastCoreEval where
+  iden = mkLeaf iden iden
+  comp = mkBinary comp comp
+  unit = mkLeaf unit unit
+  injl = mkUnary injl injl
+  injr = mkUnary injr injr
+  match = mkBinary match match
+  pair = mkBinary pair pair
+  take = mkUnary take take
+  drop = mkUnary drop drop
+
+instance Assert FastCoreEval where
+  assertl s h = mkUnary (flip assertl h) (flip assertl h) s
+  assertr h t = mkUnary (assertr h) (assertr h) t
+  fail b = mkLeaf (fail b) (fail b)
