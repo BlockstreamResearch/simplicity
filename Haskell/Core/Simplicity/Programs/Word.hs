@@ -10,6 +10,7 @@ module Simplicity.Programs.Word
   -- * Bit-wise operations
   , bitwiseNot
   , shift, rotate
+  , signedResize, signedShift
   , bitwise, bitwiseTri
   ) where
 
@@ -142,6 +143,10 @@ data BiggerWord a b where
   JustBigger :: TyC a => Word a -> BiggerWord a (a,a)
   MuchBigger :: (TyC a, TyC b) => BiggerWord a b -> BiggerWord a (b,b)
 
+smallerWord :: BiggerWord a b -> Word a
+smallerWord (JustBigger w) = w
+smallerWord (MuchBigger bw) = smallerWord bw
+
 biggerWord :: BiggerWord a b -> Word b
 biggerWord (JustBigger w) = DoubleV w
 biggerWord (MuchBigger bw) = DoubleV (biggerWord bw)
@@ -188,6 +193,32 @@ shift w = subseq w w
   subseq0 (Left (Right (MuchBigger bw))) = drop (subseq0 (Left (Right bw)))
   subseq0 (Left (Left (JustBigger w))) = zero w &&& iden
   subseq0 (Left (Left (MuchBigger bw))) = zero (biggerWord bw) &&& subseq0 (Left (Left bw))
+
+signExtract :: (Core term, TyC a, TyC b) => Word a -> Word b -> term a b
+signExtract (DoubleV n) m = take (signExtract n m)
+signExtract n (DoubleV m) = signExtract n m &&& signExtract n m
+signExtract SingleV SingleV = iden
+
+signedResize :: (Core term, TyC a) => Word a -> Word b -> term a b
+signedResize n m = subseq0 (compareWordSize n m)
+ where
+  subseq0 :: (Core term, TyC a) => Either (Either (BiggerWord a b) (BiggerWord b a)) (a :~: b) -> term a b
+  subseq0 (Right Refl) = iden
+  subseq0 (Left (Right (JustBigger w))) = drop iden
+  subseq0 (Left (Right (MuchBigger bw))) = drop (subseq0 (Left (Right bw)))
+  subseq0 (Left (Left (JustBigger w))) = signExtract w w &&& iden
+  subseq0 (Left (Left (MuchBigger bw))) = signExtract (smallerWord bw) (biggerWord bw) &&& subseq0 (Left (Left bw))
+
+signedShift :: (Core term, TyC a) => Word a -> Int -> term a a
+signedShift w = subseq w w
+ where
+  subseq :: (Core term, TyC a, TyC b) => Word a -> Word b -> Int -> term a b
+  subseq n m z | z == 0 = signedResize n m
+               | wordSize n <= z = signExtract n m
+               | z + wordSize m <= 0 = zero m
+  subseq (DoubleV n) m           z | wordSize n <= z              = take (subseq n m (z - wordSize n))
+                                   | z + wordSize m <= wordSize n = drop (subseq n m z)
+  subseq n           (DoubleV m) z = subseq n m (z + wordSize m) &&& subseq n m z
 
 -- | Simplicity expression for a bit rotation by a constant amount.
 --
