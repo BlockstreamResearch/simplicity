@@ -23,7 +23,7 @@ enum TypeNamesForJets {
   word128,
   word256,
   word512,
-  pubkey,
+  point,
   sTwo,
   outpnt,
   sOutpnt,
@@ -92,7 +92,7 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* 
       .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word128], &(*bound_var)[word128] } } };
   (*bound_var)[word512] = (unification_var){ .isBound = true,
       .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[word256], &(*bound_var)[word256] } } };
-  (*bound_var)[pubkey] = (unification_var){ .isBound = true,
+  (*bound_var)[point] = (unification_var){ .isBound = true,
       .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[two], &(*bound_var)[word256] } } };
   (*bound_var)[sTwo] = (unification_var){ .isBound = true,
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[two] } } };
@@ -101,13 +101,13 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* 
   (*bound_var)[sOutpnt] = (unification_var){ .isBound = true,
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[outpnt] } } };
   (*bound_var)[confWord256] = (unification_var){ .isBound = true,
-      .bound = { .kind = SUM,     .arg = { &(*bound_var)[pubkey], &(*bound_var)[word256] } } };
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[point], &(*bound_var)[word256] } } };
   (*bound_var)[sConfWord256] = (unification_var){ .isBound = true,
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[confWord256] } } };
   (*bound_var)[sSConfWord256] = (unification_var){ .isBound = true,
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[sConfWord256] } } };
   (*bound_var)[confWord64] = (unification_var){ .isBound = true,
-      .bound = { .kind = SUM,     .arg = { &(*bound_var)[pubkey], &(*bound_var)[word64] } } };
+      .bound = { .kind = SUM,     .arg = { &(*bound_var)[point], &(*bound_var)[word64] } } };
   (*bound_var)[sConfWord64] = (unification_var){ .isBound = true,
       .bound = { .kind = SUM,     .arg = { &(*bound_var)[one], &(*bound_var)[confWord64] } } };
   (*bound_var)[sSConfWord64] = (unification_var){ .isBound = true,

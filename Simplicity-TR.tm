@@ -2401,24 +2401,12 @@
   <subsubsection|libsecp256k1>
 
   The libsecp256k1 library<nbsp><cite|libsecp256k1> is a C implementation of
-  optimized functions on this elliptic curve. This library has two variants
-  for the representation for field elements, of which the <verbatim|10x26>
-  representation is the most portable. This representation consists of an
-  array of 10 32-bit unsigned integer values. Such an array, <verbatim|a>,
-  represents the value
-
-  <\equation*>
-    <big|sum><rsub|i=0><rsup|9><text|<verbatim|a[<math|i>]>>\<cdot\>2<rsup|26*i>
-    <around*|(|mod p|)><text|.>
-  </equation*>
-
-  Different arrays may represent the same value. The various field arithmetic
+  optimized functions on this elliptic curve. This library has
+  representations for field elements and the various field arithmetic
   operations, including modular inverse and square roots, are implemented
-  efficiently, subject to various specific preconditions on their inputs that
-  need to be satisfied to prevent overflows of the internal 32-bit unsigned
-  integer values.
+  efficiently.
 
-  The libsecp256k1 library also has two variants for the representation of
+  The libsecp256k1 library has two variants for the representation of
   elliptic curve point values. The affine coordinate representation consists
   of a pair of field elements, and a flag to indicate the value
   <math|\<cal-O\>> (in which case the coordinate values are ignored). The
@@ -2449,8 +2437,7 @@
   <math|<around*|\<langle\>|x,y,1|\<rangle\>>> in Jacobian coordinates
   represents the point <math|<around*|\<langle\>|x,y|\<rangle\>>> in affine
   coordinates. The same point has multiple representations in Jacobian
-  coordinates, however, even the affine coordinate representation is
-  redundant because the underlying field representation is itself redundant.
+  coordinates.
 
   Normally the point at infinity would be represented by
   <math|<around*|\<langle\>|a<rsup|2>,a<rsup|3>,0|\<rangle\>>> in Jacobian
@@ -2484,26 +2471,24 @@
 
   When it comes to implementing elliptic curve operations in Simplicity, we
   do face one problem. In order for elliptic curve operations to be fast, we
-  need a representation of field elements and curve points that have
-  redundant representations, but then the choice of which specific
-  representative returned by Simplicity expressions becomes consensus
-  critical.
+  need a representation of curve points that have redundant representations,
+  but then the choice of which specific representative returned by Simplicity
+  expressions becomes consensus critical.
 
   We see three possible ways of addressing this problem:
 
   <\enumerate-numeric>
-    <item>We can define minimal Simplicity types that can represent field
-    elements and elliptic curve points and return values in normal form after
-    every elliptic curve operation.
-
-    <item>We can define Simplicity types that can represent field elements
-    and elliptic curve points with redundant representations and specify
-    precisely which representative is the result of each elliptic curve
+    <item>We can define minimal Simplicity types that can represent elliptic
+    curve points and return values in normal form after every elliptic curve
     operation.
 
-    <item>We can extend Simplicity with abstract data types for field
-    elements and elliptic curve points and enforce data abstraction in the
-    elliptic curve operations.
+    <item>We can define Simplicity types that can represent elliptic curve
+    points with redundant representations and specify precisely which
+    representative is the result of each elliptic curve operation.
+
+    <item>We can extend Simplicity with abstract data types for elliptic
+    curve points and enforce data abstraction in the elliptic curve
+    operations.
   </enumerate-numeric>
 
   Option 1 would make it easy for developers to implement elliptic curve jets
@@ -2529,9 +2514,9 @@
   to do.
 
   We have chosen to go with option 2. We have reimplemented the exact same
-  algorithms for field and elliptic curve operations that the most recent
-  release of libsecp256k1 uses as of the time of this writing, including
-  computing of linear combinations of the form
+  algorithms for elliptic curve operations that the most recent release of
+  libsecp256k1 uses as of the time of this writing, including computing of
+  linear combinations of the form
 
   <\equation*>
     n<rsub|\<cal-A\><rsub|>>*\<cal-A\>+n<rsub|\<cal-G\>>*\<cal-G\>
@@ -2549,14 +2534,13 @@
   In Simplicity, we represent a field element by the type
 
   <\equation*>
-    FE\<assign\><2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><2><rsup|32>|)>|)>|)>|)>|)>|)>|)>|)>
+    FE\<assign\><2><rsup|256>
   </equation*>
 
-  and a value <math|<around*|\<langle\>|a<rsub|0>,<around*|\<langle\>|a<rsub|1>,<around*|\<langle\>|a<rsub|2>,<around*|\<langle\>|a<rsub|3>,<around*|\<langle\>|a<rsub|4>,<around*|\<langle\>|a<rsub|5>,<around*|\<langle\>|a<rsub|6>,<around*|\<langle\>|a<rsub|7>,<around*|\<langle\>|a<rsub|8>,a<rsub|9>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>\<of\>FE>
-  represents the field element
+  and a value <math|a\<of\>FE> represents the field element
 
   <\equation*>
-    <around*|\<lceil\>|<around*|\<langle\>|a<rsub|0>,<around*|\<langle\>|a<rsub|1>,<around*|\<langle\>|a<rsub|2>,<around*|\<langle\>|a<rsub|3>,<around*|\<langle\>|a<rsub|4>,<around*|\<langle\>|a<rsub|5>,<around*|\<langle\>|a<rsub|6>,<around*|\<langle\>|a<rsub|7>,<around*|\<langle\>|a<rsub|8>,a<rsub|9>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|FE>\<assign\><big|sum><rsup|9><rsub|i=0><around*|\<lceil\>|a<rsub|i>|\<rceil\>><rsub|32>\<cdot\>2<rsup|26*i>
+    <around*|\<lceil\>|a|\<rceil\>><rsub|FE>\<assign\><around*|\<lceil\>|a<rsub|i>|\<rceil\>><rsub|256>
     <around*|(|mod p|)><text|.>
   </equation*>
 
@@ -2578,7 +2562,7 @@
   coordinates by the type
 
   <\equation*>
-    GEJ\<assign\>GE\<times\>FE
+    GEJ\<assign\><around*|(|FE\<times\>FE|)>\<times\>FE
   </equation*>
 
   and a value <math|<around*|\<langle\>|<around*|\<langle\>|x,y|\<rangle\>>,z|\<rangle\>>>
@@ -2595,9 +2579,7 @@
     <around*|(|mod p|)><text|.>>>>>
   </eqnarray*>
 
-  The translation between the libsecp256k1's <verbatim|10x32> field
-  representation and Simplicity's <math|FE> type is straightforward. The
-  translation between libsecp256k1's affine coordinate representation of
+  The translation between libsecp256k1's affine coordinate representation of
   elliptic curve points and Simplicity's <math|GE> is also straightforward
   except that Simplicity's <math|GE> type has no flag and cannot represent
   the <math|\<cal-O\>> point. The translation between libsecp256k1's Jacobian
@@ -2610,13 +2592,10 @@
   libsecp256k1 can be used as jets for these Simplicity expressions. As such,
   the Simplicity expressions are designed to mimic the exact behaviour of a
   specific version of libsecp256k1's elliptic curve functions. For inputs of
-  particular representations of field elements, or points, the Simplicity
-  expression returns the exact same representative for its result as
-  libsecp256k1. If a precondition of a libsecp256k1 function is violated, the
-  the Simplicity code also overflows and returns the corresponding value that
-  libsecp256k1 returns. If an off-curve point is passed to a libsecp256k1
-  function, the Simplicity code again computes the same result that the
-  libsecp256k1 function does.
+  particular representations of points, the Simplicity expression returns the
+  exact same representative for its result as libsecp256k1. If an off-curve
+  point is passed to a libsecp256k1 function, the Simplicity code again
+  computes the same result that the libsecp256k1 function does.
 
   The only subtle point with using libsecp256k1 for jets lies in the
   different representation of <math|\<cal-O\>>. The inputs and outputs of
@@ -2627,22 +2606,19 @@
   <subsubsection|Schnorr Signature Validation>
 
   With elliptic curve operations defined, we are able to implement Schnorr
-  signature validation in accordance with the BIP-Schnorr
-  specification<nbsp><cite|bip-schnorr>. We define Simplicity types for the
-  formats of compressed public keys, <math|PubKey>; messages, <math|Msg>; and
-  Schnorr signatures, <math|Sig>, below.
+  signature validation in accordance with the BIP-340
+  specification<nbsp><cite|bip-340>. We define Simplicity types for the
+  formats of <math|x>-only public keys, <math|PubKey>; messages, <math|Msg>;
+  and Schnorr signatures, <math|Sig>, below.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|PubKey>|<cell|\<assign\>>|<cell|<2>\<times\><2><rsup|256>>>|<row|<cell|Msg>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Sig>|<cell|\<assign\>>|<cell|<2><rsup|512>>>>>
+    <tformat|<table|<row|<cell|PubKey>|<cell|\<assign\>>|<cell|FE>>|<row|<cell|Msg>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Sig>|<cell|\<assign\>>|<cell|<2><rsup|512>>>>>
   </eqnarray*>
 
-  The <math|PubKey> type is a pair <math|<around*|\<langle\>|b,<around*|\<lfloor\>|x|\<rfloor\>><rsub|256>|\<rangle\>>>
-  where <math|b> is the least significant bit of a (non-<math|\<cal-O\>>)
-  elliptic curve point's y-coordinate, and where <math|x> the point's
-  x-coordinate. A <math|Msg> value <math|m> represents the byte-string
-  <math|BE<rsub|256><around*|(|m|)>> for a Schnorr signature's message, and a
-  <math|Sig> value <math|a> represents the byte-string
-  <math|BE<rsub|512><around*|(|a|)>> for a Schnorr signature.
+  The <math|PubKey> is a point's <math|x>-coordinate. A <math|Msg> value
+  <math|m> represents the byte-string <math|BE<rsub|256><around*|(|m|)>> for
+  a Schnorr signature's message, and a <math|Sig> value <math|a> represents
+  the byte-string <math|BE<rsub|512><around*|(|a|)>> for a Schnorr signature.
 
   We have implemented a core Simplicity expression to check a Schnorr
   signature for a public key on a given message:
@@ -2653,7 +2629,7 @@
 
   The semantics are such that <math|<around*|\<llbracket\>|<math-ss|schnorrVerify>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=<math-tt|1><rsub|<2>>>
   only when the values that the inputs represents satisfy the verification
-  conditions of the BIP-Schnorr specification.
+  conditions of the BIP-340 specification.
 
   <section|Completeness Theorem>
 
@@ -6626,13 +6602,12 @@
   library of Simplicity expressions that mimic the functional behaviour of
   the the libsecp256k1 elliptic curve library<nbsp><cite|libsecp256k1>. This
   includes Simplicity types for, and operations on secp256k1's underlying
-  finite field with the <verbatim|10x26> limb representation, elliptic curve
-  point operations in affine and Jacobian coordinates, and linear
-  combinations of points.
+  finite field, elliptic curve point operations in affine and Jacobian
+  coordinates, and linear combinations of points.
 
   This module also include the <verbatim|schnorrVerify> and
   <verbatim|schnorrAssert> expressions that implement Schnorr signatures as
-  specified in BIP-Schnorr<nbsp><cite|bip-schnorr>.
+  specified in BIP-340<nbsp><cite|bip-340>.
 
   The <verbatim|mkLib> function builds the library from the its dependency,
   the SHA-256 library. The <verbatim|lib> value illustrates how to build the
@@ -7215,7 +7190,7 @@
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|Lock>|<cell|\<assign\>>|<cell|<2><rsup|32>>>|<row|<cell|Outpoint>|<cell|\<assign\>>|<cell|<2><rsup|256>\<times\><2><rsup|32>>>|<row|<cell|Confidential>|<cell|\<assign\>
-    >|<cell|PubKey>>|<row|<cell|ExplicitAsset>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Asset>|<cell|\<assign\>>|<cell|Confidential+ExplicitAsset>>|<row|<cell|ExplicitAmount>|<cell|\<assign\>>|<cell|<2><rsup|64>>>|<row|<cell|Amount>|<cell|\<assign\>>|<cell|Confidential
+    >|<cell|<2>\<times\><2><rsup|256>>>|<row|<cell|ExplicitAsset>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Asset>|<cell|\<assign\>>|<cell|Confidential+ExplicitAsset>>|<row|<cell|ExplicitAmount>|<cell|\<assign\>>|<cell|<2><rsup|64>>>|<row|<cell|Amount>|<cell|\<assign\>>|<cell|Confidential
     + ExplicitAmount>>|<row|<cell|ExplicitNonce>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Nonce>|<cell|\<assign\>>|<cell|Confidential
     + ExplicitNonce>>|<row|<cell|TokenAmount>|<cell|\<assign\>>|<cell|Amount>>|<row|<cell|NewIssuance>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|contractHash\<of\><2><rsup|256>>>|<row|<cell|amounts\<of\>
     <around*|(|Amount+TokenAmount|)>+<around*|(|Amount\<times\>TokenAmount|)>>>>>>|}>>>|<row|<cell|Reissuance>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|blindingNonce\<of\>ExplicitNonce>>|<row|<cell|entropy\<of\><2><rsup|256>>>|<row|<cell|amount\<of\>
@@ -7821,13 +7796,13 @@
       <slink|https://en.wikipedia.org/w/index.php?title=F-algebraoldid=814231684>,
       2017.<newblock>
 
-      <bibitem*|17><label|bib-bip-schnorr>P.<nbsp>Wuille.<newblock>
-      Bip-schnorr.<newblock> 2018.<newblock>
-      <slink|Https://github.com/sipa/bips/blob/bip-schnorr/bip-schnorr.mediawiki>.<newblock>
-
-      <bibitem*|18><label|bib-libsecp256k1>P.<nbsp>Wuille.<newblock>
+      <bibitem*|17><label|bib-libsecp256k1>P.<nbsp>Wuille.<newblock>
       Libsecp256k1.<newblock> <slink|https://github.com/bitcoin-core/secp256k1/tree/1e6f1f5ad5e7f1e3ef79313ec02023902bf8175c>,
       May 2018.<newblock>
+
+      <bibitem*|18><label|bib-bip-340>P.<nbsp>Wuille, J.<nbsp>Nick<localize|
+      and >T.<nbsp>Ruffing.<newblock> Bip-340.<newblock> 2020.<newblock>
+      <slink|Https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki>.<newblock>
     </bib-list>
   </bibliography>
 </body>
@@ -7849,96 +7824,96 @@
     <associate|LC313|<tuple|6.5|?>>
     <associate|LC42|<tuple|6.5|?>>
     <associate|LC98|<tuple|6.2.2|?>>
-    <associate|SS:Coq:MerkleRoots|<tuple|8.5|79>>
+    <associate|SS:Coq:MerkleRoots|<tuple|8.5|77>>
     <associate|Serialization|<tuple|2.8|?>>
-    <associate|app:AltSerialization|<tuple|B|107>>
-    <associate|app:ElementsTransactions|<tuple|A|97>>
+    <associate|app:AltSerialization|<tuple|B|105>>
+    <associate|app:ElementsTransactions|<tuple|A|95>>
     <associate|auto-1|<tuple|1|7>>
     <associate|auto-10|<tuple|2.2|13>>
-    <associate|auto-100|<tuple|7.1.1|65>>
-    <associate|auto-101|<tuple|7.1.2|67>>
-    <associate|auto-102|<tuple|7.1.2.1|67>>
-    <associate|auto-103|<tuple|7.1.2.2|68>>
-    <associate|auto-104|<tuple|7.2|68>>
-    <associate|auto-105|<tuple|7.2.1|68>>
-    <associate|auto-106|<tuple|7.2.2|69>>
-    <associate|auto-107|<tuple|7.2.3|71>>
-    <associate|auto-108|<tuple|8|73>>
-    <associate|auto-109|<tuple|8.1|73>>
+    <associate|auto-100|<tuple|7.1.1|63>>
+    <associate|auto-101|<tuple|7.1.2|65>>
+    <associate|auto-102|<tuple|7.1.2.1|65>>
+    <associate|auto-103|<tuple|7.1.2.2|66>>
+    <associate|auto-104|<tuple|7.2|66>>
+    <associate|auto-105|<tuple|7.2.1|66>>
+    <associate|auto-106|<tuple|7.2.2|67>>
+    <associate|auto-107|<tuple|7.2.3|69>>
+    <associate|auto-108|<tuple|8|71>>
+    <associate|auto-109|<tuple|8.1|71>>
     <associate|auto-11|<tuple|2.2.1|13>>
-    <associate|auto-110|<tuple|8.2|73>>
-    <associate|auto-111|<tuple|8.2.1|73>>
-    <associate|auto-112|<tuple|8.2.2|73>>
-    <associate|auto-113|<tuple|8.2.2.1|74>>
-    <associate|auto-114|<tuple|8.2.2.2|74>>
-    <associate|auto-115|<tuple|8.2.2.3|75>>
-    <associate|auto-116|<tuple|8.2.3|75>>
-    <associate|auto-117|<tuple|8.3|75>>
-    <associate|auto-118|<tuple|8.3.1|75>>
-    <associate|auto-119|<tuple|8.3.2|75>>
+    <associate|auto-110|<tuple|8.2|71>>
+    <associate|auto-111|<tuple|8.2.1|71>>
+    <associate|auto-112|<tuple|8.2.2|71>>
+    <associate|auto-113|<tuple|8.2.2.1|72>>
+    <associate|auto-114|<tuple|8.2.2.2|72>>
+    <associate|auto-115|<tuple|8.2.2.3|73>>
+    <associate|auto-116|<tuple|8.2.3|73>>
+    <associate|auto-117|<tuple|8.3|73>>
+    <associate|auto-118|<tuple|8.3.1|73>>
+    <associate|auto-119|<tuple|8.3.2|73>>
     <associate|auto-12|<tuple|2.2.2|13>>
-    <associate|auto-120|<tuple|8.3.3|76>>
-    <associate|auto-121|<tuple|8.4|76>>
-    <associate|auto-122|<tuple|8.1|76>>
-    <associate|auto-123|<tuple|8.4.1|77>>
-    <associate|auto-124|<tuple|8.4.2|77>>
-    <associate|auto-125|<tuple|8.4.3|77>>
-    <associate|auto-126|<tuple|8.4.4|78>>
-    <associate|auto-127|<tuple|8.4.4.1|78>>
-    <associate|auto-128|<tuple|8.4.5|78>>
-    <associate|auto-129|<tuple|8.4.6|79>>
+    <associate|auto-120|<tuple|8.3.3|74>>
+    <associate|auto-121|<tuple|8.4|74>>
+    <associate|auto-122|<tuple|8.1|74>>
+    <associate|auto-123|<tuple|8.4.1|75>>
+    <associate|auto-124|<tuple|8.4.2|75>>
+    <associate|auto-125|<tuple|8.4.3|75>>
+    <associate|auto-126|<tuple|8.4.4|76>>
+    <associate|auto-127|<tuple|8.4.4.1|76>>
+    <associate|auto-128|<tuple|8.4.5|76>>
+    <associate|auto-129|<tuple|8.4.6|77>>
     <associate|auto-13|<tuple|2.3|15>>
-    <associate|auto-130|<tuple|8.5|79>>
-    <associate|auto-131|<tuple|8.6|79>>
-    <associate|auto-132|<tuple|8.6.1|80>>
-    <associate|auto-133|<tuple|8.6.1.1|80>>
-    <associate|auto-134|<tuple|8.6.2|81>>
-    <associate|auto-135|<tuple|8.6.3|81>>
-    <associate|auto-136|<tuple|9|83>>
-    <associate|auto-137|<tuple|9.1|83>>
-    <associate|auto-138|<tuple|9.1.1|83>>
-    <associate|auto-139|<tuple|9.1.2|84>>
+    <associate|auto-130|<tuple|8.5|77>>
+    <associate|auto-131|<tuple|8.6|77>>
+    <associate|auto-132|<tuple|8.6.1|78>>
+    <associate|auto-133|<tuple|8.6.1.1|78>>
+    <associate|auto-134|<tuple|8.6.2|79>>
+    <associate|auto-135|<tuple|8.6.3|79>>
+    <associate|auto-136|<tuple|9|81>>
+    <associate|auto-137|<tuple|9.1|81>>
+    <associate|auto-138|<tuple|9.1.1|81>>
+    <associate|auto-139|<tuple|9.1.2|82>>
     <associate|auto-14|<tuple|2.3.1|15>>
-    <associate|auto-140|<tuple|9.1.3|85>>
-    <associate|auto-141|<tuple|9.1.4|85>>
-    <associate|auto-142|<tuple|9.1.5|85>>
-    <associate|auto-143|<tuple|9.1.5.1|85>>
-    <associate|auto-144|<tuple|9.1.5.2|85>>
-    <associate|auto-145|<tuple|9.1.5.3|86>>
-    <associate|auto-146|<tuple|9.1.5.4|86>>
-    <associate|auto-147|<tuple|9.1.6|86>>
-    <associate|auto-148|<tuple|9.1.6.1|86>>
-    <associate|auto-149|<tuple|9.1.6.2|86>>
+    <associate|auto-140|<tuple|9.1.3|83>>
+    <associate|auto-141|<tuple|9.1.4|83>>
+    <associate|auto-142|<tuple|9.1.5|83>>
+    <associate|auto-143|<tuple|9.1.5.1|83>>
+    <associate|auto-144|<tuple|9.1.5.2|83>>
+    <associate|auto-145|<tuple|9.1.5.3|84>>
+    <associate|auto-146|<tuple|9.1.5.4|84>>
+    <associate|auto-147|<tuple|9.1.6|84>>
+    <associate|auto-148|<tuple|9.1.6.1|84>>
+    <associate|auto-149|<tuple|9.1.6.2|84>>
     <associate|auto-15|<tuple|2.3.2|16>>
-    <associate|auto-150|<tuple|9.1.6.3|87>>
-    <associate|auto-151|<tuple|9.1.7|87>>
-    <associate|auto-152|<tuple|9.1.7.1|87>>
-    <associate|auto-153|<tuple|9.1.7.2|88>>
-    <associate|auto-154|<tuple|9.2|88>>
-    <associate|auto-155|<tuple|9.2.1|88>>
-    <associate|auto-156|<tuple|9.2.2|88>>
-    <associate|auto-157|<tuple|9.2.3|89>>
-    <associate|auto-158|<tuple|9.2.4|89>>
-    <associate|auto-159|<tuple|9.2.5|89>>
+    <associate|auto-150|<tuple|9.1.6.3|85>>
+    <associate|auto-151|<tuple|9.1.7|85>>
+    <associate|auto-152|<tuple|9.1.7.1|85>>
+    <associate|auto-153|<tuple|9.1.7.2|86>>
+    <associate|auto-154|<tuple|9.2|86>>
+    <associate|auto-155|<tuple|9.2.1|86>>
+    <associate|auto-156|<tuple|9.2.2|86>>
+    <associate|auto-157|<tuple|9.2.3|87>>
+    <associate|auto-158|<tuple|9.2.4|87>>
+    <associate|auto-159|<tuple|9.2.5|87>>
     <associate|auto-16|<tuple|2.3.3|16>>
-    <associate|auto-160|<tuple|9.2.6|90>>
-    <associate|auto-161|<tuple|9.2.6.1|90>>
-    <associate|auto-162|<tuple|9.2.6.2|91>>
-    <associate|auto-163|<tuple|9.3|92>>
-    <associate|auto-164|<tuple|9.4|92>>
-    <associate|auto-165|<tuple|9.4.1|92>>
-    <associate|auto-166|<tuple|9.4.2|92>>
-    <associate|auto-167|<tuple|9.5|93>>
-    <associate|auto-168|<tuple|10|95>>
-    <associate|auto-169|<tuple|A|97>>
+    <associate|auto-160|<tuple|9.2.6|88>>
+    <associate|auto-161|<tuple|9.2.6.1|88>>
+    <associate|auto-162|<tuple|9.2.6.2|89>>
+    <associate|auto-163|<tuple|9.3|90>>
+    <associate|auto-164|<tuple|9.4|90>>
+    <associate|auto-165|<tuple|9.4.1|90>>
+    <associate|auto-166|<tuple|9.4.2|90>>
+    <associate|auto-167|<tuple|9.5|91>>
+    <associate|auto-168|<tuple|10|93>>
+    <associate|auto-169|<tuple|A|95>>
     <associate|auto-17|<tuple|2.3.4|16>>
-    <associate|auto-170|<tuple|A.1|99>>
-    <associate|auto-171|<tuple|A.1.1|102>>
-    <associate|auto-172|<tuple|A.1.2|103>>
-    <associate|auto-173|<tuple|A.1.3|104>>
-    <associate|auto-174|<tuple|A.2|104>>
-    <associate|auto-175|<tuple|B|107>>
-    <associate|auto-176|<tuple|B|109>>
+    <associate|auto-170|<tuple|A.1|97>>
+    <associate|auto-171|<tuple|A.1.1|100>>
+    <associate|auto-172|<tuple|A.1.2|101>>
+    <associate|auto-173|<tuple|A.1.3|102>>
+    <associate|auto-174|<tuple|A.2|102>>
+    <associate|auto-175|<tuple|B|105>>
+    <associate|auto-176|<tuple|B|107>>
     <associate|auto-18|<tuple|2.3.4.1|17>>
     <associate|auto-19|<tuple|2.4|17>>
     <associate|auto-2|<tuple|1.1|7>>
@@ -7954,148 +7929,149 @@
     <associate|auto-29|<tuple|3.2.2|20>>
     <associate|auto-3|<tuple|1.2|8>>
     <associate|auto-30|<tuple|3.2.3|20>>
-    <associate|auto-31|<tuple|3.2.4|21>>
-    <associate|auto-32|<tuple|3.2.5|21>>
+    <associate|auto-31|<tuple|3.2.4|20>>
+    <associate|auto-32|<tuple|3.2.5|20>>
     <associate|auto-33|<tuple|3.2.6|21>>
     <associate|auto-34|<tuple|3.2.7|21>>
     <associate|auto-35|<tuple|3.2.8|21>>
     <associate|auto-36|<tuple|3.2.9|21>>
-    <associate|auto-37|<tuple|3.2.10|22>>
+    <associate|auto-37|<tuple|3.2.10|21>>
     <associate|auto-38|<tuple|3.2.11|22>>
     <associate|auto-39|<tuple|3.3|22>>
     <associate|auto-4|<tuple|1.2.1|8>>
-    <associate|auto-40|<tuple|3.3.1|23>>
+    <associate|auto-40|<tuple|3.3.1|22>>
     <associate|auto-41|<tuple|3.3.2|23>>
-    <associate|auto-42|<tuple|3.3.3|24>>
-    <associate|auto-43|<tuple|3.3.4|24>>
-    <associate|auto-44|<tuple|3.3.5|27>>
-    <associate|auto-45|<tuple|3.3.6|27>>
+    <associate|auto-42|<tuple|3.3.3|23>>
+    <associate|auto-43|<tuple|3.3.4|23>>
+    <associate|auto-44|<tuple|3.3.5|26>>
+    <associate|auto-45|<tuple|3.3.6|26>>
     <associate|auto-46|<tuple|3.3.6.1|27>>
-    <associate|auto-47|<tuple|3.3.7|28>>
+    <associate|auto-47|<tuple|3.3.7|27>>
     <associate|auto-48|<tuple|3.3.7.1|28>>
-    <associate|auto-49|<tuple|3.3.7.2|29>>
+    <associate|auto-49|<tuple|3.3.7.2|28>>
     <associate|auto-5|<tuple|1.2.2|8>>
-    <associate|auto-50|<tuple|3.3.7.3|31>>
-    <associate|auto-51|<tuple|3.4|31>>
-    <associate|auto-52|<tuple|3.5|32>>
-    <associate|auto-53|<tuple|3.5.1|32>>
-    <associate|auto-54|<tuple|3.5.2|32>>
-    <associate|auto-55|<tuple|3.1|33>>
-    <associate|auto-56|<tuple|3.5.2.1|33>>
-    <associate|auto-57|<tuple|3.5.2.2|33>>
-    <associate|auto-58|<tuple|3.5.2.3|34>>
-    <associate|auto-59|<tuple|3.5.2.4|34>>
+    <associate|auto-50|<tuple|3.3.7.3|30>>
+    <associate|auto-51|<tuple|3.4|30>>
+    <associate|auto-52|<tuple|3.5|31>>
+    <associate|auto-53|<tuple|3.5.1|31>>
+    <associate|auto-54|<tuple|3.5.2|31>>
+    <associate|auto-55|<tuple|3.1|32>>
+    <associate|auto-56|<tuple|3.5.2.1|32>>
+    <associate|auto-57|<tuple|3.5.2.2|32>>
+    <associate|auto-58|<tuple|3.5.2.3|33>>
+    <associate|auto-59|<tuple|3.5.2.4|33>>
     <associate|auto-6|<tuple|1.2.3|9>>
-    <associate|auto-60|<tuple|3.5.2.5|34>>
-    <associate|auto-61|<tuple|3.5.2.6|35>>
-    <associate|auto-62|<tuple|3.5.3|35>>
-    <associate|auto-63|<tuple|3.5.3.1|36>>
-    <associate|auto-64|<tuple|3.6|37>>
-    <associate|auto-65|<tuple|3.6.1|37>>
-    <associate|auto-66|<tuple|3.6.1.1|37>>
-    <associate|auto-67|<tuple|3.6.1.2|40>>
-    <associate|auto-68|<tuple|3.6.2|40>>
-    <associate|auto-69|<tuple|3.7|40>>
+    <associate|auto-60|<tuple|3.5.2.5|33>>
+    <associate|auto-61|<tuple|3.5.2.6|34>>
+    <associate|auto-62|<tuple|3.5.3|34>>
+    <associate|auto-63|<tuple|3.5.3.1|35>>
+    <associate|auto-64|<tuple|3.6|36>>
+    <associate|auto-65|<tuple|3.6.1|36>>
+    <associate|auto-66|<tuple|3.6.1.1|36>>
+    <associate|auto-67|<tuple|3.6.1.2|39>>
+    <associate|auto-68|<tuple|3.6.2|39>>
+    <associate|auto-69|<tuple|3.7|39>>
     <associate|auto-7|<tuple|2|11>>
-    <associate|auto-70|<tuple|4|43>>
-    <associate|auto-71|<tuple|4.1|43>>
-    <associate|auto-72|<tuple|4.2|44>>
-    <associate|auto-73|<tuple|4.2.1|44>>
-    <associate|auto-74|<tuple|4.2.2|44>>
-    <associate|auto-75|<tuple|4.3|44>>
-    <associate|auto-76|<tuple|4.3.1|45>>
-    <associate|auto-77|<tuple|4.3.2|45>>
-    <associate|auto-78|<tuple|4.3.2.1|46>>
-    <associate|auto-79|<tuple|4.3.2.2|46>>
+    <associate|auto-70|<tuple|4|41>>
+    <associate|auto-71|<tuple|4.1|41>>
+    <associate|auto-72|<tuple|4.2|42>>
+    <associate|auto-73|<tuple|4.2.1|42>>
+    <associate|auto-74|<tuple|4.2.2|42>>
+    <associate|auto-75|<tuple|4.3|42>>
+    <associate|auto-76|<tuple|4.3.1|43>>
+    <associate|auto-77|<tuple|4.3.2|43>>
+    <associate|auto-78|<tuple|4.3.2.1|44>>
+    <associate|auto-79|<tuple|4.3.2.2|44>>
     <associate|auto-8|<tuple|2.1|11>>
-    <associate|auto-80|<tuple|4.4|47>>
-    <associate|auto-81|<tuple|4.4.1|47>>
-    <associate|auto-82|<tuple|4.4.1.1|49>>
-    <associate|auto-83|<tuple|4.4.1.2|50>>
-    <associate|auto-84|<tuple|4.5|50>>
-    <associate|auto-85|<tuple|4.5.1|50>>
-    <associate|auto-86|<tuple|4.6|51>>
-    <associate|auto-87|<tuple|4.7|51>>
-    <associate|auto-88|<tuple|4.7.1|51>>
-    <associate|auto-89|<tuple|5|53>>
+    <associate|auto-80|<tuple|4.4|45>>
+    <associate|auto-81|<tuple|4.4.1|45>>
+    <associate|auto-82|<tuple|4.4.1.1|47>>
+    <associate|auto-83|<tuple|4.4.1.2|48>>
+    <associate|auto-84|<tuple|4.5|48>>
+    <associate|auto-85|<tuple|4.5.1|48>>
+    <associate|auto-86|<tuple|4.6|49>>
+    <associate|auto-87|<tuple|4.7|49>>
+    <associate|auto-88|<tuple|4.7.1|49>>
+    <associate|auto-89|<tuple|5|51>>
     <associate|auto-9|<tuple|2.1.1|13>>
-    <associate|auto-90|<tuple|6|55>>
-    <associate|auto-91|<tuple|6.1|56>>
-    <associate|auto-92|<tuple|6.1.1|57>>
-    <associate|auto-93|<tuple|6.1.1.1|57>>
-    <associate|auto-94|<tuple|6.2|59>>
-    <associate|auto-95|<tuple|6.2.1|61>>
-    <associate|auto-96|<tuple|6.3|61>>
-    <associate|auto-97|<tuple|6.3.1|62>>
-    <associate|auto-98|<tuple|7|63>>
-    <associate|auto-99|<tuple|7.1|63>>
-    <associate|bib-Appel:2015|<tuple|1|109>>
-    <associate|bib-Carette:2009|<tuple|3|109>>
-    <associate|bib-Coq:manual|<tuple|5|109>>
-    <associate|bib-King1993|<tuple|8|109>>
-    <associate|bib-Mahboubi:2013|<tuple|9|109>>
-    <associate|bib-Mairson:1989|<tuple|10|109>>
+    <associate|auto-90|<tuple|6|53>>
+    <associate|auto-91|<tuple|6.1|54>>
+    <associate|auto-92|<tuple|6.1.1|55>>
+    <associate|auto-93|<tuple|6.1.1.1|55>>
+    <associate|auto-94|<tuple|6.2|57>>
+    <associate|auto-95|<tuple|6.2.1|59>>
+    <associate|auto-96|<tuple|6.3|59>>
+    <associate|auto-97|<tuple|6.3.1|60>>
+    <associate|auto-98|<tuple|7|61>>
+    <associate|auto-99|<tuple|7.1|61>>
+    <associate|bib-Appel:2015|<tuple|1|107>>
+    <associate|bib-Carette:2009|<tuple|3|107>>
+    <associate|bib-Coq:manual|<tuple|5|107>>
+    <associate|bib-King1993|<tuple|8|107>>
+    <associate|bib-Mahboubi:2013|<tuple|9|107>>
+    <associate|bib-Mairson:1989|<tuple|10|107>>
+    <associate|bib-bip-340|<tuple|18|107>>
     <associate|bib-bip-schnorr|<tuple|17|109>>
-    <associate|bib-bitcoin|<tuple|11|109>>
-    <associate|bib-f-algebra|<tuple|16|109>>
-    <associate|bib-garillot:2009|<tuple|6|109>>
-    <associate|bib-gentzen|<tuple|7|109>>
-    <associate|bib-libsecp256k1|<tuple|18|109>>
-    <associate|bib-oconnor2014|<tuple|14|109>>
-    <associate|bib-satoshiScript|<tuple|12|109>>
-    <associate|bib-script|<tuple|2|109>>
-    <associate|bib-sec2|<tuple|4|109>>
-    <associate|bib-sha|<tuple|13|109>>
-    <associate|bib-unification|<tuple|15|109>>
+    <associate|bib-bitcoin|<tuple|11|107>>
+    <associate|bib-f-algebra|<tuple|16|107>>
+    <associate|bib-garillot:2009|<tuple|6|107>>
+    <associate|bib-gentzen|<tuple|7|107>>
+    <associate|bib-libsecp256k1|<tuple|17|107>>
+    <associate|bib-oconnor2014|<tuple|14|107>>
+    <associate|bib-satoshiScript|<tuple|12|107>>
+    <associate|bib-script|<tuple|2|107>>
+    <associate|bib-sec2|<tuple|4|107>>
+    <associate|bib-sha|<tuple|13|107>>
+    <associate|bib-unification|<tuple|15|107>>
     <associate|chapter:preliminaries|<tuple|2|11>>
     <associate|cite_ref-Martelli.Montanari.1976_16-1|<tuple|6.1.1|?>>
-    <associate|fig:inheritance|<tuple|8.1|76>>
+    <associate|fig:inheritance|<tuple|8.1|74>>
     <associate|footnote-1|<tuple|1|?>>
     <associate|footnote-2|<tuple|2|?>>
     <associate|footnote-2.1|<tuple|2.1|16>>
     <associate|footnote-2.2|<tuple|2.2|23>>
-    <associate|footnote-3.1|<tuple|3.1|28>>
-    <associate|footnote-3.2|<tuple|3.2|33>>
+    <associate|footnote-3.1|<tuple|3.1|27>>
+    <associate|footnote-3.2|<tuple|3.2|32>>
     <associate|footnr-2.1|<tuple|2.1|16>>
     <associate|footnr-2.2|<tuple|2.2|23>>
-    <associate|footnr-3.1|<tuple|3.1|28>>
-    <associate|footnr-3.2|<tuple|3.2|33>>
-    <associate|full-adder-LHS|<tuple|3.3|26>>
+    <associate|footnr-3.1|<tuple|3.1|27>>
+    <associate|footnr-3.2|<tuple|3.2|32>>
+    <associate|full-adder-LHS|<tuple|3.3|25>>
     <associate|full-adder-RHS|<tuple|3.2|25>>
-    <associate|full-adder-spec|<tuple|3.1|25>>
-    <associate|ss:AssertMerkleRoot|<tuple|4.3.2|45>>
-    <associate|ss:BTDenotationalSemantics|<tuple|4.4.1.1|49>>
-    <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|50>>
-    <associate|ss:BitcoinPrimitives|<tuple|9.3|92>>
-    <associate|ss:BitcoinTransactions|<tuple|4.4.1|47>>
+    <associate|full-adder-spec|<tuple|3.1|24>>
+    <associate|ss:AssertMerkleRoot|<tuple|4.3.2|43>>
+    <associate|ss:BTDenotationalSemantics|<tuple|4.4.1.1|47>>
+    <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|48>>
+    <associate|ss:BitcoinPrimitives|<tuple|9.3|90>>
+    <associate|ss:BitcoinTransactions|<tuple|4.4.1|45>>
     <associate|ss:CheckSigHash-Haskell|<tuple|9.1.6.3|?>>
-    <associate|ss:DAGs|<tuple|7.1|63>>
-    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.2.3|89>>
+    <associate|ss:DAGs|<tuple|7.1|61>>
+    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.2.3|87>>
     <associate|ss:Deserialization|<tuple|6.2|?>>
-    <associate|ss:ELDenotationalSemantics|<tuple|A.1|99>>
-    <associate|ss:FreeMonadicDeserialization|<tuple|9.2.6.1|90>>
-    <associate|ss:Haskell-CheckSigHash|<tuple|9.1.6.3|87>>
-    <associate|ss:Haskell-DAG|<tuple|9.2.6.2|91>>
-    <associate|ss:Haskell-Serialization|<tuple|9.2.6|90>>
+    <associate|ss:ELDenotationalSemantics|<tuple|A.1|97>>
+    <associate|ss:FreeMonadicDeserialization|<tuple|9.2.6.1|88>>
+    <associate|ss:Haskell-CheckSigHash|<tuple|9.1.6.3|85>>
+    <associate|ss:Haskell-DAG|<tuple|9.2.6.2|89>>
+    <associate|ss:Haskell-Serialization|<tuple|9.2.6|88>>
     <associate|ss:ListFunctors|<tuple|2.2.2|13>>
     <associate|ss:MonadZero|<tuple|2.3.4|16>>
-    <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|32>>
-    <associate|ss:Serialization|<tuple|7.2|68>>
-    <associate|ss:UniversalSignatureHashModes|<tuple|6.3|61>>
-    <associate|ss:bitOps|<tuple|3.3.1|23>>
-    <associate|ss:checkSigHashAll|<tuple|4.5.1|50>>
-    <associate|ss:cmr|<tuple|3.7|40>>
-    <associate|ss:coqArith|<tuple|8.3.2|75>>
-    <associate|ss:coqInitial|<tuple|8.2.1|73>>
-    <associate|ss:haskellLoop|<tuple|9.1.5.4|86>>
-    <associate|ss:inflate|<tuple|7.1.2.2|68>>
-    <associate|ss:monadicSemantics|<tuple|4.1|43>>
+    <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|31>>
+    <associate|ss:Serialization|<tuple|7.2|66>>
+    <associate|ss:UniversalSignatureHashModes|<tuple|6.3|59>>
+    <associate|ss:bitOps|<tuple|3.3.1|22>>
+    <associate|ss:checkSigHashAll|<tuple|4.5.1|48>>
+    <associate|ss:cmr|<tuple|3.7|39>>
+    <associate|ss:coqArith|<tuple|8.3.2|73>>
+    <associate|ss:coqInitial|<tuple|8.2.1|71>>
+    <associate|ss:haskellLoop|<tuple|9.1.5.4|84>>
+    <associate|ss:inflate|<tuple|7.1.2.2|66>>
+    <associate|ss:monadicSemantics|<tuple|4.1|41>>
     <associate|ss:optionMonad|<tuple|2.3.4.1|17>>
-    <associate|ss:pruning|<tuple|4.3.2.1|46>>
-    <associate|ss:salted|<tuple|4.3.2.2|46>>
-    <associate|ss:typeInference|<tuple|7.1.1|65>>
-    <associate|ss:unboundedLoop|<tuple|6.2|59>>
-    <associate|thm:CSCT|<tuple|3.3|31>>
+    <associate|ss:pruning|<tuple|4.3.2.1|44>>
+    <associate|ss:salted|<tuple|4.3.2.2|44>>
+    <associate|ss:typeInference|<tuple|7.1.1|63>>
+    <associate|ss:unboundedLoop|<tuple|6.2|57>>
+    <associate|thm:CSCT|<tuple|3.4|30>>
     <associate|v:checkSigHashAll|<tuple|8.6.6|?>>
   </collection>
 </references>
@@ -8121,7 +8097,7 @@
 
       libsecp256k1
 
-      bip-schnorr
+      bip-340
 
       unification
 
@@ -8139,7 +8115,7 @@
 
       libsecp256k1
 
-      bip-schnorr
+      bip-340
 
       oconnor2014
     </associate>

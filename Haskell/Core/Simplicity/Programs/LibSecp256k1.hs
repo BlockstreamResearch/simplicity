@@ -23,7 +23,6 @@ module Simplicity.Programs.LibSecp256k1
   -- * Schnorr signature operations
   , XOnlyPubKey, pkPoint
   , Sig, sigUnpack
-  , scalarUnrepr
   , schnorrVerify, schnorrAssert
   -- * Example instances
   , lib
@@ -31,6 +30,7 @@ module Simplicity.Programs.LibSecp256k1
 
 import Prelude hiding (drop, take, and, or, not, sqrt, Word)
 
+import Simplicity.Digest
 import Simplicity.Functor
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
@@ -186,6 +186,7 @@ data Lib term =
     -- Corresponds to @secp256k1_gej_has_quad_y_var@.
   , hasQuadY :: term GEJ Bit
 
+    -- | This function reduces a 256-bit unsigned integer module the order of the secp256k1 curve, yielding a scalar value.
   , normalizeScalar :: term Word256 Scalar
 
   , scalarIsZero :: term Scalar Bit
@@ -213,20 +214,17 @@ data Lib term =
     -- If the result is the point at infinity, it is returned in canonical form.
   , ecMult :: term ((GEJ, Scalar), Scalar) GEJ
 
-    -- | This function unpacks a 'XOnlyPubKey' as a elliptic curve point in Jacobian coordinates.
+    -- | This function unpacks a 'XOnlyPubKey' as a elliptic curve point in affine coordinates.
     --
     -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
     -- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
-  , pkPoint :: term XOnlyPubKey (Either () GEJ)
+  , pkPoint :: term XOnlyPubKey (Either () GE)
 
     -- | This function unpackes a 'Sig' as a pair of a field element and a scalar value.
     --
     -- If the field element's value is greater than or equal to the field order, the function return @Left ()@.
     -- If the scalar element's value is greater than or equal to secp256k1's curve order, the function returns @Left ()@.
   , sigUnpack :: term Sig (Either () (FE, Scalar))
-
-    -- | This function reduces a 256-bit unsigned integer module the order of the secp256k1 curve, yielding a scalar value.
-  , scalarUnrepr :: term Word256 Scalar
 
     -- | This function is given a public key, a 256-bit message, and a signature, and checks if the signature is valid for the given message and public key.
   , schnorrVerify :: term ((XOnlyPubKey, Word256), Sig) Bit
@@ -263,7 +261,6 @@ instance SimplicityFunctor Lib where
     , ecMult = m ecMult
     , pkPoint = m pkPoint
     , sigUnpack = m sigUnpack
-    , scalarUnrepr = m scalarUnrepr
     , schnorrVerify = m schnorrVerify
     }
 
@@ -489,7 +486,9 @@ mkLib Sha256.Lib{..} = lib
      let
       k1 = (scribe256 7 &&& cub >>> add >>> sqrt) &&& iden
        >>> match (injl unit) (injr k2)
-      k2 = swapP &&& (unit >>> feOne)
+      k2 = (ih &&& take mkEven)
+      mkEven = (drop . drop . drop . drop . drop $ iiih) &&& iden
+           >>> cond neg iden
       lt = sub256 >>> oh
      in
       (iden &&& scribe (toWord256 feOrder) >>> lt) &&& iden
@@ -497,30 +496,24 @@ mkLib Sha256.Lib{..} = lib
 
   , sigUnpack =
      let
-      lt = subtractor word256 >>> oh
+      lt = sub256 >>> oh
      in
       and (oh &&& scribe (toWord256 feOrder) >>> lt)
           (ih &&& scribe (toWord256 scalarOrder) >>> lt)
   &&& iden
   >>> cond (injr iden) (injl unit)
 
-  , scalarUnrepr = (iden &&& scribe (toWord256 scalarOrder) >>> subtractor word256) &&& iden
-               >>> ooh &&& (oih &&& ih)
-               >>> cond ih oh
-
   , schnorrVerify =
      let
-      k1 = ioh &&& (iih &&& oh)
-       >>> match false k2
-      k2 = iioh &&& ((oh &&& ioh) &&& iiih >>> ecMult)
+      k1 = ioh &&& (iih &&& oh) >>> match false k2
+      k2 = iioh &&& (((take geNegate &&& (unit >>> feOne)) &&& ioh) &&& iiih >>> ecMult)
        >>> and eqXCoord (drop hasQuadY)
-      nege = (scribe (toWord256 scalarOrder) &&& (h >>> scalarUnrepr) >>> sub256 >>> ih)
-      iv = scribe (toWord256 0x048d9a59fe39fb0528479648e4a660f9814b9e660469e80183909280b329e454)
-      h = m >>> (iv &&& oh >>> hashBlock) &&& ih >>> hashBlock
-      m = (ioh &&& ooh) &&& (oih &&& (scribe (toWord256 0x8000000000000000000000000000000000000000000000000000000000000500)))
+      iv = scribe . toWord256 . integerHash256 . ivHash $ tagIv "BIP340/challenge"
+      e = (iv &&& (ioh &&& ooh) >>> hashBlock) 
+              &&& (oih &&& (scribe (toWord256 0x8000000000000000000000000000000000000000000000000000000000000500)))
+              >>> hashBlock
      in
-      drop sigUnpack &&& (take (take pkPoint) &&& nege)
-  >>> match false k1
+      drop sigUnpack &&& (take (take pkPoint) &&& e) >>> match false k1
   }
    where
     cub = iden &&& sqr >>> mul

@@ -21,7 +21,6 @@ module Simplicity.Programs.LibSecp256k1.Lib
   -- * Schnorr signature operations
   , LibSecp256k1.XOnlyPubKey, pkPoint
   , LibSecp256k1.Sig, sigUnpack
-  , scalarUnrepr
   , schnorrVerify, schnorrAssert
   ) where
 
@@ -54,6 +53,5 @@ wnaf16 = LibSecp256k1.wnaf16 LibSecp256k1.lib
 ecMult = LibSecp256k1.ecMult LibSecp256k1.lib
 pkPoint = LibSecp256k1.pkPoint LibSecp256k1.lib
 sigUnpack = LibSecp256k1.sigUnpack LibSecp256k1.lib
-scalarUnrepr = LibSecp256k1.scalarUnrepr LibSecp256k1.lib
 schnorrVerify = LibSecp256k1.schnorrVerify LibSecp256k1.lib
 schnorrAssert = LibSecp256k1.schnorrAssert LibSecp256k1.lib

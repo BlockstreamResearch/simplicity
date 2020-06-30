@@ -108,6 +108,10 @@ sqrt a | 0 == (fieldOrder + 1) `mod` 4 = do
   guard $ feIsZero (sqr res .-. a)
   return res
 
+mkEven :: FE -> FE
+mkEven a | even (repr a) = a
+         | otherwise = neg a
+
 isQuad :: FE -> Bool
 isQuad = isJust . sqrt
 
@@ -184,6 +188,9 @@ offsetPointZinv a (GE bx by) bzinv = snd $ offsetPointEx a (GE (bx .*. bzinv .^.
 
 pointNegate :: GE -> GE
 pointNegate (GE x y) = GE x (neg y)
+
+toGEJ :: GE -> GEJ
+toGEJ (GE x y) = GEJ x y feOne
 
 scalarModulus :: Word256
 scalarModulus = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
@@ -303,11 +310,11 @@ tableG = t & traverse %~ norm
   zinv = inv z
   norm (GE x y) = GE (x .*. zinv .^. 2) (y .*. zinv .^. 3)
 
-pkPoint :: XOnlyPubKey -> Maybe GEJ
+pkPoint :: XOnlyPubKey -> Maybe GE
 pkPoint (XOnlyPubKey px) = do
-  x <- feUnpack px 
+  x <- feUnpack px
   y <- sqrt (x .^. 3 .+. feSeven)
-  return (GEJ x y feOne)
+  return (GE x (mkEven y))
 
 sigUnpack :: Sig -> Maybe (FE, Scalar)
 sigUnpack (Sig r s) = (,) <$> feUnpack r <*> scalarUnpack s
@@ -319,9 +326,8 @@ schnorr :: XOnlyPubKey  -- ^ public key
 schnorr pk m sg = Just () == do
   p <- pkPoint pk
   (rx, s) <- sigUnpack sg
-  let tag = bsHash (BSC.pack "BIPSchnorr")
+  let tag = bsHash (BSC.pack "BIP340/challenge")
   let h = bsHash . runPut $ put tag >> put tag >> put (fePack rx) >> put pk >> put m
-  let nege = scalarNegate . scalarUnrepr . integerHash256 $ h
-  let r = ecMult p nege s
-  guard $ hasQuadY r
-  guard $ eqXCoord rx r
+  let e = scalarUnrepr . integerHash256 $ h
+  let r = ecMult (toGEJ (pointNegate p)) e s
+  guard $ eqXCoord rx r && hasQuadY r
