@@ -23,11 +23,17 @@ import Data.Serialize (Serialize, encode, get, getShortByteString, put, putShort
 import Lens.Family2 (Adapter', Lens', (^.), (^..), over, review, under)
 import Lens.Family2.Stock (bend, bend_)
 import Lens.Family2.Unchecked (adapter)
+import Numeric (showHex)
 import Simplicity.Word
 import Simplicity.Serialization
 
 -- | Represents a 256-bit hash value or midstate from SHA-256.
-newtype Hash256 = Hash256 { hash256 :: BSS.ShortByteString } deriving (Eq, Ord, Show)
+newtype Hash256 = Hash256 { hash256 :: BSS.ShortByteString } deriving (Eq, Ord)
+
+instance Show Hash256 where
+  show h = "0x" ++ replicate (64 - length hex) '0' ++ hex
+   where
+    hex = showHex (h^.be256_) ""
 
 instance Serialize Hash256 where
   get = Hash256 <$> getShortByteString 32
