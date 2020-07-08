@@ -162,7 +162,7 @@ library
                           Simplicity.Serialization.ByteString as Simplicity.Elements.Serialization.ByteString)
                        requires
                          (Simplicity.Primitive as Simplicity.Elements.Primitive)
-  other-extensions:    GADTs, StandaloneDeriving, TypeFamilies
+  other-extensions:    ConstraintKinds, GADTs, StandaloneDeriving, TypeFamilies
   hs-source-dirs:      Haskell
   default-language:    Haskell2010
   ghc-options:         -O2

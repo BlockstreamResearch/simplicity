@@ -2,6 +2,7 @@
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Bitcoin.Jets
   ( JetType
+  , jetSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
   ) where
@@ -16,7 +17,8 @@ import Data.Void (Void, vacuous)
 import Simplicity.Digest
 import Simplicity.CoreJets (CoreJet, coreJetMap)
 import qualified Simplicity.CoreJets as CoreJets
-import Simplicity.Bitcoin.Dag
+import Simplicity.Bitcoin.Dag hiding (jetSubst)
+import qualified Simplicity.Bitcoin.Dag as Dag
 import Simplicity.Bitcoin.Term
 import qualified Simplicity.Bitcoin.JetType
 import qualified Simplicity.Bitcoin.Serialization.BitString as BitString
@@ -56,6 +58,9 @@ instance Simplicity.Bitcoin.JetType.JetType JetType where
 -- We have floated it out here to make sure the map is shared between invokations of the 'matcher' function.
 jetMap :: Map.Map Hash256 (SomeArrow JetType)
 jetMap = someArrowMap CoreJet <$> coreJetMap
+
+jetSubst :: (TyC a, TyC b) => JetDag JetType a b -> WrappedSimplicity a b
+jetSubst = Dag.jetSubst
 
 -- | This is an instance of 'BitString.getTermStopCode' that specifically decodes the canonical 'JetType' set of known jets.
 getTermStopCode :: (Monad m, Simplicity term, TyC a, TyC b) => m Void -> m Bool -> m (term a b)

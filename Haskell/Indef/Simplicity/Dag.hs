@@ -1,10 +1,12 @@
-{-# LANGUAGE EmptyCase, RankNTypes, ScopedTypeVariables #-}
+{-# LANGUAGE ConstraintKinds, GADTs, RankNTypes, ScopedTypeVariables #-}
 -- | This module provides the 'sortDag' function for converting a Simplicity expression into an topologically sorted, DAG representation.
 module Simplicity.Dag
-  ( jetDag
+  ( jetDag, jetSubst
   , JetDag, NoJetDag
-  -- * Type annoated, open recursive Simplicity terms.
+  -- * Type annoated, open recursive Simplicity terms
   , TermF(..), SimplicityDag
+  -- * Wrapped Simplicity
+  , WrappedSimplicity, unwrap
   ) where
 
 import Prelude hiding (fail, drop, take)
@@ -15,6 +17,7 @@ import Control.Monad.Trans.Writer (Writer, execWriter, tell)
 import Data.Foldable (toList)
 import Data.Map.Strict ((!))
 import qualified Data.Map.Strict as Map
+import Data.Sequence (Seq)
 import Lens.Family2 ((&), (%~))
 import Lens.Family2.State (use)
 import Lens.Family2.Stock (at)
@@ -42,7 +45,6 @@ tellNode h iterm = StateT go
    where
     sz = toInteger (Map.size map)
     f i = sz - i -- transform indexes to offsets
-
 
 -- | A 'Simplicity' instance used with 'jetDag'.
 -- This instance merges identical typed Simplicity sub-expressions to create a DAG (directed acyclic graph) structure that represents the expression.
@@ -85,8 +87,8 @@ linearizeDag dag = execLinearM . go . identityRoot . dagRoot $ dag
 -- If a different set of jets are introduced, then the 'CommitmentRoot' of the result might also not match the 'CommitmentRoot' of the input.
 -- This function invokes type inference to ensure that the type annotations are principle types (with type variables instantiated at unit types)
 -- in order to ensure maximum sharing of expressions with identical 'identityRoot's.
-jetDag :: forall jt a b. (JetType jt, TyC a, TyC b) => JetDag jt a b -> SimplicityDag [] Ty (SomeArrow jt) UntypedValue
-jetDag t = toList pass2
+jetDag :: forall jt a b. (JetType jt, TyC a, TyC b) => JetDag jt a b -> SimplicityDag Seq Ty (SomeArrow jt) UntypedValue
+jetDag t = pass2
  where
   pass1 :: JetDag jt a b
   -- The patterns should never fail as we are running type inference on terms that are already known to be well typed.
@@ -94,10 +96,25 @@ jetDag t = toList pass2
   -- The first pass matches jets and wraps them in a uJet combinator to ensure their types are not simplified by the type inference pass, which could possibly destroy the structure of the jets.
   pass1 = case typeCheck =<< typeInference pass1 (linearizeDag t) of
             Right pass -> pass
-            Left e -> error $ "sortDag.pass1: " ++ e
+            Left e -> error $ "jetDag.pass1: " ++ e
   pass2 = case typeInference pass1 (linearizeDag pass1) of
             Right pass -> pass
-            Left e -> error $ "sortDag.pass2: " ++ e
+            Left e -> error $ "jetDag.pass2: " ++ e
+
+type WrappedSimplicity = WrappedTerm Simplicity
+
+data WrappedTerm simplicity a b where
+  (:@:) :: (forall term. simplicity term => x -> term a b) -> x -> WrappedTerm simplicity a b
+
+unwrap :: simplicity term => WrappedTerm simplicity a b -> term a b
+unwrap (f :@: x) = f x
+
+jetSubst :: forall k jt a b. (JetType jt, TyC a, TyC b) => JetDag jt a b -> WrappedSimplicity a b
+jetSubst t = k :@: jetDag t
+ where
+  k x = case typeCheck x of
+                 Right pass -> pass
+                 Left e -> error $ "subJets: " ++ e
 
 -- These combinators are used in to assist making 'Dag' instances.
 mkLeaf idComb jmComb uComb =
