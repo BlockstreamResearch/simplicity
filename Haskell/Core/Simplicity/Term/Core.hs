@@ -4,10 +4,10 @@
 module Simplicity.Term.Core
  ( module Simplicity.Ty
  , Core(..)
- , elimS, copair
+ , elimS, copair, bindR
  , swapP, swapS
  -- * Notation for 'Core' terms
- , (>>>), (&&&)
+ , (>>>), (|||), (&&&)
  -- | The following expressions are for short sequences of 'take' and 'drop', with 'iden' that is used to access components of Simplicity inputs.
  --
  -- * @o@ means 'take'
@@ -67,12 +67,23 @@ swapP = pair (drop iden) (take iden)
 swapS :: (Core term, TyC a, TyC b) => term (Either a b) (Either b a)
 swapS = copair (injr iden) (injl iden)
 
+-- | Combinator for lifting with (Either b) monad.
+bindR :: (Core term, TyC a, TyC b, TyC c) => term a (Either b c) -> term (Either b a) (Either b c)
+bindR = copair (injl iden)
+
 -- same precidence as in Control.Category.
 infixr 1 >>>
 
 -- | @s '>>>' t = 'comp' s t@
 (>>>) :: (Core term, TyC a, TyC b, TyC c) => term a b -> term b c -> term a c
 (>>>) = comp
+
+-- same precidence as in Control.Arrow.
+infixr 2 |||
+
+-- | @s '|||' t = 'copair' s t@
+(|||) :: (Core term, TyC a, TyC b, TyC c) => term a c -> term b c -> term (Either a b) c
+(|||) = copair
 
 -- same precidence as in Control.Arrow.
 infixr 3 &&&
