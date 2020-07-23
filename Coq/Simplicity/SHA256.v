@@ -334,7 +334,7 @@ split.
   rewrite to_fromZ.
   symmetry.
   apply Int.eqm_samerepr.
-  apply Zbits.eqmod_mod.
+  apply Int.eqmod_mod.
   reflexivity.
  repeat f_equal;
   rewrite !add32_correct, ?majWord32_Maj, chWord32_Ch,
