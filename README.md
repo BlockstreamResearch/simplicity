@@ -25,7 +25,7 @@ Software artifacts can be built using [Nix](https://nixos.org/nix/).
 
 To build the Coq project, we first need to build the VST dependency.
 
-1. Download and extract the lastest VST from <https://github.com/PrincetonUniversity/VST/archive/v2.4.tar.gz>.
+1. Download and extract the lastest VST from <https://github.com/PrincetonUniversity/VST/archive/v2.5.tar.gz>.
 1. Build the VST project by running `make` in the extracted directory.  If you are in a rush it is sufficent to run `make sha/functional_prog.vo`.
 (Tip: if you have a newer version of Coq, you can try setting the environment variable `IGNORECOQVERSION=true`.)
 1. Install the VST project into your user's `.local/share` (or `XDG_DATA_HOME`) directory by running
