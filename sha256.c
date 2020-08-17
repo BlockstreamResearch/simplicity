@@ -3,14 +3,14 @@
 #include <assert.h>
 #include <limits.h>
 
-/* Given a SHA-256 midstate, 'h', of '*count / 512' blocks, and
+/* Given a SHA-256 midstate, 'h', of 'len / 512' blocks, and
  * a 'block' with 'len % 512' bits set and with the remaining bits set to 0,
  * finalize the SHA-256 computation by adding SHA-256 padding and set 'h' to the resulting SHA-256 hash.
  *
  * Precondition: uint32_t h[8];
  *               uint32_t block[16];
  */
-static void sha256_end(uint32_t* h, uint32_t* block, const size_t len) {
+static void sha256_end(uint32_t* h, uint32_t* block, const uint_fast64_t len) {
   block[len / 32 % 16] |= (uint32_t)1 << (31 - len % 32);
   if (448 <= len % 512) {
     sha256_compression(h, block);
@@ -25,6 +25,7 @@ static void sha256_end(uint32_t* h, uint32_t* block, const size_t len) {
  *
  * Precondition: uint32_t h[8];
  *               '*s' is a valid bitstring;
+ *               's->len < 2^64;
  */
 void sha256_bitstring(uint32_t* h, const bitstring* s) {
   /* This static assert should never fail if uint32_t exists.
@@ -60,14 +61,14 @@ void sha256_bitstring(uint32_t* h, const bitstring* s) {
 
       if (count / 32 != (count + CHAR_BIT) / 32) {
         /* The next character from s->arr straddles (or almost straddles) the boundary of two elements of the block array. */
-        block[count / 32 % 16] |= (uint32_t)(ch >> (count + CHAR_BIT) % 32);
+        block[count / 32 % 16] |= (uint32_t)((uint_fast32_t)ch >> (count + CHAR_BIT) % 32);
         if (count / 512 != (count + delta) / 512) {
           sha256_compression(h, block);
           memset(block, 0, sizeof(uint32_t[16]));
         }
       }
       if ((count + CHAR_BIT) % 32) {
-        block[(count + CHAR_BIT) / 32 % 16] |= 1U * ch << (32 - (count + CHAR_BIT) % 32);
+        block[(count + CHAR_BIT) / 32 % 16] |= (uint32_t)(1U * (uint_fast32_t)ch << (32 - (count + CHAR_BIT) % 32));
       }
       count += delta;
     }
