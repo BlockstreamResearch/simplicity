@@ -12,6 +12,10 @@ module Simplicity.Programs.Word
   , shift, rotate
   , signedResize, signedShift
   , bitwise, bitwiseTri
+  -- * Bounded loops
+  , minPartition
+  , forAll
+  , forAllLT
   ) where
 
 import Prelude hiding (Word, drop, take, not, or)
@@ -242,3 +246,23 @@ rotate w z = subseqWrap w w (z `mod` wordSize w)
    subseqWrap0 (Left (Left (MuchBigger bw))) = rec &&& rec
     where
      rec = subseqWrap0 (Left (Left bw))
+
+high :: (Core term, TyC a) => Word b -> term a b
+high SingleV = true
+high (DoubleV w) = rec &&& rec
+ where
+  rec = high w
+
+minPartition :: (Core term, TyC c, TyC a, TyC b) => Word w -> term (c, w) (Either a b) -> term c w
+minPartition SingleV test = iden &&& false >>> test >>> false ||| true
+minPartition (DoubleV n) test = iden &&& minPartition n (oh &&& (ih &&& high n) >>> test)
+                            >>> ih &&& minPartition n (ooh &&& (oih &&& ih) >>> test)
+
+forAll :: (Core term, TyC c, TyC a) => Word w -> term ((c, w), a) a -> term (c, a) a
+forAll SingleV body = (oh &&& true) &&& (((oh &&& false) &&& ih) >>> body) >>> body
+forAll (DoubleV n) body = forAll n (forAll n ((oooh &&& (ooih &&& oih)) &&& ih >>> body))
+
+forAllLT :: (Core term, TyC c, TyC a) => Word w -> term ((c, w), a) a -> term ((c, w), a) a
+forAllLT SingleV body = (oih &&& ((ooh &&& false) &&& ih)) >>> cond body ih
+forAllLT (DoubleV n) body = oh &&& (((ooh &&& oioh) &&& ih) >>> forAllLT n (forAll n ((oooh &&& (ooih &&& oih)) &&& ih >>> body)))
+                        >>> ((ooh &&& oioh) &&& oiih) &&& ih >>> forAllLT n ((oooh &&& (ooih &&& oih)) &&& ih >>> body)
