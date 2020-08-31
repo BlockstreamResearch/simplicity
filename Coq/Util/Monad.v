@@ -4,6 +4,7 @@ Import Coq.Strings.String.StringSyntax.
 Set Implicit Arguments.
 
 Local Open Scope type_scope.
+Declare Scope monad_scope.
 
 (* Commutative and Idempotnent Monads *)
 Module CIMonad.

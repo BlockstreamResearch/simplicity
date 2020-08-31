@@ -8,6 +8,7 @@ Set Primitive Projections.
 Set Implicit Arguments.
 
 Local Open Scope N_scope.
+Declare Scope mc_scope.
 
 Definition Cell := option bool.
 

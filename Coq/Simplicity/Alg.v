@@ -10,6 +10,8 @@ Require Simplicity.Core.
 Set Implicit Arguments.
 Local Open Scope ty_scope.
 Local Open Scope monad_scope.
+Declare Scope term_scope.
+Declare Scope semantic_scope.
 
 Module Core.
 

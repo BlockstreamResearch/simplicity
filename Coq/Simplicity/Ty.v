@@ -1,6 +1,8 @@
 Set Primitive Projections.
 Set Implicit Arguments.
 
+Declare Scope ty_scope.
+
 Inductive Ty : Set :=
 | Unit : Ty
 | Sum  : Ty -> Ty -> Ty

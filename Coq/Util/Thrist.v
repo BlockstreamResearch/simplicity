@@ -1,5 +1,7 @@
 Module Thrist.
 
+Declare Scope thrist_scope.
+
 Inductive T {A} (P : A -> A -> Type) (z:A) : A -> Type :=
 | nil : T P z z
 | cons : forall x y, P x y -> T P z y -> T P z x.
