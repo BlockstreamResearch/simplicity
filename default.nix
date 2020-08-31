@@ -1,4 +1,4 @@
-{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc883", coqVersion ? "coq_8_10", secp256k1git ? null}:
+{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc883", coqVersion ? "coqPackages_8_11", secp256k1git ? null}:
 let hp = nixpkgs.haskell.packages.${compiler};
  in rec
 {
@@ -11,8 +11,8 @@ let hp = nixpkgs.haskell.packages.${compiler};
   };
 
   coq = nixpkgs.callPackage ./Simplicity.Coq.nix {
+    inherit (nixpkgs.${coqVersion}) coq;
     inherit vst;
-    coq = nixpkgs.${coqVersion};
   };
 
   c = nixpkgs.callPackage ./Simplicity.C.nix {
@@ -22,7 +22,7 @@ let hp = nixpkgs.haskell.packages.${compiler};
   libsha256compression = nixpkgs.callPackage ./libsha256compression {};
 
   vst = nixpkgs.callPackage ./vst.nix {
-    coq = nixpkgs.${coqVersion};
+    inherit (nixpkgs.${coqVersion}) coq flocq;
   };
 
   # $ nix-build -A inheritance -o inheritance.Coq.eps

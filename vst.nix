@@ -1,16 +1,16 @@
-{stdenv, fetchurl, coq} :
+{stdenv, fetchurl, coq, flocq } :
 stdenv.mkDerivation {
-  name = "vst-sha256-2.5";
+  name = "vst-sha256-2.6";
   src = fetchurl {
-    url = "https://github.com/PrincetonUniversity/VST/archive/v2.5.tar.gz";
-    sha256 = "0hbgpjlikx1hgy9fgdw41ci8gdql7dmk8bsd2a6riwwp6ywcfm88";
+    url = "https://github.com/PrincetonUniversity/VST/archive/v2.6.tar.gz";
+    sha256 = "1x5jarch8pbrld1s6r1yk49y17m9v2jkwl8gfa4sn4szcl4zvq6p";
   };
 
   buildInputs = [ coq ];
-
+  propagatedBuildInputs = [ flocq ];
 
   buildPhase = ''
-    IGNORECOQVERSION=true make sha/functional_prog.vo
+    COMPCERT=bundled make sha/functional_prog.vo
     gcc -c sha/sha.c -o sha/sha.o
   '';
   installPhase = ''
