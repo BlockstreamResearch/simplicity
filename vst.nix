@@ -1,4 +1,4 @@
-{stdenv, fetchurl, coq, flocq } :
+{stdenv, fetchurl, coq, compcert } :
 stdenv.mkDerivation {
   name = "vst-sha256-2.6";
   src = fetchurl {
@@ -7,23 +7,36 @@ stdenv.mkDerivation {
   };
 
   buildInputs = [ coq ];
-  propagatedBuildInputs = [ flocq ];
+  propagatedBuildInputs = [ compcert ];
 
-  buildPhase = ''
-    COMPCERT=bundled make sha/functional_prog.vo
+  patches = [ ./vst-version.patch ./vst-makefile.patch ];
+  postPatch = ''
+    substituteInPlace util/coqflags \
+      --replace "/usr/bin/env bash" ${stdenv.shell} \
+      --replace "\`/bin/pwd\`" "$out/lib/coq/${coq.coq-version}/user-contrib/VST"
+    substituteInPlace util/calc_install_files \
+      --replace "/bin/bash" ${stdenv.shell}
+  '';
+
+  enableParallelBuilding = true;
+
+  makeFlags = [ "COMPCERT=inst_dir" "COMPCERT_INST_DIR=${compcert}/lib/coq/${coq.coq-version}/user-contrib/compcert" "INSTALLDIR=$(out)/lib/coq/${coq.coq-version}/user-contrib/VST" ];
+
+  buildFlags = [ "default_target" "sha" ];
+
+  postBuild = ''
     gcc -c sha/sha.c -o sha/sha.o
   '';
-  installPhase = ''
-    find . -name \*.vo -exec sh -c '
-     mkdir -p "$out/lib/coq/${coq.coq-version}/user-contrib/VST/''${0%/*}"
-     mv "$0" "$out/lib/coq/${coq.coq-version}/user-contrib/VST/$0"
-     mv "''${0%.vo}.v" "$out/lib/coq/${coq.coq-version}/user-contrib/VST/''${0%.vo}.v"
-     mv "''${0%.vo}.glob" "$out/lib/coq/${coq.coq-version}/user-contrib/VST/''${0%.vo}.glob"
+
+  postInstall = ''
+    install -d "$out/lib/coq/${coq.coq-version}/user-contrib/sha"
+    find sha -name \*.vo -exec sh -c '
+     install -m 0644 -T "$0" "$out/lib/coq/${coq.coq-version}/user-contrib/$0"
+     install -m 0644 -T "''${0%.vo}.v" "$out/lib/coq/${coq.coq-version}/user-contrib/''${0%.vo}.v"
     ' {} \;
-    mv $out/lib/coq/${coq.coq-version}/user-contrib/VST/compcert $out/lib/coq/${coq.coq-version}/user-contrib/compcert
-    mv $out/lib/coq/${coq.coq-version}/user-contrib/VST/sha $out/lib/coq/${coq.coq-version}/user-contrib/sha
-    mkdir -p $out/lib/sha
-    cp sha/sha.o $out/lib/sha/
-    cp sha/sha.h $out/lib/sha/
+    install -d "$out/lib/sha"
+    install -m 0644 -t "$out/lib/sha" "sha/sha.o" "sha/sha.h"
+    install -d "$out/share"
+    install -m 0644 -t "$out/share" "_CoqProject-export"
   '';
 }

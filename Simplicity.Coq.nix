@@ -9,6 +9,7 @@ stdenv.mkDerivation {
   '';
   buildInputs = [ coq ];
   propagatedBuildInputs = [ vst ];
+  enableParallelBuilding = true;
   makefile = "CoqMakefile";
   installFlags = "COQLIB=$(out)/lib/coq/${coq.coq-version}/";
   meta = {

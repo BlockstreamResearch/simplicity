@@ -21,8 +21,15 @@ let hp = nixpkgs.haskell.packages.${compiler};
 
   libsha256compression = nixpkgs.callPackage ./libsha256compression {};
 
-  vst = nixpkgs.callPackage ./vst.nix {
+  compcert = nixpkgs.callPackage ./compcert-opensource.nix {
     inherit (nixpkgs.${coqVersion}) coq flocq;
+    inherit (nixpkgs.${coqVersion}.coq.ocamlPackages) ocaml menhir findlib;
+    ccomp-platform = "x86_32-linux";
+  };
+
+  vst = nixpkgs.callPackage ./vst.nix {
+    inherit (nixpkgs.${coqVersion}) coq;
+    inherit compcert;
   };
 
   # $ nix-build -A inheritance -o inheritance.Coq.eps
