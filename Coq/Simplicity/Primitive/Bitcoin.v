@@ -1,6 +1,6 @@
 Require Import ZArith.
 Require Import String.
-Require Import Util.List.
+Require Import Simplicity.Util.List.
 Require Import compcert.lib.Integers.
 Global Unset Asymmetric Patterns. (* the VST library does a Global Set so we must unset it. *)
 

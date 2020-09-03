@@ -1,6 +1,6 @@
 Require Import Logic.FunctionalExtensionality.
 
-Require Import Util.Monad.
+Require Import Simplicity.Util.Monad.
 Local Open Scope monad_scope.
 
 Definition ReaderT E (M : Type -> Type) A := E -> M A.

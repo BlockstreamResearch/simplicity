@@ -1,6 +1,6 @@
 Require Import PeanoNat.
-Require Import Util.List.
-Require Import Util.Thrist.
+Require Import Simplicity.Util.List.
+Require Import Simplicity.Util.Thrist.
 
 Require Import Simplicity.Alg.
 Require Import Simplicity.BitMachine.

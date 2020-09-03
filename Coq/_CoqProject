@@ -13,11 +13,10 @@ Simplicity/Bit.v
 Simplicity/Primitive/Bitcoin.v
 Simplicity/Translate.v
 Simplicity/Delegation.v
--Q Util Util
-Util/Monad.v
-Util/Thrist.v
-Util/List.v
-Util/Option.v
-Util/Arith.v
-Util/Monad/Reader.v
-Util/PackedClass.v
+Simplicity/Util/Monad.v
+Simplicity/Util/Thrist.v
+Simplicity/Util/List.v
+Simplicity/Util/Option.v
+Simplicity/Util/Arith.v
+Simplicity/Util/Monad/Reader.v
+Simplicity/Util/PackedClass.v

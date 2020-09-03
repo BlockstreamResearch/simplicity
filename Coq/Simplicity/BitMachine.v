@@ -1,7 +1,7 @@
 Require Import PeanoNat.
 Require Import NArith.
-Require Import Util.List.
-Require Import Util.Thrist.
+Require Import Simplicity.Util.List.
+Require Import Simplicity.Util.Thrist.
 Require Import Eqdep_dec.
 
 Set Primitive Projections.

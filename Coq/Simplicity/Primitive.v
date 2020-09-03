@@ -1,9 +1,9 @@
-Require Import Util.List.
+Require Import Simplicity.Util.List.
 Require Import Strings.String.
-Require Import Util.PackedClass.
-Require Import Util.Monad.
-Require Import Util.Monad.Reader.
-Require Import Util.Option.
+Require Import Simplicity.Util.PackedClass.
+Require Import Simplicity.Util.Monad.
+Require Import Simplicity.Util.Monad.Reader.
+Require Import Simplicity.Util.Option.
 
 Require Import Simplicity.Alg.
 Require Import Simplicity.Delegation.

@@ -1,5 +1,5 @@
 Require Import NArith.
-Require Import Util.List.
+Require Import Simplicity.Util.List.
 
 Require Import Simplicity.Alg.
 Require Import Simplicity.BitMachine.

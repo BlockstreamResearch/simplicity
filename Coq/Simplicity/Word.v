@@ -1,7 +1,7 @@
 Require Import Logic.Eqdep_dec.
 Require Import List.
 Require Import ZArith.
-Require Import Util.Arith.
+Require Import Simplicity.Util.Arith.
 Require compcert.lib.Integers.
 
 Require Import Simplicity.Ty.

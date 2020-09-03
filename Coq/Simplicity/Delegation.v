@@ -1,4 +1,4 @@
-Require Import Util.PackedClass.
+Require Import Simplicity.Util.PackedClass.
 Import Coq.Strings.String.StringSyntax.
 
 Require Import Simplicity.Alg.
