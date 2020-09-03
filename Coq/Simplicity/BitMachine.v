@@ -553,7 +553,7 @@ Arguments Skip [s0 s1].
 Arguments Copy [s0 s1].
 Arguments Fwd [s0 s1].
 Arguments Bwd [s0 s1].
-Arguments Abort [s0].
+Arguments Abort {s0}.
 
 Definition newFrame n ctx : T _ _ :=
  NewFrame _ (NewFrame.op n ctx).
