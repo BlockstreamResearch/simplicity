@@ -23,23 +23,40 @@ Software artifacts can be built using [Nix](https://nixos.org/nix/).
 
 ### Building without Nix
 
-To build the Coq project, we first need to build the VST dependency.
+#### Building the Coq project
 
-1. Install the [`flocq` dependency](http://coq.io/opam/coq-flocq.3.3.1.html).
-1. Download and extract the lastest VST from <https://github.com/PrincetonUniversity/VST/archive/v2.6.tar.gz>.
-1. Set the environment variable `COMPCERT=bundled` (unless you have installed CompCert).
-1. Build the VST project by running `make` in the extracted directory.  If you are in a rush it is sufficent to run `make sha/functional_prog.vo`.
-(Tip: if you have a newer version of Coq, you can try setting the environment variable `IGNORECOQVERSION=true`.)
-1. Install the VST project into your user's `.local/share` (or `XDG_DATA_HOME`) directory by running
-    1. `mkdir -p ${XDG_DATA_HOME:-$HOME/.local/share}/coq/VST`
-    1. `cp -r msl sepcomp veric floyd ${XDG_DATA_HOME:-$HOME/.local/share}/coq/VST`
-    1. `cp -r compcert sha ${XDG_DATA_HOME:-$HOME/.local/share}/coq`
+These instructions assume you start within the `simplicity` root directory of this repository.
 
-Now we can build the Simplicity project.
-1. Enter the `Coq` directory.
-1. Execute `coq_makefile -f _CoqProject -o CoqMakefile`.
-1. Build the project by executing `make -f CoqMakefile`.
+Coq 8.12.0 is most easily installed via [opam](https://opam.ocaml.org/) by following the instruction at <https://coq.inria.fr/opam-using.html>.
 
+1. Install `opam` using your distribution's package manager.
+1. `opam init`
+1. `eval $(opam env)`
+1. `opam pin -j$(nproc) add coq 8.12.0`
+1. `opam install -j$(nproc) coqide # optional step`
+
+Next we use opam to install the [CompCert](http://compcert.inria.fr/) dependency
+
+1. `opam repo add coq-released https://coq.inria.fr/opam/released`
+1. `opam install -j$(nproc) coq-compcert.3.7+8.12~coq_platform~open_source`
+
+While the [VST](https://vst.cs.princeton.edu/) dependency is available via opam, we need a custom build.
+
+1. `wget -O - https://github.com/PrincetonUniversity/VST/archive/v2.6.tar.gz | tar -xvzf -`
+1. `cd VST-2.6`
+    1. `make -j$(nproc) default_target sha`
+    1. `make install`
+    1. `install -d $(coqc -where)/user-contrib/sha`
+    1. `install -m 0644 -t $(coqc -where)/user-contrib/sha sha/*.v sha/*.vo`
+    1. `cd ..`
+
+Now we can build (and install) the Simplicity Coq library.
+
+1. `cd Coq`
+    1. `coq_makefile -f _CoqProject -o CoqMakefile`
+    1. `make -f CoqMakefile -j$(nproc)`
+    1. `make -f CoqMakefile install # optional`
+    
 ## Documentation
 
 Detailed documentation can be found in the `Simplicity-TR.tm` TeXmacs file.
