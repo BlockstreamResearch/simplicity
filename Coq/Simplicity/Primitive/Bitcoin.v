@@ -129,7 +129,7 @@ Section Tag.
 Let tag_def {A B} (p : t A B) : hash256.
 pose (nm := name p).
 revert p nm; intros [] nm;
-exact (MerkleRoot.tag (primitivePrefix primName ++ [nm]) refl_equal).
+exact (MerkleRoot.tag (primitivePrefix primName ++ [nm])).
 Defined.
 
 (* Using Eval vm_compute lets us precompute all the tags for all our primitives *)
