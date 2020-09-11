@@ -5,24 +5,20 @@
 module Simplicity.MerkleRoot.Impl
   ( typeRoot, typeRootR
   , CommitmentRoot, commitmentRoot
+  , IdentityRoot, identityRoot
   , WitnessRoot, witnessRoot
   , hiddenRoot
-  , signatureTag, signatureHash, sigHashTag
+  , signatureTag, sigHashTag
   , cmrFail0
   -- * Internal functions
   -- | These functions are use internally to define commitment and witness Merkle root instances for
   -- Primitives and expressions that depend on Primitives.
-  , primitiveCommitmentImpl
-  , jetCommitmentImpl
-  , primitiveWitnessImpl
-  , jetWitnessImpl
+  , primitiveCommitmentImpl, jetCommitmentImpl
+  , primitiveIdentityImpl, jetIdentityImpl
+  , primitiveWitnessImpl, jetWitnessImpl
   ) where
 
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Lazy as BSL
-import qualified Data.ByteString.Lazy.Char8 as BSC
 import Data.List (intercalate)
-import Data.Serialize (encode)
 import Data.Proxy (Proxy(..))
 
 import Simplicity.Digest
@@ -30,14 +26,12 @@ import Simplicity.Term.Core
 import Simplicity.Ty.Word
 
 tag :: [String] -> IV
-tag ws | length str < 56 = bsIv . BSC.pack $ str
-       | otherwise = error $ "Simplicity.MerkleRoot.Tag.tag: tag is too long: " ++ show ws
- where
-  str = intercalate "\US" ws
+tag = tagIv . intercalate "\US"
 
-prefix = ["Simplicity"]
+prefix = ["Simplicity-Draft"]
 typePrefix = prefix ++ ["Type"]
 commitmentPrefix = prefix ++ ["Commitment"]
+identityPrefix = prefix ++ ["Identity"]
 witnessPrefix = prefix ++ ["Witness"]
 primitivePrefix primPrefix = prefix ++ ["Primitive", primPrefix]
 
@@ -47,6 +41,12 @@ typeTag x = tag $ typePrefix ++ [x]
 commitmentTag :: String -> IV
 commitmentTag x = tag $ commitmentPrefix ++ [x]
 
+identityRootTag :: IV
+identityRootTag = tag identityPrefix
+
+identityTag :: String -> IV
+identityTag x = tag $ identityPrefix ++ [x]
+
 witnessTag :: String -> IV
 witnessTag x = tag $ witnessPrefix ++ [x]
 
@@ -54,26 +54,22 @@ primTag :: String -> String -> IV
 primTag primPrefix x = tag $ primitivePrefix primPrefix ++ [x]
 
 jetTag :: IV
-jetTag = tag (prefix ++ ["Jet"])
+jetTag = tag $ prefix ++ ["Jet"]
 
 hiddenTag :: IV
-hiddenTag = tag $ (prefix ++ ["Hidden"])
+hiddenTag = tag $ prefix ++ ["Hidden"]
 
 signatureTag :: IV
-signatureTag = tag $ (prefix ++ ["Signature"])
+signatureTag = tag $ prefix ++ ["Signature"]
 
 sigHashTag :: IV
-sigHashTag = tag $ (prefix ++ ["SigHash"])
+sigHashTag = tag $ prefix ++ ["SigHash"]
 
 -- | This function hashes a hash such that it will not collide with any 'typeRoot', 'commitmentRoot' or 'witnessRoot'.
 --
 -- This function is mainly designed for internal use within this Simplicity library.
 hiddenRoot :: Hash256 -> Hash256
 hiddenRoot = ivHash . compressHalf hiddenTag
-
--- | This function produces an initial value sigHashes given a Commitment Root
-signatureHash :: CommitmentRoot () Word256 -> Hash256 -> Hash256
-signatureHash cmr h = ivHash $ compress signatureTag (commitmentRoot cmr, h)
 
 -- | Computes a hash committing to a Simplicity type.
 -- This function is memoized.
@@ -130,10 +126,47 @@ instance Witness CommitmentRoot where
 instance Delegate CommitmentRoot where
   disconnect (CommitmentRoot s) _ = commit $ compressHalf (commitmentTag "disconnect") s
 
-newtype WitnessRoot a b = WitnessRoot {
+newtype IdentityRoot a b = IdentityRoot Hash256
+
 -- | Interpret a Simplicity expression as a witness hash.
 -- This hash includes 'witness' values and the 'disconnect'ed expression.
--- It also includes all typing decorations.
+-- This also includes the hash of the input and output types.
+identityRoot :: (TyC a, TyC b) => IdentityRoot a b -> Hash256
+identityRoot ir@(IdentityRoot t) = ivHash $ compress (compressHalf identityRootTag t) (typeRootR ra, typeRootR rb)
+ where
+  (ra, rb) = reifyArrow ir
+
+identify = IdentityRoot . ivHash
+
+instance Core IdentityRoot where
+  iden                                    = identify $ commitmentTag "iden"
+  comp (IdentityRoot s) (IdentityRoot t)  = identify $ compress (commitmentTag "comp") (s, t)
+  unit                                    = identify $ commitmentTag "unit"
+  injl (IdentityRoot t)                   = identify $ compressHalf (commitmentTag "injl") t
+  injr (IdentityRoot t)                   = identify $ compressHalf (commitmentTag "injr") t
+  match (IdentityRoot s) (IdentityRoot t) = identify $ compress (commitmentTag "case") (s, t)
+  pair (IdentityRoot s) (IdentityRoot t)  = identify $ compress (commitmentTag "pair") (s, t)
+  take (IdentityRoot t)                   = identify $ compressHalf (commitmentTag "take") t
+  drop (IdentityRoot t)                   = identify $ compressHalf (commitmentTag "drop") t
+
+instance Assert IdentityRoot where
+  assertl (IdentityRoot s) t = identify $ compress (commitmentTag "case") (s, t)
+  assertr s (IdentityRoot t) = identify $ compress (commitmentTag "case") (s, t)
+  fail b = identify $ compress (commitmentTag "fail") b
+
+instance Witness IdentityRoot where
+  witness v = result
+   where
+    result = identify $ compress (identityTag "witness") (bitStringHash (putValue v), typeRootR rb)
+    rb = reifyProxy result
+
+instance Delegate IdentityRoot where
+  disconnect (IdentityRoot s) (IdentityRoot t) = identify $ compress (identityTag "disconnect") (s, t)
+
+newtype WitnessRoot a b = WitnessRoot {
+ -- | Interpret a Simplicity expression as a witness hash.
+ -- This hash includes 'witness' values and the 'disconnect'ed expression.
+ -- It also includes all typing decorations.
     witnessRoot :: Hash256
   } deriving (Eq, Show)
 
@@ -190,7 +223,6 @@ instance Core WitnessRoot where
     proxy :: proxy a (b,c) -> (Proxy a, Proxy b, Proxy c)
     proxy _ = (Proxy, Proxy, Proxy)
     (proxyA, proxyB, proxyC) = proxy result
-
   take (WitnessRoot t) = result
    where
     result = observe $ compress (compress (witnessTag "take") (typeRootR (reifyProxy proxyA), typeRootR (reifyProxy proxyB)))
@@ -246,14 +278,13 @@ instance Delegate WitnessRoot where
 
 primitiveCommitmentImpl primPrefix primName = commit . primTag primPrefix . primName
 
-jetCommitmentImpl wrt = commit $ compressHalf jetTag wrt
+-- Jets commit to their types, so we use 'identityRoot' here.
+jetCommitmentImpl ir = commit $ compressHalf jetTag (identityRoot ir)
+
+primitiveIdentityImpl primPrefix primName = identify . primTag primPrefix . primName
+
+jetIdentityImpl ir = identify $ compressHalf jetTag (identityRoot ir)
 
 primitiveWitnessImpl primPrefix primName = observe . primTag primPrefix . primName
 
-jetWitnessImpl wrt = observe $ compressHalf jetTag wrt
-  -- Idea for alternative WitnessRoot instance:
-  --     jet t = t
-  -- Trasparent jet witnesses would mean we could define the jet class as
-  --     jet :: (TyC a, TyC b) => (forall term0. (Assert term0, Primitive term0, Jet term0) => term0 a b) -> term a b
-  -- And then jets could contain jets such that their Sementics, WitnessRoots, and hence CommitmentRoots would all be transparent to jet sub-experssions.
-  -- Need to think carefully what this would mean for concensus, but I think it is okay.
+jetWitnessImpl ir = observe $ compressHalf jetTag (identityRoot ir)

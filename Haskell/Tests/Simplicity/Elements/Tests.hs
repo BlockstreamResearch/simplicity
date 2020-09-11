@@ -67,8 +67,9 @@ hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
   ix = 0
   txo = sigTxiTxo (sigTxIn tx1 ! ix)
   Just txEnv = primEnv tx1 ix undefined
+  sigHashTag = bsHash $ BSC.pack "Simplicity-Draft\USSigHash"
   hashAll_spec = bslHash . runPutLazy
-               $ putLazyByteString (padSHA1 . BSL.fromStrict $ BSC.pack "Simplicity\USSigHash")
+               $ put sigHashTag >> put sigHashTag
               >> put (sigTxInputsHash tx1)
               >> put (sigTxOutputsHash tx1)
               >> putWord32be (sigTxVersion tx1)
@@ -76,7 +77,8 @@ hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
               >> putWord32be ix
               >> put (utxoAsset txo)
               >> put (utxoAmount txo)
+  signatureTag = bsHash $ BSC.pack "Simplicity-Draft\USSignature"
   sigHashAll_spec = bslHash . runPutLazy
-                  $ putLazyByteString (padSHA1 . BSL.fromStrict $ BSC.pack "Simplicity\USSignature")
+                  $ put signatureTag >> put signatureTag
                  >> put (commitmentRoot hashAll)
                  >> put hashAll_spec

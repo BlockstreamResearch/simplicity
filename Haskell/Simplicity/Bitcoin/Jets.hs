@@ -32,19 +32,19 @@ data JetType a b where
 deriving instance Eq (JetType a b)
 deriving instance Show (JetType a b)
 
-data MatcherInfo a b = MatcherInfo (WitnessRoot a b)
+data MatcherInfo a b = MatcherInfo (IdentityRoot a b)
 
 instance Simplicity.Bitcoin.JetType.JetType JetType where
   type MatcherInfo JetType = MatcherInfo
 
   specification (CoreJet jt) = CoreJets.specification jt
 
-  matcher (MatcherInfo wr) = do
-    SomeArrow jt <- Map.lookup (witnessRoot wr) jetMap
-    let (wra, wrb) = reifyArrow wr
+  matcher (MatcherInfo ir) = do
+    SomeArrow jt <- Map.lookup (identityRoot ir) jetMap
+    let (ira, irb) = reifyArrow ir
     let (jta, jtb) = reifyArrow jt
     -- If the error below is thrown it suggests there is some sort of type annotation mismatch in the map below
-    case (equalTyReflect wra jta, equalTyReflect wrb jtb) of
+    case (equalTyReflect ira jta, equalTyReflect irb jtb) of
       (Just Refl, Just Refl) -> return jt
       otherwise -> error "mathcher{Simplicity.Bitcoin.Jets.JetType}: type match error"
 
@@ -76,17 +76,17 @@ putTermLengthCode = BitString.putTermLengthCode
 instance Core MatcherInfo where
   iden = MatcherInfo iden
   unit = MatcherInfo unit
-  injl (MatcherInfo wmr) = MatcherInfo (injl wmr)
-  injr (MatcherInfo wmr) = MatcherInfo (injr wmr)
-  drop (MatcherInfo wmr) = MatcherInfo (drop wmr)
-  take (MatcherInfo wmr) = MatcherInfo (take wmr)
-  pair (MatcherInfo wmrl) (MatcherInfo wmrr) = MatcherInfo (pair wmrl wmrr)
-  match (MatcherInfo wmrl) (MatcherInfo wmrr) = MatcherInfo (match wmrl wmrr)
-  comp (MatcherInfo wmrl) (MatcherInfo wmrr) = MatcherInfo (comp wmrl wmrr)
+  injl (MatcherInfo ir) = MatcherInfo (injl ir)
+  injr (MatcherInfo ir) = MatcherInfo (injr ir)
+  drop (MatcherInfo ir) = MatcherInfo (drop ir)
+  take (MatcherInfo ir) = MatcherInfo (take ir)
+  pair (MatcherInfo irl) (MatcherInfo irr) = MatcherInfo (pair irl irr)
+  match (MatcherInfo irl) (MatcherInfo irr) = MatcherInfo (match irl irr)
+  comp (MatcherInfo irl) (MatcherInfo irr) = MatcherInfo (comp irl irr)
 
 instance Assert MatcherInfo where
-  assertl (MatcherInfo wmr) h = MatcherInfo (assertl wmr h)
-  assertr h (MatcherInfo wmr) = MatcherInfo (assertr h wmr)
+  assertl (MatcherInfo ir) h = MatcherInfo (assertl ir h)
+  assertr h (MatcherInfo ir) = MatcherInfo (assertr h ir)
   fail b = MatcherInfo (fail b)
 
 instance Primitive MatcherInfo where
