@@ -4,14 +4,15 @@
 #include <stdbool.h>
 #include "bounded.h"
 #include "callonce.h"
-#include "tag.h"
+#include "prefix.h"
 #include "sha256.h"
+#include "tag.h"
 #include "uword.h"
 #include "unreachable.h"
 
 /* Prepends Simplicity tag prefixes to a string literal 's'. */
-#define COMMITMENT_TAG(s) "Simplicity\x1F" "Commitment\x1F" s
-#define WITNESS_TAG(s) "Simplicity\x1F" "Witness\x1F" s
+#define COMMITMENT_TAG(s) SIMPLICITY_PREFIX "\x1F" "Commitment\x1F" s
+#define WITNESS_TAG(s) SIMPLICITY_PREFIX "\x1F" "Witness\x1F" s
 
 /* Cached initial values for all the tags.
  * Only to be accessed through 'cmrIV' or 'wmrIV'.
@@ -42,30 +43,30 @@ static sha256_midstate wmr_compIV,
                        wmr_unitIV,
                        wmr_witnessIV;
 static void static_initialize(void) {
-  MK_TAG(cmr_compIV.s, COMMITMENT_TAG("comp"));
-  MK_TAG(cmr_caseIV.s, COMMITMENT_TAG("case"));
-  MK_TAG(cmr_pairIV.s, COMMITMENT_TAG("pair"));
-  MK_TAG(cmr_disconnectIV.s, COMMITMENT_TAG("disconnect"));
-  MK_TAG(cmr_injlIV.s, COMMITMENT_TAG("injl"));
-  MK_TAG(cmr_injrIV.s, COMMITMENT_TAG("injr"));
-  MK_TAG(cmr_takeIV.s, COMMITMENT_TAG("take"));
-  MK_TAG(cmr_dropIV.s, COMMITMENT_TAG("drop"));
-  MK_TAG(cmr_idenIV.s, COMMITMENT_TAG("iden"));
-  MK_TAG(cmr_unitIV.s, COMMITMENT_TAG("unit"));
-  MK_TAG(cmr_witnessIV.s, COMMITMENT_TAG("witness"));
-  MK_TAG(wmr_compIV.s, WITNESS_TAG("comp"));
-  MK_TAG(wmr_assertlIV.s, WITNESS_TAG("assertl"));
-  MK_TAG(wmr_assertrIV.s, WITNESS_TAG("assertr"));
-  MK_TAG(wmr_caseIV.s, WITNESS_TAG("case"));
-  MK_TAG(wmr_pairIV.s, WITNESS_TAG("pair"));
-  MK_TAG(wmr_disconnectIV.s, WITNESS_TAG("disconnect"));
-  MK_TAG(wmr_injlIV.s, WITNESS_TAG("injl"));
-  MK_TAG(wmr_injrIV.s, WITNESS_TAG("injr"));
-  MK_TAG(wmr_takeIV.s, WITNESS_TAG("take"));
-  MK_TAG(wmr_dropIV.s, WITNESS_TAG("drop"));
-  MK_TAG(wmr_idenIV.s, WITNESS_TAG("iden"));
-  MK_TAG(wmr_unitIV.s, WITNESS_TAG("unit"));
-  MK_TAG(wmr_witnessIV.s, WITNESS_TAG("witness"));
+  MK_TAG(&cmr_compIV, COMMITMENT_TAG("comp"));
+  MK_TAG(&cmr_caseIV, COMMITMENT_TAG("case"));
+  MK_TAG(&cmr_pairIV, COMMITMENT_TAG("pair"));
+  MK_TAG(&cmr_disconnectIV, COMMITMENT_TAG("disconnect"));
+  MK_TAG(&cmr_injlIV, COMMITMENT_TAG("injl"));
+  MK_TAG(&cmr_injrIV, COMMITMENT_TAG("injr"));
+  MK_TAG(&cmr_takeIV, COMMITMENT_TAG("take"));
+  MK_TAG(&cmr_dropIV, COMMITMENT_TAG("drop"));
+  MK_TAG(&cmr_idenIV, COMMITMENT_TAG("iden"));
+  MK_TAG(&cmr_unitIV, COMMITMENT_TAG("unit"));
+  MK_TAG(&cmr_witnessIV, COMMITMENT_TAG("witness"));
+  MK_TAG(&wmr_compIV, WITNESS_TAG("comp"));
+  MK_TAG(&wmr_assertlIV, WITNESS_TAG("assertl"));
+  MK_TAG(&wmr_assertrIV, WITNESS_TAG("assertr"));
+  MK_TAG(&wmr_caseIV, WITNESS_TAG("case"));
+  MK_TAG(&wmr_pairIV, WITNESS_TAG("pair"));
+  MK_TAG(&wmr_disconnectIV, WITNESS_TAG("disconnect"));
+  MK_TAG(&wmr_injlIV, WITNESS_TAG("injl"));
+  MK_TAG(&wmr_injrIV, WITNESS_TAG("injr"));
+  MK_TAG(&wmr_takeIV, WITNESS_TAG("take"));
+  MK_TAG(&wmr_dropIV, WITNESS_TAG("drop"));
+  MK_TAG(&wmr_idenIV, WITNESS_TAG("iden"));
+  MK_TAG(&wmr_unitIV, WITNESS_TAG("unit"));
+  MK_TAG(&wmr_witnessIV, WITNESS_TAG("witness"));
 }
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.

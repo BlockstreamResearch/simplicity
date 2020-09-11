@@ -5,11 +5,11 @@
 #include <stdint.h>
 
 /* A length-prefixed encoding of the following Simplicity program:
- *       (Simplicity.Elements.Programs.CheckSigHashAll.Lib.pkwCheckSigHashAll
- *         (PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63)
- *         (Sig 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
- *              0x7d0fbcf693ee43460b86b587111e5087d9f7386c1c49284fb2f8e5c096a339b8
- *       ) )
+ *       (Simplicity.Programs.CheckSigHash.checkSigHash' Simplicity.Elements.Programs.CheckSigHashAll.Lib.hashAll
+ *         (Simplicity.LibSecp256k1.Spec.XOnlyPubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63)
+ *         (Simplicity.LibSecp256k1.Spec.Sig 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
+ *                                           0xf06293f63b67d85136701fc1f9f665a077c06fac37299e7b3969ad00c389b442)
+ *       )
  * with jets.
  */
 extern const unsigned char elementsCheckSigHashAllTx1[];
