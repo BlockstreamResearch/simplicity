@@ -1,7 +1,5 @@
 /* This module defines jets that simulate various Simplicity expressions.
  * Their specifications are given by the specific Simplicity expressions they are simulating.
- * The witness Merkle roots for each jet's corresponding Simplicity expression is given in 'jetTable.gperf'.
- * See also 'jetTable.h'.
  */
 #ifndef JETS_H
 #define JETS_H

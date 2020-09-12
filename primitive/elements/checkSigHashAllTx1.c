@@ -637,7 +637,7 @@ const uint32_t elementsCheckSigHashAllTx1_cmr[] = {
   0xf9ec9658u, 0xf1a8fbd3u, 0xd56ea83au, 0x9f23cf3fu, 0xb912453au, 0x3bf1dbb3u, 0x2d038766u, 0x6bebc01fu
 };
 
-/* The witness Merkle root of the above elementsCheckSigHashAllTx1 Simplicity expression. */
-const uint32_t elementsCheckSigHashAllTx1_wmr[] = {
-  0xa50a42eau, 0x1316c6ddu, 0xdf23e557u, 0x2e56da60u, 0x2f534583u, 0xcf6cd101u, 0xc0c25b64u, 0x754ad438u
+/* The annoated Merkle root of the above elementsCheckSigHashAllTx1 Simplicity expression. */
+const uint32_t elementsCheckSigHashAllTx1_amr[] = {
+  0xf8ff6d60u, 0x1ce810e6u, 0xaedb43a2u, 0x3b031395u, 0x01871be8u, 0x11dd55e8u, 0xa00af6dbu, 0xf59b151bu
 };
