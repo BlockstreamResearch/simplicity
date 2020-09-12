@@ -142,10 +142,10 @@ typedef struct dag_node {
  */
 
 /* A structure of static analyses for a particular node of a Simplicity DAG.
- * 'commitmentMerkleRoot' is the commitment Merkle root of the subexpressions represented by the node.
+ * 'annotatedMerkleRoot' is the a Merkle root to includes the type annotations of all subexpressions.
  */
 typedef struct analyses {
-  sha256_midstate witnessMerkleRoot;
+  sha256_midstate annotatedMerkleRoot;
 } analyses;
 
 /* Given a well-formed dag[i + 1], such that for all 'j', 0 <= 'j' < 'i',
@@ -156,21 +156,22 @@ typedef struct analyses {
  * then we set the value of 'dag[i].cmr' to be the CMR of the subexpression denoted by 'dag'.
  *
  * Precondition: dag_node dag[i + 1] and 'dag' is well-formed.
+ *               dag[i].'tag' \notin {HIDDEN, JET}
  */
 void computeCommitmentMerkleRoot(dag_node* dag, size_t i);
 
-/* Given a well-typed dag representing a Simplicity expression, compute the witness Merkle roots of all subexpressions.
- * For all 'i', 0 <= 'i' < 'len', 'analysis[i].witnessMerkleRoot' will be the WMR of the subexpression denoted by the slice
+/* Given a well-typed dag representing a Simplicity expression, compute the annotated Merkle roots of all subexpressions.
+ * For all 'i', 0 <= 'i' < 'len', 'analysis[i].annotatedMerkleRoot' will be the AMR of the subexpression denoted by the slice
  *
  *     (dag_nodes[i + 1])dag.
  *
- * The WMR of the overall expression will be 'analysis[len - 1].witnessMerkleRoot'.
+ * The AMR of the overall expression will be 'analysis[len - 1].annotatedMerkleRoot'.
  *
  * Precondition: analyses analysis[len];
  *               dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'.
- * Postconditon: analyses analysis[len] contains the witness Merkle roots of each subexpressions of 'dag'.
+ * Postconditon: analyses analysis[len] contains the annotated Merkle roots of each subexpressions of 'dag'.
  */
-void computeWitnessMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
+void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
 
 /* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn

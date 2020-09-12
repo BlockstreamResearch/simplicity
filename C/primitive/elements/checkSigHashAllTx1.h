@@ -19,7 +19,7 @@ extern const size_t sizeof_elementsCheckSigHashAllTx1;
 /* The commitment Merkle root of the above elementsCheckSigHashAllTx1 Simplicity expression. */
 extern const uint32_t elementsCheckSigHashAllTx1_cmr[];
 
-/* The witness Merkle root of the above elementsCheckSigHashAllTx1 Simplicity expression. */
-extern const uint32_t elementsCheckSigHashAllTx1_wmr[];
+/* The annotated Merkle root of the above elementsCheckSigHashAllTx1 Simplicity expression. */
+extern const uint32_t elementsCheckSigHashAllTx1_amr[];
 
 #endif

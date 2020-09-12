@@ -150,7 +150,7 @@ prop_getPutByteStringDag = forallSimplicityDag prop
 
 -- Check that type inference on Simplicity expressions produce correct terms by testing their Merkle roots.
 testInference :: forall a b. (TyC a, TyC b) => String -> (forall term. (Core term) => term a b) -> TestTree
-testInference name program = testGroup name [testProperty "CommitmentRoot" assertion1, testProperty "WitnessRoot" assertion2]
+testInference name program = testGroup name [testProperty "CommitmentRoot" assertion1, testProperty "AnnotatedRoot" assertion2]
  where
   dag :: NoJetDag a b
   dag = program
@@ -161,4 +161,4 @@ testInference name program = testGroup name [testProperty "CommitmentRoot" asser
   pass2 :: forall term. Simplicity term => Either String (term a b)
   pass2 = typeCheck =<< (typeInference dag . jetDag) =<< (pass1 :: Either String (NoJetDag a b))
   assertion1 = pass1 == Right (program :: CommitmentRoot a b)
-  assertion2 = pass2 == (pass1 :: Either String (WitnessRoot a b))
+  assertion2 = pass2 == (pass1 :: Either String (AnnotatedRoot a b))
