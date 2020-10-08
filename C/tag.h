@@ -1,5 +1,5 @@
-#ifndef TAG_H
-#define TAG_H
+#ifndef SIMPLICITY_TAG_H
+#define SIMPLICITY_TAG_H
 
 #include <string.h>
 #include "sha256/compression.h"

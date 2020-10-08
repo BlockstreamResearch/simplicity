@@ -1,7 +1,7 @@
 /* This module defines primitives and jets that are specific to the Elements application for Simplicity.
  */
-#ifndef PRIMITIVE_ELEMENTS_JETS_H
-#define PRIMITIVE_ELEMENTS_JETS_H
+#ifndef SIMPLICITY_PRIMITIVE_ELEMENTS_JETS_H
+#define SIMPLICITY_PRIMITIVE_ELEMENTS_JETS_H
 
 #include "../../jets.h"
 

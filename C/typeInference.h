@@ -1,6 +1,6 @@
 /* This module provides function for running monomorphic type inference over Simplicity DAGs. */
-#ifndef TYPEINFERENCE_H
-#define TYPEINFERENCE_H
+#ifndef SIMPLICITY_TYPEINFERENCE_H
+#define SIMPLICITY_TYPEINFERENCE_H
 
 #include "dag.h"
 #include "type.h"

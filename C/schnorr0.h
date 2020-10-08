@@ -1,5 +1,5 @@
-#ifndef SCHNORR0_H
-#define SCHNORR0_H
+#ifndef SIMPLICITY_SCHNORR0_H
+#define SIMPLICITY_SCHNORR0_H
 
 #include <stddef.h>
 #include <stdint.h>

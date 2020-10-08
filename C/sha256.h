@@ -1,5 +1,5 @@
-#ifndef SHA256_H
-#define SHA256_H
+#ifndef SIMPLICITY_SHA256_H
+#define SIMPLICITY_SHA256_H
 
 #include <stdint.h>
 #include <string.h>

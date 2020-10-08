@@ -1,6 +1,6 @@
 /* This module provides functions for initializing and reading from a stream of bits from a 'FILE'. */
-#ifndef BITSTREAM_H
-#define BITSTREAM_H
+#ifndef SIMPLICITY_BITSTREAM_H
+#define SIMPLICITY_BITSTREAM_H
 
 #include <stdio.h>
 #include <stdint.h>

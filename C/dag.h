@@ -1,8 +1,8 @@
 /* This module defines the structure for Simplicity DAGs, and functions for some analysis of that structure,
  * such as computing Merkle Roots.
  */
-#ifndef DAG_H
-#define DAG_H
+#ifndef SIMPLICITY_DAG_H
+#define SIMPLICITY_DAG_H
 
 #include <stddef.h>
 #include <stdint.h>

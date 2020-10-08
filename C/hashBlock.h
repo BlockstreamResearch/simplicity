@@ -1,5 +1,5 @@
-#ifndef HASHBLOCK_H
-#define HASHBLOCK_H
+#ifndef SIMPLICITY_HASHBLOCK_H
+#define SIMPLICITY_HASHBLOCK_H
 
 #include <stddef.h>
 #include <stdint.h>

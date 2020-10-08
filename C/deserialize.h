@@ -1,6 +1,6 @@
 /* This module provides functions for deserializing Simplicity's bit-wise prefix coding. */
-#ifndef DESERIALIZE_H
-#define DESERIALIZE_H
+#ifndef SIMPLICITY_DESERIALIZE_H
+#define SIMPLICITY_DESERIALIZE_H
 
 #include "bitstream.h"
 #include "dag.h"

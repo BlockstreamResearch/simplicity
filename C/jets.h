@@ -1,8 +1,8 @@
 /* This module defines jets that simulate various Simplicity expressions.
  * Their specifications are given by the specific Simplicity expressions they are simulating.
  */
-#ifndef JETS_H
-#define JETS_H
+#ifndef SIMPLICITY_JETS_H
+#define SIMPLICITY_JETS_H
 
 #include "frame.h"
 

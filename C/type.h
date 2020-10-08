@@ -1,6 +1,6 @@
 /* This module defines the structure for Simplicity type DAGs and computes type Merkle roots. */
-#ifndef TYPE_H
-#define TYPE_H
+#ifndef SIMPLICITY_TYPE_H
+#define SIMPLICITY_TYPE_H
 
 #include <stddef.h>
 #include "sha256.h"

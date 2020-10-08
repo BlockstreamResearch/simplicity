@@ -1,7 +1,7 @@
 /* This module defines the interface that each Simplicity application must implement.
  */
-#ifndef PRIMITIVE_H
-#define PRIMITIVE_H
+#ifndef SIMPLICITY_PRIMITIVE_H
+#define SIMPLICITY_PRIMITIVE_H
 
 #include "bitstream.h"
 #include "typeInference.h"

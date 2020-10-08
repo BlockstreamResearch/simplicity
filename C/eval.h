@@ -1,7 +1,7 @@
 /* This module provides functions for evaluating Simplicity programs and expressions.
  */
-#ifndef EVAL_H
-#define EVAL_H
+#ifndef SIMPLICITY_EVAL_H
+#define SIMPLICITY_EVAL_H
 
 #include "dag.h"
 
