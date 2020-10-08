@@ -1,5 +1,5 @@
-#ifndef UWORD_H
-#define UWORD_H
+#ifndef SIMPLICITY_UWORD_H
+#define SIMPLICITY_UWORD_H
 
 #include <limits.h>
 #include <stddef.h>

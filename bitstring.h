@@ -1,6 +1,6 @@
 /* This modules defines a structure representing bit strings. */
-#ifndef BITSTRING_H
-#define BITSTRING_H
+#ifndef SIMPLICITY_BITSTRING_H
+#define SIMPLICITY_BITSTRING_H
 
 #include <stdlib.h>
 

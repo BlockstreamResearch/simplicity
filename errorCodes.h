@@ -1,8 +1,8 @@
 /* This module defines some constants used for error codes when processing Simplicity.
  * Errors can either indicate a transient or a permanent failure.
  */
-#ifndef ERRORCODES_H
-#define ERRORCODES_H
+#ifndef SIMPLICITY_ERRORCODES_H
+#define SIMPLICITY_ERRORCODES_H
 
 /* By convention, odd error codes are transient failures (i.e. out of memory or I/O errors)
  * while even error codes are permanent failures (i.e. unexpected end of file or parsing error, etc.)

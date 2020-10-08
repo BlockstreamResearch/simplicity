@@ -2,8 +2,8 @@
  * of Simplicity expressions.
  * These helper functions are also used for marshaling data to and from jets.
  */
-#ifndef FRAME_H
-#define FRAME_H
+#ifndef SIMPLICITY_FRAME_H
+#define SIMPLICITY_FRAME_H
 
 #include <assert.h>
 #include <stdbool.h>

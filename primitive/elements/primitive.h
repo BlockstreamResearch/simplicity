@@ -2,8 +2,8 @@
  * It includes the transaction data and input index of the input whose Simplicity program is being executed.
  * It also includes the commitment Merkle root of the program being executed.
  */
-#ifndef PRIMITIVE_ELEMENTS_H
-#define PRIMITIVE_ELEMENTS_H
+#ifndef SIMPLICITY_PRIMITIVE_ELEMENTS_H
+#define SIMPLICITY_PRIMITIVE_ELEMENTS_H
 
 #include "../../primitive.h"
 #include "../../sha256.h"

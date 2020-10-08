@@ -1,5 +1,5 @@
-#ifndef BOUNDED_H
-#define BOUNDED_H
+#ifndef SIMPLICITY_BOUNDED_H
+#define SIMPLICITY_BOUNDED_H
 
 #include <stdint.h>
 
