@@ -29,8 +29,8 @@ static inline bitstream initializeBitstream(FILE* file) {
 
 /* Fetches up to 31 bits from 'stream' as the 'n' least significant bits of return value.
  * The 'n' bits are set from the MSB to the LSB.
- * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available.
- * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if not enough bits are available.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  *
  * Precondition: 0 <= n < 32
  *               NULL != stream
@@ -38,8 +38,8 @@ static inline bitstream initializeBitstream(FILE* file) {
 int32_t getNBits(int n, bitstream* stream);
 
 /* Returns one bit from 'stream', 0 or 1.
- * Returns 'ERR_BITSTREAM_EOF' if no bits are available.
- * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if no bits are available.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  *
  * Precondition: NULL != stream
  */
@@ -48,9 +48,9 @@ static inline int32_t getBit(bitstream* stream) {
 }
 
 /* Allocates a 'bitstring' containing 'n' bits from 'stream'.
- * Returns 'ERR_BITSTREAM_EOF' if not enough bits are available.
- * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
- * Returns 'ERR_MALLOC' if malloc fails.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if not enough bits are available.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
+ * Returns 'SIMPLICITY_ERR_MALLOC' if malloc fails.
  * If successful, '*result' is set to a bitstring with 'n' bits read from 'stream',
  *                '*allocation' points to memory allocated for this bitstring,
  *                and 0 is returned.

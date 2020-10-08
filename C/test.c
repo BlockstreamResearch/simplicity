@@ -34,7 +34,7 @@ static void test_decodeUptoMaxInt(void) {
   };
   const int32_t expected[] =
   { 1, 2, 3, 4, 5, 7, 8, 15, 16, 17
-  , 0xffff, 0x10000, 0x40000000, 0x7fffffff, ERR_DATA_OUT_OF_RANGE
+  , 0xffff, 0x10000, 0x40000000, 0x7fffffff, SIMPLICITY_ERR_DATA_OUT_OF_RANGE
   };
 
   FILE* file = fmemopen_rb(buf, sizeof(buf));

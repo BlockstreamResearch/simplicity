@@ -200,9 +200,9 @@ static int32_t either(jetName* result, jetName a, jetName b, bitstream* stream) 
 
 /* Decode an Elements specific jet name from 'stream' into 'result'.
  * All jets begin with a bit prefix of '1' which needs to have already been consumed from the 'stream'.
- * Returns 'ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
- * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
- * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
+ * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
+ * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * In the above error cases, 'result' may be modified.
  * Returns 0 if successful.
  *
@@ -250,7 +250,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
      case 0x1e: *result = NUMOUTPUTS; return 0;
      case 0x1f:
       /* FEE is not yet implemented.  Disable it. */
-      *result = FEE; return ERR_DATA_OUT_OF_RANGE;
+      *result = FEE; return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
     }
     assert(false);
     UNREACHABLE;
@@ -277,7 +277,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
         *result = SHA256_HASHBLOCK; return 0;
       } else {
         fprintf(stderr, "EC jets nodes not yet implemented.\n");
-        return ERR_DATA_OUT_OF_RANGE;
+        return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
       }
     }
   }
@@ -617,9 +617,9 @@ static dag_node jetNode(jetName name) {
 
 /* Decode an Elements specific jet from 'stream' into 'node'.
  * All jets begin with a bit prefix of '1' which needs to have already been consumed from the 'stream'.
- * Returns 'ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
- * Returns 'ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
- * Returns 'ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
+ * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
+ * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
  *
