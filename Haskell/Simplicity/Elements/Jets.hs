@@ -2,8 +2,11 @@
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Elements.Jets
   ( JetType
+  , jetSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
+  -- * Re-exports
+  , unwrap
   ) where
 
 import Prelude hiding (fail, drop, take)
@@ -16,7 +19,8 @@ import Data.Void (Void, vacuous)
 import Simplicity.Digest
 import Simplicity.CoreJets (CoreJet, coreJetMap)
 import qualified Simplicity.CoreJets as CoreJets
-import Simplicity.Elements.Dag
+import Simplicity.Elements.Dag hiding (jetSubst)
+import qualified Simplicity.Elements.Dag as Dag
 import Simplicity.Elements.Term
 import qualified Simplicity.Elements.JetType
 import qualified Simplicity.Elements.Serialization.BitString as BitString
@@ -56,6 +60,13 @@ instance Simplicity.Elements.JetType.JetType JetType where
 -- We have floated it out here to make sure the map is shared between invokations of the 'matcher' function.
 jetMap :: Map.Map Hash256 (SomeArrow JetType)
 jetMap = someArrowMap CoreJet <$> coreJetMap
+
+-- | Find all the expressions in a term that can be replaced with Elements jets.
+-- Because discounted jets are not transparent, this replacement will change the CMR of the term.
+-- In particular the CMR values passed to 'disconnect' may be different, and thus the result of
+-- evaluation could change in the presence of 'disconnect'.
+jetSubst :: (TyC a, TyC b) => JetDag JetType a b -> WrappedSimplicity a b
+jetSubst = Dag.jetSubst
 
 -- | This is an instance of 'BitString.getTermStopCode' that specifically decodes the canonical 'JetType' set of known jets.
 getTermStopCode :: (Monad m, Simplicity term, TyC a, TyC b) => m Void -> m Bool -> m (term a b)
