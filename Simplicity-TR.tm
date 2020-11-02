@@ -6748,6 +6748,20 @@
   Machine on various inputs. In this file you can see an example of how
   <verbatim|executeUsing (instrumentMachine . translate) program> is used.
 
+  <subsubsection|Fast Evaluation with FFI>
+
+  While Simplicity with assertions expressions can be evaluated directly with
+  the <verbatim|Kleisli> instance, evaluation of sophisticated expressions,
+  such as Schnorr signature verification, can be extremely time and memory
+  consuming. To address this the <verbatim|Core/Simplicity/FFI/Frame.hs> and
+  <verbatim|Core/Simplicity/FFI/Jets.hs> files create bindings via
+  <verbatim|cbits/frame.c> and <verbatim|cbits/jets.c> to the C
+  implementation of jets for Simplicity with assertion expressions. The
+  <verbatim|Core/Simplicity/CoreJets.hs> modules provides a
+  <verbatim|fastCoreEval> that replaces evaluation of subexpressions of
+  Simplicity with assertion expressions that match these jets with optimized
+  implementations.
+
   <section|<verbatim|Simplicity-Indef> library>
 
   To keep the Haskell library of Simplicity modular over different blockchain
@@ -6809,6 +6823,26 @@
   Simplicity language with delegation. The semantics of full Simplicity is
   discussed in Section<nbsp><reference|ss:DenotationalSemanticsOfFullSimplicity>.
 
+  <subsection|<verbatim|JetType> class>
+
+  While the <verbatim|Jet> class allows any expression to be a jet, in
+  reality there we will have a specific set of known jets that we have
+  accelerated implements of. The <verbatim|Indef/Simplicity/JetType.hs>
+  defines the <verbatim|JetType> class whose instances are types which
+  represent sets of known discounted jets. The <verbatim|specification>
+  method define the specification of discounted jets and the
+  <verbatim|matcher> method decides if a given Simplicity expression is known
+  to be substitutable by a some discounted jet. The <verbatim|implementation>
+  gives an optional optimized implementation of the jet, which otherwise
+  defaults to that of the <verbatim|specification>. There are also
+  <verbatim|putJetBit> and <verbatim|getJetBit> used for Serialization (see
+  Section<nbsp><reference|ss:Haskell-Serialization>)
+
+  Because the set of discounted jets in use could vary over time, the
+  <verbatim|JetType> class allows for different types to represent different
+  sets of discounted jets. You can have a different <verbatim|JetType>
+  instance for each version of the set of discounted jets.
+
   <subsection|Denotational Semantics of Full
   Simplicity><label|ss:DenotationalSemanticsOfFullSimplicity>
 
@@ -6833,23 +6867,9 @@
   Simplicity with delegation by returning a concrete function from
   <verbatim|PrimEnv> and <verbatim|a> to <verbatim|Maybe b>.
 
-  <subsection|<verbatim|JetType> class>
-
-  While the <verbatim|Jet> class allows any expression to be a jet, in
-  reality there we will have a specific set of known jets that we have
-  accelerated implements of. The <verbatim|Indef/Simplicity/JetType.hs>
-  defines the <verbatim|JetType> class whose instances are types which
-  represent sets of known discounted jets. \ The <verbatim|specification>
-  method define the specification of discounted jets and the
-  <verbatim|matcher> method decides if a given Simplicity expression is known
-  to be substitutable by a some discounted jet. There are also
-  <verbatim|putJetBit> and <verbatim|getJetBit> used for Serialization (see
-  Section<nbsp><reference|ss:Haskell-Serialization>)
-
-  Because the set of discounted jets in use could vary over time, the
-  <verbatim|JetType> class allows for different types to represent different
-  sets of discounted jets. \ You can have a different <verbatim|JetType>
-  instance for each version of the set of discounted jets.
+  The <verbatim|Indef/Simplicity/Semantics.hs> module also provides a
+  <verbatim|fastEval> function that uses a <verbatim|JetType>'s optimized
+  <verbatim|implementation> to evalute subexpressions with known jets.
 
   <subsection|Type Inference>
 
@@ -7099,6 +7119,26 @@
   alternative <verbatim|ByteString> encoding described in
   Appendix<nbsp><reference|app:AltSerialization>.
 
+  <subsection|Jet Substitution>
+
+  The <verbatim|Indef/Simplicity/Dag.hs> provides also provides a
+  <verbatim|jetSubst> function uses the same substitution mechanism in found
+  in Section <math|<reference|ss:Haskell-DAG>> to return a new Simplicity
+  expression that replaces found jets with explicit jets. This substitution
+  can change the commitment root of the overall expression and of
+  subexpressions. Because the commitment root is used in the semantics of
+  <verbatim|disconnect>, it is even possible for this substitution to change
+  the result of evaluation of expressions.
+
+  In order to support partial evaluation, the <verbatim|jetSubt> function
+  returns a <verbatim|WrappedSimplicity> expression. This result can be
+  unwrapped by the <verbatim|unwrap> function. The use of
+  <verbatim|WrappedSimplicity> lets us share much of the work of substitution
+  in case we want to evaluate the resulting expression with multiple
+  different interpretations. Without <verbatim|WrappedSimplicity> we would
+  end up needing to redo the entire subtitution for each different
+  intepretation of the resulting expression.
+
   <section|<verbatim|Simplicity-Bitcoin> Libary><label|ss:BitcoinPrimitives>
 
   To instantiate the <verbatim|Simplicity-Indef> library, we need to provide
@@ -7187,6 +7227,9 @@
     <item>Jets for hash functions, including the SHA-256 compression
     function.
   </itemize>
+
+  These modules also reexport specialized instances of <verbatim|jetSubst>
+  and <verbatim|fastEval> for their specific <verbatim|JetType>s.
 
   <section|Simplicity <verbatim|testsuite>>
 
@@ -7918,31 +7961,33 @@
     <associate|auto-151|<tuple|9.1.7|87>>
     <associate|auto-152|<tuple|9.1.7.1|87>>
     <associate|auto-153|<tuple|9.1.7.2|88>>
-    <associate|auto-154|<tuple|9.2|88>>
-    <associate|auto-155|<tuple|9.2.1|88>>
-    <associate|auto-156|<tuple|9.2.2|88>>
-    <associate|auto-157|<tuple|9.2.3|89>>
-    <associate|auto-158|<tuple|9.2.4|89>>
-    <associate|auto-159|<tuple|9.2.5|89>>
+    <associate|auto-154|<tuple|9.1.7.3|88>>
+    <associate|auto-155|<tuple|9.2|88>>
+    <associate|auto-156|<tuple|9.2.1|88>>
+    <associate|auto-157|<tuple|9.2.2|89>>
+    <associate|auto-158|<tuple|9.2.3|89>>
+    <associate|auto-159|<tuple|9.2.4|89>>
     <associate|auto-16|<tuple|2.3.3|16>>
-    <associate|auto-160|<tuple|9.2.6|90>>
-    <associate|auto-161|<tuple|9.2.6.1|90>>
-    <associate|auto-162|<tuple|9.2.6.2|91>>
-    <associate|auto-163|<tuple|9.3|92>>
-    <associate|auto-164|<tuple|9.4|92>>
-    <associate|auto-165|<tuple|9.4.1|92>>
-    <associate|auto-166|<tuple|9.4.2|92>>
-    <associate|auto-167|<tuple|9.5|93>>
-    <associate|auto-168|<tuple|10|95>>
-    <associate|auto-169|<tuple|A|97>>
+    <associate|auto-160|<tuple|9.2.5|90>>
+    <associate|auto-161|<tuple|9.2.6|90>>
+    <associate|auto-162|<tuple|9.2.6.1|91>>
+    <associate|auto-163|<tuple|9.2.6.2|92>>
+    <associate|auto-164|<tuple|9.2.7|92>>
+    <associate|auto-165|<tuple|9.3|92>>
+    <associate|auto-166|<tuple|9.4|92>>
+    <associate|auto-167|<tuple|9.4.1|93>>
+    <associate|auto-168|<tuple|9.4.2|95>>
+    <associate|auto-169|<tuple|9.5|97>>
     <associate|auto-17|<tuple|2.3.4|16>>
-    <associate|auto-170|<tuple|A.1|99>>
-    <associate|auto-171|<tuple|A.1.1|102>>
-    <associate|auto-172|<tuple|A.1.2|103>>
-    <associate|auto-173|<tuple|A.1.3|104>>
-    <associate|auto-174|<tuple|A.2|104>>
-    <associate|auto-175|<tuple|B|107>>
-    <associate|auto-176|<tuple|B|109>>
+    <associate|auto-170|<tuple|10|99>>
+    <associate|auto-171|<tuple|A|102>>
+    <associate|auto-172|<tuple|A.1|103>>
+    <associate|auto-173|<tuple|A.1.1|104>>
+    <associate|auto-174|<tuple|A.1.2|104>>
+    <associate|auto-175|<tuple|A.1.3|107>>
+    <associate|auto-176|<tuple|A.2|109>>
+    <associate|auto-177|<tuple|B|?>>
+    <associate|auto-178|<tuple|B|?>>
     <associate|auto-18|<tuple|2.3.4.1|17>>
     <associate|auto-19|<tuple|2.4|17>>
     <associate|auto-2|<tuple|1.1|7>>
@@ -8074,7 +8119,7 @@
     <associate|ss:BitcoinTransactions|<tuple|4.4.1|47>>
     <associate|ss:CheckSigHash-Haskell|<tuple|9.1.6.3|?>>
     <associate|ss:DAGs|<tuple|7.1|63>>
-    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.2.3|89>>
+    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.2.4|89>>
     <associate|ss:Deserialization|<tuple|6.2|?>>
     <associate|ss:ELDenotationalSemantics|<tuple|A.1|99>>
     <associate|ss:FreeMonadicDeserialization|<tuple|9.2.6.1|90>>
