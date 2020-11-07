@@ -1,13 +1,15 @@
-{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GADTs, TypeOperators #-}
+
 -- | This module defines 2^/n/ bit word Simplicity types.
 module Simplicity.Ty.Word
-  ( Vector(..)
+  ( Vector(..), vectorComp, vectorPromote, compareVectorSize
   , Word, wordSize, fromWord, toWord
   -- * Type aliases
   -- | Below are type aliases for Simplicity 'Word' types upto 512-bit words.
   -- Note: This does not limit word sizes; arbitrarily large word sizes are allowed by making further pairs.
   , Word1, Word2, Word4, Word8, Word16, Word32, Word64, Word128, Word256, Word512
   , Vector1, Vector2, Vector4, Vector8, Vector16, Vector32, Vector64, Vector128, Vector256, Vector512
+  , vector1, vector2, vector4, vector8, vector16, vector32, vector64, vector128, vector256, vector512
   -- * Specializations
   -- | The following are useful instances of 'Word' and specializations of 'fromWord' and 'toWord' for commonly used word sizes.
   -- Other word sizes can still be constructed using other 'Word' values.
@@ -32,6 +34,8 @@ module Simplicity.Ty.Word
   , word256, fromWord256, toWord256
   -- ** Word512
   , word512, fromWord512, toWord512
+  -- * Zip Vector
+  , ZipVector(..)
   -- ** Bit
   , module Simplicity.Ty.Bit
   ) where
@@ -39,6 +43,7 @@ module Simplicity.Ty.Word
 import Prelude hiding (Word)
 
 import Control.Monad.Trans.State (State, evalState, get, put)
+import Data.Type.Equality ((:~:)(Refl))
 
 import Simplicity.Ty
 import Simplicity.Ty.Bit
@@ -54,12 +59,66 @@ type Vector128 x = Vector2 (Vector64 x)
 type Vector256 x = Vector2 (Vector128 x)
 type Vector512 x = Vector2 (Vector256 x)
 
+vector1 :: TyC x => Vector x (Vector1 x)
+vector1 = SingleV
+
+vector2 :: TyC x => Vector x (Vector2 x)
+vector2 = DoubleV vector1
+
+vector4 :: TyC x => Vector x (Vector4 x)
+vector4 = DoubleV vector2
+
+vector8 :: TyC x => Vector x (Vector8 x)
+vector8 = DoubleV vector4
+
+vector16 :: TyC x => Vector x (Vector16 x)
+vector16 = DoubleV vector8
+
+vector32 :: TyC x => Vector x (Vector32 x)
+vector32 = DoubleV vector16
+
+vector64 :: TyC x => Vector x (Vector64 x)
+vector64 = DoubleV vector32
+
+vector128 :: TyC x => Vector x (Vector128 x)
+vector128 = DoubleV vector64
+
+vector256 :: TyC x => Vector x (Vector256 x)
+vector256 = DoubleV vector128
+
+vector512 :: TyC x => Vector x (Vector512 x)
+vector512 = DoubleV vector256
+
 -- | @'Vector' x a@ specifies types, @a@, which are nested pairs of ... pairs of @x@'s.
 --
 -- The type @a@ contain 2^/n/ @x@ values for some /n/.
 data Vector x a where
   SingleV :: TyC x => Vector x x
   DoubleV :: (TyC x, TyC a) => Vector x a -> Vector x (Vector2 a)
+
+vectorComp :: TyC a => Vector a b -> Vector b c -> Vector a c
+vectorComp v SingleV = v
+vectorComp v (DoubleV w) = DoubleV (vectorComp v w)
+
+vectorPromote :: Vector x y -> Vector (x,x) (y,y)
+vectorPromote SingleV = SingleV
+vectorPromote (DoubleV v) = DoubleV (vectorPromote v)
+
+compareVectorSize :: Vector z a -> Vector z b -> Either (Vector (b, b) a) (Either (a :~: b) (Vector (a, a) b))
+compareVectorSize SingleV SingleV = Right (Left Refl)
+compareVectorSize (DoubleV n) SingleV =
+  case compareVectorSize n SingleV of
+    Left v -> Left (DoubleV v)
+    Right (Left Refl) -> Left SingleV
+compareVectorSize SingleV (DoubleV m) =
+  case compareVectorSize SingleV m of
+    Right (Left Refl) -> Right (Right SingleV)
+    Right (Right v) -> Right (Right (DoubleV v))
+compareVectorSize (DoubleV n) (DoubleV m) =
+  case compareVectorSize n m of
+    Left v -> Left (vectorPromote v)
+    Right (Left Refl) -> Right (Left Refl)
+    Right (Right v) -> Right (Right (vectorPromote v))
 
 type Word1 = Vector1 Bit
 type Word2 = Vector2 Bit
@@ -78,39 +137,39 @@ type Word512 = Vector512 Bit
 type Word = Vector Bit
 
 word1 :: Word Word1
-word1 = SingleV
+word1 = vector1
 
 word2 :: Word Word2
-word2 = DoubleV word1
+word2 = vector2
 
 word4 :: Word Word4
-word4 = DoubleV word2
+word4 = vector4
 
 word8 :: Word Word8
-word8 = DoubleV word4
+word8 = vector8
 
 word16 :: Word Word16
-word16 = DoubleV word8
+word16 = vector16
 
 word32 :: Word Word32
-word32 = DoubleV word16
+word32 = vector32
 
 word64 :: Word Word64
-word64 = DoubleV word32
+word64 = vector64
 
 word128 :: Word Word128
-word128 = DoubleV word64
+word128 = vector128
 
 word256 :: Word Word256
-word256 = DoubleV word128
+word256 = vector256
 
 word512 :: Word Word512
-word512 = DoubleV word256
+word512 = vector512
 
 -- | Computes the number of bits of the 'Word' 'a'.
 --
 -- @'wordSize' w = 'Simplicity.BitMachine.Ty.bitSizeR' ('reifyProxy' w)@
-wordSize :: Word a -> Int
+wordSize :: Vector x a -> Int
 wordSize SingleV = 1
 wordSize (DoubleV w) = 2*(wordSize w)
 
@@ -201,3 +260,7 @@ toWord256 = toWord word256
 
 toWord512 :: Integer -> Word512
 toWord512 = toWord word512
+
+data ZipVector x a y b where
+  SingleZV :: (TyC x, TyC y) => ZipVector x x y y
+  DoubleZV :: (TyC x, TyC a, TyC y, TyC b) => ZipVector x a y b -> ZipVector x (Vector2 a) y (Vector2 b)

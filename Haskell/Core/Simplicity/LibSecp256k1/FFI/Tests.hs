@@ -3,6 +3,7 @@ module Simplicity.LibSecp256k1.FFI.Tests
  , main
  ) where
 
+import Control.Arrow ((***))
 import Lens.Family2 ((^.), (^..), over, allOf, review, zipWithOf)
 import Test.Tasty (TestTree, defaultMain, testGroup)
 import Test.Tasty.QuickCheck ( Arbitrary(..), arbitrarySizedBoundedIntegral, shrinkIntegral
@@ -20,19 +21,12 @@ main = defaultMain tests
 tests :: TestTree
 tests = testGroup "C / SPEC"
       [ testGroup "field"
-        [ hunit_feIsZero_true "C" C.feIsZero
-        , hunit_feIsZero_true "Spec" Spec.feIsZero
-        , testProperty "normalizeWeak" prop_normalizeWeak
-        , testProperty "normalize" prop_normalize
-        , testProperty "normalize_over_low" prop_normalize_over_low
-        , testProperty "normalize_over_high" prop_normalize_over_high
-        , testProperty "fePack" prop_fePack
-        , testProperty "fePack_over_low" prop_fePack_over_low
-        , testProperty "fePack_over_high" prop_fePack_over_high
-        , testProperty "feUnpack" prop_feUnpack
-        , testProperty "feIsZero" prop_feIsZero
+        [ -- hunit_feIsZero_true "C" C.feIsZero
+--        , hunit_feIsZero_true "Spec" Spec.feIsZero
+--        , testProperty "fePack" prop_fePack
+--        , testProperty "feUnpack" prop_feUnpack
+        {-,-} testProperty "feIsZero" prop_feIsZero
         , testProperty "neg" prop_neg
-        , testProperty "mulInt" prop_mulInt
         , testProperty "add" prop_add
         , testProperty "mul" prop_mul
         , testProperty "sqr" prop_sqr
@@ -48,14 +42,15 @@ tests = testGroup "C / SPEC"
         , testProperty "addPoint_inf" prop_addPoint_inf
         , testProperty "addPoint_inf_l" prop_addPoint_inf_l
         , testProperty "addPoint_inf_r" prop_addPoint_inf_r
-        , testProperty "offsetPoint_all" prop_offsetPoint_all
-        , testProperty "offsetPoint_double" prop_offsetPoint_double
-        , testProperty "offsetPoint_opp" prop_offsetPoint_opp
-        , testProperty "offsetPoint_inf" prop_offsetPoint_inf
+        , testProperty "offsetPointEx_all" prop_offsetPointEx_all
+        , testProperty "offsetPointEx_double" prop_offsetPointEx_double
+        , testProperty "offsetPointEx_opp" prop_offsetPointEx_opp
+        , testProperty "offsetPointEx_inf" prop_offsetPointEx_inf
         , testProperty "offsetPointZinv_all" prop_offsetPointZinv_all
         , testProperty "offsetPointZinv_double" prop_offsetPointZinv_double
         , testProperty "offsetPointZinv_opp" prop_offsetPointZinv_opp
         , testProperty "offsetPointZinv_inf" prop_offsetPointZinv_inf
+        , testProperty "pointMulLambda" prop_pointMulLambda
         , testProperty "eqXCoord" prop_eqXCoord
         , testProperty "eqXCoord_true" prop_eqXCoord_true
         , testProperty "hasQuadY" prop_hasQuadY
@@ -64,38 +59,49 @@ tests = testGroup "C / SPEC"
       , testGroup "scalar"
         [ hunit_scalarNegate_zero
         , testProperty "scalarNegate" prop_scalarNegate
-        , testProperty "scalarNegate_high" prop_scalarNegate_high
+        , testProperty "scalarSplitLambda" prop_scalarSplitLambda
+        , testProperty "scalarSplit128" prop_scalarSplit128
         ]
       , testGroup "ecMult"
         [ testProperty "wnaf 5" (prop_wnaf 5)
-        , testProperty "wnaf_high 5" (prop_wnaf_high 5)
-        , testProperty "wnaf 16" (prop_wnaf 16)
-        , testProperty "wnaf_high 16" (prop_wnaf_high 16)
+        , testProperty "wnaf 15" (prop_wnaf 15)
+        , testProperty "ecMult_inf" prop_ecMult_inf
         , testProperty "ecMult0" prop_ecMult0
         , testProperty "ecMult" prop_ecMult
         ]
-      , testGroup "ecMult"
-        [ testProperty "schnorr_almost_always_false" schnorr_almost_always_false
-        , hunit_schnorr
-      ] ]
-
-instance Arbitrary FE where
-  arbitrary = review fe arbitrary
-
-instance Arbitrary GEJ where
-  arbitrary = review gej arbitrary
+--      , testGroup "ecMult"
+--        [ testProperty "schnorr_almost_always_false" schnorr_almost_always_false
+--        , hunit_schnorr
+      ] -- ]
 
 instance Arbitrary Word256 where
   arbitrary = arbitrarySizedBoundedIntegral
   shrink = shrinkIntegral
 
-instance Arbitrary Scalar where
-  arbitrary = Scalar <$> arbitrary
+instance Arbitrary FE where
+  arbitrary = mkFE <$> arbitrary
+   where
+    mkFE :: Word256 -> FE
+    mkFE = unrepr . toInteger
 
-eq_fe = zipWithOf (allOf fe) (==)
-eq_gej = zipWithOf (allOf (gej.fe)) (==)
+instance Arbitrary GE where
+  arbitrary = GE <$> arbitrary <*> arbitrary
+
+instance Arbitrary GEJ where
+  arbitrary = review gej arbitrary
+
+instance Arbitrary Scalar where
+  arbitrary = mkScalar <$> arbitrary
+   where
+    mkScalar :: Word256 -> Scalar
+    mkScalar = scalarUnrepr . toInteger
+
+eq_fe = (==)
+eq_ge (GE x1 y1) (GE x2 y2) = (eq_fe x1 x2) && (eq_fe y1 y2)
+eq_gej = zipWithOf (allOf gej) eq_fe
 eq_fe_gej (a0,a1) (b0,b1) = (eq_fe a0 b0) && (eq_gej a1 b1)
 
+{-
 hunit_feIsZero_true name isZero = testGroup ("feIsZero_true: " ++ name)
                            $ [ testCase (show i ++ " * bigZero1") (assertBool "feIsZero" $ isZero (C.mulInt i bigZero1)) | i <- [0..64]]
                           ++ [ testCase (show i ++ " * bigZero2") (assertBool "feIsZero" $ isZero (C.mulInt i bigZero2)) | i <- [1..16]]
@@ -112,30 +118,23 @@ hunit_feIsZero_true name isZero = testGroup ("feIsZero_true: " ++ name)
                , FE 0x4000000 0XFFFFFFFF 0 0 0 0 0 0 0 0
                , FE 0x7F0BFD1 0XFFFF003E 0 0 0 0 0 0 0 0xFFC00000
                ]
+-}
 
-prop_normalizeWeak a = C.normalizeWeak a `eq_fe` Spec.normalizeWeak a
-prop_normalize a = C.normalize a `eq_fe` Spec.normalize a
-over_low x y = FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x03FFFFF
-over_high x y = FE (0x3FFFFFF-x) (0x3FFFFFF-y) 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x3FFFFFF 0x07FFFFF
-prop_normalize_over_low x y = prop_normalize (over_low x y)
-prop_normalize_over_high x y = prop_normalize (over_high x y)
-prop_fePack a = C.fePack a == Spec.fePack a
-prop_fePack_over_low x y = prop_fePack (over_low x y)
-prop_fePack_over_high x y = prop_fePack (over_high x y)
-prop_feUnpack w = C.feUnpack w `eq_fe` Spec.feUnpack w
+-- prop_fePack a = C.fePack a == Spec.fePack a
+-- prop_feUnpack w = C.feUnpack w `eq_fe` Spec.feUnpack w
 prop_feIsZero a = C.feIsZero a == Spec.feIsZero a -- feIsZero will essentially always be false on random inputs.
-prop_neg a = forAll (choose (0, 32)) (\m -> C.neg (fromIntegral m) a `eq_fe` Spec.neg m a)
-prop_mulInt a = forAll (choose (0, 32)) (\m -> C.mulInt (fromIntegral m) a `eq_fe` Spec.mulInt m a)
+prop_neg a = C.neg a `eq_fe` Spec.neg a
 prop_add a b = C.add a b `eq_fe` Spec.add a b
 prop_mul a b = C.mul a b `eq_fe` Spec.mul a b
 prop_sqr a = C.sqr a `eq_fe` Spec.sqr a
 prop_inv a = C.inv a `eq_fe` Spec.inv a
-prop_sqrt a = C.sqrt a^..(traverse._fe) == Spec.sqrt a^..(traverse._fe)
+prop_sqrt a = C.sqrt a == Spec.sqrt a
 
 gen_inf = GEJ <$> arbitrary <*> arbitrary <*> pure feZero
 
 prop_double_inf = forAll gen_inf prop_double
 prop_double a = C.double a `eq_gej` Spec.double a
+
 prop_addPoint a b = C.addPoint a b `eq_gej` mappend a b
 prop_addPoint_double z a = prop_addPoint a b
  where
@@ -146,27 +145,27 @@ prop_addPoint_opp z a = prop_addPoint a b
  where
   z2 = C.sqr z
   z3 = z .*. z2
-  b = GEJ (a^._x .*. z2) (C.neg 1 (a^._y .*. z3)) (a^._z .*. z)
+  b = GEJ (a^._x .*. z2) (C.neg (a^._y .*. z3)) (a^._z .*. z)
 prop_addPoint_inf = forAll gen_inf $ \a -> forAll gen_inf $ \b -> prop_addPoint a b
 prop_addPoint_inf_l b = forAll gen_inf $ \a -> prop_addPoint a b
 prop_addPoint_inf_r a = forAll gen_inf $ \b -> prop_addPoint a b
-prop_offsetPoint a b = C.offsetPoint a b `eq_fe_gej` Spec.offsetPoint a b
-prop_offsetPoint_all a bx by = prop_offsetPoint a b
+prop_offsetPointEx a b = C.offsetPointEx a b `eq_fe_gej` Spec.offsetPointEx a b
+prop_offsetPointEx_all a bx by = prop_offsetPointEx a b
  where
   b = GE bx by
-prop_offsetPoint_double z bx by = prop_offsetPoint a b
+prop_offsetPointEx_double z bx by = prop_offsetPointEx a b
  where
   z2 = C.sqr z
   z3 = z .*. z2
   a = GEJ (bx .*. z2) (by .*. z3) z
   b = GE bx by
-prop_offsetPoint_opp z bx by = prop_offsetPoint a b
+prop_offsetPointEx_opp z bx by = prop_offsetPointEx a b
  where
   z2 = C.sqr z
   z3 = z .*. z2
-  a = GEJ (bx .*. z2) (C.neg 1 (by .*. z3)) z
+  a = GEJ (bx .*. z2) (C.neg (by .*. z3)) z
   b = GE bx by
-prop_offsetPoint_inf bx by = forAll gen_inf $ \a -> prop_offsetPoint a b
+prop_offsetPointEx_inf bx by = forAll gen_inf $ \a -> prop_offsetPointEx a b
  where
   b = GE bx by
 prop_offsetPointZinv a b bz = C.offsetPointZinv a b bz `eq_gej` Spec.offsetPointZinv a b bz
@@ -183,11 +182,14 @@ prop_offsetPointZinv_opp z b = prop_offsetPointZinv a (GE bx by) bz
  where
   z2 = C.sqr z
   z3 = z .*. z2
-  a = GEJ (bx .*. z2) (C.neg 1 (by .*. z3)) (C.inv bz .*. z)
+  a = GEJ (bx .*. z2) (C.neg (by .*. z3)) (C.inv bz .*. z)
   GEJ bx by bz = b
 prop_offsetPointZinv_inf b = forAll gen_inf $ \a -> prop_offsetPointZinv a (GE bx by) bz
  where
   GEJ bx by bz = b
+
+prop_pointMulLambda a = C.pointMulLambda a `eq_ge` Spec.pointMulLambda a
+
 prop_eqXCoord x a = C.eqXCoord x a == Spec.eqXCoord x a -- eqXCoord will essentially always be false on random inputs.
 prop_eqXCoord_true x y z = prop_eqXCoord x (GEJ (x .*. z2) y z)
  where
@@ -195,25 +197,24 @@ prop_eqXCoord_true x y z = prop_eqXCoord x (GEJ (x .*. z2) y z)
 prop_hasQuadY a = C.hasQuadY a == Spec.hasQuadY a
 prop_hasQuadY_inf = forAll gen_inf $ prop_hasQuadY
 
-scalar_high :: Word64 -> Word64 -> Scalar
-scalar_high a0 a1 = Scalar $ (fromIntegral a0) + (fromIntegral a1)*2^64 + (0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF * 2^128)
-
 hunit_scalarNegate_zero = testCase "scalarNegate_zero" (assertEqual "" (C.scalarNegate scalarZero) (Spec.scalarNegate scalarZero))
 prop_scalarNegate a = C.scalarNegate a == Spec.scalarNegate a
-prop_scalarNegate_high a0 a1 = prop_scalarNegate $ scalar_high a0 a1
 
-prop_wnaf n a = C.wnaf n a == map f (Spec.wnaf n a)
+prop_wnaf n a = C.wnaf n (scalarUnrepr a) == map f (Spec.wnaf n a)
  where
   f Nothing = 0
   f (Just x) = 2*x+1
-prop_wnaf_high :: Int -> Word64 -> Word64 -> Bool
-prop_wnaf_high n a0 a1 = prop_wnaf n $ scalar_high a0 a1
+
+prop_scalarSplitLambda x = C.scalarSplitLambda x == (scalarUnrepr *** scalarUnrepr) (Spec.scalarSplitLambda x)
+prop_scalarSplit128 x = C.scalarSplit128 x == (scalarUnrepr *** scalarUnrepr) (Spec.scalarSplit128 x)
 
 prop_ecMult x y z = C.ecMult x y z `eq_gej` Spec.ecMult x y z
 prop_ecMult0 x z = prop_ecMult x y z
  where
   y = scalarZero
+prop_ecMult_inf y z = forAll gen_inf $ \x -> prop_ecMult x y z
 
+{-
 schnorr_almost_always_false py px m r s = not $ schnorr (PubKey py px) (review (over be256) m) (Sig r s)
 
 hunit_schnorr = testGroup "schnorr"
@@ -231,3 +232,4 @@ hunit_schnorr = testGroup "schnorr"
   conv = review (over be256)
   pi = 0x243F6A8885A308D313198A2E03707344A4093822299F31D0082EFA98EC4E6C89
   bla = 0x4DF3C3F68FCC83B27E9D42C90431A72499F17875C81A599B566C9889B9696703
+-}

@@ -95,7 +95,7 @@ mkLib Sha256.Lib{..} = lib
                    injl unit)
       curConfAmt = (oh &&& drop (take oooh) >>> cond (scribe (toWord8 9) &&& iden) (scribe (toWord8 8) &&& iden)) &&&
                    drop ((take (take (oih &&& ioh) &&& (oiih &&& iooh)) &&& (take (drop (oih &&& ioh)) &&& (take iiih &&& drop oooh))) &&&
-                   drop (injr ((((take (oih &&& ioh) &&& (oiih &&& iooh)) &&& drop ((oih &&& ioh) &&& (iih &&& (scribe (toWord16 0x8000))))) &&& zero word128) &&& scribe (toWord256 (512+2*256+3*32+8+256+8+256)))))
+                   drop (injr ((((take (oih &&& ioh) &&& (oiih &&& iooh)) &&& drop ((oih &&& ioh) &&& (iih &&& (scribe (toWord16 0x8000))))) &&& (unit >>> zero word128)) &&& scribe (toWord256 (512+2*256+3*32+8+256+8+256)))))
     blk1 = primitive InputsHash &&& primitive OutputsHash
     blk2andMaybe3 = (curAsset &&& curAmt) >>>
                 ((take (take (((unit >>> ((primitive Version &&& primitive LockTime))) &&& (((unit >>> primitive CurrentIndex) &&& oh))) &&& ih)) &&&

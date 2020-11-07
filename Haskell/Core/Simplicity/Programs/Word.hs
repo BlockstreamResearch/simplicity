@@ -2,23 +2,28 @@
 -- | This module defines Simplicity expressions and combinators that operate on Words.
 module Simplicity.Programs.Word
   ( module Simplicity.Ty.Word
-  -- * Arithmetic
   , zero
-  , adder, fullAdder
-  , subtractor, fullSubtractor
-  , multiplier, fullMultiplier
-  -- * Bit-wise operations
-  , bitwiseNot
-  , shift, rotate
-  , bitwise, bitwiseTri
+  , one
+  , add, full_add, increment, full_increment
+  , subtract, full_subtract, negate, decrement, full_decrement
+  , multiply, full_multiply
+  , is_zero, is_one
+  , le, lt
+  , min, max, median
+  , div2n1n, div_mod, divide, modulo, divides
+  , eea, bezout, cofactors, gcd, lcm
+  , msb, lsb
+  , absolute_value, sign
   ) where
 
-import Prelude hiding (Word, drop, take, not, or)
-
+import Prelude hiding ( Word, drop, take, not, and, or, last
+                      , subtract, negate, min, max, gcd, lcm
+                      )
 import Data.Type.Equality ((:~:)(Refl))
 
 import Simplicity.Programs.Bit
-import Simplicity.Term.Core
+import Simplicity.Programs.MultiBit
+import Simplicity.Term.Core hiding (one)
 import Simplicity.Ty.Word
 
 -- | Simplicity expression for the constant function that returns the representation of 0.
@@ -26,11 +31,26 @@ import Simplicity.Ty.Word
 -- @
 -- 'fromWord' w ('zero' w _) = 0
 -- @
-zero :: (Core term, TyC a) => Word b -> term a b
-zero SingleV = false
-zero (DoubleV w) = rec &&& rec
+zero :: Core term => Word a -> term () a
+zero = low
+
+one :: (Core term, TyC a) => Word a -> term () a
+one w = true >>> left_pad_low word1 w
+
+-- | Simplicity expression for computing the sum of two words and a carry input bit, including the carry output bit.
+--
+-- @
+-- 'fromWord1' cout * 2 ^ 'wordSize' w + 'fromWord' w z = 'fromWord' w x + 'fromWord' w y + 'fromWord1' cin
+--  where
+--   (cout, z) = 'fullAdder' w ((x, y), cin)
+-- @
+full_add :: Core term => Word a -> term (Bit, (a, a)) (Bit, a)
+full_add SingleV = maj &&& xor3
+full_add (DoubleV w) = drop (ooh &&& ioh) &&& (oh &&& drop (oih &&& iih) >>> rec)
+                   >>> iih &&& (ioh &&& oh >>> rec)
+                   >>> ioh &&& (iih &&& oh)
  where
-  rec = zero w
+  rec = full_add w
 
 -- | Simplicity expression for computing the sum of two words, including the carry bit.
 --
@@ -39,38 +59,14 @@ zero (DoubleV w) = rec &&& rec
 --  where
 --   (c, z) = 'adder' w (x, y)
 -- @
-adder :: Core term => Word a -> term (a, a) (Bit, a)
-adder SingleV = cond (iden &&& not iden) (false &&& iden)
-adder w@(DoubleV _) = false &&& iden >>> fullAdder w
+add :: (Core term, TyC a) => Word a -> term (a, a) (Bit, a)
+add w = false &&& iden >>> full_add w
 
--- | Simplicity expression for computing the difference of two words, also returning the borrow bit.
---
--- @
--- 'fromWord' w z = 'fromWord1' b * 2 ^ 'wordSize' + 'fromWord' w x - 'fromWord' w y
---  where
---   (b, z) = 'subtractor' w (x, y)
--- @
-subtractor :: (Core term, TyC a) => Word a -> term (a, a) (Bit, a)
-subtractor w = false &&& iden >>> fullSubtractor w
+full_increment :: (Core term, TyC a) => Word a -> term (Bit, a) (Bit, a)
+full_increment w = oh &&& (ih &&& (unit >>> zero w)) >>> full_add w
 
--- | Simplicity expression for computing the sum of two words and a carry input bit, including the carry output bit.
---
--- @
--- 'fromWord1' cout * 2 ^ 'wordSize' w + 'fromWord' w z = 'fromWord' w x + 'fromWord' w y + 'fromWord1' cin
---  where
---   (cout, z) = 'fullAdder' w (cin, (x, y))
--- @
-fullAdder :: Core term => Word a -> term (Bit, (a, a)) (Bit, a)
-fullAdder SingleV = drop add &&& oh
-             >>> ooh &&& (oih &&& ih >>> add)
-             >>> cond true oh &&& iih
- where
-  add = adder SingleV
-fullAdder (DoubleV w) = drop (ooh &&& ioh) &&& (oh &&& drop (oih &&& iih) >>> rec)
-                    >>> iih &&& (ioh &&& oh >>> rec)
-                    >>> ioh &&& (iih &&& oh)
- where
-  rec = fullAdder w
+increment :: (Core term, TyC a) => Word a -> term a (Bit, a)
+increment w = true &&& iden >>> full_increment w
 
 -- | Simplicity expression for computing the difference of two words and a borrow input bit, also returning the borrow output bit.
 --
@@ -79,135 +75,204 @@ fullAdder (DoubleV w) = drop (ooh &&& ioh) &&& (oh &&& drop (oih &&& iih) >>> re
 --  where
 --   (bout, z) = 'fullSubtractor' w (bin, (x, y))
 -- @
-fullSubtractor :: (Core term, TyC a) => Word a -> term (Bit, (a, a)) (Bit, a)
-fullSubtractor w = (take (not iden) &&& drop (oh &&& drop (bitwiseNot w))) >>> fullAdder w >>> take (not iden) &&& ih
+full_subtract :: (Core term, TyC a) => Word a -> term (Bit, (a, a)) (Bit, a)
+full_subtract w = not oh &&& drop (oh &&& (ih >>> complement w))
+              >>> full_add w
+              >>> not oh &&& ih
+
+-- | Simplicity expression for computing the difference of two words, also returning the borrow bit.
+--
+-- @
+-- 'fromWord' w z = 'fromWord1' b * 2 ^ 'wordSize' + 'fromWord' w x - 'fromWord' w y
+--  where
+--   (b, z) = 'subtractor' w (x, y)
+-- @
+subtract :: (Core term, TyC a) => Word a -> term (a, a) (Bit, a)
+subtract w = false &&& iden >>> full_subtract w
+
+negate :: (Core term, TyC a) => Word a -> term a (Bit, a)
+negate w = (unit >>> zero w) &&& iden >>> subtract w
+
+full_decrement :: (Core term, TyC a) => Word a -> term (Bit, a) (Bit, a)
+full_decrement w = oh &&& (ih &&& (unit >>> zero w)) >>> full_subtract w
+
+decrement :: (Core term, TyC a) => Word a -> term a (Bit, a)
+decrement w = true &&& iden >>> full_decrement w
 
 -- | 'fullMultiplier' is a Simplicity expression that helps compute products of larger word sizes from smaller word sizes.
 --
 -- @
 -- 'fromWord' ('DoubleV' w) ('fullMultiplier' w ((a, b), (c, d))) = 'fromWord' w a * 'fromWord' w b  + 'fromWord' w c + 'fromWord' w d
 -- @
-fullMultiplier :: Core term => Word a -> term ((a, a), (a, a)) (a, a)
-fullMultiplier SingleV = take (cond iden false) &&& ih
-                  >>> fullAdder SingleV
-fullMultiplier (DoubleV w) = take (ooh &&& (ioh &&& oih))
-                         &&& ((take (ooh &&& iih) &&& drop (ooh &&& ioh) >>> rec)
-                         &&& (take (oih &&& iih) &&& drop (oih &&& iih) >>> rec))
-                         >>> take (oh &&& ioh)
-                         &&& (drop (ooh &&& iih) &&& (oih &&& drop (oih &&& ioh) >>> rec))
-                         >>> (oh &&& drop (ioh &&& ooh) >>> rec) &&& drop (iih &&& oih)
+full_multiply :: (Core term, TyC a) => Word a -> term ((a, a), (a, a)) (a, a)
+full_multiply SingleV = take (cond iden false) &&& ih
+                    >>> full_add SingleV
+full_multiply (DoubleV w) = take (ooh &&& (ioh &&& oih))
+                        &&& ((take (ooh &&& iih) &&& drop (ooh &&& ioh) >>> rec)
+                        &&& (take (oih &&& iih) &&& drop (oih &&& iih) >>> rec))
+                        >>> take (oh &&& ioh)
+                        &&& (drop (ooh &&& iih) &&& (oih &&& drop (oih &&& ioh) >>> rec))
+                        >>> (oh &&& drop (ioh &&& ooh) >>> rec) &&& drop (iih &&& oih)
  where
-  rec = fullMultiplier w
+  rec = full_multiply w
 
 -- | Simplicity expression for computing the product of two words, returning a doubled size word.
 --
 -- @
 -- 'fromWord' ('DoubleV' w) ('multiplier' w (x, y)) = 'fromWord' w x * 'fromWord' w y
 -- @
-multiplier :: (Core term, TyC a) => Word a -> term (a, a) (a, a)
-multiplier w = iden &&& zero (DoubleV w) >>> fullMultiplier w
+multiply :: (Core term, TyC a) => Word a -> term (a, a) (a, a)
+multiply w = iden &&& (unit >>> zero (DoubleV w)) >>> full_multiply w
 
--- | A Simplicity combinator for computing the bitwise complement of a binary word.
-bitwiseNot :: forall term a. Core term => Word a -> term a a
-bitwiseNot SingleV = not iden
-bitwiseNot (DoubleV w) = (oh >>> rec) &&& (ih >>> rec)
+is_zero :: (Core term, TyC a) => Word a -> term a Bit
+is_zero w = not (some w)
+
+is_one :: (Core term, TyC a) => Word a -> term a Bit
+is_one w = decrement w >>> drop (is_zero w)
+
+lt :: (Core term, TyC a) => Word a -> term (a,a) Bit
+lt w = subtract w >>> oh
+
+le :: (Core term, TyC a) => Word a -> term (a,a) Bit
+le w = not (ih &&& oh >>> lt w)
+
+min :: (Core term, TyC a) => Word a -> term (a,a) a
+min w = le w &&& iden >>> cond oh ih
+
+max :: (Core term, TyC a) => Word a -> term (a,a) a
+max w = le w &&& iden >>> cond ih oh
+
+median :: (Core term, TyC a) => Word a -> term (a, (a,a)) a
+median w = ((oh &&& ioh >>> min w) &&& (oh &&& iih >>> min w) >>> max w)
+           &&& drop (min w) >>> max w
+
+msb :: (Core term, TyC a) => Word a -> term a Bit
+msb w = leftmost w
+
+lsb :: (Core term, TyC a) => Word a -> term a Bit
+lsb w = rightmost w
+
+-- div3n2n (((a1,a2),a3), (b1,b2))
+-- precondition
+-- * [a1,a2,a3] < [b1,b2,0]
+-- * 1000... <= [b1,b2]
+-- postcondtion:
+-- * div3n2n (((a1,a2),a3), (b1,b2)) = ([a1,a2,a3]/[b1,b2], [a1,a2,a3]%[b1,b2])
+div3n2n :: (Core term, TyC a) => Word a -> term (((a, a), a), (a, a)) (a, (a, a))
+div3n2n w = (ooh &&& ioh >>> approxDiv) &&& (oih &&& ih)
+        >>> body
+ where
+  approxDiv = (ooh &&& ih >>> lt w) &&& iden >>> cond lt_case eq_case
+  lt_case = false &&& div2n1n w
+  eq_case = oih &&& ih >>> add w >>> oh &&& ((unit >>> high w) &&& ih)
+  body = ooh &&& (((oiih &&& ioh) &&& (oioh &&& iiih >>> multiply w) >>> subtract (DoubleV w)) &&& (oioh &&& iih))
+      >>> cond overflow loop0
+  overflow = ioh &&& oih
+  loop0 = ooh &&& (oih &&& ih) >>> cond loop1 (ioh &&& oh)
+  loop1 = (oh &&& iih >>> add2w) &&& drop ((take (dec >>> ih)) &&& ih)
+       >>> ooh &&& (oih &&& ih)
+       >>> cond (ioh &&& oh) loop2
+  loop2 = drop (take (dec >>> ih)) &&& (oh &&& iih >>> add2w >>> ih)
+  dec = decrement w
+  add2w = add (DoubleV w)
+
+-- div2n1n ((a1,a2), b)
+-- precondition
+-- * [a1,a2] < [b,0]
+-- * 1000... <= b
+-- postcondtion:
+-- * div2n1n ((a1,a2), b) = ([a1,a2]/b, [a1,a2]%b)
+-- When precondition is false, then return all one bits.
+div2n1n :: (Core term, TyC a) => Word a -> term ((a, a), a) (a, a)
+div2n1n SingleV = oih &&& or ooh (not ih) >>> or oh ih &&& ih
+div2n1n (DoubleV w) = conditions &&& iden >>> cond body (unit >>> high (DoubleV (DoubleV w)))
+ where
+  body = ((ooh &&& oioh) &&& ih >>> rec) &&& (oiih &&& ih)
+     >>> ooh &&& ((oih &&& ioh) &&& iih >>> rec)
+     >>> (oh &&& ioh) &&& iih
+  rec = div3n2n w
+  conditions = and (drop (msb (DoubleV w))) (ooh &&& ih >>> lt (DoubleV w))
+
+divPreShift :: (Core term, TyC a) => Word b -> Vector b a -> term ((a, a), a) ((a, a), a)
+divPreShift SingleV _ = iden
+divPreShift (DoubleV w) v = drop (leftmost v' >>> is_zero w) &&& iden >>> cond shift iden >>> divPreShift w v'
+ where
+  v' = vectorComp vector2 v
+  shift = (oh &&& zv >>> full_shift (DoubleV (vectorComp w v')) w >>> ih)
+      &&& (ih &&& zv >>> full_shift (vectorComp w v') w >>> ih)
+  zv = unit >>> zero w
+
+divPostShift :: (Core term, TyC a) => Word b -> Vector b a -> term (a, a) (a, a)
+divPostShift SingleV _ = iden
+divPostShift (DoubleV w) v = drop (leftmost v' >>> is_zero w) &&& iden >>> cond shift iden >>> divPostShift w v'
+ where
+  v' = vectorComp vector2 v
+  shift = (zv &&& oh >>> full_shift w (vectorComp w v') >>> oh)
+      &&& (ih &&& zv >>> full_shift (vectorComp w v') w >>> ih)
+  zv = unit >>> zero w
+
+div_mod :: (Core term, TyC a) => Word a -> term (a, a) (a, a)
+div_mod w = (drop (is_zero w)) &&& iden
+        >>> cond zero_case div_case
+ where
+  zero_case = ih &&& oh
+  div_case = (((unit >>> zero w) &&& oh) &&& ih >>> divPreShift w SingleV >>> div2n1n w) &&& ih
+         >>> ooh &&& (oih &&& ih >>> divPostShift w SingleV >>> oh)
+
+divide :: (Core term, TyC a) => Word a -> term (a, a) a
+divide w = div_mod w >>> oh
+
+modulo :: (Core term, TyC a) => Word a -> term (a, a) a
+modulo w = div_mod w >>> ih
+
+divides :: (Core term, TyC a) => Word a -> term (a, a) Bit
+divides w = ih &&& oh >>> modulo w >>> is_zero w
+
+eeastep :: (Core term, TyC a) => Word a -> term (((a,a), a), ((a,a),a)) (((a,a), a), ((a,a),a))
+eeastep w = (iih &&& oih >>> lt w) &&& iden
+        >>> cond (step &&& ih) (oh &&& (ih &&& oh >>> step))
+ where
+  step = (oih &&& iih >>> div_mod w) &&& (ooh &&& ioh)
+     >>> (((ooh &&& iioh) &&& (iooh &&& (unit >>> zero w)) >>> full_multiply w >>> ih)
+      &&& ((ooh &&& iiih) &&& (ioih &&& (unit >>> zero w)) >>> full_multiply w >>> ih))
+     &&& oih
+
+eeastep_iterate :: forall term a b. (Core term, TyC a) => Word a -> Word b -> term (((a,a), a), ((a,a),a)) (((a,a), a), ((a,a),a))
+eeastep_iterate w = go
+ where
+  go :: forall b. Word b -> term (((a,a), a), ((a,a),a)) (((a,a), a), ((a,a),a))
+  go SingleV = base >>> base
    where
-    rec = bitwiseNot w
-
--- | A Simplicity combinator for lifting a binary bit operation to a binary word operation that applies the bit operation bit-wise to each bit of the word.
-bitwise :: forall term a. Core term => term (Bit, Bit) Bit -> Word a -> term (a, a) a
-bitwise op = go
- where
-  go :: forall a. Word a -> term (a, a) a
-  go SingleV = op
-  go (DoubleV w) = (ooh &&& ioh >>> rec) &&& (oih &&& iih >>> rec)
+    base = eeastep w
+  go (DoubleV d) = rec >>> rec
    where
-    rec = go w
+    rec = go d
 
--- | A Simplicity combinator for lifting a trinary bit operation to a trinary word operation that applies the bit operation bit-wise to each bit of the word.
--- This is similar to 'bitwise' except works with trinary bit operations instead of binary operations.
-bitwiseTri :: forall term a. Core term => term (Bit, (Bit, Bit)) Bit -> Word a -> term (a, (a, a)) a
-bitwiseTri op = go
+eea :: (Core term, TyC a) => Word a -> term (a, a) ((Either (a, a) (a, a), (a, a)), a)
+eea w = pre >>> eeastep_iterate w w >>> post
  where
-  go :: forall a. Word a -> term (a, (a, a)) a
-  go SingleV = op
-  go (DoubleV w) = (ooh &&& (iooh &&& iioh) >>> rec)
-               &&& (oih &&& (ioih &&& iiih) >>> rec)
-   where
-    rec = go w
+  o = (unit >>> one w)
+  z = (unit >>> zero w)
+  pre = ((o &&& z) &&& oh) &&& ((z &&& o) &&& ih)
+  post = drop (drop (is_zero w)) &&& iden
+     >>> cond ((injl ooh &&& ioh) &&& oih)
+              ((injr ioh &&& ooh) &&& iih)
 
--- @'BiggerWord' a b@ is a GADT where @a@ and @b@ are Simplicity word types and @a@ has fewer bits than @b@
--- This is a helper type that is used in the definitions of 'shift' and 'rotate'.
-data BiggerWord a b where
-  JustBigger :: TyC a => Word a -> BiggerWord a (a,a)
-  MuchBigger :: (TyC a, TyC b) => BiggerWord a b -> BiggerWord a (b,b)
+bezout :: (Core term, TyC a) => Word a -> term (a, a) (Either (a, a) (a, a))
+bezout w = eea w >>> ooh
 
-biggerWord :: BiggerWord a b -> Word b
-biggerWord (JustBigger w) = DoubleV w
-biggerWord (MuchBigger bw) = DoubleV (biggerWord bw)
+cofactors :: (Core term, TyC a) => Word a -> term (a, a) (a, a)
+cofactors w = eea w >>> take (drop (ih &&& oh))
 
-doubleBigger :: BiggerWord a b -> BiggerWord (a,a) (b,b)
-doubleBigger (JustBigger w) = JustBigger (DoubleV w)
-doubleBigger (MuchBigger bw) = MuchBigger (doubleBigger bw)
+gcd :: (Core term, TyC a) => Word a -> term (a, a) a
+gcd w = eea w >>> ih
 
-compareWordSize :: Word a -> Word b -> Either (Either (BiggerWord a b) (BiggerWord b a)) (a :~: b)
-compareWordSize SingleV SingleV = Right Refl
-compareWordSize (DoubleV n) SingleV =
-  case compareWordSize n SingleV of
-    Right Refl -> Left (Right (JustBigger SingleV))
-    Left (Right bw) -> Left (Right (MuchBigger bw))
-compareWordSize SingleV (DoubleV m) =
-  case compareWordSize SingleV m of
-    Right Refl -> Left (Left (JustBigger SingleV))
-    Left (Left bw) -> Left (Left (MuchBigger bw))
-compareWordSize (DoubleV n) (DoubleV m) =
-  case compareWordSize n m of
-    Right Refl -> Right Refl
-    Left (Left bw) -> Left (Left (doubleBigger bw))
-    Left (Right bw) -> Left (Right (doubleBigger bw))
+lcm :: (Core term, TyC a) => Word a -> term (a, a) (a,a)
+lcm w = (cofactors w >>> oh) &&& ih >>> multiply w
 
--- | Simplicity expression for a bit shift by a constant amount.
---
--- @'shift' w n x@ is a right shift of @n@ bits of the word @x@.
--- The value @n@ can be negative in which case a left shift is performed.
+absolute_value :: (Core term, TyC a) => Word a -> term a a
+absolute_value w = msb w &&& iden
+               >>> cond (negate w >>> ih) iden
 
-shift :: (Core term, TyC a) => Word a -> Int -> term a a
-shift w = subseq w w
- where
-  subseq :: (Core term, TyC a, TyC b) => Word a -> Word b -> Int -> term a b
-  subseq n m z | z == 0 = subseq0 (compareWordSize n m)
-               | wordSize n <= z = zero m
-               | z + wordSize m <= 0 = zero m
-  subseq (DoubleV n) m           z | wordSize n <= z              = take (subseq n m (z - wordSize n))
-                                   | z + wordSize m <= wordSize n = drop (subseq n m z)
-  subseq n           (DoubleV m) z = subseq n m (z + wordSize m) &&& subseq n m z
-
-  subseq0 :: (Core term, TyC a) => Either (Either (BiggerWord a b) (BiggerWord b a)) (a :~: b) -> term a b
-  subseq0 (Right Refl) = iden
-  subseq0 (Left (Right (JustBigger w))) = drop iden
-  subseq0 (Left (Right (MuchBigger bw))) = drop (subseq0 (Left (Right bw)))
-  subseq0 (Left (Left (JustBigger w))) = zero w &&& iden
-  subseq0 (Left (Left (MuchBigger bw))) = zero (biggerWord bw) &&& subseq0 (Left (Left bw))
-
--- | Simplicity expression for a bit rotation by a constant amount.
---
--- @'rotate' w n x@ is a right rotation of @n@ bits of the word @x@.
--- The value @n@ can be negative in which case a left rotation is performed.
-rotate :: (Core term, TyC a) => Word a -> Int -> term a a
-rotate w z = subseqWrap w w (z `mod` wordSize w)
- where
-   -- Precondition: 0 <= z < wordSize n
-   subseqWrap :: (Core term, TyC a, TyC b) => Word a -> Word b -> Int -> term a b
-   subseqWrap n m z | z == 0 = subseqWrap0 (compareWordSize n m)
-   subseqWrap (DoubleV n) m           z | wordSize n <= z && z + wordSize m <= 2 * wordSize n = take (subseqWrap n m (z - wordSize n))
-                                        | z + wordSize m <= wordSize n                        = drop (subseqWrap n m z)
-   subseqWrap n           (DoubleV m) z = subseqWrap n m ((z + wordSize m) `mod` wordSize n) &&& subseqWrap n m z
-
-   subseqWrap0 :: (Core term, TyC a) => Either (Either (BiggerWord a b) (BiggerWord b a)) (a :~: b) -> term a b
-   subseqWrap0 (Right Refl) = iden
-   subseqWrap0 (Left (Right (JustBigger w))) = drop iden
-   subseqWrap0 (Left (Right (MuchBigger bw))) = drop (subseqWrap0 (Left (Right bw)))
-   subseqWrap0 (Left (Left (JustBigger w))) = iden &&& iden
-   subseqWrap0 (Left (Left (MuchBigger bw))) = rec &&& rec
-    where
-     rec = subseqWrap0 (Left (Left bw))
+sign :: (Core term, TyC a) => Word a -> term a Word2
+sign w = msb w &&& some w

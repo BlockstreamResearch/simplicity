@@ -20,10 +20,11 @@ import Simplicity.Bitcoin.Serialization.BitString as BitString
 import Simplicity.Bitcoin.Serialization.ByteString as ByteString
 import Simplicity.Bitcoin.Term
 import Simplicity.Digest
-import Simplicity.Programs.Word
+import qualified Simplicity.Programs.Word as Arith
 import Simplicity.Programs.Sha256.Lib
 import Simplicity.Serialization
 import Simplicity.Ty.Tests hiding (tests)
+import Simplicity.Ty.Word
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.QuickCheck ( Testable, testProperty, Positive(Positive)
@@ -39,10 +40,10 @@ tests = testGroup "Serialization"
         , testProperty "get-put ByteString DAG" prop_getPutByteStringDag
         -- This collection tests type inference on a few sample programs.
         , testGroup "Inference"
-          [ testInference "fullAdder word8" (fullAdder word8)
-          , testInference "adder word8" (adder word8)
-          , testInference "fullMultiplier word8" (fullMultiplier word8)
-          , testInference "multiplier word8" (multiplier word8)
+          [ testInference "full_add word8" (Arith.full_add word8)
+          , testInference "add word8" (Arith.add word8)
+          , testInference "full_multiply word8" (Arith.full_multiply word8)
+          , testInference "multiply word8" (Arith.multiply word8)
           , testInference "hashBlock" hashBlock
         ] ]
 

@@ -12,7 +12,7 @@ module Simplicity.CoreJets
  , FastCoreEval
  ) where
 
-import Prelude hiding (fail, drop, take)
+import Prelude hiding (fail, drop, take, subtract)
 
 import Control.Arrow (Kleisli(Kleisli), runKleisli)
 import qualified Data.Map as Map
@@ -31,12 +31,12 @@ import Simplicity.Term.Core
 --
 -- A core jet is a jet that doesn't use primitives.
 data CoreJet a b where
-  Adder32 :: CoreJet (Word32, Word32) (Bit, Word32)
-  FullAdder32 :: CoreJet (Bit, (Word32, Word32)) (Bit, Word32)
-  Subtractor32 :: CoreJet (Word32, Word32) (Bit, Word32)
-  FullSubtractor32 :: CoreJet (Bit, (Word32, Word32)) (Bit, Word32)
-  Multiplier32 :: CoreJet (Word32, Word32) Word64
-  FullMultiplier32 :: CoreJet ((Word32, Word32), (Word32, Word32)) Word64
+  Add32 :: CoreJet (Word32, Word32) (Bit, Word32)
+  FullAdd32 :: CoreJet (Bit, (Word32, Word32)) (Bit, Word32)
+  Subtract32 :: CoreJet (Word32, Word32) (Bit, Word32)
+  FullSubtract32 :: CoreJet (Bit, (Word32, Word32)) (Bit, Word32)
+  Multiply32 :: CoreJet (Word32, Word32) Word64
+  FullMultiply32 :: CoreJet ((Word32, Word32), (Word32, Word32)) Word64
   Sha256HashBlock :: CoreJet (Sha256.Hash, Sha256.Block) Sha256.Hash
 
 deriving instance Eq (CoreJet a b)
@@ -44,12 +44,12 @@ deriving instance Show (CoreJet a b)
 
 -- | The specification of "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.specification' method.
 specification :: Assert term => CoreJet a b -> term a b
-specification Adder32 = adder word32
-specification FullAdder32 = fullAdder word32
-specification Subtractor32 = subtractor word32
-specification FullSubtractor32 = fullSubtractor word32
-specification Multiplier32 = multiplier word32
-specification FullMultiplier32 = fullMultiplier word32
+specification Add32 = add word32
+specification FullAdd32 = full_add word32
+specification Subtract32 = subtract word32
+specification FullSubtract32 = full_subtract word32
+specification Multiply32 = multiply word32
+specification FullMultiply32 = full_multiply word32
 specification Sha256HashBlock = Sha256.hashBlock
 
 -- | A jetted implementaiton for "core" jets.
@@ -58,22 +58,22 @@ specification Sha256HashBlock = Sha256.hashBlock
 -- 'implementation' x === 'runKleisli' ('specification' x)
 -- @
 implementation :: CoreJet a b -> a -> Maybe b
-implementation Adder32 = \(x, y) -> do
+implementation Add32 = \(x, y) -> do
   let z = fromWord32 x + fromWord32 y
   return (toBit (z >= 2 ^ 32), toWord32 z)
-implementation FullAdder32 = \(c, (x, y)) -> do
+implementation FullAdd32 = \(c, (x, y)) -> do
   let z = fromWord32 x + fromWord32 y + fromWord1 c
   return (toBit (z >= 2 ^ 32), toWord32 z)
-implementation Subtractor32 = \(x, y) -> do
+implementation Subtract32 = \(x, y) -> do
   let z = fromWord32 x - fromWord32 y
   return (toBit (z < 0), toWord32 z)
-implementation FullSubtractor32 = \(b, (x, y)) -> do
+implementation FullSubtract32 = \(b, (x, y)) -> do
   let z = fromWord32 x - fromWord32 y - fromWord1 b
   return (toBit (z < 0), toWord32 z)
-implementation Multiplier32 = \(x, y) -> do
+implementation Multiply32 = \(x, y) -> do
   let z = fromWord32 x * fromWord32 y
   return (toWord64 z)
-implementation FullMultiplier32 = \((x, y), (a, b)) -> do
+implementation FullMultiply32 = \((x, y), (a, b)) -> do
   let z = fromWord32 x * fromWord32 y + fromWord32 a + fromWord32 b
   return (toWord64 z)
 implementation Sha256HashBlock = FFI.sha256_hashBlock
@@ -82,10 +82,10 @@ implementation Sha256HashBlock = FFI.sha256_hashBlock
 getJetBit :: (Monad m) => m Void -> m Bool -> m (SomeArrow CoreJet)
 getJetBit abort next = (getWordJet & getFullWordJet) & (getHashJet & getEcJet)
  where
-  getWordJet = (makeArrow Adder32 & makeArrow Subtractor32)
-             & makeArrow Multiplier32
-  getFullWordJet = (makeArrow FullAdder32 & makeArrow FullSubtractor32)
-                 & makeArrow FullMultiplier32
+  getWordJet = (makeArrow Add32 & makeArrow Subtract32)
+             & makeArrow Multiply32
+  getFullWordJet = (makeArrow FullAdd32 & makeArrow FullSubtract32)
+                 & makeArrow FullMultiply32
   getHashJet = makeArrow Sha256HashBlock
   getEcJet = vacuous abort -- TODO
   l & r = next >>= \b -> if b then r else l
@@ -94,24 +94,24 @@ getJetBit abort next = (getWordJet & getFullWordJet) & (getHashJet & getEcJet)
 
 -- | A canonical serialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.putJetBit' method.
 putJetBit :: CoreJet a b -> DList Bool
-putJetBit Adder32          = ([o,o,o,o]++)
-putJetBit Subtractor32     = ([o,o,o,i]++)
-putJetBit Multiplier32     = ([o,o,i]++)
-putJetBit FullAdder32      = ([o,i,o,o]++)
-putJetBit FullSubtractor32 = ([o,i,o,i]++)
-putJetBit FullMultiplier32 = ([o,i,i]++)
+putJetBit Add32            = ([o,o,o,o]++)
+putJetBit Subtract32       = ([o,o,o,i]++)
+putJetBit Multiply32       = ([o,o,i]++)
+putJetBit FullAdd32        = ([o,i,o,o]++)
+putJetBit FullSubtract32   = ([o,i,o,i]++)
+putJetBit FullMultiply32   = ([o,i,i]++)
 putJetBit Sha256HashBlock  = ([i,o]++)
 
 -- | A 'Map.Map' from the identity roots of the "core" jet specification to their corresponding token.
 -- This can be used to help instantiate the 'Simplicity.JetType.matcher' method.
 coreJetMap :: Map.Map Hash256 (SomeArrow CoreJet)
 coreJetMap = Map.fromList
-  [ mkAssoc Adder32
-  , mkAssoc Subtractor32
-  , mkAssoc Multiplier32
-  , mkAssoc FullAdder32
-  , mkAssoc FullSubtractor32
-  , mkAssoc FullMultiplier32
+  [ mkAssoc Add32
+  , mkAssoc Subtract32
+  , mkAssoc Multiply32
+  , mkAssoc FullAdd32
+  , mkAssoc FullSubtract32
+  , mkAssoc FullMultiply32
   , mkAssoc Sha256HashBlock
   ]
  where

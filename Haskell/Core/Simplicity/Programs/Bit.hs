@@ -3,7 +3,7 @@ module Simplicity.Programs.Bit
  ( module Simplicity.Ty.Bit
  , false, true
  , cond, ch, assert
- , not, and, or
+ , not, and, or, xor
  , xor3, maj
  ) where
 
@@ -61,6 +61,10 @@ and s t = s &&& iden >>> cond t false
 -- | Simplicity combinator that computes the short-circut disjunction of the results of two expressions.
 or :: (Core term, TyC a) => term a Bit -> term a Bit -> term a Bit
 or s t = s &&& iden >>> cond true t
+
+-- | Simplicity expression that returns the three-way xor of three bits.
+xor :: (Core term, TyC a) => term a Bit -> term a Bit -> term a Bit
+xor s t = s &&& iden >>> cond (not t) t
 
 -- | Simplicity expression that returns the three-way xor of three bits.
 xor3 :: Core term => term (Bit, (Bit, Bit)) Bit

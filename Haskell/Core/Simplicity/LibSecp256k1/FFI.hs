@@ -1,9 +1,10 @@
 module Simplicity.LibSecp256k1.FFI
- ( normalizeWeak, normalize, fePack, feUnpack
- , feIsZero, neg, mulInt, add, mul, sqr, inv, sqrt
- , double, addPoint, offsetPoint, offsetPointZinv
+ ( Simplicity.LibSecp256k1.FFI.fePack, feUnpack
+ , feIsZero, feOdd, neg, mulInt, add, mul, sqr, inv, sqrt
+ , double, addPoint, offsetPointEx, offsetPointZinv
+ , pointMulLambda
  , eqXCoord, hasQuadY
- , scalarNegate
+ , scalarNegate, scalarSplitLambda, scalarSplit128
  , wnaf, ecMult
  ) where
 
@@ -13,7 +14,7 @@ import Control.Monad (forM_)
 import Data.Bits (shiftR)
 import Data.ByteString (packCStringLen, useAsCStringLen)
 import Data.ByteString.Short (ShortByteString, toShort)
-import Data.Serialize (encode)
+import Data.Serialize (decode, encode)
 import Foreign.ForeignPtr (ForeignPtr, addForeignPtrFinalizer, mallocForeignPtr, withForeignPtr)
 import Foreign.Marshal.Alloc (alloca)
 import Foreign.Marshal.Array (allocaArray, peekArray)
@@ -24,6 +25,7 @@ import Foreign.Storable (Storable(..))
 import System.IO.Unsafe (unsafeDupablePerformIO, unsafePerformIO)
 
 import Simplicity.Word
+import qualified Simplicity.LibSecp256k1.Spec as Spec
 import Simplicity.LibSecp256k1.Spec ( FE(..), feZero, feOne
                                     , GEJ(..), GE(..)
                                     , Scalar(..), scalarZero
@@ -32,32 +34,18 @@ import Simplicity.LibSecp256k1.Spec ( FE(..), feZero, feOne
 instance Storable FE where
   sizeOf x = 10*sizeOf (undefined :: Word32)
   alignment _ = alignment (undefined :: Word32)
-  peek ptr = FE <$> (peekElemOff ptr' 0)
-                <*> (peekElemOff ptr' 1)
-                <*> (peekElemOff ptr' 2)
-                <*> (peekElemOff ptr' 3)
-                <*> (peekElemOff ptr' 4)
-                <*> (peekElemOff ptr' 5)
-                <*> (peekElemOff ptr' 6)
-                <*> (peekElemOff ptr' 7)
-                <*> (peekElemOff ptr' 8)
-                <*> (peekElemOff ptr' 9)
+  peek ptr = allocaArray 32 $ \buf -> do
+    c_secp256k1_fe_normalize_var ptr
+    c_secp256k1_fe_get_b32 buf ptr
+    Right fe <- decode <$> packCStringLen (buf,32)
+    return $ feUnpack fe
    where
-    ptr' = castPtr ptr
-
-  poke ptr (FE a0 a1 a2 a3 a4 a5 a6 a7 a8 a9) = do
-    pokeElemOff ptr' 0 a0
-    pokeElemOff ptr' 1 a1
-    pokeElemOff ptr' 2 a2
-    pokeElemOff ptr' 3 a3
-    pokeElemOff ptr' 4 a4
-    pokeElemOff ptr' 5 a5
-    pokeElemOff ptr' 6 a6
-    pokeElemOff ptr' 7 a7
-    pokeElemOff ptr' 8 a8
-    pokeElemOff ptr' 9 a9
-   where
-    ptr' = castPtr ptr
+    feUnpack :: Word256 -> FE
+    feUnpack = Spec.unrepr . toInteger
+  poke ptr fe =
+    useAsCStringLen (encode (Spec.fePack fe)) $ \(buf, 32) -> do
+      CInt 1 <- c_secp256k1_fe_set_b32 ptr buf
+      return ()
 
 instance Storable GEJ where
   sizeOf x = 3*sizeOf (undefined :: FE) + sizeOf (undefined :: CInt)
@@ -109,28 +97,41 @@ instance Storable Scalar where
    where
     ptr' = castPtr ptr
     mkScalar :: Word32 -> Word32 -> Word32 -> Word32 -> Word32 -> Word32 -> Word32 -> Word32 -> Scalar
-    mkScalar a0 a1 a2 a3 a4 a5 a6 a7 = Scalar $ fromIntegral a0 + 2^32*
-                                               (fromIntegral a1 + 2^32*
-                                               (fromIntegral a2 + 2^32*
-                                               (fromIntegral a3 + 2^32*
-                                               (fromIntegral a4 + 2^32*
-                                               (fromIntegral a5 + 2^32*
-                                               (fromIntegral a6 + 2^32*
-                                                fromIntegral a7))))))
+    mkScalar a0 a1 a2 a3 a4 a5 a6 a7 = Spec.scalarUnrepr $ fromIntegral a0 + 2^32*
+                                                          (fromIntegral a1 + 2^32*
+                                                          (fromIntegral a2 + 2^32*
+                                                          (fromIntegral a3 + 2^32*
+                                                          (fromIntegral a4 + 2^32*
+                                                          (fromIntegral a5 + 2^32*
+                                                          (fromIntegral a6 + 2^32*
+                                                           fromIntegral a7))))))
 
-  poke ptr (Scalar a) = forM_ [0..7] (\i -> pokeElemOff ptr' i (fromIntegral (a `shiftR` (i*32))))
+  poke ptr a = forM_ [0..7] (\i -> pokeElemOff ptr' i (fromIntegral (scalarPack a `shiftR` (i*32))))
    where
     ptr' :: Ptr Word32
     ptr' = castPtr ptr
 
-type Context = Ptr Word32
-data Callback
+data Context = Context (Ptr Word32) (Ptr Word32)
 
+instance Storable Context where
+  sizeOf x = 2*sizeOf (undefined :: Ptr Word32)
+  alignment _ = alignment (undefined :: Ptr Word32)
+  peek ptr = Context <$> (peekElemOff ptr' 0)
+                     <*> (peekElemOff ptr' 1)
+   where
+    ptr' = castPtr ptr
+  poke ptr (Context p0 p1) = pokeElemOff ptr' 0 p0
+                          >> pokeElemOff ptr' 1 p1
+   where
+    ptr' = castPtr ptr
+
+foreign import ccall safe "static &secp256k1_ecmult_prealloc" c_secp256k1_ecmult_prealloc :: Ptr CChar
 foreign import ccall unsafe "secp256k1_fe_normalize_weak" c_secp256k1_fe_normalize_weak :: Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_fe_normalize_var" c_secp256k1_fe_normalize_var :: Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_fe_set_b32" c_secp256k1_fe_set_b32 :: Ptr FE -> Ptr CChar -> IO CInt
 foreign import ccall unsafe "secp256k1_fe_get_b32" c_secp256k1_fe_get_b32 :: Ptr CChar -> Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_fe_normalizes_to_zero_var" c_secp256k1_fe_normalizes_to_zero_var :: Ptr FE -> IO CInt
+foreign import ccall unsafe "secp256k1_fe_is_odd" c_secp256k1_fe_is_odd :: Ptr FE -> IO CInt
 foreign import ccall unsafe "secp256k1_fe_negate" c_secp256k1_fe_negate :: Ptr FE -> Ptr FE -> CInt -> IO ()
 foreign import ccall unsafe "secp256k1_fe_mul_int" c_secp256k1_fe_mul_int :: Ptr FE -> CInt -> IO ()
 foreign import ccall unsafe "secp256k1_fe_add" c_secp256k1_fe_add :: Ptr FE -> Ptr FE -> IO ()
@@ -144,24 +145,15 @@ foreign import ccall unsafe "secp256k1_gej_add_ge_var" c_secp256k1_gej_add_ge_va
 foreign import ccall unsafe "secp256k1_gej_add_zinv_var" c_secp256k1_gej_add_zinv_var :: Ptr GEJ -> Ptr GEJ -> Ptr GE -> Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_gej_eq_x_var" c_secp256k1_gej_eq_x_var :: Ptr FE -> Ptr GEJ -> IO CInt
 foreign import ccall unsafe "secp256k1_gej_has_quad_y_var" c_secp256k1_gej_has_quad_y_var :: Ptr GEJ -> IO CInt
+foreign import ccall unsafe "secp256k1_ge_mul_lambda" c_secp256k1_ge_mul_lambda :: Ptr GE -> Ptr GE -> IO CInt
 foreign import ccall unsafe "secp256k1_scalar_negate" c_secp256k1_scalar_negate :: Ptr Scalar -> Ptr Scalar -> IO ()
+foreign import ccall unsafe "secp256k1_scalar_split_lambda" c_secp256k1_scalar_split_lambda :: Ptr Scalar ->Ptr Scalar -> Ptr Scalar -> IO ()
+foreign import ccall unsafe "secp256k1_scalar_split_128" c_secp256k1_scalar_split_128 :: Ptr Scalar ->Ptr Scalar -> Ptr Scalar -> IO ()
 foreign import ccall unsafe "secp256k1_ecmult_wnaf" c_secp256k1_ecmult_wnaf :: Ptr CInt -> CInt -> Ptr Scalar -> CInt -> IO CInt
 foreign import ccall unsafe "secp256k1_ecmult_context_init" c_secp256k1_ecmult_context_init :: Ptr Context -> IO ()
-foreign import ccall "secp256k1_ecmult_context_build" c_secp256k1_ecmult_context_build :: Ptr Context -> FunPtr Callback -> IO ()
+foreign import ccall "secp256k1_ecmult_context_build" c_secp256k1_ecmult_context_build :: Ptr Context -> Ptr (Ptr CChar) -> IO ()
 foreign import ccall unsafe "&secp256k1_ecmult_context_clear" c_secp256k1_ecmult_context_clear :: FunPtr (Ptr Context -> IO ())
 foreign import ccall unsafe "secp256k1_ecmult" c_secp256k1_ecmult :: Ptr Context -> Ptr GEJ -> Ptr GEJ -> Ptr Scalar -> Ptr Scalar -> IO ()
-
-normalizeWeak :: FE -> FE
-normalizeWeak a = unsafeDupablePerformIO $ do
- with a $ \aptr -> do
-   c_secp256k1_fe_normalize_weak aptr
-   peek aptr
-
-normalize :: FE -> FE
-normalize a = unsafeDupablePerformIO $ do
- with a $ \aptr -> do
-   c_secp256k1_fe_normalize_var aptr
-   peek aptr
 
 fePack :: FE -> ShortByteString
 fePack a = unsafeDupablePerformIO $ do
@@ -183,10 +175,16 @@ feIsZero a = unsafeDupablePerformIO $ do
    r <- c_secp256k1_fe_normalizes_to_zero_var aptr
    return $ r /= 0
 
-neg :: CInt -> FE -> FE
-neg m a = unsafeDupablePerformIO $ do
+feOdd :: FE -> Bool
+feOdd a = unsafeDupablePerformIO $ do
  with a $ \aptr -> do
-   c_secp256k1_fe_negate aptr aptr m
+   r <- c_secp256k1_fe_is_odd aptr
+   return $ r /= 0
+
+neg :: FE -> FE
+neg a = unsafeDupablePerformIO $ do
+ with a $ \aptr -> do
+   c_secp256k1_fe_negate aptr aptr 1
    peek aptr
 
 mulInt :: CInt -> FE -> FE
@@ -243,8 +241,8 @@ addPoint a b = unsafeDupablePerformIO $ do
     c_secp256k1_gej_add_var rptr aptr bptr nullPtr
     peek rptr
 
-offsetPoint :: GEJ -> GE -> (FE, GEJ)
-offsetPoint a b = unsafeDupablePerformIO $ do
+offsetPointEx :: GEJ -> GE -> (FE, GEJ)
+offsetPointEx a b = unsafeDupablePerformIO $ do
   with a $ \aptr -> do
   with b $ \bptr -> do
   with mempty $ \rptr -> do
@@ -260,6 +258,12 @@ offsetPointZinv a b bzinv = unsafeDupablePerformIO $ do
   with mempty $ \rptr -> do
     c_secp256k1_gej_add_zinv_var rptr aptr bptr bzinvptr
     peek rptr
+
+pointMulLambda :: GE -> GE
+pointMulLambda a = unsafeDupablePerformIO $ do
+  with a $ \aptr -> do
+    c_secp256k1_ge_mul_lambda aptr aptr
+    peek aptr  
 
 eqXCoord :: FE -> GEJ -> Bool
 eqXCoord x a = unsafeDupablePerformIO $ do
@@ -280,6 +284,22 @@ scalarNegate a = unsafeDupablePerformIO $ do
     c_secp256k1_scalar_negate aptr aptr
     peek aptr
 
+scalarSplitLambda :: Scalar -> (Scalar, Scalar)
+scalarSplitLambda a = unsafeDupablePerformIO $ do
+  with a $ \aptr -> do
+  with scalarZero $ \r1ptr -> do
+  with scalarZero $ \r2ptr -> do
+    c_secp256k1_scalar_split_lambda r1ptr r2ptr aptr
+    (,) <$> peek r1ptr <*> peek r2ptr
+
+scalarSplit128 :: Scalar -> (Scalar, Scalar)
+scalarSplit128 a = unsafeDupablePerformIO $ do
+  with a $ \aptr -> do
+  with scalarZero $ \r1ptr -> do
+  with scalarZero $ \r2ptr -> do
+    c_secp256k1_scalar_split_128 r1ptr r2ptr aptr
+    (,) <$> peek r1ptr <*> peek r2ptr
+
 wnaf :: Int -> Scalar -> [Int]
 wnaf w a = unsafeDupablePerformIO $ do
   allocaArray (fromIntegral len) $ \wnafptr -> do
@@ -295,8 +315,9 @@ ecMultContext :: ForeignPtr Context
 ecMultContext = unsafePerformIO $ do
   p <- mallocForeignPtr
   withForeignPtr p $ \p -> do
-    c_secp256k1_ecmult_context_init p
-    c_secp256k1_ecmult_context_build p nullFunPtr -- TODO: Make a proper callback
+    with c_secp256k1_ecmult_prealloc $ \pa -> do
+      c_secp256k1_ecmult_context_init p
+      c_secp256k1_ecmult_context_build p pa
   addForeignPtrFinalizer c_secp256k1_ecmult_context_clear p
   return p
 
