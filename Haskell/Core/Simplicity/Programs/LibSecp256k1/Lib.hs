@@ -13,7 +13,7 @@ module Simplicity.Programs.LibSecp256k1.Lib
   , LibSecp256k1.GE, LibSecp256k1.GEJ, inf, isInf
   , normalizePoint
   , geNegate, double, offsetPointEx, offsetPoint
-  , eqXCoord, hasQuadY
+  , eqXCoord, hasOddY
   -- * Scalar operations
   , LibSecp256k1.Scalar
   , scalarSplitLambda
@@ -51,7 +51,7 @@ double = LibSecp256k1.double LibSecp256k1.lib
 offsetPointEx = LibSecp256k1.offsetPointEx LibSecp256k1.lib
 offsetPoint = LibSecp256k1.offsetPoint LibSecp256k1.lib
 eqXCoord = LibSecp256k1.eqXCoord LibSecp256k1.lib
-hasQuadY = LibSecp256k1.hasQuadY LibSecp256k1.lib
+hasOddY = LibSecp256k1.hasOddY LibSecp256k1.lib
 scalarSplitLambda = LibSecp256k1.scalarSplitLambda LibSecp256k1.lib
 wnaf5 = LibSecp256k1.wnaf5 LibSecp256k1.lib
 wnaf15 = LibSecp256k1.wnaf15 LibSecp256k1.lib

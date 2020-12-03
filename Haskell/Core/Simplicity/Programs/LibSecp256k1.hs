@@ -6,7 +6,7 @@ module Simplicity.Programs.LibSecp256k1
   (
     Lib(Lib), mkLib
   -- * Field operations
-  , FE, feZero, feOne, feIsZero
+  , FE, feZero, feOne, feIsZero, feOdd
   , normalize
   , add, neg, sqr, mul, inv, sqrt
   , isQuad
@@ -14,7 +14,7 @@ module Simplicity.Programs.LibSecp256k1
   , GE, GEJ, inf, isInf
   , normalizePoint
   , geNegate, double, offsetPointEx, offsetPoint
-  , eqXCoord, hasQuadY
+  , eqXCoord, hasOddY
   -- * Scalar operations
   , Scalar, Word129
   , normalizeScalar
@@ -24,7 +24,7 @@ module Simplicity.Programs.LibSecp256k1
   , generator
   , ecMult
   -- * Schnorr signature operations
-  , XOnlyPubKey, pkPoint
+  , XOnlyPubKey, pkPoint, pkPointNeg
   , Sig, sigUnpack
   , scalarUnrepr
   , schnorrVerify, schnorrAssert
@@ -35,6 +35,7 @@ module Simplicity.Programs.LibSecp256k1
 import Prelude hiding (drop, take, and, or, not,
                        subtract, sqrt, Word)
 
+import Simplicity.Digest
 import Simplicity.Functor
 import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
@@ -104,6 +105,8 @@ data Lib term =
     --
     -- Corresponds to @secp256k1_fe_is_zero@.
   , feIsZero :: term FE Bit
+
+  , feOdd :: term FE Bit
 
     -- | Adds two field elements.
     -- The resulting magnitude is the sum of the input magnitudes.
@@ -196,10 +199,10 @@ data Lib term =
     -- Corresponds to @secp256k1_gej_eq_x_var@.
   , eqXCoord :: term (FE, GEJ) Bit
 
-    -- | Given a point in Jacobian coordiantes, test if the point represents one whose affine y-coordinate is a quadratic residue.
+    -- | Given a point in Jacobian coordiantes, test if the point represents one whose affine y-coordinate is odd.
     --
-    -- Corresponds to @secp256k1_gej_has_quad_y_var@.
-  , hasQuadY :: term GEJ Bit
+    -- Similar to @secp256k1_gej_has_even_y_var@.
+  , hasOddY :: term GEJ Bit
 
   , normalizeScalar :: term Word256 Scalar
 
@@ -244,7 +247,9 @@ data Lib term =
     --
     -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
     -- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
-  , pkPoint :: term XOnlyPubKey (Either () GEJ)
+  , pkPoint :: term XOnlyPubKey (Either () GE)
+
+  , pkPointNeg :: term XOnlyPubKey (Either () GE)
 
     -- | This function unpackes a 'Sig' as a pair of a field element and a scalar value.
     --
@@ -267,6 +272,7 @@ instance SimplicityFunctor Lib where
     , feOne = m feOne
     , feBeta = m feBeta
     , feIsZero = m feIsZero
+    , feOdd = m feOdd
     , add = m add
     , neg = m neg
     , mul = m mul
@@ -284,7 +290,7 @@ instance SimplicityFunctor Lib where
     , pointMulLambda = m pointMulLambda
     , normalizePoint = m normalizePoint
     , eqXCoord = m eqXCoord
-    , hasQuadY = m hasQuadY
+    , hasOddY = m hasOddY
     , normalizeScalar = m normalizeScalar
     , scalarIsZero = m scalarIsZero
     , scalarLambda = m scalarLambda
@@ -298,6 +304,7 @@ instance SimplicityFunctor Lib where
     , generator = m generator
     , ecMult = m ecMult
     , pkPoint = m pkPoint
+    , pkPointNeg = m pkPointNeg
     , sigUnpack = m sigUnpack
     , scalarUnrepr = m scalarUnrepr
     , schnorrVerify = m schnorrVerify
@@ -381,6 +388,7 @@ mkLib Sha256.Lib{..} = lib
   msb256 = Arith.msb word256
   msb128 = Arith.msb word128
 
+  lsb256 = Arith.lsb word256
   lsb128 = Arith.lsb word128
 
   -- | computes a 512 bit number modulo the field order.
@@ -456,6 +464,8 @@ mkLib Sha256.Lib{..} = lib
 
   , feIsZero = or ((unit >>> feZero) &&& iden >>> eq)
                   ((unit >>> scribeFeOrder) &&& iden >>> eq)
+ 
+  , feOdd = normalize >>> lsb256
 
   , add = add256
       >>> cond ((iden &&& ((unit >>> zero64) &&& scribe64 (2^256 - feOrder))) >>> add256_128modp) normalize
@@ -520,7 +530,7 @@ mkLib Sha256.Lib{..} = lib
   , eqXCoord = drop (take (take neg)) &&& (drop (drop sqr) &&& oh >>> mul)
            >>> add >>> feIsZero
 
-  , hasQuadY = and (not isInf) (oih &&& ih >>> mul >>> isQuad)
+  , hasOddY = and (not isInf) (oih &&& (ih >>> inv >>> cub)  >>> mul >>> feOdd)
 
   , normalizeScalar = (iden &&& (unit >>> scribeScalarOrder) >>> sub256) &&& iden
                   >>> ooh &&& (oih &&& ih)
@@ -615,15 +625,9 @@ mkLib Sha256.Lib{..} = lib
       or (take (take isInf)) (take (drop scalarIsZero)) &&& iden
   >>> cond (drop generator) body
 
-  , pkPoint =
-     let
-      k1 = (scribe256 7 &&& cub >>> add >>> sqrt) &&& iden
-       >>> match (injl unit) (injr k2)
-      k2 = swapP &&& (unit >>> feOne)
-      lt = sub256 >>> oh
-     in
-      (iden &&& scribe (toWord256 feOrder) >>> lt) &&& iden
-  >>> cond k1 (injl unit)
+  , pkPoint = pkPointRaw >>> copair (injl iden) (injr ((ih >>> feOdd) &&& iden >>> cond (oh &&& drop neg) iden))
+
+  , pkPointNeg = pkPointRaw >>> copair (injl iden) (injr ((ih >>> feOdd) &&& iden >>> cond iden (oh &&& drop neg)))
 
   , sigUnpack =
       and (oh &&& scribe (toWord256 feOrder) >>> lt256)
@@ -639,14 +643,13 @@ mkLib Sha256.Lib{..} = lib
      let
       k1 = ioh &&& (iih &&& oh)
        >>> match false k2
-      k2 = iioh &&& ((oh &&& ioh) &&& iiih >>> ecMult)
-       >>> and eqXCoord (drop hasQuadY)
-      nege = (scribe (toWord256 scalarOrder) &&& (h >>> scalarUnrepr) >>> sub256 >>> ih)
-      iv = scribe (toWord256 0x048d9a59fe39fb0528479648e4a660f9814b9e660469e80183909280b329e454)
-      h = m >>> (iv &&& oh >>> hashBlock) &&& ih >>> hashBlock
+      k2 = iioh &&& (((oh &&& (unit >>> feOne)) &&& ioh) &&& iiih >>> ecMult)
+       >>> and eqXCoord (not (drop hasOddY))
+      e = m >>> (iv &&& oh >>> hashBlock) &&& ih >>> hashBlock >>> scalarUnrepr
+      iv = scribe $ toWord256 . integerHash256 . ivHash . tagIv $ "BIP0340/challenge"
       m = (ioh &&& ooh) &&& (oih &&& (scribe (toWord256 0x8000000000000000000000000000000000000000000000000000000000000500)))
      in
-      drop sigUnpack &&& (take (take pkPoint) &&& nege)
+      drop sigUnpack &&& (take (take pkPointNeg) &&& e)
   >>> match false k1
   }
    where
@@ -714,6 +717,13 @@ mkLib Sha256.Lib{..} = lib
 
     generator128Small :: term Word16 GE
     generator128Small = generator128Signed word16 >>> normalizePoint
+
+    pkPointRaw =
+     let
+      k1 = (scribe256 7 &&& cub >>> add >>> sqrt) &&& iden
+       >>> match (injl unit) (injr swapP)
+     in
+      (iden &&& scribe (toWord256 feOrder) >>> lt256) &&& iden >>> cond k1 (injl unit)
 
 -- | This function is given a public key, a 256-bit message, and a signature, and asserts that the signature is valid for the given message and public key.
 schnorrAssert :: Assert term => Lib term -> term ((XOnlyPubKey, Word256), Sig) ()

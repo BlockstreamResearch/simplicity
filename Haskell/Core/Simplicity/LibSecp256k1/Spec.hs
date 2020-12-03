@@ -8,10 +8,10 @@ module Simplicity.LibSecp256k1.Spec
  , pointNormalize
  , double, offsetPointEx, offsetPointZinv
  , pointMulLambda
- , eqXCoord, hasQuadY
+ , eqXCoord, hasEvenY
  , scalarNegate, scalarSplitLambda, scalarSplit128
  , wnaf, ecMult
- , XOnlyPubKey(..), pkPoint
+ , XOnlyPubKey(..), pkPoint, pkPointNeg
  , Sig(..), sigUnpack
  , schnorr
  ) where
@@ -177,9 +177,11 @@ instance Monoid GEJ where
 eqXCoord :: FE -> GEJ -> Bool
 eqXCoord x a = feIsZero $ (sqr (a^._z) .*. x) .-. (a^._x)
 
-hasQuadY :: GEJ -> Bool
-hasQuadY a@(GEJ _ y z) | isInf a = False
-                       | otherwise = isQuad (y .*. z)
+hasEvenY :: GEJ -> Bool
+hasEvenY a@(GEJ _ y z) | isInf a = False
+                       | otherwise = not . feOdd $ y .*. invz .^. 3
+ where
+  invz = inv z
 
 data GE = GE !FE !FE -- Infinity not included.
         deriving Show
@@ -363,11 +365,14 @@ table w p = t & traverse %~ norm
 t ! i | i >= 0 = t V.! i
       | otherwise = pointNegate (t V.! (-i-1))
 
-pkPoint :: XOnlyPubKey -> Maybe GEJ
-pkPoint (XOnlyPubKey px) = do
+pkPoint_pred :: (FE -> Bool) -> XOnlyPubKey -> Maybe GEJ
+pkPoint_pred p (XOnlyPubKey px) = do
   x <- feUnpack px
   y <- sqrt (x .^. 3 .+. feSeven)
-  return (GEJ x y feOne)
+  return (GEJ x (if p y then y else neg y) feOne)
+
+pkPoint = pkPoint_pred (not . feOdd)
+pkPointNeg = pkPoint_pred feOdd
 
 sigUnpack :: Sig -> Maybe (FE, Scalar)
 sigUnpack (Sig r s) = (,) <$> feUnpack r <*> scalarUnpack s
@@ -377,11 +382,11 @@ schnorr :: XOnlyPubKey  -- ^ public key
         -> Sig          -- ^ signature
         -> Bool
 schnorr pk m sg = Just () == do
-  p <- pkPoint pk
+  negp <- pkPointNeg pk
   (rx, s) <- sigUnpack sg
-  let tag = bsHash (BSC.pack "BIPSchnorr")
+  let tag = bsHash (BSC.pack "BIP0340/challenge")
   let h = bsHash . runPut $ put tag >> put tag >> put (fePack rx) >> put pk >> put m
-  let nege = scalarNegate . scalarUnrepr . integerHash256 $ h
-  let r = ecMult p nege s
-  guard $ hasQuadY r
+  let e = scalarUnrepr . integerHash256 $ h
+  let r = ecMult negp e s
+  guard $ hasEvenY r
   guard $ eqXCoord rx r
