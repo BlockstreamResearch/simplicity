@@ -1,7 +1,7 @@
 -- This module tests the Simplicity programs on arbitrary inputs.
 module Simplicity.Programs.Tests (tests) where
 
-import Prelude hiding (sqrt)
+import Prelude hiding (sqrt, all)
 import Control.Arrow ((***))
 import Data.Bits ((.|.))
 import qualified Data.Bits as W
@@ -15,6 +15,7 @@ import Simplicity.CoreJets
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.Spec ((.*.), (.^.))
 import qualified Simplicity.LibSecp256k1.Spec as LibSecpSpec
+import Simplicity.Programs.Bit
 import Simplicity.Programs.LibSecp256k1.Lib as LibSecp
 import Simplicity.Programs.MultiBit
 import Simplicity.Programs.Sha256.Lib
@@ -24,23 +25,147 @@ import Simplicity.Ty.Word as Ty
 import qualified Simplicity.Word as W
 
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.QuickCheck (Arbitrary(..), Gen, Property, 
+import Test.Tasty.HUnit ((@=?), Assertion, testCase)
+import Test.Tasty.QuickCheck (Arbitrary(..), Gen, Property,
                               arbitraryBoundedIntegral, choose, elements, forAll, resize, sized, testProperty)
 
 -- This collects the tests for the various Simplicity programs.
 tests :: TestTree
 tests = testGroup "Programs"
-      [ testGroup "Arith"
-        [ testProperty "full_add word8" prop_full_add8
+      [ testGroup "Word"
+        [ testCase "low word8" assert_low8
+        , testCase "high word8" assert_high8
+        , testProperty "compelment word8" prop_complement8
+        , testProperty "and word8" prop_and8
+        , testProperty "or word8" prop_or8
+        , testProperty "xor word8" prop_xor8
+        , testProperty "xor3 word8" prop_xor3_8
+        , testProperty "maj word8" prop_maj8
+        , testProperty "ch word8" prop_ch8
+        , testProperty "some word4" prop_some4
+        , testProperty "all word4" prop_all4
+        , testProperty "shift_const_by false word8" prop_shift_const_by_false8
+        , testProperty "rotate_const word8" prop_rotate_const8
+        , testProperty "transpose zv2 zv8" prop_transpose_2x8
+        , testProperty "transpose zv8 zv8" prop_transpose_8x8
+        ]
+      , testGroup "Arith"
+        [ testCase "zero word8" assert_zero8
+        , testCase "one word8" assert_one8
+        , testProperty "full_add word8" prop_full_add8
         , testProperty "add word8" prop_add8
+        , testProperty "full_increment word8" prop_full_increment8
+        , testProperty "increment word8" prop_increment8
         , testProperty "full_subtract word8" prop_full_subtract8
         , testProperty "subtract word8" prop_subtract8
+        , testProperty "negate word8" prop_negate8
+        , testProperty "full_decrement word8" prop_full_decrement8
+        , testProperty "decrement word8" prop_decrement8
         , testProperty "fullMultiply word8" prop_full_multiply8
         , testProperty "multiply word8" prop_multiply8
-        , testProperty "complement word8" prop_complement8
+        , testProperty "is_zero word4" prop_is_zero4
+        , testProperty "is_one word4" prop_is_one4
+        , testProperty "lt word8" prop_lt8
+        , testProperty "le word8" prop_le8
+        , testProperty "min word8" prop_min8
+        , testProperty "max word8" prop_max8
+        , testProperty "median word8" prop_median8
+        , testProperty "lsb word8" prop_lsb8
+        , testProperty "msb word8" prop_msb8
+        , testProperty "div_mod word8" prop_div_mod8
+        , testProperty "divide word8" prop_divide8
+        , testProperty "modulo word8" prop_modulo8
+        , testProperty "divides word8" prop_divides8
+        , testProperty "bezout word8" prop_bezout8
+        , testProperty "cofactors word8" prop_cofactors8
+        , testProperty "gcd word8" prop_gcd8
+        , testProperty "lcm word8" prop_lcm8
+        , testProperty "absolute_value word4" prop_absolute_value4
+        , testProperty "sign word4" prop_sign4
         ]
       , testProperty "sha256" prop_sha256
       ]
+
+assert_low8 :: Assertion
+assert_low8 = 0 @=? fromWord8 (low word8 ())
+
+assert_high8 :: Assertion
+assert_high8 = 0xff @=? fromWord8 (high word8 ())
+
+prop_complement8 :: Word8 -> Bool
+prop_complement8 x = W.complement (fromInteger . fromWord8 $ x) == (fromInteger . fromWord8 $ complement word8 x :: W.Word8)
+
+prop_and8 :: Word8 -> Word8 -> Bool
+prop_and8 x y = (fromInteger $ fromWord8 x) W..&. (fromInteger $ fromWord8 y)
+             == (fromInteger . fromWord8 $ bitwise_and word8 (x, y) :: W.Word8)
+
+prop_or8 :: Word8 -> Word8 -> Bool
+prop_or8 x y = (fromInteger $ fromWord8 x) W..|. (fromInteger $ fromWord8 y)
+            == (fromInteger . fromWord8 $ bitwise_or word8 (x, y) :: W.Word8)
+
+prop_xor8 :: Word8 -> Word8 -> Bool
+prop_xor8 x y = (fromInteger $ fromWord8 x) `W.xor` (fromInteger $ fromWord8 y)
+             == (fromInteger . fromWord8 $ bitwise_xor word8 (x, y) :: W.Word8)
+
+prop_xor3_8 :: Word8 -> Word8 -> Word8 -> Bool
+prop_xor3_8 x y z = (fromInteger $ fromWord8 x) `W.xor` (fromInteger $ fromWord8 y) `W.xor` (fromInteger $ fromWord8 z)
+                 == (fromInteger . fromWord8 $ bitwise_xor3 word8 (x, (y, z)) :: W.Word8)
+
+prop_maj8 :: Word8 -> Word8 -> Word8 -> Bool
+prop_maj8 x y z = zipWith3 maj (x^..bits8) (y^..bits8) (z^..bits8)
+               == (fromBit <$> bitwise_maj word8 (x, (y, z))^..bits8)
+ where
+  maj a b c = 2 <= fromWord1 a + fromWord1 b + fromWord1 c
+  bits8 x = (both_.both_.both_) x
+
+prop_ch8 :: Word8 -> Word8 -> Word8 -> Bool
+prop_ch8 x y z = zipWith3 ch (x^..bits8) (y^..bits8) (z^..bits8)
+              == (fromBit <$> bitwise_ch word8 (x, (y, z))^..bits8)
+ where
+  ch a b c = if fromBit a then fromBit b else fromBit c
+  bits8 x = (both_.both_.both_) x
+
+prop_some4 :: Word4 -> Bool
+prop_some4 x = (0 /= fromWord4 x)
+            == fromBit (some word4 x)
+
+prop_all4 :: Word4 -> Bool
+prop_all4 x = (0xf == fromWord4 x)
+           == fromBit (all word4 x)
+
+prop_shift_const_by_false8 :: Word8 -> Property
+prop_shift_const_by_false8 x = forAll (choose (-8,16)) $ \c ->
+                               W.shift (conv x) c == conv (shift_const_by false word8 c x)
+ where
+  conv :: Word8 -> W.Word8
+  conv = fromInteger . fromWord8
+
+prop_rotate_const8 :: Word8 -> Property
+prop_rotate_const8 x = forAll (choose (-8,16)) $ \c ->
+                       W.rotate (conv x) c == conv (rotate_const word8 c x)
+ where
+  conv :: Word8 -> W.Word8
+  conv = fromInteger . fromWord8
+
+prop_transpose_2x8 :: Word16 -> Bool
+prop_transpose_2x8 x = L.transpose (map (^..both_) (x^..both_.both_.both_))
+                    == map (^..both_.both_.both_) (transpose zv2 zv8 x^..both_)
+ where
+  zv2 = DoubleZV SingleZV
+  zv8 = DoubleZV . DoubleZV . DoubleZV $ SingleZV
+
+prop_transpose_8x8 :: Word64 -> Bool
+prop_transpose_8x8 x = L.transpose (map (^..both_.both_.both_) (x^..both_.both_.both_))
+                    == map (^..both_.both_.both_) (transpose zv8 zv8' x^..both_.both_.both_)
+ where
+  zv8 = DoubleZV . DoubleZV . DoubleZV $ SingleZV
+  zv8' = DoubleZV . DoubleZV . DoubleZV $ SingleZV -- monomorhpism restriction
+
+assert_zero8 :: Assertion
+assert_zero8 = 0 @=? fromWord8 (Arith.zero word8 ())
+
+assert_one8 :: Assertion
+assert_one8 = 0x1 @=? fromWord8 (Arith.one word8 ())
 
 -- The specification for full adder on Word8
 prop_full_add8 :: Bit -> Word8 -> Word8 -> Bool
@@ -54,17 +179,42 @@ prop_add8 x y = (if fromBit carry then 2^8 else 0) + fromWord8 result8 == fromWo
  where
   (carry, result8) = Arith.add word8 (x, y)
 
+prop_full_increment8 :: Bit -> Word8 -> Bool
+prop_full_increment8 z x = (if fromBit carry then 2^8 else 0) + fromWord8 result8 == fromWord8 x + if fromBit z then 1 else 0
+ where
+  (carry, result8) = Arith.full_increment word8 (z, x)
+
+prop_increment8 :: Word8 -> Bool
+prop_increment8 x = (if fromBit carry then 2^8 else 0) + fromWord8 result8 == fromWord8 x + 1
+ where
+  (carry, result8) = Arith.increment word8 x
+
 -- The specification for full subtractor on Word8
 prop_full_subtract8 :: Bit -> Word8 -> Word8 -> Bool
-prop_full_subtract8 z x y =  fromWord8 result8 == (if fromBit borrow then 2^8 else 0) + fromWord8 x - fromWord8 y - if fromBit z then 1 else 0
+prop_full_subtract8 z x y = fromWord8 result8 == (if fromBit borrow then 2^8 else 0) + fromWord8 x - fromWord8 y - if fromBit z then 1 else 0
  where
   (borrow, result8) = Arith.full_subtract word8 (z, (x, y))
 
 -- The specification for subtractor on Word8
 prop_subtract8 :: Word8 -> Word8 -> Bool
-prop_subtract8 x y =  fromWord8 result8 == (if fromBit borrow then 2^8 else 0) + fromWord8 x - fromWord8 y
+prop_subtract8 x y = fromWord8 result8 == (if fromBit borrow then 2^8 else 0) + fromWord8 x - fromWord8 y
  where
   (borrow, result8) = Arith.subtract word8 (x, y)
+
+prop_negate8 :: Word8 -> Word8 -> Bool
+prop_negate8 x y = fromWord8 result8 == (if fromBit borrow then 2^8 else 0) - fromWord8 x
+ where
+  (borrow, result8) = Arith.negate word8 x
+
+prop_full_decrement8 :: Bit -> Word8 -> Bool
+prop_full_decrement8 z x = fromWord8 result8 == (if fromBit borrow then 2^8 else 0) + fromWord8 x - if fromBit z then 1 else 0
+ where
+  (borrow, result8) = Arith.full_decrement word8 (z, x)
+
+prop_decrement8 :: Word8 -> Bool
+prop_decrement8 x = fromWord8 result8 == (if fromBit borrow then 2^8 else 0) + fromWord8 x - 1
+ where
+  (borrow, result8) = Arith.decrement word8 x
 
 -- The specification for full multiplier on Word8
 prop_full_multiply8 :: Word8 -> Word8 -> Word8 -> Word8 -> Bool
@@ -74,12 +224,104 @@ prop_full_multiply8 w x y z = fromWord16 (Arith.full_multiply word8 ((x, y), (w,
 prop_multiply8 :: Word8 -> Word8 -> Bool
 prop_multiply8 x y = fromWord16 (Arith.multiply word8 (x, y)) == fromWord8 x * fromWord8 y
 
--- The specification for complement on Word8
-prop_complement8 :: Word8 -> Bool
-prop_complement8 x = conv (complement word8 x) == W.complement (conv x)
+prop_is_zero4 :: Word4 -> Bool
+prop_is_zero4 x = (0 == fromWord4 x) == fromBit (Arith.is_zero word4 x)
+
+prop_is_one4 :: Word4 -> Bool
+prop_is_one4 x = (1 == fromWord4 x) == fromBit (Arith.is_one word4 x)
+
+prop_lt8 :: Word8 -> Word8 -> Bool
+prop_lt8 x y = (fromWord8 x < fromWord8 y) == fromBit (Arith.lt word8 (x,y))
+
+prop_le8 :: Word8 -> Word8 -> Bool
+prop_le8 x y = (fromWord8 x <= fromWord8 y) == fromBit (Arith.le word8 (x,y))
+
+prop_min8 :: Word8 -> Word8 -> Bool
+prop_min8 x y = (fromWord8 x `min` fromWord8 y) == fromWord8 (Arith.min word8 (x,y))
+
+prop_max8 :: Word8 -> Word8 -> Bool
+prop_max8 x y = (fromWord8 x `max` fromWord8 y) == fromWord8 (Arith.max word8 (x,y))
+
+prop_median8 :: Word8 -> Word8 -> Word8 -> Bool
+prop_median8 x y z = median (fromWord8 x) (fromWord8 y) (fromWord8 z) == fromWord8 (Arith.median word8 (x,(y,z)))
  where
-  conv :: Word8 -> W.Word8
-  conv = fromInteger . fromWord8
+  median a b c = head . tail . L.sort $ [a,b,c]
+
+prop_lsb8 :: Word8 -> Bool
+prop_lsb8 x = W.testBit (fromWord8 x) 0 == fromBit (Arith.lsb word8 x)
+
+prop_msb8 :: Word8 -> Bool
+prop_msb8 x = W.testBit (fromWord8 x) 7 == fromBit (Arith.msb word8 x)
+
+prop_div_mod8 :: Word8 -> Word8 -> Bool
+prop_div_mod8 x y = div_mod_spec (fromWord8 x) (fromWord8 y) == (fromWord8 a, fromWord8 b)
+ where
+  div_mod_spec x 0 = (0, x)
+  div_mod_spec x y = divMod x y
+  (a, b) = Arith.div_mod word8 (x, y)
+
+prop_divide8 :: Word8 -> Word8 -> Bool
+prop_divide8 x y = div_spec (fromWord8 x) (fromWord8 y) == fromWord8 (Arith.divide word8 (x, y))
+ where
+  div_spec x 0 = 0
+  div_spec x y = div x y
+
+prop_modulo8 :: Word8 -> Word8 -> Bool
+prop_modulo8 x y = mod_spec (fromWord8 x) (fromWord8 y) == fromWord8 (Arith.modulo word8 (x, y))
+ where
+  mod_spec x 0 = x
+  mod_spec x y = mod x y
+
+prop_divides8 :: Word8 -> Word8 -> Bool
+prop_divides8 x y = divides_spec (fromWord8 x) (fromWord8 y) == fromBit (Arith.divides word8 (x, y))
+ where
+  divides_spec 0 y = y == 0
+  divides_spec x y = y `mod` x == 0
+
+prop_bezout8 :: Word8 -> Word8 -> Bool
+prop_bezout8 x y = a * x' + b * y' == d
+                && if x' == y' then (a == 1 && b == 0)
+                   else if y' == 0 then (a == 1 && b == 0)
+                   else if x' == 0 then (a == 0 && b == 1)
+                   else (if d == y' then a == 0 else abs a * 2 * d <= y')
+                     && (if d == x' then b == 0 else abs b * 2 * d <= x')
+ where
+  x' = fromWord8 x
+  y' = fromWord8 y
+  d = x' `gcd` y'
+  (a, b) = either f g $ Arith.bezout word8 (x, y)
+  f (a, b) = (fromWord8 a, - fromWord8 b)
+  g (a, b) = (- fromWord8 a, fromWord8 b)
+
+prop_cofactors8 :: Word8 -> Word8 -> Bool
+prop_cofactors8 x y = fromWord8 x == d * fromWord8 a
+                   && fromWord8 y == d * fromWord8 b
+ where
+  d = fromWord8 x `gcd` fromWord8 y
+  (a, b) = Arith.cofactors word8 (x, y)
+
+prop_gcd8 :: Word8 -> Word8 -> Bool
+prop_gcd8 x y = (fromWord8 x `gcd` fromWord8 y) == fromWord8 (Arith.gcd word8 (x,y))
+
+prop_lcm8 :: Word8 -> Word8 -> Bool
+prop_lcm8 x y = (fromWord8 x `lcm` fromWord8 y) == fromWord16 (Arith.lcm word8 (x,y))
+
+prop_absolute_value4 :: Word4 -> Bool
+prop_absolute_value4 x = abs (fromInt4 x) == fromWord4 (Arith.absolute_value word4 x)
+ where
+  fromInt4 x = if 2^3 <= w4 then w4 - 2^4 else w4
+   where
+    w4 = fromWord4 x
+
+prop_sign4 :: Word4 -> Bool
+prop_sign4 x = signum (fromInt4 x) == fromInt2 (Arith.sign word4 x)
+ where
+  fromInt4 x = if 2^3 <= w4 then w4 - 2^4 else w4
+   where
+    w4 = fromWord4 x
+  fromInt2 x = if 2^1 <= w2 then w2 - 2^2 else w2
+   where
+    w2 = fromWord2 x
 
 -- The specification for SHA-256's block compression function.
 prop_sha256 :: [W.Word8] -> Bool
