@@ -24,7 +24,7 @@ import Simplicity.Tensor
 hashAll = CheckSigHashAll.hashAll CheckSigHashAll.lib
 sigHashAll = CheckSigHashAll.sigHashAll CheckSigHashAll.lib
 
-checkSigHashAll :: forall term. (Assert term, Primitive term, Witness term) => Schnorr.XOnlyPubKey -> Schnorr.Sig -> term () ()
+checkSigHashAll :: forall term. (Assert term, Primitive term, Witness term) => Schnorr.PubKey -> Schnorr.Sig -> term () ()
 checkSigHashAll = CheckSigHashAll.checkSigHashAll libSecp256k1 (CheckSigHashAll.mkLib libSha256P)
   where
   libSha256P :: Sha256.Lib (Product CommitmentRoot term)

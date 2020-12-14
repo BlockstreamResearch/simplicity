@@ -14,10 +14,10 @@ import Lens.Family2.Stock (backwards, both_)
 import Simplicity.CoreJets
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.Spec ((.*.), (.^.))
-import qualified Simplicity.LibSecp256k1.Spec as LibSecpSpec
+import qualified Simplicity.LibSecp256k1.Spec as Spec
 import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
-import Simplicity.Programs.LibSecp256k1.Lib as LibSecp
+import Simplicity.Programs.LibSecp256k1.Lib
 import Simplicity.Programs.Sha256.Lib
 import Simplicity.Programs.Word
 import Simplicity.Term.Core
@@ -26,8 +26,10 @@ import qualified Simplicity.Word as W
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit ((@=?), Assertion, testCase)
-import Test.Tasty.QuickCheck (Arbitrary(..), Gen, Property,
-                              arbitraryBoundedIntegral, choose, elements, forAll, resize, sized, testProperty)
+import Test.Tasty.QuickCheck (Arbitrary(..), Gen, Property
+                             , arbitraryBoundedIntegral, choose, elements, forAll, resize, sized, testProperty
+                             , withMaxSuccess
+                             )
 
 -- This collects the tests for the various Simplicity programs.
 tests :: TestTree
@@ -53,16 +55,16 @@ tests = testGroup "Programs"
         [ testCase "zero word8" assert_zero8
         , testCase "one word8" assert_one8
         , testProperty "full_add word8" prop_full_add8
-        , testProperty "add word8" prop_add8
+        , testProperty "add word8" prop_fe_add8
         , testProperty "full_increment word8" prop_full_increment8
         , testProperty "increment word8" prop_increment8
         , testProperty "full_subtract word8" prop_full_subtract8
         , testProperty "subtract word8" prop_subtract8
-        , testProperty "negate word8" prop_negate8
+        , testProperty "negate word8" prop_negateate8
         , testProperty "full_decrement word8" prop_full_decrement8
         , testProperty "decrement word8" prop_decrement8
         , testProperty "fullMultiply word8" prop_full_multiply8
-        , testProperty "multiply word8" prop_multiply8
+        , testProperty "multiply word8" prop_fe_multiplytiply8
         , testProperty "is_zero word4" prop_is_zero4
         , testProperty "is_one word4" prop_is_one4
         , testProperty "lt word8" prop_lt8
@@ -84,6 +86,43 @@ tests = testGroup "Programs"
         , testProperty "sign word4" prop_sign4
         ]
       , testProperty "sha256" prop_sha256
+      , testGroup "ellipticCurve"
+        [ testProperty "fe_normalize" prop_fe_normalize
+        , testProperty "fe_add" prop_fe_add
+        , testProperty "fe_multiply" prop_fe_multiply
+        , testProperty "fe_square" prop_fe_square
+        , testProperty "fe_negate" prop_fe_negate
+        , testProperty "fe_invert" (withMaxSuccess 10 prop_fe_invert)
+        , testProperty "fe_square_root" (withMaxSuccess 10 prop_fe_square_root)
+        , testProperty "gej_double" prop_gej_double
+        , testProperty "gej_double_inf" prop_gej_double_inf
+        , testProperty "gej_add_ex" prop_gej_add_ex
+        , testProperty "gej_add_ex_double" prop_gej_add_ex_double
+        , testProperty "gej_add_ex_opp" prop_gej_add_ex_opp
+        , testProperty "gej_add_ex_infl" prop_gej_add_ex_infl
+        , testProperty "gej_add_ex_infr" prop_gej_add_ex_infr
+        , testProperty "gej_add" prop_gej_add
+        , testProperty "gej_add_double" prop_gej_add_double
+        , testProperty "gej_add_opp" prop_gej_add_opp
+        , testProperty "gej_add_infl" prop_gej_add_infl
+        , testProperty "gej_add_infr" prop_gej_add_infr
+        , testProperty "gej_ge_add_ex" prop_gej_ge_add_ex
+        , testProperty "gej_ge_add_ex_double" prop_gej_ge_add_ex_double
+        , testProperty "gej_ge_add_ex_opp" prop_gej_ge_add_ex_opp
+        , testProperty "gej_ge_add_ex_inf" prop_gej_ge_add_ex_inf
+        , testProperty "gej_x_equiv" prop_gej_x_equiv
+        , testProperty "gej_x_equiv_inf" prop_gej_x_equiv_inf
+        , testProperty "gej_x_equiv_true" prop_gej_x_equiv_true
+        , testProperty "gej_x_equiv_inf_zero" prop_gej_x_equiv_inf_zero
+        , testProperty "scalar_normalize" prop_scalar_normalize
+        , testProperty "scalar_split_lambda" prop_scalar_split_lambda
+        , testProperty "wnaf5" prop_wnaf5
+        , testProperty "wnaf15" prop_wnaf15
+        ]
+      , testGroup "bip0340"
+        [ testProperty "pubkey_unpack" (withMaxSuccess 10 prop_pubkey_unpack)
+        , testProperty "signature_unpack" prop_signature_unpack
+        ]
       ]
 
 assert_low8 :: Assertion
@@ -174,8 +213,8 @@ prop_full_add8 z x y = (if fromBit carry then 2^8 else 0) + fromWord8 result8 ==
   (carry, result8) = Arith.full_add word8 (z, (x, y))
 
 -- The specification for adder on Word8
-prop_add8 :: Word8 -> Word8 -> Bool
-prop_add8 x y = (if fromBit carry then 2^8 else 0) + fromWord8 result8 == fromWord8 x + fromWord8 y
+prop_fe_add8 :: Word8 -> Word8 -> Bool
+prop_fe_add8 x y = (if fromBit carry then 2^8 else 0) + fromWord8 result8 == fromWord8 x + fromWord8 y
  where
   (carry, result8) = Arith.add word8 (x, y)
 
@@ -201,8 +240,8 @@ prop_subtract8 x y = fromWord8 result8 == (if fromBit borrow then 2^8 else 0) + 
  where
   (borrow, result8) = Arith.subtract word8 (x, y)
 
-prop_negate8 :: Word8 -> Word8 -> Bool
-prop_negate8 x y = fromWord8 result8 == (if fromBit borrow then 2^8 else 0) - fromWord8 x
+prop_negateate8 :: Word8 -> Word8 -> Bool
+prop_negateate8 x y = fromWord8 result8 == (if fromBit borrow then 2^8 else 0) - fromWord8 x
  where
   (borrow, result8) = Arith.negate word8 x
 
@@ -221,8 +260,8 @@ prop_full_multiply8 :: Word8 -> Word8 -> Word8 -> Word8 -> Bool
 prop_full_multiply8 w x y z = fromWord16 (Arith.full_multiply word8 ((x, y), (w, z))) == fromWord8 x * fromWord8 y + fromWord8 w + fromWord8 z
 
 -- The specification for multiplier on Word8
-prop_multiply8 :: Word8 -> Word8 -> Bool
-prop_multiply8 x y = fromWord16 (Arith.multiply word8 (x, y)) == fromWord8 x * fromWord8 y
+prop_fe_multiplytiply8 :: Word8 -> Word8 -> Bool
+prop_fe_multiplytiply8 x y = fromWord16 (Arith.multiply word8 (x, y)) == fromWord8 x * fromWord8 y
 
 prop_is_zero4 :: Word4 -> Bool
 prop_is_zero4 x = (0 == fromWord4 x) == fromBit (Arith.is_zero word4 x)
@@ -335,13 +374,14 @@ prop_sha256 x0 = integerHash256 (bsHash (pack x)) == fromWord256 ((iv &&& iden >
     go (w:ws) n = go ws (W.shiftL n 8 .|. toInteger w)
   paddedInteger = W.shiftL (mkInteger (x ++ [0x80])) (8*(64 - (len + 1))) .|. toInteger len*8
 
-toFE :: LibSecpSpec.FE -> FE
-toFE = toWord256 . toInteger . LibSecpSpec.fePack
+toFE :: Spec.FE -> FE
+toFE = toWord256 . toInteger . Spec.fe_pack
 
 maybeToTy :: Maybe a -> Either () a
 maybeToTy Nothing = Left ()
 maybeToTy (Just x) = Right x
 
+genModularWord256 :: W.Word256 -> Gen W.Word256
 genModularWord256 w = do
   b <- arbitrary
   i <- arbitrary
@@ -350,16 +390,16 @@ genModularWord256 w = do
 data FieldElement = FieldElement W.Word256 deriving Show
 
 instance Arbitrary FieldElement where
-  arbitrary = FieldElement <$> genModularWord256 (LibSecpSpec.fePack (LibSecpSpec.neg LibSecpSpec.feOne) + 1)
+  arbitrary = FieldElement <$> genModularWord256 (fromInteger Spec.fieldOrder)
   shrink (FieldElement fe) = FieldElement <$> takeWhile (<fe) [0, 1, order - 1, order, order + 1]
    where
-    order = LibSecpSpec.fePack (LibSecpSpec.neg LibSecpSpec.feOne) + 1
+    order = fromInteger Spec.fieldOrder
 
 feAsTy (FieldElement w) = toWord256 (toInteger w)
-feAsSpec (FieldElement w) = LibSecpSpec.unrepr (toInteger w)
+feAsSpec (FieldElement w) = Spec.fe (toInteger w)
 
-prop_normalize :: FieldElement -> Bool
-prop_normalize a = normalize (feAsTy a) == toFE (feAsSpec a)
+prop_fe_normalize :: FieldElement -> Bool
+prop_fe_normalize a = fe_normalize (feAsTy a) == toFE (feAsSpec a)
 
 fe_unary_prop f g = \a -> fastF (feAsTy a) == Just (toFE (g (feAsSpec a)))
  where
@@ -369,31 +409,31 @@ fe_binary_prop f g = \a b -> fastF (feAsTy a, feAsTy b) == Just (toFE (g (feAsSp
  where
   fastF = fastCoreEval f
 
-prop_add :: FieldElement -> FieldElement -> Bool
-prop_add = fe_binary_prop LibSecp.add LibSecpSpec.add
+prop_fe_add :: FieldElement -> FieldElement -> Bool
+prop_fe_add = fe_binary_prop fe_add Spec.fe_add
 
-prop_mul :: FieldElement -> FieldElement -> Bool
-prop_mul = fe_binary_prop mul LibSecpSpec.mul
+prop_fe_multiply :: FieldElement -> FieldElement -> Bool
+prop_fe_multiply = fe_binary_prop fe_multiply Spec.fe_multiply
 
-prop_sqr :: FieldElement -> Bool
-prop_sqr = fe_unary_prop sqr LibSecpSpec.sqr
+prop_fe_square :: FieldElement -> Bool
+prop_fe_square = fe_unary_prop fe_square Spec.fe_square
 
-prop_neg :: FieldElement -> Bool
-prop_neg = fe_unary_prop neg LibSecpSpec.neg
+prop_fe_negate :: FieldElement -> Bool
+prop_fe_negate = fe_unary_prop fe_negate Spec.fe_negate
 
-prop_inv :: FieldElement -> Bool
-prop_inv = fe_unary_prop inv LibSecpSpec.inv
+prop_fe_invert :: FieldElement -> Bool
+prop_fe_invert = fe_unary_prop fe_invert Spec.fe_invert
 
-prop_sqrt :: FieldElement -> Bool
-prop_sqrt = \a -> fastSqrt (feAsTy a) == Just ((fmap toFE . maybeToTy) (LibSecpSpec.sqrt (feAsSpec a)))
+prop_fe_square_root :: FieldElement -> Bool
+prop_fe_square_root = \a -> fastSqrt (feAsTy a) == Just ((fmap toFE . maybeToTy) (Spec.fe_square_root (feAsSpec a)))
  where
-  fastSqrt = fastCoreEval sqrt
+  fastSqrt = fastCoreEval fe_square_root
 
-toGE :: LibSecpSpec.GE -> GE
-toGE (LibSecpSpec.GE x y) = (toFE x, toFE y)
+toGE :: Spec.GE -> GE
+toGE (Spec.GE x y) = (toFE x, toFE y)
 
-toGEJ :: LibSecpSpec.GEJ -> GEJ
-toGEJ (LibSecpSpec.GEJ x y z) = ((toFE x, toFE y), toFE z)
+toGEJ :: Spec.GEJ -> GEJ
+toGEJ (Spec.GEJ x y z) = ((toFE x, toFE y), toFE z)
 
 data GroupElement = GroupElement FieldElement FieldElement deriving Show
 
@@ -402,7 +442,7 @@ instance Arbitrary GroupElement where
   shrink (GroupElement x y) = [GroupElement x' y' | (x', y') <- shrink (x, y)]
 
 geAsTy (GroupElement x y) = (feAsTy x, feAsTy y)
-geAsSpec (GroupElement x y) = LibSecpSpec.GE (feAsSpec x) (feAsSpec y)
+geAsSpec (GroupElement x y) = Spec.GE (feAsSpec x) (feAsSpec y)
 
 data GroupElementJacobian = GroupElementJacobian FieldElement FieldElement FieldElement deriving Show
 
@@ -411,83 +451,161 @@ instance Arbitrary GroupElementJacobian where
   shrink (GroupElementJacobian x y z) = [GroupElementJacobian x' y' z' | (x', y', z') <- shrink (x, y, z)]
 
 gejAsTy (GroupElementJacobian x y z) = ((feAsTy x, feAsTy y), feAsTy z)
-gejAsSpec (GroupElementJacobian x y z) = LibSecpSpec.GEJ (feAsSpec x) (feAsSpec y) (feAsSpec z)
+gejAsSpec (GroupElementJacobian x y z) = Spec.GEJ (feAsSpec x) (feAsSpec y) (feAsSpec z)
 
 gen_inf :: Gen GroupElementJacobian
 gen_inf = GroupElementJacobian <$> arbitrary <*> arbitrary <*> pure (FieldElement 0)
 
-prop_double :: GroupElementJacobian -> Bool
-prop_double = \a -> fastDouble (gejAsTy a) == Just (toGEJ (LibSecpSpec.double (gejAsSpec a)))
+prop_gej_double :: GroupElementJacobian -> Bool
+prop_gej_double = \a -> fast_gej_double (gejAsTy a) == Just (toGEJ (Spec.gej_double (gejAsSpec a)))
  where
-  fastDouble = fastCoreEval double
+  fast_gej_double = fastCoreEval gej_double
 
-prop_double_inf :: Property
-prop_double_inf = forAll gen_inf $ prop_double
+prop_gej_double_inf :: Property
+prop_gej_double_inf = forAll gen_inf $ prop_gej_double
 
-prop_offsetPointEx :: GroupElementJacobian -> GroupElement -> Bool
-prop_offsetPointEx = \a b ->
-  let rzc = fastOffsetPointEx (gejAsTy a, geAsTy b)
-      (rz', c') = LibSecpSpec.offsetPointEx (gejAsSpec a) (geAsSpec b)
+prop_gej_add_ex :: GroupElementJacobian -> GroupElementJacobian -> Bool
+prop_gej_add_ex = \a b ->
+  let rzc = fast_gej_add_ex (gejAsTy a, gejAsTy b)
+      (rz', c') = Spec.gej_add_ex (gejAsSpec a) (gejAsSpec b)
   in (fst <$> rzc) == Just (toFE rz') && (snd <$> rzc) == Just (toGEJ c')
  where
-  fastOffsetPointEx = fastCoreEval offsetPointEx
+  fast_gej_add_ex = fastCoreEval gej_add_ex
 
-prop_offsetPointEx_double :: FieldElement -> GroupElement -> Bool
-prop_offsetPointEx_double z b@(GroupElement bx by) = prop_offsetPointEx a b
+prop_gej_add_ex_double :: FieldElement -> GroupElementJacobian -> Bool
+prop_gej_add_ex_double z b@(GroupElementJacobian bx by bz) = prop_gej_add_ex a b
  where
   z' = feAsSpec z
   bx' = feAsSpec bx
   by' = feAsSpec by
-  a = GroupElementJacobian (FieldElement . LibSecpSpec.fePack $ bx' .*. z' .^. 2)
-                           (FieldElement . LibSecpSpec.fePack $ by' .*. z' .^. 3)
-                           z
+  bz' = feAsSpec bz
+  a = GroupElementJacobian (FieldElement . Spec.fe_pack $ bx' .*. z' .^. 2)
+                           (FieldElement . Spec.fe_pack $ by' .*. z' .^. 3)
+                           (FieldElement . Spec.fe_pack $ bz' .*. z')
 
-prop_offsetPointEx_opp :: FieldElement -> GroupElement -> Bool
-prop_offsetPointEx_opp z b@(GroupElement bx by) = prop_offsetPointEx a b
+prop_gej_add_ex_opp :: FieldElement -> GroupElementJacobian -> Bool
+prop_gej_add_ex_opp z b@(GroupElementJacobian bx by bz) = prop_gej_add_ex a b
  where
   z' = feAsSpec z
   bx' = feAsSpec bx
   by' = feAsSpec by
-  a = GroupElementJacobian (FieldElement . LibSecpSpec.fePack $ bx' .*. z' .^. 2)
-                           (FieldElement . LibSecpSpec.fePack . LibSecpSpec.neg $ by' .*. z' .^. 3)
+  bz' = feAsSpec bz
+  a = GroupElementJacobian (FieldElement . Spec.fe_pack $ bx' .*. z' .^. 2)
+                           (FieldElement . Spec.fe_pack . Spec.fe_negate $ by' .*. z' .^. 3)
+                           (FieldElement . Spec.fe_pack $ bz' .*. z')
+
+prop_gej_add_ex_infl b = forAll gen_inf $ \a -> prop_gej_add_ex a b
+prop_gej_add_ex_infr a = forAll gen_inf $ \b -> prop_gej_add_ex a b
+
+prop_gej_add :: GroupElementJacobian -> GroupElementJacobian -> Bool
+prop_gej_add = \a b -> fast_gej_add (gejAsTy a, gejAsTy b) == Just (toGEJ (gejAsSpec a <> gejAsSpec b))
+ where
+  fast_gej_add = fastCoreEval gej_add
+
+prop_gej_add_double :: FieldElement -> GroupElementJacobian -> Bool
+prop_gej_add_double z b@(GroupElementJacobian bx by bz) = prop_gej_add a b
+ where
+  z' = feAsSpec z
+  bx' = feAsSpec bx
+  by' = feAsSpec by
+  bz' = feAsSpec bz
+  a = GroupElementJacobian (FieldElement . Spec.fe_pack $ bx' .*. z' .^. 2)
+                           (FieldElement . Spec.fe_pack $ by' .*. z' .^. 3)
+                           (FieldElement . Spec.fe_pack $ bz' .*. z')
+
+prop_gej_add_opp :: FieldElement -> GroupElementJacobian -> Bool
+prop_gej_add_opp z b@(GroupElementJacobian bx by bz) = prop_gej_add a b
+ where
+  z' = feAsSpec z
+  bx' = feAsSpec bx
+  by' = feAsSpec by
+  bz' = feAsSpec bz
+  a = GroupElementJacobian (FieldElement . Spec.fe_pack $ bx' .*. z' .^. 2)
+                           (FieldElement . Spec.fe_pack . Spec.fe_negate $ by' .*. z' .^. 3)
+                           (FieldElement . Spec.fe_pack $ bz' .*. z')
+
+prop_gej_add_infl b = forAll gen_inf $ \a -> prop_gej_add a b
+prop_gej_add_infr a = forAll gen_inf $ \b -> prop_gej_add a b
+
+prop_gej_ge_add_ex :: GroupElementJacobian -> GroupElement -> Bool
+prop_gej_ge_add_ex = \a b ->
+  let rzc = fast_gej_ge_add_ex (gejAsTy a, geAsTy b)
+      (rz', c') = Spec.gej_ge_add_ex (gejAsSpec a) (geAsSpec b)
+  in (fst <$> rzc) == Just (toFE rz') && (snd <$> rzc) == Just (toGEJ c')
+ where
+  fast_gej_ge_add_ex = fastCoreEval gej_ge_add_ex
+
+prop_gej_ge_add_ex_double :: FieldElement -> GroupElement -> Bool
+prop_gej_ge_add_ex_double z b@(GroupElement bx by) = prop_gej_ge_add_ex a b
+ where
+  z' = feAsSpec z
+  bx' = feAsSpec bx
+  by' = feAsSpec by
+  a = GroupElementJacobian (FieldElement . Spec.fe_pack $ bx' .*. z' .^. 2)
+                           (FieldElement . Spec.fe_pack $ by' .*. z' .^. 3)
                            z
 
-prop_offsetPointEx_inf b = forAll gen_inf $ \a -> prop_offsetPointEx a b
+prop_gej_ge_add_ex_opp :: FieldElement -> GroupElement -> Bool
+prop_gej_ge_add_ex_opp z b@(GroupElement bx by) = prop_gej_ge_add_ex a b
+ where
+  z' = feAsSpec z
+  bx' = feAsSpec bx
+  by' = feAsSpec by
+  a = GroupElementJacobian (FieldElement . Spec.fe_pack $ bx' .*. z' .^. 2)
+                           (FieldElement . Spec.fe_pack . Spec.fe_negate $ by' .*. z' .^. 3)
+                           z
+
+prop_gej_ge_add_ex_inf b = forAll gen_inf $ \a -> prop_gej_ge_add_ex a b
+
+prop_gej_x_equiv :: GroupElementJacobian -> FieldElement -> Bool -- gej_x_equiv will essentially always be false on random inputs.
+prop_gej_x_equiv = \a x0 -> fast_gej_x_equiv (gejAsTy a, feAsTy x0) == Just (toBit (Spec.gej_x_equiv (gejAsSpec a) (feAsSpec x0)))
+ where
+  fast_gej_x_equiv = fastCoreEval gej_x_equiv
+
+prop_gej_x_equiv_inf x0 = forAll gen_inf $ \a -> prop_gej_x_equiv a x0
+prop_gej_x_equiv_true y z x0 = prop_gej_x_equiv a x0
+  where
+   z' = feAsSpec z
+   x0' = feAsSpec x0
+   a = GroupElementJacobian (FieldElement . Spec.fe_pack $ x0' .*. z' .^. 2) y z
+
+prop_gej_x_equiv_inf_zero = prop_gej_x_equiv_inf (FieldElement 0)
 
 data ScalarElement = ScalarElement W.Word256 deriving Show
 
 instance Arbitrary ScalarElement where
-  arbitrary = sized $ \n -> if n == 0 then return . ScalarElement $ case1 else resize (n-1) $ do
+  arbitrary = sized $ \n -> if n == 0 then return case1 else resize (n-1) $ do
     i <- arbitrary
     j <- arbitrary
-    e <- elements [0, 2^255, order, halforder]
-    return . ScalarElement $ fromInteger i + (fromInteger j * lambda `mod` order) + e
+    e <- elements [0, 2^255, Spec.groupOrder, halforder]
+    return . ScalarElement . fromInteger $ i + (j * Spec.lambda `mod` Spec.groupOrder) + e
    where
     -- This denormailzed scalar would produce a different result on split-lambda than the canonical scalar due to
     -- the approximate division used in the implementation.
-    case1 = order + c
+    case1 = ScalarElement $ fromInteger Spec.groupOrder + c
      where
       c = 0x8f8da4d57dc094c4ecdd5448564d85f6 -- 2^383 `div` g2 + 1
-    order = LibSecpSpec.scalarPack maxBound + 1
-    halforder = order `div` 2
-    lambda = 0x5363AD4CC05C30E0A5261C028812645A122E22EA20816678DF02967C1B23BD72
+    halforder = Spec.groupOrder `div` 2
   shrink (ScalarElement se) = ScalarElement <$> filter (<se) [0, 1, 2^256-1, 2^255-1, 2^255, 2^255+1, order - 1, order, order + 1, halforder -1, halforder, halforder + 1, halforder + 2]
    where
-    order = LibSecpSpec.scalarPack maxBound + 1
+    order = fromInteger Spec.groupOrder
     halforder = order `div` 2
 
 scalarAsTy (ScalarElement w) = toWord256 (toInteger w)
-scalarAsSpec (ScalarElement w) = LibSecpSpec.scalarUnrepr (toInteger w)
+scalarAsSpec (ScalarElement w) = Spec.scalar (toInteger w)
 
-toScalar :: LibSecpSpec.Scalar -> FE
-toScalar a = toWord256 . toInteger $ LibSecpSpec.scalarPack a
+toScalar :: Spec.Scalar -> Scalar
+toScalar = toWord256 . Spec.scalar_repr
 
-prop_scalarSplitLambda :: ScalarElement -> Bool
-prop_scalarSplitLambda = \a -> ((interp *** interp) <$> fastSplit (scalarAsTy a))
-                            == Just (LibSecpSpec.scalarSplitLambda (scalarAsSpec a))
+prop_scalar_normalize :: ScalarElement -> Bool
+prop_scalar_normalize a@(ScalarElement w) = scalar_normalize (scalarAsTy a) == toScalar (Spec.scalar (toInteger w))
+
+prop_scalar_split_lambda :: ScalarElement -> Bool
+prop_scalar_split_lambda = \a -> ((interp *** interp) <$> fast_scalar_split_lambda (scalarAsTy a))
+                            == Just (Spec.scalar_split_lambda (scalarAsSpec a))
  where
   interp (b,x) = fromWord128 x - if fromBit b then 2^128 else 0
-  fastSplit = fastCoreEval scalarSplitLambda
+  fast_scalar_split_lambda = fastCoreEval scalar_split_lambda
 
 data WnafElement = WnafElement { wnafAsSpec :: Integer } deriving Show
 
@@ -501,152 +619,156 @@ wnafAsTy (WnafElement we) = (toBit (we < 0), toWord128 we)
 traverseWnaf f (x,y) = (,) <$> f x <*> (both_.both_.both_.both_.both_.both_.both_) f y
 
 prop_wnaf5 :: WnafElement -> Bool
-prop_wnaf5 n = L.and $ zipWith (==) lhs (fmap (maybeToTy . fmap (unsign . toInteger)) (LibSecpSpec.wnaf 5 (wnafAsSpec n) ++ repeat Nothing))
+prop_wnaf5 n = L.and $ zipWith (==) lhs (fmap (maybeToTy . fmap (unsign . toInteger)) (Spec.wnaf 5 (wnafAsSpec n) ++ repeat Nothing))
  where
   lhs = fmap fromWord4 <$> wnaf5 (wnafAsTy n)^..(backwards traverseWnaf)
   unsign x | x < 0 = 2^4 + x
            | otherwise = x
 
 prop_wnaf15 :: WnafElement -> Bool
-prop_wnaf15 n = L.and $ zipWith (==) lhs (fmap (maybeToTy . fmap (unsign . toInteger)) (LibSecpSpec.wnaf 15 (wnafAsSpec n) ++ repeat Nothing))
+prop_wnaf15 n = L.and $ zipWith (==) lhs (fmap (maybeToTy . fmap (unsign . toInteger)) (Spec.wnaf 15 (wnafAsSpec n) ++ repeat Nothing))
  where
   lhs = fmap (fromWord16) <$> wnaf15 (wnafAsTy n)^..(backwards traverseWnaf)
   unsign x | x < 0 = 2^16 + 2*x+1
            | otherwise = 2*x+1
 
-prop_ecMult :: GroupElementJacobian -> ScalarElement -> ScalarElement -> Bool
-prop_ecMult = \a na ng -> fastEcMult ((gejAsTy a, scalarAsTy na), scalarAsTy ng) == Just (toGEJ (LibSecpSpec.ecMult (gejAsSpec a) (scalarAsSpec na) (scalarAsSpec ng)))
+prop_linear_combination_1 :: ScalarElement -> GroupElementJacobian -> ScalarElement -> Bool
+prop_linear_combination_1 = \na a ng -> fast_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
+             == Just (toGEJ (Spec.linear_combination_1 (scalarAsSpec na) (gejAsSpec a) (scalarAsSpec ng)))
  where
-  fastEcMult = fastCoreEval ecMult
+  fast_linear_combination_1 = fastCoreEval linear_combination_1
 
-prop_ecMult0 :: GroupElementJacobian -> ScalarElement -> Bool
-prop_ecMult0 a ng = prop_ecMult a na ng
+prop_linear_combination_1_0 :: GroupElementJacobian -> ScalarElement -> Bool
+prop_linear_combination_1_0 a ng = prop_linear_combination_1 na a ng
  where
   na = ScalarElement 0
 
-prop_ecMult_inf :: ScalarElement -> ScalarElement -> Property
-prop_ecMult_inf na ng = forAll gen_inf $ \a -> prop_ecMult a na ng
+prop_linear_combination_1_inf :: ScalarElement -> ScalarElement -> Property
+prop_linear_combination_1_inf na ng = forAll gen_inf $ \a -> prop_linear_combination_1 na a ng
 
-prop_pkPoint :: FieldElement -> Bool
-prop_pkPoint a@(FieldElement w) = right (\x -> (x,toWord256 1)) (pkPoint (feAsTy a)) == (fmap toGEJ . maybeToTy) (LibSecpSpec.pkPoint (LibSecpSpec.XOnlyPubKey w))
+prop_pubkey_unpack :: FieldElement -> Bool
+prop_pubkey_unpack a@(FieldElement w) = fmap (right (\x -> (x,toWord256 1))) (fast_pubkey_unpack (feAsTy a))
+                                     == Just ((fmap toGEJ . maybeToTy) (Spec.pubkey_unpack (Spec.PubKey w)))
+ where
+  fast_pubkey_unpack = fastCoreEval pubkey_unpack
 
-prop_sigUnpack :: FieldElement -> ScalarElement -> Bool
-prop_sigUnpack r@(FieldElement wr) s@(ScalarElement ws) =
-  sigUnpack (feAsTy r, scalarAsTy s) == (fmap (toFE *** toScalar) . maybeToTy) (LibSecpSpec.sigUnpack (LibSecpSpec.Sig wr ws))
+prop_signature_unpack :: FieldElement -> ScalarElement -> Bool
+prop_signature_unpack r@(FieldElement wr) s@(ScalarElement ws) =
+  fast_signature_unpack (feAsTy r, scalarAsTy s) ==
+  Just ((fmap (toFE *** toScalar) . maybeToTy) (Spec.signature_unpack (Spec.Sig wr ws)))
+ where
+  fast_signature_unpack = fastCoreEval signature_unpack
 
-prop_scalarUnrepr :: ScalarElement -> Bool
-prop_scalarUnrepr a@(ScalarElement w) = scalarUnrepr (scalarAsTy a) == toScalar (LibSecpSpec.scalarUnrepr (toInteger w))
-
-fastSchnorrVerify = fromJust . fastCoreEval schnorrVerify
+fast_bip0340_check = fromJust . fastCoreEval bip0340_check
  where
   fromJust (Just a) = fromBit a
   fromJust Nothing = False
 
-schnorr0 :: Bool
-schnorr0 = fastSchnorrVerify ((pk,m),sig)
+bip0340_0 :: Bool
+bip0340_0 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xF9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9
   m = toWord256 0
   sig = toWord512 0xE907831F80848D1069A5371B402410364BDF1C5F8307B0084C55F1CE2DCA821525F66A4A85EA8B71E482A74F382D2CE5EBEEE8FDB2172F477DF4900D310536C0
 
-schnorr1 :: Bool
-schnorr1 = fastSchnorrVerify ((pk,m),sig)
+bip0340_1 :: Bool
+bip0340_1 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659
   m = toWord256 0x243F6A8885A308D313198A2E03707344A4093822299F31D0082EFA98EC4E6C89
   sig = toWord512 0x6896BD60EEAE296DB48A229FF71DFE071BDE413E6D43F917DC8DCF8C78DE33418906D11AC976ABCCB20B091292BFF4EA897EFCB639EA871CFA95F6DE339E4B0A
 
-schnorr2 :: Bool
-schnorr2 = fastSchnorrVerify ((pk,m),sig)
+bip0340_2 :: Bool
+bip0340_2 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xDD308AFEC5777E13121FA72B9CC1B7CC0139715309B086C960E18FD969774EB8
   m = toWord256 0x7E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
   sig = toWord512 0x5831AAEED7B44BB74E5EAB94BA9D4294C49BCF2A60728D8B4C200F50DD313C1BAB745879A5AD954A72C45A91C3A51D3C7ADEA98D82F8481E0E1E03674A6F3FB7
 
-schnorr3 :: Bool
-schnorr3 = fastSchnorrVerify ((pk,m),sig)
+bip0340_3 :: Bool
+bip0340_3 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0x25D1DFF95105F5253C4022F628A996AD3A0D95FBF21D468A1B33F8C160D8F517
   m = toWord256 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
   sig = toWord512 0x7EB0509757E246F19449885651611CB965ECC1A187DD51B64FDA1EDC9637D5EC97582B9CB13DB3933705B32BA982AF5AF25FD78881EBB32771FC5922EFC66EA3
 
-schnorr4 :: Bool
-schnorr4 = fastSchnorrVerify ((pk,m),sig)
+bip0340_4 :: Bool
+bip0340_4 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xD69C3509BB99E412E68B0FE8544E72837DFA30746D8BE2AA65975F29D22DC7B9
   m = toWord256 0x4DF3C3F68FCC83B27E9D42C90431A72499F17875C81A599B566C9889B9696703
   sig = toWord512 0x00000000000000000000003B78CE563F89A0ED9414F5AA28AD0D96D6795F9C6376AFB1548AF603B3EB45C9F8207DEE1060CB71C04E80F593060B07D28308D7F4
 
-schnorr5 :: Bool
-schnorr5 = fastSchnorrVerify ((pk,m),sig)
+bip0340_5 :: Bool
+bip0340_5 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xEEFDEA4CDB677750A420FEE807EACF21EB9898AE79B9768766E4FAA04A2D4A34
   m = toWord256 0x243F6A8885A308D313198A2E03707344A4093822299F31D0082EFA98EC4E6C89
   sig = toWord512 0x6CFF5C3BA86C69EA4B7376F31A9BCB4F74C1976089B2D9963DA2E5543E17776969E89B4C5564D00349106B8497785DD7D1D713A8AE82B32FA79D5F7FC407D39B
 
-schnorr6 :: Bool
-schnorr6 = fastSchnorrVerify ((pk,m),sig)
+bip0340_6 :: Bool
+bip0340_6 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659
   m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
   sig = toWord512 0xFFF97BD5755EEEA420453A14355235D382F6472F8568A18B2F057A14602975563CC27944640AC607CD107AE10923D9EF7A73C643E166BE5EBEAFA34B1AC553E2
 
-schnorr7 :: Bool
-schnorr7 = fastSchnorrVerify ((pk,m),sig)
+bip0340_7 :: Bool
+bip0340_7 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659
   m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
   sig = toWord512 0x1FA62E331EDBC21C394792D2AB1100A7B432B013DF3F6FF4F99FCB33E0E1515F28890B3EDB6E7189B630448B515CE4F8622A954CFE545735AAEA5134FCCDB2BD
 
-schnorr8 :: Bool
-schnorr8 = fastSchnorrVerify ((pk,m),sig)
+bip0340_8 :: Bool
+bip0340_8 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659
   m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
   sig = toWord512 0x6CFF5C3BA86C69EA4B7376F31A9BCB4F74C1976089B2D9963DA2E5543E177769961764B3AA9B2FFCB6EF947B6887A226E8D7C93E00C5ED0C1834FF0D0C2E6DA6
 
-schnorr9 :: Bool
-schnorr9 = fastSchnorrVerify ((pk,m),sig)
+bip0340_9 :: Bool
+bip0340_9 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659
   m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
   sig = toWord512 0x0000000000000000000000000000000000000000000000000000000000000000123DDA8328AF9C23A94C1FEECFD123BA4FB73476F0D594DCB65C6425BD186051
 
-schnorr10 :: Bool
-schnorr10 = fastSchnorrVerify ((pk,m),sig)
+bip0340_10 :: Bool
+bip0340_10 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659
   m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
   sig = toWord512 0x00000000000000000000000000000000000000000000000000000000000000017615FBAF5AE28864013C099742DEADB4DBA87F11AC6754F93780D5A1837CF197
 
-schnorr11 :: Bool
-schnorr11 = fastSchnorrVerify ((pk,m),sig)
+bip0340_11 :: Bool
+bip0340_11 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659
   m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
   sig = toWord512 0x4A298DACAE57395A15D0795DDBFD1DCB564DA82B0F269BC70A74F8220429BA1D69E89B4C5564D00349106B8497785DD7D1D713A8AE82B32FA79D5F7FC407D39B
 
-schnorr12 :: Bool
-schnorr12 = fastSchnorrVerify ((pk,m),sig)
+bip0340_12 :: Bool
+bip0340_12 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659
   m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
   sig = toWord512 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F69E89B4C5564D00349106B8497785DD7D1D713A8AE82B32FA79D5F7FC407D39B
 
-schnorr13 :: Bool
-schnorr13 = fastSchnorrVerify ((pk,m),sig)
+bip0340_13 :: Bool
+bip0340_13 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xDFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659
   m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
   sig = toWord512 0x6CFF5C3BA86C69EA4B7376F31A9BCB4F74C1976089B2D9963DA2E5543E177769FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
 
-schnorr14 :: Bool
-schnorr14 = fastSchnorrVerify ((pk,m),sig)
+bip0340_14 :: Bool
+bip0340_14 = fast_bip0340_check ((pk,m),sig)
  where
   pk = toWord256 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC30
   m = toWord256 0x5E2D58D8B3BCDF1ABADEC7829054F90DDA9805AAB56C77333024B9D0A508B75C
   sig = toWord512 0x6CFF5C3BA86C69EA4B7376F31A9BCB4F74C1976089B2D9963DA2E5543E17776969E89B4C5564D00349106B8497785DD7D1D713A8AE82B32FA79D5F7FC407D39B
 
-schnorr_tests :: Bool
-schnorr_tests = Prelude.and [schnorr0, schnorr1, schnorr2, schnorr3, schnorr4]
-             && Prelude.not (Prelude.or [schnorr5, schnorr6, schnorr7, schnorr8, schnorr9, schnorr10, schnorr11, schnorr12, schnorr13, schnorr14])
+bip0340_tests :: Bool
+bip0340_tests = Prelude.and [bip0340_0, bip0340_1, bip0340_2, bip0340_3, bip0340_4]
+             && Prelude.not (Prelude.or [bip0340_5, bip0340_6, bip0340_7, bip0340_8, bip0340_9, bip0340_10, bip0340_11, bip0340_12, bip0340_13, bip0340_14])

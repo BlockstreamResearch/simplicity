@@ -6,37 +6,38 @@ module Simplicity.Programs.LibSecp256k1
   (
     Lib(Lib), mkLib
   -- * Field operations
-  , FE, feZero, feOne, feIsZero, feOdd
-  , normalize
-  , add, neg, sqr, mul, inv, sqrt
-  , isQuad
+  , FE, fe_zero, fe_one, fe_is_zero
+  , fe_normalize
+  , fe_add, fe_negate, fe_square, fe_multiply, fe_multiply_beta, fe_invert, fe_square_root
+  , fe_is_odd, fe_is_quad
   -- * Point operations
-  , GE, GEJ, inf, isInf
-  , normalizePoint
-  , geNegate, double, offsetPointEx, offsetPoint
-  , eqXCoord, hasOddY
+  , GE, GEJ, gej_infinity, gej_is_infinity
+  , gej_normalize, gej_negate, gej_scale_lambda
+  , gej_double, gej_add_ex, gej_add, gej_ge_add_ex, gej_ge_add
+  , ge_negate, ge_scale_lambda
+  , {-gej_equiv,-} gej_x_equiv, gej_y_is_odd
   -- * Scalar operations
   , Scalar, Word129
-  , normalizeScalar
-  , scalarSplitLambda, scalarSplit128
+  , scalar_normalize, scalar_add, scalar_negate, scalar_multiply, scalar_multiply_lambda, scalar_invert
+  , scalar_split_lambda, scalar_split_128
+  , scalar_is_zero
   -- * Elliptic curve multiplication related operations
   , wnaf5, wnaf15
-  , generator
-  , ecMult
+  , generate, scale
+  , linear_combination_1
   -- * Schnorr signature operations
-  , XOnlyPubKey, pkPoint, pkPointNeg
-  , Sig, sigUnpack
-  , scalarUnrepr
-  , schnorrVerify, schnorrAssert
+  , PubKey, pubkey_unpack, pubkey_unpack_neg, pubkey_unpack_quad
+  , Sig, signature_unpack
+  , bip0340_check, bip0340_verify
   -- * Example instances
   , lib
   ) where
 
-import Prelude hiding (drop, take, and, or, not,
-                       subtract, sqrt, Word)
+import Prelude hiding (drop, take, and, or, not, Word)
 
 import Simplicity.Digest
 import Simplicity.Functor
+import qualified Simplicity.LibSecp256k1.Spec as LibSecp256k1
 import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
@@ -45,14 +46,6 @@ import qualified Simplicity.Programs.Sha256 as Sha256
 import Simplicity.Programs.Sha256 hiding (Lib(Lib), lib)
 import Simplicity.Ty
 import Simplicity.Term.Core
-
--- The number of elements in secp256k1's field.
-feOrder :: Integer
-feOrder = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F
-
--- The number of points on secp256k1's elliptic curve.
-scalarOrder :: Integer
-scalarOrder = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
 
 -- | Simplicity's representation of 'fe' (field) elements in libsecp256k1's 10x26-bit form.
 type FE = Word256
@@ -72,13 +65,13 @@ type Scalar = Word256
 
 type Vector129 x = (x, Vector128 x)
 
--- | 129-bit signed word that is returned by 'scalarSplitLambda' and 'scalarSplit128'.
+-- | 129-bit signed word that is returned by 'scalar_split_lambda' and 'scalar_split_128'.
 type Word129 = Vector129 Bit
 
 -- | A format for (Schnorr) elliptic curve x-only public keys.
--- The y-coordinate is implicity the one on the curve that is positive (i.e it is a quadratic residue).
+-- The y-coordinate is implicity the one on the curve that has an even y coordinate.
 -- The point at infinity isn't representable (nor is it a valid public key to begin with).
-type XOnlyPubKey = Word256
+type PubKey = Word256
 
 -- | A format for Schnorr signatures.
 type Sig = (Word256, Word256)
@@ -90,85 +83,89 @@ data Lib term =
   { -- | Reduce the representation of a field element to its canonical represenative.
     --
     -- Corresponds to @secp256k1_fe_normalize_var@ (and @secp256k1_fe_normalize@).
-    normalize :: term Word256 FE
+    fe_normalize :: term Word256 FE
 
     -- | The normalized reprsentative for the field element 0.
-  , feZero :: term () FE
+  , fe_zero :: term () FE
 
     -- | The normalized reprsentative for the field element 1.
-  , feOne :: term () FE
-
-  , feBeta :: term () FE
+  , fe_one :: term () FE
 
     -- | Tests if the input value is a representative of the field element 0.
     -- Some preconditions apply.
     --
     -- Corresponds to @secp256k1_fe_is_zero@.
-  , feIsZero :: term FE Bit
-
-  , feOdd :: term FE Bit
+  , fe_is_zero :: term FE Bit
 
     -- | Adds two field elements.
     -- The resulting magnitude is the sum of the input magnitudes.
     --
     -- Corresponds to @secp256k1_fe_add@.
-  , add :: term (FE, FE) FE
+  , fe_add :: term (FE, FE) FE
 
     -- | Negates a field element.
     -- The resulting magnitude is one more than the input magnitude.
     --
-    -- Corresponds to @secp256k1_fe_negate@.
-  , neg :: term FE FE
+    -- Corresponds to @secp256k1_fe_negateate@.
+  , fe_negate :: term FE FE
 
     -- | Multiplies two field elements.
     -- The input magnitudes must be at most 8 (okay maybe up to 10).
     -- The resulting magnitude is 1 (which isn't necessarily normalized).
     --
-    -- Corresponds to @secp256k1_fe_mul@.
-  , mul :: term (FE, FE) FE
+    -- Corresponds to @secp256k1_fe_multiply@.
+  , fe_multiply :: term (FE, FE) FE
 
-  , mulBeta :: term FE FE
+  , fe_multiply_beta :: term FE FE
 
     -- | Squares a field element.
     -- The input magnitude must be at most 8.
     -- The resulting magnitude is 1 (which isn't necessarily normalized).
     --
-    -- Corresponds to @secp256k1_fe_sqr@.
-  , sqr :: term FE FE
+    -- Corresponds to @secp256k1_fe_square@.
+  , fe_square :: term FE FE
 
     -- | Computes the modular inverse of a field element.
     -- The input magnitude must be at most 8.
     -- The resulting magnitude is 1 (which isn't necessarily normalized).
     -- Returns a represenative of 0 when given 0.
     --
-    -- Corresponds to @secp256k1_fe_inv@.
-  , inv :: term FE FE
+    -- Corresponds to @secp256k1_fe_invert@.
+  , fe_invert :: term FE FE
 
     -- | Computes the modular square root of a field element if it exists.
     -- The input magnitude must be at most 8.
     -- If the result exists, magnitude is 1 (which isn't necessarily normalized) and it is a quadratic residue
     --
-    -- Corresponds to @secp256k1_fe_sqrt@.
-    -- If @secp256k1_fe_sqrt@ would return 0, then @'Left' ()@ is returned by 'sqrt'.
-    -- If @secp256k1_fe_sqrt@ would return 1, then @'Right' r@ is returned by 'sqrt' where @r@ is the result from @secp256k1_fe_sqrt@.
-  , sqrt :: term FE (Either () FE)
+    -- Corresponds to @secp256k1_fe_square_root@.
+    -- If @secp256k1_fe_square_root@ would return 0, then @'Left' ()@ is returned by 'sqrt'.
+    -- If @secp256k1_fe_square_root@ would return 1, then @'Right' r@ is returned by 'sqrt' where @r@ is the result from @secp256k1_fe_square_root@.
+  , fe_square_root :: term FE (Either () FE)
+
+  , fe_is_odd :: term FE Bit
 
     -- | Tests if the field element is a quadratic residue.
     --
     -- Corresponds to @secp256k1_fe_is_quad_var@.
-  , isQuad :: term FE Bit
+  , fe_is_quad :: term FE Bit
 
     -- | Returns the canonical represenative of the point at infinity.
-  , inf :: term () GEJ
+  , gej_infinity :: term () GEJ
+
+  , gej_negate :: term GEJ GEJ
 
     -- | Given a point on curve, or a represenativie of infinity, tests if the point is a representative of infinity.
-  , isInf :: term GEJ Bit
+  , gej_is_infinity :: term GEJ Bit
 
     -- | Adds a point with itself.
     --
     -- Corresponds to @secp256k1_gej_double_var@.
     -- However if the input is infinity, it returns infinity in canonical form.
-  , double :: term GEJ GEJ
+  , gej_double :: term GEJ GEJ
+
+  , gej_add_ex :: term (GEJ, GEJ) (FE, GEJ)
+
+  , gej_add :: term (GEJ, GEJ) GEJ
 
     -- | Adds a point in Jacobian coordinates with a point in affine coordinates.
     -- Returns the result in Jacobian coordinates and the ratio of z-coordinates between the output and the input that is in Jacobain coordinates.
@@ -176,49 +173,56 @@ data Lib term =
     --
     -- Corresponds to @secp256k1_gej_add_ge_var@ with a non-null @rzr@.
     -- If the result is the point at infinity, it is returned in canonical form.
-  , offsetPointEx :: term (GEJ, GE) (FE, GEJ)
+  , gej_ge_add_ex :: term (GEJ, GE) (FE, GEJ)
 
     -- | Adds a point in Jacobian coordinates with a point in affine coordinates.
     -- Returns the result in Jacobian coordinates.
     --
     -- If the result is the point at infinity, it is returned in canonical form.
-  , offsetPoint :: term (GEJ, GE) GEJ
+  , gej_ge_add :: term (GEJ, GE) GEJ
+
+  , gej_scale_lambda :: term GEJ GEJ
 
     -- | Negates a point in affine coordinates.
     --
     -- Corresponds to @secp256k1_ge_neg@.
-  , geNegate :: term GE GE
+  , ge_negate :: term GE GE
 
-  , pointMulLambda :: term GE GE
+  , ge_scale_lambda :: term GE GE
+
     -- | Converts a point in Jacobian coordintes to the same point in affine coordinates, and normalizes the field represenatives.
     -- Returns the point (0, 0) when given the point at infinity.
-  , normalizePoint :: term GEJ GE
+  , gej_normalize :: term GEJ GE
+
+--  , gej_equiv :: term (GEJ, GEJ) Bit
 
     -- | Given a field element and a point in Jacobian coordiantes, test if the point represents one whose affine x-coordinate is equal to the given field element.
     --
     -- Corresponds to @secp256k1_gej_eq_x_var@.
-  , eqXCoord :: term (FE, GEJ) Bit
+  , gej_x_equiv :: term (GEJ, FE) Bit
 
     -- | Given a point in Jacobian coordiantes, test if the point represents one whose affine y-coordinate is odd.
     --
     -- Similar to @secp256k1_gej_has_even_y_var@.
-  , hasOddY :: term GEJ Bit
+  , gej_y_is_odd :: term GEJ Bit
 
-  , normalizeScalar :: term Word256 Scalar
+  , scalar_normalize :: term Word256 Scalar
 
-  , scalarIsZero :: term Scalar Bit
+  , scalar_is_zero :: term Scalar Bit
 
-  , scalarLambda :: term () Scalar
+  , scalar_add :: term (Scalar, Scalar) Scalar
 
-  , scalarAdd :: term (Scalar, Scalar) Scalar
+  , scalar_negate :: term Scalar Scalar
 
-  , scalarNeg :: term Scalar Scalar
+  , scalar_multiply :: term (Scalar, Scalar) Scalar
 
-  , scalarMul :: term (Scalar, Scalar) Scalar
+  , scalar_multiply_lambda :: term Scalar Scalar
 
-  , scalarSplitLambda :: term Scalar (Word129, Word129)
+  , scalar_invert :: term Scalar Scalar
 
-  , scalarSplit128 :: term Scalar (Word129, Word129)
+  , scalar_split_lambda :: term Scalar (Word129, Word129)
+
+  , scalar_split_128 :: term Scalar (Word129, Word129)
 
     -- | Convert a scalar value to wnaf form, with a window of 5 bits.
     -- The input must be strictly less than the order of secp256k1's elliptic curve.
@@ -226,7 +230,7 @@ data Lib term =
     -- Corresponds to @secp256k1_ecmult_wnaf@ with @w@ parameter set to 5.
   , wnaf5 :: term Word129 (Vector129 (Either () Word4))
 
-    -- | Convert a scalar value to wnaf form, with a window of 16 bits.
+    -- | Convert a scalar value to wnaf form, with a window of 15 bits.
     -- The input must be strictly less than the order of secp256k1's elliptic curve.
     --
     -- Corresponds to @secp256k1_ecmult_wnaf@ with @w@ parameter set to 15.
@@ -234,80 +238,87 @@ data Lib term =
 
     -- | Returns an integer multiple of the secp256k1's generator.
     -- The input must be strictly less than the order of secp256k1's elliptic curve.
-  , generator :: term Scalar GEJ
+  , generate :: term Scalar GEJ
+
+  , scale :: term (Scalar, GEJ) GEJ
 
     -- | Given an elliptic curve point, @a@, and two scalar values @na@ and @ng@, return @na * a + ng * g@ where @g@ is secp256k1's generator.
     -- The scalar inputs must be strictly less than the order of secp256k1's elliptic curve.
     --
     -- Corresponds to @secp256k1_ecmult@.
     -- If the result is the point at infinity, it is returned in canonical form.
-  , ecMult :: term ((GEJ, Scalar), Scalar) GEJ
+  , linear_combination_1 :: term ((Scalar, GEJ), Scalar) GEJ
 
-    -- | This function unpacks a 'XOnlyPubKey' as a elliptic curve point in Jacobian coordinates.
+  , pubkey_unpack_quad :: term PubKey (Either () GE)
+
+    -- | This function unpacks a 'PubKey' as a elliptic curve point in affine coordinates.
     --
     -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
     -- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
-  , pkPoint :: term XOnlyPubKey (Either () GE)
+  , pubkey_unpack :: term PubKey (Either () GE)
 
-  , pkPointNeg :: term XOnlyPubKey (Either () GE)
+  , pubkey_unpack_neg :: term PubKey (Either () GE)
 
     -- | This function unpackes a 'Sig' as a pair of a field element and a scalar value.
     --
     -- If the field element's value is greater than or equal to the field order, the function return @Left ()@.
     -- If the scalar element's value is greater than or equal to secp256k1's curve order, the function returns @Left ()@.
-  , sigUnpack :: term Sig (Either () (FE, Scalar))
-
-    -- | This function reduces a 256-bit unsigned integer module the order of the secp256k1 curve, yielding a scalar value.
-  , scalarUnrepr :: term Word256 Scalar
+  , signature_unpack :: term Sig (Either () (FE, Scalar))
 
     -- | This function is given a public key, a 256-bit message, and a signature, and checks if the signature is valid for the given message and public key.
-  , schnorrVerify :: term ((XOnlyPubKey, Word256), Sig) Bit
+  , bip0340_check :: term ((PubKey, Word256), Sig) Bit
   }
 
 instance SimplicityFunctor Lib where
   sfmap m Lib{..} =
    Lib
-    { normalize = m normalize
-    , feZero = m feZero
-    , feOne = m feOne
-    , feBeta = m feBeta
-    , feIsZero = m feIsZero
-    , feOdd = m feOdd
-    , add = m add
-    , neg = m neg
-    , mul = m mul
-    , mulBeta = m mulBeta
-    , sqr = m sqr
-    , inv = m inv
-    , sqrt = m sqrt
-    , isQuad = m isQuad
-    , inf = m inf
-    , isInf = m isInf
-    , double = m double
-    , offsetPointEx = m offsetPointEx
-    , offsetPoint = m offsetPoint
-    , geNegate = m geNegate
-    , pointMulLambda = m pointMulLambda
-    , normalizePoint = m normalizePoint
-    , eqXCoord = m eqXCoord
-    , hasOddY = m hasOddY
-    , normalizeScalar = m normalizeScalar
-    , scalarIsZero = m scalarIsZero
-    , scalarLambda = m scalarLambda
-    , scalarAdd = m scalarAdd
-    , scalarNeg = m scalarNeg
-    , scalarMul = m scalarMul
-    , scalarSplitLambda = m scalarSplitLambda
-    , scalarSplit128 = m scalarSplit128
+    { fe_normalize = m fe_normalize
+    , fe_zero = m fe_zero
+    , fe_one = m fe_one
+    , fe_is_zero = m fe_is_zero
+    , fe_is_odd = m fe_is_odd
+    , fe_add = m fe_add
+    , fe_negate = m fe_negate
+    , fe_multiply = m fe_multiply
+    , fe_multiply_beta = m fe_multiply_beta
+    , fe_square = m fe_square
+    , fe_invert = m fe_invert
+    , fe_square_root = m fe_square_root
+    , fe_is_quad = m fe_is_quad
+    , gej_infinity = m gej_infinity
+    , gej_negate = m gej_negate
+    , gej_is_infinity = m gej_is_infinity
+    , gej_double = m gej_double
+    , gej_add_ex = m gej_add_ex
+    , gej_add = m gej_add
+    , gej_ge_add_ex = m gej_ge_add_ex
+    , gej_ge_add = m gej_ge_add
+    , gej_scale_lambda = m gej_scale_lambda
+    , ge_negate = m ge_negate
+    , ge_scale_lambda = m ge_scale_lambda
+    , gej_normalize = m gej_normalize
+--    , gej_equiv = m gej_equiv
+    , gej_x_equiv = m gej_x_equiv
+    , gej_y_is_odd = m gej_y_is_odd
+    , scalar_normalize = m scalar_normalize
+    , scalar_is_zero = m scalar_is_zero
+    , scalar_add = m scalar_add
+    , scalar_negate = m scalar_negate
+    , scalar_multiply = m scalar_multiply
+    , scalar_multiply_lambda = m scalar_multiply_lambda
+    , scalar_invert = m scalar_invert
+    , scalar_split_lambda = m scalar_split_lambda
+    , scalar_split_128 = m scalar_split_128
     , wnaf5 = m wnaf5
     , wnaf15 = m wnaf15
-    , generator = m generator
-    , ecMult = m ecMult
-    , pkPoint = m pkPoint
-    , pkPointNeg = m pkPointNeg
-    , sigUnpack = m sigUnpack
-    , scalarUnrepr = m scalarUnrepr
-    , schnorrVerify = m schnorrVerify
+    , generate = m generate
+    , scale = m scale
+    , linear_combination_1 = m linear_combination_1
+    , pubkey_unpack_quad = m pubkey_unpack_quad
+    , pubkey_unpack = m pubkey_unpack
+    , pubkey_unpack_neg = m pubkey_unpack_neg
+    , signature_unpack = m signature_unpack
+    , bip0340_check = m bip0340_check
     }
 
 -- | Build the LibSecp256k1 'Lib' library from its dependencies.
@@ -328,13 +339,19 @@ mkLib Sha256.Lib{..} = lib
   scribe256 = scribe . toWord256
 
   scribeFeOrder :: term () Word256
-  scribeFeOrder = scribe256 feOrder
+  scribeFeOrder = scribe256 LibSecp256k1.fieldOrder
 
-  scribeScalarOrder :: term () Word256
-  scribeScalarOrder = scribe256 scalarOrder
+  scribeGroupOrder :: term () Word256
+  scribeGroupOrder = scribe256 LibSecp256k1.groupOrder
 
-  scribeScalarOrder512 :: term () Word512
-  scribeScalarOrder512 = zero256 &&& scribeScalarOrder
+  scribeGroupOrder512 :: term () Word512
+  scribeGroupOrder512 = zero256 &&& scribeGroupOrder
+
+  fe_beta :: term () FE
+  fe_beta = scribe256 LibSecp256k1.beta
+
+  scalar_lambda :: term () Scalar
+  scalar_lambda = scribe256 LibSecp256k1.lambda
 
   -- 256 bit addition.
   add256 :: term (Word256, Word256) (Bit, Word256)
@@ -353,13 +370,8 @@ mkLib Sha256.Lib{..} = lib
   mul128 = Arith.multiply word128
   mul256 = Arith.multiply word256
 
-  mod512 = Arith.modulo word512
-
   -- 256 bit less-than
   lt256 = Arith.lt word256
-
-  -- 64 bit zero.
-  zero64 = Arith.zero word64
 
   -- 128 bit zero.
   zero128 = Arith.zero word128
@@ -370,33 +382,21 @@ mkLib Sha256.Lib{..} = lib
   -- 256 bit one.
   one256 = Arith.one word256
 
-  -- | adds 2^256 to a 128 bit value modulo the field order.  This is guarenteed to be normalized.
-  add2256modp :: TyC a => term a Word128 -> term a FE
-  add2256modp k = (unit >>> ((unit >>> zero64) &&& scribe64 (2^256 - feOrder))) &&& k >>> Arith.add word128
-              >>> cond (scribe128 1 &&& iden) ((unit >>> zero128) &&& iden)
-
-  -- | adds a 256-bit and a 128-bit value modulo the field order.
-  add256_128modp :: term (Word256, Word128) FE
-  add256_128modp = oh &&& ((unit >>> zero128) &&& ih) >>> add256
-               >>> cond (add2256modp ih) iden
-               >>> normalize
-
-  -- | multiplies 2^256 by a 64 bit value modulo the field order.
-  mul2256_64modp :: TyC a => term a Word64 -> term a Word128
-  mul2256_64modp k = (unit >>> scribe64 (2^256 - feOrder)) &&& k >>> mul64
-
   msb256 = Arith.msb word256
   msb128 = Arith.msb word128
 
   lsb256 = Arith.lsb word256
   lsb128 = Arith.lsb word128
 
+  mod512 = Arith.modulo word512
+
   -- | computes a 512 bit number modulo the field order.
-  normalize512 :: term Word512 FE
-  normalize512 = (((unit >>> ((unit >>> zero128) &&& ((unit >>> zero64) &&& scribe64 (2^256 - feOrder)))) &&& oh) &&& ((unit >>> zero256) &&& ih))
-             >>> Arith.full_multiply word256
-             >>> ih &&& mul2256_64modp oiih
-             >>> add256_128modp
+  fe_normalize512 :: term Word512 FE
+  fe_normalize512 = iden &&& (unit >>> zero256 &&& scribeFeOrder) >>> mod512 >>> ih
+
+  -- | computes a 512 bit number modulo the group order.
+  scalar_normalize512 :: term Word512 FE
+  scalar_normalize512 = iden &&& (unit >>> zero256 &&& scribeGroupOrder) >>> mod512 >>> ih
 
   signResize4 = left_extend word4 (DoubleV . DoubleV . DoubleV . DoubleV . DoubleV $ SingleV)
   signResize16 = left_extend word16 (DoubleV . DoubleV . DoubleV $ SingleV)
@@ -429,16 +429,16 @@ mkLib Sha256.Lib{..} = lib
 
   wnafpre :: term Scalar Word256
   wnafpre = msb256 &&& iden
-        >>> cond (iden &&& (unit >>> scribeScalarOrder) >>> sub256 >>> ih) iden
+        >>> cond (iden &&& (unit >>> scribeGroupOrder) >>> sub256 >>> ih) iden
 
-  generator0 :: term () GE
-  generator0 = scribe g
+  generate0 :: term () GE
+  generate0 = scribe g
    where
      g = (toWord256 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798, toWord256 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
 
-  -- 2^128 * generator0
-  generator128 :: term () GE
-  generator128 = scribe g128
+  -- 2^128 * generate0
+  generate128 :: term () GE
+  generate128 = scribe g128
    where
      g128 = (toWord256 0x8f68b9d2f63b5f339239c1ad981f162ee88c5678723ea3351b7b444c9ec4c0da, toWord256 0x662a9f2dba063986de1d90c2b6be215dbbea2cfe95510bfdf23cbf79501fff82)
 
@@ -446,111 +446,121 @@ mkLib Sha256.Lib{..} = lib
   scaleConstant base = go
    where
     go :: Word a -> term (a, GEJ) GEJ
-    go SingleV = cond (double &&& (unit >>> base) >>> offsetPoint) double
+    go SingleV = cond (gej_double &&& (unit >>> base) >>> gej_ge_add) gej_double
     go (DoubleV w) = oih &&& (ooh &&& ih >>> rec) >>> rec
      where
       rec = go w
 
   lib@Lib{..} = Lib {
-    normalize = (iden &&& (unit >>> scribeFeOrder) >>> sub256) &&& iden
-            >>> ooh &&& (oih &&& ih)
-            >>> cond ih oh
+    fe_normalize = (iden &&& (unit >>> scribeFeOrder) >>> sub256) &&& iden
+               >>> ooh &&& (oih &&& ih)
+               >>> cond ih oh
 
-  , feZero = zero256
+  , fe_zero = zero256
 
-  , feOne = one256
+  , fe_one = one256
 
-  , feBeta = scribe256 0x7ae96a2b657c07106e64479eac3434e99cf0497512f58995c1396c28719501ee
-
-  , feIsZero = or ((unit >>> feZero) &&& iden >>> eq)
+  , fe_is_zero = or (Arith.is_zero word256)
                   ((unit >>> scribeFeOrder) &&& iden >>> eq)
- 
-  , feOdd = normalize >>> lsb256
 
-  , add = add256
-      >>> cond ((iden &&& ((unit >>> zero64) &&& scribe64 (2^256 - feOrder))) >>> add256_128modp) normalize
+  , fe_is_odd = fe_normalize >>> lsb256
 
-  , neg = mulInt (-1)
+  , fe_add = add256 >>> cond ((unit >>> one256) &&& iden) ((unit >>> zero256) &&& iden) >>> fe_normalize512
 
-  , mul = mul256 >>> normalize512
+  , fe_negate = fe_multiplyInt (-1)
 
-  , mulBeta = (unit >>> feBeta) &&& iden >>> mul
+  , fe_multiply = mul256 >>> fe_normalize512
 
-  , sqr = iden &&& iden >>> mul
+  , fe_multiply_beta = (unit >>> fe_beta) &&& iden >>> fe_multiply
 
-  , inv = (unit >>> scribeFeOrder) &&& iden >>> Arith.bezout word256 >>> copair (drop neg) ih
+  , fe_square = iden &&& iden >>> fe_multiply
 
-  , sqrt = iden &&& tower
-       >>> oh &&& drop ((oh &&& drop sqr >>> mul) >>> sqr >>> sqr)
-       >>> (take neg &&& drop sqr >>> add >>> feIsZero) &&& ih
-       >>> cond (injr iden) (injl unit)
+  , fe_invert = (unit >>> scribeFeOrder) &&& iden >>> Arith.bezout word256 >>> copair (drop fe_negate) ih
 
-  , isQuad = elimS sqrt false true
+  , fe_square_root = iden &&& tower
+          >>> oh &&& drop ((oh &&& drop fe_square >>> fe_multiply) >>> fe_square >>> fe_square)
+          >>> (take fe_negate &&& drop fe_square >>> fe_add >>> fe_is_zero) &&& ih
+          >>> cond (injr iden) (injl unit)
 
-  , inf =
+  , fe_is_quad = elimS fe_square_root false true
+
+  , gej_infinity =
      let
-      zero = feZero
+      zero = fe_zero
      in
       (zero &&& zero) &&& zero
 
-  , isInf = drop feIsZero
+  , gej_negate = take ge_negate &&& drop fe_normalize
 
-  , double =
+  , gej_is_infinity = drop fe_is_zero
+
+  , gej_double =
      let
-      body = (take (oh &&& (take sqr >>> mulInt (-3)) &&& (drop sqr >>> mulInt 2))                                                                               -- (x, (-3*x^2, 2*y^2))
-          >>> (((drop (take sqr)) &&& (iih &&& oh >>> mul)) &&& drop (oh &&& (drop sqr >>> mulInt (-2))))                                                        -- ((9*x^4, 2*x*y^2), (-3*x^2, -8*y^4))
-          >>> take (oh &&& (drop (mulInt (-4))) >>> add) &&& (iih &&& (ioh &&& take (oh &&& drop (mulInt (-6)) >>> add) >>> mul) >>> add))                       -- (9*x^4 - 8*x*y^2, 36*x^3*y^2 - 27*x^6 - 8*y^4)
-         &&& (oih &&& ih >>> mul >>> mulInt 2)                                                                                                                   -- 2*y*z
+      body = (take (oh &&& (take fe_square >>> fe_multiplyInt (-3)) &&& (drop fe_square >>> fe_multiplyInt 2))                                                               -- (x, (-3*x^2, 2*y^2))
+          >>> (((drop (take fe_square)) &&& (iih &&& oh >>> fe_multiply)) &&& drop (oh &&& (drop fe_square >>> fe_multiplyInt (-2))))                                        -- ((9*x^4, 2*x*y^2), (-3*x^2, -8*y^4))
+          >>> take (oh &&& (drop (fe_multiplyInt (-4))) >>> fe_add) &&& (iih &&& (ioh &&& take (oh &&& drop (fe_multiplyInt (-6)) >>> fe_add) >>> fe_multiply) >>> fe_add))  -- (9*x^4 - 8*x*y^2, 36*x^3*y^2 - 27*x^6 - 8*y^4)
+         &&& (oih &&& ih >>> fe_multiply >>> fe_multiplyInt 2)                                                                                                               -- 2*y*z
      in
-      isInf &&& iden >>> cond (unit >>> inf) body
+      gej_is_infinity &&& iden >>> cond (unit >>> gej_infinity) body
 
-  , offsetPointEx =
+  , gej_add_ex =
      let
-      body = ((take (take (take neg))) &&& (ioh &&& (oih >>> sqr) >>> mul) >>> add)
-         &&& ((take (take (drop neg))) &&& (iih &&& (oih >>> cub) >>> mul) >>> add) &&& oh                                                                       -- (h,(i,a))
-         >>> take feIsZero &&& iden >>> cond (drop zeroH) nonZeroH
-      zeroH = take feIsZero &&& ih >>> cond (take (drop (mulInt 2)) &&& double) (unit >>> feZero &&& inf)
-      nonZeroH = (oh &&& (oh &&& iiih >>> mul)) &&& ((take sqr &&& drop iooh >>> mul) &&& drop (oh &&& ioih))                                                    -- ((h,z),(t,(i,s1)))
-             >>> oh &&& (((take (take neg) >>> cub) &&& ioh) &&& iih)                                                                                            -- ((h,z),((-h^3,t),(i,s1)))
-             >>> ooh &&& drop ((((take (oh &&& drop (mulInt (-2)) >>> add) &&& drop (take sqr) >>> add) &&& oih) &&& (ioh &&& (ooh &&& iih >>> mul)))            -- (h,(((x,t),(i,(-h^3*s1))),z))
-                          >>> ooh &&& (iih &&& (ioh &&& (oih &&& take (take neg) >>> add) >>> mul) >>> add))                                                     -- ..,(x,y),...
+      body = ((oooh &&& (iih >>> fe_square) >>> fe_multiply) &&& (drop (take (take fe_negate)) &&& (oih >>> fe_square) >>> fe_multiply) >>> fe_add &&& oh)
+         &&& ((ooih  &&& (iih >>> fe_cube) >>> fe_multiply)   &&& (drop (take (drop fe_negate)) &&& (oih >>> fe_cube) >>> fe_multiply) >>> fe_add &&& oh) &&&
+             (oh &&& drop (drop fe_negate))                                                                                                                                     -- ((-h,u1),((-i,s1),(a,-bz))))
+         >>> take (take fe_is_zero) &&& iden >>> cond (drop zeroH) nonZeroH
+      zeroH = take (take fe_is_zero) &&& ioh >>> cond (take (drop (fe_multiplyInt 2)) &&& gej_double) (unit >>> fe_zero &&& gej_infinity)
+      nonZeroH = (ooh &&& ((ooh &&& drop ioih >>> fe_multiply) &&& iiih)) &&& ((take (take fe_square) &&& oih >>> fe_multiply) &&& ioh)                                         -- ((-h,(-h*az,-bz)),(t,(i,s1)))
+             >>> ((ooh &&& oiih >>> fe_multiply) &&& take (drop fe_multiply)) &&& (((ooh >>> fe_cube) &&& ioh) &&& iih)                                            -- ((h*bz),z),((-h^3,t),(i,s1)))
+             >>> ooh &&& drop ((((take (oh &&& drop (fe_multiplyInt (-2)) >>> fe_add) &&& drop (take fe_square) >>> fe_add) &&& oih) &&& (ioh &&& (ooh &&& iih >>> fe_multiply)))  -- (h*bz,(((x,t),(i,(-h^3*s1))),z))
+                          >>> ooh &&& (iih &&& (ioh &&& take (oh &&& drop fe_negate >>> fe_add) >>> fe_multiply) >>> fe_add))                                                   -- ..,(x,y),...
                      &&& oih
      in
-      take isInf &&& iden >>> cond ((unit >>> feZero) &&& (drop ((take normalize &&& drop normalize) &&& (unit >>> feOne)))) body
+      take gej_is_infinity &&& iden
+  >>> cond ((unit >>> fe_zero) &&& (drop (take (take fe_normalize &&& drop fe_normalize) &&& (drop fe_normalize))))
+           (drop gej_is_infinity &&& iden
+        >>> cond ((unit >>> fe_one) &&& (take (take (take fe_normalize &&& drop fe_normalize) &&& (drop fe_normalize)))) body)
 
-  , offsetPoint = offsetPointEx >>> ih
+  , gej_add = gej_add_ex >>> ih
 
-  , geNegate = take normalize &&& drop neg
+  , gej_ge_add_ex = oh &&& (ih &&& (unit >>> fe_one)) >>> gej_add_ex
 
-  , pointMulLambda = take mulBeta &&& drop normalize
+  , gej_ge_add = gej_ge_add_ex >>> ih
 
-  , normalizePoint = oh &&& (ih >>> inv)
-                 >>> (ooh &&& drop sqr >>> mul) &&& (oih &&& drop cub >>> mul)
+  , gej_scale_lambda = take ge_scale_lambda &&& drop fe_normalize
 
-  , eqXCoord = drop (take (take neg)) &&& (drop (drop sqr) &&& oh >>> mul)
-           >>> add >>> feIsZero
+  , ge_negate = take fe_normalize &&& drop fe_negate
 
-  , hasOddY = and (not isInf) (oih &&& (ih >>> inv >>> cub)  >>> mul >>> feOdd)
+  , ge_scale_lambda = take fe_multiply_beta &&& drop fe_normalize
 
-  , normalizeScalar = (iden &&& (unit >>> scribeScalarOrder) >>> sub256) &&& iden
+  , gej_normalize = oh &&& (ih >>> fe_invert)
+                 >>> (ooh &&& drop fe_square >>> fe_multiply) &&& (oih &&& drop fe_cube >>> fe_multiply)
+
+--  , gej_equiv = :TODO:
+
+  , gej_x_equiv = take (take (take fe_negate)) &&& (take (drop fe_square) &&& ih >>> fe_multiply)
+           >>> fe_add >>> fe_is_zero
+
+  , gej_y_is_odd = and (not gej_is_infinity) (oih &&& (ih >>> fe_invert >>> fe_cube)  >>> fe_multiply >>> fe_is_odd)
+
+  , scalar_normalize = (iden &&& (unit >>> scribeGroupOrder) >>> sub256) &&& iden
                   >>> ooh &&& (oih &&& ih)
                   >>> cond ih oh
 
-  , scalarIsZero = or ((unit >>> zero256) &&& iden >>> eq)
-                  ((unit >>> scribeScalarOrder) &&& iden >>> eq)
+  , scalar_is_zero = or (Arith.is_zero word256)
+                  ((unit >>> scribeGroupOrder) &&& iden >>> eq)
 
-  , scalarLambda = scribe256 0x5363ad4cc05c30e0a5261c028812645a122e22ea20816678df02967c1b23bd72
+  , scalar_add = add256 >>> cond ((unit >>> one256) &&& iden) ((unit >>> zero256) &&& iden) >>> scalar_normalize512
 
-  , scalarAdd = add256
-            >>> cond ((unit >>> one256) &&& iden) ((unit >>> zero256) &&& iden)
-            &&& (unit >>> scribeScalarOrder512) >>> mod512 >>> ih
+  , scalar_negate = (unit >>> scribe256 ((-1) `mod` LibSecp256k1.groupOrder)) &&& iden >>> scalar_multiply
 
-  , scalarNeg = (unit >>> scribe256 ((-(2^256-1)) `mod` scalarOrder)) &&& complement word256 >>> scalarAdd
+  , scalar_multiply = mul256 >>> scalar_normalize512
 
-  , scalarMul = mul256
-            &&& (unit >>> scribeScalarOrder512) >>> mod512 >>> ih
+  , scalar_multiply_lambda = (unit >>> scalar_lambda) &&& iden >>> scalar_multiply
 
-  , scalarSplitLambda = let
+  , scalar_invert = (unit >>> scribeGroupOrder) &&& iden >>> Arith.bezout word256 >>> copair (drop scalar_negate) ih
+
+  , scalar_split_lambda = let
         g1 = scribe256 0x3086d221a7d46bcde86c90e49284eb153daa8a1471e8ca7fe893209a45dbb031
         g2 = scribe256 0xe4437ed6010e88286f547fa90abfe4c4221208ac9df506c61571b4ae8ac47f71
         negB1 = scribe128 0xe4437ed6010e88286f547fa90abfe4c3
@@ -558,23 +568,23 @@ mkLib Sha256.Lib{..} = lib
         roundDivTwo384 = take (drop (Arith.msb word128) &&& oh >>> Arith.full_increment word128) >>> ih
         c1 = ((iden &&& (unit >>> g1) >>> mul256) >>> roundDivTwo384) &&& (unit >>> negB1) >>> mul128
         c2 = ((iden &&& (unit >>> g2) >>> mul256) >>> roundDivTwo384) &&& (unit >>> b2) >>> mul128
-        k1 = oh &&& drop (cond (((unit >>> high word128) &&& iden) &&& (unit >>> scribeScalarOrder) >>> add256 >>> ih)
+        k1 = oh &&& drop (cond (((unit >>> high word128) &&& iden) &&& (unit >>> scribeGroupOrder) >>> add256 >>> ih)
                                ((unit >>> zero128) &&& iden)
-                          &&& (unit >>> scalarLambda >>> scalarNeg) >>> scalarMul) >>> scalarAdd
-         >>> msb256 &&& iden >>> cond (iden &&& (unit >>> scribeScalarOrder) >>> sub256 >>> injr unit &&& iih) (injl unit &&& ih)
+                          &&& (unit >>> scalar_lambda) >>> scalar_multiply >>> scalar_negate) >>> scalar_add
+         >>> msb256 &&& iden >>> cond (iden &&& (unit >>> scribeGroupOrder) >>> sub256 >>> injr unit &&& iih) (injl unit &&& ih)
       in
-        normalizeScalar >>> iden &&& (c1 &&& c2 >>> sub256 >>> oh &&& iih) >>> k1 &&& ih
+        scalar_normalize >>> iden &&& (c1 &&& c2 >>> sub256 >>> oh &&& iih) >>> k1 &&& ih
 
-  , scalarSplit128 = normalizeScalar >>> (false &&& ih) &&& (false &&& oh)
+  , scalar_split_128 = scalar_normalize >>> (false &&& ih) &&& (false &&& oh)
 
   , wnaf5 = wnaf5step128 >>> (take wnaf5step1 >>> ih) &&& ih
 
   , wnaf15 = wnaf15step128 >>> (take wnaf15step1 >>> ih) &&& ih
 
-  , generator =
+  , generate =
      let
-      step = iih &&& (ioh &&& take double >>> match ih (ih &&& take generatorSmall >>> offsetPoint))
-         >>> match ih (ih &&& take generator128Small >>> offsetPoint)
+      step = iih &&& (ioh &&& take gej_double >>> match ih (ih &&& take generateSmall >>> gej_ge_add))
+         >>> match ih (ih &&& take generate128Small >>> gej_ge_add)
       step2 = (oh &&& (iooh &&& iioh) >>> step) &&& (ioih &&& iiih) >>> step
       step4 = (oh &&& (iooh &&& iioh) >>> step2) &&& (ioih &&& iiih) >>> step2
       step8 = (oh &&& (iooh &&& iioh) >>> step4) &&& (ioih &&& iiih) >>> step4
@@ -584,25 +594,25 @@ mkLib Sha256.Lib{..} = lib
       step128 = (oh &&& (iooh &&& iioh) >>> step64) &&& (ioih &&& iiih) >>> step64
       step129 = (oh &&& (iooh &&& iioh) >>> step) &&& (ioih &&& iiih) >>> step128
      in
-      (unit >>> inf) &&& split128 >>> step129
+      (unit >>> gej_infinity) &&& split128 >>> step129
 
-  , ecMult =
+  , linear_combination_1 =
      let
-      splitLambda = scalarSplitLambda >>> take wnaf5 &&& drop wnaf5
-      body = (unit >>> inf) &&& (ooh >>> scalarTable5) &&& (oih >>> splitLambda) &&& (ih >>> split128)
+      splitLambda = scalar_split_lambda >>> take wnaf5 &&& drop wnaf5
+      body = (unit >>> gej_infinity) &&& (oih >>> scalarTable5) &&& (ooh >>> splitLambda) &&& (ih >>> split128)
          >>> iooh &&& step129
-         >>> ioh &&& (oh &&& iih >>> mul)
+         >>> ioh &&& (oh &&& iih >>> fe_multiply)
       step = drop iiih
         &&& (drop iioh
          &&& (drop ioih
-          &&& (drop iooh &&& take double &&& ioih
-                     >>> match ioh (ioh &&& (oh &&& iih >>> lookupTable5) >>> offsetPoint))
+          &&& (drop iooh &&& take gej_double &&& ioih
+                     >>> match ioh (ioh &&& (oh &&& iih >>> lookupTable5) >>> gej_ge_add))
           &&& ioih
-          >>> match ioh (ioh &&& (oh &&& iih >>> lookupTable5 >>> pointMulLambda) >>> offsetPoint))
+          >>> match ioh (ioh &&& (oh &&& iih >>> lookupTable5 >>> ge_scale_lambda) >>> gej_ge_add))
          &&& iooh
-         >>> match ioh (ioh &&& (take generatorSmall &&& iih >>> zinv) >>> offsetPoint))
+         >>> match ioh (ioh &&& (take generateSmall &&& iih >>> zinv) >>> gej_ge_add))
         &&& iooh
-        >>> match ioh (ioh &&& (take generator128Small &&& iih >>> zinv) >>> offsetPoint)
+        >>> match ioh (ioh &&& (take generate128Small &&& iih >>> zinv) >>> gej_ge_add)
       step2 = (oh &&& drop (oh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh))) >>> step)
                   &&& drop (oh &&& drop ((ooih &&& oiih) &&& (ioih &&& iiih))) >>> step
       step4 = (oh &&& drop (oh &&& drop ((oooh &&& oioh) &&& (iooh &&& iioh))) >>> step2)
@@ -622,71 +632,76 @@ mkLib Sha256.Lib{..} = lib
      in
       -- In the case that the 'a' parameter is infinity or the 'na' parameter is 0, then scalarTable5 is not built.
       -- In particular the globalZ is set to 1 instead of whatever would have been generated by the table.
-      or (take (take isInf)) (take (drop scalarIsZero)) &&& iden
-  >>> cond (drop generator) body
+      or (take (drop gej_is_infinity)) (take (take scalar_is_zero)) &&& iden
+  >>> cond (drop generate) body
 
-  , pkPoint = pkPointRaw >>> copair (injl iden) (injr ((ih >>> feOdd) &&& iden >>> cond (oh &&& drop neg) iden))
+  , scale = iden &&& (unit >>> zero256) >>> linear_combination_1
 
-  , pkPointNeg = pkPointRaw >>> copair (injl iden) (injr ((ih >>> feOdd) &&& iden >>> cond iden (oh &&& drop neg)))
+  , pubkey_unpack_quad =
+     let
+      k1 = (scribe256 7 &&& fe_cube >>> fe_add >>> fe_square_root) &&& iden
+       >>> match (injl unit) (injr swapP)
+     in
+      (iden &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256) &&& iden >>> cond k1 (injl unit)
 
-  , sigUnpack =
-      and (oh &&& scribe (toWord256 feOrder) >>> lt256)
-          (ih &&& scribe (toWord256 scalarOrder) >>> lt256)
+  , pubkey_unpack = pubkey_unpack_quad >>> copair (injl iden) (injr ((ih >>> fe_is_odd) &&& iden >>> cond (oh &&& drop fe_negate) iden))
+
+  , pubkey_unpack_neg = pubkey_unpack >>> copair (injl iden) (injr ge_negate)
+
+  , signature_unpack =
+      and (oh &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256)
+          (ih &&& scribe (toWord256 LibSecp256k1.groupOrder) >>> lt256)
   &&& iden
   >>> cond (injr iden) (injl unit)
 
-  , scalarUnrepr = (iden &&& scribe (toWord256 scalarOrder) >>> Arith.subtract word256) &&& iden
-               >>> ooh &&& (oih &&& ih)
-               >>> cond ih oh
-
-  , schnorrVerify =
+  , bip0340_check =
      let
       k1 = ioh &&& (iih &&& oh)
        >>> match false k2
-      k2 = iioh &&& (((oh &&& (unit >>> feOne)) &&& ioh) &&& iiih >>> ecMult)
-       >>> and eqXCoord (not (drop hasOddY))
-      e = m >>> (iv &&& oh >>> hashBlock) &&& ih >>> hashBlock >>> scalarUnrepr
+      k2 = ((ioh &&& (oh &&& (unit >>> fe_one))) &&& iiih >>> linear_combination_1) &&& iioh
+       >>> and gej_x_equiv (not (take gej_y_is_odd))
+      e = m >>> (iv &&& oh >>> hashBlock) &&& ih >>> hashBlock >>> scalar_normalize
       iv = scribe $ toWord256 . integerHash256 . ivHash . tagIv $ "BIP0340/challenge"
       m = (ioh &&& ooh) &&& (oih &&& (scribe (toWord256 0x8000000000000000000000000000000000000000000000000000000000000500)))
      in
-      drop sigUnpack &&& (take (take pkPointNeg) &&& e)
+      drop signature_unpack &&& (take (take pubkey_unpack_neg) &&& e)
   >>> match false k1
   }
    where
-    cub = iden &&& sqr >>> mul
+    fe_cube = iden &&& fe_square >>> fe_multiply
 
-    mulInt i = scribe256 (i `mod` feOrder) &&& iden >>> mul
+    fe_multiplyInt i = scribe256 (i `mod` LibSecp256k1.fieldOrder) &&& iden >>> fe_multiply
 
-    -- Common code shared between 'inv' and 'sqrt'.
-    tower = iden &&& cub
-        >>> ih &&& (oh &&& drop sqr >>> mul)
-        >>> oh &&& ((ih &&& (oh &&& (drop (iden &&& (iden &&& (sqr >>> sqr >>> sqr) >>> mul >>> sqr >>> sqr >>> sqr) >>> mul) >>> sqr >>> sqr) >>> mul -- (x2,(x3,x11))
-                          >>> iden &&& foldr1 (>>>) (replicate 11 sqr) >>> mul))                      -- (x2,(x3,x22))
-                 >>> ih &&& (oh &&& drop (iden &&& foldr1 (>>>) (replicate 22 sqr) >>> mul            -- (x2,(x22,(x3,x44)))
-                                     >>> (iden &&& (iden &&& foldr1 (>>>) (replicate 44 sqr) >>> mul  -- (x2,(x22,(x3,(x44,x88))))
-                                                 >>> iden &&& foldr1 (>>>) (replicate 88 sqr) >>> mul -- (x2,(x22,(x3,(x44,x176))))
-                                           >>> foldr1 (>>>) (replicate 44 sqr)) >>> mul)              -- (x2,(x22,(x3,x220)))
-                                    >>> sqr >>> sqr >>> sqr) >>> mul                                  -- (x2,(x22,x223))
-                           >>> foldr1 (>>>) (replicate 23 sqr)) >>> mul                               -- (x2,t1)
-                 >>> foldr1 (>>>) (replicate 5 sqr))
+    -- Common code shared between 'fe_invert' and 'fe_square_root'.
+    tower = iden &&& fe_cube
+        >>> ih &&& (oh &&& drop fe_square >>> fe_multiply)
+        >>> oh &&& ((ih &&& (oh &&& (drop (iden &&& (iden &&& (fe_square >>> fe_square >>> fe_square) >>> fe_multiply >>> fe_square >>> fe_square >>> fe_square) >>> fe_multiply) >>> fe_square >>> fe_square) >>> fe_multiply -- (x2,(x3,x11))
+                          >>> iden &&& foldr1 (>>>) (replicate 11 fe_square) >>> fe_multiply))                      -- (x2,(x3,x22))
+                 >>> ih &&& (oh &&& drop (iden &&& foldr1 (>>>) (replicate 22 fe_square) >>> fe_multiply            -- (x2,(x22,(x3,x44)))
+                                     >>> (iden &&& (iden &&& foldr1 (>>>) (replicate 44 fe_square) >>> fe_multiply  -- (x2,(x22,(x3,(x44,x88))))
+                                                 >>> iden &&& foldr1 (>>>) (replicate 88 fe_square) >>> fe_multiply -- (x2,(x22,(x3,(x44,x176))))
+                                           >>> foldr1 (>>>) (replicate 44 fe_square)) >>> fe_multiply)              -- (x2,(x22,(x3,x220)))
+                                    >>> fe_square >>> fe_square >>> fe_square) >>> fe_multiply                                  -- (x2,(x22,x223))
+                           >>> foldr1 (>>>) (replicate 23 fe_square)) >>> fe_multiply                               -- (x2,t1)
+                 >>> foldr1 (>>>) (replicate 5 fe_square))
 
-    zinv = (ooh &&& drop sqr >>> mul) &&& (oih &&& drop cub >>> mul)
+    zinv = (ooh &&& drop fe_square >>> fe_multiply) &&& (oih &&& drop fe_cube >>> fe_multiply)
 
     -- Compute odd-multiples of a point for small (5-bit) multiples.
     -- The result is in Jacobian coordinates but the z-coordinate is identical for all outputs.
     scalarTable5 :: term GEJ (FE, Vector8 GE)
-    scalarTable5 = iden &&& double
+    scalarTable5 = iden &&& gej_double
                >>> iih &&& (((ooh &&& iih >>> zinv) &&& oih) &&& ioh -- (dz, (a', (dx,dy)))
                         >>> pass1_8)
-               >>> (oh &&& iih >>> mul) &&& drop (take pass2_8)
+               >>> (oh &&& iih >>> fe_multiply) &&& drop (take pass2_8)
      where
-      pass1_2 = iden &&& offsetPointEx >>> (ioh &&& (oooh &&& iioh)) &&& (iih &&& oih)
-      pass1_4 = pass1_2 >>> oh &&& drop (offsetPointEx &&& ih >>> ooh &&& (oih &&& ih >>> pass1_2)) >>> (ioh &&& (oh &&& iioh)) &&& iiih
-      pass1_8 = pass1_4 >>> oh &&& drop (offsetPointEx &&& ih >>> ooh &&& (oih &&& ih >>> pass1_4)) >>> (ioh &&& (oh &&& iioh)) &&& drop (drop ioih)
+      pass1_2 = iden &&& gej_ge_add_ex >>> (ioh &&& (oooh &&& iioh)) &&& (iih &&& oih)
+      pass1_4 = pass1_2 >>> oh &&& drop (gej_ge_add_ex &&& ih >>> ooh &&& (oih &&& ih >>> pass1_2)) >>> (ioh &&& (oh &&& iioh)) &&& iiih
+      pass1_8 = pass1_4 >>> oh &&& drop (gej_ge_add_ex &&& ih >>> ooh &&& (oih &&& ih >>> pass1_4)) >>> (ioh &&& (oh &&& iioh)) &&& drop (drop ioih)
       pass2_1 = oh &&& ih >>> zinv
-      pass2_2 = (oioh &&& (ooh &&& ih >>> mul)) &&& (oiih &&& ih >>> pass2_1) >>> (take pass2_1 &&& ih) &&& oih
-      pass2_4 = (ooh &&& oioh) &&& (oiih &&& ih >>> pass2_2) >>> (oih &&& (ooh &&& iih >>> mul) >>> pass2_2) &&& ioh >>> (ooh &&& ih) &&& oih
-      pass2_8 = ( oh &&&  ioh) &&& ( iih &&& (unit >>> feOne) >>> pass2_4) >>> (oih &&& (ooh &&& iih >>> mul) >>> pass2_4) &&& ioh >>> ooh &&& ih
+      pass2_2 = (oioh &&& (ooh &&& ih >>> fe_multiply)) &&& (oiih &&& ih >>> pass2_1) >>> (take pass2_1 &&& ih) &&& oih
+      pass2_4 = (ooh &&& oioh) &&& (oiih &&& ih >>> pass2_2) >>> (oih &&& (ooh &&& iih >>> fe_multiply) >>> pass2_2) &&& ioh >>> (ooh &&& ih) &&& oih
+      pass2_8 = ( oh &&&  ioh) &&& ( iih &&& (unit >>> fe_one) >>> pass2_4) >>> (oih &&& (ooh &&& iih >>> fe_multiply) >>> pass2_4) &&& ioh >>> ooh &&& ih
 
     -- Given an odd-multiples table of affinte points, extract the @i@th element of the table.
     -- If the index is negative @i@, then return the point negation of the @i@th element of the table.
@@ -695,39 +710,32 @@ mkLib Sha256.Lib{..} = lib
                >>> cond neg pos
      where
       pos = ioih &&& (iooh &&& (oh &&& iih >>> cond ih oh) >>> cond ih oh) >>> cond ih oh
-      neg = ioih &&& (iooh &&& (oh &&& iih >>> cond oh ih) >>> cond oh ih) >>> cond (take geNegate) (drop geNegate)
+      neg = ioih &&& (iooh &&& (oh &&& iih >>> cond oh ih) >>> cond oh ih) >>> cond (take ge_negate) (drop ge_negate)
 
-    split128 = scalarSplit128 >>> take wnaf15 &&& drop wnaf15
+    split128 = scalar_split_128 >>> take wnaf15 &&& drop wnaf15
 
     -- Returns a small, signed integer multiple of the secp256k1's generator as a normalized affine point.
-    generatorSigned :: Word a -> term a GEJ
-    generatorSigned SingleV = copair inf ((generator0 >>> geNegate) &&& feOne)
-    generatorSigned (DoubleV w) = ih &&& take rec >>> scaleConstant generator0 w
+    generateSigned :: Word a -> term a GEJ
+    generateSigned SingleV = copair gej_infinity ((generate0 >>> ge_negate) &&& fe_one)
+    generateSigned (DoubleV w) = ih &&& take rec >>> scaleConstant generate0 w
      where
-      rec = generatorSigned w
+      rec = generateSigned w
 
-    generatorSmall :: term Word16 GE
-    generatorSmall = generatorSigned word16 >>> normalizePoint
+    generateSmall :: term Word16 GE
+    generateSmall = generateSigned word16 >>> gej_normalize
 
-    generator128Signed :: Word a -> term a GEJ
-    generator128Signed SingleV = copair inf ((generator128 >>> geNegate) &&& feOne)
-    generator128Signed (DoubleV w) = ih &&& take rec >>> scaleConstant generator128 w
+    generate128Signed :: Word a -> term a GEJ
+    generate128Signed SingleV = copair gej_infinity ((generate128 >>> ge_negate) &&& fe_one)
+    generate128Signed (DoubleV w) = ih &&& take rec >>> scaleConstant generate128 w
      where
-      rec = generator128Signed w
+      rec = generate128Signed w
 
-    generator128Small :: term Word16 GE
-    generator128Small = generator128Signed word16 >>> normalizePoint
-
-    pkPointRaw =
-     let
-      k1 = (scribe256 7 &&& cub >>> add >>> sqrt) &&& iden
-       >>> match (injl unit) (injr swapP)
-     in
-      (iden &&& scribe (toWord256 feOrder) >>> lt256) &&& iden >>> cond k1 (injl unit)
+    generate128Small :: term Word16 GE
+    generate128Small = generate128Signed word16 >>> gej_normalize
 
 -- | This function is given a public key, a 256-bit message, and a signature, and asserts that the signature is valid for the given message and public key.
-schnorrAssert :: Assert term => Lib term -> term ((XOnlyPubKey, Word256), Sig) ()
-schnorrAssert m = assert (schnorrVerify m)
+bip0340_verify :: Assert term => Lib term -> term ((PubKey, Word256), Sig) ()
+bip0340_verify m = assert (bip0340_check m)
 
 -- | An instance of the Sha256 'Lib' library.
 -- This instance does not share its dependencies.

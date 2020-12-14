@@ -1083,168 +1083,169 @@
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-275><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-is-quad>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-is-zero>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-276><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-normalize>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-is-odd>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-277><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-negate>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-is-quad>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-278><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-add>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-normalize>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-279><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-square>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-negate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-280><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-multiply>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-add>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-281><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-multiply-lambda>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-square>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-282><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-invert>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-multiply>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-283><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-split>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-multiply-lambda>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-284><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-infinity>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-invert>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-285><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-normalize>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-is-zero>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-286><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-negate>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-infinity>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-287><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-ge-negate>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-normalize>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-288><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-double>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-negate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-289><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-add>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-ge-negate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-290><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-ge-add-ex>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-double>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-291><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-ge-add>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-add>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-292><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-is-infinity>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-ge-add-ex>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-293><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-equiv>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-ge-add>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-294><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-x-equiv>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-is-infinity>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-295><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-shamir>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-equiv>
+    <with|color|red|Does not exist in libsecp256k1>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-296><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scale>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-x-equiv>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-297><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scale-short>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-y-is-odd>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-298><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scale-lambda>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-generate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-299><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-generate>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-scale>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-300><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-short-generate>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-linear-combination>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-301><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-lambda-generate>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-ge-scale-lambda>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-302><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-wnaf5>
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-scale-lambda>
+    <with|color|red|Consider removing> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-303><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-wnaf16>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-split-lambda>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-304><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-short-wnaf5>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-short-scalar>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-305><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-short-wnaf16>
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-306><vspace|0.15fn>>
-
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-odd-generate>
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-307><vspace|0.15fn>>
-
     <with|par-left|1tab|B.1.5<space|2spc><with|font-family|tt|language|verbatim|110110001...:
     >Jets for digital signatures <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-308>>
+    <no-break><pageref|auto-306>>
 
     <with|par-left|2tab|B.1.5.1<space|2spc><with|font-family|tt|language|verbatim|1101100010...:
     >Jets for secp256k1 based digital signatures
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-309>>
+    <no-break><pageref|auto-307>>
 
-    <with|par-left|4tab|<with|font-family|ss|bip0340-schnorr>
+    <with|par-left|4tab|<with|font-family|ss|bip0340-schnorr>-verify
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-310><vspace|0.15fn>>
+    <no-break><pageref|auto-308><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|bip0340-challenge-iv>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-311><vspace|0.15fn>>
+    <no-break><pageref|auto-309><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|bip0340-challenge-midstate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-312><vspace|0.15fn>>
+    <no-break><pageref|auto-310><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|bip0340-schnorr-midstate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-311><vspace|0.15fn>>
+
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-signature-unpack>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-312><vspace|0.15fn>>
+
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-pubkey-unpack>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-313><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-unpack-point>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-pubkey-unpack-neg>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-314><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-unpack-pubkey>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-pubkey-unpack-quad>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-315><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-unpack-signature>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-point-unpack>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-316><vspace|0.15fn>>
 
@@ -9967,7 +9968,7 @@
   <subsubsection|<verbatim|1101100000...: >Jets for secp256k1>
 
   In this section we define <math|Scalar\<assign\><2><rsup|256>>,
-  <math|Short\<assign\><2>\<times\><2><rsup|128>>,
+  <math|<2><rsup|129>\<assign\><2>\<times\><2><rsup|128>>,
   <math|FE\<assign\><2><rsup|256>>, <math|GE\<assign\>FE\<times\>FE>, and
   <math|GEJ\<assign\>GE\<times\>FE>.
 
@@ -10074,6 +10075,30 @@
 
   \;
 
+  <paragraph|<samp|secp256k1-fe-is-zero>>
+
+  \;
+
+  <\math>
+    <rep|<text|<samp|'secp256k1-fe-is-zero'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+  </math>
+
+  <math|<text|<samp|secp256k1-fe-is-zero>>:FE\<vdash\><2>>
+
+  \;
+
+  <paragraph|<samp|secp256k1-fe-is-odd>>
+
+  \;
+
+  <\math>
+    <rep|<text|<samp|'secp256k1-fe-is-odd'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+  </math>
+
+  <math|<text|<samp|secp256k1-fe-is-odd>>:FE\<vdash\><2>>
+
+  \;
+
   <paragraph|<samp|secp256k1-fe-is-quad>>
 
   \;
@@ -10170,23 +10195,15 @@
 
   \;
 
-  <paragraph|<samp|secp256k1-scalar-split>>
+  <paragraph|<samp|secp256k1-scalar-is-zero>>
 
   \;
 
   <\math>
-    <rep|<text|<samp|'secp256k1-scalar-split'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    <rep|<text|<samp|'secp256k1-scalar-is-zero'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|secp256k1-scalar-split>>:Scalar\<vdash\>Short\<times\>Short>
-
-  \;
-
-  <\with|color|red>
-    TODO Properties:
-
-    <math|\<lambda\>\<cdot\><around*|\<lceil\>|\<pi\><rsub|1><around*|(|<around*|\<llbracket\>|<text|<samp|'secp256k1-scalar-split'>>|\<rrbracket\>><around*|(|x|)>|)>|\<rceil\>><rsub|2<rsup|128>>+<around*|\<lceil\>|\<pi\><rsub|2><around*|(|<around*|\<llbracket\>|<text|<samp|'secp256k1-scalar-split'>>|\<rrbracket\>><around*|(|x|)>|)>|\<rceil\>><rsub|2<rsup|128>>\<equiv\><rsub|Scalar><around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|256>>>
-  </with>
+  <math|<text|<samp|secp256k1-scalar-is-zero>>:Scalar\<vdash\><2>>
 
   \;
 
@@ -10211,6 +10228,10 @@
   </math>
 
   <math|<text|<samp|secp256k1-gej-normalize>>:GEJ\<vdash\>GE>
+
+  \;
+
+  Returns <math|<around*|(|0,0|)>> when passed infinity.
 
   \;
 
@@ -10298,7 +10319,8 @@
 
   \;
 
-  <paragraph|<samp|secp256k1-gej-equiv>>
+  <paragraph|<samp|secp256k1-gej-equiv> <with|color|red|Does not exist in
+  libsecp256k1>>
 
   \;
 
@@ -10318,59 +10340,19 @@
     <rep|<text|<samp|'secp256k1-gej-x-equiv'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|secp256k1-gej-x-equiv>>:FE\<times\>GEJ\<vdash\><2>>
+  <math|<text|<samp|secp256k1-gej-x-equiv>>:GEJ\<times\>FE\<vdash\><2>>
 
   \;
 
-  <paragraph|<samp|secp256k1-shamir>>
-
-  (Note: Support only recommened up to <math|2<rsup|n>\<leq\><with|color|red|TODO
-  8?>>.)
-
-  <\math>
-    <rep|<text|<samp|'secp256k1-shamir'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>\<cdummy\><rep|n+1|>
-  </math>
-
-  <math|<text|<samp|secp256k1-shamir>><rsub|2<rsup|n>>:Scalar\<times\><around*|(|Scalar\<times\>GEJ|)><rsup|2<rsup|n>>\<vdash\>GEJ>
-  for <math|0\<leq\>n>
-
-  <with|color|red|TODO Short version?>
-
-  \;
-
-  <paragraph|<samp|secp256k1-scale>>
+  <paragraph|<samp|secp256k1-gej-y-is-odd>>
 
   \;
 
   <\math>
-    <rep|<text|<samp|'secp256k1-scale'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    <rep|<text|<samp|'secp256k1-gej-y-is-odd'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|secp256k1-scale>>:Scalar\<times\>GEJ\<vdash\>GEJ>
-
-  \;
-
-  <paragraph|<samp|secp256k1-scale-short>>
-
-  \;
-
-  <\math>
-    <rep|<text|<samp|'secp256k1-scale-short'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
-
-  <math|<text|<samp|secp256k1-scale-short>>:Short\<vdash\>GEJ>
-
-  \;
-
-  <paragraph|<samp|secp256k1-scale-lambda>>
-
-  \;
-
-  <\math>
-    <rep|<text|<samp|'secp256k1-scale-lambda'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
-
-  <math|<text|<samp|secp256k1-scale-lambda>>:GEJ\<vdash\>GEJ>
+  <math|<text|<samp|secp256k1-gej-y-is-odd>>:GEJ\<vdash\><2>>
 
   \;
 
@@ -10386,49 +10368,88 @@
 
   \;
 
-  <paragraph|<samp|secp256k1-short-generate>>
+  <paragraph|<samp|secp256k1-scale>>
 
   \;
 
   <\math>
-    <rep|<text|<samp|'secp256k1-short-generate'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    <rep|<text|<samp|'secp256k1-scale'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|secp256k1-short-generate>>:Short\<vdash\>GEJ>
+  <math|<text|<samp|secp256k1-scale>>:Scalar\<times\>GEJ\<vdash\>GEJ>
 
   \;
 
-  <paragraph|<samp|secp256k1-lambda-generate>>
+  <paragraph|<samp|secp256k1-linear-combination>>
+
+  (Note: Support only recommened up to <math|2<rsup|n>\<leq\><with|color|red|TODO
+  8?>>.)
+
+  <\math>
+    <rep|<text|<samp|'secp256k1-linear-combination'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>\<cdummy\><rep|n+1|>
+  </math>
+
+  <math|<text|<samp|secp256k1-linear-combination>><rsub|2<rsup|n>>:<around*|(|Scalar\<times\>GEJ|)><rsup|2<rsup|n>>\<times\>Scalar\<vdash\>GEJ>
+  for <math|0\<leq\>n>
+
+  \;
+
+  <paragraph|<samp|secp256k1-ge-scale-lambda>>
 
   \;
 
   <\math>
-    <rep|<text|<samp|'secp256k1-lambda-generate'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    <rep|<text|<samp|'secp256k1-scale-lambda'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|secp256k1-lambda-generate>>:Short\<vdash\>GEJ>
+  <math|<text|<samp|secp256k1-scale-lambda>>:GE\<vdash\>GE>
 
   \;
 
-  \;
-
-  <paragraph|<samp|secp256k1-scalar-wnaf5>>
-
-  <paragraph|<samp|secp256k1-scalar-wnaf16>>
-
-  <paragraph|<samp|secp256k1-short-wnaf5>>
-
-  <paragraph|<samp|secp256k1-short-wnaf16>>
-
-  <paragraph|<samp|secp256k1-odd-generate>>
+  <paragraph|<samp|secp256k1-gej-scale-lambda> <with|color|red|Consider
+  removing>>
 
   \;
 
   <\math>
-    <rep|<text|<samp|'secp256k1-odd-generate'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    <rep|<text|<samp|'secp256k1-scale-lambda'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|secp256k1-odd-generate>>:<2><rsup|16>\<vdash\>GE>
+  <math|<text|<samp|secp256k1-scale-lambda>>:GEJ\<vdash\>GEJ>
+
+  \;
+
+  <paragraph|<samp|secp256k1-scalar-split-lambda>>
+
+  \;
+
+  <\math>
+    <rep|<text|<samp|'secp256k1-scalar-split-lambda'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+  </math>
+
+  <math|<text|<samp|secp256k1-scalar-split-lambda>>:Scalar\<vdash\><2><rsup|129>\<times\><2><rsup|129>>
+
+  \;
+
+  <\with|color|red>
+    TODO Properties:
+
+    <math|\<lambda\>\<cdot\><around*|\<lceil\>|\<pi\><rsub|1><around*|(|<around*|\<llbracket\>|<text|<samp|'secp256k1-scalar-split'>>|\<rrbracket\>><around*|(|x|)>|)>|\<rceil\>><rsub|2<rsup|128>>+<around*|\<lceil\>|\<pi\><rsub|2><around*|(|<around*|\<llbracket\>|<text|<samp|'secp256k1-scalar-split'>>|\<rrbracket\>><around*|(|x|)>|)>|\<rceil\>><rsub|2<rsup|128>>\<equiv\><rsub|Scalar><around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|256>>>
+  </with>
+
+  \;
+
+  <paragraph|<samp|secp256k1-short-scalar>>
+
+  \;
+
+  <\math>
+    <rep|<text|<samp|'secp256k1-short-scalar'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+  </math>
+
+  <math|<text|<samp|secp256k1-short-scalar>>:<2><rsup|129>\<vdash\>Scalar>
+
+  \;
 
   \;
 
@@ -10443,15 +10464,15 @@
 
   \;
 
-  <paragraph|<samp|bip0340-schnorr>>
+  <paragraph|<samp|bip0340-schnorr>-verify>
 
   (Note: this jet can fail.)
 
   <\math>
-    <rep|<text|<samp|'bip0340-schnorr'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    <rep|<text|<samp|'bip0340-schnorr-verify'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|bip0340-schnorr>>:<around*|(|Pubkey\<times\><2><rsup|256>|)>\<times\>Signature\<vdash\><1>>
+  <math|<text|<samp|bip0340-schnorr-verify>>:<around*|(|Pubkey\<times\><2><rsup|256>|)>\<times\>Signature\<vdash\><1>>
 
   \;
 
@@ -10495,39 +10516,63 @@
 
   \;
 
-  <paragraph|<samp|secp256k1-unpack-point>>
+  <paragraph|<samp|secp256k1-signature-unpack>>
 
   \;
 
   <\math>
-    <rep|<text|<samp|'secp256k1-unpack-point'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    <rep|<text|<samp|'secp256k1-signtaure-unpack'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|secp256k1-unpack-point>>:Point\<vdash\><maybe><around*|(|GE|)>>
+  <math|<text|<samp|secp256k1-signature-unpack>>:Signature\<vdash\><maybe><around*|(|FE\<times\>Scalar|)>>
 
   \;
 
-  <paragraph|<samp|secp256k1-unpack-pubkey>>
+  <paragraph|<samp|secp256k1-pubkey-unpack>>
 
   \;
 
   <\math>
-    <rep|<text|<samp|'secp256k1-unpack-pubkey'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    <rep|<text|<samp|'secp256k1-pubkey-unpack'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|secp256k1-unpack-pubkey>>:Pubkey\<vdash\><maybe><around*|(|GE|)>>
+  <math|<text|<samp|secp256k1-pubkey-unpack>>:Pubkey\<vdash\><maybe><around*|(|GE|)>>
 
   \;
 
-  <paragraph|<samp|secp256k1-unpack-signature>>
+  <paragraph|<samp|secp256k1-pubkey-unpack-neg>>
 
   \;
 
   <\math>
-    <rep|<text|<samp|'secp256k1-unpack-signtaure'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    <rep|<text|<samp|'secp256k1-pubkey-unpack-neg'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|secp256k1-unpack-signature>>:Pubkey\<vdash\><maybe><around*|(|FE\<times\>Scalar|)>>
+  <math|<text|<samp|secp256k1-pubkey-unpack-neg>>:Pubkey\<vdash\><maybe><around*|(|GE|)>>
+
+  \;
+
+  <paragraph|<samp|secp256k1-pubkey-unpack-quad>>
+
+  \;
+
+  <\math>
+    <rep|<text|<samp|'secp256k1-pubkey-unpack-quad'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+  </math>
+
+  <math|<text|<samp|secp256k1-pubkey-unpack-quad>>:Pubkey\<vdash\><maybe><around*|(|GE|)>>
+
+  \;
+
+  <paragraph|<samp|secp256k1-point-unpack>>
+
+  \;
+
+  <\math>
+    <rep|<text|<samp|'secp256k1-point-unpack'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+  </math>
+
+  <math|<text|<samp|secp256k1-point-unpack>>:Point\<vdash\><maybe><around*|(|GE|)>>
 
   \;
 
@@ -11666,19 +11711,19 @@
     <associate|auto-303|<tuple|B.1.4.1.36|?>>
     <associate|auto-304|<tuple|B.1.4.1.37|?>>
     <associate|auto-305|<tuple|B.1.4.1.38|?>>
-    <associate|auto-306|<tuple|B.1.4.1.39|?>>
-    <associate|auto-307|<tuple|B.1.4.1.40|?>>
-    <associate|auto-308|<tuple|B.1.5|?>>
-    <associate|auto-309|<tuple|B.1.5.1|?>>
+    <associate|auto-306|<tuple|B.1.5|?>>
+    <associate|auto-307|<tuple|B.1.5.1|?>>
+    <associate|auto-308|<tuple|B.1.5.1.1|?>>
+    <associate|auto-309|<tuple|B.1.5.1.2|?>>
     <associate|auto-31|<tuple|3.2.4|?>>
-    <associate|auto-310|<tuple|B.1.5.1.1|?>>
-    <associate|auto-311|<tuple|B.1.5.1.2|?>>
-    <associate|auto-312|<tuple|B.1.5.1.3|?>>
-    <associate|auto-313|<tuple|B.1.5.1.4|?>>
-    <associate|auto-314|<tuple|B.1.5.1.5|?>>
-    <associate|auto-315|<tuple|B.1.5.1.6|?>>
-    <associate|auto-316|<tuple|B.1.5.1.7|?>>
-    <associate|auto-317|<tuple|B.1.5.1.8|?>>
+    <associate|auto-310|<tuple|B.1.5.1.3|?>>
+    <associate|auto-311|<tuple|B.1.5.1.4|?>>
+    <associate|auto-312|<tuple|B.1.5.1.5|?>>
+    <associate|auto-313|<tuple|B.1.5.1.6|?>>
+    <associate|auto-314|<tuple|B.1.5.1.7|?>>
+    <associate|auto-315|<tuple|B.1.5.1.8|?>>
+    <associate|auto-316|<tuple|B.1.5.1.9|?>>
+    <associate|auto-317|<tuple|B.1.5.1.10|?>>
     <associate|auto-318|<tuple|B.1.6|?>>
     <associate|auto-319|<tuple|B.1.6.1|?>>
     <associate|auto-32|<tuple|3.2.5|?>>
@@ -13006,168 +13051,170 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-275><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-is-quad>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-is-zero>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-276><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-normalize>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-is-odd>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-277><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-negate>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-is-quad>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-278><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-add>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-normalize>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-279><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-square>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-negate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-280><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-multiply>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-add>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-281><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-multiply-lambda>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-square>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-282><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-invert>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-multiply>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-283><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-split>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-multiply-lambda>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-284><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-infinity>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-invert>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-285><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-normalize>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-is-zero>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-286><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-negate>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-infinity>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-287><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-ge-negate>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-normalize>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-288><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-double>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-negate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-289><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-add>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-ge-negate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-290><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-ge-add-ex>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-double>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-291><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-ge-add>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-add>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-292><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-is-infinity>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-ge-add-ex>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-293><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-equiv>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-ge-add>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-294><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-x-equiv>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-is-infinity>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-295><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-shamir>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-equiv>
+      <with|color|<quote|red>|Does not exist in libsecp256k1>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-296><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scale>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-x-equiv>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-297><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scale-short>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-y-is-odd>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-298><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scale-lambda>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-generate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-299><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-generate>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scale>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-300><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-short-generate>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-linear-combination>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-301><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-lambda-generate>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-ge-scale-lambda>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-302><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-wnaf5>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-scale-lambda>
+      <with|color|<quote|red>|Consider removing>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-303><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-wnaf16>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-split-lambda>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-304><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-short-wnaf5>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-short-scalar>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-305><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-short-wnaf16>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-306><vspace|0.15fn>>
-
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-odd-generate>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-307><vspace|0.15fn>>
-
       <with|par-left|<quote|1tab>|B.1.5<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110110001...:
       >Jets for digital signatures <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-308>>
+      <no-break><pageref|auto-306>>
 
       <with|par-left|<quote|2tab>|B.1.5.1<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|1101100010...:
       >Jets for secp256k1 based digital signatures
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-309>>
+      <no-break><pageref|auto-307>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip0340-schnorr>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip0340-schnorr>-verify
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-310><vspace|0.15fn>>
+      <no-break><pageref|auto-308><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip0340-challenge-iv>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-311><vspace|0.15fn>>
+      <no-break><pageref|auto-309><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip0340-challenge-midstate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-312><vspace|0.15fn>>
+      <no-break><pageref|auto-310><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip0340-schnorr-midstate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-311><vspace|0.15fn>>
+
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-signature-unpack>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-312><vspace|0.15fn>>
+
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-313><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-unpack-point>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack-neg>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-314><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-unpack-pubkey>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack-quad>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-315><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-unpack-signature>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-point-unpack>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-316><vspace|0.15fn>>
 
