@@ -22,7 +22,7 @@ import Prelude hiding ( Word, drop, take, not, and, or, last
 import Data.Type.Equality ((:~:)(Refl))
 
 import Simplicity.Programs.Bit
-import Simplicity.Programs.MultiBit
+import Simplicity.Programs.Word
 import Simplicity.Term.Core hiding (one)
 import Simplicity.Ty.Word
 

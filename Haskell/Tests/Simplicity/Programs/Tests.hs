@@ -19,7 +19,7 @@ import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.LibSecp256k1.Lib as LibSecp
 import Simplicity.Programs.Sha256.Lib
-import Simplicity.Programs.MultiBit
+import Simplicity.Programs.Word
 import Simplicity.Term.Core
 import Simplicity.Ty.Word as Ty
 import qualified Simplicity.Word as W

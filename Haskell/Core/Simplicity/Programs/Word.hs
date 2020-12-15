@@ -1,6 +1,6 @@
 {-# LANGUAGE RankNTypes, GADTs, ScopedTypeVariables, TypeOperators #-}
 -- | This module defines Simplicity expressions and combinators that operate on Words.
-module Simplicity.Programs.MultiBit
+module Simplicity.Programs.Word
   ( fill, low, high
   , complement
   , bitwise_and, bitwise_or, bitwise_xor

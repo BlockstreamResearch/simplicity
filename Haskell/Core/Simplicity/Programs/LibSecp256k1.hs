@@ -39,11 +39,10 @@ import Simplicity.Functor
 import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
-import Simplicity.Programs.MultiBit
+import Simplicity.Programs.Word
 import qualified Simplicity.Programs.Sha256 as Sha256
 import Simplicity.Programs.Sha256 hiding (Lib(Lib), lib)
 import Simplicity.Ty
-import Simplicity.Ty.Word
 import Simplicity.Term.Core
 
 -- The number of elements in secp256k1's field.
