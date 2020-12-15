@@ -23,8 +23,8 @@ import Simplicity.Digest
 import Simplicity.FFI.Jets as FFI
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
+import Simplicity.Programs.Arith
 import qualified Simplicity.Programs.Sha256.Lib as Sha256
-import Simplicity.Programs.Word
 import Simplicity.Term.Core
 
 -- | A data type of (typed) tokens representing known "core" jets.

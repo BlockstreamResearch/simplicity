@@ -12,7 +12,7 @@ import Foreign.Ptr (Ptr)
 import Simplicity.FFI.Frame
 import qualified Simplicity.Programs.Sha256.Lib as Sha256
 import qualified Simplicity.Programs.LibSecp256k1.Lib as LibSecp256k1
-import Simplicity.Programs.Word
+import Simplicity.Ty.Word
 
 foreign import ccall unsafe "" c_adder32 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
 foreign import ccall unsafe "" c_fullAdder32 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool

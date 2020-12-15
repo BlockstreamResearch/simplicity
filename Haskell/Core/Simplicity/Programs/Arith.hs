@@ -1,6 +1,6 @@
 {-# LANGUAGE GADTs, ScopedTypeVariables, TypeOperators #-}
 -- | This module defines Simplicity expressions and combinators that operate on Words.
-module Simplicity.Programs.Word
+module Simplicity.Programs.Arith
   ( module Simplicity.Ty.Word
   , zero
   , one

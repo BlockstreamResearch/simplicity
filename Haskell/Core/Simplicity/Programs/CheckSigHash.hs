@@ -17,9 +17,9 @@ import Simplicity.Programs.Sha256 hiding (Lib(Lib), lib)
 import qualified Simplicity.Programs.Sha256 as Sha256
 import Simplicity.Programs.LibSecp256k1 hiding (Lib(Lib), lib, mkLib)
 import qualified Simplicity.Programs.LibSecp256k1 as LibSecp256k1
-import Simplicity.Programs.Word
 import Simplicity.Term.Core
 import Simplicity.Ty
+import Simplicity.Ty.Word
 
 -- | Given a signature hash mode, compute a digest of the hash mode's 'commitmentRoot' and the hash mode's output.
 -- This constitutes the message that is verified by the 'checkSigHash' Simplicity program.

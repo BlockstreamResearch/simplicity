@@ -4,10 +4,10 @@ module Simplicity.Programs.Example
   ) where
 
 import Prelude hiding (drop)
+import Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Loop
-import Simplicity.Programs.Word as Arith
 import Simplicity.Term.Core
 
 -- | An example program that uses disconnect via the 'loop' construction.

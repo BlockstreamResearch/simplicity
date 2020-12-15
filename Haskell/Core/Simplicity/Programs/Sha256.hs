@@ -11,10 +11,10 @@ module Simplicity.Programs.Sha256
 import Prelude hiding (Word, drop, not, take)
 
 import Simplicity.Functor
+import Simplicity.Programs.Arith
 import Simplicity.Programs.Bit
-import Simplicity.Programs.MultiBit
 import Simplicity.Programs.Generic
-import Simplicity.Programs.Word
+import Simplicity.Programs.MultiBit
 import Simplicity.Term.Core
 
 -- | In SHA-256, each block of data passed to the compression function is a 512-bit 'Word'.

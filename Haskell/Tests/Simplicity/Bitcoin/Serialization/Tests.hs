@@ -20,7 +20,7 @@ import Simplicity.Bitcoin.Serialization.BitString as BitString
 import Simplicity.Bitcoin.Serialization.ByteString as ByteString
 import Simplicity.Bitcoin.Term
 import Simplicity.Digest
-import qualified Simplicity.Programs.Word as Arith
+import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Sha256.Lib
 import Simplicity.Serialization
 import Simplicity.Ty.Tests hiding (tests)

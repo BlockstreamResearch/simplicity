@@ -26,13 +26,13 @@ import Simplicity.Elements.Term
 import Simplicity.Functor
 import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
 import Simplicity.MerkleRoot
+import Simplicity.Programs.Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Sha256 hiding (Lib(Lib), lib)
 import qualified Simplicity.Programs.Sha256 as Sha256
 import qualified Simplicity.Programs.LibSecp256k1 as LibSecp256k1
 import Simplicity.Programs.LibSecp256k1 (XOnlyPubKey, Sig)
-import Simplicity.Programs.Word
 import Simplicity.Tensor
 import Simplicity.Ty
 

@@ -36,10 +36,10 @@ import Prelude hiding (drop, take, and, or, not,
                        subtract, sqrt, Word)
 
 import Simplicity.Functor
+import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.MultiBit
-import qualified Simplicity.Programs.Word as Arith
 import qualified Simplicity.Programs.Sha256 as Sha256
 import Simplicity.Programs.Sha256 hiding (Lib(Lib), lib)
 import Simplicity.Ty

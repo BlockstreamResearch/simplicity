@@ -11,8 +11,8 @@ import Simplicity.BitMachine.Translate.TCO as TCO
 import Simplicity.Delegator
 import Simplicity.Programs.Sha256.Lib
 import Simplicity.Term.Core
+import Simplicity.Programs.Arith
 import Simplicity.Programs.Example
-import Simplicity.Programs.Word
 import qualified Simplicity.Word
 
 import Test.Tasty (TestTree, testGroup)
