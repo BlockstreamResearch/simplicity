@@ -96,14 +96,17 @@ data Vector x a where
   SingleV :: TyC x => Vector x x
   DoubleV :: (TyC x, TyC a) => Vector x a -> Vector x (Vector2 a)
 
+-- | A proof that a 'Vector' of 'Vector's is itself a 'Vector'.
 vectorComp :: TyC a => Vector a b -> Vector b c -> Vector a c
 vectorComp v SingleV = v
 vectorComp v (DoubleV w) = DoubleV (vectorComp v w)
 
-vectorPromote :: Vector x y -> Vector (x,x) (y,y)
+-- | A proof that if @y@ is a 'Vector' of @x@'s then @(y, y)@ is a vector of @(x, x)@'s
+vectorPromote :: Vector x y -> Vector (x, x) (y, y)
 vectorPromote SingleV = SingleV
 vectorPromote (DoubleV v) = DoubleV (vectorPromote v)
 
+-- | Given @a@ and @b@ which are both 'Vector's of @z@'s, then decide which of the two 'Vector's is longer or prove that they are equal.
 compareVectorSize :: Vector z a -> Vector z b -> Either (Vector (b, b) a) (Either (a :~: b) (Vector (a, a) b))
 compareVectorSize SingleV SingleV = Right (Left Refl)
 compareVectorSize (DoubleV n) SingleV =
@@ -166,7 +169,7 @@ word256 = vector256
 word512 :: Word Word512
 word512 = vector512
 
--- | Computes the number of bits of the 'Word' 'a'.
+-- | Computes the number of entries in a 'Vector'.
 --
 -- @'wordSize' w = 'Simplicity.BitMachine.Ty.bitSizeR' ('reifyProxy' w)@
 wordSize :: Vector x a -> Int
@@ -261,6 +264,7 @@ toWord256 = toWord word256
 toWord512 :: Integer -> Word512
 toWord512 = toWord word512
 
+-- | A pair of 'Vector's of the same length that have different contents.
 data ZipVector x a y b where
   SingleZV :: (TyC x, TyC y) => ZipVector x x y y
   DoubleZV :: (TyC x, TyC a, TyC y, TyC b) => ZipVector x a y b -> ZipVector x (Vector2 a) y (Vector2 b)

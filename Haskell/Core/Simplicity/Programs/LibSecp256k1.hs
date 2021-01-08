@@ -22,6 +22,7 @@ module Simplicity.Programs.LibSecp256k1
   , scalar_split_lambda, scalar_split_128
   , scalar_is_zero
   -- * Elliptic curve multiplication related operations
+  , Vector129
   , wnaf5, wnaf15
   , generate, scale
   , linear_combination_1
@@ -47,7 +48,7 @@ import Simplicity.Programs.Sha256 hiding (Lib(Lib), lib)
 import Simplicity.Ty
 import Simplicity.Term.Core
 
--- | Simplicity's representation of 'fe' (field) elements in libsecp256k1's 10x26-bit form.
+-- | Simplicity's representation of field elements.
 type FE = Word256
 
 -- | A point in affine coordinates.
@@ -57,12 +58,13 @@ type GE = (FE, FE)
 
 -- | A point in Jacobian coordinates.
 -- Usually expected to be on the elliptic curve.
--- The point at infinity's representatives are of the form @((a^2, a^3), 0)@, with @((1, 1), 0)@ being the canonical representative.
+-- The point at infinity's representatives are of the form @((a^2, a^3), 0)@, with @((0, 0), 0)@ being the canonical representative.
 type GEJ = (GE, FE)
 
 -- | Scalar values, those less than the order of secp256's elliptic curve, are represented by a 256-bit word type.
 type Scalar = Word256
 
+-- | 129 entry vector of values.
 type Vector129 x = (x, Vector128 x)
 
 -- | 129-bit signed word that is returned by 'scalar_split_lambda' and 'scalar_split_128'.
@@ -81,8 +83,6 @@ type Sig = (Word256, Word256)
 data Lib term =
  Lib
   { -- | Reduce the representation of a field element to its canonical represenative.
-    --
-    -- Corresponds to @secp256k1_fe_normalize_var@ (and @secp256k1_fe_normalize@).
     fe_normalize :: term Word256 FE
 
     -- | The normalized reprsentative for the field element 0.
@@ -92,163 +92,137 @@ data Lib term =
   , fe_one :: term () FE
 
     -- | Tests if the input value is a representative of the field element 0.
-    -- Some preconditions apply.
-    --
-    -- Corresponds to @secp256k1_fe_is_zero@.
   , fe_is_zero :: term FE Bit
 
     -- | Adds two field elements.
-    -- The resulting magnitude is the sum of the input magnitudes.
-    --
-    -- Corresponds to @secp256k1_fe_add@.
   , fe_add :: term (FE, FE) FE
 
     -- | Negates a field element.
-    -- The resulting magnitude is one more than the input magnitude.
-    --
-    -- Corresponds to @secp256k1_fe_negateate@.
   , fe_negate :: term FE FE
 
     -- | Multiplies two field elements.
-    -- The input magnitudes must be at most 8 (okay maybe up to 10).
-    -- The resulting magnitude is 1 (which isn't necessarily normalized).
-    --
-    -- Corresponds to @secp256k1_fe_multiply@.
   , fe_multiply :: term (FE, FE) FE
 
+    -- | Multiplies a field element by the canonical primitive cube root of unity.
   , fe_multiply_beta :: term FE FE
 
     -- | Squares a field element.
-    -- The input magnitude must be at most 8.
-    -- The resulting magnitude is 1 (which isn't necessarily normalized).
-    --
-    -- Corresponds to @secp256k1_fe_square@.
   , fe_square :: term FE FE
 
     -- | Computes the modular inverse of a field element.
-    -- The input magnitude must be at most 8.
-    -- The resulting magnitude is 1 (which isn't necessarily normalized).
-    -- Returns a represenative of 0 when given 0.
-    --
-    -- Corresponds to @secp256k1_fe_invert@.
   , fe_invert :: term FE FE
 
     -- | Computes the modular square root of a field element if it exists.
-    -- The input magnitude must be at most 8.
-    -- If the result exists, magnitude is 1 (which isn't necessarily normalized) and it is a quadratic residue
-    --
-    -- Corresponds to @secp256k1_fe_square_root@.
-    -- If @secp256k1_fe_square_root@ would return 0, then @'Left' ()@ is returned by 'sqrt'.
-    -- If @secp256k1_fe_square_root@ would return 1, then @'Right' r@ is returned by 'sqrt' where @r@ is the result from @secp256k1_fe_square_root@.
   , fe_square_root :: term FE (Either () FE)
 
+    -- | Tests if the canonical representative of the field element is odd.
   , fe_is_odd :: term FE Bit
 
     -- | Tests if the field element is a quadratic residue.
-    --
-    -- Corresponds to @secp256k1_fe_is_quad_var@.
   , fe_is_quad :: term FE Bit
 
     -- | Returns the canonical represenative of the point at infinity.
   , gej_infinity :: term () GEJ
 
+    -- | Computes the negation of a point.
   , gej_negate :: term GEJ GEJ
 
-    -- | Given a point on curve, or a represenativie of infinity, tests if the point is a representative of infinity.
+    -- | Tests if the point is a representative of infinity.
   , gej_is_infinity :: term GEJ Bit
 
-    -- | Adds a point with itself.
-    --
-    -- Corresponds to @secp256k1_gej_double_var@.
-    -- However if the input is infinity, it returns infinity in canonical form.
+    -- | Doubles a point.
+    -- If the result is the point at infinity, it is returned in canonical form.
   , gej_double :: term GEJ GEJ
 
+    -- | Adds points 'a' and 'b'.
+    -- Also returns the ratio of 'a''s z-coordinate and the result's z-coordinate.
+    --
+    -- If the result is the point at infinity, it is returned in canonical form.
   , gej_add_ex :: term (GEJ, GEJ) (FE, GEJ)
 
+    -- | Adds points 'a' and 'b'.
   , gej_add :: term (GEJ, GEJ) GEJ
 
-    -- | Adds a point in Jacobian coordinates with a point in affine coordinates.
-    -- Returns the result in Jacobian coordinates and the ratio of z-coordinates between the output and the input that is in Jacobain coordinates.
-    -- If the input point in Jacobian coordinates is the point at infinity, the ratio returned is set to 0.
+    -- | Adds a point 'a' in Jacobian coordinates with a point 'b' in affine coordinates.
+    -- Also returns the ratio of 'a''s z-coordinate and the result's z-coordinate.
     --
-    -- Corresponds to @secp256k1_gej_add_ge_var@ with a non-null @rzr@.
     -- If the result is the point at infinity, it is returned in canonical form.
   , gej_ge_add_ex :: term (GEJ, GE) (FE, GEJ)
 
     -- | Adds a point in Jacobian coordinates with a point in affine coordinates.
-    -- Returns the result in Jacobian coordinates.
     --
     -- If the result is the point at infinity, it is returned in canonical form.
   , gej_ge_add :: term (GEJ, GE) GEJ
 
+    -- | Multiply a point by the canonical cube root of unity.
   , gej_scale_lambda :: term GEJ GEJ
 
     -- | Negates a point in affine coordinates.
-    --
-    -- Corresponds to @secp256k1_ge_neg@.
   , ge_negate :: term GE GE
 
+    -- | Multiply a point in affine coordinates by the canonical cube root of unity.
   , ge_scale_lambda :: term GE GE
 
     -- | Converts a point in Jacobian coordintes to the same point in affine coordinates, and normalizes the field represenatives.
     -- Returns the point (0, 0) when given the point at infinity.
   , gej_normalize :: term GEJ GE
 
+--    -- | Tests if two points in jacobian coordinates represent the same point.
 --  , gej_equiv :: term (GEJ, GEJ) Bit
 
     -- | Given a field element and a point in Jacobian coordiantes, test if the point represents one whose affine x-coordinate is equal to the given field element.
-    --
-    -- Corresponds to @secp256k1_gej_eq_x_var@.
   , gej_x_equiv :: term (GEJ, FE) Bit
 
     -- | Given a point in Jacobian coordiantes, test if the point represents one whose affine y-coordinate is odd.
-    --
-    -- Similar to @secp256k1_gej_has_even_y_var@.
   , gej_y_is_odd :: term GEJ Bit
 
+    -- | Reduce the representation of a scalar element to its canonical represenative.
   , scalar_normalize :: term Word256 Scalar
 
+    -- | Tests if the input value is a representative of the scalar element 0.
   , scalar_is_zero :: term Scalar Bit
 
+    -- | Adds two scalar elements.
   , scalar_add :: term (Scalar, Scalar) Scalar
 
+    -- | Negates a scalar element.
   , scalar_negate :: term Scalar Scalar
 
+    -- | Multiplies two scalar elements.
   , scalar_multiply :: term (Scalar, Scalar) Scalar
 
+    -- | Multiplies a scalar element by the canonical primitive cube root of unity.
   , scalar_multiply_lambda :: term Scalar Scalar
 
+    -- | Computes the modular inverse of a scalar element.
   , scalar_invert :: term Scalar Scalar
 
+    -- | Divide a scalar element into two short integers 'k1' and 'k2' such that @'k1' + 'k2' * 'Simplicity.LibSecp256k1.Spec.lambda'@ is the orginal scalar element.
   , scalar_split_lambda :: term Scalar (Word129, Word129)
 
+    -- | Divide a scalar element into two short integers 'k1' and 'k2' such that @'k1' + 'k2' * 2^128@ is the orginal scalar element.
   , scalar_split_128 :: term Scalar (Word129, Word129)
 
     -- | Convert a scalar value to wnaf form, with a window of 5 bits.
-    -- The input must be strictly less than the order of secp256k1's elliptic curve.
-    --
-    -- Corresponds to @secp256k1_ecmult_wnaf@ with @w@ parameter set to 5.
   , wnaf5 :: term Word129 (Vector129 (Either () Word4))
 
     -- | Convert a scalar value to wnaf form, with a window of 15 bits.
-    -- The input must be strictly less than the order of secp256k1's elliptic curve.
-    --
-    -- Corresponds to @secp256k1_ecmult_wnaf@ with @w@ parameter set to 15.
   , wnaf15 :: term Word129 (Vector129 (Either () Word16))
 
-    -- | Returns an integer multiple of the secp256k1's generator.
-    -- The input must be strictly less than the order of secp256k1's elliptic curve.
+    -- | Returns a multiple of the secp256k1's generator.
   , generate :: term Scalar GEJ
 
+    -- | Multiply a point by a scalar element.
   , scale :: term (Scalar, GEJ) GEJ
 
     -- | Given an elliptic curve point, @a@, and two scalar values @na@ and @ng@, return @na * a + ng * g@ where @g@ is secp256k1's generator.
-    -- The scalar inputs must be strictly less than the order of secp256k1's elliptic curve.
-    --
-    -- Corresponds to @secp256k1_ecmult@.
     -- If the result is the point at infinity, it is returned in canonical form.
   , linear_combination_1 :: term ((Scalar, GEJ), Scalar) GEJ
 
+    -- | This function unpacks a 'PubKey' as a elliptic curve point in affine coordinates with a y-coordinate that is a square.
+    --
+    -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
+    -- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
   , pubkey_unpack_quad :: term PubKey (Either () GE)
 
     -- | This function unpacks a 'PubKey' as a elliptic curve point in affine coordinates.
@@ -257,6 +231,10 @@ data Lib term =
     -- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
   , pubkey_unpack :: term PubKey (Either () GE)
 
+    -- | This function unpacks a 'PubKey' as a elliptic curve point in affine coordinates and returns its negation.
+    --
+    -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
+    -- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
   , pubkey_unpack_neg :: term PubKey (Either () GE)
 
     -- | This function unpackes a 'Sig' as a pair of a field element and a scalar value.

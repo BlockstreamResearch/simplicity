@@ -10,7 +10,7 @@ import Data.Serialize.Put (putWord8)
 
 import Simplicity.Word
 
--- | A public key format to be used for Schnorr signatures.
+-- | An (x-only) public key format to be used for Schnorr signatures.
 data PubKey = PubKey Word256 deriving Show
 
 instance Serialize PubKey where

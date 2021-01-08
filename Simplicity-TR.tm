@@ -555,958 +555,962 @@
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-143>>
 
-    <with|par-left|2tab|9.1.5.1<space|2spc>Bits
+    <with|par-left|2tab|9.1.5.1<space|2spc>Generic
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-144>>
 
-    <with|par-left|2tab|9.1.5.2<space|2spc>Multi-bit Words
+    <with|par-left|2tab|9.1.5.2<space|2spc>Bits
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-145>>
 
-    <with|par-left|2tab|9.1.5.3<space|2spc>Generic
+    <with|par-left|2tab|9.1.5.3<space|2spc>Multi-bit Words
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-146>>
 
-    <with|par-left|2tab|9.1.5.4<space|2spc>Loop
+    <with|par-left|2tab|9.1.5.4<space|2spc>Arithmetic
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-147>>
 
-    <with|par-left|1tab|9.1.6<space|2spc>Libraries of Simplicity Expressions
+    <with|par-left|2tab|9.1.5.5<space|2spc>Loop
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-148>>
 
-    <with|par-left|2tab|9.1.6.1<space|2spc>SHA-256
+    <with|par-left|1tab|9.1.6<space|2spc>Libraries of Simplicity Expressions
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-149>>
 
-    <with|par-left|2tab|9.1.6.2<space|2spc>LibSecp256k1
+    <with|par-left|2tab|9.1.6.1<space|2spc>SHA-256
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-150>>
 
-    <with|par-left|2tab|9.1.6.3<space|2spc>CheckSigHash
+    <with|par-left|2tab|9.1.6.2<space|2spc>LibSecp256k1
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-151>>
 
-    <with|par-left|1tab|9.1.7<space|2spc>The Bit Machine
+    <with|par-left|2tab|9.1.6.3<space|2spc>CheckSigHash
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-152>>
 
+    <with|par-left|1tab|9.1.7<space|2spc>The Bit Machine
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-153>>
+
     <with|par-left|2tab|9.1.7.1<space|2spc>Translating Simplicity to the Bit
     Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-153>>
+    <no-break><pageref|auto-154>>
 
     <with|par-left|2tab|9.1.7.2<space|2spc>Static Analysis
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-154>>
+    <no-break><pageref|auto-155>>
 
     <with|par-left|2tab|9.1.7.3<space|2spc>Fast Evaluation with FFI
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-155>>
+    <no-break><pageref|auto-156>>
 
     9.2<space|2spc><with|font-family|tt|language|verbatim|Simplicity-Indef>
     library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-156>
+    <no-break><pageref|auto-157>
 
     <with|par-left|1tab|9.2.1<space|2spc>Primitive Signature
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-157>>
+    <no-break><pageref|auto-158>>
 
     <with|par-left|1tab|9.2.2<space|2spc>Primitive Terms
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-158>>
+    <no-break><pageref|auto-159>>
 
     <with|par-left|1tab|9.2.3<space|2spc><with|font-family|tt|language|verbatim|JetType>
     class <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-159>>
+    <no-break><pageref|auto-160>>
 
     <with|par-left|1tab|9.2.4<space|2spc>Denotational Semantics of Full
     Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-160>>
+    <no-break><pageref|auto-161>>
 
     <with|par-left|1tab|9.2.5<space|2spc>Type Inference
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-161>>
+    <no-break><pageref|auto-162>>
 
     <with|par-left|1tab|9.2.6<space|2spc>Serialization
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-162>>
+    <no-break><pageref|auto-163>>
 
     <with|par-left|2tab|9.2.6.1<space|2spc>Free Monadic Deserializaiton
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-163>>
+    <no-break><pageref|auto-164>>
 
     <with|par-left|2tab|9.2.6.2<space|2spc>Serialization of Simplicity DAGs
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-164>>
+    <no-break><pageref|auto-165>>
 
     <with|par-left|1tab|9.2.7<space|2spc>Jet Substitution
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-165>>
+    <no-break><pageref|auto-166>>
 
     9.3<space|2spc><with|font-family|tt|language|verbatim|Simplicity-Bitcoin>
     Libary <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-166>
+    <no-break><pageref|auto-167>
 
     9.4<space|2spc><with|font-family|tt|language|verbatim|Simplicity> Library
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-167>
+    <no-break><pageref|auto-168>
 
     <with|par-left|1tab|9.4.1<space|2spc>CheckSigHashAll
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-168>>
+    <no-break><pageref|auto-169>>
 
     <with|par-left|1tab|9.4.2<space|2spc>Known Discounted Jets
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-169>>
+    <no-break><pageref|auto-170>>
 
     9.5<space|2spc>Simplicity <with|font-family|tt|language|verbatim|testsuite>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-170>
+    <no-break><pageref|auto-171>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|10<space|2spc>C
     Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-171><vspace|0.5fn>
+    <no-break><pageref|auto-172><vspace|0.5fn>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Appendix
     A<space|2spc>Elements Application> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-172><vspace|0.5fn>
+    <no-break><pageref|auto-173><vspace|0.5fn>
 
     A.1<space|2spc>Denotational Semantics
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-173>
+    <no-break><pageref|auto-174>
 
     <with|par-left|1tab|A.1.1<space|2spc>Null Data
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-174>>
+    <no-break><pageref|auto-175>>
 
     <with|par-left|1tab|A.1.2<space|2spc>Merkle Roots
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-175>>
+    <no-break><pageref|auto-176>>
 
     <with|par-left|1tab|A.1.3<space|2spc>Serialization
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-176>>
+    <no-break><pageref|auto-177>>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Appendix
     B<space|2spc>Catelogue of Jets> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-177><vspace|0.5fn>
+    <no-break><pageref|auto-178><vspace|0.5fn>
 
     B.1<space|2spc><with|font-family|tt|language|verbatim|110...: >Core Jets
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-178>
+    <no-break><pageref|auto-179>
 
     <with|par-left|1tab|B.1.1<space|2spc><with|font-family|tt|language|verbatim|1100...:
     >Jets for multi-bit logic <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-179>>
+    <no-break><pageref|auto-180>>
 
     <with|par-left|2tab|B.1.1.1<space|2spc><with|font-family|ss|low>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-180>>
+    <no-break><pageref|auto-181>>
 
     <with|par-left|2tab|B.1.1.2<space|2spc><with|font-family|ss|high>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-181>>
+    <no-break><pageref|auto-182>>
 
     <with|par-left|2tab|B.1.1.3<space|2spc><with|font-family|ss|complement>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-182>>
+    <no-break><pageref|auto-183>>
 
     <with|par-left|2tab|B.1.1.4<space|2spc><with|font-family|ss|and>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-183>>
+    <no-break><pageref|auto-184>>
 
     <with|par-left|2tab|B.1.1.5<space|2spc><with|font-family|ss|or>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-184>>
+    <no-break><pageref|auto-185>>
 
     <with|par-left|2tab|B.1.1.6<space|2spc><with|font-family|ss|xor>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-185>>
+    <no-break><pageref|auto-186>>
 
     <with|par-left|2tab|B.1.1.7<space|2spc><with|font-family|ss|maj>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-186>>
+    <no-break><pageref|auto-187>>
 
     <with|par-left|2tab|B.1.1.8<space|2spc><with|font-family|ss|xor3>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-187>>
+    <no-break><pageref|auto-188>>
 
     <with|par-left|2tab|B.1.1.9<space|2spc><with|font-family|ss|ch>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-188>>
+    <no-break><pageref|auto-189>>
 
     <with|par-left|2tab|B.1.1.10<space|2spc><with|font-family|ss|some>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-189>>
+    <no-break><pageref|auto-190>>
 
     <with|par-left|2tab|B.1.1.11<space|2spc><with|font-family|ss|all>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-190>>
+    <no-break><pageref|auto-191>>
 
     <with|par-left|2tab|B.1.1.12<space|2spc><with|font-family|ss|eq>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-191>>
+    <no-break><pageref|auto-192>>
 
     <with|par-left|2tab|B.1.1.13<space|2spc><with|font-family|ss|full-left-shift>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-192>>
+    <no-break><pageref|auto-193>>
 
     <with|par-left|2tab|B.1.1.14<space|2spc><with|font-family|ss|full-right-shift>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-193>>
+    <no-break><pageref|auto-194>>
 
     <with|par-left|2tab|B.1.1.15<space|2spc><with|font-family|ss|leftmost>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-194>>
+    <no-break><pageref|auto-195>>
 
     <with|par-left|2tab|B.1.1.16<space|2spc><with|font-family|ss|rightmost>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-195>>
+    <no-break><pageref|auto-196>>
 
     <with|par-left|2tab|B.1.1.17<space|2spc><with|font-family|ss|left-pad-low>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-196>>
+    <no-break><pageref|auto-197>>
 
     <with|par-left|2tab|B.1.1.18<space|2spc><with|font-family|ss|left-pad-high>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-197>>
+    <no-break><pageref|auto-198>>
 
     <with|par-left|2tab|B.1.1.19<space|2spc><with|font-family|ss|left-extend>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-198>>
+    <no-break><pageref|auto-199>>
 
     <with|par-left|2tab|B.1.1.20<space|2spc><with|font-family|ss|right-pad-low>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-199>>
+    <no-break><pageref|auto-200>>
 
     <with|par-left|2tab|B.1.1.21<space|2spc><with|font-family|ss|right-pad-high>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-200>>
+    <no-break><pageref|auto-201>>
 
     <with|par-left|2tab|B.1.1.22<space|2spc><with|font-family|ss|right-extend>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-201>>
+    <no-break><pageref|auto-202>>
 
     <with|par-left|2tab|B.1.1.23<space|2spc><with|font-family|ss|right-shift-with>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-202>>
+    <no-break><pageref|auto-203>>
 
     <with|par-left|2tab|B.1.1.24<space|2spc><with|font-family|ss|right-shift>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-203>>
+    <no-break><pageref|auto-204>>
 
     <with|par-left|2tab|B.1.1.25<space|2spc><with|font-family|ss|right-rotate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-204>>
+    <no-break><pageref|auto-205>>
 
     <with|par-left|2tab|B.1.1.26<space|2spc><with|font-family|ss|transpose>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-205>>
+    <no-break><pageref|auto-206>>
 
     <with|par-left|2tab|B.1.1.27<space|2spc><with|font-family|ss|find-first-high>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-206>>
+    <no-break><pageref|auto-207>>
 
     <with|par-left|2tab|B.1.1.28<space|2spc><with|font-family|ss|find-last-high>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-207>>
+    <no-break><pageref|auto-208>>
 
     <with|par-left|2tab|B.1.1.29<space|2spc><with|font-family|ss|bit>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-208>>
+    <no-break><pageref|auto-209>>
 
     <with|par-left|1tab|B.1.2<space|2spc><with|font-family|tt|language|verbatim|110100...:
     >Jets for arithmetic <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-209>>
+    <no-break><pageref|auto-210>>
 
     <with|par-left|2tab|B.1.2.1<space|2spc><with|font-family|ss|one>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-210>>
+    <no-break><pageref|auto-211>>
 
     <with|par-left|2tab|B.1.2.2<space|2spc><with|font-family|ss|full-add>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-211>>
+    <no-break><pageref|auto-212>>
 
     <with|par-left|2tab|B.1.2.3<space|2spc><with|font-family|ss|add>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-212>>
+    <no-break><pageref|auto-213>>
 
     <with|par-left|2tab|B.1.2.4<space|2spc><with|font-family|ss|full-increment>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-213>>
+    <no-break><pageref|auto-214>>
 
     <with|par-left|2tab|B.1.2.5<space|2spc><with|font-family|ss|increment>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-214>>
+    <no-break><pageref|auto-215>>
 
     <with|par-left|2tab|B.1.2.6<space|2spc><with|font-family|ss|popcount>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-215>>
+    <no-break><pageref|auto-216>>
 
     <with|par-left|2tab|B.1.2.7<space|2spc><with|font-family|ss|full-subtract>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-216>>
+    <no-break><pageref|auto-217>>
 
     <with|par-left|2tab|B.1.2.8<space|2spc><with|font-family|ss|subtract>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-217>>
+    <no-break><pageref|auto-218>>
 
     <with|par-left|2tab|B.1.2.9<space|2spc><with|font-family|ss|negate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-218>>
+    <no-break><pageref|auto-219>>
 
     <with|par-left|2tab|B.1.2.10<space|2spc><with|font-family|ss|full-decrement>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-219>>
+    <no-break><pageref|auto-220>>
 
     <with|par-left|2tab|B.1.2.11<space|2spc><with|font-family|ss|decrement>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-220>>
+    <no-break><pageref|auto-221>>
 
     <with|par-left|2tab|B.1.2.12<space|2spc><with|font-family|ss|full-multiply>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-221>>
+    <no-break><pageref|auto-222>>
 
     <with|par-left|2tab|B.1.2.13<space|2spc><with|font-family|ss|multiply>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-222>>
+    <no-break><pageref|auto-223>>
 
     <with|par-left|2tab|B.1.2.14<space|2spc><with|font-family|tt|language|verbatim|><with|font-family|ss|is-zero>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-223>>
+    <no-break><pageref|auto-224>>
 
     <with|par-left|2tab|B.1.2.15<space|2spc><with|font-family|tt|language|verbatim|><with|font-family|ss|is-one>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-224>>
+    <no-break><pageref|auto-225>>
 
     <with|par-left|2tab|B.1.2.16<space|2spc><with|font-family|ss|le>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-225>>
+    <no-break><pageref|auto-226>>
 
     <with|par-left|2tab|B.1.2.17<space|2spc><with|font-family|ss|lt>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-226>>
+    <no-break><pageref|auto-227>>
 
     <with|par-left|2tab|B.1.2.18<space|2spc><with|font-family|ss|min>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-227>>
+    <no-break><pageref|auto-228>>
 
     <with|par-left|2tab|B.1.2.19<space|2spc><with|font-family|ss|max>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-228>>
+    <no-break><pageref|auto-229>>
 
     <with|par-left|2tab|B.1.2.20<space|2spc><with|font-family|ss|median>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-229>>
+    <no-break><pageref|auto-230>>
 
     <with|par-left|2tab|B.1.2.21<space|2spc><with|font-family|ss|div2n1n>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-230>>
+    <no-break><pageref|auto-231>>
 
     <with|par-left|2tab|B.1.2.22<space|2spc><with|font-family|ss|div-mod>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-231>>
+    <no-break><pageref|auto-232>>
 
     <with|par-left|2tab|B.1.2.23<space|2spc><with|font-family|ss|divide>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-232>>
+    <no-break><pageref|auto-233>>
 
     <with|par-left|2tab|B.1.2.24<space|2spc><with|font-family|ss|modulo>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-233>>
+    <no-break><pageref|auto-234>>
 
     <with|par-left|2tab|B.1.2.25<space|2spc><with|font-family|ss|divides>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-234>>
+    <no-break><pageref|auto-235>>
 
     <with|par-left|2tab|B.1.2.26<space|2spc><with|font-family|ss|eea>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-235>>
+    <no-break><pageref|auto-236>>
 
     <with|par-left|2tab|B.1.2.27<space|2spc><with|font-family|ss|bezout>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-236>>
+    <no-break><pageref|auto-237>>
 
     <with|par-left|2tab|B.1.2.28<space|2spc><with|font-family|ss|gcd>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-237>>
+    <no-break><pageref|auto-238>>
 
     <with|par-left|2tab|B.1.2.29<space|2spc><with|font-family|ss|cofactors>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-238>>
+    <no-break><pageref|auto-239>>
 
     <with|par-left|2tab|B.1.2.30<space|2spc><with|font-family|ss|lcm>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-239>>
+    <no-break><pageref|auto-240>>
 
     <with|par-left|2tab|B.1.2.31<space|2spc><with|font-family|ss|jacobi>
     (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-240>>
+    <no-break><pageref|auto-241>>
 
     <with|par-left|2tab|B.1.2.32<space|2spc><with|font-family|ss|absolute-value>
     (signed input/unsigned output) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-241>>
+    <no-break><pageref|auto-242>>
 
     <with|par-left|2tab|B.1.2.33<space|2spc><with|font-family|tt|language|verbatim|><with|font-family|ss|sign>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-242>>
+    <no-break><pageref|auto-243>>
 
     <with|par-left|2tab|B.1.2.34<space|2spc><with|font-family|ss|signed-le>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-243>>
+    <no-break><pageref|auto-244>>
 
     <with|par-left|2tab|B.1.2.35<space|2spc><with|font-family|ss|signed-lt>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-244>>
+    <no-break><pageref|auto-245>>
 
     <with|par-left|2tab|B.1.2.36<space|2spc><with|font-family|ss|signed-min>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-245>>
+    <no-break><pageref|auto-246>>
 
     <with|par-left|2tab|B.1.2.37<space|2spc><with|font-family|ss|signed-max>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-246>>
+    <no-break><pageref|auto-247>>
 
     <with|par-left|2tab|B.1.2.38<space|2spc><with|font-family|ss|signed-median>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-247>>
+    <no-break><pageref|auto-248>>
 
     <with|par-left|2tab|B.1.2.39<space|2spc><with|font-family|ss|signed-right-shift>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-248>>
+    <no-break><pageref|auto-249>>
 
     <with|par-left|2tab|B.1.2.40<space|2spc><with|font-family|ss|signed-divmod>
     (unsigned denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-249>>
+    <no-break><pageref|auto-250>>
 
     <with|par-left|2tab|B.1.2.41<space|2spc><with|font-family|ss|signed-div>
     (unsigned denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-250>>
+    <no-break><pageref|auto-251>>
 
     <with|par-left|2tab|B.1.2.42<space|2spc><with|font-family|ss|signed-signed-divmod>
     (signed denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-251>>
+    <no-break><pageref|auto-252>>
 
     <with|par-left|2tab|B.1.2.43<space|2spc><with|font-family|ss|signed-signed-div>
     (signed denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-252>>
+    <no-break><pageref|auto-253>>
 
     <with|par-left|1tab|B.1.3<space|2spc><with|font-family|tt|language|verbatim|110101...:
     >Jets for hash functions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-253>>
+    <no-break><pageref|auto-254>>
 
     <with|par-left|2tab|B.1.3.1<space|2spc><with|font-family|tt|language|verbatim|1101010...:
     >Jets for SHA-2 <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-254>>
+    <no-break><pageref|auto-255>>
 
     <with|par-left|4tab|<with|font-family|ss|sha-256-block>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-255><vspace|0.15fn>>
+    <no-break><pageref|auto-256><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|sha-256-iv>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-256><vspace|0.15fn>>
+    <no-break><pageref|auto-257><vspace|0.15fn>>
 
     <with|par-left|2tab|B.1.3.2<space|2spc><with|font-family|tt|language|verbatim|110101100...:
     >Jets for SHA-3 <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-257>>
+    <no-break><pageref|auto-258>>
 
     <with|par-left|4tab|<with|font-family|ss|sha3-zero>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-258><vspace|0.15fn>>
+    <no-break><pageref|auto-259><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|sha3-absorb>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-259><vspace|0.15fn>>
+    <no-break><pageref|auto-260><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|sha3-xor>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-260><vspace|0.15fn>>
+    <no-break><pageref|auto-261><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|sha3-permute>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-261><vspace|0.15fn>>
+    <no-break><pageref|auto-262><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|sha3-squeeze-256>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-262><vspace|0.15fn>>
+    <no-break><pageref|auto-263><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|sha3-squeeze-512>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-263><vspace|0.15fn>>
+    <no-break><pageref|auto-264><vspace|0.15fn>>
 
     <with|par-left|2tab|B.1.3.3<space|2spc><with|font-family|tt|language|verbatim|110101101...:
     >Jets for RIPEMD <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-264>>
+    <no-break><pageref|auto-265>>
 
     <with|par-left|2tab|B.1.3.4<space|2spc><with|font-family|tt|language|verbatim|110101110000...:
     >Jets for SHA-1 (RESERVED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-265>>
+    <no-break><pageref|auto-266>>
 
     <with|par-left|1tab|B.1.4<space|2spc><with|font-family|tt|language|verbatim|110110000...:
     >Jets for elliptic curve functions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-266>>
+    <no-break><pageref|auto-267>>
 
     <with|par-left|2tab|B.1.4.1<space|2spc><with|font-family|tt|language|verbatim|1101100000...:
     >Jets for secp256k1 <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-267>>
+    <no-break><pageref|auto-268>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-normalize>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-268><vspace|0.15fn>>
+    <no-break><pageref|auto-269><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-negate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-269><vspace|0.15fn>>
+    <no-break><pageref|auto-270><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-add>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-270><vspace|0.15fn>>
+    <no-break><pageref|auto-271><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-square>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-271><vspace|0.15fn>>
+    <no-break><pageref|auto-272><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-multiply>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-272><vspace|0.15fn>>
+    <no-break><pageref|auto-273><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-multiply-beta>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-273><vspace|0.15fn>>
+    <no-break><pageref|auto-274><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-invert>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-274><vspace|0.15fn>>
+    <no-break><pageref|auto-275><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-square-root>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-275><vspace|0.15fn>>
+    <no-break><pageref|auto-276><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-is-zero>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-276><vspace|0.15fn>>
+    <no-break><pageref|auto-277><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-is-odd>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-277><vspace|0.15fn>>
+    <no-break><pageref|auto-278><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-fe-is-quad>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-278><vspace|0.15fn>>
+    <no-break><pageref|auto-279><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-normalize>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-279><vspace|0.15fn>>
+    <no-break><pageref|auto-280><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-negate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-280><vspace|0.15fn>>
+    <no-break><pageref|auto-281><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-add>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-281><vspace|0.15fn>>
+    <no-break><pageref|auto-282><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-square>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-282><vspace|0.15fn>>
+    <no-break><pageref|auto-283><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-multiply>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-283><vspace|0.15fn>>
+    <no-break><pageref|auto-284><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-multiply-lambda>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-284><vspace|0.15fn>>
+    <no-break><pageref|auto-285><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-invert>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-285><vspace|0.15fn>>
+    <no-break><pageref|auto-286><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-is-zero>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-286><vspace|0.15fn>>
+    <no-break><pageref|auto-287><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-infinity>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-287><vspace|0.15fn>>
+    <no-break><pageref|auto-288><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-normalize>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-288><vspace|0.15fn>>
+    <no-break><pageref|auto-289><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-negate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-289><vspace|0.15fn>>
+    <no-break><pageref|auto-290><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-ge-negate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-290><vspace|0.15fn>>
+    <no-break><pageref|auto-291><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-double>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-291><vspace|0.15fn>>
+    <no-break><pageref|auto-292><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-add>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-292><vspace|0.15fn>>
+    <no-break><pageref|auto-293><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-ge-add-ex>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-293><vspace|0.15fn>>
+    <no-break><pageref|auto-294><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-ge-add>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-294><vspace|0.15fn>>
+    <no-break><pageref|auto-295><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-is-infinity>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-295><vspace|0.15fn>>
+    <no-break><pageref|auto-296><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-equiv>
     <with|color|red|Does not exist in libsecp256k1>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-296><vspace|0.15fn>>
+    <no-break><pageref|auto-297><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-x-equiv>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-297><vspace|0.15fn>>
+    <no-break><pageref|auto-298><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-y-is-odd>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-298><vspace|0.15fn>>
+    <no-break><pageref|auto-299><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-generate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-299><vspace|0.15fn>>
+    <no-break><pageref|auto-300><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-scale>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-300><vspace|0.15fn>>
+    <no-break><pageref|auto-301><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-linear-combination>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-301><vspace|0.15fn>>
+    <no-break><pageref|auto-302><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-ge-scale-lambda>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-302><vspace|0.15fn>>
+    <no-break><pageref|auto-303><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-gej-scale-lambda>
     <with|color|red|Consider removing> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-303><vspace|0.15fn>>
+    <no-break><pageref|auto-304><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-scalar-split-lambda>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-304><vspace|0.15fn>>
+    <no-break><pageref|auto-305><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-short-scalar>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-305><vspace|0.15fn>>
+    <no-break><pageref|auto-306><vspace|0.15fn>>
 
     <with|par-left|1tab|B.1.5<space|2spc><with|font-family|tt|language|verbatim|110110001...:
     >Jets for digital signatures <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-306>>
+    <no-break><pageref|auto-307>>
 
     <with|par-left|2tab|B.1.5.1<space|2spc><with|font-family|tt|language|verbatim|1101100010...:
     >Jets for secp256k1 based digital signatures
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-307>>
+    <no-break><pageref|auto-308>>
 
     <with|par-left|4tab|<with|font-family|ss|bip0340-schnorr>-verify
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-308><vspace|0.15fn>>
+    <no-break><pageref|auto-309><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|bip0340-challenge-iv>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-309><vspace|0.15fn>>
+    <no-break><pageref|auto-310><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|bip0340-challenge-midstate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-310><vspace|0.15fn>>
+    <no-break><pageref|auto-311><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|bip0340-schnorr-midstate>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-311><vspace|0.15fn>>
+    <no-break><pageref|auto-312><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-signature-unpack>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-312><vspace|0.15fn>>
+    <no-break><pageref|auto-313><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-pubkey-unpack>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-313><vspace|0.15fn>>
+    <no-break><pageref|auto-314><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-pubkey-unpack-neg>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-314><vspace|0.15fn>>
+    <no-break><pageref|auto-315><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-pubkey-unpack-quad>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-315><vspace|0.15fn>>
+    <no-break><pageref|auto-316><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-point-unpack>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-316><vspace|0.15fn>>
+    <no-break><pageref|auto-317><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|secp256k1-ecdsa>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-317><vspace|0.15fn>>
+    <no-break><pageref|auto-318><vspace|0.15fn>>
 
     <with|par-left|1tab|B.1.6<space|2spc><with|font-family|tt|language|verbatim|110110010...:
     >Jets for Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-318>>
+    <no-break><pageref|auto-319>>
 
     <with|par-left|2tab|B.1.6.1<space|2spc><with|font-family|tt|language|verbatim|11011000100...:
     >Jets for tagged hash IVs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-319>>
+    <no-break><pageref|auto-320>>
 
     <with|par-left|4tab|<with|font-family|ss|iden-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-320><vspace|0.15fn>>
+    <no-break><pageref|auto-321><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|comp-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-321><vspace|0.15fn>>
+    <no-break><pageref|auto-322><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|unit-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-322><vspace|0.15fn>>
+    <no-break><pageref|auto-323><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|injl-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-323><vspace|0.15fn>>
+    <no-break><pageref|auto-324><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|injr-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-324><vspace|0.15fn>>
+    <no-break><pageref|auto-325><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|case-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-325><vspace|0.15fn>>
+    <no-break><pageref|auto-326><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|pair-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-326><vspace|0.15fn>>
+    <no-break><pageref|auto-327><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|take-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-327><vspace|0.15fn>>
+    <no-break><pageref|auto-328><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|drop-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-328><vspace|0.15fn>>
+    <no-break><pageref|auto-329><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|witness-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-329><vspace|0.15fn>>
+    <no-break><pageref|auto-330><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|disconnect-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-330><vspace|0.15fn>>
+    <no-break><pageref|auto-331><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|fail-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-331><vspace|0.15fn>>
+    <no-break><pageref|auto-332><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|signtaure-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-332><vspace|0.15fn>>
+    <no-break><pageref|auto-333><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|sighash-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-333><vspace|0.15fn>>
+    <no-break><pageref|auto-334><vspace|0.15fn>>
 
     <with|par-left|1tab|B.1.7<space|2spc><with|font-family|tt|language|verbatim|110110011...:
     >Jets for Bitcoin (without primitives)
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-334>>
+    <no-break><pageref|auto-335>>
 
     <with|par-left|2tab|B.1.7.1<space|2spc><with|font-family|ss|parse-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-335>>
+    <no-break><pageref|auto-336>>
 
     <with|par-left|2tab|B.1.7.2<space|2spc><with|font-family|ss|parse-sequence>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-336>>
+    <no-break><pageref|auto-337>>
 
     <with|par-left|1tab|B.1.8<space|2spc><with|font-family|tt|language|verbatim|1101101000...:
     >Jets for Elements (without primitives)
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-337>>
+    <no-break><pageref|auto-338>>
 
     <with|par-left|2tab|B.1.8.1<space|2spc><with|font-family|ss|generate-entropy>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-338>>
+    <no-break><pageref|auto-339>>
 
     <with|par-left|2tab|B.1.8.2<space|2spc><with|font-family|ss|calculate-asset>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-339>>
+    <no-break><pageref|auto-340>>
 
     <with|par-left|2tab|B.1.8.3<space|2spc><with|font-family|ss|calculate-token>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-340>>
+    <no-break><pageref|auto-341>>
 
     B.2<space|2spc><with|font-family|tt|language|verbatim|111...: >Bitcoin
     Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-341>
+    <no-break><pageref|auto-342>
 
     <with|par-left|1tab|B.2.1<space|2spc>Transaction
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-342>>
+    <no-break><pageref|auto-343>>
 
     <with|par-left|1tab|B.2.2<space|2spc>Signature Hash Modes
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-343>>
+    <no-break><pageref|auto-344>>
 
     <with|par-left|1tab|B.2.3<space|2spc>Time Locks
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-344>>
+    <no-break><pageref|auto-345>>
 
     <with|par-left|2tab|B.2.3.1<space|2spc><with|font-family|ss|total-height-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-345>>
+    <no-break><pageref|auto-346>>
 
     <with|par-left|2tab|B.2.3.2<space|2spc><with|font-family|ss|total-time-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-346>>
+    <no-break><pageref|auto-347>>
 
     <with|par-left|2tab|B.2.3.3<space|2spc><with|font-family|ss|total-distance-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-347>>
+    <no-break><pageref|auto-348>>
 
     <with|par-left|2tab|B.2.3.4<space|2spc><with|font-family|ss|total-duration-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-348>>
+    <no-break><pageref|auto-349>>
 
     <with|par-left|2tab|B.2.3.5<space|2spc><with|font-family|ss|is-final>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-349>>
+    <no-break><pageref|auto-350>>
 
     <with|par-left|2tab|B.2.3.6<space|2spc><with|font-family|ss|current-height-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-350>>
+    <no-break><pageref|auto-351>>
 
     <with|par-left|2tab|B.2.3.7<space|2spc><with|font-family|ss|current-time-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-351>>
+    <no-break><pageref|auto-352>>
 
     <with|par-left|2tab|B.2.3.8<space|2spc><with|font-family|ss|current-distance-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-352>>
+    <no-break><pageref|auto-353>>
 
     <with|par-left|2tab|B.2.3.9<space|2spc><with|font-family|ss|current-duration-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-353>>
+    <no-break><pageref|auto-354>>
 
     <with|par-left|2tab|B.2.3.10<space|2spc><with|font-family|ss|current-is-Final>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-354>>
+    <no-break><pageref|auto-355>>
 
     <with|par-left|2tab|B.2.3.11<space|2spc><with|font-family|ss|input-height-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-355>>
+    <no-break><pageref|auto-356>>
 
     <with|par-left|2tab|B.2.3.12<space|2spc><with|font-family|ss|input-time-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-356>>
+    <no-break><pageref|auto-357>>
 
     <with|par-left|2tab|B.2.3.13<space|2spc><with|font-family|ss|input-distance-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-357>>
+    <no-break><pageref|auto-358>>
 
     <with|par-left|2tab|B.2.3.14<space|2spc><with|font-family|ss|input-duration-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-358>>
+    <no-break><pageref|auto-359>>
 
     <with|par-left|2tab|B.2.3.15<space|2spc><with|font-family|ss|input-is-final>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-359>>
+    <no-break><pageref|auto-360>>
 
     B.3<space|2spc><with|font-family|tt|language|verbatim|111...: >Elements
     Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-360>
+    <no-break><pageref|auto-361>
 
     <with|par-left|1tab|B.3.1<space|2spc>Transaction
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-361>>
+    <no-break><pageref|auto-362>>
 
     <with|par-left|1tab|B.3.2<space|2spc>Time Locks
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-362>>
+    <no-break><pageref|auto-363>>
 
     <with|par-left|2tab|B.3.2.1<space|2spc><with|font-family|ss|total-height-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-363>>
+    <no-break><pageref|auto-364>>
 
     <with|par-left|2tab|B.3.2.2<space|2spc><with|font-family|ss|total-time-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-364>>
+    <no-break><pageref|auto-365>>
 
     <with|par-left|2tab|B.3.2.3<space|2spc><with|font-family|ss|total-distance-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-365>>
+    <no-break><pageref|auto-366>>
 
     <with|par-left|2tab|B.3.2.4<space|2spc><with|font-family|ss|total-duration-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-366>>
+    <no-break><pageref|auto-367>>
 
     <with|par-left|2tab|B.3.2.5<space|2spc><with|font-family|ss|is-final>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-367>>
+    <no-break><pageref|auto-368>>
 
     <with|par-left|2tab|B.3.2.6<space|2spc><with|font-family|ss|current-height-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-368>>
+    <no-break><pageref|auto-369>>
 
     <with|par-left|2tab|B.3.2.7<space|2spc><with|font-family|ss|current-time-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-369>>
+    <no-break><pageref|auto-370>>
 
     <with|par-left|2tab|B.3.2.8<space|2spc><with|font-family|ss|current-distance-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-370>>
+    <no-break><pageref|auto-371>>
 
     <with|par-left|2tab|B.3.2.9<space|2spc><with|font-family|ss|current-duration-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-371>>
+    <no-break><pageref|auto-372>>
 
     <with|par-left|2tab|B.3.2.10<space|2spc><with|font-family|ss|current-is-Final>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-372>>
+    <no-break><pageref|auto-373>>
 
     <with|par-left|2tab|B.3.2.11<space|2spc><with|font-family|ss|input-height-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-373>>
+    <no-break><pageref|auto-374>>
 
     <with|par-left|2tab|B.3.2.12<space|2spc><with|font-family|ss|input-time-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-374>>
+    <no-break><pageref|auto-375>>
 
     <with|par-left|2tab|B.3.2.13<space|2spc><with|font-family|ss|input-distance-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-375>>
+    <no-break><pageref|auto-376>>
 
     <with|par-left|2tab|B.3.2.14<space|2spc><with|font-family|ss|input-duration-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-376>>
+    <no-break><pageref|auto-377>>
 
     <with|par-left|2tab|B.3.2.15<space|2spc><with|font-family|ss|input-is-final>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-377>>
+    <no-break><pageref|auto-378>>
 
     <with|par-left|1tab|B.3.3<space|2spc>Issuance
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-378>>
+    <no-break><pageref|auto-379>>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Appendix
     C<space|2spc>Alternative Serialization of Simplicity DAGs>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-379><vspace|0.5fn>
+    <no-break><pageref|auto-380><vspace|0.5fn>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Bibliography>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-380><vspace|0.5fn>
+    <no-break><pageref|auto-381><vspace|0.5fn>
   </table-of-contents>
 
   <chapter|Introduction>
@@ -2812,53 +2816,61 @@
   Using techniques familiar from digital logic, we can build an adders and
   full adders from our Boolean operations defined in
   Section<nbsp><reference|ss:bitOps>. We begin with definitions of the single
-  bit adder and full adder.
+  bit full adder.
+
+  \;
 
   <\render-code>
-    <math|<math-ss|adder><rsub|1>\<of\><2>\<times\><2>\<vdash\><2><rsup|2>>
+    <math|<math-ss|full-add><rsub|1>\<of\><2>\<times\><around*|(|<2>\<times\><2>|)>\<vdash\><2><rsup|2>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|adder><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|cond>
-    <around*|(|<math-ss|iden> \<vartriangle\> <math-ss|not> <math-ss|iden>|)>
-    <around*|(|<math-ss|false> \<vartriangle\> <math-ss|iden>|)>>>>>>>>>>>>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-add><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|maj><rsub|1>
+    \<vartriangle\> <math|<math-ss|xor3><rsub|1>>>>>>>>>>>>>
   </render-code>
+
+  where
 
   <\render-code>
-    <math|<math-ss|full-adder><rsub|1>\<of\><2>\<times\><around*|(|<2>\<times\><2>|)>\<vdash\><2><rsup|2>>
+    <math|<math-ss|maj><rsub|1>\<of\><2>\<times\><around*|(|<2>\<times\><2>|)>\<vdash\><2>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-adder><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|drop>
-    <math-ss|adder><rsub|1> \<vartriangle\>
-    <math-ss|OH>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|OOH>
-    \<vartriangle\> <around*|(|<math-ss|OIH> \<vartriangle\>
-    <math-ss|IH>;<math-ss|adder><rsub|1>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|<math|<math-ss|cond>
-    <math-ss|true> <math-ss|OH> \<vartriangle\> <math-ss|IIH>>>>>>>>>>>>>>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|maj><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|cond>
+    <around*|(|<math-ss|cond> <math-ss|true> <math-ss|iden>|)>
+    <around*|(|<math-ss|cond> <math-ss|iden> <math-ss|false>|)>>>>>>>>>>>>
   </render-code>
 
-  These adders meet the following specifications.
+  and
+
+  <\render-code>
+    <math|<math-ss|xor3><rsub|1>\<of\><2>\<times\><around*|(|<2>\<times\><2>|)>\<vdash\><2>>
+
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|xor3><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|cond>
+    <around*|(|<math-ss|cond> <math-ss|iden> <around*|(|<math-ss|not>
+    <math-ss|iden>|)>|)> <around*|(|<math-ss|cond> <around*|(|<math-ss|not>
+    <math-ss|iden>|)> <math-ss|iden>|)>>>>>>>>>>>>
+  </render-code>
+
+  The full adder meets the following specification.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|adder><rsub|1>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|2>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|1>+<around*|\<lceil\>|b|\<rceil\>><rsub|1>>>|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|1>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a,b|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|1>+<around*|\<lceil\>|b|\<rceil\>><rsub|1>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>>>>
+    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-add><rsub|1>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a,b|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|1>+<around*|\<lceil\>|b|\<rceil\>><rsub|1>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>>>>
   </eqnarray*>
 
   It is easy to exhaustively check the above equations because there are only
-  a small finite number of possible inputs to consider (four inputs for
-  <math|<math-ss|adder><rsub|1>> and eight inputs for
-  <math|<math-ss|full-adder><rsub|1>>). We will illustrate this for a single
-  case for <math|<math-ss|adder><rsub|1>> where
-  <math|a=<math-tt|1><rsub|<2>>> and <math|b=<math-tt|0><rsub|<2>>>.
+  eight inputs to consider. We will illustrate this for a single case where
+  <math|a=<math-tt|1><rsub|<2>>>, <math|b=<math-tt|0><rsub|<2>>>, and
+  <math|c=<math-tt|1><rsub|<2>>>.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|adder><rsub|1>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rceil\>><rsub|2>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|cond>
-    <around*|(|<math-ss|iden> \<vartriangle\> <math-ss|not> <math-ss|iden>|)>
-    <around*|(|<math-ss|false> \<vartriangle\>
-    <math-ss|iden>|)>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|iden>
-    \<vartriangle\> <math-ss|not> <math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<llbracket\>|<math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>,<around*|\<llbracket\>|<math-ss|not>
-    <math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|pair>
-    <math-ss|iden> <math-ss|unit>|)>;<around*|(|<math-ss|cond>
-    <math-ss|false> <math-ss|true>|)>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|cond>
-    <math-ss|false> <math-ss|true>|)>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<around*|(|<math-ss|pair>
-    <math-ss|iden> <math-ss|unit>|)>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|cond>
-    <math-ss|false> <math-ss|true>|)>|\<rrbracket\>><around*|\<langle\>|<around*|\<llbracket\>|<math-ss|iden>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>,<around*|\<llbracket\>|<math-ss|unit>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<llbracket\>|<around*|(|<math-ss|cond>
-    <math-ss|false> <math-ss|true>|)>|\<rrbracket\>><around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<langle\>||\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,<around*|\<llbracket\>|<math-ss|true>|\<rrbracket\>><around*|\<langle\>||\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|0><rsub|<2>>,1<rsub|<2>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<math-tt|0><rsub|<2>>|\<rceil\>><rsub|1>\<cdot\>2<rsup|1>+<around*|\<lceil\>|<math-tt|1><rsub|<2>>|\<rceil\>><rsub|1>>>|<row|<cell|>|<cell|=>|<cell|0\<cdot\>2+1>>|<row|<cell|>|<cell|=>|<cell|1>>|<row|<cell|>|<cell|=>|<cell|1+0>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<math-tt|1><rsub|<2>>|\<rceil\>><rsub|1>+<around*|\<lceil\>|<math-tt|0><rsub|<2>>|\<rceil\>><rsub|1>>>>>
+    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-add><rsub|1>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|maj><rsub|1>
+    \<vartriangle\> <math|<math-ss|xor3><rsub|1>>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<llbracket\>|<math-ss|<math|<math-ss|maj><rsub|1>>>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rangle\>>,<around*|\<llbracket\>|<math|<math-ss|xor3><rsub|1>>|\<rrbracket\>><math|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rangle\>>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<llbracket\>|<math|<math-ss|cond>
+    <around*|(|<math-ss|cond> <math-ss|true> <math-ss|iden>|)>
+    <around*|(|<math-ss|cond> <math-ss|iden>
+    <math-ss|false>|)>>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rangle\>>,<around*|\<llbracket\>|<math|<math-ss|xor3><rsub|1>>|\<rrbracket\>><math|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rangle\>>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<llbracket\>|<math|<math|<math-ss|cond>
+    <math-ss|true> <math-ss|iden>>>|\<rrbracket\>><around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>,<around*|\<llbracket\>|<math|<math-ss|xor3><rsub|1>>|\<rrbracket\>><math|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rangle\>>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<around*|\<llbracket\>|<math|<math|<math-ss|true>>>|\<rrbracket\>><around*|(|<math-tt|0><rsub|<2>>|)>,<around*|\<llbracket\>|<math|<math-ss|xor3><rsub|1>>|\<rrbracket\>><math|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rangle\>>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<llbracket\>|<math|<math-ss|xor3><rsub|1>>|\<rrbracket\>><math|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rangle\>>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<llbracket\>|<math|<math|<math-ss|cond>
+    <around*|(|<math-ss|cond> <math-ss|iden> <around*|(|<math-ss|not>
+    <math-ss|iden>|)>|)> <around*|(|<math-ss|cond> <around*|(|<math-ss|not>
+    <math-ss|iden>|)> <math-ss|iden>|)>>>|\<rrbracket\>><math|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>|\<rangle\>>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<llbracket\>|<math|<math|<math-ss|cond>
+    <math-ss|iden> <around*|(|<math-ss|not>
+    <math-ss|iden>|)>>>|\<rrbracket\>><math|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math-tt|0><rsub|<2>>|\<rangle\>>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<around*|\<llbracket\>|<math|<math|<math-ss|iden>>>|\<rrbracket\>><math|<around*|(|<math-tt|0><rsub|<2>>|)>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|<math-tt|1><rsub|<2>>,<math|<math-tt|0><rsub|<2>>>|\<rangle\>>|\<rceil\>><rsub|2>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<math-tt|1><rsub|<2>>|\<rceil\>><rsub|1>\<cdot\>2<rsup|1>+<around*|\<lceil\>|<math-tt|0><rsub|<2>>|\<rceil\>><rsub|1>>>|<row|<cell|>|<cell|=>|<cell|1\<cdot\>2+0>>|<row|<cell|>|<cell|=>|<cell|2>>|<row|<cell|>|<cell|=>|<cell|1+0+1>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|<math-tt|1><rsub|<2>>|\<rceil\>><rsub|1>+<around*|\<lceil\>|<math-tt|0><rsub|<2>>|\<rceil\>><rsub|1>+<around*|\<lceil\>|<math-tt|1><rsub|<2>>|\<rceil\>><rsub|1>>>>>
   </eqnarray*>
 
   The calculations for the other cases are similar.
@@ -2866,50 +2878,43 @@
   Next, we recursively build full adders for any word size.
 
   <\render-code>
-    <math|<math-ss|full-adder><rsub|2*n>\<of\><2>\<times\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<vdash\><2>\<times\><2><rsup|2*n>>
+    <math|<math-ss|full-add><rsub|2*n>\<of\><2>\<times\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<vdash\><2>\<times\><2><rsup|2*n>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-adder><rsub|2*n>>>|<cell|:=>|<cell|<math|<math-ss|drop>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-add><rsub|2*n>>>|<cell|:=>|<cell|<math|<math-ss|drop>
     <around*|(|<math-ss|OOH> \<vartriangle\> <math-ss|IOH>|)> \<vartriangle\>
     <around*|(|<math-ss|OH>\<vartriangle\> <math-ss|drop>
     <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IIH>|)>
-    ;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>
+    ;<math-ss|full-add><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IIH>
     \<vartriangle\> <around*|(|<math-ss|IOH>\<vartriangle\> <math-ss|OH>
-    ;<math-ss|full-adder><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>
+    ;<math-ss|full-add><rsub|n>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|IOH>
     \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
     <math-ss|OH>|)>>>>>>>>>>>>
   </render-code>
 
-  <\render-code>
-    <math|<math-ss|adder><rsub|2*n>\<of\><2><rsup|2*n>\<times\><2><rsup|2*n>\<vdash\><2>\<times\><2><rsup|2*n>>
-
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|adder><rsub|2*n>>>|<cell|:=>|<cell|<math-ss|false>
-    \<vartriangle\> <math-ss|iden> ; <math-ss|full-adder><rsub|2n>>>>>>>>>>>
-  </render-code>
-
-  We generalize the specification of the single bit adders and full adders to
-  the multi-bit adders and full adders.
+  We generalize the specification of the single bit full adder to the
+  multi-bit full adders.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|1,n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>>>|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a,b|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>>>>
+    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-add><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a,b|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>>>>
   </eqnarray*>
 
   <\theorem>
     For all <math|n> which is a power of 2, and for all <math|a:<2><rsup|n>>,
     <math|b:<2><rsup|n>>, and <math|c:<2>>, we have that
-    <math|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a,b|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>=<around*|\<lceil\>|a|\<rceil\>><rsub|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>.
+    <math|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-add><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a,b|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>=<around*|\<lceil\>|a|\<rceil\>><rsub|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>>.
   </theorem>
 
   <\proof>
-    We prove <math|<math-ss|full-adder><rsub|n>> meets its specification by
+    We prove <math|<math-ss|full-add><rsub|n>> meets its specification by
     induction on <math|n>. As mentioned before, the
-    <math|<math-ss|full-adder><rsub|1>> case is easily checked by verifying
-    all eight possible inputs. Next, we prove that
-    <math|<math-ss|full-adder><rsub|2*n>> meets its specification under the
-    assumption that <math|<math-ss|full-adder><rsub|n>> does. Specifically we
+    <math|<math-ss|full-add><rsub|1>> case is easily checked by verifying all
+    eight possible inputs. Next, we prove that
+    <math|<math-ss|full-add><rsub|2*n>> meets its specification under the
+    assumption that <math|<math-ss|full-add><rsub|n>> does. Specifically we
     need to show that
 
     <\equation>
-      <around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,2*n>=<around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1><label|full-adder-spec>
+      <around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-add><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,2*n>=<around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1><label|full-adder-spec>
     </equation>
 
     Let us first consider the right hand side of equation
@@ -2923,17 +2928,17 @@
     By our inductive hypothesis, we have that
 
     <\equation*>
-      <around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>=<around*|\<lceil\>|a<rsub|2>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|2>|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>
+      <around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-add><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>=<around*|\<lceil\>|a<rsub|2>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|2>|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>
     </equation*>
 
     so we know that
 
     <\equation*>
-      <around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>=<around*|(|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>
+      <around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>=<around*|(|<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>|)>\<cdot\>2<rsup|n>+<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-add><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>
     </equation*>
 
     Let us define <math|c<rsub|0>> and <math|r<rsub|0>> such that
-    <math|<around*|\<langle\>|c<rsub|0>,r<rsub|0>|\<rangle\>>\<assign\><around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>|\<rangle\>>>.
+    <math|<around*|\<langle\>|c<rsub|0>,r<rsub|0>|\<rangle\>>\<assign\><around*|\<llbracket\>|<math-ss|full-add><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>|\<rangle\>>>.
     Thus we have that
 
     <\eqnarray*>
@@ -2943,17 +2948,17 @@
     Again, by our inductive hypothesis, we have that
 
     <\equation*>
-      <around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|c<rsub|0>,<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>=<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|c<rsub|0>|\<rceil\>><rsub|1>
+      <around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-add><rsub|n>|\<rrbracket\>><around*|\<langle\>|c<rsub|0>,<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>=<around*|\<lceil\>|a<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|b<rsub|1>|\<rceil\>><rsub|n>+<around*|\<lceil\>|c<rsub|0>|\<rceil\>><rsub|1>
     </equation*>
 
     therefore we have that
 
     <\equation*>
-      <around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>=<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|c<rsub|0>,<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|2>|\<rceil\>><rsub|n>
+      <around*|\<lceil\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rceil\>><rsub|2*n>+<around*|\<lceil\>|c|\<rceil\>><rsub|1>=<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-add><rsub|n>|\<rrbracket\>><around*|\<langle\>|c<rsub|0>,<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|2>|\<rceil\>><rsub|n>
     </equation*>
 
     Let us define <math|c<rsub|1>> and <math|r<rsub|1>> such that
-    <math|<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>\<assign\><around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>>.
+    <math|<around*|\<langle\>|c<rsub|1>,r<rsub|1>|\<rangle\>>\<assign\><around*|\<llbracket\>|<math-ss|full-add><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,c<rsub|0>|\<rangle\>>>.
     Thus we have that
 
     <\eqnarray*>
@@ -2965,23 +2970,23 @@
     <math|<math-ss|full-adder><rsub|2*n>> we have that
 
     <\eqnarray*>
-      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rangle\>>>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|full-add><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rangle\>>>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
       \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
       <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>
       \<vartriangle\> <around*|(|<math-ss|IOH> \<vartriangle\>
-      <math-ss|OH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|drop>
+      <math-ss|OH>;<math-ss|full-add><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|drop>
       <around*|(|<math-ss|OOH> \<vartriangle\> <math-ss|IOH>|)>
       \<vartriangle\> <around*|(|<math-ss|OH> \<vartriangle\> <math-ss|drop>
       <around*|(|<math-ss|OIH> \<vartriangle\>
-      <math-ss|IIH>|)>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|c,<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      <math-ss|IIH>|)>;<math-ss|full-add><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|c,<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
       \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
       <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>
       \<vartriangle\> <around*|(|<math-ss|IOH> \<vartriangle\>
-      <math-ss|OH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      <math-ss|OH>;<math-ss|full-add><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<llbracket\>|<math-ss|full-add><rsub|n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|a<rsub|2>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
       \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
       <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|\<circ\>>|<cell|<around*|\<llbracket\>|<math-ss|IIH>
       \<vartriangle\> <around*|(|<math-ss|IOH> \<vartriangle\>
-      <math-ss|OH>;<math-ss|full-adder><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|c<rsub|0>,r<rsub|0>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
+      <math-ss|OH>;<math-ss|full-add><rsub|n>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>,<around*|\<langle\>|c<rsub|0>,r<rsub|0>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
       \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
       <math-ss|OH>|)>|\<rrbracket\>>>>|<row|<cell|>|<cell|>|<cell|<around*|\<langle\>|r<rsub|0>,<around*|\<llbracket\>|<math-ss|full-adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|c<rsub|0>,<around*|\<langle\>|a<rsub|1>,b<rsub|1>|\<rangle\>>|\<rangle\>>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math-ss|IOH>
       \<vartriangle\> <around*|(|<math-ss|IIH> \<vartriangle\>
@@ -2991,30 +2996,12 @@
     Therefore we have that
 
     <\eqnarray*>
-      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,2*n>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|0>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|<around*|\<langle\>|r<rsub|1>,r<rsub|0>|\<rangle\>>|\<rceil\>><rsub|2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|r<rsub|1>|\<rceil\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|0>|\<rceil\>><rsub|n><eq-number><label|full-adder-LHS>>>>>
+      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-add><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|c,<around*|\<langle\>|<around*|\<langle\>|a<rsub|1>,a<rsub|2>|\<rangle\>>,<around*|\<langle\>|b<rsub|1>,b<rsub|2>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,2*n>>|<cell|=>|<cell|<around*|\<lceil\>|<around*|\<langle\>|c<rsub|1>,<around*|\<langle\>|r<rsub|1>,r<rsub|0>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|1,2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|<around*|\<langle\>|r<rsub|1>,r<rsub|0>|\<rangle\>>|\<rceil\>><rsub|2*n>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|c<rsub|1>|\<rceil\>><rsub|1>\<cdot\>2<rsup|2*n>+<around*|\<lceil\>|r<rsub|1>|\<rceil\>><rsub|n>\<cdot\>2<rsup|n>+<around*|\<lceil\>|r<rsub|0>|\<rceil\>><rsub|n><eq-number><label|full-adder-LHS>>>>>
     </eqnarray*>
 
     Together equations <reference|full-adder-RHS> and
     <reference|full-adder-LHS> show that the right hand side and left hand
     side of equation <reference|full-adder-spec> are equal, as required.
-  </proof>
-
-  <\theorem>
-    For all <math|n> which is a power of 2, and for all <math|a:<2><rsup|n>>,
-    and <math|b:<2><rsup|n>>, we have that
-    <math|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|adder><rsub|n>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|1,n>=<around*|\<lceil\>|a|\<rceil\>><rsub|n>+<around*|\<lceil\>|b|\<rceil\>><rsub|n>>.
-  </theorem>
-
-  <\proof>
-    As mentioned before, the <math|<math-ss|adder><rsub|1>> case is easily
-    checked by verifying all four possible inputs. Next, we prove that
-    <math|<math-ss|adder><rsub|2*n>> meets its specification given that
-    <math|<math-ss|full-adder><rsub|2n>> is correct.
-
-    <\eqnarray*>
-      <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<cwith|4|4|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<cwith|5|5|2|2|cell-halign|r>|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|adder><rsub|2*n>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>>|<cell|=>|<cell|<around*|(|<around*|\<llbracket\>|<math|<math-ss|full-adder><rsub|2n>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<math-ss|false>
-      \<vartriangle\> <math-ss|iden>|\<rrbracket\>>|)><around*|\<langle\>|a,b|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<llbracket\>|<math|<math-ss|full-adder><rsub|2n>>|\<rrbracket\>><around*|(|<around*|\<langle\>|0<rsub|<2>>,<around*|\<langle\>|a,b|\<rangle\>>|\<rangle\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|2n>+<around*|\<lceil\>|b|\<rceil\>><rsub|2n>+<around*|\<lceil\>|0<rsub|<2>>|\<rceil\>><rsub|1>>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|2n>+<around*|\<lceil\>|b|\<rceil\>><rsub|2n>+0>>|<row|<cell|>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|2n>+<around*|\<lceil\>|b|\<rceil\>><rsub|2n>>>>>
-    </eqnarray*>
   </proof>
 
   Computer verified versions of theses proofs can be found in the Coq library
@@ -3023,56 +3010,43 @@
   With a full adder we can recursively build full multipliers.
 
   <\render-code>
-    <math|<math-ss|full-multiplier><rsub|1>\<of\><around*|(|<2>\<times\><2>|)>\<times\><around*|(|<2>\<times\><2>|)>\<vdash\><2><rsup|2>>
+    <math|<math-ss|full-multiply><rsub|1>\<of\><around*|(|<2>\<times\><2>|)>\<times\><around*|(|<2>\<times\><2>|)>\<vdash\><2><rsup|2>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiplier><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|take>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiply><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|take>
     <around*|(|<math-ss|cond> <math-ss|iden> <math-ss|false>|)>
-    \<vartriangle\> <math-ss|IH>;<math-ss|full-adder><rsub|1>>>>>>>>>>>>
+    \<vartriangle\> <math-ss|IH>;<math-ss|full-add><rsub|1>>>>>>>>>>>>
   </render-code>
 
   <\render-code>
-    <math|<math-ss|full-multiplier><rsub|2*n>\<of\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<times\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<vdash\><2><rsup|4*n>>
+    <math|<math-ss|full-multiply><rsub|2*n>\<of\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<times\><around*|(|<2><rsup|2*n>\<times\><2><rsup|2*n>|)>\<vdash\><2><rsup|4*n>>
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiplier><rsub|2*n>>>|<cell|:=>|<cell|<math|<math-ss|take>
+    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|full-multiply><rsub|2*n>>>|<cell|:=>|<cell|<math|<math-ss|take>
     <around*|(|<math-ss|OOH> \<vartriangle\> <around*|(|<math-ss|IOH>
     \<vartriangle\> <math-ss|OIH>|)>|)>>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|(<math|<around*|(|<math-ss|take>
     <around*|(|<math-ss|OOH> \<vartriangle\> <math-ss|IIH>|)> \<vartriangle\>
     <math-ss|drop> <around*|(|<math-ss|OOH> \<vartriangle\>
-    <math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|<math|<around*|(|<math-ss|take>
+    <math-ss|IOH>|)>;<math-ss|full-multiply><rsub|n>|)>>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|<math|<around*|(|<math-ss|take>
     <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|IIH>|)> \<vartriangle\>
     <math-ss|drop> <around*|(|<math-ss|OIH> \<vartriangle\>
-    <math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>>)>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|take>
+    <math-ss|IOH>|)>;<math-ss|full-multiply><rsub|n>|)>>)>>|<row|<cell|>|<cell|;>|<cell|<math|<math-ss|take>
     <around*|(|<math-ss|OH> \<vartriangle\>
     <math-ss|IOH>|)>>>>|<row|<cell|>|<cell|<math|\<vartriangle\>>>|<cell|<math|<around*|(|<math-ss|drop>
     <around*|(|<math-ss|OOH> \<vartriangle\> <math-ss|IIH>|)> \<vartriangle\>
     <around*|(|<math-ss|OIH> \<vartriangle\> <math-ss|drop>
     <around*|(|<math-ss|OIH> \<vartriangle\>
-    <math-ss|IOH>|)>;<math-ss|full-multiplier><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<around*|(|<math-ss|OH>
+    <math-ss|IOH>|)>;<math-ss|full-multiply><rsub|n>|)>|)>>>>|<row|<cell|>|<cell|;>|<cell|<math|<around*|(|<math-ss|OH>
     \<vartriangle\> <math-ss|drop> <around*|(|<math-ss|IOH> \<vartriangle\>
-    <math-ss|OOH>|)>;<math-ss|full-multiplier><rsub|n>|)> \<vartriangle\>
+    <math-ss|OOH>|)>;<math-ss|full-multiply><rsub|n>|)> \<vartriangle\>
     <math-ss|drop> <around*|(|<math-ss|IIH> \<vartriangle\>
     <math-ss|OIH>|)>>>>>>>>>>>>
   </render-code>
 
-  <\render-code>
-    <math|<math-ss|multiplier><rsub|>\<of\><2>\<times\><2>\<vdash\><2><rsup|2>>
+  \;
 
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|1>>>|<cell|:=>|<cell|<math|<math-ss|false>
-    \<vartriangle\> <math-ss|cond> <math-ss|iden> <math-ss|false>>>>>>>>>>>>
-  </render-code>
-
-  <\render-code>
-    <math|<math-ss|multiplier><rsub|n>\<of\><2><rsup|n>\<times\><2><rsup|n>\<vdash\><2><rsup|2*n>>
-
-    <tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<math-ss|multiplier><rsub|*n>>>|<cell|:=>|<cell|<math|<around*|(|<math-ss|iden>
-    \<vartriangle\> <math-ss|scribe><around*|\<langle\>|<around*|\<lfloor\>|0|\<rfloor\>><rsub|n>,<around*|\<lfloor\>|0|\<rfloor\>><rsub|n>|\<rangle\>>|)>;<math-ss|multiplier><rsub|n>>>>>>>>>>>>
-  </render-code>
-
-  We can prove that the multipliers and full multipliers meet the following
-  specifications.
+  We can prove that the full multipliers meet the following specifications.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-multiplier><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,<around*|\<langle\>|c,d|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2*n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>\<cdot\><around*|\<lceil\>|b|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|n>+<around*|\<lceil\>|d|\<rceil\>><rsub|n>>>|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|multiplier><rsub|n>|\<rrbracket\>><around*|\<langle\>|a,b|\<rangle\>>|\<rceil\>><rsub|2*n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>\<cdot\><around*|\<lceil\>|b|\<rceil\>><rsub|n>>>>>
+    <tformat|<table|<row|<cell|<around*|\<lceil\>|<around*|\<llbracket\>|<math-ss|full-multiply><rsub|n>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|a,b|\<rangle\>>,<around*|\<langle\>|c,d|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|2*n>>|<cell|=>|<cell|<around*|\<lceil\>|a|\<rceil\>><rsub|n>\<cdot\><around*|\<lceil\>|b|\<rceil\>><rsub|n>+<around*|\<lceil\>|c|\<rceil\>><rsub|n>+<around*|\<lceil\>|d|\<rceil\>><rsub|n>>>>>
   </eqnarray*>
 
   \;
@@ -3222,29 +3196,12 @@
 
   The libsecp256k1 library<nbsp><cite|libsecp256k1> is a C implementation of
   optimized functions on this elliptic curve. This library has two variants
-  for the representation for field elements, of which the <verbatim|10x26>
-  representation is the most portable. This representation consists of an
-  array of 10 32-bit unsigned integer values. Such an array, <verbatim|a>,
-  represents the value
-
-  <\equation*>
-    <big|sum><rsub|i=0><rsup|9><text|<verbatim|a[<math|i>]>>\<cdot\>2<rsup|26*i>
-    <around*|(|mod p|)><text|.>
-  </equation*>
-
-  Different arrays may represent the same value. The various field arithmetic
-  operations, including modular inverse and square roots, are implemented
-  efficiently, subject to various specific preconditions on their inputs that
-  need to be satisfied to prevent overflows of the internal 32-bit unsigned
-  integer values.
-
-  The libsecp256k1 library also has two variants for the representation of
-  elliptic curve point values. The affine coordinate representation consists
-  of a pair of field elements, and a flag to indicate the value
-  <math|\<cal-O\>> (in which case the coordinate values are ignored). The
-  Jacobian coordinate representation consists of a triple of field elements,
-  and a flag to indicate the value <math|\<cal-O\>> (in which case the
-  coordinates are ignored).
+  for the representation of elliptic curve point values. The affine
+  coordinate representation consists of a pair of field elements, and a flag
+  to indicate the value <math|\<cal-O\>> (in which case the coordinate values
+  are ignored). The Jacobian coordinate representation consists of a triple
+  of field elements, and a flag to indicate the value <math|\<cal-O\>> (in
+  which case the coordinates are ignored).
 
   A point in Jacobian coordinates, <math|<around*|\<langle\>|x,y,z|\<rangle\>>>
   is defined to be on the elliptic curve when
@@ -3369,14 +3326,13 @@
   In Simplicity, we represent a field element by the type
 
   <\equation*>
-    FE\<assign\><2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><around*|(|<2><rsup|32>\<times\><2><rsup|32>|)>|)>|)>|)>|)>|)>|)>|)>
+    FE\<assign\><2><rsup|256>
   </equation*>
 
-  and a value <math|<around*|\<langle\>|a<rsub|0>,<around*|\<langle\>|a<rsub|1>,<around*|\<langle\>|a<rsub|2>,<around*|\<langle\>|a<rsub|3>,<around*|\<langle\>|a<rsub|4>,<around*|\<langle\>|a<rsub|5>,<around*|\<langle\>|a<rsub|6>,<around*|\<langle\>|a<rsub|7>,<around*|\<langle\>|a<rsub|8>,a<rsub|9>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>\<of\>FE>
-  represents the field element
+  and a value <math|a\<of\>FE> represents the field element
 
   <\equation*>
-    <around*|\<lceil\>|<around*|\<langle\>|a<rsub|0>,<around*|\<langle\>|a<rsub|1>,<around*|\<langle\>|a<rsub|2>,<around*|\<langle\>|a<rsub|3>,<around*|\<langle\>|a<rsub|4>,<around*|\<langle\>|a<rsub|5>,<around*|\<langle\>|a<rsub|6>,<around*|\<langle\>|a<rsub|7>,<around*|\<langle\>|a<rsub|8>,a<rsub|9>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rangle\>>|\<rceil\>><rsub|FE>\<assign\><big|sum><rsup|9><rsub|i=0><around*|\<lceil\>|a<rsub|i>|\<rceil\>><rsub|32>\<cdot\>2<rsup|26*i>
+    <around*|\<lceil\>|a|\<rceil\>><rsub|FE>\<assign\><around*|\<lceil\>|a|\<rceil\>><rsub|256>
     <around*|(|mod p|)><text|.>
   </equation*>
 
@@ -3415,12 +3371,10 @@
     <around*|(|mod p|)><text|.>>>>>
   </eqnarray*>
 
-  The translation between the libsecp256k1's <verbatim|10x32> field
-  representation and Simplicity's <math|FE> type is straightforward. The
-  translation between libsecp256k1's affine coordinate representation of
-  elliptic curve points and Simplicity's <math|GE> is also straightforward
-  except that Simplicity's <math|GE> type has no flag and cannot represent
-  the <math|\<cal-O\>> point. The translation between libsecp256k1's Jacobian
+  The translation between libsecp256k1's affine coordinate representation of
+  elliptic curve points and Simplicity's <math|GE> is straightforward except
+  that Simplicity's <math|GE> type has no flag and cannot represent the
+  <math|\<cal-O\>> point. The translation between libsecp256k1's Jacobian
   coordinate representation of elliptic curve points and Simplicity's
   <math|GEJ> type is mostly straight forward, however the <math|GEJ> type
   represents the <math|\<cal-O\>> point using a z-coordinate representing 0,
@@ -3430,13 +3384,11 @@
   libsecp256k1 can be used as jets for these Simplicity expressions. As such,
   the Simplicity expressions are designed to mimic the exact behaviour of a
   specific version of libsecp256k1's elliptic curve functions. For inputs of
-  particular representations of field elements, or points, the Simplicity
+  particular representations of point in Jacobian coordinates, the Simplicity
   expression returns the exact same representative for its result as
-  libsecp256k1. If a precondition of a libsecp256k1 function is violated, the
-  the Simplicity code also overflows and returns the corresponding value that
-  libsecp256k1 returns. If an off-curve point is passed to a libsecp256k1
-  function, the Simplicity code again computes the same result that the
-  libsecp256k1 function does.
+  libsecp256k1. If an off-curve point is passed to a libsecp256k1 function,
+  the Simplicity code again computes the same result that the libsecp256k1
+  function does.
 
   The only subtle point with using libsecp256k1 for jets lies in the
   different representation of <math|\<cal-O\>>. The inputs and outputs of
@@ -3447,33 +3399,31 @@
   <subsubsection|Schnorr Signature Validation>
 
   With elliptic curve operations defined, we are able to implement Schnorr
-  signature validation in accordance with the BIP-Schnorr
-  specification<nbsp><cite|bip-schnorr>. We define Simplicity types for the
-  formats of compressed public keys, <math|PubKey>; messages, <math|Msg>; and
+  signature validation in accordance with the BIP-0340
+  specification<nbsp><cite|bip-0340>. We define Simplicity types for the
+  formats of x-only public keys, <math|PubKey>; messages, <math|Msg>; and
   Schnorr signatures, <math|Sig>, below.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|PubKey>|<cell|\<assign\>>|<cell|<2>\<times\><2><rsup|256>>>|<row|<cell|Msg>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Sig>|<cell|\<assign\>>|<cell|<2><rsup|512>>>>>
+    <tformat|<table|<row|<cell|PubKey>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Msg>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Sig>|<cell|\<assign\>>|<cell|<2><rsup|512>>>>>
   </eqnarray*>
 
-  The <math|PubKey> type is a pair <math|<around*|\<langle\>|b,<around*|\<lfloor\>|x|\<rfloor\>><rsub|256>|\<rangle\>>>
-  where <math|b> is the least significant bit of a (non-<math|\<cal-O\>>)
-  elliptic curve point's y-coordinate, and where <math|x> the point's
-  x-coordinate. A <math|Msg> value <math|m> represents the byte-string
-  <math|BE<rsub|256><around*|(|m|)>> for a Schnorr signature's message, and a
-  <math|Sig> value <math|a> represents the byte-string
+  The <math|PubKey> type is an x-coordinate of a point whoes y-coordinate's
+  least significant bit is even. A <math|Msg> value <math|m> represents the
+  byte-string <math|BE<rsub|256><around*|(|m|)>> for a Schnorr signature's
+  message, and a <math|Sig> value <math|a> represents the byte-string
   <math|BE<rsub|512><around*|(|a|)>> for a Schnorr signature.
 
   We have implemented a core Simplicity expression to check a Schnorr
   signature for a public key on a given message:
 
   <\equation*>
-    <math-ss|schnorrVerify>\<of\><around*|(|PubKey\<times\>Msg|)>\<times\>Sig\<vdash\><2>
+    <math-ss|bip0340-check>\<of\><around*|(|PubKey\<times\>Msg|)>\<times\>Sig\<vdash\><2>
   </equation*>
 
-  The semantics are such that <math|<around*|\<llbracket\>|<math-ss|schnorrVerify>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=<math-tt|1><rsub|<2>>>
+  The semantics are such that <math|<around*|\<llbracket\>|<math-ss|bip0340-check>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=<math-tt|1><rsub|<2>>>
   only when the values that the inputs represents satisfy the verification
-  conditions of the BIP-Schnorr specification.
+  conditions of the BIP-0340 specification.
 
   <section|Completeness Theorem>
 
@@ -4907,17 +4857,17 @@
   Using Simplicity with witnesses, assertions and Bitcoin, we are able to
   build an expression that use Schnorr signatures to authorize spending of
   funds. Using the assertion extension we are able to define a variant of
-  <math|<math-ss|schnorrVerify>> called <math|<math-ss|schnorrAssert>>:
+  <math|<math-ss|bip0340-check>> called <math|<math-ss|bip0340-verify>>:
 
   <\equation*>
-    <math-ss|schnorrAssert>\<assign\> <math-ss|assert>
-    <math-ss|schnorrVerify>\<of\><around*|(|PubKey\<times\>Msg|)>\<times\>Sig\<vdash\><1>
+    <math-ss|bip0340-verify>\<assign\> <math-ss|assert>
+    <math-ss|bip0340-check>\<of\><around*|(|PubKey\<times\>Msg|)>\<times\>Sig\<vdash\><1>
   </equation*>
 
   such that
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|schnorrAssert>|\<rrbracket\>><rsup|<maybe>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=\<eta\><rsup|<maybe>><around*|\<langle\>||\<rangle\>>>|<cell|\<Leftrightarrow\>>|<cell|<around*|\<llbracket\>|<math-ss|schnorrVerify>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=<math-tt|1><rsub|<2>><text|.>>>>>
+    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|bip0340-verify>|\<rrbracket\>><rsup|<maybe>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=\<eta\><rsup|<maybe>><around*|\<langle\>||\<rangle\>>>|<cell|\<Leftrightarrow\>>|<cell|<around*|\<llbracket\>|<math-ss|bip0340-check>|\<rrbracket\>><around*|\<langle\>|<around*|\<langle\>|p,m|\<rangle\>>,s|\<rangle\>>=<math-tt|1><rsub|<2>><text|.>>>>>
   </eqnarray*>
 
   Next, we use the Bitcoin transaction extension to build a
@@ -4969,7 +4919,7 @@
     <math|<math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>\<of\><1>\<vdash\><1>>
 
     <math|<tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>>|<cell|:=>|<cell|<around*|(|<math-ss|scribe><rsub|PubKey><around*|(|p|)><math-ss|<math|<math|>\<vartriangle\>><math|<math-ss|sigHashAll>>>|)>
-    \<vartriangle\> <math-ss|witness><rsub|Sig><around*|(|s|)>>>|<row|<cell|>|<cell|;>|<cell|<math-ss|schnorrAssert>>>>>>>>>>>>
+    \<vartriangle\> <math-ss|witness><rsub|Sig><around*|(|s|)>>>|<row|<cell|>|<cell|;>|<cell|<math-ss|bip0340-verify>>>>>>>>>>>>
   </render-code>
 
   The <math-ss|witness> combinator ensures that the program's commitment
@@ -5676,7 +5626,7 @@
 
     <math|<tabular|<tformat|<table|<row|<cell|<subtable|<tformat|<cwith|1|-1|2|2|cell-halign|r>|<table|<row|<cell|<math|<around*|(|<math-ss|checkSigHash>
     t|)>><around*|\<langle\>|p,s|\<rangle\>>>|<cell|:=>|<cell|<around*|(|<math-ss|scribe><rsub|PubKey><around*|(|p|)><math|<math|>\<vartriangle\>><math-ss|sigHash>
-    t|)> \<vartriangle\> <math-ss|witness><rsub|Sig><around*|(|s|)>>>|<row|<cell|>|<cell|;>|<cell|<math-ss|schnorrAssert>>>>>>>>>>>>
+    t|)> \<vartriangle\> <math-ss|witness><rsub|Sig><around*|(|s|)>>>|<row|<cell|>|<cell|;>|<cell|<math-ss|bip0340-verify>>>>>>>>>>>>
   </render-code>
 
   The <math|<math-ss|sigHash> t> expression is similar to the definition of
@@ -5716,8 +5666,8 @@
   for creating a digest can be used instead. \ Because <math|<cmr|t>> is
   covered by the digital signature proveded to <math|<samp|checkSigHash> t>,
   the signature fixes the digest expression and it cannot be altered by a
-  third party while still satisfying the <math|<math-ss|schnorrAssert>>, with
-  the exception of any <samp|witness> values or <samp|disconnect>ed
+  third party while still satisfying the <math|<math-ss|bip0340-verify>>,
+  with the exception of any <samp|witness> values or <samp|disconnect>ed
   expressions within <math|t>. This allows users not only to simulate any of
   Script's signature hash flags, but to create and use any novel signtature
   hash mode that they desire.
@@ -7363,10 +7313,11 @@
   parameter is restricted to either be a single <verbatim|Bit> word type or a
   product that doubles the size of a another word type via the
   <verbatim|Vector> GADT. The <verbatim|wordSize> returns the number of bits
-  a word has. The <verbatim|fromWord> and <verbatim|toWord> functions convert
-  values of Simplicity words types to and from Haskell <verbatim|Integer>s
-  (modulo the size of the word). The file also provides specializations of
-  these various functions for popular word sizes between 1 and 512 bits.
+  a word has, or more generally the number of elements a vector has. The
+  <verbatim|fromWord> and <verbatim|toWord> functions convert values of
+  Simplicity words types to and from Haskell <verbatim|Integer>s (modulo the
+  size of the word). The file also provides specializations of these various
+  functions for word sizes between 1 and 512 bits.
 
   <subsection|Simplicity Terms>
 
@@ -7454,6 +7405,16 @@
   developments of Simplicity expressions in Haskell that are independent of
   any particular blockchain application.
 
+  <subsubsection|Generic>
+
+  The <verbatim|Core/Simplicity/Programs/Generic.hs> file provides some
+  Simplicity expressions that can apply to any Simplicity type.
+
+  The <verbatim|scribe> function produces a Simplicity expression denoting a
+  constant function for any value for any Simplicity type. The <verbatim|eq>
+  Simplicity expression compares any two values of the same Simplicity type
+  and decides if they are equal or not.
+
   <subsubsection|Bits>
 
   The <verbatim|Core/Simplicity/Programs/Bit.hs> file has Simplicity
@@ -7467,34 +7428,40 @@
   <subsubsection|Multi-bit Words>
 
   The <verbatim|Core/Simplicity/Programs/Word.hs> file provides support for
-  multi-bit word expressions that operate on Simplicity's word types. It
-  provides the standard implementations of the <verbatim|zero>,
-  <verbatim|adder>, <verbatim|fullAdder>, <verbatim|subtractor>,
-  <verbatim|fullSubtractor>, <verbatim|multiplier>, and
-  <verbatim|fullMultiplier> Simplicity expressions. Notice that the
-  implementation of these functions is careful to use explicit sharing of
-  Simplicity sub-expressions through the <verbatim|where> clauses.
+  vector an multi-bit word expressions that operate on Simplicity's vector
+  and word types. It provides the implementations of logical bit-vector,
+  padding, truncating, shifting and rotating Simplicity expressions.
 
-  The <verbatim|shift> and <verbatim|rotate> functions create Simplicity
-  expressions that do right shifts and rotates of multi-bit words by any
-  constant amount. Left (unsigned) shifts and rotates can be made by passing
-  a negative value for the shift/rotate amount.
+  The <verbatim|full_shift> function provides a generic shift operation that
+  allows shifting in and shifting out an arbitary word size of bits. The
+  <verbatim|shift_const_by> function can perform either left or right shifts,
+  filling in new elements or bits with a provided value. The
+  <verbatim|rotate_const> function can perform either left or right rotates
+  by a constant amount.
 
-  The <verbatim|bitwise> combinator takes a Simplicity expression for a
+  The <verbatim|bitwise_bin> combinator takes a Simplicity expression for a
   binary bit operation and lifts it to a Simplicity expression for a binary
   operation on arbitrary sized words that performs the bit operation
-  bit-wise. There is also a variant, called <verbatim|bitwiseTri> the does
+  bit-wise. There is also a variant, called <verbatim|bitwise_tri> the does
   the same thing for trinary bit operations.
 
-  <subsubsection|Generic>
+  <subsubsection|Arithmetic>
 
-  The <verbatim|Core/Simplicity/Programs/Generic.hs> file provides some
-  Simplicity expressions that can apply to any Simplicity type.
+  The <verbatim|Core/Simplicity/Programs/Arith.hs> file provides support for
+  arithmetic and number based expressions that operate on Simplicity's word
+  types interpreted as unsigned integers. It provides implementations of the
+  <verbatim|zero>, <verbatim|one>, <verbatim|add>, <verbatim|subtract>,
+  <verbatim|multiply>, <verbatim|divide>, and <verbatim|modulo> Simplicity
+  expressions. It also provides implementations of <verbatim|lt>,
+  <verbatim|le>, <verbatim|min>, <verbatim|max>, and <verbatim|median>.
 
-  The <verbatim|scribe> function produces a Simplicity expression denoting a
-  constant function for any value for any Simplicity type. The <verbatim|eq>
-  Simplicity expression compares any two values of the same Simplicity type
-  and decides if they are equal or not.
+  The <verbatim|eea> expression implements the extended euclidian algorithm,
+  which in turn defines <verbatim|bezout>, <verbatim|cofactors>, and
+  <verbatim|gcd> expressions.
+
+  The <verbatim|absolute_value> and <verbatim|sign> expression operate on an
+  intepretation of Simplicity words as signed integers (with
+  <verbatim|absolute_value> returning an unsigned value).
 
   <subsubsection|Loop><label|ss:haskellLoop>
 
@@ -7563,13 +7530,12 @@
   library of Simplicity expressions that mimic the functional behaviour of
   the the libsecp256k1 elliptic curve library<nbsp><cite|libsecp256k1>. This
   includes Simplicity types for, and operations on secp256k1's underlying
-  finite field with the <verbatim|10x26> limb representation, elliptic curve
-  point operations in affine and Jacobian coordinates, and linear
-  combinations of points.
+  finite field, elliptic curve point operations in affine and Jacobian
+  coordinates, and linear combinations of points.
 
-  This module also include the <verbatim|schnorrVerify> and
-  <verbatim|schnorrAssert> expressions that implement Schnorr signatures as
-  specified in BIP-Schnorr<nbsp><cite|bip-schnorr>.
+  This module also include the <verbatim|bip0340_check> and
+  <verbatim|bip0340_verify> expressions that implement Schnorr signatures as
+  specified in BIP-0340<nbsp><cite|bip-0340>.
 
   The <verbatim|mkLib> function builds the library from the its dependency,
   the SHA-256 library. The <verbatim|lib> value illustrates how to build the
@@ -11456,13 +11422,13 @@
       <slink|https://en.wikipedia.org/w/index.php?title=F-algebraoldid=814231684>,
       2017.<newblock>
 
-      <bibitem*|17><label|bib-bip-schnorr>P.<nbsp>Wuille.<newblock>
-      Bip-schnorr.<newblock> 2018.<newblock>
-      <slink|Https://github.com/sipa/bips/blob/bip-schnorr/bip-schnorr.mediawiki>.<newblock>
-
-      <bibitem*|18><label|bib-libsecp256k1>P.<nbsp>Wuille.<newblock>
+      <bibitem*|17><label|bib-libsecp256k1>P.<nbsp>Wuille.<newblock>
       Libsecp256k1.<newblock> <slink|https://github.com/bitcoin-core/secp256k1/tree/1e6f1f5ad5e7f1e3ef79313ec02023902bf8175c>,
       May 2018.<newblock>
+
+      <bibitem*|18><label|bib-bip-0340>P.<nbsp>Wuille, J.<nbsp>Nick<localize|
+      and >T.<nbsp>Ruffing.<newblock> Bip-0340.<newblock> 2020.<newblock>
+      <slink|Https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki>.<newblock>
     </bib-list>
   </bibliography>
 </body>
@@ -11478,450 +11444,471 @@
 
 <\references>
   <\collection>
-    <associate|SS:Coq:MerkleRoots|<tuple|8.5|?>>
-    <associate|app:AltSerialization|<tuple|C|?>>
-    <associate|app:ElementsTransactions|<tuple|A|?>>
-    <associate|auto-1|<tuple|1|?>>
-    <associate|auto-10|<tuple|2.2|?>>
-    <associate|auto-100|<tuple|7.1|?>>
-    <associate|auto-101|<tuple|7.1.1|?>>
-    <associate|auto-102|<tuple|7.1.2|?>>
-    <associate|auto-103|<tuple|7.1.2.1|?>>
-    <associate|auto-104|<tuple|7.1.2.2|?>>
-    <associate|auto-105|<tuple|7.2|?>>
-    <associate|auto-106|<tuple|7.2.1|?>>
-    <associate|auto-107|<tuple|7.2.2|?>>
-    <associate|auto-108|<tuple|7.2.3|?>>
-    <associate|auto-109|<tuple|8|?>>
-    <associate|auto-11|<tuple|2.2.1|?>>
-    <associate|auto-110|<tuple|8.1|?>>
-    <associate|auto-111|<tuple|8.2|?>>
-    <associate|auto-112|<tuple|8.2.1|?>>
-    <associate|auto-113|<tuple|8.2.2|?>>
-    <associate|auto-114|<tuple|8.2.2.1|?>>
-    <associate|auto-115|<tuple|8.2.2.2|?>>
-    <associate|auto-116|<tuple|8.2.2.3|?>>
-    <associate|auto-117|<tuple|8.2.3|?>>
-    <associate|auto-118|<tuple|8.3|?>>
-    <associate|auto-119|<tuple|8.3.1|?>>
-    <associate|auto-12|<tuple|2.2.2|?>>
-    <associate|auto-120|<tuple|8.3.2|?>>
-    <associate|auto-121|<tuple|8.3.3|?>>
-    <associate|auto-122|<tuple|8.4|?>>
-    <associate|auto-123|<tuple|8.1|?>>
-    <associate|auto-124|<tuple|8.4.1|?>>
-    <associate|auto-125|<tuple|8.4.2|?>>
-    <associate|auto-126|<tuple|8.4.3|?>>
-    <associate|auto-127|<tuple|8.4.4|?>>
-    <associate|auto-128|<tuple|8.4.4.1|?>>
-    <associate|auto-129|<tuple|8.4.5|?>>
-    <associate|auto-13|<tuple|2.3|?>>
-    <associate|auto-130|<tuple|8.4.6|?>>
-    <associate|auto-131|<tuple|8.5|?>>
-    <associate|auto-132|<tuple|8.6|?>>
-    <associate|auto-133|<tuple|8.6.1|?>>
-    <associate|auto-134|<tuple|8.6.1.1|?>>
-    <associate|auto-135|<tuple|8.6.2|?>>
-    <associate|auto-136|<tuple|8.6.3|?>>
-    <associate|auto-137|<tuple|9|?>>
-    <associate|auto-138|<tuple|9.1|?>>
-    <associate|auto-139|<tuple|9.1.1|?>>
-    <associate|auto-14|<tuple|2.3.1|?>>
-    <associate|auto-140|<tuple|9.1.2|?>>
-    <associate|auto-141|<tuple|9.1.3|?>>
-    <associate|auto-142|<tuple|9.1.4|?>>
-    <associate|auto-143|<tuple|9.1.5|?>>
-    <associate|auto-144|<tuple|9.1.5.1|?>>
-    <associate|auto-145|<tuple|9.1.5.2|?>>
-    <associate|auto-146|<tuple|9.1.5.3|?>>
-    <associate|auto-147|<tuple|9.1.5.4|?>>
-    <associate|auto-148|<tuple|9.1.6|?>>
-    <associate|auto-149|<tuple|9.1.6.1|?>>
-    <associate|auto-15|<tuple|2.3.2|?>>
-    <associate|auto-150|<tuple|9.1.6.2|?>>
-    <associate|auto-151|<tuple|9.1.6.3|?>>
-    <associate|auto-152|<tuple|9.1.7|?>>
-    <associate|auto-153|<tuple|9.1.7.1|?>>
-    <associate|auto-154|<tuple|9.1.7.2|?>>
-    <associate|auto-155|<tuple|9.1.7.3|?>>
-    <associate|auto-156|<tuple|9.2|?>>
-    <associate|auto-157|<tuple|9.2.1|?>>
-    <associate|auto-158|<tuple|9.2.2|?>>
-    <associate|auto-159|<tuple|9.2.3|?>>
-    <associate|auto-16|<tuple|2.3.3|?>>
-    <associate|auto-160|<tuple|9.2.4|?>>
-    <associate|auto-161|<tuple|9.2.5|?>>
-    <associate|auto-162|<tuple|9.2.6|?>>
-    <associate|auto-163|<tuple|9.2.6.1|?>>
-    <associate|auto-164|<tuple|9.2.6.2|?>>
-    <associate|auto-165|<tuple|9.2.7|?>>
-    <associate|auto-166|<tuple|9.3|?>>
-    <associate|auto-167|<tuple|9.4|?>>
-    <associate|auto-168|<tuple|9.4.1|?>>
-    <associate|auto-169|<tuple|9.4.2|?>>
-    <associate|auto-17|<tuple|2.3.4|?>>
-    <associate|auto-170|<tuple|9.5|?>>
-    <associate|auto-171|<tuple|10|?>>
-    <associate|auto-172|<tuple|A|?>>
-    <associate|auto-173|<tuple|A.1|?>>
-    <associate|auto-174|<tuple|A.1.1|?>>
-    <associate|auto-175|<tuple|A.1.2|?>>
-    <associate|auto-176|<tuple|A.1.3|?>>
-    <associate|auto-177|<tuple|B|?>>
-    <associate|auto-178|<tuple|B.1|?>>
-    <associate|auto-179|<tuple|B.1.1|?>>
-    <associate|auto-18|<tuple|2.3.4.1|?>>
-    <associate|auto-180|<tuple|B.1.1.1|?>>
-    <associate|auto-181|<tuple|B.1.1.2|?>>
-    <associate|auto-182|<tuple|B.1.1.3|?>>
-    <associate|auto-183|<tuple|B.1.1.4|?>>
-    <associate|auto-184|<tuple|B.1.1.5|?>>
-    <associate|auto-185|<tuple|B.1.1.6|?>>
-    <associate|auto-186|<tuple|B.1.1.7|?>>
-    <associate|auto-187|<tuple|B.1.1.8|?>>
-    <associate|auto-188|<tuple|B.1.1.9|?>>
-    <associate|auto-189|<tuple|B.1.1.10|?>>
-    <associate|auto-19|<tuple|2.4|?>>
-    <associate|auto-190|<tuple|B.1.1.11|?>>
-    <associate|auto-191|<tuple|B.1.1.12|?>>
-    <associate|auto-192|<tuple|B.1.1.13|?>>
-    <associate|auto-193|<tuple|B.1.1.14|?>>
-    <associate|auto-194|<tuple|B.1.1.15|?>>
-    <associate|auto-195|<tuple|B.1.1.16|?>>
-    <associate|auto-196|<tuple|B.1.1.17|?>>
-    <associate|auto-197|<tuple|B.1.1.18|?>>
-    <associate|auto-198|<tuple|B.1.1.19|?>>
-    <associate|auto-199|<tuple|B.1.1.20|?>>
-    <associate|auto-2|<tuple|1.1|?>>
-    <associate|auto-20|<tuple|2.4.1|?>>
-    <associate|auto-200|<tuple|B.1.1.21|?>>
-    <associate|auto-201|<tuple|B.1.1.22|?>>
-    <associate|auto-202|<tuple|B.1.1.23|?>>
-    <associate|auto-203|<tuple|B.1.1.24|?>>
-    <associate|auto-204|<tuple|B.1.1.25|?>>
-    <associate|auto-205|<tuple|B.1.1.26|?>>
-    <associate|auto-206|<tuple|B.1.1.27|?>>
-    <associate|auto-207|<tuple|B.1.1.28|?>>
-    <associate|auto-208|<tuple|B.1.1.29|?>>
-    <associate|auto-209|<tuple|B.1.2|?>>
-    <associate|auto-21|<tuple|2.4.2|?>>
-    <associate|auto-210|<tuple|B.1.2.1|?>>
-    <associate|auto-211|<tuple|B.1.2.2|?>>
-    <associate|auto-212|<tuple|B.1.2.3|?>>
-    <associate|auto-213|<tuple|B.1.2.4|?>>
-    <associate|auto-214|<tuple|B.1.2.5|?>>
-    <associate|auto-215|<tuple|B.1.2.6|?>>
-    <associate|auto-216|<tuple|B.1.2.7|?>>
-    <associate|auto-217|<tuple|B.1.2.8|?>>
-    <associate|auto-218|<tuple|B.1.2.9|?>>
-    <associate|auto-219|<tuple|B.1.2.10|?>>
-    <associate|auto-22|<tuple|3|?>>
-    <associate|auto-220|<tuple|B.1.2.11|?>>
-    <associate|auto-221|<tuple|B.1.2.12|?>>
-    <associate|auto-222|<tuple|B.1.2.13|?>>
-    <associate|auto-223|<tuple|B.1.2.14|?>>
-    <associate|auto-224|<tuple|B.1.2.15|?>>
-    <associate|auto-225|<tuple|B.1.2.16|?>>
-    <associate|auto-226|<tuple|B.1.2.17|?>>
-    <associate|auto-227|<tuple|B.1.2.18|?>>
-    <associate|auto-228|<tuple|B.1.2.19|?>>
-    <associate|auto-229|<tuple|B.1.2.20|?>>
-    <associate|auto-23|<tuple|3.1|?>>
-    <associate|auto-230|<tuple|B.1.2.21|?>>
-    <associate|auto-231|<tuple|B.1.2.22|?>>
-    <associate|auto-232|<tuple|B.1.2.23|?>>
-    <associate|auto-233|<tuple|B.1.2.24|?>>
-    <associate|auto-234|<tuple|B.1.2.25|?>>
-    <associate|auto-235|<tuple|B.1.2.26|?>>
-    <associate|auto-236|<tuple|B.1.2.27|?>>
-    <associate|auto-237|<tuple|B.1.2.28|?>>
-    <associate|auto-238|<tuple|B.1.2.29|?>>
-    <associate|auto-239|<tuple|B.1.2.30|?>>
-    <associate|auto-24|<tuple|3.1.1|?>>
-    <associate|auto-240|<tuple|B.1.2.31|?>>
-    <associate|auto-241|<tuple|B.1.2.32|?>>
-    <associate|auto-242|<tuple|B.1.2.33|?>>
-    <associate|auto-243|<tuple|B.1.2.34|?>>
-    <associate|auto-244|<tuple|B.1.2.35|?>>
-    <associate|auto-245|<tuple|B.1.2.36|?>>
-    <associate|auto-246|<tuple|B.1.2.37|?>>
-    <associate|auto-247|<tuple|B.1.2.38|?>>
-    <associate|auto-248|<tuple|B.1.2.39|?>>
-    <associate|auto-249|<tuple|B.1.2.40|?>>
-    <associate|auto-25|<tuple|3.1.2|?>>
-    <associate|auto-250|<tuple|B.1.2.41|?>>
-    <associate|auto-251|<tuple|B.1.2.42|?>>
-    <associate|auto-252|<tuple|B.1.2.43|?>>
-    <associate|auto-253|<tuple|B.1.3|?>>
-    <associate|auto-254|<tuple|B.1.3.1|?>>
-    <associate|auto-255|<tuple|B.1.3.1.1|?>>
-    <associate|auto-256|<tuple|B.1.3.1.2|?>>
-    <associate|auto-257|<tuple|B.1.3.2|?>>
-    <associate|auto-258|<tuple|B.1.3.2.1|?>>
-    <associate|auto-259|<tuple|B.1.3.2.2|?>>
-    <associate|auto-26|<tuple|3.1.3|?>>
-    <associate|auto-260|<tuple|B.1.3.2.3|?>>
-    <associate|auto-261|<tuple|B.1.3.2.4|?>>
-    <associate|auto-262|<tuple|B.1.3.2.5|?>>
-    <associate|auto-263|<tuple|B.1.3.2.6|?>>
-    <associate|auto-264|<tuple|B.1.3.3|?>>
-    <associate|auto-265|<tuple|B.1.3.4|?>>
-    <associate|auto-266|<tuple|B.1.4|?>>
-    <associate|auto-267|<tuple|B.1.4.1|?>>
-    <associate|auto-268|<tuple|B.1.4.1.1|?>>
-    <associate|auto-269|<tuple|B.1.4.1.2|?>>
-    <associate|auto-27|<tuple|3.2|?>>
-    <associate|auto-270|<tuple|B.1.4.1.3|?>>
-    <associate|auto-271|<tuple|B.1.4.1.4|?>>
-    <associate|auto-272|<tuple|B.1.4.1.5|?>>
-    <associate|auto-273|<tuple|B.1.4.1.6|?>>
-    <associate|auto-274|<tuple|B.1.4.1.7|?>>
-    <associate|auto-275|<tuple|B.1.4.1.8|?>>
-    <associate|auto-276|<tuple|B.1.4.1.9|?>>
-    <associate|auto-277|<tuple|B.1.4.1.10|?>>
-    <associate|auto-278|<tuple|B.1.4.1.11|?>>
-    <associate|auto-279|<tuple|B.1.4.1.12|?>>
-    <associate|auto-28|<tuple|3.2.1|?>>
-    <associate|auto-280|<tuple|B.1.4.1.13|?>>
-    <associate|auto-281|<tuple|B.1.4.1.14|?>>
-    <associate|auto-282|<tuple|B.1.4.1.15|?>>
-    <associate|auto-283|<tuple|B.1.4.1.16|?>>
-    <associate|auto-284|<tuple|B.1.4.1.17|?>>
-    <associate|auto-285|<tuple|B.1.4.1.18|?>>
-    <associate|auto-286|<tuple|B.1.4.1.19|?>>
-    <associate|auto-287|<tuple|B.1.4.1.20|?>>
-    <associate|auto-288|<tuple|B.1.4.1.21|?>>
-    <associate|auto-289|<tuple|B.1.4.1.22|?>>
-    <associate|auto-29|<tuple|3.2.2|?>>
-    <associate|auto-290|<tuple|B.1.4.1.23|?>>
-    <associate|auto-291|<tuple|B.1.4.1.24|?>>
-    <associate|auto-292|<tuple|B.1.4.1.25|?>>
-    <associate|auto-293|<tuple|B.1.4.1.26|?>>
-    <associate|auto-294|<tuple|B.1.4.1.27|?>>
-    <associate|auto-295|<tuple|B.1.4.1.28|?>>
-    <associate|auto-296|<tuple|B.1.4.1.29|?>>
-    <associate|auto-297|<tuple|B.1.4.1.30|?>>
-    <associate|auto-298|<tuple|B.1.4.1.31|?>>
-    <associate|auto-299|<tuple|B.1.4.1.32|?>>
-    <associate|auto-3|<tuple|1.2|?>>
-    <associate|auto-30|<tuple|3.2.3|?>>
-    <associate|auto-300|<tuple|B.1.4.1.33|?>>
-    <associate|auto-301|<tuple|B.1.4.1.34|?>>
-    <associate|auto-302|<tuple|B.1.4.1.35|?>>
-    <associate|auto-303|<tuple|B.1.4.1.36|?>>
-    <associate|auto-304|<tuple|B.1.4.1.37|?>>
-    <associate|auto-305|<tuple|B.1.4.1.38|?>>
-    <associate|auto-306|<tuple|B.1.5|?>>
-    <associate|auto-307|<tuple|B.1.5.1|?>>
-    <associate|auto-308|<tuple|B.1.5.1.1|?>>
-    <associate|auto-309|<tuple|B.1.5.1.2|?>>
-    <associate|auto-31|<tuple|3.2.4|?>>
-    <associate|auto-310|<tuple|B.1.5.1.3|?>>
-    <associate|auto-311|<tuple|B.1.5.1.4|?>>
-    <associate|auto-312|<tuple|B.1.5.1.5|?>>
-    <associate|auto-313|<tuple|B.1.5.1.6|?>>
-    <associate|auto-314|<tuple|B.1.5.1.7|?>>
-    <associate|auto-315|<tuple|B.1.5.1.8|?>>
-    <associate|auto-316|<tuple|B.1.5.1.9|?>>
-    <associate|auto-317|<tuple|B.1.5.1.10|?>>
-    <associate|auto-318|<tuple|B.1.6|?>>
-    <associate|auto-319|<tuple|B.1.6.1|?>>
-    <associate|auto-32|<tuple|3.2.5|?>>
-    <associate|auto-320|<tuple|B.1.6.1.1|?>>
-    <associate|auto-321|<tuple|B.1.6.1.2|?>>
-    <associate|auto-322|<tuple|B.1.6.1.3|?>>
-    <associate|auto-323|<tuple|B.1.6.1.4|?>>
-    <associate|auto-324|<tuple|B.1.6.1.5|?>>
-    <associate|auto-325|<tuple|B.1.6.1.6|?>>
-    <associate|auto-326|<tuple|B.1.6.1.7|?>>
-    <associate|auto-327|<tuple|B.1.6.1.8|?>>
-    <associate|auto-328|<tuple|B.1.6.1.9|?>>
-    <associate|auto-329|<tuple|B.1.6.1.10|?>>
-    <associate|auto-33|<tuple|3.2.6|?>>
-    <associate|auto-330|<tuple|B.1.6.1.11|?>>
-    <associate|auto-331|<tuple|B.1.6.1.12|?>>
-    <associate|auto-332|<tuple|B.1.6.1.13|?>>
-    <associate|auto-333|<tuple|B.1.6.1.14|?>>
-    <associate|auto-334|<tuple|B.1.7|?>>
-    <associate|auto-335|<tuple|B.1.7.1|?>>
-    <associate|auto-336|<tuple|B.1.7.2|?>>
-    <associate|auto-337|<tuple|B.1.8|?>>
-    <associate|auto-338|<tuple|B.1.8.1|?>>
-    <associate|auto-339|<tuple|B.1.8.2|?>>
-    <associate|auto-34|<tuple|3.2.7|?>>
-    <associate|auto-340|<tuple|B.1.8.3|?>>
-    <associate|auto-341|<tuple|B.2|?>>
-    <associate|auto-342|<tuple|B.2.1|?>>
-    <associate|auto-343|<tuple|B.2.2|?>>
-    <associate|auto-344|<tuple|B.2.3|?>>
-    <associate|auto-345|<tuple|B.2.3.1|?>>
-    <associate|auto-346|<tuple|B.2.3.2|?>>
-    <associate|auto-347|<tuple|B.2.3.3|?>>
-    <associate|auto-348|<tuple|B.2.3.4|?>>
-    <associate|auto-349|<tuple|B.2.3.5|?>>
-    <associate|auto-35|<tuple|3.2.8|?>>
-    <associate|auto-350|<tuple|B.2.3.6|?>>
-    <associate|auto-351|<tuple|B.2.3.7|?>>
-    <associate|auto-352|<tuple|B.2.3.8|?>>
-    <associate|auto-353|<tuple|B.2.3.9|?>>
-    <associate|auto-354|<tuple|B.2.3.10|?>>
-    <associate|auto-355|<tuple|B.2.3.11|?>>
-    <associate|auto-356|<tuple|B.2.3.12|?>>
-    <associate|auto-357|<tuple|B.2.3.13|?>>
-    <associate|auto-358|<tuple|B.2.3.14|?>>
-    <associate|auto-359|<tuple|B.2.3.15|?>>
-    <associate|auto-36|<tuple|3.2.9|?>>
-    <associate|auto-360|<tuple|B.3|?>>
-    <associate|auto-361|<tuple|B.3.1|?>>
-    <associate|auto-362|<tuple|B.3.2|?>>
-    <associate|auto-363|<tuple|B.3.2.1|?>>
-    <associate|auto-364|<tuple|B.3.2.2|?>>
-    <associate|auto-365|<tuple|B.3.2.3|?>>
-    <associate|auto-366|<tuple|B.3.2.4|?>>
-    <associate|auto-367|<tuple|B.3.2.5|?>>
-    <associate|auto-368|<tuple|B.3.2.6|?>>
-    <associate|auto-369|<tuple|B.3.2.7|?>>
-    <associate|auto-37|<tuple|3.2.10|?>>
-    <associate|auto-370|<tuple|B.3.2.8|?>>
-    <associate|auto-371|<tuple|B.3.2.9|?>>
-    <associate|auto-372|<tuple|B.3.2.10|?>>
-    <associate|auto-373|<tuple|B.3.2.11|?>>
-    <associate|auto-374|<tuple|B.3.2.12|?>>
-    <associate|auto-375|<tuple|B.3.2.13|?>>
-    <associate|auto-376|<tuple|B.3.2.14|?>>
-    <associate|auto-377|<tuple|B.3.2.15|?>>
-    <associate|auto-378|<tuple|B.3.3|?>>
-    <associate|auto-379|<tuple|C|?>>
-    <associate|auto-38|<tuple|3.2.11|?>>
-    <associate|auto-380|<tuple|C|?>>
-    <associate|auto-39|<tuple|3.3|?>>
-    <associate|auto-4|<tuple|1.2.1|?>>
-    <associate|auto-40|<tuple|3.3.1|?>>
-    <associate|auto-41|<tuple|3.3.2|?>>
-    <associate|auto-42|<tuple|3.3.3|?>>
-    <associate|auto-43|<tuple|3.3.4|?>>
-    <associate|auto-44|<tuple|3.3.5|?>>
-    <associate|auto-45|<tuple|3.3.6|?>>
-    <associate|auto-46|<tuple|3.3.6.1|?>>
-    <associate|auto-47|<tuple|3.3.7|?>>
-    <associate|auto-48|<tuple|3.3.7.1|?>>
-    <associate|auto-49|<tuple|3.3.7.2|?>>
-    <associate|auto-5|<tuple|1.2.2|?>>
-    <associate|auto-50|<tuple|3.3.7.3|?>>
-    <associate|auto-51|<tuple|3.4|?>>
-    <associate|auto-52|<tuple|3.5|?>>
-    <associate|auto-53|<tuple|3.5.1|?>>
-    <associate|auto-54|<tuple|3.5.2|?>>
-    <associate|auto-55|<tuple|3.1|?>>
-    <associate|auto-56|<tuple|3.5.2.1|?>>
-    <associate|auto-57|<tuple|3.5.2.2|?>>
-    <associate|auto-58|<tuple|3.5.2.3|?>>
-    <associate|auto-59|<tuple|3.5.2.4|?>>
-    <associate|auto-6|<tuple|1.2.3|?>>
-    <associate|auto-60|<tuple|3.5.2.5|?>>
-    <associate|auto-61|<tuple|3.5.2.6|?>>
-    <associate|auto-62|<tuple|3.5.3|?>>
-    <associate|auto-63|<tuple|3.5.3.1|?>>
-    <associate|auto-64|<tuple|3.6|?>>
-    <associate|auto-65|<tuple|3.6.1|?>>
-    <associate|auto-66|<tuple|3.6.1.1|?>>
-    <associate|auto-67|<tuple|3.6.1.2|?>>
-    <associate|auto-68|<tuple|3.6.2|?>>
-    <associate|auto-69|<tuple|3.7|?>>
-    <associate|auto-7|<tuple|2|?>>
-    <associate|auto-70|<tuple|3.8|?>>
-    <associate|auto-71|<tuple|4|?>>
-    <associate|auto-72|<tuple|4.1|?>>
-    <associate|auto-73|<tuple|4.2|?>>
-    <associate|auto-74|<tuple|4.2.1|?>>
-    <associate|auto-75|<tuple|4.2.2|?>>
-    <associate|auto-76|<tuple|4.3|?>>
-    <associate|auto-77|<tuple|4.3.1|?>>
-    <associate|auto-78|<tuple|4.3.2|?>>
-    <associate|auto-79|<tuple|4.3.2.1|?>>
-    <associate|auto-8|<tuple|2.1|?>>
-    <associate|auto-80|<tuple|4.3.2.2|?>>
-    <associate|auto-81|<tuple|4.4|?>>
-    <associate|auto-82|<tuple|4.4.1|?>>
-    <associate|auto-83|<tuple|4.4.1.1|?>>
-    <associate|auto-84|<tuple|4.4.1.2|?>>
-    <associate|auto-85|<tuple|4.5|?>>
-    <associate|auto-86|<tuple|4.5.1|?>>
-    <associate|auto-87|<tuple|4.6|?>>
-    <associate|auto-88|<tuple|4.7|?>>
-    <associate|auto-89|<tuple|4.7.1|?>>
-    <associate|auto-9|<tuple|2.1.1|?>>
-    <associate|auto-90|<tuple|5|?>>
-    <associate|auto-91|<tuple|6|?>>
-    <associate|auto-92|<tuple|6.1|?>>
-    <associate|auto-93|<tuple|6.1.1|?>>
-    <associate|auto-94|<tuple|6.1.1.1|?>>
-    <associate|auto-95|<tuple|6.2|?>>
-    <associate|auto-96|<tuple|6.2.1|?>>
-    <associate|auto-97|<tuple|6.3|?>>
-    <associate|auto-98|<tuple|6.3.1|?>>
-    <associate|auto-99|<tuple|7|?>>
-    <associate|bib-Appel:2015|<tuple|1|?>>
-    <associate|bib-Carette:2009|<tuple|3|?>>
-    <associate|bib-Coq:manual|<tuple|5|?>>
-    <associate|bib-King1993|<tuple|8|?>>
-    <associate|bib-Mahboubi:2013|<tuple|9|?>>
-    <associate|bib-Mairson:1989|<tuple|10|?>>
-    <associate|bib-bip-schnorr|<tuple|17|?>>
-    <associate|bib-bitcoin|<tuple|11|?>>
-    <associate|bib-f-algebra|<tuple|16|?>>
-    <associate|bib-garillot:2009|<tuple|6|?>>
-    <associate|bib-gentzen|<tuple|7|?>>
-    <associate|bib-libsecp256k1|<tuple|18|?>>
-    <associate|bib-oconnor2014|<tuple|14|?>>
-    <associate|bib-satoshiScript|<tuple|12|?>>
-    <associate|bib-script|<tuple|2|?>>
-    <associate|bib-sec2|<tuple|4|?>>
-    <associate|bib-sha|<tuple|13|?>>
-    <associate|bib-unification|<tuple|15|?>>
-    <associate|chapter:preliminaries|<tuple|2|?>>
-    <associate|fig:inheritance|<tuple|8.1|?>>
-    <associate|footnote-2.1|<tuple|2.1|?>>
-    <associate|footnote-3.1|<tuple|3.1|?>>
-    <associate|footnote-3.2|<tuple|3.2|?>>
-    <associate|footnr-2.1|<tuple|2.1|?>>
-    <associate|footnr-3.1|<tuple|3.1|?>>
-    <associate|footnr-3.2|<tuple|3.2|?>>
-    <associate|full-adder-LHS|<tuple|3.3|?>>
-    <associate|full-adder-RHS|<tuple|3.2|?>>
-    <associate|full-adder-spec|<tuple|3.1|?>>
-    <associate|ss:AssertMerkleRoot|<tuple|4.3.2|?>>
-    <associate|ss:BTDenotationalSemantics|<tuple|4.4.1.1|?>>
-    <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|?>>
-    <associate|ss:BitcoinPrimitives|<tuple|9.3|?>>
-    <associate|ss:BitcoinTransactions|<tuple|4.4.1|?>>
-    <associate|ss:DAGs|<tuple|7.1|?>>
-    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.2.4|?>>
-    <associate|ss:ELDenotationalSemantics|<tuple|A.1|?>>
-    <associate|ss:FreeMonadicDeserialization|<tuple|9.2.6.1|?>>
-    <associate|ss:Haskell-CheckSigHash|<tuple|9.1.6.3|?>>
-    <associate|ss:Haskell-DAG|<tuple|9.2.6.2|?>>
-    <associate|ss:Haskell-Serialization|<tuple|9.2.6|?>>
+    <associate|LC218|<tuple|6.2.2|?>>
+    <associate|LC219|<tuple|<with|mode|<quote|math>|\<bullet\>>|?>>
+    <associate|LC267|<tuple|6.1|?>>
+    <associate|LC313|<tuple|6.5|?>>
+    <associate|LC42|<tuple|6.5|?>>
+    <associate|LC98|<tuple|6.2.2|?>>
+    <associate|SS:Coq:MerkleRoots|<tuple|8.5|81>>
+    <associate|Serialization|<tuple|2.8|?>>
+    <associate|app:AltSerialization|<tuple|C|131>>
+    <associate|app:ElementsTransactions|<tuple|A|99>>
+    <associate|auto-1|<tuple|1|11>>
+    <associate|auto-10|<tuple|2.2|17>>
+    <associate|auto-100|<tuple|7.1|67>>
+    <associate|auto-101|<tuple|7.1.1|69>>
+    <associate|auto-102|<tuple|7.1.2|69>>
+    <associate|auto-103|<tuple|7.1.2.1|70>>
+    <associate|auto-104|<tuple|7.1.2.2|70>>
+    <associate|auto-105|<tuple|7.2|70>>
+    <associate|auto-106|<tuple|7.2.1|71>>
+    <associate|auto-107|<tuple|7.2.2|73>>
+    <associate|auto-108|<tuple|7.2.3|75>>
+    <associate|auto-109|<tuple|8|75>>
+    <associate|auto-11|<tuple|2.2.1|17>>
+    <associate|auto-110|<tuple|8.1|75>>
+    <associate|auto-111|<tuple|8.2|75>>
+    <associate|auto-112|<tuple|8.2.1|75>>
+    <associate|auto-113|<tuple|8.2.2|76>>
+    <associate|auto-114|<tuple|8.2.2.1|76>>
+    <associate|auto-115|<tuple|8.2.2.2|77>>
+    <associate|auto-116|<tuple|8.2.2.3|77>>
+    <associate|auto-117|<tuple|8.2.3|77>>
+    <associate|auto-118|<tuple|8.3|77>>
+    <associate|auto-119|<tuple|8.3.1|77>>
+    <associate|auto-12|<tuple|2.2.2|17>>
+    <associate|auto-120|<tuple|8.3.2|78>>
+    <associate|auto-121|<tuple|8.3.3|78>>
+    <associate|auto-122|<tuple|8.4|78>>
+    <associate|auto-123|<tuple|8.1|79>>
+    <associate|auto-124|<tuple|8.4.1|79>>
+    <associate|auto-125|<tuple|8.4.2|79>>
+    <associate|auto-126|<tuple|8.4.3|80>>
+    <associate|auto-127|<tuple|8.4.4|80>>
+    <associate|auto-128|<tuple|8.4.4.1|80>>
+    <associate|auto-129|<tuple|8.4.5|81>>
+    <associate|auto-13|<tuple|2.3|19>>
+    <associate|auto-130|<tuple|8.4.6|81>>
+    <associate|auto-131|<tuple|8.5|81>>
+    <associate|auto-132|<tuple|8.6|82>>
+    <associate|auto-133|<tuple|8.6.1|82>>
+    <associate|auto-134|<tuple|8.6.1.1|83>>
+    <associate|auto-135|<tuple|8.6.2|83>>
+    <associate|auto-136|<tuple|8.6.3|85>>
+    <associate|auto-137|<tuple|9|85>>
+    <associate|auto-138|<tuple|9.1|85>>
+    <associate|auto-139|<tuple|9.1.1|86>>
+    <associate|auto-14|<tuple|2.3.1|19>>
+    <associate|auto-140|<tuple|9.1.2|87>>
+    <associate|auto-141|<tuple|9.1.3|87>>
+    <associate|auto-142|<tuple|9.1.4|87>>
+    <associate|auto-143|<tuple|9.1.5|87>>
+    <associate|auto-144|<tuple|9.1.5.1|87>>
+    <associate|auto-145|<tuple|9.1.5.2|87>>
+    <associate|auto-146|<tuple|9.1.5.3|87>>
+    <associate|auto-147|<tuple|9.1.5.4|88>>
+    <associate|auto-148|<tuple|9.1.5.5|88>>
+    <associate|auto-149|<tuple|9.1.6|88>>
+    <associate|auto-15|<tuple|2.3.2|20>>
+    <associate|auto-150|<tuple|9.1.6.1|88>>
+    <associate|auto-151|<tuple|9.1.6.2|89>>
+    <associate|auto-152|<tuple|9.1.6.3|89>>
+    <associate|auto-153|<tuple|9.1.7|89>>
+    <associate|auto-154|<tuple|9.1.7.1|90>>
+    <associate|auto-155|<tuple|9.1.7.2|90>>
+    <associate|auto-156|<tuple|9.1.7.3|90>>
+    <associate|auto-157|<tuple|9.2|90>>
+    <associate|auto-158|<tuple|9.2.1|90>>
+    <associate|auto-159|<tuple|9.2.2|91>>
+    <associate|auto-16|<tuple|2.3.3|20>>
+    <associate|auto-160|<tuple|9.2.3|91>>
+    <associate|auto-161|<tuple|9.2.4|91>>
+    <associate|auto-162|<tuple|9.2.5|92>>
+    <associate|auto-163|<tuple|9.2.6|92>>
+    <associate|auto-164|<tuple|9.2.6.1|93>>
+    <associate|auto-165|<tuple|9.2.6.2|94>>
+    <associate|auto-166|<tuple|9.2.7|94>>
+    <associate|auto-167|<tuple|9.3|94>>
+    <associate|auto-168|<tuple|9.4|95>>
+    <associate|auto-169|<tuple|9.4.1|95>>
+    <associate|auto-17|<tuple|2.3.4|20>>
+    <associate|auto-170|<tuple|9.4.2|95>>
+    <associate|auto-171|<tuple|9.5|97>>
+    <associate|auto-172|<tuple|10|99>>
+    <associate|auto-173|<tuple|A|101>>
+    <associate|auto-174|<tuple|A.1|104>>
+    <associate|auto-175|<tuple|A.1.1|105>>
+    <associate|auto-176|<tuple|A.1.2|106>>
+    <associate|auto-177|<tuple|A.1.3|107>>
+    <associate|auto-178|<tuple|B|107>>
+    <associate|auto-179|<tuple|B.1|107>>
+    <associate|auto-18|<tuple|2.3.4.1|21>>
+    <associate|auto-180|<tuple|B.1.1|107>>
+    <associate|auto-181|<tuple|B.1.1.1|107>>
+    <associate|auto-182|<tuple|B.1.1.2|108>>
+    <associate|auto-183|<tuple|B.1.1.3|108>>
+    <associate|auto-184|<tuple|B.1.1.4|108>>
+    <associate|auto-185|<tuple|B.1.1.5|108>>
+    <associate|auto-186|<tuple|B.1.1.6|108>>
+    <associate|auto-187|<tuple|B.1.1.7|108>>
+    <associate|auto-188|<tuple|B.1.1.8|109>>
+    <associate|auto-189|<tuple|B.1.1.9|109>>
+    <associate|auto-19|<tuple|2.4|21>>
+    <associate|auto-190|<tuple|B.1.1.10|109>>
+    <associate|auto-191|<tuple|B.1.1.11|109>>
+    <associate|auto-192|<tuple|B.1.1.12|109>>
+    <associate|auto-193|<tuple|B.1.1.13|110>>
+    <associate|auto-194|<tuple|B.1.1.14|110>>
+    <associate|auto-195|<tuple|B.1.1.15|110>>
+    <associate|auto-196|<tuple|B.1.1.16|110>>
+    <associate|auto-197|<tuple|B.1.1.17|110>>
+    <associate|auto-198|<tuple|B.1.1.18|111>>
+    <associate|auto-199|<tuple|B.1.1.19|111>>
+    <associate|auto-2|<tuple|1.1|11>>
+    <associate|auto-20|<tuple|2.4.1|22>>
+    <associate|auto-200|<tuple|B.1.1.20|111>>
+    <associate|auto-201|<tuple|B.1.1.21|111>>
+    <associate|auto-202|<tuple|B.1.1.22|111>>
+    <associate|auto-203|<tuple|B.1.1.23|112>>
+    <associate|auto-204|<tuple|B.1.1.24|112>>
+    <associate|auto-205|<tuple|B.1.1.25|112>>
+    <associate|auto-206|<tuple|B.1.1.26|112>>
+    <associate|auto-207|<tuple|B.1.1.27|112>>
+    <associate|auto-208|<tuple|B.1.1.28|112>>
+    <associate|auto-209|<tuple|B.1.1.29|112>>
+    <associate|auto-21|<tuple|2.4.2|22>>
+    <associate|auto-210|<tuple|B.1.2|112>>
+    <associate|auto-211|<tuple|B.1.2.1|113>>
+    <associate|auto-212|<tuple|B.1.2.2|113>>
+    <associate|auto-213|<tuple|B.1.2.3|113>>
+    <associate|auto-214|<tuple|B.1.2.4|113>>
+    <associate|auto-215|<tuple|B.1.2.5|113>>
+    <associate|auto-216|<tuple|B.1.2.6|114>>
+    <associate|auto-217|<tuple|B.1.2.7|114>>
+    <associate|auto-218|<tuple|B.1.2.8|114>>
+    <associate|auto-219|<tuple|B.1.2.9|114>>
+    <associate|auto-22|<tuple|3|23>>
+    <associate|auto-220|<tuple|B.1.2.10|114>>
+    <associate|auto-221|<tuple|B.1.2.11|114>>
+    <associate|auto-222|<tuple|B.1.2.12|114>>
+    <associate|auto-223|<tuple|B.1.2.13|115>>
+    <associate|auto-224|<tuple|B.1.2.14|115>>
+    <associate|auto-225|<tuple|B.1.2.15|115>>
+    <associate|auto-226|<tuple|B.1.2.16|115>>
+    <associate|auto-227|<tuple|B.1.2.17|115>>
+    <associate|auto-228|<tuple|B.1.2.18|115>>
+    <associate|auto-229|<tuple|B.1.2.19|116>>
+    <associate|auto-23|<tuple|3.1|23>>
+    <associate|auto-230|<tuple|B.1.2.20|116>>
+    <associate|auto-231|<tuple|B.1.2.21|116>>
+    <associate|auto-232|<tuple|B.1.2.22|116>>
+    <associate|auto-233|<tuple|B.1.2.23|116>>
+    <associate|auto-234|<tuple|B.1.2.24|116>>
+    <associate|auto-235|<tuple|B.1.2.25|117>>
+    <associate|auto-236|<tuple|B.1.2.26|117>>
+    <associate|auto-237|<tuple|B.1.2.27|117>>
+    <associate|auto-238|<tuple|B.1.2.28|117>>
+    <associate|auto-239|<tuple|B.1.2.29|117>>
+    <associate|auto-24|<tuple|3.1.1|23>>
+    <associate|auto-240|<tuple|B.1.2.30|117>>
+    <associate|auto-241|<tuple|B.1.2.31|117>>
+    <associate|auto-242|<tuple|B.1.2.32|118>>
+    <associate|auto-243|<tuple|B.1.2.33|118>>
+    <associate|auto-244|<tuple|B.1.2.34|118>>
+    <associate|auto-245|<tuple|B.1.2.35|118>>
+    <associate|auto-246|<tuple|B.1.2.36|118>>
+    <associate|auto-247|<tuple|B.1.2.37|118>>
+    <associate|auto-248|<tuple|B.1.2.38|118>>
+    <associate|auto-249|<tuple|B.1.2.39|118>>
+    <associate|auto-25|<tuple|3.1.2|23>>
+    <associate|auto-250|<tuple|B.1.2.40|118>>
+    <associate|auto-251|<tuple|B.1.2.41|118>>
+    <associate|auto-252|<tuple|B.1.2.42|118>>
+    <associate|auto-253|<tuple|B.1.2.43|118>>
+    <associate|auto-254|<tuple|B.1.3|118>>
+    <associate|auto-255|<tuple|B.1.3.1|118>>
+    <associate|auto-256|<tuple|B.1.3.1.1|118>>
+    <associate|auto-257|<tuple|B.1.3.1.2|118>>
+    <associate|auto-258|<tuple|B.1.3.2|119>>
+    <associate|auto-259|<tuple|B.1.3.2.1|119>>
+    <associate|auto-26|<tuple|3.1.3|23>>
+    <associate|auto-260|<tuple|B.1.3.2.2|119>>
+    <associate|auto-261|<tuple|B.1.3.2.3|119>>
+    <associate|auto-262|<tuple|B.1.3.2.4|119>>
+    <associate|auto-263|<tuple|B.1.3.2.5|119>>
+    <associate|auto-264|<tuple|B.1.3.2.6|119>>
+    <associate|auto-265|<tuple|B.1.3.3|119>>
+    <associate|auto-266|<tuple|B.1.3.4|119>>
+    <associate|auto-267|<tuple|B.1.4|119>>
+    <associate|auto-268|<tuple|B.1.4.1|119>>
+    <associate|auto-269|<tuple|B.1.4.1.1|119>>
+    <associate|auto-27|<tuple|3.2|24>>
+    <associate|auto-270|<tuple|B.1.4.1.2|119>>
+    <associate|auto-271|<tuple|B.1.4.1.3|120>>
+    <associate|auto-272|<tuple|B.1.4.1.4|120>>
+    <associate|auto-273|<tuple|B.1.4.1.5|120>>
+    <associate|auto-274|<tuple|B.1.4.1.6|120>>
+    <associate|auto-275|<tuple|B.1.4.1.7|120>>
+    <associate|auto-276|<tuple|B.1.4.1.8|120>>
+    <associate|auto-277|<tuple|B.1.4.1.9|120>>
+    <associate|auto-278|<tuple|B.1.4.1.10|120>>
+    <associate|auto-279|<tuple|B.1.4.1.11|120>>
+    <associate|auto-28|<tuple|3.2.1|24>>
+    <associate|auto-280|<tuple|B.1.4.1.12|120>>
+    <associate|auto-281|<tuple|B.1.4.1.13|120>>
+    <associate|auto-282|<tuple|B.1.4.1.14|121>>
+    <associate|auto-283|<tuple|B.1.4.1.15|121>>
+    <associate|auto-284|<tuple|B.1.4.1.16|121>>
+    <associate|auto-285|<tuple|B.1.4.1.17|121>>
+    <associate|auto-286|<tuple|B.1.4.1.18|121>>
+    <associate|auto-287|<tuple|B.1.4.1.19|121>>
+    <associate|auto-288|<tuple|B.1.4.1.20|121>>
+    <associate|auto-289|<tuple|B.1.4.1.21|121>>
+    <associate|auto-29|<tuple|3.2.2|24>>
+    <associate|auto-290|<tuple|B.1.4.1.22|121>>
+    <associate|auto-291|<tuple|B.1.4.1.23|121>>
+    <associate|auto-292|<tuple|B.1.4.1.24|122>>
+    <associate|auto-293|<tuple|B.1.4.1.25|122>>
+    <associate|auto-294|<tuple|B.1.4.1.26|122>>
+    <associate|auto-295|<tuple|B.1.4.1.27|122>>
+    <associate|auto-296|<tuple|B.1.4.1.28|122>>
+    <associate|auto-297|<tuple|B.1.4.1.29|122>>
+    <associate|auto-298|<tuple|B.1.4.1.30|122>>
+    <associate|auto-299|<tuple|B.1.4.1.31|122>>
+    <associate|auto-3|<tuple|1.2|12>>
+    <associate|auto-30|<tuple|3.2.3|24>>
+    <associate|auto-300|<tuple|B.1.4.1.32|122>>
+    <associate|auto-301|<tuple|B.1.4.1.33|122>>
+    <associate|auto-302|<tuple|B.1.4.1.34|122>>
+    <associate|auto-303|<tuple|B.1.4.1.35|123>>
+    <associate|auto-304|<tuple|B.1.4.1.36|123>>
+    <associate|auto-305|<tuple|B.1.4.1.37|123>>
+    <associate|auto-306|<tuple|B.1.4.1.38|123>>
+    <associate|auto-307|<tuple|B.1.5|123>>
+    <associate|auto-308|<tuple|B.1.5.1|123>>
+    <associate|auto-309|<tuple|B.1.5.1.1|123>>
+    <associate|auto-31|<tuple|3.2.4|24>>
+    <associate|auto-310|<tuple|B.1.5.1.2|123>>
+    <associate|auto-311|<tuple|B.1.5.1.3|123>>
+    <associate|auto-312|<tuple|B.1.5.1.4|123>>
+    <associate|auto-313|<tuple|B.1.5.1.5|123>>
+    <associate|auto-314|<tuple|B.1.5.1.6|124>>
+    <associate|auto-315|<tuple|B.1.5.1.7|124>>
+    <associate|auto-316|<tuple|B.1.5.1.8|124>>
+    <associate|auto-317|<tuple|B.1.5.1.9|124>>
+    <associate|auto-318|<tuple|B.1.5.1.10|124>>
+    <associate|auto-319|<tuple|B.1.6|124>>
+    <associate|auto-32|<tuple|3.2.5|24>>
+    <associate|auto-320|<tuple|B.1.6.1|124>>
+    <associate|auto-321|<tuple|B.1.6.1.1|124>>
+    <associate|auto-322|<tuple|B.1.6.1.2|124>>
+    <associate|auto-323|<tuple|B.1.6.1.3|124>>
+    <associate|auto-324|<tuple|B.1.6.1.4|124>>
+    <associate|auto-325|<tuple|B.1.6.1.5|124>>
+    <associate|auto-326|<tuple|B.1.6.1.6|124>>
+    <associate|auto-327|<tuple|B.1.6.1.7|124>>
+    <associate|auto-328|<tuple|B.1.6.1.8|124>>
+    <associate|auto-329|<tuple|B.1.6.1.9|124>>
+    <associate|auto-33|<tuple|3.2.6|25>>
+    <associate|auto-330|<tuple|B.1.6.1.10|124>>
+    <associate|auto-331|<tuple|B.1.6.1.11|124>>
+    <associate|auto-332|<tuple|B.1.6.1.12|124>>
+    <associate|auto-333|<tuple|B.1.6.1.13|124>>
+    <associate|auto-334|<tuple|B.1.6.1.14|124>>
+    <associate|auto-335|<tuple|B.1.7|125>>
+    <associate|auto-336|<tuple|B.1.7.1|125>>
+    <associate|auto-337|<tuple|B.1.7.2|125>>
+    <associate|auto-338|<tuple|B.1.8|125>>
+    <associate|auto-339|<tuple|B.1.8.1|125>>
+    <associate|auto-34|<tuple|3.2.7|25>>
+    <associate|auto-340|<tuple|B.1.8.2|125>>
+    <associate|auto-341|<tuple|B.1.8.3|125>>
+    <associate|auto-342|<tuple|B.2|125>>
+    <associate|auto-343|<tuple|B.2.1|125>>
+    <associate|auto-344|<tuple|B.2.2|125>>
+    <associate|auto-345|<tuple|B.2.3|125>>
+    <associate|auto-346|<tuple|B.2.3.1|126>>
+    <associate|auto-347|<tuple|B.2.3.2|126>>
+    <associate|auto-348|<tuple|B.2.3.3|126>>
+    <associate|auto-349|<tuple|B.2.3.4|126>>
+    <associate|auto-35|<tuple|3.2.8|25>>
+    <associate|auto-350|<tuple|B.2.3.5|126>>
+    <associate|auto-351|<tuple|B.2.3.6|126>>
+    <associate|auto-352|<tuple|B.2.3.7|126>>
+    <associate|auto-353|<tuple|B.2.3.8|127>>
+    <associate|auto-354|<tuple|B.2.3.9|127>>
+    <associate|auto-355|<tuple|B.2.3.10|127>>
+    <associate|auto-356|<tuple|B.2.3.11|127>>
+    <associate|auto-357|<tuple|B.2.3.12|127>>
+    <associate|auto-358|<tuple|B.2.3.13|127>>
+    <associate|auto-359|<tuple|B.2.3.14|127>>
+    <associate|auto-36|<tuple|3.2.9|25>>
+    <associate|auto-360|<tuple|B.2.3.15|128>>
+    <associate|auto-361|<tuple|B.3|128>>
+    <associate|auto-362|<tuple|B.3.1|128>>
+    <associate|auto-363|<tuple|B.3.2|128>>
+    <associate|auto-364|<tuple|B.3.2.1|128>>
+    <associate|auto-365|<tuple|B.3.2.2|128>>
+    <associate|auto-366|<tuple|B.3.2.3|128>>
+    <associate|auto-367|<tuple|B.3.2.4|128>>
+    <associate|auto-368|<tuple|B.3.2.5|129>>
+    <associate|auto-369|<tuple|B.3.2.6|129>>
+    <associate|auto-37|<tuple|3.2.10|25>>
+    <associate|auto-370|<tuple|B.3.2.7|129>>
+    <associate|auto-371|<tuple|B.3.2.8|129>>
+    <associate|auto-372|<tuple|B.3.2.9|129>>
+    <associate|auto-373|<tuple|B.3.2.10|129>>
+    <associate|auto-374|<tuple|B.3.2.11|129>>
+    <associate|auto-375|<tuple|B.3.2.12|130>>
+    <associate|auto-376|<tuple|B.3.2.13|130>>
+    <associate|auto-377|<tuple|B.3.2.14|130>>
+    <associate|auto-378|<tuple|B.3.2.15|130>>
+    <associate|auto-379|<tuple|B.3.3|131>>
+    <associate|auto-38|<tuple|3.2.11|26>>
+    <associate|auto-380|<tuple|C|133>>
+    <associate|auto-381|<tuple|C|?>>
+    <associate|auto-382|<tuple|C|?>>
+    <associate|auto-383|<tuple|C|?>>
+    <associate|auto-384|<tuple|C|?>>
+    <associate|auto-385|<tuple|C|?>>
+    <associate|auto-39|<tuple|3.3|26>>
+    <associate|auto-4|<tuple|1.2.1|12>>
+    <associate|auto-40|<tuple|3.3.1|26>>
+    <associate|auto-41|<tuple|3.3.2|27>>
+    <associate|auto-42|<tuple|3.3.3|27>>
+    <associate|auto-43|<tuple|3.3.4|27>>
+    <associate|auto-44|<tuple|3.3.5|30>>
+    <associate|auto-45|<tuple|3.3.6|30>>
+    <associate|auto-46|<tuple|3.3.6.1|31>>
+    <associate|auto-47|<tuple|3.3.7|31>>
+    <associate|auto-48|<tuple|3.3.7.1|32>>
+    <associate|auto-49|<tuple|3.3.7.2|32>>
+    <associate|auto-5|<tuple|1.2.2|12>>
+    <associate|auto-50|<tuple|3.3.7.3|34>>
+    <associate|auto-51|<tuple|3.4|34>>
+    <associate|auto-52|<tuple|3.5|35>>
+    <associate|auto-53|<tuple|3.5.1|35>>
+    <associate|auto-54|<tuple|3.5.2|35>>
+    <associate|auto-55|<tuple|3.1|36>>
+    <associate|auto-56|<tuple|3.5.2.1|36>>
+    <associate|auto-57|<tuple|3.5.2.2|36>>
+    <associate|auto-58|<tuple|3.5.2.3|37>>
+    <associate|auto-59|<tuple|3.5.2.4|37>>
+    <associate|auto-6|<tuple|1.2.3|13>>
+    <associate|auto-60|<tuple|3.5.2.5|37>>
+    <associate|auto-61|<tuple|3.5.2.6|38>>
+    <associate|auto-62|<tuple|3.5.3|38>>
+    <associate|auto-63|<tuple|3.5.3.1|39>>
+    <associate|auto-64|<tuple|3.6|40>>
+    <associate|auto-65|<tuple|3.6.1|40>>
+    <associate|auto-66|<tuple|3.6.1.1|40>>
+    <associate|auto-67|<tuple|3.6.1.2|43>>
+    <associate|auto-68|<tuple|3.6.2|43>>
+    <associate|auto-69|<tuple|3.7|43>>
+    <associate|auto-7|<tuple|2|15>>
+    <associate|auto-70|<tuple|3.8|45>>
+    <associate|auto-71|<tuple|4|45>>
+    <associate|auto-72|<tuple|4.1|46>>
+    <associate|auto-73|<tuple|4.2|46>>
+    <associate|auto-74|<tuple|4.2.1|46>>
+    <associate|auto-75|<tuple|4.2.2|46>>
+    <associate|auto-76|<tuple|4.3|47>>
+    <associate|auto-77|<tuple|4.3.1|47>>
+    <associate|auto-78|<tuple|4.3.2|48>>
+    <associate|auto-79|<tuple|4.3.2.1|48>>
+    <associate|auto-8|<tuple|2.1|15>>
+    <associate|auto-80|<tuple|4.3.2.2|49>>
+    <associate|auto-81|<tuple|4.4|49>>
+    <associate|auto-82|<tuple|4.4.1|51>>
+    <associate|auto-83|<tuple|4.4.1.1|52>>
+    <associate|auto-84|<tuple|4.4.1.2|52>>
+    <associate|auto-85|<tuple|4.5|52>>
+    <associate|auto-86|<tuple|4.5.1|53>>
+    <associate|auto-87|<tuple|4.6|53>>
+    <associate|auto-88|<tuple|4.7|53>>
+    <associate|auto-89|<tuple|4.7.1|55>>
+    <associate|auto-9|<tuple|2.1.1|17>>
+    <associate|auto-90|<tuple|5|57>>
+    <associate|auto-91|<tuple|6|58>>
+    <associate|auto-92|<tuple|6.1|59>>
+    <associate|auto-93|<tuple|6.1.1|59>>
+    <associate|auto-94|<tuple|6.1.1.1|61>>
+    <associate|auto-95|<tuple|6.2|63>>
+    <associate|auto-96|<tuple|6.2.1|63>>
+    <associate|auto-97|<tuple|6.3|64>>
+    <associate|auto-98|<tuple|6.3.1|65>>
+    <associate|auto-99|<tuple|7|65>>
+    <associate|bib-Appel:2015|<tuple|1|133>>
+    <associate|bib-Carette:2009|<tuple|3|133>>
+    <associate|bib-Coq:manual|<tuple|5|133>>
+    <associate|bib-King1993|<tuple|8|133>>
+    <associate|bib-Mahboubi:2013|<tuple|9|133>>
+    <associate|bib-Mairson:1989|<tuple|10|133>>
+    <associate|bib-bip-0340|<tuple|18|133>>
+    <associate|bib-bip-schnorr|<tuple|17|109>>
+    <associate|bib-bitcoin|<tuple|11|133>>
+    <associate|bib-f-algebra|<tuple|16|133>>
+    <associate|bib-garillot:2009|<tuple|6|133>>
+    <associate|bib-gentzen|<tuple|7|133>>
+    <associate|bib-libsecp256k1|<tuple|17|133>>
+    <associate|bib-oconnor2014|<tuple|14|133>>
+    <associate|bib-satoshiScript|<tuple|12|133>>
+    <associate|bib-script|<tuple|2|133>>
+    <associate|bib-sec2|<tuple|4|133>>
+    <associate|bib-sha|<tuple|13|133>>
+    <associate|bib-unification|<tuple|15|133>>
+    <associate|chapter:preliminaries|<tuple|2|15>>
+    <associate|cite_ref-Martelli.Montanari.1976_16-1|<tuple|6.1.1|?>>
+    <associate|fig:inheritance|<tuple|8.1|78>>
+    <associate|footnote-1|<tuple|1|?>>
+    <associate|footnote-2|<tuple|2|?>>
+    <associate|footnote-2.1|<tuple|2.1|20>>
+    <associate|footnote-2.2|<tuple|2.2|23>>
+    <associate|footnote-3.1|<tuple|3.1|31>>
+    <associate|footnote-3.2|<tuple|3.2|36>>
+    <associate|footnr-2.1|<tuple|2.1|20>>
+    <associate|footnr-2.2|<tuple|2.2|23>>
+    <associate|footnr-3.1|<tuple|3.1|31>>
+    <associate|footnr-3.2|<tuple|3.2|36>>
+    <associate|full-adder-LHS|<tuple|3.3|29>>
+    <associate|full-adder-RHS|<tuple|3.2|29>>
+    <associate|full-adder-spec|<tuple|3.1|28>>
+    <associate|ss:AssertMerkleRoot|<tuple|4.3.2|47>>
+    <associate|ss:BTDenotationalSemantics|<tuple|4.4.1.1|51>>
+    <associate|ss:BTMerkleRoots|<tuple|4.4.1.2|52>>
+    <associate|ss:BitcoinPrimitives|<tuple|9.3|94>>
+    <associate|ss:BitcoinTransactions|<tuple|4.4.1|49>>
+    <associate|ss:CheckSigHash-Haskell|<tuple|9.1.6.3|?>>
+    <associate|ss:DAGs|<tuple|7.1|65>>
+    <associate|ss:DenotationalSemanticsOfFullSimplicity|<tuple|9.2.4|91>>
+    <associate|ss:Deserialization|<tuple|6.2|?>>
+    <associate|ss:ELDenotationalSemantics|<tuple|A.1|101>>
+    <associate|ss:FreeMonadicDeserialization|<tuple|9.2.6.1|92>>
+    <associate|ss:Haskell-CheckSigHash|<tuple|9.1.6.3|89>>
+    <associate|ss:Haskell-DAG|<tuple|9.2.6.2|93>>
+    <associate|ss:Haskell-Serialization|<tuple|9.2.6|92>>
     <associate|ss:IMR|<tuple|7.2.3|?>>
-    <associate|ss:ListFunctors|<tuple|2.2.2|?>>
-    <associate|ss:MonadZero|<tuple|2.3.4|?>>
-    <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|?>>
-    <associate|ss:Serialization|<tuple|7.2|?>>
-    <associate|ss:UniversalSignatureHashModes|<tuple|6.3|?>>
-    <associate|ss:bitOps|<tuple|3.3.1|?>>
-    <associate|ss:checkSigHashAll|<tuple|4.5.1|?>>
-    <associate|ss:cmr|<tuple|3.7|?>>
-    <associate|ss:coqArith|<tuple|8.3.2|?>>
-    <associate|ss:coqInitial|<tuple|8.2.1|?>>
-    <associate|ss:haskellLoop|<tuple|9.1.5.4|?>>
-    <associate|ss:inflate|<tuple|7.1.2.2|?>>
-    <associate|ss:monadicSemantics|<tuple|4.1|?>>
-    <associate|ss:optionMonad|<tuple|2.3.4.1|?>>
-    <associate|ss:pruning|<tuple|4.3.2.1|?>>
-    <associate|ss:salted|<tuple|4.3.2.2|?>>
-    <associate|ss:typeInference|<tuple|7.1.1|?>>
-    <associate|ss:unboundedLoop|<tuple|6.2|?>>
-    <associate|thm:CSCT|<tuple|3.4|?>>
+    <associate|ss:ListFunctors|<tuple|2.2.2|17>>
+    <associate|ss:MonadZero|<tuple|2.3.4|20>>
+    <associate|ss:RepresentingValuesAsCellArrays|<tuple|3.5.1|35>>
+    <associate|ss:Serialization|<tuple|7.2|70>>
+    <associate|ss:UniversalSignatureHashModes|<tuple|6.3|63>>
+    <associate|ss:bitOps|<tuple|3.3.1|26>>
+    <associate|ss:checkSigHashAll|<tuple|4.5.1|52>>
+    <associate|ss:cmr|<tuple|3.7|43>>
+    <associate|ss:coqArith|<tuple|8.3.2|77>>
+    <associate|ss:coqInitial|<tuple|8.2.1|75>>
+    <associate|ss:haskellLoop|<tuple|9.1.5.5|88>>
+    <associate|ss:inflate|<tuple|7.1.2.2|70>>
+    <associate|ss:monadicSemantics|<tuple|4.1|45>>
+    <associate|ss:optionMonad|<tuple|2.3.4.1|21>>
+    <associate|ss:pruning|<tuple|4.3.2.1|48>>
+    <associate|ss:salted|<tuple|4.3.2.2|48>>
+    <associate|ss:typeInference|<tuple|7.1.1|67>>
+    <associate|ss:unboundedLoop|<tuple|6.2|61>>
+    <associate|thm:CSCT|<tuple|3.3|34>>
+    <associate|v:checkSigHashAll|<tuple|8.6.6|?>>
   </collection>
 </references>
 
@@ -11946,7 +11933,7 @@
 
       libsecp256k1
 
-      bip-schnorr
+      bip-0340
 
       unification
 
@@ -11964,7 +11951,7 @@
 
       libsecp256k1
 
-      bip-schnorr
+      bip-0340
 
       oconnor2014
     </associate>
@@ -12523,959 +12510,963 @@
       Expressions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-143>>
 
-      <with|par-left|<quote|2tab>|9.1.5.1<space|2spc>Bits
+      <with|par-left|<quote|2tab>|9.1.5.1<space|2spc>Generic
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-144>>
 
-      <with|par-left|<quote|2tab>|9.1.5.2<space|2spc>Multi-bit Words
+      <with|par-left|<quote|2tab>|9.1.5.2<space|2spc>Bits
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-145>>
 
-      <with|par-left|<quote|2tab>|9.1.5.3<space|2spc>Generic
+      <with|par-left|<quote|2tab>|9.1.5.3<space|2spc>Multi-bit Words
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-146>>
 
-      <with|par-left|<quote|2tab>|9.1.5.4<space|2spc>Loop
+      <with|par-left|<quote|2tab>|9.1.5.4<space|2spc>Arithmetic
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-147>>
 
+      <with|par-left|<quote|2tab>|9.1.5.5<space|2spc>Loop
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-148>>
+
       <with|par-left|<quote|1tab>|9.1.6<space|2spc>Libraries of Simplicity
       Expressions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-148>>
+      <no-break><pageref|auto-149>>
 
       <with|par-left|<quote|2tab>|9.1.6.1<space|2spc>SHA-256
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-149>>
+      <no-break><pageref|auto-150>>
 
       <with|par-left|<quote|2tab>|9.1.6.2<space|2spc>LibSecp256k1
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-150>>
+      <no-break><pageref|auto-151>>
 
       <with|par-left|<quote|2tab>|9.1.6.3<space|2spc>CheckSigHash
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-151>>
+      <no-break><pageref|auto-152>>
 
       <with|par-left|<quote|1tab>|9.1.7<space|2spc>The Bit Machine
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-152>>
+      <no-break><pageref|auto-153>>
 
       <with|par-left|<quote|2tab>|9.1.7.1<space|2spc>Translating Simplicity
       to the Bit Machine <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-153>>
+      <no-break><pageref|auto-154>>
 
       <with|par-left|<quote|2tab>|9.1.7.2<space|2spc>Static Analysis
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-154>>
+      <no-break><pageref|auto-155>>
 
       <with|par-left|<quote|2tab>|9.1.7.3<space|2spc>Fast Evaluation with FFI
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-155>>
+      <no-break><pageref|auto-156>>
 
       9.2<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity-Indef>
       library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-156>
+      <no-break><pageref|auto-157>
 
       <with|par-left|<quote|1tab>|9.2.1<space|2spc>Primitive Signature
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-157>>
+      <no-break><pageref|auto-158>>
 
       <with|par-left|<quote|1tab>|9.2.2<space|2spc>Primitive Terms
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-158>>
+      <no-break><pageref|auto-159>>
 
       <with|par-left|<quote|1tab>|9.2.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|JetType>
       class <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-159>>
+      <no-break><pageref|auto-160>>
 
       <with|par-left|<quote|1tab>|9.2.4<space|2spc>Denotational Semantics of
       Full Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-160>>
+      <no-break><pageref|auto-161>>
 
       <with|par-left|<quote|1tab>|9.2.5<space|2spc>Type Inference
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-161>>
+      <no-break><pageref|auto-162>>
 
       <with|par-left|<quote|1tab>|9.2.6<space|2spc>Serialization
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-162>>
+      <no-break><pageref|auto-163>>
 
       <with|par-left|<quote|2tab>|9.2.6.1<space|2spc>Free Monadic
       Deserializaiton <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-163>>
+      <no-break><pageref|auto-164>>
 
       <with|par-left|<quote|2tab>|9.2.6.2<space|2spc>Serialization of
       Simplicity DAGs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-164>>
+      <no-break><pageref|auto-165>>
 
       <with|par-left|<quote|1tab>|9.2.7<space|2spc>Jet Substitution
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-165>>
+      <no-break><pageref|auto-166>>
 
       9.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity-Bitcoin>
       Libary <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-166>
+      <no-break><pageref|auto-167>
 
       9.4<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity>
       Library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-167>
+      <no-break><pageref|auto-168>
 
       <with|par-left|<quote|1tab>|9.4.1<space|2spc>CheckSigHashAll
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-168>>
+      <no-break><pageref|auto-169>>
 
       <with|par-left|<quote|1tab>|9.4.2<space|2spc>Known Discounted Jets
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-169>>
+      <no-break><pageref|auto-170>>
 
       9.5<space|2spc>Simplicity <with|font-family|<quote|tt>|language|<quote|verbatim>|testsuite>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-170>
+      <no-break><pageref|auto-171>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|10<space|2spc>C
       Library Guide> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-171><vspace|0.5fn>
+      <no-break><pageref|auto-172><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       A<space|2spc>Elements Application> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-172><vspace|0.5fn>
+      <no-break><pageref|auto-173><vspace|0.5fn>
 
       A.1<space|2spc>Denotational Semantics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-173>
+      <no-break><pageref|auto-174>
 
       <with|par-left|<quote|1tab>|A.1.1<space|2spc>Null Data
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-174>>
+      <no-break><pageref|auto-175>>
 
       <with|par-left|<quote|1tab>|A.1.2<space|2spc>Merkle Roots
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-175>>
+      <no-break><pageref|auto-176>>
 
       <with|par-left|<quote|1tab>|A.1.3<space|2spc>Serialization
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-176>>
+      <no-break><pageref|auto-177>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       B<space|2spc>Catelogue of Jets> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-177><vspace|0.5fn>
+      <no-break><pageref|auto-178><vspace|0.5fn>
 
       B.1<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110...:
       >Core Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-178>
+      <no-break><pageref|auto-179>
 
       <with|par-left|<quote|1tab>|B.1.1<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|1100...:
       >Jets for multi-bit logic <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-179>>
+      <no-break><pageref|auto-180>>
 
       <with|par-left|<quote|2tab>|B.1.1.1<space|2spc><with|font-family|<quote|ss>|low>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-180>>
+      <no-break><pageref|auto-181>>
 
       <with|par-left|<quote|2tab>|B.1.1.2<space|2spc><with|font-family|<quote|ss>|high>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-181>>
+      <no-break><pageref|auto-182>>
 
       <with|par-left|<quote|2tab>|B.1.1.3<space|2spc><with|font-family|<quote|ss>|complement>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-182>>
+      <no-break><pageref|auto-183>>
 
       <with|par-left|<quote|2tab>|B.1.1.4<space|2spc><with|font-family|<quote|ss>|and>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-183>>
+      <no-break><pageref|auto-184>>
 
       <with|par-left|<quote|2tab>|B.1.1.5<space|2spc><with|font-family|<quote|ss>|or>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-184>>
+      <no-break><pageref|auto-185>>
 
       <with|par-left|<quote|2tab>|B.1.1.6<space|2spc><with|font-family|<quote|ss>|xor>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-185>>
+      <no-break><pageref|auto-186>>
 
       <with|par-left|<quote|2tab>|B.1.1.7<space|2spc><with|font-family|<quote|ss>|maj>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-186>>
+      <no-break><pageref|auto-187>>
 
       <with|par-left|<quote|2tab>|B.1.1.8<space|2spc><with|font-family|<quote|ss>|xor3>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-187>>
+      <no-break><pageref|auto-188>>
 
       <with|par-left|<quote|2tab>|B.1.1.9<space|2spc><with|font-family|<quote|ss>|ch>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-188>>
+      <no-break><pageref|auto-189>>
 
       <with|par-left|<quote|2tab>|B.1.1.10<space|2spc><with|font-family|<quote|ss>|some>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-189>>
+      <no-break><pageref|auto-190>>
 
       <with|par-left|<quote|2tab>|B.1.1.11<space|2spc><with|font-family|<quote|ss>|all>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-190>>
+      <no-break><pageref|auto-191>>
 
       <with|par-left|<quote|2tab>|B.1.1.12<space|2spc><with|font-family|<quote|ss>|eq>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-191>>
+      <no-break><pageref|auto-192>>
 
       <with|par-left|<quote|2tab>|B.1.1.13<space|2spc><with|font-family|<quote|ss>|full-left-shift>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-192>>
+      <no-break><pageref|auto-193>>
 
       <with|par-left|<quote|2tab>|B.1.1.14<space|2spc><with|font-family|<quote|ss>|full-right-shift>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-193>>
+      <no-break><pageref|auto-194>>
 
       <with|par-left|<quote|2tab>|B.1.1.15<space|2spc><with|font-family|<quote|ss>|leftmost>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-194>>
+      <no-break><pageref|auto-195>>
 
       <with|par-left|<quote|2tab>|B.1.1.16<space|2spc><with|font-family|<quote|ss>|rightmost>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-195>>
+      <no-break><pageref|auto-196>>
 
       <with|par-left|<quote|2tab>|B.1.1.17<space|2spc><with|font-family|<quote|ss>|left-pad-low>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-196>>
+      <no-break><pageref|auto-197>>
 
       <with|par-left|<quote|2tab>|B.1.1.18<space|2spc><with|font-family|<quote|ss>|left-pad-high>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-197>>
+      <no-break><pageref|auto-198>>
 
       <with|par-left|<quote|2tab>|B.1.1.19<space|2spc><with|font-family|<quote|ss>|left-extend>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-198>>
+      <no-break><pageref|auto-199>>
 
       <with|par-left|<quote|2tab>|B.1.1.20<space|2spc><with|font-family|<quote|ss>|right-pad-low>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-199>>
+      <no-break><pageref|auto-200>>
 
       <with|par-left|<quote|2tab>|B.1.1.21<space|2spc><with|font-family|<quote|ss>|right-pad-high>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-200>>
+      <no-break><pageref|auto-201>>
 
       <with|par-left|<quote|2tab>|B.1.1.22<space|2spc><with|font-family|<quote|ss>|right-extend>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-201>>
+      <no-break><pageref|auto-202>>
 
       <with|par-left|<quote|2tab>|B.1.1.23<space|2spc><with|font-family|<quote|ss>|right-shift-with>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-202>>
+      <no-break><pageref|auto-203>>
 
       <with|par-left|<quote|2tab>|B.1.1.24<space|2spc><with|font-family|<quote|ss>|right-shift>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-203>>
+      <no-break><pageref|auto-204>>
 
       <with|par-left|<quote|2tab>|B.1.1.25<space|2spc><with|font-family|<quote|ss>|right-rotate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-204>>
+      <no-break><pageref|auto-205>>
 
       <with|par-left|<quote|2tab>|B.1.1.26<space|2spc><with|font-family|<quote|ss>|transpose>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-205>>
+      <no-break><pageref|auto-206>>
 
       <with|par-left|<quote|2tab>|B.1.1.27<space|2spc><with|font-family|<quote|ss>|find-first-high>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-206>>
+      <no-break><pageref|auto-207>>
 
       <with|par-left|<quote|2tab>|B.1.1.28<space|2spc><with|font-family|<quote|ss>|find-last-high>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-207>>
+      <no-break><pageref|auto-208>>
 
       <with|par-left|<quote|2tab>|B.1.1.29<space|2spc><with|font-family|<quote|ss>|bit>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-208>>
+      <no-break><pageref|auto-209>>
 
       <with|par-left|<quote|1tab>|B.1.2<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110100...:
       >Jets for arithmetic <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-209>>
+      <no-break><pageref|auto-210>>
 
       <with|par-left|<quote|2tab>|B.1.2.1<space|2spc><with|font-family|<quote|ss>|one>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-210>>
+      <no-break><pageref|auto-211>>
 
       <with|par-left|<quote|2tab>|B.1.2.2<space|2spc><with|font-family|<quote|ss>|full-add>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-211>>
+      <no-break><pageref|auto-212>>
 
       <with|par-left|<quote|2tab>|B.1.2.3<space|2spc><with|font-family|<quote|ss>|add>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-212>>
+      <no-break><pageref|auto-213>>
 
       <with|par-left|<quote|2tab>|B.1.2.4<space|2spc><with|font-family|<quote|ss>|full-increment>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-213>>
+      <no-break><pageref|auto-214>>
 
       <with|par-left|<quote|2tab>|B.1.2.5<space|2spc><with|font-family|<quote|ss>|increment>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-214>>
+      <no-break><pageref|auto-215>>
 
       <with|par-left|<quote|2tab>|B.1.2.6<space|2spc><with|font-family|<quote|ss>|popcount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-215>>
+      <no-break><pageref|auto-216>>
 
       <with|par-left|<quote|2tab>|B.1.2.7<space|2spc><with|font-family|<quote|ss>|full-subtract>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-216>>
+      <no-break><pageref|auto-217>>
 
       <with|par-left|<quote|2tab>|B.1.2.8<space|2spc><with|font-family|<quote|ss>|subtract>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-217>>
+      <no-break><pageref|auto-218>>
 
       <with|par-left|<quote|2tab>|B.1.2.9<space|2spc><with|font-family|<quote|ss>|negate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-218>>
+      <no-break><pageref|auto-219>>
 
       <with|par-left|<quote|2tab>|B.1.2.10<space|2spc><with|font-family|<quote|ss>|full-decrement>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-219>>
+      <no-break><pageref|auto-220>>
 
       <with|par-left|<quote|2tab>|B.1.2.11<space|2spc><with|font-family|<quote|ss>|decrement>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-220>>
+      <no-break><pageref|auto-221>>
 
       <with|par-left|<quote|2tab>|B.1.2.12<space|2spc><with|font-family|<quote|ss>|full-multiply>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-221>>
+      <no-break><pageref|auto-222>>
 
       <with|par-left|<quote|2tab>|B.1.2.13<space|2spc><with|font-family|<quote|ss>|multiply>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-222>>
+      <no-break><pageref|auto-223>>
 
       <with|par-left|<quote|2tab>|B.1.2.14<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|><with|font-family|<quote|ss>|is-zero>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-223>>
+      <no-break><pageref|auto-224>>
 
       <with|par-left|<quote|2tab>|B.1.2.15<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|><with|font-family|<quote|ss>|is-one>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-224>>
+      <no-break><pageref|auto-225>>
 
       <with|par-left|<quote|2tab>|B.1.2.16<space|2spc><with|font-family|<quote|ss>|le>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-225>>
+      <no-break><pageref|auto-226>>
 
       <with|par-left|<quote|2tab>|B.1.2.17<space|2spc><with|font-family|<quote|ss>|lt>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-226>>
+      <no-break><pageref|auto-227>>
 
       <with|par-left|<quote|2tab>|B.1.2.18<space|2spc><with|font-family|<quote|ss>|min>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-227>>
+      <no-break><pageref|auto-228>>
 
       <with|par-left|<quote|2tab>|B.1.2.19<space|2spc><with|font-family|<quote|ss>|max>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-228>>
+      <no-break><pageref|auto-229>>
 
       <with|par-left|<quote|2tab>|B.1.2.20<space|2spc><with|font-family|<quote|ss>|median>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-229>>
+      <no-break><pageref|auto-230>>
 
       <with|par-left|<quote|2tab>|B.1.2.21<space|2spc><with|font-family|<quote|ss>|div2n1n>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-230>>
+      <no-break><pageref|auto-231>>
 
       <with|par-left|<quote|2tab>|B.1.2.22<space|2spc><with|font-family|<quote|ss>|div-mod>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-231>>
+      <no-break><pageref|auto-232>>
 
       <with|par-left|<quote|2tab>|B.1.2.23<space|2spc><with|font-family|<quote|ss>|divide>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-232>>
+      <no-break><pageref|auto-233>>
 
       <with|par-left|<quote|2tab>|B.1.2.24<space|2spc><with|font-family|<quote|ss>|modulo>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-233>>
+      <no-break><pageref|auto-234>>
 
       <with|par-left|<quote|2tab>|B.1.2.25<space|2spc><with|font-family|<quote|ss>|divides>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-234>>
+      <no-break><pageref|auto-235>>
 
       <with|par-left|<quote|2tab>|B.1.2.26<space|2spc><with|font-family|<quote|ss>|eea>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-235>>
+      <no-break><pageref|auto-236>>
 
       <with|par-left|<quote|2tab>|B.1.2.27<space|2spc><with|font-family|<quote|ss>|bezout>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-236>>
+      <no-break><pageref|auto-237>>
 
       <with|par-left|<quote|2tab>|B.1.2.28<space|2spc><with|font-family|<quote|ss>|gcd>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-237>>
+      <no-break><pageref|auto-238>>
 
       <with|par-left|<quote|2tab>|B.1.2.29<space|2spc><with|font-family|<quote|ss>|cofactors>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-238>>
+      <no-break><pageref|auto-239>>
 
       <with|par-left|<quote|2tab>|B.1.2.30<space|2spc><with|font-family|<quote|ss>|lcm>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-239>>
+      <no-break><pageref|auto-240>>
 
       <with|par-left|<quote|2tab>|B.1.2.31<space|2spc><with|font-family|<quote|ss>|jacobi>
       (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-240>>
+      <no-break><pageref|auto-241>>
 
       <with|par-left|<quote|2tab>|B.1.2.32<space|2spc><with|font-family|<quote|ss>|absolute-value>
       (signed input/unsigned output) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-241>>
+      <no-break><pageref|auto-242>>
 
       <with|par-left|<quote|2tab>|B.1.2.33<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|><with|font-family|<quote|ss>|sign>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-242>>
+      <no-break><pageref|auto-243>>
 
       <with|par-left|<quote|2tab>|B.1.2.34<space|2spc><with|font-family|<quote|ss>|signed-le>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-243>>
+      <no-break><pageref|auto-244>>
 
       <with|par-left|<quote|2tab>|B.1.2.35<space|2spc><with|font-family|<quote|ss>|signed-lt>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-244>>
+      <no-break><pageref|auto-245>>
 
       <with|par-left|<quote|2tab>|B.1.2.36<space|2spc><with|font-family|<quote|ss>|signed-min>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-245>>
+      <no-break><pageref|auto-246>>
 
       <with|par-left|<quote|2tab>|B.1.2.37<space|2spc><with|font-family|<quote|ss>|signed-max>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-246>>
+      <no-break><pageref|auto-247>>
 
       <with|par-left|<quote|2tab>|B.1.2.38<space|2spc><with|font-family|<quote|ss>|signed-median>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-247>>
+      <no-break><pageref|auto-248>>
 
       <with|par-left|<quote|2tab>|B.1.2.39<space|2spc><with|font-family|<quote|ss>|signed-right-shift>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-248>>
+      <no-break><pageref|auto-249>>
 
       <with|par-left|<quote|2tab>|B.1.2.40<space|2spc><with|font-family|<quote|ss>|signed-divmod>
       (unsigned denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-249>>
+      <no-break><pageref|auto-250>>
 
       <with|par-left|<quote|2tab>|B.1.2.41<space|2spc><with|font-family|<quote|ss>|signed-div>
       (unsigned denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-250>>
+      <no-break><pageref|auto-251>>
 
       <with|par-left|<quote|2tab>|B.1.2.42<space|2spc><with|font-family|<quote|ss>|signed-signed-divmod>
       (signed denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-251>>
+      <no-break><pageref|auto-252>>
 
       <with|par-left|<quote|2tab>|B.1.2.43<space|2spc><with|font-family|<quote|ss>|signed-signed-div>
       (signed denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-252>>
+      <no-break><pageref|auto-253>>
 
       <with|par-left|<quote|1tab>|B.1.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110101...:
       >Jets for hash functions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-253>>
+      <no-break><pageref|auto-254>>
 
       <with|par-left|<quote|2tab>|B.1.3.1<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|1101010...:
       >Jets for SHA-2 <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-254>>
+      <no-break><pageref|auto-255>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sha-256-block>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-255><vspace|0.15fn>>
+      <no-break><pageref|auto-256><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sha-256-iv>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-256><vspace|0.15fn>>
+      <no-break><pageref|auto-257><vspace|0.15fn>>
 
       <with|par-left|<quote|2tab>|B.1.3.2<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110101100...:
       >Jets for SHA-3 <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-257>>
+      <no-break><pageref|auto-258>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sha3-zero>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-258><vspace|0.15fn>>
+      <no-break><pageref|auto-259><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sha3-absorb>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-259><vspace|0.15fn>>
+      <no-break><pageref|auto-260><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sha3-xor>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-260><vspace|0.15fn>>
+      <no-break><pageref|auto-261><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sha3-permute>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-261><vspace|0.15fn>>
+      <no-break><pageref|auto-262><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sha3-squeeze-256>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-262><vspace|0.15fn>>
+      <no-break><pageref|auto-263><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sha3-squeeze-512>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-263><vspace|0.15fn>>
+      <no-break><pageref|auto-264><vspace|0.15fn>>
 
       <with|par-left|<quote|2tab>|B.1.3.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110101101...:
       >Jets for RIPEMD <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-264>>
+      <no-break><pageref|auto-265>>
 
       <with|par-left|<quote|2tab>|B.1.3.4<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110101110000...:
       >Jets for SHA-1 (RESERVED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-265>>
+      <no-break><pageref|auto-266>>
 
       <with|par-left|<quote|1tab>|B.1.4<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110110000...:
       >Jets for elliptic curve functions <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-266>>
+      <no-break><pageref|auto-267>>
 
       <with|par-left|<quote|2tab>|B.1.4.1<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|1101100000...:
       >Jets for secp256k1 <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-267>>
+      <no-break><pageref|auto-268>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-normalize>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-268><vspace|0.15fn>>
+      <no-break><pageref|auto-269><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-negate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-269><vspace|0.15fn>>
+      <no-break><pageref|auto-270><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-add>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-270><vspace|0.15fn>>
+      <no-break><pageref|auto-271><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-square>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-271><vspace|0.15fn>>
+      <no-break><pageref|auto-272><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-multiply>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-272><vspace|0.15fn>>
+      <no-break><pageref|auto-273><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-multiply-beta>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-273><vspace|0.15fn>>
+      <no-break><pageref|auto-274><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-invert>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-274><vspace|0.15fn>>
+      <no-break><pageref|auto-275><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-square-root>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-275><vspace|0.15fn>>
+      <no-break><pageref|auto-276><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-is-zero>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-276><vspace|0.15fn>>
+      <no-break><pageref|auto-277><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-is-odd>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-277><vspace|0.15fn>>
+      <no-break><pageref|auto-278><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-is-quad>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-278><vspace|0.15fn>>
+      <no-break><pageref|auto-279><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-normalize>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-279><vspace|0.15fn>>
+      <no-break><pageref|auto-280><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-negate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-280><vspace|0.15fn>>
+      <no-break><pageref|auto-281><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-add>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-281><vspace|0.15fn>>
+      <no-break><pageref|auto-282><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-square>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-282><vspace|0.15fn>>
+      <no-break><pageref|auto-283><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-multiply>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-283><vspace|0.15fn>>
+      <no-break><pageref|auto-284><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-multiply-lambda>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-284><vspace|0.15fn>>
+      <no-break><pageref|auto-285><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-invert>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-285><vspace|0.15fn>>
+      <no-break><pageref|auto-286><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-is-zero>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-286><vspace|0.15fn>>
+      <no-break><pageref|auto-287><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-infinity>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-287><vspace|0.15fn>>
+      <no-break><pageref|auto-288><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-normalize>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-288><vspace|0.15fn>>
+      <no-break><pageref|auto-289><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-negate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-289><vspace|0.15fn>>
+      <no-break><pageref|auto-290><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-ge-negate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-290><vspace|0.15fn>>
+      <no-break><pageref|auto-291><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-double>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-291><vspace|0.15fn>>
+      <no-break><pageref|auto-292><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-add>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-292><vspace|0.15fn>>
+      <no-break><pageref|auto-293><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-ge-add-ex>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-293><vspace|0.15fn>>
+      <no-break><pageref|auto-294><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-ge-add>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-294><vspace|0.15fn>>
+      <no-break><pageref|auto-295><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-is-infinity>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-295><vspace|0.15fn>>
+      <no-break><pageref|auto-296><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-equiv>
       <with|color|<quote|red>|Does not exist in libsecp256k1>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-296><vspace|0.15fn>>
+      <no-break><pageref|auto-297><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-x-equiv>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-297><vspace|0.15fn>>
+      <no-break><pageref|auto-298><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-y-is-odd>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-298><vspace|0.15fn>>
+      <no-break><pageref|auto-299><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-generate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-299><vspace|0.15fn>>
+      <no-break><pageref|auto-300><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scale>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-300><vspace|0.15fn>>
+      <no-break><pageref|auto-301><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-linear-combination>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-301><vspace|0.15fn>>
+      <no-break><pageref|auto-302><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-ge-scale-lambda>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-302><vspace|0.15fn>>
+      <no-break><pageref|auto-303><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-scale-lambda>
       <with|color|<quote|red>|Consider removing>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-303><vspace|0.15fn>>
+      <no-break><pageref|auto-304><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-split-lambda>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-304><vspace|0.15fn>>
+      <no-break><pageref|auto-305><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-short-scalar>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-305><vspace|0.15fn>>
+      <no-break><pageref|auto-306><vspace|0.15fn>>
 
       <with|par-left|<quote|1tab>|B.1.5<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110110001...:
       >Jets for digital signatures <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-306>>
+      <no-break><pageref|auto-307>>
 
       <with|par-left|<quote|2tab>|B.1.5.1<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|1101100010...:
       >Jets for secp256k1 based digital signatures
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-307>>
+      <no-break><pageref|auto-308>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip0340-schnorr>-verify
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-308><vspace|0.15fn>>
+      <no-break><pageref|auto-309><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip0340-challenge-iv>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-309><vspace|0.15fn>>
+      <no-break><pageref|auto-310><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip0340-challenge-midstate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-310><vspace|0.15fn>>
+      <no-break><pageref|auto-311><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip0340-schnorr-midstate>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-311><vspace|0.15fn>>
+      <no-break><pageref|auto-312><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-signature-unpack>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-312><vspace|0.15fn>>
+      <no-break><pageref|auto-313><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-313><vspace|0.15fn>>
+      <no-break><pageref|auto-314><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack-neg>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-314><vspace|0.15fn>>
+      <no-break><pageref|auto-315><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack-quad>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-315><vspace|0.15fn>>
+      <no-break><pageref|auto-316><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-point-unpack>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-316><vspace|0.15fn>>
+      <no-break><pageref|auto-317><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-ecdsa>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-317><vspace|0.15fn>>
+      <no-break><pageref|auto-318><vspace|0.15fn>>
 
       <with|par-left|<quote|1tab>|B.1.6<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110110010...:
       >Jets for Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-318>>
+      <no-break><pageref|auto-319>>
 
       <with|par-left|<quote|2tab>|B.1.6.1<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|11011000100...:
       >Jets for tagged hash IVs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-319>>
+      <no-break><pageref|auto-320>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|iden-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-320><vspace|0.15fn>>
+      <no-break><pageref|auto-321><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|comp-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-321><vspace|0.15fn>>
+      <no-break><pageref|auto-322><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|unit-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-322><vspace|0.15fn>>
+      <no-break><pageref|auto-323><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|injl-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-323><vspace|0.15fn>>
+      <no-break><pageref|auto-324><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|injr-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-324><vspace|0.15fn>>
+      <no-break><pageref|auto-325><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|case-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-325><vspace|0.15fn>>
+      <no-break><pageref|auto-326><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|pair-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-326><vspace|0.15fn>>
+      <no-break><pageref|auto-327><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|take-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-327><vspace|0.15fn>>
+      <no-break><pageref|auto-328><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|drop-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-328><vspace|0.15fn>>
+      <no-break><pageref|auto-329><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|witness-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-329><vspace|0.15fn>>
+      <no-break><pageref|auto-330><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|disconnect-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-330><vspace|0.15fn>>
+      <no-break><pageref|auto-331><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|fail-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-331><vspace|0.15fn>>
+      <no-break><pageref|auto-332><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|signtaure-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-332><vspace|0.15fn>>
+      <no-break><pageref|auto-333><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sighash-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-333><vspace|0.15fn>>
+      <no-break><pageref|auto-334><vspace|0.15fn>>
 
       <with|par-left|<quote|1tab>|B.1.7<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110110011...:
       >Jets for Bitcoin (without primitives)
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-334>>
+      <no-break><pageref|auto-335>>
 
       <with|par-left|<quote|2tab>|B.1.7.1<space|2spc><with|font-family|<quote|ss>|parse-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-335>>
+      <no-break><pageref|auto-336>>
 
       <with|par-left|<quote|2tab>|B.1.7.2<space|2spc><with|font-family|<quote|ss>|parse-sequence>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-336>>
+      <no-break><pageref|auto-337>>
 
       <with|par-left|<quote|1tab>|B.1.8<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|1101101000...:
       >Jets for Elements (without primitives)
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-337>>
+      <no-break><pageref|auto-338>>
 
       <with|par-left|<quote|2tab>|B.1.8.1<space|2spc><with|font-family|<quote|ss>|generate-entropy>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-338>>
+      <no-break><pageref|auto-339>>
 
       <with|par-left|<quote|2tab>|B.1.8.2<space|2spc><with|font-family|<quote|ss>|calculate-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-339>>
+      <no-break><pageref|auto-340>>
 
       <with|par-left|<quote|2tab>|B.1.8.3<space|2spc><with|font-family|<quote|ss>|calculate-token>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-340>>
+      <no-break><pageref|auto-341>>
 
       B.2<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|111...:
       >Bitcoin Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-341>
+      <no-break><pageref|auto-342>
 
       <with|par-left|<quote|1tab>|B.2.1<space|2spc>Transaction
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-342>>
+      <no-break><pageref|auto-343>>
 
       <with|par-left|<quote|1tab>|B.2.2<space|2spc>Signature Hash Modes
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-343>>
+      <no-break><pageref|auto-344>>
 
       <with|par-left|<quote|1tab>|B.2.3<space|2spc>Time Locks
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-344>>
+      <no-break><pageref|auto-345>>
 
       <with|par-left|<quote|2tab>|B.2.3.1<space|2spc><with|font-family|<quote|ss>|total-height-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-345>>
+      <no-break><pageref|auto-346>>
 
       <with|par-left|<quote|2tab>|B.2.3.2<space|2spc><with|font-family|<quote|ss>|total-time-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-346>>
+      <no-break><pageref|auto-347>>
 
       <with|par-left|<quote|2tab>|B.2.3.3<space|2spc><with|font-family|<quote|ss>|total-distance-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-347>>
+      <no-break><pageref|auto-348>>
 
       <with|par-left|<quote|2tab>|B.2.3.4<space|2spc><with|font-family|<quote|ss>|total-duration-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-348>>
+      <no-break><pageref|auto-349>>
 
       <with|par-left|<quote|2tab>|B.2.3.5<space|2spc><with|font-family|<quote|ss>|is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-349>>
+      <no-break><pageref|auto-350>>
 
       <with|par-left|<quote|2tab>|B.2.3.6<space|2spc><with|font-family|<quote|ss>|current-height-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-350>>
+      <no-break><pageref|auto-351>>
 
       <with|par-left|<quote|2tab>|B.2.3.7<space|2spc><with|font-family|<quote|ss>|current-time-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-351>>
+      <no-break><pageref|auto-352>>
 
       <with|par-left|<quote|2tab>|B.2.3.8<space|2spc><with|font-family|<quote|ss>|current-distance-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-352>>
+      <no-break><pageref|auto-353>>
 
       <with|par-left|<quote|2tab>|B.2.3.9<space|2spc><with|font-family|<quote|ss>|current-duration-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-353>>
+      <no-break><pageref|auto-354>>
 
       <with|par-left|<quote|2tab>|B.2.3.10<space|2spc><with|font-family|<quote|ss>|current-is-Final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-354>>
+      <no-break><pageref|auto-355>>
 
       <with|par-left|<quote|2tab>|B.2.3.11<space|2spc><with|font-family|<quote|ss>|input-height-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-355>>
+      <no-break><pageref|auto-356>>
 
       <with|par-left|<quote|2tab>|B.2.3.12<space|2spc><with|font-family|<quote|ss>|input-time-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-356>>
+      <no-break><pageref|auto-357>>
 
       <with|par-left|<quote|2tab>|B.2.3.13<space|2spc><with|font-family|<quote|ss>|input-distance-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-357>>
+      <no-break><pageref|auto-358>>
 
       <with|par-left|<quote|2tab>|B.2.3.14<space|2spc><with|font-family|<quote|ss>|input-duration-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-358>>
+      <no-break><pageref|auto-359>>
 
       <with|par-left|<quote|2tab>|B.2.3.15<space|2spc><with|font-family|<quote|ss>|input-is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-359>>
+      <no-break><pageref|auto-360>>
 
       B.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|111...:
       >Elements Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-360>
+      <no-break><pageref|auto-361>
 
       <with|par-left|<quote|1tab>|B.3.1<space|2spc>Transaction
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-361>>
+      <no-break><pageref|auto-362>>
 
       <with|par-left|<quote|1tab>|B.3.2<space|2spc>Time Locks
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-362>>
+      <no-break><pageref|auto-363>>
 
       <with|par-left|<quote|2tab>|B.3.2.1<space|2spc><with|font-family|<quote|ss>|total-height-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-363>>
+      <no-break><pageref|auto-364>>
 
       <with|par-left|<quote|2tab>|B.3.2.2<space|2spc><with|font-family|<quote|ss>|total-time-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-364>>
+      <no-break><pageref|auto-365>>
 
       <with|par-left|<quote|2tab>|B.3.2.3<space|2spc><with|font-family|<quote|ss>|total-distance-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-365>>
+      <no-break><pageref|auto-366>>
 
       <with|par-left|<quote|2tab>|B.3.2.4<space|2spc><with|font-family|<quote|ss>|total-duration-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-366>>
+      <no-break><pageref|auto-367>>
 
       <with|par-left|<quote|2tab>|B.3.2.5<space|2spc><with|font-family|<quote|ss>|is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-367>>
+      <no-break><pageref|auto-368>>
 
       <with|par-left|<quote|2tab>|B.3.2.6<space|2spc><with|font-family|<quote|ss>|current-height-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-368>>
+      <no-break><pageref|auto-369>>
 
       <with|par-left|<quote|2tab>|B.3.2.7<space|2spc><with|font-family|<quote|ss>|current-time-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-369>>
+      <no-break><pageref|auto-370>>
 
       <with|par-left|<quote|2tab>|B.3.2.8<space|2spc><with|font-family|<quote|ss>|current-distance-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-370>>
+      <no-break><pageref|auto-371>>
 
       <with|par-left|<quote|2tab>|B.3.2.9<space|2spc><with|font-family|<quote|ss>|current-duration-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-371>>
+      <no-break><pageref|auto-372>>
 
       <with|par-left|<quote|2tab>|B.3.2.10<space|2spc><with|font-family|<quote|ss>|current-is-Final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-372>>
+      <no-break><pageref|auto-373>>
 
       <with|par-left|<quote|2tab>|B.3.2.11<space|2spc><with|font-family|<quote|ss>|input-height-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-373>>
+      <no-break><pageref|auto-374>>
 
       <with|par-left|<quote|2tab>|B.3.2.12<space|2spc><with|font-family|<quote|ss>|input-time-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-374>>
+      <no-break><pageref|auto-375>>
 
       <with|par-left|<quote|2tab>|B.3.2.13<space|2spc><with|font-family|<quote|ss>|input-distance-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-375>>
+      <no-break><pageref|auto-376>>
 
       <with|par-left|<quote|2tab>|B.3.2.14<space|2spc><with|font-family|<quote|ss>|input-duration-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-376>>
+      <no-break><pageref|auto-377>>
 
       <with|par-left|<quote|2tab>|B.3.2.15<space|2spc><with|font-family|<quote|ss>|input-is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-377>>
+      <no-break><pageref|auto-378>>
 
       <with|par-left|<quote|1tab>|B.3.3<space|2spc>Issuance
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-378>>
+      <no-break><pageref|auto-379>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       C<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-379><vspace|0.5fn>
+      <no-break><pageref|auto-380><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-380><vspace|0.5fn>
+      <no-break><pageref|auto-381><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

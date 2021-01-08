@@ -21,6 +21,7 @@ module Simplicity.Programs.LibSecp256k1.Lib
   , scalar_split_lambda, scalar_split_128
   , scalar_is_zero
   -- * Elliptic curve multiplication related operations
+  , LibSecp256k1.Vector129
   , wnaf5, wnaf15
   , generate, scale
   , linear_combination_1
