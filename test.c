@@ -5,10 +5,12 @@
 #include "dag.h"
 #include "deserialize.h"
 #include "eval.h"
-#include "typeInference.h"
 #include "hashBlock.h"
+#include "rsort.h"
+#include "sha256.h"
 #include "schnorr0.h"
 #include "schnorr6.h"
+#include "typeInference.h"
 #include "primitive/elements/checkSigHashAllTx1.h"
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
@@ -356,10 +358,62 @@ static void test_elements(void) {
   }
 }
 
+static sha256_midstate hashint(uint_fast32_t n) {
+  sha256_midstate result;
+  sha256_context ctx = sha256_init(result.s);
+  sha256_u32le(&ctx, n);
+  sha256_finalize(&ctx);
+
+  return result;
+}
+
+static uint_fast32_t rsort_no_duplicates(size_t i) {
+  return i;
+}
+
+static uint_fast32_t rsort_all_duplicates(size_t i) {
+  (void)i;
+  return 0;
+}
+
+static uint_fast32_t rsort_one_duplicate(size_t i) {
+  return i ? i : 1;
+}
+
+static void test_hasDuplicates(const char* name, bool expected, uint_fast32_t (*f)(size_t), size_t n) {
+  sha256_midstate hashes[n];
+  const sha256_midstate* ptrs[n];
+
+  printf("Test %s\n", name);
+  for(size_t i = 0; i < n; ++i) {
+    hashes[i] = hashint(f(i));
+    ptrs[i] = hashes + i;
+  }
+
+  bool duplicates;
+  if (!hasDuplicates(&duplicates, ptrs, n)) {
+    failures++;
+    printf("Unexpected failure of hasDuplicates\n");
+  } else if (expected == duplicates) {
+    successes++;
+  } else if (expected) {
+    failures++;
+    printf("Expected duplicates but found none.\n");
+  } else {
+    failures++;
+    printf("Expected no duplicate but found some.\n");
+  }
+}
+
 int main(void) {
   test_decodeUptoMaxInt();
   test_hashBlock();
   test_occursCheck();
+
+  test_hasDuplicates("hasDuplicates no duplicates testcase", false, rsort_no_duplicates, 10000);
+  test_hasDuplicates("hasDuplicates all duplicates testcase", true, rsort_all_duplicates, 10000);
+  test_hasDuplicates("hasDuplicates one duplicate testcase", true, rsort_one_duplicate, 10000);
+
   {
     FILE* file = fmemopen_rb(schnorr0, sizeof_schnorr0);
     test_program("schnorr0", file, true, schnorr0_cmr, schnorr0_amr);
