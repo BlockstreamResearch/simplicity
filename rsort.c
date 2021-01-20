@@ -14,6 +14,7 @@ static unsigned char readLevel(const sha256_midstate* a, size_t i) {
 
 /* Given an array of midstate pointers,
  * count the frequencies of the values of the 'j'th character of each midstate's internal representation.
+ * Returns 'true' if the 'j'th character of every entry is the same, otherwise returns 'false'.
  *
  * The time complexity of 'freq' is O('len').
  *
@@ -21,12 +22,17 @@ static unsigned char readLevel(const sha256_midstate* a, size_t i) {
  *               const sha256_midstate * const a[len];
  *               j < sizeof((*a)->s)
  */
-static void freq(size_t* result, const sha256_midstate * const * a, size_t len, size_t j) {
+static bool freq(size_t* result, const sha256_midstate * const * a, size_t len, size_t j) {
   memset(result, 0, CHAR_COUNT * sizeof(size_t));
 
-  for (size_t i = 0; i < len; ++i) {
+  if (0 == len) return true;
+
+  for (size_t i = 0; i < len - 1; ++i) {
     result[readLevel(a[i],j)]++;
   }
+
+  /* Check the final iteration to see if the frequency is equal to 'len'. */
+  return len == ++result[readLevel(a[len-1],j)];
 }
 
 /* Given an array of bucket sizes, return an array of their cumulative sizes.
@@ -92,7 +98,12 @@ const sha256_midstate* rsort(size_t* scratch, const sha256_midstate** a, size_t 
     size_t* bucketSize = scratch + CHAR_COUNT;
 
     /* The time complexity of 'freq' is O('len'). */
-    freq(bucketSize, a, len, level - 1);
+    while (freq(bucketSize, a, len, level - 1)) {
+      /* If there is only one non-empty bucket, then we can proceed directly to the next level. */
+      level--;
+      if (0 == level) return a[0];
+    };
+
     cumulative(bucketEnds, bucketSize);
     assert(len == bucketEnds[UCHAR_MAX]);
 
