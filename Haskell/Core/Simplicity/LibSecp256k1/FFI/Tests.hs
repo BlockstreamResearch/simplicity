@@ -30,7 +30,10 @@ tests = testGroup "C / SPEC"
         , testProperty "fe_square_root" prop_fe_square_root
         ]
       , testGroup "group"
-        [ testProperty "gej_double_inf" prop_gej_double_inf
+        [ testProperty "gej_rescale" prop_gej_rescale
+        , testProperty "gej_rescale_zero" prop_gej_rescale_zero
+        , testProperty "gej_rescale_inf" prop_gej_rescale_inf
+        , testProperty "gej_double_inf" prop_gej_double_inf
         , testProperty "gej_double" prop_gej_double
         , testProperty "gej_add" prop_gej_add
         , testProperty "gej_add_double" prop_gej_add_double
@@ -105,6 +108,10 @@ prop_fe_invert a = C.fe_invert a == Spec.fe_invert a
 prop_fe_square_root a = C.fe_square_root a == Spec.fe_square_root a
 
 gen_inf = GEJ <$> arbitrary <*> arbitrary <*> pure fe_zero
+
+prop_gej_rescale c a = C.gej_rescale c a `eq_gej` Spec.gej_rescale c a
+prop_gej_rescale_zero = prop_gej_rescale fe_zero
+prop_gej_rescale_inf c = forAll gen_inf (prop_gej_rescale c)
 
 prop_gej_double_inf = forAll gen_inf prop_gej_double
 prop_gej_double a = C.gej_double a `eq_gej` Spec.gej_double a

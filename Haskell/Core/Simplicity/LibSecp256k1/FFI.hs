@@ -1,7 +1,7 @@
 module Simplicity.LibSecp256k1.FFI
  ( Simplicity.LibSecp256k1.FFI.fe_pack, fe_unpack
  , fe_is_zero, fe_is_odd, fe_negate, fe_multiply_int, fe_add, fe_multiply, fe_square, fe_invert, fe_square_root
- , gej_double, gej_add, gej_ge_add_ex, gej_ge_add_zinv
+ , gej_double, gej_rescale, gej_add, gej_ge_add_ex, gej_ge_add_zinv
  , ge_scale_lambda
  , gej_x_equiv, has_quad_y
  , scalar_negate, scalar_split_lambda, scalar_split_128
@@ -124,6 +124,7 @@ foreign import ccall unsafe "secp256k1_fe_mul" c_secp256k1_fe_mul :: Ptr FE -> P
 foreign import ccall unsafe "secp256k1_fe_sqr" c_secp256k1_fe_sqr :: Ptr FE -> Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_fe_inv" c_secp256k1_fe_inv :: Ptr FE -> Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_fe_sqrt" c_secp256k1_fe_sqrt :: Ptr FE -> Ptr FE -> IO CInt
+foreign import ccall unsafe "secp256k1_gej_rescale" c_secp256k1_gej_rescale :: Ptr GEJ -> Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_gej_double_var" c_secp256k1_gej_double_var :: Ptr GEJ -> Ptr GEJ -> Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_gej_add_var" c_secp256k1_gej_add_var :: Ptr GEJ -> Ptr GEJ -> Ptr GEJ -> Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_gej_add_ge_var" c_secp256k1_gej_add_ge_var :: Ptr GEJ -> Ptr GEJ -> Ptr GE -> Ptr FE -> IO ()
@@ -212,6 +213,14 @@ fe_square_root a = unsafeDupablePerformIO $ do
  alloca $ \rptr -> do
    CInt flag <- c_secp256k1_fe_sqrt rptr aptr
    if flag == 0 then return Nothing else Just <$> peek rptr
+
+gej_rescale :: FE -> GEJ -> GEJ
+gej_rescale c a | fe_is_zero c = mempty
+                | otherwise = unsafeDupablePerformIO $ do
+  with c $ \cptr -> do
+  with a $ \aptr -> do
+    c_secp256k1_gej_rescale aptr cptr
+    peek aptr
 
 gej_double :: GEJ -> GEJ
 gej_double a = unsafeDupablePerformIO $ do

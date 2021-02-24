@@ -1,4 +1,4 @@
-{ mkDerivation, base, binary, cereal, lens-family, lib, MemoTrie, mtl, QuickCheck, stdenv, SHA, split, tasty, tasty-hunit, tasty-quickcheck, unification-fd, vector }:
+{ mkDerivation, base, binary, cereal, lens-family, lib, MemoTrie, mtl, QuickCheck, stdenv, SHA, split, tasty, tasty-hunit, tasty-quickcheck, tardis, unification-fd, vector }:
 mkDerivation (rec {
   pname = "Simplicity";
   version = "0.0.0";
@@ -7,7 +7,7 @@ mkDerivation (rec {
                               "^libsha256compression$" "^libsha256compression/.*"
                               "^C$" "^C/uword.h" "^C/bitstring.h" "^C/frame.*" "^C/jets.*" "^C/sha256.h"])
     ["LICENSE" ".cabal" ".hs" ".hsig" ".h" ".c"];
-  libraryHaskellDepends = [ base binary cereal lens-family MemoTrie mtl SHA split unification-fd vector ];
+  libraryHaskellDepends = [ base binary cereal lens-family MemoTrie mtl SHA split tardis unification-fd vector ];
   testHaskellDepends = libraryHaskellDepends ++ [ QuickCheck tasty tasty-hunit tasty-quickcheck ];
   testTarget = ''--test-option="--quickcheck-replay=582534"'';
 

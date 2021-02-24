@@ -10,7 +10,7 @@ module Simplicity.LibSecp256k1.Spec
  , gej_double, gej_add_ex
  , gej_x_equiv, gej_y_is_odd
  , GE(..)
- , gej_normalize
+ , gej_normalize, gej_rescale
  , gej_ge_add_ex, gej_ge_add_zinv
  , ge_negate, ge_scale_lambda
    -- * Scalar operations
@@ -29,6 +29,7 @@ module Simplicity.LibSecp256k1.Spec
 import Control.Monad (guard)
 import Control.Monad.Trans.RWS hiding (put)
 import Control.Monad.Trans.State (state, evalState)
+import Control.Monad.Trans.Tardis (Tardis, getFuture, getPast, getsPast, modifyBackwards, modifyForwards, runTardis, sendFuture)
 import Data.Bits ((.&.), (.|.), finiteBitSize)
 import Data.ByteString.Short (ShortByteString, pack)
 import qualified Data.ByteString.Char8 as BSC
@@ -220,6 +221,11 @@ _z f (GEJ x y z) = (\z -> GEJ x y z) <$> f z
 -- | Checks if the point is a representation of infinity.
 isInf :: GEJ -> Bool
 isInf a = fe_is_zero (a^._z)
+
+-- | Returns an equivalent point with the z-coefficent multiplied by the given constant.
+-- This will return infinity if the constant is zero.
+gej_rescale :: FE -> GEJ -> GEJ
+gej_rescale c (GEJ x y z) = GEJ (x .*. c .^. 2) (y .*. c .^. 3) (z .*. c)
 
 -- | Compute the point doubling formula for a 'GEJ'.
 gej_double :: GEJ -> GEJ
@@ -434,7 +440,7 @@ linear_combination_1 na0 a ng = foldr f mempty zips & _z %~ (.*. globalZ)
   (ng1, ng2) = scalar_split_128 ng
   wa = 5
   (tableA, globalZ) | scalar_is_zero na = (V.empty, fe_one)
-                    | otherwise = scalarTable wa a
+                    | otherwise = runTableM (scalarTable wa a)
   tableAlam = ge_scale_lambda <$> tableA
   f (Nothing, Nothing, Nothing, Nothing) r0 = gej_double r0
   f (Just a1, Nothing, Nothing, Nothing) r0
@@ -473,21 +479,45 @@ wnaf w s = post <$> wnafInteger w s
   post i | odd i = Just $ i `div` 2
          | otherwise = error "Simplicity.LibSecp256k1.Spec: invalid result from wnafInteger"
 
+-- | A monad used to help construct scalar tables with a common z-coordinate.
+type TableM a = Tardis FE GEJ a
+
+-- | Execute a 'TableM' computation, also returning the combon z-coordinate value.
+runTableM :: TableM a -> (a, FE)
+runTableM tardis = (a, p^._z)
+ where
+  (a,(_,p)) = runTardis tardis (fe_one, GEJ fe_zero fe_zero fe_one)
+
+-- | Get the current table point, scalining it by the future z-factor.
+getTable :: TableM GE
+getTable = do
+  a <- getPast
+  zf <- getFuture
+  return $ GE (a^._x .*. zf .^. 2) (a^._y .*. zf .^. 3)
+
+-- | Put a new table point into the 'TableM'.
+-- Requres the (true) z-ratio between the new point and the previous point.
+putTable :: FE -> GEJ -> TableM ()
+putTable zr a = do
+  modifyBackwards (.*. zr)
+  sendFuture a
+
 -- | Precompute small odd muliplies of a 'GEJ' and give them a common z-coordinate.
 -- The point must not be at infinity.
-scalarTable :: Int -> GEJ -> (V.Vector GE, FE)
-scalarTable w a = (V.fromList r, globalZ)
+scalarTable :: Int -> GEJ -> TableM (V.Vector GE)
+scalarTable w a = do
+  z0 <- getsPast (^._z)
+  let a' = gej_rescale z0 a
+  let d = gej_double a'
+  let dz = d^._z
+  let a'' = GEJ (a'^._x .*. dz .^. 2) (a'^._y .*. dz .^. 3) (a'^._z)
+  putTable (a^._z .*. dz) a''
+  let tableNext = uncurry putTable =<< (gej_ge_add_ex <$> getPast <*> pure (GE (d^._x) (d^._y)))
+  result <- V.cons <$> getTable <*> V.replicateM (len - 1) (tableNext >> getTable)
+  modifyForwards $ _z %~ (.*. dz)
+  return result
  where
-  d = gej_double a
-  z = d^._z
   len = 2^(w-2)
-  l = take len $ iterate (\p -> gej_ge_add_ex (snd p) (GE (d^._x) (d^._y))) (error "scalarTable: Impossible to access", a')
-   where
-    a' = a & _x %~ (.*. (z .^. 2))
-           & _y %~ (.*. (z .^. 3))
-  (Right (globalZ, _), r) = mapAccumR acc (Left z) l
-  acc (Left z0) (zr, b) = (Right (b^._z .*. z0, zr), GE (b^._x) (b^._y))
-  acc (Right (globalZ, z0)) (zr, b) = (Right (globalZ, z0 .*. zr), GE (b^._x .*. z0 .^. 2) (b^._y .*. z0 .^. 3))
 
 -- | The specified generator of the secp256k1 curve.
 g :: GEJ
@@ -511,7 +541,7 @@ tableG128 = table wg g128
 -- | Compute a table of odd multiple of a point and 'gej_normalize' all of them.
 table w p = t & traverse %~ norm
  where
-  (t,z) = scalarTable w p
+  (t,z) = runTableM (scalarTable w p)
   zinv = fe_invert z
   norm (GE x y) = GE (x .*. zinv .^. 2) (y .*. zinv .^. 3)
 
