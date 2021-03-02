@@ -3,8 +3,8 @@ stdenv.mkDerivation {
   name = "libsecp256k1.o";
   src = fetchgit {
     url = secp256k1git;
-    rev = "f97247cf5527ad2d52574c13d3fe6b61f4b20011"; # simplicity branch
-    sha256 = "0xwsda3yi9dym9faj5wpzjdhpqy2vavsfszszm7gbwlixx88wmxq";
+    rev = "40140d544dfa3d96d57adbad466bae97659e0140"; # simplicity branch
+    sha256 = "1cpc5jrx83sf7d7zk0yaykr1f49wgv4gv5xfa69xd4bq71k33hkx";
   };
 
   buildPhase = ''

@@ -5,7 +5,7 @@ module Simplicity.LibSecp256k1.FFI
  , ge_scale_lambda
  , gej_x_equiv, has_quad_y
  , scalar_negate, scalar_split_lambda, scalar_split_128
- , wnaf, linear_combination_1
+ , wnaf, linear_combination, linear_combination_1
  ) where
 
 import Control.Monad (forM_)
@@ -14,11 +14,11 @@ import Data.ByteString (packCStringLen, useAsCStringLen)
 import Data.ByteString.Short (ShortByteString, toShort)
 import Data.Serialize (decode, encode)
 import Foreign.ForeignPtr (ForeignPtr, addForeignPtrFinalizer, mallocForeignPtr, withForeignPtr)
-import Foreign.Marshal.Alloc (alloca)
-import Foreign.Marshal.Array (allocaArray, peekArray)
+import Foreign.Marshal.Alloc (alloca, allocaBytes)
+import Foreign.Marshal.Array (allocaArray, peekArray, withArray)
 import Foreign.Marshal.Utils (with)
 import Foreign.Ptr (FunPtr, Ptr, alignPtr, castPtr, plusPtr, nullFunPtr, nullPtr)
-import Foreign.C.Types (CInt(..), CChar)
+import Foreign.C.Types (CInt(..), CChar, CSize(..))
 import Foreign.Storable (Storable(..))
 import System.IO.Unsafe (unsafeDupablePerformIO, unsafePerformIO)
 
@@ -110,6 +110,27 @@ instance Storable Context where
    where
     ptr' = castPtr ptr
 
+data StraussPointState = StraussPointState
+data StraussState = StraussState (Ptr GEJ) (Ptr FE) (Ptr GE) (Ptr GE) (Ptr StraussPointState)
+
+instance Storable StraussState where
+  sizeOf x = 5*sizeOf (undefined :: Ptr a)
+  alignment _ = alignment (undefined :: Ptr a)
+  peek ptr = StraussState <$> (peekElemOff ptr' 0)
+                          <*> (peekElemOff ptr' 1)
+                          <*> (peekElemOff ptr' 2)
+                          <*> (peekElemOff ptr' 3)
+                          <*> (peekElemOff ptr' 4)
+   where
+    ptr' = castPtr ptr
+  poke ptr (StraussState p0 p1 p2 p3 p4) = pokeElemOff ptr' 0 p0
+                                        >> pokeElemOff ptr' 1 p1
+                                        >> pokeElemOff ptr' 2 p2
+                                        >> pokeElemOff ptr' 3 p3
+                                        >> pokeElemOff ptr' 4 p4
+   where
+    ptr' = castPtr ptr
+
 foreign import ccall safe "static &secp256k1_ecmult_prealloc" c_secp256k1_ecmult_prealloc :: Ptr CChar
 foreign import ccall unsafe "secp256k1_fe_normalize_weak" c_secp256k1_fe_normalize_weak :: Ptr FE -> IO ()
 foreign import ccall unsafe "secp256k1_fe_normalize_var" c_secp256k1_fe_normalize_var :: Ptr FE -> IO ()
@@ -142,6 +163,7 @@ foreign import ccall unsafe "secp256k1_ecmult_context_init" c_secp256k1_ecmult_c
 foreign import ccall "secp256k1_ecmult_context_build" c_secp256k1_ecmult_context_build :: Ptr Context -> Ptr (Ptr CChar) -> IO ()
 foreign import ccall unsafe "&secp256k1_ecmult_context_clear" c_secp256k1_ecmult_context_clear :: FunPtr (Ptr Context -> IO ())
 foreign import ccall unsafe "secp256k1_ecmult" c_secp256k1_ecmult :: Ptr Context -> Ptr GEJ -> Ptr GEJ -> Ptr Scalar -> Ptr Scalar -> IO ()
+foreign import ccall unsafe "secp256k1_ecmult_strauss_wnaf" c_secp256k1_ecmult_strauss_wnaf :: Ptr Context -> Ptr StraussState -> Ptr GEJ -> CSize -> Ptr GEJ -> Ptr Scalar -> Ptr Scalar -> IO ()
 
 fe_pack :: FE -> ShortByteString
 fe_pack a = unsafeDupablePerformIO $ do
@@ -328,3 +350,28 @@ linear_combination_1 na a ng = unsafeDupablePerformIO $ do
     c_secp256k1_ecmult ctxptr rptr aptr naptr ngptr
     CInt flag <- peek (alignPtr (rptr `plusPtr` (3 * sizeOf (undefined :: FE))) (alignment (undefined :: CInt)))
     if flag == 0 then peek rptr else return mempty
+
+linear_combination :: [(Scalar, GEJ)] -> Scalar -> GEJ
+linear_combination l ng = unsafeDupablePerformIO $ do
+  allocaArray (n * wsize) $ \prejptr -> do
+  allocaArray (n * wsize) $ \zrptr -> do
+  allocaArray (n * wsize) $ \preaptr -> do
+  allocaArray (n * wsize) $ \prealamptr -> do
+  allocaBytes (n * sizeOfStraussPointState) $ \strausspointstateptr -> do
+  with (StraussState prejptr zrptr preaptr prealamptr strausspointstateptr) $ \straussstateptr -> do
+  withArray as $ \asptr -> do
+  withArray nas $ \nasptr -> do
+  with ng $ \ngptr -> do
+  with mempty $ \rptr -> do
+  withForeignPtr ecMultContext $ \ctxptr -> do
+    c_secp256k1_ecmult_strauss_wnaf ctxptr straussstateptr rptr (fromIntegral n) asptr nasptr ngptr
+    CInt flag <- peek (alignPtr (rptr `plusPtr` (3 * sizeOf (undefined :: FE))) (alignment (undefined :: CInt)))
+    if flag == 0 then peek rptr else return mempty
+ where
+  (nas, as) = unzip l
+  w = 5
+  wsize = 2^(w - 2)
+  n = length l
+  sizeOfStraussPointState = 2 * sizeOf (undefined :: Scalar)
+                          + (2 * 129 + 2) * sizeOf (undefined :: CInt)
+                          + sizeOf (undefined :: CSize)

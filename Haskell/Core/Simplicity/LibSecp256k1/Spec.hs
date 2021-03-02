@@ -16,7 +16,7 @@ module Simplicity.LibSecp256k1.Spec
    -- * Scalar operations
  , Scalar, scalar, scalar_repr, scalar_pack
  , scalar_zero, scalar_negate, scalar_multiply, scalar_split_lambda, scalar_split_128
- , wnaf, linear_combination_1
+ , wnaf, linear_combination, linear_combination_1
    -- * Public key / Signature operations
  , PubKey(..), pubkey_unpack, pubkey_unpack_neg, pubkey_unpack_quad
  , Sig(..), signature_unpack
@@ -34,7 +34,7 @@ import Data.Bits ((.&.), (.|.), finiteBitSize)
 import Data.ByteString.Short (ShortByteString, pack)
 import qualified Data.ByteString.Char8 as BSC
 import Data.Ix (inRange)
-import Data.List (mapAccumL, mapAccumR, unfoldr)
+import Data.List (foldl', mapAccumL, mapAccumR, unfoldr)
 import Data.Maybe (isJust)
 import Data.Serialize (put)
 import Data.Serialize.Put (putShortByteString, runPut)
@@ -427,37 +427,54 @@ scalar_split_128 k0 = (k1, k2)
   k = scalar_repr k0
   (k2, k1) = k `divMod` (2^128)
 
+-- | Fast computation of a linear combination of the secp256k1 curve generator and other points.
+--
+-- @
+--    'gej_is_inf' $ 'linear_combination' [] ng <> 'gej_negate' ('scalar_multiply' ng 'g')
+-- @
+--
+-- @
+--    'gej_is_inf' $ 'linear_combination' ((na, a):tl) ng <> 'gej_negate' ('scalar_multiply' ng 'g' <> 'linear_combination' tl ng)
+-- @
+linear_combination :: [(Scalar, GEJ)] -> Scalar -> GEJ
+linear_combination l ng = foldr f mempty zips & _z %~ (.*. globalZ)
+ where
+  wa = 5
+  (l', globalZ) = runTableM . sequence $
+    [(,) <$> pure na <*> scalarTable wa s | (na, s) <- l, not (isInf s) && not (scalar_is_zero na)]
+  (ng1, ng2) = scalar_split_128 ng
+  split_l = do
+    (na, table) <- l'
+    let (na1, na2) = scalar_split_lambda na
+    let table_lam = ge_scale_lambda <$> table
+    [(na1, table), (na2, table_lam)]
+  f (as, Nothing, Nothing) r0 = foldl' gej_ge_add (gej_double r0) as
+  f (as, Just g1, Nothing) r0
+                   = gej_ge_add_zinv (f (as, Nothing, Nothing) r0) (tableG ! g1) globalZ
+  f (as, g1, Just g2) r0
+                   = gej_ge_add_zinv (f (as, g1, Nothing) r0) (tableG128 ! g2) globalZ
+  gej_ge_add p q = snd $ gej_ge_add_ex p q
+  zip3Ex [] [] [] = []
+  zip3Ex [] bs cs = zip3Ex [[]] bs cs
+  zip3Ex as [] cs = zip3Ex as [Nothing] cs
+  zip3Ex as bs [] = zip3Ex as bs [Nothing]
+  zip3Ex (a:as) (b:bs) (c:cs) = (a,b,c) : zip3Ex as bs cs
+  zips = zip3Ex (transposeTables split_l) (wnaf wg ng1) (wnaf wg ng2)
+  transposeTables [] = []
+  transposeTables ((na, ts):rest) = merge (wnaf wa na) ts (transposeTables rest)
+   where
+    merge [] _ tbls = tbls
+    merge l t [] = [[t ! i | Just i <- [x]] | x <- l]
+    merge (Just i : tl) t (htbls : ttbls) = ((t ! i) : htbls) : merge tl t ttbls
+    merge (Nothing : tl) t (htbls : ttbls) = htbls : merge tl t ttbls
+
 -- | Fast computation of a linear combination of the secp256k1 curve generator and another point.
 --
 -- @
---    'gej_is_inf' $ 'linear_combination_1' na a ng <> ('scalar_multiply' ('scalar_negate' na) a) <> ('scalar_multiply' ('scalar_negate' ng) 'g')
+--    'gej_is_inf' $ 'linear_combination_1' na a ng <> 'gej_negate' ('scalar_multiply' na 'a' <> 'scalar_multiply' ng 'g')
 -- @
 linear_combination_1 :: Scalar -> GEJ -> Scalar -> GEJ
-linear_combination_1 na0 a ng = foldr f mempty zips & _z %~ (.*. globalZ)
- where
-  na = if isInf a then scalar_zero else na0
-  (na1, na2) = scalar_split_lambda na
-  (ng1, ng2) = scalar_split_128 ng
-  wa = 5
-  (tableA, globalZ) | scalar_is_zero na = (V.empty, fe_one)
-                    | otherwise = runTableM (scalarTable wa a)
-  tableAlam = ge_scale_lambda <$> tableA
-  f (Nothing, Nothing, Nothing, Nothing) r0 = gej_double r0
-  f (Just a1, Nothing, Nothing, Nothing) r0
-                   = snd $ f (Nothing, Nothing, Nothing, Nothing) r0 `gej_ge_add_ex` (tableA ! a1)
-  f (a1, Just a2, Nothing, Nothing) r0
-                   = snd $ f (a1, Nothing, Nothing, Nothing) r0 `gej_ge_add_ex` (tableAlam ! a2)
-  f (a1, a2, Just g1, Nothing) r0
-                   = gej_ge_add_zinv (f (a1, a2, Nothing, Nothing) r0) (tableG ! g1) globalZ
-  f (a1, a2, g1, Just g2) r0
-                   = gej_ge_add_zinv (f (a1, a2, g1, Nothing) r0) (tableG128 ! g2) globalZ
-  zipEx [] [] [] [] = []
-  zipEx [] bs cs ds = zipEx [Nothing] bs cs ds
-  zipEx as [] cs ds = zipEx as [Nothing] cs ds
-  zipEx as bs [] ds = zipEx as bs [Nothing] ds
-  zipEx as bs cs [] = zipEx as bs cs [Nothing]
-  zipEx (a:as) (b:bs) (c:cs) (d:ds) = (a,b,c,d) : zipEx as bs cs ds
-  zips = zipEx (wnaf wa na1) (wnaf wa na2) (wnaf wg ng1) (wnaf wg ng2)
+linear_combination_1 na a = linear_combination [(na, a)]
 
 -- | Decompose an integer in windowed non-adjacent form
 wnafInteger :: Int -> Integer -> [Int]
