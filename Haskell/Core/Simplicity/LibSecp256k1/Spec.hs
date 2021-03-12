@@ -9,16 +9,21 @@ module Simplicity.LibSecp256k1.Spec
  , GEJ(..), _gej, gej, _x, _y, _z, g
  , gej_double, gej_add_ex
  , gej_x_equiv, gej_y_is_odd
+ , gej_is_on_curve
  , GE(..)
  , gej_normalize, gej_rescale
  , gej_ge_add_ex, gej_ge_add_zinv
  , ge_negate, ge_scale_lambda
+ , ge_is_on_curve
    -- * Scalar operations
  , Scalar, scalar, scalar_repr, scalar_pack
  , scalar_zero, scalar_negate, scalar_multiply, scalar_split_lambda, scalar_split_128
  , wnaf, linear_combination, linear_combination_1
+ , linear_check, linear_check_1
+   -- * Point operations
+ , Point(..), decompress, point_check
    -- * Public key / Signature operations
- , PubKey(..), pubkey_unpack, pubkey_unpack_neg, pubkey_unpack_quad
+ , PubKey(..), pubkey_unpack, pubkey_unpack_neg
  , Sig(..), signature_unpack
  , bip0340_check
  -- * Some large integer constants for secp256k1.
@@ -39,8 +44,8 @@ import Data.Maybe (isJust)
 import Data.Serialize (put)
 import Data.Serialize.Put (putShortByteString, runPut)
 import qualified Data.Vector as V
-import Lens.Family2 ((^.), (^..), (&), (+~), (*~), (%~), over, review, under, zipWithOf)
-import Lens.Family2.Stock (_1, lend_, some_)
+import Lens.Family2 ((^.), (^..), (&), (+~), (*~), (%~), allOf, over, review, under, zipWithOf)
+import Lens.Family2.Stock (_1, _2, lend_, some_)
 
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.Schnorr
@@ -186,6 +191,9 @@ fe_square_root a | 0 == (fieldOrder + 1) `mod` 4 = do
 isQuad :: FE -> Bool
 isQuad = isJust . fe_square_root
 
+-- | A "compressed" point on the secp256k1 curve.  Infinity not included.
+data Point = Point Bool FE
+
 -- | A point in Jacobian coordinates.
 -- A '_z' component of 'fe_zero' represents a point at infinity.
 --
@@ -219,8 +227,8 @@ _z :: Functor f => (FE -> f FE) -> GEJ -> f GEJ
 _z f (GEJ x y z) = (\z -> GEJ x y z) <$> f z
 
 -- | Checks if the point is a representation of infinity.
-isInf :: GEJ -> Bool
-isInf a = fe_is_zero (a^._z)
+gej_is_infinity :: GEJ -> Bool
+gej_is_infinity a = fe_is_zero (a^._z)
 
 -- | Returns an equivalent point with the z-coefficent multiplied by the given constant.
 -- This will return infinity if the constant is zero.
@@ -229,7 +237,7 @@ gej_rescale c (GEJ x y z) = GEJ (x .*. c .^. 2) (y .*. c .^. 3) (z .*. c)
 
 -- | Compute the point doubling formula for a 'GEJ'.
 gej_double :: GEJ -> GEJ
-gej_double a@(GEJ x y z) | isInf a = mempty
+gej_double a@(GEJ x y z) | gej_is_infinity a = mempty
                          | otherwise = GEJ x' y' z'
  where
   x' = mulInt 9 (x .^. 4) .+. mulInt (-8) (x .*. y .^. 2)
@@ -249,8 +257,8 @@ gej_double a@(GEJ x y z) | isInf a = mempty
 --    (r, p) = 'gej_add_ex' a b
 -- @
 gej_add_ex :: GEJ -> GEJ -> (FE, GEJ)
-gej_add_ex a@(GEJ ax ay az) b@(GEJ bx by bz) | isInf a = (fe_zero, GEJ bx by bz)
-                                             | isInf b = (fe_one, a)
+gej_add_ex a@(GEJ ax ay az) b@(GEJ bx by bz) | gej_is_infinity a = (fe_zero, GEJ bx by bz)
+                                             | gej_is_infinity b = (fe_one, a)
                                              | isZeroH && isZeroI = (mulInt 2 ay, gej_double a)
                                              | isZeroH = (fe_zero, mempty)
                                              | otherwise = (bz .*. h, GEJ x y z)
@@ -282,12 +290,16 @@ gej_x_equiv a x = fe_is_zero $ (fe_square (a^._z) .*. x) .-. (a^._x)
 
 -- | Check if the y-coordinate of the point represented by a 'GEJ' is odd.
 gej_y_is_odd :: GEJ -> Bool
-gej_y_is_odd a@(GEJ _ y z) | isInf a = False
+gej_y_is_odd a@(GEJ _ y z) | gej_is_infinity a = False
                            | otherwise = fe_is_odd $ y .*. invz .^. 3
  where
   invz = fe_invert z
 
--- | A point.  Infinity not included
+-- | Validates the secp256k1 curve equation: Y^2 = X^3 + 7Z^6
+gej_is_on_curve :: GEJ -> Bool
+gej_is_on_curve (GEJ x y z) = fe_is_zero $ x.^.3 .+. fe_seven.*.z.^.6 .-. y.^.2
+
+-- | An uncompressed point.  Infinity not included
 data GE = GE !FE !FE -- Infinity not included.
         deriving Show
 
@@ -309,7 +321,7 @@ gej_ge_add_ex a (GE bx by) = gej_add_ex a (GEJ bx by fe_one)
 -- | Compute a point addition formula for a 'GEJ' and another point with an inverted z coordinate.
 --
 -- @
---    'gej_is_inf' $ ('gej_ge_add_zinv' a (GE bx by) bzinv) <> ('gej_negate' (a <> ('GEJ' bx by ('fe_invert' bzinf))))
+--    'gej_is_infinity' $ ('gej_ge_add_zinv' a (GE bx by) bzinv) <> ('gej_negate' (a <> ('GEJ' bx by ('fe_invert' bzinf))))
 -- @
 --
 -- where
@@ -338,6 +350,10 @@ ge_negate (GE x y) = GE x (fe_negate y)
 -- @
 ge_scale_lambda :: GE -> GE
 ge_scale_lambda (GE x y) = GE (x .*. fe_beta) y
+
+-- | Validates the secp256k1 curve equation: y^2 = x^3 + 7
+ge_is_on_curve :: GE -> Bool
+ge_is_on_curve (GE x y) = gej_is_on_curve (GEJ x y fe_one)
 
 -- | An element of secp256k1's scalar field is represented as a normalized value.
 newtype Scalar = Scalar { scalar_pack :: Word256 -- ^ Return the normalized represenative of a scalar element as a 'Word256'.
@@ -430,18 +446,18 @@ scalar_split_128 k0 = (k1, k2)
 -- | Fast computation of a linear combination of the secp256k1 curve generator and other points.
 --
 -- @
---    'gej_is_inf' $ 'linear_combination' [] ng <> 'gej_negate' ('scalar_multiply' ng 'g')
+--    'gej_is_infinity' $ 'linear_combination' [] ng <> 'gej_negate' ('scalar_multiply' ng 'g')
 -- @
 --
 -- @
---    'gej_is_inf' $ 'linear_combination' ((na, a):tl) ng <> 'gej_negate' ('scalar_multiply' ng 'g' <> 'linear_combination' tl ng)
+--    'gej_is_infinity' $ 'linear_combination' ((na, a):tl) ng <> 'gej_negate' ('scalar_multiply' ng 'g' <> 'linear_combination' tl ng)
 -- @
 linear_combination :: [(Scalar, GEJ)] -> Scalar -> GEJ
 linear_combination l ng = foldr f mempty zips & _z %~ (.*. globalZ)
  where
   wa = 5
   (l', globalZ) = runTableM . sequence $
-    [(,) <$> pure na <*> scalarTable wa s | (na, s) <- l, not (isInf s) && not (scalar_is_zero na)]
+    [(,) <$> pure na <*> scalarTable wa s | (na, s) <- l, not (gej_is_infinity s) && not (scalar_is_zero na)]
   (ng1, ng2) = scalar_split_128 ng
   split_l = do
     (na, table) <- l'
@@ -471,7 +487,7 @@ linear_combination l ng = foldr f mempty zips & _z %~ (.*. globalZ)
 -- | Fast computation of a linear combination of the secp256k1 curve generator and another point.
 --
 -- @
---    'gej_is_inf' $ 'linear_combination_1' na a ng <> 'gej_negate' ('scalar_multiply' na 'a' <> 'scalar_multiply' ng 'g')
+--    'gej_is_infinity' $ 'linear_combination_1' na a ng <> 'gej_negate' ('scalar_multiply' na 'a' <> 'scalar_multiply' ng 'g')
 -- @
 linear_combination_1 :: Scalar -> GEJ -> Scalar -> GEJ
 linear_combination_1 na a = linear_combination [(na, a)]
@@ -568,43 +584,70 @@ table w p = t & traverse %~ norm
 t ! i | i >= 0 = t V.! i
       | otherwise = ge_negate (t V.! (-i-1))
 
--- | Given an (x-only) public key, returns a GEJ with that x-coordinate whose y-coordinate is a square, if such a point exists.
-pubkey_unpack_quad :: PubKey -> Maybe GEJ
-pubkey_unpack_quad (PubKey px) = do
-  x <- fe_unpack px
+-- | Validates that all points are 'ge_is_on_curve' and that
+-- @'linear_check' l ng r@ implies
+--
+-- @
+--    'gej_is_infinity' $ 'linear_combination' l ng <> 'ge_negate' r
+-- @
+linear_check :: [(Scalar, GE)] -> Scalar -> GE -> Bool
+linear_check l ng r = isJust $ do
+  guard $ ge_is_on_curve r
+  guard $ allOf (traverse._2) ge_is_on_curve l
+  guard $ gej_is_infinity (linear_combination l' ng <> negR)
+ where
+  negR = toGEJ (ge_negate r)
+  l' = l & (traverse._2) %~ toGEJ
+  toGEJ (GE x y) = (GEJ x y fe_one)
+
+-- | Validates that all points are 'ge_is_on_curve' and that
+-- @'linear_check_1' na a ng r@ implies
+--
+-- @
+--    'gej_is_infinity' $ 'linear_combination_1' na a ng <> 'ge_negate' r
+-- @
+linear_check_1 :: Scalar -> GE -> Scalar -> GE -> Bool
+linear_check_1 na a = linear_check [(na, a)]
+
+-- | Convert a point from compressed coordinates to affine coordinates.
+-- Fails if the x-coordinate of the point is not on the secp256k1 curve.
+decompress :: Point -> Maybe GE
+decompress (Point yodd x) = do
   y <- fe_square_root (x .^. 3 .+. fe_seven)
-  return (GEJ x y fe_one)
+  return (GE x (if fe_is_odd y == yodd then y else (fe_negate y)))
 
--- | Given an (x-only) public key, returns a GEJ with that x-coordinate whose y-coordinate is even, if such a point exists.
-pubkey_unpack :: PubKey -> Maybe GEJ
-pubkey_unpack = (some_ . _y %~ mkEven) . pubkey_unpack_quad
- where
-  mkEven y | fe_is_odd y = fe_negate y
-           | otherwise = y
+-- | Given an (x-only) public key, check that the x-coordinate is normalized and returns a Point representing that pubkey.
+-- This does not check that the point is on-curve, which needed to be done by a subsequent call to `decompress`.
+pubkey_unpack :: PubKey -> Maybe Point
+pubkey_unpack (PubKey px) = Point False <$> fe_unpack px
 
--- | Given an (x-only) public key, returns a GEJ with that x-coordinate whose y-coordinate is odd, if such a point exists.
-pubkey_unpack_neg :: PubKey -> Maybe GEJ
-pubkey_unpack_neg = (some_ . _y %~ mkOdd) . pubkey_unpack_quad
- where
-  mkOdd y | fe_is_odd y = y
-          | otherwise = fe_negate y
+-- | Given an (x-only) public key, check that the x-coordinate is normalized and returns a Point representing the negation of that pubkey.
+-- This does not check that the point is on-curve, which needed to be done by a subsequent call to `decompress`.
+pubkey_unpack_neg :: PubKey -> Maybe Point
+pubkey_unpack_neg (PubKey px) = Point True <$> fe_unpack px
 
 -- | Given a bip0340 signature, unpack it r value as an 'FE', and its s value as a 'Scalar'.
 -- Fails if the signature components are out of range.
 signature_unpack :: Sig -> Maybe (FE, Scalar)
 signature_unpack (Sig r s) = (,) <$> fe_unpack r <*> scalar_unpack s
 
+-- | Validates that all points are 'decompress'able and that the 'linear_check' of the decompressed points is satified.
+point_check :: [(Scalar, Point)] -> Scalar -> Point -> Bool
+point_check l ng r = isJust $ do
+  l' <- l & (traverse._2) decompress
+  r' <- decompress r
+  guard $ linear_check l' ng r'
+
 -- | Verify a bip0340 signature for a given public key on a given message.
 bip0340_check :: PubKey  -- ^ public key
               -> Hash256 -- ^ message
               -> Sig     -- ^ signature
               -> Bool
-bip0340_check pk m sg = Just () == do
+bip0340_check pk m sg = isJust $ do
   negp <- pubkey_unpack_neg pk
   (rx, s) <- signature_unpack sg
   let tag = bsHash (BSC.pack "BIP0340/challenge")
   let h = bsHash . runPut $ put tag >> put tag >> put (fe_pack rx) >> put pk >> put m
   let e = scalar . integerHash256 $ h
-  let r = linear_combination_1 e negp s
-  guard . not $ gej_y_is_odd r
-  guard $ gej_x_equiv r rx
+  let r = Point False rx
+  guard $ point_check [(e, negp)] s r

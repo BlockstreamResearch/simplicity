@@ -11,11 +11,13 @@ module Simplicity.Programs.LibSecp256k1
   , fe_add, fe_negate, fe_square, fe_multiply, fe_multiply_beta, fe_invert, fe_square_root
   , fe_is_odd, fe_is_quad
   -- * Point operations
-  , GE, GEJ, gej_infinity, gej_is_infinity
+  , Point, GE, GEJ, gej_is_on_curve
+  , gej_infinity, gej_is_infinity
   , gej_normalize, gej_negate, gej_scale_lambda
   , gej_double, gej_add_ex, gej_add, gej_ge_add_ex, gej_ge_add
-  , ge_negate, ge_scale_lambda
+  , ge_is_on_curve, ge_negate, ge_scale_lambda
   , {-gej_equiv,-} gej_x_equiv, gej_y_is_odd
+  , decompress
   -- * Scalar operations
   , Scalar, Word129
   , scalar_normalize, scalar_add, scalar_negate, scalar_multiply, scalar_multiply_lambda, scalar_invert
@@ -26,8 +28,10 @@ module Simplicity.Programs.LibSecp256k1
   , wnaf5, wnaf15
   , generate, scale
   , linear_combination_1
+  , linear_check_1
+  , point_check_1
   -- * Schnorr signature operations
-  , PubKey, pubkey_unpack, pubkey_unpack_neg, pubkey_unpack_quad
+  , PubKey, pubkey_unpack, pubkey_unpack_neg
   , Sig, signature_unpack
   , bip0340_check, bip0340_verify
   -- * Example instances
@@ -50,6 +54,10 @@ import Simplicity.Term.Core
 
 -- | Simplicity's representation of field elements.
 type FE = Word256
+
+-- | A point in compressed coordinates.
+-- The point at infinity isn't representable.
+type Point = (Bit, FE)
 
 -- | A point in affine coordinates.
 -- Usually expected to be on the elliptic curve.
@@ -176,6 +184,12 @@ data Lib term =
     -- | Given a point in Jacobian coordiantes, test if the point represents one whose affine y-coordinate is odd.
   , gej_y_is_odd :: term GEJ Bit
 
+    -- | Check if a given point in Jacobian coordinate satifies the secp256k1 curve equation Y^2 = X^3 + 7Z^6.
+  , gej_is_on_curve :: term GEJ Bit
+
+    -- | Check if a given point in affine coordinate satifies the secp256k1 curve equation Y^2 = X^3 + 7.
+  , ge_is_on_curve :: term GE Bit
+
     -- | Reduce the representation of a scalar element to its canonical represenative.
   , scalar_normalize :: term Word256 Scalar
 
@@ -219,23 +233,27 @@ data Lib term =
     -- If the result is the point at infinity, it is returned in canonical form.
   , linear_combination_1 :: term ((Scalar, GEJ), Scalar) GEJ
 
-    -- | This function unpacks a 'PubKey' as a elliptic curve point in affine coordinates with a y-coordinate that is a square.
-    --
-    -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
-    -- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
-  , pubkey_unpack_quad :: term PubKey (Either () GE)
+    -- | Verifies that all points are on the secp256k1 curve and checks if @na * a + ng * g == r@ on the input @(((na, a), ng), r)@ where @g@ is secp256k1's generator.
+  , linear_check_1 :: term (((Scalar, GE), Scalar), GE) Bit
 
-    -- | This function unpacks a 'PubKey' as a elliptic curve point in affine coordinates.
-    --
-    -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
-    -- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
-  , pubkey_unpack :: term PubKey (Either () GE)
+    -- | Decompress a compressed point into affine coordinates.  Fails if the x-coordinate is no on the secp256k1, but it will succeed even if the x-coordinate is not normalized.
+  , decompress :: term Point (Either () GE)
 
-    -- | This function unpacks a 'PubKey' as a elliptic curve point in affine coordinates and returns its negation.
+    -- | Decompresses and verifies that all points are on the secp256k1 curve as 'linear_check_1' does.
+    -- This will fail if either point decompression fails or if the 'linear_check_1' would fail.
+  , point_check_1 :: term (((Scalar, Point), Scalar), Point) Bit
+
+    -- | This function unpacks a 'PubKey' as a elliptic curve point in compressed coordinates.
     --
     -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
-    -- If the x-coordinate is greater than or equal the field order, the function returns @Left ()@.
-  , pubkey_unpack_neg :: term PubKey (Either () GE)
+    -- This does not check that the x-coordinate in on-curve.  That would have to be performed by `decompress`.
+  , pubkey_unpack :: term PubKey (Either () Point)
+
+    -- | This function unpacks the negation of a 'PubKey' as a elliptic curve point in compressed coordinates.
+    --
+    -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
+    -- This does not check that the x-coordinate in on-curve.  That would have to be performed by `decompress`.
+  , pubkey_unpack_neg :: term PubKey (Either () Point)
 
     -- | This function unpackes a 'Sig' as a pair of a field element and a scalar value.
     --
@@ -278,6 +296,8 @@ instance SimplicityFunctor Lib where
 --    , gej_equiv = m gej_equiv
     , gej_x_equiv = m gej_x_equiv
     , gej_y_is_odd = m gej_y_is_odd
+    , gej_is_on_curve = m gej_is_on_curve
+    , ge_is_on_curve = m ge_is_on_curve
     , scalar_normalize = m scalar_normalize
     , scalar_is_zero = m scalar_is_zero
     , scalar_add = m scalar_add
@@ -292,7 +312,9 @@ instance SimplicityFunctor Lib where
     , generate = m generate
     , scale = m scale
     , linear_combination_1 = m linear_combination_1
-    , pubkey_unpack_quad = m pubkey_unpack_quad
+    , linear_check_1 = m linear_check_1
+    , decompress = m decompress
+    , point_check_1 = m point_check_1
     , pubkey_unpack = m pubkey_unpack
     , pubkey_unpack_neg = m pubkey_unpack_neg
     , signature_unpack = m signature_unpack
@@ -521,6 +543,12 @@ mkLib Sha256.Lib{..} = lib
 
   , gej_y_is_odd = and (not gej_is_infinity) (oih &&& (ih >>> fe_invert >>> fe_cube)  >>> fe_multiply >>> fe_is_odd)
 
+  , gej_is_on_curve = ((unit >>> scribe256 7) &&& (ih >>> fe_cube >>> fe_square) >>> fe_multiply)
+                  &&& (take (take fe_cube &&& (drop fe_square >>> fe_negate)) >>> fe_add) >>> fe_add
+                  >>> fe_is_zero
+
+  , ge_is_on_curve = iden &&& (unit >>> fe_one) >>> gej_is_on_curve
+
   , scalar_normalize = (iden &&& (unit >>> scribeGroupOrder) >>> sub256) &&& iden
                   >>> ooh &&& (oih &&& ih)
                   >>> cond ih oh
@@ -613,18 +641,31 @@ mkLib Sha256.Lib{..} = lib
       or (take (drop gej_is_infinity)) (take (take scalar_is_zero)) &&& iden
   >>> cond (drop generate) body
 
+  , linear_check_1 = and (drop ge_is_on_curve)
+                    (and (take (take (drop ge_is_on_curve)))
+                         ((take (take (oh &&& (ih &&& (unit >>> fe_one))) &&& ih >>> linear_combination_1))
+                      &&& drop ge_negate >>> gej_ge_add >>> gej_is_infinity))
+
   , scale = iden &&& (unit >>> zero256) >>> linear_combination_1
 
-  , pubkey_unpack_quad =
+  , decompress =
      let
-      k1 = (scribe256 7 &&& fe_cube >>> fe_add >>> fe_square_root) &&& iden
-       >>> match (injl unit) (injr swapP)
+      k = drop (drop fe_normalize) &&& (xor (take fe_is_odd) ioh &&& oh >>> cond fe_negate iden)
      in
-      (iden &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256) &&& iden >>> cond k1 (injl unit)
+      (scribe256 7 &&& drop fe_cube >>> fe_add >>> fe_square_root) &&& iden
+       >>> match (injl unit) (injr k)
 
-  , pubkey_unpack = pubkey_unpack_quad >>> copair (injl iden) (injr ((ih >>> fe_is_odd) &&& iden >>> cond (oh &&& drop fe_negate) iden))
+  , point_check_1 =
+     let
+       k1 = drop (take (drop decompress)) &&& (drop (ooh &&& ih) &&& oh)
+        >>> match false k2
+       k2 = ((iooh &&& oh) &&& ioih) &&& iih >>> linear_check_1
+     in
+       drop decompress &&& oh >>> match false k1
 
-  , pubkey_unpack_neg = pubkey_unpack >>> copair (injl iden) (injr ge_negate)
+  , pubkey_unpack = pubkey_check >>> cond (injr ((unit >>> false) &&& iden)) (injl unit)
+
+  , pubkey_unpack_neg = pubkey_check >>> cond (injr ((unit >>> true) &&& iden)) (injl unit)
 
   , signature_unpack =
       and (oh &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256)
@@ -634,16 +675,14 @@ mkLib Sha256.Lib{..} = lib
 
   , bip0340_check =
      let
-      k1 = ioh &&& (iih &&& oh)
+      k1 = iih &&& (ioh &&& oh)
        >>> match false k2
-      k2 = ((ioh &&& (oh &&& (unit >>> fe_one))) &&& iiih >>> linear_combination_1) &&& iioh
-       >>> and gej_x_equiv (not (take gej_y_is_odd))
+      k2 = (ih &&& oih) &&& ((unit >>> false) &&& ooh) >>> point_check_1
       e = m >>> (iv &&& oh >>> hashBlock) &&& ih >>> hashBlock >>> scalar_normalize
       iv = scribe $ toWord256 . integerHash256 . ivHash . tagIv $ "BIP0340/challenge"
       m = (ioh &&& ooh) &&& (oih &&& (scribe (toWord256 0x8000000000000000000000000000000000000000000000000000000000000500)))
      in
-      drop signature_unpack &&& (take (take pubkey_unpack_neg) &&& e)
-  >>> match false k1
+      take (take pubkey_unpack_neg) &&& (e &&& drop signature_unpack) >>> match false k1
   }
    where
     fe_cube = iden &&& fe_square >>> fe_multiply
@@ -710,6 +749,9 @@ mkLib Sha256.Lib{..} = lib
 
     generate128Small :: term Word16 GE
     generate128Small = generate128Signed word16 >>> gej_normalize
+
+    pubkey_check = (iden &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256) &&& iden
+
 
 -- | This function is given a public key, a 256-bit message, and a signature, and asserts that the signature is valid for the given message and public key.
 bip0340_verify :: Assert term => Lib term -> term ((PubKey, Word256), Sig) ()

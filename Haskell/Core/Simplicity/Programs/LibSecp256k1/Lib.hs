@@ -10,11 +10,13 @@ module Simplicity.Programs.LibSecp256k1.Lib
   , fe_add, fe_negate, fe_square, fe_multiply, fe_multiply_beta, fe_invert, fe_square_root
   , fe_is_odd, fe_is_quad
   -- * Point operations
-  , LibSecp256k1.GE, LibSecp256k1.GEJ, gej_infinity, gej_is_infinity
+  , LibSecp256k1.Point, LibSecp256k1.GE, LibSecp256k1.GEJ, gej_is_on_curve
+  , gej_infinity, gej_is_infinity
   , gej_normalize, gej_negate, gej_scale_lambda
   , gej_double, gej_add_ex, gej_add, gej_ge_add_ex, gej_ge_add
-  , ge_negate, ge_scale_lambda
+  , ge_is_on_curve, ge_negate, ge_scale_lambda
   , {-gej_equiv,-} gej_x_equiv, gej_y_is_odd
+  , decompress
   -- * Scalar operations
   , LibSecp256k1.Scalar, LibSecp256k1.Word129
   , scalar_normalize, scalar_add, scalar_negate, scalar_multiply, scalar_multiply_lambda, scalar_invert
@@ -25,8 +27,10 @@ module Simplicity.Programs.LibSecp256k1.Lib
   , wnaf5, wnaf15
   , generate, scale
   , linear_combination_1
+  , linear_check_1
+  , point_check_1
   -- * Schnorr signature operations
-  , LibSecp256k1.PubKey, pubkey_unpack, pubkey_unpack_neg, pubkey_unpack_quad
+  , LibSecp256k1.PubKey, pubkey_unpack, pubkey_unpack_neg
   , LibSecp256k1.Sig, signature_unpack
   , bip0340_check, bip0340_verify
   ) where
@@ -47,6 +51,7 @@ fe_invert = LibSecp256k1.fe_invert LibSecp256k1.lib
 fe_square_root = LibSecp256k1.fe_square_root LibSecp256k1.lib
 fe_is_odd = LibSecp256k1.fe_is_odd LibSecp256k1.lib
 fe_is_quad = LibSecp256k1.fe_is_quad LibSecp256k1.lib
+gej_is_on_curve = LibSecp256k1.gej_is_on_curve LibSecp256k1.lib
 gej_infinity = LibSecp256k1.gej_infinity LibSecp256k1.lib
 gej_is_infinity = LibSecp256k1.gej_is_infinity LibSecp256k1.lib
 gej_normalize = LibSecp256k1.gej_normalize LibSecp256k1.lib
@@ -57,6 +62,7 @@ gej_add_ex = LibSecp256k1.gej_add_ex LibSecp256k1.lib
 gej_add = LibSecp256k1.gej_add LibSecp256k1.lib
 gej_ge_add_ex = LibSecp256k1.gej_ge_add_ex LibSecp256k1.lib
 gej_ge_add = LibSecp256k1.gej_ge_add LibSecp256k1.lib
+ge_is_on_curve = LibSecp256k1.ge_is_on_curve LibSecp256k1.lib
 ge_negate = LibSecp256k1.gej_negate LibSecp256k1.lib
 ge_scale_lambda = LibSecp256k1.ge_scale_lambda LibSecp256k1.lib
 gej_x_equiv = LibSecp256k1.gej_x_equiv LibSecp256k1.lib
@@ -75,9 +81,11 @@ wnaf15 = LibSecp256k1.wnaf15 LibSecp256k1.lib
 generate = LibSecp256k1.generate LibSecp256k1.lib
 scale = LibSecp256k1.scale LibSecp256k1.lib
 linear_combination_1 = LibSecp256k1.linear_combination_1 LibSecp256k1.lib
+linear_check_1 = LibSecp256k1.linear_check_1 LibSecp256k1.lib
+decompress = LibSecp256k1.decompress LibSecp256k1.lib
+point_check_1 = LibSecp256k1.point_check_1 LibSecp256k1.lib
 pubkey_unpack = LibSecp256k1.pubkey_unpack LibSecp256k1.lib
 pubkey_unpack_neg = LibSecp256k1.pubkey_unpack_neg LibSecp256k1.lib
-pubkey_unpack_quad = LibSecp256k1.pubkey_unpack_quad LibSecp256k1.lib
 signature_unpack = LibSecp256k1.signature_unpack LibSecp256k1.lib
 bip0340_check = LibSecp256k1.bip0340_check LibSecp256k1.lib
 bip0340_verify = LibSecp256k1.bip0340_verify LibSecp256k1.lib

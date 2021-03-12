@@ -13,7 +13,7 @@ import Lens.Family2.Stock (backwards, both_)
 
 import Simplicity.CoreJets
 import Simplicity.Digest
-import Simplicity.LibSecp256k1.Spec ((.*.), (.^.))
+import Simplicity.LibSecp256k1.Spec ((.+.), (.*.), (.^.))
 import qualified Simplicity.LibSecp256k1.Spec as Spec
 import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
@@ -114,13 +114,21 @@ tests = testGroup "Programs"
         , testProperty "gej_x_equiv_inf" prop_gej_x_equiv_inf
         , testProperty "gej_x_equiv_true" prop_gej_x_equiv_true
         , testProperty "gej_x_equiv_inf_zero" prop_gej_x_equiv_inf_zero
+        , testProperty "gej_is_on_curve" prop_gej_is_on_curve
+        , testProperty "gej_is_on_curve_half" prop_gej_is_on_curve_half
+        , testProperty "gej_is_on_curve_inf" prop_gej_is_on_curve_inf
+        , testProperty "gej_is_on_curve_inf_half" prop_gej_is_on_curve_inf_half
+        , testProperty "ge_is_on_curve" prop_ge_is_on_curve
+        , testProperty "ge_is_on_curve_half" prop_ge_is_on_curve_half
         , testProperty "scalar_normalize" prop_scalar_normalize
         , testProperty "scalar_split_lambda" prop_scalar_split_lambda
         , testProperty "wnaf5" prop_wnaf5
         , testProperty "wnaf15" prop_wnaf15
+        , testProperty "decompress" (withMaxSuccess 10 prop_decompress)
         ]
       , testGroup "bip0340"
-        [ testProperty "pubkey_unpack" (withMaxSuccess 10 prop_pubkey_unpack)
+        [ testProperty "pubkey_unpack" prop_pubkey_unpack
+        , testProperty "pubkey_unpack_neg" prop_pubkey_unpack_neg
         , testProperty "signature_unpack" prop_signature_unpack
         ]
       ]
@@ -435,6 +443,9 @@ toGE (Spec.GE x y) = (toFE x, toFE y)
 toGEJ :: Spec.GEJ -> GEJ
 toGEJ (Spec.GEJ x y z) = ((toFE x, toFE y), toFE z)
 
+toPoint :: Spec.Point -> Point
+toPoint (Spec.Point b x) = (toBit b, toFE x)
+
 data GroupElement = GroupElement FieldElement FieldElement deriving Show
 
 instance Arbitrary GroupElement where
@@ -443,6 +454,15 @@ instance Arbitrary GroupElement where
 
 geAsTy (GroupElement x y) = (feAsTy x, feAsTy y)
 geAsSpec (GroupElement x y) = Spec.GE (feAsSpec x) (feAsSpec y)
+
+data PointElement = PointElement Bool FieldElement deriving Show
+
+instance Arbitrary PointElement where
+  arbitrary = PointElement <$> arbitrary <*> arbitrary
+  shrink (PointElement x y) = [PointElement x' y' | (x', y') <- shrink (x, y)]
+
+pointAsTy (PointElement x y) = (toBit x, feAsTy y)
+pointAsSpec (PointElement x y) = Spec.Point x (feAsSpec y)
 
 data GroupElementJacobian = GroupElementJacobian FieldElement FieldElement FieldElement deriving Show
 
@@ -571,6 +591,50 @@ prop_gej_x_equiv_true y z x0 = prop_gej_x_equiv a x0
 
 prop_gej_x_equiv_inf_zero = prop_gej_x_equiv_inf (FieldElement 0)
 
+prop_ge_is_on_curve :: GroupElement -> Bool
+prop_ge_is_on_curve = \a -> fast_ge_is_on_curve (geAsTy a) == Just (toBit (Spec.ge_is_on_curve (geAsSpec a)))
+ where
+  fast_ge_is_on_curve = fastCoreEval ge_is_on_curve
+
+gen_half_curve :: Gen GroupElement
+gen_half_curve = half_curve <$> arbitrary
+ where
+  half_curve x = GroupElement x (FieldElement . Spec.fe_pack $ y')
+   where
+    x' = feAsSpec x
+    y' = (x' .^. 3 .+. (Spec.fe 7)) .^. ((Spec.fieldOrder + 1) `div` 4)
+
+prop_ge_is_on_curve_half = forAll gen_half_curve prop_ge_is_on_curve
+
+prop_gej_is_on_curve :: GroupElementJacobian -> Bool
+prop_gej_is_on_curve = \a -> fast_gej_is_on_curve (gejAsTy a) == Just (toBit (Spec.gej_is_on_curve (gejAsSpec a)))
+ where
+  fast_gej_is_on_curve = fastCoreEval gej_is_on_curve
+
+gen_half_curve_jacobian :: Gen GroupElementJacobian
+gen_half_curve_jacobian = half_curve_jacobian <$> gen_half_curve <*> arbitrary
+ where
+  half_curve_jacobian (GroupElement x y) z = GroupElementJacobian (FieldElement . Spec.fe_pack $ x' .*. z' .^. 2)
+                                                                  (FieldElement . Spec.fe_pack $ y' .*. z' .^. 3)
+                                                                  z
+   where
+    x' = feAsSpec x
+    y' = feAsSpec y
+    z' = feAsSpec z
+
+gen_half_curve_inf :: Gen GroupElementJacobian
+gen_half_curve_inf = half_curve_inf <$> arbitrary
+ where
+  half_curve_inf :: FieldElement -> GroupElementJacobian
+  half_curve_inf x = GroupElementJacobian x (FieldElement . Spec.fe_pack $ y') (FieldElement 0)
+   where
+    x' = feAsSpec x
+    y' = x' .^. (3 * ((Spec.fieldOrder + 1) `div` 4))
+
+prop_gej_is_on_curve_inf = forAll gen_inf prop_gej_is_on_curve
+prop_gej_is_on_curve_inf_half = forAll gen_half_curve_inf prop_gej_is_on_curve
+prop_gej_is_on_curve_half = forAll gen_half_curve_jacobian prop_gej_is_on_curve
+
 data ScalarElement = ScalarElement W.Word256 deriving Show
 
 instance Arbitrary ScalarElement where
@@ -646,11 +710,35 @@ prop_linear_combination_1_0 a ng = prop_linear_combination_1 na a ng
 prop_linear_combination_1_inf :: ScalarElement -> ScalarElement -> Property
 prop_linear_combination_1_inf na ng = forAll gen_inf $ \a -> prop_linear_combination_1 na a ng
 
+prop_linear_check_1 :: ScalarElement -> GroupElement -> ScalarElement -> GroupElement -> Bool
+prop_linear_check_1 = \na a ng r -> fast_linear_check_1 (((scalarAsTy na, geAsTy a), scalarAsTy ng), geAsTy r)
+             == Just (toBit (Spec.linear_check [(scalarAsSpec na, geAsSpec a)] (scalarAsSpec ng) (geAsSpec r)))
+ where
+  fast_linear_check_1 = fastCoreEval linear_check_1
+
+prop_decompress :: PointElement -> Bool
+prop_decompress = \a -> fast_decompress (pointAsTy a)
+             == Just ((fmap toGE . maybeToTy) (Spec.decompress (pointAsSpec a)))
+ where
+  fast_decompress = fastCoreEval decompress
+
+prop_point_check_1 :: ScalarElement -> PointElement -> ScalarElement -> PointElement -> Bool
+prop_point_check_1 = \na a ng r -> fast_point_check_1 (((scalarAsTy na, pointAsTy a), scalarAsTy ng), pointAsTy r)
+             == Just (toBit (Spec.point_check [(scalarAsSpec na, pointAsSpec a)] (scalarAsSpec ng) (pointAsSpec r)))
+ where
+  fast_point_check_1 = fastCoreEval point_check_1
+
 prop_pubkey_unpack :: FieldElement -> Bool
-prop_pubkey_unpack a@(FieldElement w) = fmap (right (\x -> (x,toWord256 1))) (fast_pubkey_unpack (feAsTy a))
-                                     == Just ((fmap toGEJ . maybeToTy) (Spec.pubkey_unpack (Spec.PubKey w)))
+prop_pubkey_unpack a@(FieldElement w) = fast_pubkey_unpack (feAsTy a)
+                                     == Just ((fmap toPoint . maybeToTy) (Spec.pubkey_unpack (Spec.PubKey w)))
  where
   fast_pubkey_unpack = fastCoreEval pubkey_unpack
+
+prop_pubkey_unpack_neg :: FieldElement -> Bool
+prop_pubkey_unpack_neg a@(FieldElement w) = fast_pubkey_unpack_neg (feAsTy a)
+                                         == Just ((fmap toPoint . maybeToTy) (Spec.pubkey_unpack_neg (Spec.PubKey w)))
+ where
+  fast_pubkey_unpack_neg = fastCoreEval pubkey_unpack_neg
 
 prop_signature_unpack :: FieldElement -> ScalarElement -> Bool
 prop_signature_unpack r@(FieldElement wr) s@(ScalarElement ws) =
