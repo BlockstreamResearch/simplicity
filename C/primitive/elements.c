@@ -477,9 +477,9 @@ extern bool elements_simplicity_execSimplicity(bool* success, const transaction*
     *success = !cmr || 0 == memcmp(cmr_hash.s, dag[len-1].cmr.s, sizeof(uint32_t[8]));
     if (*success) {
       type* type_dag;
-      size_t sourceIx, targetIx;
-      result = mallocTypeInference(&type_dag, &sourceIx, &targetIx, dag, (size_t)len, &census);
-      *success = result && type_dag && 0 == sourceIx && 0 == targetIx && fillWitnessData(dag, type_dag, (size_t)len, witness);
+      result = mallocTypeInference(&type_dag, dag, (size_t)len, &census);
+      *success = result && type_dag && 0 == dag[len-1].sourceType && 0 == dag[len-1].targetType
+              && fillWitnessData(dag, type_dag, (size_t)len, witness);
       if (*success) {
         if (amr) {
           analyses *analysis = (size_t)len <= SIZE_MAX / sizeof(analyses)

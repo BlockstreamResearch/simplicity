@@ -87,9 +87,8 @@ static void test_hashBlock(void) {
     }
 
     type* type_dag;
-    size_t sourceIx, targetIx;
-    if (!mallocTypeInference(&type_dag, &sourceIx, &targetIx, dag, (size_t)len, &census) || !type_dag ||
-        type_dag[sourceIx].bitSize != 768 || type_dag[targetIx].bitSize != 256) {
+    if (!mallocTypeInference(&type_dag, dag, (size_t)len, &census) || !type_dag ||
+        type_dag[dag[len-1].sourceType].bitSize != 768 || type_dag[dag[len-1].targetType].bitSize != 256) {
       failures++;
       printf("Unexpected failure of type inference for hashblock\n");
     } else if (!fillWitnessData(dag, type_dag, (size_t)len, witness)) {
@@ -174,9 +173,8 @@ static void test_program(char* name, FILE* file, bool expectedResult, const uint
       }
     }
     type* type_dag;
-    size_t sourceIx, targetIx;
-    if (!mallocTypeInference(&type_dag, &sourceIx, &targetIx, dag, (size_t)len, &census) || !type_dag ||
-        sourceIx != 0 || targetIx != 0) {
+    if (!mallocTypeInference(&type_dag, dag, (size_t)len, &census) || !type_dag ||
+        dag[len-1].sourceType != 0 || dag[len-1].targetType != 0) {
       failures++;
       printf("Unexpected failure of type inference.\n");
     } else if (!fillWitnessData(dag, type_dag, (size_t)len, witness)) {
@@ -224,7 +222,7 @@ static void test_occursCheck(void) {
     printf("Error parsing dag: %d\n", len);
   } else {
     type* type_dag;
-    if (mallocTypeInference(&type_dag, &(size_t){0}, &(size_t){0}, dag, (size_t)len, &census) && !type_dag) {
+    if (mallocTypeInference(&type_dag, dag, (size_t)len, &census) && !type_dag) {
       successes++;
     } else {
       printf("Unexpected occurs check success\n");

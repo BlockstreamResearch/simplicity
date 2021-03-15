@@ -105,6 +105,7 @@ typedef struct witnessInfo {
 typedef struct dag_node {
   jet_ptr jet;
   sha256_midstate cmr;
+  size_t sourceType, targetType;
   union {
     struct {
       size_t sourceIx, targetIx;

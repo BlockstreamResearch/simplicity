@@ -481,81 +481,76 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
  * and return 'true'.
  * The type Merkle roots of the 'type_dag' are also filled in.
  *
- * If the Simplicity expression is a program then '*sourceIx' and '*targetIx' will be set to the index 0.
- *
- * We say 'dag' is "well-typed" if it is a well-formed 'dag' with type annotations referencing a well-formed 'type_dag'
- * that satisfies all the typing constraints of Simplicity.
+ * We say 'dag' is "well-typed" if it is a well-formed 'dag' with type annotations, and source and target types,
+ * referencing a well-formed 'type_dag' that satisfies all the typing constraints of Simplicity.
  *
  * If the Simplicity DAG, 'dag' does not have a principal type, yet the precondition on 'arrow' below is still satisfied,
  * then there must be a cycle in the graph of bindings accessible through the 'arrow' array, and in this case we return 'false'.
  *
  * In either case, '*arrow', and values referenced by these structures may be modified.
  *
- * If 'false' is returned, then the '*sourceIx', '*targetIx', 'type_dag' array, and
+ * If 'false' is returned, then the 'type_dag' array, and
  * the '.typeAnnotation' fields within the 'dag' array may be modified.
  *
  * Precondition: type type_dag[1 + n]
  *                 where 'n' is the number of unification variables that have non-trivial bindings
  *                   that are accessible from the 'arrow' array;
- *               NULL != sourceIx;
- *               NULL != targetIx;
  *               dag_node dag[len] is well-formed;
  *               unification_arrow arrow[len] is a graph of bindings that satisfies the typing constraints of imposed by 'dag'.
  */
-static bool freezeTypes(type* type_dag, size_t* sourceIx, size_t* targetIx,
-                        dag_node* dag, unification_arrow* arrow, const size_t len) {
+static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow, const size_t len) {
   /* First entry of type_dag gets assigned to the ONE type. */
   type_dag[0] = (type){ .kind = ONE };
   size_t type_dag_used = 1;
 
-  #define FREEZE(a, b, c, d) { if (!freeze((a), (b), (c), (d))) return false; }
   for (size_t i = 0; i < len; ++i) {
+    if (!(freeze(&(dag[i].sourceType), type_dag, &type_dag_used, &(arrow[i].source)) &&
+          freeze(&(dag[i].targetType), type_dag, &type_dag_used, &(arrow[i].target)))) return false;
+
     switch (dag[i].tag) {
      case COMP:
-      FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, &(arrow[i].source));
-      FREEZE(&(dag[i].typeAnnotation[1]), type_dag, &type_dag_used, &(arrow[dag[i].child[0]].target));
-      FREEZE(&(dag[i].typeAnnotation[2]), type_dag, &type_dag_used, &(arrow[i].target));
+      dag[i].typeAnnotation[0] = dag[i].sourceType;
+      dag[i].typeAnnotation[1] = dag[dag[i].child[1]].sourceType;
+      dag[i].typeAnnotation[2] = dag[i].targetType;
       break;
      case ASSERTL:
      case ASSERTR:
      case CASE:
-      FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used,
-             findRoot(findRoot(&(arrow[i].source))->bound.arg[0])->bound.arg[0]);
-      FREEZE(&(dag[i].typeAnnotation[1]), type_dag, &type_dag_used,
-             findRoot(findRoot(&(arrow[i].source))->bound.arg[0])->bound.arg[1]);
-      FREEZE(&(dag[i].typeAnnotation[2]), type_dag, &type_dag_used, findRoot(&(arrow[i].source))->bound.arg[1]);
-      FREEZE(&(dag[i].typeAnnotation[3]), type_dag, &type_dag_used, &(arrow[i].target));
+      dag[i].typeAnnotation[0] = type_dag[type_dag[dag[i].sourceType].typeArg[0]].typeArg[0];
+      dag[i].typeAnnotation[1] = type_dag[type_dag[dag[i].sourceType].typeArg[0]].typeArg[1];
+      dag[i].typeAnnotation[2] = type_dag[dag[i].sourceType].typeArg[1];
+      dag[i].typeAnnotation[3] = dag[i].targetType;
       break;
      case PAIR:
-      FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, &(arrow[i].source));
-      FREEZE(&(dag[i].typeAnnotation[1]), type_dag, &type_dag_used, &(arrow[dag[i].child[0]].target));
-      FREEZE(&(dag[i].typeAnnotation[2]), type_dag, &type_dag_used, &(arrow[dag[i].child[1]].target));
+      dag[i].typeAnnotation[0] = dag[i].sourceType;
+      dag[i].typeAnnotation[1] = type_dag[dag[i].targetType].typeArg[0];
+      dag[i].typeAnnotation[2] = type_dag[dag[i].targetType].typeArg[1];
       break;
      case DISCONNECT:
-      FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, &(arrow[i].source));
-      FREEZE(&(dag[i].typeAnnotation[1]), type_dag, &type_dag_used, findRoot(&(arrow[i].target))->bound.arg[0]);
-      FREEZE(&(dag[i].typeAnnotation[2]), type_dag, &type_dag_used, &(arrow[dag[i].child[1]].source));
-      FREEZE(&(dag[i].typeAnnotation[3]), type_dag, &type_dag_used, &(arrow[dag[i].child[1]].target));
+      dag[i].typeAnnotation[0] = dag[i].sourceType;
+      dag[i].typeAnnotation[1] = type_dag[dag[i].targetType].typeArg[0];
+      dag[i].typeAnnotation[2] = dag[dag[i].child[1]].sourceType;
+      dag[i].typeAnnotation[3] = type_dag[dag[i].targetType].typeArg[1];
       break;
      case INJL:
      case INJR:
-      FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, &(arrow[i].source));
-      FREEZE(&(dag[i].typeAnnotation[1]), type_dag, &type_dag_used, findRoot(&(arrow[i].target))->bound.arg[0]);
-      FREEZE(&(dag[i].typeAnnotation[2]), type_dag, &type_dag_used, findRoot(&(arrow[i].target))->bound.arg[1]);
+      dag[i].typeAnnotation[0] = dag[i].sourceType;
+      dag[i].typeAnnotation[1] = type_dag[dag[i].targetType].typeArg[0];
+      dag[i].typeAnnotation[2] = type_dag[dag[i].targetType].typeArg[1];
       break;
      case TAKE:
      case DROP:
-      FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, findRoot(&(arrow[i].source))->bound.arg[0]);
-      FREEZE(&(dag[i].typeAnnotation[1]), type_dag, &type_dag_used, findRoot(&(arrow[i].source))->bound.arg[1]);
-      FREEZE(&(dag[i].typeAnnotation[2]), type_dag, &type_dag_used, &(arrow[i].target));
+      dag[i].typeAnnotation[0] = type_dag[dag[i].sourceType].typeArg[0];
+      dag[i].typeAnnotation[1] = type_dag[dag[i].sourceType].typeArg[1];
+      dag[i].typeAnnotation[2] = dag[i].targetType;
       break;
      case IDEN:
      case UNIT:
-      FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, &(arrow[i].source));
+      dag[i].typeAnnotation[0] = dag[i].sourceType;
       break;
      case WITNESS:
-      FREEZE(&(dag[i].typeAnnotation[0]), type_dag, &type_dag_used, &(arrow[i].source));
-      FREEZE(&(dag[i].typeAnnotation[1]), type_dag, &type_dag_used, &(arrow[i].target));
+      dag[i].witness.typeAnnotation[0] = dag[i].sourceType;
+      dag[i].witness.typeAnnotation[1] = dag[i].targetType;
       break;
      case HIDDEN:
      case JET:
@@ -563,9 +558,6 @@ static bool freezeTypes(type* type_dag, size_t* sourceIx, size_t* targetIx,
       break;
     }
   }
-  FREEZE(sourceIx, type_dag, &type_dag_used, &(arrow[len-1].source));
-  FREEZE(targetIx, type_dag, &type_dag_used, &(arrow[len-1].target));
-  #undef FREEZE
   computeTypeAnalyses(type_dag, type_dag_used);
 
   return true;
@@ -576,30 +568,22 @@ static bool freezeTypes(type* type_dag, size_t* sourceIx, size_t* targetIx,
  * and the input and output types of whole expression,
  * with all free type variables instantiated at ONE, and set '*type_dag' to this allocation.
  * and update the .typeAnnotation array within each node of the 'dag' to refer to their type within the resulting type DAG.
- * and set '*sourceIx' and '*targetIx' such that 'type_dag[*sourceIx]' and 'type_dag[*targetIx]' are the inferred types of the
- * Simplicity expression.
- *
- * Recall that a well-formed type DAG is always non-empty because the first element of the array is guaranteed to be the type 'ONE'.
- * If the expression is a Simplicity program then '*sourceIx' and '*targetIx' will be set to the index 0.
+ * and set the .sourceType and .targetType such that 'type_dag[dag[i].sourceType]' and 'type_dag[dag[i].targetType]' are the inferred types of the
+ * Simplicity subexpression at dag[i].
  *
  * If malloc fails, return 'false', otherwise return 'true'.
- * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL and
- * '*sourceIx' and '*targetIx' may be modified.
+ * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL.
  *
  * Precondition: NULL != type_dag;
- *               NULL != sourceIx;
- *               NULL != targetIx;
  *               dag_node dag[len] is well-formed;
  *               '*census' contains a tally of the different tags that occur in 'dag'.
  *
  * Postcondition: if the return value is 'true'
  *                then either NULL == '*type_dag'
  *                     or 'dag' is well-typed with '*type_dag' and without witness values
- *                         and '(*type_dag)[*sourceIx]' and '(*type_dag)[*targetIx]' are both defined.
  *                if the return value is 'false' then 'NULL == *type_dag'
  */
-bool mallocTypeInference(type** type_dag, size_t *sourceIx, size_t *targetIx,
-                         dag_node* dag, const size_t len, const combinator_counters* census) {
+bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census) {
   *type_dag = NULL;
   /* :TODO: static assert that MAX_DAG size is small enough that these sizes fit within SIZE_T. */
   /* These arrays could be allocated on the stack, but they are potentially large, so we allocate them on the heap instead. */
@@ -621,7 +605,7 @@ bool mallocTypeInference(type** type_dag, size_t *sourceIx, size_t *targetIx,
                 : NULL;
       result = *type_dag;
       if (result) {
-        if (!freezeTypes(*type_dag, sourceIx, targetIx, dag, arrow, len)) {
+        if (!freezeTypes(*type_dag, dag, arrow, len)) {
           free(*type_dag);
           *type_dag = NULL;
         }
