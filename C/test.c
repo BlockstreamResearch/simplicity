@@ -382,16 +382,14 @@ static uint_fast32_t rsort_one_duplicate(size_t i) {
 
 static void test_hasDuplicates(const char* name, bool expected, uint_fast32_t (*f)(size_t), size_t n) {
   sha256_midstate hashes[n];
-  const sha256_midstate* ptrs[n];
 
   printf("Test %s\n", name);
   for(size_t i = 0; i < n; ++i) {
     hashes[i] = hashint(f(i));
-    ptrs[i] = hashes + i;
   }
 
   bool duplicates;
-  if (!hasDuplicates(&duplicates, ptrs, n)) {
+  if (!hasDuplicates(&duplicates, hashes, n)) {
     failures++;
     printf("Unexpected failure of hasDuplicates\n");
   } else if (expected == duplicates) {
