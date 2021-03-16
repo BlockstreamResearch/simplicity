@@ -475,22 +475,22 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
  * If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
  * and 'arrow[i]'s and 'source' and 'target' field's unification variables are bound to the principal source and target types
  * of subexpression denoted by the slice '(dag_nodes[i + 1])dag', then we create a well-formed 'type_dag' (see 'type.h')
- * that includes the type annotations for every combinator and expression in 'dag' of the principal type,
- * and the input and output types of whole expression,
- * with all free type variables instantiated to the type 'ONE' and add references to these type annotations to 'dag'
+ * that includes the input and output types for every subexpression in 'dag', with all free type variables instantiated to the type
+ * 'ONE' and add references to these type annotations to 'dag'
  * and return 'true'.
+ *
  * The type Merkle roots of the 'type_dag' are also filled in.
  *
- * We say 'dag' is "well-typed" if it is a well-formed 'dag' with type annotations, and source and target types,
- * referencing a well-formed 'type_dag' that satisfies all the typing constraints of Simplicity.
+ * We say 'dag' is "well-typed" if it is a well-formed 'dag' with source and target types on all subexpressions,
+ * referencing a well-formed 'type_dag', that satisfies all the typing constraints of Simplicity.
+ * Hidden nodes are not actually typed and are instead assigned references to the type 'ONE' for their input and output types.
  *
  * If the Simplicity DAG, 'dag' does not have a principal type, yet the precondition on 'arrow' below is still satisfied,
  * then there must be a cycle in the graph of bindings accessible through the 'arrow' array, and in this case we return 'false'.
  *
  * In either case, '*arrow', and values referenced by these structures may be modified.
  *
- * If 'false' is returned, then the 'type_dag' array, and
- * the '.typeAnnotation' fields within the 'dag' array may be modified.
+ * If 'false' is returned, then the 'type_dag' array, and the '.sourceType', '.targetType' within the 'dag' array may be modified.
  *
  * Precondition: type type_dag[1 + n]
  *                 where 'n' is the number of unification variables that have non-trivial bindings
@@ -506,70 +506,18 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
   for (size_t i = 0; i < len; ++i) {
     if (!(freeze(&(dag[i].sourceType), type_dag, &type_dag_used, &(arrow[i].source)) &&
           freeze(&(dag[i].targetType), type_dag, &type_dag_used, &(arrow[i].target)))) return false;
-
-    switch (dag[i].tag) {
-     case COMP:
-      dag[i].typeAnnotation[0] = dag[i].sourceType;
-      dag[i].typeAnnotation[1] = dag[dag[i].child[1]].sourceType;
-      dag[i].typeAnnotation[2] = dag[i].targetType;
-      break;
-     case ASSERTL:
-     case ASSERTR:
-     case CASE:
-      dag[i].typeAnnotation[0] = type_dag[type_dag[dag[i].sourceType].typeArg[0]].typeArg[0];
-      dag[i].typeAnnotation[1] = type_dag[type_dag[dag[i].sourceType].typeArg[0]].typeArg[1];
-      dag[i].typeAnnotation[2] = type_dag[dag[i].sourceType].typeArg[1];
-      dag[i].typeAnnotation[3] = dag[i].targetType;
-      break;
-     case PAIR:
-      dag[i].typeAnnotation[0] = dag[i].sourceType;
-      dag[i].typeAnnotation[1] = type_dag[dag[i].targetType].typeArg[0];
-      dag[i].typeAnnotation[2] = type_dag[dag[i].targetType].typeArg[1];
-      break;
-     case DISCONNECT:
-      dag[i].typeAnnotation[0] = dag[i].sourceType;
-      dag[i].typeAnnotation[1] = type_dag[dag[i].targetType].typeArg[0];
-      dag[i].typeAnnotation[2] = dag[dag[i].child[1]].sourceType;
-      dag[i].typeAnnotation[3] = type_dag[dag[i].targetType].typeArg[1];
-      break;
-     case INJL:
-     case INJR:
-      dag[i].typeAnnotation[0] = dag[i].sourceType;
-      dag[i].typeAnnotation[1] = type_dag[dag[i].targetType].typeArg[0];
-      dag[i].typeAnnotation[2] = type_dag[dag[i].targetType].typeArg[1];
-      break;
-     case TAKE:
-     case DROP:
-      dag[i].typeAnnotation[0] = type_dag[dag[i].sourceType].typeArg[0];
-      dag[i].typeAnnotation[1] = type_dag[dag[i].sourceType].typeArg[1];
-      dag[i].typeAnnotation[2] = dag[i].targetType;
-      break;
-     case IDEN:
-     case UNIT:
-      dag[i].typeAnnotation[0] = dag[i].sourceType;
-      break;
-     case WITNESS:
-      dag[i].witness.typeAnnotation[0] = dag[i].sourceType;
-      dag[i].witness.typeAnnotation[1] = dag[i].targetType;
-      break;
-     case HIDDEN:
-     case JET:
-      /* Jets and Hidden nodes do not have type annotations. */
-      break;
-    }
   }
+
   computeTypeAnalyses(type_dag, type_dag_used);
 
   return true;
 }
 
 /* If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
- * then allocate a well-formed type DAG containing all the type annotations needed for the principal type of 'dag',
- * and the input and output types of whole expression,
- * with all free type variables instantiated at ONE, and set '*type_dag' to this allocation.
- * and update the .typeAnnotation array within each node of the 'dag' to refer to their type within the resulting type DAG.
- * and set the .sourceType and .targetType such that 'type_dag[dag[i].sourceType]' and 'type_dag[dag[i].targetType]' are the inferred types of the
- * Simplicity subexpression at dag[i].
+ * then allocate a well-formed type DAG containing all the types needed for all the subexpressions of 'dag',
+ * with all free type variables instantiated at ONE, and set '*type_dag' to this allocation,
+ * and update the '.sourceType' and '.targetType' fields within each node of the 'dag' 'type_dag[dag[i].sourceType]'
+ * and 'type_dag[dag[i].targetType]' are the inferred types of the Simplicity subexpression at dag[i].
  *
  * If malloc fails, return 'false', otherwise return 'true'.
  * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL.

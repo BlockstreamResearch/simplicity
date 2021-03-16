@@ -198,23 +198,43 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
      case ASSERTL:
      case ASSERTR:
      case CASE:
-     case DISCONNECT:
-      memcpy(block, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      memcpy(block + 8, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block, type_dag[CASE_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8,
+             type_dag[CASE_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
-      memcpy(block, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      memcpy(block + 8, type_dag[dag[i].typeAnnotation[3]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block, type_dag[CASE_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[CASE_D(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      memcpy(block, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, analysis[dag[i].child[1]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      break;
+     case DISCONNECT:
+      memcpy(block, type_dag[DISCONNECT_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[DISCONNECT_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      memcpy(block, type_dag[DISCONNECT_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[DISCONNECT_D(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, analysis[dag[i].child[1]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case COMP:
-     case PAIR:
-      memcpy(block + 8, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[COMP_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
-      memcpy(block, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      memcpy(block + 8, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block, type_dag[COMP_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[COMP_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      memcpy(block, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, analysis[dag[i].child[1]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      break;
+     case PAIR:
+      memcpy(block + 8, type_dag[PAIR_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      memcpy(block, type_dag[PAIR_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[PAIR_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, analysis[dag[i].child[1]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
@@ -222,25 +242,35 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
       break;
      case INJL:
      case INJR:
+      memcpy(block, type_dag[INJ_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[INJ_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      memcpy(block, type_dag[INJ_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      break;
      case TAKE:
      case DROP:
-      memcpy(block, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      memcpy(block + 8, type_dag[dag[i].typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block, type_dag[PROJ_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[PROJ_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
-      memcpy(block, type_dag[dag[i].typeAnnotation[2]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block, type_dag[PROJ_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case IDEN:
+      memcpy(block + 8, type_dag[IDEN_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      break;
      case UNIT:
-      memcpy(block + 8, type_dag[dag[i].typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[UNIT_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case WITNESS:
-      memcpy(block + 8, type_dag[dag[i].witness.typeAnnotation[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[WITNESS_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
-      memcpy(block, type_dag[dag[i].witness.typeAnnotation[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_bitstring(block + 8, &dag[i].witness.data);
+      memcpy(block, type_dag[WITNESS_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_bitstring(block + 8, &dag[i].witness);
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case HIDDEN:
@@ -268,19 +298,18 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
     if (WITNESS == dag[i].tag) {
       if (witness.len <= 0) {
         /* There is no more data left in witness. */
-        dag[i].witness = (witnessInfo){ .typeAnnotation = { dag[i].typeAnnotation[0], dag[i].typeAnnotation[1] } };
+        dag[i].witness = (bitstring){0};
         /* This is fine as long as the witness type is trivial */
-        if (type_dag[dag[i].witness.typeAnnotation[1]].bitSize) return false;
+        if (type_dag[WITNESS_B(dag, type_dag, i)].bitSize) return false;
       } else {
-        dag[i].witness = (witnessInfo)
-          { .typeAnnotation = { dag[i].typeAnnotation[0], dag[i].typeAnnotation[1] }
-          , .data = { .arr = &witness.arr[witness.offset/CHAR_BIT]
-                    , .offset = witness.offset % CHAR_BIT
-                    , .len = witness.len /* The value of .len will be finalized after the while loop. */
-          }         };
+        dag[i].witness = (bitstring)
+          { .arr = &witness.arr[witness.offset/CHAR_BIT]
+          , .offset = witness.offset % CHAR_BIT
+          , .len = witness.len /* The value of .len will be finalized after the while loop. */
+          };
 
         /* Traverse the witness type to parse the witness's compact representation as a bit sting. */
-        size_t cur = typeSkip(dag[i].witness.typeAnnotation[1], type_dag);
+        size_t cur = typeSkip(WITNESS_B(dag, type_dag, i), type_dag);
         bool calling = true;
         type_dag[cur].back = 0;
         while (cur) {
@@ -325,14 +354,14 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
         /* The length of this 'WITNESS' node's witness value is
          * the difference between the remaining witness length from before and after parsing.
          */
-        dag[i].witness.data.len -= witness.len;
+        dag[i].witness.len -= witness.len;
 
         /* Note: Above we use 'typeSkip' to skip over long chains of products against trivial types
          * This avoids a potential DOS vulnerability where a DAG of deeply nested products of unit types with sharing is traversed,
          * taking exponential time.
          * While traversing still could take exponential time in terms of the size of the type's dag,
          * at least one bit of witness data is required per PRODUCT type encountered.
-         * This ought to limit the total number of times through the above loop to no more that 3 * dag[i].witness.data.len.
+         * This ought to limit the total number of times through the above loop to no more that 3 * dag[i].witness.len.
          */
         /* :TODO: build a test case that creates such a long chain of products with unit types for a witness value. */
       }
