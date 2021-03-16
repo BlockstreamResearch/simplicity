@@ -232,12 +232,12 @@ static void copyBits(frameItem* dst, const frameItem* src, size_t n) {
  * Cells in front of the '*dst's cursor's final position may be overwritten.
  *
  * Precondition: '*dst' is a valid write frame for 'bitSize(B)' more cells;
- *               'type_dag[witness->typeAnnotation[1]]' is a type dag for the type B;
- *               'witness->data' is a compact bitstring representation of a value 'v : B'.
+ *               'data' is a compact bitstring representation of a value 'v : B';
+ *               'type_dag[typeIx]' is a type dag for the type B.
  */
-static void writeWitness(frameItem* dst, const witnessInfo* witness, type* type_dag) {
-  size_t cur = typeSkip(witness->typeAnnotation[1], type_dag);
-  size_t offset = witness->data.offset;
+static void writeWitness(frameItem* dst, const bitstring* data, size_t typeIx, type* type_dag) {
+  size_t cur = typeSkip(typeIx, type_dag);
+  size_t offset = data->offset;
   bool calling = true;
   type_dag[cur].back = 0;
   while (cur) {
@@ -245,7 +245,7 @@ static void writeWitness(frameItem* dst, const witnessInfo* witness, type* type_
       assert(calling);
 
       /* Write one bit to the write frame and then skip over any padding bits. */
-      bool bit = 1 & (witness->data.arr[offset/CHAR_BIT] >> (CHAR_BIT - 1 - offset % CHAR_BIT));
+      bool bit = 1 & (data->arr[offset/CHAR_BIT] >> (CHAR_BIT - 1 - offset % CHAR_BIT));
       offset++;
       writeBit(dst, bit);
       skip(dst, pad(bit, type_dag[type_dag[cur].typeArg[0]].bitSize, type_dag[type_dag[cur].typeArg[1]].bitSize));
@@ -287,7 +287,7 @@ static void writeWitness(frameItem* dst, const witnessInfo* witness, type* type_
    * taking exponential time.
    * While traversing still could take exponential time in terms of the size of the type's dag,
    * at least one bit of witness data is required per PRODUCT type encountered.
-   * This ought to limit the total number of times through the above loop to no more that 3 * dag[i].witness.data.len.
+   * This ought to limit the total number of times through the above loop to no more that 3 * data.len.
    */
 }
 
@@ -367,7 +367,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
      case COMP:
       if (calling) {
         /* NEW_FRAME(BITSIZE(B)) */
-        *(state.activeWriteFrame - 1) = initWriteFrame(type_dag[dag[pc].typeAnnotation[1]].bitSize, state.activeWriteFrame->edge);
+        *(state.activeWriteFrame - 1) = initWriteFrame(type_dag[COMP_B(dag, type_dag, pc)].bitSize, state.activeWriteFrame->edge);
         state.activeWriteFrame--;
 
         /* CALL(dag[pc].child[0], SAME_TCO) */
@@ -379,7 +379,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
         memmove( state.activeReadFrame->edge, state.activeWriteFrame->edge
                , (size_t)((state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge) * sizeof(UWORD)
                );
-        *(state.activeReadFrame + 1) = initReadFrame(type_dag[dag[pc].typeAnnotation[1]].bitSize, state.activeReadFrame->edge);
+        *(state.activeReadFrame + 1) = initReadFrame(type_dag[COMP_B(dag, type_dag, pc)].bitSize, state.activeReadFrame->edge);
         state.activeWriteFrame++; state.activeReadFrame++;
 
         /* TAIL_CALL(dag[pc].child[1], true) */
@@ -396,8 +396,8 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
 
         /* FWD(1 + PADL(A,B) when bit = 0; FWD(1 + PADR(A,B) when bit = 1 */
         forward(state.activeReadFrame, 1 + pad( bit
-                                     , type_dag[dag[pc].typeAnnotation[0]].bitSize
-                                     , type_dag[dag[pc].typeAnnotation[1]].bitSize));
+                                     , type_dag[CASE_A(dag, type_dag, pc)].bitSize
+                                     , type_dag[CASE_B(dag, type_dag, pc)].bitSize));
 
         /* CONDITIONAL_TAIL_CALL(dag[pc].child[bit]); */
         stack[dag[pc].child[bit]] = (call)
@@ -413,8 +413,8 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
       } else {
         /* BWD(1 + PADL(A,B) when bit = 0; BWD(1 + PADR(A,B) when bit = 1 */
         backward(state.activeReadFrame, 1 + pad( stack[pc].bit
-                                      , type_dag[dag[pc].typeAnnotation[0]].bitSize
-                                      , type_dag[dag[pc].typeAnnotation[1]].bitSize));
+                                      , type_dag[CASE_A(dag, type_dag, pc)].bitSize
+                                      , type_dag[CASE_B(dag, type_dag, pc)].bitSize));
 
         /* RETURN; */
         pc = stack[pc].return_to;
@@ -438,7 +438,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
      case DISCONNECT:
       if (calling) {
         /* NEW_FRAME(BITSIZE(WORD256 * A)) */
-        *(state.activeWriteFrame - 1) = initWriteFrame(256 + type_dag[dag[pc].typeAnnotation[0]].bitSize,
+        *(state.activeWriteFrame - 1) = initWriteFrame(type_dag[DISCONNECT_W256A(dag, type_dag, pc)].bitSize,
                                                        state.activeWriteFrame->edge);
         state.activeWriteFrame--;
 
@@ -446,7 +446,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
         write32s(state.activeWriteFrame, dag[dag[pc].child[1]].cmr.s, 8);
 
         /* COPY(BITSIZE(A)) */
-        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
+        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[DISCONNECT_A(dag, type_dag, pc)].bitSize);
 
         if (stack[pc].tcoOn) {
           /* DROP_FRAME */
@@ -458,13 +458,12 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
         memmove( state.activeReadFrame->edge, state.activeWriteFrame->edge
                , (size_t)((state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge) * sizeof(UWORD)
                );
-        *(state.activeReadFrame + 1) = initReadFrame(256 + type_dag[dag[pc].typeAnnotation[0]].bitSize,
+        *(state.activeReadFrame + 1) = initReadFrame(type_dag[DISCONNECT_W256A(dag, type_dag, pc)].bitSize,
                                                      state.activeReadFrame->edge);
         state.activeWriteFrame++; state.activeReadFrame++;
 
         /* NEW_FRAME(BITSIZE(B * C)) */
-        *(state.activeWriteFrame - 1) = initWriteFrame(type_dag[dag[pc].typeAnnotation[1]].bitSize +
-                                                       type_dag[dag[pc].typeAnnotation[2]].bitSize,
+        *(state.activeWriteFrame - 1) = initWriteFrame(type_dag[DISCONNECT_BC(dag, type_dag, pc)].bitSize,
                                                        state.activeWriteFrame->edge);
         state.activeWriteFrame--;
 
@@ -477,16 +476,15 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
         memmove( state.activeReadFrame->edge, state.activeWriteFrame->edge
                , (size_t)((state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge) * sizeof(UWORD)
                );
-        *(state.activeReadFrame + 1) = initReadFrame(type_dag[dag[pc].typeAnnotation[1]].bitSize +
-                                                     type_dag[dag[pc].typeAnnotation[2]].bitSize,
+        *(state.activeReadFrame + 1) = initReadFrame(type_dag[DISCONNECT_BC(dag, type_dag, pc)].bitSize,
                                                      state.activeReadFrame->edge);
         state.activeWriteFrame++; state.activeReadFrame++;
 
         /* COPY(BITSIZE(B)) */
-        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[1]].bitSize);
+        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[DISCONNECT_B(dag, type_dag, pc)].bitSize);
 
         /* FWD(BITSIZE(B)) */
-        forward(state.activeReadFrame, type_dag[dag[pc].typeAnnotation[1]].bitSize);
+        forward(state.activeReadFrame, type_dag[DISCONNECT_B(dag, type_dag, pc)].bitSize);
 
         /* TAIL_CALL(dag[pc].child[1], true) */
         calling = true;
@@ -501,8 +499,8 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
 
       /* SKIP(PADL(A,B)) when INJL; SKIP(PADR(A,B)) when INJR */
       skip(state.activeWriteFrame, pad( INJR == dag[pc].tag
-                                 , type_dag[dag[pc].typeAnnotation[1]].bitSize
-                                 , type_dag[dag[pc].typeAnnotation[2]].bitSize));
+                                 , type_dag[INJ_B(dag, type_dag, pc)].bitSize
+                                 , type_dag[INJ_C(dag, type_dag, pc)].bitSize));
       /*@fallthrough@*/
      case TAKE:
       assert(calling);
@@ -516,7 +514,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
      case DROP:
       if (calling) {
         /* FWD(BITSIZE(A)) */
-        forward(state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
+        forward(state.activeReadFrame, type_dag[PROJ_A(dag, type_dag, pc)].bitSize);
 
         /* CONDITIONAL_TAIL_CALL(dag[pc].child[0]); */
         stack[dag[pc].child[0]] = (call)
@@ -526,7 +524,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
         pc = dag[pc].child[0];
       } else {
         /* BWD(BITSIZE(A)) */
-        backward(state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
+        backward(state.activeReadFrame, type_dag[PROJ_A(dag, type_dag, pc)].bitSize);
 
         /* RETURN; */
         pc = stack[pc].return_to;
@@ -536,10 +534,10 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
      case WITNESS:
       if (IDEN == tag) {
         /* COPY(BITSIZE(A)) */
-        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[dag[pc].typeAnnotation[0]].bitSize);
+        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[IDEN_A(dag, type_dag, pc)].bitSize);
       } else {
         assert(WITNESS == tag);
-        writeWitness(state.activeWriteFrame, &dag[pc].witness, type_dag);
+        writeWitness(state.activeWriteFrame, &dag[pc].witness, WITNESS_B(dag, type_dag, pc), type_dag);
       }
       /*@fallthrough@*/
      case UNIT:
@@ -616,16 +614,16 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
       break;
      case DISCONNECT:
       /* :TODO: replace this check with a consensus critical limit. */
-      if (SIZE_MAX - 256 <= type_dag[dag[i].typeAnnotation[0]].bitSize ||
-          SIZE_MAX - type_dag[dag[i].typeAnnotation[1]].bitSize <= type_dag[dag[i].typeAnnotation[2]].bitSize) {
-        /* 'BITSIZE(A * WORD256) or BITSIZE(B * C)' has exceeded our limits. */
+      if (SIZE_MAX <= type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize ||
+          SIZE_MAX <= type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize) {
+        /* 'BITSIZE(WORD256 * A)' or 'BITSIZE(B * C)' has exceeded our limits. */
         bound[i].extraCellsBoundTCO[0] = SIZE_MAX;
         bound[i].extraCellsBoundTCO[1] = SIZE_MAX;
       } else {
-        bound[i].extraCellsBoundTCO[1] = ROUND_UWORD(256 + type_dag[dag[i].typeAnnotation[0]].bitSize);
+        bound[i].extraCellsBoundTCO[1] = ROUND_UWORD(type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize);
         bound[i].extraCellsBoundTCO[0] = max(
           bounded_add(
-            ROUND_UWORD(type_dag[dag[i].typeAnnotation[1]].bitSize + type_dag[dag[i].typeAnnotation[2]].bitSize),
+            ROUND_UWORD(type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize),
             max( bounded_add(bound[i].extraCellsBoundTCO[1], bound[dag[i].child[0]].extraCellsBoundTCO[1])
                , max(bound[dag[i].child[0]].extraCellsBoundTCO[0], bound[dag[i].child[1]].extraCellsBoundTCO[1]))),
           bound[dag[i].child[1]].extraCellsBoundTCO[0]);
@@ -637,12 +635,12 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
       break;
      case COMP:
       /* :TODO: replace this check with a consensus critical limit. */
-      if (SIZE_MAX <= type_dag[dag[i].typeAnnotation[1]].bitSize) {
-        /* 'type_dag[dag[i].typeAnnotation[1]].bitSize' has exceeded our limits. */
+      if (SIZE_MAX <= type_dag[COMP_B(dag, type_dag, i)].bitSize) {
+        /* 'BITSIZE(B)' has exceeded our limits. */
         bound[i].extraCellsBoundTCO[0] = SIZE_MAX;
         bound[i].extraCellsBoundTCO[1] = SIZE_MAX;
       } else {
-        size_t scratch = ROUND_UWORD(type_dag[dag[i].typeAnnotation[1]].bitSize);
+        size_t scratch = ROUND_UWORD(type_dag[COMP_B(dag, type_dag, i)].bitSize);
         bound[i].extraCellsBoundTCO[0] = max( bounded_add( scratch
                                                          , max( bound[dag[i].child[0]].extraCellsBoundTCO[0]
                                                               , bound[dag[i].child[1]].extraCellsBoundTCO[1] ))

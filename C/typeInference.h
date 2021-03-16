@@ -72,12 +72,10 @@ struct unification_var {
 };
 
 /* If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
- * then allocate a well-formed type DAG containing all the type annotations needed for the principal type of 'dag',
- * and the input and output types of whole expression,
- * with all free type variables instantiated at ONE, and set '*type_dag' to this allocation.
- * and update the .typeAnnotation array within each node of the 'dag' to refer to their type within the resulting type DAG.
- * and set the .sourceType and .targetType such that 'type_dag[dag[i].sourceType]' and 'type_dag[dag[i].targetType]' are the inferred types of the
- * Simplicity subexpression at dag[i].
+ * then allocate a well-formed type DAG containing all the types needed for all the subexpressions of 'dag',
+ * with all free type variables instantiated at ONE, and set '*type_dag' to this allocation,
+ * and update the '.sourceType' and '.targetType' fields within each node of the 'dag' 'type_dag[dag[i].sourceType]'
+ * and 'type_dag[dag[i].targetType]' are the inferred types of the Simplicity subexpression at dag[i].
  *
  * If malloc fails, return 'false', otherwise return 'true'.
  * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL.
