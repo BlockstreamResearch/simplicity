@@ -17,6 +17,9 @@ extern const size_t sizeof_schnorr0;
 /* The commitment Merkle root of the above schnorr0 Simplicity expression. */
 extern const uint32_t schnorr0_cmr[];
 
+/* The identity Merkle root of the above schnorr0 Simplicity expression. */
+extern const uint32_t schnorr0_imr[];
+
 /* The annotated Merkle root of the above schnorr0 Simplicity expression. */
 extern const uint32_t schnorr0_amr[];
 

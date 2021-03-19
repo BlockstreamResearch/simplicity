@@ -91,17 +91,20 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
  * If 'cmr != NULL' and the commitment Merkle root of the decoded expression doesn't match 'cmr' then '*success' is set to false.
  * If 'amr != NULL' and the annotated Merkle root of the decoded expression doesn't match 'amr' then '*success' is set to false.
  * Otherwise evaluation proceeds and '*success' is set to the result of evaluation.
+ * If 'imr != NULL' and '*success' is set to true, then the identity Merkle root of the decoded expression is written to 'imr'.
+ * Otherwise if 'imr != NULL' then 'imr' may or may not be written to.
  *
  * If at any time there is a transient error, such as malloc failing or an I/O error reading from 'file'
  * then 'false' is returned, and 'success' and 'file' may be modified.
  * Otherwise, 'true' is returned.
  *
  * Precondition: NULL != success;
+ *               NULL != imr implies unsigned char imr[32]
  *               NULL != tx;
  *               NULL != cmr implies unsigned char cmr[32]
  *               NULL != amr implies unsigned char amr[32]
  *               NULL != file;
  */
-extern bool elements_simplicity_execSimplicity(bool* success, const transaction* tx, uint_fast32_t ix,
+extern bool elements_simplicity_execSimplicity(bool* success, unsigned char* imr, const transaction* tx, uint_fast32_t ix,
                                                const unsigned char* cmr, const unsigned char* amr, FILE* file);
 #endif

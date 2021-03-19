@@ -5,6 +5,7 @@
 #include "bounded.h"
 #include "callonce.h"
 #include "prefix.h"
+#include "rsort.h"
 #include "sha256.h"
 #include "tag.h"
 #include "uword.h"
@@ -13,6 +14,7 @@
 /* Prepends Simplicity tag prefixes to a string literal 's'. */
 #define COMMITMENT_TAG(s) SIMPLICITY_PREFIX "\x1F" "Commitment\x1F" s
 #define ANNOTATED_TAG(s) SIMPLICITY_PREFIX "\x1F" "Annotated\x1F" s
+#define IDENTITY_TAG(s) SIMPLICITY_PREFIX "\x1F" "Identity\x1F" s
 
 /* Cached initial values for all the tags.
  * Only to be accessed through 'cmrIV' or 'amrIV'.
@@ -42,6 +44,10 @@ static sha256_midstate amr_compIV,
                        amr_idenIV,
                        amr_unitIV,
                        amr_witnessIV;
+static sha256_midstate imr_disconnectIV,
+                       imr_witnessIV;
+static sha256_midstate identityIV,
+                       hiddenIV;
 static void static_initialize(void) {
   MK_TAG(&cmr_compIV, COMMITMENT_TAG("comp"));
   MK_TAG(&cmr_caseIV, COMMITMENT_TAG("case"));
@@ -67,7 +73,12 @@ static void static_initialize(void) {
   MK_TAG(&amr_idenIV, ANNOTATED_TAG("iden"));
   MK_TAG(&amr_unitIV, ANNOTATED_TAG("unit"));
   MK_TAG(&amr_witnessIV, ANNOTATED_TAG("witness"));
+  MK_TAG(&imr_disconnectIV, IDENTITY_TAG("disconnect"));
+  MK_TAG(&imr_witnessIV, IDENTITY_TAG("witness"));
+  MK_TAG(&identityIV, SIMPLICITY_PREFIX "\x1F" "Identity");
+  MK_TAG(&hiddenIV, SIMPLICITY_PREFIX "\x1F" "Hidden");
 }
+
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
  *
@@ -97,6 +108,19 @@ static sha256_midstate cmrIV(tag_t tag) {
   }
   assert(false);
   UNREACHABLE;
+}
+
+/* Given a tag for a node, return the SHA-256 hash of its associated IMR tag.
+ * This is the "initial value" for computing the commitment Merkle root for that expression.
+ *
+ * Precondition: 'tag' \notin {HIDDEN, JET}
+ */
+static sha256_midstate imrIV(tag_t tag) {
+  call_once(&static_initialized, &static_initialize);
+
+  return DISCONNECT == tag ? imr_disconnectIV
+       : WITNESS == tag ? imr_witnessIV
+       : cmrIV(tag);
 }
 
 /* Given a tag for a node, return the SHA-256 hash of its associated AMR tag.
@@ -172,6 +196,73 @@ void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
    case HIDDEN:
    case JET:
     break;
+  }
+}
+
+/* Computes the identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses.
+ * 'imr[i]' is set to the identity Merkle root of the subexpression 'dag[i]'.
+ * When 'HIDDEN == dag[i].tag', then 'imr[i]' is instead set to a hidden root hash for that hidden node.
+ *
+ * Precondition: sha256_midstate imr[len];
+ *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' and contains witnesses.
+ */
+static void computeIdentityMerkleRoot(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t len) {
+  call_once(&static_initialized, &static_initialize);
+
+  /* Pass 1 */
+  for (size_t i = 0; i < len; ++i) {
+    uint32_t block[16] = {0};
+    size_t j = 8;
+
+    /* For jets and primitives, the first pass identity Merkle root is the same as their commitment Merkle root. */
+    imr[i] = HIDDEN == dag[i].tag ? dag[i].cmr
+           : JET == dag[i].tag ? dag[i].cmr
+           : imrIV(dag[i].tag);
+    switch (dag[i].tag) {
+     case WITNESS:
+      sha256_bitstring(block, &dag[i].witness);
+      memcpy(block + 8, type_dag[WITNESS_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(imr[i].s, block);
+      break;
+     case COMP:
+     case ASSERTL:
+     case ASSERTR:
+     case CASE:
+     case PAIR:
+     case DISCONNECT:
+      memcpy(block + j, imr[dag[i].child[1]].s, sizeof(uint32_t[8]));
+      j = 0;
+      /*@fallthrough@*/
+     case INJL:
+     case INJR:
+     case TAKE:
+     case DROP:
+      memcpy(block + j, imr[dag[i].child[0]].s, sizeof(uint32_t[8]));
+      sha256_compression(imr[i].s, block);
+     case IDEN:
+     case UNIT:
+     case HIDDEN:
+     case JET:
+      break;
+    }
+  }
+
+  /* Pass 2 */
+  for (size_t i = 0; i < len; ++i) {
+    uint32_t block[16] = {0};
+
+    if (HIDDEN == dag[i].tag) {
+      memcpy(block + 8, imr[i].s, sizeof(uint32_t[8]));
+      imr[i] = hiddenIV;
+      sha256_compression(imr[i].s, block);
+    } else {
+      memcpy(block + 8, imr[i].s, sizeof(uint32_t[8]));
+      imr[i] = identityIV;
+      sha256_compression(imr[i].s, block);
+      memcpy(block, type_dag[dag[i].sourceType].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      memcpy(block + 8, type_dag[dag[i].targetType].typeMerkleRoot.s, sizeof(uint32_t[8]));
+      sha256_compression(imr[i].s, block);
+    }
   }
 }
 
@@ -368,4 +459,27 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
     }
   }
   return (0 == witness.len);
+}
+
+/* Computes the identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses.
+ * imr[i]' is set to the identity Merkle root of the subexpression 'dag[i]'.
+ * When 'HIDDEN == dag[i].tag', then 'imr[i]' is instead set to a hidden root hash for that hidden node.
+ *
+ * If malloc fails, return 'false', otherwise return 'true'.
+ * If 'true' is returned then '*success' is set to true if all the identity Merkle roots (and hidden roots) are all unique.
+ *
+ * Precondition: NULL != success;
+ *               sha256_midstate imr[len];
+ *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' and contains witnesses.
+ */
+bool verifyNoDuplicateIdentityRoots(bool* success, sha256_midstate* imr,
+                                    const dag_node* dag, const type* type_dag, const size_t len) {
+  bool result, duplicates;
+
+  computeIdentityMerkleRoot(imr, dag, type_dag, len);
+
+  result = hasDuplicates(&duplicates, imr, len);
+  *success = result && !duplicates;
+
+  return result;
 }

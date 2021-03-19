@@ -215,6 +215,11 @@ const uint32_t hashBlock_cmr[] = {
   0xa432e9aeu, 0x74b02620u, 0x56ee1d65u, 0x4ac89985u, 0xf5e4fb55u, 0x7654d948u, 0x06be7f83u, 0x9c0779e9u
 };
 
+/* The identity Merkle root of the above hashBlock Simplicity expression. */
+const uint32_t hashBlock_imr[] = {
+  0xda10f0e8u, 0x530695d0u, 0x7564f0b3u, 0x2feebe77u, 0x265a1d69u, 0xcf802e22u, 0xd77289dau, 0xf6641b8du
+};
+
 /* The annotated Merkle root of the above hashBlock Simplicity expression. */
 const uint32_t hashBlock_amr[] = {
   0x6e3a2e15u, 0x1276de09u, 0x91176cf4u, 0x70c66100u, 0x7e5f56b7u, 0xd4b8816du, 0x65aaa927u, 0xb1195579u

@@ -339,4 +339,18 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
  */
 bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring witness);
 
+/* Computes the identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses.
+ * imr[i]' is set to the identity Merkle root of the subexpression 'dag[i]'.
+ * When 'HIDDEN == dag[i].tag', then 'imr[i]' is instead set to a hidden root hash for that hidden node.
+ *
+ * If malloc fails, return 'false', otherwise return 'true'.
+ * If 'true' is returned then '*success' is set to true if all the identity Merkle roots (and hidden roots) are all unique.
+ *
+ * Precondition: NULL != success;
+ *               sha256_midstate imr[len];
+ *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' and contains witnesses.
+ */
+bool verifyNoDuplicateIdentityRoots(bool* success, sha256_midstate* imr,
+                                    const dag_node* dag, const type* type_dag, const size_t len);
+
 #endif

@@ -95,13 +95,26 @@ static void test_hashBlock(void) {
       failures++;
       printf("Unexpected failure of fillWitnessData for hashblock\n");
     } else {
-      analyses analysis[len];
-      computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)len);
-      if (0 == memcmp(hashBlock_amr, analysis[len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]))) {
-        successes++;
-      } else {
-        failures++;
-        printf("Unexpected AMR of hashblock\n");
+      {
+        analyses analysis[len];
+        computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)len);
+        if (0 == memcmp(hashBlock_amr, analysis[len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]))) {
+          successes++;
+        } else {
+          failures++;
+          printf("Unexpected AMR of hashblock\n");
+        }
+      }
+      {
+        sha256_midstate imr[len];
+        bool noDups;
+        if (verifyNoDuplicateIdentityRoots(&noDups, imr, dag, type_dag, (size_t)len) && noDups
+            && 0 == memcmp(hashBlock_imr, imr[len-1].s, sizeof(uint32_t[8]))) {
+          successes++;
+        } else {
+          failures++;
+          printf("Unexpected IMR of hashblock\n");
+        }
       }
 
       _Static_assert(UWORD_BIT - 1 <= SIZE_MAX - (256+512), "UWORD_BIT is far too large.");
@@ -140,7 +153,8 @@ static void test_hashBlock(void) {
   free(witnessAlloc);
 }
 
-static void test_program(char* name, FILE* file, bool expectedResult, const uint32_t* expectedCMR, const uint32_t* expectedAMR) {
+static void test_program(char* name, FILE* file, bool expectedResult, const uint32_t* expectedCMR,
+                         const uint32_t* expectedIMR, const uint32_t* expectedAMR) {
   printf("Test %s\n", name);
   dag_node* dag;
   combinator_counters census;
@@ -181,14 +195,27 @@ static void test_program(char* name, FILE* file, bool expectedResult, const uint
       failures++;
       printf("Unexpected failure of fillWitnessData.\n");
     } else {
-      analyses analysis[len];
-      computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)len);
-      if (expectedAMR) {
-        if (0 == memcmp(expectedAMR, analysis[len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]))) {
+      { 
+        analyses analysis[len];
+        computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)len);
+        if (expectedAMR) {
+          if (0 == memcmp(expectedAMR, analysis[len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]))) {
+            successes++;
+          } else {
+            failures++;
+            printf("Unexpected AMR.\n");
+          }
+        }
+      }
+      {
+        sha256_midstate imr[len];
+        bool noDups;
+        if (verifyNoDuplicateIdentityRoots(&noDups, imr, dag, type_dag, (size_t)len) && noDups
+            && 0 == memcmp(expectedIMR, imr[len-1].s, sizeof(uint32_t[8]))) {
           successes++;
         } else {
           failures++;
-          printf("Unexpected AMR.\n");
+          printf("Unexpected IMR.\n");
         }
       }
       bool evalSuccess;
@@ -275,8 +302,16 @@ static void test_elements(void) {
       bool execResult;
       {
         FILE* file = fmemopen_rb(elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
-        if (elements_simplicity_execSimplicity(&execResult, tx1, 0, cmr, amr, file) && execResult) {
-          successes++;
+        unsigned char imrResult[32];
+        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, cmr, amr, file) && execResult) {
+          sha256_midstate imr;
+          sha256_toMidstate(imr.s, imrResult);
+          if (0 == memcmp(imr.s, elementsCheckSigHashAllTx1_imr, sizeof(uint32_t[8]))) {
+            successes++;
+          } else {
+            failures++;
+            printf("Unexpected IMR of elementsCheckSigHashAllTx1\n");
+          }
         } else {
           failures++;
           printf("execSimplicity of elementsCheckSigHashAllTx1 on tx1 failed\n");
@@ -289,7 +324,7 @@ static void test_elements(void) {
         memcpy(brokenSig, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
         brokenSig[sizeof_elementsCheckSigHashAllTx1 - 1] ^= 0x80;
         FILE* file = fmemopen_rb(brokenSig, sizeof_elementsCheckSigHashAllTx1);
-        if (elements_simplicity_execSimplicity(&execResult, tx1, 0, NULL, NULL, file) && !execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, NULL, tx1, 0, NULL, NULL, file) && !execResult) {
           successes++;
         } else {
           failures++;
@@ -340,7 +375,7 @@ static void test_elements(void) {
       bool execResult;
       {
         FILE* file = fmemopen_rb(elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
-        if (elements_simplicity_execSimplicity(&execResult, tx2, 0, NULL, NULL, file) && !execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, NULL, tx2, 0, NULL, NULL, file) && !execResult) {
           successes++;
         } else {
           failures++;
@@ -412,12 +447,12 @@ int main(void) {
 
   {
     FILE* file = fmemopen_rb(schnorr0, sizeof_schnorr0);
-    test_program("schnorr0", file, true, schnorr0_cmr, schnorr0_amr);
+    test_program("schnorr0", file, true, schnorr0_cmr, schnorr0_imr, schnorr0_amr);
     fclose(file);
   }
   {
     FILE* file = fmemopen_rb(schnorr6, sizeof_schnorr6);
-    test_program("schnorr6", file, false, schnorr6_cmr, schnorr6_amr);
+    test_program("schnorr6", file, false, schnorr6_cmr, schnorr6_imr, schnorr6_amr);
     fclose(file);
   }
   test_elements();
