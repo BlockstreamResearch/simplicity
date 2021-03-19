@@ -604,6 +604,11 @@ const uint32_t schnorr0_cmr[] = {
   0x4756c5a4u, 0xee31bb6fu, 0xf570e75fu, 0xe85f6d36u, 0x1be15b08u, 0x78dcc137u, 0xdd98acb8u, 0x0b91ff88u
 };
 
+/* The identity Merkle root of the above schnorr0 Simplicity expression. */
+const uint32_t schnorr0_imr[] = {
+  0x919c4961u, 0x6cfef10fu, 0x65ac2c4bu, 0x22f9e8beu, 0x23281e47u, 0x1ca697f1u, 0xaacbca79u, 0xb72faa49u
+};
+
 /* The annotated Merkle root of the above schnorr0 Simplicity expression. */
 const uint32_t schnorr0_amr[] = {
   0x24968df1u, 0x882140d9u, 0xce56a1c0u, 0xb1c2a4feu, 0x4c5c98c6u, 0x3f51f9ceu, 0x9aef42fdu, 0xe50deda2u

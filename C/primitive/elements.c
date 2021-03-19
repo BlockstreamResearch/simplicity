@@ -427,18 +427,21 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
  * If 'cmr != NULL' and the commitment Merkle root of the decoded expression doesn't match 'cmr' then '*success' is set to false.
  * If 'amr != NULL' and the annotated Merkle root of the decoded expression doesn't match 'amr' then '*success' is set to false.
  * Otherwise evaluation proceeds and '*success' is set to the result of evaluation.
+ * If 'imr != NULL' and '*success' is set to true, then the identity Merkle root of the decoded expression is written to 'imr'.
+ * Otherwise if 'imr != NULL' then 'imr' may or may not be written to.
  *
  * If at any time there is a transient error, such as malloc failing or an I/O error reading from 'file'
  * then 'false' is returned, and 'success' and 'file' may be modified.
  * Otherwise, 'true' is returned.
  *
  * Precondition: NULL != success;
+ *               NULL != imr implies unsigned char imr[32]
  *               NULL != tx;
  *               NULL != cmr implies unsigned char cmr[32]
  *               NULL != amr implies unsigned char amr[32]
  *               NULL != file;
  */
-extern bool elements_simplicity_execSimplicity(bool* success, const transaction* tx, uint_fast32_t ix,
+extern bool elements_simplicity_execSimplicity(bool* success, unsigned char* imr, const transaction* tx, uint_fast32_t ix,
                                                const unsigned char* cmr, const unsigned char* amr, FILE* file) {
   if (!success || !tx || !file) return false;
 
@@ -481,22 +484,30 @@ extern bool elements_simplicity_execSimplicity(bool* success, const transaction*
       *success = result && type_dag && 0 == dag[len-1].sourceType && 0 == dag[len-1].targetType
               && fillWitnessData(dag, type_dag, (size_t)len, witness);
       if (*success) {
-        if (amr) {
-          analyses *analysis = (size_t)len <= SIZE_MAX / sizeof(analyses)
-                             ? malloc((size_t)len * sizeof(analyses))
-                             : NULL;
-          if (analysis) {
-            computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)len);
-            *success = 0 == memcmp(amr_hash.s, analysis[len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
-          } else {
-            /* malloc failed which counts as a transient error. */
-            *success = result = false;
-          }
-          free(analysis);
+        sha256_midstate* imr_buf = (size_t)len <= SIZE_MAX / sizeof(sha256_midstate)
+                                 ? malloc((size_t)len * sizeof(sha256_midstate))
+                                 : NULL;
+        bool noDupsCheck;
+        result = imr_buf && verifyNoDuplicateIdentityRoots(&noDupsCheck, imr_buf, dag, type_dag, (size_t)len);
+        *success = result && noDupsCheck;
+        if (*success && imr) sha256_fromMidstate(imr, imr_buf[len-1].s);
+        free(imr_buf);
+      }
+      if (*success && amr) {
+        analyses *analysis = (size_t)len <= SIZE_MAX / sizeof(analyses)
+                           ? malloc((size_t)len * sizeof(analyses))
+                           : NULL;
+        if (analysis) {
+          computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)len);
+          *success = 0 == memcmp(amr_hash.s, analysis[len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
+        } else {
+          /* malloc failed which counts as a transient error. */
+          *success = result = false;
         }
-        if (*success) {
-          result = evalTCOProgram(success, dag, type_dag, (size_t)len, &(txEnv){.tx = tx, .scriptCMR = cmr_hash.s, .ix = ix});
-        }
+        free(analysis);
+      }
+      if (*success) {
+        result = evalTCOProgram(success, dag, type_dag, (size_t)len, &(txEnv){.tx = tx, .scriptCMR = cmr_hash.s, .ix = ix});
       }
       free(type_dag);
     }
