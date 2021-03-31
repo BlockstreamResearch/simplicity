@@ -258,27 +258,79 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
     bit = getBit(stream);
     if (bit < 0) return bit;
     if (!bit) {
-      int32_t code = getNBits(2, stream);
+      /* Core jets */
+      int32_t code = decodeUptoMaxInt(stream);
       if (code < 0) return code;
 
       switch (code) {
-        case 0x0: return either(result, ADD_32, SUBTRACT_32, stream);
-        case 0x1: *result = MULTIPLY_32; return 0;
-        case 0x2: return either(result, FULL_ADD_32, FULL_SUBTRACT_32, stream);
-        case 0x3: *result = FULL_MULTIPLY_32; return 0;
-      }
+       case 2: /* Arith jets chapter */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return code;
 
-      assert(false);
-      UNREACHABLE;
-    } else {
-      bit = getBit(stream);
-      if (bit < 0) return bit;
-      if (!bit) {
-        *result = SHA_256_BLOCK; return 0;
-      } else {
-        fprintf(stderr, "EC jets nodes not yet implemented.\n");
-        return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+        switch (code) {
+         case 2: /* FullAdd */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 5: *result = FULL_ADD_32; return 0;
+          }
+          break;
+         case 3: /* Add */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 5: *result = ADD_32; return 0;
+          }
+          break;
+         case 7: /* FullSubtract */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 5: *result = FULL_SUBTRACT_32; return 0;
+          }
+          break;
+         case 8: /* Subtract */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 5: *result = SUBTRACT_32; return 0;
+          }
+          break;
+         case 12: /* FullMultiply */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 5: *result = FULL_MULTIPLY_32; return 0;
+          }
+          break;
+         case 13: /* Multiply */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 5: *result = MULTIPLY_32; return 0;
+          }
+          break;
+        }
+        break;
+       case 3: /* Hash jets chapter */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return code;
+        switch (code) {
+         case 1: /* SHA-256 section */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 1: *result = SHA_256_BLOCK; return 0;
+          }
+          break;
+        }
+        break;
       }
+      return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+
+    } else {
+      /* Elements specific jets go here */
+      return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
     }
   }
 }
@@ -559,13 +611,13 @@ static void static_initialize(void) {
   } while(0)
 
     /* Jets are identified by their specification's identity Merkle roots. */
-    MK_JET(ADD_32,            0x73b3315bu, 0xdec731edu, 0xb09c5187u, 0x2782249cu, 0x9515e149u, 0x078c0e61u, 0x95b8e546u, 0x532e5584u);
-    MK_JET(FULL_ADD_32,       0xa20bf848u, 0xb6cd6637u, 0x5469a520u, 0x1f41507bu, 0xf24dadc8u, 0xd5d3aeacu, 0x07c8ddc9u, 0x278e3041u);
-    MK_JET(SUBTRACT_32,       0x51b9d49cu, 0x79e50235u, 0xb40333a8u, 0xa1d3cf56u, 0x54ff583eu, 0x65109570u, 0xc3d9202bu, 0x5080cd9au);
-    MK_JET(FULL_SUBTRACT_32,  0xbbf14525u, 0xa1bdfa57u, 0x373772c8u, 0xc12202adu, 0x918e43f2u, 0x178f2be7u, 0x33c3c365u, 0x3fd58cedu);
-    MK_JET(MULTIPLY_32,       0xfca03a42u, 0xe8f84210u, 0xb0bebe3fu, 0xbdc10628u, 0x670ba7b2u, 0x96926316u, 0x121131a5u, 0x9375a9d8u);
-    MK_JET(FULL_MULTIPLY_32,  0x342e643fu, 0x60a1fc90u, 0xe4488d3du, 0xeea7e9a0u, 0xb6bfabe9u, 0xd0e0e7a8u, 0xc9ce2535u, 0x8a86db87u);
-    MK_JET(SHA_256_BLOCK,     0xda10f0e8u, 0x530695d0u, 0x7564f0b3u, 0x2feebe77u, 0x265a1d69u, 0xcf802e22u, 0xd77289dau, 0xf6641b8du);
+    MK_JET(ADD_32,            0xe40466a7u, 0xecf71ce8u, 0x62fb3c15u, 0x4c1e8f84u, 0x5d7e5707u, 0x463a8945u, 0x37a32fc7u, 0x214900adu);
+    MK_JET(FULL_ADD_32,       0x4727361eu, 0xa003c1a4u, 0x83e57505u, 0xcf5b405au, 0x8227da1au, 0xddc47e2bu, 0x016c2d09u, 0xbe047fe8u);
+    MK_JET(SUBTRACT_32,       0xf76ecad1u, 0xfda50f13u, 0x5bdfe3e5u, 0x33a15009u, 0x8f406261u, 0xc76f6dbfu, 0x6725f1e3u, 0x883c2ae2u);
+    MK_JET(FULL_SUBTRACT_32,  0x6d96f68au, 0x945c22e7u, 0x62115c09u, 0x4297b194u, 0xbedc0ce5u, 0xa0c92db6u, 0x4b830a18u, 0xb44df0d0u);
+    MK_JET(MULTIPLY_32,       0x161fd03au, 0x92c621b3u, 0x289849ffu, 0x29ad8134u, 0x99d63ed9u, 0x73db0e97u, 0x51785421u, 0xf568d18fu);
+    MK_JET(FULL_MULTIPLY_32,  0xaac25361u, 0xe598e354u, 0x38b918b5u, 0x8fd2cef4u, 0xdb3c5d8cu, 0x5e63aa4fu, 0x25e9cec0u, 0xcfd9dfb1u);
+    MK_JET(SHA_256_BLOCK,     0xdfc927d3u, 0x9bf7147au, 0x8b0a7f43u, 0x79466870u, 0x824db102u, 0x090a0036u, 0x2923a377u, 0xa91af681u);
 #undef MK_JET
 
   }
