@@ -4,9 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/* A length-prefixed encoding of the SHA-256 compression function written in Simplicity.
- *
- * Invariant: unsigned char hashBlock[sizeof_hashBlock]
+/* A length-prefixed encoding of the following Simplicity program:
+ *     hashBlock
  */
 extern const unsigned char hashBlock[];
 extern const size_t sizeof_hashBlock;

@@ -7,7 +7,7 @@ module Simplicity.Elements.Jets
   , getTermLengthCode, putTermLengthCode
   , fastEval
   -- * Re-exports
-  , unwrap
+  , WrappedSimplicity, unwrap
   ) where
 
 import Prelude hiding (fail, drop, take)
@@ -27,6 +27,7 @@ import qualified Simplicity.Elements.JetType
 import qualified Simplicity.Elements.Serialization.BitString as BitString
 import qualified Simplicity.Elements.Semantics as Semantics
 import Simplicity.MerkleRoot
+import Simplicity.Serialization
 import Simplicity.Ty
 
 -- | A type of tokens for the cannonical set of known jets for Simplicity for Elements. (At the moment this just consists of 'CoreJet's.)
@@ -56,9 +57,14 @@ instance Simplicity.Elements.JetType.JetType JetType where
       (Just Refl, Just Refl) -> return jt
       otherwise -> error "mathcher{Simplicity.Elements.Jets.JetType}: type match error"
 
-  getJetBit abort next = someArrowMap CoreJet <$> CoreJets.getJetBit abort next
+  getJetBit abort next = do
+   b <- next
+   if b then vacuous abort -- Elements Specific Jets
+        else someArrowMap CoreJet <$> CoreJets.getJetBit abort next
 
-  putJetBit (CoreJet jt) = CoreJets.putJetBit jt
+  putJetBit (CoreJet jt) = ([o]++) . CoreJets.putJetBit jt
+   where
+    (o,i) = (False,True)
 
 -- This map is used in the 'matcher' method above.
 -- We have floated it out here to make sure the map is shared between invokations of the 'matcher' function.
