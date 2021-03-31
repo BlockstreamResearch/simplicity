@@ -1,7 +1,7 @@
 #include "jets.h"
 #include "sha256.h"
 
-bool adder32(frameItem* dst, frameItem src, const txEnv* env) {
+bool add_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
@@ -16,7 +16,7 @@ bool adder32(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-bool fullAdder32(frameItem* dst, frameItem src, const txEnv* env) {
+bool full_add_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
   bool z = readBit(&src);
   uint_fast32_t x = read32(&src);
@@ -32,7 +32,7 @@ bool fullAdder32(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-bool subtractor32(frameItem* dst, frameItem src, const txEnv* env) {
+bool subtract_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
@@ -41,7 +41,7 @@ bool subtractor32(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-bool fullSubtractor32(frameItem* dst, frameItem src, const txEnv* env) {
+bool full_subtract_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
   bool z = readBit(&src);
   uint_fast32_t x = read32(&src);
@@ -51,7 +51,7 @@ bool fullSubtractor32(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-bool multiplier32(frameItem* dst, frameItem src, const txEnv* env) {
+bool multiply_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
   uint_fast64_t x = read32(&src);
   uint_fast64_t y = read32(&src);
@@ -59,7 +59,7 @@ bool multiplier32(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-bool fullMultiplier32(frameItem* dst, frameItem src, const txEnv* env) {
+bool full_multiply_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
   uint_fast64_t x = read32(&src);
   uint_fast64_t y = read32(&src);
@@ -69,7 +69,7 @@ bool fullMultiplier32(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-bool sha256_hashBlock(frameItem* dst, frameItem src, const txEnv* env) {
+bool sha_256_block(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
   uint32_t h[8];
   uint32_t block[16];

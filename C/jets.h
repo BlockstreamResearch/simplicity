@@ -21,12 +21,12 @@ typedef struct txEnv txEnv;
  */
 typedef bool (*jet_ptr)(frameItem* dst, frameItem src, const txEnv* env);
 
-bool adder32(frameItem* dst, frameItem src, const txEnv* env);
-bool fullAdder32(frameItem* dst, frameItem src, const txEnv* env);
-bool subtractor32(frameItem* dst, frameItem src, const txEnv* env);
-bool fullSubtractor32(frameItem* dst, frameItem src, const txEnv* env);
-bool multiplier32(frameItem* dst, frameItem src, const txEnv* env);
-bool fullMultiplier32(frameItem* dst, frameItem src, const txEnv* env);
-bool sha256_hashBlock(frameItem* dst, frameItem src, const txEnv* env);
+bool add_32(frameItem* dst, frameItem src, const txEnv* env);
+bool full_add_32(frameItem* dst, frameItem src, const txEnv* env);
+bool subtract_32(frameItem* dst, frameItem src, const txEnv* env);
+bool full_subtract_32(frameItem* dst, frameItem src, const txEnv* env);
+bool multiply_32(frameItem* dst, frameItem src, const txEnv* env);
+bool full_multiply_32(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_block(frameItem* dst, frameItem src, const txEnv* env);
 
 #endif
