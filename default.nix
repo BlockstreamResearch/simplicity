@@ -1,8 +1,8 @@
-{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc883", coqVersion ? "coqPackages_8_11", secp256k1git ? null}:
+{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc8104", coqVersion ? "coqPackages_8_11", secp256k1git ? null}:
 let hp = nixpkgs.haskell.packages.${compiler};
  in rec
 {
-  haskell = hp.callPackage ./Simplicity.Haskell.nix {};
+  haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix {};
 
   haskellPackages = hp.override {
     overrides = self: super: {

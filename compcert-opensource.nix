@@ -85,7 +85,7 @@ stdenv.mkDerivation {
   preBuild = "make depend";
   buildFlags = [ "proof" "exportclight/Clightdefs.vo" ];
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Formally verified C compiler";
     homepage    = "http://compcert.inria.fr";
     license     = licenses.gpl3; # These particular files are all gpl3 compatible.

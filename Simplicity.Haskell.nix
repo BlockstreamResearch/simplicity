@@ -19,5 +19,5 @@ mkDerivation (rec {
     cp ${./Simplicity-Primitive.html} $doc/share/doc/${pname}-${version}/html/Simplicity-Primitive.html
   '';
 
-  license = stdenv.lib.licenses.mit;
+  license = lib.licenses.mit;
 })
