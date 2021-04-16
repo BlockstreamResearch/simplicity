@@ -47,6 +47,16 @@ static inline int32_t getBit(bitstream* stream) {
   return getNBits(1, stream);
 }
 
+/* Decode an encoded number between 1 and 2^31 - 1 inclusive.
+ * When successful returns the decoded result.
+ * If the decoded value would be too large, 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' is returned.
+ * If more bits are needed than available in the 'stream', 'SIMPLICITY_ERR_BITSTRING_EOF' is returned.
+ * If an I/O error occurs when reading from the 'stream', 'SIMPLICITY_ERR_BISTRING_ERROR' is returned.
+ *
+ * Precondition: NULL != stream
+ */
+int32_t decodeUptoMaxInt(bitstream* stream);
+
 /* Allocates a 'bitstring' containing 'n' bits from 'stream'.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if not enough bits are available.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
