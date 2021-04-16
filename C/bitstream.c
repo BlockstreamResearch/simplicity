@@ -53,6 +53,158 @@ int32_t getNBits(int n, bitstream* stream) {
   result |= (uint32_t)(stream->byte >> stream->available) & (((uint32_t)1 << n) - 1);
   return (int32_t)result;
 }
+/* Decode an encoded bitstring up to length 1.
+ * If successful returns the length of the bitstring and 'result' contains the decoded bits.
+ * The decoded bitstring is stored in the LSBs of 'result', with the LSB being the last bit decoded.
+ * Any remaining bits in 'result' are reset to 0.
+ * If the decoded bitstring would be too long 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' is returned ('result' may be modified).
+ * If more bits are needed than available in the 'stream', 'SIMPLICITY_ERR_BITSTRING_EOF' is returned ('result' may be modified).
+ * If an I/O error occurs when reading from the 'stream', 'SIMPLICITY_ERR_BISTRING_ERROR' is returned ('result' may be modified).
+ *
+ * Precondition: NULL != result
+ *               NULL != stream
+ */
+static int32_t decodeUpto1Bit(int32_t* result, bitstream* stream) {
+  *result = getBit(stream);
+  if (*result <= 0) return *result;
+
+  *result = getBit(stream);
+  if (*result < 0) return *result;
+  if (0 != *result) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+
+  *result = getBit(stream);
+  if (*result < 0) return *result;
+  return 1;
+}
+
+/* Decode an encoded number between 1 and 3 inclusive.
+ * When successful returns the decoded result.
+ * If the decoded value would be too large, 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' is returned.
+ * If more bits are needed than available in the 'stream', 'SIMPLICITY_ERR_BITSTRING_EOF' is returned.
+ * If an I/O error occurs when reading from the 'stream', 'SIMPLICITY_ERR_BISTRING_ERROR' is returned.
+ *
+ * Precondition: NULL != stream
+ */
+static int32_t decodeUpto3(bitstream* stream) {
+  int32_t result;
+  int32_t len = decodeUpto1Bit(&result, stream);
+  if (len < 0) return len;
+  result |= 1 << len;
+  return result;
+}
+
+/* Decode an encoded bitstring up to length 3.
+ * If successful returns the length of the bitstring and 'result' contains the decoded bits.
+ * The decoded bitstring is stored in the LSBs of 'result', with the LSB being the last bit decoded.
+ * Any remaining bits in 'result' are reset to 0.
+ * If the decoded bitstring would be too long 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' is returned ('result' may be modified).
+ * If more bits are needed than available in the 'stream', 'SIMPLICITY_ERR_BITSTRING_EOF' is returned ('result' may be modified).
+ * If an I/O error occurs when reading from the 'stream', 'SIMPLICITY_ERR_BISTRING_ERROR' is returned ('result' may be modified).
+ *
+ * Precondition: NULL != result
+ *               NULL != stream
+ */
+static int32_t decodeUpto3Bits(int32_t* result, bitstream* stream) {
+  int32_t bit = getBit(stream);
+  if (bit < 0) return bit;
+
+  *result = 0;
+  if (0 == bit) {
+    return 0;
+  } else {
+    int32_t n = decodeUpto3(stream);
+    if (0 <= n) {
+      *result = getNBits(n, stream);
+      if (*result < 0) return *result;
+    }
+    return n;
+  }
+}
+
+/* Decode an encoded number between 1 and 15 inclusive.
+ * When successful returns the decoded result.
+ * If the decoded value would be too large, 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' is returned.
+ * If more bits are needed than available in the 'stream', 'SIMPLICITY_ERR_BITSTRING_EOF' is returned.
+ * If an I/O error occurs when reading from the 'stream', 'SIMPLICITY_ERR_BISTRING_ERROR' is returned.
+ *
+ * Precondition: NULL != stream
+ */
+static int32_t decodeUpto15(bitstream* stream) {
+  int32_t result;
+  int32_t len = decodeUpto3Bits(&result, stream);
+  if (len < 0) return len;
+  result |= 1 << len;
+  return result;
+}
+
+/* Decode an encoded bitstring up to length 15.
+ * If successful returns the length of the bitstring and 'result' contains the decoded bits.
+ * The decoded bitstring is stored in the LSBs of 'result', with the LSB being the last bit decoded.
+ * Any remaining bits in 'result' are reset to 0.
+ * If the decoded bitstring would be too long 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' is returned ('result' may be modified).
+ * If more bits are needed than available in the 'stream', 'SIMPLICITY_ERR_BITSTRING_EOF' is returned ('result' may be modified).
+ * If an I/O error occurs when reading from the 'stream', 'SIMPLICITY_ERR_BISTRING_ERROR' is returned ('result' may be modified).
+ *
+ * Precondition: NULL != result
+ *               NULL != stream
+ */
+static int32_t decodeUpto15Bits(int32_t* result, bitstream* stream) {
+  int32_t bit = getBit(stream);
+  if (bit < 0) return bit;
+
+  *result = 0;
+  if (0 == bit) {
+    return 0;
+  } else {
+    int32_t n = decodeUpto15(stream);
+    if (0 <= n) {
+      *result = getNBits(n, stream);
+      if (*result < 0) return *result;
+    }
+    return n;
+  }
+}
+
+/* Decode an encoded number between 1 and 65535 inclusive.
+ * When successful returns the decoded result.
+ * If the decoded value would be too large, 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' is returned.
+ * If more bits are needed than available in the 'stream', 'SIMPLICITY_ERR_BITSTRING_EOF' is returned.
+ * If an I/O error occurs when reading from the 'stream', 'SIMPLICITY_ERR_BISTRING_ERROR' is returned.
+ *
+ * Precondition: NULL != stream
+ */
+static int32_t decodeUpto65535(bitstream* stream) {
+  int32_t result;
+  int32_t len = decodeUpto15Bits(&result, stream);
+  if (len < 0) return len;
+  result |= 1 << len;
+  return result;
+}
+
+/* Decode an encoded number between 1 and 2^31 - 1 inclusive.
+ * When successful returns the decoded result.
+ * If the decoded value would be too large, 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' is returned.
+ * If more bits are needed than available in the 'stream', 'SIMPLICITY_ERR_BITSTRING_EOF' is returned.
+ * If an I/O error occurs when reading from the 'stream', 'SIMPLICITY_ERR_BISTRING_ERROR' is returned.
+ *
+ * Precondition: NULL != stream
+ */
+int32_t decodeUptoMaxInt(bitstream* stream) {
+  int32_t bit = getBit(stream);
+  if (bit < 0) return bit;
+  if (0 == bit) {
+    return 1;
+  } else {
+    int32_t n = decodeUpto65535(stream);
+    if (n < 0) return n;
+    if (30 < n) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+    {
+      int32_t result = getNBits(n, stream);
+      if (result < 0) return result;
+      return ((1 << n) | result);
+    }
+  }
+}
 
 /* Allocates a 'bitstring' containing 'n' bits from 'stream'.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if not enough bits are available.
