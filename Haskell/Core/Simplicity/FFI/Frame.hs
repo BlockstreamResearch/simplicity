@@ -88,7 +88,7 @@ runCoreJet jet = go
       then Just <$> (withReadFrame (bitSizeR bR) (arr `plusPtr` aSize) $ readFrameItem)
       else return Nothing
 
--- | This cannot be used with jets that access global variables, which include some elliptic curve operations.
+-- | This cannot be used with jets that access global variables.
 unsafeLocalCoreJet :: (TyC a, TyC b) => (Ptr FrameItem -> Ptr FrameItem -> IO Bool) -> a -> Maybe b
 unsafeLocalCoreJet jet = unsafeLocalState . runCoreJet jet
 

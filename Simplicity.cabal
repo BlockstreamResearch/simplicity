@@ -14,7 +14,7 @@ extra-source-files:  README.md
 tested-with:         GHC ==8.6.4
 
 library Simplicity-Core
-  C-sources:           C/sha256.c, C/frame.c, C/jets.c,
+  C-sources:           C/sha256.c, C/frame.c, C/jets.c, C/jets-secp256k1.c
                        Haskell/cbits/frame.c, Haskell/cbits/jets.c
   Include-dirs:        C
   Includes:            sha256.h, frame.h, jets.h
@@ -121,6 +121,7 @@ library
                        Simplicity.Term.Core,
                        Simplicity.CoreJets,
                        Simplicity.Functor, Simplicity.Tensor,
+                       Simplicity.FFI.Jets,
                        Simplicity.BitMachine, Simplicity.BitMachine.Authentic, Simplicity.BitMachine.Ty,
                        Simplicity.BitMachine.Translate, Simplicity.BitMachine.Translate.TCO,
                        Simplicity.BitMachine.StaticAnalysis, Simplicity.BitMachine.StaticAnalysis.TCO,
