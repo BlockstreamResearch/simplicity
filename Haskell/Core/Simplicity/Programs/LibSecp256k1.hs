@@ -13,23 +13,22 @@ module Simplicity.Programs.LibSecp256k1
   -- * Point operations
   , Point, GE, GEJ, gej_is_on_curve
   , gej_infinity, gej_is_infinity
-  , gej_normalize, gej_negate, gej_scale_lambda
+  , gej_rescale, gej_normalize, gej_negate, gej_scale_lambda
   , gej_double, gej_add_ex, gej_add, gej_ge_add_ex, gej_ge_add
   , ge_is_on_curve, ge_negate, ge_scale_lambda
   , {-gej_equiv,-} gej_x_equiv, gej_y_is_odd
   , decompress
   -- * Scalar operations
   , Scalar, Word129
-  , scalar_normalize, scalar_add, scalar_negate, scalar_multiply, scalar_multiply_lambda, scalar_invert
+  , scalar_normalize, scalar_add, scalar_negate, scalar_square, scalar_multiply, scalar_multiply_lambda, scalar_invert
   , scalar_split_lambda, scalar_split_128
   , scalar_is_zero
   -- * Elliptic curve multiplication related operations
   , Vector129
   , wnaf5, wnaf15
   , generate, scale
-  , linear_combination_1
-  , linear_check_1
-  , point_check_1
+  , linear_combination_1, linear_check_1, linear_verify_1
+  , point_check_1, point_verify_1
   -- * Schnorr signature operations
   , PubKey, pubkey_unpack, pubkey_unpack_neg
   , Sig, signature_unpack
@@ -171,6 +170,9 @@ data Lib term =
     -- | Multiply a point in affine coordinates by the canonical cube root of unity.
   , ge_scale_lambda :: term GE GE
 
+    -- | Changes represenative of a point in Jacobian coordintes by multiplying the z-coefficent by a given value.
+  , gej_rescale :: term (GEJ, FE) GEJ
+
     -- | Converts a point in Jacobian coordintes to the same point in affine coordinates, and normalizes the field represenatives.
     -- Returns the point (0, 0) when given the point at infinity.
   , gej_normalize :: term GEJ GE
@@ -179,7 +181,7 @@ data Lib term =
 --  , gej_equiv :: term (GEJ, GEJ) Bit
 
     -- | Given a field element and a point in Jacobian coordiantes, test if the point represents one whose affine x-coordinate is equal to the given field element.
-  , gej_x_equiv :: term (GEJ, FE) Bit
+  , gej_x_equiv :: term (FE, GEJ) Bit
 
     -- | Given a point in Jacobian coordiantes, test if the point represents one whose affine y-coordinate is odd.
   , gej_y_is_odd :: term GEJ Bit
@@ -201,6 +203,9 @@ data Lib term =
 
     -- | Negates a scalar element.
   , scalar_negate :: term Scalar Scalar
+
+    -- | Multiplies two scalar elements.
+  , scalar_square :: term Scalar Scalar
 
     -- | Multiplies two scalar elements.
   , scalar_multiply :: term (Scalar, Scalar) Scalar
@@ -292,6 +297,7 @@ instance SimplicityFunctor Lib where
     , gej_scale_lambda = m gej_scale_lambda
     , ge_negate = m ge_negate
     , ge_scale_lambda = m ge_scale_lambda
+    , gej_rescale = m gej_rescale
     , gej_normalize = m gej_normalize
 --    , gej_equiv = m gej_equiv
     , gej_x_equiv = m gej_x_equiv
@@ -302,6 +308,7 @@ instance SimplicityFunctor Lib where
     , scalar_is_zero = m scalar_is_zero
     , scalar_add = m scalar_add
     , scalar_negate = m scalar_negate
+    , scalar_square = m scalar_square
     , scalar_multiply = m scalar_multiply
     , scalar_multiply_lambda = m scalar_multiply_lambda
     , scalar_invert = m scalar_invert
@@ -533,15 +540,17 @@ mkLib Sha256.Lib{..} = lib
 
   , ge_scale_lambda = take fe_multiply_beta &&& drop fe_normalize
 
-  , gej_normalize = oh &&& (ih >>> fe_invert)
-                 >>> (ooh &&& drop fe_square >>> fe_multiply) &&& (oih &&& drop fe_cube >>> fe_multiply)
+  , gej_rescale = (ooh &&& ih >>> zinv) &&& (oih &&& ih >>> fe_multiply)
+
+  , gej_normalize = oh &&& (ih >>> fe_invert) >>> zinv
 
 --  , gej_equiv = :TODO:
 
-  , gej_x_equiv = take (take (take fe_negate)) &&& (take (drop fe_square) &&& ih >>> fe_multiply)
-           >>> fe_add >>> fe_is_zero
+  , gej_x_equiv = and (not (drop gej_is_infinity))
+                     (drop (take (take fe_negate)) &&& (drop (drop fe_square) &&& oh >>> fe_multiply)
+                  >>> fe_add >>> fe_is_zero)
 
-  , gej_y_is_odd = and (not gej_is_infinity) (oih &&& (ih >>> fe_invert >>> fe_cube)  >>> fe_multiply >>> fe_is_odd)
+  , gej_y_is_odd = oih &&& (ih >>> fe_invert >>> fe_cube) >>> fe_multiply >>> fe_is_odd
 
   , gej_is_on_curve = ((unit >>> scribe256 7) &&& (ih >>> fe_cube >>> fe_square) >>> fe_multiply)
                   &&& (take (take fe_cube &&& (drop fe_square >>> fe_negate)) >>> fe_add) >>> fe_add
@@ -559,6 +568,8 @@ mkLib Sha256.Lib{..} = lib
   , scalar_add = add256 >>> cond ((unit >>> one256) &&& iden) ((unit >>> zero256) &&& iden) >>> scalar_normalize512
 
   , scalar_negate = (unit >>> scribe256 ((-1) `mod` LibSecp256k1.groupOrder)) &&& iden >>> scalar_multiply
+
+  , scalar_square = iden &&& iden >>> scalar_multiply
 
   , scalar_multiply = mul256 >>> scalar_normalize512
 
@@ -752,6 +763,11 @@ mkLib Sha256.Lib{..} = lib
 
     pubkey_check = (iden &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256) &&& iden
 
+linear_verify_1 :: Assert term => Lib term -> term (((Scalar, GE), Scalar), GE) ()
+linear_verify_1 m = assert (linear_check_1 m)
+
+point_verify_1 :: Assert term => Lib term -> term (((Scalar, Point), Scalar), Point) ()
+point_verify_1 m = assert (point_check_1 m)
 
 -- | This function is given a public key, a 256-bit message, and a signature, and asserts that the signature is valid for the given message and public key.
 bip0340_verify :: Assert term => Lib term -> term ((PubKey, Word256), Sig) ()

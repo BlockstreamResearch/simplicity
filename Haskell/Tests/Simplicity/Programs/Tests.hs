@@ -94,6 +94,8 @@ tests = testGroup "Programs"
         , testProperty "fe_negate" prop_fe_negate
         , testProperty "fe_invert" (withMaxSuccess 10 prop_fe_invert)
         , testProperty "fe_square_root" (withMaxSuccess 10 prop_fe_square_root)
+        , testProperty "gej_rescale" prop_gej_rescale
+        , testProperty "gej_rescale_inf" prop_gej_rescale_inf
         , testProperty "gej_double" prop_gej_double
         , testProperty "gej_double_inf" prop_gej_double_inf
         , testProperty "gej_add_ex" prop_gej_add_ex
@@ -121,6 +123,11 @@ tests = testGroup "Programs"
         , testProperty "ge_is_on_curve" prop_ge_is_on_curve
         , testProperty "ge_is_on_curve_half" prop_ge_is_on_curve_half
         , testProperty "scalar_normalize" prop_scalar_normalize
+        , testProperty "scalar_add" prop_scalar_add
+        , testProperty "scalar_square" prop_scalar_square
+        , testProperty "scalar_multiply" prop_scalar_multiply
+        , testProperty "scalar_negate" prop_scalar_negate
+        , testProperty "scalar_invert" prop_scalar_invert
         , testProperty "scalar_split_lambda" prop_scalar_split_lambda
         , testProperty "wnaf5" prop_wnaf5
         , testProperty "wnaf15" prop_wnaf15
@@ -476,6 +483,14 @@ gejAsSpec (GroupElementJacobian x y z) = Spec.GEJ (feAsSpec x) (feAsSpec y) (feA
 gen_inf :: Gen GroupElementJacobian
 gen_inf = GroupElementJacobian <$> arbitrary <*> arbitrary <*> pure (FieldElement 0)
 
+prop_gej_rescale :: GroupElementJacobian -> FieldElement -> Bool
+prop_gej_rescale = \a c -> fast_gej_rescale (gejAsTy a, feAsTy c) == Just (toGEJ (Spec.gej_rescale (gejAsSpec a) (feAsSpec c)))
+ where
+  fast_gej_rescale = fastCoreEval gej_rescale
+
+prop_gej_rescale_inf :: FieldElement -> Property
+prop_gej_rescale_inf c = forAll gen_inf $ flip prop_gej_rescale c
+
 prop_gej_double :: GroupElementJacobian -> Bool
 prop_gej_double = \a -> fast_gej_double (gejAsTy a) == Just (toGEJ (Spec.gej_double (gejAsSpec a)))
  where
@@ -577,13 +592,13 @@ prop_gej_ge_add_ex_opp z b@(GroupElement bx by) = prop_gej_ge_add_ex a b
 
 prop_gej_ge_add_ex_inf b = forAll gen_inf $ \a -> prop_gej_ge_add_ex a b
 
-prop_gej_x_equiv :: GroupElementJacobian -> FieldElement -> Bool -- gej_x_equiv will essentially always be false on random inputs.
-prop_gej_x_equiv = \a x0 -> fast_gej_x_equiv (gejAsTy a, feAsTy x0) == Just (toBit (Spec.gej_x_equiv (gejAsSpec a) (feAsSpec x0)))
+prop_gej_x_equiv :: FieldElement -> GroupElementJacobian -> Bool -- gej_x_equiv will essentially always be false on random inputs.
+prop_gej_x_equiv = \x0 a -> fast_gej_x_equiv (feAsTy x0, gejAsTy a) == Just (toBit (Spec.gej_x_equiv (feAsSpec x0) (gejAsSpec a) ))
  where
   fast_gej_x_equiv = fastCoreEval gej_x_equiv
 
-prop_gej_x_equiv_inf x0 = forAll gen_inf $ \a -> prop_gej_x_equiv a x0
-prop_gej_x_equiv_true y z x0 = prop_gej_x_equiv a x0
+prop_gej_x_equiv_inf x0 = forAll gen_inf $ prop_gej_x_equiv x0
+prop_gej_x_equiv_true y z x0 = prop_gej_x_equiv x0 a
   where
    z' = feAsSpec z
    x0' = feAsSpec x0
@@ -661,8 +676,31 @@ scalarAsSpec (ScalarElement w) = Spec.scalar (toInteger w)
 toScalar :: Spec.Scalar -> Scalar
 toScalar = toWord256 . Spec.scalar_repr
 
+scalar_unary_prop f g = \a -> fastF (scalarAsTy a) == Just (toScalar (g (scalarAsSpec a)))
+ where
+  fastF = fastCoreEval f
+
+scalar_binary_prop f g = \a b -> fastF (scalarAsTy a, scalarAsTy b) == Just (toScalar (g (scalarAsSpec a) (scalarAsSpec b)))
+ where
+  fastF = fastCoreEval f
+
 prop_scalar_normalize :: ScalarElement -> Bool
 prop_scalar_normalize a@(ScalarElement w) = scalar_normalize (scalarAsTy a) == toScalar (Spec.scalar (toInteger w))
+
+prop_scalar_add :: ScalarElement -> ScalarElement -> Bool
+prop_scalar_add = scalar_binary_prop scalar_add Spec.scalar_add
+
+prop_scalar_square :: ScalarElement -> Bool
+prop_scalar_square = scalar_unary_prop scalar_square Spec.scalar_square
+
+prop_scalar_multiply :: ScalarElement -> ScalarElement -> Bool
+prop_scalar_multiply = scalar_binary_prop scalar_multiply Spec.scalar_multiply
+
+prop_scalar_negate :: ScalarElement -> Bool
+prop_scalar_negate = scalar_unary_prop scalar_negate Spec.scalar_negate
+
+prop_scalar_invert :: ScalarElement -> Bool
+prop_scalar_invert = scalar_unary_prop scalar_invert Spec.scalar_invert
 
 prop_scalar_split_lambda :: ScalarElement -> Bool
 prop_scalar_split_lambda = \a -> ((interp *** interp) <$> fast_scalar_split_lambda (scalarAsTy a))

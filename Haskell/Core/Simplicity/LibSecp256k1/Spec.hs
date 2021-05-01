@@ -17,8 +17,8 @@ module Simplicity.LibSecp256k1.Spec
  , ge_is_on_curve
    -- * Scalar operations
  , Scalar, scalar, scalar_repr, scalar_pack
- , scalar_zero, scalar_negate, scalar_multiply, scalar_split_lambda, scalar_split_128
- , wnaf, linear_combination, linear_combination_1
+ , scalar_zero, scalar_negate, scalar_add, scalar_square, scalar_multiply, scalar_invert, scalar_split_lambda, scalar_split_128
+ , wnaf, scale, linear_combination, linear_combination_1
  , linear_check, linear_check_1
    -- * Point operations
  , Point(..), decompress, point_check
@@ -146,7 +146,7 @@ fe_add a b = fe (fe_repr a + fe_repr b)
 fe_multiply :: FE -> FE -> FE
 fe_multiply a b = fe (fe_repr a * fe_repr b)
 
--- | Square a field elements.
+-- | Square a field element.
 fe_square :: FE -> FE
 fe_square a = fe_multiply a a
 
@@ -232,8 +232,8 @@ gej_is_infinity a = fe_is_zero (a^._z)
 
 -- | Returns an equivalent point with the z-coefficent multiplied by the given constant.
 -- This will return infinity if the constant is zero.
-gej_rescale :: FE -> GEJ -> GEJ
-gej_rescale c (GEJ x y z) = GEJ (x .*. c .^. 2) (y .*. c .^. 3) (z .*. c)
+gej_rescale :: GEJ -> FE -> GEJ
+gej_rescale (GEJ x y z) c = GEJ (x .*. c .^. 2) (y .*. c .^. 3) (z .*. c)
 
 -- | Compute the point doubling formula for a 'GEJ'.
 gej_double :: GEJ -> GEJ
@@ -284,9 +284,9 @@ instance Monoid GEJ where
   mappend a b = snd $ gej_add_ex a b
 
 -- | Check if the x-coordinate of the point represented by a 'GEJ' has a given value.
-gej_x_equiv :: GEJ -> FE -> Bool
--- :TODO: Perhaps should return false for the point at infinity.
-gej_x_equiv a x = fe_is_zero $ (fe_square (a^._z) .*. x) .-. (a^._x)
+gej_x_equiv :: FE -> GEJ -> Bool
+gej_x_equiv x a | gej_is_infinity a = False
+                | otherwise = fe_is_zero $ (fe_square (a^._z) .*. x) .-. (a^._x)
 
 -- | Check if the y-coordinate of the point represented by a 'GEJ' is odd.
 gej_y_is_odd :: GEJ -> Bool
@@ -394,9 +394,32 @@ scalar_is_zero a = scalar_repr a == 0
 scalar_negate :: Scalar -> Scalar
 scalar_negate = scalar . negate . scalar_repr
 
+-- | Add two scalar elements.
+scalar_add :: Scalar -> Scalar -> Scalar
+scalar_add a b = scalar (scalar_repr a + scalar_repr b)
+
+-- | Multiply two scalar elements.
+scalar_multiply :: Scalar -> Scalar -> Scalar
+scalar_multiply a b = scalar (scalar_repr a * scalar_repr b)
+
+-- | Square a scalar element.
+scalar_square :: Scalar -> Scalar
+scalar_square a = scalar_multiply a a
+
+-- | The modulular inverse of a scalar element, with 'scalar_zero' mapping to 'scalar_zero'.
+scalar_invert :: Scalar -> Scalar
+scalar_invert a = a `scalar_power` (groupOrder - 2)
+ where
+  scalar_power x n = go x (n `mod` (groupOrder - 1))
+   where
+    go x 0 = scalar_zero
+    go x 1 = x
+    go x n | even n = go (scalar_square x) (n `div` 2)
+           | odd n = scalar_multiply x (go (scalar_square x) (n `div` 2))
+
 -- | Scale a 'GEJ' by a scalar element.
-scalar_multiply :: Scalar -> GEJ -> GEJ
-scalar_multiply na a = linear_combination_1 na a scalar_zero
+scale :: Scalar -> GEJ -> GEJ
+scale na a = linear_combination_1 na a scalar_zero
 
 -- | Decompose a scalar value in short components.
 --
@@ -540,7 +563,7 @@ putTable zr a = do
 scalarTable :: Int -> GEJ -> TableM (V.Vector GE)
 scalarTable w a = do
   z0 <- getsPast (^._z)
-  let a' = gej_rescale z0 a
+  let a' = gej_rescale a z0
   let d = gej_double a'
   let dz = d^._z
   let a'' = GEJ (a'^._x .*. dz .^. 2) (a'^._y .*. dz .^. 3) (a'^._z)
