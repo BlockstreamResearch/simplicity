@@ -150,6 +150,7 @@ static void secp256k1_ge_globalz_set_table_gej(size_t len, secp256k1_ge *r, secp
             }
             i--;
             secp256k1_ge_set_gej_zinv(&r[i], &a[i], &zs);
+            r[i].infinity = 0;
         }
     }
 }
@@ -204,7 +205,7 @@ static void secp256k1_gej_set_ge(secp256k1_gej *r, const secp256k1_ge *a) {
    r->infinity = a->infinity;
    r->x = a->x;
    r->y = a->y;
-   secp256k1_fe_set_int(&r->z, 1);
+   secp256k1_fe_set_int(&r->z, !r->infinity);
 }
 
 static int secp256k1_gej_eq_x_var(const secp256k1_fe *x, const secp256k1_gej *a) {
@@ -276,16 +277,6 @@ static SECP256K1_INLINE void secp256k1_gej_double(secp256k1_gej *r, const secp25
 }
 
 static void secp256k1_gej_double_var(secp256k1_gej *r, const secp256k1_gej *a, secp256k1_fe *rzr) {
-    /** For secp256k1, 2Q is infinity if and only if Q is infinity. This is because if 2Q = infinity,
-     *  Q must equal -Q, or that Q.y == -(Q.y), or Q.y is 0. For a point on y^2 = x^3 + 7 to have
-     *  y=0, x^3 must be -7 mod p. However, -7 has no cube root mod p.
-     *
-     *  Having said this, if this function receives a point on a sextic twist, e.g. by
-     *  a fault attack, it is possible for y to be 0. This happens for y^2 = x^3 + 6,
-     *  since -6 does have a cube root mod p. For this point, this function will not set
-     *  the infinity flag even though the point doubles to infinity, and the result
-     *  point will be gibberish (z = 0 but infinity = 0).
-     */
     if (a->infinity) {
         secp256k1_gej_set_infinity(r);
         if (rzr != NULL) {
@@ -301,6 +292,17 @@ static void secp256k1_gej_double_var(secp256k1_gej *r, const secp256k1_gej *a, s
     }
 
     secp256k1_gej_double(r, a);
+
+    /** For secp256k1, 2Q is infinity if and only if Q is infinity. This is because if 2Q = infinity,
+     *  Q must equal -Q, or that Q.y == -(Q.y), or Q.y is 0. For a point on y^2 = x^3 + 7 to have
+     *  y=0, x^3 must be -7 mod p. However, -7 has no cube root mod p.
+     *
+     *  Having said this, if this function receives a point on a sextic twist,
+     *  it is possible for y to be 0. This happens for y^2 = x^3 + 6,
+     *  since -6 does have a cube root mod p. For this point, gej_double will not set
+     *  the infinity flag even though the point doubles to infinity, so we explicitly set it to infinity.
+     */
+    r->infinity = secp256k1_fe_normalizes_to_zero_var(&r->z);
 }
 
 static void secp256k1_gej_add_var(secp256k1_gej *r, const secp256k1_gej *a, const secp256k1_gej *b, secp256k1_fe *rzr) {
@@ -361,6 +363,9 @@ static void secp256k1_gej_add_ge_var(secp256k1_gej *r, const secp256k1_gej *a, c
     secp256k1_fe z12, u1, u2, s1, s2, h, i, i2, h2, h3, t;
     if (a->infinity) {
         VERIFY_CHECK(rzr == NULL);
+        if (rzr != NULL) {
+            secp256k1_fe_clear(rzr);
+        }
         secp256k1_gej_set_ge(r, b);
         return;
     }
@@ -420,7 +425,7 @@ static void secp256k1_gej_add_zinv_var(secp256k1_gej *r, const secp256k1_gej *a,
         secp256k1_fe_mul(&bzinv3, &bzinv2, bzinv);
         secp256k1_fe_mul(&r->x, &b->x, &bzinv2);
         secp256k1_fe_mul(&r->y, &b->y, &bzinv3);
-        secp256k1_fe_set_int(&r->z, 1);
+        secp256k1_fe_set_int(&r->z, !r->infinity);
         return;
     }
     r->infinity = 0;
