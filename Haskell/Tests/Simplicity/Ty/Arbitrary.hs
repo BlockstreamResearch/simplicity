@@ -18,7 +18,7 @@ import Simplicity.Ty.Word
 import qualified Simplicity.Word as W
 
 import Test.Tasty.QuickCheck (Arbitrary(..), Gen
-                             , arbitraryBoundedIntegral, choose, elements, resize, sized
+                             , arbitraryBoundedIntegral, choose, elements, frequency, resize, sized
                              )
 
 
@@ -48,8 +48,13 @@ toFE = toWord256 . toInteger . Spec.fe_pack
 
 data GroupElement = GroupElement FieldElement FieldElement deriving Show
 
+lowOrderGE :: Gen GroupElement
+lowOrderGE = elements (mkGE <$> [Spec.ge_3, Spec.ge_6, Spec.ge_7, Spec.ge_13, Spec.ge_14])
+ where
+  mkGE (Spec.GE x y) = GroupElement (FieldElement (Spec.fe_pack x)) (FieldElement (Spec.fe_pack y))
+
 instance Arbitrary GroupElement where
-  arbitrary = GroupElement <$> arbitrary <*> arbitrary
+  arbitrary = sized $ \n -> frequency [(1, lowOrderGE), (n `div` 10, GroupElement <$> arbitrary <*> arbitrary)]
   shrink (GroupElement x y) = [GroupElement x' y' | (x', y') <- shrink (x, y)]
 
 geAsTy (GroupElement x y) = (feAsTy x, feAsTy y)
@@ -72,8 +77,15 @@ toPoint (Spec.Point b x) = (toBit b, toFE x)
 
 data GroupElementJacobian = GroupElementJacobian FieldElement FieldElement FieldElement deriving Show
 
+lowOrderGEJ :: Gen GroupElementJacobian
+lowOrderGEJ = do
+  Spec.GE x y <- geAsSpec <$> lowOrderGE
+  z <- arbitrary
+  let Spec.GEJ x' y' z' = Spec.gej_rescale (Spec.GEJ x y Spec.fe_one) (feAsSpec z)
+  return $ GroupElementJacobian (FieldElement (Spec.fe_pack x')) (FieldElement (Spec.fe_pack y')) (FieldElement (Spec.fe_pack z'))
+
 instance Arbitrary GroupElementJacobian where
-  arbitrary = GroupElementJacobian <$> arbitrary <*> arbitrary <*> arbitrary
+  arbitrary = sized $ \n -> frequency [(1, lowOrderGEJ), (n `div` 10, GroupElementJacobian <$> arbitrary <*> arbitrary <*> arbitrary)]
   shrink (GroupElementJacobian x y z) = [GroupElementJacobian x' y' z' | (x', y', z') <- shrink (x, y, z)]
 
 gejAsTy (GroupElementJacobian x y z) = ((feAsTy x, feAsTy y), feAsTy z)
