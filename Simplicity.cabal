@@ -198,6 +198,7 @@ Test-Suite testsuite
                        Simplicity.Bitcoin.Serialization.Tests,
                        Simplicity.Elements.Tests,
                        Simplicity.Programs.Tests,
+                       Simplicity.TestEval,
                        Simplicity.Ty.Tests
   build-depends:       Simplicity,
                        array >=0.5 && <0.6,

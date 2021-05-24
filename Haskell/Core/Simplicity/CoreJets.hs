@@ -5,7 +5,7 @@
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.CoreJets
  ( CoreJet(..)
- , specification, coreJetMap
+ , specification, coreJetMap, coreJetLookup
  , implementation
  , fastCoreEval
  , putJetBit, getJetBit
@@ -118,6 +118,8 @@ coreJetMap = Map.fromList
   mkAssoc :: (TyC a, TyC b) => CoreJet a b -> (Hash256, (SomeArrow CoreJet))
   mkAssoc jt = (identityRoot (specification jt), SomeArrow jt)
 
+-- | Performs a lookup from `coreJetMap` from an `IdentityRoot`.
+-- This operation preserves the Simplicity types.
 coreJetLookup :: (TyC a, TyC b) => IdentityRoot a b -> Maybe (CoreJet a b)
 coreJetLookup ir = do
   SomeArrow jt <- Map.lookup (identityRoot ir) coreJetMap

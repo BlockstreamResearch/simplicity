@@ -11,7 +11,6 @@ import qualified Data.List as L
 import Lens.Family2 ((^..), allOf, zipWithOf)
 import Lens.Family2.Stock (backwards, both_)
 
-import Simplicity.CoreJets
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.Spec ((.+.), (.*.), (.^.))
 import qualified Simplicity.LibSecp256k1.Spec as Spec
@@ -21,6 +20,7 @@ import Simplicity.Programs.LibSecp256k1.Lib
 import Simplicity.Programs.Sha256.Lib
 import Simplicity.Programs.Word
 import Simplicity.Term.Core
+import Simplicity.TestEval
 import Simplicity.Ty.Word as Ty
 import qualified Simplicity.Word as W
 
@@ -418,11 +418,11 @@ prop_fe_normalize a = fe_normalize (feAsTy a) == toFE (feAsSpec a)
 
 fe_unary_prop f g = \a -> fastF (feAsTy a) == Just (toFE (g (feAsSpec a)))
  where
-  fastF = fastCoreEval f
+  fastF = testCoreEval f
 
 fe_binary_prop f g = \a b -> fastF (feAsTy a, feAsTy b) == Just (toFE (g (feAsSpec a) (feAsSpec b)))
  where
-  fastF = fastCoreEval f
+  fastF = testCoreEval f
 
 prop_fe_add :: FieldElement -> FieldElement -> Bool
 prop_fe_add = fe_binary_prop fe_add Spec.fe_add
@@ -442,7 +442,7 @@ prop_fe_invert = fe_unary_prop fe_invert Spec.fe_invert
 prop_fe_square_root :: FieldElement -> Bool
 prop_fe_square_root = \a -> fastSqrt (feAsTy a) == Just ((fmap toFE . maybeToTy) (Spec.fe_square_root (feAsSpec a)))
  where
-  fastSqrt = fastCoreEval fe_square_root
+  fastSqrt = testCoreEval fe_square_root
 
 toGE :: Spec.GE -> GE
 toGE (Spec.GE x y) = (toFE x, toFE y)
@@ -486,7 +486,7 @@ gen_inf = GroupElementJacobian <$> arbitrary <*> arbitrary <*> pure (FieldElemen
 prop_gej_rescale :: GroupElementJacobian -> FieldElement -> Bool
 prop_gej_rescale = \a c -> fast_gej_rescale (gejAsTy a, feAsTy c) == Just (toGEJ (Spec.gej_rescale (gejAsSpec a) (feAsSpec c)))
  where
-  fast_gej_rescale = fastCoreEval gej_rescale
+  fast_gej_rescale = testCoreEval gej_rescale
 
 prop_gej_rescale_inf :: FieldElement -> Property
 prop_gej_rescale_inf c = forAll gen_inf $ flip prop_gej_rescale c
@@ -494,7 +494,7 @@ prop_gej_rescale_inf c = forAll gen_inf $ flip prop_gej_rescale c
 prop_gej_double :: GroupElementJacobian -> Bool
 prop_gej_double = \a -> fast_gej_double (gejAsTy a) == Just (toGEJ (Spec.gej_double (gejAsSpec a)))
  where
-  fast_gej_double = fastCoreEval gej_double
+  fast_gej_double = testCoreEval gej_double
 
 prop_gej_double_inf :: Property
 prop_gej_double_inf = forAll gen_inf $ prop_gej_double
@@ -505,7 +505,7 @@ prop_gej_add_ex = \a b ->
       (rz', c') = Spec.gej_add_ex (gejAsSpec a) (gejAsSpec b)
   in (fst <$> rzc) == Just (toFE rz') && (snd <$> rzc) == Just (toGEJ c')
  where
-  fast_gej_add_ex = fastCoreEval gej_add_ex
+  fast_gej_add_ex = testCoreEval gej_add_ex
 
 prop_gej_add_ex_double :: FieldElement -> GroupElementJacobian -> Bool
 prop_gej_add_ex_double z b@(GroupElementJacobian bx by bz) = prop_gej_add_ex a b
@@ -535,7 +535,7 @@ prop_gej_add_ex_infr a = forAll gen_inf $ \b -> prop_gej_add_ex a b
 prop_gej_add :: GroupElementJacobian -> GroupElementJacobian -> Bool
 prop_gej_add = \a b -> fast_gej_add (gejAsTy a, gejAsTy b) == Just (toGEJ (gejAsSpec a <> gejAsSpec b))
  where
-  fast_gej_add = fastCoreEval gej_add
+  fast_gej_add = testCoreEval gej_add
 
 prop_gej_add_double :: FieldElement -> GroupElementJacobian -> Bool
 prop_gej_add_double z b@(GroupElementJacobian bx by bz) = prop_gej_add a b
@@ -568,7 +568,7 @@ prop_gej_ge_add_ex = \a b ->
       (rz', c') = Spec.gej_ge_add_ex (gejAsSpec a) (geAsSpec b)
   in (fst <$> rzc) == Just (toFE rz') && (snd <$> rzc) == Just (toGEJ c')
  where
-  fast_gej_ge_add_ex = fastCoreEval gej_ge_add_ex
+  fast_gej_ge_add_ex = testCoreEval gej_ge_add_ex
 
 prop_gej_ge_add_ex_double :: FieldElement -> GroupElement -> Bool
 prop_gej_ge_add_ex_double z b@(GroupElement bx by) = prop_gej_ge_add_ex a b
@@ -595,7 +595,7 @@ prop_gej_ge_add_ex_inf b = forAll gen_inf $ \a -> prop_gej_ge_add_ex a b
 prop_gej_x_equiv :: FieldElement -> GroupElementJacobian -> Bool -- gej_x_equiv will essentially always be false on random inputs.
 prop_gej_x_equiv = \x0 a -> fast_gej_x_equiv (feAsTy x0, gejAsTy a) == Just (toBit (Spec.gej_x_equiv (feAsSpec x0) (gejAsSpec a) ))
  where
-  fast_gej_x_equiv = fastCoreEval gej_x_equiv
+  fast_gej_x_equiv = testCoreEval gej_x_equiv
 
 prop_gej_x_equiv_inf x0 = forAll gen_inf $ prop_gej_x_equiv x0
 prop_gej_x_equiv_true y z x0 = prop_gej_x_equiv x0 a
@@ -609,7 +609,7 @@ prop_gej_x_equiv_inf_zero = prop_gej_x_equiv_inf (FieldElement 0)
 prop_ge_is_on_curve :: GroupElement -> Bool
 prop_ge_is_on_curve = \a -> fast_ge_is_on_curve (geAsTy a) == Just (toBit (Spec.ge_is_on_curve (geAsSpec a)))
  where
-  fast_ge_is_on_curve = fastCoreEval ge_is_on_curve
+  fast_ge_is_on_curve = testCoreEval ge_is_on_curve
 
 gen_half_curve :: Gen GroupElement
 gen_half_curve = half_curve <$> arbitrary
@@ -624,7 +624,7 @@ prop_ge_is_on_curve_half = forAll gen_half_curve prop_ge_is_on_curve
 prop_gej_is_on_curve :: GroupElementJacobian -> Bool
 prop_gej_is_on_curve = \a -> fast_gej_is_on_curve (gejAsTy a) == Just (toBit (Spec.gej_is_on_curve (gejAsSpec a)))
  where
-  fast_gej_is_on_curve = fastCoreEval gej_is_on_curve
+  fast_gej_is_on_curve = testCoreEval gej_is_on_curve
 
 gen_half_curve_jacobian :: Gen GroupElementJacobian
 gen_half_curve_jacobian = half_curve_jacobian <$> gen_half_curve <*> arbitrary
@@ -678,11 +678,11 @@ toScalar = toWord256 . Spec.scalar_repr
 
 scalar_unary_prop f g = \a -> fastF (scalarAsTy a) == Just (toScalar (g (scalarAsSpec a)))
  where
-  fastF = fastCoreEval f
+  fastF = testCoreEval f
 
 scalar_binary_prop f g = \a b -> fastF (scalarAsTy a, scalarAsTy b) == Just (toScalar (g (scalarAsSpec a) (scalarAsSpec b)))
  where
-  fastF = fastCoreEval f
+  fastF = testCoreEval f
 
 prop_scalar_normalize :: ScalarElement -> Bool
 prop_scalar_normalize a@(ScalarElement w) = scalar_normalize (scalarAsTy a) == toScalar (Spec.scalar (toInteger w))
@@ -707,7 +707,7 @@ prop_scalar_split_lambda = \a -> ((interp *** interp) <$> fast_scalar_split_lamb
                             == Just (Spec.scalar_split_lambda (scalarAsSpec a))
  where
   interp (b,x) = fromWord128 x - if fromBit b then 2^128 else 0
-  fast_scalar_split_lambda = fastCoreEval scalar_split_lambda
+  fast_scalar_split_lambda = testCoreEval scalar_split_lambda
 
 data WnafElement = WnafElement { wnafAsSpec :: Integer } deriving Show
 
@@ -738,7 +738,7 @@ prop_linear_combination_1 :: ScalarElement -> GroupElementJacobian -> ScalarElem
 prop_linear_combination_1 = \na a ng -> fast_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
              == Just (toGEJ (Spec.linear_combination_1 (scalarAsSpec na) (gejAsSpec a) (scalarAsSpec ng)))
  where
-  fast_linear_combination_1 = fastCoreEval linear_combination_1
+  fast_linear_combination_1 = testCoreEval linear_combination_1
 
 prop_linear_combination_1_0 :: GroupElementJacobian -> ScalarElement -> Bool
 prop_linear_combination_1_0 a ng = prop_linear_combination_1 na a ng
@@ -752,40 +752,40 @@ prop_linear_check_1 :: ScalarElement -> GroupElement -> ScalarElement -> GroupEl
 prop_linear_check_1 = \na a ng r -> fast_linear_check_1 (((scalarAsTy na, geAsTy a), scalarAsTy ng), geAsTy r)
              == Just (toBit (Spec.linear_check [(scalarAsSpec na, geAsSpec a)] (scalarAsSpec ng) (geAsSpec r)))
  where
-  fast_linear_check_1 = fastCoreEval linear_check_1
+  fast_linear_check_1 = testCoreEval linear_check_1
 
 prop_decompress :: PointElement -> Bool
 prop_decompress = \a -> fast_decompress (pointAsTy a)
              == Just ((fmap toGE . maybeToTy) (Spec.decompress (pointAsSpec a)))
  where
-  fast_decompress = fastCoreEval decompress
+  fast_decompress = testCoreEval decompress
 
 prop_point_check_1 :: ScalarElement -> PointElement -> ScalarElement -> PointElement -> Bool
 prop_point_check_1 = \na a ng r -> fast_point_check_1 (((scalarAsTy na, pointAsTy a), scalarAsTy ng), pointAsTy r)
              == Just (toBit (Spec.point_check [(scalarAsSpec na, pointAsSpec a)] (scalarAsSpec ng) (pointAsSpec r)))
  where
-  fast_point_check_1 = fastCoreEval point_check_1
+  fast_point_check_1 = testCoreEval point_check_1
 
 prop_pubkey_unpack :: FieldElement -> Bool
 prop_pubkey_unpack a@(FieldElement w) = fast_pubkey_unpack (feAsTy a)
                                      == Just ((fmap toPoint . maybeToTy) (Spec.pubkey_unpack (Spec.PubKey w)))
  where
-  fast_pubkey_unpack = fastCoreEval pubkey_unpack
+  fast_pubkey_unpack = testCoreEval pubkey_unpack
 
 prop_pubkey_unpack_neg :: FieldElement -> Bool
 prop_pubkey_unpack_neg a@(FieldElement w) = fast_pubkey_unpack_neg (feAsTy a)
                                          == Just ((fmap toPoint . maybeToTy) (Spec.pubkey_unpack_neg (Spec.PubKey w)))
  where
-  fast_pubkey_unpack_neg = fastCoreEval pubkey_unpack_neg
+  fast_pubkey_unpack_neg = testCoreEval pubkey_unpack_neg
 
 prop_signature_unpack :: FieldElement -> ScalarElement -> Bool
 prop_signature_unpack r@(FieldElement wr) s@(ScalarElement ws) =
   fast_signature_unpack (feAsTy r, scalarAsTy s) ==
   Just ((fmap (toFE *** toScalar) . maybeToTy) (Spec.signature_unpack (Spec.Sig wr ws)))
  where
-  fast_signature_unpack = fastCoreEval signature_unpack
+  fast_signature_unpack = testCoreEval signature_unpack
 
-fast_bip0340_check = fromJust . fastCoreEval bip0340_check
+fast_bip0340_check = fromJust . testCoreEval bip0340_check
  where
   fromJust (Just a) = fromBit a
   fromJust Nothing = False
