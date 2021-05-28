@@ -52,12 +52,12 @@ library Simplicity-Core
   hs-source-dirs:      Haskell/Core
   default-language:    Haskell2010
   ghc-options:         -O2
-  build-depends:       base >=4.9 && <4.15,
+  build-depends:       base >=4.9 && <4.16,
                        binary >=0.7 && <0.9,
                        bytestring >=0.10 && <0.11,
                        containers >=0.5.10 && <0.7,
                        cereal >=0.5 && <0.6,
-                       lens-family >=2.0 && <2.1,
+                       lens-family >=2.0 && <2.2,
                        mtl >=2.2 && <2.3,
                        MemoTrie >=0.6 && <0.7,
                        SHA >=1.6 && <1.7,
@@ -75,7 +75,7 @@ library Simplicity-Bitcoin
   ghc-options:         -O2
   build-depends:       Simplicity-Core,
                        array >=0.5 && <0.6,
-                       base >=4.9 && <4.15,
+                       base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6
 
@@ -87,7 +87,7 @@ library Simplicity-Elements
   ghc-options:         -O2
   build-depends:       Simplicity-Core,
                        array >=0.5 && <0.6,
-                       base >=4.9 && <4.15,
+                       base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6
 
@@ -106,11 +106,11 @@ library Simplicity-Indef
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core,
-                       base >=4.9 && <4.15,
+                       base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,
                        containers >=0.5.10 && <0.7,
-                       lens-family >=2.0 && <2.1,
+                       lens-family >=2.0 && <2.2,
                        mtl >=2.2 && <2.3,
                        transformers >=0.5 && <0.6,
                        unification-fd >=0.10 && <0.12,
@@ -180,7 +180,7 @@ library
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core, Simplicity-Bitcoin, Simplicity-Elements, Simplicity-Indef,
-                       base >=4.9 && <4.15,
+                       base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
                        containers >=0.5.10 && <0.7
 
@@ -201,10 +201,10 @@ Test-Suite testsuite
                        Simplicity.Ty.Tests
   build-depends:       Simplicity,
                        array >=0.5 && <0.6,
-                       base >=4.9 && <4.15,
+                       base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,
-                       lens-family >=2.0 && <2.1,
+                       lens-family >=2.0 && <2.2,
                        QuickCheck >=2.10 && <2.15,
                        SHA >=1.6 && <1.7,
                        tasty >=0.11 && <1.5,
