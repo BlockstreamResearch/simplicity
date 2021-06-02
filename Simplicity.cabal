@@ -197,6 +197,7 @@ Test-Suite testsuite
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests,
                        Simplicity.Bitcoin.Serialization.Tests,
                        Simplicity.Elements.Tests,
+                       Simplicity.FFI.Tests,
                        Simplicity.Programs.Tests,
                        Simplicity.TestEval,
                        Simplicity.Ty.Tests
