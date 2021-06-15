@@ -133,13 +133,19 @@ tests = testGroup "Programs"
         , testProperty "scalar_split_lambda" prop_scalar_split_lambda
         , testProperty "wnaf5" prop_wnaf5
         , testProperty "wnaf15" prop_wnaf15
-        , testProperty "decompress" (withMaxSuccess 10 prop_decompress)
+        , testProperty "decompress" prop_decompress
+        , testProperty "linear_combination_1" prop_linear_combination_1
+        , testProperty "linear_combination_1_0" prop_linear_combination_1_0
+        , testProperty "linear_combination_1_inf" prop_linear_combination_1_inf
+        , testProperty "linear_check_1" prop_linear_check_1
+        , testProperty "point_check_1" prop_point_check_1
         ]
       , testGroup "bip0340"
         [ testProperty "pubkey_unpack" prop_pubkey_unpack
         , testProperty "pubkey_unpack_neg" prop_pubkey_unpack_neg
         , testProperty "signature_unpack" prop_signature_unpack
         ]
+      , group_bip_0340_check
       ]
 
 assert_low8 :: Assertion
