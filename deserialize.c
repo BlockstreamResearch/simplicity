@@ -335,6 +335,11 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
 
   if (census) *census = (combinator_counters){0};
   int32_t err = decodeDag(*dag, (size_t)dagLen, census, stream);
+
+  if (0 <= err && !verifyCanonicalOrder(*dag, (size_t)(dagLen))) {
+    err = SIMPLICITY_ERR_DATA_OUT_OF_ORDER;
+  }
+
   if (err < 0) {
     free(*dag);
     *dag = NULL;

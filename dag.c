@@ -371,6 +371,106 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
   }
 }
 
+/* Verifies that the 'dag' is in canonical order, meaning that nodes under the left branches have lower indices than nodes under
+ * right branches, with the exception that nodes under right braches may (cross-)reference identical nodes that already occur under
+ * left branches.
+ *
+ * Returns 'true' if the 'dag' is in canonical order, and returns 'false' if it is not.
+ *
+ * May modify dag[i].aux values and invalidate dag[i].sourceType and dag[i].targetType.
+ * This function should only be used prior to calling 'mallocTypeInference'.
+ *
+ * Precondition: dag_node dag[len] and 'dag' is well-formed.
+ */
+bool verifyCanonicalOrder(dag_node* dag, const size_t len) {
+  size_t bottom = 0;
+  size_t top = len-1; /* Underflow is checked below. */
+
+  if (!len) {
+    assert(false); /* A well-formed dag has non-zero length */
+    return true; /* However, an empty dag is technically in canonical order */
+  }
+
+  /* We use dag[i].aux as a "stack" to manage the traversal of the DAG. */
+  dag[top].aux = len; /* We will set top to 'len' to indicate we are finished. */
+
+  /* Each time any particular 'top' value is revisted in this loop, bottom has increased to be strictly larger than the last 'child'
+     value examined.  Therefore we will make further progress in the loop the next time around.
+     By this reasoning any given 'top' value will be visited no more than numChildren(dag[top].tag) + 1 <= 3 times.
+     Thus this loop iterates at most O('len') times.
+   */
+  while (top < len) {
+    /* We determine cannonical order by iterating through the dag in canonical (pre-)order,
+       incrementing 'bottom' each time we encounter a node that is (correctly) placed at the 'bottom' index.
+       We take advantage of the precondition that the dag is well-formed to know in advance that any children
+       of a node have index strictly less than the node itself.
+     */
+
+    /* Check first child. */
+    size_t child = dag[top].child[0];
+    switch (dag[top].tag) {
+     case ASSERTL:
+     case ASSERTR:
+     case CASE:
+     case DISCONNECT:
+     case COMP:
+     case PAIR:
+     case INJL:
+     case INJR:
+     case TAKE:
+     case DROP:
+      if (bottom < child) {
+        dag[child].aux = top;
+        top = child;
+        continue;
+      }
+      if (bottom == child) bottom++;
+     case IDEN:
+     case UNIT:
+     case WITNESS:
+     case HIDDEN:
+     case JET:
+      break;
+    }
+
+    /* Check second child. */
+    child = dag[top].child[1];
+    switch (dag[top].tag) {
+     case ASSERTL:
+     case ASSERTR:
+     case CASE:
+     case DISCONNECT:
+     case COMP:
+     case PAIR:
+      if (bottom < child) {
+        dag[child].aux = top;
+        top = child;
+        continue;
+      }
+      if (bottom == child) bottom++;
+     case INJL:
+     case INJR:
+     case TAKE:
+     case DROP:
+     case IDEN:
+     case UNIT:
+     case WITNESS:
+     case HIDDEN:
+     case JET:
+      break;
+    }
+
+    /* Check current node. */
+    if (bottom < top) return false; /* Not in canonical order.  */
+    if (bottom == top) bottom++;
+    /* top < bottom */
+    top = dag[top].aux; /* Return. */
+  }
+  assert(bottom == top && top == len);
+
+  return true;
+}
+
 /* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
  * to construct a compact representation of a witness value of type B.

@@ -99,7 +99,12 @@ static inline size_t numChildren(tag_t tag) {
 typedef struct dag_node {
   jet_ptr jet;
   sha256_midstate cmr;
-  size_t sourceType, targetType;
+  union {
+    size_t aux; /* Used as scratch space for verifyCanonicalOrder. */
+    struct {
+       size_t sourceType, targetType;
+    };
+  };
   union {
     struct {
       size_t sourceIx, targetIx;
@@ -325,6 +330,19 @@ void computeCommitmentMerkleRoot(dag_node* dag, size_t i);
  * Postconditon: analyses analysis[len] contains the annotated Merkle roots of each subexpressions of 'dag'.
  */
 void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
+
+/* Verifies that the 'dag' is in canonical order, meaning that nodes under the left branches have lower indices than nodes under
+ * right branches, with the exception that nodes under right braches may (cross-)reference identical nodes that already occur under
+ * left branches.
+ *
+ * Returns 'true' if the 'dag' is in canonical order, and returns 'false' if it is not.
+ *
+ * May modify dag[i].aux values and invalidate dag[i].sourceType and dag[i].targetType.
+ * This function should only be used prior to calling 'mallocTypeInference'.
+ *
+ * Precondition: dag_node dag[len] and 'dag' is well-formed.
+ */
+bool verifyCanonicalOrder(dag_node* dag, const size_t len);
 
 /* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
