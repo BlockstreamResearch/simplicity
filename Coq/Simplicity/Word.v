@@ -2,6 +2,7 @@ Require Import Logic.Eqdep_dec.
 Require Import List.
 Require Import ZArith.
 Require Import Simplicity.Util.Arith.
+Require Import Lia.
 Require compcert.lib.Integers.
 
 Require Import Simplicity.Ty.
@@ -157,7 +158,7 @@ assert (H2 : forall n, (0 < Zpower_nat 2 n)%Z).
 assert (H2' : forall n, (Zpower_nat 2 n <> 0)%Z).
  intros n.
  generalize (H2 n).
- omega.
+ lia.
 unfold PairBitSize.
 rewrite two_power_nat_correct, Zpower_nat_is_exp.
 rewrite Zmult_comm, Z.rem_mul_r by auto; cbn.

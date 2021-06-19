@@ -1,21 +1,15 @@
-diff -ur CompCert-3.7/Makefile CompCert-3.7-adj/Makefile
---- CompCert-3.7/Makefile	2020-03-31 12:24:12.000000000 -0400
-+++ CompCert-3.7-adj/Makefile	2020-09-02 12:06:09.520981007 -0400
-@@ -21,11 +21,10 @@
+--- CompCert-3.8/Makefile	2020-11-16 04:28:40.000000000 -0500
++++ CompCert-3.7-adj/Makefile	2021-04-07 16:57:32.839375780 -0400
+@@ -27,7 +27,7 @@
  ARCHDIRS=$(ARCH)_$(BITSIZE) $(ARCH)
  endif
  
--DIRS=lib common $(ARCHDIRS) backend cfrontend driver \
--  flocq/Core flocq/Prop flocq/Calc flocq/IEEE754 \
-+DIRS=lib common $(ARCHDIRS) backend cfrontend \
-   exportclight MenhirLib cparser
+-DIRS := lib common $(ARCHDIRS) backend cfrontend driver exportclight cparser
++DIRS := lib common $(ARCHDIRS) backend cfrontend exportclight cparser
  
--RECDIRS=lib common $(ARCHDIRS) backend cfrontend driver flocq exportclight \
-+RECDIRS=lib common $(ARCHDIRS) backend cfrontend exportclight \
-   MenhirLib cparser
+ COQINCLUDES := $(foreach d, $(DIRS), -R $(d) compcert.$(d))
  
- COQINCLUDES=$(foreach d, $(RECDIRS), -R $(d) compcert.$(d))
-@@ -69,41 +68,12 @@
+@@ -84,41 +84,12 @@
  # Back-end modules (in backend/, $(ARCH)/)
  
  BACKEND=\
@@ -56,13 +50,13 @@ diff -ur CompCert-3.7/Makefile CompCert-3.7-adj/Makefile
 -  Cshmgen.v Cshmgenproof.v \
 -  Csharpminor.v Cminorgen.v Cminorgenproof.v
 +CFRONTEND=Ctypes.v Cop.v Csyntax.v Csem.v Ctyping.v Cstrategy.v \
-+  Clight.v ClightBigstep.v \
++  Clight.v ClightBigstep.v
  
  # Parser
  
-@@ -115,22 +85,11 @@
-   Interpreter_correct.v Interpreter.v Main.v Validator_complete.v \
-   Validator_safe.v Validator_classes.v
+@@ -134,22 +105,11 @@
+ MENHIRLIB=
+ endif
  
 -# Putting everything together (in driver/)
 -
@@ -71,7 +65,7 @@ diff -ur CompCert-3.7/Makefile CompCert-3.7-adj/Makefile
  # All source files
  
 -FILES=$(VLIB) $(COMMON) $(BACKEND) $(CFRONTEND) $(DRIVER) $(FLOCQ) \
-+FILES=$(VLIB) $(COMMON) $(BACKEND) $(CFRONTEND) \
++FILES=$(VLIB) $(COMMON) $(BACKEND) $(CFRONTEND) $(FLOCQ) \
    $(MENHIRLIB) $(PARSER)
  
 -# Generated source files
@@ -84,8 +78,8 @@ diff -ur CompCert-3.7/Makefile CompCert-3.7-adj/Makefile
  all:
  	@test -f .depend || $(MAKE) depend
  	$(MAKE) proof
-@@ -229,20 +188,13 @@
- 	$(MENHIR) --coq --coq-lib-path compcert.MenhirLib --coq-no-version-check cparser/Parser.vy
+@@ -275,20 +235,13 @@
+ 	$(MENHIR) --coq --coq-no-version-check cparser/Parser.vy
  	@chmod a-w $@
  
 -depend: $(GENERATED) depend1
@@ -106,8 +100,8 @@ diff -ur CompCert-3.7/Makefile CompCert-3.7-adj/Makefile
  ifeq ($(CLIGHTGEN),true)
  	install -m 0755 ./clightgen $(DESTDIR)$(BINDIR)
  endif
-@@ -265,7 +217,7 @@
- 	rm -f compcert.ini
+@@ -312,7 +265,7 @@
+ 	rm -f compcert.ini compcert.config
  	rm -f extraction/STAMP extraction/*.ml extraction/*.mli .depend.extr
  	rm -f tools/ndfun tools/modorder tools/*.cm? tools/*.o
 -	rm -f $(GENERATED) .depend

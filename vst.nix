@@ -1,15 +1,16 @@
-{stdenv, fetchurl, coq, compcert } :
+{stdenv, fetchFromGitHub, coq, compcert } :
 stdenv.mkDerivation {
-  name = "vst-sha256-2.6";
-  src = fetchurl {
-    url = "https://github.com/PrincetonUniversity/VST/archive/v2.6.tar.gz";
-    sha256 = "1x5jarch8pbrld1s6r1yk49y17m9v2jkwl8gfa4sn4szcl4zvq6p";
+  name = "vst-sha256-2.7";
+  src = fetchFromGitHub {
+    owner = "PrincetonUniversity";
+    repo = "VST";
+    rev = "v2.7";
+    sha256 = "04sqxxfz76yqg9ywcvagk9lmsiv82l0xmbf1vgpazqklwn6sm7r2";
   };
 
   buildInputs = [ coq ];
   propagatedBuildInputs = [ compcert ];
 
-  patches = [ ./vst-version.patch ./vst-makefile.patch ];
   postPatch = ''
     substituteInPlace util/coqflags \
       --replace "/usr/bin/env bash" ${stdenv.shell} \

@@ -1,5 +1,6 @@
 Require Import ZArith.
 Require Import List.
+Require Import Lia.
 
 Require sha.SHA256.
 Require Import compcert.lib.Integers.
@@ -204,13 +205,13 @@ unfold shift32.
 rewrite shift_correct by assumption.
 rewrite Int.unsigned_repr by assumption.
 destruct (Coqlib.zlt _ _) as [Hiz|Hiz].
- rewrite Int.testbit_repr by omega.
+ rewrite Int.testbit_repr by lia.
  reflexivity.
 rewrite toZ_mod, two_power_nat_equiv.
 apply Z.mod_pow2_bits_high.
 clear - Hiz.
 cbn in *.
-omega.
+lia.
 Qed.
 
 Lemma rotate32_correct z (x : Word32) :
@@ -282,7 +283,7 @@ cut  (to_hash256 (fst (|[fr]| (h, b))) = SHA256.Round (to_hash256 h) (SHA256.nth
 revert fr.
 rewrite <- (firstn_all ks').
 change (length ks') with (Z.to_nat (63 + 1)).
-cut (63 < 64)%Z;[|omega].
+cut (63 < 64)%Z;[|lia].
 apply SHA256.Round_ind.
  intros t Ht _ _ fr; unfold fr.
  replace (Z.to_nat _) with 0 by
@@ -295,18 +296,18 @@ apply SHA256.Round_ind.
                 [[[b8 b9][ba bb]][[bc bd][be bf]]]].
  reflexivity.
 intros t Ht Hzlt IH Ht0.
-assert (Ht1 : (t - 1 < 64)%Z) by omega.
+assert (Ht1 : (t - 1 < 64)%Z) by lia.
 specialize (IH Ht1).
 rewrite Z.sub_add in IH.
 pose (kt := nth (Z.to_nat t) ks' 0%Z).
 assert (Ht2 : Z.to_nat t < length ks').
  change (Z.to_nat t < Z.to_nat 64).
- rewrite <- Z2Nat.inj_lt; omega.
+ rewrite <- Z2Nat.inj_lt; lia.
 replace (firstn (Z.to_nat (t + 1)) ks') with (firstn (Z.to_nat t) ks' ++ [kt]); revgoals.
- rewrite Z2Nat.inj_add by omega.
+ rewrite Z2Nat.inj_add by lia.
  unfold kt.
  rewrite sublist.firstn_1_skipn by auto.
- rewrite <- firstn_app_2, firstn_skipn, firstn_length_le by omega.
+ rewrite <- firstn_app_2, firstn_skipn, firstn_length_le by lia.
  reflexivity.
 rewrite rev_app_distr, map_app, fold_right_app.
 set (fr := fold_right _ H _) in *.
@@ -318,7 +319,7 @@ split.
  replace (SHA256.W (SHA256.nthi (repr_Block b)) t) with (hd Int.zero (repr_Block (snd (fr (h, b))))); revgoals.
   rewrite IH1.
   cbn.
-  rewrite Z2Nat.id by omega.
+  rewrite Z2Nat.id by lia.
   reflexivity.
  cbn -[round scribe32 kt].
  unfold scribe32; rewrite scribe_correct.
@@ -346,7 +347,7 @@ split.
  rewrite Int.add_commut, <- Int.add_assoc; do 2 f_equal.
  rewrite Int.add_assoc; reflexivity.
 unfold iden; simpl.
-rewrite (Zplus_comm t 1), Z2Nat.inj_add by omega.
+rewrite (Zplus_comm t 1), Z2Nat.inj_add by lia.
 clear -IH1 Ht.
 set (p := snd (fr (h, b))) in *.
 match goal with
@@ -360,7 +361,7 @@ repeat f_equal.
 rewrite !Pos2Z.inj_succ, Zpos_P_of_succ_nat, Z2Nat.id by auto with zarith.
 replace (Z.succ _) with (16 + t)%Z by ring.
 rewrite SHA256.W_equation.
-destruct Coqlib.zlt;[omega|].
+destruct Coqlib.zlt;[lia|].
 replace (16 + t - 2)%Z with (Z.of_nat 14 + t)%Z by ring.
 replace (16 + t - 7)%Z with (Z.of_nat 9 + t)%Z by ring.
 replace (16 + t - 15)%Z with (Z.of_nat 1 + t)%Z by ring.
@@ -371,12 +372,12 @@ assert (HIH : forall i, i < 16 -> SHA256.W (SHA256.nthi (repr_Block b)) (Z.of_na
  intros i Hi.
  rewrite (map_nth (fun n => SHA256.W (SHA256.nthi (repr_Block b)) (Z.of_nat n))).
  rewrite seq_nth by auto.
- rewrite plus_comm, Nat2Z.inj_add, Z2Nat.id by omega.
+ rewrite plus_comm, Nat2Z.inj_add, Z2Nat.id by lia.
  reflexivity.
 rewrite <- IH1 in HIH.
-rewrite !HIH by omega.
+rewrite !HIH by lia.
 cbn -[shift32 rotate32 xor3Word32 add32 toZ].
-rewrite !add32_correct, !xor3Word32_xor, !rotate32_correct, !shift32_correct by (cbn; omega).
+rewrite !add32_correct, !xor3Word32_xor, !rotate32_correct, !shift32_correct by (cbn; lia).
 rewrite Int.add_commut; f_equal; apply Int.add_commut.
 Qed.
 

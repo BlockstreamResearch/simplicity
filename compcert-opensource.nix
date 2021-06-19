@@ -4,15 +4,15 @@
 }:
 
 assert lib.versionAtLeast ocaml.version "4.05";
-assert lib.versionAtLeast coq.coq-version "8.7";
+assert lib.versionAtLeast coq.coq-version "8.8";
 
 stdenv.mkDerivation {
   pname = "compcert";
-  version = "3.7";
+  version = "3.8";
 
   src = fetchurl {
-    url = "https://github.com/AbsInt/CompCert/archive/v3.7.tar.gz";
-    sha256 = "1c3yp3ns830vg3q8b0y61xffd1fgkmkg585pdsv6qmy2sqp1pvnf";
+    url = "https://github.com/AbsInt/CompCert/archive/v3.8.tar.gz";
+    sha256 = "0k4vbjmm1vzva43wrmkj32p7j49110h17dy4b23nljrxnzb7nkbk";
   };
 
   # Unpack only those files that are open source licensed (GPL2 or GPL3).
@@ -53,19 +53,7 @@ stdenv.mkDerivation {
     mkdir doc
   '';
 
-  patches = [ (fetchurl {
-                url="https://raw.githubusercontent.com/coq/opam-coq-archive/ac224efae1204e12313897df67c1d40ff2649571/released/packages/coq-compcert/coq-compcert.3.7%7Ecoq-platform%7Eopen-source/files/0007-Dual-license-aarch64-Archi.v-Cbuiltins.ml-extraction.patch";
-                sha256="1mwl61wjbkj53mn1y9rx324vhvn6lng47y9xylh4yzh9ni2g8rpx";
-              })
-              (fetchurl {
-                url="https://raw.githubusercontent.com/coq/opam-coq-archive/ac224efae1204e12313897df67c1d40ff2649571/released/packages/coq-compcert/coq-compcert.3.7%7Ecoq-platform%7Eopen-source/files/0008-Update-the-list-of-dual-licensed-files.patch";
-                sha256="0zfvvqmv8lnay76gwv7ydwbhl02401qcavmylh11vcwy1qgj8va0";
-              })
-              (fetchurl {
-                url="https://raw.githubusercontent.com/coq/opam-coq-archive/ac224efae1204e12313897df67c1d40ff2649571/released/packages/coq-compcert/coq-compcert.3.7%7Ecoq-platform%7Eopen-source/files/0011-Use-Coq-platform-supplied-Flocq.patch";
-                sha256="1w6z1z2r21kfm29x9hjmbidzvm4kzilcq2l11gind99w108kxm8z";
-              })
-              ./compcert-opensource.patch ];
+  patches = [ ./compcert-opensource.patch ];
 
   buildInputs = [ ocaml findlib coq menhir ];
   propagatedBuildInputs = [ flocq ];
@@ -77,13 +65,14 @@ stdenv.mkDerivation {
       -bindir $out/bin \
       -libdir $out/lib \
       -install-coqdev \
+      -use-external-Flocq \
       -coqdevdir $out/lib/coq/${coq.coq-version}/user-contrib/compcert \
       -ignore-coq-version \
       ${ccomp-platform}
   '';
 
   preBuild = "make depend";
-  buildFlags = [ "proof" "exportclight/Clightdefs.vo" ];
+  buildFlags = [ "proof" "exportclight/Clightdefs.vo" "compcert.config" ];
 
   meta = with lib; {
     description = "Formally verified C compiler";
