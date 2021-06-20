@@ -8,11 +8,11 @@ assert lib.versionAtLeast coq.coq-version "8.8";
 
 stdenv.mkDerivation {
   pname = "compcert";
-  version = "3.8";
+  version = "3.9";
 
   src = fetchurl {
-    url = "https://github.com/AbsInt/CompCert/archive/v3.8.tar.gz";
-    sha256 = "0k4vbjmm1vzva43wrmkj32p7j49110h17dy4b23nljrxnzb7nkbk";
+    url = "https://github.com/AbsInt/CompCert/archive/v3.9.tar.gz";
+    sha256 = "1yxf2w8wsv6bik2diljb4is6izcygh20h6islkmpdrxnqbjb8mka";
   };
 
   # Unpack only those files that are open source licensed (GPL2 or GPL3).

@@ -1,6 +1,6 @@
---- CompCert-3.8/Makefile	2020-11-16 04:28:40.000000000 -0500
-+++ CompCert-3.7-adj/Makefile	2021-04-07 16:57:32.839375780 -0400
-@@ -27,7 +27,7 @@
+--- CompCert-3.9/Makefile	2021-05-10 04:11:36.000000000 -0400
++++ CompCert-3.9-adj/Makefile	2021-06-19 18:50:59.484683789 -0400
+@@ -28,7 +28,7 @@
  ARCHDIRS=$(ARCH)_$(BITSIZE) $(ARCH)
  endif
  
@@ -9,7 +9,7 @@
  
  COQINCLUDES := $(foreach d, $(DIRS), -R $(d) compcert.$(d))
  
-@@ -84,41 +84,12 @@
+@@ -102,41 +102,12 @@
  # Back-end modules (in backend/, $(ARCH)/)
  
  BACKEND=\
@@ -54,7 +54,7 @@
  
  # Parser
  
-@@ -134,22 +105,11 @@
+@@ -152,22 +123,11 @@
  MENHIRLIB=
  endif
  
@@ -78,7 +78,7 @@
  all:
  	@test -f .depend || $(MAKE) depend
  	$(MAKE) proof
-@@ -275,20 +235,13 @@
+@@ -293,20 +253,13 @@
  	$(MENHIR) --coq --coq-no-version-check cparser/Parser.vy
  	@chmod a-w $@
  
@@ -100,7 +100,7 @@
  ifeq ($(CLIGHTGEN),true)
  	install -m 0755 ./clightgen $(DESTDIR)$(BINDIR)
  endif
-@@ -312,7 +265,7 @@
+@@ -330,7 +283,7 @@
  	rm -f compcert.ini compcert.config
  	rm -f extraction/STAMP extraction/*.ml extraction/*.mli .depend.extr
  	rm -f tools/ndfun tools/modorder tools/*.cm? tools/*.o
