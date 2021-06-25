@@ -1,5 +1,5 @@
 { stdenv, lib, fetchurl
-, coq, flocq, ocaml, menhir, findlib
+, coq, flocq, ocaml, menhir, menhirLib, findlib
 , ccomp-platform ? if stdenv.isDarwin then "x86_64-macosx" else "x86_64-linux"
 }:
 
@@ -55,7 +55,7 @@ stdenv.mkDerivation {
 
   patches = [ ./compcert-opensource.patch ];
 
-  buildInputs = [ ocaml findlib coq menhir ];
+  buildInputs = [ ocaml findlib coq menhir menhirLib ];
   propagatedBuildInputs = [ flocq ];
 
   enableParallelBuilding = true;
