@@ -13,11 +13,12 @@ ifneq ($(strip $(SINGLE_THREADED)),)
   CPPFLAGS := $(CPPFLAGS) -DSINGLE_THREADED
 endif
 
-CFLAGS := -I include
+CFLAGS := $(CFLAGS) -I include -I ../libsha256compression/include
+LDFLAGS := $(LDFLAGS) -L ../libsha256compression/
 
 ifeq ($(strip $(SINGLE_THREADED)),)
   # SINGLE_THREADED is empty
-  LDFLAGS := -pthread
+  LDFLAGS := $(LDFLAGS) -pthread
 endif
 
 LDLIBS := -lsha256compression
