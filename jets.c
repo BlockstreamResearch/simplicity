@@ -1,6 +1,5 @@
 #include "jets.h"
-
-#include "sha256/compression.h"
+#include "sha256.h"
 
 bool adder32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;

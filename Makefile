@@ -20,8 +20,6 @@ ifeq ($(strip $(SINGLE_THREADED)),)
   LDFLAGS := -pthread
 endif
 
-LDLIBS := -lsha256compression
-
 primitive/elements/jets.o: primitive/elements/jets.c
 	$(CC) -c $(CFLAGS) $(CWARN) -Wno-switch-enum -Wswitch $(CPPFLAGS) -o $@ $<
 
@@ -32,7 +30,7 @@ libElementsSimplicity.a: $(OBJS)
 	ar rcs $@ $^
 
 test: $(TEST_OBJS) libElementsSimplicity.a
-	$(CC) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+	$(CC) $^ -o $@ $(LDFLAGS)
 
 install: libElementsSimplicity.a
 	mkdir -p $(out)/lib

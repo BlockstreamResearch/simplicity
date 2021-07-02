@@ -2,7 +2,6 @@
 #define SIMPLICITY_TAG_H
 
 #include <string.h>
-#include "sha256/compression.h"
 #include "sha256.h"
 #include "ascii.h"
 
