@@ -14,13 +14,10 @@ extra-source-files:  README.md
 tested-with:         GHC ==8.6.4
 
 library Simplicity-Core
-  C-sources:           libsha256compression/sha256/compression.c,
-                       C/frame.c, C/jets.c,
+  C-sources:           C/sha256.c, C/frame.c, C/jets.c,
                        Haskell/cbits/frame.c, Haskell/cbits/jets.c
-  Include-dirs:        libsha256compression/include,
-                       C
-  Includes:            sha256/compression.h,
-                       frame.h, jets.h
+  Include-dirs:        C
+  Includes:            sha256.h, frame.h, jets.h
   exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
                        Simplicity.Term.Core,
                        Simplicity.CoreJets,
