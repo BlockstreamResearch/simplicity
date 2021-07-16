@@ -1,7 +1,7 @@
 -- | This modules wraps Data.Digest.Pure.SHA in order to simulate direct access to the SHA-256 compression function by providing access to SHA-256 midstates.
 {-# LANGUAGE BangPatterns #-}
 module Simplicity.Digest
-  ( Hash256, be256, be256_
+  ( Hash256, be256, be256_, le256, le256_
   , get256Bits, put256Bits
   , integerHash256, hash0
   , IV, tagIv, ivHash, bslHash, bsHash, bitStringHash
@@ -51,6 +51,16 @@ be256 = adapter to fro
   to h = foldl' go 0 . BSS.unpack $ hash256 h
    where
     go n w = (n `shiftL` 8) .|. fromIntegral w
+
+-- | A 'Lens' accessing a 'Word256' from a 'Hash256' using a little endian interpretation.
+le256_ :: Lens' Hash256 Word256
+le256_ = under le256
+
+-- | An adaptor converting a 'Hash256' to a 'Word256' using a little endian interpretation.
+le256 :: Adapter' Hash256 Word256
+le256 = adapter rev rev . be256
+ where
+  rev = Hash256 . BSS.toShort . BS.reverse . BSS.fromShort . hash256
 
 -- | Deserializes a 256-bit hash value from a stream of 'Bool's.
 --
