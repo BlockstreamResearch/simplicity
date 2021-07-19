@@ -11,7 +11,10 @@ import Data.Serialize.Put (putWord8)
 import Simplicity.Word
 
 -- | An (x-only) public key format to be used for Schnorr signatures.
-data PubKey = PubKey Word256 deriving Show
+data PubKey = PubKey Word256
+
+instance Show PubKey where
+  showsPrec p (PubKey w) = showParen (p > 10) . showString $ "PubKey 0x" ++ showHex256 w
 
 instance Serialize PubKey where
   get = PubKey <$> get

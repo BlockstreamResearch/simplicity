@@ -1,11 +1,13 @@
 module Simplicity.Word
   ( Word256, Word64, Word32, Word16, Word8
+  , showHex256
   ) where
 
 import Data.Bits
 import Data.Ix
 import Data.Serialize
 import Data.Word (Word8, Word16, Word32, Word64)
+import Numeric (showHex)
 import Foreign.Ptr (castPtr)
 import Foreign.Storable
 import Lens.Family2 ((&), (%~))
@@ -100,3 +102,9 @@ instance FiniteBits Word256 where
 instance Serialize Word256 where
   put (Word256 a3 a2 a1 a0) = put a3 >> put a2 >> put a1 >> put a0
   get = Word256 <$> get <*> get <*> get <*> get
+
+-- | Show a Word256 value as a hex string padded with leading zeros.
+showHex256 :: Word256 -> String
+showHex256 w = replicate (64 - length hexStr) '0' ++ hexStr
+ where
+  hexStr = showHex w ""

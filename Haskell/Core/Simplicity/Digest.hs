@@ -31,9 +31,7 @@ import Simplicity.Serialization
 newtype Hash256 = Hash256 { hash256 :: BSS.ShortByteString } deriving (Eq, Ord)
 
 instance Show Hash256 where
-  show h = "0x" ++ replicate (64 - length hex) '0' ++ hex
-   where
-    hex = showHex (h^.be256_) ""
+  show h = "0x" ++ showHex256 (h^.be256_)
 
 instance Serialize Hash256 where
   get = Hash256 <$> getShortByteString 32
