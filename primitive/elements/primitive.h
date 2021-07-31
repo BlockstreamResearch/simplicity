@@ -182,6 +182,20 @@ typedef struct transaction {
   uint_fast32_t lockTime;
 } transaction;
 
+/* A structure representing taproot spending data from an Elements transaction.
+ * 'annexHash' is a cache of the hash of the annex.
+ *
+ * Invariant: branchLen <= 128
+ *            sha256_midstate branch[branchLen];
+ */
+typedef struct tapEnv {
+  const sha256_midstate *annexHash;
+  const sha256_midstate *branch;
+  sha256_midstate internalKey;
+  unsigned char branchLen;
+  unsigned char leafVersion;
+} tapEnv;
+
 /* The 'txEnv' structure used by the Elements application of Simplcity.
  *
  * It includes
@@ -191,6 +205,7 @@ typedef struct transaction {
  */
 typedef struct txEnv {
   const transaction* tx;
+  const tapEnv* taproot;
   const uint32_t* scriptCMR;
   uint_fast32_t ix;
 } txEnv;

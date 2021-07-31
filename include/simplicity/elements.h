@@ -85,6 +85,27 @@ typedef struct transaction transaction;
  */
 extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* rawTx);
 
+/* A structure representing taproot spending data for an Elements transaction, including the taproot annex.
+ *
+ * Invariant: branchLen <= 128;
+ *            unsigned char controlBlock[33+branchLen*32];
+ */
+typedef struct rawTapEnv {
+  rawBuffer* annex;
+  const unsigned char* controlBlock;
+  unsigned char branchLen;
+} rawTapEnv;
+
+/* A forward declaration for the structure containing a copy (and digest) of the rawTapEnv data */
+typedef struct tapEnv tapEnv;
+
+/* Allocate and initialize a 'tapEnv' from a 'rawTapEnv', copying or hashing the data as needed.
+ * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
+ *
+ * Precondition: *rawEnv is well-formed (i.e. rawEnv->branchLen <= 128.)
+ */
+extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv);
+
 /* Deserialize a Simplicity program from 'file' and execute it in the environment of the 'ix'th input of 'tx'.
  * If the file isn't a proper encoding of a Simplicity program, '*success' is set to false.
  * If EOF isn't encountered at the end of decoding, '*success' is set to false.
@@ -105,6 +126,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
  *               NULL != amr implies unsigned char amr[32]
  *               NULL != file;
  */
-extern bool elements_simplicity_execSimplicity(bool* success, unsigned char* imr, const transaction* tx, uint_fast32_t ix,
-                                               const unsigned char* cmr, const unsigned char* amr, FILE* file);
+extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* imr
+                                              , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
+                                              , const unsigned char* cmr, const unsigned char* amr, FILE* file);
 #endif

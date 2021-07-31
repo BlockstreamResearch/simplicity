@@ -421,6 +421,70 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
   return tx;
 }
 
+/* Allocate and initialize a 'tapEnv' from a 'rawTapEnv', copying or hashing the data as needed.
+ * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
+ *
+ * Precondition: *rawEnv is well-formed (i.e. rawEnv->branchLen <= 128.)
+ */
+extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
+  if (!rawEnv) return NULL;
+  if (128 < rawEnv->branchLen) return NULL;
+
+  size_t allocationSize = sizeof(tapEnv);
+
+  const size_t numMidstate = rawEnv->branchLen + (size_t)!!rawEnv->annex;
+  const size_t pad1 = PADDING(sha256_midstate, allocationSize);
+
+  if (numMidstate) {
+    if (SIZE_MAX - allocationSize < pad1) return NULL;
+    allocationSize += pad1;
+
+    if (SIZE_MAX / sizeof(sha256_midstate) < numMidstate) return NULL;
+    if (SIZE_MAX - allocationSize < numMidstate * sizeof(sha256_midstate)) return NULL;
+    allocationSize += numMidstate * sizeof(sha256_midstate);
+  }
+
+  char *allocation = malloc(allocationSize);
+  if (!allocation) return NULL;
+
+  tapEnv* const env = (tapEnv*)allocation;
+  sha256_midstate* annexHash = NULL;
+  sha256_midstate* branch = NULL;
+  sha256_midstate internalKey;
+
+  sha256_toMidstate(internalKey.s,  &rawEnv->controlBlock[1]);
+
+  if (numMidstate)  {
+    allocation += sizeof(tapEnv) + pad1;
+
+    if (rawEnv->annex) {
+      annexHash = (sha256_midstate*)allocation;
+      allocation += sizeof(sha256_midstate);
+    }
+
+    if (rawEnv->branchLen) {
+      branch = (sha256_midstate*)allocation;
+    }
+  }
+
+  *env = (tapEnv){ .annexHash = annexHash
+                 , .leafVersion = rawEnv->controlBlock[0] & 0xfe
+                 , .internalKey = internalKey
+                 , .branch = branch
+                 , .branchLen = rawEnv->branchLen
+                 };
+
+  if (annexHash) {
+    hashBuffer(annexHash, rawEnv->annex);
+  }
+
+  for (int i = 0; i < env->branchLen; ++i) {
+    sha256_toMidstate(branch[i].s,  &rawEnv->controlBlock[33+32*i]);
+  }
+
+  return env;
+}
+
 /* Deserialize a Simplicity program from 'file' and execute it in the environment of the 'ix'th input of 'tx'.
  * If the file isn't a proper encoding of a Simplicity program, '*success' is set to false.
  * If EOF isn't encountered at the end of decoding, '*success' is set to false.
@@ -437,13 +501,15 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
  * Precondition: NULL != success;
  *               NULL != imr implies unsigned char imr[32]
  *               NULL != tx;
+ *               NULL != taproot;
  *               NULL != cmr implies unsigned char cmr[32]
  *               NULL != amr implies unsigned char amr[32]
  *               NULL != file;
  */
-extern bool elements_simplicity_execSimplicity(bool* success, unsigned char* imr, const transaction* tx, uint_fast32_t ix,
-                                               const unsigned char* cmr, const unsigned char* amr, FILE* file) {
-  if (!success || !tx || !file) return false;
+extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* imr
+                                              , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
+                                              , const unsigned char* cmr, const unsigned char* amr, FILE* file) {
+  if (!success || !tx || !taproot || !file) return false;
 
   bool result;
   combinator_counters census;
@@ -507,7 +573,8 @@ extern bool elements_simplicity_execSimplicity(bool* success, unsigned char* imr
         free(analysis);
       }
       if (*success) {
-        result = evalTCOProgram(success, dag, type_dag, (size_t)len, &(txEnv){.tx = tx, .scriptCMR = cmr_hash.s, .ix = ix});
+        result = evalTCOProgram(success, dag, type_dag, (size_t)len,
+          &(txEnv){.tx = tx, .taproot = taproot, .scriptCMR = dag[len-1].cmr.s, .ix = ix});
       }
       free(type_dag);
     }
