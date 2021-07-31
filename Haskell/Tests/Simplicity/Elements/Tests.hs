@@ -15,6 +15,7 @@ import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Primitive
 import Simplicity.Elements.Programs.CheckSigHashAll.Lib
 import Simplicity.Elements.Semantics
+import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
 import Simplicity.MerkleRoot
 import Simplicity.Programs.CheckSigHash
 import qualified Simplicity.Programs.Sha256 as Sha256
@@ -24,6 +25,14 @@ tests :: TestTree
 tests = testGroup "Elements"
         [ testCase "sigHashAll" (assertBool "sigHashAll_matches" hunit_sigHashAll)
         ]
+
+tapEnv :: TapEnv
+tapEnv = TapEnv
+         { tapAnnex = Nothing
+         , tapLeafVersion = 0xbe
+         , tapInternalKey = Schnorr.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
+         , tapBranch = []
+         }
 
 tx1 :: SigTx
 tx1 = SigTx
@@ -66,7 +75,7 @@ hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
  where
   ix = 0
   txo = sigTxiTxo (sigTxIn tx1 ! ix)
-  Just txEnv = primEnv tx1 ix undefined
+  Just txEnv = primEnv tx1 ix tapEnv undefined
   sigHashTag = bsHash $ BSC.pack "Simplicity-Draft\USSigHash"
   hashAll_spec = bslHash . runPutLazy
                $ put sigHashTag >> put sigHashTag

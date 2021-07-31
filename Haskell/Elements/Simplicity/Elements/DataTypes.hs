@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveTraversable #-}
 -- | This module defines the data structures that make up the signed data in a Bitcoin transaction.
 module Simplicity.Elements.DataTypes
-  ( PubKey(..)
+  ( Point(..)
   , Script
   , TxNullDatumF(..), TxNullDatum, TxNullData, txNullData
   , Lock, Value
@@ -19,6 +19,7 @@ module Simplicity.Elements.DataTypes
   , SigTxInput(SigTxInput), sigTxiIsPegin, sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiIssuance
   , TxOutput(TxOutput), txoAsset, txoAmount, txoNonce, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
+  , TapEnv(..)
   ) where
 
 import Control.Monad (guard, mzero)
@@ -32,9 +33,10 @@ import Data.Serialize ( Serialize
                       )
 
 import Simplicity.Digest
+import Simplicity.LibSecp256k1.Schnorr
 import Simplicity.Word
 
-data PubKey = PubKey Bool Word256 deriving Show
+data Point = Point Bool PubKey deriving Show
 
 -- | Unparsed Bitcoin Script.
 -- Script in transactions outputs do not have to be parsable, so we encode this as a raw 'Data.ByteString.ByteString'.
@@ -118,19 +120,19 @@ type Lock = Word32
 type Value = Word64
 
 data Confidential a = Explicit a
-                    | Confidential PubKey
+                    | Confidential Point
                     deriving Show
 
 newtype Asset = Asset { asset :: Confidential Hash256 } deriving Show
 
 instance Serialize Asset where
   put (Asset (Explicit h)) = putWord8 0x01 >> put h
-  put (Asset (Confidential (PubKey by x))) = putWord8 (if by then 0x0b else 0x0a) >> put x
+  put (Asset (Confidential (Point by x))) = putWord8 (if by then 0x0b else 0x0a) >> put x
   get = getWord8 >>= go
    where
     go 0x01 = Asset . Explicit <$> get
-    go 0x0a = Asset . Confidential . PubKey False <$> get
-    go 0x0b = Asset . Confidential . PubKey True <$> get
+    go 0x0a = Asset . Confidential . Point False <$> get
+    go 0x0b = Asset . Confidential . Point True <$> get
     go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Asset}: bad prefix."
 
 newtype Amount = Amount { amount :: Confidential Value } deriving Show
@@ -138,24 +140,24 @@ type TokenAmount = Amount
 
 instance Serialize Amount where
   put (Amount (Explicit v)) = putWord8 0x01 >> putWord64be v
-  put (Amount (Confidential (PubKey by x))) = putWord8 (if by then 0x09 else 0x08) >> put x
+  put (Amount (Confidential (Point by x))) = putWord8 (if by then 0x09 else 0x08) >> put x
   get = getWord8 >>= go
    where
     go 0x01 = Amount . Explicit <$> get
-    go 0x08 = Amount . Confidential . PubKey False <$> get
-    go 0x09 = Amount . Confidential . PubKey True <$> get
+    go 0x08 = Amount . Confidential . Point False <$> get
+    go 0x09 = Amount . Confidential . Point True <$> get
     go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Amount}: bad prefix."
 
 newtype Nonce = Nonce { nonce :: Confidential Hash256 } deriving Show
 
 instance Serialize Nonce where
   put (Nonce (Explicit h)) = putWord8 0x01 >> put h
-  put (Nonce (Confidential (PubKey by x))) = putWord8 (if by then 0x03 else 0x02) >> put x
+  put (Nonce (Confidential (Point by x))) = putWord8 (if by then 0x03 else 0x02) >> put x
   get = lookAhead getWord8 >>= go
    where
     go 0x01 = getWord8 *> (Nonce . Explicit <$> get)
-    go 0x02 = Nonce . Confidential . PubKey False <$> get
-    go 0x03 = Nonce . Confidential . PubKey True <$> get
+    go 0x02 = Nonce . Confidential . Point False <$> get
+    go 0x03 = Nonce . Confidential . Point True <$> get
     go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Nonce}: bad prefix."
 
 putMaybeConfidential :: Putter a -> Putter (Maybe a)
@@ -283,3 +285,10 @@ sigTxOutputsHash tx = bslHash . runPutLazy $ mapM_ go (elems (sigTxOut tx))
   go txo = put (txoAsset txo) >> put (txoAmount txo)
         >> putNonce (txoNonce txo)
         >> put (bslHash (txoScript txo))
+
+-- | Taproot specific environment data about the input being spent.
+data TapEnv = TapEnv { tapAnnex :: Maybe BSL.ByteString
+                     , tapLeafVersion :: Word8
+                     , tapInternalKey :: PubKey
+                     , tapBranch :: [Hash256]
+                     }

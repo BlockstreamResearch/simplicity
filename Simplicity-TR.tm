@@ -4627,7 +4627,9 @@
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|Lock>|<cell|\<assign\>>|<cell|<2><rsup|32>>>|<row|<cell|Value>|<cell|\<assign\>>|<cell|<2><rsup|64>>>|<row|<cell|Outpoint>|<cell|\<assign\>>|<cell|<2><rsup|256>\<times\><2><rsup|32>>>|<row|<cell|SigInput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|prevOutpoint\<of\>Outpoint>>|<row|<cell|value\<of\>Value<with|color|red|<text|make
-    this SigOutput?>>>>|<row|<cell|sequence\<of\><2><rsup|32>>>>>>|}>>>|<row|<cell|SigOutput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|value\<of\>Value>>|<row|<cell|pubScript\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|SigTx>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|version\<of\><2><rsup|32>>>|<row|<cell|inputs\<of\>SigInput<rsup|+>>>|<row|<cell|outputs\<of\>SigOutput<rsup|+>>>|<row|<cell|lockTime\<of\>Lock>>>>>|}>>>|<row|<cell|BCEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|tx\<of\>SigTx>>|<row|<cell|ix\<of\><2><rsup|32>>>|<row|<cell|scriptCMR\<of\><2><rsup|256>>>>>>|}>>>>>
+    this SigOutput? just add the segwitVerison/outputKey?>>>>|<row|<cell|sequence\<of\><2><rsup|32>>>>>>|}>>>|<row|<cell|SigOutput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|value\<of\>Value>>|<row|<cell|pubScript\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|SigTx>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|version\<of\><2><rsup|32>>>|<row|<cell|inputs\<of\>SigInput<rsup|+>>>|<row|<cell|outputs\<of\>SigOutput<rsup|+>>>|<row|<cell|lockTime\<of\>Lock>>>>>|}>>>|<row|<cell|TapEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|annex\<of\><maybe><around*|(|<around*|(|<2><rsup|8>|)><rsup|\<ast\>>|)>
+    <text|<around*|(|excludes the <math|<math-tt|50><rsub|<2><rsup|8>>>
+    prefix|)>>>>|<row|<cell|leafVersion\<of\><2><rsup|8>>>|<row|<cell|internalKey\<of\>PubKey>>|<row|<cell|branch\<of\><around*|(|<2><rsup|256>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|BCEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|tx\<of\>SigTx>>|<row|<cell|ix\<of\><2><rsup|32>>>|<row|<cell|tapEnv\<of\>TapEnv>>|<row|<cell|scriptCMR\<of\><2><rsup|256>>>>>>|}>>>>>
   </eqnarray*>
 
   The type <math|SigTx> contains the signed transaction data. Following a
@@ -4648,7 +4650,11 @@
   Furthermore, we assume that for every <math|e\<of\>BCEnv> that
   <math|<around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>\<less\><around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>>
   so that ``current'' index being validated is, in fact, an input of the
-  transaction.
+  transaction. \ We also assume that the annex length, when it exists, is
+  strictly less than <math|2<rsup|25>> (becaues it excludes the 0x50 prefix),
+  <math|<around*|\<lceil\>|e<around*|[|tapEnv|]><around*|[|leafVersion|]>|\<rceil\>>>
+  is even, and <math|<around*|\||e<around*|[|tapEnv|]><around*|[|branch|]>|\|>\<leq\>128>
+  in accordance with Taproot limitations.
 
   Bitcoin's money supply is capped below <math|21<nbsp>000<nbsp>000\<times\>10<rsup|8>>
   satoshi, therefore it is safe to assume that all monetary values are within
@@ -8180,7 +8186,7 @@
     <around*|(|Amount+TokenAmount|)>+<around*|(|Amount\<times\>TokenAmount|)>>>>>>|}>>>|<row|<cell|Reissuance>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|blindingNonce\<of\>ExplicitNonce>>|<row|<cell|entropy\<of\><2><rsup|256>>>|<row|<cell|amount\<of\>
     Amount>>>>>|}>>>|<row|<cell|Issuance>|<cell|\<assign\>>|<cell|NewIssuance+Reissuance>>|<row|<cell|ElementsSigOutput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|asset\<of\>Asset>>|<row|<cell|amount\<of\>Amount>>|<row|<cell|scriptPubKey\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>|<row|<cell|nonce\<of\><maybe><around*|(|Nonce|)>>>>>>|}>>>|<row|<cell|ElementsUTXO>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|asset\<of\>Asset>>|<row|<cell|amount\<of\>Amount>>|<row|<cell|scriptPubKey\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|ElementsSigInput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|isPegin\<of\><2>>>|<row|<cell|prevOutpoint\<of\>Outpoint>>|<row|<cell|txo\<of\>ElementsUTXO
     <with|color|red|scriptPubKey is claim_script when
-    isPegin>>>|<row|<cell|sequence\<of\><2><rsup|32>>>|<row|<cell|issuance:<maybe><around*|(|Issuance|)>>>>>>|}>>>|<row|<cell|ElementsSigTx>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|version\<of\><2><rsup|32>>>|<row|<cell|inputs\<of\>ElementsSigInput<rsup|+>>>|<row|<cell|outputs\<of\>ElementsSigOutput<rsup|+>>>|<row|<cell|lockTime\<of\>Lock>>>>>|}>>>|<row|<cell|ELEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|tx\<of\>ElementsSigTx>>|<row|<cell|ix\<of\><2><rsup|32>>>|<row|<cell|scriptCMR\<of\><2><rsup|256>>>>>>|}>>>>>
+    isPegin>>>|<row|<cell|sequence\<of\><2><rsup|32>>>|<row|<cell|issuance:<maybe><around*|(|Issuance|)>>>>>>|}>>>|<row|<cell|ElementsSigTx>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|version\<of\><2><rsup|32>>>|<row|<cell|inputs\<of\>ElementsSigInput<rsup|+>>>|<row|<cell|outputs\<of\>ElementsSigOutput<rsup|+>>>|<row|<cell|lockTime\<of\>Lock>>>>>|}>>>|<row|<cell|ELEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|tx\<of\>ElementsSigTx>>|<row|<cell|ix\<of\><2><rsup|32>>>|<row|<cell|tapEnv\<of\>TapEnv>>|<row|<cell|scriptCMR\<of\><2><rsup|256>>>>>>|}>>>>>
   </eqnarray*>
 
   \;

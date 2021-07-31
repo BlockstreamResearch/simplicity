@@ -164,18 +164,20 @@ putPrimByte = putWord8 . encode
 
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32
+                       , envTap :: TapEnv
                        , envScriptCMR :: Hash256
                        , envInputsHash :: Hash256
                        , envOutputsHash :: Hash256
                        }
 
-primEnv :: SigTx -> Data.Word.Word32 -> Hash256 -> Maybe PrimEnv
-primEnv tx ix scmr | cond = Just $ PrimEnv { envTx = tx
-                                           , envIx = ix
-                                           , envScriptCMR = scmr
-                                           , envInputsHash = sigTxInputsHash tx
-                                           , envOutputsHash = sigTxOutputsHash tx
-                                           }
+primEnv :: SigTx -> Data.Word.Word32 -> TapEnv -> Hash256 -> Maybe PrimEnv
+primEnv tx ix tap scmr | cond = Just $ PrimEnv { envTx = tx
+                                               , envIx = ix
+                                               , envTap = tap
+                                               , envScriptCMR = scmr
+                                               , envInputsHash = sigTxInputsHash tx
+                                               , envOutputsHash = sigTxOutputsHash tx
+                                               }
                    | otherwise = Nothing
  where
   cond = inRange (bounds (sigTxIn tx)) ix

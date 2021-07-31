@@ -21,6 +21,7 @@ import qualified Data.Word
 
 import Simplicity.Digest
 import Simplicity.Elements.DataTypes
+import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
 import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Ty.Bit
@@ -205,18 +206,20 @@ putPrimBit Fee                          = ([True,True,True,True,True]++)
 data PrimEnv = PrimEnv { -- envParentGenesisBlockHash :: Hash256
                          envTx :: SigTx
                        , envIx :: Data.Word.Word32
+                       , envTap :: TapEnv
                        , envScriptCMR :: Hash256
                        , envInputsHash :: Hash256
                        , envOutputsHash :: Hash256
                        }
 
-primEnv :: SigTx -> Data.Word.Word32 -> Hash256 -> Maybe PrimEnv
-primEnv tx ix scmr | cond = Just $ PrimEnv { envTx = tx
-                                           , envIx = ix
-                                           , envScriptCMR = scmr
-                                           , envInputsHash = sigTxInputsHash tx
-                                           , envOutputsHash = sigTxOutputsHash tx
-                                           }
+primEnv :: SigTx -> Data.Word.Word32 -> TapEnv -> Hash256 -> Maybe PrimEnv
+primEnv tx ix tap scmr | cond = Just $ PrimEnv { envTx = tx
+                                               , envIx = ix
+                                               , envTap = tap
+                                               , envScriptCMR = scmr
+                                               , envInputsHash = sigTxInputsHash tx
+                                               , envOutputsHash = sigTxOutputsHash tx
+                                               }
                    | otherwise = Nothing
  where
   cond = inRange (bounds (sigTxIn tx)) ix
@@ -244,7 +247,7 @@ primSem p a env = interpret p a
   atOutput f = cast . fmap f . lookupOutput . fromInteger . fromWord32
   encodeHash = toWord256 . integerHash256
   encodeConfidential enc (Explicit a) = Right (enc a)
-  encodeConfidential enc (Confidential (PubKey by x)) = Left (toBit by, toWord256 . toInteger $ x)
+  encodeConfidential enc (Confidential (Point by (Schnorr.PubKey x))) = Left (toBit by, toWord256 . toInteger $ x)
   encodeAsset = encodeConfidential encodeHash . asset
   encodeAmount = encodeConfidential (toWord64 . toInteger) . amount
   encodeNonce = cast . fmap (encodeConfidential encodeHash . nonce)

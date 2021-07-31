@@ -5,6 +5,7 @@ module Simplicity.Bitcoin.DataTypes
   , SigTxInput(SigTxInput), sigTxiPreviousOutpoint, sigTxiValue, sigTxiSequence
   , TxOutput(TxOutput), txoValue, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
+  , TapEnv(..)
   ) where
 
 import Control.Monad (guard)
@@ -18,6 +19,7 @@ import Data.Serialize ( Serialize
                       )
 
 import Simplicity.Digest
+import Simplicity.LibSecp256k1.Schnorr
 
 {-
 getVarInteger :: Get Word64
@@ -127,3 +129,10 @@ sigTxOutputsHash tx = bslHash . runPutLazy $ mapM_ go (elems (sigTxOut tx))
  where
   go txo = putWord64le (txoValue txo)
         >> put (bslHash (txoScript txo))
+
+-- | Taproot specific environment data about the input being spent.
+data TapEnv = TapEnv { tapAnnex :: Maybe BSL.ByteString
+                     , tapLeafVersion :: Word8
+                     , tapInternalKey :: PubKey
+                     , tapBranch :: [Hash256]
+                     }
