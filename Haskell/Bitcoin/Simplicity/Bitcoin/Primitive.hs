@@ -9,12 +9,15 @@ module Simplicity.Bitcoin.Primitive
 
 import Data.Array (Array, (!), bounds, elems, inRange)
 import qualified Data.List as List
+import Data.Maybe (listToMaybe)
 import Data.Serialize (Get, getWord8,
                        Putter, put, putWord8, putWord32le, putWord64le, runPutLazy)
 import qualified Data.Word
 
 import Simplicity.Digest
 import Simplicity.Bitcoin.DataTypes
+import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
+import Simplicity.Programs.LibSecp256k1
 import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Ty.Word
@@ -37,6 +40,10 @@ data Prim a b where
   TotalOutputValue :: Prim () Word64
   OutputValue :: Prim Word32 (Either () Word64)
   OutputScriptHash :: Prim Word32 (Either () Word256)
+  TapleafVersion :: Prim () Word8
+  Tapbranch :: Prim Word8 (Either () Word256)
+  InternalKey :: Prim () PubKey
+  AnnexHash :: Prim () (Either () Word256)
   ScriptCMR :: Prim () Word256
 -- Other possible ideas:
   -- TxId :: Prim () Word256
@@ -59,6 +66,10 @@ instance Eq (Prim a b) where
   TotalOutputValue == TotalOutputValue = True
   OutputValue == OutputValue = True
   OutputScriptHash == OutputScriptHash = True
+  TapleafVersion == TapleafVersion = True
+  Tapbranch == Tapbranch = True
+  InternalKey == InternalKey = True
+  AnnexHash == AnnexHash = True
   ScriptCMR == ScriptCMR = True
   _ == _ = False
 
@@ -84,14 +95,22 @@ primName NumOutputs = "maxOutputs"
 primName TotalOutputValue = "totalOutputValue"
 primName OutputValue = "outputValue"
 primName OutputScriptHash = "outputScriptHash"
+primName TapleafVersion = "tapleafVersion"
+primName Tapbranch = "tapbranch"
+primName InternalKey = "internalKey"
+primName AnnexHash = "annexHash"
 primName ScriptCMR = "scriptCMR"
 
 getPrimBit :: Monad m => m Bool -> m (SomeArrow Prim)
 getPrimBit next =
-  ((((makeArrow Version & makeArrow LockTime) & (makeArrow InputsHash)) & (makeArrow OutputsHash & makeArrow NumInputs)) &
-   ((makeArrow TotalInputValue & makeArrow CurrentPrevOutpoint) & (makeArrow CurrentValue & makeArrow CurrentSequence))) &
-  ((((makeArrow CurrentIndex & makeArrow InputPrevOutpoint) & (makeArrow InputValue)) & (makeArrow InputSequence & makeArrow NumOutputs)) &
-   ((makeArrow TotalOutputValue & makeArrow OutputValue) & (makeArrow OutputScriptHash & makeArrow ScriptCMR)))
+  ((((makeArrow Version & makeArrow LockTime) & makeArrow InputsHash) &
+    ((makeArrow OutputsHash & makeArrow NumInputs) & makeArrow TotalInputValue)) &
+   (((makeArrow CurrentPrevOutpoint & makeArrow CurrentValue) & makeArrow CurrentSequence) &
+    (makeArrow CurrentIndex & makeArrow InputPrevOutpoint))) &
+  ((((makeArrow InputValue & makeArrow InputSequence) & makeArrow NumOutputs) &
+    ((makeArrow TotalOutputValue & makeArrow OutputValue) & makeArrow OutputScriptHash)) &
+   (((makeArrow TapleafVersion & makeArrow Tapbranch) & makeArrow InternalKey) &
+    (makeArrow AnnexHash & makeArrow ScriptCMR)))
  where
   l & r = next >>= \b -> if b then r else l
   makeArrow p = return (SomeArrow p)
@@ -116,28 +135,40 @@ getPrimByte = return . decode
   decode 0x32 = Just $ SomeArrow TotalOutputValue
   decode 0x33 = Just $ SomeArrow OutputValue
   decode 0x34 = Just $ SomeArrow OutputScriptHash
-  decode 0x35 = Just $ SomeArrow ScriptCMR
+  decode 0x35 = Just $ SomeArrow TapleafVersion
+  decode 0x36 = Just $ SomeArrow Tapbranch
+  decode 0x37 = Just $ SomeArrow InternalKey
+  decode 0x38 = Just $ SomeArrow AnnexHash
+  decode 0x39 = Just $ SomeArrow ScriptCMR
   decode _ = Nothing
 
 putPrimBit :: Prim a b -> DList Bool
-putPrimBit Version             = ([False,False,False,False,False]++)
-putPrimBit LockTime            = ([False,False,False,False,True]++)
-putPrimBit InputsHash          = ([False,False,False,True]++)
-putPrimBit OutputsHash         = ([False,False,True,False]++)
-putPrimBit NumInputs           = ([False,False,True,True]++)
-putPrimBit TotalInputValue     = ([False,True,False,False]++)
-putPrimBit CurrentPrevOutpoint = ([False,True,False,True]++)
-putPrimBit CurrentValue        = ([False,True,True,False]++)
-putPrimBit CurrentSequence     = ([False,True,True,True]++)
-putPrimBit CurrentIndex        = ([True,False,False,False,False]++)
-putPrimBit InputPrevOutpoint   = ([True,False,False,False,True]++)
-putPrimBit InputValue          = ([True,False,False,True]++)
-putPrimBit InputSequence       = ([True,False,True,False]++)
-putPrimBit NumOutputs          = ([True,False,True,True]++)
-putPrimBit TotalOutputValue    = ([True,True,False,False]++)
-putPrimBit OutputValue         = ([True,True,False,True]++)
-putPrimBit OutputScriptHash    = ([True,True,True,False]++)
-putPrimBit ScriptCMR           = ([True,True,True,True]++)
+putPrimBit = go
+ where
+  go :: Prim a b -> DList Bool
+  go Version             = ([o,o,o,o,o]++)
+  go LockTime            = ([o,o,o,o,i]++)
+  go InputsHash          = ([o,o,o,i]++)
+  go OutputsHash         = ([o,o,i,o,o]++)
+  go NumInputs           = ([o,o,i,o,i]++)
+  go TotalInputValue     = ([o,o,i,i]++)
+  go CurrentPrevOutpoint = ([o,i,o,o,o]++)
+  go CurrentValue        = ([o,i,o,o,i]++)
+  go CurrentSequence     = ([o,i,o,i]++)
+  go CurrentIndex        = ([o,i,i,o]++)
+  go InputPrevOutpoint   = ([o,i,i,i]++)
+  go InputValue          = ([i,o,o,o,o]++)
+  go InputSequence       = ([i,o,o,o,i]++)
+  go NumOutputs          = ([i,o,o,i]++)
+  go TotalOutputValue    = ([i,o,i,o,o]++)
+  go OutputValue         = ([i,o,i,o,i]++)
+  go OutputScriptHash    = ([i,o,i,i]++)
+  go TapleafVersion      = ([i,i,o,o,o]++)
+  go Tapbranch           = ([i,i,o,o,i]++)
+  go InternalKey         = ([i,i,o,i]++)
+  go AnnexHash           = ([i,i,i,o]++)
+  go ScriptCMR           = ([i,i,i,i]++)
+  (o,i) = (False, True)
 
 putPrimByte :: Putter (Prim a b)
 putPrimByte = putWord8 . encode
@@ -160,7 +191,11 @@ putPrimByte = putWord8 . encode
   encode TotalOutputValue    = 0x32
   encode OutputValue         = 0x33
   encode OutputScriptHash    = 0x34
-  encode ScriptCMR           = 0x35
+  encode TapleafVersion      = 0x35
+  encode Tapbranch           = 0x36
+  encode InternalKey         = 0x37
+  encode AnnexHash           = 0x38
+  encode ScriptCMR           = 0x39
 
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32
@@ -205,6 +240,7 @@ primSem p a env = interpret p a
   atOutput f = cast . fmap f . lookupOutput . fromInteger . fromWord32
   encodeHash = toWord256 . integerHash256
   encodeOutpoint op = (toWord256 . integerHash256 $ opHash op, toWord32 . fromIntegral $ opIndex op)
+  encodeKey (Schnorr.PubKey x) = toWord256 . toInteger $ x
   interpret Version = const . return . toWord32 . toInteger $ sigTxVersion tx
   interpret LockTime = const . return . toWord32 . toInteger $ sigTxLock tx
   interpret InputsHash = const . return . encodeHash $ envInputsHash env
@@ -221,5 +257,9 @@ primSem p a env = interpret p a
   interpret NumOutputs = const . return . toWord32 . toInteger $ 1 + maxOutput
   interpret TotalOutputValue = const . return . toWord64 . fromIntegral . List.sum $ txoValue <$> elems (sigTxOut tx)
   interpret OutputValue = return . (atOutput $ toWord64 . fromIntegral . txoValue)
-  interpret OutputScriptHash = return . (atOutput $ toWord256 . integerHash256 . bslHash . txoScript)
+  interpret OutputScriptHash = return . (atOutput $ encodeHash . bslHash . txoScript)
+  interpret TapleafVersion = const . return . toWord8 . toInteger . tapLeafVersion $ envTap env
+  interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapBranch (envTap env)) . fromInteger . fromWord8
+  interpret InternalKey = const . return . encodeKey . tapInternalKey $ envTap env
+  interpret AnnexHash = const . return . cast $ encodeHash . bslHash <$> tapAnnex (envTap env)
   interpret ScriptCMR = const . return . toWord256 . integerHash256 $ envScriptCMR env

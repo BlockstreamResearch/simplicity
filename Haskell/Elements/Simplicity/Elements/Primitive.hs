@@ -22,6 +22,7 @@ import qualified Data.Word
 import Simplicity.Digest
 import Simplicity.Elements.DataTypes
 import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
+import Simplicity.Programs.LibSecp256k1
 import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Ty.Bit
@@ -60,6 +61,10 @@ data Prim a b where
   CurrentIssuanceEntropy :: Prim () (S Word256)
   CurrentIssuanceAssetAmt :: Prim () (S (Conf Word64))
   CurrentIssuanceTokenAmt :: Prim () (S (Conf Word64))
+  TapleafVersion :: Prim () Word8
+  Tapbranch :: Prim Word8 (S Word256)
+  InternalKey :: Prim () PubKey
+  AnnexHash :: Prim () (S Word256)
   NumOutputs :: Prim () Word32
   OutputAsset :: Prim Word32 (S (Conf Word256))
   OutputAmount :: Prim Word32 (S (Conf Word64))
@@ -98,6 +103,10 @@ instance Eq (Prim a b) where
   CurrentIssuanceEntropy == CurrentIssuanceEntropy = True
   CurrentIssuanceAssetAmt == CurrentIssuanceAssetAmt = True
   CurrentIssuanceTokenAmt == CurrentIssuanceTokenAmt = True
+  TapleafVersion == TapleafVersion = True
+  Tapbranch == Tapbranch = True
+  InternalKey == InternalKey = True
+  AnnexHash == AnnexHash = True
   NumOutputs == NumOutputs = True
   OutputAsset == OutputAsset = True
   OutputAmount == OutputAmount = True
@@ -141,6 +150,10 @@ primName CurrentIssuanceContract = "currentIssuanceContract"
 primName CurrentIssuanceEntropy = "currentIssuanceEntropy"
 primName CurrentIssuanceAssetAmt = "currentIssuanceAssetAmt"
 primName CurrentIssuanceTokenAmt = "currentIssuanceTokenAmt"
+primName TapleafVersion = "tapleafVersion"
+primName Tapbranch = "tapbranch"
+primName InternalKey = "internalKey"
+primName AnnexHash = "annexHash"
 primName NumOutputs = "numOutputs"
 primName OutputAsset = "outputAsset"
 primName OutputAmount = "outputAmount"
@@ -156,52 +169,60 @@ getPrimBit next =
     (((makeArrow InputAmount & makeArrow InputScriptHash) & makeArrow InputSequence) & (makeArrow InputIssuanceBlinding & makeArrow InputIssuanceContract))) &
    ((((makeArrow InputIssuanceEntropy & makeArrow InputIssuanceAssetAmt) & makeArrow InputIssuanceTokenAmt) & (makeArrow OutputAsset & makeArrow OutputAmount)) &
     (((makeArrow OutputNonce & makeArrow OutputScriptHash) & makeArrow OutputNullDatum) & (makeArrow ScriptCMR & makeArrow CurrentIndex)))) &
-   ((((makeArrow CurrentIsPegin & makeArrow CurrentPrevOutpoint) & (makeArrow CurrentAsset & makeArrow CurrentAmount)) &
-     ((makeArrow CurrentScriptHash & makeArrow CurrentSequence) & (makeArrow CurrentIssuanceBlinding & makeArrow CurrentIssuanceContract))) &
-   (((makeArrow CurrentIssuanceEntropy & makeArrow CurrentIssuanceAssetAmt) & (makeArrow CurrentIssuanceTokenAmt & makeArrow InputsHash)) &
-     ((makeArrow OutputsHash & makeArrow NumInputs) & (makeArrow NumOutputs & makeArrow Fee))))
+  (((((makeArrow CurrentIsPegin & makeArrow CurrentPrevOutpoint) & makeArrow CurrentAsset) & (makeArrow CurrentAmount & makeArrow CurrentScriptHash)) &
+    (((makeArrow CurrentSequence & makeArrow CurrentIssuanceBlinding) & makeArrow CurrentIssuanceContract) & (makeArrow CurrentIssuanceEntropy & makeArrow CurrentIssuanceAssetAmt))) &
+   ((((makeArrow CurrentIssuanceTokenAmt & makeArrow TapleafVersion) & makeArrow Tapbranch) & (makeArrow InternalKey & makeArrow AnnexHash)) &
+     (((makeArrow InputsHash & makeArrow OutputsHash) & makeArrow NumInputs) & (makeArrow NumOutputs & makeArrow Fee))))
  where
   l & r = next >>= \b -> if b then r else l
   makeArrow p = return (SomeArrow p)
 
 putPrimBit :: Prim a b -> DList Bool
-putPrimBit Version                      = ([False,False,False,False,False,False]++)
-putPrimBit LockTime                     = ([False,False,False,False,False,True]++)
-putPrimBit InputIsPegin                 = ([False,False,False,False,True]++)
-putPrimBit InputPrevOutpoint            = ([False,False,False,True,False]++)
-putPrimBit InputAsset                   = ([False,False,False,True,True]++)
-putPrimBit InputAmount                  = ([False,False,True,False,False,False]++)
-putPrimBit InputScriptHash              = ([False,False,True,False,False,True]++)
-putPrimBit InputSequence                = ([False,False,True,False,True]++)
-putPrimBit InputIssuanceBlinding        = ([False,False,True,True,False]++)
-putPrimBit InputIssuanceContract        = ([False,False,True,True,True]++)
-putPrimBit InputIssuanceEntropy         = ([False,True,False,False,False,False]++)
-putPrimBit InputIssuanceAssetAmt        = ([False,True,False,False,False,True]++)
-putPrimBit InputIssuanceTokenAmt        = ([False,True,False,False,True]++)
-putPrimBit OutputAsset                  = ([False,True,False,True,False]++)
-putPrimBit OutputAmount                 = ([False,True,False,True,True]++)
-putPrimBit OutputNonce                  = ([False,True,True,False,False,False]++)
-putPrimBit OutputScriptHash             = ([False,True,True,False,False,True]++)
-putPrimBit OutputNullDatum              = ([False,True,True,False,True]++)
-putPrimBit ScriptCMR                    = ([False,True,True,True,False]++)
-putPrimBit CurrentIndex                 = ([False,True,True,True,True]++)
+putPrimBit = go
+ where
+  go :: Prim a b -> DList Bool
+  go Version                      = ([o,o,o,o,o,o]++)
+  go LockTime                     = ([o,o,o,o,o,i]++)
+  go InputIsPegin                 = ([o,o,o,o,i]++)
+  go InputPrevOutpoint            = ([o,o,o,i,o]++)
+  go InputAsset                   = ([o,o,o,i,i]++)
+  go InputAmount                  = ([o,o,i,o,o,o]++)
+  go InputScriptHash              = ([o,o,i,o,o,i]++)
+  go InputSequence                = ([o,o,i,o,i]++)
+  go InputIssuanceBlinding        = ([o,o,i,i,o]++)
+  go InputIssuanceContract        = ([o,o,i,i,i]++)
+  go InputIssuanceEntropy         = ([o,i,o,o,o,o]++)
+  go InputIssuanceAssetAmt        = ([o,i,o,o,o,i]++)
+  go InputIssuanceTokenAmt        = ([o,i,o,o,i]++)
+  go OutputAsset                  = ([o,i,o,i,o]++)
+  go OutputAmount                 = ([o,i,o,i,i]++)
+  go OutputNonce                  = ([o,i,i,o,o,o]++)
+  go OutputScriptHash             = ([o,i,i,o,o,i]++)
+  go OutputNullDatum              = ([o,i,i,o,i]++)
+  go ScriptCMR                    = ([o,i,i,i,o]++)
+  go CurrentIndex                 = ([o,i,i,i,i]++)
 -- :TODO: Below here are primitives that are likely candidates for being jets instead of primitives (see https://github.com/ElementsProject/simplicity/issues/5).
-putPrimBit CurrentIsPegin               = ([True,False,False,False,False]++)
-putPrimBit CurrentPrevOutpoint          = ([True,False,False,False,True]++)
-putPrimBit CurrentAsset                 = ([True,False,False,True,False]++)
-putPrimBit CurrentAmount                = ([True,False,False,True,True]++)
-putPrimBit CurrentScriptHash            = ([True,False,True,False,False]++)
-putPrimBit CurrentSequence              = ([True,False,True,False,True]++)
-putPrimBit CurrentIssuanceBlinding      = ([True,False,True,True,False]++)
-putPrimBit CurrentIssuanceContract      = ([True,False,True,True,True]++)
-putPrimBit CurrentIssuanceEntropy       = ([True,True,False,False,False]++)
-putPrimBit CurrentIssuanceAssetAmt      = ([True,True,False,False,True]++)
-putPrimBit CurrentIssuanceTokenAmt      = ([True,True,False,True,False]++)
-putPrimBit InputsHash                   = ([True,True,False,True,True]++)
-putPrimBit OutputsHash                  = ([True,True,True,False,False]++)
-putPrimBit NumInputs                    = ([True,True,True,False,True]++)
-putPrimBit NumOutputs                   = ([True,True,True,True,False]++)
-putPrimBit Fee                          = ([True,True,True,True,True]++)
+  go CurrentIsPegin               = ([i,o,o,o,o,o]++)
+  go CurrentPrevOutpoint          = ([i,o,o,o,o,i]++)
+  go CurrentAsset                 = ([i,o,o,o,i]++)
+  go CurrentAmount                = ([i,o,o,i,o]++)
+  go CurrentScriptHash            = ([i,o,o,i,i]++)
+  go CurrentSequence              = ([i,o,i,o,o,o]++)
+  go CurrentIssuanceBlinding      = ([i,o,i,o,o,i]++)
+  go CurrentIssuanceContract      = ([i,o,i,o,i]++)
+  go CurrentIssuanceEntropy       = ([i,o,i,i,o]++)
+  go CurrentIssuanceAssetAmt      = ([i,o,i,i,i]++)
+  go CurrentIssuanceTokenAmt      = ([i,i,o,o,o,o]++)
+  go TapleafVersion               = ([i,i,o,o,o,i]++)
+  go Tapbranch                    = ([i,i,o,o,i]++)
+  go InternalKey                  = ([i,i,o,i,o]++)
+  go AnnexHash                    = ([i,i,o,i,i]++)
+  go InputsHash                   = ([i,i,i,o,o,o]++)
+  go OutputsHash                  = ([i,i,i,o,o,i]++)
+  go NumInputs                    = ([i,i,i,o,i]++)
+  go NumOutputs                   = ([i,i,i,i,o]++)
+  go Fee                          = ([i,i,i,i,i]++)
+  (o,i) = (False, True)
 
 data PrimEnv = PrimEnv { -- envParentGenesisBlockHash :: Hash256
                          envTx :: SigTx
@@ -252,6 +273,7 @@ primSem p a env = interpret p a
   encodeAmount = encodeConfidential (toWord64 . toInteger) . amount
   encodeNonce = cast . fmap (encodeConfidential encodeHash . nonce)
   encodeOutpoint op = (encodeHash $ opHash op, toWord32 . fromIntegral $ opIndex op)
+  encodeKey (Schnorr.PubKey x) = toWord256 . toInteger $ x
   encodeNullDatum (Immediate h) = Left (toWord2 0, encodeHash h)
   encodeNullDatum (PushData h) = Left (toWord2 1, encodeHash h)
   encodeNullDatum (PushData2 h) = Left (toWord2 2, encodeHash h)
@@ -312,6 +334,10 @@ primSem p a env = interpret p a
       cast . fmap encodeAmount . (either (issuanceAmount . newIssuanceAmounts) (Just . reissuanceAmount) <=< sigTxiIssuance) <$> currentInput
   interpret CurrentIssuanceTokenAmt = const $
       cast . fmap encodeAmount . (either (issuanceTokenAmount . newIssuanceAmounts) (const Nothing) <=< sigTxiIssuance) <$> currentInput
+  interpret TapleafVersion = const . return . toWord8 . toInteger . tapLeafVersion $ envTap env
+  interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapBranch (envTap env)) . fromInteger . fromWord8
+  interpret InternalKey = const . return . encodeKey . tapInternalKey $ envTap env
+  interpret AnnexHash = const . return . cast $ encodeHash . bslHash <$> tapAnnex (envTap env)
   interpret NumOutputs = const . return . toWord32 . toInteger $ 1 + maxOutput
   interpret OutputAsset = return . (atOutput $ encodeAsset . txoAsset)
   interpret OutputAmount = return . (atOutput $ encodeAmount . txoAmount)

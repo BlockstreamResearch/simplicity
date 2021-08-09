@@ -30,6 +30,10 @@ MK_TAG(&jet_node[CURRENT_ISSUANCE_CONTRACT].cmr, PRIMITIVE_TAG("currentIssuanceC
 MK_TAG(&jet_node[CURRENT_ISSUANCE_ENTROPY].cmr, PRIMITIVE_TAG("currentIssuanceEntropy"));
 MK_TAG(&jet_node[CURRENT_ISSUANCE_ASSET_AMT].cmr, PRIMITIVE_TAG("currentIssuanceAssetAmt"));
 MK_TAG(&jet_node[CURRENT_ISSUANCE_TOKEN_AMT].cmr, PRIMITIVE_TAG("currentIssuanceTokenAmt"));
+MK_TAG(&jet_node[TAPLEAF_VERSION].cmr, PRIMITIVE_TAG("tapleafVersion"));
+MK_TAG(&jet_node[TAPBRANCH].cmr, PRIMITIVE_TAG("tapbranch"));
+MK_TAG(&jet_node[INTERNAL_KEY].cmr, PRIMITIVE_TAG("internalKey"));
+MK_TAG(&jet_node[ANNEX_HASH].cmr, PRIMITIVE_TAG("annexHash"));
 MK_TAG(&jet_node[INPUTS_HASH].cmr, PRIMITIVE_TAG("inputsHash"));
 MK_TAG(&jet_node[OUTPUTS_HASH].cmr, PRIMITIVE_TAG("outputsHash"));
 MK_TAG(&jet_node[NUM_INPUTS].cmr, PRIMITIVE_TAG("numInputs"));
