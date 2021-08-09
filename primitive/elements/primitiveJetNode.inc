@@ -461,6 +461,30 @@
 , .sourceIx = ty_u
 , .targetIx = ty_mspbw256w64
 }
+,[TAPLEAF_VERSION] =
+{ .tag = JET
+, .jet = tapleaf_version
+, .sourceIx = ty_u
+, .targetIx = ty_w8
+}
+,[TAPBRANCH] =
+{ .tag = JET
+, .jet = tapbranch
+, .sourceIx = ty_w8
+, .targetIx = ty_mw256
+}
+,[INTERNAL_KEY] =
+{ .tag = JET
+, .jet = internal_key
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
+,[ANNEX_HASH] =
+{ .tag = JET
+, .jet = annex_hash
+, .sourceIx = ty_u
+, .targetIx = ty_mw256
+}
 ,[INPUTS_HASH] =
 { .tag = JET
 , .jet = inputs_hash

@@ -482,6 +482,42 @@ bool current_issuance_token_amt(frameItem* dst, frameItem src, const txEnv* env)
   return true;
 }
 
+/* tapleaf_version : ONE |- TWO^8 */
+bool tapleaf_version(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  write8(dst, env->taproot->leafVersion);
+  return true;
+}
+
+/* tapbranch : TWO^8 |- S (TWO^256) */
+bool tapbranch(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast8_t i = read8(&src);
+  if (writeBit(dst, i < env->taproot->branchLen)) {
+    writeHash(dst, &env->taproot->branch[i]);
+  } else {
+    skipBits(dst, 256);
+  }
+  return true;
+}
+
+/* internal_key : ONE |- TWO^256 */
+bool internal_key(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->taproot->internalKey);
+  return true;
+}
+
+/* annex_hash : ONE |- S (TWO^256) */
+bool annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  if (writeBit(dst, env->taproot->annexHash)) {
+    writeHash(dst, env->taproot->annexHash);
+  } else {
+    skipBits(dst, 256);
+  }
+  return true;
+}
+
 /* inputs_hash : ONE |- TWO^256 */
 bool inputs_hash(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
