@@ -27,6 +27,47 @@ bool subtract_32(frameItem* dst, frameItem src, const txEnv* env);
 bool full_subtract_32(frameItem* dst, frameItem src, const txEnv* env);
 bool multiply_32(frameItem* dst, frameItem src, const txEnv* env);
 bool full_multiply_32(frameItem* dst, frameItem src, const txEnv* env);
+
 bool sha_256_block(frameItem* dst, frameItem src, const txEnv* env);
+
+bool fe_normalize(frameItem* dst, frameItem src, const txEnv* env);
+bool fe_negate(frameItem* dst, frameItem src, const txEnv* env);
+bool fe_add(frameItem* dst, frameItem src, const txEnv* env);
+bool fe_square(frameItem* dst, frameItem src, const txEnv* env);
+bool fe_multiply(frameItem* dst, frameItem src, const txEnv* env);
+bool fe_multiply_beta(frameItem* dst, frameItem src, const txEnv* env);
+bool fe_invert(frameItem* dst, frameItem src, const txEnv* env);
+bool fe_square_root(frameItem* dst, frameItem src, const txEnv* env);
+bool fe_is_zero(frameItem* dst, frameItem src, const txEnv* env);
+bool fe_is_odd(frameItem* dst, frameItem src, const txEnv* env);
+bool scalar_normalize(frameItem* dst, frameItem src, const txEnv* env);
+bool scalar_negate(frameItem* dst, frameItem src, const txEnv* env);
+bool scalar_add(frameItem* dst, frameItem src, const txEnv* env);
+bool scalar_square(frameItem* dst, frameItem src, const txEnv* env);
+bool scalar_multiply(frameItem* dst, frameItem src, const txEnv* env);
+bool scalar_multiply_lambda(frameItem* dst, frameItem src, const txEnv* env);
+bool scalar_invert(frameItem* dst, frameItem src, const txEnv* env);
+bool scalar_is_zero(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_infinity(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_rescale(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_normalize(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_negate(frameItem* dst, frameItem src, const txEnv* env);
+bool ge_negate(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_double(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_add(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_ge_add_ex(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_ge_add(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_is_infinity(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_x_equiv(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_y_is_odd(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_is_on_curve(frameItem* dst, frameItem src, const txEnv* env);
+bool ge_is_on_curve(frameItem* dst, frameItem src, const txEnv* env);
+bool scale(frameItem* dst, frameItem src, const txEnv* env);
+bool generate(frameItem* dst, frameItem src, const txEnv* env);
+bool linear_combination_1(frameItem* dst, frameItem src, const txEnv* env);
+bool linear_verify_1(frameItem* dst, frameItem src, const txEnv* env);
+bool decompress(frameItem* dst, frameItem src, const txEnv* env);
+bool point_verify_1(frameItem* dst, frameItem src, const txEnv* env);
+bool bip_0340_verify(frameItem* dst, frameItem src, const txEnv* env);
 
 #endif
