@@ -72,33 +72,30 @@ mkLib :: forall term. (Core term, Primitive term) => Sha256.Lib (Product Commitm
 mkLib Sha256.Lib{..} = lib
  where
   hashAllProduct :: (Product CommitmentRoot term) () Hash
-  hashAllProduct = blk2andMaybe3 &&& (scribe iv &&& blk1 >>> hb)
-        >>> oih &&& (ih &&& ooh >>> hb)
-        >>> match ih (ih &&& oh >>> hb)
+  hashAllProduct = (((scribe sigIv &&& blk1 >>> hb) &&& blk2 >>> hb) &&& blk3 >>> hb) &&& blk4 >>> hb
    where
-    iv = toWord256 . integerHash256 . ivHash $ sigHashTag
+    sigIv = toWord256 . integerHash256 . ivHash $ sigHashTag
     hb = hashBlock
-    curAsset = (primitive CurrentAsset &&& unit) >>>
-               (match (take (cond (scribe (toWord8 11) &&& iden) (scribe (toWord8 10) &&& iden)))
-                      (scribe (toWord8 1) &&& oh))
-           >>> ((((oh &&& drop (take (take oooh))) &&& drop (take (take (take (oih &&& ioh))))) &&&
-                drop (take (take  ((oiih &&& iooh) &&& drop (oih &&& ioh)) &&& ((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh)))) &&&
-                       (take (drop ((oiih &&& iooh) &&& drop (oih &&& ioh))) &&& ((take (drop iiih) &&& drop (take oooh)) &&& drop (take (take (oih &&& ioh))))))) &&&
-                drop (drop ((take ((oiih &&& iooh) &&& drop (oih &&& ioh)) &&& ((take iiih &&& drop oooh) &&& drop (take (oih &&& ioh)))) &&&
-                      drop  (((oiih &&& iooh) &&& drop (oih &&& ioh)) &&&   iiih))))
-    curAmt = (primitive CurrentAmount &&& unit) >>>
-             match (take curConfAmt) (take curExplAmt)
-     where
-      curExplAmt = ((scribe (toWord8 1)) &&& ooh) &&&
-                   ((((oih &&& ioh) &&& (iih &&& (scribe (toWord16 0x8000)))) &&& scribe (toWord64 (512+2*256+3*32+8+256+8+64))) &&&
-                   injl unit)
-      curConfAmt = (oh &&& drop (take oooh) >>> cond (scribe (toWord8 9) &&& iden) (scribe (toWord8 8) &&& iden)) &&&
-                   drop ((take (take (oih &&& ioh) &&& (oiih &&& iooh)) &&& (take (drop (oih &&& ioh)) &&& (take iiih &&& drop oooh))) &&&
-                   drop (injr ((((take (oih &&& ioh) &&& (oiih &&& iooh)) &&& drop ((oih &&& ioh) &&& (iih &&& (scribe (toWord16 0x8000))))) &&& (unit >>> zero word128)) &&& scribe (toWord256 (512+2*256+3*32+8+256+8+256)))))
+    annex = primitive AnnexHash &&& unit >>>
+               match (take (scribe (toWord256 . integerHash256 . bsHash $ mempty)))
+                     (drop iv &&& (oh &&& drop (scribe (toWord256 (2^255 + 256)))) >>> hb)
+    -- :TODO: Add merkle path to avoid the bug that taproot has with repeated leaves at different depths.
+    taprootPath = iv &&& (primitive ScriptCMR &&&
+                  (((((primitive TapleafVersion &&& scribe (toWord8 0x80)) &&& zero word16) &&& zero word32) &&& zero word64)
+                     &&& scribe (toWord128 (256 + 8)))) >>> hb
+    curAsset = (iv &&& (primitive CurrentAsset &&& unit >>>
+               (match (take (cond (scribe (toWord256 11) &&& iden) (scribe (toWord256 10) &&& iden)))
+                      (drop (scribe (toWord256 1)) &&& oh)))
+           >>> hb) &&& scribe (toWord512 (2^511 + 512)) >>> hb
+    curAmt = (iv &&& (primitive CurrentAmount &&& unit >>>
+               (match (take (cond (scribe (toWord256 9) &&& iden) (scribe (toWord256 8) &&& iden)))
+                      (drop (scribe (toWord256 1)) &&& (drop (zero word128) &&& (drop (zero word64) &&& oh)))))
+           >>> hb) &&& scribe (toWord512 (2^511 + 512)) >>> hb
     blk1 = primitive InputsHash &&& primitive OutputsHash
-    blk2andMaybe3 = (curAsset &&& curAmt) >>>
-                ((take (take (((unit >>> ((primitive Version &&& primitive LockTime))) &&& (((unit >>> primitive CurrentIndex) &&& oh))) &&& ih)) &&&
-                   ((oioh &&& (take iioh &&& ((take iiih &&& iooh) &&& ioih))) &&& iioh)) &&& iiih)
+    blk2 = annex &&& taprootPath
+    blk3 = curAsset &&& curAmt
+    blk4 = (((primitive Version &&& primitive LockTime) &&& (primitive CurrentIndex &&& scribe (toWord32 (2^31)))) &&& zero word128)
+       &&& scribe (toWord256 (512+3*512+3*32))
   hashAllCMR = fstProduct hashAllProduct
   lib@Lib{..} =
    Lib

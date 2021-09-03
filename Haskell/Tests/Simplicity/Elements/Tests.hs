@@ -4,7 +4,7 @@ import Data.Array ((!), listArray, elems)
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
 import Data.Digest.Pure.SHA (padSHA1)
-import Data.Serialize (encode, put, putLazyByteString, putWord32be, putWord32le, runPutLazy)
+import Data.Serialize (encode, put, putLazyByteString, putWord8, putWord32be, putWord32le, runPutLazy)
 import Lens.Family2 (review, over)
 
 import Test.Tasty (TestTree, testGroup)
@@ -20,6 +20,7 @@ import Simplicity.MerkleRoot
 import Simplicity.Programs.CheckSigHash
 import qualified Simplicity.Programs.Sha256 as Sha256
 import Simplicity.Ty.Word
+import Simplicity.Word as Word
 
 tests :: TestTree
 tests = testGroup "Elements"
@@ -74,18 +75,26 @@ hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
                    [fromWord256 <$> (sem sigHashAll txEnv ()), fromWord256 <$> (sem (sigHash Sha256.lib hashAll) txEnv ())]
  where
   ix = 0
+  cmr = review (over be256) 0x896b16e4692350cb43c4807c8f9f63637f70f84a17b678ca9467109ff1e50f61
   txo = sigTxiTxo (sigTxIn tx1 ! ix)
-  Just txEnv = primEnv tx1 ix tapEnv undefined
+  Just txEnv = primEnv tx1 ix tapEnv cmr
   sigHashTag = bsHash $ BSC.pack "Simplicity-Draft\USSigHash"
+  taproot_spec = bsHash $ encode cmr <> encode (tapLeafVersion tapEnv)
+  asset_spec (Asset (Explicit id)) = bsHash $ encode (0x01 :: Word.Word256) <> encode id
+  asset_spec (Asset (Confidential (Point b x))) = bsHash $ encode (if b then 0x0b else 0x0a :: Word.Word256) <> encode x
+  amount_spec (Amount (Explicit amt)) = bsHash $ encode (0x01 :: Word.Word256) <> encode (fromIntegral amt :: Word.Word256)
+  amount_spec (Amount (Confidential (Point b x))) = bsHash $ encode (if b then 0x09 else 0x08 :: Word.Word256) <> encode x
   hashAll_spec = bslHash . runPutLazy
                $ put sigHashTag >> put sigHashTag
               >> put (sigTxInputsHash tx1)
               >> put (sigTxOutputsHash tx1)
+              >> put (bsHash mempty)
+              >> put taproot_spec
+              >> put (asset_spec (utxoAsset txo))
+              >> put (amount_spec (utxoAmount txo))
               >> putWord32be (sigTxVersion tx1)
               >> putWord32be (sigTxLock tx1)
               >> putWord32be ix
-              >> put (utxoAsset txo)
-              >> put (utxoAmount txo)
   signatureTag = bsHash $ BSC.pack "Simplicity-Draft\USSignature"
   sigHashAll_spec = bslHash . runPutLazy
                   $ put signatureTag >> put signatureTag

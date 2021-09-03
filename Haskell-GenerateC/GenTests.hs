@@ -195,13 +195,13 @@ checkSigHashAllTx1 = Example
             , "                                  0x" ++ sh s ++ ")"
             ]
   , _withJets = True
-  , _prog = jetSubst
-          $ Simplicity.Programs.CheckSigHash.checkSigHash' (unwrap hashMode)
-            (Simplicity.LibSecp256k1.Spec.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63)
-            (Simplicity.LibSecp256k1.Spec.Sig 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
+  , _prog = program
+          $ (Simplicity.LibSecp256k1.Spec.Sig 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
                                               s)
    }
  where
+  pk = Simplicity.LibSecp256k1.Spec.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
+  program sig = jetSubst $ Simplicity.Programs.CheckSigHash.checkSigHash' (unwrap hashMode) pk sig
   sh v = replicate (64 - length s) '0' ++ s
    where
     s = Numeric.showHex v ""
@@ -209,7 +209,13 @@ checkSigHashAllTx1 = Example
   Just msg = fastEval (Simplicity.Programs.CheckSigHash.sigHash libSha256 (unwrap hashMode)) env ()
   hashMode = jetSubst $ Simplicity.Elements.Programs.CheckSigHashAll.Lib.hashAll
   libSha256 = Simplicity.Programs.Sha256.lib
-  Just env = primEnv tx1 0 undefined undefined
+  Just env = primEnv tx1 0 tapEnv cmr
+  cmr = commitmentRoot . unwrap $ program (Simplicity.LibSecp256k1.Spec.Sig 0 0)
+  tapEnv = TapEnv { tapAnnex = Nothing
+                  , tapLeafVersion = 0xbe
+                  , tapInternalKey = pk
+                  , tapBranch = []
+                  }
   tx1 = SigTx
         { sigTxVersion = 0x00000002
         , sigTxIn = listArray (0, 0) [input0]

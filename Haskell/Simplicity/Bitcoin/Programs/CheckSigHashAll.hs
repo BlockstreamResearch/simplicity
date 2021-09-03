@@ -18,6 +18,8 @@ module Simplicity.Bitcoin.Programs.CheckSigHashAll
   , lib
   ) where
 
+import Prelude hiding (drop, take)
+
 import Simplicity.Bitcoin.Primitive
 import Simplicity.Bitcoin.Term
 import Simplicity.Digest
@@ -70,12 +72,22 @@ mkLib :: forall term. (Core term, Primitive term) => Sha256.Lib (Product Commitm
 mkLib Sha256.Lib{..} = lib
  where
   hashAllProduct :: (Product CommitmentRoot term) () Hash
-  hashAllProduct = (scribe iv &&& blk1 >>> hb) &&& blk2 >>> hb
+  hashAllProduct = ((scribe sigIv &&& blk1 >>> hb) &&& blk2 >>> hb) &&& blk3 >>> hb
    where
-    iv = toWord256 . integerHash256 . ivHash $ sigHashTag
+    sigIv = toWord256 . integerHash256 . ivHash $ sigHashTag
     hb = hashBlock
+    annex = primitive AnnexHash &&& unit >>>
+               match (take (scribe (toWord256 . integerHash256 . bsHash $ mempty)))
+                     (drop iv &&& (oh &&& drop (scribe (toWord256 (2^255 + 256)))) >>> hb)
+    -- :TODO: Add merkle path to avoid the bug that taproot has with repeated leaves at different depths.
+    taprootPath = iv &&& (primitive ScriptCMR &&&
+                  (((((primitive TapleafVersion &&& scribe (toWord8 0x80)) &&& zero word16) &&& zero word32) &&& zero word64)
+                     &&& scribe (toWord128 (256 + 8)))) >>> hb
     blk1 = primitive InputsHash &&& primitive OutputsHash
-    blk2 = ((primitive CurrentValue &&& (primitive CurrentIndex &&& primitive LockTime)) &&& ((primitive Version &&& scribe (toWord32 0x80000000)) &&& zero word64)) &&& scribe (toWord256 (512+2*256+64+3*32))
+    blk2 = annex &&& taprootPath
+    blk3 = (((primitive CurrentValue &&& (primitive Version &&& primitive LockTime)) &&&
+            (primitive CurrentIndex &&& scribe (toWord32 (2^31))) &&& zero word64))
+       &&& scribe (toWord256 (512+2*512+64+3*32))
   hashAllCMR = fstProduct hashAllProduct
   lib@Lib{..} =
    Lib
