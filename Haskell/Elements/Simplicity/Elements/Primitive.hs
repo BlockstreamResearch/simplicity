@@ -316,9 +316,9 @@ primSem p a env = interpret p a
   interpret InputIssuanceEntropy = return . (atInput $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance))
   interpret InputIssuanceAssetAmt = return . (atInput $
-      cast . fmap encodeAmount . (either (issuanceAmount . newIssuanceAmounts) (Just . reissuanceAmount) <=< sigTxiIssuance))
+      cast . fmap (encodeAmount . either newIssuanceAmount reissuanceAmount) . sigTxiIssuance)
   interpret InputIssuanceTokenAmt = return . (atInput $
-      cast . fmap encodeAmount . (either (issuanceTokenAmount . newIssuanceAmounts) (const Nothing) <=< sigTxiIssuance))
+      cast . fmap (encodeAmount . either newIssuanceTokenAmount (const (Amount (Explicit 0)))) . sigTxiIssuance)
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
   interpret CurrentIsPegin = element $ toBit . sigTxiIsPegin <$> currentInput
   interpret CurrentPrevOutpoint = element $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
@@ -333,9 +333,9 @@ primSem p a env = interpret p a
   interpret CurrentIssuanceEntropy = element $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance) <$> currentInput
   interpret CurrentIssuanceAssetAmt = element $
-      cast . fmap encodeAmount . (either (issuanceAmount . newIssuanceAmounts) (Just . reissuanceAmount) <=< sigTxiIssuance) <$> currentInput
+      cast . fmap (encodeAmount . either newIssuanceAmount reissuanceAmount) . sigTxiIssuance <$> currentInput
   interpret CurrentIssuanceTokenAmt = element $
-      cast . fmap encodeAmount . (either (issuanceTokenAmount . newIssuanceAmounts) (const Nothing) <=< sigTxiIssuance) <$> currentInput
+      cast . fmap (encodeAmount . either newIssuanceTokenAmount (const (Amount (Explicit 0)))) . sigTxiIssuance <$> currentInput
   interpret TapleafVersion = element . return . toWord8 . toInteger . tapLeafVersion $ envTap env
   interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapBranch (envTap env)) . fromInteger . fromWord8
   interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env

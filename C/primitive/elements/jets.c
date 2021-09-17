@@ -40,23 +40,20 @@ static bool asset(frameItem* dst, const confidential* asset) {
   return true;
 }
 
-/* Write an confidential amount to the 'dst' frame, advancing the cursor 258 cells, unless 'amt->prefix == NONE'.
- * Returns 'amt->prefix != NONE'.
+/* Write an confidential amount to the 'dst' frame, advancing the cursor 258 cells.
+ * Writes an explicit amount of 0 when 'amt->prefix' is NONE.
  *
  * Precondition: '*dst' is a valid write frame for 258 more cells;
  *               NULL != amt;
  */
-static bool amt(frameItem* dst, const confAmount* amt) {
-  if (NONE == amt->prefix) return false;
-
-  if (writeBit(dst, EXPLICIT == amt->prefix)) {
+static void amt(frameItem* dst, const confAmount* amt) {
+  if (writeBit(dst, NONE == amt->prefix || EXPLICIT == amt->prefix)) {
     skipBits(dst, 1 + 256 - 64);
-    write64(dst, amt->explicit);
+    write64(dst, EXPLICIT == amt->prefix ? amt->explicit : 0);
   } else {
     writeBit(dst, ODD_Y == amt->prefix);
     writeHash(dst, &amt->confidential);
   }
-  return true;
 }
 
 /* Write an optional confidential nonce to the 'dst' frame, advancing the cursor 259 cells.
@@ -122,11 +119,8 @@ static void issuanceEntropy(frameItem* dst, const assetIssuance* issuance) {
  *               NULL != issuance;
  */
 static void issuanceAssetAmt(frameItem* dst, const assetIssuance* issuance) {
-  if (writeBit(dst, NO_ISSUANCE != issuance->type && NONE != issuance->assetAmt.prefix)) {
-    if (!amt(dst, &issuance->assetAmt)) {
-      /* The 'amt' function has side-effects so we cannot simply 'assert(amt(..))' as it would be removed in non-debug builds. */
-      assert(false);
-    }
+  if (writeBit(dst, NO_ISSUANCE != issuance->type)) {
+    amt(dst, &issuance->assetAmt);
   } else {
     skipBits(dst, 258);
   }
@@ -138,11 +132,8 @@ static void issuanceAssetAmt(frameItem* dst, const assetIssuance* issuance) {
  *               NULL != issuance;
  */
 static void issuanceTokenAmt(frameItem* dst, const assetIssuance* issuance) {
-  if (writeBit(dst, NEW_ISSUANCE == issuance->type) && NONE != issuance->tokenAmt.prefix) {
-    if (!amt(dst, &issuance->tokenAmt)) {
-      /* The 'amt' function has side-effects so we cannot simply 'assert(amt(..))' as it would be removed in non-debug builds. */
-      assert(false);
-    }
+  if (writeBit(dst, NEW_ISSUANCE == issuance->type)) {
+    amt(dst, &issuance->tokenAmt);
   } else {
     skipBits(dst, 258);
   }
@@ -199,11 +190,11 @@ bool input_asset(frameItem* dst, frameItem src, const txEnv* env) {
 bool input_amount(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
-    return amt(dst, &env->tx->input[i].txo.amt);
+    amt(dst, &env->tx->input[i].txo.amt);
   } else {
     skipBits(dst, 258);
-    return true;
   }
+  return true;
 }
 
 /* input_script_hash : TWO^32 |- S TWO^256 */
@@ -298,11 +289,11 @@ bool output_asset(frameItem* dst, frameItem src, const txEnv* env) {
 bool output_amount(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
-    return amt(dst, &env->tx->output[i].amt);
+    amt(dst, &env->tx->output[i].amt);
   } else {
     skipBits(dst, 258);
-    return true;
   }
+  return true;
 }
 
 /* output_nonce : TWO^32 |- S (S (Conf TWO^256)) */
@@ -423,7 +414,8 @@ bool current_asset(frameItem* dst, frameItem src, const txEnv* env) {
 bool current_amount(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
-  return amt(dst, &env->tx->input[env->ix].txo.amt);
+  amt(dst, &env->tx->input[env->ix].txo.amt);
+  return true;
 }
 
 /* current_script_hash : ONE |- TWO^256 */

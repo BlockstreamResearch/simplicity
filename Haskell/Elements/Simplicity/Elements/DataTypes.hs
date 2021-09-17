@@ -8,10 +8,8 @@ module Simplicity.Elements.DataTypes
   , Confidential(..)
   , Asset(..), Amount(..), TokenAmount, Nonce(..)
   , putNonce, getNonce
-  , IssuanceAmounts(..)
-  , issuanceAmount, issuanceTokenAmount
   , putIssuance, getIssuance
-  , NewIssuance, newIssuanceContractHash, newIssuanceAmounts
+  , NewIssuance, newIssuanceContractHash, newIssuanceAmount, newIssuanceTokenAmount
   , Reissuance, reissuanceBlindingNonce, reissuanceEntropy, reissuanceAmount
   , Issuance
   , Outpoint(Outpoint), opHash, opIndex
@@ -176,31 +174,9 @@ putNonce = putMaybeConfidential put
 getNonce :: Get (Maybe Nonce)
 getNonce = getMaybeConfidential get
 
-data IssuanceAmounts = NoReissuance Amount -- Only Amounts
-                     | NoIssuance TokenAmount -- Only Tokens
-                     | Issuance Amount TokenAmount -- Both Amounts and TokenAmounts
-                     deriving Show
-
-issuanceAmount :: IssuanceAmounts -> Maybe Amount
-issuanceAmount (NoReissuance amt) = Just amt
-issuanceAmount (NoIssuance _) = Nothing
-issuanceAmount (Issuance amt _) = Just amt
-
-issuanceTokenAmount :: IssuanceAmounts -> Maybe TokenAmount
-issuanceTokenAmount (NoReissuance _) = Nothing
-issuanceTokenAmount (NoIssuance tkamt) = Just tkamt
-issuanceTokenAmount (Issuance _ tkamt) = Just tkamt
-
-getIssuanceAmounts :: Get (Maybe IssuanceAmounts)
-getIssuanceAmounts = mkIssuanceAmounts <$> getMaybeConfidential get <*> getMaybeConfidential get
- where
-  mkIssuanceAmounts Nothing Nothing = Nothing
-  mkIssuanceAmounts (Just amt) Nothing = Just (NoReissuance amt)
-  mkIssuanceAmounts Nothing (Just tkAmt) = Just (NoIssuance tkAmt)
-  mkIssuanceAmounts (Just amt) (Just tkAmt) = Just (Issuance amt tkAmt)
-
 data NewIssuance = NewIssuance { newIssuanceContractHash :: Hash256
-                               , newIssuanceAmounts :: IssuanceAmounts
+                               , newIssuanceAmount :: Amount
+                               , newIssuanceTokenAmount :: TokenAmount
                                } deriving Show
 
 data Reissuance = Reissuance { reissuanceBlindingNonce :: Hash256
@@ -212,26 +188,36 @@ type Issuance = Either NewIssuance Reissuance
 
 putIssuance :: Putter (Maybe Issuance)
 putIssuance Nothing = putWord8 0x00 >> putWord8 0x00
-putIssuance (Just (Left new)) = putMaybeConfidential put (issuanceAmount (newIssuanceAmounts new))
-                             >> putMaybeConfidential put (issuanceTokenAmount (newIssuanceAmounts new))
-                             >> put (0 :: Word256)
-                             >> put (newIssuanceContractHash new)
-putIssuance (Just (Right re)) = put (reissuanceAmount re)
-                             >> putWord8 0x00
-                             >> put (reissuanceBlindingNonce re)
-                             >> put (reissuanceEntropy re)
+putIssuance (Just x) = go x
+ where
+  maybeZero (Amount (Explicit 0)) = Nothing
+  maybeZero x = Just x
+  go (Left new) = putMaybeConfidential put (maybeZero $ newIssuanceAmount new)
+               >> putMaybeConfidential put (maybeZero $ newIssuanceTokenAmount new)
+               >> put (0 :: Word256)
+               >> put (newIssuanceContractHash new)
+  go (Right re) = put (reissuanceAmount re)
+               >> putWord8 0x00
+               >> put (reissuanceBlindingNonce re)
+               >> put (reissuanceEntropy re)
 
 getIssuance :: Get (Maybe Issuance)
-getIssuance = getIssuanceAmounts >>= go
+getIssuance = do
+  amt <- zeroAmt =<< getMaybeConfidential get
+  tokenAmt <- zeroAmt =<< getMaybeConfidential get
+  go amt tokenAmt
  where
-  go Nothing = return Nothing
-  go (Just issue) = Just <$> do
+  zeroAmt Nothing = return . Amount $ Explicit 0
+  zeroAmt (Just (Amount (Explicit 0))) = fail "Simplicity.Primitive.Elements.DataTypes.getIssuance: illegal explicit zero"
+  zeroAmt (Just x) = return x
+  go (Amount (Explicit 0)) (Amount (Explicit 0)) = return Nothing
+  go amt tokenAmt = Just <$> do
     blinding <- get
     entropy <- get
     mkIssuance blinding entropy
    where
-    mkIssuance blinding entropy | blinding == hash0 = return (Left (NewIssuance entropy issue))
-                                | NoReissuance amt <- issue = return (Right (Reissuance blinding entropy amt))
+    mkIssuance blinding entropy | blinding == hash0 = return (Left (NewIssuance entropy amt tokenAmt))
+                                | Amount (Explicit 0) <- tokenAmt = return (Right (Reissuance blinding entropy amt))
                                 | otherwise = fail "Simplicity.Primitive.Elements.DataTypes.getIssuance: reissuance attempting to reissue tokens"
 
 -- | An outpoint is an index into the TXO set.
