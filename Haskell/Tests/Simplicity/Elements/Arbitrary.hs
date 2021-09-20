@@ -25,7 +25,7 @@ import Test.Tasty.QuickCheck ( Arbitrary(..), Discard(Discard), Gen, Property, T
                              , forAll, property
                              )
 
-nonZeroAmount :: Amount -> Bool
+nonZeroAmount :: AmountWith prf -> Bool
 nonZeroAmount (Amount (Explicit 0)) = False
 nonZeroAmount _ = True
 
@@ -73,37 +73,43 @@ arbitraryNonNullData = do
   nondata <- arbitraryBS
   return $ BSL.append nulldata nondata
 
-arbitraryConfidential :: Gen a -> Gen (Confidential a)
-arbitraryConfidential genA = oneof [conf, nonConf]
+arbitraryConfidential :: Gen prf -> Gen a -> Gen (Confidential prf a)
+arbitraryConfidential genPrf genA = oneof [conf, nonConf]
    where
-    conf = Confidential <$> arbitraryPoint
+    conf = Confidential <$> arbitraryPoint <*> genPrf
     nonConf = Explicit <$> genA
 
-instance Arbitrary Asset where
-  arbitrary = Asset <$> arbitraryConfidential arbitraryHash256
+arbitraryAsset :: Gen Asset
+arbitraryAsset = Asset <$> arbitraryConfidential (return ()) arbitraryHash256
 
-instance Arbitrary Amount where
-  arbitrary = Amount <$> arbitraryConfidential arbitrarySizedBoundedIntegral
+arbitraryAssetWithWitness :: Gen AssetWithWitness
+arbitraryAssetWithWitness = Asset <$> arbitraryConfidential arbitraryBS arbitraryHash256
+
+arbitraryAmount :: Gen Amount
+arbitraryAmount = Amount <$> arbitraryConfidential (return ()) arbitrarySizedBoundedIntegral
+
+arbitraryAmountWithWitness :: Gen AmountWithWitness
+arbitraryAmountWithWitness = Amount <$> arbitraryConfidential arbitraryBS arbitrarySizedBoundedIntegral
 
 instance Arbitrary Nonce where
-  arbitrary = Nonce <$> arbitraryConfidential arbitraryHash256
+  arbitrary = Nonce <$> arbitraryConfidential (return ()) arbitraryHash256
 
 instance Arbitrary TxOutput where
-  arbitrary = TxOutput <$> arbitrary <*> arbitrary <*> arbitrary <*> oneof [arbitraryBS, arbitraryNullData, arbitraryNonNullData]
+  arbitrary = TxOutput <$> arbitraryAssetWithWitness <*> arbitraryAmountWithWitness <*> arbitrary <*> oneof [arbitraryBS, arbitraryNullData, arbitraryNonNullData]
 
 instance Arbitrary UTXO where
-  arbitrary = UTXO <$> arbitrary <*> arbitrary <*> arbitraryBS
+  arbitrary = UTXO <$> arbitraryAsset <*> arbitraryAmount <*> arbitraryBS
 
 instance Arbitrary Outpoint where
   arbitrary = Outpoint <$> arbitraryHash256 <*> arbitrarySizedBoundedIntegral
 
 instance Arbitrary NewIssuance where
-  arbitrary = (NewIssuance <$> arbitraryHash256 <*> arbitrary <*> arbitrary) `suchThat` nonZeroIssuance
+  arbitrary = (NewIssuance <$> arbitraryHash256 <*> arbitraryAmountWithWitness <*> arbitraryAmountWithWitness) `suchThat` nonZeroIssuance
    where
     nonZeroIssuance x = nonZeroAmount (newIssuanceAmount x) || nonZeroAmount (newIssuanceTokenAmount x)
 
 instance Arbitrary Reissuance where
-  arbitrary = Reissuance <$> arbitraryHash256 <*> arbitraryHash256 <*> (arbitrary `suchThat` nonZeroAmount)
+  arbitrary = Reissuance <$> arbitraryHash256 <*> arbitraryHash256 <*> (arbitraryAmountWithWitness `suchThat` nonZeroAmount)
 
 instance Arbitrary SigTxInput where
   arbitrary = SigTxInput <$> arbitrary <*> arbitrary <*> arbitrary <*> arbitraryBoundedIntegral <*> arbitrary

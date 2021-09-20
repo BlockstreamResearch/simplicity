@@ -5,10 +5,13 @@ module Simplicity.Elements.DataTypes
   , Script
   , TxNullDatumF(..), TxNullDatum, TxNullData, txNullData
   , Lock, Value
-  , Confidential(..)
-  , Asset(..), Amount(..), TokenAmount, Nonce(..)
+  , Confidential(..), prf_
+  , AssetWith(..), AssetWithWitness, Asset, asset, clearAssetPrf, putAsset
+  , AmountWith(..), AmountWithWitness, Amount, amount, clearAmountPrf, putAmount
+  , TokenAmountWith, TokenAmountWithWitness, TokenAmount
+  , Nonce(..)
   , putNonce, getNonce
-  , putIssuance, getIssuance
+  , putIssuance
   , NewIssuance(..)
   , Reissuance(..)
   , Issuance
@@ -29,6 +32,8 @@ import Data.Serialize ( Serialize
                       , Get, get, runGetLazy, lookAhead, getWord8, getWord16le, getWord32le, getLazyByteString, isEmpty
                       , Putter, put, putWord8, putWord32le, putWord64be, putLazyByteString, runPutLazy
                       )
+import Lens.Family2 ((&), (.~), under)
+import Lens.Family2.Unchecked (Adapter, adapter, Traversal)
 
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.Spec
@@ -38,6 +43,8 @@ import Simplicity.Word
 -- | Unparsed Bitcoin Script.
 -- Script in transactions outputs do not have to be parsable, so we encode this as a raw 'Data.ByteString.ByteString'.
 type Script = BSL.ByteString
+type SurjectionProof = BSL.ByteString
+type RangeProof = BSL.ByteString
 
 data TxNullDatumF a = Immediate a
                     | PushData a
@@ -122,45 +129,62 @@ type Lock = Word32
 
 type Value = Word64
 
-data Confidential a = Explicit a
-                    | Confidential Point
-                    deriving Show
+data Confidential prf a = Explicit a
+                        | Confidential Point prf
+                        deriving Show
 
-newtype Asset = Asset { asset :: Confidential Hash256 } deriving Show
+prf_ :: Traversal (Confidential prfA a) (Confidential prfB a) prfA prfB
+prf_ f (Confidential pt prf) = Confidential pt <$> f prf
+prf_ f (Explicit x) = pure (Explicit x)
 
-instance Serialize Asset where
-  put (Asset (Explicit h)) = putWord8 0x01 >> put h
-  put (Asset (Confidential (Point by x))) = putWord8 (if by then 0x0b else 0x0a) >> putFE x
-  get = getWord8 >>= go
-   where
-    go 0x01 = Asset . Explicit <$> get
-    go 0x0a = Asset . Confidential . Point False <$> getFE
-    go 0x0b = Asset . Confidential . Point True <$> getFE
-    go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Asset}: bad prefix."
+newtype AssetWith prf = Asset (Confidential prf Hash256) deriving Show
+type Asset = AssetWith ()
+type AssetWithWitness = AssetWith SurjectionProof
 
-newtype Amount = Amount { amount :: Confidential Value } deriving Show
+asset :: Adapter (AssetWith prfA) (AssetWith prfB) (Confidential prfA Hash256) (Confidential prfB Hash256)
+asset = adapter to fro
+ where
+  to (Asset x) = x
+  fro x = (Asset x)
+
+clearAssetPrf :: AssetWith prf -> Asset
+clearAssetPrf x = x & under asset . prf_ .~ ()
+
+putAsset :: Putter Asset
+putAsset (Asset (Explicit h)) = putWord8 0x01 >> put h
+putAsset (Asset (Confidential (Point by x) _)) = putWord8 (if by then 0x0b else 0x0a) >> putFE x
+
+newtype AmountWith prf = Amount (Confidential prf Value) deriving Show
+type Amount = AmountWith ()
+type AmountWithWitness = AmountWith RangeProof
+
+type TokenAmountWith prf = AmountWith prf
 type TokenAmount = Amount
+type TokenAmountWithWitness = AmountWithWitness
 
-instance Serialize Amount where
-  put (Amount (Explicit v)) = putWord8 0x01 >> putWord64be v
-  put (Amount (Confidential (Point by x))) = putWord8 (if by then 0x09 else 0x08) >> putFE x
-  get = getWord8 >>= go
-   where
-    go 0x01 = Amount . Explicit <$> get
-    go 0x08 = Amount . Confidential . Point False <$> getFE
-    go 0x09 = Amount . Confidential . Point True <$> getFE
-    go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Amount}: bad prefix."
+amount :: Adapter (AmountWith prfA) (AmountWith prfB) (Confidential prfA Value) (Confidential prfB Value)
+amount = adapter to fro
+ where
+  to (Amount x) = x
+  fro x = (Amount x)
 
-newtype Nonce = Nonce { nonce :: Confidential Hash256 } deriving Show
+clearAmountPrf :: AmountWith prf -> Amount
+clearAmountPrf x = x & under amount . prf_ .~ ()
+
+putAmount :: Putter Amount
+putAmount (Amount (Explicit v)) = putWord8 0x01 >> putWord64be v
+putAmount (Amount (Confidential (Point by x) _)) = putWord8 (if by then 0x09 else 0x08) >> putFE x
+
+newtype Nonce = Nonce { nonce :: Confidential () Hash256 } deriving Show
 
 instance Serialize Nonce where
   put (Nonce (Explicit h)) = putWord8 0x01 >> put h
-  put (Nonce (Confidential (Point by x))) = putWord8 (if by then 0x03 else 0x02) >> putFE x
+  put (Nonce (Confidential (Point by x) _)) = putWord8 (if by then 0x03 else 0x02) >> putFE x
   get = lookAhead getWord8 >>= go
    where
     go 0x01 = getWord8 *> (Nonce . Explicit <$> get)
-    go 0x02 = Nonce . Confidential . Point False <$> getFE
-    go 0x03 = Nonce . Confidential . Point True <$> getFE
+    go 0x02 = Nonce . flip Confidential () . Point False <$> getFE
+    go 0x03 = Nonce . flip Confidential () . Point True <$> getFE
     go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Nonce}: bad prefix."
 
 putMaybeConfidential :: Putter a -> Putter (Maybe a)
@@ -180,13 +204,13 @@ getNonce :: Get (Maybe Nonce)
 getNonce = getMaybeConfidential get
 
 data NewIssuance = NewIssuance { newIssuanceContractHash :: Hash256
-                               , newIssuanceAmount :: Amount
-                               , newIssuanceTokenAmount :: TokenAmount
+                               , newIssuanceAmount :: AmountWithWitness
+                               , newIssuanceTokenAmount :: TokenAmountWithWitness
                                } deriving Show
 
 data Reissuance = Reissuance { reissuanceBlindingNonce :: Hash256
                              , reissuanceEntropy :: Hash256
-                             , reissuanceAmount :: Amount
+                             , reissuanceAmount :: AmountWithWitness
                              } deriving Show
 
 type Issuance = Either NewIssuance Reissuance
@@ -197,33 +221,15 @@ putIssuance (Just x) = go x
  where
   maybeZero (Amount (Explicit 0)) = Nothing
   maybeZero x = Just x
-  go (Left new) = putMaybeConfidential put (maybeZero $ newIssuanceAmount new)
-               >> putMaybeConfidential put (maybeZero $ newIssuanceTokenAmount new)
+  -- We serialize the range/surjection proofs separately.
+  go (Left new) = putMaybeConfidential putAmount (maybeZero . clearAmountPrf $ newIssuanceAmount new)
+               >> putMaybeConfidential putAmount (maybeZero . clearAmountPrf $ newIssuanceTokenAmount new)
                >> put (0 :: Word256)
                >> put (newIssuanceContractHash new)
-  go (Right re) = put (reissuanceAmount re)
+  go (Right re) = putAmount (clearAmountPrf $ reissuanceAmount re)
                >> putWord8 0x00
                >> put (reissuanceBlindingNonce re)
                >> put (reissuanceEntropy re)
-
-getIssuance :: Get (Maybe Issuance)
-getIssuance = do
-  amt <- zeroAmt =<< getMaybeConfidential get
-  tokenAmt <- zeroAmt =<< getMaybeConfidential get
-  go amt tokenAmt
- where
-  zeroAmt Nothing = return . Amount $ Explicit 0
-  zeroAmt (Just (Amount (Explicit 0))) = fail "Simplicity.Primitive.Elements.DataTypes.getIssuance: illegal explicit zero"
-  zeroAmt (Just x) = return x
-  go (Amount (Explicit 0)) (Amount (Explicit 0)) = return Nothing
-  go amt tokenAmt = Just <$> do
-    blinding <- get
-    entropy <- get
-    mkIssuance blinding entropy
-   where
-    mkIssuance blinding entropy | blinding == hash0 = return (Left (NewIssuance entropy amt tokenAmt))
-                                | Amount (Explicit 0) <- tokenAmt = return (Right (Reissuance blinding entropy amt))
-                                | otherwise = fail "Simplicity.Primitive.Elements.DataTypes.getIssuance: reissuance attempting to reissue tokens"
 
 -- | An outpoint is an index into the TXO set.
 data Outpoint = Outpoint { opHash :: Hash256
@@ -251,8 +257,8 @@ data SigTxInput = SigTxInput { sigTxiIsPegin :: Bool
 
 -- | The data type for transaction outputs.
 -- The signed transactin output format is identical to the serialized transaction output format.
-data TxOutput = TxOutput { txoAsset :: Asset
-                         , txoAmount :: Amount
+data TxOutput = TxOutput { txoAsset :: AssetWithWitness
+                         , txoAmount :: AmountWithWitness
                          , txoNonce :: Maybe Nonce
                          , txoScript :: Script -- length must be strictly less than 2^32.
                          } deriving Show
@@ -273,7 +279,9 @@ sigTxInputsHash tx = bslHash . runPutLazy $ mapM_ go (elems (sigTxIn tx))
 
 sigTxOutputsHash tx = bslHash . runPutLazy $ mapM_ go (elems (sigTxOut tx))
  where
-  go txo = put (txoAsset txo) >> put (txoAmount txo)
+  -- We serialize the range/surjection proofs separately.
+  go txo = putAsset (clearAssetPrf $ txoAsset txo)
+        >> putAmount (clearAmountPrf $ txoAmount txo)
         >> putNonce (txoNonce txo)
         >> put (bslHash (txoScript txo))
 

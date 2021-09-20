@@ -18,6 +18,7 @@ import qualified Data.Monoid as Monoid
 import Data.Serialize (Get, getWord8,
                        Putter, put, putWord8, putWord32le, putWord64le, runPutLazy)
 import qualified Data.Word
+import Lens.Family2 (view, under)
 
 import Simplicity.Digest
 import Simplicity.Elements.DataTypes
@@ -282,9 +283,9 @@ primSem p a env = interpret p a
   atOutput f = cast . fmap f . lookupOutput . fromInteger . fromWord32
   encodeHash = toWord256 . integerHash256
   encodeConfidential enc (Explicit a) = Right (enc a)
-  encodeConfidential enc (Confidential (Point by x)) = Left (toBit by, toWord256 . Schnorr.fe_repr $ x)
-  encodeAsset = encodeConfidential encodeHash . asset
-  encodeAmount = encodeConfidential (toWord64 . toInteger) . amount
+  encodeConfidential enc (Confidential (Point by x) ()) = Left (toBit by, toWord256 . Schnorr.fe_repr $ x)
+  encodeAsset = encodeConfidential encodeHash . view (under asset)
+  encodeAmount = encodeConfidential (toWord64 . toInteger) . view (under amount)
   encodeNonce = cast . fmap (encodeConfidential encodeHash . nonce)
   encodeOutpoint op = (encodeHash $ opHash op, toWord32 . fromIntegral $ opIndex op)
   encodeKey (Schnorr.PubKey x) = toWord256 . toInteger $ x
@@ -328,9 +329,9 @@ primSem p a env = interpret p a
   interpret InputIssuanceEntropy = return . (atInput $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance))
   interpret InputIssuanceAssetAmt = return . (atInput $
-      cast . fmap (encodeAmount . either newIssuanceAmount reissuanceAmount) . sigTxiIssuance)
+      cast . fmap (encodeAmount . clearAmountPrf . either newIssuanceAmount reissuanceAmount) . sigTxiIssuance)
   interpret InputIssuanceTokenAmt = return . (atInput $
-      cast . fmap (encodeAmount . either newIssuanceTokenAmount (const (Amount (Explicit 0)))) . sigTxiIssuance)
+      cast . fmap (encodeAmount . clearAmountPrf . either newIssuanceTokenAmount (const (Amount (Explicit 0)))) . sigTxiIssuance)
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
   interpret CurrentIsPegin = element $ toBit . sigTxiIsPegin <$> currentInput
   interpret CurrentPrevOutpoint = element $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
@@ -345,16 +346,16 @@ primSem p a env = interpret p a
   interpret CurrentIssuanceEntropy = element $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance) <$> currentInput
   interpret CurrentIssuanceAssetAmt = element $
-      cast . fmap (encodeAmount . either newIssuanceAmount reissuanceAmount) . sigTxiIssuance <$> currentInput
+      cast . fmap (encodeAmount . clearAmountPrf . either newIssuanceAmount reissuanceAmount) . sigTxiIssuance <$> currentInput
   interpret CurrentIssuanceTokenAmt = element $
-      cast . fmap (encodeAmount . either newIssuanceTokenAmount (const (Amount (Explicit 0)))) . sigTxiIssuance <$> currentInput
+      cast . fmap (encodeAmount . clearAmountPrf . either newIssuanceTokenAmount (const (Amount (Explicit 0)))) . sigTxiIssuance <$> currentInput
   interpret TapleafVersion = element . return . toWord8 . toInteger . tapLeafVersion $ envTap env
   interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapBranch (envTap env)) . fromInteger . fromWord8
   interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env
   interpret AnnexHash = element . return . cast $ encodeHash . bslHash <$> tapAnnex (envTap env)
   interpret NumOutputs = element . return . toWord32 . toInteger $ 1 + maxOutput
-  interpret OutputAsset = return . (atOutput $ encodeAsset . txoAsset)
-  interpret OutputAmount = return . (atOutput $ encodeAmount . txoAmount)
+  interpret OutputAsset = return . (atOutput $ encodeAsset . clearAssetPrf . txoAsset)
+  interpret OutputAmount = return . (atOutput $ encodeAmount . clearAmountPrf . txoAmount)
   interpret OutputNonce = return . (atOutput $ encodeNonce . txoNonce)
   interpret OutputScriptHash = return . (atOutput $ encodeHash . bslHash . txoScript)
   interpret OutputNullDatum = \(i, j) -> return . cast $ do
@@ -365,9 +366,9 @@ primSem p a env = interpret p a
    where
     getValue assetId txo = fromMaybe (Monoid.Sum 0) $ do
       guard $ BSL.null (txoScript txo)
-      Explicit a <- Just . asset $ txoAsset txo
+      Explicit a <- Just . view (under asset) $ txoAsset txo
       guard $ assetId == encodeHash a
-      Explicit v <- Just . amount $ txoAmount txo
+      Explicit v <- Just . view (under amount) $ txoAmount txo
       return (Monoid.Sum v)
   interpret ScriptCMR = element . return . encodeHash $ envScriptCMR env
 

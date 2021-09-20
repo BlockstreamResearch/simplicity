@@ -27,6 +27,11 @@ typedef enum confPrefix {
   ODD_Y = 3
 } confPrefix;
 
+/* Returns true when the prefix indicates the associated value is a confidental value. */
+static inline bool is_confidential(confPrefix prefix) {
+  return EVEN_Y == prefix || ODD_Y == prefix;
+}
+
 /* A confidential (256-bit) hash.
  * When 'prefix' is either 'EVEN_Y' or 'ODD_Y' then 'data' contains the x-coordinate of the point on the secp256k1 curve
  * representing the blinded value.
@@ -105,10 +110,14 @@ typedef struct parsedNullData {
 } parsedNullData;
 
 /* A structure representing data from one output from an Elements transaction.
+ * 'surjectionProofHash' is the SHA-256 hash of the output's surjection proof.
+ * 'rangeProofHash' is the SHA-256 hash of the output's range proof.
  * 'scriptPubKey' is the SHA-256 hash of the outputs scriptPubKey.
  * 'isNullData' is true if the output has a null-data scriptPubKey.
  */
 typedef struct sigOutput {
+  sha256_midstate surjectionProofHash;
+  sha256_midstate rangeProofHash;
   confidential asset;
   confAmount amt;
   confidential nonce;
@@ -138,6 +147,8 @@ typedef enum issuanceType {
 
 /* In Elements, a trasaction input can optionally issue a new asset or reissue an existing asset.
  * This structure contains data about such an issuance.
+ * 'assetRangeProofHash' is the SHA-256 hash of the asset amount's range proof.
+ * 'tokenRangeProofHash' is the SHA-256 hash of the token amount's range proof.
  *
  * Invariant: If 'type == NEW_ISSUANCE' then 'contractHash' and 'tokenAmt' are active;
  *            If 'type == REISSUANCE' then 'entropy' and 'blindingNonce' are active;
@@ -153,6 +164,8 @@ typedef struct assetIssuance {
       sha256_midstate blindingNonce;
     };
   };
+  sha256_midstate assetRangeProofHash;
+  sha256_midstate tokenRangeProofHash;
   confAmount assetAmt;
   issuanceType type;
 } assetIssuance;

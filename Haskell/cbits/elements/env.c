@@ -13,17 +13,30 @@ void c_set_rawBuffer(rawBuffer* result, const char* buf, unsigned int len) {
   *result = (rawBuffer){ .buf = buf, .len = len };
 }
 
-void c_set_rawOutput(rawOutput* result, const char* asset, const char* value, const char* nonce, const rawBuffer* scriptPubKey) {
-  *result = (rawOutput){ .asset = asset, .value = value, .nonce = nonce, .scriptPubKey = *scriptPubKey };
+void c_set_rawOutput(rawOutput* result, const char* asset, const char* value, const char* nonce, const rawBuffer* scriptPubKey,
+                                        const rawBuffer* surjectionProof, const rawBuffer* rangeProof) {
+  *result = (rawOutput){ .asset = asset
+                       , .value = value
+                       , .nonce = nonce
+                       , .scriptPubKey = *scriptPubKey
+                       , .surjectionProof = *surjectionProof
+                       , .rangeProof = *rangeProof };
 }
 
 void c_set_rawInput(rawInput* result, bool isPegin,
                                       const char* prevTxid, unsigned int prevIx,
                                       const char* asset, const char* value, const rawBuffer* scriptPubKey,
                                       unsigned int sequence,
-                                      const char* blindingNonce, const char* assetEntropy, const char* amount, const char* inflationKeys) {
+                                      const char* blindingNonce, const char* assetEntropy, const char* amount, const char* inflationKeys,
+                                      const rawBuffer* amountRangePrf, const rawBuffer* inflationKeysRangePrf) {
   *result = (rawInput){ .prevTxid = prevTxid
-                      , .issuance = {.blindingNonce = blindingNonce, .assetEntropy = assetEntropy, .amount = amount, .inflationKeys = inflationKeys}
+                      , .issuance = { .blindingNonce = blindingNonce
+                                    , .assetEntropy = assetEntropy
+                                    , .amount = amount
+                                    , .inflationKeys = inflationKeys
+                                    , .amountRangePrf = *amountRangePrf
+                                    , .inflationKeysRangePrf = *inflationKeysRangePrf
+                                    }
                       , .txo = {.asset = asset, .value = value, .scriptPubKey = *scriptPubKey}
                       , .prevIx = prevIx
                       , .sequence = sequence

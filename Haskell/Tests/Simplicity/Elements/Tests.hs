@@ -252,9 +252,9 @@ hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
   sigHashTag = bsHash $ BSC.pack "Simplicity-Draft\USSigHash"
   taproot_spec = bsHash $ encode cmr <> encode (tapLeafVersion tapEnv)
   asset_spec (Asset (Explicit id)) = bsHash $ encode (0x01 :: Word.Word256) <> encode id
-  asset_spec (Asset (Confidential (Point b x))) = bsHash $ encode (if b then 0x0b else 0x0a :: Word.Word256) <> encode (Schnorr.fe_pack x)
+  asset_spec (Asset (Confidential (Point b x) _)) = bsHash $ encode (if b then 0x0b else 0x0a :: Word.Word256) <> encode (Schnorr.fe_pack x)
   amount_spec (Amount (Explicit amt)) = bsHash $ encode (0x01 :: Word.Word256) <> encode (fromIntegral amt :: Word.Word256)
-  amount_spec (Amount (Confidential (Point b x))) = bsHash $ encode (if b then 0x09 else 0x08 :: Word.Word256) <> encode (Schnorr.fe_pack x)
+  amount_spec (Amount (Confidential (Point b x) _)) = bsHash $ encode (if b then 0x09 else 0x08 :: Word.Word256) <> encode (Schnorr.fe_pack x)
   hashAll_spec = bslHash . runPutLazy
                $ put sigHashTag >> put sigHashTag
               >> put (sigTxInputsHash tx1)

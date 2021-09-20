@@ -86,7 +86,8 @@ library Simplicity-Elements
                        array >=0.5 && <0.6,
                        base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
-                       cereal >=0.5 && <0.6
+                       cereal >=0.5 && <0.6,
+                       lens-family >=2.0 && <2.2
 
 library Simplicity-Indef
   exposed-modules:     Simplicity.Term,
@@ -187,7 +188,8 @@ library
                        base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,
-                       containers >=0.5.10 && <0.7
+                       containers >=0.5.10 && <0.7,
+                       lens-family >=2.0 && <2.2
 
 Test-Suite testsuite
   Type:                exitcode-stdio-1.0
