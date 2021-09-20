@@ -30,6 +30,8 @@ typedef struct rawOutput {
   const unsigned char* value;
   const unsigned char* nonce;
   rawBuffer scriptPubKey;
+  rawBuffer surjectionProof;
+  rawBuffer rangeProof;
 } rawOutput;
 
 /* A structure representing data for one input from an Elements transaction, plus the TXO data of the output being redeemed.
@@ -49,6 +51,8 @@ typedef struct rawInput {
     const unsigned char* assetEntropy;
     const unsigned char* amount;
     const unsigned char* inflationKeys;
+    rawBuffer amountRangePrf;
+    rawBuffer inflationKeysRangePrf;
   } issuance;
   struct {
     const unsigned char* asset;
