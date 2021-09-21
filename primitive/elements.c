@@ -124,9 +124,9 @@ static void sha256_issuance(sha256_context* ctx, const assetIssuance* issuance) 
  * Precondition: NULL != result;
  *               NULL != scriptPubKey;
  */
-static void hashScriptPubKey(sha256_midstate* result, const rawScript* scriptPubKey) {
+static void hashBuffer(sha256_midstate* result, const rawBuffer* buffer) {
   sha256_context ctx = sha256_init(result->s);
-  sha256_uchars(&ctx, scriptPubKey->code, scriptPubKey->len);
+  sha256_uchars(&ctx, buffer->buf, buffer->len);
   sha256_finalize(&ctx);
 }
 
@@ -177,7 +177,7 @@ static void copyInput(sigInput* result, const rawInput* input) {
                       , .isPegin = input->isPegin
                       };
   sha256_toMidstate(result->prevOutpoint.txid.s, input->prevTxid);
-  hashScriptPubKey(&result->txo.scriptPubKey, &input->txo.scriptPubKey);
+  hashBuffer(&result->txo.scriptPubKey, &input->txo.scriptPubKey);
   copyRawConfidential(&result->txo.asset, input->txo.asset);
   copyRawAmt(&result->txo.amt, input->txo.value);
   if (input->issuance.amount || input->issuance.inflationKeys) {
@@ -206,27 +206,27 @@ static void copyInput(sigInput* result, const rawInput* input) {
  *
  * Precondition: NULL != scriptPubKey
  */
-static uint_fast32_t countNullDataCodes(const rawScript* scriptPubKey) {
-  if (0 == scriptPubKey->len || 0x6a != scriptPubKey->code[0] ) return 0;
+static uint_fast32_t countNullDataCodes(const rawBuffer* scriptPubKey) {
+  if (0 == scriptPubKey->len || 0x6a != scriptPubKey->buf[0] ) return 0;
 
   uint_fast32_t result = 0;
   for (uint_fast32_t i = 1; i < scriptPubKey->len;) {
     uint_fast32_t skip = 0;
-    unsigned char code = scriptPubKey->code[i++];
+    unsigned char code = scriptPubKey->buf[i++];
     if (0x60 < code) return 0;
     if (code < 0x4c) {
       skip = code;
     } else if (code < 0x4f) {
       if (scriptPubKey->len == i) return 0;
-      skip = scriptPubKey->code[i++];
+      skip = scriptPubKey->buf[i++];
       if (0x4d <= code) {
         if (scriptPubKey->len == i) return 0;
-        skip += (uint_fast32_t)(scriptPubKey->code[i++]) << 8;
+        skip += (uint_fast32_t)(scriptPubKey->buf[i++]) << 8;
         if (0x4e <= code) {
           if (scriptPubKey->len == i) return 0;
-          skip += (uint_fast32_t)(scriptPubKey->code[i++]) << 16;
+          skip += (uint_fast32_t)(scriptPubKey->buf[i++]) << 16;
           if (scriptPubKey->len == i) return 0;
-          skip += (uint_fast32_t)(scriptPubKey->code[i++]) << 24;
+          skip += (uint_fast32_t)(scriptPubKey->buf[i++]) << 24;
         }
       }
     }
@@ -266,13 +266,13 @@ static uint_fast64_t countTotalNullDataCodes(const rawTransaction* rawTx) {
  *               NULL != scriptPubKey;
  *               countNullDataCodes(scriptPubKey) <= *allocationLen
  */
-static void parseNullData(parsedNullData* result, opcode** allocation, size_t* allocationLen, const rawScript* scriptPubKey) {
+static void parseNullData(parsedNullData* result, opcode** allocation, size_t* allocationLen, const rawBuffer* scriptPubKey) {
   *result = (parsedNullData){ .op = *allocation };
 
-  if (0 == scriptPubKey->len || 0x6a != scriptPubKey->code[0] ) { result->op = NULL; return; }
+  if (0 == scriptPubKey->len || 0x6a != scriptPubKey->buf[0] ) { result->op = NULL; return; }
 
   for (uint_fast32_t i = 1; i < scriptPubKey->len; ++result->len) {
-    unsigned char code = scriptPubKey->code[i++];
+    unsigned char code = scriptPubKey->buf[i++];
     if (*allocationLen <= result->len || 0x60 < code) { result->op = NULL; return; }
     if (0x4f <= code) {
       (*allocation)[result->len].code = OP_1NEGATE + (code - 0x4f);
@@ -283,19 +283,19 @@ static void parseNullData(parsedNullData* result, opcode** allocation, size_t* a
         (*allocation)[result->len].code = OP_IMMEDIATE;
       } else {
         if (scriptPubKey->len == i) { result->op = NULL; return; }
-        skip = scriptPubKey->code[i++];
+        skip = scriptPubKey->buf[i++];
         if (code < 0x4d) {
           (*allocation)[result->len].code = OP_PUSHDATA;
         } else {
           if (scriptPubKey->len == i) { result->op = NULL; return; }
-          skip += (uint_fast32_t)(scriptPubKey->code[i++]) << 8;
+          skip += (uint_fast32_t)(scriptPubKey->buf[i++]) << 8;
           if (code < 0x4e) {
             (*allocation)[result->len].code = OP_PUSHDATA2;
           } else {
             if (scriptPubKey->len == i) { result->op = NULL; return; }
-            skip += (uint_fast32_t)(scriptPubKey->code[i++]) << 16;
+            skip += (uint_fast32_t)(scriptPubKey->buf[i++]) << 16;
             if (scriptPubKey->len == i) { result->op = NULL; return; }
-            skip += (uint_fast32_t)(scriptPubKey->code[i++]) << 24;
+            skip += (uint_fast32_t)(scriptPubKey->buf[i++]) << 24;
             (*allocation)[result->len].code = OP_PUSHDATA4;
           }
         }
@@ -303,7 +303,7 @@ static void parseNullData(parsedNullData* result, opcode** allocation, size_t* a
       if (scriptPubKey->len - i < skip) { result->op = NULL; return; }
       {
         sha256_context ctx = sha256_init((*allocation)[result->len].dataHash.s);
-        sha256_uchars(&ctx, &scriptPubKey->code[i], skip);
+        sha256_uchars(&ctx, &scriptPubKey->buf[i], skip);
         sha256_finalize(&ctx);
       }
       i += skip;
@@ -326,7 +326,7 @@ static void parseNullData(parsedNullData* result, opcode** allocation, size_t* a
  *               countNullDataCodes(&output->scriptPubKey) <= *allocationLen
  */
 static void copyOutput(sigOutput* result, opcode** allocation, size_t* allocationLen, const rawOutput* output) {
-  hashScriptPubKey(&result->scriptPubKey, &output->scriptPubKey);
+  hashBuffer(&result->scriptPubKey, &output->scriptPubKey);
   copyRawConfidential(&result->asset, output->asset);
   copyRawAmt(&result->amt, output->value);
   copyRawConfidential(&result->nonce, output->nonce);

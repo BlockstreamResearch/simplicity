@@ -11,14 +11,14 @@
  * inputs within the same transaction.
  */
 
-/* A type for a Bitcoin script with its length.
+/* A type for an unparsed buffer
  *
- * Invariant: if 0 < len then unsigned char code[len]
+ * Invariant: if 0 < len then unsigned char buf[len]
  */
-typedef struct rawScript {
-  const unsigned char* code;
+typedef struct rawBuffer {
+  const unsigned char* buf;
   uint32_t len;
-} rawScript;
+} rawBuffer;
 
 /* A structure representing data for one output from an Elements transaction.
  *
@@ -30,7 +30,7 @@ typedef struct rawOutput {
   const unsigned char* asset;
   const unsigned char* value;
   const unsigned char* nonce;
-  rawScript scriptPubKey;
+  rawBuffer scriptPubKey;
 } rawOutput;
 
 /* A structure representing data for one input from an Elements transaction, plus the TXO data of the output being redeemed.
@@ -54,7 +54,7 @@ typedef struct rawInput {
   struct {
     const unsigned char* asset;
     const unsigned char* value;
-    rawScript scriptPubKey;
+    rawBuffer scriptPubKey;
   } txo;
   uint32_t prevIx;
   uint32_t sequence;
