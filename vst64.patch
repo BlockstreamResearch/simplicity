@@ -1,0 +1,32 @@
+diff -u source/sha/call_memcpy.v source64/sha/call_memcpy.v
+--- source/sha/call_memcpy.v	1969-12-31 19:00:01.000000000 -0500
++++ source/sha/call_memcpy.v	2021-10-08 15:26:03.405138106 -0400
+@@ -364,6 +364,7 @@
+  (*rewrite <- H6, <- H7, <- H8.*)
+  normalize. unfold PROPx, LOCALx, SEPx, local, liftx, lift1, lift. simpl. unfold liftx, lift. simpl. normalize.
+  
++ try rewrite sem_cast_i2i_correct_range by (rewrite <- H8; auto).
+ (* split3; try (repeat split; auto; congruence).*)
+  apply andp_right.
+  { apply prop_right; split3; auto. repeat split; trivial.  congruence.  }
+@@ -596,6 +596,8 @@
+  unfold PROPx, LOCALx, SEPx, local, liftx, lift1, lift. simpl. unfold liftx, lift. simpl. normalize.
+  
+ (* split3; try (repeat split; auto; congruence).*)
++ try rewrite sem_cast_i2i_correct_range by (rewrite <- H2; auto).
++ try rewrite sem_cast_i2i_correct_range by (rewrite <- H6; auto).
+  apply andp_right.
+  { apply prop_right; split3; auto. repeat split; trivial; congruence. }
+  subst Frame.
+diff -u source/sha/verif_sha_bdo7.v source64/sha/verif_sha_bdo7.v
+--- source/sha/verif_sha_bdo7.v	1969-12-31 19:00:01.000000000 -0500
++++ source/sha/verif_sha_bdo7.v	2021-10-08 15:54:24.225431606 -0400
+@@ -245,6 +245,8 @@
+ change LBLOCKz with 16%Z in H0.
+ change (tarray tuint LBLOCKz) with (tarray tuint 16).
+ change LBLOCKz with 16%Z in H.
++assert (Hand15 : forall j, Int.min_signed <= Z.land j 15 <= Int.max_signed)
++ by (intros j; assert  (X:=Z.mod_pos_bound j 16); rewrite Zland_15; cbn; lia).
+ forward.	(*s0 = X[(i+1)&0x0f]; *)
+ autorewrite with sublist. rewrite Zland_15.
+ forward. (* s0 = sigma0(s0); *)

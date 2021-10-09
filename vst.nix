@@ -11,6 +11,8 @@ stdenv.mkDerivation {
   buildInputs = [ coq ];
   propagatedBuildInputs = [ compcert ];
 
+  patches = [ ./vst64.patch ];
+
   postPatch = ''
     substituteInPlace util/coqflags \
       --replace "/usr/bin/env bash" ${stdenv.shell} \
