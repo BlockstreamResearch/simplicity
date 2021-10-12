@@ -18,7 +18,8 @@ import qualified Data.Monoid as Monoid
 import Data.Serialize (Get, getWord8,
                        Putter, put, putWord8, putWord32le, putWord64le, runPutLazy)
 import qualified Data.Word
-import Lens.Family2 (view, under)
+import Lens.Family2 (to, view, under)
+import Lens.Family2.Stock (some_)
 
 import Simplicity.Digest
 import Simplicity.Elements.DataTypes
@@ -29,6 +30,8 @@ import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Ty.Bit
 import Simplicity.Ty.Word
+
+just_ f = some_ f
 
 type Conf a = Either (Bit, Word256) a
 
@@ -51,6 +54,8 @@ data Prim a b where
   InputIssuanceEntropy :: Prim Word32 (S (S Word256))
   InputIssuanceAssetAmt :: Prim Word32 (S (S (Conf Word64)))
   InputIssuanceTokenAmt :: Prim Word32 (S (S (Conf Word64)))
+  InputIssuanceAssetProof :: Prim Word32 (S Word256)
+  InputIssuanceTokenProof :: Prim Word32 (S Word256)
   CurrentIndex :: Prim () Word32
   CurrentIsPegin :: Prim () Bit
   CurrentPrevOutpoint :: Prim () (Word256,Word32)
@@ -63,6 +68,8 @@ data Prim a b where
   CurrentIssuanceEntropy :: Prim () (S Word256)
   CurrentIssuanceAssetAmt :: Prim () (S (Conf Word64))
   CurrentIssuanceTokenAmt :: Prim () (S (Conf Word64))
+  CurrentIssuanceAssetProof :: Prim () Word256
+  CurrentIssuanceTokenProof :: Prim () Word256
   TapleafVersion :: Prim () Word8
   Tapbranch :: Prim Word8 (S Word256)
   InternalKey :: Prim () PubKey
@@ -73,6 +80,8 @@ data Prim a b where
   OutputNonce :: Prim Word32 (S (S (Conf Word256)))
   OutputScriptHash :: Prim Word32 (S Word256)
   OutputNullDatum :: Prim (Word32, Word32) (S (S (Either (Word2, Word256) (Either Bit Word4))))
+  OutputSurjectionProof :: Prim Word32 (S Word256)
+  OutputRangeProof :: Prim Word32 (S Word256)
   Fee :: Prim Word256 Word64
   ScriptCMR :: Prim () Word256
 
@@ -93,6 +102,8 @@ instance Eq (Prim a b) where
   InputIssuanceEntropy == InputIssuanceEntropy = True
   InputIssuanceAssetAmt == InputIssuanceAssetAmt = True
   InputIssuanceTokenAmt == InputIssuanceTokenAmt = True
+  InputIssuanceAssetProof == InputIssuanceAssetProof = True
+  InputIssuanceTokenProof == InputIssuanceTokenProof = True
   CurrentIndex == CurrentIndex = True
   CurrentIsPegin == CurrentIsPegin = True
   CurrentPrevOutpoint == CurrentPrevOutpoint = True
@@ -105,6 +116,8 @@ instance Eq (Prim a b) where
   CurrentIssuanceEntropy == CurrentIssuanceEntropy = True
   CurrentIssuanceAssetAmt == CurrentIssuanceAssetAmt = True
   CurrentIssuanceTokenAmt == CurrentIssuanceTokenAmt = True
+  CurrentIssuanceAssetProof == CurrentIssuanceAssetProof = True
+  CurrentIssuanceTokenProof == CurrentIssuanceTokenProof = True
   TapleafVersion == TapleafVersion = True
   Tapbranch == Tapbranch = True
   InternalKey == InternalKey = True
@@ -115,6 +128,8 @@ instance Eq (Prim a b) where
   OutputNonce == OutputNonce = True
   OutputScriptHash == OutputScriptHash = True
   OutputNullDatum == OutputNullDatum = True
+  OutputSurjectionProof == OutputSurjectionProof = True
+  OutputRangeProof == OutputRangeProof = True
   Fee == Fee = True
   ScriptCMR == ScriptCMR = True
   _ == _ = False
@@ -140,6 +155,8 @@ primName InputIssuanceContract = "inputIssuanceContract"
 primName InputIssuanceEntropy = "inputIssuanceEntropy"
 primName InputIssuanceAssetAmt = "inputIssuanceAssetAmt"
 primName InputIssuanceTokenAmt = "inputIssuanceTokenAmt"
+primName InputIssuanceAssetProof = "inputIssuanceAssetProof"
+primName InputIssuanceTokenProof = "inputIssuanceTokenProof"
 primName CurrentIndex = "currentIndex"
 primName CurrentIsPegin = "currentIsPegin"
 primName CurrentPrevOutpoint = "currentPrevOutpoint"
@@ -152,6 +169,8 @@ primName CurrentIssuanceContract = "currentIssuanceContract"
 primName CurrentIssuanceEntropy = "currentIssuanceEntropy"
 primName CurrentIssuanceAssetAmt = "currentIssuanceAssetAmt"
 primName CurrentIssuanceTokenAmt = "currentIssuanceTokenAmt"
+primName CurrentIssuanceAssetProof = "currentIssuanceAssetProof"
+primName CurrentIssuanceTokenProof = "currentIssuanceTokenProof"
 primName TapleafVersion = "tapleafVersion"
 primName Tapbranch = "tapbranch"
 primName InternalKey = "internalKey"
@@ -162,19 +181,21 @@ primName OutputAmount = "outputAmount"
 primName OutputNonce = "outputNonce"
 primName OutputScriptHash = "outputScriptHash"
 primName OutputNullDatum = "outputNullDatum"
+primName OutputSurjectionProof = "outputSurjectionProof"
+primName OutputRangeProof = "outputRangeProof"
 primName Fee = "fee"
 primName ScriptCMR = "scriptCMR"
 
 getPrimBit :: Monad m => m Bool -> m (SomeArrow Prim)
 getPrimBit next =
-  (((((makeArrow Version & makeArrow LockTime) & makeArrow InputIsPegin) & (makeArrow InputPrevOutpoint & makeArrow InputAsset)) &
-    (((makeArrow InputAmount & makeArrow InputScriptHash) & makeArrow InputSequence) & (makeArrow InputIssuanceBlinding & makeArrow InputIssuanceContract))) &
-   ((((makeArrow InputIssuanceEntropy & makeArrow InputIssuanceAssetAmt) & makeArrow InputIssuanceTokenAmt) & (makeArrow OutputAsset & makeArrow OutputAmount)) &
-    (((makeArrow OutputNonce & makeArrow OutputScriptHash) & makeArrow OutputNullDatum) & (makeArrow ScriptCMR & makeArrow CurrentIndex)))) &
-  (((((makeArrow CurrentIsPegin & makeArrow CurrentPrevOutpoint) & makeArrow CurrentAsset) & (makeArrow CurrentAmount & makeArrow CurrentScriptHash)) &
-    (((makeArrow CurrentSequence & makeArrow CurrentIssuanceBlinding) & makeArrow CurrentIssuanceContract) & (makeArrow CurrentIssuanceEntropy & makeArrow CurrentIssuanceAssetAmt))) &
-   ((((makeArrow CurrentIssuanceTokenAmt & makeArrow TapleafVersion) & makeArrow Tapbranch) & (makeArrow InternalKey & makeArrow AnnexHash)) &
-     (((makeArrow InputsHash & makeArrow OutputsHash) & makeArrow NumInputs) & (makeArrow NumOutputs & makeArrow Fee))))
+  (((((makeArrow Version & makeArrow LockTime) & makeArrow InputIsPegin) & ((makeArrow InputPrevOutpoint & makeArrow InputAsset) & makeArrow InputAmount)) &
+    (((makeArrow InputScriptHash & makeArrow InputSequence) & makeArrow InputIssuanceBlinding) & ((makeArrow InputIssuanceContract & makeArrow InputIssuanceEntropy) & makeArrow InputIssuanceAssetAmt))) &
+   ((((makeArrow InputIssuanceTokenAmt & makeArrow InputIssuanceAssetProof) & makeArrow InputIssuanceTokenProof) & ((makeArrow OutputAsset & makeArrow OutputAmount) & makeArrow OutputNonce)) &
+    (((makeArrow OutputScriptHash & makeArrow OutputNullDatum) & makeArrow OutputSurjectionProof) & (makeArrow OutputRangeProof & makeArrow ScriptCMR)))) &
+  (((((makeArrow CurrentIndex & makeArrow CurrentIsPegin) & makeArrow CurrentPrevOutpoint) & ((makeArrow CurrentAsset & makeArrow CurrentAmount) & makeArrow CurrentScriptHash)) &
+    (((makeArrow CurrentSequence & makeArrow CurrentIssuanceBlinding) & makeArrow CurrentIssuanceContract) & ((makeArrow CurrentIssuanceEntropy & makeArrow CurrentIssuanceAssetAmt) & makeArrow CurrentIssuanceTokenAmt))) &
+   ((((makeArrow CurrentIssuanceAssetProof& makeArrow CurrentIssuanceTokenProof ) & makeArrow TapleafVersion) & ((makeArrow Tapbranch & makeArrow InternalKey) & makeArrow AnnexHash)) &
+    (((makeArrow InputsHash & makeArrow OutputsHash) & makeArrow NumInputs) & (makeArrow NumOutputs & makeArrow Fee))))
  where
   l & r = next >>= \b -> if b then r else l
   makeArrow p = return (SomeArrow p)
@@ -186,38 +207,44 @@ putPrimBit = go
   go Version                      = ([o,o,o,o,o,o]++)
   go LockTime                     = ([o,o,o,o,o,i]++)
   go InputIsPegin                 = ([o,o,o,o,i]++)
-  go InputPrevOutpoint            = ([o,o,o,i,o]++)
-  go InputAsset                   = ([o,o,o,i,i]++)
-  go InputAmount                  = ([o,o,i,o,o,o]++)
-  go InputScriptHash              = ([o,o,i,o,o,i]++)
-  go InputSequence                = ([o,o,i,o,i]++)
-  go InputIssuanceBlinding        = ([o,o,i,i,o]++)
-  go InputIssuanceContract        = ([o,o,i,i,i]++)
-  go InputIssuanceEntropy         = ([o,i,o,o,o,o]++)
-  go InputIssuanceAssetAmt        = ([o,i,o,o,o,i]++)
-  go InputIssuanceTokenAmt        = ([o,i,o,o,i]++)
-  go OutputAsset                  = ([o,i,o,i,o]++)
-  go OutputAmount                 = ([o,i,o,i,i]++)
-  go OutputNonce                  = ([o,i,i,o,o,o]++)
-  go OutputScriptHash             = ([o,i,i,o,o,i]++)
-  go OutputNullDatum              = ([o,i,i,o,i]++)
-  go ScriptCMR                    = ([o,i,i,i,o]++)
-  go CurrentIndex                 = ([o,i,i,i,i]++)
+  go InputPrevOutpoint            = ([o,o,o,i,o,o]++)
+  go InputAsset                   = ([o,o,o,i,o,i]++)
+  go InputAmount                  = ([o,o,o,i,i]++)
+  go InputScriptHash              = ([o,o,i,o,o,o]++)
+  go InputSequence                = ([o,o,i,o,o,i]++)
+  go InputIssuanceBlinding        = ([o,o,i,o,i]++)
+  go InputIssuanceContract        = ([o,o,i,i,o,o]++)
+  go InputIssuanceEntropy         = ([o,o,i,i,o,i]++)
+  go InputIssuanceAssetAmt        = ([o,o,i,i,i]++)
+  go InputIssuanceTokenAmt        = ([o,i,o,o,o,o]++)
+  go InputIssuanceAssetProof      = ([o,i,o,o,o,i]++)
+  go InputIssuanceTokenProof      = ([o,i,o,o,i]++)
+  go OutputAsset                  = ([o,i,o,i,o,o]++)
+  go OutputAmount                 = ([o,i,o,i,o,i]++)
+  go OutputNonce                  = ([o,i,o,i,i]++)
+  go OutputScriptHash             = ([o,i,i,o,o,o]++)
+  go OutputNullDatum              = ([o,i,i,o,o,i]++)
+  go OutputSurjectionProof        = ([o,i,i,o,i]++)
+  go OutputRangeProof             = ([o,i,i,i,o]++)
+  go ScriptCMR                    = ([o,i,i,i,i]++)
+  go CurrentIndex                 = ([i,o,o,o,o,o]++)
 -- :TODO: Below here are primitives that are likely candidates for being jets instead of primitives (see https://github.com/ElementsProject/simplicity/issues/5).
-  go CurrentIsPegin               = ([i,o,o,o,o,o]++)
-  go CurrentPrevOutpoint          = ([i,o,o,o,o,i]++)
-  go CurrentAsset                 = ([i,o,o,o,i]++)
-  go CurrentAmount                = ([i,o,o,i,o]++)
+  go CurrentIsPegin               = ([i,o,o,o,o,i]++)
+  go CurrentPrevOutpoint          = ([i,o,o,o,i]++)
+  go CurrentAsset                 = ([i,o,o,i,o,o]++)
+  go CurrentAmount                = ([i,o,o,i,o,i]++)
   go CurrentScriptHash            = ([i,o,o,i,i]++)
   go CurrentSequence              = ([i,o,i,o,o,o]++)
   go CurrentIssuanceBlinding      = ([i,o,i,o,o,i]++)
   go CurrentIssuanceContract      = ([i,o,i,o,i]++)
-  go CurrentIssuanceEntropy       = ([i,o,i,i,o]++)
-  go CurrentIssuanceAssetAmt      = ([i,o,i,i,i]++)
-  go CurrentIssuanceTokenAmt      = ([i,i,o,o,o,o]++)
-  go TapleafVersion               = ([i,i,o,o,o,i]++)
-  go Tapbranch                    = ([i,i,o,o,i]++)
-  go InternalKey                  = ([i,i,o,i,o]++)
+  go CurrentIssuanceEntropy       = ([i,o,i,i,o,o]++)
+  go CurrentIssuanceAssetAmt      = ([i,o,i,i,o,i]++)
+  go CurrentIssuanceTokenAmt      = ([i,o,i,i,i]++)
+  go CurrentIssuanceAssetProof    = ([i,i,o,o,o,o]++)
+  go CurrentIssuanceTokenProof    = ([i,i,o,o,o,i]++)
+  go TapleafVersion               = ([i,i,o,o,i]++)
+  go Tapbranch                    = ([i,i,o,i,o,o]++)
+  go InternalKey                  = ([i,i,o,i,o,i]++)
   go AnnexHash                    = ([i,i,o,i,i]++)
   go InputsHash                   = ([i,i,i,o,o,o]++)
   go OutputsHash                  = ([i,i,i,o,o,i]++)
@@ -311,6 +338,8 @@ primSem p a env = interpret p a
   encodeNullDatum OP14 = Right (Right (toWord4 0xd))
   encodeNullDatum OP15 = Right (Right (toWord4 0xe))
   encodeNullDatum OP16 = Right (Right (toWord4 0xf))
+  issuanceAmount = either newIssuanceAmount reissuanceAmount
+  issuanceTokenAmount = either newIssuanceTokenAmount (const (Amount (Explicit 0)))
   interpret Version = element . return . toWord32 . toInteger $ sigTxVersion tx
   interpret LockTime = element . return . toWord32 . toInteger $ sigTxLock tx
   interpret InputsHash = element . return . encodeHash $ envInputsHash env
@@ -329,9 +358,11 @@ primSem p a env = interpret p a
   interpret InputIssuanceEntropy = return . (atInput $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance))
   interpret InputIssuanceAssetAmt = return . (atInput $
-      cast . fmap (encodeAmount . clearAmountPrf . either newIssuanceAmount reissuanceAmount) . sigTxiIssuance)
+      cast . fmap (encodeAmount . clearAmountPrf . issuanceAmount) . sigTxiIssuance)
   interpret InputIssuanceTokenAmt = return . (atInput $
-      cast . fmap (encodeAmount . clearAmountPrf . either newIssuanceTokenAmount (const (Amount (Explicit 0)))) . sigTxiIssuance)
+      cast . fmap (encodeAmount . clearAmountPrf . issuanceTokenAmount) . sigTxiIssuance)
+  interpret InputIssuanceAssetProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceAmount.under amount.prf_))
+  interpret InputIssuanceTokenProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceTokenAmount.under amount.prf_))
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
   interpret CurrentIsPegin = element $ toBit . sigTxiIsPegin <$> currentInput
   interpret CurrentPrevOutpoint = element $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
@@ -346,9 +377,11 @@ primSem p a env = interpret p a
   interpret CurrentIssuanceEntropy = element $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance) <$> currentInput
   interpret CurrentIssuanceAssetAmt = element $
-      cast . fmap (encodeAmount . clearAmountPrf . either newIssuanceAmount reissuanceAmount) . sigTxiIssuance <$> currentInput
+      cast . fmap (encodeAmount . clearAmountPrf . issuanceAmount) . sigTxiIssuance <$> currentInput
   interpret CurrentIssuanceTokenAmt = element $
-      cast . fmap (encodeAmount . clearAmountPrf . either newIssuanceTokenAmount (const (Amount (Explicit 0)))) . sigTxiIssuance <$> currentInput
+      cast . fmap (encodeAmount . clearAmountPrf . issuanceTokenAmount) . sigTxiIssuance <$> currentInput
+  interpret CurrentIssuanceAssetProof = element $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceAmount.under amount.prf_) <$> currentInput
+  interpret CurrentIssuanceTokenProof = element $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceTokenAmount.under amount.prf_) <$> currentInput
   interpret TapleafVersion = element . return . toWord8 . toInteger . tapLeafVersion $ envTap env
   interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapBranch (envTap env)) . fromInteger . fromWord8
   interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env
@@ -362,6 +395,8 @@ primSem p a env = interpret p a
     txo <- lookupOutput . fromInteger $ fromWord32 i
     nullData <- txNullData $ txoScript txo
     return . cast . fmap (encodeNullDatum . fmap bslHash) . listToMaybe $ List.drop (fromInteger (fromWord32 j)) nullData
+  interpret OutputSurjectionProof = return . (atOutput $ encodeHash . bslHash . view (to txoAsset.under asset.prf_))
+  interpret OutputRangeProof = return . (atOutput $ encodeHash . bslHash . view (to txoAmount.under amount.prf_))
   interpret Fee = \assetId -> return . toWord64 . toInteger . Monoid.getSum $ foldMap (getValue assetId) (sigTxOut tx)
    where
     getValue assetId txo = fromMaybe (Monoid.Sum 0) $ do

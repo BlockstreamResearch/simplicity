@@ -353,6 +353,18 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mmspbw256w64
 }
+,[INPUT_ISSUANCE_ASSET_PROOF] =
+{ .tag = JET
+, .jet = input_issuance_asset_proof
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+}
+,[INPUT_ISSUANCE_TOKEN_PROOF] =
+{ .tag = JET
+, .jet = input_issuance_token_proof
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+}
 ,[OUTPUT_ASSET] =
 { .tag = JET
 , .jet = output_asset
@@ -382,6 +394,18 @@
 , .jet = output_null_datum
 , .sourceIx = ty_w64
 , .targetIx = ty_mmspw2w256sbw4
+}
+,[OUTPUT_SURJECTION_PROOF] =
+{ .tag = JET
+, .jet = output_surjection_proof
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+}
+,[OUTPUT_RANGE_PROOF] =
+{ .tag = JET
+, .jet = output_range_proof
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
 }
 ,[SCRIPT_CMR] =
 { .tag = JET
@@ -460,6 +484,18 @@
 , .jet = current_issuance_token_amt
 , .sourceIx = ty_u
 , .targetIx = ty_mspbw256w64
+}
+,[CURRENT_ISSUANCE_ASSET_PROOF] =
+{ .tag = JET
+, .jet = current_issuance_asset_proof
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
+,[CURRENT_ISSUANCE_TOKEN_PROOF] =
+{ .tag = JET
+, .jet = current_issuance_token_proof
+, .sourceIx = ty_u
+, .targetIx = ty_w256
 }
 ,[TAPLEAF_VERSION] =
 { .tag = JET
