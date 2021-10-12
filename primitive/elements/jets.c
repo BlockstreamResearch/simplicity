@@ -126,7 +126,7 @@ static void issuanceAssetAmt(frameItem* dst, const assetIssuance* issuance) {
   }
 }
 
-/* Write an optional confidential issued/reissued asset amount from an 'assetIssuance' to the 'dst' frame, advancing the cursor.
+/* Write an optional confidential token amount from an 'assetIssuance' to the 'dst' frame, advancing the cursor.
  *
  * Precondition: '*dst' is a valid write frame for 259 more cells;
  *               NULL != issuance;
@@ -274,6 +274,28 @@ bool input_issuance_token_amt(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
+/* input_issuance_asset_proof : TWO^32 |- S TWO^256 */
+bool input_issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numInputs)) {
+    writeHash(dst, &env->tx->input[i].issuance.assetRangeProofHash);
+  } else {
+    skipBits(dst, 256);
+  }
+  return true;
+}
+
+/* input_issuance_token_proof : TWO^32 |- S TWO^256 */
+bool input_issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numInputs)) {
+    writeHash(dst, &env->tx->input[i].issuance.tokenRangeProofHash);
+  } else {
+    skipBits(dst, 256);
+  }
+  return true;
+}
+
 /* output_asset : TWO^32 |- S (Conf TWO^256) */
 bool output_asset(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
@@ -367,6 +389,28 @@ bool output_null_datum(frameItem* dst, frameItem src, const txEnv* env) {
     }
   } else {
     skipBits(dst, 1 + 1 + 2 + 256);
+  }
+  return true;
+}
+
+/* output_surjection_proof : TWO^32 |- S TWO^256 */
+bool output_surjection_proof(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numOutputs)) {
+    writeHash(dst, &env->tx->output[i].surjectionProofHash);
+  } else {
+    skipBits(dst, 256);
+  }
+  return true;
+}
+
+/* output_range_proof : TWO^32 |- S TWO^256 */
+bool output_range_proof(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numOutputs)) {
+    writeHash(dst, &env->tx->output[i].rangeProofHash);
+  } else {
+    skipBits(dst, 256);
   }
   return true;
 }
@@ -469,6 +513,22 @@ bool current_issuance_token_amt(frameItem* dst, frameItem src, const txEnv* env)
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   issuanceTokenAmt(dst, &env->tx->input[env->ix].issuance);
+  return true;
+}
+
+/* current_issuance_asset_proof : ONE |- TWO^256 */
+bool current_issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  if (env->tx->numInputs <= env->ix) return false;
+  writeHash(dst, &env->tx->input[env->ix].issuance.assetRangeProofHash);
+  return true;
+}
+
+/* current_issuance_token_proof : ONE |- TWO^256 */
+bool current_issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  if (env->tx->numInputs <= env->ix) return false;
+  writeHash(dst, &env->tx->input[env->ix].issuance.tokenRangeProofHash);
   return true;
 }
 

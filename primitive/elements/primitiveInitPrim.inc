@@ -12,11 +12,15 @@ MK_TAG(&jet_node[INPUT_ISSUANCE_CONTRACT].cmr, PRIMITIVE_TAG("inputIssuanceContr
 MK_TAG(&jet_node[INPUT_ISSUANCE_ENTROPY].cmr, PRIMITIVE_TAG("inputIssuanceEntropy"));
 MK_TAG(&jet_node[INPUT_ISSUANCE_ASSET_AMT].cmr, PRIMITIVE_TAG("inputIssuanceAssetAmt"));
 MK_TAG(&jet_node[INPUT_ISSUANCE_TOKEN_AMT].cmr, PRIMITIVE_TAG("inputIssuanceTokenAmt"));
+MK_TAG(&jet_node[INPUT_ISSUANCE_ASSET_PROOF].cmr, PRIMITIVE_TAG("inputIssuanceAssetProof"));
+MK_TAG(&jet_node[INPUT_ISSUANCE_TOKEN_PROOF].cmr, PRIMITIVE_TAG("inputIssuanceTokenProof"));
 MK_TAG(&jet_node[OUTPUT_ASSET].cmr, PRIMITIVE_TAG("outputAsset"));
 MK_TAG(&jet_node[OUTPUT_AMOUNT].cmr, PRIMITIVE_TAG("outputAmount"));
 MK_TAG(&jet_node[OUTPUT_NONCE].cmr, PRIMITIVE_TAG("outputNonce"));
 MK_TAG(&jet_node[OUTPUT_SCRIPT_HASH].cmr, PRIMITIVE_TAG("outputScriptHash"));
 MK_TAG(&jet_node[OUTPUT_NULL_DATUM].cmr, PRIMITIVE_TAG("outputNullDatum"));
+MK_TAG(&jet_node[OUTPUT_SURJECTION_PROOF].cmr, PRIMITIVE_TAG("outputSurjectionProof"));
+MK_TAG(&jet_node[OUTPUT_RANGE_PROOF].cmr, PRIMITIVE_TAG("outputRangeProof"));
 MK_TAG(&jet_node[SCRIPT_CMR].cmr, PRIMITIVE_TAG("scriptCMR"));
 MK_TAG(&jet_node[CURRENT_INDEX].cmr, PRIMITIVE_TAG("currentIndex"));
 MK_TAG(&jet_node[CURRENT_IS_PEGIN].cmr, PRIMITIVE_TAG("currentIsPegin"));
@@ -30,6 +34,8 @@ MK_TAG(&jet_node[CURRENT_ISSUANCE_CONTRACT].cmr, PRIMITIVE_TAG("currentIssuanceC
 MK_TAG(&jet_node[CURRENT_ISSUANCE_ENTROPY].cmr, PRIMITIVE_TAG("currentIssuanceEntropy"));
 MK_TAG(&jet_node[CURRENT_ISSUANCE_ASSET_AMT].cmr, PRIMITIVE_TAG("currentIssuanceAssetAmt"));
 MK_TAG(&jet_node[CURRENT_ISSUANCE_TOKEN_AMT].cmr, PRIMITIVE_TAG("currentIssuanceTokenAmt"));
+MK_TAG(&jet_node[CURRENT_ISSUANCE_ASSET_PROOF].cmr, PRIMITIVE_TAG("currentIssuanceAssetProof"));
+MK_TAG(&jet_node[CURRENT_ISSUANCE_TOKEN_PROOF].cmr, PRIMITIVE_TAG("currentIssuanceTokenProof"));
 MK_TAG(&jet_node[TAPLEAF_VERSION].cmr, PRIMITIVE_TAG("tapleafVersion"));
 MK_TAG(&jet_node[TAPBRANCH].cmr, PRIMITIVE_TAG("tapbranch"));
 MK_TAG(&jet_node[INTERNAL_KEY].cmr, PRIMITIVE_TAG("internalKey"));
