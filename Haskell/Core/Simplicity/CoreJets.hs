@@ -122,6 +122,7 @@ getJetBit abort next =  getPositive next >>= match
   makeArrow p = return (SomeArrow p)
   match 2 = (someArrowMap ArithJet) <$> getJetBitArith abort next
   match 3 = (someArrowMap HashJet) <$> getJetBitHash abort next
+  match _ = vacuous abort
   getJetBitArith :: (Monad m) => m Void -> m Bool -> m (SomeArrow ArithJet)
   getJetBitArith abort next = getPositive next >>= matchArith
    where
@@ -131,7 +132,7 @@ getJetBit abort next =  getPositive next >>= match
     matchArith 8 = getPositive next >>= matchSubtract
     matchArith 12 = getPositive next >>= matchFullMultiply
     matchArith 13 = getPositive next >>= matchMultiply
-    matchArth _ = vacuous abort
+    matchArith _ = vacuous abort
     matchAdd 5 = makeArrow Add32
     matchAdd _ = vacuous abort
     matchFullAdd 5 = makeArrow FullAdd32
