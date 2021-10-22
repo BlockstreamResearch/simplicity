@@ -155,15 +155,15 @@ bool version(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* lockTime : ONE |- TWO^32 */
-bool lockTime(frameItem* dst, frameItem src, const txEnv* env) {
+/* lock_time : ONE |- TWO^32 */
+bool lock_time(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   write32(dst, env->tx->lockTime);
   return true;
 }
 
-/* inputIsPegin : TWO^32 |- S TWO */
-bool inputIsPegin(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_is_pegin : TWO^32 |- S TWO */
+bool input_is_pegin(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     writeBit(dst, env->tx->input[i].isPegin);
@@ -173,8 +173,8 @@ bool inputIsPegin(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* inputIsPegin : TWO^32 |- S (TWO^256 * TWO^32) */
-bool inputPrevOutpoint(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_prev_outpoint : TWO^32 |- S (TWO^256 * TWO^32) */
+bool input_prev_outpoint(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     prevOutpoint(dst, &env->tx->input[i].prevOutpoint);
@@ -184,8 +184,8 @@ bool inputPrevOutpoint(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* inputAsset : TWO^32 |- S (Conf TWO^256) */
-bool inputAsset(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_asset : TWO^32 |- S (Conf TWO^256) */
+bool input_asset(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     return asset(dst, &env->tx->input[i].txo.asset);
@@ -195,8 +195,8 @@ bool inputAsset(frameItem* dst, frameItem src, const txEnv* env) {
   }
 }
 
-/* inputAmount : TWO^32 |- S (Conf TWO^64) */
-bool inputAmount(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_amount : TWO^32 |- S (Conf TWO^64) */
+bool input_amount(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     return amt(dst, &env->tx->input[i].txo.amt);
@@ -206,8 +206,8 @@ bool inputAmount(frameItem* dst, frameItem src, const txEnv* env) {
   }
 }
 
-/* inputScriptHash : TWO^32 |- S TWO^256 */
-bool inputScriptHash(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_script_hash : TWO^32 |- S TWO^256 */
+bool input_script_hash(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     writeHash(dst, &env->tx->input[i].txo.scriptPubKey);
@@ -217,8 +217,8 @@ bool inputScriptHash(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* inputSequence : TWO^32 |- S TWO^32 */
-bool inputSequence(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_sequence : TWO^32 |- S TWO^32 */
+bool input_sequence(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     write32(dst, env->tx->input[i].sequence);
@@ -228,8 +228,8 @@ bool inputSequence(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* inputIssuanceBlinding : TWO^32 |- S (S TWO^256) */
-bool inputIssuanceBlinding(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_issuance_blinding : TWO^32 |- S (S TWO^256) */
+bool input_issuance_blinding(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     issuanceBlinding(dst, &env->tx->input[i].issuance);
@@ -239,8 +239,8 @@ bool inputIssuanceBlinding(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* inputIssuanceContract : TWO^32 |- S (S TWO^256) */
-bool inputIssuanceContract(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_issuance_contract : TWO^32 |- S (S TWO^256) */
+bool input_issuance_contract(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     issuanceContract(dst, &env->tx->input[i].issuance);
@@ -250,8 +250,8 @@ bool inputIssuanceContract(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* inputIssuanceEntropy : TWO^32 |- S (S TWO^256) */
-bool inputIssuanceEntropy(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_issuance_entropy : TWO^32 |- S (S TWO^256) */
+bool input_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     issuanceEntropy(dst, &env->tx->input[i].issuance);
@@ -261,8 +261,8 @@ bool inputIssuanceEntropy(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* inputIssuanceAssetAmt : TWO^32 |- S (S (Conf TWO^64)) */
-bool inputIssuanceAssetAmt(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_issuance_asset_amt : TWO^32 |- S (S (Conf TWO^64)) */
+bool input_issuance_asset_amt(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     issuanceAssetAmt(dst, &env->tx->input[i].issuance);
@@ -272,8 +272,8 @@ bool inputIssuanceAssetAmt(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* inputIssuanceTokenAmt : TWO^32 |- S (S (Conf TWO^64)) */
-bool inputIssuanceTokenAmt(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_issuance_token_amt : TWO^32 |- S (S (Conf TWO^64)) */
+bool input_issuance_token_amt(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     issuanceTokenAmt(dst, &env->tx->input[i].issuance);
@@ -283,8 +283,8 @@ bool inputIssuanceTokenAmt(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* outputAsset : TWO^32 |- S (Conf TWO^256) */
-bool outputAsset(frameItem* dst, frameItem src, const txEnv* env) {
+/* output_asset : TWO^32 |- S (Conf TWO^256) */
+bool output_asset(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     return asset(dst, &env->tx->output[i].asset);
@@ -294,8 +294,8 @@ bool outputAsset(frameItem* dst, frameItem src, const txEnv* env) {
   }
 }
 
-/* outputAmount : TWO^32 |- S (Conf TWO^64) */
-bool outputAmount(frameItem* dst, frameItem src, const txEnv* env) {
+/* output_amount : TWO^32 |- S (Conf TWO^64) */
+bool output_amount(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     return amt(dst, &env->tx->output[i].amt);
@@ -305,8 +305,8 @@ bool outputAmount(frameItem* dst, frameItem src, const txEnv* env) {
   }
 }
 
-/* outputNonce : TWO^32 |- S (S (Conf TWO^256)) */
-bool outputNonce(frameItem* dst, frameItem src, const txEnv* env) {
+/* output_nonce : TWO^32 |- S (S (Conf TWO^256)) */
+bool output_nonce(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     nonce(dst, &env->tx->output[i].nonce);
@@ -316,8 +316,8 @@ bool outputNonce(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* outputScriptHash : TWO^32 |- S TWO^256 */
-bool outputScriptHash(frameItem* dst, frameItem src, const txEnv* env) {
+/* output_script_hash : TWO^32 |- S TWO^256 */
+bool output_script_hash(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     writeHash(dst, &env->tx->output[i].scriptPubKey);
@@ -327,8 +327,8 @@ bool outputScriptHash(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* outputNullDatum : TWO^32 * TWO^32 |- S (S (TWO^2 * TWO^256 + (TWO + TWO^4)))  */
-bool outputNullDatum(frameItem* dst, frameItem src, const txEnv* env) {
+/* output_null_datum : TWO^32 * TWO^32 |- S (S (TWO^2 * TWO^256 + (TWO + TWO^4)))  */
+bool output_null_datum(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs && env->tx->output[i].isNullData)) {
     uint_fast32_t j = read32(&src);
@@ -382,129 +382,129 @@ bool outputNullDatum(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* scriptCMR : ONE |- TWO^256 */
-bool scriptCMR(frameItem* dst, frameItem src, const txEnv* env) {
+/* script_cmr : ONE |- TWO^256 */
+bool script_cmr(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   write32s(dst, env->scriptCMR, 8);
   return true;
 }
 
-/* currentIndex : ONE |- TWO^32 */
-bool currentIndex(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_index : ONE |- TWO^32 */
+bool current_index(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   write32(dst, env->ix);
   return true;
 }
 
-/* currentIsPegin : ONE |- TWO */
-bool currentIsPegin(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_is_pegin : ONE |- TWO */
+bool current_is_pegin(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   writeBit(dst, env->tx->input[env->ix].isPegin);
   return true;
 }
 
-/* currentPrevOutpoint : ONE |- TWO^256 * TWO^32 */
-bool currentPrevOutpoint(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_prev_outpoint : ONE |- TWO^256 * TWO^32 */
+bool current_prev_outpoint(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   prevOutpoint(dst, &env->tx->input[env->ix].prevOutpoint);
   return true;
 }
 
-/* currentAsset : ONE |- Conf TWO^256 */
-bool currentAsset(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_asset : ONE |- Conf TWO^256 */
+bool current_asset(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   return asset(dst, &env->tx->input[env->ix].txo.asset);
 }
 
-/* currentAmount : ONE |- Conf TWO^64 */
-bool currentAmount(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_amount : ONE |- Conf TWO^64 */
+bool current_amount(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   return amt(dst, &env->tx->input[env->ix].txo.amt);
 }
 
-/* currentScriptHash : ONE |- TWO^256 */
-bool currentScriptHash(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_script_hash : ONE |- TWO^256 */
+bool current_script_hash(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   writeHash(dst, &env->tx->input[env->ix].txo.scriptPubKey);
   return true;
 }
 
-/* currentSequence : ONE |- TWO^32 */
-bool currentSequence(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_sequence : ONE |- TWO^32 */
+bool current_sequence(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   write32(dst, env->tx->input[env->ix].sequence);
   return true;
 }
 
-/* currentIssuanceBlinding : ONE |- S (Conf TWO^256) */
-bool currentIssuanceBlinding(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_issuance_blinding : ONE |- S (Conf TWO^256) */
+bool current_issuance_blinding(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   issuanceBlinding(dst, &env->tx->input[env->ix].issuance);
   return true;
 }
 
-/* currentIssuanceContractHash : ONE |- S (Conf TWO^256) */
-bool currentIssuanceContract(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_issuance_contract : ONE |- S (Conf TWO^256) */
+bool current_issuance_contract(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   issuanceContract(dst, &env->tx->input[env->ix].issuance);
   return true;
 }
 
-/* currentIssuanceEntropy : ONE |- S (Conf TWO^256) */
-bool currentIssuanceEntropy(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_issuance_entropy : ONE |- S (Conf TWO^256) */
+bool current_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   issuanceEntropy(dst, &env->tx->input[env->ix].issuance);
   return true;
 }
 
-/* currentIssuanceAssetAmt : ONE |- S (Conf TWO^64) */
-bool currentIssuanceAssetAmt(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_issuance_asset_amt : ONE |- S (Conf TWO^64) */
+bool current_issuance_asset_amt(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   issuanceAssetAmt(dst, &env->tx->input[env->ix].issuance);
   return true;
 }
 
-/* currentIssuanceTokenAmt : ONE |- S (Conf TWO^64) */
-bool currentIssuanceTokenAmt(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_issuance_token_amt : ONE |- S (Conf TWO^64) */
+bool current_issuance_token_amt(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   issuanceTokenAmt(dst, &env->tx->input[env->ix].issuance);
   return true;
 }
 
-/* inputsHash : ONE |- TWO^256 */
-bool inputsHash(frameItem* dst, frameItem src, const txEnv* env) {
+/* inputs_hash : ONE |- TWO^256 */
+bool inputs_hash(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   writeHash(dst, &env->tx->inputsHash);
   return true;
 }
 
-/* outputsHash : ONE |- TWO^256 */
-bool outputsHash(frameItem* dst, frameItem src, const txEnv* env) {
+/* outputs_hash : ONE |- TWO^256 */
+bool outputs_hash(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   writeHash(dst, &env->tx->outputsHash);
   return true;
 }
 
-/* numInputs : ONE |- TWO^32 */
-bool numInputs(frameItem* dst, frameItem src, const txEnv* env) {
+/* num_inputs : ONE |- TWO^32 */
+bool num_inputs(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   write32(dst, env->tx->numInputs);
   return true;
 }
 
-/* numOutputs : ONE |- TWO^32 */
-bool numOutputs(frameItem* dst, frameItem src, const txEnv* env) {
+/* num_outputs : ONE |- TWO^32 */
+bool num_outputs(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   write32(dst, env->tx->numOutputs);
   return true;
