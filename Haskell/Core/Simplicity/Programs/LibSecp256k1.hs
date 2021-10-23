@@ -32,7 +32,7 @@ module Simplicity.Programs.LibSecp256k1
   -- * Schnorr signature operations
   , PubKey, pubkey_unpack, pubkey_unpack_neg
   , Sig, signature_unpack
-  , bip0340_check, bip0340_verify
+  , bip_0340_check, bip_0340_verify
   -- * Example instances
   , lib
   ) where
@@ -267,7 +267,7 @@ data Lib term =
   , signature_unpack :: term Sig (Either () (FE, Scalar))
 
     -- | This function is given a public key, a 256-bit message, and a signature, and checks if the signature is valid for the given message and public key.
-  , bip0340_check :: term ((PubKey, Word256), Sig) Bit
+  , bip_0340_check :: term ((PubKey, Word256), Sig) Bit
   }
 
 instance SimplicityFunctor Lib where
@@ -325,7 +325,7 @@ instance SimplicityFunctor Lib where
     , pubkey_unpack = m pubkey_unpack
     , pubkey_unpack_neg = m pubkey_unpack_neg
     , signature_unpack = m signature_unpack
-    , bip0340_check = m bip0340_check
+    , bip_0340_check = m bip_0340_check
     }
 
 -- | Build the LibSecp256k1 'Lib' library from its dependencies.
@@ -684,7 +684,7 @@ mkLib Sha256.Lib{..} = lib
   &&& iden
   >>> cond (injr iden) (injl unit)
 
-  , bip0340_check =
+  , bip_0340_check =
      let
       k1 = iih &&& (ioh &&& oh)
        >>> match false k2
@@ -770,8 +770,8 @@ point_verify_1 :: Assert term => Lib term -> term (((Scalar, Point), Scalar), Po
 point_verify_1 m = assert (point_check_1 m)
 
 -- | This function is given a public key, a 256-bit message, and a signature, and asserts that the signature is valid for the given message and public key.
-bip0340_verify :: Assert term => Lib term -> term ((PubKey, Word256), Sig) ()
-bip0340_verify m = assert (bip0340_check m)
+bip_0340_verify :: Assert term => Lib term -> term ((PubKey, Word256), Sig) ()
+bip_0340_verify m = assert (bip_0340_check m)
 
 -- | An instance of the Sha256 'Lib' library.
 -- This instance does not share its dependencies.

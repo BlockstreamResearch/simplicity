@@ -659,14 +659,14 @@ prop_signature_unpack r@(FieldElement wr) s@(ScalarElement ws) =
  where
   fast_signature_unpack = testCoreEval signature_unpack
 
-fast_bip0340_check = fromJust . testCoreEval bip0340_check
+fast_bip_0340_check = fromJust . testCoreEval bip_0340_check
  where
   fromJust (Just a) = fromBit a
   fromJust Nothing = False
 
-group_bip0340_check = testGroup "bip0340_check" (zipWith case_bip0340_check_vector [0..] bip0340Vectors)
+group_bip_0340_check = testGroup "bip_0340_check" (zipWith case_bip_0340_check_vector [0..] bip0340Vectors)
  where
-  assert_bip0340_check_vector tv = bip0340TestResult tv @=? fast_bip0340_check (bip0340TestAsTy tv)
-  case_bip0340_check_vector n tv = testCase name (assert_bip0340_check_vector tv)
+  assert_bip_0340_check_vector tv = bip0340TestResult tv @=? fast_bip_0340_check (bip0340TestAsTy tv)
+  case_bip_0340_check_vector n tv = testCase name (assert_bip_0340_check_vector tv)
    where
-    name = "bip0340_vector_" ++ show n
+    name = "bip_0340_vector_" ++ show n

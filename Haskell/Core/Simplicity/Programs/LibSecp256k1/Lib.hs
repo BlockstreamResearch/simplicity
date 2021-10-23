@@ -31,7 +31,7 @@ module Simplicity.Programs.LibSecp256k1.Lib
   -- * Schnorr signature operations
   , LibSecp256k1.PubKey, pubkey_unpack, pubkey_unpack_neg
   , LibSecp256k1.Sig, signature_unpack
-  , bip0340_check, bip0340_verify
+  , bip_0340_check, bip_0340_verify
   ) where
 
 import qualified Simplicity.Programs.LibSecp256k1 as LibSecp256k1
@@ -90,5 +90,5 @@ point_verify_1 = LibSecp256k1.point_verify_1 LibSecp256k1.lib
 pubkey_unpack = LibSecp256k1.pubkey_unpack LibSecp256k1.lib
 pubkey_unpack_neg = LibSecp256k1.pubkey_unpack_neg LibSecp256k1.lib
 signature_unpack = LibSecp256k1.signature_unpack LibSecp256k1.lib
-bip0340_check = LibSecp256k1.bip0340_check LibSecp256k1.lib
-bip0340_verify = LibSecp256k1.bip0340_verify LibSecp256k1.lib
+bip_0340_check = LibSecp256k1.bip_0340_check LibSecp256k1.lib
+bip_0340_verify = LibSecp256k1.bip_0340_verify LibSecp256k1.lib

@@ -25,7 +25,7 @@ module Simplicity.LibSecp256k1.Spec
    -- * Public key / Signature operations
  , PubKey(..), pubkey_unpack, pubkey_unpack_neg
  , Sig(..), signature_unpack
- , bip0340_check
+ , bip_0340_check
  -- * Some large integer constants for secp256k1.
  , fieldOrder, groupOrder, beta, lambda
  -- * points on other twists
@@ -669,11 +669,11 @@ point_check l ng r = isJust $ do
   guard $ linear_check l' ng r'
 
 -- | Verify a bip0340 signature for a given public key on a given message.
-bip0340_check :: PubKey  -- ^ public key
-              -> Hash256 -- ^ message
-              -> Sig     -- ^ signature
-              -> Bool
-bip0340_check pk m sg = isJust $ do
+bip_0340_check :: PubKey  -- ^ public key
+               -> Hash256 -- ^ message
+               -> Sig     -- ^ signature
+               -> Bool
+bip_0340_check pk m sg = isJust $ do
   negp <- pubkey_unpack_neg pk
   (rx, s) <- signature_unpack sg
   let tag = bsHash (BSC.pack "BIP0340/challenge")

@@ -107,6 +107,6 @@ checkSigHashAll :: (Assert term, Primitive term, Witness term) => LibSecp256k1.L
                                                                -> Schnorr.PubKey -> Schnorr.Sig -> term () ()
 checkSigHashAll libsecp256k1 Lib{..} (Schnorr.PubKey x) ~(Schnorr.Sig r s) =
    (scribe (toWord256 . toInteger $ x) &&& sigHashAll) &&& (witness (toWord256 . toInteger $ r, toWord256 . toInteger $ s))
-   >>> bip0340_verify
+   >>> bip_0340_verify
  where
-  bip0340_verify = LibSecp256k1.bip0340_verify libsecp256k1
+  bip_0340_verify = LibSecp256k1.bip_0340_verify libsecp256k1
