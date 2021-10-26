@@ -1,9 +1,27 @@
 /* This file has been automatically generated. */
-[MULTIPLY_32] =
+[SCALAR_MULTIPLY] =
+{ .tag = JET
+, .jet = scalar_multiply
+, .sourceIx = ty_w512
+, .targetIx = ty_w256
+}
+,[MULTIPLY_32] =
 { .tag = JET
 , .jet = multiply_32
 , .sourceIx = ty_w64
 , .targetIx = ty_w64
+}
+,[GEJ_INFINITY] =
+{ .tag = JET
+, .jet = gej_infinity
+, .sourceIx = ty_u
+, .targetIx = ty_pw512w256
+}
+,[SCALAR_IS_ZERO] =
+{ .tag = JET
+, .jet = scalar_is_zero
+, .sourceIx = ty_w256
+, .targetIx = ty_b
 }
 ,[FULL_ADD_32] =
 { .tag = JET
@@ -11,11 +29,119 @@
 , .sourceIx = ty_pbw64
 , .targetIx = ty_pbw32
 }
+,[GEJ_GE_ADD_EX] =
+{ .tag = JET
+, .jet = gej_ge_add_ex
+, .sourceIx = ty_ppw512w256w512
+, .targetIx = ty_pw256pw512w256
+}
+,[FE_IS_ODD] =
+{ .tag = JET
+, .jet = fe_is_odd
+, .sourceIx = ty_w256
+, .targetIx = ty_b
+}
+,[LINEAR_COMBINATION_1] =
+{ .tag = JET
+, .jet = linear_combination_1
+, .sourceIx = ty_ppw256pw512w256w256
+, .targetIx = ty_pw512w256
+}
+,[FE_IS_ZERO] =
+{ .tag = JET
+, .jet = fe_is_zero
+, .sourceIx = ty_w256
+, .targetIx = ty_b
+}
+,[GEJ_X_EQUIV] =
+{ .tag = JET
+, .jet = gej_x_equiv
+, .sourceIx = ty_pw256pw512w256
+, .targetIx = ty_b
+}
+,[SCALAR_ADD] =
+{ .tag = JET
+, .jet = scalar_add
+, .sourceIx = ty_w512
+, .targetIx = ty_w256
+}
+,[SCALAR_NEGATE] =
+{ .tag = JET
+, .jet = scalar_negate
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
 ,[FULL_SUBTRACT_32] =
 { .tag = JET
 , .jet = full_subtract_32
 , .sourceIx = ty_pbw64
 , .targetIx = ty_pbw32
+}
+,[GEJ_NEGATE] =
+{ .tag = JET
+, .jet = gej_negate
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_pw512w256
+}
+,[GEJ_ADD] =
+{ .tag = JET
+, .jet = gej_add
+, .sourceIx = ty_ppw512w256pw512w256
+, .targetIx = ty_pw512w256
+}
+,[GEJ_DOUBLE] =
+{ .tag = JET
+, .jet = gej_double
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_pw512w256
+}
+,[FE_NEGATE] =
+{ .tag = JET
+, .jet = fe_negate
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
+,[FE_SQUARE] =
+{ .tag = JET
+, .jet = fe_square
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
+,[SCALAR_NORMALIZE] =
+{ .tag = JET
+, .jet = scalar_normalize
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
+,[GENERATE] =
+{ .tag = JET
+, .jet = generate
+, .sourceIx = ty_w256
+, .targetIx = ty_pw512w256
+}
+,[BIP_0340_VERIFY] =
+{ .tag = JET
+, .jet = bip_0340_verify
+, .sourceIx = ty_w1024
+, .targetIx = ty_u
+}
+,[SCALE] =
+{ .tag = JET
+, .jet = scale
+, .sourceIx = ty_pw256pw512w256
+, .targetIx = ty_pw512w256
+}
+,[GE_NEGATE] =
+{ .tag = JET
+, .jet = ge_negate
+, .sourceIx = ty_w512
+, .targetIx = ty_w512
+}
+,[GEJ_IS_ON_CURVE] =
+{ .tag = JET
+, .jet = gej_is_on_curve
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_b
 }
 ,[FULL_MULTIPLY_32] =
 { .tag = JET
@@ -23,11 +149,89 @@
 , .sourceIx = ty_w128
 , .targetIx = ty_w64
 }
+,[DECOMPRESS] =
+{ .tag = JET
+, .jet = decompress
+, .sourceIx = ty_pbw256
+, .targetIx = ty_mw512
+}
+,[FE_MULTIPLY] =
+{ .tag = JET
+, .jet = fe_multiply
+, .sourceIx = ty_w512
+, .targetIx = ty_w256
+}
+,[GEJ_NORMALIZE] =
+{ .tag = JET
+, .jet = gej_normalize
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_mw512
+}
+,[FE_INVERT] =
+{ .tag = JET
+, .jet = fe_invert
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
+,[FE_NORMALIZE] =
+{ .tag = JET
+, .jet = fe_normalize
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
+,[FE_ADD] =
+{ .tag = JET
+, .jet = fe_add
+, .sourceIx = ty_w512
+, .targetIx = ty_w256
+}
+,[SCALAR_INVERT] =
+{ .tag = JET
+, .jet = scalar_invert
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
+,[POINT_VERIFY_1] =
+{ .tag = JET
+, .jet = point_verify_1
+, .sourceIx = ty_pppw256pbw256w256pbw256
+, .targetIx = ty_u
+}
+,[GEJ_Y_IS_ODD] =
+{ .tag = JET
+, .jet = gej_y_is_odd
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_b
+}
+,[SCALAR_SQUARE] =
+{ .tag = JET
+, .jet = scalar_square
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
+,[GE_IS_ON_CURVE] =
+{ .tag = JET
+, .jet = ge_is_on_curve
+, .sourceIx = ty_w512
+, .targetIx = ty_b
+}
+,[GEJ_GE_ADD] =
+{ .tag = JET
+, .jet = gej_ge_add
+, .sourceIx = ty_ppw512w256w512
+, .targetIx = ty_pw512w256
+}
 ,[SHA_256_BLOCK] =
 { .tag = JET
 , .jet = sha_256_block
 , .sourceIx = ty_pw256w512
 , .targetIx = ty_w256
+}
+,[GEJ_IS_INFINITY] =
+{ .tag = JET
+, .jet = gej_is_infinity
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_b
 }
 ,[ADD_32] =
 { .tag = JET
@@ -35,11 +239,41 @@
 , .sourceIx = ty_w64
 , .targetIx = ty_pbw32
 }
+,[FE_MULTIPLY_BETA] =
+{ .tag = JET
+, .jet = fe_multiply_beta
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
+,[LINEAR_VERIFY_1] =
+{ .tag = JET
+, .jet = linear_verify_1
+, .sourceIx = ty_pppw256w512w256w512
+, .targetIx = ty_u
+}
+,[SCALAR_MULTIPLY_LAMBDA] =
+{ .tag = JET
+, .jet = scalar_multiply_lambda
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
 ,[SUBTRACT_32] =
 { .tag = JET
 , .jet = subtract_32
 , .sourceIx = ty_w64
 , .targetIx = ty_pbw32
+}
+,[FE_SQUARE_ROOT] =
+{ .tag = JET
+, .jet = fe_square_root
+, .sourceIx = ty_w256
+, .targetIx = ty_mw256
+}
+,[GEJ_RESCALE] =
+{ .tag = JET
+, .jet = gej_rescale
+, .sourceIx = ty_ppw512w256w256
+, .targetIx = ty_pw512w256
 }
 ,[VERSION] =
 { .tag = JET

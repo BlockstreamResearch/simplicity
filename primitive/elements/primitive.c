@@ -189,6 +189,77 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
           break;
         }
         break;
+       case 4: /* Secp256k1 jets chapter */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return code;
+        switch (code) {
+         case 1: /* point-verify */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 1: *result = POINT_VERIFY_1; return 0;
+          }
+          break;
+         case 2: *result = DECOMPRESS; return 0;
+         case 3: /* linear-verify */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 1: *result = LINEAR_VERIFY_1; return 0;
+          }
+          break;
+         case 4: /* linear-combination */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 1: *result = LINEAR_COMBINATION_1; return 0;
+          }
+          break;
+         case 5: *result = SCALE; return 0;
+         case 6: *result = GENERATE; return 0;
+         case 7: *result = GEJ_INFINITY; return 0;
+         case 8: *result = GEJ_NORMALIZE; return 0;
+         case 9: *result = GEJ_NEGATE; return 0;
+         case 10: *result = GE_NEGATE; return 0;
+         case 11: *result = GEJ_DOUBLE; return 0;
+         case 12: *result = GEJ_ADD; return 0;
+         case 13: *result = GEJ_GE_ADD_EX; return 0;
+         case 14: *result = GEJ_GE_ADD; return 0;
+         case 15: *result = GEJ_RESCALE; return 0;
+         case 16: *result = GEJ_IS_INFINITY; return 0;
+
+         case 19: *result = GEJ_X_EQUIV; return 0;
+         case 20: *result = GEJ_Y_IS_ODD; return 0;
+         case 21: *result = GEJ_IS_ON_CURVE; return 0;
+         case 22: *result = GE_IS_ON_CURVE; return 0;
+         case 23: *result = SCALAR_NORMALIZE; return 0;
+         case 24: *result = SCALAR_NEGATE; return 0;
+         case 25: *result = SCALAR_ADD; return 0;
+         case 26: *result = SCALAR_SQUARE; return 0;
+         case 27: *result = SCALAR_MULTIPLY; return 0;
+         case 28: *result = SCALAR_MULTIPLY_LAMBDA; return 0;
+         case 29: *result = SCALAR_INVERT; return 0;
+         case 30: *result = SCALAR_IS_ZERO; return 0;
+
+         case 35: *result = FE_NORMALIZE; return 0;
+         case 36: *result = FE_NEGATE; return 0;
+         case 37: *result = FE_ADD; return 0;
+         case 38: *result = FE_SQUARE; return 0;
+         case 39: *result = FE_MULTIPLY; return 0;
+         case 40: *result = FE_MULTIPLY_BETA; return 0;
+         case 41: *result = FE_INVERT; return 0;
+         case 42: *result = FE_SQUARE_ROOT; return 0;
+         case 43: *result = FE_IS_ZERO; return 0;
+         case 44: *result = FE_IS_ODD; return 0;
+        }
+        break;
+       case 5: /* Signature jets chapter */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return code;
+        switch (code) {
+         case 1: *result = BIP_0340_VERIFY; return 0;
+        }
+        break;
       }
       return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
 
