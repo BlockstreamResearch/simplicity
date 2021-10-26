@@ -42,8 +42,7 @@ bool outputs_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool num_inputs(frameItem* dst, frameItem src, const txEnv* env);
 bool num_outputs(frameItem* dst, frameItem src, const txEnv* env);
 
-/* :TODO: Not yet implemented.
-bool fees(frameItem* dst, frameItem src, const txEnv* env);
-*/
+/* :TODO: Not yet implemented. */
+#define fee NULL
 
 #endif
