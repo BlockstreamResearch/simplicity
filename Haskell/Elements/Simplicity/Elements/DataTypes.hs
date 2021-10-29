@@ -32,7 +32,7 @@ import Data.Serialize ( Serialize
                       , Get, get, runGetLazy, lookAhead, getWord8, getWord16le, getWord32le, getLazyByteString, isEmpty
                       , Putter, put, putWord8, putWord32le, putWord64be, putLazyByteString, runPutLazy
                       )
-import Lens.Family2 ((&), (.~), under)
+import Lens.Family2 ((&), (.~), (^.), under)
 import Lens.Family2.Unchecked (Adapter, adapter, Traversal)
 
 import Simplicity.Digest
@@ -226,10 +226,14 @@ putIssuance (Just x) = go x
                >> putMaybeConfidential putAmount (maybeZero . clearAmountPrf $ newIssuanceTokenAmount new)
                >> put (0 :: Word256)
                >> put (newIssuanceContractHash new)
+               >> put (bslHash (newIssuanceAmount new ^. (under amount.prf_)))
+               >> put (bslHash (newIssuanceTokenAmount new ^. (under amount.prf_)))
   go (Right re) = putAmount (clearAmountPrf $ reissuanceAmount re)
                >> putWord8 0x00
                >> put (reissuanceBlindingNonce re)
                >> put (reissuanceEntropy re)
+               >> put (bslHash (reissuanceAmount re ^. (under amount.prf_)))
+               >> put (bslHash mempty)
 
 -- | An outpoint is an index into the TXO set.
 data Outpoint = Outpoint { opHash :: Hash256
@@ -279,11 +283,12 @@ sigTxInputsHash tx = bslHash . runPutLazy $ mapM_ go (elems (sigTxIn tx))
 
 sigTxOutputsHash tx = bslHash . runPutLazy $ mapM_ go (elems (sigTxOut tx))
  where
-  -- We serialize the range/surjection proofs separately.
   go txo = putAsset (clearAssetPrf $ txoAsset txo)
         >> putAmount (clearAmountPrf $ txoAmount txo)
         >> putNonce (txoNonce txo)
         >> put (bslHash (txoScript txo))
+        >> put (bslHash (txoAsset txo ^. (under asset.prf_)))
+        >> put (bslHash (txoAmount txo ^. (under amount.prf_)))
 
 -- | Taproot specific environment data about the input being spent.
 data TapEnv = TapEnv { tapAnnex :: Maybe BSL.ByteString
