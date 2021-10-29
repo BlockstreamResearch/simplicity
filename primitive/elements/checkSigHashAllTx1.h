@@ -8,7 +8,7 @@
  *     Simplicity.Programs.CheckSigHash.checkSigHash' Simplicity.Elements.Programs.CheckSigHashAll.Lib.hashAll
  *     (Simplicity.LibSecp256k1.Spec.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63)
  *     (Simplicity.LibSecp256k1.Spec.Sig 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
- *                                       0x34c3dd251477af7794bee9721943a7158cdfd880e4c36239284379f7af49b5f1)
+ *                                       0xa8088f43b1ce5832d7e272b38676b6b31ae4294ed7c927929359df41c5d7ec36)
  * with jets.
  */
 extern const unsigned char elementsCheckSigHashAllTx1[];

@@ -90,6 +90,17 @@ static void sha256_confAmt(sha256_context* ctx, const confAmount* amt) {
   }
 }
 
+/* Compute the SHA-256 hash of a scriptPubKey and write it into 'result'.
+ *
+ * Precondition: NULL != result;
+ *               NULL != scriptPubKey;
+ */
+static void hashBuffer(sha256_midstate* result, const rawBuffer* buffer) {
+  sha256_context ctx = sha256_init(result->s);
+  sha256_uchars(&ctx, buffer->buf, buffer->len);
+  sha256_finalize(&ctx);
+}
+
 /* Add an 'assetIssuance' to be consumed by an ongoing SHA-256 evaluation.
  *
  * Precondition: NULL != ctx;
@@ -106,25 +117,22 @@ static void sha256_issuance(sha256_context* ctx, const assetIssuance* issuance) 
     sha256_confAmt(ctx, &issuance->tokenAmt);
     sha256_hash(ctx, &(sha256_midstate){0});
     sha256_hash(ctx, &issuance->contractHash);
+    sha256_hash(ctx, &issuance->assetRangeProofHash);
+    sha256_hash(ctx, &issuance->tokenRangeProofHash);
     break;
    case REISSUANCE:
     sha256_confAmt(ctx, &issuance->assetAmt);
     sha256_confAmt(ctx, &(confAmount){0});
     sha256_hash(ctx, &issuance->blindingNonce);
     sha256_hash(ctx, &issuance->entropy);
+    sha256_hash(ctx, &issuance->assetRangeProofHash);
+    {
+      sha256_midstate empty;
+      hashBuffer(&empty, &(rawBuffer){0});
+      sha256_hash(ctx, &empty);
+    }
     break;
   }
-}
-
-/* Compute the SHA-256 hash of a scriptPubKey and write it into 'result'.
- *
- * Precondition: NULL != result;
- *               NULL != scriptPubKey;
- */
-static void hashBuffer(sha256_midstate* result, const rawBuffer* buffer) {
-  sha256_context ctx = sha256_init(result->s);
-  sha256_uchars(&ctx, buffer->buf, buffer->len);
-  sha256_finalize(&ctx);
 }
 
 /* Initialize a 'confidential' asset or 'confidential' nonce from an unsigned char array from a 'rawTransaction'.
@@ -416,6 +424,8 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
       sha256_confAmt(&ctx, &output[i].amt);
       sha256_confNonce(&ctx, &output[i].nonce);
       sha256_hash(&ctx, &output[i].scriptPubKey);
+      sha256_hash(&ctx, &output[i].surjectionProofHash);
+      sha256_hash(&ctx, &output[i].rangeProofHash);
     }
     sha256_finalize(&ctx);
   }
