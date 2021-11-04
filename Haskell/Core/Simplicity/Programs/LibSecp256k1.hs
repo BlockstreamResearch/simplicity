@@ -175,7 +175,7 @@ data Lib term =
 
     -- | Converts a point in Jacobian coordintes to the same point in affine coordinates, and normalizes the field represenatives.
     -- Returns the point (0, 0) when given the point at infinity.
-  , gej_normalize :: term GEJ GE
+  , gej_normalize :: term GEJ (Either () GE)
 
 --    -- | Tests if two points in jacobian coordinates represent the same point.
 --  , gej_equiv :: term (GEJ, GEJ) Bit
@@ -542,7 +542,8 @@ mkLib Sha256.Lib{..} = lib
 
   , gej_rescale = (ooh &&& ih >>> zinv) &&& (oih &&& ih >>> fe_multiply)
 
-  , gej_normalize = oh &&& (ih >>> fe_invert) >>> zinv
+  , gej_normalize = drop fe_is_zero &&& iden
+                >>> cond (injl unit) (injr gej_norm)
 
 --  , gej_equiv = :TODO:
 
@@ -715,6 +716,8 @@ mkLib Sha256.Lib{..} = lib
 
     zinv = (ooh &&& drop fe_square >>> fe_multiply) &&& (oih &&& drop fe_cube >>> fe_multiply)
 
+    gej_norm = oh &&& drop fe_invert >>> zinv
+
     -- Compute odd-multiples of a point for small (5-bit) multiples.
     -- The result is in Jacobian coordinates but the z-coordinate is identical for all outputs.
     scalarTable5 :: term GEJ (FE, Vector8 GE)
@@ -750,7 +753,7 @@ mkLib Sha256.Lib{..} = lib
       rec = generateSigned w
 
     generateSmall :: term Word16 GE
-    generateSmall = generateSigned word16 >>> gej_normalize
+    generateSmall = generateSigned word16 >>> gej_norm
 
     generate128Signed :: Word a -> term a GEJ
     generate128Signed SingleV = copair gej_infinity ((generate128 >>> ge_negate) &&& fe_one)
@@ -759,7 +762,7 @@ mkLib Sha256.Lib{..} = lib
       rec = generate128Signed w
 
     generate128Small :: term Word16 GE
-    generate128Small = generate128Signed word16 >>> gej_normalize
+    generate128Small = generate128Signed word16 >>> gej_norm
 
     pubkey_check = (iden &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256) &&& iden
 

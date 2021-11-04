@@ -340,9 +340,10 @@ gej_ge_add_zinv :: GEJ -> GE -> FE -> GEJ
 gej_ge_add_zinv a (GE bx by) bzinv = snd $ gej_ge_add_ex a (GE (bx .*. bzinv .^. 2) (by .*. bzinv .^. 3))
 
 -- | Convert a 'GEJ' to a 'GE'.
--- This sends a point at infinity the the point @(GE fe_zero fe_zero)@.
-gej_normalize :: GEJ -> GE
-gej_normalize (GEJ x y z) = GE (x .*. invz .^. 2) (y .*. invz .^. 3)
+-- If the input is infinity, returns Nothing.
+gej_normalize :: GEJ -> Maybe GE
+gej_normalize (GEJ x y z) | fe_is_zero z = Nothing
+                          | otherwise = Just $ GE (x .*. invz .^. 2) (y .*. invz .^. 3)
  where
   invz = fe_invert z
 
