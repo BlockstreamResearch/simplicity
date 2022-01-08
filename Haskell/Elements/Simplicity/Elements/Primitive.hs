@@ -262,6 +262,8 @@ primSem p a env = interpret p a
   cast :: Maybe a -> Either () a
   cast (Just x) = Right x
   cast Nothing = Left ()
+  element :: a -> () -> a
+  element = const
   atInput :: (SigTxInput -> a) -> Word32 -> Either () a
   atInput f = cast . fmap f . lookupInput . fromInteger . fromWord32
   atOutput :: (TxOutput -> a) -> Word32 -> Either () a
@@ -296,11 +298,11 @@ primSem p a env = interpret p a
   encodeNullDatum OP14 = Right (Right (toWord4 0xd))
   encodeNullDatum OP15 = Right (Right (toWord4 0xe))
   encodeNullDatum OP16 = Right (Right (toWord4 0xf))
-  interpret Version = const . return . toWord32 . toInteger $ sigTxVersion tx
-  interpret LockTime = const . return . toWord32 . toInteger $ sigTxLock tx
-  interpret InputsHash = const . return . encodeHash $ envInputsHash env
-  interpret OutputsHash = const . return . encodeHash $ envOutputsHash env
-  interpret NumInputs = const . return . toWord32 . toInteger $ 1 + maxInput
+  interpret Version = element . return . toWord32 . toInteger $ sigTxVersion tx
+  interpret LockTime = element . return . toWord32 . toInteger $ sigTxLock tx
+  interpret InputsHash = element . return . encodeHash $ envInputsHash env
+  interpret OutputsHash = element . return . encodeHash $ envOutputsHash env
+  interpret NumInputs = element . return . toWord32 . toInteger $ 1 + maxInput
   interpret InputIsPegin = return . (atInput $ toBit . sigTxiIsPegin)
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutpoint)
   interpret InputAsset = return . (atInput $ encodeAsset . utxoAsset . sigTxiTxo)
@@ -317,28 +319,28 @@ primSem p a env = interpret p a
       cast . fmap encodeAmount . (either (issuanceAmount . newIssuanceAmounts) (Just . reissuanceAmount) <=< sigTxiIssuance))
   interpret InputIssuanceTokenAmt = return . (atInput $
       cast . fmap encodeAmount . (either (issuanceTokenAmount . newIssuanceAmounts) (const Nothing) <=< sigTxiIssuance))
-  interpret CurrentIndex = const . return . toWord32 . toInteger $ ix
-  interpret CurrentIsPegin = const $ toBit . sigTxiIsPegin <$> currentInput
-  interpret CurrentPrevOutpoint = const $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
-  interpret CurrentAsset = const $ encodeAsset . utxoAsset . sigTxiTxo <$> currentInput
-  interpret CurrentAmount = const $ encodeAmount . utxoAmount . sigTxiTxo <$> currentInput
-  interpret CurrentScriptHash = const $ encodeHash . bslHash . utxoScript . sigTxiTxo <$> currentInput
-  interpret CurrentSequence = const $ toWord32 . toInteger . sigTxiSequence <$> currentInput
-  interpret CurrentIssuanceBlinding = const $
+  interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
+  interpret CurrentIsPegin = element $ toBit . sigTxiIsPegin <$> currentInput
+  interpret CurrentPrevOutpoint = element $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
+  interpret CurrentAsset = element $ encodeAsset . utxoAsset . sigTxiTxo <$> currentInput
+  interpret CurrentAmount = element $ encodeAmount . utxoAmount . sigTxiTxo <$> currentInput
+  interpret CurrentScriptHash = element $ encodeHash . bslHash . utxoScript . sigTxiTxo <$> currentInput
+  interpret CurrentSequence = element $ toWord32 . toInteger . sigTxiSequence <$> currentInput
+  interpret CurrentIssuanceBlinding = element $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceBlindingNonce) <=< sigTxiIssuance) <$> currentInput
-  interpret CurrentIssuanceContract = const $
+  interpret CurrentIssuanceContract = element $
       cast . fmap encodeHash . (either (Just . newIssuanceContractHash) (const Nothing) <=< sigTxiIssuance) <$> currentInput
-  interpret CurrentIssuanceEntropy = const $
+  interpret CurrentIssuanceEntropy = element $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance) <$> currentInput
-  interpret CurrentIssuanceAssetAmt = const $
+  interpret CurrentIssuanceAssetAmt = element $
       cast . fmap encodeAmount . (either (issuanceAmount . newIssuanceAmounts) (Just . reissuanceAmount) <=< sigTxiIssuance) <$> currentInput
-  interpret CurrentIssuanceTokenAmt = const $
+  interpret CurrentIssuanceTokenAmt = element $
       cast . fmap encodeAmount . (either (issuanceTokenAmount . newIssuanceAmounts) (const Nothing) <=< sigTxiIssuance) <$> currentInput
-  interpret TapleafVersion = const . return . toWord8 . toInteger . tapLeafVersion $ envTap env
+  interpret TapleafVersion = element . return . toWord8 . toInteger . tapLeafVersion $ envTap env
   interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapBranch (envTap env)) . fromInteger . fromWord8
-  interpret InternalKey = const . return . encodeKey . tapInternalKey $ envTap env
-  interpret AnnexHash = const . return . cast $ encodeHash . bslHash <$> tapAnnex (envTap env)
-  interpret NumOutputs = const . return . toWord32 . toInteger $ 1 + maxOutput
+  interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env
+  interpret AnnexHash = element . return . cast $ encodeHash . bslHash <$> tapAnnex (envTap env)
+  interpret NumOutputs = element . return . toWord32 . toInteger $ 1 + maxOutput
   interpret OutputAsset = return . (atOutput $ encodeAsset . txoAsset)
   interpret OutputAmount = return . (atOutput $ encodeAmount . txoAmount)
   interpret OutputNonce = return . (atOutput $ encodeNonce . txoNonce)
@@ -355,7 +357,7 @@ primSem p a env = interpret p a
       guard $ assetId == encodeHash a
       Explicit v <- Just . amount $ txoAmount txo
       return (Monoid.Sum v)
-  interpret ScriptCMR = const . return . encodeHash $ envScriptCMR env
+  interpret ScriptCMR = element . return . encodeHash $ envScriptCMR env
 
 getPrimByte :: Data.Word.Word8 -> Get (Maybe (SomeArrow Prim))
 getPrimByte = error "Simplicity.Elements.Primitive.getPrimByte is not implemented"
