@@ -10760,19 +10760,13 @@
 
   This section is not recommended for non-Bitcoin(-like) applications.
 
-  \;
-
-  In this section we define <math|Height\<assign\><2><rsup|32>>,
-  <math|Time\<assign\><2><rsup|32>>, <math|Distance\<assign\><2><rsup|16>>,
-  and <math|Duration = <2><rsup|32>>.
-
   <subsubsection|<samp|parse-lock>>
 
   (Note: <math|<around*|\<llbracket\>|<text|<samp|'parse-lock'>>|\<rrbracket\>><around*|\<lfloor\>|0|\<rfloor\>><rsub|32>\<assign\><injl|<around*|(|0|)>>>)
 
   <math|<rep|<text|<samp|'parse-lock'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|parse-lock>> :<2><rsup|32>\<vdash\>Height+Time>
+  <math|<text|<samp|parse-lock>> :<2><rsup|32>\<vdash\><2><rsup|32>+<2><rsup|32>>
 
   <subsubsection|<samp|parse-sequence>>
 
@@ -10780,7 +10774,7 @@
 
   <math|<rep|<text|<samp|'parse-sequence'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|parse-sequence>> :<2><rsup|32>\<vdash\><maybe><around*|(|Distance+Duration|)>>
+  <math|<text|<samp|parse-sequence>> :<2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|16>+<2><rsup|16>|)>>
 
   <subsection|<verbatim|1101101000...: >Jets for Elements (without
   primitives)>
@@ -10835,69 +10829,125 @@
 
   In this section we define <math|Height\<assign\><2><rsup|32>>,
   <math|Time\<assign\><2><rsup|32>>, <math|Distance\<assign\><2><rsup|16>>,
-  and <math|Duration = <2><rsup|32>>.
+  and <math|Duration = <2><rsup|16>>.
 
-  <subsubsection|<samp|total-height-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'total-height-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|<samp|total-height-lock>>>
-  :<1>\<vdash\><maybe><around*|(|Height|)>>
+  <subsubsection|<samp|check-lock-height>>
 
   \;
 
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> when <samp|is-final> returns
-  <math|<math-tt|1><rsub|<2>>> and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
+  <math|<rep|<text|<samp|'check-lock-height'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|<samp|check-lock-height>>> :Height\<vdash\><1>>
+
+  \;
+
+  Asserts that the value returned by <samp|'tx-lock-height'> is greater than
+  or equal to the input.
+
+  <subsubsection|<samp|check-lock-time>>
+
+  \;
+
+  <math|<rep|<text|<samp|'check-lock-time'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|'<samp|check-lock-time>'>> :Time\<vdash\><1>>
+
+  \;
+
+  Asserts that the value returned by <samp|'tx-lock-time'> is greater than or
+  equal to the input.
+
+  <subsubsection|<samp|check-lock-distance>>
+
+  \;
+
+  <math|<rep|<text|<samp|'check-lock-distance'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|'<samp|check-lock-distance>'>> :Distance\<vdash\><1>>
+
+  \;
+
+  Asserts that the value returned by <samp|'check-lock-distance'> is greater
+  than or equal to the input.
+
+  <subsubsection|<samp|check-lock-duration>>
+
+  \;
+
+  <math|<rep|<text|<samp|'check-lock-duration'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|'<samp|check-lock-duration>'>> :Duration\<vdash\><1>>
+
+  \;
+
+  Asserts that the value returned by <samp|'check-lock-duration'> is greater
+  than or equal to the input.
+
+  <subsubsection|<samp|tx-height-lock>>
+
+  \;
+
+  <math|<rep|<text|<samp|'tx-height-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|<samp|tx-height-lock>>> :<1>\<vdash\>Height>
+
+  \;
+
+  Returns <math|x> when <samp|is-final> returns <math|<math-tt|0><rsub|<2>>>
+  and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
   returns <math|<injl|<around*|(|x|)>>>.
 
-  <subsubsection|<samp|total-time-lock>>
+  Otherwise returns <math|<around*|\<lfloor\>|0|\<rfloor\>><rsub|32>>.
+
+  <subsubsection|<samp|tx-time-lock>>
 
   \;
 
-  <math|<rep|<text|<samp|'total-time-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'tx-time-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|'<samp|total-time-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Time|)>>
+  <math|<text|<samp|'<samp|tx-time-lock>'>> :<1>\<vdash\>Time>
 
   \;
 
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> when <samp|is-final> returns
-  <math|<math-tt|1><rsub|<2>>> and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
+  Returns <math|x> when <samp|is-final> returns <math|<math-tt|0><rsub|<2>>>
+  and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
   returns <math|<injr|<around*|(|x|)>>>.
 
-  <subsubsection|<samp|total-distance-lock>>
+  Otherwise returns <math|<around*|\<lfloor\>|0|\<rfloor\>><rsub|32>>.
+
+  <subsubsection|<samp|tx-distance-lock>>
 
   \;
 
-  <math|<rep|<text|<samp|'total-distance-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'tx-distance-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|'<samp|total-distance-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Distance|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> where <math|x> is the largest
-  among the <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  returned by <samp|input-distance-lock> on any inputs, if any such values
-  are returned.
-
-  <subsubsection|<samp|total-duration-lock>>
+  <math|<text|<samp|'<samp|tx-distance-lock>'>> :<1>\<vdash\>Distance>
 
   \;
 
-  <math|<rep|<text|<samp|'total-duration-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  When <samp|<math|2\<leq\><around*|\<lceil\>|<around*|\<llbracket\>|<text|<samp|version>>|\<rrbracket\>><around*|\<langle\>||\<rangle\>>|\<rceil\>><rsub|2<rsup|32>>>>,
+  returns the greatest <math|x> of values
+  <math|\<eta\><rsup|S><around*|(|<injl|<around*|(|x|)>>|)>> returned by
+  <math|<around*|(|<maybe><around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|inputSequence>>|\<rrbracket\>>|)><around*|(|i|)>>
+  for any input <math|i>, if there are any. \ Otherwise returns
+  <math|<around*|\<lfloor\>|0|\<rfloor\>><rsub|16>>.
 
-  <math|<text|<samp|'<samp|total-duration-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Duration|)>>
+  <subsubsection|<samp|tx-duration-lock>>
 
   \;
 
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> where <math|x> is the largest
-  among the <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  returned by <samp|input-duration-lock> on any inputs, if any such values
-  are returned.
+  <math|<rep|<text|<samp|'tx-duration-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|'<samp|tx-duration-lock>'>> :<1>\<vdash\>Duration>
+
+  \;
+
+  When <samp|<math|2\<leq\><around*|\<lceil\>|<around*|\<llbracket\>|<text|<samp|version>>|\<rrbracket\>><around*|\<langle\>||\<rangle\>>|\<rceil\>><rsub|2<rsup|32>>>>,
+  returns the greatest <math|x> of values
+  \<eta\><rsup|S><around*|(|<injr|<around*|(|x|)>>|)> returned by
+  <math|<around*|(|<maybe><around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|inputSequence>>|\<rrbracket\>>|)><around*|(|i|)>>
+  for any input <math|i>, if there are any. \ Otherwise returns
+  <math|<around*|\<lfloor\>|0|\<rfloor\>><rsub|16>>.
 
   <subsubsection|<samp|is-final>>
 
@@ -10909,175 +10959,10 @@
 
   \;
 
-  Returns <math|<math-tt|1><rsub|<2>>> when <samp|input-is-final> returns
-  <math|\<eta\><rsup|S><around*|(|<math-tt|1><rsub|<2>>|)>> for all inputs.
+  Returns <math|<math-tt|1><rsub|<2>>> when all the sequence numbers of the
+  tranaction inputs are at their maximum value.
 
-  <subsubsection|<samp|current-height-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'current-height-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|current-height-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Height|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> when <samp|current-is-final>
-  returns <math|<math-tt|1><rsub|<2>>> and
-  <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
-  returns <math|<injl|<around*|(|x|)>>>.
-
-  <subsubsection|<samp|current-time-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'current-time-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|current-time-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Time|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> when <samp|current-is-final>
-  returns <math|<math-tt|1><rsub|<2>>> and
-  <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
-  returns <math|<injr|<around*|(|x|)>>>.
-
-  <subsubsection|<samp|current-distance-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'current-distance-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|current-distance-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Distance|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> when
-  <math|<around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|currentSequence>>|\<rrbracket\>>>
-  returns <math|<injl|<around*|(|x|)>>>.
-
-  <subsubsection|<samp|current-duration-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'current-duration-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|current-duration-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Duration|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  when <math|<around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|currentSequence>>|\<rrbracket\>>>
-  returns <math|<injr|<around*|(|x|)>>>.
-
-  <subsubsection|<samp|current-is-Final>>
-
-  \;
-
-  <math|<rep|<text|<samp|'current-is-final'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|current-is-final>'>> :<1>\<vdash\><2>>
-
-  \;
-
-  Returns <math-tt|1><rsub|<2>> when <math|<around*|\<llbracket\>|<text|<samp|<math|currentSequence>>>|\<rrbracket\>>>
-  returns <math|<around*|\<lfloor\>|2<rsup|32>-1|\<rfloor\>>>.
-
-  <subsubsection|<samp|input-height-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'input-height-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|input-height-lock>'>>
-  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|Height|)>|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  when <samp|input-is-final> returns <math|\<eta\><rsup|S><around*|(|<math-tt|1><rsub|<2>>|)>>
-  and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
-  returns <math|<injl|<around*|(|x|)>>>.
-
-  Returns <math|\<emptyset\><rsup|<maybe>>> when the input index is out of
-  range.
-
-  <subsubsection|<samp|input-time-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'input-time-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|input-time-lock>'>>
-  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|Time|)>|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  when <samp|input-is-final> returns <math|\<eta\><rsup|S><around*|(|<math-tt|1><rsub|<2>>|)>>
-  and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
-  returns <math|<injr|<around*|(|x|)>>>.
-
-  Returns <math|\<emptyset\><rsup|<maybe>>> when the input index is out of
-  range.
-
-  <subsubsection|<samp|input-distance-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'input-distance-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|input-distance-lock>'>>
-  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|Distance|)>|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  when <math|<maybe><around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|inputSequence>>|\<rrbracket\>>>
-  returns <math|\<eta\><rsup|S><around*|(|<injl|<around*|(|x|)>>|)>>.
-
-  Returns <math|\<emptyset\><rsup|<maybe>>> when the input index is out of
-  range.
-
-  <subsubsection|<samp|input-duration-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'input-duration-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|input-duration-lock>'>>
-  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|Duration|)>|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  when <math|<maybe><around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|inputSequence>>|\<rrbracket\>>>
-  returns <math|\<eta\><rsup|S><around*|(|<injr|<around*|(|x|)>>|)>>.
-
-  Returns <math|\<emptyset\><rsup|<maybe>>> when the input index is out of
-  range.
-
-  <subsubsection|<samp|input-is-final>>
-
-  \;
-
-  <math|<rep|<text|<samp|'input-is-final'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|input-is-final>'>>
-  :Index\<vdash\><maybe><around*|(|<2>|)>>
-
-  \;
-
-  Returns \<eta\><rsup|S><around*|(|<math-tt|1><rsub|<2>>|)> when
-  <math|<around*|\<llbracket\>|<text|<samp|<math|inputSequence>>>|\<rrbracket\>>>
-  returns \<eta\><rsup|S><around*|(|<math|<around*|\<lfloor\>|2<rsup|32>-1|\<rfloor\>>>|)>.
-
-  Returns <math|\<emptyset\><rsup|<maybe>>> when the input index is out of
-  range.
+  Otherwise returns <math|<math-tt|0><rsub|<2>>>.
 
   <em|><section|<verbatim|111...: >Elements Jets>
 
@@ -11102,249 +10987,140 @@
 
   In this section we define <math|Height\<assign\><2><rsup|32>>,
   <math|Time\<assign\><2><rsup|32>>, <math|Distance\<assign\><2><rsup|16>>,
-  and <math|Duration = <2><rsup|32>>.
+  and <math|Duration = <2><rsup|16>>.
 
-  <subsubsection|<samp|total-height-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'total-height-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|total-height-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Height|)>>
+  <subsubsection|<samp|check-lock-height>>
 
   \;
 
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> when <samp|is-final> returns
-  <math|<math-tt|1><rsub|<2>>> and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
-  returns <math|<injl|<around*|(|x|)>>>.
+  <math|<rep|<text|<samp|'check-lock-height'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <subsubsection|<samp|total-time-lock>>
+  <math|<text|<samp|<samp|check-lock-height>>> :Height\<vdash\><1>>
 
   \;
 
-  <math|<rep|<text|<samp|'total-time-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  Asserts that the value returned by <samp|'tx-lock-height'> is greater than
+  or equal to the input.
 
-  <math|<text|<samp|'<samp|total-time-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Time|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> when <samp|is-final> returns
-  <math|<math-tt|1><rsub|<2>>> and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
-  returns <math|<injr|<around*|(|x|)>>>.
-
-  <subsubsection|<samp|total-distance-lock>>
+  <subsubsection|<samp|check-lock-time>>
 
   \;
 
-  <math|<rep|<text|<samp|'total-distance-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'check-lock-time'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|'<samp|total-distance-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Distance|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> where <math|x> is the largest
-  among the <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  returned by <samp|input-distance-lock> on any inputs, if any such values
-  are returned.
-
-  <subsubsection|<samp|total-duration-lock>>
+  <math|<text|<samp|'<samp|check-lock-time>'>> :Time\<vdash\><1>>
 
   \;
 
-  <math|<rep|<text|<samp|'total-duration-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  Asserts that the value returned by <samp|'tx-lock-time'> is greater than or
+  equal to the input.
 
-  <math|<text|<samp|'<samp|total-duration-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Duration|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> where <math|x> is the largest
-  among the <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  returned by <samp|input-duration-lock> on any inputs, if any such values
-  are returned.
-
-  <subsubsection|<samp|is-final>>
+  <subsubsection|<samp|check-lock-distance>>
 
   \;
 
-  <math|<rep|<text|<samp|'is-final'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'check-lock-distance'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|'<samp|is-final>'>> :<1>\<vdash\><2>>
-
-  \;
-
-  Returns <math|<math-tt|1><rsub|<2>>> when <samp|input-is-final> returns
-  <math|\<eta\><rsup|S><around*|(|<math-tt|1><rsub|<2>>|)>> for all inputs.
-
-  <subsubsection|<samp|current-height-lock>>
+  <math|<text|<samp|'<samp|check-lock-distance>'>> :Distance\<vdash\><1>>
 
   \;
 
-  <math|<rep|<text|<samp|'current-height-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  Asserts that the value returned by <samp|'check-lock-distance'> is greater
+  than or equal to the input.
 
-  <math|<text|<samp|'<samp|current-height-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Height|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> when <samp|current-is-final>
-  returns <math|<math-tt|1><rsub|<2>>> and
-  <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
-  returns <math|<injl|<around*|(|x|)>>>.
-
-  <subsubsection|<samp|current-time-lock>>
+  <subsubsection|<samp|check-lock-duration>>
 
   \;
 
-  <math|<rep|<text|<samp|'current-time-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'check-lock-duration'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|'<samp|current-time-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Time|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> when <samp|current-is-final>
-  returns <math|<math-tt|1><rsub|<2>>> and
-  <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
-  returns <math|<injr|<around*|(|x|)>>>.
-
-  <subsubsection|<samp|current-distance-lock>>
+  <math|<text|<samp|'<samp|check-lock-duration>'>> :Duration\<vdash\><1>>
 
   \;
 
-  <math|<rep|<text|<samp|'current-distance-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  Asserts that the value returned by <samp|'check-lock-duration'> is greater
+  than or equal to the input.
 
-  <math|<text|<samp|'<samp|current-distance-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Distance|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|x|)>> when
-  <math|<around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|currentSequence>>|\<rrbracket\>>>
-  returns <math|<injl|<around*|(|x|)>>>.
-
-  <subsubsection|<samp|current-duration-lock>>
+  <subsubsection|<samp|tx-lock-height>>
 
   \;
 
-  <math|<rep|<text|<samp|'current-duration-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'tx-lock-height'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|'<samp|current-duration-lock>'>>
-  :<1>\<vdash\><maybe><around*|(|Duration|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  when <math|<around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|currentSequence>>|\<rrbracket\>>>
-  returns <math|<injr|<around*|(|x|)>>>.
-
-  <subsubsection|<samp|current-is-Final>>
+  <math|<text|<samp|<samp|tx-lock-height>>> :<1>\<vdash\>Height>
 
   \;
 
-  <math|<rep|<text|<samp|'current-is-final'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|current-is-final>'>> :<1>\<vdash\><2>>
-
-  \;
-
-  Returns <math-tt|1><rsub|<2>> when <math|<around*|\<llbracket\>|<text|<samp|<math|currentSequence>>>|\<rrbracket\>>>
-  returns <math|<around*|\<lfloor\>|2<rsup|32>-1|\<rfloor\>>>.
-
-  <subsubsection|<samp|input-height-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'input-height-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|input-height-lock>'>>
-  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|Height|)>|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  when <samp|input-is-final> returns <math|\<eta\><rsup|S><around*|(|<math-tt|1><rsub|<2>>|)>>
+  Returns <math|x> when <samp|is-final> returns <math|<math-tt|0><rsub|<2>>>
   and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
   returns <math|<injl|<around*|(|x|)>>>.
 
-  Returns <math|\<emptyset\><rsup|<maybe>>> when the input index is out of
-  range.
+  Otherwise returns <math|<around*|\<lfloor\>|0|\<rfloor\>><rsub|32>>.
 
-  <subsubsection|<samp|input-time-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'input-time-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|input-time-lock>'>>
-  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|Time|)>|)>>
+  <subsubsection|<samp|tx-lock-time>>
 
   \;
 
-  Returns <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  when <samp|input-is-final> returns <math|\<eta\><rsup|S><around*|(|<math-tt|1><rsub|<2>>|)>>
+  <math|<rep|<text|<samp|'tx-lock-time'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|'<samp|tx-lock-time>'>> :<1>\<vdash\>Time>
+
+  \;
+
+  Returns <math|x> when <samp|is-final> returns <math|<math-tt|0><rsub|<2>>>
   and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
   returns <math|<injr|<around*|(|x|)>>>.
 
-  Returns <math|\<emptyset\><rsup|<maybe>>> when the input index is out of
-  range.
+  Otherwise returns <math|<around*|\<lfloor\>|0|\<rfloor\>><rsub|32>>.
 
-  <subsubsection|<samp|input-distance-lock>>
-
-  \;
-
-  <math|<rep|<text|<samp|'input-distance-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|'<samp|input-distance-lock>'>>
-  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|Distance|)>|)>>
+  <subsubsection|<samp|tx-lock-distance>>
 
   \;
 
-  Returns <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  when <math|<maybe><around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|inputSequence>>|\<rrbracket\>>>
-  returns <math|\<eta\><rsup|S><around*|(|<injl|<around*|(|x|)>>|)>>.
+  <math|<rep|<text|<samp|'tx-lock-distance'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  Returns <math|\<emptyset\><rsup|<maybe>>> when the input index is out of
-  range.
-
-  <subsubsection|<samp|input-duration-lock>>
+  <math|<text|<samp|'<samp|tx-lock-distance>'>> :<1>\<vdash\>Distance>
 
   \;
 
-  <math|<rep|<text|<samp|'input-duration-lock'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  When <samp|<math|2\<leq\><around*|\<lceil\>|<around*|\<llbracket\>|<text|<samp|version>>|\<rrbracket\>><around*|\<langle\>||\<rangle\>>|\<rceil\>><rsub|2<rsup|32>>>>,
+  returns the greatest <math|x> of values
+  <math|\<eta\><rsup|S><around*|(|<injl|<around*|(|x|)>>|)>> returned by
+  <math|<around*|(|<maybe><around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|inputSequence>>|\<rrbracket\>>|)><around*|(|i|)>>
+  for any input <math|i>, if there are any. \ Otherwise returns
+  <math|<around*|\<lfloor\>|0|\<rfloor\>><rsub|16>>.
 
-  <math|<text|<samp|'<samp|input-duration-lock>'>>
-  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|Duration|)>|)>>
-
-  \;
-
-  Returns <math|\<eta\><rsup|S><around*|(|\<eta\><rsup|S><around*|(|x|)>|)>>
-  when <math|<maybe><around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|inputSequence>>|\<rrbracket\>>>
-  returns <math|\<eta\><rsup|S><around*|(|<injr|<around*|(|x|)>>|)>>.
-
-  Returns <math|\<emptyset\><rsup|<maybe>>> when the input index is out of
-  range.
-
-  <subsubsection|<samp|input-is-final>>
+  <subsubsection|<samp|tx-lock-duration>>
 
   \;
 
-  <math|<rep|<text|<samp|'input-is-final'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'tx-lock-duration'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|'<samp|input-is-final>'>>
-  :Index\<vdash\><maybe><around*|(|<2>|)>>
+  <math|<text|<samp|'<samp|tx-lock-duration>'>> :<1>\<vdash\>Duration>
 
   \;
 
-  Returns \<eta\><rsup|S><around*|(|<math-tt|1><rsub|<2>>|)> when
-  <math|<around*|\<llbracket\>|<text|<samp|<math|inputSequence>>>|\<rrbracket\>>>
-  returns \<eta\><rsup|S><around*|(|<math|<around*|\<lfloor\>|2<rsup|32>-1|\<rfloor\>>>|)>.
+  When <samp|<math|2\<leq\><around*|\<lceil\>|<around*|\<llbracket\>|<text|<samp|version>>|\<rrbracket\>><around*|\<langle\>||\<rangle\>>|\<rceil\>><rsub|2<rsup|32>>>>,
+  returns the greatest <math|x> of values
+  \<eta\><rsup|S><around*|(|<injr|<around*|(|x|)>>|)> returned by
+  <math|<around*|(|<maybe><around*|\<llbracket\>|<text|<samp|parse-sequence>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|inputSequence>>|\<rrbracket\>>|)><around*|(|i|)>>
+  for any input <math|i>, if there are any. \ Otherwise returns
+  <math|<around*|\<lfloor\>|0|\<rfloor\>><rsub|16>>.
 
-  Returns <math|\<emptyset\><rsup|<maybe>>> when the input index is out of
-  range.
+  <subsubsection|<samp|tx-is-final>>
+
+  \;
+
+  <math|<rep|<text|<samp|'tx-is-final'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|'tx-<samp|is-final>'>> :<1>\<vdash\><2>>
+
+  \;
+
+  Returns <math|<math-tt|1><rsub|<2>>> when all the sequence numbers of the
+  tranaction inputs are at their maximum value.
+
+  Otherwise returns <math|<math-tt|0><rsub|<2>>>.
 
   <subsection|Issuance>
 
@@ -11896,33 +11672,33 @@
     <associate|auto-356|<tuple|B.2.3.7|?>>
     <associate|auto-357|<tuple|B.2.3.8|?>>
     <associate|auto-358|<tuple|B.2.3.9|?>>
-    <associate|auto-359|<tuple|B.2.3.10|?>>
+    <associate|auto-359|<tuple|B.3|?>>
     <associate|auto-36|<tuple|3.2.9|?>>
-    <associate|auto-360|<tuple|B.2.3.11|?>>
-    <associate|auto-361|<tuple|B.2.3.12|?>>
-    <associate|auto-362|<tuple|B.2.3.13|?>>
-    <associate|auto-363|<tuple|B.2.3.14|?>>
-    <associate|auto-364|<tuple|B.2.3.15|?>>
-    <associate|auto-365|<tuple|B.3|?>>
-    <associate|auto-366|<tuple|B.3.1|?>>
-    <associate|auto-367|<tuple|B.3.2|?>>
-    <associate|auto-368|<tuple|B.3.2.1|?>>
-    <associate|auto-369|<tuple|B.3.2.2|?>>
+    <associate|auto-360|<tuple|B.3.1|?>>
+    <associate|auto-361|<tuple|B.3.2|?>>
+    <associate|auto-362|<tuple|B.3.2.1|?>>
+    <associate|auto-363|<tuple|B.3.2.2|?>>
+    <associate|auto-364|<tuple|B.3.2.3|?>>
+    <associate|auto-365|<tuple|B.3.2.4|?>>
+    <associate|auto-366|<tuple|B.3.2.5|?>>
+    <associate|auto-367|<tuple|B.3.2.6|?>>
+    <associate|auto-368|<tuple|B.3.2.7|?>>
+    <associate|auto-369|<tuple|B.3.2.8|?>>
     <associate|auto-37|<tuple|3.2.10|?>>
-    <associate|auto-370|<tuple|B.3.2.3|?>>
-    <associate|auto-371|<tuple|B.3.2.4|?>>
-    <associate|auto-372|<tuple|B.3.2.5|?>>
-    <associate|auto-373|<tuple|B.3.2.6|?>>
-    <associate|auto-374|<tuple|B.3.2.7|?>>
-    <associate|auto-375|<tuple|B.3.2.8|?>>
-    <associate|auto-376|<tuple|B.3.2.9|?>>
-    <associate|auto-377|<tuple|B.3.2.10|?>>
-    <associate|auto-378|<tuple|B.3.2.11|?>>
-    <associate|auto-379|<tuple|B.3.2.12|?>>
+    <associate|auto-370|<tuple|B.3.2.9|?>>
+    <associate|auto-371|<tuple|B.3.3|?>>
+    <associate|auto-372|<tuple|C|?>>
+    <associate|auto-373|<tuple|C|?>>
+    <associate|auto-374|<tuple|B.3.2.16|?>>
+    <associate|auto-375|<tuple|B.3.2.17|?>>
+    <associate|auto-376|<tuple|B.3.2.18|?>>
+    <associate|auto-377|<tuple|B.3.2.19|?>>
+    <associate|auto-378|<tuple|B.3.2.20|?>>
+    <associate|auto-379|<tuple|B.3.2.21|?>>
     <associate|auto-38|<tuple|3.2.11|?>>
-    <associate|auto-380|<tuple|B.3.2.13|?>>
-    <associate|auto-381|<tuple|B.3.2.14|?>>
-    <associate|auto-382|<tuple|B.3.2.15|?>>
+    <associate|auto-380|<tuple|B.3.3|?>>
+    <associate|auto-381|<tuple|C|?>>
+    <associate|auto-382|<tuple|C|?>>
     <associate|auto-383|<tuple|B.3.3|?>>
     <associate|auto-384|<tuple|C|?>>
     <associate|auto-385|<tuple|C|?>>
@@ -13485,150 +13261,102 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-349>>
 
-      <with|par-left|<quote|2tab>|B.2.3.1<space|2spc><with|font-family|<quote|ss>|total-height-lock>
+      <with|par-left|<quote|2tab>|B.2.3.1<space|2spc><with|font-family|<quote|ss>|check-lock-height>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-350>>
 
-      <with|par-left|<quote|2tab>|B.2.3.2<space|2spc><with|font-family|<quote|ss>|total-time-lock>
+      <with|par-left|<quote|2tab>|B.2.3.2<space|2spc><with|font-family|<quote|ss>|check-lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-351>>
 
-      <with|par-left|<quote|2tab>|B.2.3.3<space|2spc><with|font-family|<quote|ss>|total-distance-lock>
+      <with|par-left|<quote|2tab>|B.2.3.3<space|2spc><with|font-family|<quote|ss>|check-lock-distance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-352>>
 
-      <with|par-left|<quote|2tab>|B.2.3.4<space|2spc><with|font-family|<quote|ss>|total-duration-lock>
+      <with|par-left|<quote|2tab>|B.2.3.4<space|2spc><with|font-family|<quote|ss>|check-lock-duration>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-353>>
 
-      <with|par-left|<quote|2tab>|B.2.3.5<space|2spc><with|font-family|<quote|ss>|is-final>
+      <with|par-left|<quote|2tab>|B.2.3.5<space|2spc><with|font-family|<quote|ss>|tx-height-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-354>>
 
-      <with|par-left|<quote|2tab>|B.2.3.6<space|2spc><with|font-family|<quote|ss>|current-height-lock>
+      <with|par-left|<quote|2tab>|B.2.3.6<space|2spc><with|font-family|<quote|ss>|tx-time-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-355>>
 
-      <with|par-left|<quote|2tab>|B.2.3.7<space|2spc><with|font-family|<quote|ss>|current-time-lock>
+      <with|par-left|<quote|2tab>|B.2.3.7<space|2spc><with|font-family|<quote|ss>|tx-distance-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-356>>
 
-      <with|par-left|<quote|2tab>|B.2.3.8<space|2spc><with|font-family|<quote|ss>|current-distance-lock>
+      <with|par-left|<quote|2tab>|B.2.3.8<space|2spc><with|font-family|<quote|ss>|tx-duration-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-357>>
 
-      <with|par-left|<quote|2tab>|B.2.3.9<space|2spc><with|font-family|<quote|ss>|current-duration-lock>
+      <with|par-left|<quote|2tab>|B.2.3.9<space|2spc><with|font-family|<quote|ss>|is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-358>>
 
-      <with|par-left|<quote|2tab>|B.2.3.10<space|2spc><with|font-family|<quote|ss>|current-is-Final>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-359>>
-
-      <with|par-left|<quote|2tab>|B.2.3.11<space|2spc><with|font-family|<quote|ss>|input-height-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-360>>
-
-      <with|par-left|<quote|2tab>|B.2.3.12<space|2spc><with|font-family|<quote|ss>|input-time-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-361>>
-
-      <with|par-left|<quote|2tab>|B.2.3.13<space|2spc><with|font-family|<quote|ss>|input-distance-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-362>>
-
-      <with|par-left|<quote|2tab>|B.2.3.14<space|2spc><with|font-family|<quote|ss>|input-duration-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-363>>
-
-      <with|par-left|<quote|2tab>|B.2.3.15<space|2spc><with|font-family|<quote|ss>|input-is-final>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-364>>
-
       B.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|111...:
       >Elements Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-365>
+      <no-break><pageref|auto-359>
 
       <with|par-left|<quote|1tab>|B.3.1<space|2spc>Transaction
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-366>>
+      <no-break><pageref|auto-360>>
 
       <with|par-left|<quote|1tab>|B.3.2<space|2spc>Time Locks
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-361>>
+
+      <with|par-left|<quote|2tab>|B.3.2.1<space|2spc><with|font-family|<quote|ss>|check-lock-height>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-362>>
+
+      <with|par-left|<quote|2tab>|B.3.2.2<space|2spc><with|font-family|<quote|ss>|check-lock-time>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-363>>
+
+      <with|par-left|<quote|2tab>|B.3.2.3<space|2spc><with|font-family|<quote|ss>|check-lock-distance>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-364>>
+
+      <with|par-left|<quote|2tab>|B.3.2.4<space|2spc><with|font-family|<quote|ss>|check-lock-duration>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-365>>
+
+      <with|par-left|<quote|2tab>|B.3.2.5<space|2spc><with|font-family|<quote|ss>|tx-lock-height>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-366>>
+
+      <with|par-left|<quote|2tab>|B.3.2.6<space|2spc><with|font-family|<quote|ss>|tx-lock-time>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-367>>
 
-      <with|par-left|<quote|2tab>|B.3.2.1<space|2spc><with|font-family|<quote|ss>|total-height-lock>
+      <with|par-left|<quote|2tab>|B.3.2.7<space|2spc><with|font-family|<quote|ss>|tx-lock-distance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-368>>
 
-      <with|par-left|<quote|2tab>|B.3.2.2<space|2spc><with|font-family|<quote|ss>|total-time-lock>
+      <with|par-left|<quote|2tab>|B.3.2.8<space|2spc><with|font-family|<quote|ss>|tx-lock-duration>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-369>>
 
-      <with|par-left|<quote|2tab>|B.3.2.3<space|2spc><with|font-family|<quote|ss>|total-distance-lock>
+      <with|par-left|<quote|2tab>|B.3.2.9<space|2spc><with|font-family|<quote|ss>|tx-is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-370>>
 
-      <with|par-left|<quote|2tab>|B.3.2.4<space|2spc><with|font-family|<quote|ss>|total-duration-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-371>>
-
-      <with|par-left|<quote|2tab>|B.3.2.5<space|2spc><with|font-family|<quote|ss>|is-final>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-372>>
-
-      <with|par-left|<quote|2tab>|B.3.2.6<space|2spc><with|font-family|<quote|ss>|current-height-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-373>>
-
-      <with|par-left|<quote|2tab>|B.3.2.7<space|2spc><with|font-family|<quote|ss>|current-time-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-374>>
-
-      <with|par-left|<quote|2tab>|B.3.2.8<space|2spc><with|font-family|<quote|ss>|current-distance-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-375>>
-
-      <with|par-left|<quote|2tab>|B.3.2.9<space|2spc><with|font-family|<quote|ss>|current-duration-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-376>>
-
-      <with|par-left|<quote|2tab>|B.3.2.10<space|2spc><with|font-family|<quote|ss>|current-is-Final>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-377>>
-
-      <with|par-left|<quote|2tab>|B.3.2.11<space|2spc><with|font-family|<quote|ss>|input-height-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-378>>
-
-      <with|par-left|<quote|2tab>|B.3.2.12<space|2spc><with|font-family|<quote|ss>|input-time-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-379>>
-
-      <with|par-left|<quote|2tab>|B.3.2.13<space|2spc><with|font-family|<quote|ss>|input-distance-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-380>>
-
-      <with|par-left|<quote|2tab>|B.3.2.14<space|2spc><with|font-family|<quote|ss>|input-duration-lock>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-381>>
-
-      <with|par-left|<quote|2tab>|B.3.2.15<space|2spc><with|font-family|<quote|ss>|input-is-final>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-382>>
-
       <with|par-left|<quote|1tab>|B.3.3<space|2spc>Issuance
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-383>>
+      <no-break><pageref|auto-371>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       C<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-384><vspace|0.5fn>
+      <no-break><pageref|auto-372><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-385><vspace|0.5fn>
+      <no-break><pageref|auto-373><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
