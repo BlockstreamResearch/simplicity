@@ -1,4 +1,4 @@
-OBJS := bitstream.o dag.o deserialize.o eval.o frame.o jets.o jets-secp256k1.o rsort.o sha256.o type.o typeInference.o primitive/elements.o primitive/elements/jets.o primitive/elements/primitive.o
+OBJS := bitstream.o dag.o deserialize.o eval.o frame.o jets.o jets-secp256k1.o rsort.o sha256.o type.o typeInference.o primitive/elements/env.o primitive/elements/exec.o primitive/elements/jets.o primitive/elements/primitive.o
 TEST_OBJS := test.o hashBlock.o schnorr0.o schnorr6.o primitive/elements/checkSigHashAllTx1.o
 
 # From https://fastcompression.blogspot.com/2019/01/compiler-warnings.html

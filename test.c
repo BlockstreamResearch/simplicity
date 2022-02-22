@@ -1,7 +1,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
-#include <simplicity/elements.h>
+#include <simplicity/elements/exec.h>
 #include "dag.h"
 #include "deserialize.h"
 #include "eval.h"
