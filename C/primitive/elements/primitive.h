@@ -5,7 +5,7 @@
 #ifndef SIMPLICITY_PRIMITIVE_ELEMENTS_H
 #define SIMPLICITY_PRIMITIVE_ELEMENTS_H
 
-#include "../../primitive.h"
+#include <stdbool.h>
 #include "../../sha256.h"
 
 /* An Elements 'outpoint' consists of a transaction id and output index within that transaction.

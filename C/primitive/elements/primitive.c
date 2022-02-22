@@ -5,6 +5,7 @@
 #include "jets.h"
 #include "../../callonce.h"
 #include "../../prefix.h"
+#include "../../primitive.h"
 #include "../../tag.h"
 #include "../../unreachable.h"
 
