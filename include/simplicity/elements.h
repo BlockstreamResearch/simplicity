@@ -91,7 +91,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
  *            unsigned char controlBlock[33+branchLen*32];
  */
 typedef struct rawTapEnv {
-  rawBuffer* annex;
+  const rawBuffer* annex;
   const unsigned char* controlBlock;
   unsigned char branchLen;
 } rawTapEnv;
