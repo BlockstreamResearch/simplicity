@@ -15,7 +15,7 @@ tested-with:         GHC ==8.6.4
 
 library Simplicity-Core
   C-sources:           C/sha256.c, C/frame.c, C/jets.c, C/jets-secp256k1.c
-                       Haskell/cbits/frame.c, Haskell/cbits/jets.c
+                       Haskell/cbits/frame.c, Haskell/cbits/coreJets.c
   Include-dirs:        C
   Includes:            sha256.h, frame.h, jets.h
   exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
@@ -114,9 +114,14 @@ library Simplicity-Indef
                        vector >=0.12 && <0.13
 
 library
+  C-sources:           C/primitive/elements/jets.c C/primitive/elements/env.c
+                       Haskell/cbits/elements/jets.c Haskell/cbits/elements/env.c
+  Include-dirs:        C C/include
+  Includes:            primitive/elements/jets.h primitive/elements/primitive.h simplicity/elements/env.h
   exposed-modules:     Simplicity.Bitcoin.Programs.CheckSigHashAll, Simplicity.Elements.Programs.CheckSigHashAll,
                        Simplicity.Bitcoin.Programs.CheckSigHashAll.Lib, Simplicity.Elements.Programs.CheckSigHashAll.Lib,
-                       Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets
+                       Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets,
+                       Simplicity.Elements.FFI.Env, Simplicity.Elements.FFI.Jets
   reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
                        Simplicity.Term.Core,
                        Simplicity.CoreJets,
@@ -178,8 +183,10 @@ library
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core, Simplicity-Bitcoin, Simplicity-Elements, Simplicity-Indef,
+                       array >=0.5 && <0.6,
                        base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
+                       cereal >=0.5 && <0.6,
                        containers >=0.5.10 && <0.7
 
 Test-Suite testsuite
