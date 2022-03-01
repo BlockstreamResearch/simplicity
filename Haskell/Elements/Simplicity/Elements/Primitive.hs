@@ -22,6 +22,7 @@ import qualified Data.Word
 import Simplicity.Digest
 import Simplicity.Elements.DataTypes
 import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
+import qualified Simplicity.LibSecp256k1.Spec as Schnorr
 import Simplicity.Programs.LibSecp256k1
 import Simplicity.Serialization
 import Simplicity.Ty
@@ -270,7 +271,7 @@ primSem p a env = interpret p a
   atOutput f = cast . fmap f . lookupOutput . fromInteger . fromWord32
   encodeHash = toWord256 . integerHash256
   encodeConfidential enc (Explicit a) = Right (enc a)
-  encodeConfidential enc (Confidential (Point by (Schnorr.PubKey x))) = Left (toBit by, toWord256 . toInteger $ x)
+  encodeConfidential enc (Confidential (Point by x)) = Left (toBit by, toWord256 . Schnorr.fe_repr $ x)
   encodeAsset = encodeConfidential encodeHash . asset
   encodeAmount = encodeConfidential (toWord64 . toInteger) . amount
   encodeNonce = cast . fmap (encodeConfidential encodeHash . nonce)

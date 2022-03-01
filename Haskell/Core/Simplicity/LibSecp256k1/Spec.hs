@@ -1,6 +1,6 @@
 module Simplicity.LibSecp256k1.Spec
  ( -- * Field operations.
-   FE, fe, fe_repr, fe_pack
+   FE, fe, fe_repr, fe_pack, fe_unpack
  , fe_zero, fe_one
  , fe_is_zero, fe_is_odd
  , fe_negate, fe_add, fe_multiply, fe_square, fe_invert, fe_square_root
@@ -200,6 +200,7 @@ isQuad = isJust . fe_square_root
 
 -- | A "compressed" point on the secp256k1 curve.  Infinity not included.
 data Point = Point Bool FE
+  deriving Show
 
 -- | A point in Jacobian coordinates.
 -- A '_z' component of 'fe_zero' represents a point at infinity.

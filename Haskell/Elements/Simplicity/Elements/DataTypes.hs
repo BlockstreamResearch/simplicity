@@ -9,8 +9,8 @@ module Simplicity.Elements.DataTypes
   , Asset(..), Amount(..), TokenAmount, Nonce(..)
   , putNonce, getNonce
   , putIssuance, getIssuance
-  , NewIssuance, newIssuanceContractHash, newIssuanceAmount, newIssuanceTokenAmount
-  , Reissuance, reissuanceBlindingNonce, reissuanceEntropy, reissuanceAmount
+  , NewIssuance(..)
+  , Reissuance(..)
   , Issuance
   , Outpoint(Outpoint), opHash, opIndex
   , UTXO(UTXO), utxoAsset, utxoAmount, utxoScript
@@ -31,10 +31,9 @@ import Data.Serialize ( Serialize
                       )
 
 import Simplicity.Digest
+import Simplicity.LibSecp256k1.Spec
 import Simplicity.LibSecp256k1.Schnorr
 import Simplicity.Word
-
-data Point = Point Bool PubKey deriving Show
 
 -- | Unparsed Bitcoin Script.
 -- Script in transactions outputs do not have to be parsable, so we encode this as a raw 'Data.ByteString.ByteString'.
@@ -110,6 +109,12 @@ txNullData = either (const Nothing) Just . runGetLazy prog
     emp <- isEmpty
     if emp then return [] else ((:) <$> getTxNullDatum <*> go)
 
+getFE :: Get FE
+getFE = fmap fe_unpack get >>= maybe mzero return
+
+putFE :: Putter FE
+putFE = put . fe_pack
+
 -- | Transaction locktime.
 -- This represents either a block height or a block time.
 -- It is encoded as a 32-bit value.
@@ -125,12 +130,12 @@ newtype Asset = Asset { asset :: Confidential Hash256 } deriving Show
 
 instance Serialize Asset where
   put (Asset (Explicit h)) = putWord8 0x01 >> put h
-  put (Asset (Confidential (Point by x))) = putWord8 (if by then 0x0b else 0x0a) >> put x
+  put (Asset (Confidential (Point by x))) = putWord8 (if by then 0x0b else 0x0a) >> putFE x
   get = getWord8 >>= go
    where
     go 0x01 = Asset . Explicit <$> get
-    go 0x0a = Asset . Confidential . Point False <$> get
-    go 0x0b = Asset . Confidential . Point True <$> get
+    go 0x0a = Asset . Confidential . Point False <$> getFE
+    go 0x0b = Asset . Confidential . Point True <$> getFE
     go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Asset}: bad prefix."
 
 newtype Amount = Amount { amount :: Confidential Value } deriving Show
@@ -138,24 +143,24 @@ type TokenAmount = Amount
 
 instance Serialize Amount where
   put (Amount (Explicit v)) = putWord8 0x01 >> putWord64be v
-  put (Amount (Confidential (Point by x))) = putWord8 (if by then 0x09 else 0x08) >> put x
+  put (Amount (Confidential (Point by x))) = putWord8 (if by then 0x09 else 0x08) >> putFE x
   get = getWord8 >>= go
    where
     go 0x01 = Amount . Explicit <$> get
-    go 0x08 = Amount . Confidential . Point False <$> get
-    go 0x09 = Amount . Confidential . Point True <$> get
+    go 0x08 = Amount . Confidential . Point False <$> getFE
+    go 0x09 = Amount . Confidential . Point True <$> getFE
     go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Amount}: bad prefix."
 
 newtype Nonce = Nonce { nonce :: Confidential Hash256 } deriving Show
 
 instance Serialize Nonce where
   put (Nonce (Explicit h)) = putWord8 0x01 >> put h
-  put (Nonce (Confidential (Point by x))) = putWord8 (if by then 0x03 else 0x02) >> put x
+  put (Nonce (Confidential (Point by x))) = putWord8 (if by then 0x03 else 0x02) >> putFE x
   get = lookAhead getWord8 >>= go
    where
     go 0x01 = getWord8 *> (Nonce . Explicit <$> get)
-    go 0x02 = Nonce . Confidential . Point False <$> get
-    go 0x03 = Nonce . Confidential . Point True <$> get
+    go 0x02 = Nonce . Confidential . Point False <$> getFE
+    go 0x03 = Nonce . Confidential . Point True <$> getFE
     go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Nonce}: bad prefix."
 
 putMaybeConfidential :: Putter a -> Putter (Maybe a)
