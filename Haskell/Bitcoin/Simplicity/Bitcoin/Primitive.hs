@@ -205,6 +205,17 @@ data PrimEnv = PrimEnv { envTx :: SigTx
                        , envOutputsHash :: Hash256
                        }
 
+instance Show PrimEnv where
+  showsPrec d env = showParen (d > 10)
+                  $ showString "primEnv "
+                  . showsPrec 11 (envTx env)
+                  . showString " "
+                  . showsPrec 11 (envIx env)
+                  . showString " "
+                  . showsPrec 11 (envTap env)
+                  . showString " "
+                  . showsPrec 11 (envScriptCMR env)
+
 primEnv :: SigTx -> Data.Word.Word32 -> TapEnv -> Hash256 -> Maybe PrimEnv
 primEnv tx ix tap scmr | cond = Just $ PrimEnv { envTx = tx
                                                , envIx = ix

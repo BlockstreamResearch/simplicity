@@ -282,4 +282,4 @@ data TapEnv = TapEnv { tapAnnex :: Maybe BSL.ByteString
                      , tapLeafVersion :: Word8
                      , tapInternalKey :: PubKey
                      , tapBranch :: [Hash256]
-                     }
+                     } deriving Show
