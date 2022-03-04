@@ -26,6 +26,7 @@ foreign import ccall unsafe "&" c_sizeof_frameItem :: Ptr CSize
 
 foreign import ccall unsafe "" c_readBit :: Ptr FrameItem -> IO Bool
 foreign import ccall unsafe "" c_writeBit :: Ptr FrameItem -> Bool -> IO ()
+foreign import ccall unsafe "" c_forwardBits :: Ptr FrameItem -> CSize -> IO ()
 foreign import ccall unsafe "" c_skipBits :: Ptr FrameItem -> CSize -> IO ()
 foreign import ccall unsafe "" c_initReadFrame :: Ptr FrameItem -> CSize -> Ptr UWORD -> IO ()
 foreign import ccall unsafe "" c_initWriteFrame :: Ptr FrameItem -> CSize -> Ptr UWORD -> IO ()
@@ -49,7 +50,8 @@ readFrameItemR :: TyReflect a -> Ptr FrameItem -> IO a
 readFrameItemR OneR _ = return ()
 readFrameItemR (SumR a b) frame = do
   bit <- c_readBit frame
-  if bit then Right <$> readFrameItemR b frame else Left <$> readFrameItemR a frame
+  if bit then c_forwardBits frame (fromIntegral (padRR a b)) >> Right <$> readFrameItemR b frame
+         else c_forwardBits frame (fromIntegral (padLR a b)) >>  Left <$> readFrameItemR a frame
 readFrameItemR (ProdR a b) frame = (,) <$> readFrameItemR a frame <*> readFrameItemR b frame
 
 writeFrameItemR :: TyReflect a -> a -> Ptr FrameItem -> IO ()

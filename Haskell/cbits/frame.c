@@ -19,6 +19,10 @@ void c_writeBit(frameItem* frame, bool bit) {
   writeBit(frame, bit);
 }
 
+void c_forwardBits(frameItem* frame, size_t n) {
+  forwardBits(frame, n);
+}
+
 void c_skipBits(frameItem* frame, size_t n) {
   skipBits(frame, n);
 }
