@@ -132,8 +132,8 @@ static void issuanceAssetAmt(frameItem* dst, const assetIssuance* issuance) {
  *               NULL != issuance;
  */
 static void issuanceTokenAmt(frameItem* dst, const assetIssuance* issuance) {
-  if (writeBit(dst, NEW_ISSUANCE == issuance->type)) {
-    amt(dst, &issuance->tokenAmt);
+  if (writeBit(dst, NO_ISSUANCE != issuance->type)) {
+    amt(dst, NEW_ISSUANCE == issuance->type ? &issuance->tokenAmt : &(confAmount){ .prefix = EXPLICIT, .explicit = 0});
   } else {
     skipBits(dst, 258);
   }
