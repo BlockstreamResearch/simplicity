@@ -88,6 +88,14 @@ static inline bool writeBit(frameItem* frame, bool bit) {
   return bit;
 }
 
+/* Given a read frame, advance the cursor by 'n' cells.
+ *
+ * Precondition: '*frame' is a valid read frame for 'n' more cells.
+ */
+static inline void forwardBits(frameItem* frame, size_t n) {
+  frame->offset += n;
+}
+
 /* Given a write frame, advance the cursor by 'n' cells.
  *
  * Precondition: '*frame' is a valid write frame for 'n' more cells.
