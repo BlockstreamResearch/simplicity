@@ -344,10 +344,8 @@ bool output_null_datum(frameItem* dst, frameItem src, const txEnv* env) {
             case OP_14: writeBit(dst, 1); writeBit(dst, 1); writeBit(dst, 0); writeBit(dst, 1); break;
             case OP_15: writeBit(dst, 1); writeBit(dst, 1); writeBit(dst, 1); writeBit(dst, 0); break;
             case OP_16: writeBit(dst, 1); writeBit(dst, 1); writeBit(dst, 1); writeBit(dst, 1); break;
-            default: break;
+            default: assert(false); UNREACHABLE;
           }
-          assert(false);
-          UNREACHABLE;
         } else {
           assert(OP_RESERVED == env->tx->output[i].pnd.op[j].code ||
                  OP_1NEGATE == env->tx->output[i].pnd.op[j].code);
