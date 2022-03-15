@@ -51,6 +51,8 @@ tests = testGroup "Elements"
           , testProperty "input_issuance_entropy" prop_input_issuance_entropy
           , testProperty "input_issuance_asset_amt" prop_input_issuance_asset_amt
           , testProperty "input_issuance_token_amt" prop_input_issuance_token_amt
+          , testProperty "input_issuance_asset_proof" prop_input_issuance_asset_proof
+          , testProperty "input_issuance_token_proof" prop_input_issuance_token_proof
           , testProperty "current_index" prop_current_index
           , testProperty "current_is_pegin" prop_current_is_pegin
           , testProperty "current_prev_outpoint" prop_current_prev_outpoint
@@ -63,6 +65,8 @@ tests = testGroup "Elements"
           , testProperty "current_issuance_entropy" prop_current_issuance_entropy
           , testProperty "current_issuance_asset_amt" prop_current_issuance_asset_amt
           , testProperty "current_issuance_token_amt" prop_current_issuance_token_amt
+          , testProperty "current_issuance_asset_proof" prop_current_issuance_asset_proof
+          , testProperty "current_issuance_token_proof" prop_current_issuance_token_proof
           , testProperty "tapleaf_version" prop_tapleaf_version
           , testProperty "tapbranch" prop_tapbranch
           , testProperty "internal_key" prop_internal_key
@@ -73,6 +77,8 @@ tests = testGroup "Elements"
           , testProperty "output_nonce" prop_output_nonce
           , testProperty "output_script_hash" prop_output_script_hash
           , testProperty "output_null_datum" prop_output_null_datum
+          , testProperty "output_surjection_proof" prop_output_surjection_proof
+          , testProperty "output_range_proof" prop_output_range_proof
           , testProperty "script_cmr" prop_script_cmr
           ]
         , testCase "sigHashAll" (assertBool "sigHashAll_matches" hunit_sigHashAll)
@@ -126,6 +132,12 @@ prop_input_issuance_asset_amt = forallInPrimEnv $ \env i -> primSem InputIssuanc
 prop_input_issuance_token_amt :: Property
 prop_input_issuance_token_amt = forallInPrimEnv $ \env i -> primSem InputIssuanceTokenAmt (toW32 i) env == input_issuance_token_amt env (toW32 i)
 
+prop_input_issuance_asset_proof :: Property
+prop_input_issuance_asset_proof = forallInPrimEnv $ \env i -> primSem InputIssuanceAssetAmt (toW32 i) env == input_issuance_asset_amt env (toW32 i)
+
+prop_input_issuance_token_proof :: Property
+prop_input_issuance_token_proof = forallInPrimEnv $ \env i -> primSem InputIssuanceTokenAmt (toW32 i) env == input_issuance_token_amt env (toW32 i)
+
 prop_current_index :: Property
 prop_current_index = forallPrimEnv $ \env -> primSem CurrentIndex () env == current_index env ()
 
@@ -162,6 +174,12 @@ prop_current_issuance_asset_amt = forallPrimEnv $ \env -> primSem CurrentIssuanc
 prop_current_issuance_token_amt :: Property
 prop_current_issuance_token_amt = forallPrimEnv $ \env -> primSem CurrentIssuanceTokenAmt () env == current_issuance_token_amt env ()
 
+prop_current_issuance_asset_proof :: Property
+prop_current_issuance_asset_proof = forallPrimEnv $ \env -> primSem CurrentIssuanceAssetAmt () env == current_issuance_asset_amt env ()
+
+prop_current_issuance_token_proof :: Property
+prop_current_issuance_token_proof = forallPrimEnv $ \env -> primSem CurrentIssuanceTokenAmt () env == current_issuance_token_amt env ()
+
 prop_tapleaf_version :: Property
 prop_tapleaf_version = forallPrimEnv $ \env -> primSem TapleafVersion () env == tapleaf_version env ()
 
@@ -194,6 +212,12 @@ prop_output_script_hash = forallOutPrimEnv $ \env i -> primSem OutputScriptHash 
 -- :TODO: Make proper arbitrary NullDatum scripts
 prop_output_null_datum :: NonNegative Integer -> Property
 prop_output_null_datum (NonNegative j) = forallOutPrimEnv $ \env i -> primSem OutputNullDatum (toW32 i, toWord32 j) env == output_null_datum env (toW32 i, toWord32 j)
+
+prop_output_surjection_proof :: Property
+prop_output_surjection_proof = forallOutPrimEnv $ \env i -> primSem OutputSurjectionProof (toW32 i) env == output_surjection_proof env (toW32 i)
+
+prop_output_range_proof :: Property
+prop_output_range_proof = forallOutPrimEnv $ \env i -> primSem OutputRangeProof (toW32 i) env == output_range_proof env (toW32 i)
 
 prop_script_cmr :: Property
 prop_script_cmr = forallPrimEnv $ \env -> primSem ScriptCMR () env == script_cmr env ()

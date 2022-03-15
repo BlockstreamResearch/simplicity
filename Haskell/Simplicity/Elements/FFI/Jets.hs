@@ -14,11 +14,15 @@ module Simplicity.Elements.FFI.Jets
  , input_issuance_entropy
  , input_issuance_asset_amt
  , input_issuance_token_amt
+ , input_issuance_asset_proof
+ , input_issuance_token_proof
  , output_asset
  , output_amount
  , output_nonce
  , output_script_hash
  , output_null_datum
+ , output_surjection_proof
+ , output_range_proof
  , script_cmr
  , current_index
  , current_is_pegin
@@ -32,6 +36,8 @@ module Simplicity.Elements.FFI.Jets
  , current_issuance_entropy
  , current_issuance_asset_amt
  , current_issuance_token_amt
+ , current_issuance_asset_proof
+ , current_issuance_token_proof
  , tapleaf_version
  , tapbranch
  , internal_key
@@ -73,11 +79,15 @@ foreign import ccall unsafe "" c_input_issuance_contract :: Ptr FrameItem -> Ptr
 foreign import ccall unsafe "" c_input_issuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_input_issuance_asset_amt :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_input_issuance_token_amt :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
+foreign import ccall unsafe "" c_input_issuance_asset_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
+foreign import ccall unsafe "" c_input_issuance_token_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_output_asset :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_output_amount :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_output_nonce :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_output_script_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_output_null_datum :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
+foreign import ccall unsafe "" c_output_surjection_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
+foreign import ccall unsafe "" c_output_range_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_script_cmr :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_current_index :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_current_is_pegin :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
@@ -91,6 +101,8 @@ foreign import ccall unsafe "" c_current_issuance_contract :: Ptr FrameItem -> P
 foreign import ccall unsafe "" c_current_issuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_current_issuance_asset_amt :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_current_issuance_token_amt :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
+foreign import ccall unsafe "" c_current_issuance_asset_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
+foreign import ccall unsafe "" c_current_issuance_token_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_tapleaf_version :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_tapbranch :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
 foreign import ccall unsafe "" c_internal_key :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO Bool
@@ -148,6 +160,12 @@ input_issuance_asset_amt = unsafeLocalJet c_input_issuance_asset_amt
 input_issuance_token_amt :: PrimEnv -> Word32 -> Maybe (S (S (Conf Word64)))
 input_issuance_token_amt = unsafeLocalJet c_input_issuance_token_amt
 
+input_issuance_asset_proof :: PrimEnv -> Word32 -> Maybe (S Word256)
+input_issuance_asset_proof = unsafeLocalJet c_input_issuance_asset_proof
+
+input_issuance_token_proof :: PrimEnv -> Word32 -> Maybe (S Word256)
+input_issuance_token_proof = unsafeLocalJet c_input_issuance_token_proof
+
 current_index :: PrimEnv -> () -> Maybe Word32
 current_index = unsafeLocalJet c_current_index
 
@@ -184,6 +202,12 @@ current_issuance_asset_amt = unsafeLocalJet c_current_issuance_asset_amt
 current_issuance_token_amt :: PrimEnv -> () -> Maybe (S (Conf Word64))
 current_issuance_token_amt = unsafeLocalJet c_current_issuance_token_amt
 
+current_issuance_asset_proof :: PrimEnv -> () -> Maybe Word256
+current_issuance_asset_proof = unsafeLocalJet c_current_issuance_asset_proof
+
+current_issuance_token_proof :: PrimEnv -> () -> Maybe Word256
+current_issuance_token_proof = unsafeLocalJet c_current_issuance_token_proof
+
 tapleaf_version :: PrimEnv -> () -> Maybe Word8
 tapleaf_version = unsafeLocalJet c_tapleaf_version
 
@@ -213,6 +237,12 @@ output_script_hash = unsafeLocalJet c_output_script_hash
 
 output_null_datum :: PrimEnv -> (Word32,Word32) -> Maybe (S (S (Either (Word2, Word256) (Either Bit Word4))))
 output_null_datum = unsafeLocalJet c_output_null_datum
+
+output_surjection_proof :: PrimEnv -> Word32 -> Maybe (S Word256)
+output_surjection_proof = unsafeLocalJet c_output_surjection_proof
+
+output_range_proof :: PrimEnv -> Word32 -> Maybe (S Word256)
+output_range_proof = unsafeLocalJet c_output_range_proof
 
 -- fee :: PrimEnv -> Word256 -> Maybe Word64
 
