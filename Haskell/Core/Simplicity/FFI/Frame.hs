@@ -6,7 +6,7 @@ module Simplicity.FFI.Frame
 
 import Control.Arrow (Kleisli(Kleisli))
 import Data.Functor.Compose (Compose(..))
-import Foreign.C.Types (CSize(..))
+import Foreign.C.Types (CSize(..), CBool(..))
 import Foreign.Ptr (Ptr, plusPtr)
 import Foreign.Storable (Storable(..))
 import Foreign.Marshal.Alloc (allocaBytes)
@@ -24,8 +24,8 @@ newtype FrameItem = FrameItem FrameItem
 foreign import ccall unsafe "&" c_sizeof_UWORD :: Ptr CSize
 foreign import ccall unsafe "&" c_sizeof_frameItem :: Ptr CSize
 
-foreign import ccall unsafe "" c_readBit :: Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_writeBit :: Ptr FrameItem -> Bool -> IO ()
+foreign import ccall unsafe "" c_readBit :: Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_writeBit :: Ptr FrameItem -> CBool -> IO ()
 foreign import ccall unsafe "" c_forwardBits :: Ptr FrameItem -> CSize -> IO ()
 foreign import ccall unsafe "" c_skipBits :: Ptr FrameItem -> CSize -> IO ()
 foreign import ccall unsafe "" c_initReadFrame :: Ptr FrameItem -> CSize -> Ptr UWORD -> IO ()
@@ -50,18 +50,18 @@ readFrameItemR :: TyReflect a -> Ptr FrameItem -> IO a
 readFrameItemR OneR _ = return ()
 readFrameItemR (SumR a b) frame = do
   bit <- c_readBit frame
-  if bit then c_forwardBits frame (fromIntegral (padRR a b)) >> Right <$> readFrameItemR b frame
-         else c_forwardBits frame (fromIntegral (padLR a b)) >>  Left <$> readFrameItemR a frame
+  if 0 /= bit then c_forwardBits frame (fromIntegral (padRR a b)) >> Right <$> readFrameItemR b frame
+              else c_forwardBits frame (fromIntegral (padLR a b)) >>  Left <$> readFrameItemR a frame
 readFrameItemR (ProdR a b) frame = (,) <$> readFrameItemR a frame <*> readFrameItemR b frame
 
 writeFrameItemR :: TyReflect a -> a -> Ptr FrameItem -> IO ()
 writeFrameItemR OneR _ _ = return ()
 writeFrameItemR (SumR a b) (Left v) frame = do
-  c_writeBit frame False
+  c_writeBit frame 0
   c_skipBits frame (fromIntegral (padLR a b))
   writeFrameItemR a v frame
 writeFrameItemR (SumR a b) (Right v) frame = do
-  c_writeBit frame True
+  c_writeBit frame 1
   c_skipBits frame (fromIntegral (padRR a b))
   writeFrameItemR b v frame
 writeFrameItemR (ProdR a b) (va, vb) frame = writeFrameItemR a va frame >> writeFrameItemR b vb frame
@@ -72,7 +72,7 @@ withReadFrame n from k = allocaFrameItem $ \frame -> c_initReadFrame frame (from
 withWriteFrame :: Int -> Ptr UWORD -> (Ptr FrameItem -> IO a) -> IO a
 withWriteFrame n from k = allocaFrameItem $ \frame -> c_initWriteFrame frame (fromIntegral n) from >> k frame
 
-runCoreJet :: (TyC a, TyC b) => (Ptr FrameItem -> Ptr FrameItem -> IO Bool) -> a -> IO (Maybe b)
+runCoreJet :: (TyC a, TyC b) => (Ptr FrameItem -> Ptr FrameItem -> IO CBool) -> a -> IO (Maybe b)
 runCoreJet jet = go
  where
   (aR, bR) = reifyArrow . Kleisli $ Compose . go
@@ -86,13 +86,13 @@ runCoreJet jet = go
     result <- withReadFrame (bitSizeR aR) arr $ \readFrame ->
               withWriteFrame (bitSizeR bR) (arr `plusPtr` arrSize) $ \writeFrame ->
               jet writeFrame readFrame
-    if result
+    if 0 /= result
       then Just <$> (withReadFrame (bitSizeR bR) (arr `plusPtr` aSize) $ readFrameItem)
       else return Nothing
 
 -- | This cannot be used with jets that access global variables.
-unsafeLocalCoreJet :: (TyC a, TyC b) => (Ptr FrameItem -> Ptr FrameItem -> IO Bool) -> a -> Maybe b
+unsafeLocalCoreJet :: (TyC a, TyC b) => (Ptr FrameItem -> Ptr FrameItem -> IO CBool) -> a -> Maybe b
 unsafeLocalCoreJet jet = unsafeLocalState . runCoreJet jet
 
-unsafeCoreJet :: (TyC a, TyC b) => (Ptr FrameItem -> Ptr FrameItem -> IO Bool) -> a -> Maybe b
+unsafeCoreJet :: (TyC a, TyC b) => (Ptr FrameItem -> Ptr FrameItem -> IO CBool) -> a -> Maybe b
 unsafeCoreJet jet = unsafePerformIO . runCoreJet jet

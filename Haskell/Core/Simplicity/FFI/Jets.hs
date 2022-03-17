@@ -14,6 +14,7 @@ module Simplicity.FFI.Jets
  ) where
 
 import Foreign.Ptr (Ptr)
+import Foreign.C.Types (CBool(..))
 
 import Simplicity.FFI.Frame
 import qualified Simplicity.Programs.Sha256.Lib as Sha256
@@ -21,54 +22,54 @@ import Simplicity.Programs.LibSecp256k1.Lib (FE, Scalar, GE, GEJ, Point, PubKey,
 import qualified Simplicity.Programs.LibSecp256k1.Lib as LibSecp256k1
 import Simplicity.Ty.Word
 
-foreign import ccall unsafe "" c_add_32 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_full_add_32 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_subtract_32 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_full_subtract_32 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_full_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
+foreign import ccall unsafe "" c_add_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_add_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_subtract_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_subtract_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
-foreign import ccall unsafe "" c_sha_256_block :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
+foreign import ccall unsafe "" c_sha_256_block :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
-foreign import ccall unsafe "" c_fe_normalize :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_fe_negate :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_fe_add :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_fe_square :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_fe_multiply :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_fe_multiply_beta :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_fe_invert :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_fe_square_root :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_fe_is_zero :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_fe_is_odd :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_scalar_normalize :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_scalar_negate :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_scalar_add :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_scalar_square :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_scalar_multiply :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_scalar_multiply_lambda :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_scalar_invert :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_scalar_is_zero :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_infinity :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_rescale :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_normalize :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_negate :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_ge_negate :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_double :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_add :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_ge_add_ex :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_ge_add :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_is_infinity :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_x_equiv :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_y_is_odd :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_gej_is_on_curve :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_ge_is_on_curve :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_scale :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_generate :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_linear_combination_1 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_linear_verify_1 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_decompress :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_point_verify_1 :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
-foreign import ccall unsafe "" c_bip_0340_verify :: Ptr FrameItem -> Ptr FrameItem -> IO Bool
+foreign import ccall unsafe "" c_fe_normalize :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_fe_negate :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_fe_add :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_fe_square :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_fe_multiply :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_fe_multiply_beta :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_fe_invert :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_fe_square_root :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_fe_is_zero :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_fe_is_odd :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_scalar_normalize :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_scalar_negate :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_scalar_add :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_scalar_square :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_scalar_multiply :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_scalar_multiply_lambda :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_scalar_invert :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_scalar_is_zero :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_infinity :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_rescale :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_normalize :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_negate :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_ge_negate :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_double :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_add :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_ge_add_ex :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_ge_add :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_is_infinity :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_x_equiv :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_y_is_odd :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_is_on_curve :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_ge_is_on_curve :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_scale :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_generate :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_linear_combination_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_linear_verify_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_decompress :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_point_verify_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_bip_0340_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 add_32 :: (Word32, Word32) -> Maybe (Bit, Word32)
 add_32 = unsafeLocalCoreJet c_add_32
