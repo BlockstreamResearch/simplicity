@@ -403,12 +403,22 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
                      , .numOutputs = rawTx->numOutputs
                      , .version = rawTx->version
                      , .lockTime = rawTx->lockTime
+                     , .isFinal = true
                      };
 
   {
     sha256_context ctx = sha256_init(tx->inputsHash.s);
     for (uint_fast32_t i = 0; i < tx->numInputs; ++i) {
       copyInput(&input[i], &rawTx->input[i]);
+      if (input[i].sequence < 0xffffffff) { tx->isFinal = false; }
+      if (input[i].sequence < 0x80000000) {
+         const uint_fast16_t maskedSequence = input[i].sequence & 0xffff;
+         if (input[i].sequence & ((uint_fast32_t)1 << 22)) {
+            if (tx->lockDuration < maskedSequence) tx->lockDuration = maskedSequence;
+         } else {
+            if (tx->lockDistance < maskedSequence) tx->lockDistance = maskedSequence;
+         }
+      }
       sha256_outpoint(&ctx, &input[i].prevOutpoint);
       sha256_u32le(&ctx, input[i].sequence);
       sha256_issuance(&ctx, &input[i].issuance);
