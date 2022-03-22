@@ -3,16 +3,22 @@ module Simplicity.Elements.Tests (tests) where
 import Data.Array ((!), listArray)
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
+import Data.Either (fromLeft, fromRight)
 import Data.Serialize (encode, put, putWord8, putWord32be, runPutLazy)
 import Lens.Family2 (review, over)
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, testCase)
+import Test.Tasty.QuickCheck (Property, forAll, testProperty)
 
+import Simplicity.Arbitrary
 import Simplicity.Digest
+import Simplicity.Elements.Arbitrary
 import Simplicity.Elements.DataTypes
+import Simplicity.Elements.Jets
 import Simplicity.Elements.Primitive
 import Simplicity.Elements.Programs.CheckSigHashAll.Lib
+import qualified Simplicity.Elements.Programs.TimeLock as Prog
 import Simplicity.Elements.Semantics
 import qualified Simplicity.LibSecp256k1.Spec as Schnorr
 import Simplicity.MerkleRoot
@@ -21,10 +27,60 @@ import qualified Simplicity.Programs.Sha256 as Sha256
 import Simplicity.Ty.Word
 import qualified Simplicity.Word as Word
 
+toW32 :: Word.Word32 -> Word32
+toW32 = toWord32 . fromIntegral
+
+toW16 :: Word.Word16 -> Word16
+toW16 = toWord16 . fromIntegral
+
 tests :: TestTree
 tests = testGroup "Elements"
-        [ testCase "sigHashAll" (assertBool "sigHashAll_matches" hunit_sigHashAll)
+        [ testGroup "TimeLock"
+          [ testProperty "tx_is_final" prop_tx_is_final
+          , testProperty "tx_lock_height" prop_tx_lock_height
+          , testProperty "tx_lock_time" prop_tx_lock_time
+          , testProperty "tx_lock_distance" prop_tx_lock_distance
+          , testProperty "tx_lock_duration" prop_tx_lock_duration
+          , testProperty "check_lock_height" prop_check_lock_height
+          , testProperty "check_lock_time" prop_check_lock_time
+          , testProperty "check_lock_distance" prop_check_lock_distance
+          , testProperty "check_lock_duration" prop_check_lock_duration
+          ]
+        , testCase "sigHashAll" (assertBool "sigHashAll_matches" hunit_sigHashAll)
         ]
+
+checkJet jet env a = sem (specification jet) env a == implementation jet env a
+
+prop_tx_is_final :: Property
+prop_tx_is_final = forallPrimEnv $ \env -> checkJet (ElementsJet (TimeLockJet TxIsFinal)) env ()
+
+prop_tx_lock_height :: Property
+prop_tx_lock_height = forallPrimEnv $ \env -> checkJet (ElementsJet (TimeLockJet TxLockHeight)) env ()
+
+prop_tx_lock_time :: Property
+prop_tx_lock_time = forallPrimEnv $ \env -> checkJet (ElementsJet (TimeLockJet TxLockTime)) env ()
+
+prop_tx_lock_distance :: Property
+prop_tx_lock_distance = forallPrimEnv $ \env -> checkJet (ElementsJet (TimeLockJet TxLockDistance)) env ()
+
+prop_tx_lock_duration :: Property
+prop_tx_lock_duration = forallPrimEnv $ \env -> checkJet (ElementsJet (TimeLockJet TxLockDuration)) env ()
+
+prop_check_lock_height :: Property
+prop_check_lock_height = forallPrimEnv $ \env -> forAll (genBoundaryCases . sigTxLock $ envTx env)
+                     $ \w -> checkJet (ElementsJet (TimeLockJet CheckLockHeight)) env (toW32 w)
+
+prop_check_lock_time :: Property
+prop_check_lock_time = forallPrimEnv $ \env -> forAll (genBoundaryCases . sigTxLock $ envTx env)
+                     $ \w -> checkJet (ElementsJet (TimeLockJet CheckLockTime)) env (toW32 w)
+
+prop_check_lock_distance :: Property
+prop_check_lock_distance = forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDistance $ envTx env)
+                         $ \w -> checkJet (ElementsJet (TimeLockJet CheckLockDistance)) env (toW16 w)
+
+prop_check_lock_duration :: Property
+prop_check_lock_duration = forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDuration $ envTx env)
+                         $ \w -> checkJet (ElementsJet (TimeLockJet CheckLockDuration)) env (toW16 w)
 
 tapEnv :: TapEnv
 tapEnv = TapEnv

@@ -21,13 +21,16 @@ module Simplicity.Elements.DataTypes
   , TxOutput(TxOutput), txoAsset, txoAmount, txoNonce, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
   , TapEnv(..)
+  , txIsFinal, txLockDistance, txLockDuration
+  , module Simplicity.Bitcoin
   ) where
 
 import Control.Monad (guard, mzero)
 import Data.Array (Array, elems)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
-import Data.Word (Word64, Word32)
+import Data.Semigroup (Max(Max,getMax))
+import Data.Word (Word64, Word32, Word16, Word8)
 import Data.Serialize ( Serialize
                       , Get, get, runGetLazy, lookAhead, getWord8, getWord16le, getWord32le, getLazyByteString, isEmpty
                       , Putter, put, putWord8, putWord32le, putWord64be, putLazyByteString, runPutLazy
@@ -35,6 +38,7 @@ import Data.Serialize ( Serialize
 import Lens.Family2 ((&), (.~), (^.), under)
 import Lens.Family2.Unchecked (Adapter, adapter, Traversal)
 
+import Simplicity.Bitcoin
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.Spec
 import Simplicity.LibSecp256k1.Schnorr
@@ -296,3 +300,24 @@ data TapEnv = TapEnv { tapAnnex :: Maybe BSL.ByteString
                      , tapInternalKey :: PubKey
                      , tapBranch :: [Hash256]
                      } deriving Show
+
+txIsFinal :: SigTx -> Bool
+txIsFinal tx = all finalSequence (sigTxIn tx)
+ where
+  finalSequence sigin = sigTxiSequence sigin == maxBound
+
+txLockDistance :: SigTx -> Word16
+txLockDistance tx | sigTxVersion tx < 2 = 0
+                  | otherwise = getMax . foldMap distance $ sigTxIn tx
+ where
+  distance sigin = case parseSequence (sigTxiSequence sigin) of
+                     Just (Left x) -> Max x
+                     _ -> mempty
+
+txLockDuration :: SigTx -> Word16
+txLockDuration tx | sigTxVersion tx < 2 = 0
+                  | otherwise = getMax . foldMap duration $ sigTxIn tx
+ where
+  duration sigin = case parseSequence (sigTxiSequence sigin) of
+                     Just (Right x) -> Max x
+                     _ -> mempty

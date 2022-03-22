@@ -4,7 +4,7 @@
 -- The other exports of this library aid in building an instance of 'Simplicity.JetType.JetType' for those that make use of 'CoreJet' as a substructure.
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.CoreJets
- ( CoreJet
+ ( CoreJet(..), ArithJet(..), HashJet(..), Secp256k1Jet(..), SignatureJet(..), BitcoinJet(..)
  , specification, coreJetMap, coreJetLookup
  , implementation
  , fastCoreEval
@@ -14,16 +14,18 @@ module Simplicity.CoreJets
 
 import Prelude hiding (fail, drop, take, subtract)
 
-import Control.Arrow (Kleisli(Kleisli), runKleisli)
+import Control.Arrow ((+++), Kleisli(Kleisli), runKleisli)
 import qualified Data.Map as Map
 import Data.Type.Equality ((:~:)(Refl))
 import Data.Void (Void, vacuous)
 
+import Simplicity.Bitcoin
 import Simplicity.Digest
 import Simplicity.FFI.Jets as FFI
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Programs.Arith
+import qualified Simplicity.Programs.TimeLock as TimeLock
 import qualified Simplicity.Programs.LibSecp256k1.Lib as Secp256k1
 import qualified Simplicity.Programs.Sha256.Lib as Sha256
 import Simplicity.Term.Core
@@ -37,6 +39,7 @@ data CoreJet a b where
   HashJet :: HashJet a b -> CoreJet a b
   Secp256k1Jet :: Secp256k1Jet a b -> CoreJet a b
   SignatureJet :: SignatureJet a b -> CoreJet a b
+  BitcoinJet :: BitcoinJet a b -> CoreJet a b
 deriving instance Eq (CoreJet a b)
 deriving instance Show (CoreJet a b)
 
@@ -106,6 +109,11 @@ data SignatureJet a b where
 deriving instance Eq (SignatureJet a b)
 deriving instance Show (SignatureJet a b)
 
+data BitcoinJet a b where
+  ParseLock :: BitcoinJet Word32 (Either Word32 Word32)
+  ParseSequence :: BitcoinJet Word32 (Either () (Either Word16 Word16))
+deriving instance Eq (BitcoinJet a b)
+deriving instance Show (BitcoinJet a b)
 
 -- | The specification of "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.specification' method.
 specification :: Assert term => CoreJet a b -> term a b
@@ -113,6 +121,7 @@ specification (ArithJet x) = specificationArith x
 specification (HashJet x) = specificationHash x
 specification (Secp256k1Jet x) = specificationSecp256k1 x
 specification (SignatureJet x) = specificationSignature x
+specification (BitcoinJet x) = specificationBitcoin x
 
 specificationArith :: Assert term => ArithJet a b -> term a b
 specificationArith Add32 = add word32
@@ -168,6 +177,10 @@ specificationSecp256k1 Decompress = Secp256k1.decompress
 specificationSignature :: Assert term => SignatureJet a b -> term a b
 specificationSignature Bip0340Verify = Secp256k1.bip_0340_verify
 
+specificationBitcoin :: Assert term => BitcoinJet a b -> term a b
+specificationBitcoin ParseLock = TimeLock.parseLock
+specificationBitcoin ParseSequence = TimeLock.parseSequence
+
 -- | A jetted implementaiton for "core" jets.
 --
 -- @
@@ -178,6 +191,7 @@ implementation (ArithJet x) = implementationArith x
 implementation (HashJet x) = implementationHash x
 implementation (Secp256k1Jet x) = implementationSecp256k1 x
 implementation (SignatureJet x) = implementationSignature x
+implementation (BitcoinJet x) = implementationBitcoin x
 
 implementationArith :: ArithJet a b -> a -> Maybe b
 implementationArith Add32 = \(x, y) -> do
@@ -245,6 +259,16 @@ implementationSecp256k1 Decompress = FFI.decompress
 implementationSignature :: SignatureJet a b -> a -> Maybe b
 implementationSignature Bip0340Verify = FFI.bip_0340_verify
 
+implementationBitcoin :: BitcoinJet a b -> a -> Maybe b
+implementationBitcoin ParseLock v = Just . (toW32 +++ toW32) . parseLock $ fromW32 v
+  where
+   toW32 = toWord32 . fromIntegral
+   fromW32 = fromInteger . fromWord32
+implementationBitcoin ParseSequence v = Just . maybe (Left ()) (Right . (toW16 +++ toW16)) . parseSequence $ fromW32 v
+  where
+   toW16 = toWord16 . fromIntegral
+   fromW32 = fromInteger . fromWord32
+
 -- | A canonical deserialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.getJetBit' method.
 getJetBit :: (Monad m) => m Void -> m Bool -> m (SomeArrow CoreJet)
 getJetBit abort next =  getPositive next >>= match
@@ -254,6 +278,7 @@ getJetBit abort next =  getPositive next >>= match
   match 3 = (someArrowMap HashJet) <$> getJetBitHash abort next
   match 4 = (someArrowMap Secp256k1Jet) <$> getJetBitSecp256k1 abort next
   match 5 = (someArrowMap SignatureJet) <$> getJetBitSignature abort next
+  match 7 = (someArrowMap BitcoinJet) <$> getJetBitBitcoin abort next
   match _ = vacuous abort
   getJetBitArith :: (Monad m) => m Void -> m Bool -> m (SomeArrow ArithJet)
   getJetBitArith abort next = getPositive next >>= matchArith
@@ -336,6 +361,12 @@ getJetBit abort next =  getPositive next >>= match
    where
     matchSignature 1 = makeArrow Bip0340Verify
     matchSignature _ = vacuous abort
+  getJetBitBitcoin :: (Monad m) => m Void -> m Bool -> m (SomeArrow BitcoinJet)
+  getJetBitBitcoin abort next = getPositive next >>= matchBitcoin
+   where
+    matchBitcoin 1 = makeArrow ParseLock
+    matchBitcoin 2 = makeArrow ParseSequence
+    matchBitcoin _ = vacuous abort
 
 -- | A canonical serialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.putJetBit' method.
 putJetBit :: CoreJet a b -> DList Bool
@@ -343,6 +374,7 @@ putJetBit (ArithJet x) = putPositive 2 . putJetBitArith x
 putJetBit (HashJet x) = putPositive 3 . putJetBitHash x
 putJetBit (Secp256k1Jet x) = putPositive 4 . putJetBitSecp256k1 x
 putJetBit (SignatureJet x) = putPositive 5 . putJetBitSignature x
+putJetBit (BitcoinJet x) = putPositive 7 . putJetBitBitcoin x
 
 putJetBitArith :: ArithJet a b -> DList Bool
 putJetBitArith FullAdd32      = putPositive 2 . putPositive 5
@@ -398,6 +430,10 @@ putJetBitSecp256k1 Decompress = putPositive 2
 putJetBitSignature :: SignatureJet a b -> DList Bool
 putJetBitSignature Bip0340Verify  = putPositive 1
 
+putJetBitBitcoin :: BitcoinJet a b -> DList Bool
+putJetBitBitcoin ParseLock  = putPositive 1
+putJetBitBitcoin ParseSequence  = putPositive 2
+
 -- | A 'Map.Map' from the identity roots of the "core" jet specification to their corresponding token.
 -- This can be used to help instantiate the 'Simplicity.JetType.matcher' method.
 coreJetMap :: Map.Map Hash256 (SomeArrow CoreJet)
@@ -452,6 +488,9 @@ coreJetMap = Map.fromList
   , mkAssoc (Secp256k1Jet Decompress)
     -- SignatureJet
   , mkAssoc (SignatureJet Bip0340Verify)
+    -- BitcoinJet
+  , mkAssoc (BitcoinJet ParseLock)
+  , mkAssoc (BitcoinJet ParseSequence)
   ]
  where
   mkAssoc :: (TyC a, TyC b) => CoreJet a b -> (Hash256, (SomeArrow CoreJet))

@@ -6,18 +6,22 @@ module Simplicity.Bitcoin.DataTypes
   , TxOutput(TxOutput), txoValue, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
   , TapEnv(..)
+  , txIsFinal, txLockDistance, txLockDuration
+  , module Simplicity.Bitcoin
   ) where
 
 import Control.Monad (guard)
 import Data.Array (Array, elems)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
-import Data.Word (Word64, Word32, Word8)
+import Data.Semigroup (Max(Max,getMax))
+import Data.Word (Word64, Word32, Word16, Word8)
 import Data.Serialize ( Serialize
                       , Get, get, getWord8, getWord16le, getWord32le, getWord64le, getLazyByteString
                       , Put, put, putWord8, putWord16le, putWord32le, putWord64le, putLazyByteString, runPutLazy
                       )
 
+import Simplicity.Bitcoin
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.Schnorr
 
@@ -136,3 +140,24 @@ data TapEnv = TapEnv { tapAnnex :: Maybe BSL.ByteString
                      , tapInternalKey :: PubKey
                      , tapBranch :: [Hash256]
                      } deriving Show
+
+txIsFinal :: SigTx -> Bool
+txIsFinal tx = all finalSequence (sigTxIn tx)
+ where
+  finalSequence sigin = sigTxiSequence sigin == maxBound
+
+txLockDistance :: SigTx -> Word16
+txLockDistance tx | sigTxVersion tx < 2 = 0
+                  | otherwise = getMax . foldMap distance $ sigTxIn tx
+ where
+  distance sigin = case parseSequence (sigTxiSequence sigin) of
+                     Just (Left x) -> Max x
+                     _ -> mempty
+
+txLockDuration :: SigTx -> Word16
+txLockDuration tx | sigTxVersion tx < 2 = 0
+                  | otherwise = getMax . foldMap duration $ sigTxIn tx
+ where
+  duration sigin = case parseSequence (sigTxiSequence sigin) of
+                     Just (Right x) -> Max x
+                     _ -> mempty

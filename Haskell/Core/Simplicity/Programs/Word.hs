@@ -11,6 +11,7 @@ module Simplicity.Programs.Word
   , rightmost, right_pad_low, right_pad_high, right_extend
   , full_shift, shift_const_by, rotate_const
   , mapZV, transpose
+  , forWhile
   , module Simplicity.Ty.Word
   ) where
 
@@ -266,3 +267,14 @@ transpose mzv nzv = go mzv nzv yId
   go :: (Core term, TyC nm, TyC m) => ZipVector x kx nx knx -> ZipVector m nm x nx -> Yoneda term m kx -> term nm knx
   go SingleZV nzv t = mapZV nzv (runYoneda t)
   go (DoubleZV zv) nzv t = go zv nzv (yoh t) &&& go zv nzv (yih t)
+
+-- | Given @body :: term ((c, w), a) (Either b a)@ where @c@ is a generic context type, @w@ is a counter value, and @a@ is a state value,
+-- then @loop body (c, a)@ repeatedly apply body with a fixed context @c@ and an initial state @a@ with an incrementing counter @w@ starting at zero
+-- with the state being updated by a result of @Right a@, until either @body@ returns @Left b@, in which case @Left b@ is immediately returned, or
+-- in case the counter reaches its maximum possible value, in which case @Right a@ is returned where @a@ is the final state value.
+forWhile :: (Core term, TyC c, TyC b, TyC a) => Word w -> term ((c, w), a) (Either b a) -> term (c, a) (Either b a)
+forWhile SingleV body = (((oh &&& false) &&& ih) >>> monobody) &&& oh
+                    >>> match (injl oh) (((ih &&& true) &&& oh) >>> monobody)
+ where
+  monobody = body
+forWhile (DoubleV n) body = forWhile n (forWhile n ((oooh &&& (ooih &&& oih)) &&& ih >>> body))

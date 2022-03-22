@@ -1,6 +1,7 @@
 -- This module tests the Simplicity programs on arbitrary inputs.
 module Simplicity.Elements.Arbitrary
- ( genPrimEnv, forallPrimEnv, forallInPrimEnv, forallOutPrimEnv
+ ( arbitraryLock
+ , genPrimEnv, forallPrimEnv, forallInPrimEnv, forallOutPrimEnv
  ) where
 
 import Data.Array (bounds, listArray, rangeSize)
@@ -106,7 +107,7 @@ instance Arbitrary Reissuance where
   arbitrary = Reissuance <$> arbitraryHash256 <*> arbitraryHash256 <*> (arbitraryAmountWithWitness `suchThat` nonZeroAmount)
 
 instance Arbitrary SigTxInput where
-  arbitrary = SigTxInput <$> arbitrary <*> arbitrary <*> arbitrary <*> arbitraryBoundedIntegral <*> arbitrary
+  arbitrary = SigTxInput <$> arbitrary <*> arbitrary <*> arbitrary <*> oneof [return maxBound, arbitraryBoundedIntegral] <*> arbitrary
 
 instance Arbitrary SigTx where
   arbitrary = SigTx <$> arbitraryVersion

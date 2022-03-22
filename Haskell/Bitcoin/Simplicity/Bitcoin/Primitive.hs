@@ -3,7 +3,7 @@
 module Simplicity.Bitcoin.Primitive
   ( Prim(..), primPrefix, primName
   , getPrimBit, getPrimByte, putPrimBit, putPrimByte
-  , PrimEnv, primEnv
+  , PrimEnv(..), primEnv
   , primSem
   ) where
 

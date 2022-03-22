@@ -31,13 +31,15 @@ library Simplicity-Core
                        Simplicity.Programs.Sha256, Simplicity.Programs.Sha256.Lib,
                        Simplicity.Programs.LibSecp256k1, Simplicity.Programs.LibSecp256k1.Lib,
                        Simplicity.Programs.CheckSigHash,
+                       Simplicity.Programs.TimeLock,
                        Simplicity.Digest,
                        Simplicity.MerkleRoot, Simplicity.MerkleRoot.Impl,
                        Simplicity.Delegator, Simplicity.Delegator.Impl,
                        Simplicity.Serialization,
                        Simplicity.Word,
                        Simplicity.LibSecp256k1.Schnorr,
-                       Simplicity.LibSecp256k1.Spec
+                       Simplicity.LibSecp256k1.Spec,
+                       Simplicity.Bitcoin
   other-extensions:    BangPatterns,
                        FlexibleContexts,
                        GADTs, StandaloneDeriving, TypeFamilies
@@ -121,6 +123,7 @@ library
   Includes:            primitive/elements/jets.h primitive/elements/primitive.h simplicity/elements/env.h
   exposed-modules:     Simplicity.Bitcoin.Programs.CheckSigHashAll, Simplicity.Elements.Programs.CheckSigHashAll,
                        Simplicity.Bitcoin.Programs.CheckSigHashAll.Lib, Simplicity.Elements.Programs.CheckSigHashAll.Lib,
+                       Simplicity.Bitcoin.Programs.TimeLock, Simplicity.Elements.Programs.TimeLock,
                        Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets,
                        Simplicity.Elements.FFI.Env, Simplicity.Elements.FFI.Jets
   reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
@@ -136,6 +139,7 @@ library
                        Simplicity.Programs.Sha256, Simplicity.Programs.Sha256.Lib,
                        Simplicity.Programs.LibSecp256k1, Simplicity.Programs.LibSecp256k1.Lib,
                        Simplicity.Programs.CheckSigHash,
+                       Simplicity.Programs.TimeLock,
                        Simplicity.Digest,
                        Simplicity.MerkleRoot,
                        Simplicity.Delegator,
@@ -143,6 +147,7 @@ library
                        Simplicity.Word,
                        Simplicity.LibSecp256k1.Schnorr,
                        Simplicity.LibSecp256k1.Spec,
+                       Simplicity.Bitcoin,
                        Simplicity.Bitcoin.Primitive, Simplicity.Bitcoin.DataTypes,
                        Simplicity.Bitcoin.Term,
                        Simplicity.Bitcoin.Semantics,

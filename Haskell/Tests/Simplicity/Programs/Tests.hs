@@ -12,7 +12,9 @@ import Lens.Family2 ((^..), allOf, zipWithOf)
 import Lens.Family2.Stock (backwards, both_)
 
 import Simplicity.Bip0340
+import Simplicity.CoreJets
 import Simplicity.Digest
+import Simplicity.Elements.Arbitrary (arbitraryLock)
 import Simplicity.LibSecp256k1.Spec ((.+.), (.*.), (.^.))
 import qualified Simplicity.LibSecp256k1.Spec as Spec
 import qualified Simplicity.Programs.Arith as Arith
@@ -32,6 +34,12 @@ import Test.Tasty.QuickCheck (Arbitrary(..), Gen, Property
                              , arbitraryBoundedIntegral, choose, elements, forAll, resize, sized, testProperty
                              , withMaxSuccess
                              )
+
+toW32 :: W.Word32 -> Word32
+toW32 = toWord32 . fromIntegral
+
+toW16 :: W.Word16 -> Word16
+toW16 = toWord16 . fromIntegral
 
 -- This collects the tests for the various Simplicity programs.
 tests :: TestTree
@@ -146,6 +154,10 @@ tests = testGroup "Programs"
         , testProperty "signature_unpack" prop_signature_unpack
         ]
       , group_bip_0340_check
+      , testGroup "timelock"
+        [ testProperty "parse_lock" prop_parse_lock
+        , testProperty "parse_sequence" prop_parse_sequence
+        ]
       ]
 
 assert_low8 :: Assertion
@@ -676,3 +688,12 @@ group_bip_0340_check = testGroup "bip_0340_check" (zipWith case_bip_0340_check_v
   case_bip_0340_check_vector n tv = testCase name (assert_bip_0340_check_vector tv)
    where
     name = "bip_0340_vector_" ++ show n
+
+prop_parse_lock = forAll arbitraryLock
+                $ \a -> fastF (toW32 a) == implementation (BitcoinJet ParseLock) (toW32 a)
+ where
+  fastF = testCoreEval (specification (BitcoinJet ParseLock))
+
+prop_parse_sequence a = fastF (toW32 a) == implementation (BitcoinJet ParseSequence) (toW32 a)
+ where
+  fastF = testCoreEval (specification (BitcoinJet ParseSequence))
