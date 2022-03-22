@@ -1,5 +1,17 @@
 /* This file has been automatically generated. */
-[SCALAR_MULTIPLY] =
+[PARSE_SEQUENCE] =
+{ .tag = JET
+, .jet = parse_sequence
+, .sourceIx = ty_w32
+, .targetIx = ty_msw16w16
+}
+,[CHECK_LOCK_HEIGHT] =
+{ .tag = JET
+, .jet = check_lock_height
+, .sourceIx = ty_w32
+, .targetIx = ty_u
+}
+,[SCALAR_MULTIPLY] =
 { .tag = JET
 , .jet = scalar_multiply
 , .sourceIx = ty_w512
@@ -10,6 +22,12 @@
 , .jet = multiply_32
 , .sourceIx = ty_w64
 , .targetIx = ty_w64
+}
+,[CHECK_LOCK_DURATION] =
+{ .tag = JET
+, .jet = check_lock_duration
+, .sourceIx = ty_w16
+, .targetIx = ty_u
 }
 ,[GEJ_INFINITY] =
 { .tag = JET
@@ -83,6 +101,12 @@
 , .sourceIx = ty_pw512w256
 , .targetIx = ty_pw512w256
 }
+,[CHECK_LOCK_DISTANCE] =
+{ .tag = JET
+, .jet = check_lock_distance
+, .sourceIx = ty_w16
+, .targetIx = ty_u
+}
 ,[GEJ_ADD] =
 { .tag = JET
 , .jet = gej_add
@@ -94,6 +118,12 @@
 , .jet = gej_double
 , .sourceIx = ty_pw512w256
 , .targetIx = ty_pw512w256
+}
+,[TX_LOCK_DURATION] =
+{ .tag = JET
+, .jet = tx_lock_duration
+, .sourceIx = ty_u
+, .targetIx = ty_w16
 }
 ,[FE_NEGATE] =
 { .tag = JET
@@ -179,6 +209,12 @@
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
 }
+,[CHECK_LOCK_TIME] =
+{ .tag = JET
+, .jet = check_lock_time
+, .sourceIx = ty_w32
+, .targetIx = ty_u
+}
 ,[FE_ADD] =
 { .tag = JET
 , .jet = fe_add
@@ -197,11 +233,29 @@
 , .sourceIx = ty_pppw256pbw256w256pbw256
 , .targetIx = ty_u
 }
+,[TX_LOCK_DISTANCE] =
+{ .tag = JET
+, .jet = tx_lock_distance
+, .sourceIx = ty_u
+, .targetIx = ty_w16
+}
 ,[GEJ_Y_IS_ODD] =
 { .tag = JET
 , .jet = gej_y_is_odd
 , .sourceIx = ty_pw512w256
 , .targetIx = ty_b
+}
+,[TX_LOCK_TIME] =
+{ .tag = JET
+, .jet = tx_lock_time
+, .sourceIx = ty_u
+, .targetIx = ty_w32
+}
+,[PARSE_LOCK] =
+{ .tag = JET
+, .jet = parse_lock
+, .sourceIx = ty_w32
+, .targetIx = ty_sw32w32
 }
 ,[SCALAR_SQUARE] =
 { .tag = JET
@@ -269,11 +323,23 @@
 , .sourceIx = ty_w256
 , .targetIx = ty_mw256
 }
+,[TX_LOCK_HEIGHT] =
+{ .tag = JET
+, .jet = tx_lock_height
+, .sourceIx = ty_u
+, .targetIx = ty_w32
+}
 ,[GEJ_RESCALE] =
 { .tag = JET
 , .jet = gej_rescale
 , .sourceIx = ty_ppw512w256w256
 , .targetIx = ty_pw512w256
+}
+,[TX_IS_FINAL] =
+{ .tag = JET
+, .jet = tx_is_final
+, .sourceIx = ty_u
+, .targetIx = ty_b
 }
 ,[VERSION] =
 { .tag = JET

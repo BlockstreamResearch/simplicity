@@ -11,12 +11,15 @@ import Test.Tasty.QuickCheck ( Arbitrary(..), Property, arbitrarySizedBoundedInt
                              )
 import Test.Tasty.HUnit (Assertion, (@=?), assertBool, testCase)
 
+import Simplicity.CoreJets
 import Simplicity.Digest
+import Simplicity.Elements.Arbitrary
 import Simplicity.FFI.Jets as C
 import Simplicity.Programs.LibSecp256k1.Lib as Prog
 import Simplicity.LibSecp256k1.Spec as Spec
 import Simplicity.TestEval
 import Simplicity.Ty.Arbitrary
+import Simplicity.Ty.Word (toWord32)
 import Simplicity.Bip0340
 import Simplicity.Word
 
@@ -24,7 +27,11 @@ main = defaultMain tests
 
 tests :: TestTree
 tests = testGroup "C / SPEC"
-      [ testGroup "field"
+      [ testGroup "locktime" $
+        [ testProperty "parse_lock" prop_parse_lock
+        , testProperty "parse_sequence" prop_parse_sequence
+        ]
+      , testGroup "field"
         [ testProperty "fe_normlaize"     prop_fe_normalize
         , testProperty "fe_negate"        prop_fe_negate
         , testProperty "fe_add"           prop_fe_add
@@ -102,6 +109,14 @@ tests = testGroup "C / SPEC"
         [ testProperty "bip_0340_verify"   prop_bip_0340_verify
         ] ++ zipWith case_bip_0340_verify_vector [0..] bip0340Vectors
       ]
+
+prop_parse_lock = forAll arbitraryLock $ \a -> fastF (toWord32 (fromIntegral a)) == C.parse_lock (toWord32 (fromIntegral a))
+ where
+  fastF = testCoreEval (specification (BitcoinJet ParseLock))
+
+prop_parse_sequence = forAll arbitraryLock $ \a -> fastF (toWord32 (fromIntegral a)) == C.parse_sequence (toWord32 (fromIntegral a))
+ where
+  fastF = testCoreEval (specification (BitcoinJet ParseSequence))
 
 fe_unary_prop f g = \a -> fastF (feAsTy a) == g (feAsTy a)
  where

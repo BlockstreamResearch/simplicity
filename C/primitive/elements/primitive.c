@@ -261,11 +261,37 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 1: *result = BIP_0340_VERIFY; return 0;
         }
         break;
+       case 7: /* Bitcoin jets chapter */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return code;
+        switch (code) {
+         case 1: *result = PARSE_LOCK; return 0;
+         case 2: *result = PARSE_SEQUENCE; return 0;
+        }
+        break;
       }
       return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
-
     } else {
-      /* Elements specific jets go here */
+      /* Elements jets */
+      int32_t code = decodeUptoMaxInt(stream);
+      if (code < 0) return code;
+      switch (code) {
+       case 2: /* Timelock jets chapter */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return code;
+        switch (code) {
+         case 1: *result = CHECK_LOCK_HEIGHT; return 0;
+         case 2: *result = CHECK_LOCK_TIME; return 0;
+         case 3: *result = CHECK_LOCK_DISTANCE; return 0;
+         case 4: *result = CHECK_LOCK_DURATION; return 0;
+         case 5: *result = TX_LOCK_HEIGHT; return 0;
+         case 6: *result = TX_LOCK_TIME; return 0;
+         case 7: *result = TX_LOCK_DISTANCE; return 0;
+         case 8: *result = TX_LOCK_DURATION; return 0;
+         case 9: *result = TX_IS_FINAL; return 0;
+        }
+        break;
+      }
       return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
     }
   }

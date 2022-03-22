@@ -55,4 +55,15 @@ bool num_outputs(frameItem* dst, frameItem src, const txEnv* env);
 /* :TODO: Not yet implemented. */
 #define fee NULL
 
+/* Jets for the Elements application of Simplicity. */
+bool tx_is_final(frameItem* dst, frameItem src, const txEnv* env);
+bool tx_lock_height(frameItem* dst, frameItem src, const txEnv* env);
+bool tx_lock_time(frameItem* dst, frameItem src, const txEnv* env);
+bool tx_lock_distance(frameItem* dst, frameItem src, const txEnv* env);
+bool tx_lock_duration(frameItem* dst, frameItem src, const txEnv* env);
+bool check_lock_height(frameItem* dst, frameItem src, const txEnv* env);
+bool check_lock_time(frameItem* dst, frameItem src, const txEnv* env);
+bool check_lock_distance(frameItem* dst, frameItem src, const txEnv* env);
+bool check_lock_duration(frameItem* dst, frameItem src, const txEnv* env);
+
 #endif

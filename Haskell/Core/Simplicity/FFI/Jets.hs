@@ -11,6 +11,7 @@ module Simplicity.FFI.Jets
  , scale, generate, linear_combination_1, linear_verify_1
  , decompress, point_verify_1
  , bip_0340_verify
+ , parse_lock, parse_sequence
  ) where
 
 import Foreign.Ptr (Ptr)
@@ -70,6 +71,8 @@ foreign import ccall unsafe "" c_linear_verify_1 :: Ptr FrameItem -> Ptr FrameIt
 foreign import ccall unsafe "" c_decompress :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_point_verify_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_bip_0340_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_parse_lock :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_parse_sequence :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 add_32 :: (Word32, Word32) -> Maybe (Bit, Word32)
 add_32 = unsafeLocalCoreJet c_add_32
@@ -208,3 +211,9 @@ point_verify_1 = unsafeLocalCoreJet c_point_verify_1
 
 bip_0340_verify :: ((PubKey, Word256), Sig) -> Maybe ()
 bip_0340_verify = unsafeLocalCoreJet c_bip_0340_verify
+
+parse_lock :: Word32 -> Maybe (Either Word32 Word32)
+parse_lock = unsafeLocalCoreJet c_parse_lock
+
+parse_sequence :: Word32 -> Maybe (Either () (Either Word16 Word16))
+parse_sequence = unsafeLocalCoreJet c_parse_sequence

@@ -1,7 +1,7 @@
 module GenPrimitives where
 
 import Control.Monad.Cont (Cont, cont, runCont)
-import Data.Char (isDigit, isUpper, toLower, toUpper)
+import Data.Char (isAlphaNum, isDigit, isUpper, toLower, toUpper)
 import Data.Functor.Fixedpoint (Fix(..))
 import Data.List (groupBy, intercalate)
 import Data.List.Split (chunksOf, condense, dropInitBlank, keepDelimsL, split, whenElt)
@@ -9,9 +9,9 @@ import Data.Maybe (isJust)
 import qualified Data.Map as Map
 import Numeric (showHex)
 
-import Simplicity.CoreJets
 import Simplicity.Digest
 import Simplicity.Elements.Primitive
+import Simplicity.Elements.Jets
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Ty
@@ -23,8 +23,8 @@ enumerate tree = runCont (tree end branch) (:) []
   end = cont $ \k -> id
   branch = cont $ \k -> k False . k True
 
-coreJetList :: [SomeArrow CoreJet]
-coreJetList = Map.elems coreJetMap
+jetList :: [SomeArrow JetType]
+jetList = Map.elems jetMap
 
 primList :: [SomeArrow Prim]
 primList = enumerate (const getPrimBit)
@@ -104,11 +104,11 @@ cJetNode name jet = unlines
  where
   (tyx, tyy) = reifyArrow jet
 
-jetName :: CoreJet x y -> String
-jetName = last . words . show
+jetName :: JetType x y -> String
+jetName = filter isAlphaNum . last . words . show
 
-cInitializeCoreJet :: (TyC x, TyC y) => CoreJet x y -> String
-cInitializeCoreJet jet = "MK_JET(" ++ upperSnakeCase (jetName jet) ++ ", " ++ showCHash (identityRoot (specification jet)) ++ ");"
+cInitializeJet :: (TyC x, TyC y) => JetType x y -> String
+cInitializeJet jet = "MK_JET(" ++ upperSnakeCase (jetName jet) ++ ", " ++ showCHash (identityRoot (specification jet)) ++ ");"
 
 cInitializePrimitive :: (TyC x, TyC y) => Prim x y -> String
 cInitializePrimitive prim = "MK_TAG(&jet_node[" ++ upperSnakeCase name ++ "].cmr, PRIMITIVE_TAG(\"" ++ name ++ "\"));"
@@ -116,7 +116,7 @@ cInitializePrimitive prim = "MK_TAG(&jet_node[" ++ upperSnakeCase name ++ "].cmr
   name = primName $ prim
 
 tyList :: [Ty]
-tyList = Map.elems . foldr combine Map.empty $ (tys =<< coreJetList) ++ (tys =<< primList)
+tyList = Map.elems . foldr combine Map.empty $ (tys =<< jetList) ++ (tys =<< primList)
  where
   tys (SomeArrow jet) = [unreflect x, unreflect y]
    where
@@ -136,21 +136,21 @@ cInitializeTyFile :: String
 cInitializeTyFile = unlines $ cInitializeTy <$> tyList
 
 cEnumJetFile :: String
-cEnumJetFile = unlines $ map f coreJetList ++ map g primList
+cEnumJetFile = unlines $ map f jetList ++ map g primList
  where
   f (SomeArrow jet) = (upperSnakeCase . jetName $ jet) ++ ","
   g (SomeArrow prim) = (upperSnakeCase . primName $ prim) ++ ","
 
 cJetNodeFile :: String
-cJetNodeFile = intercalate "," $ map f coreJetList ++ map g primList
+cJetNodeFile = intercalate "," $ map f jetList ++ map g primList
  where
   f (SomeArrow jet) = cJetNode (jetName jet) jet
   g (SomeArrow prim) = cJetNode (primName prim) prim
 
 cInitializeJetFile :: String
-cInitializeJetFile = unlines $ map f coreJetList
+cInitializeJetFile = unlines $ map f jetList
  where
-  f (SomeArrow jet) = cInitializeCoreJet jet
+  f (SomeArrow jet) = cInitializeJet jet
 
 cInitializePrimFile :: String
 cInitializePrimFile = unlines $ map g primList

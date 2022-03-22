@@ -70,4 +70,7 @@ bool decompress(frameItem* dst, frameItem src, const txEnv* env);
 bool point_verify_1(frameItem* dst, frameItem src, const txEnv* env);
 bool bip_0340_verify(frameItem* dst, frameItem src, const txEnv* env);
 
+bool parse_lock(frameItem* dst, frameItem src, const txEnv* env);
+bool parse_sequence(frameItem* dst, frameItem src, const txEnv* env);
+
 #endif

@@ -46,6 +46,15 @@ module Simplicity.Elements.FFI.Jets
  , outputs_hash
  , num_inputs
  , num_outputs
+ , tx_is_final
+ , tx_lock_height
+ , tx_lock_time
+ , tx_lock_distance
+ , tx_lock_duration
+ , check_lock_height
+ , check_lock_time
+ , check_lock_distance
+ , check_lock_duration
  ) where
 
 import Foreign.Ptr (Ptr)
@@ -112,6 +121,15 @@ foreign import ccall unsafe "" c_inputs_hash :: Ptr FrameItem -> Ptr FrameItem -
 foreign import ccall unsafe "" c_outputs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_num_inputs :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_num_outputs :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_tx_is_final :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_tx_lock_height :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_tx_lock_time :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_tx_lock_distance :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_tx_lock_duration :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_check_lock_height :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_check_lock_time :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_check_lock_distance :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_check_lock_duration :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 
 version :: PrimEnv -> () -> Maybe Word32
 version = unsafeLocalJet c_version
@@ -249,3 +267,30 @@ output_range_proof = unsafeLocalJet c_output_range_proof
 
 script_cmr :: PrimEnv -> () -> Maybe Word256
 script_cmr = unsafeLocalJet c_script_cmr
+
+tx_is_final :: PrimEnv -> () -> Maybe Bit
+tx_is_final = unsafeLocalJet c_tx_is_final
+
+tx_lock_height :: PrimEnv -> () -> Maybe Word32
+tx_lock_height = unsafeLocalJet c_tx_lock_height
+
+tx_lock_time :: PrimEnv -> () -> Maybe Word32
+tx_lock_time = unsafeLocalJet c_tx_lock_time
+
+tx_lock_distance :: PrimEnv -> () -> Maybe Word16
+tx_lock_distance  = unsafeLocalJet c_tx_lock_distance
+
+tx_lock_duration :: PrimEnv -> () -> Maybe Word16
+tx_lock_duration  = unsafeLocalJet c_tx_lock_duration
+
+check_lock_height :: PrimEnv -> Word32 -> Maybe ()
+check_lock_height = unsafeLocalJet c_check_lock_height
+
+check_lock_time :: PrimEnv -> Word32 -> Maybe ()
+check_lock_time = unsafeLocalJet c_check_lock_time
+
+check_lock_distance :: PrimEnv -> Word16 -> Maybe ()
+check_lock_distance  = unsafeLocalJet c_check_lock_distance
+
+check_lock_duration :: PrimEnv -> Word16 -> Maybe ()
+check_lock_duration  = unsafeLocalJet c_check_lock_duration

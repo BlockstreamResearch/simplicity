@@ -79,3 +79,25 @@ bool sha_256_block(frameItem* dst, frameItem src, const txEnv* env) {
   write32s(dst, h, 8);
   return true;
 }
+
+/* parse_sequence : TWO^32 |- TWO^32 + TWO^32 */
+bool parse_lock(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+  uint_fast32_t nLockTime = read32(&src);
+  writeBit(dst, 500000000U <= nLockTime);
+  write32(dst, nLockTime);
+  return true;
+}
+
+/* parse_sequence : TWO^32 |- S (TWO^16 + TWO^16) */
+bool parse_sequence(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+  uint_fast32_t nSequence = read32(&src);
+  if (writeBit(dst, nSequence < ((uint_fast32_t)1 << 31))) {
+    writeBit(dst, nSequence & ((uint_fast32_t)1 << 22));
+    write16(dst, nSequence & 0xffff);
+  } else {
+    skipBits(dst, 17);
+  }
+  return true;
+}

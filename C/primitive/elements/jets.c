@@ -139,6 +139,22 @@ static void issuanceTokenAmt(frameItem* dst, const assetIssuance* issuance) {
   }
 }
 
+static uint_fast32_t lockHeight(const transaction* tx) {
+  return !tx->isFinal && tx->lockTime < 500000000U ? tx->lockTime : 0;
+}
+
+static uint_fast32_t lockTime(const transaction* tx) {
+  return !tx->isFinal && 500000000U <= tx->lockTime ? tx->lockTime : 0;
+}
+
+static uint_fast16_t lockDistance(const transaction* tx) {
+  return 2 <= tx->version ? tx->lockDistance : 0;
+}
+
+static uint_fast16_t lockDuration(const transaction* tx) {
+  return 2 <= tx->version ? (uint_fast32_t)tx->lockDuration : 0;
+}
+
 /* version : ONE |- TWO^32 */
 bool version(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
@@ -594,4 +610,67 @@ bool num_outputs(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   write32(dst, env->tx->numOutputs);
   return true;
+}
+
+/* tx_is_final : ONE |- TWO */
+bool tx_is_final(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeBit(dst, env->tx->isFinal);
+  return true;
+}
+
+/* tx_lock_height : ONE |- TWO^32 */
+bool tx_lock_height(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  write32(dst, lockHeight(env->tx));
+  return true;
+}
+
+/* tx_lock_time : ONE |- TWO^32 */
+bool tx_lock_time(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  write32(dst, lockTime(env->tx));
+  return true;
+}
+
+/* tx_lock_distance : ONE |- TWO^16 */
+bool tx_lock_distance(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  write16(dst, lockDistance(env->tx));
+  return true;
+}
+
+/* tx_lock_duration : ONE |- TWO^16 */
+bool tx_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  write16(dst, lockDuration(env->tx));
+  return true;
+}
+
+/* check_lock_height : TWO^32 |- ONE */
+bool check_lock_height(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) dst; // dst is unused;
+  uint_fast32_t x = read32(&src);
+  return x <= lockHeight(env->tx);
+}
+
+/* check_lock_time : TWO^32 |- ONE */
+bool check_lock_time(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) dst; // dst is unused;
+  uint_fast32_t x = read32(&src);
+  return x <= lockTime(env->tx);
+}
+
+/* check_lock_distance : TWO^16 |- ONE */
+bool check_lock_distance(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) dst; // dst is unused;
+  uint_fast16_t x = read16(&src);
+  return x <= lockDistance(env->tx);
+}
+
+/* check_lock_duration : TWO^16 |- ONE */
+bool check_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) dst; // dst is unused;
+  uint_fast16_t x = read16(&src);
+  return x <= lockDuration(env->tx);
 }
