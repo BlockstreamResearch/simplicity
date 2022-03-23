@@ -205,7 +205,7 @@ Test-Suite testsuite
                        Simplicity.Arbitrary, Simplicity.Ty.Arbitrary, Simplicity.Elements.Arbitrary,
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests,
                        Simplicity.Bitcoin.Serialization.Tests,
-                       Simplicity.Elements.Tests,
+                       Simplicity.Elements.Tests, Simplicity.Elements.FFI.Tests,
                        Simplicity.FFI.Tests,
                        Simplicity.Programs.Tests,
                        Simplicity.TestEval,

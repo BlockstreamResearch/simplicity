@@ -9,6 +9,7 @@ import qualified Simplicity.FFI.Tests as FFI
 import qualified Simplicity.Programs.Tests as Programs
 import qualified Simplicity.Bitcoin.Serialization.Tests as Serialization
 import qualified Simplicity.Elements.Tests as Elements
+import qualified Simplicity.Elements.FFI.Tests as ElementsFFI
 import qualified Simplicity.Ty.Tests as Ty
 
 main :: IO ()
@@ -23,4 +24,5 @@ tests = testGroup "Tests"
       , Serialization.tests
       , Ty.tests
       , Elements.tests
+      , ElementsFFI.tests
       ]
