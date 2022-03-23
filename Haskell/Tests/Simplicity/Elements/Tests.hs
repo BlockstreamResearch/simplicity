@@ -11,6 +11,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, assertEqual, testCase)
 import Test.Tasty.QuickCheck (NonNegative(..), Property, forAll, testProperty)
 
+import Simplicity.Arbitrary
 import Simplicity.Digest
 import Simplicity.Elements.Arbitrary
 import Simplicity.Elements.DataTypes

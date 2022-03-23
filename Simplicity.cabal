@@ -202,7 +202,7 @@ Test-Suite testsuite
   ghc-options:         -O0 -with-rtsopts=-c
   other-modules:       Simplicity.Programs.Example,
                        Simplicity.Bip0340,
-                       Simplicity.Ty.Arbitrary, Simplicity.Elements.Arbitrary,
+                       Simplicity.Arbitrary, Simplicity.Ty.Arbitrary, Simplicity.Elements.Arbitrary,
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests,
                        Simplicity.Bitcoin.Serialization.Tests,
                        Simplicity.Elements.Tests,

@@ -1,7 +1,6 @@
 -- This module tests the Simplicity programs on arbitrary inputs.
 module Simplicity.Elements.Arbitrary
- ( genBoundaryCases,
-   genPrimEnv, forallPrimEnv, forallInPrimEnv, forallOutPrimEnv
+ ( genPrimEnv, forallPrimEnv, forallInPrimEnv, forallOutPrimEnv
  ) where
 
 import Data.Array (bounds, listArray, rangeSize)
@@ -10,6 +9,7 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Serialize.Put (runPutLazy, putWord8, putWord16le, putWord32le, putLazyByteString)
 import Lens.Family2 (review, over)
 
+import Simplicity.Arbitrary
 import Simplicity.Digest
 import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Primitive
@@ -20,7 +20,6 @@ import Simplicity.Word
 
 import Test.Tasty.QuickCheck ( Arbitrary(..), Discard(Discard), Gen, Property, Testable
                              , arbitraryBoundedIntegral, arbitrarySizedBoundedIntegral
-                             , chooseBoundedIntegral
                              , choose, frequency, oneof, listOf, listOf1, suchThat
                              , forAll, property
                              )
@@ -28,11 +27,6 @@ import Test.Tasty.QuickCheck ( Arbitrary(..), Discard(Discard), Gen, Property, T
 nonZeroAmount :: AmountWith prf -> Bool
 nonZeroAmount (Amount (Explicit 0)) = False
 nonZeroAmount _ = True
-
-genBoundaryCases :: (Bounded w, Integral w) => w -> Gen w
-genBoundaryCases 0 = oneof [return 0, chooseBoundedIntegral (1, maxBound)]
-genBoundaryCases 1 = oneof [return 0, return 1, chooseBoundedIntegral (2, maxBound)]
-genBoundaryCases boundary = oneof [return 0, chooseBoundedIntegral (1, boundary-1), return boundary, chooseBoundedIntegral (boundary + 1, maxBound)]
 
 arbitraryVersion :: Gen Word32
 arbitraryVersion = genBoundaryCases 2
