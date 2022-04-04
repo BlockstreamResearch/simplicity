@@ -4,15 +4,15 @@
 }:
 
 assert lib.versionAtLeast ocaml.version "4.05";
-assert lib.versionAtLeast coq.coq-version "8.8";
+assert lib.versionAtLeast coq.coq-version "8.9";
 
 stdenv.mkDerivation {
   pname = "compcert";
-  version = "3.9";
+  version = "3.10";
 
   src = fetchurl {
-    url = "https://github.com/AbsInt/CompCert/archive/v3.9.tar.gz";
-    sha256 = "1yxf2w8wsv6bik2diljb4is6izcygh20h6islkmpdrxnqbjb8mka";
+    url = "https://github.com/AbsInt/CompCert/archive/v3.10.tar.gz";
+    hash = "sha256-ideImkHZ0pXulZ/53nrtGgp8gT93+ppmi+7avq3pGSc=";
   };
 
   # Unpack only those files that are open source licensed (GPL2 or GPL3).
@@ -36,7 +36,7 @@ stdenv.mkDerivation {
       'CompCert*/backend/Cminor.v' \
       'CompCert*/backend/PrintCminor.ml' \
       'CompCert*/cparser' \
-      'CompCert*/exportclight' \
+      'CompCert*/export' \
       'CompCert*/*/Archi.v' \
       'CompCert*/*/Builtins1.v' \
       'CompCert*/*/CBuiltins.ml' \
@@ -72,7 +72,7 @@ stdenv.mkDerivation {
   '';
 
   preBuild = "make depend";
-  buildFlags = [ "proof" "exportclight/Clightdefs.vo" "compcert.config" ];
+  buildFlags = [ "proof" "export/Clightdefs.vo" "compcert.config" ];
 
   meta = with lib; {
     description = "Formally verified C compiler";

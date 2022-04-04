@@ -1,24 +1,24 @@
 {stdenv, fetchFromGitHub, coq, compcert } :
 stdenv.mkDerivation {
-  name = "vst-sha256-2.8";
+  name = "vst-sha256-2.9.1";
   src = fetchFromGitHub {
     owner = "PrincetonUniversity";
     repo = "VST";
-    rev ="v2.8";
-    sha256 = "1bfsp58xas4sggpj52zcf1d5ns8j21wfjl4kdbiigbg8xkrbq8kk";
+    rev ="v2.9.1";
+    hash = "sha256-q/Us8bG1Sek2cuAT6mvwxihBKrVl77RW9m0N5uWOQL4=";
   };
 
   buildInputs = [ coq ];
   propagatedBuildInputs = [ compcert ];
 
-  patches = [ ./vst64.patch ];
+  patches = [ ];
 
   postPatch = ''
     substituteInPlace util/coqflags \
       --replace "/usr/bin/env bash" ${stdenv.shell} \
       --replace "\`/bin/pwd\`" "$out/lib/coq/${coq.coq-version}/user-contrib/VST"
     substituteInPlace util/calc_install_files \
-      --replace "/bin/bash" ${stdenv.shell}
+      --replace "/usr/bin/env bash" ${stdenv.shell} \
   '';
 
   enableParallelBuilding = true;
