@@ -6,10 +6,11 @@ module Simplicity.Elements.FFI.Env
  , withEnv, withPrimEnv
  ) where
 
-import Data.Array (Array, bounds, elems, rangeSize)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
+import Data.Foldable (toList)
 import Data.Serialize (Serialize, encode, runPut)
+import Data.Vector (Vector)
 import Data.Word (Word32)
 import Foreign.C.Types (CSize(..), CChar(..), CUChar(..), CUInt(..))
 import Foreign.ForeignPtr (ForeignPtr, newForeignPtr, withForeignPtr)
@@ -116,12 +117,12 @@ withIssuance (Just (Right reIssue)) k =
  where
   issueAmount = reissuanceAmount reIssue
 
-withRawOutputs :: Array Word32 TxOutput -> (Ptr RawOutput -> IO b) -> IO b
+withRawOutputs :: Vector TxOutput -> (Ptr RawOutput -> IO b) -> IO b
 withRawOutputs txos k =
   allocaBytes (len * sizeof_rawOutput) $ \pRawOutput ->
-   foldr ($) (k pRawOutput) [pokeRawOutput txo (pRawOutput `plusPtr` (i*sizeof_rawOutput)) | (i, txo) <- zip [0..] (elems txos)]
+   foldr ($) (k pRawOutput) [pokeRawOutput txo (pRawOutput `plusPtr` (i*sizeof_rawOutput)) | (i, txo) <- zip [0..] (toList txos)]
  where
-  len = fromIntegral . rangeSize $ bounds txos
+  len = fromIntegral $ length txos
   pokeRawOutput :: TxOutput -> Ptr RawOutput -> IO b -> IO b
   pokeRawOutput txo pRawOutput k =
     BS.useAsCString (runPut . putAsset . clearAssetPrf $ txoAsset txo) $ \pAsset ->
@@ -135,12 +136,12 @@ withRawOutputs txos k =
   withMaybe Nothing = ($ nullPtr)
   withMaybe (Just x) = BS.useAsCString (encode x)
 
-withRawInputs :: Array Word32 SigTxInput -> (Ptr RawInput -> IO b) -> IO b
+withRawInputs :: Vector SigTxInput -> (Ptr RawInput -> IO b) -> IO b
 withRawInputs txis k =
   allocaBytes (len * sizeof_rawInput) $ \pRawInput -> do
-   foldr ($) (k pRawInput) [pokeRawInput txo (pRawInput `plusPtr` (i*sizeof_rawInput)) | (i, txo) <- zip [0..] (elems txis)]
+   foldr ($) (k pRawInput) [pokeRawInput txo (pRawInput `plusPtr` (i*sizeof_rawInput)) | (i, txo) <- zip [0..] (toList txis)]
  where
-  len = fromIntegral . rangeSize $ bounds txis
+  len = fromIntegral $ length txis
   pokeRawInput :: SigTxInput -> Ptr RawInput -> IO b -> IO b
   pokeRawInput txi pRawInput k =
     BS.useAsCString (encode . opHash $ sigTxiPreviousOutpoint txi) $ \pPrevTxid ->
@@ -165,8 +166,8 @@ withRawTransaction tx k =
    k pRawTransaction
  where
   version = fromIntegral (sigTxVersion tx)
-  numInputs = fromIntegral . rangeSize $ bounds (sigTxIn tx)
-  numOutputs = fromIntegral . rangeSize $ bounds (sigTxOut tx)
+  numInputs = fromIntegral $ length (sigTxIn tx)
+  numOutputs = fromIntegral $ length (sigTxOut tx)
   lockTime = fromIntegral (sigTxLock tx)
 
 withRawTapEnv :: TapEnv -> (Ptr RawTapEnv -> IO b) -> IO b

@@ -10,7 +10,6 @@ module Simplicity.Elements.Primitive
   ) where
 
 import Control.Monad ((<=<), guard)
-import Data.Array (Array, (!), bounds, elems, inRange)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.List as List
 import Data.Maybe (fromMaybe, listToMaybe)
@@ -18,6 +17,7 @@ import qualified Data.Monoid as Monoid
 import Data.Serialize (Get, getWord8,
                        Putter, put, putWord8, putWord32le, putWord64le, runPutLazy)
 import qualified Data.Word
+import Data.Vector as Vector ((!?), length)
 import Lens.Family2 (to, view, under)
 import Lens.Family2.Stock (some_)
 
@@ -283,22 +283,18 @@ primEnv tx ix tap scmr | cond = Just $ PrimEnv { envTx = tx
                                                }
                    | otherwise = Nothing
  where
-  cond = inRange (bounds (sigTxIn tx)) ix
+  cond = fromIntegral ix < Vector.length (sigTxIn tx)
 
 primSem :: Prim a b -> a -> PrimEnv -> Maybe b
 primSem p a env = interpret p a
  where
   tx = envTx env
   ix = envIx env
-  lookup a i | inRange range i = Just $ a ! i
-             | otherwise       = Nothing
-   where
-    range = bounds a
-  lookupInput = lookup (sigTxIn tx)
-  lookupOutput = lookup (sigTxOut tx)
+  lookupInput = (sigTxIn tx !?) . fromIntegral
+  lookupOutput = (sigTxOut tx !?) . fromIntegral
   currentInput = lookupInput ix
-  maxInput = snd . bounds $ sigTxIn tx
-  maxOutput = snd . bounds $ sigTxOut tx
+  maxInput = fromIntegral $ Vector.length (sigTxIn tx) - 1
+  maxOutput = fromIntegral $ Vector.length (sigTxOut tx) - 1
   cast :: Maybe a -> Either () a
   cast (Just x) = Right x
   cast Nothing = Left ()

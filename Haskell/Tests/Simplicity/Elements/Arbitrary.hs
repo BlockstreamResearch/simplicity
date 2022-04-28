@@ -4,10 +4,10 @@ module Simplicity.Elements.Arbitrary
  , genPrimEnv, forallPrimEnv, forallInPrimEnv, forallOutPrimEnv
  ) where
 
-import Data.Array (bounds, listArray, rangeSize)
 import Data.Bits ((.&.))
 import qualified Data.ByteString.Lazy as BSL
 import Data.Serialize.Put (runPutLazy, putWord8, putWord16le, putWord32le, putLazyByteString)
+import Data.Vector (fromList)
 import Lens.Family2 (review, over)
 
 import Simplicity.Arbitrary
@@ -111,11 +111,9 @@ instance Arbitrary SigTxInput where
 
 instance Arbitrary SigTx where
   arbitrary = SigTx <$> arbitraryVersion
-                    <*> (mkArray <$> listOf1 arbitrary)
-                    <*> (mkArray <$> listOf1 arbitrary)
+                    <*> (fromList <$> listOf1 arbitrary)
+                    <*> (fromList <$> listOf1 arbitrary)
                     <*> arbitraryLock
-   where
-    mkArray l = listArray (0, fromIntegral (length l - 1)) l
 
 instance Arbitrary TapEnv where
   arbitrary = TapEnv <$> oneof [return Nothing, Just <$> arbitraryBS]
@@ -130,7 +128,7 @@ genPrimEnv = do
    tx <- arbitrary
    tapenv <- arbitrary
    cmr <- arbitraryHash256
-   ix <- choose (bounds (sigTxIn tx))
+   ix <- fromIntegral <$> choose (0, length (sigTxIn tx) - 1)
    return $ primEnv tx ix tapenv cmr
 
 forallPrimEnv :: Testable prop => (PrimEnv -> prop) -> Property
@@ -145,8 +143,7 @@ forallInPrimEnv p = forAll genPrimEnv go
    go Nothing = property Discard
    go (Just env) = forAll genIx $ \i -> property $ p env i
     where
-     (0, bnd) = bounds (sigTxIn (envTx env))
-     genIx = genBoundaryCases (bnd + 1)
+     genIx = fromIntegral <$> genBoundaryCases (length (sigTxIn (envTx env))) -- Generate out of bounds cases too.
 
 forallOutPrimEnv :: Testable prop => (PrimEnv -> Word32 -> prop) -> Property
 forallOutPrimEnv p = forAll genPrimEnv go
@@ -154,5 +151,4 @@ forallOutPrimEnv p = forAll genPrimEnv go
    go Nothing = property Discard
    go (Just env) = forAll genIx $ \i -> property $ p env i
     where
-     (0, bnd) = bounds (sigTxOut (envTx env))
-     genIx = genBoundaryCases (bnd + 1)
+     genIx = fromIntegral <$> genBoundaryCases (length (sigTxOut (envTx env))) -- Generate out of bounds cases too.

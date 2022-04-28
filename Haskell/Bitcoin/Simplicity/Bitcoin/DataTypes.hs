@@ -11,7 +11,6 @@ module Simplicity.Bitcoin.DataTypes
   ) where
 
 import Control.Monad (guard)
-import Data.Array (Array, elems)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 import Data.Semigroup (Max(Max,getMax))
@@ -20,6 +19,7 @@ import Data.Serialize ( Serialize
                       , Get, get, getWord8, getWord16le, getWord32le, getWord64le, getLazyByteString
                       , Put, put, putWord8, putWord16le, putWord32le, putWord64le, putLazyByteString, runPutLazy
                       )
+import Data.Vector (Vector)
 
 import Simplicity.Bitcoin
 import Simplicity.Digest
@@ -112,8 +112,8 @@ instance Serialize TxOutput where
 -- | The data type for transactions in the context of signatures.
 -- The data signed in a BIP 143 directly covers input values.
 data SigTx = SigTx { sigTxVersion :: Word32
-                   , sigTxIn :: Array Word32 SigTxInput
-                   , sigTxOut :: Array Word32 TxOutput
+                   , sigTxIn :: Vector SigTxInput
+                   , sigTxOut :: Vector TxOutput
                    , sigTxLock :: Lock
                    } deriving Show
 
@@ -123,13 +123,13 @@ instance Serialize Tx where
   put (Tx v is os t) = putWord32le v >> putList is >> putList os >> put t
 -}
 
-sigTxInputsHash tx = bslHash . runPutLazy $ mapM_ go (elems (sigTxIn tx))
+sigTxInputsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
  where
   go txi = put (sigTxiPreviousOutpoint txi)
         >> putWord64le (sigTxiValue txi)
         >> putWord32le (sigTxiSequence txi)
 
-sigTxOutputsHash tx = bslHash . runPutLazy $ mapM_ go (elems (sigTxOut tx))
+sigTxOutputsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxOut tx)
  where
   go txo = putWord64le (txoValue txo)
         >> put (bslHash (txoScript txo))

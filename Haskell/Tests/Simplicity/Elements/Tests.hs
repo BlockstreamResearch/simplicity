@@ -1,10 +1,10 @@
 module Simplicity.Elements.Tests (tests) where
 
-import Data.Array ((!), listArray)
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
 import Data.Either (fromLeft, fromRight)
 import Data.Serialize (encode, put, putWord8, putWord32be, runPutLazy)
+import Data.Vector ((!), fromList)
 import Lens.Family2 (review, over)
 
 import Test.Tasty (TestTree, testGroup)
@@ -93,8 +93,8 @@ tapEnv = TapEnv
 tx1 :: SigTx
 tx1 = SigTx
       { sigTxVersion = 0x00000002
-      , sigTxIn = listArray (0, 0) [input0]
-      , sigTxOut = listArray (0, 1) [output0, output1]
+      , sigTxIn = fromList [input0]
+      , sigTxOut = fromList [output0, output1]
       , sigTxLock = 0
       }
  where
@@ -131,7 +131,7 @@ hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
  where
   ix = 0
   cmr = review (over be256) 0x896b16e4692350cb43c4807c8f9f63637f70f84a17b678ca9467109ff1e50f61
-  txo = sigTxiTxo (sigTxIn tx1 ! ix)
+  txo = sigTxiTxo (sigTxIn tx1 ! (fromIntegral ix))
   Just txEnv = primEnv tx1 ix tapEnv cmr
   sigHashTag = bsHash $ BSC.pack "Simplicity-Draft\USSigHash"
   taproot_spec = bsHash $ encode cmr <> encode (tapLeafVersion tapEnv)

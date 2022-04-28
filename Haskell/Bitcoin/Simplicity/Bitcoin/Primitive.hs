@@ -7,12 +7,12 @@ module Simplicity.Bitcoin.Primitive
   , primSem
   ) where
 
-import Data.Array (Array, (!), bounds, elems, inRange)
 import qualified Data.List as List
 import Data.Maybe (listToMaybe)
 import Data.Serialize (Get, getWord8,
                        Putter, put, putWord8, putWord32le, putWord64le, runPutLazy)
 import qualified Data.Word
+import Data.Vector as Vector ((!?), length)
 
 import Simplicity.Digest
 import Simplicity.Bitcoin.DataTypes
@@ -226,22 +226,18 @@ primEnv tx ix tap scmr | cond = Just $ PrimEnv { envTx = tx
                                                }
                    | otherwise = Nothing
  where
-  cond = inRange (bounds (sigTxIn tx)) ix
+  cond = fromIntegral ix < Vector.length (sigTxIn tx)
 
 primSem :: Prim a b -> a -> PrimEnv -> Maybe b
 primSem p a env = interpret p a
  where
   tx = envTx env
   ix = envIx env
-  lookup a i | inRange range i = Just $ a ! i
-             | otherwise       = Nothing
-   where
-    range = bounds a
-  lookupInput = lookup (sigTxIn tx)
-  lookupOutput = lookup (sigTxOut tx)
+  lookupInput = (sigTxIn tx !?) . fromIntegral
+  lookupOutput = (sigTxOut tx !?) . fromIntegral
   currentInput = lookupInput ix
-  maxInput = snd . bounds $ sigTxIn tx
-  maxOutput = snd . bounds $ sigTxOut tx
+  maxInput = fromIntegral $ Vector.length (sigTxIn tx) - 1
+  maxOutput = fromIntegral $ Vector.length (sigTxOut tx) - 1
   cast :: Maybe a -> Either () a
   cast (Just x) = Right x
   cast Nothing = Left ()
@@ -259,7 +255,7 @@ primSem p a env = interpret p a
   interpret InputsHash = element . return . encodeHash $ envInputsHash env
   interpret OutputsHash = element . return . encodeHash $ envOutputsHash env
   interpret NumInputs = element . return . toWord32 . toInteger $ 1 + maxInput
-  interpret TotalInputValue = element . return . toWord64 . fromIntegral . List.sum $ sigTxiValue <$> elems (sigTxIn tx)
+  interpret TotalInputValue = element . return . toWord64 . fromIntegral . List.sum $ sigTxiValue <$> sigTxIn tx
   interpret CurrentPrevOutpoint = element $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
   interpret CurrentValue = element $ toWord64 . toInteger . sigTxiValue <$> currentInput
   interpret CurrentSequence = element $ toWord32 . toInteger . sigTxiSequence <$> currentInput
@@ -268,7 +264,7 @@ primSem p a env = interpret p a
   interpret InputValue = return . (atInput $ toWord64 . toInteger . sigTxiValue)
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
   interpret NumOutputs = element . return . toWord32 . toInteger $ 1 + maxOutput
-  interpret TotalOutputValue = element . return . toWord64 . fromIntegral . List.sum $ txoValue <$> elems (sigTxOut tx)
+  interpret TotalOutputValue = element . return . toWord64 . fromIntegral . List.sum $ txoValue <$> sigTxOut tx
   interpret OutputValue = return . (atOutput $ toWord64 . fromIntegral . txoValue)
   interpret OutputScriptHash = return . (atOutput $ encodeHash . bslHash . txoScript)
   interpret TapleafVersion = element . return . toWord8 . toInteger . tapLeafVersion $ envTap env

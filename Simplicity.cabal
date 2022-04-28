@@ -73,10 +73,10 @@ library Simplicity-Bitcoin
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core,
-                       array >=0.5 && <0.6,
                        base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
-                       cereal >=0.5 && <0.6
+                       cereal >=0.5 && <0.6,
+                       vector >=0.12 && <0.13
 
 library Simplicity-Elements
   exposed-modules:     Simplicity.Elements.Primitive, Simplicity.Elements.DataTypes
@@ -85,11 +85,11 @@ library Simplicity-Elements
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core,
-                       array >=0.5 && <0.6,
                        base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,
-                       lens-family >=2.0 && <2.2
+                       lens-family >=2.0 && <2.2,
+                       vector >=0.12 && <0.13
 
 library Simplicity-Indef
   exposed-modules:     Simplicity.Term,
@@ -189,12 +189,12 @@ library
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core, Simplicity-Bitcoin, Simplicity-Elements, Simplicity-Indef,
-                       array >=0.5 && <0.6,
                        base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,
                        containers >=0.5.10 && <0.7,
-                       lens-family >=2.0 && <2.2
+                       lens-family >=2.0 && <2.2,
+                       vector >=0.12 && <0.13
 
 Test-Suite testsuite
   Type:                exitcode-stdio-1.0
@@ -216,7 +216,6 @@ Test-Suite testsuite
                        Simplicity.TestEval,
                        Simplicity.Ty.Tests
   build-depends:       Simplicity,
-                       array >=0.5 && <0.6,
                        base >=4.9 && <4.16,
                        bytestring >=0.10 && <0.11,
                        cereal >=0.5 && <0.6,
