@@ -99,7 +99,9 @@ instance Arbitrary Outpoint where
   arbitrary = Outpoint <$> arbitraryHash256 <*> arbitrarySizedBoundedIntegral
 
 instance Arbitrary NewIssuance where
-  arbitrary = (NewIssuance <$> arbitraryHash256 <*> arbitraryAmountWithWitness <*> arbitraryAmountWithWitness) `suchThat` nonZeroIssuance
+  arbitrary = (NewIssuance <$> arbitraryHash256 <*> oneof [return (Amount (Explicit 0)), arbitraryAmountWithWitness]
+                                                <*> oneof [return (Amount (Explicit 0)), arbitraryAmountWithWitness]
+              ) `suchThat` nonZeroIssuance
    where
     nonZeroIssuance x = nonZeroAmount (newIssuanceAmount x) || nonZeroAmount (newIssuanceTokenAmount x)
 
