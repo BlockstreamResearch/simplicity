@@ -23,7 +23,7 @@ import Simplicity.Programs.LibSecp256k1.Lib
 import Simplicity.Programs.Sha256.Lib
 import Simplicity.Programs.Word
 import Simplicity.Term.Core
-import Simplicity.TestEval
+import Simplicity.TestCoreEval
 import Simplicity.Ty.Arbitrary
 import Simplicity.Ty.Word as Ty
 import qualified Simplicity.Word as W

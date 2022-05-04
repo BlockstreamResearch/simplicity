@@ -17,7 +17,7 @@ import Simplicity.Elements.Arbitrary
 import Simplicity.FFI.Jets as C
 import Simplicity.Programs.LibSecp256k1.Lib as Prog
 import Simplicity.LibSecp256k1.Spec as Spec
-import Simplicity.TestEval
+import Simplicity.TestCoreEval
 import Simplicity.Ty.Arbitrary
 import Simplicity.Ty.Word (toWord32)
 import Simplicity.Bip0340

@@ -1,5 +1,5 @@
 -- | This module builds a wrapper around 'Simplicity.CoreJets.fastCoreEval' to define a 'testCoreEval' variant.
-module Simplicity.TestEval
+module Simplicity.TestCoreEval
  ( TestCoreEval, testCoreEval
  ) where
 

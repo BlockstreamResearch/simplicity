@@ -213,7 +213,7 @@ Test-Suite testsuite
                        Simplicity.Elements.Tests, Simplicity.Elements.FFI.Tests,
                        Simplicity.FFI.Tests,
                        Simplicity.Programs.Tests,
-                       Simplicity.TestEval,
+                       Simplicity.TestCoreEval,
                        Simplicity.Ty.Tests
   build-depends:       Simplicity,
                        base >=4.9 && <4.16,
