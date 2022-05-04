@@ -16,6 +16,7 @@ import Simplicity.Digest
 import Simplicity.Elements.Arbitrary
 import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Jets
+import Simplicity.Elements.TestEval
 import Simplicity.Elements.Primitive
 import Simplicity.Elements.Programs.CheckSigHashAll.Lib
 import qualified Simplicity.Elements.Programs.TimeLock as Prog
@@ -49,38 +50,51 @@ tests = testGroup "Elements"
         , testCase "sigHashAll" (assertBool "sigHashAll_matches" hunit_sigHashAll)
         ]
 
-checkJet jet env a = sem (specification jet) env a == implementation jet env a
+
+-- We use continuations here because we need to ensure that 'fastSpec' is memoized outside of any lambda expressions.
+checkJet jet k = k (\env a -> fastSpec env a == implementation jet env a)
+ where
+  fastSpec = testEval (specification jet)
 
 prop_tx_is_final :: Property
-prop_tx_is_final = forallPrimEnv $ \env -> checkJet (ElementsJet (TimeLockJet TxIsFinal)) env ()
+prop_tx_is_final = checkJet (ElementsJet (TimeLockJet TxIsFinal))
+                 $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_tx_lock_height :: Property
-prop_tx_lock_height = forallPrimEnv $ \env -> checkJet (ElementsJet (TimeLockJet TxLockHeight)) env ()
+prop_tx_lock_height = checkJet (ElementsJet (TimeLockJet TxLockHeight))
+                    $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_tx_lock_time :: Property
-prop_tx_lock_time = forallPrimEnv $ \env -> checkJet (ElementsJet (TimeLockJet TxLockTime)) env ()
+prop_tx_lock_time = checkJet (ElementsJet (TimeLockJet TxLockTime))
+                  $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_tx_lock_distance :: Property
-prop_tx_lock_distance = forallPrimEnv $ \env -> checkJet (ElementsJet (TimeLockJet TxLockDistance)) env ()
+prop_tx_lock_distance = checkJet (ElementsJet (TimeLockJet TxLockDistance))
+                      $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_tx_lock_duration :: Property
-prop_tx_lock_duration = forallPrimEnv $ \env -> checkJet (ElementsJet (TimeLockJet TxLockDuration)) env ()
+prop_tx_lock_duration = checkJet (ElementsJet (TimeLockJet TxLockDuration))
+                      $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_check_lock_height :: Property
-prop_check_lock_height = forallPrimEnv $ \env -> forAll (genBoundaryCases . sigTxLock $ envTx env)
-                     $ \w -> checkJet (ElementsJet (TimeLockJet CheckLockHeight)) env (toW32 w)
+prop_check_lock_height = checkJet (ElementsJet (TimeLockJet CheckLockHeight))
+                       $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . sigTxLock $ envTx env)
+                                                 $ \w -> check env (toW32 w)
 
 prop_check_lock_time :: Property
-prop_check_lock_time = forallPrimEnv $ \env -> forAll (genBoundaryCases . sigTxLock $ envTx env)
-                     $ \w -> checkJet (ElementsJet (TimeLockJet CheckLockTime)) env (toW32 w)
+prop_check_lock_time = checkJet (ElementsJet (TimeLockJet CheckLockTime))
+                     $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . sigTxLock $ envTx env)
+                                               $ \w -> check env (toW32 w)
 
 prop_check_lock_distance :: Property
-prop_check_lock_distance = forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDistance $ envTx env)
-                         $ \w -> checkJet (ElementsJet (TimeLockJet CheckLockDistance)) env (toW16 w)
+prop_check_lock_distance = checkJet (ElementsJet (TimeLockJet CheckLockDistance))
+                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDistance $ envTx env)
+                                                   $ \w -> check env (toW16 w)
 
 prop_check_lock_duration :: Property
-prop_check_lock_duration = forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDuration $ envTx env)
-                         $ \w -> checkJet (ElementsJet (TimeLockJet CheckLockDuration)) env (toW16 w)
+prop_check_lock_duration = checkJet (ElementsJet (TimeLockJet CheckLockDuration))
+                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDuration $ envTx env)
+                                                   $ \w -> check env (toW16 w)
 
 tapEnv :: TapEnv
 tapEnv = TapEnv

@@ -10,6 +10,7 @@ module Simplicity.Bitcoin.Jets
   -- * Re-exports
   , WrappedSimplicity, unwrap
   , Simplicity.Bitcoin.JetType.specification, Simplicity.Bitcoin.JetType.implementation
+  , Semantics.FastEval
   ) where
 
 import Prelude hiding (fail, drop, take)

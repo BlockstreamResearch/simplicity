@@ -10,6 +10,7 @@ import Simplicity.Elements.FFI.Jets
 import Simplicity.Elements.Jets
 import Simplicity.Elements.Primitive
 import Simplicity.Elements.Semantics
+import Simplicity.Elements.TestEval
 import Simplicity.Ty.Word
 import qualified Simplicity.Word as Word
 
@@ -219,28 +220,46 @@ prop_script_cmr :: Property
 prop_script_cmr = forallPrimEnv $ \env -> primSem ScriptCMR () env == script_cmr env ()
 
 prop_tx_is_final :: Property
-prop_tx_is_final = forallPrimEnv $ \env -> sem (specification (ElementsJet (TimeLockJet TxIsFinal))) env () == tx_is_final env ()
+prop_tx_is_final = forallPrimEnv $ \env -> fast_tx_is_final env () == tx_is_final env ()
+ where
+  fast_tx_is_final = testEval (specification (ElementsJet (TimeLockJet TxIsFinal)))
 
 prop_tx_lock_height :: Property
-prop_tx_lock_height = forallPrimEnv $ \env -> sem (specification (ElementsJet (TimeLockJet TxLockHeight))) env () == tx_lock_height env ()
+prop_tx_lock_height = forallPrimEnv $ \env -> fast_tx_lock_height env () == tx_lock_height env ()
+ where
+  fast_tx_lock_height = testEval (specification (ElementsJet (TimeLockJet TxLockHeight)))
 
 prop_tx_lock_time :: Property
-prop_tx_lock_time = forallPrimEnv $ \env -> sem (specification (ElementsJet (TimeLockJet TxLockTime))) env () == tx_lock_time env ()
+prop_tx_lock_time = forallPrimEnv $ \env -> fast_tx_lock_time env () == tx_lock_time env ()
+ where
+  fast_tx_lock_time = testEval (specification (ElementsJet (TimeLockJet TxLockTime)))
 
 prop_tx_lock_distance :: Property
-prop_tx_lock_distance = forallPrimEnv $ \env -> sem (specification (ElementsJet (TimeLockJet TxLockDistance))) env () == tx_lock_distance env ()
+prop_tx_lock_distance = forallPrimEnv $ \env -> fast_tx_lock_distance env () == tx_lock_distance env ()
+ where
+  fast_tx_lock_distance = testEval (specification (ElementsJet (TimeLockJet TxLockDistance)))
 
 prop_tx_lock_duration :: Property
-prop_tx_lock_duration = forallPrimEnv $ \env -> sem (specification (ElementsJet (TimeLockJet TxLockDuration))) env () == tx_lock_duration env ()
+prop_tx_lock_duration = forallPrimEnv $ \env -> fast_tx_lock_duration env () == tx_lock_duration env ()
+ where
+  fast_tx_lock_duration = testEval (specification (ElementsJet (TimeLockJet TxLockDuration)))
 
 prop_check_lock_height :: Word32 -> Property
-prop_check_lock_height w = forallPrimEnv $ \env -> sem (specification (ElementsJet (TimeLockJet CheckLockHeight))) env w == check_lock_height env w
+prop_check_lock_height = \w -> forallPrimEnv $ \env -> fast_check_lock_height env w == check_lock_height env w
+ where
+  fast_check_lock_height = testEval (specification (ElementsJet (TimeLockJet CheckLockHeight)))
 
 prop_check_lock_time :: Word32 -> Property
-prop_check_lock_time w = forallPrimEnv $ \env -> sem (specification (ElementsJet (TimeLockJet CheckLockTime))) env w == check_lock_time env w
+prop_check_lock_time = \w -> forallPrimEnv $ \env -> fast_check_lock_time env w == check_lock_time env w
+ where
+  fast_check_lock_time = testEval (specification (ElementsJet (TimeLockJet CheckLockTime)))
 
 prop_check_lock_distance :: Word16 -> Property
-prop_check_lock_distance w = forallPrimEnv $ \env -> sem (specification (ElementsJet (TimeLockJet CheckLockDistance))) env w == check_lock_distance env w
+prop_check_lock_distance = \w -> forallPrimEnv $ \env -> fast_check_lock_distance env w == check_lock_distance env w
+ where
+  fast_check_lock_distance = testEval (specification (ElementsJet (TimeLockJet CheckLockDistance)))
 
 prop_check_lock_duration :: Word16 -> Property
-prop_check_lock_duration w = forallPrimEnv $ \env -> sem (specification (ElementsJet (TimeLockJet CheckLockDuration))) env w == check_lock_duration env w
+prop_check_lock_duration = \w -> forallPrimEnv $ \env -> fast_check_lock_duration env w == check_lock_duration env w
+ where
+  fast_check_lock_duration = testEval (specification (ElementsJet (TimeLockJet CheckLockDuration)))
