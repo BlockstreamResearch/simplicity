@@ -8323,19 +8323,19 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputIssuanceBlinding>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitNonce|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputReissuanceBlinding>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitNonce|)>|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputIssuanceContract>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputNewIssuanceContract>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputIssuanceEntropy>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputReissuanceEntropy>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>>>>>>
   </with>
 
   \;
@@ -8407,19 +8407,19 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIssuanceBlinding>\<of\><value|1>\<vdash\><maybe><around*|(|ExplicitNonce|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentReissuanceBlinding>\<of\><value|1>\<vdash\><maybe><around*|(|ExplicitNonce|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIssuanceContract>\<of\><value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentNewIssuanceContract>\<of\><value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentIssuanceEntropy>\<of\><value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|currentReissuanceEntropy>\<of\><value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>>>>>>
   </with>
 
   \;
@@ -8535,7 +8535,7 @@
   We extend the formal semantics of these new expressions as follows.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|version>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|version|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|lockTime>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|lockTime|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputsHash>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>inputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputsHash>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>outputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numInputs>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIsPegin>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|isPegin|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputPrevOutpoint>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputAsset>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|asset|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputAmount>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|amount|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputScriptHash>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|txo|]><around*|[|scriptPubKey|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputSequence>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceBlinding>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|blindingNonce|)><around*|(|reissuance<around*|(|l|)>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceContract>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|contractHash|)><around*|(|newIssuance<around*|(|l|)>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceEntropy>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|entropy|)><around*|(|reissuance<around*|(|l|)>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceAssetAmt>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|<maybe><around*|(|ClearAmout|)>\<circ\>issuanceAssetAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceTokenAmt>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|<maybe><around*|(|ClearAmout|)>\<circ\>issuanceTokenAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceAssetProof>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|OptionPrfHash\<circ\>issuanceAssetAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|<samp|inputIssuanceTokenProof>>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|OptionPrfHash\<circ\>issuanceTokenAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIndex>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|ix|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIsPegin>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|isPegin|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentPrevOutpoint>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentAsset>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|asset|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentAmount>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|amount|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentScriptHash>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|txo|]><around*|[|scriptPubKey|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentSequence>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceBlinding>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|blindingNonce|)><around*|(|reissuance<around*|(|l|)>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceContract>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|contractHash|)><around*|(|newIssuance<around*|(|l|)>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceEntropy>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|entropy|)><around*|(|reissuance<around*|(|l|)>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceAssetAmt>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|<maybe><around*|(|ClearAmout|)>\<circ\>issuanceAssetAmt|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceTokenAmt>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|<maybe><around*|(|ClearAmout|)>\<circ\>issuanceTokenAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<samp|currentIssuanceAssetProof>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|OptionPrfHash\<circ\>issuanceAssetAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<samp|currentIssuanceTokenProof>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|OptionPrfHash\<circ\>issuanceTokenAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numOutputs>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|outputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputAsset>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>ClearAsset<around*|(|l<around*|[|asset|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputAmount>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>ClearAmount<around*|(|l<around*|[|amount|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputScriptHash>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|scriptPubKey|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputNullDatum>>|\<rrbracket\>><rsup|EL><around*|\<langle\>|i,j|\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|\<mu\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>nullDatum<around*|\<langle\>|l<around*|[|scriptPubKey|]>,<around*|\<lceil\>|j|\<rceil\>>|\<rangle\>>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<samp|outputSurjectionProof>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>PrfHash<around*|(|l<around*|[|asset|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<samp|outputRangeProof>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>PrfHash<around*|(|l<around*|[|amount|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalFee>>|\<rrbracket\>><rsup|<EL>><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fee<around*|\<langle\>|e<around*|[|tx|]><around*|[|outputs|]>,a|\<rangle\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|tapleafVersion>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tapEnv|]><around*|[|leafVersion|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|tapbranch>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tapEnv|]><around*|[|branch|]><around*|\<lceil\>|i|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|internalKey>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tapEnv|]><around*|[|internalKey|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|annexHash>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|SHA256|)><around*|(|e<around*|[|tapEnv|]><around*|[|annex|]>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|scriptCMR>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|scriptCMR|]>|)>>>>>
+    <tformat|<table|<row|<cell|<around*|\<llbracket\>|<math-ss|version>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|version|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|lockTime>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tx|]><around*|[|lockTime|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputsHash>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>inputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputsHash>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><around*|(|\<eta\><rsup|<maybe>>\<circ\>SHA256\<circ\>\<mu\><rsup|\<ast\>>\<circ\>\<eta\><rsup|S>\<circ\>outputHash<rsup|+>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numInputs>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIsPegin>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|isPegin|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputPrevOutpoint>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputAsset>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|asset|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputAmount>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|amount|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputScriptHash>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|txo|]><around*|[|scriptPubKey|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputSequence>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputReissuanceBlinding>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|blindingNonce|)><around*|(|reissuance<around*|(|l|)>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputNewIssuanceContract>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|contractHash|)><around*|(|newIssuance<around*|(|l|)>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputReissuanceEntropy>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|entropy|)><around*|(|reissuance<around*|(|l|)>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceAssetAmt>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|<maybe><around*|(|ClearAmout|)>\<circ\>issuanceAssetAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceTokenAmt>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|<maybe><around*|(|ClearAmout|)>\<circ\>issuanceTokenAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|inputIssuanceAssetProof>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|OptionPrfHash\<circ\>issuanceAssetAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|<samp|inputIssuanceTokenProof>>>|\<rrbracket\>><rsup|<EL>><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|OptionPrfHash\<circ\>issuanceTokenAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIndex>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|ix|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIsPegin>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|isPegin|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentPrevOutpoint>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|prevOutpoint|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentAsset>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|asset|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentAmount>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|txo|]><around*|[|amount|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentScriptHash>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|txo|]><around*|[|scriptPubKey|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentSequence>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\>l<around*|[|sequence|]>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentReissuanceBlinding>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|blindingNonce|)><around*|(|reissuance<around*|(|l|)>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentNewIssuanceContract>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|contractHash|)><around*|(|newIssuance<around*|(|l|)>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceEntropy>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|\<lambda\>l\<point\><maybe><around*|(|entropy|)><around*|(|reissuance<around*|(|l|)>|)>|)><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceAssetAmt>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|<maybe><around*|(|ClearAmout|)>\<circ\>issuanceAssetAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|currentIssuanceTokenAmt>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|<maybe><around*|(|ClearAmout|)>\<circ\>issuanceTokenAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<samp|currentIssuanceAssetProof>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|OptionPrfHash\<circ\>issuanceAssetAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<samp|currentIssuanceTokenProof>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\><maybe><around*|(|OptionPrfHash\<circ\>issuanceTokenAmt|)><next-line><around*|(|e<around*|[|tx|]><around*|[|inputs|]><around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|numOutputs>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|\<lfloor\>|<around*|\||e<around*|[|tx|]><around*|[|outputs|]>|\|>|\<rfloor\>><rsub|32>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputAsset>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>ClearAsset<around*|(|l<around*|[|asset|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputAmount>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>ClearAmount<around*|(|l<around*|[|amount|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputScriptHash>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>SHA256<around*|(|l<around*|[|scriptPubKey|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|outputNullDatum>>|\<rrbracket\>><rsup|EL><around*|\<langle\>|i,j|\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|\<mu\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>nullDatum<around*|\<langle\>|l<around*|[|scriptPubKey|]>,<around*|\<lceil\>|j|\<rceil\>>|\<rangle\>>|)>|)><next-line><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<samp|outputSurjectionProof>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>PrfHash<around*|(|l<around*|[|asset|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<samp|outputRangeProof>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|\<lambda\>l\<point\>PrfHash<around*|(|l<around*|[|amount|]>|)>|)><around*|(|e<around*|[|tx|]><around*|[|outputs|]><around*|\<lceil\>|i|\<rceil\>>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|totalFee>>|\<rrbracket\>><rsup|<EL>><around*|(|a|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|fee<around*|\<langle\>|e<around*|[|tx|]><around*|[|outputs|]>,a|\<rangle\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|tapleafVersion>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tapEnv|]><around*|[|leafVersion|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|tapbranch>>|\<rrbracket\>><rsup|EL><around*|(|i|)>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tapEnv|]><around*|[|branch|]><around*|\<lceil\>|i|\<rceil\>>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|internalKey>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|tapEnv|]><around*|[|internalKey|]>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|annexHash>>|\<rrbracket\>><rsup|EL><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|<maybe><around*|(|SHA256|)><around*|(|e<around*|[|tapEnv|]><around*|[|annex|]>|)>|)>>>|<row|<cell|<around*|\<llbracket\>|<math-ss|<math|scriptCMR>>|\<rrbracket\>><rsup|<EL>><around*|\<langle\>||\<rangle\>>>|<cell|\<assign\>>|<cell|\<lambda\>e\<of\>ELEnv\<point\>\<eta\><rsup|<maybe>><around*|(|e<around*|[|scriptCMR|]>|)>>>>>
   </eqnarray*>
 
   where
@@ -8619,7 +8619,7 @@
   expressions by hashing new unique byte strings.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<cmr|<math-ss|version>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[76657273696f6e]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|lockTime>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6c6f636b54696d65]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputsHash>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e7075747348617368]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|outputsHash>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f75747075747348617368]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|numInputs>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6e756d496e70757473]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIsPegin>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e7075744973506567696e]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputPrevOutpoint>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e707574507265764f7574706f696e74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputAsset>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e7075744173736574]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputAmount>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e707574416d6f756e74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputScriptHash>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[696e70757453637269707448617368]>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputSequence>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757453657175656e6365]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceBlinding>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365426c696e64696e67]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceContract>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365436f6e7472616374]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceEntropy>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365456e74726f7079]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceAssetAmt>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e63654173736574416d74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceTokenAmt>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365546f6b656e416d74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceAssetProof>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365417373657450726f6f66]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|<samp|inputIssuanceTokenProof>>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365546f6b656e50726f6f66]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIndex>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e74496e646578]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIsPegin>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e744973506567696e]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentPrevOutpoint>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e74507265764f7574706f696e74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentAsset>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e744173736574]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentAmount>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e74416d6f756e74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentScriptHash>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7453637269707448617368]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentSequence>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7453657175656e6365]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceBlinding>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365426c696e64696e67]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceContract>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365436f6e7472616374]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceEntropy>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365456e74726f7079]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceAssetAmt>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e63654173736574416d74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceTokenAmt>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365546f6b656e416d74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<samp|currentIssuanceAssetProof>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365417373657450726f6f66<next-line>]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<samp|currentIssuanceTokenProof>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365546f6b656e50726f6f66<next-line>]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|numOutput>s>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6e756d784f757470757473]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|outputAsset>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f75747075744173736574]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|outputAmount>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f7574707574416d6f756e74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|outputNonce>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f75747075744e6f6e6365]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|outputScriptHash>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f757470757453637269707448617368]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|outputNullDatum>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f75747075744e756c6c446174756d]>>><rsub|IV>>>|<row|<cell|<cmr|<samp|outputSurjectionProof>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f75747075745375726a656374696f6e50726f6f66<next-line>]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<samp|outputRangeProof>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f757470757452616e676550726f6f66<next-line>]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|fee>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[666565]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|tapleafVersion>>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[7461706c65616656657273696f6e]>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math-ss|<math|tapbranch>>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[7461706272616e6368]>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|internalKey>>><math-ss|>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[696e7465726e616c4b6579]>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|annexHash>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[616e6e657848617368]>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|scriptCMR>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[736372697074434d52]>><rsub|IV>>>>>
+    <tformat|<table|<row|<cell|<cmr|<math-ss|version>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[76657273696f6e]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|lockTime>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6c6f636b54696d65]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputsHash>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e7075747348617368]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|outputsHash>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f75747075747348617368]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|numInputs>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6e756d496e70757473]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIsPegin>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e7075744973506567696e]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputPrevOutpoint>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e707574507265764f7574706f696e74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputAsset>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e7075744173736574]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputAmount>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e707574416d6f756e74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputScriptHash>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[696e70757453637269707448617368]>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputSequence>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757453657175656e6365]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputReissuanceBlinding>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e707574526569737375616e6365426c696e64696e67]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputNewIssuanceContract>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e7075744e657749737375616e6365436f6e7472616374]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputReissuanceEntropy>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e707574526569737375616e6365456e74726f7079]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceAssetAmt>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e63654173736574416d74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceTokenAmt>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365546f6b656e416d74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|inputIssuanceAssetProof>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365417373657450726f6f66]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|<samp|inputIssuanceTokenProof>>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[696e70757449737375616e6365546f6b656e50726f6f66]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIndex>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e74496e646578]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIsPegin>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e744973506567696e]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentPrevOutpoint>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e74507265764f7574706f696e74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentAsset>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e744173736574]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentAmount>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e74416d6f756e74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentScriptHash>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7453637269707448617368]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentSequence>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7453657175656e6365]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentReissuanceBlinding>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e74526569737375616e6365426c696e64696e67]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentNewIssuanceContract>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e744e657749737375616e6365436f6e7472616374]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currenReissuanceEntropy>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e74526569737375616e6365456e74726f7079]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceAssetAmt>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e63654173736574416d74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|currentIssuanceTokenAmt>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365546f6b656e416d74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<samp|currentIssuanceAssetProof>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365417373657450726f6f66<next-line>]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<samp|currentIssuanceTokenProof>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[63757272656e7449737375616e6365546f6b656e50726f6f66<next-line>]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|numOutput>s>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6e756d784f757470757473]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|outputAsset>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f75747075744173736574]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|outputAmount>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f7574707574416d6f756e74]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|outputNonce>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f75747075744e6f6e6365]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|outputScriptHash>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f757470757453637269707448617368]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|outputNullDatum>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f75747075744e756c6c446174756d]>>><rsub|IV>>>|<row|<cell|<cmr|<samp|outputSurjectionProof>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f75747075745375726a656374696f6e50726f6f66<next-line>]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<samp|outputRangeProof>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[6f757470757452616e676550726f6f66<next-line>]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|fee>>>|<cell|\<assign\>>|<cell|SHA256<rsup|<math|ELprefix\<cdummy\><math-tt|[666565]>>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|tapleafVersion>>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[7461706c65616656657273696f6e]>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math-ss|<math|tapbranch>>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[7461706272616e6368]>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|internalKey>>><math-ss|>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[696e7465726e616c4b6579]>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|annexHash>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[616e6e657848617368]>><rsub|IV>>>|<row|<cell|<cmr|<math-ss|<math|scriptCMR>>>>|<cell|\<assign\>>|<cell|SHA256<rsup|ELprefix\<cdummy\><math-tt|[736372697074434d52]>><rsub|IV>>>>>
   </eqnarray*>
 
   \;
@@ -8636,7 +8636,7 @@
   primitive names all begin with <math|<verbatim|[10]><rsub|<2>>>.
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|<rep|<text|<samp|`version'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10000000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`lockTime'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10000001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIsPegin'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputPrevOutpoint'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10000100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputAsset'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10000101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputAmount'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputScriptHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10001000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputSequence'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10001001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceBlinding'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceContract'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10001100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceEntropy'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10001101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceAssetAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000111|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceTokenAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10010000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceAssetProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10010001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceTokenProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputAsset'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10010100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputAmount'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10010101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputNonce'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputScriptHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10011000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputNullDatum'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10011001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputSurjectionProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputRangeProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10011100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`scriptCMR'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10011101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIndex'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001111|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIsPegin'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10100000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentPrevOutpoint'>>|>>|<cell|=>|<verbatim|<around*|[|10100001|]>><rsub|<2>>>|<row|<cell|<rep|<text|<samp|`currentAsset'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentAmount'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10100100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentScriptHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10100101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentSequence'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceBlinding'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10101000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceContract'>>|>>|<cell|=>|<verbatim|<around*|[|10101001|]>><rsub|<2>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceEntropy'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceAssetAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10101100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceTokenAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10101101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceAssetProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010111|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceTokenProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10110000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`tapleafVersion'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10110001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`tapbranch'>>|>>|<cell|=>|<verbatim|<around*|[|1011001|]>><rsub|<2>>>|<row|<cell|<rep|<text|<samp|`internalKey'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011010|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`annexHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputsHash'>>|>>|<cell|=>|<cell|<rsub|><verbatim|<around*|[|10111000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputsHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10111001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`numInputs'>>|>>|<cell|=>|<verbatim|<around*|[|1011101|]>><rsub|<2>>>|<row|<cell|<rep|<text|<samp|`numOutputs'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011110|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`fee'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011111|]>><rsub|<2>>>>>>
+    <tformat|<table|<row|<cell|<rep|<text|<samp|`version'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10000000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`lockTime'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10000001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIsPegin'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputPrevOutpoint'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10000100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputAsset'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10000101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputAmount'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputScriptHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10001000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputSequence'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10001001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputReissuanceBlinding'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputNewIssuanceContract'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10001100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputReissuanceEntropy'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10001101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceAssetAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1000111|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceTokenAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10010000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceAssetProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10010001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputIssuanceTokenProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputAsset'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10010100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputAmount'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10010101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputNonce'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputScriptHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10011000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputNullDatum'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10011001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputSurjectionProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputRangeProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10011100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`scriptCMR'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10011101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIndex'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1001111|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIsPegin'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10100000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentPrevOutpoint'>>|>>|<cell|=>|<verbatim|<around*|[|10100001|]>><rsub|<2>>>|<row|<cell|<rep|<text|<samp|`currentAsset'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentAmount'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10100100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentScriptHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10100101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentSequence'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentReissuanceBlinding'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10101000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentNewIssuanceContract'>>|>>|<cell|=>|<verbatim|<around*|[|10101001|]>><rsub|<2>>>|<row|<cell|<rep|<text|<samp|`currentReissuanceEntropy'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceAssetAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10101100|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceTokenAmt'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10101101|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceAssetProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1010111|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`currentIssuanceTokenProof'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10110000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`tapleafVersion'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10110001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`tapbranch'>>|>>|<cell|=>|<verbatim|<around*|[|1011001|]>><rsub|<2>>>|<row|<cell|<rep|<text|<samp|`internalKey'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011010|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`annexHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011011|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`inputsHash'>>|>>|<cell|=>|<cell|<rsub|><verbatim|<around*|[|10111000|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`outputsHash'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|10111001|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`numInputs'>>|>>|<cell|=>|<verbatim|<around*|[|1011101|]>><rsub|<2>>>|<row|<cell|<rep|<text|<samp|`numOutputs'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011110|]>><rsub|<2>>>>|<row|<cell|<rep|<text|<samp|`fee'>>|>>|<cell|=>|<cell|<verbatim|<around*|[|1011111|]>><rsub|<2>>>>>>
   </eqnarray*>
 
   <appendix|Catelogue of Jets>
@@ -10776,35 +10776,6 @@
 
   <math|<text|<samp|parse-sequence>> :<2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|16>+<2><rsup|16>|)>>
 
-  <subsection|<verbatim|1101101000...: >Jets for Elements (without
-  primitives)>
-
-  This section is not recommended for non-Elements applications.
-
-  <subsubsection|<samp|generate-entropy>>
-
-  \;
-
-  <math|<rep|<text|<samp|'generate-entropy'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|generate-entropy>> :Outpoint\<times\><2><rsup|256>\<vdash\><2><rsup|256>>
-
-  <subsubsection|<samp|calculate-asset>>
-
-  \;
-
-  <math|<rep|<text|<samp|'calculate-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|calculate-asset>> :<2><rsup|256>\<vdash\>ExplicitAsset>
-
-  <subsubsection|<samp|calculate-token>>
-
-  \;
-
-  <math|<rep|<text|<samp|'calculate-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|calculate-token>> :<2>\<times\><2><rsup|256>\<vdash\>ExplicitAsset>
-
   <section|<verbatim|111...: >Bitcoin Jets>
 
   <subsection|Transaction>
@@ -11124,25 +11095,135 @@
 
   <subsection|Issuance>
 
-  Notes: use <samp|IssuanceContractHash> and <samp|IssuanceEntropy> to decide
-  which issuance kind, if any, is being invoked.
+  <subsubsection|<samp|input-issuance>>
 
-  <\itemize>
-    <item><math|<samp|currentIssuance>\<of\><value|1>\<vdash\><maybe><around*|(|<2>|)>><with|color|red|Either
-    a new issuance or reissuance or neither>
+  \;
 
-    <item><math|<samp|currentIssuanceAsset>\<of\><value|1>\<vdash\><maybe><around*|(|ExplicitAsset|)>>
+  <math|<rep|<text|<samp|'input-issuance'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-    <item><math|<samp|currentIssuanceToken>\<of\><value|1>\<vdash\><maybe><around*|(|ExplicitAsset|)>>
+  <math|<text|<samp|input-issuance>> :Index\<vdash\><maybe><around*|(|<maybe><around*|(|<2>|)>|)>>
 
-    <item><math|<samp|inputIssuance>\<of\>Index\<vdash\><maybe><around*|(|<maybe><around*|(|<2>|)>|)>>
+  \;
 
-    <item><math|<samp|inputIssuanceAsset>\<of\>Index\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitAsset|)>|)>>
+  Returns <math|\<eta\><around*|(|\<eta\><around*|(|<math-tt|0><rsub|<2>>|)>|)><rsub|>>
+  when the given input has a new issuance. Returns
+  <math|\<eta\><around*|(|\<eta\><around*|(|<math-tt|1><rsub|<2>>|)>|)><rsub|>>
+  when the given input has a reissuance. Returns
+  <math|\<eta\><around*|(|\<emptyset\>|)><rsub|>> when the given input has no
+  issuance.
 
-    <item><math|<samp|inputIssuanceToken>\<of\>Index\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitAsset|)>|)>>
+  Otherwise returns <math|\<emptyset\>> when there is no input of the given
+  index.
 
-    \;
-  </itemize>
+  <subsubsection|<samp|input-issuance-asset>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-issuance-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-issuance-asset>>
+  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitAsset|)>|)>>
+
+  \;
+
+  Returns <math|\<eta\><around*|(|\<eta\><around*|(|x|)>|)><rsub|>> when the
+  given input has an issuance with asset ID <math|x>. Returns
+  <math|\<eta\><around*|(|\<emptyset\>|)><rsub|>> when the given input has no
+  issuance.
+
+  Otherwise returns <math|\<emptyset\>> when there is no input of the given
+  index.
+
+  <subsubsection|<samp|input-issuance-token>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-issuance-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-issuance-token>>
+  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitAsset|)>|)>>
+
+  \;
+
+  Returns <math|\<eta\><around*|(|\<eta\><around*|(|x|)>|)><rsub|>> when the
+  given input has an issuance with reissuance token ID <math|x>. Returns
+  <math|\<eta\><around*|(|\<emptyset\>|)><rsub|>> when the given input has no
+  issuance.
+
+  Otherwise returns <math|\<emptyset\>> when there is no input of the given
+  index.
+
+  <subsubsection|<samp|input-issuance-entropy>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-issuance-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-issuance-token>>
+  :Index\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
+
+  \;
+
+  Returns <math|\<eta\><around*|(|\<eta\><around*|(|x|)>|)><rsub|>> when the
+  given input has an reissuance with entropy <math|x>, or if there is a new
+  issuance whose computed entropy is <math|x>. Returns
+  <math|\<eta\><around*|(|\<emptyset\>|)><rsub|>> when the given input has no
+  issuance.
+
+  Otherwise returns <math|\<emptyset\>> when there is no input of the given
+  index.
+
+  <subsubsection|<samp|calculate-issuance-entropy>>
+
+  \;
+
+  <math|<rep|<text|<samp|'calculate-issuance-entropy'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|calculate-issuance-entropy>>
+  :Outpoint\<times\><2><rsup|256>\<vdash\><2><rsup|256>>
+
+  \;
+
+  Calculate the entropy value from a given ouptoint and contract hash. \ This
+  entropy value is used to compute issued asset and token IDs (see below).
+
+  <subsubsection|<samp|calculate-asset>>
+
+  \;
+
+  <math|<rep|<text|<samp|'calculate-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|calculate-asset>> :<2><rsup|256>\<vdash\>ExplicitAsset>
+
+  \;
+
+  Calculate the issued asset id from a given entropy value.
+
+  <subsubsection|<samp|calculate-explicit-token>>
+
+  \;
+
+  <math|<rep|<text|<samp|'calculate-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|calculate-token>> :<2><rsup|256>\<vdash\>ExplicitAsset>
+
+  \;
+
+  Calculate the reissuance token id from a given entropy value for assets
+  with explicit issued amounts.
+
+  <subsubsection|<samp|calculate-confidential-token>>
+
+  \;
+
+  <math|<rep|<text|<samp|'calculate-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|calculate-token>> :<2><rsup|256>\<vdash\>ExplicitAsset>
+
+  \;
+
+  Calculate the reissuance token id from a given entropy value for assets
+  with confidential issued amounts.
 
   <appendix|Alternative Serialization of Simplicity
   DAGs><label|app:AltSerialization>
@@ -11654,47 +11735,47 @@
     <associate|auto-34|<tuple|3.2.7|?>>
     <associate|auto-340|<tuple|B.1.7.1|?>>
     <associate|auto-341|<tuple|B.1.7.2|?>>
-    <associate|auto-342|<tuple|B.1.8|?>>
-    <associate|auto-343|<tuple|B.1.8.1|?>>
-    <associate|auto-344|<tuple|B.1.8.2|?>>
-    <associate|auto-345|<tuple|B.1.8.3|?>>
-    <associate|auto-346|<tuple|B.2|?>>
-    <associate|auto-347|<tuple|B.2.1|?>>
-    <associate|auto-348|<tuple|B.2.2|?>>
-    <associate|auto-349|<tuple|B.2.3|?>>
+    <associate|auto-342|<tuple|B.2|?>>
+    <associate|auto-343|<tuple|B.2.1|?>>
+    <associate|auto-344|<tuple|B.2.2|?>>
+    <associate|auto-345|<tuple|B.2.3|?>>
+    <associate|auto-346|<tuple|B.2.3.1|?>>
+    <associate|auto-347|<tuple|B.2.3.2|?>>
+    <associate|auto-348|<tuple|B.2.3.3|?>>
+    <associate|auto-349|<tuple|B.2.3.4|?>>
     <associate|auto-35|<tuple|3.2.8|?>>
-    <associate|auto-350|<tuple|B.2.3.1|?>>
-    <associate|auto-351|<tuple|B.2.3.2|?>>
-    <associate|auto-352|<tuple|B.2.3.3|?>>
-    <associate|auto-353|<tuple|B.2.3.4|?>>
-    <associate|auto-354|<tuple|B.2.3.5|?>>
-    <associate|auto-355|<tuple|B.2.3.6|?>>
-    <associate|auto-356|<tuple|B.2.3.7|?>>
-    <associate|auto-357|<tuple|B.2.3.8|?>>
-    <associate|auto-358|<tuple|B.2.3.9|?>>
-    <associate|auto-359|<tuple|B.3|?>>
+    <associate|auto-350|<tuple|B.2.3.5|?>>
+    <associate|auto-351|<tuple|B.2.3.6|?>>
+    <associate|auto-352|<tuple|B.2.3.7|?>>
+    <associate|auto-353|<tuple|B.2.3.8|?>>
+    <associate|auto-354|<tuple|B.2.3.9|?>>
+    <associate|auto-355|<tuple|B.3|?>>
+    <associate|auto-356|<tuple|B.3.1|?>>
+    <associate|auto-357|<tuple|B.3.2|?>>
+    <associate|auto-358|<tuple|B.3.2.1|?>>
+    <associate|auto-359|<tuple|B.3.2.2|?>>
     <associate|auto-36|<tuple|3.2.9|?>>
-    <associate|auto-360|<tuple|B.3.1|?>>
-    <associate|auto-361|<tuple|B.3.2|?>>
-    <associate|auto-362|<tuple|B.3.2.1|?>>
-    <associate|auto-363|<tuple|B.3.2.2|?>>
-    <associate|auto-364|<tuple|B.3.2.3|?>>
-    <associate|auto-365|<tuple|B.3.2.4|?>>
-    <associate|auto-366|<tuple|B.3.2.5|?>>
-    <associate|auto-367|<tuple|B.3.2.6|?>>
-    <associate|auto-368|<tuple|B.3.2.7|?>>
-    <associate|auto-369|<tuple|B.3.2.8|?>>
+    <associate|auto-360|<tuple|B.3.2.3|?>>
+    <associate|auto-361|<tuple|B.3.2.4|?>>
+    <associate|auto-362|<tuple|B.3.2.5|?>>
+    <associate|auto-363|<tuple|B.3.2.6|?>>
+    <associate|auto-364|<tuple|B.3.2.7|?>>
+    <associate|auto-365|<tuple|B.3.2.8|?>>
+    <associate|auto-366|<tuple|B.3.2.9|?>>
+    <associate|auto-367|<tuple|B.3.3|?>>
+    <associate|auto-368|<tuple|B.3.3.1|?>>
+    <associate|auto-369|<tuple|B.3.3.2|?>>
     <associate|auto-37|<tuple|3.2.10|?>>
-    <associate|auto-370|<tuple|B.3.2.9|?>>
-    <associate|auto-371|<tuple|B.3.3|?>>
-    <associate|auto-372|<tuple|C|?>>
-    <associate|auto-373|<tuple|C|?>>
-    <associate|auto-374|<tuple|B.3.2.16|?>>
-    <associate|auto-375|<tuple|B.3.2.17|?>>
-    <associate|auto-376|<tuple|B.3.2.18|?>>
-    <associate|auto-377|<tuple|B.3.2.19|?>>
-    <associate|auto-378|<tuple|B.3.2.20|?>>
-    <associate|auto-379|<tuple|B.3.2.21|?>>
+    <associate|auto-370|<tuple|B.3.3.3|?>>
+    <associate|auto-371|<tuple|B.3.3.4|?>>
+    <associate|auto-372|<tuple|B.3.3.5|?>>
+    <associate|auto-373|<tuple|B.3.3.6|?>>
+    <associate|auto-374|<tuple|B.3.3.7|?>>
+    <associate|auto-375|<tuple|B.3.3.8|?>>
+    <associate|auto-376|<tuple|C|?>>
+    <associate|auto-377|<tuple|C|?>>
+    <associate|auto-378|<tuple|C|?>>
+    <associate|auto-379|<tuple|C|?>>
     <associate|auto-38|<tuple|3.2.11|?>>
     <associate|auto-380|<tuple|B.3.3|?>>
     <associate|auto-381|<tuple|C|?>>
@@ -13228,135 +13309,150 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-341>>
 
-      <with|par-left|<quote|1tab>|B.1.8<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|1101101000...:
-      >Jets for Elements (without primitives)
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-342>>
-
-      <with|par-left|<quote|2tab>|B.1.8.1<space|2spc><with|font-family|<quote|ss>|generate-entropy>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-343>>
-
-      <with|par-left|<quote|2tab>|B.1.8.2<space|2spc><with|font-family|<quote|ss>|calculate-asset>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-344>>
-
-      <with|par-left|<quote|2tab>|B.1.8.3<space|2spc><with|font-family|<quote|ss>|calculate-token>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-345>>
-
       B.2<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|111...:
       >Bitcoin Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-346>
+      <no-break><pageref|auto-342>
 
       <with|par-left|<quote|1tab>|B.2.1<space|2spc>Transaction
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-347>>
+      <no-break><pageref|auto-343>>
 
       <with|par-left|<quote|1tab>|B.2.2<space|2spc>Signature Hash Modes
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-348>>
+      <no-break><pageref|auto-344>>
 
       <with|par-left|<quote|1tab>|B.2.3<space|2spc>Time Locks
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-349>>
+      <no-break><pageref|auto-345>>
 
       <with|par-left|<quote|2tab>|B.2.3.1<space|2spc><with|font-family|<quote|ss>|check-lock-height>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-350>>
+      <no-break><pageref|auto-346>>
 
       <with|par-left|<quote|2tab>|B.2.3.2<space|2spc><with|font-family|<quote|ss>|check-lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-351>>
+      <no-break><pageref|auto-347>>
 
       <with|par-left|<quote|2tab>|B.2.3.3<space|2spc><with|font-family|<quote|ss>|check-lock-distance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-352>>
+      <no-break><pageref|auto-348>>
 
       <with|par-left|<quote|2tab>|B.2.3.4<space|2spc><with|font-family|<quote|ss>|check-lock-duration>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-353>>
+      <no-break><pageref|auto-349>>
 
       <with|par-left|<quote|2tab>|B.2.3.5<space|2spc><with|font-family|<quote|ss>|tx-height-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-354>>
+      <no-break><pageref|auto-350>>
 
       <with|par-left|<quote|2tab>|B.2.3.6<space|2spc><with|font-family|<quote|ss>|tx-time-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-355>>
+      <no-break><pageref|auto-351>>
 
       <with|par-left|<quote|2tab>|B.2.3.7<space|2spc><with|font-family|<quote|ss>|tx-distance-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-356>>
+      <no-break><pageref|auto-352>>
 
       <with|par-left|<quote|2tab>|B.2.3.8<space|2spc><with|font-family|<quote|ss>|tx-duration-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-357>>
+      <no-break><pageref|auto-353>>
 
       <with|par-left|<quote|2tab>|B.2.3.9<space|2spc><with|font-family|<quote|ss>|is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-358>>
+      <no-break><pageref|auto-354>>
 
       B.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|111...:
       >Elements Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-359>
+      <no-break><pageref|auto-355>
 
       <with|par-left|<quote|1tab>|B.3.1<space|2spc>Transaction
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-360>>
+      <no-break><pageref|auto-356>>
 
       <with|par-left|<quote|1tab>|B.3.2<space|2spc>Time Locks
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-361>>
+      <no-break><pageref|auto-357>>
 
       <with|par-left|<quote|2tab>|B.3.2.1<space|2spc><with|font-family|<quote|ss>|check-lock-height>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-362>>
+      <no-break><pageref|auto-358>>
 
       <with|par-left|<quote|2tab>|B.3.2.2<space|2spc><with|font-family|<quote|ss>|check-lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-363>>
+      <no-break><pageref|auto-359>>
 
       <with|par-left|<quote|2tab>|B.3.2.3<space|2spc><with|font-family|<quote|ss>|check-lock-distance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-364>>
+      <no-break><pageref|auto-360>>
 
       <with|par-left|<quote|2tab>|B.3.2.4<space|2spc><with|font-family|<quote|ss>|check-lock-duration>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-365>>
+      <no-break><pageref|auto-361>>
 
       <with|par-left|<quote|2tab>|B.3.2.5<space|2spc><with|font-family|<quote|ss>|tx-lock-height>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-366>>
+      <no-break><pageref|auto-362>>
 
       <with|par-left|<quote|2tab>|B.3.2.6<space|2spc><with|font-family|<quote|ss>|tx-lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-367>>
+      <no-break><pageref|auto-363>>
 
       <with|par-left|<quote|2tab>|B.3.2.7<space|2spc><with|font-family|<quote|ss>|tx-lock-distance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-368>>
+      <no-break><pageref|auto-364>>
 
       <with|par-left|<quote|2tab>|B.3.2.8<space|2spc><with|font-family|<quote|ss>|tx-lock-duration>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-369>>
+      <no-break><pageref|auto-365>>
 
       <with|par-left|<quote|2tab>|B.3.2.9<space|2spc><with|font-family|<quote|ss>|tx-is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-370>>
+      <no-break><pageref|auto-366>>
 
       <with|par-left|<quote|1tab>|B.3.3<space|2spc>Issuance
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-367>>
+
+      <with|par-left|<quote|2tab>|B.3.3.1<space|2spc><with|font-family|<quote|ss>|input-issuance>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-368>>
+
+      <with|par-left|<quote|2tab>|B.3.3.2<space|2spc><with|font-family|<quote|ss>|input-issuance-asset>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-369>>
+
+      <with|par-left|<quote|2tab>|B.3.3.3<space|2spc><with|font-family|<quote|ss>|input-issuance-token>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-370>>
+
+      <with|par-left|<quote|2tab>|B.3.3.4<space|2spc><with|font-family|<quote|ss>|input-issuance-entropy>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-371>>
+
+      <with|par-left|<quote|2tab>|B.3.3.5<space|2spc><with|font-family|<quote|ss>|calculate-issuance-entropy>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-372>>
+
+      <with|par-left|<quote|2tab>|B.3.3.6<space|2spc><with|font-family|<quote|ss>|calculate-asset>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-373>>
+
+      <with|par-left|<quote|2tab>|B.3.3.7<space|2spc><with|font-family|<quote|ss>|calculate-explicit-token>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-374>>
+
+      <with|par-left|<quote|2tab>|B.3.3.8<space|2spc><with|font-family|<quote|ss>|calculate-confidential-token>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-375>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       C<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-372><vspace|0.5fn>
+      <no-break><pageref|auto-376><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-373><vspace|0.5fn>
+      <no-break><pageref|auto-377><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
