@@ -151,7 +151,7 @@ typedef enum issuanceType {
  * 'tokenRangeProofHash' is the SHA-256 hash of the token amount's range proof.
  *
  * Invariant: If 'type == NEW_ISSUANCE' then 'contractHash' and 'tokenAmt' are active;
- *            If 'type == REISSUANCE' then 'entropy' and 'blindingNonce' are active;
+ *            If 'type == REISSUANCE' then 'blindingNonce' is active;
  */
 typedef struct assetIssuance {
   union {
@@ -160,12 +160,14 @@ typedef struct assetIssuance {
       confAmount tokenAmt;
     };
     struct {
-      sha256_midstate entropy;
       sha256_midstate blindingNonce;
     };
   };
+  sha256_midstate entropy;
   sha256_midstate assetRangeProofHash;
   sha256_midstate tokenRangeProofHash;
+  sha256_midstate assetId; /* Cached asset ID calculation. */
+  sha256_midstate tokenId; /* Cached token ID calculation. */
   confAmount assetAmt;
   issuanceType type;
 } assetIssuance;

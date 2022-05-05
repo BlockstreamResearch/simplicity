@@ -4,6 +4,7 @@
 #include <stdalign.h>
 #include <string.h>
 #include "primitive.h"
+#include "ops.h"
 #include "../../sha256.h"
 
 #define PADDING(alignType, allocated) ((alignof(alignType) - (allocated) % alignof(alignType)) % alignof(alignType))
@@ -196,6 +197,7 @@ static void copyInput(sigInput* result, const rawInput* input) {
         0 == result->issuance.blindingNonce.s[4] && 0 == result->issuance.blindingNonce.s[5] &&
         0 == result->issuance.blindingNonce.s[6] && 0 == result->issuance.blindingNonce.s[7]) {
       sha256_toMidstate(result->issuance.contractHash.s, input->issuance.assetEntropy);
+      result->issuance.entropy = generateIssuanceEntropy(&result->prevOutpoint, &result->issuance.contractHash);
       copyRawAmt(&result->issuance.tokenAmt, input->issuance.inflationKeys);
       if (is_confidential(result->issuance.tokenAmt.prefix)) hashBuffer(&result->issuance.tokenRangeProofHash, &input->issuance.inflationKeysRangePrf);
       result->issuance.type = NEW_ISSUANCE;
@@ -203,6 +205,8 @@ static void copyInput(sigInput* result, const rawInput* input) {
       sha256_toMidstate(result->issuance.entropy.s, input->issuance.assetEntropy);
       result->issuance.type = REISSUANCE;
     }
+    result->issuance.assetId = calculateAsset(&result->issuance.entropy);
+    result->issuance.tokenId = calculateToken(&result->issuance.entropy, result->issuance.assetAmt.prefix);
   }
 }
 
