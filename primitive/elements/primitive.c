@@ -291,6 +291,16 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 9: *result = TX_IS_FINAL; return 0;
         }
         break;
+       case 3: /* Issuance jets chapter */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return code;
+        switch (code) {
+         case 5: *result = CALCULATE_ISSUANCE_ENTROPY; return 0;
+         case 6: *result = CALCULATE_ASSET; return 0;
+         case 7: *result = CALCULATE_EXPLICIT_TOKEN; return 0;
+         case 8: *result = CALCULATE_CONFIDENTIAL_TOKEN; return 0;
+        }
+        break;
       }
       return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
     }

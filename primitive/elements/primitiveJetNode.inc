@@ -29,11 +29,23 @@
 , .sourceIx = ty_w16
 , .targetIx = ty_u
 }
+,[CALCULATE_ISSUANCE_ENTROPY] =
+{ .tag = JET
+, .jet = calculate_issuance_entropy
+, .sourceIx = ty_ppw256w32w256
+, .targetIx = ty_w256
+}
 ,[GEJ_INFINITY] =
 { .tag = JET
 , .jet = gej_infinity
 , .sourceIx = ty_u
 , .targetIx = ty_pw512w256
+}
+,[CALCULATE_EXPLICIT_TOKEN] =
+{ .tag = JET
+, .jet = calculate_explicit_token
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
 }
 ,[SCALAR_IS_ZERO] =
 { .tag = JET
@@ -58,6 +70,12 @@
 , .jet = fe_is_odd
 , .sourceIx = ty_w256
 , .targetIx = ty_b
+}
+,[CALCULATE_CONFIDENTIAL_TOKEN] =
+{ .tag = JET
+, .jet = calculate_confidential_token
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
 }
 ,[LINEAR_COMBINATION_1] =
 { .tag = JET
@@ -196,6 +214,12 @@
 , .jet = gej_normalize
 , .sourceIx = ty_pw512w256
 , .targetIx = ty_mw512
+}
+,[CALCULATE_ASSET] =
+{ .tag = JET
+, .jet = calculate_asset
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
 }
 ,[FE_INVERT] =
 { .tag = JET
