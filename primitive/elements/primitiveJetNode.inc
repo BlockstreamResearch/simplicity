@@ -389,21 +389,21 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mw32
 }
-,[INPUT_ISSUANCE_BLINDING] =
+,[INPUT_REISSUANCE_BLINDING] =
 { .tag = JET
-, .jet = input_issuance_blinding
+, .jet = input_reissuance_blinding
 , .sourceIx = ty_w32
 , .targetIx = ty_mmw256
 }
-,[INPUT_ISSUANCE_CONTRACT] =
+,[INPUT_NEW_ISSUANCE_CONTRACT] =
 { .tag = JET
-, .jet = input_issuance_contract
+, .jet = input_new_issuance_contract
 , .sourceIx = ty_w32
 , .targetIx = ty_mmw256
 }
-,[INPUT_ISSUANCE_ENTROPY] =
+,[INPUT_REISSUANCE_ENTROPY] =
 { .tag = JET
-, .jet = input_issuance_entropy
+, .jet = input_reissuance_entropy
 , .sourceIx = ty_w32
 , .targetIx = ty_mmw256
 }
@@ -521,21 +521,21 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w32
 }
-,[CURRENT_ISSUANCE_BLINDING] =
+,[CURRENT_REISSUANCE_BLINDING] =
 { .tag = JET
-, .jet = current_issuance_blinding
+, .jet = current_reissuance_blinding
 , .sourceIx = ty_u
 , .targetIx = ty_mw256
 }
-,[CURRENT_ISSUANCE_CONTRACT] =
+,[CURRENT_NEW_ISSUANCE_CONTRACT] =
 { .tag = JET
-, .jet = current_issuance_contract
+, .jet = current_new_issuance_contract
 , .sourceIx = ty_u
 , .targetIx = ty_mw256
 }
-,[CURRENT_ISSUANCE_ENTROPY] =
+,[CURRENT_REISSUANCE_ENTROPY] =
 { .tag = JET
-, .jet = current_issuance_entropy
+, .jet = current_reissuance_entropy
 , .sourceIx = ty_u
 , .targetIx = ty_mw256
 }

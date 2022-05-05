@@ -87,8 +87,8 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
      case 0x2: return either(result, INPUT_PREV_OUTPOINT, INPUT_ASSET, stream);
      case 0x3: *result = INPUT_AMOUNT; return 0;
      case 0x4: return either(result, INPUT_SCRIPT_HASH, INPUT_SEQUENCE, stream);
-     case 0x5: *result = INPUT_ISSUANCE_BLINDING; return 0;
-     case 0x6: return either(result, INPUT_ISSUANCE_CONTRACT, INPUT_ISSUANCE_ENTROPY, stream);
+     case 0x5: *result = INPUT_REISSUANCE_BLINDING; return 0;
+     case 0x6: return either(result, INPUT_NEW_ISSUANCE_CONTRACT, INPUT_REISSUANCE_ENTROPY, stream);
      case 0x7: *result = INPUT_ISSUANCE_ASSET_AMT; return 0;
      case 0x8: return either(result, INPUT_ISSUANCE_TOKEN_AMT, INPUT_ISSUANCE_ASSET_PROOF, stream);
      case 0x9: *result = INPUT_ISSUANCE_TOKEN_PROOF; return 0;
@@ -102,9 +102,9 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
      case 0x11: *result = CURRENT_PREV_OUTPOINT; return 0;
      case 0x12: return either(result, CURRENT_ASSET, CURRENT_AMOUNT, stream);
      case 0x13: *result = CURRENT_SCRIPT_HASH; return 0;
-     case 0x14: return either(result, CURRENT_SEQUENCE, CURRENT_ISSUANCE_BLINDING, stream);
-     case 0x15: *result = CURRENT_ISSUANCE_CONTRACT; return 0;
-     case 0x16: return either(result, CURRENT_ISSUANCE_ENTROPY, CURRENT_ISSUANCE_ASSET_AMT, stream);
+     case 0x14: return either(result, CURRENT_SEQUENCE, CURRENT_REISSUANCE_BLINDING, stream);
+     case 0x15: *result = CURRENT_NEW_ISSUANCE_CONTRACT; return 0;
+     case 0x16: return either(result, CURRENT_REISSUANCE_ENTROPY, CURRENT_ISSUANCE_ASSET_AMT, stream);
      case 0x17: *result = CURRENT_ISSUANCE_TOKEN_AMT; return 0;
      case 0x18: return either(result, CURRENT_ISSUANCE_ASSET_PROOF, CURRENT_ISSUANCE_TOKEN_PROOF, stream);
      case 0x19: *result = TAPLEAF_VERSION; return 0;

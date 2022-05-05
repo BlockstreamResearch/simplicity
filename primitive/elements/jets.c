@@ -79,7 +79,7 @@ static void nonce(frameItem* dst, const confidential* nonce) {
  * Precondition: '*dst' is a valid write frame for 257 more cells;
  *               NULL != issuance;
  */
-static void issuanceBlinding(frameItem* dst, const assetIssuance* issuance) {
+static void reissuanceBlinding(frameItem* dst, const assetIssuance* issuance) {
   if (writeBit(dst, REISSUANCE == issuance->type)) {
     writeHash(dst, &issuance->blindingNonce);
   } else {
@@ -92,7 +92,7 @@ static void issuanceBlinding(frameItem* dst, const assetIssuance* issuance) {
  * Precondition: '*dst' is a valid write frame for 257 more cells;
  *               NULL != issuance;
  */
-static void issuanceContract(frameItem* dst, const assetIssuance* issuance) {
+static void newIssuanceContract(frameItem* dst, const assetIssuance* issuance) {
   if (writeBit(dst, NEW_ISSUANCE == issuance->type)) {
     writeHash(dst, &issuance->contractHash);
   } else {
@@ -105,7 +105,7 @@ static void issuanceContract(frameItem* dst, const assetIssuance* issuance) {
  * Precondition: '*dst' is a valid write frame for 257 more cells;
  *               NULL != issuance;
  */
-static void issuanceEntropy(frameItem* dst, const assetIssuance* issuance) {
+static void reissuanceEntropy(frameItem* dst, const assetIssuance* issuance) {
   if (writeBit(dst, REISSUANCE == issuance->type)) {
     writeHash(dst, &issuance->entropy);
   } else {
@@ -235,33 +235,33 @@ bool input_sequence(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_issuance_blinding : TWO^32 |- S (S TWO^256) */
-bool input_issuance_blinding(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_reissuance_blinding : TWO^32 |- S (S TWO^256) */
+bool input_reissuance_blinding(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
-    issuanceBlinding(dst, &env->tx->input[i].issuance);
+    reissuanceBlinding(dst, &env->tx->input[i].issuance);
   } else {
     skipBits(dst, 257);
   }
   return true;
 }
 
-/* input_issuance_contract : TWO^32 |- S (S TWO^256) */
-bool input_issuance_contract(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_new_issuance_contract : TWO^32 |- S (S TWO^256) */
+bool input_new_issuance_contract(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
-    issuanceContract(dst, &env->tx->input[i].issuance);
+    newIssuanceContract(dst, &env->tx->input[i].issuance);
   } else {
     skipBits(dst, 257);
   }
   return true;
 }
 
-/* input_issuance_entropy : TWO^32 |- S (S TWO^256) */
-bool input_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_reissuance_entropy : TWO^32 |- S (S TWO^256) */
+bool input_reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
-    issuanceEntropy(dst, &env->tx->input[i].issuance);
+    reissuanceEntropy(dst, &env->tx->input[i].issuance);
   } else {
     skipBits(dst, 257);
   }
@@ -492,27 +492,27 @@ bool current_sequence(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* current_issuance_blinding : ONE |- S (Conf TWO^256) */
-bool current_issuance_blinding(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_reissuance_blinding : ONE |- S (Conf TWO^256) */
+bool current_reissuance_blinding(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
-  issuanceBlinding(dst, &env->tx->input[env->ix].issuance);
+  reissuanceBlinding(dst, &env->tx->input[env->ix].issuance);
   return true;
 }
 
-/* current_issuance_contract : ONE |- S (Conf TWO^256) */
-bool current_issuance_contract(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_new_issuance_contract : ONE |- S (Conf TWO^256) */
+bool current_new_issuance_contract(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
-  issuanceContract(dst, &env->tx->input[env->ix].issuance);
+  newIssuanceContract(dst, &env->tx->input[env->ix].issuance);
   return true;
 }
 
-/* current_issuance_entropy : ONE |- S (Conf TWO^256) */
-bool current_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_reissuance_entropy : ONE |- S (Conf TWO^256) */
+bool current_reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
-  issuanceEntropy(dst, &env->tx->input[env->ix].issuance);
+  reissuanceEntropy(dst, &env->tx->input[env->ix].issuance);
   return true;
 }
 
