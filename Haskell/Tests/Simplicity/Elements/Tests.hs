@@ -8,7 +8,7 @@ import Data.Vector ((!), fromList)
 import Lens.Family2 (review, over)
 
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.HUnit (assertBool, testCase)
+import Test.Tasty.HUnit (Assertion, (@?=), assertBool, testCase)
 import Test.Tasty.QuickCheck (Property, forAll, testProperty)
 
 import Simplicity.Arbitrary
@@ -25,6 +25,9 @@ import qualified Simplicity.LibSecp256k1.Spec as Schnorr
 import Simplicity.MerkleRoot
 import Simplicity.Programs.CheckSigHash
 import qualified Simplicity.Programs.Sha256 as Sha256
+import qualified Simplicity.Programs.Elements.Lib as Prog
+import Simplicity.TestCoreEval
+import Simplicity.Ty.Arbitrary
 import Simplicity.Ty.Word
 import qualified Simplicity.Word as Word
 
@@ -46,6 +49,24 @@ tests = testGroup "Elements"
           , testProperty "check_lock_time" prop_check_lock_time
           , testProperty "check_lock_distance" prop_check_lock_distance
           , testProperty "check_lock_duration" prop_check_lock_duration
+          ]
+        , testGroup "Elements Functions"
+          [ testProperty "calculate_issuance_entropy" prop_calculate_issuance_entropy
+          , testProperty "calculate_asset" prop_calculate_asset
+          , testProperty "calculate_explicit_token" prop_calculate_explicit_token
+          , testProperty "calculate_confidential_token" prop_calculate_confidential_token
+          , testCase "issuance_entropy_1" assert_issuance_entropy_1
+          , testCase "calculate_asset_1" assert_calculate_asset_1
+          , testCase "calculcate_token_1" assert_calculcate_token_1
+          , testCase "issuance_entropy_2" assert_issuance_entropy_2
+          , testCase "calculate_asset_2" assert_calculate_asset_2
+          , testCase "calculcate_token_2" assert_calculcate_token_2
+          , testCase "issuance_entropy_3" assert_issuance_entropy_3
+          , testCase "calculate_asset_3" assert_calculate_asset_3
+          , testCase "calculcate_token_3" assert_calculcate_token_3
+          , testCase "issuance_entropy_4" assert_issuance_entropy_4
+          , testCase "calculate_asset_4" assert_calculate_asset_4
+          , testCase "calculcate_token_4" assert_calculcate_token_4
           ]
         , testCase "sigHashAll" (assertBool "sigHashAll_matches" hunit_sigHashAll)
         ]
@@ -95,6 +116,92 @@ prop_check_lock_duration :: Property
 prop_check_lock_duration = checkJet (ElementsJet (TimeLockJet CheckLockDuration))
                          $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDuration $ envTx env)
                                                    $ \w -> check env (toW16 w)
+
+prop_calculate_issuance_entropy :: Outpoint -> HashElement -> Bool
+prop_calculate_issuance_entropy = \op contract ->
+  let input = ((fromHash (opHash op), fromIndex (opIndex op)), heAsTy contract) in
+  fast_calculate_issuance_entropy input ==
+    implementation (ElementsJet (IssuanceJet CalculateIssuanceEntropy)) undefined input
+ where
+  fromHash = toWord256 . integerHash256
+  fromIndex = toWord32 . fromIntegral
+  fast_calculate_issuance_entropy = testCoreEval Prog.calculateIssuanceEntropy
+
+prop_calculate_asset :: HashElement -> Bool
+prop_calculate_asset = \entropy ->
+  let input = heAsTy entropy in
+  fast_calculate_asset input ==
+    implementation (ElementsJet (IssuanceJet CalculateAsset)) undefined input
+ where
+  fast_calculate_asset = testCoreEval Prog.calculateAsset
+
+prop_calculate_explicit_token :: HashElement -> Bool
+prop_calculate_explicit_token = \entropy ->
+  let input = heAsTy entropy in
+  fast_calculate_explicit_token input ==
+    implementation (ElementsJet (IssuanceJet CalculateExplicitToken)) undefined input
+ where
+  fast_calculate_explicit_token = testCoreEval Prog.calculateExplicitToken
+
+prop_calculate_confidential_token :: HashElement -> Bool
+prop_calculate_confidential_token = \entropy ->
+  let input = heAsTy entropy in
+  fast_calculate_confidential_token input ==
+    implementation (ElementsJet (IssuanceJet CalculateConfidentialToken)) undefined input
+ where
+  fast_calculate_confidential_token = testCoreEval Prog.calculateConfidentialToken
+
+-- example test data from Elements Core 0.17
+(assert_issuance_entropy_1, assert_calculate_asset_1, assert_calculcate_token_1) =
+  ( calculateIssuanceEntropy outpoint contractHash @?= entropy
+  , calculateAsset entropy @?= assetID
+  , calculateToken (Amount (Explicit undefined)) entropy @?= tokenID
+  )
+ where
+  contractHash = review (over le256) 0
+  outpoint = Outpoint (review (over le256) 0x05a047c98e82a848dee94efcf32462b065198bebf2404d201ba2e06db30b28f4) 0
+  entropy = review (over le256) 0x746f447f691323502cad2ef646f932613d37a83aeaa2133185b316648df4b70a
+  assetID = review (over le256) 0xdcd60818d863b5c026c40b2bc3ba6fdaf5018bcc8606c18adf7db4da0bcd8533
+  tokenID = review (over le256) 0xc1adb114f4f87d33bf9ce90dd4f9ca523dd414d6cd010a7917903e2009689530
+
+-- example test data from Elements Core 0.21 with prevout vout = 1
+(assert_issuance_entropy_2, assert_calculate_asset_2, assert_calculcate_token_2) =
+  ( calculateIssuanceEntropy outpoint contractHash @?= entropy
+  , calculateAsset entropy @?= assetID
+  , calculateToken (Amount (Confidential undefined undefined)) entropy @?= tokenID
+  )
+ where
+  contractHash = review (over le256) 0
+  outpoint = Outpoint (review (over le256) 0xc76664aa4be760056dcc39b59637eeea8f3c3c3b2aeefb9f23a7b99945a2931e) 1
+  entropy = review (over le256) 0xbc67a13736341d8ad19e558433483a38cae48a44a5a8b5598ca0b01b5f9f9f41
+  assetID = review (over le256) 0x2ec6c1a06e895b06fffb8dc36084255f890467fb906565b0c048d4c807b4a129
+  tokenID = review (over le256) 0xd09d205ff7c626ca98c91fed24787ff747fec62194ed1b7e6ef6cc775a1a1fdc
+
+-- example test data from Elements Core 0.21 with a given contract hash and non-blinded issuance
+(assert_issuance_entropy_3, assert_calculate_asset_3, assert_calculcate_token_3) =
+  ( calculateIssuanceEntropy outpoint contractHash @?= entropy
+  , calculateAsset entropy @?= assetID
+  , calculateToken (Amount (Explicit undefined)) entropy @?= tokenID
+  )
+ where
+  contractHash = review (over le256) 0xe06e6d4933e76afd7b9cc6a013e0855aa60bbe6d2fca1c27ec6951ff5f1a20c9
+  outpoint = Outpoint (review (over le256) 0xee45365ddb62e8822182fbdd132fb156b4991e0b7411cff4aab576fd964f2edb) 0
+  entropy = review (over le256) 0x1922da340705eef526640b49d28b08928630d1ad52db0f945f3c389267e292c9
+  assetID = review (over le256) 0x8eebf6109bca0331fe559f0cbd1ef846a2bbb6812f3ae3d8b0b610170cc21a4e
+  tokenID = review (over le256) 0xeb02cbc591c9ede071625c129f0a1fab386202cb27a894a45be0d564e961d6bc
+
+-- example test data from Elements Core 0.21 with confidential re-issuance
+(assert_issuance_entropy_4, assert_calculate_asset_4, assert_calculcate_token_4) =
+  ( calculateIssuanceEntropy outpoint contractHash @?= entropy
+  , calculateAsset entropy @?= assetID
+  , calculateToken (Amount (Confidential undefined undefined)) entropy @?= tokenID
+  )
+ where
+  contractHash = review (over le256) 0
+  outpoint = Outpoint (review (over le256) 0x8903ee739b52859877fbfedc58194c2d59d0f5a4ea3c2774dc3cba3031cec757) 0
+  entropy = review (over le256) 0xb9789de8589dc1b664e4f2bda4d04af9d4d2180394a8c47b1f889acfb5e0acc4
+  assetID = review (over le256) 0xbdab916e8cda17781bcdb84505452e44d0ab2f080e9e5dd7765ffd5ce0c07cd9
+  tokenID = review (over le256) 0xf144868169dfc7afc024c4d8f55607ac8dfe925e67688650a9cdc54c3cfa5b1c
 
 tapEnv :: TapEnv
 tapEnv = TapEnv

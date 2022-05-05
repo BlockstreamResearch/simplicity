@@ -1,5 +1,6 @@
 -- This module tests the Simplicity programs on arbitrary inputs.
 module Simplicity.Ty.Arbitrary ( maybeToTy
+                               , HashElement(..), heAsTy, heAsSpec
                                , FieldElement(..), feAsTy, feAsSpec, toFE
                                , GroupElement(..), geAsTy, geAsSpec, toGE
                                , PointElement(..), pointAsTy, pointAsSpec, toPoint
@@ -9,8 +10,10 @@ module Simplicity.Ty.Arbitrary ( maybeToTy
                                , WnafElement(..), wnafAsTy, traverseWnaf
                                ) where
 
+import Lens.Family2 (review, over)
 import Lens.Family2.Stock (both_)
 
+import Simplicity.Digest
 import Simplicity.LibSecp256k1.Spec ((.+.), (.*.), (.^.))
 import qualified Simplicity.LibSecp256k1.Spec as Spec
 import Simplicity.Programs.LibSecp256k1.Lib
@@ -25,6 +28,15 @@ import Test.Tasty.QuickCheck (Arbitrary(..), Gen
 maybeToTy :: Maybe a -> Either () a
 maybeToTy Nothing = Left ()
 maybeToTy (Just x) = Right x
+
+data HashElement = HashElement W.Word256 deriving Show
+
+instance Arbitrary HashElement where
+  arbitrary = HashElement <$> arbitraryBoundedIntegral
+  shrink (HashElement h) = HashElement <$> takeWhile (<h) [0, 1, 2^248, 2^255, 2^256-1]
+
+heAsTy (HashElement h) = toWord256 (toInteger h)
+heAsSpec (HashElement h) = review (over be256) h
 
 genModularWord256 :: W.Word256 -> Gen W.Word256
 genModularWord256 w = do

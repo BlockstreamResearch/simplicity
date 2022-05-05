@@ -19,6 +19,8 @@ module Simplicity.Ty
  , putValue, putValueR, getValue, getValueR
  -- ** Untyped Simplicity Values
  , UntypedValue(..), untypedValue, untypedValueR, castUntypedValue, castUntypedValueR
+ -- ** Synonyms
+ , S
  ) where
 
 import Prelude hiding (sum, prod)
@@ -277,3 +279,6 @@ memoCataTy :: (TyF a -> a) -> Ty -> a
 memoCataTy alg = f . MemoTy
  where
   f = memo (alg . fmap f . deMemoTy)
+
+-- | A 'Maybe' type for Simplicity
+type S a = Either () a

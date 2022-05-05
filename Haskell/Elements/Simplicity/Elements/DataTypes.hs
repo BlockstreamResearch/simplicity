@@ -4,7 +4,7 @@ module Simplicity.Elements.DataTypes
   ( Point(..)
   , Script
   , TxNullDatumF(..), TxNullDatum, TxNullData, txNullData
-  , Lock, Value
+  , Lock, Value, Entropy
   , Confidential(..), prf_
   , AssetWith(..), AssetWithWitness, Asset, asset, clearAssetPrf, putAsset
   , AmountWith(..), AmountWithWitness, Amount, amount, clearAmountPrf, putAmount
@@ -22,6 +22,7 @@ module Simplicity.Elements.DataTypes
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
   , TapEnv(..)
   , txIsFinal, txLockDistance, txLockDuration
+  , calculateIssuanceEntropy, calculateAsset, calculateToken
   , module Simplicity.Bitcoin
   ) where
 
@@ -30,12 +31,12 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 import Data.Semigroup (Max(Max,getMax))
 import Data.Word (Word64, Word32, Word16, Word8)
-import Data.Serialize ( Serialize
+import Data.Serialize ( Serialize, encode
                       , Get, get, runGetLazy, lookAhead, getWord8, getWord16le, getWord32le, getLazyByteString, isEmpty
                       , Putter, put, putWord8, putWord32le, putWord64be, putLazyByteString, runPutLazy
                       )
 import Data.Vector (Vector)
-import Lens.Family2 ((&), (.~), (^.), under)
+import Lens.Family2 ((&), (.~), (^.), over, review, under)
 import Lens.Family2.Unchecked (Adapter, adapter, Traversal)
 
 import Simplicity.Bitcoin
@@ -133,6 +134,8 @@ type Lock = Word32
 
 type Value = Word64
 
+type Entropy = Hash256
+
 data Confidential prf a = Explicit a
                         | Confidential Point prf
                         deriving Show
@@ -213,7 +216,7 @@ data NewIssuance = NewIssuance { newIssuanceContractHash :: Hash256
                                } deriving Show
 
 data Reissuance = Reissuance { reissuanceBlindingNonce :: Hash256
-                             , reissuanceEntropy :: Hash256
+                             , reissuanceEntropy :: Entropy
                              , reissuanceAmount :: AmountWithWitness
                              } deriving Show
 
@@ -321,3 +324,18 @@ txLockDuration tx | sigTxVersion tx < 2 = 0
   duration sigin = case parseSequence (sigTxiSequence sigin) of
                      Just (Right x) -> Max x
                      _ -> mempty
+
+-- | An implementation of GenerateIssuanceEntropy from Element's 'issuance.cpp'.
+calculateIssuanceEntropy :: Outpoint -> Hash256 -> Entropy
+calculateIssuanceEntropy op contract = ivHash $ compress noTagIv (bsHash (encode (bsHash (encode op))), contract)
+
+-- | An implementation of CalculateAsset from Element's 'issuance.cpp'.
+calculateAsset :: Entropy -> Hash256
+calculateAsset entropy = ivHash $ compress noTagIv (entropy, review (over le256) 0)
+
+-- | An implementation of CalculateToken from Element's 'issuance.cpp'.
+calculateToken :: AmountWith prf -> Entropy -> Hash256
+calculateToken amt entropy = ivHash $ compress noTagIv (entropy, review (over le256) tag)
+ where
+  tag | Amount (Explicit _) <- amt = 1
+      | Amount (Confidential _ _) <- amt = 2

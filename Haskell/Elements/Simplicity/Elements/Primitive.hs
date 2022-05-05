@@ -5,6 +5,8 @@ module Simplicity.Elements.Primitive
   , getPrimBit, putPrimBit
   , PrimEnv, primEnv, envTx, envIx, envTap, envScriptCMR
   , primSem
+  -- * Re-exported Types
+  , S, Conf
   -- * Unimplemented
   , getPrimByte, putPrimByte
   ) where
@@ -25,6 +27,7 @@ import Simplicity.Digest
 import Simplicity.Elements.DataTypes
 import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
 import qualified Simplicity.LibSecp256k1.Spec as Schnorr
+import Simplicity.Programs.Elements
 import Simplicity.Programs.LibSecp256k1
 import Simplicity.Serialization
 import Simplicity.Ty
@@ -32,10 +35,6 @@ import Simplicity.Ty.Bit
 import Simplicity.Ty.Word
 
 just_ f = some_ f
-
-type Conf a = Either (Bit, Word256) a
-
-type S a = Either () a
 
 data Prim a b where
   Version :: Prim () Word32

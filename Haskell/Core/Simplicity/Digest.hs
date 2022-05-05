@@ -4,7 +4,7 @@ module Simplicity.Digest
   ( Hash256, be256, be256_, le256, le256_
   , get256Bits, put256Bits
   , integerHash256, hash0
-  , IV, tagIv, ivHash, bslHash, bsHash, bitStringHash
+  , IV, noTagIv, tagIv, ivHash, bslHash, bsHash, bitStringHash
   , Block512, compress, compressHalf
   ) where
 
@@ -89,13 +89,14 @@ hash0 = review (over be256) 0
 -- function.
 newtype IV = IV (Decoder SHA256State)
 
-iv :: IV
-iv = IV sha256Incremental
+-- | The SHA-256 inital value.
+noTagIv :: IV
+noTagIv = IV sha256Incremental
 
 -- | Return the SHA-256 midstate after compression of a block of the SHA256 digest of the given tag name twice.
 -- This twice repeated SHA256 digest is the tagged hash format used by BIP-340 and BIP-341.
 tagIv :: String -> IV
-tagIv tag = compress iv (tagDigest, tagDigest)
+tagIv tag = compress noTagIv (tagDigest, tagDigest)
  where
   tagDigest = bsHash . BSC.pack $ tag
 

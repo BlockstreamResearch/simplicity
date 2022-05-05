@@ -1,5 +1,10 @@
 #include "primitive/elements/jets.h"
 
+#define COREWRAP_(jet)                                                                                                        \
+bool c_##jet(frameItem* dst, const frameItem* src) {                                                                          \
+  return jet(dst, *src, NULL);                                                                                                \
+}
+
 #define WRAP_(jet)                                                                                                            \
 bool c_##jet(frameItem* dst, const frameItem* src, const txEnv* env) {                                                        \
   return jet(dst, *src, env);                                                                                                 \
@@ -59,3 +64,7 @@ WRAP_(check_lock_height)
 WRAP_(check_lock_time)
 WRAP_(check_lock_distance)
 WRAP_(check_lock_duration)
+COREWRAP_(calculate_issuance_entropy)
+COREWRAP_(calculate_asset)
+COREWRAP_(calculate_explicit_token)
+COREWRAP_(calculate_confidential_token)

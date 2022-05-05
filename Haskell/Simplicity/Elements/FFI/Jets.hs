@@ -55,6 +55,10 @@ module Simplicity.Elements.FFI.Jets
  , check_lock_time
  , check_lock_distance
  , check_lock_duration
+ , calculate_issuance_entropy
+ , calculate_asset
+ , calculate_explicit_token
+ , calculate_confidential_token
  ) where
 
 import Foreign.Ptr (Ptr)
@@ -63,14 +67,10 @@ import Foreign.C.Types (CBool(..))
 import Simplicity.Elements.FFI.Env
 import Simplicity.Elements.Primitive
 import Simplicity.FFI.Frame
+import Simplicity.Programs.Elements
 import Simplicity.Programs.LibSecp256k1
 import Simplicity.Ty
 import Simplicity.Ty.Word
-
--- :TODO: Move these types and in Primitve.hs into Simplicy.Ty.*
-type Conf a = Either (Bit, Word256) a
-
-type S a = Either () a
 
 -- | This cannot be used with jets that access global variables.
 unsafeLocalJet :: (TyC a, TyC b) => (Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool) -> PrimEnv -> a -> Maybe b
@@ -130,6 +130,10 @@ foreign import ccall unsafe "" c_check_lock_height :: Ptr FrameItem -> Ptr Frame
 foreign import ccall unsafe "" c_check_lock_time :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_check_lock_distance :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_check_lock_duration :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_calculate_issuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_calculate_asset :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_calculate_explicit_token :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_calculate_confidential_token :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 version :: PrimEnv -> () -> Maybe Word32
 version = unsafeLocalJet c_version
@@ -294,3 +298,15 @@ check_lock_distance  = unsafeLocalJet c_check_lock_distance
 
 check_lock_duration :: PrimEnv -> Word16 -> Maybe ()
 check_lock_duration  = unsafeLocalJet c_check_lock_duration
+
+calculate_issuance_entropy :: ((Word256, Word32), Word256) -> Maybe Word256
+calculate_issuance_entropy = unsafeLocalCoreJet c_calculate_issuance_entropy
+
+calculate_asset :: Word256 -> Maybe Word256
+calculate_asset = unsafeLocalCoreJet c_calculate_asset
+
+calculate_explicit_token :: Word256 -> Maybe Word256
+calculate_explicit_token = unsafeLocalCoreJet c_calculate_explicit_token
+
+calculate_confidential_token :: Word256 -> Maybe Word256
+calculate_confidential_token = unsafeLocalCoreJet c_calculate_confidential_token

@@ -11,6 +11,9 @@ import Simplicity.Elements.Jets
 import Simplicity.Elements.Primitive
 import Simplicity.Elements.Semantics
 import Simplicity.Elements.TestEval
+import Simplicity.FFI.Jets
+import qualified Simplicity.Programs.Elements.Lib as Prog
+import Simplicity.TestCoreEval
 import Simplicity.Ty.Word
 import qualified Simplicity.Word as Word
 
@@ -79,6 +82,10 @@ tests = testGroup "Elements"
           , testProperty "check_lock_time" prop_check_lock_time
           , testProperty "check_lock_distance" prop_check_lock_distance
           , testProperty "check_lock_duration" prop_check_lock_duration
+          , testProperty "calculate_issuance_entropy" prop_calculate_issuance_entropy
+          , testProperty "calculate_asset" prop_calculate_asset
+          , testProperty "calculate_explicit_token" prop_calculate_explicit_token
+          , testProperty "calculate_confidential_token" prop_calculate_confidential_token
           ]
         ]
 
@@ -263,3 +270,27 @@ prop_check_lock_duration :: Word16 -> Property
 prop_check_lock_duration = \w -> forallPrimEnv $ \env -> fast_check_lock_duration env w == check_lock_duration env w
  where
   fast_check_lock_duration = testEval (specification (ElementsJet (TimeLockJet CheckLockDuration)))
+
+prop_calculate_issuance_entropy :: ((Word256, Word32), Word256) -> Bool
+prop_calculate_issuance_entropy = \input ->
+  calculate_issuance_entropy input == fast_calculate_issuance_entropy input
+ where
+  fast_calculate_issuance_entropy = testCoreEval Prog.calculateIssuanceEntropy
+
+prop_calculate_asset :: Word256 -> Bool
+prop_calculate_asset = \input ->
+  calculate_asset input == fast_calculate_asset input
+ where
+  fast_calculate_asset = testCoreEval Prog.calculateAsset
+
+prop_calculate_explicit_token :: Word256 -> Bool
+prop_calculate_explicit_token = \input ->
+  calculate_explicit_token input == fast_calculate_explicit_token input
+ where
+  fast_calculate_explicit_token = testCoreEval Prog.calculateExplicitToken
+
+prop_calculate_confidential_token :: Word256 -> Bool
+prop_calculate_confidential_token = \input ->
+  calculate_confidential_token input == fast_calculate_confidential_token input
+ where
+  fast_calculate_confidential_token = testCoreEval Prog.calculateConfidentialToken

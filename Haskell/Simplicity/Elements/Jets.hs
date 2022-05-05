@@ -1,7 +1,7 @@
 -- | This module provides a cannonical set of known jets for Simplicity for Elements. (At the moment this just consists of 'CoreJet's.)
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Elements.Jets
-  ( JetType(..), ElementsJet(..), TimeLockJet(..)
+  ( JetType(..), ElementsJet(..), TimeLockJet(..), IssuanceJet(..)
   , jetSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
@@ -20,6 +20,7 @@ import qualified Data.Map as Map
 import Data.Proxy (Proxy(Proxy))
 import Data.Type.Equality ((:~:)(Refl))
 import Data.Void (Void, vacuous)
+import Lens.Family2 (over, review)
 
 import Simplicity.Digest
 import Simplicity.CoreJets (CoreJet, coreJetMap)
@@ -34,6 +35,7 @@ import qualified Simplicity.Elements.Serialization.BitString as BitString
 import qualified Simplicity.Elements.Semantics as Semantics
 import qualified Simplicity.Elements.Programs.TimeLock as TimeLock
 import Simplicity.MerkleRoot
+import qualified Simplicity.Programs.Elements.Lib as Issuance
 import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Ty.Bit
@@ -50,6 +52,7 @@ deriving instance Show (JetType a b)
 
 data ElementsJet a b where
   TimeLockJet :: TimeLockJet a b -> ElementsJet a b
+  IssuanceJet :: IssuanceJet a b -> ElementsJet a b
 deriving instance Eq (ElementsJet a b)
 deriving instance Show (ElementsJet a b)
 
@@ -66,8 +69,17 @@ data TimeLockJet a b where
 deriving instance Eq (TimeLockJet a b)
 deriving instance Show (TimeLockJet a b)
 
+data IssuanceJet a b where
+  CalculateIssuanceEntropy :: IssuanceJet ((Word256, Word32), Word256) Word256
+  CalculateAsset :: IssuanceJet Word256 Word256
+  CalculateExplicitToken :: IssuanceJet Word256 Word256
+  CalculateConfidentialToken :: IssuanceJet Word256 Word256
+deriving instance Eq (IssuanceJet a b)
+deriving instance Show (IssuanceJet a b)
+
 specificationElements :: (Assert term, Primitive term) => ElementsJet a b -> term a b
 specificationElements (TimeLockJet x) = specificationTimeLock x
+specificationElements (IssuanceJet x) = specificationIssuance x
 
 specificationTimeLock :: (Assert term, Primitive term) => TimeLockJet a b -> term a b
 specificationTimeLock CheckLockHeight = TimeLock.checkLockHeight
@@ -80,8 +92,15 @@ specificationTimeLock TxLockDistance = TimeLock.txLockDistance
 specificationTimeLock TxLockDuration = TimeLock.txLockDuration
 specificationTimeLock TxIsFinal = TimeLock.txIsFinal
 
+specificationIssuance :: (Assert term, Primitive term) => IssuanceJet a b -> term a b
+specificationIssuance CalculateIssuanceEntropy = Issuance.calculateIssuanceEntropy
+specificationIssuance CalculateAsset = Issuance.calculateAsset
+specificationIssuance CalculateExplicitToken = Issuance.calculateExplicitToken
+specificationIssuance CalculateConfidentialToken = Issuance.calculateConfidentialToken
+
 implementationElements :: ElementsJet a b -> PrimEnv -> a -> Maybe b
 implementationElements (TimeLockJet x) = implementationTimeLock x
+implementationElements (IssuanceJet x) = implementationIssuance x
 
 implementationTimeLock :: TimeLockJet a b -> PrimEnv -> a -> Maybe b
 implementationTimeLock CheckLockHeight env x | txIsFinal (envTx env) = guard $ fromWord32 x <= 0
@@ -112,11 +131,39 @@ implementationTimeLock TxLockDistance env () = Just . toWord16 . fromIntegral $ 
 implementationTimeLock TxLockDuration env () = Just . toWord16 . fromIntegral $ txLockDuration (envTx env)
 implementationTimeLock TxIsFinal env () = Just $ toBit (txIsFinal (envTx env))
 
+implementationIssuance :: IssuanceJet a b -> PrimEnv -> a -> Maybe b
+implementationIssuance CalculateIssuanceEntropy _ ((x,y), z) = Just (fromHash (calculateIssuanceEntropy op contract))
+ where
+  fromHash = toWord256 . integerHash256
+  fromW256 = fromIntegral . fromWord256
+  fromW32 = fromIntegral . fromWord32
+  op = Outpoint (review (over be256) (fromW256 x)) (fromW32 y)
+  contract = review (over be256) (fromW256 z)
+
+implementationIssuance CalculateAsset _ x = Just (fromHash (calculateAsset entropy))
+ where
+  fromW256 = fromIntegral . fromWord256
+  fromHash = toWord256 . integerHash256
+  entropy = review (over be256) (fromW256 x)
+
+implementationIssuance CalculateExplicitToken _ x = Just (fromHash (calculateToken (Amount (Explicit undefined)) entropy))
+ where
+  fromW256 = fromIntegral . fromWord256
+  fromHash = toWord256 . integerHash256
+  entropy = review (over be256) (fromW256 x)
+
+implementationIssuance CalculateConfidentialToken _ x = Just (fromHash (calculateToken (Amount (Confidential undefined undefined)) entropy))
+ where
+  fromW256 = fromIntegral . fromWord256
+  fromHash = toWord256 . integerHash256
+  entropy = review (over be256) (fromW256 x)
+
 getJetBitElements :: (Monad m) => m Void -> m Bool -> m (SomeArrow ElementsJet)
 getJetBitElements abort next = getPositive next >>= match
  where
   makeArrow p = return (SomeArrow p)
   match 2 = (someArrowMap TimeLockJet) <$> getJetBitTimeLock
+  match 3 = (someArrowMap IssuanceJet) <$> getJetBitIssuance
   match _ = vacuous abort
   getJetBitTimeLock = getPositive next >>= matchTimeLock
    where
@@ -130,9 +177,16 @@ getJetBitElements abort next = getPositive next >>= match
     matchTimeLock 8 = makeArrow TxLockDuration
     matchTimeLock 9 = makeArrow TxIsFinal
     matchTimeLock _ = vacuous abort
+  getJetBitIssuance = getPositive next >>= matchIssuance
+   where
+    matchIssuance 5 = makeArrow CalculateIssuanceEntropy
+    matchIssuance 6 = makeArrow CalculateAsset
+    matchIssuance 7 = makeArrow CalculateExplicitToken
+    matchIssuance 8 = makeArrow CalculateConfidentialToken
 
 putJetBitElements :: ElementsJet a b -> DList Bool
 putJetBitElements (TimeLockJet x) = putPositive 2 . putJetBitTimeLock x
+putJetBitElements (IssuanceJet x) = putPositive 3 . putJetBitIssuance x
 
 putJetBitTimeLock :: TimeLockJet a b -> DList Bool
 putJetBitTimeLock CheckLockHeight   = putPositive 1
@@ -144,6 +198,12 @@ putJetBitTimeLock TxLockTime     = putPositive 6
 putJetBitTimeLock TxLockDistance = putPositive 7
 putJetBitTimeLock TxLockDuration = putPositive 8
 putJetBitTimeLock TxIsFinal      = putPositive 9
+
+putJetBitIssuance :: IssuanceJet a b -> DList Bool
+putJetBitIssuance CalculateIssuanceEntropy   = putPositive 5
+putJetBitIssuance CalculateAsset             = putPositive 6
+putJetBitIssuance CalculateExplicitToken     = putPositive 7
+putJetBitIssuance CalculateConfidentialToken = putPositive 8
 
 elementsJetMap :: Map.Map Hash256 (SomeArrow ElementsJet)
 elementsJetMap = Map.fromList
@@ -157,6 +217,11 @@ elementsJetMap = Map.fromList
   , mkAssoc (TimeLockJet TxLockDistance)
   , mkAssoc (TimeLockJet TxLockDuration)
   , mkAssoc (TimeLockJet TxIsFinal)
+    -- IssuanceJet
+  , mkAssoc (IssuanceJet CalculateIssuanceEntropy)
+  , mkAssoc (IssuanceJet CalculateAsset)
+  , mkAssoc (IssuanceJet CalculateExplicitToken)
+  , mkAssoc (IssuanceJet CalculateConfidentialToken)
   ]
  where
   mkAssoc :: (TyC a, TyC b) => ElementsJet a b -> (Hash256, (SomeArrow ElementsJet))

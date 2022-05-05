@@ -1,5 +1,6 @@
 #include "jets.h"
 
+#include "ops.h"
 #include "primitive.h"
 #include "../../unreachable.h"
 
@@ -673,4 +674,59 @@ bool check_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
   (void) dst; // dst is unused;
   uint_fast16_t x = read16(&src);
   return x <= lockDuration(env->tx);
+}
+
+/* calculate_issuance_entropy : TWO^256 * TWO^32 * TWO^256 |- TWO^256 */
+bool calculate_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  outpoint op;
+  sha256_midstate contract;
+  sha256_midstate result;
+
+  read32s(op.txid.s, 8, &src);
+  op.ix = read32(&src);
+  read32s(contract.s, 8, &src);
+
+  result = generateIssuanceEntropy(&op, &contract);
+  writeHash(dst, &result);
+  return true;
+}
+
+/* calculate_asset : TWO^256 |- TWO^256 */
+bool calculate_asset(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  sha256_midstate entropy;
+  sha256_midstate result;
+
+  read32s(entropy.s, 8, &src);
+  result = calculateAsset(&entropy);
+
+  writeHash(dst, &result);
+  return true;
+}
+
+/* calculate_explicit_token : TWO^256 |- TWO^256 */
+bool calculate_explicit_token(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  sha256_midstate entropy;
+  sha256_midstate result;
+
+  read32s(entropy.s, 8, &src);
+  result = calculateToken(&entropy, EXPLICIT);
+
+  writeHash(dst, &result);
+  return true;
+}
+
+/* calculate_confidential_token : TWO^256 |- TWO^256 */
+bool calculate_confidential_token(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  sha256_midstate entropy;
+  sha256_midstate result;
+
+  read32s(entropy.s, 8, &src);
+  result = calculateToken(&entropy, EVEN_Y /* ODD_Y would also work. */);
+
+  writeHash(dst, &result);
+  return true;
 }
