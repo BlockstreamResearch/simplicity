@@ -9,9 +9,9 @@ module Simplicity.Elements.FFI.Jets
  , input_amount
  , input_script_hash
  , input_sequence
- , input_issuance_blinding
- , input_issuance_contract
- , input_issuance_entropy
+ , input_reissuance_blinding
+ , input_new_issuance_contract
+ , input_reissuance_entropy
  , input_issuance_asset_amt
  , input_issuance_token_amt
  , input_issuance_asset_proof
@@ -31,9 +31,9 @@ module Simplicity.Elements.FFI.Jets
  , current_amount
  , current_script_hash
  , current_sequence
- , current_issuance_blinding
- , current_issuance_contract
- , current_issuance_entropy
+ , current_reissuance_blinding
+ , current_new_issuance_contract
+ , current_reissuance_entropy
  , current_issuance_asset_amt
  , current_issuance_token_amt
  , current_issuance_asset_proof
@@ -84,9 +84,9 @@ foreign import ccall unsafe "" c_input_asset :: Ptr FrameItem -> Ptr FrameItem -
 foreign import ccall unsafe "" c_input_amount :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_script_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_sequence :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_input_issuance_blinding :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_input_issuance_contract :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_input_issuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_reissuance_blinding :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_new_issuance_contract :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_reissuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_issuance_asset_amt :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_issuance_token_amt :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_issuance_asset_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -106,9 +106,9 @@ foreign import ccall unsafe "" c_current_asset :: Ptr FrameItem -> Ptr FrameItem
 foreign import ccall unsafe "" c_current_amount :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_script_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_sequence :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_current_issuance_blinding :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_current_issuance_contract :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_current_issuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_current_reissuance_blinding :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_current_new_issuance_contract :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_current_reissuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_issuance_asset_amt :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_issuance_token_amt :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_issuance_asset_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -164,14 +164,14 @@ input_script_hash = unsafeLocalJet c_input_script_hash
 input_sequence :: PrimEnv -> Word32 -> Maybe (S Word32)
 input_sequence = unsafeLocalJet c_input_sequence
 
-input_issuance_blinding :: PrimEnv -> Word32 -> Maybe (S (S Word256))
-input_issuance_blinding = unsafeLocalJet c_input_issuance_blinding
+input_reissuance_blinding :: PrimEnv -> Word32 -> Maybe (S (S Word256))
+input_reissuance_blinding = unsafeLocalJet c_input_reissuance_blinding
 
-input_issuance_contract :: PrimEnv -> Word32 -> Maybe (S (S Word256))
-input_issuance_contract = unsafeLocalJet c_input_issuance_contract
+input_new_issuance_contract :: PrimEnv -> Word32 -> Maybe (S (S Word256))
+input_new_issuance_contract = unsafeLocalJet c_input_new_issuance_contract
 
-input_issuance_entropy :: PrimEnv -> Word32 -> Maybe (S (S Word256))
-input_issuance_entropy = unsafeLocalJet c_input_issuance_entropy
+input_reissuance_entropy :: PrimEnv -> Word32 -> Maybe (S (S Word256))
+input_reissuance_entropy = unsafeLocalJet c_input_reissuance_entropy
 
 input_issuance_asset_amt :: PrimEnv -> Word32 -> Maybe (S (S (Conf Word64)))
 input_issuance_asset_amt = unsafeLocalJet c_input_issuance_asset_amt
@@ -206,14 +206,14 @@ current_script_hash = unsafeLocalJet c_current_script_hash
 current_sequence :: PrimEnv -> () -> Maybe Word32
 current_sequence = unsafeLocalJet c_current_sequence
 
-current_issuance_blinding :: PrimEnv -> () -> Maybe (S Word256)
-current_issuance_blinding = unsafeLocalJet c_current_issuance_blinding
+current_reissuance_blinding :: PrimEnv -> () -> Maybe (S Word256)
+current_reissuance_blinding = unsafeLocalJet c_current_reissuance_blinding
 
-current_issuance_contract :: PrimEnv -> () -> Maybe (S Word256)
-current_issuance_contract = unsafeLocalJet c_current_issuance_contract
+current_new_issuance_contract :: PrimEnv -> () -> Maybe (S Word256)
+current_new_issuance_contract = unsafeLocalJet c_current_new_issuance_contract
 
-current_issuance_entropy :: PrimEnv -> () -> Maybe (S Word256)
-current_issuance_entropy = unsafeLocalJet c_current_issuance_entropy
+current_reissuance_entropy :: PrimEnv -> () -> Maybe (S Word256)
+current_reissuance_entropy = unsafeLocalJet c_current_reissuance_entropy
 
 current_issuance_asset_amt :: PrimEnv -> () -> Maybe (S (Conf Word64))
 current_issuance_asset_amt = unsafeLocalJet c_current_issuance_asset_amt

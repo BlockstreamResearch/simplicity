@@ -34,9 +34,9 @@ tests = testGroup "Elements"
           , testProperty "input_amount" prop_input_amount
           , testProperty "input_script_hash" prop_input_script_hash
           , testProperty "input_sequence" prop_input_sequence
-          , testProperty "input_issuance_blinding" prop_input_issuance_blinding
-          , testProperty "input_issuance_contract" prop_input_issuance_contract
-          , testProperty "input_issuance_entropy" prop_input_issuance_entropy
+          , testProperty "input_reissuance_blinding" prop_input_reissuance_blinding
+          , testProperty "input_new_issuance_contract" prop_input_new_issuance_contract
+          , testProperty "input_reissuance_entropy" prop_input_reissuance_entropy
           , testProperty "input_issuance_asset_amt" prop_input_issuance_asset_amt
           , testProperty "input_issuance_token_amt" prop_input_issuance_token_amt
           , testProperty "input_issuance_asset_proof" prop_input_issuance_asset_proof
@@ -48,9 +48,9 @@ tests = testGroup "Elements"
           , testProperty "current_amount" prop_current_amount
           , testProperty "current_script_hash" prop_current_script_hash
           , testProperty "current_sequence" prop_current_sequence
-          , testProperty "current_issuance_blinding" prop_current_issuance_blinding
-          , testProperty "current_issuance_contract" prop_current_issuance_contract
-          , testProperty "current_issuance_entropy" prop_current_issuance_entropy
+          , testProperty "current_reissuance_blinding" prop_current_reissuance_blinding
+          , testProperty "current_new_issuance_contract" prop_current_new_issuance_contract
+          , testProperty "current_re_issuance_entropy" prop_current_reissuance_entropy
           , testProperty "current_issuance_asset_amt" prop_current_issuance_asset_amt
           , testProperty "current_issuance_token_amt" prop_current_issuance_token_amt
           , testProperty "current_issuance_asset_proof" prop_current_issuance_asset_proof
@@ -115,14 +115,14 @@ prop_input_sequence = forallInPrimEnv $ \env i -> primSem InputSequence (toW32 i
 prop_input_script_hash :: Property
 prop_input_script_hash = forallInPrimEnv $ \env i -> primSem InputScriptHash (toW32 i) env == input_script_hash env (toW32 i)
 
-prop_input_issuance_blinding :: Property
-prop_input_issuance_blinding = forallInPrimEnv $ \env i -> primSem InputIssuanceBlinding (toW32 i) env == input_issuance_blinding env (toW32 i)
+prop_input_reissuance_blinding :: Property
+prop_input_reissuance_blinding = forallInPrimEnv $ \env i -> primSem InputReissuanceBlinding (toW32 i) env == input_reissuance_blinding env (toW32 i)
 
-prop_input_issuance_contract :: Property
-prop_input_issuance_contract = forallInPrimEnv $ \env i -> primSem InputIssuanceContract (toW32 i) env == input_issuance_contract env (toW32 i)
+prop_input_new_issuance_contract :: Property
+prop_input_new_issuance_contract = forallInPrimEnv $ \env i -> primSem InputNewIssuanceContract (toW32 i) env == input_new_issuance_contract env (toW32 i)
 
-prop_input_issuance_entropy :: Property
-prop_input_issuance_entropy = forallInPrimEnv $ \env i -> primSem InputIssuanceEntropy (toW32 i) env == input_issuance_entropy env (toW32 i)
+prop_input_reissuance_entropy :: Property
+prop_input_reissuance_entropy = forallInPrimEnv $ \env i -> primSem InputReissuanceEntropy (toW32 i) env == input_reissuance_entropy env (toW32 i)
 
 prop_input_issuance_asset_amt :: Property
 prop_input_issuance_asset_amt = forallInPrimEnv $ \env i -> primSem InputIssuanceAssetAmt (toW32 i) env == input_issuance_asset_amt env (toW32 i)
@@ -157,14 +157,14 @@ prop_current_sequence = forallPrimEnv $ \env -> primSem CurrentSequence () env =
 prop_current_script_hash :: Property
 prop_current_script_hash = forallPrimEnv $ \env -> primSem CurrentScriptHash () env == current_script_hash env ()
 
-prop_current_issuance_blinding :: Property
-prop_current_issuance_blinding = forallPrimEnv $ \env -> primSem CurrentIssuanceBlinding () env == current_issuance_blinding env ()
+prop_current_reissuance_blinding :: Property
+prop_current_reissuance_blinding = forallPrimEnv $ \env -> primSem CurrentReissuanceBlinding () env == current_reissuance_blinding env ()
 
-prop_current_issuance_contract :: Property
-prop_current_issuance_contract = forallPrimEnv $ \env -> primSem CurrentIssuanceContract () env == current_issuance_contract env ()
+prop_current_new_issuance_contract :: Property
+prop_current_new_issuance_contract = forallPrimEnv $ \env -> primSem CurrentNewIssuanceContract () env == current_new_issuance_contract env ()
 
-prop_current_issuance_entropy :: Property
-prop_current_issuance_entropy = forallPrimEnv $ \env -> primSem CurrentIssuanceEntropy () env == current_issuance_entropy env ()
+prop_current_reissuance_entropy :: Property
+prop_current_reissuance_entropy = forallPrimEnv $ \env -> primSem CurrentReissuanceEntropy () env == current_reissuance_entropy env ()
 
 prop_current_issuance_asset_amt :: Property
 prop_current_issuance_asset_amt = forallPrimEnv $ \env -> primSem CurrentIssuanceAssetAmt () env == current_issuance_asset_amt env ()

@@ -49,9 +49,9 @@ data Prim a b where
   InputAmount :: Prim Word32 (S (Conf Word64))
   InputScriptHash :: Prim Word32 (S Word256)
   InputSequence :: Prim Word32 (S Word32)
-  InputIssuanceBlinding :: Prim Word32 (S (S Word256))
-  InputIssuanceContract :: Prim Word32 (S (S Word256))
-  InputIssuanceEntropy :: Prim Word32 (S (S Word256))
+  InputReissuanceBlinding :: Prim Word32 (S (S Word256))
+  InputNewIssuanceContract :: Prim Word32 (S (S Word256))
+  InputReissuanceEntropy :: Prim Word32 (S (S Word256))
   InputIssuanceAssetAmt :: Prim Word32 (S (S (Conf Word64)))
   InputIssuanceTokenAmt :: Prim Word32 (S (S (Conf Word64)))
   InputIssuanceAssetProof :: Prim Word32 (S Word256)
@@ -63,9 +63,9 @@ data Prim a b where
   CurrentAmount :: Prim () (Conf Word64)
   CurrentScriptHash :: Prim () Word256
   CurrentSequence :: Prim () Word32
-  CurrentIssuanceBlinding :: Prim () (S Word256)
-  CurrentIssuanceContract :: Prim () (S Word256)
-  CurrentIssuanceEntropy :: Prim () (S Word256)
+  CurrentReissuanceBlinding :: Prim () (S Word256)
+  CurrentNewIssuanceContract :: Prim () (S Word256)
+  CurrentReissuanceEntropy :: Prim () (S Word256)
   CurrentIssuanceAssetAmt :: Prim () (S (Conf Word64))
   CurrentIssuanceTokenAmt :: Prim () (S (Conf Word64))
   CurrentIssuanceAssetProof :: Prim () Word256
@@ -97,9 +97,9 @@ instance Eq (Prim a b) where
   InputAmount == InputAmount = True
   InputScriptHash == InputScriptHash = True
   InputSequence == InputSequence = True
-  InputIssuanceBlinding == InputIssuanceBlinding = True
-  InputIssuanceContract == InputIssuanceContract = True
-  InputIssuanceEntropy == InputIssuanceEntropy = True
+  InputReissuanceBlinding == InputReissuanceBlinding = True
+  InputNewIssuanceContract == InputNewIssuanceContract = True
+  InputReissuanceEntropy == InputReissuanceEntropy = True
   InputIssuanceAssetAmt == InputIssuanceAssetAmt = True
   InputIssuanceTokenAmt == InputIssuanceTokenAmt = True
   InputIssuanceAssetProof == InputIssuanceAssetProof = True
@@ -111,9 +111,9 @@ instance Eq (Prim a b) where
   CurrentAmount == CurrentAmount = True
   CurrentScriptHash == CurrentScriptHash = True
   CurrentSequence == CurrentSequence = True
-  CurrentIssuanceBlinding == CurrentIssuanceBlinding = True
-  CurrentIssuanceContract == CurrentIssuanceContract = True
-  CurrentIssuanceEntropy == CurrentIssuanceEntropy = True
+  CurrentReissuanceBlinding == CurrentReissuanceBlinding = True
+  CurrentNewIssuanceContract == CurrentNewIssuanceContract = True
+  CurrentReissuanceEntropy == CurrentReissuanceEntropy = True
   CurrentIssuanceAssetAmt == CurrentIssuanceAssetAmt = True
   CurrentIssuanceTokenAmt == CurrentIssuanceTokenAmt = True
   CurrentIssuanceAssetProof == CurrentIssuanceAssetProof = True
@@ -150,9 +150,9 @@ primName InputAsset = "inputAsset"
 primName InputAmount = "inputAmount"
 primName InputScriptHash = "inputScriptHash"
 primName InputSequence = "inputSequence"
-primName InputIssuanceBlinding = "inputIssuanceBlinding"
-primName InputIssuanceContract = "inputIssuanceContract"
-primName InputIssuanceEntropy = "inputIssuanceEntropy"
+primName InputReissuanceBlinding = "inputReissuanceBlinding"
+primName InputNewIssuanceContract = "inputNewIssuanceContract"
+primName InputReissuanceEntropy = "inputReissuanceEntropy"
 primName InputIssuanceAssetAmt = "inputIssuanceAssetAmt"
 primName InputIssuanceTokenAmt = "inputIssuanceTokenAmt"
 primName InputIssuanceAssetProof = "inputIssuanceAssetProof"
@@ -164,9 +164,9 @@ primName CurrentAsset = "currentAsset"
 primName CurrentAmount = "currentAmount"
 primName CurrentScriptHash = "currentScriptHash"
 primName CurrentSequence = "currentSequence"
-primName CurrentIssuanceBlinding = "currentIssuanceBlinding"
-primName CurrentIssuanceContract = "currentIssuanceContract"
-primName CurrentIssuanceEntropy = "currentIssuanceEntropy"
+primName CurrentReissuanceBlinding = "currentReissuanceBlinding"
+primName CurrentNewIssuanceContract = "currentNewIssuanceContract"
+primName CurrentReissuanceEntropy = "currentReissuanceEntropy"
 primName CurrentIssuanceAssetAmt = "currentIssuanceAssetAmt"
 primName CurrentIssuanceTokenAmt = "currentIssuanceTokenAmt"
 primName CurrentIssuanceAssetProof = "currentIssuanceAssetProof"
@@ -189,12 +189,12 @@ primName ScriptCMR = "scriptCMR"
 getPrimBit :: Monad m => m Bool -> m (SomeArrow Prim)
 getPrimBit next =
   (((((makeArrow Version & makeArrow LockTime) & makeArrow InputIsPegin) & ((makeArrow InputPrevOutpoint & makeArrow InputAsset) & makeArrow InputAmount)) &
-    (((makeArrow InputScriptHash & makeArrow InputSequence) & makeArrow InputIssuanceBlinding) & ((makeArrow InputIssuanceContract & makeArrow InputIssuanceEntropy) & makeArrow InputIssuanceAssetAmt))) &
+    (((makeArrow InputScriptHash & makeArrow InputSequence) & makeArrow InputReissuanceBlinding) & ((makeArrow InputNewIssuanceContract & makeArrow InputReissuanceEntropy) & makeArrow InputIssuanceAssetAmt))) &
    ((((makeArrow InputIssuanceTokenAmt & makeArrow InputIssuanceAssetProof) & makeArrow InputIssuanceTokenProof) & ((makeArrow OutputAsset & makeArrow OutputAmount) & makeArrow OutputNonce)) &
     (((makeArrow OutputScriptHash & makeArrow OutputNullDatum) & makeArrow OutputSurjectionProof) & (makeArrow OutputRangeProof & makeArrow ScriptCMR)))) &
   (((((makeArrow CurrentIndex & makeArrow CurrentIsPegin) & makeArrow CurrentPrevOutpoint) & ((makeArrow CurrentAsset & makeArrow CurrentAmount) & makeArrow CurrentScriptHash)) &
-    (((makeArrow CurrentSequence & makeArrow CurrentIssuanceBlinding) & makeArrow CurrentIssuanceContract) & ((makeArrow CurrentIssuanceEntropy & makeArrow CurrentIssuanceAssetAmt) & makeArrow CurrentIssuanceTokenAmt))) &
-   ((((makeArrow CurrentIssuanceAssetProof& makeArrow CurrentIssuanceTokenProof ) & makeArrow TapleafVersion) & ((makeArrow Tapbranch & makeArrow InternalKey) & makeArrow AnnexHash)) &
+    (((makeArrow CurrentSequence & makeArrow CurrentReissuanceBlinding) & makeArrow CurrentNewIssuanceContract) & ((makeArrow CurrentReissuanceEntropy & makeArrow CurrentIssuanceAssetAmt) & makeArrow CurrentIssuanceTokenAmt))) &
+   ((((makeArrow CurrentIssuanceAssetProof & makeArrow CurrentIssuanceTokenProof ) & makeArrow TapleafVersion) & ((makeArrow Tapbranch & makeArrow InternalKey) & makeArrow AnnexHash)) &
     (((makeArrow InputsHash & makeArrow OutputsHash) & makeArrow NumInputs) & (makeArrow NumOutputs & makeArrow Fee))))
  where
   l & r = next >>= \b -> if b then r else l
@@ -212,9 +212,9 @@ putPrimBit = go
   go InputAmount                  = ([o,o,o,i,i]++)
   go InputScriptHash              = ([o,o,i,o,o,o]++)
   go InputSequence                = ([o,o,i,o,o,i]++)
-  go InputIssuanceBlinding        = ([o,o,i,o,i]++)
-  go InputIssuanceContract        = ([o,o,i,i,o,o]++)
-  go InputIssuanceEntropy         = ([o,o,i,i,o,i]++)
+  go InputReissuanceBlinding      = ([o,o,i,o,i]++)
+  go InputNewIssuanceContract     = ([o,o,i,i,o,o]++)
+  go InputReissuanceEntropy       = ([o,o,i,i,o,i]++)
   go InputIssuanceAssetAmt        = ([o,o,i,i,i]++)
   go InputIssuanceTokenAmt        = ([o,i,o,o,o,o]++)
   go InputIssuanceAssetProof      = ([o,i,o,o,o,i]++)
@@ -235,9 +235,9 @@ putPrimBit = go
   go CurrentAmount                = ([i,o,o,i,o,i]++)
   go CurrentScriptHash            = ([i,o,o,i,i]++)
   go CurrentSequence              = ([i,o,i,o,o,o]++)
-  go CurrentIssuanceBlinding      = ([i,o,i,o,o,i]++)
-  go CurrentIssuanceContract      = ([i,o,i,o,i]++)
-  go CurrentIssuanceEntropy       = ([i,o,i,i,o,o]++)
+  go CurrentReissuanceBlinding    = ([i,o,i,o,o,i]++)
+  go CurrentNewIssuanceContract   = ([i,o,i,o,i]++)
+  go CurrentReissuanceEntropy     = ([i,o,i,i,o,o]++)
   go CurrentIssuanceAssetAmt      = ([i,o,i,i,o,i]++)
   go CurrentIssuanceTokenAmt      = ([i,o,i,i,i]++)
   go CurrentIssuanceAssetProof    = ([i,i,o,o,o,o]++)
@@ -347,11 +347,11 @@ primSem p a env = interpret p a
   interpret InputAmount = return . (atInput $ encodeAmount . utxoAmount . sigTxiTxo)
   interpret InputScriptHash = return . (atInput $ encodeHash . bslHash . utxoScript . sigTxiTxo)
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
-  interpret InputIssuanceBlinding = return . (atInput $
+  interpret InputReissuanceBlinding = return . (atInput $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceBlindingNonce) <=< sigTxiIssuance))
-  interpret InputIssuanceContract = return . (atInput $
+  interpret InputNewIssuanceContract = return . (atInput $
       cast . fmap encodeHash . (either (Just . newIssuanceContractHash) (const Nothing) <=< sigTxiIssuance))
-  interpret InputIssuanceEntropy = return . (atInput $
+  interpret InputReissuanceEntropy = return . (atInput $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance))
   interpret InputIssuanceAssetAmt = return . (atInput $
       cast . fmap (encodeAmount . clearAmountPrf . issuanceAmount) . sigTxiIssuance)
@@ -366,11 +366,11 @@ primSem p a env = interpret p a
   interpret CurrentAmount = element $ encodeAmount . utxoAmount . sigTxiTxo <$> currentInput
   interpret CurrentScriptHash = element $ encodeHash . bslHash . utxoScript . sigTxiTxo <$> currentInput
   interpret CurrentSequence = element $ toWord32 . toInteger . sigTxiSequence <$> currentInput
-  interpret CurrentIssuanceBlinding = element $
+  interpret CurrentReissuanceBlinding = element $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceBlindingNonce) <=< sigTxiIssuance) <$> currentInput
-  interpret CurrentIssuanceContract = element $
+  interpret CurrentNewIssuanceContract = element $
       cast . fmap encodeHash . (either (Just . newIssuanceContractHash) (const Nothing) <=< sigTxiIssuance) <$> currentInput
-  interpret CurrentIssuanceEntropy = element $
+  interpret CurrentReissuanceEntropy = element $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance) <$> currentInput
   interpret CurrentIssuanceAssetAmt = element $
       cast . fmap (encodeAmount . clearAmountPrf . issuanceAmount) . sigTxiIssuance <$> currentInput
