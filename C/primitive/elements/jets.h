@@ -69,5 +69,9 @@ bool calculate_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env)
 bool calculate_asset(frameItem* dst, frameItem src, const txEnv* env);
 bool calculate_explicit_token(frameItem* dst, frameItem src, const txEnv* env);
 bool calculate_confidential_token(frameItem* dst, frameItem src, const txEnv* env);
+bool input_issuance(frameItem* dst, frameItem src, const txEnv* env);
+bool input_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env);
+bool input_issuance_asset(frameItem* dst, frameItem src, const txEnv* env);
+bool input_issuance_token(frameItem* dst, frameItem src, const txEnv* env);
 
 #endif

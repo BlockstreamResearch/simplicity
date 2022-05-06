@@ -59,6 +59,10 @@ module Simplicity.Elements.FFI.Jets
  , calculate_asset
  , calculate_explicit_token
  , calculate_confidential_token
+ , input_issuance
+ , input_issuance_entropy
+ , input_issuance_asset
+ , input_issuance_token
  ) where
 
 import Foreign.Ptr (Ptr)
@@ -134,6 +138,10 @@ foreign import ccall unsafe "" c_calculate_issuance_entropy :: Ptr FrameItem -> 
 foreign import ccall unsafe "" c_calculate_asset :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_calculate_explicit_token :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_calculate_confidential_token :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_input_issuance :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_issuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_issuance_asset :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_issuance_token :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 
 version :: PrimEnv -> () -> Maybe Word32
 version = unsafeLocalJet c_version
@@ -310,3 +318,15 @@ calculate_explicit_token = unsafeLocalCoreJet c_calculate_explicit_token
 
 calculate_confidential_token :: Word256 -> Maybe Word256
 calculate_confidential_token = unsafeLocalCoreJet c_calculate_confidential_token
+
+input_issuance :: PrimEnv -> Word32 -> Maybe (S (S Bit))
+input_issuance = unsafeLocalJet c_input_issuance
+
+input_issuance_entropy :: PrimEnv -> Word32 -> Maybe (S (S Word256))
+input_issuance_entropy = unsafeLocalJet c_input_issuance_entropy
+
+input_issuance_asset :: PrimEnv -> Word32 -> Maybe (S (S Word256))
+input_issuance_asset = unsafeLocalJet c_input_issuance_asset
+
+input_issuance_token :: PrimEnv -> Word32 -> Maybe (S (S Word256))
+input_issuance_token = unsafeLocalJet c_input_issuance_token

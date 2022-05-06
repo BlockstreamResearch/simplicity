@@ -167,6 +167,12 @@
 , .sourceIx = ty_w256
 , .targetIx = ty_pw512w256
 }
+,[INPUT_ISSUANCE] =
+{ .tag = JET
+, .jet = input_issuance
+, .sourceIx = ty_w32
+, .targetIx = ty_mmb
+}
 ,[BIP_0340_VERIFY] =
 { .tag = JET
 , .jet = bip_0340_verify
@@ -209,6 +215,12 @@
 , .sourceIx = ty_w512
 , .targetIx = ty_w256
 }
+,[INPUT_ISSUANCE_ENTROPY] =
+{ .tag = JET
+, .jet = input_issuance_entropy
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+}
 ,[GEJ_NORMALIZE] =
 { .tag = JET
 , .jet = gej_normalize
@@ -244,6 +256,12 @@
 , .jet = fe_add
 , .sourceIx = ty_w512
 , .targetIx = ty_w256
+}
+,[INPUT_ISSUANCE_TOKEN] =
+{ .tag = JET
+, .jet = input_issuance_token
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
 }
 ,[SCALAR_INVERT] =
 { .tag = JET
@@ -310,6 +328,12 @@
 , .jet = gej_is_infinity
 , .sourceIx = ty_pw512w256
 , .targetIx = ty_b
+}
+,[INPUT_ISSUANCE_ASSET] =
+{ .tag = JET
+, .jet = input_issuance_asset
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
 }
 ,[ADD_32] =
 { .tag = JET

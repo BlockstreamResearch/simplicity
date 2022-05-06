@@ -18,6 +18,7 @@ module Simplicity.Elements.DataTypes
   , Outpoint(Outpoint), opHash, opIndex
   , UTXO(UTXO), utxoAsset, utxoAmount, utxoScript
   , SigTxInput(SigTxInput), sigTxiIsPegin, sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiIssuance
+  , sigTxiIssuanceEntropy, sigTxiIssuanceAsset, sigTxiIssuanceToken
   , TxOutput(TxOutput), txoAsset, txoAmount, txoNonce, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
   , TapEnv(..)
@@ -339,3 +340,20 @@ calculateToken amt entropy = ivHash $ compress noTagIv (entropy, review (over le
  where
   tag | Amount (Explicit _) <- amt = 1
       | Amount (Confidential _ _) <- amt = 2
+
+-- | The entropy value of an issuance there is one, either given by a reissuance, or derived from a new issuance.
+sigTxiIssuanceEntropy :: SigTxInput -> Maybe Entropy
+sigTxiIssuanceEntropy txi = either mkEntropy reissuanceEntropy <$> sigTxiIssuance txi
+ where
+  mkEntropy = calculateIssuanceEntropy (sigTxiPreviousOutpoint txi) . newIssuanceContractHash
+
+-- | The issued asset ID if there is an issuance.
+sigTxiIssuanceAsset :: SigTxInput -> Maybe Hash256
+sigTxiIssuanceAsset = fmap calculateAsset . sigTxiIssuanceEntropy
+
+-- | The issued token ID if there is an issuance.
+sigTxiIssuanceToken :: SigTxInput -> Maybe Hash256
+sigTxiIssuanceToken txi = calculateToken <$> amount <*> entropy
+ where
+  amount = either newIssuanceAmount reissuanceAmount <$> sigTxiIssuance txi
+  entropy = sigTxiIssuanceEntropy txi

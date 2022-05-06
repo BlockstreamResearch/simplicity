@@ -86,6 +86,10 @@ tests = testGroup "Elements"
           , testProperty "calculate_asset" prop_calculate_asset
           , testProperty "calculate_explicit_token" prop_calculate_explicit_token
           , testProperty "calculate_confidential_token" prop_calculate_confidential_token
+          , testProperty "input_issuance" prop_input_issuance
+          , testProperty "input_issuance_asset" prop_input_issuance_asset
+          , testProperty "input_issuance_token" prop_input_issuance_token
+          , testProperty "input_issuance_entropy" prop_input_issuance_entropy
           ]
         ]
 
@@ -294,3 +298,27 @@ prop_calculate_confidential_token = \input ->
   calculate_confidential_token input == fast_calculate_confidential_token input
  where
   fast_calculate_confidential_token = testCoreEval Prog.calculateConfidentialToken
+
+prop_input_issuance :: Property
+prop_input_issuance = forallInPrimEnv $ \env i ->
+   fast_input_issuance env (toW32 i) == input_issuance env (toW32 i)
+ where
+  fast_input_issuance = testEval (specification (ElementsJet (IssuanceJet InputIssuance)))
+
+prop_input_issuance_asset :: Property
+prop_input_issuance_asset = forallInPrimEnv $ \env i ->
+   fast_input_issuance_asset env (toW32 i) == input_issuance_asset env (toW32 i)
+ where
+  fast_input_issuance_asset = testEval (specification (ElementsJet (IssuanceJet InputIssuanceAsset)))
+
+prop_input_issuance_token :: Property
+prop_input_issuance_token = forallInPrimEnv $ \env i ->
+   fast_input_issuance_token env (toW32 i) == input_issuance_token env (toW32 i)
+ where
+  fast_input_issuance_token = testEval (specification (ElementsJet (IssuanceJet InputIssuanceToken)))
+
+prop_input_issuance_entropy :: Property
+prop_input_issuance_entropy = forallInPrimEnv $ \env i ->
+   fast_input_issuance_entropy env (toW32 i) == input_issuance_entropy env (toW32 i)
+ where
+  fast_input_issuance_entropy = testEval (specification (ElementsJet (IssuanceJet InputIssuanceEntropy)))

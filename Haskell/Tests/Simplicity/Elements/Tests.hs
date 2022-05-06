@@ -2,7 +2,6 @@ module Simplicity.Elements.Tests (tests) where
 
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
-import Data.Either (fromLeft, fromRight)
 import Data.Serialize (encode, put, putWord8, putWord32be, runPutLazy)
 import Data.Vector ((!), fromList)
 import Lens.Family2 (review, over)
@@ -26,6 +25,7 @@ import Simplicity.MerkleRoot
 import Simplicity.Programs.CheckSigHash
 import qualified Simplicity.Programs.Sha256 as Sha256
 import qualified Simplicity.Programs.Elements.Lib as Prog
+import qualified Simplicity.Elements.Programs.Issuance.Lib as Prog
 import Simplicity.TestCoreEval
 import Simplicity.Ty.Arbitrary
 import Simplicity.Ty.Word
@@ -55,6 +55,10 @@ tests = testGroup "Elements"
           , testProperty "calculate_asset" prop_calculate_asset
           , testProperty "calculate_explicit_token" prop_calculate_explicit_token
           , testProperty "calculate_confidential_token" prop_calculate_confidential_token
+          , testProperty "input_issuance" prop_input_issuance
+          , testProperty "input_issuance_asset" prop_input_issuance_asset
+          , testProperty "input_issuance_token" prop_input_issuance_token
+          , testProperty "input_issuance_entropy" prop_input_issuance_entropy
           , testCase "issuance_entropy_1" assert_issuance_entropy_1
           , testCase "calculate_asset_1" assert_calculate_asset_1
           , testCase "calculcate_token_1" assert_calculcate_token_1
@@ -150,6 +154,22 @@ prop_calculate_confidential_token = \entropy ->
     implementation (ElementsJet (IssuanceJet CalculateConfidentialToken)) undefined input
  where
   fast_calculate_confidential_token = testCoreEval Prog.calculateConfidentialToken
+
+prop_input_issuance :: Property
+prop_input_issuance = checkJet (ElementsJet (IssuanceJet InputIssuance))
+                    $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_input_issuance_asset :: Property
+prop_input_issuance_asset = checkJet (ElementsJet (IssuanceJet InputIssuanceAsset))
+                          $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_input_issuance_token :: Property
+prop_input_issuance_token = checkJet (ElementsJet (IssuanceJet InputIssuanceToken))
+                          $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_input_issuance_entropy :: Property
+prop_input_issuance_entropy = checkJet (ElementsJet (IssuanceJet InputIssuanceEntropy))
+                            $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 -- example test data from Elements Core 0.17
 (assert_issuance_entropy_1, assert_calculate_asset_1, assert_calculcate_token_1) =
