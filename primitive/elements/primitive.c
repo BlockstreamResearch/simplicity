@@ -295,6 +295,10 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return code;
         switch (code) {
+         case 1: *result = INPUT_ISSUANCE; return 0;
+         case 2: *result = INPUT_ISSUANCE_ASSET; return 0;
+         case 3: *result = INPUT_ISSUANCE_TOKEN; return 0;
+         case 4: *result = INPUT_ISSUANCE_ENTROPY; return 0;
          case 5: *result = CALCULATE_ISSUANCE_ENTROPY; return 0;
          case 6: *result = CALCULATE_ASSET; return 0;
          case 7: *result = CALCULATE_EXPLICIT_TOKEN; return 0;

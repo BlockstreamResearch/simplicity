@@ -730,3 +730,67 @@ bool calculate_confidential_token(frameItem* dst, frameItem src, const txEnv* en
   writeHash(dst, &result);
   return true;
 }
+
+/* input_issuance : TWO^256 |- S (S TWO) */
+bool input_issuance(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numInputs)) {
+    const sigInput* input = &env->tx->input[i];
+    if (writeBit(dst, NO_ISSUANCE != input->issuance.type)) {
+      writeBit(dst, REISSUANCE == input->issuance.type);
+    } else {
+      skipBits(dst, 1);
+    }
+  } else {
+    skipBits(dst, 2);
+  }
+  return true;
+}
+
+/* input_issuance_entropy : TWO^256 |- S (S TWO^256) */
+bool input_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numInputs)) {
+    const sigInput* input = &env->tx->input[i];
+    if (writeBit(dst, NO_ISSUANCE != input->issuance.type)) {
+      writeHash(dst, &input->issuance.entropy);
+    } else {
+      skipBits(dst, 256);
+    }
+  } else {
+    skipBits(dst, 257);
+  }
+  return true;
+}
+
+/* input_issuance_asset : TWO^256 |- S (S TWO^256) */
+bool input_issuance_asset(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numInputs)) {
+    const sigInput* input = &env->tx->input[i];
+    if (writeBit(dst, NO_ISSUANCE != input->issuance.type)) {
+      writeHash(dst, &input->issuance.assetId);
+    } else {
+      skipBits(dst, 256);
+    }
+  } else {
+    skipBits(dst, 257);
+  }
+  return true;
+}
+
+/* input_issuance_token : TWO^256 |- S (S TWO^256) */
+bool input_issuance_token(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numInputs)) {
+    const sigInput* input = &env->tx->input[i];
+    if (writeBit(dst, NO_ISSUANCE != input->issuance.type)) {
+      writeHash(dst, &input->issuance.tokenId);
+    } else {
+      skipBits(dst, 256);
+    }
+  } else {
+    skipBits(dst, 257);
+  }
+  return true;
+}

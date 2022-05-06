@@ -15,6 +15,7 @@
 (*bound_var)[ty_mw32] = (unification_var){ .isBound = true, .bound = { .kind = SUM, .arg = { &(*bound_var)[ty_u], &(*bound_var)[ty_w32] } }};
 (*bound_var)[ty_mw256] = (unification_var){ .isBound = true, .bound = { .kind = SUM, .arg = { &(*bound_var)[ty_u], &(*bound_var)[ty_w256] } }};
 (*bound_var)[ty_mw512] = (unification_var){ .isBound = true, .bound = { .kind = SUM, .arg = { &(*bound_var)[ty_u], &(*bound_var)[ty_w512] } }};
+(*bound_var)[ty_mmb] = (unification_var){ .isBound = true, .bound = { .kind = SUM, .arg = { &(*bound_var)[ty_u], &(*bound_var)[ty_mb] } }};
 (*bound_var)[ty_mmw256] = (unification_var){ .isBound = true, .bound = { .kind = SUM, .arg = { &(*bound_var)[ty_u], &(*bound_var)[ty_mw256] } }};
 (*bound_var)[ty_mmspbw256w64] = (unification_var){ .isBound = true, .bound = { .kind = SUM, .arg = { &(*bound_var)[ty_u], &(*bound_var)[ty_mspbw256w64] } }};
 (*bound_var)[ty_mmspbw256w256] = (unification_var){ .isBound = true, .bound = { .kind = SUM, .arg = { &(*bound_var)[ty_u], &(*bound_var)[ty_mspbw256w256] } }};
