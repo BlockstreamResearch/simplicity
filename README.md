@@ -25,6 +25,18 @@ Software artifacts can be built using [Nix](https://nixos.org/nix/).
 
 ### Building without Nix
 
+#### Building the C project
+
+Install the [GNU Compiler Collection](https://gcc.gnu.org/) and [GNU Make](https://www.gnu.org/software/make/).
+Binary packages are available for Debian (`apt install gcc make`) and other Linux distributions.
+
+1. Open a command line.
+1. Change directory to the `C` directory of this repository.
+1. To run tests: `make check`
+1. To install globally: `make install`
+1. To install locally: `make install out=/path/to/dir`
+1. To remove generated files: `make clean`
+
 #### Building the Coq project
 
 These instructions assume you start within the `simplicity` root directory of this repository.
@@ -58,6 +70,16 @@ Now we can build (and install) the Simplicity Coq library.
     1. `coq_makefile -f _CoqProject -o CoqMakefile`
     1. `make -f CoqMakefile -j$(nproc)`
     1. `make -f CoqMakefile install # optional`
+
+#### Building the Haskell project
+
+Install the [Glasgow Haskell Compiler](https://www.haskell.org/ghc/) and [Cabal](https://www.haskell.org/cabal/).
+Binary packages are available for Debian (`apt install ghc cabal-install`) and other Linux distributions.
+
+1. Open a command line.
+1. Change directory to the root directory of this repository.
+1. `cabal repl Simplicity`
+1. Cabal will build the project and open a GHCi prompt.
     
 ## Documentation
 
