@@ -3,14 +3,6 @@
 #include "sha256.h"
 #include "secp256k1/secp256k1_impl.h"
 
-static inline void read8s(unsigned char* x, size_t n, frameItem* frame) {
-  for(; n; --n) *(x++) = (unsigned char)read8(frame);
-}
-
-static inline void write8s(frameItem* frame, const unsigned char* x, size_t n) {
-  for(; n; --n) write8(frame, *(x++));
-}
-
 /* Read a secp256k1 field element value from the 'src' frame, advancing the cursor 256 cells.
  *
  * Precondition: '*src' is a valid read frame for 256 more cells;
