@@ -8,7 +8,7 @@ import qualified Data.Bits as W
 import Data.ByteString (pack)
 import Data.ByteString.Short (toShort)
 import qualified Data.List as L
-import Lens.Family2 ((^..), allOf, zipWithOf)
+import Lens.Family2 ((^..), allOf, over, zipWithOf)
 import Lens.Family2.Stock (backwards, both_)
 
 import Simplicity.Bip0340
@@ -31,8 +31,8 @@ import qualified Simplicity.Word as W
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit ((@=?), Assertion, testCase)
 import Test.Tasty.QuickCheck (Arbitrary(..), Gen, Property
-                             , arbitraryBoundedIntegral, choose, elements, forAll, resize, sized, testProperty
-                             , withMaxSuccess
+                             , arbitraryBoundedIntegral, choose, elements, forAll, resize, sized, vectorOf
+                             , testProperty, withMaxSuccess
                              )
 
 toW32 :: W.Word32 -> Word32
@@ -95,7 +95,23 @@ tests = testGroup "Programs"
         , testProperty "absolute_value word4" prop_absolute_value4
         , testProperty "sign word4" prop_sign4
         ]
-      , testProperty "sha256" prop_sha256
+      , testGroup "Hash"
+        [ testCase "sha_256_iv" assert_sha_256_iv
+        , testProperty "sha_256_block" prop_sha_256_block
+        , testCase "sha_256_ctx_8_init" assert_sha_256_ctx_8_init
+        , testProperty "sha_256_ctx_8_add_1" prop_sha_256_ctx_8_add_1
+        , testProperty "sha_256_ctx_8_add_2" prop_sha_256_ctx_8_add_2
+        , testProperty "sha_256_ctx_8_add_4" prop_sha_256_ctx_8_add_4
+        , testProperty "sha_256_ctx_8_add_8" prop_sha_256_ctx_8_add_8
+        , testProperty "sha_256_ctx_8_add_16" prop_sha_256_ctx_8_add_16
+        , testProperty "sha_256_ctx_8_add_32" prop_sha_256_ctx_8_add_32
+        , testProperty "sha_256_ctx_8_add_64" prop_sha_256_ctx_8_add_64
+        , testProperty "sha_256_ctx_8_add_128" prop_sha_256_ctx_8_add_128
+        , testProperty "sha_256_ctx_8_add_256" prop_sha_256_ctx_8_add_256
+        , testProperty "sha_256_ctx_8_add_512" prop_sha_256_ctx_8_add_512
+        , testProperty "sha_256_ctx_8_add_buffer_511" prop_sha_256_ctx_8_add_buffer_511
+        , testProperty "sha_256_ctx_8_finalize" prop_sha_256_ctx_8_finalize
+        ]
       , testGroup "ellipticCurve"
         [ testProperty "fe_normalize" prop_fe_normalize
         , testProperty "fe_add" prop_fe_add
@@ -397,17 +413,103 @@ prop_sign4 x = signum (fromInt4 x) == fromInt2 (Arith.sign word4 x)
    where
     w2 = fromWord2 x
 
--- The specification for SHA-256's block compression function.
-prop_sha256 :: [W.Word8] -> Bool
-prop_sha256 x0 = integerHash256 (bsHash (pack x)) == fromWord256 ((iv &&& iden >>> hashBlock) (toWord512 paddedInteger))
+assert_sha_256_iv :: Assertion
+assert_sha_256_iv = fastF () @=? implementation (HashJet Sha256Iv) ()
  where
-  x = L.take 55 x0
-  len = length x
-  mkInteger l = go l 0
-   where
-    go [] n     = n
-    go (w:ws) n = go ws (W.shiftL n 8 .|. toInteger w)
-  paddedInteger = W.shiftL (mkInteger (x ++ [0x80])) (8*(64 - (len + 1))) .|. toInteger len*8
+  fastF = testCoreEval (specification (HashJet Sha256Iv))
+
+prop_sha_256_block :: HashElement -> HashElement -> HashElement -> Bool
+prop_sha_256_block = \h b1 b2 ->
+  let input = (heAsTy h, (heAsTy b1, heAsTy b2))
+  in implementation (HashJet Sha256Block) input == fastF input
+ where
+  fastF = testCoreEval (specification (HashJet Sha256Block))
+
+assert_sha_256_ctx_8_init :: Assertion
+assert_sha_256_ctx_8_init = fastF () @=? implementation (HashJet Sha256Ctx8Init) ()
+ where
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Init))
+
+prop_sha_256_ctx_8_add_1 :: Sha256CtxElement -> W.Word8 -> Bool
+prop_sha_256_ctx_8_add_1 = \ce w -> fastF (ctxAsTy ce, toW8 w) == implementation (HashJet Sha256Ctx8Add1) (ctxAsTy ce, toW8 w)
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add1))
+
+prop_sha_256_ctx_8_add_2 :: Sha256CtxElement -> W.Word16 -> Bool
+prop_sha_256_ctx_8_add_2 = \ce w -> fastF (ctxAsTy ce, toW16 w) == implementation (HashJet Sha256Ctx8Add2) (ctxAsTy ce, toW16 w)
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add2))
+
+prop_sha_256_ctx_8_add_4 :: Sha256CtxElement -> W.Word32 -> Bool
+prop_sha_256_ctx_8_add_4 = \ce w -> fastF (ctxAsTy ce, toW32 w) == implementation (HashJet Sha256Ctx8Add4) (ctxAsTy ce, toW32 w)
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add4))
+
+prop_sha_256_ctx_8_add_8 :: Sha256CtxElement -> W.Word64 -> Bool
+prop_sha_256_ctx_8_add_8 = \ce w -> fastF (ctxAsTy ce, toW64 w) == implementation (HashJet Sha256Ctx8Add8) (ctxAsTy ce, toW64 w)
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add8))
+
+prop_sha_256_ctx_8_add_16 :: Sha256CtxElement -> (W.Word64, W.Word64) -> Bool
+prop_sha_256_ctx_8_add_16 = \ce (w1, w2) -> fastF (ctxAsTy ce, (toW64 w1, toW64 w2)) == implementation (HashJet Sha256Ctx8Add16) (ctxAsTy ce, (toW64 w1, toW64 w2))
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add16))
+
+prop_sha_256_ctx_8_add_32 :: Sha256CtxElement -> W.Word256 -> Bool
+prop_sha_256_ctx_8_add_32 = \ce w -> fastF (ctxAsTy ce, toW256 w) == implementation (HashJet Sha256Ctx8Add32) (ctxAsTy ce, toW256 w)
+ where
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add32))
+
+prop_sha_256_ctx_8_add_64 :: Sha256CtxElement -> (W.Word256, W.Word256) -> Bool
+prop_sha_256_ctx_8_add_64 = \ce (w1, w2) -> fastF (ctxAsTy ce, (toW256 w1, toW256 w2)) == implementation (HashJet Sha256Ctx8Add64) (ctxAsTy ce, (toW256 w1, toW256 w2))
+ where
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add64))
+
+prop_sha_256_ctx_8_add_128 :: Sha256CtxElement -> ((W.Word256, W.Word256), (W.Word256, W.Word256)) -> Bool
+prop_sha_256_ctx_8_add_128 = \ce ws ->
+   let input = (ctxAsTy ce, over (both_.both_) toW256 ws)
+   in fastF input == implementation (HashJet Sha256Ctx8Add128) input
+ where
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add128))
+
+prop_sha_256_ctx_8_add_256 :: Sha256CtxElement -> (((W.Word256, W.Word256), (W.Word256, W.Word256)), ((W.Word256, W.Word256), (W.Word256, W.Word256))) -> Bool
+prop_sha_256_ctx_8_add_256 = \ce ws ->
+   let input = (ctxAsTy ce, over (both_.both_.both_) toW256 ws)
+   in fastF input == implementation (HashJet Sha256Ctx8Add256) input
+ where
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add256))
+
+prop_sha_256_ctx_8_add_512 :: Sha256CtxElement -> ((((W.Word256, W.Word256), (W.Word256, W.Word256)), ((W.Word256, W.Word256), (W.Word256, W.Word256))),
+                                                   (((W.Word256, W.Word256), (W.Word256, W.Word256)), ((W.Word256, W.Word256), (W.Word256, W.Word256)))) -> Bool
+prop_sha_256_ctx_8_add_512 = \ce ws ->
+   let input = (ctxAsTy ce, over (both_.both_.both_.both_) toW256 ws)
+   in fastF input == implementation (HashJet Sha256Ctx8Add512) input
+ where
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add512))
+
+prop_sha_256_ctx_8_add_buffer_511 :: Int -> Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_buffer_511 = \preLen ce -> forAll (vectorOf (preLen `mod` 512) arbitraryBoundedIntegral)
+                                  $ \ws -> let input = (ctxAsTy ce, fst $ bufferFill buffer511 (toW8 <$> ws))
+                                           in fastF input == implementation (HashJet Sha256Ctx8AddBuffer511) input
+ where
+  toW8 :: W.Word8 -> Word8
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8AddBuffer511))
+
+prop_sha_256_ctx_8_finalize :: Sha256CtxElement -> Bool
+prop_sha_256_ctx_8_finalize = \ce -> fastF (ctxAsTy ce) == implementation (HashJet Sha256Ctx8Finalize) (ctxAsTy ce)
+ where
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Finalize))
 
 prop_fe_normalize :: FieldElement -> Bool
 prop_fe_normalize a = fe_normalize (feAsTy a) == toFE (feAsSpec a)

@@ -15,9 +15,11 @@ module Simplicity.CoreJets
 import Prelude hiding (fail, drop, take, subtract)
 
 import Control.Arrow ((+++), Kleisli(Kleisli), runKleisli)
+import qualified Data.ByteString as BS
 import qualified Data.Map as Map
 import Data.Type.Equality ((:~:)(Refl))
 import Data.Void (Void, vacuous)
+import Lens.Family2 ((^..), over, review)
 
 import Simplicity.Bitcoin
 import Simplicity.Digest
@@ -59,6 +61,20 @@ deriving instance Show (ArithJet a b)
 
 data HashJet a b where
   Sha256Block :: HashJet (Sha256.Hash, Sha256.Block) Sha256.Hash
+  Sha256Iv :: HashJet () Sha256.Hash
+  Sha256Ctx8Init :: HashJet () Sha256.Ctx8
+  Sha256Ctx8Add1 :: HashJet (Sha256.Ctx8, Word8) Sha256.Ctx8
+  Sha256Ctx8Add2 :: HashJet (Sha256.Ctx8, Word16) Sha256.Ctx8
+  Sha256Ctx8Add4 :: HashJet (Sha256.Ctx8, Word32) Sha256.Ctx8
+  Sha256Ctx8Add8 :: HashJet (Sha256.Ctx8, Word64) Sha256.Ctx8
+  Sha256Ctx8Add16 :: HashJet (Sha256.Ctx8, Word128) Sha256.Ctx8
+  Sha256Ctx8Add32 :: HashJet (Sha256.Ctx8, Word256) Sha256.Ctx8
+  Sha256Ctx8Add64 :: HashJet (Sha256.Ctx8, Word512) Sha256.Ctx8
+  Sha256Ctx8Add128 :: HashJet (Sha256.Ctx8, Word1024) Sha256.Ctx8
+  Sha256Ctx8Add256 :: HashJet (Sha256.Ctx8, Word2048) Sha256.Ctx8
+  Sha256Ctx8Add512 :: HashJet (Sha256.Ctx8, Word4096) Sha256.Ctx8
+  Sha256Ctx8AddBuffer511 :: HashJet (Sha256.Ctx8, Buffer511 Word8) Sha256.Ctx8
+  Sha256Ctx8Finalize :: HashJet Sha256.Ctx8 Sha256.Hash
 deriving instance Eq (HashJet a b)
 deriving instance Show (HashJet a b)
 
@@ -133,6 +149,20 @@ specificationArith FullMultiply32 = full_multiply word32
 
 specificationHash :: Assert term => HashJet a b -> term a b
 specificationHash Sha256Block = Sha256.hashBlock
+specificationHash Sha256Iv = Sha256.iv
+specificationHash Sha256Ctx8Add1 = Sha256.ctx8Add1
+specificationHash Sha256Ctx8Add2 = Sha256.ctx8Addn vector2
+specificationHash Sha256Ctx8Add4 = Sha256.ctx8Addn vector4
+specificationHash Sha256Ctx8Add8 = Sha256.ctx8Addn vector8
+specificationHash Sha256Ctx8Add16 = Sha256.ctx8Addn vector16
+specificationHash Sha256Ctx8Add32 = Sha256.ctx8Addn vector32
+specificationHash Sha256Ctx8Add64 = Sha256.ctx8Addn vector64
+specificationHash Sha256Ctx8Add128 = Sha256.ctx8Addn vector128
+specificationHash Sha256Ctx8Add256 = Sha256.ctx8Addn vector256
+specificationHash Sha256Ctx8Add512 = Sha256.ctx8Addn vector512
+specificationHash Sha256Ctx8AddBuffer511 = Sha256.ctx8AddBuffer buffer511
+specificationHash Sha256Ctx8Finalize = Sha256.ctx8Finalize
+specificationHash Sha256Ctx8Init = Sha256.ctx8Init
 
 specificationSecp256k1 :: Assert term => Secp256k1Jet a b -> term a b
 specificationSecp256k1 FeNormalize = Secp256k1.fe_normalize
@@ -214,7 +244,34 @@ implementationArith FullMultiply32 = \((x, y), (a, b)) -> do
   return (toWord64 z)
 
 implementationHash :: HashJet a b -> a -> Maybe b
-implementationHash Sha256Block = FFI.sha_256_block
+implementationHash = go
+ where
+  go :: HashJet a b -> a -> Maybe b
+  go Sha256Block = \(h, (b1, b2)) ->
+    Just . toWord256 . integerHash256 . ivHash $ compress (freeStart (fromHash h)) (fromHash b1, fromHash b2)
+  go Sha256Iv = const (Just . toWord256 . integerHash256 . ivHash $ noTagIv)
+  go Sha256Ctx8Add1 = \(ctx, v) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack [fromInteger . fromWord8 $ v]))
+  go Sha256Ctx8Add2 = \(ctx, v) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack (fromInteger . fromWord8 <$> v^..vector_ vector2)))
+  go Sha256Ctx8Add4 = \(ctx, v) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack (fromInteger . fromWord8 <$> v^..vector_ vector4)))
+  go Sha256Ctx8Add8 = \(ctx, v) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack (fromInteger . fromWord8 <$> v^..vector_ vector8)))
+  go Sha256Ctx8Add16 = \(ctx, v) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack (fromInteger . fromWord8 <$> v^..vector_ vector16)))
+  go Sha256Ctx8Add32 = \(ctx, v) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack (fromInteger . fromWord8 <$> v^..vector_ vector32)))
+  go Sha256Ctx8Add64 = \(ctx, v) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack (fromInteger . fromWord8 <$> v^..vector_ vector64)))
+  go Sha256Ctx8Add128 = \(ctx, v) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack (fromInteger . fromWord8 <$> v^..vector_ vector128)))
+  go Sha256Ctx8Add256 = \(ctx, v) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack (fromInteger . fromWord8 <$> v^..vector_ vector256)))
+  go Sha256Ctx8Add512 = \(ctx, v) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack (fromInteger . fromWord8 <$> v^..vector_ vector512)))
+  go Sha256Ctx8AddBuffer511 = \(ctx, b) -> toCtx <$> (fromCtx ctx >>= flip ctxAdd (BS.pack (fromInteger . fromWord8 <$> b^..buffer_ buffer511)))
+  go Sha256Ctx8Finalize = \ctx -> toWord256 . integerHash256 . ctxFinalize <$> fromCtx ctx
+  go Sha256Ctx8Init = const (Just . toCtx $ ctxInit)
+  fromHash = review (over be256) . fromIntegral . fromWord256
+  fromCtx (buffer, (count, midstate)) = ctxBuild (fromInteger . fromWord8 <$> buffer^..buffer_ buffer63)
+                                                 (fromWord64 count)
+                                                 (fromHash midstate)
+  toCtx ctx = (buffer, (count, midstate))
+   where
+    buffer = fst $ bufferFill buffer63 (toWord8 . fromIntegral <$> BS.unpack (ctxBuffer ctx))
+    count = toWord64 . fromIntegral $ ctxCounter ctx
+    midstate = toWord256 . integerHash256 . ivHash $ ctxIV ctx
 
 implementationSecp256k1 :: Secp256k1Jet a b -> a -> Maybe b
 implementationSecp256k1 FeNormalize = FFI.fe_normalize
@@ -308,7 +365,23 @@ getJetBit abort next =  getPositive next >>= match
     matchHash 1 = getPositive next >>= matchSha2
     matchHash _ = vacuous abort
     matchSha2 1 = makeArrow Sha256Block
+    matchSha2 2 = makeArrow Sha256Iv
+    matchSha2 3 = getPositive next >>= matchSha2Addn
+    matchSha2 4 = makeArrow Sha256Ctx8AddBuffer511
+    matchSha2 5 = makeArrow Sha256Ctx8Finalize
+    matchSha2 6 = makeArrow Sha256Ctx8Init
     matchSha2 _ = vacuous abort
+    matchSha2Addn 1 = makeArrow Sha256Ctx8Add1
+    matchSha2Addn 2 = makeArrow Sha256Ctx8Add2
+    matchSha2Addn 3 = makeArrow Sha256Ctx8Add4
+    matchSha2Addn 4 = makeArrow Sha256Ctx8Add8
+    matchSha2Addn 5 = makeArrow Sha256Ctx8Add16
+    matchSha2Addn 6 = makeArrow Sha256Ctx8Add32
+    matchSha2Addn 7 = makeArrow Sha256Ctx8Add64
+    matchSha2Addn 8 = makeArrow Sha256Ctx8Add128
+    matchSha2Addn 9 = makeArrow Sha256Ctx8Add256
+    matchSha2Addn 10 = makeArrow Sha256Ctx8Add512
+    matchSha2Addn _ = vacuous abort
   getJetBitSecp256k1 :: (Monad m) => m Void -> m Bool -> m (SomeArrow Secp256k1Jet)
   getJetBitSecp256k1 abort next = getPositive next >>= matchSecp256k1
    where
@@ -386,6 +459,20 @@ putJetBitArith Multiply32     = putPositive 13 . putPositive 5
 
 putJetBitHash :: HashJet a b -> DList Bool
 putJetBitHash Sha256Block = putPositive 1 . putPositive 1
+putJetBitHash Sha256Iv = putPositive 1 . putPositive 2
+putJetBitHash Sha256Ctx8Add1 = putPositive 1 . putPositive 3 . putPositive 1
+putJetBitHash Sha256Ctx8Add2 = putPositive 1 . putPositive 3 . putPositive 2
+putJetBitHash Sha256Ctx8Add4 = putPositive 1 . putPositive 3 . putPositive 3
+putJetBitHash Sha256Ctx8Add8 = putPositive 1 . putPositive 3 . putPositive 4
+putJetBitHash Sha256Ctx8Add16 = putPositive 1 . putPositive 3 . putPositive 5
+putJetBitHash Sha256Ctx8Add32 = putPositive 1 . putPositive 3 . putPositive 6
+putJetBitHash Sha256Ctx8Add64 = putPositive 1 . putPositive 3 . putPositive 7
+putJetBitHash Sha256Ctx8Add128 = putPositive 1 . putPositive 3 . putPositive 8
+putJetBitHash Sha256Ctx8Add256 = putPositive 1 . putPositive 3 . putPositive 9
+putJetBitHash Sha256Ctx8Add512 = putPositive 1 . putPositive 3 . putPositive 10
+putJetBitHash Sha256Ctx8AddBuffer511 = putPositive 1 . putPositive 4
+putJetBitHash Sha256Ctx8Finalize = putPositive 1 . putPositive 5
+putJetBitHash Sha256Ctx8Init = putPositive 1 . putPositive 6
 
 putJetBitSecp256k1 :: Secp256k1Jet a b -> DList Bool
 putJetBitSecp256k1 FeNormalize = putPositive 35
@@ -447,6 +534,20 @@ coreJetMap = Map.fromList
   , mkAssoc (ArithJet FullMultiply32)
     -- HashJet
   , mkAssoc (HashJet Sha256Block)
+  , mkAssoc (HashJet Sha256Iv)
+  , mkAssoc (HashJet Sha256Ctx8Add1)
+  , mkAssoc (HashJet Sha256Ctx8Add2)
+  , mkAssoc (HashJet Sha256Ctx8Add4)
+  , mkAssoc (HashJet Sha256Ctx8Add8)
+  , mkAssoc (HashJet Sha256Ctx8Add16)
+  , mkAssoc (HashJet Sha256Ctx8Add32)
+  , mkAssoc (HashJet Sha256Ctx8Add64)
+  , mkAssoc (HashJet Sha256Ctx8Add128)
+  , mkAssoc (HashJet Sha256Ctx8Add256)
+  , mkAssoc (HashJet Sha256Ctx8Add512)
+  , mkAssoc (HashJet Sha256Ctx8AddBuffer511)
+  , mkAssoc (HashJet Sha256Ctx8Finalize)
+  , mkAssoc (HashJet Sha256Ctx8Init)
     -- Secp256k1Jet
   , mkAssoc (Secp256k1Jet FeNormalize)
   , mkAssoc (Secp256k1Jet FeNegate)

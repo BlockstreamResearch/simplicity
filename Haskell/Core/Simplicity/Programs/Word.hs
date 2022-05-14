@@ -11,6 +11,7 @@ module Simplicity.Programs.Word
   , rightmost, right_pad_low, right_pad_high, right_extend
   , full_shift, shift_const_by, rotate_const
   , mapZV, transpose
+  , bufferEmpty, bufferSnoc
   , forWhile
   , module Simplicity.Ty.Word
   ) where
@@ -182,7 +183,7 @@ full_shift wa wb = go (compareVectorSize wb wa)
 -- | Left shift a vector by a constant number of places, shifting in copies the provided value.
 -- Shifting by a negative number of places will perform a right shift instead.
 shift_const_by :: (Core term, TyC a, TyC b) => term () a -> Vector a b -> Int -> term b b
-shift_const_by t v n | wordSize v <= n = unit >>> fill t v
+shift_const_by t v n | vectorSize v <= n = unit >>> fill t v
                      | n < 0 = right_shift_const_by t v (-n)
                      | otherwise = compose (go t v n)
  where
@@ -199,7 +200,7 @@ shift_const_by t v n | wordSize v <= n = unit >>> fill t v
 -- | Right shift a vector by a constant number of places, shifting in copies the provided value.
 -- Shifting by a negative number of places will perform a left shift instead.
 right_shift_const_by :: (Core term, TyC a, TyC b) => term () a -> Vector a b -> Int -> term b b
-right_shift_const_by t v n | wordSize v <= n = unit >>> fill t v
+right_shift_const_by t v n | vectorSize v <= n = unit >>> fill t v
                            | n < 0 = shift_const_by t v (-n)
                            | otherwise = compose (go t v n)
  where
@@ -267,6 +268,20 @@ transpose mzv nzv = go mzv nzv yId
   go :: (Core term, TyC nm, TyC m) => ZipVector x kx nx knx -> ZipVector m nm x nx -> Yoneda term m kx -> term nm knx
   go SingleZV nzv t = mapZV nzv (runYoneda t)
   go (DoubleZV zv) nzv t = go zv nzv (yoh t) &&& go zv nzv (yih t)
+
+-- | Given a 'Buffer' @b@, return the empty buffer.
+bufferEmpty :: (Core term, TyC e) => Buffer x v b -> term e b
+bufferEmpty SingleB = injl unit
+bufferEmpty (DoubleB b) = injl unit &&& bufferEmpty b
+
+-- | Given a 'Buffer' @b@, append an 'x' value to the buffer.
+--
+-- If the resulting buffer overflows, return a vector of all values from the input.
+bufferSnoc :: Core term => Buffer x v b -> term (b, x) (Either v b)
+bufferSnoc SingleB = match (injr (injr ih)) (injl iden)
+bufferSnoc (DoubleB b) = (oih &&& ih >>> bufferSnoc b) &&& ooh
+                     >>> match (ih &&& oh >>> match (injr (injr ih &&& bufferEmpty b)) (injl iden))
+                               (injr (ih &&& oh))
 
 -- | Given @body :: term ((c, w), a) (Either b a)@ where @c@ is a generic context type, @w@ is a counter value, and @a@ is a state value,
 -- then @loop body (c, a)@ repeatedly apply body with a fixed context @c@ and an initial state @a@ with an incrementing counter @w@ starting at zero

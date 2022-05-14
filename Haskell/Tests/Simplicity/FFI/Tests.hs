@@ -6,8 +6,8 @@ module Simplicity.FFI.Tests
 import Control.Arrow ((***))
 import Lens.Family2 ((^.), (^..), over, allOf, review, zipWithOf)
 import Test.Tasty (TestTree, defaultMain, testGroup)
-import Test.Tasty.QuickCheck ( Arbitrary(..), Property, arbitrarySizedBoundedIntegral, shrinkIntegral
-                             , choose, forAll, property, Discard(Discard), testProperty
+import Test.Tasty.QuickCheck ( Arbitrary(..), Gen, Property, arbitraryBoundedIntegral, arbitrarySizedBoundedIntegral, shrinkIntegral
+                             , choose, forAll, property, Discard(Discard), testProperty, vectorOf
                              )
 import Test.Tasty.HUnit (Assertion, (@=?), assertBool, testCase)
 
@@ -19,16 +19,33 @@ import Simplicity.Programs.LibSecp256k1.Lib as Prog
 import Simplicity.LibSecp256k1.Spec as Spec
 import Simplicity.TestCoreEval
 import Simplicity.Ty.Arbitrary
-import Simplicity.Ty.Word (toWord32)
+import Simplicity.Ty.Word
 import Simplicity.Bip0340
-import Simplicity.Word
+import Simplicity.Word as W
 
 main = defaultMain tests
 
 tests :: TestTree
 tests = testGroup "C / SPEC"
-      [ testGroup "locktime" $
-        [ testProperty "parse_lock" prop_parse_lock
+      [ testGroup "sha256" $
+        [ testCase     "sha_256_iv"                   assert_sha_256_iv
+        , testProperty "sha_256_block"                prop_sha_256_block
+        , testCase     "sha_256_ctx_8_init"           assert_sha_256_ctx_8_init
+        , testProperty "sha_256_ctx_8_add_1"          prop_sha_256_ctx_8_add_1
+        , testProperty "sha_256_ctx_8_add_2"          prop_sha_256_ctx_8_add_2
+        , testProperty "sha_256_ctx_8_add_4"          prop_sha_256_ctx_8_add_4
+        , testProperty "sha_256_ctx_8_add_8"          prop_sha_256_ctx_8_add_8
+        , testProperty "sha_256_ctx_8_add_16"         prop_sha_256_ctx_8_add_16
+        , testProperty "sha_256_ctx_8_add_32"         prop_sha_256_ctx_8_add_32
+        , testProperty "sha_256_ctx_8_add_64"         prop_sha_256_ctx_8_add_64
+        , testProperty "sha_256_ctx_8_add_128"        prop_sha_256_ctx_8_add_128
+        , testProperty "sha_256_ctx_8_add_256"        prop_sha_256_ctx_8_add_256
+        , testProperty "sha_256_ctx_8_add_512"        prop_sha_256_ctx_8_add_512
+        , testProperty "sha_256_ctx_8_add_buffer_511" prop_sha_256_ctx_8_add_buffer_511
+        , testProperty "sha_256_ctx_8_finalize"       prop_sha_256_ctx_8_finalize
+        ]
+      , testGroup "locktime" $
+        [ testProperty "parse_lock"     prop_parse_lock
         , testProperty "parse_sequence" prop_parse_sequence
         ]
       , testGroup "field"
@@ -109,6 +126,178 @@ tests = testGroup "C / SPEC"
         [ testProperty "bip_0340_verify"   prop_bip_0340_verify
         ] ++ zipWith case_bip_0340_verify_vector [0..] bip0340Vectors
       ]
+
+assert_sha_256_iv :: Assertion
+assert_sha_256_iv = fastF () @=? C.sha_256_iv ()
+ where
+  fastF = testCoreEval (specification (HashJet Sha256Iv))
+
+prop_sha_256_block :: HashElement -> HashElement -> HashElement -> Bool
+prop_sha_256_block = \h b1 b2 -> fastF (heAsTy h, (heAsTy b1, heAsTy b2)) == C.sha_256_block (heAsTy h, (heAsTy b1, heAsTy b2))
+ where
+  fastF = testCoreEval (specification (HashJet Sha256Block))
+
+assert_sha_256_ctx_8_init :: Assertion
+assert_sha_256_ctx_8_init = fastF () @=? C.sha_256_ctx_8_init ()
+ where
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Init))
+
+prop_sha_256_ctx_8_add_1 :: Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_1 = \ctx ->
+                           forAll arbitraryW8 $ \w8 ->
+                           let input = (ctxAsTy ctx, toW8 w8)
+                           in fastF input == C.sha_256_ctx_8_add_1 input
+ where
+  arbitraryW8 :: Gen W.Word8
+  arbitraryW8 = arbitraryBoundedIntegral
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add1))
+
+prop_sha_256_ctx_8_add_2 :: Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_2 = \ctx ->
+                           forAll arbitraryW16 $ \w16 ->
+                           let input = (ctxAsTy ctx, toW16 w16)
+                           in fastF input == C.sha_256_ctx_8_add_2 input
+ where
+  arbitraryW16 :: Gen W.Word16
+  arbitraryW16 = arbitraryBoundedIntegral
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add2))
+
+prop_sha_256_ctx_8_add_4 :: Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_4 = \ctx ->
+                           forAll arbitraryW32 $ \w32 ->
+                           let input = (ctxAsTy ctx, toW32 w32)
+                           in fastF input == C.sha_256_ctx_8_add_4 input
+ where
+  arbitraryW32 :: Gen W.Word32
+  arbitraryW32 = arbitraryBoundedIntegral
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add4))
+
+prop_sha_256_ctx_8_add_8 :: Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_8 = \ctx ->
+                           forAll arbitraryW64 $ \w64 ->
+                           let input = (ctxAsTy ctx, toW64 w64)
+                           in fastF input == C.sha_256_ctx_8_add_8 input
+ where
+  arbitraryW64 :: Gen W.Word64
+  arbitraryW64 = arbitraryBoundedIntegral
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add8))
+
+prop_sha_256_ctx_8_add_16 :: Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_16 = \ctx ->
+                           forAll arbitraryW64 $ \w64a ->
+                           forAll arbitraryW64 $ \w64b ->
+                           let input = (ctxAsTy ctx, (toW64 w64a, toW64 w64b))
+                           in fastF input == C.sha_256_ctx_8_add_16 input
+ where
+  arbitraryW64 :: Gen W.Word64
+  arbitraryW64 = arbitraryBoundedIntegral
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add16))
+
+prop_sha_256_ctx_8_add_32 :: Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_32 = \ctx ->
+                           forAll arbitraryW256 $ \w256 ->
+                           let input = (ctxAsTy ctx, toW256 w256)
+                           in fastF input == C.sha_256_ctx_8_add_32 input
+ where
+  arbitraryW256 :: Gen W.Word256
+  arbitraryW256 = arbitraryBoundedIntegral
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add32))
+
+prop_sha_256_ctx_8_add_64 :: Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_64 = \ctx ->
+                           forAll arbitraryW256 $ \w256a ->
+                           forAll arbitraryW256 $ \w256b ->
+                           let input = (ctxAsTy ctx, (toW256 w256a, toW256 w256b))
+                           in fastF input == C.sha_256_ctx_8_add_64 input
+ where
+  arbitraryW256 :: Gen W.Word256
+  arbitraryW256 = arbitraryBoundedIntegral
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add64))
+
+prop_sha_256_ctx_8_add_128 :: Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_128 = \ctx ->
+                           forAll arbitraryW256 $ \w256a ->
+                           forAll arbitraryW256 $ \w256b ->
+                           forAll arbitraryW256 $ \w256c ->
+                           forAll arbitraryW256 $ \w256d ->
+                           let input = (ctxAsTy ctx, ((toW256 w256a, toW256 w256b), (toW256 w256c, toW256 w256d)))
+                           in fastF input == C.sha_256_ctx_8_add_128 input
+ where
+  arbitraryW256 :: Gen W.Word256
+  arbitraryW256 = arbitraryBoundedIntegral
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add128))
+
+prop_sha_256_ctx_8_add_256 :: Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_256 = \ctx ->
+                           forAll arbitraryW256 $ \w256a ->
+                           forAll arbitraryW256 $ \w256b ->
+                           forAll arbitraryW256 $ \w256c ->
+                           forAll arbitraryW256 $ \w256d ->
+                           forAll arbitraryW256 $ \w256e ->
+                           forAll arbitraryW256 $ \w256f ->
+                           forAll arbitraryW256 $ \w256g ->
+                           forAll arbitraryW256 $ \w256h ->
+                           let input = (ctxAsTy ctx, (((toW256 w256a, toW256 w256b), (toW256 w256c, toW256 w256d)),
+                                                      ((toW256 w256e, toW256 w256f), (toW256 w256g, toW256 w256h))))
+                           in fastF input == C.sha_256_ctx_8_add_256 input
+ where
+  arbitraryW256 :: Gen W.Word256
+  arbitraryW256 = arbitraryBoundedIntegral
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add256))
+
+prop_sha_256_ctx_8_add_512 :: Sha256CtxElement -> Property
+prop_sha_256_ctx_8_add_512 = \ctx ->
+                           forAll arbitraryW256 $ \w256a ->
+                           forAll arbitraryW256 $ \w256b ->
+                           forAll arbitraryW256 $ \w256c ->
+                           forAll arbitraryW256 $ \w256d ->
+                           forAll arbitraryW256 $ \w256e ->
+                           forAll arbitraryW256 $ \w256f ->
+                           forAll arbitraryW256 $ \w256g ->
+                           forAll arbitraryW256 $ \w256h ->
+                           forAll arbitraryW256 $ \w256i ->
+                           forAll arbitraryW256 $ \w256j ->
+                           forAll arbitraryW256 $ \w256k ->
+                           forAll arbitraryW256 $ \w256l ->
+                           forAll arbitraryW256 $ \w256m ->
+                           forAll arbitraryW256 $ \w256n ->
+                           forAll arbitraryW256 $ \w256o ->
+                           forAll arbitraryW256 $ \w256p ->
+                           let input = (ctxAsTy ctx, ((((toW256 w256a, toW256 w256b), (toW256 w256c, toW256 w256d)),
+                                                       ((toW256 w256e, toW256 w256f), (toW256 w256g, toW256 w256h))),
+                                                      (((toW256 w256i, toW256 w256j), (toW256 w256k, toW256 w256l)),
+                                                       ((toW256 w256m, toW256 w256n), (toW256 w256o, toW256 w256p)))))
+                           in fastF input == C.sha_256_ctx_8_add_512 input
+ where
+  arbitraryW256 :: Gen W.Word256
+  arbitraryW256 = arbitraryBoundedIntegral
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Add512))
+
+prop_sha_256_ctx_8_add_buffer_511 :: Sha256CtxElement -> Int -> Property
+prop_sha_256_ctx_8_add_buffer_511 = \ctx preLen ->
+                           forAll (vectorOf (preLen `mod` 512) arbitraryW8) $ \w8s ->
+                           let input = (ctxAsTy ctx, fst $ bufferFill buffer511 (toW8 <$> w8s))
+                           in fastF input == C.sha_256_ctx_8_add_buffer_511 input
+ where
+  arbitraryW8 :: Gen W.Word8
+  arbitraryW8 = arbitraryBoundedIntegral
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8AddBuffer511))
+
+prop_sha_256_ctx_8_finalize :: Sha256CtxElement -> Bool
+prop_sha_256_ctx_8_finalize = \ctx -> fastF (ctxAsTy ctx) == C.sha_256_ctx_8_finalize (ctxAsTy ctx)
+ where
+  fastF = testCoreEval (specification (HashJet Sha256Ctx8Finalize))
 
 prop_parse_lock = forAll arbitraryLock $ \a -> fastF (toWord32 (fromIntegral a)) == C.parse_lock (toWord32 (fromIntegral a))
  where

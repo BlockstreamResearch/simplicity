@@ -128,6 +128,14 @@ void write16(frameItem* frame, uint_fast16_t x);
 void write32(frameItem* frame, uint_fast32_t x);
 void write64(frameItem* frame, uint_fast64_t x);
 
+static inline void read8s(unsigned char* x, size_t n, frameItem* frame) {
+  for(; n; --n) *(x++) = (unsigned char)read8(frame);
+}
+
+static inline void write8s(frameItem* frame, const unsigned char* x, size_t n) {
+  for(; n; --n) write8(frame, *(x++));
+}
+
 static inline void read32s(uint32_t* x, size_t n, frameItem* frame) {
   for(; n; --n) *(x++) = (uint32_t)read32(frame);
 }

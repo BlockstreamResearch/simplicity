@@ -41,6 +41,12 @@
 , .sourceIx = ty_u
 , .targetIx = ty_pw512w256
 }
+,[SHA_256_CTX_8_FINALIZE] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_finalize
+, .sourceIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+, .targetIx = ty_w256
+}
 ,[CALCULATE_EXPLICIT_TOKEN] =
 { .tag = JET
 , .jet = calculate_explicit_token
@@ -52,6 +58,12 @@
 , .jet = scalar_is_zero
 , .sourceIx = ty_w256
 , .targetIx = ty_b
+}
+,[SHA_256_CTX_8_ADD_64] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_64
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w512
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
 ,[FULL_ADD_32] =
 { .tag = JET
@@ -89,6 +101,12 @@
 , .sourceIx = ty_w256
 , .targetIx = ty_b
 }
+,[SHA_256_CTX_8_ADD_256] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_256
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w2048
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
 ,[GEJ_X_EQUIV] =
 { .tag = JET
 , .jet = gej_x_equiv
@@ -106,6 +124,12 @@
 , .jet = scalar_negate
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
+}
+,[SHA_256_CTX_8_ADD_2] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_2
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w16
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
 ,[FULL_SUBTRACT_32] =
 { .tag = JET
@@ -131,6 +155,12 @@
 , .sourceIx = ty_ppw512w256pw512w256
 , .targetIx = ty_pw512w256
 }
+,[SHA_256_CTX_8_ADD_1] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_1
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w8
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
 ,[GEJ_DOUBLE] =
 { .tag = JET
 , .jet = gej_double
@@ -149,6 +179,24 @@
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
 }
+,[SHA_256_CTX_8_ADD_BUFFER_511] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_buffer_511
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw2048pmw1024pmw512pmw256pmw128pmw64pmw32pmw16mw8
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
+,[SHA_256_CTX_8_INIT] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_init
+, .sourceIx = ty_u
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
+,[SHA_256_CTX_8_ADD_32] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_32
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w256
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
 ,[FE_SQUARE] =
 { .tag = JET
 , .jet = fe_square
@@ -166,6 +214,12 @@
 , .jet = generate
 , .sourceIx = ty_w256
 , .targetIx = ty_pw512w256
+}
+,[SHA_256_CTX_8_ADD_512] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_512
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w4096
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
 ,[INPUT_ISSUANCE] =
 { .tag = JET
@@ -275,6 +329,12 @@
 , .sourceIx = ty_pppw256pbw256w256pbw256
 , .targetIx = ty_u
 }
+,[SHA_256_CTX_8_ADD_16] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_16
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w128
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
 ,[TX_LOCK_DISTANCE] =
 { .tag = JET
 , .jet = tx_lock_distance
@@ -341,17 +401,35 @@
 , .sourceIx = ty_w64
 , .targetIx = ty_pbw32
 }
+,[SHA_256_IV] =
+{ .tag = JET
+, .jet = sha_256_iv
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[FE_MULTIPLY_BETA] =
 { .tag = JET
 , .jet = fe_multiply_beta
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
 }
+,[SHA_256_CTX_8_ADD_8] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_8
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w64
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
 ,[LINEAR_VERIFY_1] =
 { .tag = JET
 , .jet = linear_verify_1
 , .sourceIx = ty_pppw256w512w256w512
 , .targetIx = ty_u
+}
+,[SHA_256_CTX_8_ADD_4] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_4
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w32
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
 ,[SCALAR_MULTIPLY_LAMBDA] =
 { .tag = JET
@@ -382,6 +460,12 @@
 , .jet = gej_rescale
 , .sourceIx = ty_ppw512w256w256
 , .targetIx = ty_pw512w256
+}
+,[SHA_256_CTX_8_ADD_128] =
+{ .tag = JET
+, .jet = sha_256_ctx_8_add_128
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w1024
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
 ,[TX_IS_FINAL] =
 { .tag = JET

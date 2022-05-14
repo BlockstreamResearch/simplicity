@@ -6,6 +6,8 @@ module Simplicity.Digest
   , integerHash256, hash0
   , IV, noTagIv, tagIv, ivHash, bslHash, bsHash, bitStringHash
   , Block512, compress, compressHalf
+  , freeStart
+  , Ctx(..), ctxInit, ctxBuild, ctxAdd, ctxFinalize
   ) where
 
 import Control.Monad (replicateM)
@@ -23,7 +25,7 @@ import Lens.Family2 (Adapter', Lens', (^.), (^..), over, review, under)
 import Lens.Family2.Stock (bend, bend_)
 import Lens.Family2.Unchecked (adapter)
 import Numeric (showHex)
-import Simplicity.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
+import Simplicity.Digest.Pure.SHA
 import Simplicity.Word
 import Simplicity.Serialization
 
@@ -106,6 +108,14 @@ ivHash (IV state) =  case pushEndOfInput state of
   Done _ _ x -> Hash256 . BSS.toShort . BSL.toStrict . Binary.encode $ x
   _          -> error "getHash256 unexpected decoder state"
 
+-- | Restore an IV from an given midstate.
+-- 
+-- WARNING: Use of 'freeStart' may violate the security assumptions about SHA-256.
+freeStart :: Hash256 -> IV
+freeStart midstate = IV $ runSHAIncremental midstateSHA256State processSHA256Block
+ where
+  midstateSHA256State = Binary.decode . BSL.fromStrict . encode $ midstate
+
 -- | Computes a SHA-256 hash from a lazy 'BSL.ByteString'.
 bslHash :: BSL.ByteString -> Hash256
 bslHash = ivHash . IV . pushChunks sha256Incremental . padSHA1
@@ -145,3 +155,53 @@ compress (IV state) (h1, h2) = IV $ state `pushChunk` BSS.fromShort (hash256 h1)
 -- | Given an initial value and a block of data consisting of a one hash preceeded by 256-bits of zeros, apply the SHA-256 compression function.
 compressHalf :: IV -> Hash256 -> IV
 compressHalf iv h = compress iv (hash0, h)
+
+-- | A SHA-256 context for bytes.
+data Ctx = Ctx { ctxBuffer :: BS.ByteString
+               , ctxCounter :: Integer
+               , ctxIV :: IV
+               }
+
+-- | Initialize an empty 'Ctx'.
+ctxInit :: Ctx
+ctxInit = Ctx { ctxBuffer = mempty, ctxCounter = 0, ctxIV = noTagIv }
+
+-- | Normalize the context's buffer to less than 64 bytes.
+--
+-- This may fail if the SHA-256 counter overflows.
+ctxNormalize :: Ctx -> Maybe Ctx
+ctxNormalize ctx | 2^55 <= ctxCounter ctx = Nothing
+                 | BS.length (ctxBuffer ctx) < 64 = Just ctx
+                 | otherwise = ctxNormalize
+                             $ Ctx { ctxBuffer = BS.drop 64 (ctxBuffer ctx)
+                                   , ctxCounter = 1 + ctxCounter ctx
+                                   , ctxIV = let IV state = ctxIV ctx in IV (state `pushChunk` BS.take 64 (ctxBuffer ctx))
+                                   }
+
+-- | Append a bytestring to a context.
+--
+-- This may fail if the SHA-256 counter overflows.
+ctxAdd :: Ctx -> BS.ByteString -> Maybe Ctx
+ctxAdd ctx bs = ctxNormalize $ ctx { ctxBuffer = ctxBuffer ctx <> bs }
+
+-- | Freely construct a SHA-256 'Ctx' from its components.
+--
+-- This may fail if the SHA-256 counter overflows.
+--
+-- WARNING: Use of 'ctxBuild' may violate the secuirty assumptions about SHA-256.
+ctxBuild :: [Word8] -- ^ Buffer
+         -> Integer -- ^ Compression count
+         -> Hash256 -- ^ Midstate
+         -> Maybe Ctx
+ctxBuild buffer counter midstate = ctxNormalize $ Ctx { ctxBuffer = BS.pack buffer
+                                                      , ctxCounter = counter
+                                                      , ctxIV = freeStart midstate
+                                                      }
+
+-- | Add the SHA-256 padding an produce the final hash output.
+ctxFinalize :: Ctx -> Hash256
+ctxFinalize ctx | 8*size < 2^64 = Hash256 . BSS.toShort . BSL.toStrict . Binary.encode
+                              $ completeSha256Incremental (state `pushChunk` ctxBuffer ctx) (fromInteger size)
+ where
+  size = ctxCounter ctx * 64 + toInteger (BS.length (ctxBuffer ctx))
+  IV state = ctxIV ctx

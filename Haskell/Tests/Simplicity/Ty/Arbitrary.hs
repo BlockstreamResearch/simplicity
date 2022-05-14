@@ -1,6 +1,6 @@
 -- This module tests the Simplicity programs on arbitrary inputs.
 module Simplicity.Ty.Arbitrary ( maybeToTy
-                               , HashElement(..), heAsTy, heAsSpec
+                               , HashElement(..), heAsTy, heAsSpec, toHE
                                , FieldElement(..), feAsTy, feAsSpec, toFE
                                , GroupElement(..), geAsTy, geAsSpec, toGE
                                , PointElement(..), pointAsTy, pointAsSpec, toPoint
@@ -8,8 +8,10 @@ module Simplicity.Ty.Arbitrary ( maybeToTy
                                , gen_inf, gen_half_curve, gen_half_curve_jacobian, gen_half_curve_inf
                                , ScalarElement(..), scalarAsTy, scalarAsSpec, toScalar
                                , WnafElement(..), wnafAsTy, traverseWnaf
+                               , Sha256CtxElement(..), ctxAsTy, ctxAsSpec, toCtx
                                ) where
 
+import qualified Data.ByteString as BS
 import Lens.Family2 (review, over)
 import Lens.Family2.Stock (both_)
 
@@ -21,13 +23,25 @@ import Simplicity.Ty.Word
 import qualified Simplicity.Word as W
 
 import Test.Tasty.QuickCheck (Arbitrary(..), Gen
-                             , arbitraryBoundedIntegral, choose, elements, frequency, resize, sized
+                             , arbitraryBoundedIntegral, arbitrarySizedBoundedIntegral
+                             , choose, elements, frequency, resize, sized, oneof, vectorOf
+                             , shrinkIntegral
                              )
 
 
 maybeToTy :: Maybe a -> Either () a
 maybeToTy Nothing = Left ()
 maybeToTy (Just x) = Right x
+
+toW8 :: W.Word8 -> Word8
+toW8 = toWord8 . fromIntegral
+
+toW64 :: W.Word64 -> Word64
+toW64 = toWord64 . fromIntegral
+
+instance Arbitrary W.Word256 where
+  arbitrary = arbitrarySizedBoundedIntegral
+  shrink = shrinkIntegral
 
 data HashElement = HashElement W.Word256 deriving Show
 
@@ -37,6 +51,9 @@ instance Arbitrary HashElement where
 
 heAsTy (HashElement h) = toWord256 (toInteger h)
 heAsSpec (HashElement h) = review (over be256) h
+
+toHE :: Hash256 -> Word256
+toHE = toWord256 .integerHash256
 
 genModularWord256 :: W.Word256 -> Gen W.Word256
 genModularWord256 w = do
@@ -173,3 +190,21 @@ wnafAsTy :: WnafElement -> (Bit, Word128)
 wnafAsTy (WnafElement we) = (toBit (we < 0), toWord128 we)
 
 traverseWnaf f (x,y) = (,) <$> f x <*> (both_.both_.both_.both_.both_.both_.both_) f y
+
+
+data Sha256CtxElement = Sha256CtxElement [W.Word8] W.Word64 HashElement deriving Show
+
+instance Arbitrary Sha256CtxElement where
+  arbitrary = do
+    preLen <- arbitrary
+    count <- oneof [pure id, pure (2^55 +)] <*> arbitrary
+    Sha256CtxElement <$> (vectorOf (preLen `mod` 64) arbitraryBoundedIntegral) <*> pure (fromInteger count) <*> arbitrary
+  shrink (Sha256CtxElement l w h) = [Sha256CtxElement l w h | (l,w,h) <- shrink (l, w, h)]
+
+ctxAsTy (Sha256CtxElement l w h) = (fst (bufferFill buffer63 (toW8 <$> l)), (toW64 w, heAsTy h))
+ctxAsSpec (Sha256CtxElement l w h) = ctxBuild l (fromIntegral w) (heAsSpec h)
+toCtx ctx = (buffer, (count, midstate))
+ where
+  buffer = fst $ bufferFill buffer63 (toWord8 . fromIntegral <$> BS.unpack (ctxBuffer ctx))
+  count = toWord64 . fromIntegral $ ctxCounter ctx
+  midstate = toHE . ivHash $ ctxIV ctx

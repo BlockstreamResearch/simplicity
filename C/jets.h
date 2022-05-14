@@ -28,7 +28,21 @@ bool full_subtract_32(frameItem* dst, frameItem src, const txEnv* env);
 bool multiply_32(frameItem* dst, frameItem src, const txEnv* env);
 bool full_multiply_32(frameItem* dst, frameItem src, const txEnv* env);
 
+bool sha_256_iv(frameItem* dst, frameItem src, const txEnv* env);
 bool sha_256_block(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_init(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_1(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_2(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_4(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_8(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_16(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_32(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_64(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_128(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_256(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_512(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_add_buffer_511(frameItem* dst, frameItem src, const txEnv* env);
+bool sha_256_ctx_8_finalize(frameItem* dst, frameItem src, const txEnv* env);
 
 bool fe_normalize(frameItem* dst, frameItem src, const txEnv* env);
 bool fe_negate(frameItem* dst, frameItem src, const txEnv* env);

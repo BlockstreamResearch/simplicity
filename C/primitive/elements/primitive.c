@@ -186,6 +186,26 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
           if (code < 0) return code;
           switch (code) {
            case 1: *result = SHA_256_BLOCK; return 0;
+           case 2: *result = SHA_256_IV; return 0;
+           case 3: /* SHA-256-CTX-8-ADD-n subsection */
+             code = decodeUptoMaxInt(stream);
+             if (code < 0) return code;
+             switch (code) {
+               case 1: *result = SHA_256_CTX_8_ADD_1; return 0;
+               case 2: *result = SHA_256_CTX_8_ADD_2; return 0;
+               case 3: *result = SHA_256_CTX_8_ADD_4; return 0;
+               case 4: *result = SHA_256_CTX_8_ADD_8; return 0;
+               case 5: *result = SHA_256_CTX_8_ADD_16; return 0;
+               case 6: *result = SHA_256_CTX_8_ADD_32; return 0;
+               case 7: *result = SHA_256_CTX_8_ADD_64; return 0;
+               case 8: *result = SHA_256_CTX_8_ADD_128; return 0;
+               case 9: *result = SHA_256_CTX_8_ADD_256; return 0;
+               case 10: *result = SHA_256_CTX_8_ADD_512; return 0;
+             }
+             break;
+           case 4: *result = SHA_256_CTX_8_ADD_BUFFER_511; return 0;
+           case 5: *result = SHA_256_CTX_8_FINALIZE; return 0;
+           case 6: *result = SHA_256_CTX_8_INIT; return 0;
           }
           break;
         }

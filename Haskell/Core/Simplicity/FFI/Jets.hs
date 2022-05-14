@@ -4,7 +4,20 @@ module Simplicity.FFI.Jets
  ( add_32, full_add_32
  , subtract_32, full_subtract_32
  , multiply_32, full_multiply_32
- , sha_256_block
+ , sha_256_iv, sha_256_block
+ , sha_256_ctx_8_init
+ , sha_256_ctx_8_add_1
+ , sha_256_ctx_8_add_2
+ , sha_256_ctx_8_add_4
+ , sha_256_ctx_8_add_8
+ , sha_256_ctx_8_add_16
+ , sha_256_ctx_8_add_32
+ , sha_256_ctx_8_add_64
+ , sha_256_ctx_8_add_128
+ , sha_256_ctx_8_add_256
+ , sha_256_ctx_8_add_512
+ , sha_256_ctx_8_add_buffer_511
+ , sha_256_ctx_8_finalize
  , fe_normalize, fe_negate, fe_add, fe_square, fe_multiply, fe_multiply_beta, fe_invert, fe_square_root, fe_is_zero, fe_is_odd
  , scalar_normalize, scalar_negate, scalar_add, scalar_square, scalar_multiply, scalar_multiply_lambda, scalar_invert, scalar_is_zero
  , gej_infinity, gej_rescale, gej_normalize, gej_negate, ge_negate, gej_double, gej_add, gej_ge_add_ex, gej_ge_add, gej_is_infinity, gej_x_equiv, gej_y_is_odd, gej_is_on_curve, ge_is_on_curve
@@ -30,7 +43,21 @@ foreign import ccall unsafe "" c_full_subtract_32 :: Ptr FrameItem -> Ptr FrameI
 foreign import ccall unsafe "" c_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
+foreign import ccall unsafe "" c_sha_256_iv :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_sha_256_block :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_init :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_128 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_256 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_512 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_add_buffer_511 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_sha_256_ctx_8_finalize :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 foreign import ccall unsafe "" c_fe_normalize :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_fe_negate :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -92,8 +119,50 @@ multiply_32 = unsafeLocalCoreJet c_multiply_32
 full_multiply_32 :: ((Word32, Word32), (Word32, Word32)) -> Maybe Word64
 full_multiply_32 = unsafeLocalCoreJet c_full_multiply_32
 
+sha_256_iv :: () -> Maybe Sha256.Hash
+sha_256_iv = unsafeLocalCoreJet c_sha_256_iv
+
 sha_256_block :: (Sha256.Hash, Sha256.Block) -> Maybe Sha256.Hash
 sha_256_block = unsafeLocalCoreJet c_sha_256_block
+
+sha_256_ctx_8_init :: () -> Maybe Sha256.Ctx8
+sha_256_ctx_8_init = unsafeLocalCoreJet c_sha_256_ctx_8_init
+
+sha_256_ctx_8_add_1 :: (Sha256.Ctx8, Word8) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_1 = unsafeLocalCoreJet c_sha_256_ctx_8_add_1
+
+sha_256_ctx_8_add_2 :: (Sha256.Ctx8, Word16) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_2 = unsafeLocalCoreJet c_sha_256_ctx_8_add_2
+
+sha_256_ctx_8_add_4 :: (Sha256.Ctx8, Word32) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_4 = unsafeLocalCoreJet c_sha_256_ctx_8_add_4
+
+sha_256_ctx_8_add_8 :: (Sha256.Ctx8, Word64) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_8 = unsafeLocalCoreJet c_sha_256_ctx_8_add_8
+
+sha_256_ctx_8_add_16 :: (Sha256.Ctx8, Word128) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_16 = unsafeLocalCoreJet c_sha_256_ctx_8_add_16
+
+sha_256_ctx_8_add_32 :: (Sha256.Ctx8, Word256) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_32 = unsafeLocalCoreJet c_sha_256_ctx_8_add_32
+
+sha_256_ctx_8_add_64 :: (Sha256.Ctx8, Word512) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_64 = unsafeLocalCoreJet c_sha_256_ctx_8_add_64
+
+sha_256_ctx_8_add_128 :: (Sha256.Ctx8, Word1024) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_128 = unsafeLocalCoreJet c_sha_256_ctx_8_add_128
+
+sha_256_ctx_8_add_256 :: (Sha256.Ctx8, Word2048) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_256 = unsafeLocalCoreJet c_sha_256_ctx_8_add_256
+
+sha_256_ctx_8_add_512 :: (Sha256.Ctx8, Word4096) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_512 = unsafeLocalCoreJet c_sha_256_ctx_8_add_512
+
+sha_256_ctx_8_add_buffer_511 :: (Sha256.Ctx8, Buffer511 Word8) -> Maybe Sha256.Ctx8
+sha_256_ctx_8_add_buffer_511 = unsafeLocalCoreJet c_sha_256_ctx_8_add_buffer_511
+
+sha_256_ctx_8_finalize :: Sha256.Ctx8 -> Maybe Sha256.Hash
+sha_256_ctx_8_finalize = unsafeLocalCoreJet c_sha_256_ctx_8_finalize
 
 fe_normalize :: FE -> Maybe FE
 fe_normalize = unsafeLocalCoreJet c_fe_normalize
