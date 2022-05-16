@@ -11,7 +11,14 @@ mkDerivation (rec {
     ["LICENSE" ".cabal" ".hs" ".hsig" ".h" ".c"];
   libraryHaskellDepends = [ base binary cereal lens-family MemoTrie mtl SHA split tardis unification-fd vector ];
   testHaskellDepends = libraryHaskellDepends ++ [ QuickCheck tasty tasty-hunit tasty-quickcheck ];
-  testTarget = ''--test-option="--quickcheck-replay=582534"'';
+  preCheck = ''
+    export GHCRTS=-N$NIX_BUILD_CORES
+  '';
+  postCheck = ''
+    unset GHCRTS
+  '';
+  # Uncomment to make testing deterministic.
+  # testFlags = ["--quickcheck-replay=582534"];
 
   # Cabal's haddock doesn't work for Backpack / internal libraries / modules reexports.
   # Until that is fix we manually generate some documentation pages
