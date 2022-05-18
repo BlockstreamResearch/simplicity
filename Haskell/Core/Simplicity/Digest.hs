@@ -17,13 +17,13 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Short as BSS
 import qualified Data.ByteString.Lazy as BSL
-import Data.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
 import Data.List (foldl')
 import Data.Serialize (Serialize, encode, get, getShortByteString, put, putShortByteString)
 import Lens.Family2 (Adapter', Lens', (^.), (^..), over, review, under)
 import Lens.Family2.Stock (bend, bend_)
 import Lens.Family2.Unchecked (adapter)
 import Numeric (showHex)
+import Simplicity.Digest.Pure.SHA (SHA256State, sha256Incremental, padSHA1)
 import Simplicity.Word
 import Simplicity.Serialization
 

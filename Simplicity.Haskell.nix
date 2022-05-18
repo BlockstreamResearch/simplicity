@@ -1,4 +1,4 @@
-{ mkDerivation, base, binary, cereal, lens-family, lib, MemoTrie, mtl, QuickCheck, stdenv, SHA, split, tasty, tasty-hunit, tasty-quickcheck, tardis, unification-fd, vector }:
+{ mkDerivation, base, binary, cereal, lens-family, lib, MemoTrie, mtl, QuickCheck, stdenv, split, tasty, tasty-hunit, tasty-quickcheck, tardis, unification-fd, vector }:
 mkDerivation (rec {
   pname = "Simplicity";
   version = "0.0.0";
@@ -9,7 +9,7 @@ mkDerivation (rec {
                               "^C/include$" "^C/include/simplicity$" "^C/include/simplicity/elements$" "^C/include/simplicity/elements/env.h"
                               "^C/primitive$" "^C/primitive/elements$" "^C/primitive/elements/jets.*" "^C/primitive/elements/ops.*" "^C/primitive/elements/primitive.*" "^C/primitive/elements/env.c"])
     ["LICENSE" ".cabal" ".hs" ".hsig" ".h" ".c"];
-  libraryHaskellDepends = [ base binary cereal lens-family MemoTrie mtl SHA split tardis unification-fd vector ];
+  libraryHaskellDepends = [ base binary cereal lens-family MemoTrie mtl split tardis unification-fd vector ];
   testHaskellDepends = libraryHaskellDepends ++ [ QuickCheck tasty tasty-hunit tasty-quickcheck ];
   preCheck = ''
     export GHCRTS=-N$NIX_BUILD_CORES
