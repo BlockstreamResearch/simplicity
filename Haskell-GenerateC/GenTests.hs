@@ -1,7 +1,6 @@
 {-# LANGUAGE KindSignatures, ScopedTypeVariables #-}
 module GenTests where
 
-import Data.Array (listArray)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
@@ -9,6 +8,7 @@ import Data.Char (toUpper)
 import Data.List (intercalate)
 import Data.List.Split (chunksOf)
 import Data.Serialize (encode, runPut)
+import Data.Vector (fromList)
 import Numeric (showHex)
 import System.IO (hPutStrLn, stderr)
 import Lens.Family2 ((^.), over, review, to, Getter')
@@ -218,8 +218,8 @@ checkSigHashAllTx1 = Example
                   }
   tx1 = SigTx
         { sigTxVersion = 0x00000002
-        , sigTxIn = listArray (0, 0) [input0]
-        , sigTxOut = listArray (0, 1) [output0, output1]
+        , sigTxIn = fromList [input0]
+        , sigTxOut = fromList [output0, output1]
         , sigTxLock = 0
         }
    where
