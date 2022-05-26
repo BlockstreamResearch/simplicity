@@ -1,5 +1,10 @@
-{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc8107", coqVersion ? "coqPackages_8_14", secp256k1git ? null}:
-let hp = nixpkgs.haskell.packages.${compiler};
+{ nixpkgs ? import <nixpkgs> {}
+, ghc ? "ghc8107"
+, coqPackages ? "coqPackages_8_14"
+, secp256k1git ? null
+}:
+let hp = nixpkgs.haskell.packages.${ghc};
+    cp = nixpkgs.${coqPackages};
  in rec
 {
   haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix {};
@@ -11,20 +16,20 @@ let hp = nixpkgs.haskell.packages.${compiler};
   };
 
   coq = nixpkgs.callPackage ./Simplicity.Coq.nix {
-    inherit (nixpkgs.${coqVersion}) coq;
+    inherit (cp) coq;
     inherit vst;
   };
 
   c = nixpkgs.callPackage ./Simplicity.C.nix {};
 
   compcert = nixpkgs.callPackage ./compcert-opensource.nix {
-    inherit (nixpkgs.${coqVersion}) coq flocq;
-    inherit (nixpkgs.${coqVersion}.coq.ocamlPackages) ocaml menhir menhirLib findlib;
+    inherit (cp) coq flocq;
+    inherit (cp.coq.ocamlPackages) ocaml menhir menhirLib findlib;
     ccomp-platform = "x86_64-linux";
   };
 
   vst = nixpkgs.callPackage ./vst.nix {
-    inherit (nixpkgs.${coqVersion}) coq;
+    inherit (cp) coq;
     inherit compcert;
   };
 
