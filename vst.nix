@@ -4,8 +4,8 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "PrincetonUniversity";
     repo = "VST";
-    rev ="v2.9.1";
-    hash = "sha256-q/Us8bG1Sek2cuAT6mvwxihBKrVl77RW9m0N5uWOQL4=";
+    rev = "9a91f41c4ee1ff56a0c80111c86ed4b2fe51fa11";
+    hash = "sha256-dzsewWQYxbjyVDtdc3TZggoIm/RrHFsYtq88fkYcTQ8=";
   };
 
   buildInputs = [ coq ];

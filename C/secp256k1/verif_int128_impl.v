@@ -566,6 +566,9 @@ rewrite !Int64.signed_repr by
  change Int64.max_signed with (2^63 - 1);
  lia).
 forward.
+ entailer!.
+ rewrite Hmod32, Hdiv32, Z.mul_comm by auto.
+ apply Hmul64;[apply Hdiv32bound|apply Z.mod_pos_bound]; lia.
 change (Int.unsigned (Int.repr 32)) with 32.
 rewrite !Int64.mul_signed, Hmod32, Hdiv32 by auto.
 rewrite !Int64.signed_repr by
