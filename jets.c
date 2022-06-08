@@ -1,6 +1,22 @@
 #include "jets.h"
 #include "sha256.h"
 
+/* low_32 : ONE |- TWO^32 */
+bool low_32(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+  (void) src; // env is unused;
+  write32(dst, 0);
+  return true;
+}
+
+/* one_32 : ONE |- TWO^32 */
+bool one_32(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+  (void) src; // env is unused;
+  write32(dst, 1);
+  return true;
+}
+
 bool add_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
   uint_fast32_t x = read32(&src);
@@ -66,6 +82,15 @@ bool full_multiply_32(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast64_t z = read32(&src);
   uint_fast64_t w = read32(&src);
   write64(dst, x * y + z + w);
+  return true;
+}
+
+/* eq_32 : TWO^32 * TWO^32 |- TWO */
+bool eq_32(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+  uint_fast32_t x = read32(&src);
+  uint_fast32_t y = read32(&src);
+  writeBit(dst, x == y);
   return true;
 }
 

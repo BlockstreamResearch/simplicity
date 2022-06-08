@@ -21,12 +21,15 @@ typedef struct txEnv txEnv;
  */
 typedef bool (*jet_ptr)(frameItem* dst, frameItem src, const txEnv* env);
 
+bool low_32(frameItem* dst, frameItem src, const txEnv* env);
+bool one_32(frameItem* dst, frameItem src, const txEnv* env);
 bool add_32(frameItem* dst, frameItem src, const txEnv* env);
 bool full_add_32(frameItem* dst, frameItem src, const txEnv* env);
 bool subtract_32(frameItem* dst, frameItem src, const txEnv* env);
 bool full_subtract_32(frameItem* dst, frameItem src, const txEnv* env);
 bool multiply_32(frameItem* dst, frameItem src, const txEnv* env);
 bool full_multiply_32(frameItem* dst, frameItem src, const txEnv* env);
+bool eq_32(frameItem* dst, frameItem src, const txEnv* env);
 
 bool sha_256_iv(frameItem* dst, frameItem src, const txEnv* env);
 bool sha_256_block(frameItem* dst, frameItem src, const txEnv* env);

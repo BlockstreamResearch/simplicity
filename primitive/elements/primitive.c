@@ -128,11 +128,38 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
       if (code < 0) return code;
 
       switch (code) {
+       case 1: /* Word jets chapter */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return code;
+        switch (code) {
+         case 1: /* Low */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 5: *result = LOW_32; return 0;
+          }
+          break;
+         case 12: /* Eq */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 5: *result = EQ_32; return 0;
+          }
+          break;
+        }
+        break;
        case 2: /* Arith jets chapter */
         code = decodeUptoMaxInt(stream);
         if (code < 0) return code;
 
         switch (code) {
+         case 1: /* One */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 5: *result = ONE_32; return 0;
+          }
+          break;
          case 2: /* FullAdd */
           code = decodeUptoMaxInt(stream);
           if (code < 0) return code;
