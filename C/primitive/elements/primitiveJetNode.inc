@@ -65,6 +65,12 @@
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w512
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
+,[ONE_32] =
+{ .tag = JET
+, .jet = one_32
+, .sourceIx = ty_u
+, .targetIx = ty_w32
+}
 ,[FULL_ADD_32] =
 { .tag = JET
 , .jet = full_add_32
@@ -179,6 +185,12 @@
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
 }
+,[EQ_32] =
+{ .tag = JET
+, .jet = eq_32
+, .sourceIx = ty_w64
+, .targetIx = ty_b
+}
 ,[SHA_256_CTX_8_ADD_BUFFER_511] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_buffer_511
@@ -220,6 +232,12 @@
 , .jet = sha_256_ctx_8_add_512
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w4096
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
+,[LOW_32] =
+{ .tag = JET
+, .jet = low_32
+, .sourceIx = ty_u
+, .targetIx = ty_w32
 }
 ,[INPUT_ISSUANCE] =
 { .tag = JET

@@ -27,7 +27,14 @@ main = defaultMain tests
 
 tests :: TestTree
 tests = testGroup "C / SPEC"
-      [ testGroup "sha256" $
+      [ testGroup "word" $
+        [ testCase     "low_32" assert_low_32
+        , testProperty "eq_32"  prop_eq_32
+        ]
+      , testGroup "arith" $
+        [ testCase "one_32" assert_one_32
+        ]
+      , testGroup "sha256" $
         [ testCase     "sha_256_iv"                   assert_sha_256_iv
         , testProperty "sha_256_block"                prop_sha_256_block
         , testCase     "sha_256_ctx_8_init"           assert_sha_256_ctx_8_init
@@ -126,6 +133,23 @@ tests = testGroup "C / SPEC"
         [ testProperty "bip_0340_verify"   prop_bip_0340_verify
         ] ++ zipWith case_bip_0340_verify_vector [0..] bip0340Vectors
       ]
+
+assert_low_32 :: Assertion
+assert_low_32 = fastF () @=? C.low_32 ()
+ where
+  fastF = testCoreEval (specification (WordJet Low32))
+
+prop_eq_32 :: W.Word32 -> W.Word32 -> Bool
+prop_eq_32 = \x y -> let input = (toW32 x, toW32 y)
+                      in fastF input == C.eq_32 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Eq32))
+
+assert_one_32 :: Assertion
+assert_one_32 = fastF () @=? C.one_32 ()
+ where
+  fastF = testCoreEval (specification (ArithJet One32))
 
 assert_sha_256_iv :: Assertion
 assert_sha_256_iv = fastF () @=? C.sha_256_iv ()

@@ -47,6 +47,7 @@ tests = testGroup "Programs"
       [ testGroup "Word"
         [ testCase "low word8" assert_low8
         , testCase "high word8" assert_high8
+        , testCase "low_32" assert_low_32
         , testProperty "compelment word8" prop_complement8
         , testProperty "and word8" prop_and8
         , testProperty "or word8" prop_or8
@@ -56,6 +57,7 @@ tests = testGroup "Programs"
         , testProperty "ch word8" prop_ch8
         , testProperty "some word4" prop_some4
         , testProperty "all word4" prop_all4
+        , testProperty "eq_32" prop_eq_32
         , testProperty "shift_const_by false word8" prop_shift_const_by_false8
         , testProperty "rotate_const word8" prop_rotate_const8
         , testProperty "transpose zv2 zv8" prop_transpose_2x8
@@ -64,6 +66,7 @@ tests = testGroup "Programs"
       , testGroup "Arith"
         [ testCase "zero word8" assert_zero8
         , testCase "one word8" assert_one8
+        , testCase "one_32" assert_one_32
         , testProperty "full_add word8" prop_full_add8
         , testProperty "add word8" prop_fe_add8
         , testProperty "full_increment word8" prop_full_increment8
@@ -182,6 +185,15 @@ assert_low8 = 0 @=? fromWord8 (low word8 ())
 assert_high8 :: Assertion
 assert_high8 = 0xff @=? fromWord8 (high word8 ())
 
+assert_low_32 :: Assertion
+assert_low_32 = testCoreEval (specification (WordJet Low32)) () @=? implementation (WordJet Low32) ()
+
+prop_eq_32 :: W.Word32 -> W.Word32 -> Bool
+prop_eq_32 = \x y -> let input = (toW32 x, toW32 y)
+                      in fastF input == implementation (WordJet Eq32) input
+ where
+  fastF = testCoreEval (specification (WordJet Eq32))
+
 prop_complement8 :: Word8 -> Bool
 prop_complement8 x = W.complement (fromInteger . fromWord8 $ x) == (fromInteger . fromWord8 $ complement word8 x :: W.Word8)
 
@@ -256,6 +268,9 @@ assert_zero8 = 0 @=? fromWord8 (Arith.zero word8 ())
 
 assert_one8 :: Assertion
 assert_one8 = 0x1 @=? fromWord8 (Arith.one word8 ())
+
+assert_one_32 :: Assertion
+assert_one_32 = testCoreEval (specification (ArithJet One32)) () @=? implementation (ArithJet One32) ()
 
 -- The specification for full adder on Word8
 prop_full_add8 :: Bit -> Word8 -> Word8 -> Bool

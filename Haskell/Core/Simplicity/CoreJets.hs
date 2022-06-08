@@ -4,7 +4,7 @@
 -- The other exports of this library aid in building an instance of 'Simplicity.JetType.JetType' for those that make use of 'CoreJet' as a substructure.
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.CoreJets
- ( CoreJet(..), ArithJet(..), HashJet(..), Secp256k1Jet(..), SignatureJet(..), BitcoinJet(..)
+ ( CoreJet(..), WordJet(..), ArithJet(..), HashJet(..), Secp256k1Jet(..), SignatureJet(..), BitcoinJet(..)
  , specification, coreJetMap, coreJetLookup
  , implementation
  , fastCoreEval
@@ -26,7 +26,8 @@ import Simplicity.Digest
 import Simplicity.FFI.Jets as FFI
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
-import Simplicity.Programs.Arith
+import Simplicity.Programs.Arith as Prog
+import Simplicity.Programs.Generic as Prog
 import qualified Simplicity.Programs.TimeLock as TimeLock
 import qualified Simplicity.Programs.LibSecp256k1.Lib as Secp256k1
 import qualified Simplicity.Programs.Sha256.Lib as Sha256
@@ -46,10 +47,13 @@ deriving instance Eq (CoreJet a b)
 deriving instance Show (CoreJet a b)
 
 data WordJet a b where
+  Low32 :: WordJet () Word32
+  Eq32 :: WordJet (Word32, Word32) Bit
 deriving instance Eq (WordJet a b)
 deriving instance Show (WordJet a b)
 
 data ArithJet a b where
+  One32 :: ArithJet () Word32
   Add32 :: ArithJet (Word32, Word32) (Bit, Word32)
   FullAdd32 :: ArithJet (Bit, (Word32, Word32)) (Bit, Word32)
   Subtract32 :: ArithJet (Word32, Word32) (Bit, Word32)
@@ -133,13 +137,19 @@ deriving instance Show (BitcoinJet a b)
 
 -- | The specification of "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.specification' method.
 specification :: Assert term => CoreJet a b -> term a b
+specification (WordJet x) = specificationWord x
 specification (ArithJet x) = specificationArith x
 specification (HashJet x) = specificationHash x
 specification (Secp256k1Jet x) = specificationSecp256k1 x
 specification (SignatureJet x) = specificationSignature x
 specification (BitcoinJet x) = specificationBitcoin x
 
+specificationWord :: Assert term => WordJet a b -> term a b
+specificationWord Low32 = zero word32
+specificationWord Eq32 = eq
+
 specificationArith :: Assert term => ArithJet a b -> term a b
+specificationArith One32 = Prog.one word32
 specificationArith Add32 = add word32
 specificationArith FullAdd32 = full_add word32
 specificationArith Subtract32 = subtract word32
@@ -217,13 +227,19 @@ specificationBitcoin ParseSequence = TimeLock.parseSequence
 -- 'implementation' x === 'runKleisli' ('specification' x)
 -- @
 implementation :: CoreJet a b -> a -> Maybe b
+implementation (WordJet x) = implementationWord x
 implementation (ArithJet x) = implementationArith x
 implementation (HashJet x) = implementationHash x
 implementation (Secp256k1Jet x) = implementationSecp256k1 x
 implementation (SignatureJet x) = implementationSignature x
 implementation (BitcoinJet x) = implementationBitcoin x
 
+implementationWord :: WordJet a b -> a -> Maybe b
+implementationWord Low32 = const . return $ toWord32 0
+implementationWord Eq32 = \(x, y) -> return (toBit (x == y))
+
 implementationArith :: ArithJet a b -> a -> Maybe b
+implementationArith One32 = const . return $ toWord32 1
 implementationArith Add32 = \(x, y) -> do
   let z = fromWord32 x + fromWord32 y
   return (toBit (z >= 2 ^ 32), toWord32 z)
@@ -331,15 +347,26 @@ getJetBit :: (Monad m) => m Void -> m Bool -> m (SomeArrow CoreJet)
 getJetBit abort next =  getPositive next >>= match
  where
   makeArrow p = return (SomeArrow p)
+  match 1 = (someArrowMap WordJet) <$> getJetBitWord abort next
   match 2 = (someArrowMap ArithJet) <$> getJetBitArith abort next
   match 3 = (someArrowMap HashJet) <$> getJetBitHash abort next
   match 4 = (someArrowMap Secp256k1Jet) <$> getJetBitSecp256k1 abort next
   match 5 = (someArrowMap SignatureJet) <$> getJetBitSignature abort next
   match 7 = (someArrowMap BitcoinJet) <$> getJetBitBitcoin abort next
   match _ = vacuous abort
+  getJetBitWord :: (Monad m) => m Void -> m Bool -> m (SomeArrow WordJet)
+  getJetBitWord abort next = getPositive next >>= matchWord
+   where
+    matchWord 1 = getPositive next >>= matchLow
+    matchWord 12 = getPositive next >>= matchEq
+    matchLow 5 = makeArrow Low32
+    matchLow _ = vacuous abort
+    matchEq 5 = makeArrow Eq32
+    matchEq _ = vacuous abort
   getJetBitArith :: (Monad m) => m Void -> m Bool -> m (SomeArrow ArithJet)
   getJetBitArith abort next = getPositive next >>= matchArith
    where
+    matchArith 1 = getPositive next >>= matchOne
     matchArith 2 = getPositive next >>= matchFullAdd
     matchArith 3 = getPositive next >>= matchAdd
     matchArith 7 = getPositive next >>= matchFullSubtract
@@ -347,6 +374,8 @@ getJetBit abort next =  getPositive next >>= match
     matchArith 12 = getPositive next >>= matchFullMultiply
     matchArith 13 = getPositive next >>= matchMultiply
     matchArith _ = vacuous abort
+    matchOne 5 = makeArrow Add32
+    matchOne _ = vacuous abort
     matchAdd 5 = makeArrow Add32
     matchAdd _ = vacuous abort
     matchFullAdd 5 = makeArrow FullAdd32
@@ -443,13 +472,19 @@ getJetBit abort next =  getPositive next >>= match
 
 -- | A canonical serialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.putJetBit' method.
 putJetBit :: CoreJet a b -> DList Bool
+putJetBit (WordJet x) = putPositive 1 . putJetBitWord x
 putJetBit (ArithJet x) = putPositive 2 . putJetBitArith x
 putJetBit (HashJet x) = putPositive 3 . putJetBitHash x
 putJetBit (Secp256k1Jet x) = putPositive 4 . putJetBitSecp256k1 x
 putJetBit (SignatureJet x) = putPositive 5 . putJetBitSignature x
 putJetBit (BitcoinJet x) = putPositive 7 . putJetBitBitcoin x
 
+putJetBitWord :: WordJet a b -> DList Bool
+putJetBitWord Low32 = putPositive 1 . putPositive 5
+putJetBitWord Eq32 = putPositive 12 . putPositive 5
+
 putJetBitArith :: ArithJet a b -> DList Bool
+putJetBitArith One32          = putPositive 1 . putPositive 5
 putJetBitArith FullAdd32      = putPositive 2 . putPositive 5
 putJetBitArith Add32          = putPositive 3 . putPositive 5
 putJetBitArith FullSubtract32 = putPositive 7 . putPositive 5
@@ -525,8 +560,12 @@ putJetBitBitcoin ParseSequence  = putPositive 2
 -- This can be used to help instantiate the 'Simplicity.JetType.matcher' method.
 coreJetMap :: Map.Map Hash256 (SomeArrow CoreJet)
 coreJetMap = Map.fromList
-  [ -- ArithJet
-    mkAssoc (ArithJet Add32)
+  [ -- WordJet
+    mkAssoc (WordJet Low32)
+  , mkAssoc (WordJet Eq32)
+    -- ArithJet
+  , mkAssoc (ArithJet One32)
+  , mkAssoc (ArithJet Add32)
   , mkAssoc (ArithJet Subtract32)
   , mkAssoc (ArithJet Multiply32)
   , mkAssoc (ArithJet FullAdd32)
