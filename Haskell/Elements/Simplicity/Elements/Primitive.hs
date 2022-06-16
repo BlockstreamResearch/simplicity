@@ -48,13 +48,13 @@ data Prim a b where
   InputAmount :: Prim Word32 (S (Conf Word64))
   InputScriptHash :: Prim Word32 (S Word256)
   InputSequence :: Prim Word32 (S Word32)
-  InputReissuanceBlinding :: Prim Word32 (S (S Word256))
-  InputNewIssuanceContract :: Prim Word32 (S (S Word256))
-  InputReissuanceEntropy :: Prim Word32 (S (S Word256))
-  InputIssuanceAssetAmt :: Prim Word32 (S (S (Conf Word64)))
-  InputIssuanceTokenAmt :: Prim Word32 (S (S (Conf Word64)))
-  InputIssuanceAssetProof :: Prim Word32 (S Word256)
-  InputIssuanceTokenProof :: Prim Word32 (S Word256)
+  ReissuanceBlinding :: Prim Word32 (S (S Word256))
+  NewIssuanceContract :: Prim Word32 (S (S Word256))
+  ReissuanceEntropy :: Prim Word32 (S (S Word256))
+  IssuanceAssetAmt :: Prim Word32 (S (S (Conf Word64)))
+  IssuanceTokenAmt :: Prim Word32 (S (S (Conf Word64)))
+  IssuanceAssetProof :: Prim Word32 (S Word256)
+  IssuanceTokenProof :: Prim Word32 (S Word256)
   CurrentIndex :: Prim () Word32
   CurrentIsPegin :: Prim () Bit
   CurrentPrevOutpoint :: Prim () (Word256,Word32)
@@ -96,13 +96,13 @@ instance Eq (Prim a b) where
   InputAmount == InputAmount = True
   InputScriptHash == InputScriptHash = True
   InputSequence == InputSequence = True
-  InputReissuanceBlinding == InputReissuanceBlinding = True
-  InputNewIssuanceContract == InputNewIssuanceContract = True
-  InputReissuanceEntropy == InputReissuanceEntropy = True
-  InputIssuanceAssetAmt == InputIssuanceAssetAmt = True
-  InputIssuanceTokenAmt == InputIssuanceTokenAmt = True
-  InputIssuanceAssetProof == InputIssuanceAssetProof = True
-  InputIssuanceTokenProof == InputIssuanceTokenProof = True
+  ReissuanceBlinding == ReissuanceBlinding = True
+  NewIssuanceContract == NewIssuanceContract = True
+  ReissuanceEntropy == ReissuanceEntropy = True
+  IssuanceAssetAmt == IssuanceAssetAmt = True
+  IssuanceTokenAmt == IssuanceTokenAmt = True
+  IssuanceAssetProof == IssuanceAssetProof = True
+  IssuanceTokenProof == IssuanceTokenProof = True
   CurrentIndex == CurrentIndex = True
   CurrentIsPegin == CurrentIsPegin = True
   CurrentPrevOutpoint == CurrentPrevOutpoint = True
@@ -149,13 +149,13 @@ primName InputAsset = "inputAsset"
 primName InputAmount = "inputAmount"
 primName InputScriptHash = "inputScriptHash"
 primName InputSequence = "inputSequence"
-primName InputReissuanceBlinding = "inputReissuanceBlinding"
-primName InputNewIssuanceContract = "inputNewIssuanceContract"
-primName InputReissuanceEntropy = "inputReissuanceEntropy"
-primName InputIssuanceAssetAmt = "inputIssuanceAssetAmt"
-primName InputIssuanceTokenAmt = "inputIssuanceTokenAmt"
-primName InputIssuanceAssetProof = "inputIssuanceAssetProof"
-primName InputIssuanceTokenProof = "inputIssuanceTokenProof"
+primName ReissuanceBlinding = "reissuanceBlinding"
+primName NewIssuanceContract = "newIssuanceContract"
+primName ReissuanceEntropy = "reissuanceEntropy"
+primName IssuanceAssetAmt = "issuanceAssetAmt"
+primName IssuanceTokenAmt = "issuanceTokenAmt"
+primName IssuanceAssetProof = "issuanceAssetProof"
+primName IssuanceTokenProof = "issuanceTokenProof"
 primName CurrentIndex = "currentIndex"
 primName CurrentIsPegin = "currentIsPegin"
 primName CurrentPrevOutpoint = "currentPrevOutpoint"
@@ -188,8 +188,8 @@ primName ScriptCMR = "scriptCMR"
 getPrimBit :: Monad m => m Bool -> m (SomeArrow Prim)
 getPrimBit next =
   (((((makeArrow Version & makeArrow LockTime) & makeArrow InputIsPegin) & ((makeArrow InputPrevOutpoint & makeArrow InputAsset) & makeArrow InputAmount)) &
-    (((makeArrow InputScriptHash & makeArrow InputSequence) & makeArrow InputReissuanceBlinding) & ((makeArrow InputNewIssuanceContract & makeArrow InputReissuanceEntropy) & makeArrow InputIssuanceAssetAmt))) &
-   ((((makeArrow InputIssuanceTokenAmt & makeArrow InputIssuanceAssetProof) & makeArrow InputIssuanceTokenProof) & ((makeArrow OutputAsset & makeArrow OutputAmount) & makeArrow OutputNonce)) &
+    (((makeArrow InputScriptHash & makeArrow InputSequence) & makeArrow ReissuanceBlinding) & ((makeArrow NewIssuanceContract & makeArrow ReissuanceEntropy) & makeArrow IssuanceAssetAmt))) &
+   ((((makeArrow IssuanceTokenAmt & makeArrow IssuanceAssetProof) & makeArrow IssuanceTokenProof) & ((makeArrow OutputAsset & makeArrow OutputAmount) & makeArrow OutputNonce)) &
     (((makeArrow OutputScriptHash & makeArrow OutputNullDatum) & makeArrow OutputSurjectionProof) & (makeArrow OutputRangeProof & makeArrow ScriptCMR)))) &
   (((((makeArrow CurrentIndex & makeArrow CurrentIsPegin) & makeArrow CurrentPrevOutpoint) & ((makeArrow CurrentAsset & makeArrow CurrentAmount) & makeArrow CurrentScriptHash)) &
     (((makeArrow CurrentSequence & makeArrow CurrentReissuanceBlinding) & makeArrow CurrentNewIssuanceContract) & ((makeArrow CurrentReissuanceEntropy & makeArrow CurrentIssuanceAssetAmt) & makeArrow CurrentIssuanceTokenAmt))) &
@@ -211,13 +211,13 @@ putPrimBit = go
   go InputAmount                  = ([o,o,o,i,i]++)
   go InputScriptHash              = ([o,o,i,o,o,o]++)
   go InputSequence                = ([o,o,i,o,o,i]++)
-  go InputReissuanceBlinding      = ([o,o,i,o,i]++)
-  go InputNewIssuanceContract     = ([o,o,i,i,o,o]++)
-  go InputReissuanceEntropy       = ([o,o,i,i,o,i]++)
-  go InputIssuanceAssetAmt        = ([o,o,i,i,i]++)
-  go InputIssuanceTokenAmt        = ([o,i,o,o,o,o]++)
-  go InputIssuanceAssetProof      = ([o,i,o,o,o,i]++)
-  go InputIssuanceTokenProof      = ([o,i,o,o,i]++)
+  go ReissuanceBlinding           = ([o,o,i,o,i]++)
+  go NewIssuanceContract          = ([o,o,i,i,o,o]++)
+  go ReissuanceEntropy            = ([o,o,i,i,o,i]++)
+  go IssuanceAssetAmt             = ([o,o,i,i,i]++)
+  go IssuanceTokenAmt             = ([o,i,o,o,o,o]++)
+  go IssuanceAssetProof           = ([o,i,o,o,o,i]++)
+  go IssuanceTokenProof           = ([o,i,o,o,i]++)
   go OutputAsset                  = ([o,i,o,i,o,o]++)
   go OutputAmount                 = ([o,i,o,i,o,i]++)
   go OutputNonce                  = ([o,i,o,i,i]++)
@@ -346,18 +346,18 @@ primSem p a env = interpret p a
   interpret InputAmount = return . (atInput $ encodeAmount . utxoAmount . sigTxiTxo)
   interpret InputScriptHash = return . (atInput $ encodeHash . bslHash . utxoScript . sigTxiTxo)
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
-  interpret InputReissuanceBlinding = return . (atInput $
+  interpret ReissuanceBlinding = return . (atInput $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceBlindingNonce) <=< sigTxiIssuance))
-  interpret InputNewIssuanceContract = return . (atInput $
+  interpret NewIssuanceContract = return . (atInput $
       cast . fmap encodeHash . (either (Just . newIssuanceContractHash) (const Nothing) <=< sigTxiIssuance))
-  interpret InputReissuanceEntropy = return . (atInput $
+  interpret ReissuanceEntropy = return . (atInput $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance))
-  interpret InputIssuanceAssetAmt = return . (atInput $
+  interpret IssuanceAssetAmt = return . (atInput $
       cast . fmap (encodeAmount . clearAmountPrf . issuanceAmount) . sigTxiIssuance)
-  interpret InputIssuanceTokenAmt = return . (atInput $
+  interpret IssuanceTokenAmt = return . (atInput $
       cast . fmap (encodeAmount . clearAmountPrf . issuanceTokenAmount) . sigTxiIssuance)
-  interpret InputIssuanceAssetProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceAmount.under amount.prf_))
-  interpret InputIssuanceTokenProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceTokenAmount.under amount.prf_))
+  interpret IssuanceAssetProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceAmount.under amount.prf_))
+  interpret IssuanceTokenProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceTokenAmount.under amount.prf_))
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
   interpret CurrentIsPegin = element $ toBit . sigTxiIsPegin <$> currentInput
   interpret CurrentPrevOutpoint = element $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput

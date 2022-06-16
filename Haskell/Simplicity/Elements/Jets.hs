@@ -73,10 +73,10 @@ deriving instance Eq (TimeLockJet a b)
 deriving instance Show (TimeLockJet a b)
 
 data IssuanceJet a b where
-  InputIssuance :: IssuanceJet Word32 (S (S Bit))
-  InputIssuanceAsset :: IssuanceJet Word32 (S (S Word256))
-  InputIssuanceToken :: IssuanceJet Word32 (S (S Word256))
-  InputIssuanceEntropy :: IssuanceJet Word32 (S (S Word256))
+  Issuance :: IssuanceJet Word32 (S (S Bit))
+  IssuanceAsset :: IssuanceJet Word32 (S (S Word256))
+  IssuanceToken :: IssuanceJet Word32 (S (S Word256))
+  IssuanceEntropy :: IssuanceJet Word32 (S (S Word256))
   CalculateIssuanceEntropy :: IssuanceJet ((Word256, Word32), Word256) Word256
   CalculateAsset :: IssuanceJet Word256 Word256
   CalculateExplicitToken :: IssuanceJet Word256 Word256
@@ -100,10 +100,10 @@ specificationTimeLock TxLockDuration = TimeLock.txLockDuration
 specificationTimeLock TxIsFinal = TimeLock.txIsFinal
 
 specificationIssuance :: (Assert term, Primitive term) => IssuanceJet a b -> term a b
-specificationIssuance InputIssuance = Issuance.inputIssuance
-specificationIssuance InputIssuanceAsset = Issuance.inputIssuanceAsset
-specificationIssuance InputIssuanceToken = Issuance.inputIssuanceToken
-specificationIssuance InputIssuanceEntropy = Issuance.inputIssuanceEntropy
+specificationIssuance Issuance = Issuance.issuance
+specificationIssuance IssuanceAsset = Issuance.issuanceAsset
+specificationIssuance IssuanceToken = Issuance.issuanceToken
+specificationIssuance IssuanceEntropy = Issuance.issuanceEntropy
 specificationIssuance CalculateIssuanceEntropy = Issuance.calculateIssuanceEntropy
 specificationIssuance CalculateAsset = Issuance.calculateAsset
 specificationIssuance CalculateExplicitToken = Issuance.calculateExplicitToken
@@ -143,24 +143,24 @@ implementationTimeLock TxLockDuration env () = Just . toWord16 . fromIntegral $ 
 implementationTimeLock TxIsFinal env () = Just $ toBit (txIsFinal (envTx env))
 
 implementationIssuance :: IssuanceJet a b -> PrimEnv -> a -> Maybe b
-implementationIssuance InputIssuance env i = fmap (cast . fmap (cast . fmap toBit)) body
+implementationIssuance Issuance env i = fmap (cast . fmap (cast . fmap toBit)) body
  where
   cast = maybe (Left ()) Right
   body = return $ fmap isRight . sigTxiIssuance <$> sigTxIn (envTx env) !? (fromIntegral (fromWord32 i))
 
-implementationIssuance InputIssuanceEntropy env i = fmap (cast . fmap (cast . fmap fromHash)) body
+implementationIssuance IssuanceEntropy env i = fmap (cast . fmap (cast . fmap fromHash)) body
  where
   cast = maybe (Left ()) Right
   fromHash = toWord256 . integerHash256
   body = return $ sigTxiIssuanceEntropy <$> sigTxIn (envTx env) !? (fromIntegral (fromWord32 i))
 
-implementationIssuance InputIssuanceAsset env i = fmap (cast . fmap (cast . fmap fromHash)) body
+implementationIssuance IssuanceAsset env i = fmap (cast . fmap (cast . fmap fromHash)) body
  where
   cast = maybe (Left ()) Right
   fromHash = toWord256 . integerHash256
   body = return $ sigTxiIssuanceAsset <$> sigTxIn (envTx env) !? (fromIntegral (fromWord32 i))
 
-implementationIssuance InputIssuanceToken env i = fmap (cast . fmap (cast . fmap fromHash)) body
+implementationIssuance IssuanceToken env i = fmap (cast . fmap (cast . fmap fromHash)) body
  where
   cast = maybe (Left ()) Right
   fromHash = toWord256 . integerHash256
@@ -213,10 +213,10 @@ getJetBitElements abort next = getPositive next >>= match
     matchTimeLock _ = vacuous abort
   getJetBitIssuance = getPositive next >>= matchIssuance
    where
-    matchIssuance 1 = makeArrow InputIssuance
-    matchIssuance 2 = makeArrow InputIssuanceAsset
-    matchIssuance 3 = makeArrow InputIssuanceToken
-    matchIssuance 4 = makeArrow InputIssuanceEntropy
+    matchIssuance 1 = makeArrow Issuance
+    matchIssuance 2 = makeArrow IssuanceAsset
+    matchIssuance 3 = makeArrow IssuanceToken
+    matchIssuance 4 = makeArrow IssuanceEntropy
     matchIssuance 5 = makeArrow CalculateIssuanceEntropy
     matchIssuance 6 = makeArrow CalculateAsset
     matchIssuance 7 = makeArrow CalculateExplicitToken
@@ -231,17 +231,17 @@ putJetBitTimeLock CheckLockHeight   = putPositive 1
 putJetBitTimeLock CheckLockTime     = putPositive 2
 putJetBitTimeLock CheckLockDistance = putPositive 3
 putJetBitTimeLock CheckLockDuration = putPositive 4
-putJetBitTimeLock TxLockHeight   = putPositive 5
-putJetBitTimeLock TxLockTime     = putPositive 6
-putJetBitTimeLock TxLockDistance = putPositive 7
-putJetBitTimeLock TxLockDuration = putPositive 8
-putJetBitTimeLock TxIsFinal      = putPositive 9
+putJetBitTimeLock TxLockHeight      = putPositive 5
+putJetBitTimeLock TxLockTime        = putPositive 6
+putJetBitTimeLock TxLockDistance    = putPositive 7
+putJetBitTimeLock TxLockDuration    = putPositive 8
+putJetBitTimeLock TxIsFinal         = putPositive 9
 
 putJetBitIssuance :: IssuanceJet a b -> DList Bool
-putJetBitIssuance InputIssuance              = putPositive 1
-putJetBitIssuance InputIssuanceAsset         = putPositive 2
-putJetBitIssuance InputIssuanceToken         = putPositive 3
-putJetBitIssuance InputIssuanceEntropy       = putPositive 4
+putJetBitIssuance Issuance                   = putPositive 1
+putJetBitIssuance IssuanceAsset              = putPositive 2
+putJetBitIssuance IssuanceToken              = putPositive 3
+putJetBitIssuance IssuanceEntropy            = putPositive 4
 putJetBitIssuance CalculateIssuanceEntropy   = putPositive 5
 putJetBitIssuance CalculateAsset             = putPositive 6
 putJetBitIssuance CalculateExplicitToken     = putPositive 7
@@ -260,10 +260,10 @@ elementsJetMap = Map.fromList
   , mkAssoc (TimeLockJet TxLockDuration)
   , mkAssoc (TimeLockJet TxIsFinal)
     -- IssuanceJet
-  , mkAssoc (IssuanceJet InputIssuance)
-  , mkAssoc (IssuanceJet InputIssuanceAsset)
-  , mkAssoc (IssuanceJet InputIssuanceToken)
-  , mkAssoc (IssuanceJet InputIssuanceEntropy)
+  , mkAssoc (IssuanceJet Issuance)
+  , mkAssoc (IssuanceJet IssuanceAsset)
+  , mkAssoc (IssuanceJet IssuanceToken)
+  , mkAssoc (IssuanceJet IssuanceEntropy)
   , mkAssoc (IssuanceJet CalculateIssuanceEntropy)
   , mkAssoc (IssuanceJet CalculateAsset)
   , mkAssoc (IssuanceJet CalculateExplicitToken)

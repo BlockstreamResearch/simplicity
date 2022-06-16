@@ -156,19 +156,19 @@ prop_calculate_confidential_token = \entropy ->
   fast_calculate_confidential_token = testCoreEval Prog.calculateConfidentialToken
 
 prop_input_issuance :: Property
-prop_input_issuance = checkJet (ElementsJet (IssuanceJet InputIssuance))
+prop_input_issuance = checkJet (ElementsJet (IssuanceJet Issuance))
                     $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 prop_input_issuance_asset :: Property
-prop_input_issuance_asset = checkJet (ElementsJet (IssuanceJet InputIssuanceAsset))
+prop_input_issuance_asset = checkJet (ElementsJet (IssuanceJet IssuanceAsset))
                           $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 prop_input_issuance_token :: Property
-prop_input_issuance_token = checkJet (ElementsJet (IssuanceJet InputIssuanceToken))
+prop_input_issuance_token = checkJet (ElementsJet (IssuanceJet IssuanceToken))
                           $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 prop_input_issuance_entropy :: Property
-prop_input_issuance_entropy = checkJet (ElementsJet (IssuanceJet InputIssuanceEntropy))
+prop_input_issuance_entropy = checkJet (ElementsJet (IssuanceJet IssuanceEntropy))
                             $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 -- example test data from Elements Core 0.17

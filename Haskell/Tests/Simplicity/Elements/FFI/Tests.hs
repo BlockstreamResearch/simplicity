@@ -37,13 +37,13 @@ tests = testGroup "Elements"
           , testProperty "input_amount" prop_input_amount
           , testProperty "input_script_hash" prop_input_script_hash
           , testProperty "input_sequence" prop_input_sequence
-          , testProperty "input_reissuance_blinding" prop_input_reissuance_blinding
-          , testProperty "input_new_issuance_contract" prop_input_new_issuance_contract
-          , testProperty "input_reissuance_entropy" prop_input_reissuance_entropy
-          , testProperty "input_issuance_asset_amt" prop_input_issuance_asset_amt
-          , testProperty "input_issuance_token_amt" prop_input_issuance_token_amt
-          , testProperty "input_issuance_asset_proof" prop_input_issuance_asset_proof
-          , testProperty "input_issuance_token_proof" prop_input_issuance_token_proof
+          , testProperty "reissuance_blinding" prop_reissuance_blinding
+          , testProperty "new_issuance_contract" prop_new_issuance_contract
+          , testProperty "reissuance_entropy" prop_reissuance_entropy
+          , testProperty "issuance_asset_amt" prop_issuance_asset_amt
+          , testProperty "issuance_token_amt" prop_issuance_token_amt
+          , testProperty "issuance_asset_proof" prop_issuance_asset_proof
+          , testProperty "issuance_token_proof" prop_issuance_token_proof
           , testProperty "current_index" prop_current_index
           , testProperty "current_is_pegin" prop_current_is_pegin
           , testProperty "current_prev_outpoint" prop_current_prev_outpoint
@@ -86,10 +86,10 @@ tests = testGroup "Elements"
           , testProperty "calculate_asset" prop_calculate_asset
           , testProperty "calculate_explicit_token" prop_calculate_explicit_token
           , testProperty "calculate_confidential_token" prop_calculate_confidential_token
-          , testProperty "input_issuance" prop_input_issuance
-          , testProperty "input_issuance_asset" prop_input_issuance_asset
-          , testProperty "input_issuance_token" prop_input_issuance_token
-          , testProperty "input_issuance_entropy" prop_input_issuance_entropy
+          , testProperty "issuance" prop_issuance
+          , testProperty "issuance_asset" prop_issuance_asset
+          , testProperty "issuance_token" prop_issuance_token
+          , testProperty "issuance_entropy" prop_issuance_entropy
           ]
         ]
 
@@ -126,26 +126,26 @@ prop_input_sequence = forallInPrimEnv $ \env i -> primSem InputSequence (toW32 i
 prop_input_script_hash :: Property
 prop_input_script_hash = forallInPrimEnv $ \env i -> primSem InputScriptHash (toW32 i) env == input_script_hash env (toW32 i)
 
-prop_input_reissuance_blinding :: Property
-prop_input_reissuance_blinding = forallInPrimEnv $ \env i -> primSem InputReissuanceBlinding (toW32 i) env == input_reissuance_blinding env (toW32 i)
+prop_reissuance_blinding :: Property
+prop_reissuance_blinding = forallInPrimEnv $ \env i -> primSem ReissuanceBlinding (toW32 i) env == reissuance_blinding env (toW32 i)
 
-prop_input_new_issuance_contract :: Property
-prop_input_new_issuance_contract = forallInPrimEnv $ \env i -> primSem InputNewIssuanceContract (toW32 i) env == input_new_issuance_contract env (toW32 i)
+prop_new_issuance_contract :: Property
+prop_new_issuance_contract = forallInPrimEnv $ \env i -> primSem NewIssuanceContract (toW32 i) env == new_issuance_contract env (toW32 i)
 
-prop_input_reissuance_entropy :: Property
-prop_input_reissuance_entropy = forallInPrimEnv $ \env i -> primSem InputReissuanceEntropy (toW32 i) env == input_reissuance_entropy env (toW32 i)
+prop_reissuance_entropy :: Property
+prop_reissuance_entropy = forallInPrimEnv $ \env i -> primSem ReissuanceEntropy (toW32 i) env == reissuance_entropy env (toW32 i)
 
-prop_input_issuance_asset_amt :: Property
-prop_input_issuance_asset_amt = forallInPrimEnv $ \env i -> primSem InputIssuanceAssetAmt (toW32 i) env == input_issuance_asset_amt env (toW32 i)
+prop_issuance_asset_amt :: Property
+prop_issuance_asset_amt = forallInPrimEnv $ \env i -> primSem IssuanceAssetAmt (toW32 i) env == issuance_asset_amt env (toW32 i)
 
-prop_input_issuance_token_amt :: Property
-prop_input_issuance_token_amt = forallInPrimEnv $ \env i -> primSem InputIssuanceTokenAmt (toW32 i) env == input_issuance_token_amt env (toW32 i)
+prop_issuance_token_amt :: Property
+prop_issuance_token_amt = forallInPrimEnv $ \env i -> primSem IssuanceTokenAmt (toW32 i) env == issuance_token_amt env (toW32 i)
 
-prop_input_issuance_asset_proof :: Property
-prop_input_issuance_asset_proof = forallInPrimEnv $ \env i -> primSem InputIssuanceAssetAmt (toW32 i) env == input_issuance_asset_amt env (toW32 i)
+prop_issuance_asset_proof :: Property
+prop_issuance_asset_proof = forallInPrimEnv $ \env i -> primSem IssuanceAssetAmt (toW32 i) env == issuance_asset_amt env (toW32 i)
 
-prop_input_issuance_token_proof :: Property
-prop_input_issuance_token_proof = forallInPrimEnv $ \env i -> primSem InputIssuanceTokenAmt (toW32 i) env == input_issuance_token_amt env (toW32 i)
+prop_issuance_token_proof :: Property
+prop_issuance_token_proof = forallInPrimEnv $ \env i -> primSem IssuanceTokenAmt (toW32 i) env == issuance_token_amt env (toW32 i)
 
 prop_current_index :: Property
 prop_current_index = forallPrimEnv $ \env -> primSem CurrentIndex () env == current_index env ()
@@ -299,26 +299,26 @@ prop_calculate_confidential_token = \input ->
  where
   fast_calculate_confidential_token = testCoreEval Prog.calculateConfidentialToken
 
-prop_input_issuance :: Property
-prop_input_issuance = forallInPrimEnv $ \env i ->
-   fast_input_issuance env (toW32 i) == input_issuance env (toW32 i)
+prop_issuance :: Property
+prop_issuance = forallInPrimEnv $ \env i ->
+   fast_issuance env (toW32 i) == issuance env (toW32 i)
  where
-  fast_input_issuance = testEval (specification (ElementsJet (IssuanceJet InputIssuance)))
+  fast_issuance = testEval (specification (ElementsJet (IssuanceJet Issuance)))
 
-prop_input_issuance_asset :: Property
-prop_input_issuance_asset = forallInPrimEnv $ \env i ->
-   fast_input_issuance_asset env (toW32 i) == input_issuance_asset env (toW32 i)
+prop_issuance_asset :: Property
+prop_issuance_asset = forallInPrimEnv $ \env i ->
+   fast_issuance_asset env (toW32 i) == issuance_asset env (toW32 i)
  where
-  fast_input_issuance_asset = testEval (specification (ElementsJet (IssuanceJet InputIssuanceAsset)))
+  fast_issuance_asset = testEval (specification (ElementsJet (IssuanceJet IssuanceAsset)))
 
-prop_input_issuance_token :: Property
-prop_input_issuance_token = forallInPrimEnv $ \env i ->
-   fast_input_issuance_token env (toW32 i) == input_issuance_token env (toW32 i)
+prop_issuance_token :: Property
+prop_issuance_token = forallInPrimEnv $ \env i ->
+   fast_issuance_token env (toW32 i) == issuance_token env (toW32 i)
  where
-  fast_input_issuance_token = testEval (specification (ElementsJet (IssuanceJet InputIssuanceToken)))
+  fast_issuance_token = testEval (specification (ElementsJet (IssuanceJet IssuanceToken)))
 
-prop_input_issuance_entropy :: Property
-prop_input_issuance_entropy = forallInPrimEnv $ \env i ->
-   fast_input_issuance_entropy env (toW32 i) == input_issuance_entropy env (toW32 i)
+prop_issuance_entropy :: Property
+prop_issuance_entropy = forallInPrimEnv $ \env i ->
+   fast_issuance_entropy env (toW32 i) == issuance_entropy env (toW32 i)
  where
-  fast_input_issuance_entropy = testEval (specification (ElementsJet (IssuanceJet InputIssuanceEntropy)))
+  fast_issuance_entropy = testEval (specification (ElementsJet (IssuanceJet IssuanceEntropy)))
