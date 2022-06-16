@@ -11,6 +11,12 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_u
 }
+,[ISSUANCE_ENTROPY] =
+{ .tag = JET
+, .jet = issuance_entropy
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+}
 ,[SCALAR_MULTIPLY] =
 { .tag = JET
 , .jet = scalar_multiply
@@ -47,6 +53,12 @@
 , .sourceIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .targetIx = ty_w256
 }
+,[ISSUANCE_TOKEN] =
+{ .tag = JET
+, .jet = issuance_token
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+}
 ,[CALCULATE_EXPLICIT_TOKEN] =
 { .tag = JET
 , .jet = calculate_explicit_token
@@ -58,6 +70,12 @@
 , .jet = scalar_is_zero
 , .sourceIx = ty_w256
 , .targetIx = ty_b
+}
+,[ISSUANCE] =
+{ .tag = JET
+, .jet = issuance
+, .sourceIx = ty_w32
+, .targetIx = ty_mmb
 }
 ,[SHA_256_CTX_8_ADD_64] =
 { .tag = JET
@@ -118,6 +136,12 @@
 , .jet = gej_x_equiv
 , .sourceIx = ty_pw256pw512w256
 , .targetIx = ty_b
+}
+,[ISSUANCE_ASSET] =
+{ .tag = JET
+, .jet = issuance_asset
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
 }
 ,[SCALAR_ADD] =
 { .tag = JET
@@ -239,12 +263,6 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w32
 }
-,[INPUT_ISSUANCE] =
-{ .tag = JET
-, .jet = input_issuance
-, .sourceIx = ty_w32
-, .targetIx = ty_mmb
-}
 ,[BIP_0340_VERIFY] =
 { .tag = JET
 , .jet = bip_0340_verify
@@ -287,12 +305,6 @@
 , .sourceIx = ty_w512
 , .targetIx = ty_w256
 }
-,[INPUT_ISSUANCE_ENTROPY] =
-{ .tag = JET
-, .jet = input_issuance_entropy
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
-}
 ,[GEJ_NORMALIZE] =
 { .tag = JET
 , .jet = gej_normalize
@@ -328,12 +340,6 @@
 , .jet = fe_add
 , .sourceIx = ty_w512
 , .targetIx = ty_w256
-}
-,[INPUT_ISSUANCE_TOKEN] =
-{ .tag = JET
-, .jet = input_issuance_token
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
 }
 ,[SCALAR_INVERT] =
 { .tag = JET
@@ -406,12 +412,6 @@
 , .jet = gej_is_infinity
 , .sourceIx = ty_pw512w256
 , .targetIx = ty_b
-}
-,[INPUT_ISSUANCE_ASSET] =
-{ .tag = JET
-, .jet = input_issuance_asset
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
 }
 ,[ADD_32] =
 { .tag = JET
@@ -539,45 +539,45 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mw32
 }
-,[INPUT_REISSUANCE_BLINDING] =
+,[REISSUANCE_BLINDING] =
 { .tag = JET
-, .jet = input_reissuance_blinding
+, .jet = reissuance_blinding
 , .sourceIx = ty_w32
 , .targetIx = ty_mmw256
 }
-,[INPUT_NEW_ISSUANCE_CONTRACT] =
+,[NEW_ISSUANCE_CONTRACT] =
 { .tag = JET
-, .jet = input_new_issuance_contract
+, .jet = new_issuance_contract
 , .sourceIx = ty_w32
 , .targetIx = ty_mmw256
 }
-,[INPUT_REISSUANCE_ENTROPY] =
+,[REISSUANCE_ENTROPY] =
 { .tag = JET
-, .jet = input_reissuance_entropy
+, .jet = reissuance_entropy
 , .sourceIx = ty_w32
 , .targetIx = ty_mmw256
 }
-,[INPUT_ISSUANCE_ASSET_AMT] =
+,[ISSUANCE_ASSET_AMT] =
 { .tag = JET
-, .jet = input_issuance_asset_amt
+, .jet = issuance_asset_amt
 , .sourceIx = ty_w32
 , .targetIx = ty_mmspbw256w64
 }
-,[INPUT_ISSUANCE_TOKEN_AMT] =
+,[ISSUANCE_TOKEN_AMT] =
 { .tag = JET
-, .jet = input_issuance_token_amt
+, .jet = issuance_token_amt
 , .sourceIx = ty_w32
 , .targetIx = ty_mmspbw256w64
 }
-,[INPUT_ISSUANCE_ASSET_PROOF] =
+,[ISSUANCE_ASSET_PROOF] =
 { .tag = JET
-, .jet = input_issuance_asset_proof
+, .jet = issuance_asset_proof
 , .sourceIx = ty_w32
 , .targetIx = ty_mw256
 }
-,[INPUT_ISSUANCE_TOKEN_PROOF] =
+,[ISSUANCE_TOKEN_PROOF] =
 { .tag = JET
-, .jet = input_issuance_token_proof
+, .jet = issuance_token_proof
 , .sourceIx = ty_w32
 , .targetIx = ty_mw256
 }

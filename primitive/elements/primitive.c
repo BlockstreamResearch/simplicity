@@ -87,11 +87,11 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
      case 0x2: return either(result, INPUT_PREV_OUTPOINT, INPUT_ASSET, stream);
      case 0x3: *result = INPUT_AMOUNT; return 0;
      case 0x4: return either(result, INPUT_SCRIPT_HASH, INPUT_SEQUENCE, stream);
-     case 0x5: *result = INPUT_REISSUANCE_BLINDING; return 0;
-     case 0x6: return either(result, INPUT_NEW_ISSUANCE_CONTRACT, INPUT_REISSUANCE_ENTROPY, stream);
-     case 0x7: *result = INPUT_ISSUANCE_ASSET_AMT; return 0;
-     case 0x8: return either(result, INPUT_ISSUANCE_TOKEN_AMT, INPUT_ISSUANCE_ASSET_PROOF, stream);
-     case 0x9: *result = INPUT_ISSUANCE_TOKEN_PROOF; return 0;
+     case 0x5: *result = REISSUANCE_BLINDING; return 0;
+     case 0x6: return either(result, NEW_ISSUANCE_CONTRACT, REISSUANCE_ENTROPY, stream);
+     case 0x7: *result = ISSUANCE_ASSET_AMT; return 0;
+     case 0x8: return either(result, ISSUANCE_TOKEN_AMT, ISSUANCE_ASSET_PROOF, stream);
+     case 0x9: *result = ISSUANCE_TOKEN_PROOF; return 0;
      case 0xa: return either(result, OUTPUT_ASSET, OUTPUT_AMOUNT, stream);
      case 0xb: *result = OUTPUT_NONCE; return 0;
      case 0xc: return either(result, OUTPUT_SCRIPT_HASH, OUTPUT_NULL_DATUM, stream);
@@ -342,10 +342,10 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return code;
         switch (code) {
-         case 1: *result = INPUT_ISSUANCE; return 0;
-         case 2: *result = INPUT_ISSUANCE_ASSET; return 0;
-         case 3: *result = INPUT_ISSUANCE_TOKEN; return 0;
-         case 4: *result = INPUT_ISSUANCE_ENTROPY; return 0;
+         case 1: *result = ISSUANCE; return 0;
+         case 2: *result = ISSUANCE_ASSET; return 0;
+         case 3: *result = ISSUANCE_TOKEN; return 0;
+         case 4: *result = ISSUANCE_ENTROPY; return 0;
          case 5: *result = CALCULATE_ISSUANCE_ENTROPY; return 0;
          case 6: *result = CALCULATE_ASSET; return 0;
          case 7: *result = CALCULATE_EXPLICIT_TOKEN; return 0;

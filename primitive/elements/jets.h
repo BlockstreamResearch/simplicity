@@ -14,13 +14,13 @@ bool input_asset(frameItem* dst, frameItem src, const txEnv* env);
 bool input_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool input_script_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool input_sequence(frameItem* dst, frameItem src, const txEnv* env);
-bool input_reissuance_blinding(frameItem* dst, frameItem src, const txEnv* env);
-bool input_new_issuance_contract(frameItem* dst, frameItem src, const txEnv* env);
-bool input_reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env);
-bool input_issuance_asset_amt(frameItem* dst, frameItem src, const txEnv* env);
-bool input_issuance_token_amt(frameItem* dst, frameItem src, const txEnv* env);
-bool input_issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env);
-bool input_issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env);
+bool reissuance_blinding(frameItem* dst, frameItem src, const txEnv* env);
+bool new_issuance_contract(frameItem* dst, frameItem src, const txEnv* env);
+bool reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env);
+bool issuance_asset_amt(frameItem* dst, frameItem src, const txEnv* env);
+bool issuance_token_amt(frameItem* dst, frameItem src, const txEnv* env);
+bool issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env);
+bool issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool output_asset(frameItem* dst, frameItem src, const txEnv* env);
 bool output_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool output_nonce(frameItem* dst, frameItem src, const txEnv* env);
@@ -69,9 +69,9 @@ bool calculate_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env)
 bool calculate_asset(frameItem* dst, frameItem src, const txEnv* env);
 bool calculate_explicit_token(frameItem* dst, frameItem src, const txEnv* env);
 bool calculate_confidential_token(frameItem* dst, frameItem src, const txEnv* env);
-bool input_issuance(frameItem* dst, frameItem src, const txEnv* env);
-bool input_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env);
-bool input_issuance_asset(frameItem* dst, frameItem src, const txEnv* env);
-bool input_issuance_token(frameItem* dst, frameItem src, const txEnv* env);
+bool issuance(frameItem* dst, frameItem src, const txEnv* env);
+bool issuance_entropy(frameItem* dst, frameItem src, const txEnv* env);
+bool issuance_asset(frameItem* dst, frameItem src, const txEnv* env);
+bool issuance_token(frameItem* dst, frameItem src, const txEnv* env);
 
 #endif

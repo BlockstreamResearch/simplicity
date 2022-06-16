@@ -236,8 +236,8 @@ bool input_sequence(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_reissuance_blinding : TWO^32 |- S (S TWO^256) */
-bool input_reissuance_blinding(frameItem* dst, frameItem src, const txEnv* env) {
+/* reissuance_blinding : TWO^32 |- S (S TWO^256) */
+bool reissuance_blinding(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     reissuanceBlinding(dst, &env->tx->input[i].issuance);
@@ -247,8 +247,8 @@ bool input_reissuance_blinding(frameItem* dst, frameItem src, const txEnv* env) 
   return true;
 }
 
-/* input_new_issuance_contract : TWO^32 |- S (S TWO^256) */
-bool input_new_issuance_contract(frameItem* dst, frameItem src, const txEnv* env) {
+/* new_issuance_contract : TWO^32 |- S (S TWO^256) */
+bool new_issuance_contract(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     newIssuanceContract(dst, &env->tx->input[i].issuance);
@@ -258,8 +258,8 @@ bool input_new_issuance_contract(frameItem* dst, frameItem src, const txEnv* env
   return true;
 }
 
-/* input_reissuance_entropy : TWO^32 |- S (S TWO^256) */
-bool input_reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
+/* reissuance_entropy : TWO^32 |- S (S TWO^256) */
+bool reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     reissuanceEntropy(dst, &env->tx->input[i].issuance);
@@ -269,8 +269,8 @@ bool input_reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_issuance_asset_amt : TWO^32 |- S (S (Conf TWO^64)) */
-bool input_issuance_asset_amt(frameItem* dst, frameItem src, const txEnv* env) {
+/* issuance_asset_amt : TWO^32 |- S (S (Conf TWO^64)) */
+bool issuance_asset_amt(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     issuanceAssetAmt(dst, &env->tx->input[i].issuance);
@@ -280,8 +280,8 @@ bool input_issuance_asset_amt(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_issuance_token_amt : TWO^32 |- S (S (Conf TWO^64)) */
-bool input_issuance_token_amt(frameItem* dst, frameItem src, const txEnv* env) {
+/* issuance_token_amt : TWO^32 |- S (S (Conf TWO^64)) */
+bool issuance_token_amt(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     issuanceTokenAmt(dst, &env->tx->input[i].issuance);
@@ -291,8 +291,8 @@ bool input_issuance_token_amt(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_issuance_asset_proof : TWO^32 |- S TWO^256 */
-bool input_issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env) {
+/* issuance_asset_proof : TWO^32 |- S TWO^256 */
+bool issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     writeHash(dst, &env->tx->input[i].issuance.assetRangeProofHash);
@@ -302,8 +302,8 @@ bool input_issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env)
   return true;
 }
 
-/* input_issuance_token_proof : TWO^32 |- S TWO^256 */
-bool input_issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env) {
+/* issuance_token_proof : TWO^32 |- S TWO^256 */
+bool issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     writeHash(dst, &env->tx->input[i].issuance.tokenRangeProofHash);
@@ -731,8 +731,8 @@ bool calculate_confidential_token(frameItem* dst, frameItem src, const txEnv* en
   return true;
 }
 
-/* input_issuance : TWO^256 |- S (S TWO) */
-bool input_issuance(frameItem* dst, frameItem src, const txEnv* env) {
+/* issuance : TWO^256 |- S (S TWO) */
+bool issuance(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const sigInput* input = &env->tx->input[i];
@@ -747,8 +747,8 @@ bool input_issuance(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_issuance_entropy : TWO^256 |- S (S TWO^256) */
-bool input_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
+/* issuance_entropy : TWO^256 |- S (S TWO^256) */
+bool issuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const sigInput* input = &env->tx->input[i];
@@ -763,8 +763,8 @@ bool input_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_issuance_asset : TWO^256 |- S (S TWO^256) */
-bool input_issuance_asset(frameItem* dst, frameItem src, const txEnv* env) {
+/* issuance_asset : TWO^256 |- S (S TWO^256) */
+bool issuance_asset(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const sigInput* input = &env->tx->input[i];
@@ -779,8 +779,8 @@ bool input_issuance_asset(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_issuance_token : TWO^256 |- S (S TWO^256) */
-bool input_issuance_token(frameItem* dst, frameItem src, const txEnv* env) {
+/* issuance_token : TWO^256 |- S (S TWO^256) */
+bool issuance_token(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const sigInput* input = &env->tx->input[i];
