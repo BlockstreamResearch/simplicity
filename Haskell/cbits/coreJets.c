@@ -1,9 +1,5 @@
 #include "jets.h"
-
-#define COREWRAP_(jet)                                                                                                            \
-bool c_##jet(frameItem* dst, const frameItem* src) {                                                                          \
-  return jet(dst, *src, NULL);                                                                                                \
-}
+#include "wrappers.h"
 
 COREWRAP_(low_32)
 COREWRAP_(one_32)

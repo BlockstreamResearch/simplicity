@@ -1,14 +1,5 @@
 #include "primitive/elements/jets.h"
-
-#define COREWRAP_(jet)                                                                                                        \
-bool c_##jet(frameItem* dst, const frameItem* src) {                                                                          \
-  return jet(dst, *src, NULL);                                                                                                \
-}
-
-#define WRAP_(jet)                                                                                                            \
-bool c_##jet(frameItem* dst, const frameItem* src, const txEnv* env) {                                                        \
-  return jet(dst, *src, env);                                                                                                 \
-}
+#include "../wrappers.h"
 
 WRAP_(version)
 WRAP_(lock_time)
