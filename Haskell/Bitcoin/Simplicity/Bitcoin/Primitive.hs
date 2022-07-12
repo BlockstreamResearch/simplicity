@@ -26,20 +26,13 @@ import Simplicity.Ty.Word
 data Prim a b where
   Version :: Prim () Word32
   LockTime :: Prim () Word32
-  NumInputs :: Prim () Word32
   TotalInputValue :: Prim () Word64
-  CurrentPrevOutpoint :: Prim () (Word256,Word32)
-  CurrentValue :: Prim () Word64
-  CurrentSequence :: Prim () Word32
-  CurrentAnnexHash :: Prim () (Either () Word256)
-  CurrentScriptSigHash :: Prim () Word256
   CurrentIndex :: Prim () Word32
   InputPrevOutpoint :: Prim Word32 (Either () (Word256,Word32))
   InputValue :: Prim Word32 (Either () Word64)
   InputSequence :: Prim Word32 (Either () Word32)
   InputAnnexHash :: Prim Word32 (Either () (Either () Word256))
   InputScriptSigHash :: Prim Word32 (Either () Word256)
-  NumOutputs :: Prim () Word32
   TotalOutputValue :: Prim () Word64
   OutputValue :: Prim Word32 (Either () Word64)
   OutputScriptHash :: Prim Word32 (Either () Word256)
@@ -53,20 +46,13 @@ data Prim a b where
 instance Eq (Prim a b) where
   Version == Version = True
   LockTime == LockTime = True
-  NumInputs == NumInputs = True
   TotalInputValue == TotalInputValue = True
-  CurrentPrevOutpoint == CurrentPrevOutpoint = True
-  CurrentValue == CurrentValue = True
-  CurrentSequence == CurrentSequence = True
-  CurrentAnnexHash == CurrentAnnexHash = True
-  CurrentScriptSigHash == CurrentScriptSigHash = True
   CurrentIndex == CurrentIndex = True
   InputPrevOutpoint == InputPrevOutpoint = True
   InputValue == InputValue = True
   InputSequence == InputSequence = True
   InputAnnexHash == InputAnnexHash = True
   InputScriptSigHash == InputScriptSigHash = True
-  NumOutputs == NumOutputs = True
   TotalOutputValue == TotalOutputValue = True
   OutputValue == OutputValue = True
   OutputScriptHash == OutputScriptHash = True
@@ -83,20 +69,13 @@ primPrefix = "Bitcoin"
 primName :: Prim a b -> String
 primName Version = "version"
 primName LockTime = "lockTime"
-primName NumInputs = "numInputs"
 primName TotalInputValue = "totalInputValue"
-primName CurrentPrevOutpoint = "currentPrevOutpoint"
-primName CurrentValue = "currentValue"
-primName CurrentSequence = "currentSequence"
-primName CurrentAnnexHash = "currentAnnexHash"
-primName CurrentScriptSigHash = "currentScriptSigHash"
 primName CurrentIndex = "currentIndex"
 primName InputPrevOutpoint = "inputPrevOutpoint"
 primName InputValue = "inputValue"
 primName InputSequence = "inputSequence"
 primName InputAnnexHash = "inputAnnexHash"
 primName InputScriptSigHash = "inputScriptSigHash"
-primName NumOutputs = "maxOutputs"
 primName TotalOutputValue = "totalOutputValue"
 primName OutputValue = "outputValue"
 primName OutputScriptHash = "outputScriptHash"
@@ -152,20 +131,13 @@ primSem p a env = interpret p a
   encodeKey (Schnorr.PubKey x) = toWord256 . toInteger $ x
   interpret Version = element . return . toWord32 . toInteger $ sigTxVersion tx
   interpret LockTime = element . return . toWord32 . toInteger $ sigTxLock tx
-  interpret NumInputs = element . return . toWord32 . toInteger $ 1 + maxInput
   interpret TotalInputValue = element . return . toWord64 . fromIntegral . List.sum $ sigTxiValue <$> sigTxIn tx
-  interpret CurrentPrevOutpoint = element $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
-  interpret CurrentValue = element $ toWord64 . toInteger . sigTxiValue <$> currentInput
-  interpret CurrentSequence = element $ toWord32 . toInteger . sigTxiSequence <$> currentInput
-  interpret CurrentAnnexHash = element $ cast . fmap (encodeHash . bslHash) . sigTxiAnnex <$> currentInput
-  interpret CurrentScriptSigHash = element $ encodeHash . bslHash . sigTxiScriptSig <$> currentInput
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutpoint)
   interpret InputValue = return . (atInput $ toWord64 . toInteger . sigTxiValue)
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
   interpret InputAnnexHash = return . (atInput $ cast . fmap (encodeHash . bslHash) . sigTxiAnnex)
   interpret InputScriptSigHash = return . (atInput $ encodeHash . bslHash . sigTxiScriptSig)
-  interpret NumOutputs = element . return . toWord32 . toInteger $ 1 + maxOutput
   interpret TotalOutputValue = element . return . toWord64 . fromIntegral . List.sum $ txoValue <$> sigTxOut tx
   interpret OutputValue = return . (atOutput $ toWord64 . fromIntegral . txoValue)
   interpret OutputScriptHash = return . (atOutput $ encodeHash . bslHash . txoScript)

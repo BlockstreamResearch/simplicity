@@ -33,6 +33,7 @@ import qualified Simplicity.Bitcoin.Primitive as Prim
 import qualified Simplicity.Bitcoin.Serialization.BitString as BitString
 import qualified Simplicity.Bitcoin.Semantics as Semantics
 import qualified Simplicity.Bitcoin.Programs.TimeLock as TimeLock
+import qualified Simplicity.Bitcoin.Programs.Transaction.Lib as Prog
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Ty
@@ -114,17 +115,17 @@ specificationTransaction :: (Assert term, Primitive term) => TransactionJet a b 
 specificationTransaction ScriptCMR = primitive Prim.ScriptCMR
 specificationTransaction InternalKey = primitive Prim.InternalKey
 specificationTransaction CurrentIndex = primitive Prim.CurrentIndex
-specificationTransaction NumInputs = primitive Prim.NumInputs
-specificationTransaction NumOutputs = primitive Prim.NumOutputs
+specificationTransaction NumInputs = Prog.numInputs
+specificationTransaction NumOutputs = Prog.numOutputs
 specificationTransaction LockTime = primitive Prim.LockTime
 specificationTransaction OutputValue = primitive Prim.OutputValue
 specificationTransaction OutputScriptHash = primitive Prim.OutputScriptHash
 specificationTransaction TotalOutputValue = primitive Prim.TotalOutputValue
-specificationTransaction CurrentPrevOutpoint = primitive Prim.CurrentPrevOutpoint
-specificationTransaction CurrentValue = primitive Prim.CurrentValue
-specificationTransaction CurrentSequence = primitive Prim.CurrentSequence
-specificationTransaction CurrentAnnexHash = primitive Prim.CurrentAnnexHash
-specificationTransaction CurrentScriptSigHash = primitive Prim.CurrentScriptSigHash
+specificationTransaction CurrentPrevOutpoint = Prog.currentPrevOutpoint
+specificationTransaction CurrentValue = Prog.currentValue
+specificationTransaction CurrentSequence = Prog.currentSequence
+specificationTransaction CurrentAnnexHash = Prog.currentAnnexHash
+specificationTransaction CurrentScriptSigHash = Prog.currentScriptSigHash
 specificationTransaction InputPrevOutpoint = primitive Prim.InputPrevOutpoint
 specificationTransaction InputValue = primitive Prim.InputValue
 specificationTransaction InputSequence = primitive Prim.InputSequence

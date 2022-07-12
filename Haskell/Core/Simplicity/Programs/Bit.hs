@@ -45,10 +45,9 @@ cond thn els = match (drop els) (drop thn)
 ch :: (Core term, TyC a) => term (Bit, (a, a)) a
 ch = cond oh ih
 
--- | Requires the bit produced by @t@ to be 'true' and fails otherwise.
-assert :: (Assert term, TyC a) => term a Bit -> term a ()
-assert t = t &&& unit
-       >>> assertr cmrFail0 unit
+-- | Requires the value produced by @t@ to not be 'false' and fails otherwise.
+assert :: (Assert term, TyC a, TyC b) => term a (Either () b) -> term a b
+assert t = t &&& unit >>> assertr cmrFail0 oh
 
 -- | Simplicity combinator that computes inverts the Bit result of an expression.
 not :: (Core term, TyC a) => term a Bit -> term a Bit

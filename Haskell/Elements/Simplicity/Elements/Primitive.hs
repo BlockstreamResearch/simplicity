@@ -38,7 +38,6 @@ just_ f = some_ f
 data Prim a b where
   Version :: Prim () Word32
   LockTime :: Prim () Word32
-  NumInputs :: Prim () Word32
   InputPegin :: Prim Word32 (S (S Word256))
   InputPrevOutpoint :: Prim Word32 (S (Word256,Word32))
   InputAsset :: Prim Word32 (S (Conf Word256))
@@ -55,25 +54,9 @@ data Prim a b where
   IssuanceAssetProof :: Prim Word32 (S Word256)
   IssuanceTokenProof :: Prim Word32 (S Word256)
   CurrentIndex :: Prim () Word32
-  CurrentPegin :: Prim () (S Word256)
-  CurrentPrevOutpoint :: Prim () (Word256,Word32)
-  CurrentAsset :: Prim () (Conf Word256)
-  CurrentAmount :: Prim () (Conf Word64)
-  CurrentScriptHash :: Prim () Word256
-  CurrentSequence :: Prim () Word32
-  CurrentReissuanceBlinding :: Prim () (S Word256)
-  CurrentNewIssuanceContract :: Prim () (S Word256)
-  CurrentReissuanceEntropy :: Prim () (S Word256)
-  CurrentIssuanceAssetAmt :: Prim () (S (Conf Word64))
-  CurrentIssuanceTokenAmt :: Prim () (S (Conf Word64))
-  CurrentIssuanceAssetProof :: Prim () Word256
-  CurrentIssuanceTokenProof :: Prim () Word256
-  CurrentAnnexHash :: Prim () (S Word256)
-  CurrentScriptSigHash :: Prim () Word256
   TapleafVersion :: Prim () Word8
   Tapbranch :: Prim Word8 (S Word256)
   InternalKey :: Prim () PubKey
-  NumOutputs :: Prim () Word32
   OutputAsset :: Prim Word32 (S (Conf Word256))
   OutputAmount :: Prim Word32 (S (Conf Word64))
   OutputNonce :: Prim Word32 (S (S (Conf Word256)))
@@ -88,7 +71,6 @@ data Prim a b where
 instance Eq (Prim a b) where
   Version == Version = True
   LockTime == LockTime = True
-  NumInputs == NumInputs = True
   InputPegin == InputPegin = True
   InputPrevOutpoint == InputPrevOutpoint = True
   InputAsset == InputAsset = True
@@ -105,25 +87,9 @@ instance Eq (Prim a b) where
   IssuanceAssetProof == IssuanceAssetProof = True
   IssuanceTokenProof == IssuanceTokenProof = True
   CurrentIndex == CurrentIndex = True
-  CurrentPegin == CurrentPegin = True
-  CurrentPrevOutpoint == CurrentPrevOutpoint = True
-  CurrentAsset == CurrentAsset = True
-  CurrentAmount == CurrentAmount = True
-  CurrentScriptHash == CurrentScriptHash = True
-  CurrentSequence == CurrentSequence = True
-  CurrentReissuanceBlinding == CurrentReissuanceBlinding = True
-  CurrentNewIssuanceContract == CurrentNewIssuanceContract = True
-  CurrentReissuanceEntropy == CurrentReissuanceEntropy = True
-  CurrentIssuanceAssetAmt == CurrentIssuanceAssetAmt = True
-  CurrentIssuanceTokenAmt == CurrentIssuanceTokenAmt = True
-  CurrentIssuanceAssetProof == CurrentIssuanceAssetProof = True
-  CurrentIssuanceTokenProof == CurrentIssuanceTokenProof = True
-  CurrentAnnexHash == CurrentAnnexHash = True
-  CurrentScriptSigHash == CurrentScriptSigHash = True
   TapleafVersion == TapleafVersion = True
   Tapbranch == Tapbranch = True
   InternalKey == InternalKey = True
-  NumOutputs == NumOutputs = True
   OutputAsset == OutputAsset = True
   OutputAmount == OutputAmount = True
   OutputNonce == OutputNonce = True
@@ -143,7 +109,6 @@ primPrefix = "Elements"
 primName :: Prim a b -> String
 primName Version = "version"
 primName LockTime = "lockTime"
-primName NumInputs = "numInputs"
 primName InputPegin = "inputPegin"
 primName InputPrevOutpoint = "inputPrevOutpoint"
 primName InputAsset = "inputAsset"
@@ -160,25 +125,9 @@ primName IssuanceTokenAmt = "issuanceTokenAmt"
 primName IssuanceAssetProof = "issuanceAssetProof"
 primName IssuanceTokenProof = "issuanceTokenProof"
 primName CurrentIndex = "currentIndex"
-primName CurrentPegin = "currentPegin"
-primName CurrentPrevOutpoint = "currentPrevOutpoint"
-primName CurrentAsset = "currentAsset"
-primName CurrentAmount = "currentAmount"
-primName CurrentScriptHash = "currentScriptHash"
-primName CurrentSequence = "currentSequence"
-primName CurrentReissuanceBlinding = "currentReissuanceBlinding"
-primName CurrentNewIssuanceContract = "currentNewIssuanceContract"
-primName CurrentReissuanceEntropy = "currentReissuanceEntropy"
-primName CurrentIssuanceAssetAmt = "currentIssuanceAssetAmt"
-primName CurrentIssuanceTokenAmt = "currentIssuanceTokenAmt"
-primName CurrentIssuanceAssetProof = "currentIssuanceAssetProof"
-primName CurrentIssuanceTokenProof = "currentIssuanceTokenProof"
-primName CurrentAnnexHash = "currentAnnexHash"
-primName CurrentScriptSigHash = "currentScriptSigHash"
 primName TapleafVersion = "tapleafVersion"
 primName Tapbranch = "tapbranch"
 primName InternalKey = "internalKey"
-primName NumOutputs = "numOutputs"
 primName OutputAsset = "outputAsset"
 primName OutputAmount = "outputAmount"
 primName OutputNonce = "outputNonce"
@@ -238,9 +187,6 @@ primSem p a env = interpret p a
   ix = envIx env
   lookupInput = (sigTxIn tx !?) . fromIntegral
   lookupOutput = (sigTxOut tx !?) . fromIntegral
-  currentInput = lookupInput ix
-  maxInput = fromIntegral $ Vector.length (sigTxIn tx) - 1
-  maxOutput = fromIntegral $ Vector.length (sigTxOut tx) - 1
   cast :: Maybe a -> Either () a
   cast (Just x) = Right x
   cast Nothing = Left ()
@@ -284,7 +230,6 @@ primSem p a env = interpret p a
   issuanceTokenAmount = either newIssuanceTokenAmount (const (Amount (Explicit 0)))
   interpret Version = element . return . toWord32 . toInteger $ sigTxVersion tx
   interpret LockTime = element . return . toWord32 . toInteger $ sigTxLock tx
-  interpret NumInputs = element . return . toWord32 . toInteger $ 1 + maxInput
   interpret InputPegin = return . (atInput $ cast . fmap encodeHash . sigTxiPegin)
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutpoint)
   interpret InputAsset = return . (atInput $ encodeAsset . utxoAsset . sigTxiTxo)
@@ -306,30 +251,9 @@ primSem p a env = interpret p a
   interpret IssuanceAssetProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceAmount.under amount.prf_))
   interpret IssuanceTokenProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceTokenAmount.under amount.prf_))
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
-  interpret CurrentPegin = element $ cast . fmap encodeHash . sigTxiPegin <$> currentInput
-  interpret CurrentPrevOutpoint = element $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
-  interpret CurrentAsset = element $ encodeAsset . utxoAsset . sigTxiTxo <$> currentInput
-  interpret CurrentAmount = element $ encodeAmount . utxoAmount . sigTxiTxo <$> currentInput
-  interpret CurrentScriptHash = element $ encodeHash . bslHash . utxoScript . sigTxiTxo <$> currentInput
-  interpret CurrentSequence = element $ toWord32 . toInteger . sigTxiSequence <$> currentInput
-  interpret CurrentReissuanceBlinding = element $
-      cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceBlindingNonce) <=< sigTxiIssuance) <$> currentInput
-  interpret CurrentNewIssuanceContract = element $
-      cast . fmap encodeHash . (either (Just . newIssuanceContractHash) (const Nothing) <=< sigTxiIssuance) <$> currentInput
-  interpret CurrentReissuanceEntropy = element $
-      cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance) <$> currentInput
-  interpret CurrentIssuanceAssetAmt = element $
-      cast . fmap (encodeAmount . clearAmountPrf . issuanceAmount) . sigTxiIssuance <$> currentInput
-  interpret CurrentIssuanceTokenAmt = element $
-      cast . fmap (encodeAmount . clearAmountPrf . issuanceTokenAmount) . sigTxiIssuance <$> currentInput
-  interpret CurrentIssuanceAssetProof = element $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceAmount.under amount.prf_) <$> currentInput
-  interpret CurrentIssuanceTokenProof = element $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceTokenAmount.under amount.prf_) <$> currentInput
-  interpret CurrentAnnexHash = element $ cast . fmap (encodeHash . bslHash) . sigTxiAnnex <$> currentInput
-  interpret CurrentScriptSigHash = element $ encodeHash . bslHash . sigTxiScriptSig <$> currentInput
   interpret TapleafVersion = element . return . toWord8 . toInteger . tapleafVersion $ envTap env
   interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapbranch (envTap env)) . fromInteger . fromWord8
   interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env
-  interpret NumOutputs = element . return . toWord32 . toInteger $ 1 + maxOutput
   interpret OutputAsset = return . (atOutput $ encodeAsset . clearAssetPrf . txoAsset)
   interpret OutputAmount = return . (atOutput $ encodeAmount . clearAmountPrf . txoAmount)
   interpret OutputNonce = return . (atOutput $ encodeNonce . txoNonce)

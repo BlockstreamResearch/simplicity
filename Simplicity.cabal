@@ -121,7 +121,8 @@ library
                        Haskell/cbits/elements/jets.c Haskell/cbits/elements/env.c
   Include-dirs:        C C/include
   Includes:            primitive/elements/jets.h primitive/elements/primitive.h simplicity/elements/env.h
-  exposed-modules:     Simplicity.Bitcoin.Programs.TimeLock, Simplicity.Elements.Programs.TimeLock,
+  exposed-modules:     Simplicity.Bitcoin.Programs.Transaction, Simplicity.Bitcoin.Programs.Transaction.Lib,
+                       Simplicity.Bitcoin.Programs.TimeLock, Simplicity.Elements.Programs.TimeLock,
                        Simplicity.Elements.Programs.Issuance, Simplicity.Elements.Programs.Issuance.Lib,
                        Simplicity.Elements.Programs.SigHash, Simplicity.Elements.Programs.SigHash.Lib,
                        Simplicity.Elements.Programs.Transaction, Simplicity.Elements.Programs.Transaction.Lib,

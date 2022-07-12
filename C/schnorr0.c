@@ -27,15 +27,15 @@ const size_t sizeof_schnorr0 = sizeof(schnorr0);
 
 /* The commitment Merkle root of the above schnorr0 Simplicity expression. */
 const uint32_t schnorr0_cmr[] = {
-  0x6061cd8au, 0x2afa5ecau, 0xd42d65a0u, 0x51f888adu, 0xb6a58192u, 0x74734fbdu, 0x7eade674u, 0x438b9f97u
+  0x1778633au, 0x0fd8b788u, 0x7cfa7884u, 0xe4e0442eu, 0x10b72b78u, 0x34403037u, 0x75a3539eu, 0xd186e722u
 };
 
 /* The identity Merkle root of the above schnorr0 Simplicity expression. */
 const uint32_t schnorr0_imr[] = {
-  0xb4549770u, 0x993624c3u, 0x9cff1c78u, 0x7f798f4cu, 0xda429816u, 0x0be8cb12u, 0x46e90488u, 0x7ebcac79u
+  0xc450bb1du, 0x4b0180fbu, 0x676b0372u, 0xaff39877u, 0x567097c1u, 0x6677bdc3u, 0x99d195fcu, 0xaa4c6ee1u
 };
 
 /* The annotated Merkle root of the above schnorr0 Simplicity expression. */
 const uint32_t schnorr0_amr[] = {
-  0x781f58a2u, 0xcc5eca9bu, 0x948d6fc1u, 0x2bdadcf8u, 0xddbbb101u, 0x3326868fu, 0x233918c4u, 0x91913244u
+  0x7882912bu, 0xed4a4c5cu, 0x21909cdau, 0x69577136u, 0xd6eac670u, 0xd82dc5e6u, 0xa9eb5908u, 0x79cbd114u
 };
