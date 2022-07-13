@@ -195,8 +195,6 @@ typedef struct sigInput {
 typedef struct transaction {
   const sigInput* input;
   const sigOutput* output;
-  sha256_midstate inputsHash_deprecated;
-  sha256_midstate outputsHash_deprecated;
   sha256_midstate outputAssetAmountsHash;
   sha256_midstate outputNoncesHash;
   sha256_midstate outputScriptsHash;
@@ -230,13 +228,11 @@ typedef struct transaction {
 } transaction;
 
 /* A structure representing taproot spending data from an Elements transaction.
- * 'annexHash' is a cache of the hash of the annex.
  *
  * Invariant: branchLen <= 128
  *            sha256_midstate branch[branchLen];
  */
 typedef struct tapEnv {
-  const sha256_midstate *annexHash;
   const sha256_midstate *branch;
   sha256_midstate tapLeafHash;
   sha256_midstate tapbranchHash;

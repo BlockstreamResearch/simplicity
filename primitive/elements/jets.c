@@ -202,17 +202,6 @@ bool input_asset(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_amount : TWO^32 |- S (Conf TWO^64) */
-bool input_amount(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
-  if (writeBit(dst, i < env->tx->numInputs)) {
-    amt(dst, &env->tx->input[i].txo.amt);
-  } else {
-    skipBits(dst, 258);
-  }
-  return true;
-}
-
 /* input_asset_amount : TWO^32 |- S (Conf TWO^256, Conf TWO^64) */
 bool input_asset_amount(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
@@ -355,17 +344,6 @@ bool output_asset(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     asset(dst, &env->tx->output[i].asset);
-  } else {
-    skipBits(dst, 258);
-  }
-  return true;
-}
-
-/* output_amount : TWO^32 |- S (Conf TWO^64) */
-bool output_amount(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
-  if (writeBit(dst, i < env->tx->numOutputs)) {
-    amt(dst, &env->tx->output[i].amt);
   } else {
     skipBits(dst, 258);
   }
@@ -530,14 +508,6 @@ bool current_asset(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* current_amount : ONE |- Conf TWO^64 */
-bool current_amount(frameItem* dst, frameItem src, const txEnv* env) {
-  (void) src; // src is unused;
-  if (env->tx->numInputs <= env->ix) return false;
-  amt(dst, &env->tx->input[env->ix].txo.amt);
-  return true;
-}
-
 /* current_asset_amount : ONE |- (Conf TWO^256, Conf TWO^64) */
 bool current_asset_amount(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
@@ -661,31 +631,6 @@ bool tapbranch(frameItem* dst, frameItem src, const txEnv* env) {
 bool internal_key(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   writeHash(dst, &env->taproot->internalKey);
-  return true;
-}
-
-/* annex_hash : ONE |- S (TWO^256) */
-bool annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
-  (void) src; // src is unused;
-  if (writeBit(dst, env->taproot->annexHash)) {
-    writeHash(dst, env->taproot->annexHash);
-  } else {
-    skipBits(dst, 256);
-  }
-  return true;
-}
-
-/* inputs_hash_deprecated : ONE |- TWO^256 */
-bool inputs_hash_deprecated(frameItem* dst, frameItem src, const txEnv* env) {
-  (void) src; // src is unused;
-  writeHash(dst, &env->tx->inputsHash_deprecated);
-  return true;
-}
-
-/* outputs_hash_deprecated : ONE |- TWO^256 */
-bool outputs_hash_deprecated(frameItem* dst, frameItem src, const txEnv* env) {
-  (void) src; // src is unused;
-  writeHash(dst, &env->tx->outputsHash_deprecated);
   return true;
 }
 

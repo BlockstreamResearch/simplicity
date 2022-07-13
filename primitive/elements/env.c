@@ -22,18 +22,6 @@ static void sha256_hash(sha256_context* ctx, const sha256_midstate* h) {
   sha256_uchars(ctx, buf, sizeof(buf));
 }
 
-/* Add an 'outpoint' to be consumed by an ongoing SHA-256 evaluation.
- * The 'txid' is consumed first in big endian order.
- * The 'ix' is consumed next in little endian byte-order.
- *
- * Precondition: NULL != ctx;
- *               NULL != op;
- */
-static void sha256_outpoint(sha256_context* ctx, const outpoint* op) {
-  sha256_hash(ctx, &op->txid);
-  sha256_u32le(ctx,op->ix);
-}
-
 /* Add an 'confidential' value to be consumed by an ongoing SHA-256 evaluation.
  * If the 'confidential' value is blinded, then the 'evenPrefix' used if the y coordinate is even,
  * and the 'oddPrefix' is used if the y coordinate is odd.
@@ -100,52 +88,6 @@ static void hashBuffer(sha256_midstate* result, const rawBuffer* buffer) {
   sha256_context ctx = sha256_init(result->s);
   sha256_uchars(&ctx, buffer->buf, buffer->len);
   sha256_finalize(&ctx);
-}
-
-/* Add an 'assetIssuance' to be consumed by an ongoing SHA-256 evaluation.
- *
- * Precondition: NULL != ctx;
- *               NULL != issuance;
- */
-static void sha256_issuance(sha256_context* ctx, const assetIssuance* issuance) {
-  switch (issuance->type) {
-   case NO_ISSUANCE:
-    sha256_uchar(ctx, 0);
-    sha256_uchar(ctx, 0);
-    break;
-   case NEW_ISSUANCE:
-    if (EXPLICIT == issuance->assetAmt.prefix  && 0 == issuance->assetAmt.explicit) {
-      sha256_uchar(ctx, 0);
-    } else {
-      sha256_confAmt(ctx, &issuance->assetAmt);
-    }
-    if (EXPLICIT == issuance->tokenAmt.prefix  && 0 == issuance->tokenAmt.explicit) {
-      sha256_uchar(ctx, 0);
-    } else {
-      sha256_confAmt(ctx, &issuance->tokenAmt);
-    }
-    sha256_hash(ctx, &(sha256_midstate){0});
-    sha256_hash(ctx, &issuance->contractHash);
-    sha256_hash(ctx, &issuance->assetRangeProofHash);
-    sha256_hash(ctx, &issuance->tokenRangeProofHash);
-    break;
-   case REISSUANCE:
-    if (EXPLICIT == issuance->assetAmt.prefix  && 0 == issuance->assetAmt.explicit) {
-      sha256_uchar(ctx, 0);
-    } else {
-      sha256_confAmt(ctx, &issuance->assetAmt);
-    }
-    sha256_uchar(ctx, 0);
-    sha256_hash(ctx, &issuance->blindingNonce);
-    sha256_hash(ctx, &issuance->entropy);
-    sha256_hash(ctx, &issuance->assetRangeProofHash);
-    {
-      sha256_midstate empty;
-      hashBuffer(&empty, &(rawBuffer){0});
-      sha256_hash(ctx, &empty);
-    }
-    break;
-  }
 }
 
 /* Initialize a 'confidential' asset or 'confidential' nonce from an unsigned char array from a 'rawTransaction'.
@@ -429,7 +371,6 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
                      };
 
   {
-    sha256_context ctx_inputsHash_deprecated = sha256_init(tx->inputsHash_deprecated.s);
     sha256_context ctx_inputOutpointsHash = sha256_init(tx->inputOutpointsHash.s);
     sha256_context ctx_inputAssetAmountsHash = sha256_init(tx->inputAssetAmountsHash.s);
     sha256_context ctx_inputScriptsHash = sha256_init(tx->inputScriptsHash.s);
@@ -454,9 +395,6 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
             if (tx->lockDistance < maskedSequence) tx->lockDistance = maskedSequence;
          }
       }
-      sha256_outpoint(&ctx_inputsHash_deprecated, &input[i].prevOutpoint);
-      sha256_u32le(&ctx_inputsHash_deprecated, input[i].sequence);
-      sha256_issuance(&ctx_inputsHash_deprecated, &input[i].issuance);
       if (input[i].isPegin) {
         sha256_uchar(&ctx_inputOutpointsHash, 1);
         sha256_hash(&ctx_inputOutpointsHash, &input[i].pegin);
@@ -501,7 +439,6 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
       sha256_hash(&ctx_issuanceRangeProofsHash, &input[i].issuance.assetRangeProofHash);
       sha256_hash(&ctx_issuanceRangeProofsHash, &input[i].issuance.tokenRangeProofHash);
     }
-    sha256_finalize(&ctx_inputsHash_deprecated);
     sha256_finalize(&ctx_inputOutpointsHash);
     sha256_finalize(&ctx_inputAssetAmountsHash);
     sha256_finalize(&ctx_inputScriptsHash);
@@ -531,7 +468,6 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
   }
 
   {
-    sha256_context ctx_outputsHash_deprecated = sha256_init(tx->outputsHash_deprecated.s);
     sha256_context ctx_outputAssetAmountsHash = sha256_init(tx->outputAssetAmountsHash.s);
     sha256_context ctx_outputNoncesHash = sha256_init(tx->outputNoncesHash.s);
     sha256_context ctx_outputScriptsHash = sha256_init(tx->outputScriptsHash.s);
@@ -540,12 +476,6 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
     sha256_context ctx_outputsHash = sha256_init(tx->outputsHash.s);
     for (uint_fast32_t i = 0; i < tx->numOutputs; ++i) {
       copyOutput(&output[i], &ops, &opsLen, &rawTx->output[i]);
-      sha256_confAsset(&ctx_outputsHash_deprecated, &output[i].asset);
-      sha256_confAmt(&ctx_outputsHash_deprecated, &output[i].amt);
-      sha256_confNonce(&ctx_outputsHash_deprecated, &output[i].nonce);
-      sha256_hash(&ctx_outputsHash_deprecated, &output[i].scriptPubKey);
-      sha256_hash(&ctx_outputsHash_deprecated, &output[i].surjectionProofHash);
-      sha256_hash(&ctx_outputsHash_deprecated, &output[i].rangeProofHash);
       sha256_confAsset(&ctx_outputAssetAmountsHash, &output[i].asset);
       sha256_confAmt(&ctx_outputAssetAmountsHash, &output[i].amt);
       sha256_confNonce(&ctx_outputNoncesHash, &output[i].nonce);
@@ -553,7 +483,6 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
       sha256_hash(&ctx_outputRangeProofsHash, &output[i].rangeProofHash);
       sha256_hash(&ctx_outputSurjectionProofsHash, &output[i].surjectionProofHash);
     }
-    sha256_finalize(&ctx_outputsHash_deprecated);
     sha256_finalize(&ctx_outputAssetAmountsHash);
     sha256_finalize(&ctx_outputNoncesHash);
     sha256_finalize(&ctx_outputScriptsHash);
@@ -592,7 +521,7 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
 
   size_t allocationSize = sizeof(tapEnv);
 
-  const size_t numMidstate = rawEnv->branchLen + (size_t)!!rawEnv->annex;
+  const size_t numMidstate = rawEnv->branchLen;
   const size_t pad1 = PADDING(sha256_midstate, allocationSize);
 
   if (numMidstate) {
@@ -608,7 +537,6 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
   if (!allocation) return NULL;
 
   tapEnv* const env = (tapEnv*)allocation;
-  sha256_midstate* annexHash = NULL;
   sha256_midstate* branch = NULL;
   sha256_midstate internalKey;
 
@@ -617,27 +545,17 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
   if (numMidstate)  {
     allocation += sizeof(tapEnv) + pad1;
 
-    if (rawEnv->annex) {
-      annexHash = (sha256_midstate*)allocation;
-      allocation += sizeof(sha256_midstate);
-    }
-
     if (rawEnv->branchLen) {
       branch = (sha256_midstate*)allocation;
     }
   }
 
-  *env = (tapEnv){ .annexHash = annexHash
-                 , .leafVersion = rawEnv->controlBlock[0] & 0xfe
+  *env = (tapEnv){ .leafVersion = rawEnv->controlBlock[0] & 0xfe
                  , .internalKey = internalKey
                  , .branch = branch
                  , .branchLen = rawEnv->branchLen
                  };
   sha256_toMidstate(env->scriptCMR.s, rawEnv->scriptCMR);
-
-  if (annexHash) {
-    hashBuffer(annexHash, rawEnv->annex);
-  }
 
   {
     sha256_context ctx = sha256_init(env->tapbranchHash.s);
