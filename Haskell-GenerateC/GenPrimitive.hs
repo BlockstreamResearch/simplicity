@@ -2,8 +2,9 @@ module GenPrimitives where
 
 import Control.Monad.Cont (Cont, cont, runCont)
 import Data.Char (isAlphaNum, isDigit, isUpper, toLower, toUpper)
+import Data.Function (on)
 import Data.Functor.Fixedpoint (Fix(..))
-import Data.List (groupBy, intercalate)
+import Data.List (groupBy, intercalate, sortBy)
 import Data.List.Split (chunksOf, condense, dropInitBlank, keepDelimsL, split, whenElt)
 import Data.Maybe (isJust)
 import qualified Data.Map as Map
@@ -24,10 +25,14 @@ enumerate tree = runCont (tree end branch) (:) []
   branch = cont $ \k -> k False . k True
 
 jetList :: [SomeArrow JetType]
-jetList = Map.elems jetMap
+jetList = sortBy (compare `on` name) $ Map.elems jetMap
+ where
+  name (SomeArrow j) = jetName j
 
 primList :: [SomeArrow Prim]
-primList = enumerate (const getPrimBit)
+primList = sortBy (compare `on` name) $ enumerate (const getPrimBit)
+ where
+  name (SomeArrow j) = primName j
 
 snakeCase :: String -> String
 snakeCase str = intercalate "_" . groupSingles $ (split . keepDelimsL . dropInitBlank . whenElt) isUpper =<< splitDigit
