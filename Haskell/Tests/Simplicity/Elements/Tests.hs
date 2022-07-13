@@ -585,8 +585,7 @@ prop_genesis_block_hash = checkJet (ElementsJet (TransactionJet GenesisBlockHash
 
 tapEnv :: TapEnv
 tapEnv = TapEnv
-         { tapAnnex = Nothing
-         , tapleafVersion = 0xbe
+         { tapleafVersion = 0xbe
          , tapInternalKey = Schnorr.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
          , tapbranch = []
          , tapScriptCMR = review (over be256) 0x896b16e4692350cb43c4807c8f9f63637f70f84a17b678ca9467109ff1e50f61

@@ -54,7 +54,7 @@ foreign import ccall unsafe "" c_set_rawTransaction :: Ptr RawTransaction -> CUI
                                                                           -> Ptr RawInput -> CUInt
                                                                           -> Ptr RawOutput -> CUInt
                                                                           -> CUInt -> IO ()
-foreign import ccall unsafe "" c_set_rawTapEnv :: Ptr RawTapEnv -> Ptr RawBuffer -> Ptr CChar -> CUChar -> Ptr CChar -> IO ()
+foreign import ccall unsafe "" c_set_rawTapEnv :: Ptr RawTapEnv -> Ptr CChar -> CUChar -> Ptr CChar -> IO ()
 foreign import ccall unsafe "" c_set_txEnv :: Ptr CTxEnv -> Ptr CTransaction -> Ptr CTapEnv -> Ptr CChar -> CUInt -> IO ()
 
 foreign import ccall unsafe "&" c_free_transaction :: FunPtr (Ptr CTransaction -> IO ())
@@ -180,14 +180,11 @@ withRawTransaction tx k =
 withRawTapEnv :: TapEnv -> (Ptr RawTapEnv -> IO b) -> IO b
 withRawTapEnv tapEnv k | length (tapbranch tapEnv) <= 128 =
   allocaBytes sizeof_rawTapEnv $ \pRawTapEnv ->
-  withMaybeAnnex (tapAnnex tapEnv) $ \pAnnex ->
   BS.useAsCString encodeBranch $ \pControlBlock -> do
   BS.useAsCString (encode $ tapScriptCMR tapEnv) $ \pCmr -> do
-   c_set_rawTapEnv pRawTapEnv pAnnex pControlBlock (fromIntegral . length $ tapbranch tapEnv) pCmr
+   c_set_rawTapEnv pRawTapEnv pControlBlock (fromIntegral . length $ tapbranch tapEnv) pCmr
    k pRawTapEnv
  where
-  withMaybeAnnex Nothing = ($ nullPtr)
-  withMaybeAnnex (Just annex) = withRawBuffer annex
   encodeBranch = BS.cons (tapleafVersion tapEnv) (BS.concat (encode (tapInternalKey tapEnv) : map encode (tapbranch tapEnv)))
 
 marshallTransaction :: SigTx -> IO (ForeignPtr CTransaction)

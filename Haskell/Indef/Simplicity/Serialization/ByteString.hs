@@ -54,10 +54,6 @@ decodeNode w | w .&. 0xf7 == 0x10 = return (uInjl (testBit w 3))
              | w .&. 0xf3 == 0x02 = return (uPair (testBit w 3) (testBit w 2))
              | w .&. 0xf3 == 0x03 = return (uDisconnect (testBit w 3) (testBit w 2))
              | w .&. 0x80 == 0x80 = uWitness <$> getBoolVector (fromIntegral (w .&. 0x7f))
-             | w .&. 0x20 == 0x20 = getPrimByte w >>= go
-   where
-    go (Just p) = return (Prim p)
-    go Nothing = fail $ "Simplicity.Serialization.ByteString.decodeNode: Unknown primtiive #"++show w++"."
 
 -- The 'DeserializeM' monad adds a counter to the 'Get' monad to count the number of nodes deserialized.
 -- This is used to compute the offsets of references.
@@ -123,7 +119,6 @@ putNode bnd = go
   go (Hidden h)               = Just $ putWord8 0x23 >> put h
   go (Witness _ b w) = case reflect b of
                         SomeTy rb -> putWitness . UV.fromList . putValueR rb <$> castUntypedValue w
-  go (Prim (SomeArrow p)) = Just $ putPrimByte p
   go (Jet j)              = error ":TODO: Implement bytestring serialization of discounted jets"
   putUnary 1 z = putWord8 z
   putUnary i z | 2 <= i = putWord8 (setBit z 3) >> putIx (bnd - 2) (i - 2)

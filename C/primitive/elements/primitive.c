@@ -9,7 +9,6 @@
 #include "../../tag.h"
 #include "../../unreachable.h"
 
-#define PRIMITIVE_TAG(s) SIMPLICITY_PREFIX "\x1F" "Primitive\x1F" "Elements\x1F" s
 #define JET_TAG SIMPLICITY_PREFIX "\x1F" "Jet"
 
 /* An enumeration of all the types we need to construct to specify the input and output types of all jets created by 'decodeJet'. */
@@ -56,13 +55,6 @@ typedef enum jetName
   NUMBER_OF_JET_NAMES
 } jetName;
 
-static int32_t either(jetName* result, jetName a, jetName b, bitstream* stream) {
-  int32_t bit = getBit(stream);
-  if (bit < 0) return bit;
-  *result = bit ? b : a;
-  return 0;
-}
-
 /* Decode an Elements specific jet name from 'stream' into 'result'.
  * All jets begin with a bit prefix of '1' which needs to have already been consumed from the 'stream'.
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
@@ -78,47 +70,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
   int32_t bit = getBit(stream);
   if (bit < 0) return bit;
   if (!bit) {
-    int32_t code = getNBits(5, stream);
-    if (code < 0) return code;
-
-    switch (code) {
-     case 0x0: return either(result, VERSION, LOCK_TIME, stream);
-     case 0x1: *result = INPUT_PEGIN; return 0;
-     case 0x2: return either(result, INPUT_PREV_OUTPOINT, INPUT_ASSET, stream);
-     case 0x3: *result = INPUT_AMOUNT; return 0;
-     case 0x4: return either(result, INPUT_SCRIPT_HASH, INPUT_SEQUENCE, stream);
-     case 0x5: *result = REISSUANCE_BLINDING; return 0;
-     case 0x6: return either(result, NEW_ISSUANCE_CONTRACT, REISSUANCE_ENTROPY, stream);
-     case 0x7: *result = ISSUANCE_ASSET_AMT; return 0;
-     case 0x8: return either(result, ISSUANCE_TOKEN_AMT, ISSUANCE_ASSET_PROOF, stream);
-     case 0x9: *result = ISSUANCE_TOKEN_PROOF; return 0;
-     case 0xa: return either(result, OUTPUT_ASSET, OUTPUT_AMOUNT, stream);
-     case 0xb: *result = OUTPUT_NONCE; return 0;
-     case 0xc: return either(result, OUTPUT_SCRIPT_HASH, OUTPUT_NULL_DATUM, stream);
-     case 0xd: *result = OUTPUT_SURJECTION_PROOF; return 0;
-     case 0xe: *result = OUTPUT_RANGE_PROOF; return 0;
-     case 0xf: *result = SCRIPT_CMR; return 0;
-     case 0x10: return either(result, CURRENT_INDEX, CURRENT_PEGIN, stream);
-     case 0x11: *result = CURRENT_PREV_OUTPOINT; return 0;
-     case 0x12: return either(result, CURRENT_ASSET, CURRENT_AMOUNT, stream);
-     case 0x13: *result = CURRENT_SCRIPT_HASH; return 0;
-     case 0x14: return either(result, CURRENT_SEQUENCE, CURRENT_REISSUANCE_BLINDING, stream);
-     case 0x15: *result = CURRENT_NEW_ISSUANCE_CONTRACT; return 0;
-     case 0x16: return either(result, CURRENT_REISSUANCE_ENTROPY, CURRENT_ISSUANCE_ASSET_AMT, stream);
-     case 0x17: *result = CURRENT_ISSUANCE_TOKEN_AMT; return 0;
-     case 0x18: return either(result, CURRENT_ISSUANCE_ASSET_PROOF, CURRENT_ISSUANCE_TOKEN_PROOF, stream);
-     case 0x19: *result = TAPLEAF_VERSION; return 0;
-     case 0x1a: return either(result, TAPBRANCH, INTERNAL_KEY,stream);
-     case 0x1b: *result = ANNEX_HASH; return 0;
-     case 0x1c: return either(result, INPUTS_HASH_DEPRECATED, OUTPUTS_HASH_DEPRECATED, stream);
-     case 0x1d: *result = NUM_INPUTS; return 0;
-     case 0x1e: *result = NUM_OUTPUTS; return 0;
-     case 0x1f:
-      /* FEE is not yet implemented.  Disable it. */
-      *result = FEE; return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
-    }
-    assert(false);
-    UNREACHABLE;
+    return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
   } else {
     bit = getBit(stream);
     if (bit < 0) return bit;
@@ -465,7 +417,6 @@ static void static_initialize(void) {
 #undef MK_JET
 
   }
-#include "primitiveInitPrim.inc"
 }
 
 /* Return a copy of the Simplicity node corresponding to the given Elements specific jet 'name'.

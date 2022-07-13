@@ -27,7 +27,7 @@ import Simplicity.Ty
 -- @abort@ is invoked if an invalid code is encountered.
 getNode :: (Monad m, JetType jt) => m Void -> m Bool -> m (Maybe (TermF () (SomeArrow jt) () Integer))
 getNode abort next = (getBody >>= traverse (traverse (\_ -> getPositive next)))
-                   & ((Just . Prim <$> getPrimBit next) & (Just . Jet <$> getJetBit abort next))
+                   & (vacuous abort & (Just . Jet <$> getJetBit abort next))
  where
   l & r = next >>= \b -> if b then r else l
   node = return . Just
@@ -173,7 +173,6 @@ putNode = go
   go (Unit _)                 = ([o,i,o,o,i]++)
   go (Hidden h)               = ([o,i,i,o]++) . put256Bits h
   go (Witness _ _ _)          = ([o,i,i,i]++)
-  go (Prim (SomeArrow p))     = ([i,o]++) . putPrimBit p
   go (Jet (SomeArrow j))      = ([i,i]++) . putJetBit j
   (o,i) = (False,True)
 

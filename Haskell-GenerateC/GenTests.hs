@@ -212,8 +212,7 @@ checkSigHashAllTx1 = Example
   genesis = review (over be256) 0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
   Just env = primEnv tx1 0 tapEnv genesis
   cmr = commitmentRoot . unwrap $ program (Simplicity.LibSecp256k1.Spec.Sig 0 0)
-  tapEnv = TapEnv { tapAnnex = Nothing
-                  , tapleafVersion = 0xbe
+  tapEnv = TapEnv { tapleafVersion = 0xbe
                   , tapInternalKey = pk
                   , tapbranch = []
                   , tapScriptCMR = cmr

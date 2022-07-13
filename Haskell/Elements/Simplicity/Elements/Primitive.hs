@@ -2,14 +2,11 @@
 -- | This module provides the Simplicity primitives specific for Elements sidechain applications.
 module Simplicity.Elements.Primitive
   ( Prim(..), primPrefix, primName
-  , getPrimBit, putPrimBit
   , PrimEnv, primEnv, envTx, envIx, envTap, envGenesisBlock
   , primEnvHash
   , primSem
   -- * Re-exported Types
   , S, Conf, PubKey
-  -- * Unimplemented
-  , getPrimByte, putPrimByte
   ) where
 
 import Control.Arrow ((***), (+++))
@@ -41,8 +38,6 @@ just_ f = some_ f
 data Prim a b where
   Version :: Prim () Word32
   LockTime :: Prim () Word32
-  InputsHashDeprecated :: Prim () Word256
-  OutputsHashDeprecated :: Prim () Word256
   NumInputs :: Prim () Word32
   InputPegin :: Prim Word32 (S (S Word256))
   InputPrevOutpoint :: Prim Word32 (S (Word256,Word32))
@@ -78,7 +73,6 @@ data Prim a b where
   TapleafVersion :: Prim () Word8
   Tapbranch :: Prim Word8 (S Word256)
   InternalKey :: Prim () PubKey
-  AnnexHash :: Prim () (S Word256)
   NumOutputs :: Prim () Word32
   OutputAsset :: Prim Word32 (S (Conf Word256))
   OutputAmount :: Prim Word32 (S (Conf Word64))
@@ -94,8 +88,6 @@ data Prim a b where
 instance Eq (Prim a b) where
   Version == Version = True
   LockTime == LockTime = True
-  InputsHashDeprecated == InputsHashDeprecated = True
-  OutputsHashDeprecated == OutputsHashDeprecated = True
   NumInputs == NumInputs = True
   InputPegin == InputPegin = True
   InputPrevOutpoint == InputPrevOutpoint = True
@@ -131,7 +123,6 @@ instance Eq (Prim a b) where
   TapleafVersion == TapleafVersion = True
   Tapbranch == Tapbranch = True
   InternalKey == InternalKey = True
-  AnnexHash == AnnexHash = True
   NumOutputs == NumOutputs = True
   OutputAsset == OutputAsset = True
   OutputAmount == OutputAmount = True
@@ -152,8 +143,6 @@ primPrefix = "Elements"
 primName :: Prim a b -> String
 primName Version = "version"
 primName LockTime = "lockTime"
-primName InputsHashDeprecated = "inputsHashDeprecated"
-primName OutputsHashDeprecated = "outputsHashDeprecated"
 primName NumInputs = "numInputs"
 primName InputPegin = "inputPegin"
 primName InputPrevOutpoint = "inputPrevOutpoint"
@@ -189,7 +178,6 @@ primName CurrentScriptSigHash = "currentScriptSigHash"
 primName TapleafVersion = "tapleafVersion"
 primName Tapbranch = "tapbranch"
 primName InternalKey = "internalKey"
-primName AnnexHash = "annexHash"
 primName NumOutputs = "numOutputs"
 primName OutputAsset = "outputAsset"
 primName OutputAmount = "outputAmount"
@@ -202,79 +190,10 @@ primName Fee = "fee"
 primName GenesisBlockHash = "genesisBlockHash"
 primName ScriptCMR = "scriptCMR"
 
-getPrimBit :: Monad m => m Bool -> m (SomeArrow Prim)
-getPrimBit next =
-  (((((makeArrow Version & makeArrow LockTime) & makeArrow InputPegin) & ((makeArrow InputPrevOutpoint & makeArrow InputAsset) & makeArrow InputAmount)) &
-    (((makeArrow InputScriptHash & makeArrow InputSequence) & makeArrow ReissuanceBlinding) & ((makeArrow NewIssuanceContract & makeArrow ReissuanceEntropy) & makeArrow IssuanceAssetAmt))) &
-   ((((makeArrow IssuanceTokenAmt & makeArrow IssuanceAssetProof) & makeArrow IssuanceTokenProof) & ((makeArrow OutputAsset & makeArrow OutputAmount) & makeArrow OutputNonce)) &
-    (((makeArrow OutputScriptHash & makeArrow OutputNullDatum) & makeArrow OutputSurjectionProof) & (makeArrow OutputRangeProof & makeArrow ScriptCMR)))) &
-  (((((makeArrow CurrentIndex & makeArrow CurrentPegin) & makeArrow CurrentPrevOutpoint) & ((makeArrow CurrentAsset & makeArrow CurrentAmount) & makeArrow CurrentScriptHash)) &
-    (((makeArrow CurrentSequence & makeArrow CurrentReissuanceBlinding) & makeArrow CurrentNewIssuanceContract) & ((makeArrow CurrentReissuanceEntropy & makeArrow CurrentIssuanceAssetAmt) & makeArrow CurrentIssuanceTokenAmt))) &
-   ((((makeArrow CurrentIssuanceAssetProof & makeArrow CurrentIssuanceTokenProof ) & makeArrow TapleafVersion) & ((makeArrow Tapbranch & makeArrow InternalKey) & makeArrow AnnexHash)) &
-    (((makeArrow InputsHashDeprecated & makeArrow OutputsHashDeprecated) & makeArrow NumInputs) & (makeArrow NumOutputs & makeArrow Fee))))
- where
-  l & r = next >>= \b -> if b then r else l
-  makeArrow p = return (SomeArrow p)
-
-putPrimBit :: Prim a b -> DList Bool
-putPrimBit = go
- where
-  go :: Prim a b -> DList Bool
-  go Version                      = ([o,o,o,o,o,o]++)
-  go LockTime                     = ([o,o,o,o,o,i]++)
-  go InputPegin                   = ([o,o,o,o,i]++)
-  go InputPrevOutpoint            = ([o,o,o,i,o,o]++)
-  go InputAsset                   = ([o,o,o,i,o,i]++)
-  go InputAmount                  = ([o,o,o,i,i]++)
-  go InputScriptHash              = ([o,o,i,o,o,o]++)
-  go InputSequence                = ([o,o,i,o,o,i]++)
-  go ReissuanceBlinding           = ([o,o,i,o,i]++)
-  go NewIssuanceContract          = ([o,o,i,i,o,o]++)
-  go ReissuanceEntropy            = ([o,o,i,i,o,i]++)
-  go IssuanceAssetAmt             = ([o,o,i,i,i]++)
-  go IssuanceTokenAmt             = ([o,i,o,o,o,o]++)
-  go IssuanceAssetProof           = ([o,i,o,o,o,i]++)
-  go IssuanceTokenProof           = ([o,i,o,o,i]++)
-  go OutputAsset                  = ([o,i,o,i,o,o]++)
-  go OutputAmount                 = ([o,i,o,i,o,i]++)
-  go OutputNonce                  = ([o,i,o,i,i]++)
-  go OutputScriptHash             = ([o,i,i,o,o,o]++)
-  go OutputNullDatum              = ([o,i,i,o,o,i]++)
-  go OutputSurjectionProof        = ([o,i,i,o,i]++)
-  go OutputRangeProof             = ([o,i,i,i,o]++)
-  go ScriptCMR                    = ([o,i,i,i,i]++)
-  go CurrentIndex                 = ([i,o,o,o,o,o]++)
--- :TODO: Below here are primitives that are likely candidates for being jets instead of primitives (see https://github.com/ElementsProject/simplicity/issues/5).
-  go CurrentPegin                 = ([i,o,o,o,o,i]++)
-  go CurrentPrevOutpoint          = ([i,o,o,o,i]++)
-  go CurrentAsset                 = ([i,o,o,i,o,o]++)
-  go CurrentAmount                = ([i,o,o,i,o,i]++)
-  go CurrentScriptHash            = ([i,o,o,i,i]++)
-  go CurrentSequence              = ([i,o,i,o,o,o]++)
-  go CurrentReissuanceBlinding    = ([i,o,i,o,o,i]++)
-  go CurrentNewIssuanceContract   = ([i,o,i,o,i]++)
-  go CurrentReissuanceEntropy     = ([i,o,i,i,o,o]++)
-  go CurrentIssuanceAssetAmt      = ([i,o,i,i,o,i]++)
-  go CurrentIssuanceTokenAmt      = ([i,o,i,i,i]++)
-  go CurrentIssuanceAssetProof    = ([i,i,o,o,o,o]++)
-  go CurrentIssuanceTokenProof    = ([i,i,o,o,o,i]++)
-  go TapleafVersion               = ([i,i,o,o,i]++)
-  go Tapbranch                    = ([i,i,o,i,o,o]++)
-  go InternalKey                  = ([i,i,o,i,o,i]++)
-  go AnnexHash                    = ([i,i,o,i,i]++)
-  go InputsHashDeprecated         = ([i,i,i,o,o,o]++)
-  go OutputsHashDeprecated        = ([i,i,i,o,o,i]++)
-  go NumInputs                    = ([i,i,i,o,i]++)
-  go NumOutputs                   = ([i,i,i,i,o]++)
-  go Fee                          = ([i,i,i,i,i]++)
-  (o,i) = (False, True)
-
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32
                        , envTap :: TapEnv
                        , envGenesisBlock :: Hash256
-                       , envInputsHashDeprecated :: Hash256
-                       , envOutputsHashDeprecated :: Hash256
                        }
 
 instance Show PrimEnv where
@@ -291,8 +210,6 @@ primEnv tx ix tap gen | cond = Just $ PrimEnv { envTx = tx
                                               , envIx = ix
                                               , envTap = tap
                                               , envGenesisBlock = gen
-                                              , envInputsHashDeprecated = sigTxInputsHash tx
-                                              , envOutputsHashDeprecated = sigTxOutputsHash tx
                                               }
                       | otherwise = Nothing
  where
@@ -367,8 +284,6 @@ primSem p a env = interpret p a
   issuanceTokenAmount = either newIssuanceTokenAmount (const (Amount (Explicit 0)))
   interpret Version = element . return . toWord32 . toInteger $ sigTxVersion tx
   interpret LockTime = element . return . toWord32 . toInteger $ sigTxLock tx
-  interpret InputsHashDeprecated = element . return . encodeHash $ envInputsHashDeprecated env
-  interpret OutputsHashDeprecated = element . return . encodeHash $ envOutputsHashDeprecated env
   interpret NumInputs = element . return . toWord32 . toInteger $ 1 + maxInput
   interpret InputPegin = return . (atInput $ cast . fmap encodeHash . sigTxiPegin)
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutpoint)
@@ -414,7 +329,6 @@ primSem p a env = interpret p a
   interpret TapleafVersion = element . return . toWord8 . toInteger . tapleafVersion $ envTap env
   interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapbranch (envTap env)) . fromInteger . fromWord8
   interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env
-  interpret AnnexHash = element . return . cast $ encodeHash . bslHash <$> tapAnnex (envTap env)
   interpret NumOutputs = element . return . toWord32 . toInteger $ 1 + maxOutput
   interpret OutputAsset = return . (atOutput $ encodeAsset . clearAssetPrf . txoAsset)
   interpret OutputAmount = return . (atOutput $ encodeAmount . clearAmountPrf . txoAmount)
@@ -436,9 +350,3 @@ primSem p a env = interpret p a
       return (Monoid.Sum v)
   interpret GenesisBlockHash = element . return . encodeHash $ envGenesisBlock env
   interpret ScriptCMR = element . return . encodeHash . tapScriptCMR $ envTap env
-
-getPrimByte :: Data.Word.Word8 -> Get (Maybe (SomeArrow Prim))
-getPrimByte = error "Simplicity.Elements.Primitive.getPrimByte is not implemented"
-
-putPrimByte :: Putter (Prim a b)
-putPrimByte = error "Simplicity.Elements.Primitive.putPrimByte is not implemented"

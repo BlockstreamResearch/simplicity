@@ -82,7 +82,6 @@ forallSimplicityDag = forAll gen_UntypedTermF_list
     , pure $ Disconnect one one one one () ()
     , Hidden <$> get256Bits arbitrary
     , wit
-    , Prim <$> elements allPrim
     ]
    where
     -- Here we are careful to place a correct type annotation for witness values.
@@ -90,7 +89,6 @@ forallSimplicityDag = forAll gen_UntypedTermF_list
       b <- arbTy
       v <- case reflect b of SomeTy rb -> untypedValue <$> arbValueR rb
       return (Witness one b v)
-    allPrim = getPrimBit [False,True]
 
 -- Compare 'SimplicityDag' disregarding most type annotations.
 -- Witness nodes are compared using the 'compareWitness' function which may or may not consider type annotations.

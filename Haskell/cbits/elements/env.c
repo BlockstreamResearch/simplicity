@@ -57,8 +57,8 @@ void c_set_rawTransaction(rawTransaction* result, unsigned int version,
                             };
 }
 
-void c_set_rawTapEnv(rawTapEnv* result, const rawBuffer* annex, const char* controlBlock, unsigned char branchLen, const char* scriptCMR) {
-  *result = (rawTapEnv){ .annex = annex, .controlBlock = controlBlock, .branchLen = branchLen, .scriptCMR = scriptCMR };
+void c_set_rawTapEnv(rawTapEnv* result, const char* controlBlock, unsigned char branchLen, const char* scriptCMR) {
+  *result = (rawTapEnv){ .controlBlock = controlBlock, .branchLen = branchLen, .scriptCMR = scriptCMR };
 }
 
 void c_set_txEnv(txEnv* result, const transaction* tx, const tapEnv* taproot, const char* genesisHash, unsigned int ix) {

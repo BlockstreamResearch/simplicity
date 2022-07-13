@@ -25,12 +25,7 @@ toW8 = toWord8 . fromIntegral
 
 tests :: TestTree
 tests = testGroup "Elements"
-        [ testGroup "Primitives"
-          [ testProperty "inputs_hash_deprecated" prop_inputs_hash_deprecated
-          , testProperty "outputs_hash_deprecated" prop_outputs_hash_deprecated
-          , testProperty "annex_hash" prop_annex_hash
-          ]
-        , testGroup "Jets"
+        [ testGroup "Jets"
           [ testProperty "tx_is_final" prop_tx_is_final
           , testProperty "tx_lock_height" prop_tx_lock_height
           , testProperty "tx_lock_time" prop_tx_lock_time
@@ -123,15 +118,6 @@ tests = testGroup "Elements"
           , testProperty "genesis_block_hash" prop_genesis_block_hash
           ]
         ]
-
-prop_inputs_hash_deprecated :: Property
-prop_inputs_hash_deprecated = forallPrimEnv $ \env -> Prim.primSem Prim.InputsHashDeprecated () env == inputs_hash_deprecated env ()
-
-prop_outputs_hash_deprecated :: Property
-prop_outputs_hash_deprecated = forallPrimEnv $ \env -> Prim.primSem Prim.OutputsHashDeprecated () env == outputs_hash_deprecated env ()
-
-prop_annex_hash :: Property
-prop_annex_hash = forallPrimEnv $ \env -> Prim.primSem Prim.AnnexHash () env == annex_hash env ()
 
 prop_tx_is_final :: Property
 prop_tx_is_final = forallPrimEnv $ \env -> fast_tx_is_final env () == tx_is_final env ()

@@ -4,7 +4,7 @@ module Simplicity.Bitcoin.DataTypes
   , Outpoint(Outpoint), opHash, opIndex
   , SigTxInput(SigTxInput), sigTxiPreviousOutpoint, sigTxiValue, sigTxiSequence, sigTxiAnnex, sigTxiScriptSig
   , TxOutput(TxOutput), txoValue, txoScript
-  , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
+  , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock
   , TapEnv(..)
   , txIsFinal, txLockDistance, txLockDuration
   , module Simplicity.Bitcoin
@@ -125,20 +125,8 @@ instance Serialize Tx where
   put (Tx v is os t) = putWord32le v >> putList is >> putList os >> put t
 -}
 
-sigTxInputsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
- where
-  go txi = put (sigTxiPreviousOutpoint txi)
-        >> putWord64le (sigTxiValue txi)
-        >> putWord32le (sigTxiSequence txi)
-
-sigTxOutputsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxOut tx)
- where
-  go txo = putWord64le (txoValue txo)
-        >> put (bslHash (txoScript txo))
-
 -- | Taproot specific environment data about the input being spent.
-data TapEnv = TapEnv { tapAnnex :: Maybe BSL.ByteString
-                     , tapleafVersion :: Word8
+data TapEnv = TapEnv { tapleafVersion :: Word8
                      , tapInternalKey :: PubKey
                      , tapbranch :: [Hash256]
                      , tapScriptCMR :: Hash256

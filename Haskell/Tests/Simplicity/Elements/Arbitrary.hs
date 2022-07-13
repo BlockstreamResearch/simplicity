@@ -124,8 +124,7 @@ instance Arbitrary SigTx where
                     <*> arbitraryLock
 
 instance Arbitrary TapEnv where
-  arbitrary = TapEnv <$> oneof [return Nothing, Just <$> arbitraryBS]
-                     <*> ((0xfe .&.) <$> arbitraryBoundedIntegral)
+  arbitrary = TapEnv <$> ((0xfe .&.) <$> arbitraryBoundedIntegral)
                      <*> (mkPubKey <$> arbitraryPoint)
                      <*> listOf arbitraryHash256
                      <*> arbitraryHash256

@@ -11,7 +11,6 @@ import qualified Data.Map as Map
 import Numeric (showHex)
 
 import Simplicity.Digest
-import Simplicity.Elements.Primitive
 import Simplicity.Elements.Jets
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
@@ -28,12 +27,6 @@ jetList :: [SomeArrow JetType]
 jetList = sortBy (compare `on` name) $ Map.elems jetMap
  where
   name (SomeArrow j) = jetName j
-
-primList :: [SomeArrow Prim]
-primList = sortBy (compare `on` name) . filter nonJet $ enumerate (const getPrimBit)
- where
-  name (SomeArrow j) = primName j
-  nonJet (SomeArrow x) = upperSnakeCase (primName x) `notElem` (map (\(SomeArrow x) -> upperSnakeCase (jetName x)) jetList)
 
 snakeCase :: String -> String
 snakeCase str = intercalate "_" . groupSingles $ (split . keepDelimsL . dropInitBlank . whenElt) isUpper =<< splitDigit
@@ -116,13 +109,8 @@ jetName = filter isAlphaNum . last . words . show
 cInitializeJet :: (TyC x, TyC y) => JetType x y -> String
 cInitializeJet jet = "MK_JET(" ++ upperSnakeCase (jetName jet) ++ ", " ++ showCHash (identityRoot (specification jet)) ++ ");"
 
-cInitializePrimitive :: (TyC x, TyC y) => Prim x y -> String
-cInitializePrimitive prim = "MK_TAG(&jet_node[" ++ upperSnakeCase name ++ "].cmr, PRIMITIVE_TAG(\"" ++ name ++ "\"));"
- where
-  name = primName $ prim
-
 tyList :: [Ty]
-tyList = Map.elems . foldr combine Map.empty $ (tys =<< jetList) ++ (tys =<< primList)
+tyList = Map.elems . foldr combine Map.empty $ (tys =<< jetList)
  where
   tys (SomeArrow jet) = [unreflect x, unreflect y]
    where
@@ -142,26 +130,19 @@ cInitializeTyFile :: String
 cInitializeTyFile = unlines $ cInitializeTy <$> tyList
 
 cEnumJetFile :: String
-cEnumJetFile = unlines $ map f jetList ++ map g primList
+cEnumJetFile = unlines $ map f jetList
  where
   f (SomeArrow jet) = (upperSnakeCase . jetName $ jet) ++ ","
-  g (SomeArrow prim) = (upperSnakeCase . primName $ prim) ++ ","
 
 cJetNodeFile :: String
-cJetNodeFile = intercalate "," $ map f jetList ++ map g primList
+cJetNodeFile = intercalate "," $ map f jetList
  where
   f (SomeArrow jet) = cJetNode (jetName jet) jet
-  g (SomeArrow prim) = cJetNode (primName prim) prim
 
 cInitializeJetFile :: String
 cInitializeJetFile = unlines $ map f jetList
  where
   f (SomeArrow jet) = cInitializeJet jet
-
-cInitializePrimFile :: String
-cInitializePrimFile = unlines $ map g primList
- where
-  g (SomeArrow prim) = cInitializePrimitive prim
 
 writeIncludeFile :: FilePath -> String -> IO ()
 writeIncludeFile name content = writeFile name (header ++ content)
@@ -174,4 +155,3 @@ main = do
   writeIncludeFile "primitiveEnumJet.inc" cEnumJetFile
   writeIncludeFile "primitiveJetNode.inc" cJetNodeFile
   writeIncludeFile "primitiveInitJet.inc" cInitializeJetFile
-  writeIncludeFile "primitiveInitPrim.inc" cInitializePrimFile

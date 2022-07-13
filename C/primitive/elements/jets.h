@@ -11,7 +11,6 @@ bool lock_time(frameItem* dst, frameItem src, const txEnv* env);
 bool input_pegin(frameItem* dst, frameItem src, const txEnv* env);
 bool input_prev_outpoint(frameItem* dst, frameItem src, const txEnv* env);
 bool input_asset(frameItem* dst, frameItem src, const txEnv* env);
-bool input_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool input_asset_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool input_script_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool input_sequence(frameItem* dst, frameItem src, const txEnv* env);
@@ -22,13 +21,9 @@ bool new_issuance_contract(frameItem* dst, frameItem src, const txEnv* env);
 bool reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env);
 bool issuance_asset_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool issuance_token_amount(frameItem* dst, frameItem src, const txEnv* env);
-/* :TODO: remove these aliases when no longer in use */
-#define issuance_asset_amt issuance_asset_amount
-#define issuance_token_amt issuance_token_amount
 bool issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool output_asset(frameItem* dst, frameItem src, const txEnv* env);
-bool output_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool output_asset_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool output_nonce(frameItem* dst, frameItem src, const txEnv* env);
 bool output_script_hash(frameItem* dst, frameItem src, const txEnv* env);
@@ -41,7 +36,6 @@ bool current_index(frameItem* dst, frameItem src, const txEnv* env);
 bool current_pegin(frameItem* dst, frameItem src, const txEnv* env);
 bool current_prev_outpoint(frameItem* dst, frameItem src, const txEnv* env);
 bool current_asset(frameItem* dst, frameItem src, const txEnv* env);
-bool current_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool current_asset_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool current_script_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool current_sequence(frameItem* dst, frameItem src, const txEnv* env);
@@ -50,9 +44,6 @@ bool current_new_issuance_contract(frameItem* dst, frameItem src, const txEnv* e
 bool current_reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env);
 bool current_issuance_asset_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool current_issuance_token_amount(frameItem* dst, frameItem src, const txEnv* env);
-/* :TODO: remove these aliases when no longer in use */
-#define current_issuance_asset_amt current_issuance_asset_amount
-#define current_issuance_token_amt current_issuance_token_amount
 bool current_issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool current_issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool current_annex_hash(frameItem* dst, frameItem src, const txEnv* env);
@@ -60,14 +51,8 @@ bool current_script_sig_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool tapleaf_version(frameItem* dst, frameItem src, const txEnv* env);
 bool tapbranch(frameItem* dst, frameItem src, const txEnv* env);
 bool internal_key(frameItem* dst, frameItem src, const txEnv* env);
-bool annex_hash(frameItem* dst, frameItem src, const txEnv* env);
-bool inputs_hash_deprecated(frameItem* dst, frameItem src, const txEnv* env);
-bool outputs_hash_deprecated(frameItem* dst, frameItem src, const txEnv* env);
 bool num_inputs(frameItem* dst, frameItem src, const txEnv* env);
 bool num_outputs(frameItem* dst, frameItem src, const txEnv* env);
-
-/* :TODO: Not yet implemented. */
-#define fee NULL
 
 /* Jets for the Elements application of Simplicity. */
 bool tx_is_final(frameItem* dst, frameItem src, const txEnv* env);

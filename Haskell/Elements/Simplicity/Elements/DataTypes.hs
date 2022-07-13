@@ -20,7 +20,7 @@ module Simplicity.Elements.DataTypes
   , SigTxInput(SigTxInput), sigTxiPegin, sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiIssuance, sigTxiAnnex, sigTxiScriptSig
   , sigTxiIssuanceEntropy, sigTxiIssuanceAsset, sigTxiIssuanceToken
   , TxOutput(TxOutput), txoAsset, txoAmount, txoNonce, txoScript
-  , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
+  , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock
   , TapEnv(..)
   , txIsFinal, txLockDistance, txLockDuration
   , calculateIssuanceEntropy, calculateAsset, calculateToken
@@ -296,24 +296,8 @@ data SigTx = SigTx { sigTxVersion :: Word32
                    , sigTxLock :: Lock
                    } deriving Show
 
-sigTxInputsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
- where
-  go txi = put (sigTxiPreviousOutpoint txi)
-        >> putWord32le (sigTxiSequence txi)
-        >> putIssuance (sigTxiIssuance txi)
-
-sigTxOutputsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxOut tx)
- where
-  go txo = putAsset (clearAssetPrf $ txoAsset txo)
-        >> putAmount (clearAmountPrf $ txoAmount txo)
-        >> putNonce (txoNonce txo)
-        >> put (bslHash (txoScript txo))
-        >> put (bslHash (txoAsset txo ^. (under asset.prf_)))
-        >> put (bslHash (txoAmount txo ^. (under amount.prf_)))
-
 -- | Taproot specific environment data about the input being spent.
-data TapEnv = TapEnv { tapAnnex :: Maybe BSL.ByteString
-                     , tapleafVersion :: Word8
+data TapEnv = TapEnv { tapleafVersion :: Word8
                      , tapInternalKey :: PubKey
                      , tapbranch :: [Hash256]
                      , tapScriptCMR :: Hash256
