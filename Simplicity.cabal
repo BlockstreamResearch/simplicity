@@ -125,6 +125,7 @@ library
                        Simplicity.Bitcoin.Programs.CheckSigHashAll.Lib, Simplicity.Elements.Programs.CheckSigHashAll.Lib,
                        Simplicity.Bitcoin.Programs.TimeLock, Simplicity.Elements.Programs.TimeLock,
                        Simplicity.Elements.Programs.Issuance, Simplicity.Elements.Programs.Issuance.Lib,
+                       Simplicity.Elements.Programs.Transaction, Simplicity.Elements.Programs.Transaction.Lib,
                        Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets,
                        Simplicity.Elements.FFI.Env, Simplicity.Elements.FFI.Jets
   reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,

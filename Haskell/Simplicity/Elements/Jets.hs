@@ -1,7 +1,7 @@
 -- | This module provides a cannonical set of known jets for Simplicity for Elements. (At the moment this just consists of 'CoreJet's.)
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Elements.Jets
-  ( JetType(..), ElementsJet(..), TimeLockJet(..), IssuanceJet(..)
+  ( JetType(..), ElementsJet(..), TimeLockJet(..), IssuanceJet(..), TransactionJet(..)
   , jetSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
@@ -32,11 +32,13 @@ import qualified Simplicity.Elements.Dag as Dag
 import Simplicity.Elements.Term
 import Simplicity.Elements.DataTypes
 import qualified Simplicity.Elements.JetType
-import Simplicity.Elements.Primitive
+import Simplicity.Elements.Primitive (PrimEnv, S, Conf, PubKey, envTx)
+import qualified Simplicity.Elements.Primitive as Prim
 import qualified Simplicity.Elements.Serialization.BitString as BitString
 import qualified Simplicity.Elements.Semantics as Semantics
 import qualified Simplicity.Elements.Programs.Issuance.Lib as Issuance
 import qualified Simplicity.Elements.Programs.TimeLock as TimeLock
+import qualified Simplicity.Elements.Programs.Transaction.Lib as Prog
 import Simplicity.MerkleRoot
 import qualified Simplicity.Programs.Elements.Lib as Issuance
 import Simplicity.Serialization
@@ -56,6 +58,7 @@ deriving instance Show (JetType a b)
 data ElementsJet a b where
   TimeLockJet :: TimeLockJet a b -> ElementsJet a b
   IssuanceJet :: IssuanceJet a b -> ElementsJet a b
+  TransactionJet :: TransactionJet a b -> ElementsJet a b
 deriving instance Eq (ElementsJet a b)
 deriving instance Show (ElementsJet a b)
 
@@ -84,9 +87,56 @@ data IssuanceJet a b where
 deriving instance Eq (IssuanceJet a b)
 deriving instance Show (IssuanceJet a b)
 
+data TransactionJet a b where
+  ScriptCMR :: TransactionJet () Word256
+  InternalKey :: TransactionJet () PubKey
+  CurrentIndex :: TransactionJet () Word32
+  NumInputs :: TransactionJet () Word32
+  NumOutputs :: TransactionJet () Word32
+  LockTime :: TransactionJet () Word32
+  OutputAsset :: TransactionJet Word32 (S (Conf Word256))
+  OutputAssetAmount :: TransactionJet Word32 (S (Conf Word256, Conf Word64))
+  OutputNonce :: TransactionJet Word32 (S (S (Conf Word256)))
+  OutputScriptHash :: TransactionJet Word32 (S Word256)
+  OutputNullDatum :: TransactionJet (Word32, Word32) (S (S (Either (Word2, Word256) (Either Bit Word4))))
+  OutputSurjectionProof :: TransactionJet Word32 (S Word256)
+  OutputRangeProof :: TransactionJet Word32 (S Word256)
+  CurrentIsPegin :: TransactionJet () Bit
+  CurrentPrevOutpoint :: TransactionJet () (Word256,Word32)
+  CurrentAsset :: TransactionJet () (Conf Word256)
+  CurrentAssetAmount :: TransactionJet () (Conf Word256, Conf Word64)
+  CurrentScriptHash :: TransactionJet () Word256
+  CurrentSequence :: TransactionJet () Word32
+  CurrentReissuanceBlinding :: TransactionJet () (S Word256)
+  CurrentNewIssuanceContract :: TransactionJet () (S Word256)
+  CurrentReissuanceEntropy :: TransactionJet () (S Word256)
+  CurrentIssuanceAssetAmount :: TransactionJet () (S (Conf Word64))
+  CurrentIssuanceTokenAmount :: TransactionJet () (S (Conf Word64))
+  CurrentIssuanceAssetProof :: TransactionJet () Word256
+  CurrentIssuanceTokenProof :: TransactionJet () Word256
+  InputIsPegin :: TransactionJet Word32 (S Bit)
+  InputPrevOutpoint :: TransactionJet Word32 (S (Word256,Word32))
+  InputAsset :: TransactionJet Word32 (S (Conf Word256))
+  InputAssetAmount :: TransactionJet Word32 (S (Conf Word256, Conf Word64))
+  InputScriptHash :: TransactionJet Word32 (S Word256)
+  InputSequence :: TransactionJet Word32 (S Word32)
+  ReissuanceBlinding :: TransactionJet Word32 (S (S Word256))
+  NewIssuanceContract :: TransactionJet Word32 (S (S Word256))
+  ReissuanceEntropy :: TransactionJet Word32 (S (S Word256))
+  IssuanceAssetAmount :: TransactionJet Word32 (S (S (Conf Word64)))
+  IssuanceTokenAmount :: TransactionJet Word32 (S (S (Conf Word64)))
+  IssuanceAssetProof :: TransactionJet Word32 (S Word256)
+  IssuanceTokenProof :: TransactionJet Word32 (S Word256)
+  TapleafVersion :: TransactionJet () Word8
+  Tapbranch :: TransactionJet Word8 (S Word256)
+  Version :: TransactionJet () Word32
+deriving instance Eq (TransactionJet a b)
+deriving instance Show (TransactionJet a b)
+
 specificationElements :: (Assert term, Primitive term) => ElementsJet a b -> term a b
 specificationElements (TimeLockJet x) = specificationTimeLock x
 specificationElements (IssuanceJet x) = specificationIssuance x
+specificationElements (TransactionJet x) = specificationTransaction x
 
 specificationTimeLock :: (Assert term, Primitive term) => TimeLockJet a b -> term a b
 specificationTimeLock CheckLockHeight = TimeLock.checkLockHeight
@@ -109,9 +159,54 @@ specificationIssuance CalculateAsset = Issuance.calculateAsset
 specificationIssuance CalculateExplicitToken = Issuance.calculateExplicitToken
 specificationIssuance CalculateConfidentialToken = Issuance.calculateConfidentialToken
 
+specificationTransaction :: (Assert term, Primitive term) => TransactionJet a b -> term a b
+specificationTransaction ScriptCMR = primitive Prim.ScriptCMR
+specificationTransaction InternalKey = primitive Prim.InternalKey
+specificationTransaction CurrentIndex = primitive Prim.CurrentIndex
+specificationTransaction NumInputs = primitive Prim.NumInputs
+specificationTransaction NumOutputs = primitive Prim.NumOutputs
+specificationTransaction LockTime = primitive Prim.LockTime
+specificationTransaction OutputAsset = primitive Prim.OutputAsset
+specificationTransaction OutputAssetAmount = Prog.outputAssetAmount
+specificationTransaction OutputNonce = primitive Prim.OutputNonce
+specificationTransaction OutputScriptHash = primitive Prim.OutputScriptHash
+specificationTransaction OutputNullDatum = primitive Prim.OutputNullDatum
+specificationTransaction OutputSurjectionProof = primitive Prim.OutputSurjectionProof
+specificationTransaction OutputRangeProof = primitive Prim.OutputRangeProof
+specificationTransaction CurrentIsPegin = primitive Prim.CurrentIsPegin
+specificationTransaction CurrentPrevOutpoint = primitive Prim.CurrentPrevOutpoint
+specificationTransaction CurrentAsset = primitive Prim.CurrentAsset
+specificationTransaction CurrentAssetAmount = Prog.currentAssetAmount
+specificationTransaction CurrentScriptHash = primitive Prim.CurrentScriptHash
+specificationTransaction CurrentSequence = primitive Prim.CurrentSequence
+specificationTransaction CurrentReissuanceBlinding = primitive Prim.CurrentReissuanceBlinding
+specificationTransaction CurrentNewIssuanceContract = primitive Prim.CurrentNewIssuanceContract
+specificationTransaction CurrentReissuanceEntropy = primitive Prim.CurrentReissuanceEntropy
+specificationTransaction CurrentIssuanceAssetAmount = primitive Prim.CurrentIssuanceAssetAmt
+specificationTransaction CurrentIssuanceTokenAmount = primitive Prim.CurrentIssuanceTokenAmt
+specificationTransaction CurrentIssuanceAssetProof = primitive Prim.CurrentIssuanceAssetProof
+specificationTransaction CurrentIssuanceTokenProof = primitive Prim.CurrentIssuanceTokenProof
+specificationTransaction InputIsPegin = primitive Prim.InputIsPegin
+specificationTransaction InputPrevOutpoint = primitive Prim.InputPrevOutpoint
+specificationTransaction InputAsset = primitive Prim.InputAsset
+specificationTransaction InputAssetAmount = Prog.inputAssetAmount
+specificationTransaction InputScriptHash = primitive Prim.InputScriptHash
+specificationTransaction InputSequence = primitive Prim.InputSequence
+specificationTransaction ReissuanceBlinding = primitive Prim.ReissuanceBlinding
+specificationTransaction NewIssuanceContract = primitive Prim.NewIssuanceContract
+specificationTransaction ReissuanceEntropy = primitive Prim.ReissuanceEntropy
+specificationTransaction IssuanceAssetAmount = primitive Prim.IssuanceAssetAmt
+specificationTransaction IssuanceTokenAmount = primitive Prim.IssuanceTokenAmt
+specificationTransaction IssuanceAssetProof = primitive Prim.IssuanceAssetProof
+specificationTransaction IssuanceTokenProof = primitive Prim.IssuanceTokenProof
+specificationTransaction TapleafVersion = primitive Prim.TapleafVersion
+specificationTransaction Tapbranch = primitive Prim.Tapbranch
+specificationTransaction Version = primitive Prim.Version
+
 implementationElements :: ElementsJet a b -> PrimEnv -> a -> Maybe b
 implementationElements (TimeLockJet x) = implementationTimeLock x
 implementationElements (IssuanceJet x) = implementationIssuance x
+implementationElements (TransactionJet x) = implementationTransaction x
 
 implementationTimeLock :: TimeLockJet a b -> PrimEnv -> a -> Maybe b
 implementationTimeLock CheckLockHeight env x | txIsFinal (envTx env) = guard $ fromWord32 x <= 0
@@ -192,12 +287,16 @@ implementationIssuance CalculateConfidentialToken _ x = Just (fromHash (calculat
   fromHash = toWord256 . integerHash256
   entropy = review (over be256) (fromW256 x)
 
+implementationTransaction :: TransactionJet a b -> PrimEnv -> a -> Maybe b
+implementationTransaction x env i = Semantics.sem (specificationTransaction x) env i
+
 getJetBitElements :: (Monad m) => m Void -> m Bool -> m (SomeArrow ElementsJet)
 getJetBitElements abort next = getPositive next >>= match
  where
   makeArrow p = return (SomeArrow p)
   match 2 = (someArrowMap TimeLockJet) <$> getJetBitTimeLock
   match 3 = (someArrowMap IssuanceJet) <$> getJetBitIssuance
+  match 4 = (someArrowMap TransactionJet) <$> getJetBitTransaction
   match _ = vacuous abort
   getJetBitTimeLock = getPositive next >>= matchTimeLock
    where
@@ -221,10 +320,60 @@ getJetBitElements abort next = getPositive next >>= match
     matchIssuance 6 = makeArrow CalculateAsset
     matchIssuance 7 = makeArrow CalculateExplicitToken
     matchIssuance 8 = makeArrow CalculateConfidentialToken
+  getJetBitTransaction = getPositive next >>= matchTransaction
+   where
+    matchTransaction 1 = makeArrow ScriptCMR
+    matchTransaction 2 = makeArrow InternalKey
+    matchTransaction 3 = makeArrow CurrentIndex
+    matchTransaction 4 = makeArrow NumInputs
+    matchTransaction 5 = makeArrow NumOutputs
+    matchTransaction 6 = makeArrow LockTime
+    matchTransaction 7 = makeArrow OutputAsset
+    matchTransaction 8 = makeArrow OutputAssetAmount
+    matchTransaction 9 = makeArrow OutputNonce
+    matchTransaction 10 = makeArrow OutputScriptHash
+    matchTransaction 11 = makeArrow OutputNullDatum
+    matchTransaction 12 = makeArrow OutputSurjectionProof
+    matchTransaction 13 = makeArrow OutputRangeProof
+
+    matchTransaction 15 = makeArrow CurrentIsPegin
+    matchTransaction 16 = makeArrow CurrentPrevOutpoint
+    matchTransaction 17 = makeArrow CurrentAsset
+    matchTransaction 18 = makeArrow CurrentAssetAmount
+    matchTransaction 19 = makeArrow CurrentScriptHash
+    matchTransaction 20 = makeArrow CurrentSequence
+
+
+    matchTransaction 23 = makeArrow CurrentReissuanceBlinding
+    matchTransaction 24 = makeArrow CurrentNewIssuanceContract
+    matchTransaction 25 = makeArrow CurrentReissuanceEntropy
+    matchTransaction 26 = makeArrow CurrentIssuanceAssetAmount
+    matchTransaction 27 = makeArrow CurrentIssuanceTokenAmount
+    matchTransaction 28 = makeArrow CurrentIssuanceAssetProof
+    matchTransaction 29 = makeArrow CurrentIssuanceTokenProof
+    matchTransaction 30 = makeArrow InputIsPegin
+    matchTransaction 31 = makeArrow InputPrevOutpoint
+    matchTransaction 32 = makeArrow InputAsset
+    matchTransaction 33 = makeArrow InputAssetAmount
+    matchTransaction 34 = makeArrow InputScriptHash
+    matchTransaction 35 = makeArrow InputSequence
+
+
+    matchTransaction 38 = makeArrow ReissuanceBlinding
+    matchTransaction 39 = makeArrow NewIssuanceContract
+    matchTransaction 40 = makeArrow ReissuanceEntropy
+    matchTransaction 41 = makeArrow IssuanceAssetAmount
+    matchTransaction 42 = makeArrow IssuanceTokenAmount
+    matchTransaction 43 = makeArrow IssuanceAssetProof
+    matchTransaction 44 = makeArrow IssuanceTokenProof
+    matchTransaction 45 = makeArrow TapleafVersion
+    matchTransaction 46 = makeArrow Tapbranch
+    matchTransaction 47 = makeArrow Version
 
 putJetBitElements :: ElementsJet a b -> DList Bool
-putJetBitElements (TimeLockJet x) = putPositive 2 . putJetBitTimeLock x
-putJetBitElements (IssuanceJet x) = putPositive 3 . putJetBitIssuance x
+putJetBitElements (TimeLockJet x)    = putPositive 2 . putJetBitTimeLock x
+putJetBitElements (IssuanceJet x)    = putPositive 3 . putJetBitIssuance x
+putJetBitElements (TransactionJet x) = putPositive 4 . putJetBitTransaction x
 
 putJetBitTimeLock :: TimeLockJet a b -> DList Bool
 putJetBitTimeLock CheckLockHeight   = putPositive 1
@@ -247,6 +396,55 @@ putJetBitIssuance CalculateAsset             = putPositive 6
 putJetBitIssuance CalculateExplicitToken     = putPositive 7
 putJetBitIssuance CalculateConfidentialToken = putPositive 8
 
+putJetBitTransaction :: TransactionJet a b -> DList Bool
+putJetBitTransaction ScriptCMR                  = putPositive 1
+putJetBitTransaction InternalKey                = putPositive 2
+putJetBitTransaction CurrentIndex               = putPositive 3
+putJetBitTransaction NumInputs                  = putPositive 4
+putJetBitTransaction NumOutputs                 = putPositive 5
+putJetBitTransaction LockTime                   = putPositive 6
+putJetBitTransaction OutputAsset                = putPositive 7
+putJetBitTransaction OutputAssetAmount          = putPositive 8
+putJetBitTransaction OutputNonce                = putPositive 9
+putJetBitTransaction OutputScriptHash           = putPositive 10
+putJetBitTransaction OutputNullDatum            = putPositive 11
+putJetBitTransaction OutputSurjectionProof      = putPositive 12
+putJetBitTransaction OutputRangeProof           = putPositive 13
+
+putJetBitTransaction CurrentIsPegin             = putPositive 15
+putJetBitTransaction CurrentPrevOutpoint        = putPositive 16
+putJetBitTransaction CurrentAsset               = putPositive 17
+putJetBitTransaction CurrentAssetAmount         = putPositive 18
+putJetBitTransaction CurrentScriptHash          = putPositive 19
+putJetBitTransaction CurrentSequence            = putPositive 20
+
+
+putJetBitTransaction CurrentReissuanceBlinding  = putPositive 23
+putJetBitTransaction CurrentNewIssuanceContract = putPositive 24
+putJetBitTransaction CurrentReissuanceEntropy   = putPositive 25
+putJetBitTransaction CurrentIssuanceAssetAmount = putPositive 26
+putJetBitTransaction CurrentIssuanceTokenAmount = putPositive 27
+putJetBitTransaction CurrentIssuanceAssetProof  = putPositive 28
+putJetBitTransaction CurrentIssuanceTokenProof  = putPositive 29
+putJetBitTransaction InputIsPegin               = putPositive 30
+putJetBitTransaction InputPrevOutpoint          = putPositive 31
+putJetBitTransaction InputAsset                 = putPositive 32
+putJetBitTransaction InputAssetAmount           = putPositive 33
+putJetBitTransaction InputScriptHash            = putPositive 34
+putJetBitTransaction InputSequence              = putPositive 35
+
+
+putJetBitTransaction ReissuanceBlinding         = putPositive 38
+putJetBitTransaction NewIssuanceContract        = putPositive 39
+putJetBitTransaction ReissuanceEntropy          = putPositive 40
+putJetBitTransaction IssuanceAssetAmount        = putPositive 41
+putJetBitTransaction IssuanceTokenAmount        = putPositive 42
+putJetBitTransaction IssuanceAssetProof         = putPositive 43
+putJetBitTransaction IssuanceTokenProof         = putPositive 44
+putJetBitTransaction TapleafVersion             = putPositive 45
+putJetBitTransaction Tapbranch                  = putPositive 46
+putJetBitTransaction Version                    = putPositive 47
+
 elementsJetMap :: Map.Map Hash256 (SomeArrow ElementsJet)
 elementsJetMap = Map.fromList
   [ -- TimeLockJet
@@ -268,6 +466,49 @@ elementsJetMap = Map.fromList
   , mkAssoc (IssuanceJet CalculateAsset)
   , mkAssoc (IssuanceJet CalculateExplicitToken)
   , mkAssoc (IssuanceJet CalculateConfidentialToken)
+    -- TransactionJet
+  , mkAssoc (TransactionJet ScriptCMR)
+  , mkAssoc (TransactionJet InternalKey)
+  , mkAssoc (TransactionJet CurrentIndex)
+  , mkAssoc (TransactionJet NumInputs)
+  , mkAssoc (TransactionJet NumOutputs)
+  , mkAssoc (TransactionJet LockTime)
+  , mkAssoc (TransactionJet OutputAsset)
+  , mkAssoc (TransactionJet OutputAssetAmount)
+  , mkAssoc (TransactionJet OutputNonce)
+  , mkAssoc (TransactionJet OutputScriptHash)
+  , mkAssoc (TransactionJet OutputNullDatum)
+  , mkAssoc (TransactionJet OutputSurjectionProof)
+  , mkAssoc (TransactionJet OutputRangeProof)
+  , mkAssoc (TransactionJet CurrentIsPegin)
+  , mkAssoc (TransactionJet CurrentPrevOutpoint)
+  , mkAssoc (TransactionJet CurrentAsset)
+  , mkAssoc (TransactionJet CurrentAssetAmount)
+  , mkAssoc (TransactionJet CurrentScriptHash)
+  , mkAssoc (TransactionJet CurrentSequence)
+  , mkAssoc (TransactionJet CurrentReissuanceBlinding)
+  , mkAssoc (TransactionJet CurrentNewIssuanceContract)
+  , mkAssoc (TransactionJet CurrentReissuanceEntropy)
+  , mkAssoc (TransactionJet CurrentIssuanceAssetAmount)
+  , mkAssoc (TransactionJet CurrentIssuanceTokenAmount)
+  , mkAssoc (TransactionJet CurrentIssuanceAssetProof)
+  , mkAssoc (TransactionJet CurrentIssuanceTokenProof)
+  , mkAssoc (TransactionJet InputIsPegin)
+  , mkAssoc (TransactionJet InputPrevOutpoint)
+  , mkAssoc (TransactionJet InputAsset)
+  , mkAssoc (TransactionJet InputAssetAmount)
+  , mkAssoc (TransactionJet InputScriptHash)
+  , mkAssoc (TransactionJet InputSequence)
+  , mkAssoc (TransactionJet ReissuanceBlinding)
+  , mkAssoc (TransactionJet NewIssuanceContract)
+  , mkAssoc (TransactionJet ReissuanceEntropy)
+  , mkAssoc (TransactionJet IssuanceAssetAmount)
+  , mkAssoc (TransactionJet IssuanceTokenAmount)
+  , mkAssoc (TransactionJet IssuanceAssetProof)
+  , mkAssoc (TransactionJet IssuanceTokenProof)
+  , mkAssoc (TransactionJet TapleafVersion)
+  , mkAssoc (TransactionJet Tapbranch)
+  , mkAssoc (TransactionJet Version)
   ]
  where
   mkAssoc :: (TyC a, TyC b) => ElementsJet a b -> (Hash256, (SomeArrow ElementsJet))

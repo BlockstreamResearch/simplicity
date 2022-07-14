@@ -5,6 +5,8 @@ module Simplicity.Bitcoin.Primitive
   , getPrimBit, getPrimByte, putPrimBit, putPrimByte
   , PrimEnv(..), primEnv
   , primSem
+  -- * Re-exported Types
+  , PubKey
   ) where
 
 import qualified Data.List as List

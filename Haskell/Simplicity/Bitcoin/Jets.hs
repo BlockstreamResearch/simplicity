@@ -28,7 +28,8 @@ import qualified Simplicity.Bitcoin.Dag as Dag
 import Simplicity.Bitcoin.Term
 import Simplicity.Bitcoin.DataTypes
 import qualified Simplicity.Bitcoin.JetType
-import Simplicity.Bitcoin.Primitive
+import Simplicity.Bitcoin.Primitive (PrimEnv, envTx, PubKey)
+import qualified Simplicity.Bitcoin.Primitive as Prim
 import qualified Simplicity.Bitcoin.Serialization.BitString as BitString
 import qualified Simplicity.Bitcoin.Semantics as Semantics
 import qualified Simplicity.Bitcoin.Programs.TimeLock as TimeLock
@@ -49,6 +50,7 @@ deriving instance Show (JetType a b)
 
 data BitcoinJet a b where
   TimeLockJet :: TimeLockJet a b -> BitcoinJet a b
+  TransactionJet :: TransactionJet a b -> BitcoinJet a b
 deriving instance Eq (BitcoinJet a b)
 deriving instance Show (BitcoinJet a b)
 
@@ -65,8 +67,33 @@ data TimeLockJet a b where
 deriving instance Eq (TimeLockJet a b)
 deriving instance Show (TimeLockJet a b)
 
+data TransactionJet a b where
+  ScriptCMR :: TransactionJet () Word256
+  InternalKey :: TransactionJet () PubKey
+  CurrentIndex :: TransactionJet () Word32
+  NumInputs :: TransactionJet () Word32
+  NumOutputs :: TransactionJet () Word32
+  LockTime :: TransactionJet () Word32
+  OutputValue :: TransactionJet Word32 (Either () Word64)
+  OutputScriptHash :: TransactionJet Word32 (Either () Word256)
+  TotalOutputValue :: TransactionJet () Word64
+  CurrentPrevOutpoint :: TransactionJet () (Word256,Word32)
+  CurrentValue :: TransactionJet () Word64
+  CurrentSequence :: TransactionJet () Word32
+  InputPrevOutpoint :: TransactionJet Word32 (Either () (Word256,Word32))
+  InputValue :: TransactionJet Word32 (Either () Word64)
+  InputSequence :: TransactionJet Word32 (Either () Word32)
+  TotalInputValue :: TransactionJet () Word64
+  TapleafVersion :: TransactionJet () Word8
+  Tapbranch :: TransactionJet Word8 (Either () Word256)
+  Version :: TransactionJet () Word32
+
+deriving instance Eq (TransactionJet a b)
+deriving instance Show (TransactionJet a b)
+
 specificationBitcoin :: (Assert term, Primitive term) => BitcoinJet a b -> term a b
 specificationBitcoin (TimeLockJet x) = specificationTimeLock x
+specificationBitcoin (TransactionJet x) = specificationTransaction x
 
 specificationTimeLock :: (Assert term, Primitive term) => TimeLockJet a b -> term a b
 specificationTimeLock CheckLockHeight = TimeLock.checkLockHeight
@@ -79,8 +106,30 @@ specificationTimeLock TxLockDistance = TimeLock.txLockDistance
 specificationTimeLock TxLockDuration = TimeLock.txLockDuration
 specificationTimeLock TxIsFinal = TimeLock.txIsFinal
 
+specificationTransaction :: (Assert term, Primitive term) => TransactionJet a b -> term a b
+specificationTransaction ScriptCMR = primitive Prim.ScriptCMR
+specificationTransaction InternalKey = primitive Prim.InternalKey
+specificationTransaction CurrentIndex = primitive Prim.CurrentIndex
+specificationTransaction NumInputs = primitive Prim.NumInputs
+specificationTransaction NumOutputs = primitive Prim.NumOutputs
+specificationTransaction LockTime = primitive Prim.LockTime
+specificationTransaction OutputValue = primitive Prim.OutputValue
+specificationTransaction OutputScriptHash = primitive Prim.OutputScriptHash
+specificationTransaction TotalOutputValue = primitive Prim.TotalOutputValue
+specificationTransaction CurrentPrevOutpoint = primitive Prim.CurrentPrevOutpoint
+specificationTransaction CurrentValue = primitive Prim.CurrentValue
+specificationTransaction CurrentSequence = primitive Prim.CurrentSequence
+specificationTransaction InputPrevOutpoint = primitive Prim.InputPrevOutpoint
+specificationTransaction InputValue = primitive Prim.InputValue
+specificationTransaction InputSequence = primitive Prim.InputSequence
+specificationTransaction TotalInputValue = primitive Prim.TotalInputValue
+specificationTransaction TapleafVersion = primitive Prim.TapleafVersion
+specificationTransaction Tapbranch = primitive Prim.Tapbranch
+specificationTransaction Version = primitive Prim.Version
+
 implementationBitcoin :: BitcoinJet a b -> PrimEnv -> a -> Maybe b
 implementationBitcoin (TimeLockJet x) = implementationTimeLock x
+implementationBitcoin (TransactionJet x) = implementationTransaction x
 
 implementationTimeLock :: TimeLockJet a b -> PrimEnv -> a -> Maybe b
 implementationTimeLock CheckLockDistance env x | fromWord16 x <= fromIntegral (txLockDistance (envTx env)) = Just ()
@@ -99,11 +148,15 @@ implementationTimeLock TxLockDistance env () = Just . toWord16 . fromIntegral $ 
 implementationTimeLock TxLockDuration env () = Just . toWord16 . fromIntegral $ txLockDuration (envTx env)
 implementationTimeLock TxIsFinal env () = Just $ toBit (txIsFinal (envTx env))
 
+implementationTransaction :: TransactionJet a b -> PrimEnv -> a -> Maybe b
+implementationTransaction x env i = Semantics.sem (specificationTransaction x) env i
+
 getJetBitBitcoin :: (Monad m) => m Void -> m Bool -> m (SomeArrow BitcoinJet)
 getJetBitBitcoin abort next = getPositive next >>= match
  where
   makeArrow p = return (SomeArrow p)
   match 2 = (someArrowMap TimeLockJet) <$> getJetBitTimeLock
+  match 3 = (someArrowMap TransactionJet) <$> getJetBitTransaction
   match _ = vacuous abort
   getJetBitTimeLock = getPositive next >>= matchTimeLock
    where
@@ -117,9 +170,38 @@ getJetBitBitcoin abort next = getPositive next >>= match
     matchTimeLock 8 = makeArrow TxLockDuration
     matchTimeLock 9 = makeArrow TxIsFinal
     matchTimeLock _ = vacuous abort
+  getJetBitTransaction = getPositive next >>= matchTransaction
+   where
+    matchTransaction 1 = makeArrow ScriptCMR
+    matchTransaction 2 = makeArrow InternalKey
+    matchTransaction 3 = makeArrow CurrentIndex
+    matchTransaction 4 = makeArrow NumInputs
+    matchTransaction 5 = makeArrow NumOutputs
+    matchTransaction 6 = makeArrow LockTime
+
+    matchTransaction 8 = makeArrow OutputValue
+    matchTransaction 9 = makeArrow OutputScriptHash
+    matchTransaction 10 = makeArrow TotalOutputValue
+    matchTransaction 11 = makeArrow CurrentPrevOutpoint
+    matchTransaction 12 = makeArrow CurrentValue
+
+    matchTransaction 14 = makeArrow CurrentSequence
+
+
+    matchTransaction 17 = makeArrow InputPrevOutpoint
+    matchTransaction 18 = makeArrow InputValue
+
+    matchTransaction 20 = makeArrow InputSequence
+
+
+    matchTransaction 23 = makeArrow TotalInputValue
+    matchTransaction 24 = makeArrow TapleafVersion
+    matchTransaction 25 = makeArrow Tapbranch
+    matchTransaction 26 = makeArrow Version
 
 putJetBitBitcoin :: BitcoinJet a b -> DList Bool
 putJetBitBitcoin (TimeLockJet x) = putPositive 2 . putJetBitTimeLock x
+putJetBitBitcoin (TransactionJet x) = putPositive 3 . putJetBitTransaction x
 
 putJetBitTimeLock :: TimeLockJet a b -> DList Bool
 putJetBitTimeLock CheckLockHeight   = putPositive 1
@@ -131,6 +213,34 @@ putJetBitTimeLock TxLockTime     = putPositive 6
 putJetBitTimeLock TxLockDistance = putPositive 7
 putJetBitTimeLock TxLockDuration = putPositive 8
 putJetBitTimeLock TxIsFinal      = putPositive 9
+
+putJetBitTransaction :: TransactionJet a b -> DList Bool
+putJetBitTransaction ScriptCMR           = putPositive 1
+putJetBitTransaction InternalKey         = putPositive 2
+putJetBitTransaction CurrentIndex        = putPositive 3
+putJetBitTransaction NumInputs           = putPositive 4
+putJetBitTransaction NumOutputs          = putPositive 5
+putJetBitTransaction LockTime            = putPositive 6
+
+putJetBitTransaction OutputValue         = putPositive 8
+putJetBitTransaction OutputScriptHash    = putPositive 9
+putJetBitTransaction TotalOutputValue    = putPositive 10
+putJetBitTransaction CurrentPrevOutpoint = putPositive 11
+putJetBitTransaction CurrentValue        = putPositive 12
+
+putJetBitTransaction CurrentSequence     = putPositive 14
+
+
+putJetBitTransaction InputPrevOutpoint   = putPositive 17
+putJetBitTransaction InputValue          = putPositive 18
+
+putJetBitTransaction InputSequence       = putPositive 20
+
+
+putJetBitTransaction TotalInputValue     = putPositive 23
+putJetBitTransaction TapleafVersion      = putPositive 24
+putJetBitTransaction Tapbranch           = putPositive 25
+putJetBitTransaction Version             = putPositive 26
 
 bitcoinJetMap :: Map.Map Hash256 (SomeArrow BitcoinJet)
 bitcoinJetMap = Map.fromList
@@ -144,6 +254,26 @@ bitcoinJetMap = Map.fromList
   , mkAssoc (TimeLockJet TxLockDistance)
   , mkAssoc (TimeLockJet TxLockDuration)
   , mkAssoc (TimeLockJet TxIsFinal)
+    -- TransactionJet
+  , mkAssoc (TransactionJet ScriptCMR)
+  , mkAssoc (TransactionJet InternalKey)
+  , mkAssoc (TransactionJet CurrentIndex)
+  , mkAssoc (TransactionJet NumInputs)
+  , mkAssoc (TransactionJet NumOutputs)
+  , mkAssoc (TransactionJet LockTime)
+  , mkAssoc (TransactionJet OutputValue)
+  , mkAssoc (TransactionJet OutputScriptHash)
+  , mkAssoc (TransactionJet TotalOutputValue)
+  , mkAssoc (TransactionJet CurrentPrevOutpoint)
+  , mkAssoc (TransactionJet CurrentValue)
+  , mkAssoc (TransactionJet CurrentSequence)
+  , mkAssoc (TransactionJet InputPrevOutpoint)
+  , mkAssoc (TransactionJet InputValue)
+  , mkAssoc (TransactionJet InputSequence)
+  , mkAssoc (TransactionJet TotalInputValue)
+  , mkAssoc (TransactionJet TapleafVersion)
+  , mkAssoc (TransactionJet Tapbranch)
+  , mkAssoc (TransactionJet Version)
   ]
  where
   mkAssoc :: (TyC a, TyC b) => BitcoinJet a b -> (Hash256, (SomeArrow BitcoinJet))

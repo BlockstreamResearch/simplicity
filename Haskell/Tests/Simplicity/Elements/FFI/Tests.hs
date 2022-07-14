@@ -8,7 +8,7 @@ import Simplicity.Elements.Arbitrary
 import Simplicity.Elements.DataTypes
 import Simplicity.Elements.FFI.Jets
 import Simplicity.Elements.Jets
-import Simplicity.Elements.Primitive
+import qualified Simplicity.Elements.Primitive as Prim
 import Simplicity.Elements.Semantics
 import Simplicity.Elements.TestEval
 import Simplicity.FFI.Jets
@@ -26,51 +26,9 @@ toW8 = toWord8 . fromIntegral
 tests :: TestTree
 tests = testGroup "Elements"
         [ testGroup "Primitives"
-          [ testProperty "version" prop_version
-          , testProperty "lock_time" prop_lock_time
-          , testProperty "inputs_hash" prop_inputs_hash
+          [ testProperty "inputs_hash" prop_inputs_hash
           , testProperty "outputs_hash" prop_outputs_hash
-          , testProperty "num_inputs" prop_num_inputs
-          , testProperty "input_is_pegin" prop_input_is_pegin
-          , testProperty "input_prev_outpoint" prop_input_prev_outpoint
-          , testProperty "input_asset" prop_input_asset
-          , testProperty "input_amount" prop_input_amount
-          , testProperty "input_script_hash" prop_input_script_hash
-          , testProperty "input_sequence" prop_input_sequence
-          , testProperty "reissuance_blinding" prop_reissuance_blinding
-          , testProperty "new_issuance_contract" prop_new_issuance_contract
-          , testProperty "reissuance_entropy" prop_reissuance_entropy
-          , testProperty "issuance_asset_amt" prop_issuance_asset_amt
-          , testProperty "issuance_token_amt" prop_issuance_token_amt
-          , testProperty "issuance_asset_proof" prop_issuance_asset_proof
-          , testProperty "issuance_token_proof" prop_issuance_token_proof
-          , testProperty "current_index" prop_current_index
-          , testProperty "current_is_pegin" prop_current_is_pegin
-          , testProperty "current_prev_outpoint" prop_current_prev_outpoint
-          , testProperty "current_asset" prop_current_asset
-          , testProperty "current_amount" prop_current_amount
-          , testProperty "current_script_hash" prop_current_script_hash
-          , testProperty "current_sequence" prop_current_sequence
-          , testProperty "current_reissuance_blinding" prop_current_reissuance_blinding
-          , testProperty "current_new_issuance_contract" prop_current_new_issuance_contract
-          , testProperty "current_re_issuance_entropy" prop_current_reissuance_entropy
-          , testProperty "current_issuance_asset_amt" prop_current_issuance_asset_amt
-          , testProperty "current_issuance_token_amt" prop_current_issuance_token_amt
-          , testProperty "current_issuance_asset_proof" prop_current_issuance_asset_proof
-          , testProperty "current_issuance_token_proof" prop_current_issuance_token_proof
-          , testProperty "tapleaf_version" prop_tapleaf_version
-          , testProperty "tapbranch" prop_tapbranch
-          , testProperty "internal_key" prop_internal_key
           , testProperty "annex_hash" prop_annex_hash
-          , testProperty "num_outputs" prop_num_outputs
-          , testProperty "output_asset" prop_output_asset
-          , testProperty "output_amount" prop_output_amount
-          , testProperty "output_nonce" prop_output_nonce
-          , testProperty "output_script_hash" prop_output_script_hash
-          , testProperty "output_null_datum" prop_output_null_datum
-          , testProperty "output_surjection_proof" prop_output_surjection_proof
-          , testProperty "output_range_proof" prop_output_range_proof
-          , testProperty "script_cmr" prop_script_cmr
           ]
         , testGroup "Jets"
           [ testProperty "tx_is_final" prop_tx_is_final
@@ -91,144 +49,60 @@ tests = testGroup "Elements"
           , testProperty "issuance_token" prop_issuance_token
           , testProperty "issuance_entropy" prop_issuance_entropy
           ]
+        , testGroup "Transaction"
+          [ testProperty "script_cmr" prop_script_cmr
+          , testProperty "internal_key" prop_internal_key
+          , testProperty "current_index" prop_current_index
+          , testProperty "num_inputs" prop_num_inputs
+          , testProperty "num_outputs" prop_num_outputs
+          , testProperty "lock_time" prop_lock_time
+          , testProperty "output_asset" prop_output_asset
+          , testProperty "output_amount" prop_output_amount
+          , testProperty "output_nonce" prop_output_nonce
+          , testProperty "output_script_hash" prop_output_script_hash
+          , testProperty "output_null_datum" prop_output_null_datum
+          , testProperty "output_surjection_proof" prop_output_surjection_proof
+          , testProperty "output_range_proof" prop_output_range_proof
+          , testProperty "current_is_pegin" prop_current_is_pegin
+          , testProperty "current_prev_outpoint" prop_current_prev_outpoint
+          , testProperty "current_asset" prop_current_asset
+          , testProperty "current_amount" prop_current_amount
+          , testProperty "current_script_hash" prop_current_script_hash
+          , testProperty "current_sequence" prop_current_sequence
+          , testProperty "current_reissuance_blinding" prop_current_reissuance_blinding
+          , testProperty "current_new_issuance_contract" prop_current_new_issuance_contract
+          , testProperty "current_reissuance_entropy" prop_current_reissuance_entropy
+          , testProperty "current_issuance_asset_amount" prop_current_issuance_asset_amount
+          , testProperty "current_issuance_token_amount" prop_current_issuance_token_amount
+          , testProperty "current_issuance_asset_proof" prop_current_issuance_asset_proof
+          , testProperty "current_issuance_token_proof" prop_current_issuance_token_proof
+          , testProperty "input_is_pegin" prop_input_is_pegin
+          , testProperty "input_prev_outpoint" prop_input_prev_outpoint
+          , testProperty "input_asset" prop_input_asset
+          , testProperty "input_amount" prop_input_amount
+          , testProperty "input_script_hash" prop_input_script_hash
+          , testProperty "input_sequence" prop_input_sequence
+          , testProperty "reissuance_blinding" prop_reissuance_blinding
+          , testProperty "new_issuance_contract" prop_new_issuance_contract
+          , testProperty "reissuance_entropy" prop_reissuance_entropy
+          , testProperty "issuance_asset_amount" prop_issuance_asset_amount
+          , testProperty "issuance_token_amount" prop_issuance_token_amount
+          , testProperty "issuance_asset_proof" prop_issuance_asset_proof
+          , testProperty "issuance_token_proof" prop_issuance_token_proof
+          , testProperty "tapleaf_version" prop_tapleaf_version
+          , testProperty "tapbranch" prop_tapbranch
+          , testProperty "version" prop_version
+          ]
         ]
 
-prop_version :: Property
-prop_version = forallPrimEnv $ \env -> primSem Version () env == version env ()
-
-prop_lock_time :: Property
-prop_lock_time = forallPrimEnv $ \env -> primSem LockTime () env == lock_time env ()
-
 prop_inputs_hash :: Property
-prop_inputs_hash = forallPrimEnv $ \env -> primSem InputsHash () env == inputs_hash env ()
+prop_inputs_hash = forallPrimEnv $ \env -> Prim.primSem Prim.InputsHash () env == inputs_hash env ()
 
 prop_outputs_hash :: Property
-prop_outputs_hash = forallPrimEnv $ \env -> primSem OutputsHash () env == outputs_hash env ()
-
-prop_num_inputs :: Property
-prop_num_inputs = forallPrimEnv $ \env -> primSem NumInputs () env == num_inputs env ()
-
-prop_input_is_pegin :: Property
-prop_input_is_pegin = forallInPrimEnv $ \env i -> primSem InputIsPegin (toW32 i) env == input_is_pegin env (toW32 i)
-
-prop_input_prev_outpoint :: Property
-prop_input_prev_outpoint = forallInPrimEnv $ \env i -> primSem InputPrevOutpoint (toW32 i) env == input_prev_outpoint env (toW32 i)
-
-prop_input_asset :: Property
-prop_input_asset = forallInPrimEnv $ \env i -> primSem InputAsset (toW32 i) env == input_asset env (toW32 i)
-
-prop_input_amount :: Property
-prop_input_amount = forallInPrimEnv $ \env i -> primSem InputAmount (toW32 i) env == input_amount env (toW32 i)
-
-prop_input_sequence :: Property
-prop_input_sequence = forallInPrimEnv $ \env i -> primSem InputSequence (toW32 i) env == input_sequence env (toW32 i)
-
-prop_input_script_hash :: Property
-prop_input_script_hash = forallInPrimEnv $ \env i -> primSem InputScriptHash (toW32 i) env == input_script_hash env (toW32 i)
-
-prop_reissuance_blinding :: Property
-prop_reissuance_blinding = forallInPrimEnv $ \env i -> primSem ReissuanceBlinding (toW32 i) env == reissuance_blinding env (toW32 i)
-
-prop_new_issuance_contract :: Property
-prop_new_issuance_contract = forallInPrimEnv $ \env i -> primSem NewIssuanceContract (toW32 i) env == new_issuance_contract env (toW32 i)
-
-prop_reissuance_entropy :: Property
-prop_reissuance_entropy = forallInPrimEnv $ \env i -> primSem ReissuanceEntropy (toW32 i) env == reissuance_entropy env (toW32 i)
-
-prop_issuance_asset_amt :: Property
-prop_issuance_asset_amt = forallInPrimEnv $ \env i -> primSem IssuanceAssetAmt (toW32 i) env == issuance_asset_amt env (toW32 i)
-
-prop_issuance_token_amt :: Property
-prop_issuance_token_amt = forallInPrimEnv $ \env i -> primSem IssuanceTokenAmt (toW32 i) env == issuance_token_amt env (toW32 i)
-
-prop_issuance_asset_proof :: Property
-prop_issuance_asset_proof = forallInPrimEnv $ \env i -> primSem IssuanceAssetAmt (toW32 i) env == issuance_asset_amt env (toW32 i)
-
-prop_issuance_token_proof :: Property
-prop_issuance_token_proof = forallInPrimEnv $ \env i -> primSem IssuanceTokenAmt (toW32 i) env == issuance_token_amt env (toW32 i)
-
-prop_current_index :: Property
-prop_current_index = forallPrimEnv $ \env -> primSem CurrentIndex () env == current_index env ()
-
-prop_current_is_pegin :: Property
-prop_current_is_pegin = forallPrimEnv $ \env -> primSem CurrentIsPegin () env == current_is_pegin env ()
-
-prop_current_prev_outpoint :: Property
-prop_current_prev_outpoint = forallPrimEnv $ \env -> primSem CurrentPrevOutpoint () env == current_prev_outpoint env ()
-
-prop_current_asset :: Property
-prop_current_asset = forallPrimEnv $ \env -> primSem CurrentAsset () env == current_asset env ()
-
-prop_current_amount :: Property
-prop_current_amount = forallPrimEnv $ \env -> primSem CurrentAmount () env == current_amount env ()
-
-prop_current_sequence :: Property
-prop_current_sequence = forallPrimEnv $ \env -> primSem CurrentSequence () env == current_sequence env ()
-
-prop_current_script_hash :: Property
-prop_current_script_hash = forallPrimEnv $ \env -> primSem CurrentScriptHash () env == current_script_hash env ()
-
-prop_current_reissuance_blinding :: Property
-prop_current_reissuance_blinding = forallPrimEnv $ \env -> primSem CurrentReissuanceBlinding () env == current_reissuance_blinding env ()
-
-prop_current_new_issuance_contract :: Property
-prop_current_new_issuance_contract = forallPrimEnv $ \env -> primSem CurrentNewIssuanceContract () env == current_new_issuance_contract env ()
-
-prop_current_reissuance_entropy :: Property
-prop_current_reissuance_entropy = forallPrimEnv $ \env -> primSem CurrentReissuanceEntropy () env == current_reissuance_entropy env ()
-
-prop_current_issuance_asset_amt :: Property
-prop_current_issuance_asset_amt = forallPrimEnv $ \env -> primSem CurrentIssuanceAssetAmt () env == current_issuance_asset_amt env ()
-
-prop_current_issuance_token_amt :: Property
-prop_current_issuance_token_amt = forallPrimEnv $ \env -> primSem CurrentIssuanceTokenAmt () env == current_issuance_token_amt env ()
-
-prop_current_issuance_asset_proof :: Property
-prop_current_issuance_asset_proof = forallPrimEnv $ \env -> primSem CurrentIssuanceAssetAmt () env == current_issuance_asset_amt env ()
-
-prop_current_issuance_token_proof :: Property
-prop_current_issuance_token_proof = forallPrimEnv $ \env -> primSem CurrentIssuanceTokenAmt () env == current_issuance_token_amt env ()
-
-prop_tapleaf_version :: Property
-prop_tapleaf_version = forallPrimEnv $ \env -> primSem TapleafVersion () env == tapleaf_version env ()
-
-prop_tapbranch :: Property
-prop_tapbranch = forallPrimEnv $ \env -> forAll (genTapBranchIx env) $ \i -> primSem Tapbranch (toW8 i) env == tapbranch env (toW8 i)
- where
-  genTapBranchIx = genBoundaryCases . fromIntegral . length . tapBranch . envTap
-
-prop_internal_key :: Property
-prop_internal_key = forallPrimEnv $ \env -> primSem InternalKey () env == internal_key env ()
+prop_outputs_hash = forallPrimEnv $ \env -> Prim.primSem Prim.OutputsHash () env == outputs_hash env ()
 
 prop_annex_hash :: Property
-prop_annex_hash = forallPrimEnv $ \env -> primSem AnnexHash () env == annex_hash env ()
-
-prop_num_outputs :: Property
-prop_num_outputs = forallPrimEnv $ \env -> primSem NumOutputs () env == num_outputs env ()
-
-prop_output_asset :: Property
-prop_output_asset = forallOutPrimEnv $ \env i -> primSem OutputAsset (toW32 i) env == output_asset env (toW32 i)
-
-prop_output_amount :: Property
-prop_output_amount = forallOutPrimEnv $ \env i -> primSem OutputAmount (toW32 i) env == output_amount env (toW32 i)
-
-prop_output_nonce :: Property
-prop_output_nonce = forallOutPrimEnv $ \env i -> primSem OutputNonce (toW32 i) env == output_nonce env (toW32 i)
-
-prop_output_script_hash :: Property
-prop_output_script_hash = forallOutPrimEnv $ \env i -> primSem OutputScriptHash (toW32 i) env == output_script_hash env (toW32 i)
-
-prop_output_null_datum :: NonNegative Integer -> Property
-prop_output_null_datum (NonNegative j) = forallOutPrimEnv $ \env i -> primSem OutputNullDatum (toW32 i, toWord32 j) env == output_null_datum env (toW32 i, toWord32 j)
-
-prop_output_surjection_proof :: Property
-prop_output_surjection_proof = forallOutPrimEnv $ \env i -> primSem OutputSurjectionProof (toW32 i) env == output_surjection_proof env (toW32 i)
-
-prop_output_range_proof :: Property
-prop_output_range_proof = forallOutPrimEnv $ \env i -> primSem OutputRangeProof (toW32 i) env == output_range_proof env (toW32 i)
-
-prop_script_cmr :: Property
-prop_script_cmr = forallPrimEnv $ \env -> primSem ScriptCMR () env == script_cmr env ()
+prop_annex_hash = forallPrimEnv $ \env -> Prim.primSem Prim.AnnexHash () env == annex_hash env ()
 
 prop_tx_is_final :: Property
 prop_tx_is_final = forallPrimEnv $ \env -> fast_tx_is_final env () == tx_is_final env ()
@@ -322,3 +196,215 @@ prop_issuance_entropy = forallInPrimEnv $ \env i ->
    fast_issuance_entropy env (toW32 i) == issuance_entropy env (toW32 i)
  where
   fast_issuance_entropy = testEval (specification (ElementsJet (IssuanceJet IssuanceEntropy)))
+
+prop_script_cmr :: Property
+prop_script_cmr = forallPrimEnv $ \env -> fast_script_cmr env () == script_cmr env ()
+ where
+  fast_script_cmr = testEval (specification (ElementsJet (TransactionJet ScriptCMR)))
+
+prop_internal_key :: Property
+prop_internal_key = forallPrimEnv $ \env -> fast_internal_key env () == internal_key env ()
+ where
+  fast_internal_key = testEval (specification (ElementsJet (TransactionJet InternalKey)))
+
+prop_current_index :: Property
+prop_current_index = forallPrimEnv $ \env -> fast_current_index env () == current_index env ()
+ where
+  fast_current_index = testEval (specification (ElementsJet (TransactionJet CurrentIndex)))
+
+prop_num_inputs :: Property
+prop_num_inputs = forallPrimEnv $ \env -> fast_num_inputs env () == num_inputs env ()
+ where
+  fast_num_inputs = testEval (specification (ElementsJet (TransactionJet NumInputs)))
+
+prop_num_outputs :: Property
+prop_num_outputs = forallPrimEnv $ \env -> fast_num_outputs env () == num_outputs env ()
+ where
+  fast_num_outputs = testEval (specification (ElementsJet (TransactionJet NumOutputs)))
+
+prop_lock_time :: Property
+prop_lock_time = forallPrimEnv $ \env -> fast_lock_time env () == lock_time env ()
+ where
+  fast_lock_time = testEval (specification (ElementsJet (TransactionJet LockTime)))
+
+prop_output_asset :: Property
+prop_output_asset = forallOutPrimEnv $ \env i -> fast_output_asset env (toW32 i) == output_asset env (toW32 i)
+ where
+  fast_output_asset = testEval (specification (ElementsJet (TransactionJet OutputAsset)))
+
+prop_output_amount :: Property
+prop_output_amount = forallOutPrimEnv $ \env i -> fast_output_amount env (toW32 i) == output_asset_amount env (toW32 i)
+ where
+  fast_output_amount = testEval (specification (ElementsJet (TransactionJet OutputAssetAmount)))
+
+prop_output_nonce :: Property
+prop_output_nonce = forallOutPrimEnv $ \env i -> fast_output_nonce env (toW32 i) == output_nonce env (toW32 i)
+ where
+  fast_output_nonce = testEval (specification (ElementsJet (TransactionJet OutputNonce)))
+
+prop_output_script_hash :: Property
+prop_output_script_hash = forallOutPrimEnv $ \env i -> fast_output_script_hash env (toW32 i) == output_script_hash env (toW32 i)
+ where
+  fast_output_script_hash = testEval (specification (ElementsJet (TransactionJet OutputScriptHash)))
+
+prop_output_null_datum :: NonNegative Integer -> Property
+prop_output_null_datum = \(NonNegative j) -> forallOutPrimEnv $ \env i -> fast_output_null_datum env (toW32 i, toWord32 j) == output_null_datum env (toW32 i, toWord32 j)
+ where
+  fast_output_null_datum = testEval (specification (ElementsJet (TransactionJet OutputNullDatum)))
+
+prop_output_surjection_proof :: Property
+prop_output_surjection_proof = forallOutPrimEnv $ \env i -> fast_output_surjection_proof env (toW32 i) == output_surjection_proof env (toW32 i)
+ where
+  fast_output_surjection_proof = testEval (specification (ElementsJet (TransactionJet OutputSurjectionProof)))
+
+prop_output_range_proof :: Property
+prop_output_range_proof = forallOutPrimEnv $ \env i -> fast_output_range_proof env (toW32 i) == output_range_proof env (toW32 i)
+ where
+  fast_output_range_proof = testEval (specification (ElementsJet (TransactionJet OutputRangeProof)))
+
+prop_current_is_pegin :: Property
+prop_current_is_pegin = forallPrimEnv $ \env -> fast_current_is_pegin env () == current_is_pegin env ()
+ where
+  fast_current_is_pegin = testEval (specification (ElementsJet (TransactionJet CurrentIsPegin)))
+
+prop_current_prev_outpoint :: Property
+prop_current_prev_outpoint = forallPrimEnv $ \env -> fast_current_prev_outpoint env () == current_prev_outpoint env ()
+ where
+  fast_current_prev_outpoint = testEval (specification (ElementsJet (TransactionJet CurrentPrevOutpoint)))
+
+prop_current_asset :: Property
+prop_current_asset = forallPrimEnv $ \env -> fast_current_asset env () == current_asset env ()
+ where
+  fast_current_asset = testEval (specification (ElementsJet (TransactionJet CurrentAsset)))
+
+prop_current_amount :: Property
+prop_current_amount = forallPrimEnv $ \env -> fast_current_amount env () == current_asset_amount env ()
+ where
+  fast_current_amount = testEval (specification (ElementsJet (TransactionJet CurrentAssetAmount)))
+
+prop_current_script_hash :: Property
+prop_current_script_hash = forallPrimEnv $ \env -> fast_current_script_hash env () == current_script_hash env ()
+ where
+  fast_current_script_hash = testEval (specification (ElementsJet (TransactionJet CurrentScriptHash)))
+
+prop_current_sequence :: Property
+prop_current_sequence = forallPrimEnv $ \env -> fast_current_sequence env () == current_sequence env ()
+ where
+  fast_current_sequence = testEval (specification (ElementsJet (TransactionJet CurrentSequence)))
+
+prop_current_reissuance_blinding :: Property
+prop_current_reissuance_blinding = forallPrimEnv $ \env -> fast_current_reissuance_blinding env () == current_reissuance_blinding env ()
+ where
+  fast_current_reissuance_blinding = testEval (specification (ElementsJet (TransactionJet CurrentReissuanceBlinding)))
+
+prop_current_new_issuance_contract :: Property
+prop_current_new_issuance_contract = forallPrimEnv $ \env -> fast_current_new_issuance_contract env () == current_new_issuance_contract env ()
+ where
+  fast_current_new_issuance_contract = testEval (specification (ElementsJet (TransactionJet CurrentNewIssuanceContract)))
+
+prop_current_reissuance_entropy :: Property
+prop_current_reissuance_entropy = forallPrimEnv $ \env -> fast_current_reissuance_entropy env () == current_reissuance_entropy env ()
+ where
+  fast_current_reissuance_entropy = testEval (specification (ElementsJet (TransactionJet CurrentReissuanceEntropy)))
+
+prop_current_issuance_asset_amount :: Property
+prop_current_issuance_asset_amount = forallPrimEnv $ \env -> fast_current_issuance_asset_amount env () == current_issuance_asset_amount env ()
+ where
+  fast_current_issuance_asset_amount = testEval (specification (ElementsJet (TransactionJet CurrentIssuanceAssetAmount)))
+
+prop_current_issuance_token_amount :: Property
+prop_current_issuance_token_amount = forallPrimEnv $ \env -> fast_current_issuance_token_amount env () == current_issuance_token_amount env ()
+ where
+  fast_current_issuance_token_amount = testEval (specification (ElementsJet (TransactionJet CurrentIssuanceTokenAmount)))
+
+prop_current_issuance_asset_proof :: Property
+prop_current_issuance_asset_proof = forallPrimEnv $ \env -> fast_current_issuance_asset_proof env () == current_issuance_asset_proof env ()
+ where
+  fast_current_issuance_asset_proof = testEval (specification (ElementsJet (TransactionJet CurrentIssuanceAssetProof)))
+
+prop_current_issuance_token_proof :: Property
+prop_current_issuance_token_proof = forallPrimEnv $ \env -> fast_current_issuance_token_proof env () == current_issuance_token_proof env ()
+ where
+  fast_current_issuance_token_proof = testEval (specification (ElementsJet (TransactionJet CurrentIssuanceTokenProof)))
+
+prop_input_is_pegin :: Property
+prop_input_is_pegin = forallInPrimEnv $ \env i -> fast_input_is_pegin env (toW32 i) == input_is_pegin env (toW32 i)
+ where
+  fast_input_is_pegin = testEval (specification (ElementsJet (TransactionJet InputIsPegin)))
+
+prop_input_prev_outpoint :: Property
+prop_input_prev_outpoint = forallInPrimEnv $ \env i -> fast_input_prev_outpoint env (toW32 i) == input_prev_outpoint env (toW32 i)
+ where
+  fast_input_prev_outpoint = testEval (specification (ElementsJet (TransactionJet InputPrevOutpoint)))
+
+prop_input_asset :: Property
+prop_input_asset = forallInPrimEnv $ \env i -> fast_input_asset env (toW32 i) == input_asset env (toW32 i)
+ where
+  fast_input_asset = testEval (specification (ElementsJet (TransactionJet InputAsset)))
+
+prop_input_amount :: Property
+prop_input_amount = forallInPrimEnv $ \env i -> fast_input_amount env (toW32 i) == input_asset_amount env (toW32 i)
+ where
+  fast_input_amount = testEval (specification (ElementsJet (TransactionJet InputAssetAmount)))
+
+prop_input_script_hash :: Property
+prop_input_script_hash = forallInPrimEnv $ \env i -> fast_input_script_hash env (toW32 i) == input_script_hash env (toW32 i)
+ where
+  fast_input_script_hash = testEval (specification (ElementsJet (TransactionJet InputScriptHash)))
+
+prop_input_sequence :: Property
+prop_input_sequence = forallInPrimEnv $ \env i -> fast_input_sequence env (toW32 i) == input_sequence env (toW32 i)
+ where
+  fast_input_sequence = testEval (specification (ElementsJet (TransactionJet InputSequence)))
+
+prop_reissuance_blinding :: Property
+prop_reissuance_blinding = forallInPrimEnv $ \env i -> fast_reissuance_blinding env (toW32 i) == reissuance_blinding env (toW32 i)
+ where
+  fast_reissuance_blinding = testEval (specification (ElementsJet (TransactionJet ReissuanceBlinding)))
+
+prop_new_issuance_contract :: Property
+prop_new_issuance_contract = forallInPrimEnv $ \env i -> fast_new_issuance_contract env (toW32 i) == new_issuance_contract env (toW32 i)
+ where
+  fast_new_issuance_contract = testEval (specification (ElementsJet (TransactionJet NewIssuanceContract)))
+
+prop_reissuance_entropy :: Property
+prop_reissuance_entropy = forallInPrimEnv $ \env i -> fast_reissuance_entropy env (toW32 i) == reissuance_entropy env (toW32 i)
+ where
+  fast_reissuance_entropy = testEval (specification (ElementsJet (TransactionJet ReissuanceEntropy)))
+
+prop_issuance_asset_amount :: Property
+prop_issuance_asset_amount = forallInPrimEnv $ \env i -> fast_issuance_asset_amount env (toW32 i) == issuance_asset_amount env (toW32 i)
+ where
+  fast_issuance_asset_amount = testEval (specification (ElementsJet (TransactionJet IssuanceAssetAmount)))
+
+prop_issuance_token_amount :: Property
+prop_issuance_token_amount = forallInPrimEnv $ \env i -> fast_issuance_token_amount env (toW32 i) == issuance_token_amount env (toW32 i)
+ where
+  fast_issuance_token_amount = testEval (specification (ElementsJet (TransactionJet IssuanceTokenAmount)))
+
+prop_issuance_asset_proof :: Property
+prop_issuance_asset_proof = forallInPrimEnv $ \env i -> fast_issuance_asset_proof env (toW32 i) == issuance_asset_proof env (toW32 i)
+ where
+  fast_issuance_asset_proof = testEval (specification (ElementsJet (TransactionJet IssuanceAssetProof)))
+
+prop_issuance_token_proof :: Property
+prop_issuance_token_proof = forallInPrimEnv $ \env i -> fast_issuance_token_proof env (toW32 i) == issuance_token_proof env (toW32 i)
+ where
+  fast_issuance_token_proof = testEval (specification (ElementsJet (TransactionJet IssuanceTokenProof)))
+
+prop_tapleaf_version :: Property
+prop_tapleaf_version = forallPrimEnv $ \env -> fast_tapleaf_version env () == tapleaf_version env ()
+ where
+  fast_tapleaf_version = testEval (specification (ElementsJet (TransactionJet TapleafVersion)))
+
+prop_tapbranch :: Property
+prop_tapbranch = forallPrimEnv $ \env -> forAll (genTapBranchIx env) $ \i -> fast_tapbranch env (toW8 i) == tapbranch env (toW8 i)
+ where
+  fast_tapbranch = testEval (specification (ElementsJet (TransactionJet Tapbranch)))
+  genTapBranchIx = genBoundaryCases . fromIntegral . length . tapBranch . Prim.envTap
+
+prop_version :: Property
+prop_version = forallPrimEnv $ \env -> fast_version env () == version env ()
+ where
+  fast_version = testEval (specification (ElementsJet (TransactionJet Version)))
+

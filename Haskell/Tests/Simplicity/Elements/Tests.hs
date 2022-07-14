@@ -8,7 +8,7 @@ import Lens.Family2 (review, over)
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, (@?=), assertBool, testCase)
-import Test.Tasty.QuickCheck (Property, forAll, testProperty)
+import Test.Tasty.QuickCheck (Property, NonNegative(..), arbitrary, forAll, testProperty)
 
 import Simplicity.Arbitrary
 import Simplicity.Digest
@@ -16,7 +16,7 @@ import Simplicity.Elements.Arbitrary
 import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Jets
 import Simplicity.Elements.TestEval
-import Simplicity.Elements.Primitive
+import Simplicity.Elements.Primitive (primEnv, envTx, envTap)
 import Simplicity.Elements.Programs.CheckSigHashAll.Lib
 import qualified Simplicity.Elements.Programs.TimeLock as Prog
 import Simplicity.Elements.Semantics
@@ -36,6 +36,9 @@ toW32 = toWord32 . fromIntegral
 
 toW16 :: Word.Word16 -> Word16
 toW16 = toWord16 . fromIntegral
+
+toW8 :: Word.Word8 -> Word8
+toW8 = toWord8 . fromIntegral
 
 tests :: TestTree
 tests = testGroup "Elements"
@@ -59,6 +62,48 @@ tests = testGroup "Elements"
           , testProperty "input_issuance_asset" prop_input_issuance_asset
           , testProperty "input_issuance_token" prop_input_issuance_token
           , testProperty "input_issuance_entropy" prop_input_issuance_entropy
+          , testProperty "script_cmr" prop_script_cmr
+          , testProperty "internal_key" prop_internal_key
+          , testProperty "current_index" prop_current_index
+          , testProperty "num_inputs" prop_num_inputs
+          , testProperty "num_outputs" prop_num_outputs
+          , testProperty "lock_time" prop_lock_time
+          , testProperty "output_asset" prop_output_asset
+          , testProperty "output_amount" prop_output_amount
+          , testProperty "output_nonce" prop_output_nonce
+          , testProperty "output_script_hash" prop_output_script_hash
+          , testProperty "output_null_datum" prop_output_null_datum
+          , testProperty "output_surjection_proof" prop_output_surjection_proof
+          , testProperty "output_range_proof" prop_output_range_proof
+          , testProperty "current_is_pegin" prop_current_is_pegin
+          , testProperty "current_prev_outpoint" prop_current_prev_outpoint
+          , testProperty "current_asset" prop_current_asset
+          , testProperty "current_amount" prop_current_amount
+          , testProperty "current_script_hash" prop_current_script_hash
+          , testProperty "current_sequence" prop_current_sequence
+          , testProperty "current_reissuance_blinding" prop_current_reissuance_blinding
+          , testProperty "current_new_issuance_contract" prop_current_new_issuance_contract
+          , testProperty "current_reissuance_entropy" prop_current_reissuance_entropy
+          , testProperty "current_issuance_asset_amount" prop_current_issuance_asset_amount
+          , testProperty "current_issuance_token_amount" prop_current_issuance_token_amount
+          , testProperty "current_issuance_asset_proof" prop_current_issuance_asset_proof
+          , testProperty "current_issuance_token_proof" prop_current_issuance_token_proof
+          , testProperty "input_is_pegin" prop_input_is_pegin
+          , testProperty "input_prev_outpoint" prop_input_prev_outpoint
+          , testProperty "input_asset" prop_input_asset
+          , testProperty "input_amount" prop_input_amount
+          , testProperty "input_script_hash" prop_input_script_hash
+          , testProperty "input_sequence" prop_input_sequence
+          , testProperty "reissuance_blinding" prop_reissuance_blinding
+          , testProperty "new_issuance_contract" prop_new_issuance_contract
+          , testProperty "reissuance_entropy" prop_reissuance_entropy
+          , testProperty "issuance_asset_amount" prop_issuance_asset_amount
+          , testProperty "issuance_token_amount" prop_issuance_token_amount
+          , testProperty "issuance_asset_proof" prop_issuance_asset_proof
+          , testProperty "issuance_token_proof" prop_issuance_token_proof
+          , testProperty "tapleaf_version" prop_tapleaf_version
+          , testProperty "tapbranch" prop_tapbranch
+          , testProperty "version" prop_version
           , testCase "issuance_entropy_1" assert_issuance_entropy_1
           , testCase "calculate_asset_1" assert_calculate_asset_1
           , testCase "calculcate_token_1" assert_calculcate_token_1
@@ -170,6 +215,177 @@ prop_input_issuance_token = checkJet (ElementsJet (IssuanceJet IssuanceToken))
 prop_input_issuance_entropy :: Property
 prop_input_issuance_entropy = checkJet (ElementsJet (IssuanceJet IssuanceEntropy))
                             $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_script_cmr :: Property
+prop_script_cmr = checkJet (ElementsJet (TransactionJet ScriptCMR))
+                $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_internal_key :: Property
+prop_internal_key = checkJet (ElementsJet (TransactionJet InternalKey))
+                  $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_index :: Property
+prop_current_index = checkJet (ElementsJet (TransactionJet CurrentIndex))
+                   $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_num_inputs :: Property
+prop_num_inputs = checkJet (ElementsJet (TransactionJet NumInputs))
+                $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_num_outputs :: Property
+prop_num_outputs = checkJet (ElementsJet (TransactionJet NumOutputs))
+                 $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_lock_time :: Property
+prop_lock_time = checkJet (ElementsJet (TransactionJet LockTime))
+               $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_output_asset :: Property
+prop_output_asset = checkJet (ElementsJet (TransactionJet OutputAsset))
+                  $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
+
+prop_output_amount :: Property
+prop_output_amount = checkJet (ElementsJet (TransactionJet OutputAssetAmount))
+                   $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
+
+prop_output_nonce :: Property
+prop_output_nonce = checkJet (ElementsJet (TransactionJet OutputNonce))
+                  $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
+
+prop_output_script_hash :: Property
+prop_output_script_hash = checkJet (ElementsJet (TransactionJet OutputScriptHash))
+                        $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
+
+prop_output_null_datum :: Property
+prop_output_null_datum = checkJet (ElementsJet (TransactionJet OutputNullDatum))
+                       $ \check -> forallOutPrimEnv $ \env i -> forAll arbitrary $ \(NonNegative j) -> check env (toW32 i, toWord32 j)
+
+prop_output_surjection_proof :: Property
+prop_output_surjection_proof = checkJet (ElementsJet (TransactionJet OutputSurjectionProof))
+                             $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
+
+prop_output_range_proof :: Property
+prop_output_range_proof = checkJet (ElementsJet (TransactionJet OutputRangeProof))
+                        $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
+
+prop_current_is_pegin :: Property
+prop_current_is_pegin = checkJet (ElementsJet (TransactionJet CurrentIsPegin))
+                      $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_prev_outpoint :: Property
+prop_current_prev_outpoint = checkJet (ElementsJet (TransactionJet CurrentPrevOutpoint))
+                           $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_asset :: Property
+prop_current_asset = checkJet (ElementsJet (TransactionJet CurrentAsset))
+                   $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_amount :: Property
+prop_current_amount = checkJet (ElementsJet (TransactionJet CurrentAssetAmount))
+                    $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_script_hash :: Property
+prop_current_script_hash = checkJet (ElementsJet (TransactionJet CurrentScriptHash))
+                         $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_sequence :: Property
+prop_current_sequence = checkJet (ElementsJet (TransactionJet CurrentSequence))
+                      $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_reissuance_blinding :: Property
+prop_current_reissuance_blinding = checkJet (ElementsJet (TransactionJet CurrentReissuanceBlinding))
+                                 $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_new_issuance_contract :: Property
+prop_current_new_issuance_contract = checkJet (ElementsJet (TransactionJet CurrentNewIssuanceContract))
+                                   $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_reissuance_entropy :: Property
+prop_current_reissuance_entropy = checkJet (ElementsJet (TransactionJet CurrentReissuanceEntropy))
+                                $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_issuance_asset_amount :: Property
+prop_current_issuance_asset_amount = checkJet (ElementsJet (TransactionJet CurrentIssuanceAssetAmount))
+                                   $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_issuance_token_amount :: Property
+prop_current_issuance_token_amount = checkJet (ElementsJet (TransactionJet CurrentIssuanceTokenAmount))
+                                   $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_issuance_asset_proof :: Property
+prop_current_issuance_asset_proof = checkJet (ElementsJet (TransactionJet CurrentIssuanceAssetProof))
+                                  $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_current_issuance_token_proof :: Property
+prop_current_issuance_token_proof = checkJet (ElementsJet (TransactionJet CurrentIssuanceTokenProof))
+                                  $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_input_is_pegin :: Property
+prop_input_is_pegin = checkJet (ElementsJet (TransactionJet InputIsPegin))
+                    $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_input_prev_outpoint :: Property
+prop_input_prev_outpoint = checkJet (ElementsJet (TransactionJet InputPrevOutpoint))
+                         $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_input_asset :: Property
+prop_input_asset = checkJet (ElementsJet (TransactionJet InputAsset))
+                 $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_input_amount :: Property
+prop_input_amount = checkJet (ElementsJet (TransactionJet InputAssetAmount))
+                  $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_input_script_hash :: Property
+prop_input_script_hash = checkJet (ElementsJet (TransactionJet InputScriptHash))
+                       $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_input_sequence :: Property
+prop_input_sequence = checkJet (ElementsJet (TransactionJet InputSequence))
+                    $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_reissuance_blinding :: Property
+prop_reissuance_blinding = checkJet (ElementsJet (TransactionJet ReissuanceBlinding))
+                         $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_new_issuance_contract :: Property
+prop_new_issuance_contract = checkJet (ElementsJet (TransactionJet NewIssuanceContract))
+                           $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_reissuance_entropy :: Property
+prop_reissuance_entropy = checkJet (ElementsJet (TransactionJet ReissuanceEntropy))
+                        $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_issuance_asset_amount :: Property
+prop_issuance_asset_amount = checkJet (ElementsJet (TransactionJet IssuanceAssetAmount))
+                           $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_issuance_token_amount :: Property
+prop_issuance_token_amount = checkJet (ElementsJet (TransactionJet IssuanceTokenAmount))
+                           $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_issuance_asset_proof :: Property
+prop_issuance_asset_proof = checkJet (ElementsJet (TransactionJet IssuanceAssetProof))
+                          $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_issuance_token_proof :: Property
+prop_issuance_token_proof = checkJet (ElementsJet (TransactionJet IssuanceTokenProof))
+                          $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_tapleaf_version :: Property
+prop_tapleaf_version = checkJet (ElementsJet (TransactionJet TapleafVersion))
+                     $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_tapbranch :: Property
+prop_tapbranch = checkJet (ElementsJet (TransactionJet Tapbranch))
+               $ \check -> forallPrimEnv $ \env -> forAll (genTapBranchIx env) $ \i -> check env (toW8 i)
+ where
+  genTapBranchIx = genBoundaryCases . fromIntegral . length . tapBranch . envTap
+
+prop_version :: Property
+prop_version = checkJet (ElementsJet (TransactionJet Version))
+             $ \check -> forallPrimEnv $ \env -> check env ()
+
 
 -- example test data from Elements Core 0.17
 (assert_issuance_entropy_1, assert_calculate_asset_1, assert_calculcate_token_1) =

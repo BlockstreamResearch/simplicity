@@ -10859,12 +10859,6 @@
 
   <section|<verbatim|111...: >Bitcoin Jets>
 
-  <subsection|Transaction>
-
-  <\itemize>
-    <item><math|<text|<samp|total-fee>>\<of\><1>\<vdash\>Value>
-  </itemize>
-
   <subsection|Signature Hash Modes>
 
   <\itemize>
@@ -11016,14 +11010,234 @@
 
   Otherwise returns <math|<math-tt|0><rsub|<2>>>.
 
-  <em|><section|<verbatim|111...: >Elements Jets>
-
   <subsection|Transaction>
 
-  <\itemize>
-    <item><math|<text|<samp|'<samp|outputIsFee>'>>
-    :Index\<vdash\><maybe><around*|(|<2>|)>>
-  </itemize>
+  <subsubsection|<samp|script-cmr>>
+
+  \;
+
+  <math|<rep|<text|<samp|'script-cmr'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|script-cmr>> \<of\> <value|1>\<vdash\><2><rsup|256>>
+
+  <subsubsection|<samp|internal-key>>
+
+  \;
+
+  <math|<rep|<text|<samp|'internal-key'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|internal-key>> \<of\> <value|1>\<vdash\>PubKey>
+
+  <subsubsection|<samp|current-index>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-index'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-index>> \<of\> <value|1>\<vdash\><2><rsup|32>>
+
+  <subsubsection|<samp|num-inputs>>
+
+  \;
+
+  <math|<rep|<text|<samp|'num-inputs'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|num-inputs>> \<of\> <value|1>\<vdash\><2><rsup|32>>
+
+  <subsubsection|<samp|num-outputs>>
+
+  \;
+
+  <math|<rep|<text|<samp|'num-outputs'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|num-outputs>> \<of\> <value|1>\<vdash\><2><rsup|32>>
+
+  <subsubsection|<samp|lock-time>>
+
+  \;
+
+  <math|<rep|<text|<samp|'lock-time'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|lock-time>> \<of\> <value|1>\<vdash\>Lock>
+
+  <subsubsection|<samp|fee>>
+
+  \;
+
+  <math|<rep|<text|<samp|'fee'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|fee>> \<of\> <value|1>\<vdash\><2><rsup|64>>
+
+  <subsubsection|<samp|output-value>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-value'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|output-value>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|64>|)>>
+
+  <subsubsection|<samp|output-script-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|output-script-hash>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|total-output-value>>
+
+  \;
+
+  <math|<rep|<text|<samp|'total-output-value'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|total-output-value>> \<of\>
+  <value|1>\<vdash\><2><rsup|64>>
+
+  <subsubsection|<samp|current-prev-outpoint>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-prev-outpoint>> \<of\>
+  <value|1>\<vdash\>Outpoint>
+
+  <subsubsection|<samp|current-value>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-value'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-value>> \<of\> <value|1>\<vdash\><2><rsup|64>>
+
+  <subsubsection|<samp|current-script-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-script-hash>> \<of\>
+  <value|1>\<vdash\><2><rsup|256>>
+
+  <subsubsection|<samp|current-sequence>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-sequence'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-sequence>> \<of\> <value|1>\<vdash\><2><rsup|32>>
+
+  <subsubsection|<samp|current-annex-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-annex-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-annex-hash>> \<of\>
+  <value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|current-script-sig-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-script-sig-hash>> \<of\>
+  <value|1>\<vdash\><2><rsup|256>>
+
+  <subsubsection|<samp|input-prev-outpoint>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-prev-outpoint>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|Outpoint|)>>
+
+  <subsubsection|<samp|input-value>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-value'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-value>> \<of\> <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|64>|)>>
+
+  <subsubsection|<samp|input-script-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-script-hash>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|input-sequence>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-sequence'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-sequence>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|32>|)>>
+
+  <subsubsection|<samp|input-annex-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-annex-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-annex-hash>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
+
+  <subsubsection|<samp|input-script-sig-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-script-sig-hash>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|total-input-value>>
+
+  \;
+
+  <math|<rep|<text|<samp|'total-input-value'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|total-input-value>> \<of\>
+  <value|1>\<vdash\><2><rsup|64>>
+
+  <subsubsection|<samp|tapleaf-version>>
+
+  \;
+
+  <math|<rep|<text|<samp|'tapleaf-version'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|tapleaf-version>> \<of\> <value|1>\<vdash\><2><rsup|8>>
+
+  <subsubsection|<samp|tapbranch>>
+
+  \;
+
+  <math|<rep|<text|<samp|'tapbranch'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|tapbranch>> \<of\> <2><rsup|8>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|version>>
+
+  \;
+
+  <math|<rep|<text|<samp|'version'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|version>> \<of\> <value|1>\<vdash\><2><rsup|32>>
+
+  \;
+
+  <em|><section|<verbatim|111...: >Elements Jets>
+
+  <subsection|Signature Hash Modes>
 
   <\itemize>
     <item><math|<samp|sigHashAll>\<of\><1>\<vdash\><2><rsup|256>>
@@ -11303,8 +11517,434 @@
   Calculate the reissuance token id from a given entropy value for assets
   with confidential issued amounts.
 
-  <appendix|Alternative Serialization of Simplicity
-  DAGs><label|app:AltSerialization>
+  <subsection|Transaction>
+
+  <\itemize>
+    <item><math|<text|<samp|'<samp|outputIsFee>'>>
+    :Index\<vdash\><maybe><around*|(|<2>|)>>
+  </itemize>
+
+  <subsubsection|<samp|script-cmr>>
+
+  \;
+
+  <math|<rep|<text|<samp|'script-cmr'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|script-cmr>> \<of\> <value|1>\<vdash\><2><rsup|256>>
+
+  <subsubsection|<samp|internal-key>>
+
+  \;
+
+  <math|<rep|<text|<samp|'internal-key'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|internal-key>> \<of\> <value|1>\<vdash\>PubKey>
+
+  <subsubsection|<samp|current-index>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-index'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-index>> \<of\> <value|1>\<vdash\><2><rsup|32>>
+
+  <subsubsection|<samp|num-inputs>>
+
+  \;
+
+  <math|<rep|<text|<samp|'num-inputs'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|num-inputs>> \<of\> <value|1>\<vdash\><2><rsup|32>>
+
+  <subsubsection|<samp|num-outputs>>
+
+  \;
+
+  <math|<rep|<text|<samp|'num-outputs'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|num-outputs>> \<of\> <value|1>\<vdash\><2><rsup|32>>
+
+  <subsubsection|<samp|lock-time>>
+
+  \;
+
+  <math|<rep|<text|<samp|'lock-time'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|lock-time>> \<of\> <value|1>\<vdash\>Lock>
+
+  <subsubsection|<samp|output-asset>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|output-asset>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|Asset<around*|(|<1>|)>|)>>
+
+  <subsubsection|<samp|output-amount>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|output-amount>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|Asset<around*|(|<1>|)>\<times\>Amount<around*|(|<1>|)>|)>>
+
+  <subsubsection|<samp|output-nonce>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-nonce'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|output-nonce>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|Nonce|)>|)>>
+
+  <subsubsection|<samp|output-script-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|output-script-hash>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|output-null-datum>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-null-datum'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|output-null-datum>> \<of\>
+  <2><rsup|32>\<times\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|2>\<times\><2><rsup|256>+<around*|(|<2>+<2><rsup|4>|)>|)>|)>>
+
+  <subsubsection|<samp|output-surjection-proof>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-surjection-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|output-surjection-proof>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|output-range-proof>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-range-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|output-range-proof>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|total-fee>>
+
+  \;
+
+  <math|<rep|<text|<samp|'total-fee'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|total-fee>> \<of\> ExplicitAsset\<vdash\>ExplicitAmount>
+
+  <subsubsection|<samp|current-is-pegin>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-is-pegin'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-is-pegin>> \<of\> <value|1>\<vdash\><2>>
+
+  <subsubsection|<samp|current-prev-outpoint>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-prev-outpoint>> \<of\>
+  <value|1>\<vdash\>Outpoint>
+
+  <subsubsection|<samp|current-asset>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-asset>> \<of\>
+  <value|1>\<vdash\>Asset<around*|(|<1>|)>>
+
+  <subsubsection|<samp|current-amount>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-amount>> \<of\>
+  <value|1>\<vdash\>Asset<around*|(|<1>|)>\<times\>Amount<around*|(|<1>|)>>
+
+  <subsubsection|<samp|current-script-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-script-hash>> \<of\>
+  <value|1>\<vdash\><2><rsup|256>>
+
+  <subsubsection|<samp|current-sequence>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-sequence'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-sequence>> \<of\> <value|1>\<vdash\><2><rsup|32>>
+
+  <subsubsection|<samp|current-annex-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-annex-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-annex-hash>> \<of\>
+  <value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|current-script-sig-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-script-sig-hash>> \<of\>
+  <value|1>\<vdash\><2><rsup|256>>
+
+  <subsubsection|<samp|current-reissuance-blinding>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-reissuance-blinding'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-reissuance-blinding>> \<of\>
+  <value|1>\<vdash\><maybe><around*|(|ExplicitNonce|)>>
+
+  <subsubsection|<samp|current-new-issuance-contract>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-new-issuance-contract'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-new-issuance-contract>> \<of\>
+  <value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|current-reissuance-entropy>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-reissuance-entropy'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-reissuance-entropy>> \<of\>
+  <value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|current-issuance-asset-amount>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-issuance-asset-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-issuance-asset-amount>> \<of\>
+  <value|1>\<vdash\><maybe><around*|(|Amount<around*|(|<1>|)>|)>>
+
+  <subsubsection|<samp|current-issuance-token-amount>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-issuance-token-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-issuance-token-amount>> \<of\>
+  <value|1>\<vdash\><maybe><around*|(|TokenAmount<around*|(|<1>|)>|)>>
+
+  <subsubsection|<samp|current-issuance-asset-proof>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-issuance-asset-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-issuance-asset-proof>> \<of\>
+  <value|1>\<vdash\><2><rsup|256>>
+
+  <subsubsection|<samp|current-issuance-token-proof>>
+
+  \;
+
+  <math|<rep|<text|<samp|'current-issuance-token-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|current-issuance-token-proof>> \<of\>
+  <value|1>\<vdash\><2><rsup|256>>
+
+  <subsubsection|<samp|input-is-pegin>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-is-pegin'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-is-pegin>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2>|)>>
+
+  <subsubsection|<samp|input-prev-outpoint>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-prev-outpoint>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|Outpoint|)>>
+
+  <subsubsection|<samp|input-asset>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-asset>> \<of\> <2><rsup|32>\<vdash\><maybe><around*|(|Asset<around*|(|<1>|)>|)>>
+
+  <subsubsection|<samp|input-amount>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-amount>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|Asset<around*|(|<1>|)>\<times\>Amount<around*|(|<1>|)>|)>>
+
+  <subsubsection|<samp|input-script-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-script-hash>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|input-sequence>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-sequence'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-sequence>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|32>|)>>
+
+  <subsubsection|<samp|input-annex-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-annex-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-annex-hash>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
+
+  <subsubsection|<samp|input-script-sig-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|input-script-sig-hash>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|reissuance-blinding>>
+
+  \;
+
+  <math|<rep|<text|<samp|'reissuance-blinding'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|reissuance-blinding>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitNonce|)>|)>>
+
+  <subsubsection|<samp|new-issuance-contract>>
+
+  \;
+
+  <math|<rep|<text|<samp|'new-issuance-contract'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|new-issuance-contract>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
+
+  <subsubsection|<samp|reissuance-entropy>>
+
+  \;
+
+  <math|<rep|<text|<samp|'reissuance-entropy'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|reissuance-entropy>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
+
+  <subsubsection|<samp|issuance-asset-amount>>
+
+  \;
+
+  <math|<rep|<text|<samp|'issuance-asset-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|issuance-asset-amount>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|Amount<around*|(|<1>|)>|)>|)>>
+
+  <subsubsection|<samp|issuance-token-amount>>
+
+  \;
+
+  <math|<rep|<text|<samp|'issuance-token-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|issuance-token-amount>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|TokenAmount<around*|(|<1>|)>|)>|)>>
+
+  <subsubsection|<samp|issuance-asset-proof>>
+
+  \;
+
+  <math|<rep|<text|<samp|'issuance-asset-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|issuance-asset-proof>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|issuance-token-proof>>
+
+  \;
+
+  <math|<rep|<text|<samp|'issuance-token-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|issuance-token-proof>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  \;
+
+  <subsubsection|<samp|tapleaf-version>>
+
+  \;
+
+  <math|<rep|<text|<samp|'tapleaf-version'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|tapleaf-version>> \<of\> <value|1>\<vdash\><2><rsup|8>>
+
+  <subsubsection|<samp|tapbranch>>
+
+  \;
+
+  <math|<rep|<text|<samp|'tapbranch'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|tapbranch>> \<of\> <2><rsup|8>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  <subsubsection|<samp|version>>
+
+  \;
+
+  <math|<rep|<text|<samp|'version'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|version>> \<of\> <value|1>\<vdash\><2><rsup|32>>
+
+  <subsubsection|<samp|genesis-block-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'genesis-block-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|genesis-block-hash>> \<of\>
+  <value|1>\<vdash\><2><rsup|256>><appendix|Alternative Serialization of
+  Simplicity DAGs><label|app:AltSerialization>
 
   <with|color|red|DEPRICATED>
 
@@ -11822,72 +12462,284 @@
     <associate|auto-348|<tuple|B.2.1|?>>
     <associate|auto-349|<tuple|B.2.2|?>>
     <associate|auto-35|<tuple|3.2.7|?>>
-    <associate|auto-350|<tuple|B.2.3|?>>
-    <associate|auto-351|<tuple|B.2.3.1|?>>
-    <associate|auto-352|<tuple|B.2.3.2|?>>
-    <associate|auto-353|<tuple|B.2.3.3|?>>
-    <associate|auto-354|<tuple|B.2.3.4|?>>
-    <associate|auto-355|<tuple|B.2.3.5|?>>
-    <associate|auto-356|<tuple|B.2.3.6|?>>
-    <associate|auto-357|<tuple|B.2.3.7|?>>
-    <associate|auto-358|<tuple|B.2.3.8|?>>
-    <associate|auto-359|<tuple|B.2.3.9|?>>
+    <associate|auto-350|<tuple|B.2.2.1|?>>
+    <associate|auto-351|<tuple|B.2.2.2|?>>
+    <associate|auto-352|<tuple|B.2.2.3|?>>
+    <associate|auto-353|<tuple|B.2.2.4|?>>
+    <associate|auto-354|<tuple|B.2.2.5|?>>
+    <associate|auto-355|<tuple|B.2.2.6|?>>
+    <associate|auto-356|<tuple|B.2.2.7|?>>
+    <associate|auto-357|<tuple|B.2.2.8|?>>
+    <associate|auto-358|<tuple|B.2.2.9|?>>
+    <associate|auto-359|<tuple|B.2.3|?>>
     <associate|auto-36|<tuple|3.2.8|?>>
-    <associate|auto-360|<tuple|B.3|?>>
-    <associate|auto-361|<tuple|B.3.1|?>>
-    <associate|auto-362|<tuple|B.3.2|?>>
-    <associate|auto-363|<tuple|B.3.2.1|?>>
-    <associate|auto-364|<tuple|B.3.2.2|?>>
-    <associate|auto-365|<tuple|B.3.2.3|?>>
-    <associate|auto-366|<tuple|B.3.2.4|?>>
-    <associate|auto-367|<tuple|B.3.2.5|?>>
-    <associate|auto-368|<tuple|B.3.2.6|?>>
-    <associate|auto-369|<tuple|B.3.2.7|?>>
+    <associate|auto-360|<tuple|B.2.3.1|?>>
+    <associate|auto-361|<tuple|B.2.3.2|?>>
+    <associate|auto-362|<tuple|B.2.3.3|?>>
+    <associate|auto-363|<tuple|B.2.3.4|?>>
+    <associate|auto-364|<tuple|B.2.3.5|?>>
+    <associate|auto-365|<tuple|B.2.3.6|?>>
+    <associate|auto-366|<tuple|B.2.3.7|?>>
+    <associate|auto-367|<tuple|B.2.3.8|?>>
+    <associate|auto-368|<tuple|B.2.3.9|?>>
+    <associate|auto-369|<tuple|B.2.3.10|?>>
     <associate|auto-37|<tuple|3.2.9|?>>
-    <associate|auto-370|<tuple|B.3.2.8|?>>
-    <associate|auto-371|<tuple|B.3.2.9|?>>
-    <associate|auto-372|<tuple|B.3.3|?>>
-    <associate|auto-373|<tuple|B.3.3.1|?>>
-    <associate|auto-374|<tuple|B.3.3.2|?>>
-    <associate|auto-375|<tuple|B.3.3.3|?>>
-    <associate|auto-376|<tuple|B.3.3.4|?>>
-    <associate|auto-377|<tuple|B.3.3.5|?>>
-    <associate|auto-378|<tuple|B.3.3.6|?>>
-    <associate|auto-379|<tuple|B.3.3.7|?>>
+    <associate|auto-370|<tuple|B.2.3.11|?>>
+    <associate|auto-371|<tuple|B.2.3.12|?>>
+    <associate|auto-372|<tuple|B.2.3.13|?>>
+    <associate|auto-373|<tuple|B.2.3.14|?>>
+    <associate|auto-374|<tuple|B.2.3.15|?>>
+    <associate|auto-375|<tuple|B.2.3.16|?>>
+    <associate|auto-376|<tuple|B.2.3.17|?>>
+    <associate|auto-377|<tuple|B.2.3.18|?>>
+    <associate|auto-378|<tuple|B.2.3.19|?>>
+    <associate|auto-379|<tuple|B.2.3.20|?>>
     <associate|auto-38|<tuple|3.2.10|?>>
-    <associate|auto-380|<tuple|B.3.3.8|?>>
-    <associate|auto-381|<tuple|C|?>>
-    <associate|auto-382|<tuple|C|?>>
-    <associate|auto-383|<tuple|B.3.3|?>>
-    <associate|auto-384|<tuple|C|?>>
-    <associate|auto-385|<tuple|C|?>>
+    <associate|auto-380|<tuple|B.2.3.21|?>>
+    <associate|auto-381|<tuple|B.2.3.22|?>>
+    <associate|auto-382|<tuple|B.2.3.23|?>>
+    <associate|auto-383|<tuple|B.2.3.24|?>>
+    <associate|auto-384|<tuple|B.2.3.25|?>>
+    <associate|auto-385|<tuple|B.2.3.26|?>>
+    <associate|auto-386|<tuple|B.3|?>>
+    <associate|auto-387|<tuple|B.3.1|?>>
+    <associate|auto-388|<tuple|B.3.2|?>>
+    <associate|auto-389|<tuple|B.3.2.1|?>>
     <associate|auto-39|<tuple|3.2.11|?>>
+    <associate|auto-390|<tuple|B.3.2.2|?>>
+    <associate|auto-391|<tuple|B.3.2.3|?>>
+    <associate|auto-392|<tuple|B.3.2.4|?>>
+    <associate|auto-393|<tuple|B.3.2.5|?>>
+    <associate|auto-394|<tuple|B.3.2.6|?>>
+    <associate|auto-395|<tuple|B.3.2.7|?>>
+    <associate|auto-396|<tuple|B.3.2.8|?>>
+    <associate|auto-397|<tuple|B.3.2.9|?>>
+    <associate|auto-398|<tuple|B.3.3|?>>
+    <associate|auto-399|<tuple|B.3.3.1|?>>
     <associate|auto-4|<tuple|1.2.1|?>>
     <associate|auto-40|<tuple|3.3|?>>
+    <associate|auto-400|<tuple|B.3.3.2|?>>
+    <associate|auto-401|<tuple|B.3.3.3|?>>
+    <associate|auto-402|<tuple|B.3.3.4|?>>
+    <associate|auto-403|<tuple|B.3.3.5|?>>
+    <associate|auto-404|<tuple|B.3.3.6|?>>
+    <associate|auto-405|<tuple|B.3.3.7|?>>
+    <associate|auto-406|<tuple|B.3.3.8|?>>
+    <associate|auto-407|<tuple|B.3.4|?>>
+    <associate|auto-408|<tuple|B.3.4.1|?>>
+    <associate|auto-409|<tuple|B.3.4.2|?>>
     <associate|auto-41|<tuple|3.3.1|?>>
+    <associate|auto-410|<tuple|B.3.4.3|?>>
+    <associate|auto-411|<tuple|B.3.4.4|?>>
+    <associate|auto-412|<tuple|B.3.4.5|?>>
+    <associate|auto-413|<tuple|B.3.4.6|?>>
+    <associate|auto-414|<tuple|B.3.4.7|?>>
+    <associate|auto-415|<tuple|B.3.4.8|?>>
+    <associate|auto-416|<tuple|B.3.4.9|?>>
+    <associate|auto-417|<tuple|B.3.4.10|?>>
+    <associate|auto-418|<tuple|B.3.4.11|?>>
+    <associate|auto-419|<tuple|B.3.4.12|?>>
     <associate|auto-42|<tuple|3.3.2|?>>
+    <associate|auto-420|<tuple|B.3.4.13|?>>
+    <associate|auto-421|<tuple|B.3.4.14|?>>
+    <associate|auto-422|<tuple|B.3.4.15|?>>
+    <associate|auto-423|<tuple|B.3.4.16|?>>
+    <associate|auto-424|<tuple|B.3.4.17|?>>
+    <associate|auto-425|<tuple|B.3.4.18|?>>
+    <associate|auto-426|<tuple|B.3.4.19|?>>
+    <associate|auto-427|<tuple|B.3.4.20|?>>
+    <associate|auto-428|<tuple|B.3.4.21|?>>
+    <associate|auto-429|<tuple|B.3.4.22|?>>
     <associate|auto-43|<tuple|3.3.3|?>>
+    <associate|auto-430|<tuple|B.3.4.23|?>>
+    <associate|auto-431|<tuple|B.3.4.24|?>>
+    <associate|auto-432|<tuple|B.3.4.25|?>>
+    <associate|auto-433|<tuple|B.3.4.26|?>>
+    <associate|auto-434|<tuple|B.3.4.27|?>>
+    <associate|auto-435|<tuple|B.3.4.28|?>>
+    <associate|auto-436|<tuple|B.3.4.29|?>>
+    <associate|auto-437|<tuple|B.3.4.30|?>>
+    <associate|auto-438|<tuple|B.3.4.31|?>>
+    <associate|auto-439|<tuple|B.3.4.32|?>>
     <associate|auto-44|<tuple|3.3.4|?>>
+    <associate|auto-440|<tuple|B.3.4.33|?>>
+    <associate|auto-441|<tuple|B.3.4.34|?>>
+    <associate|auto-442|<tuple|B.3.4.35|?>>
+    <associate|auto-443|<tuple|B.3.4.36|?>>
+    <associate|auto-444|<tuple|B.3.4.37|?>>
+    <associate|auto-445|<tuple|B.3.4.38|?>>
+    <associate|auto-446|<tuple|B.3.4.39|?>>
+    <associate|auto-447|<tuple|B.3.4.40|?>>
+    <associate|auto-448|<tuple|B.3.4.41|?>>
+    <associate|auto-449|<tuple|B.3.4.42|?>>
     <associate|auto-45|<tuple|3.3.5|?>>
+    <associate|auto-450|<tuple|B.3.4.43|?>>
+    <associate|auto-451|<tuple|B.3.4.44|?>>
+    <associate|auto-452|<tuple|B.3.4.45|?>>
+    <associate|auto-453|<tuple|B.3.4.46|?>>
+    <associate|auto-454|<tuple|B.3.4.47|?>>
+    <associate|auto-455|<tuple|B.3.4.48|?>>
+    <associate|auto-456|<tuple|C|?>>
+    <associate|auto-457|<tuple|C|?>>
+    <associate|auto-458|<tuple|B.3.4.46|?>>
+    <associate|auto-459|<tuple|B.3.4.47|?>>
     <associate|auto-46|<tuple|3.3.6|?>>
+    <associate|auto-460|<tuple|B.3.4.48|?>>
+    <associate|auto-461|<tuple|C|?>>
+    <associate|auto-462|<tuple|C|?>>
+    <associate|auto-463|<tuple|B.3.4.43|?>>
+    <associate|auto-464|<tuple|B.3.4.44|?>>
+    <associate|auto-465|<tuple|B.3.4.45|?>>
+    <associate|auto-466|<tuple|B.3.4.46|?>>
+    <associate|auto-467|<tuple|B.3.4.47|?>>
+    <associate|auto-468|<tuple|B.3.4.48|?>>
+    <associate|auto-469|<tuple|C|?>>
     <associate|auto-47|<tuple|3.3.6.1|?>>
+    <associate|auto-470|<tuple|C|?>>
+    <associate|auto-471|<tuple|C|?>>
+    <associate|auto-472|<tuple|C|?>>
+    <associate|auto-473|<tuple|C|?>>
+    <associate|auto-474|<tuple|B.3.4.48|?>>
+    <associate|auto-475|<tuple|C|?>>
+    <associate|auto-476|<tuple|C|?>>
+    <associate|auto-477|<tuple|C|?>>
+    <associate|auto-478|<tuple|C|?>>
+    <associate|auto-479|<tuple|C|?>>
     <associate|auto-48|<tuple|3.3.7|?>>
     <associate|auto-49|<tuple|3.3.7.1|?>>
     <associate|auto-5|<tuple|1.2.2|?>>
     <associate|auto-50|<tuple|3.3.7.2|?>>
+    <associate|auto-505|<tuple|B.3.4|?>>
+    <associate|auto-506|<tuple|B.3.4.1|?>>
+    <associate|auto-507|<tuple|B.3.4.2|?>>
+    <associate|auto-508|<tuple|B.3.4.3|?>>
+    <associate|auto-509|<tuple|B.3.4.4|?>>
     <associate|auto-51|<tuple|3.3.7.3|?>>
+    <associate|auto-510|<tuple|B.3.4.5|?>>
+    <associate|auto-511|<tuple|B.3.4.6|?>>
+    <associate|auto-512|<tuple|B.3.4.7|?>>
+    <associate|auto-513|<tuple|B.3.4.8|?>>
+    <associate|auto-514|<tuple|B.3.4.9|?>>
+    <associate|auto-515|<tuple|B.3.4.10|?>>
+    <associate|auto-516|<tuple|B.3.4.11|?>>
+    <associate|auto-517|<tuple|B.3.4.12|?>>
+    <associate|auto-518|<tuple|B.3.4.13|?>>
+    <associate|auto-519|<tuple|B.3.4.14|?>>
     <associate|auto-52|<tuple|3.4|?>>
+    <associate|auto-520|<tuple|B.3.4.15|?>>
+    <associate|auto-521|<tuple|B.3.4.16|?>>
+    <associate|auto-522|<tuple|B.3.4.17|?>>
+    <associate|auto-523|<tuple|B.3.4.18|?>>
+    <associate|auto-524|<tuple|B.3.4.19|?>>
+    <associate|auto-525|<tuple|B.3.4.20|?>>
+    <associate|auto-526|<tuple|B.3.4.21|?>>
+    <associate|auto-527|<tuple|B.3.4.22|?>>
+    <associate|auto-528|<tuple|B.3.4.23|?>>
+    <associate|auto-529|<tuple|B.3.4.24|?>>
     <associate|auto-53|<tuple|3.5|?>>
+    <associate|auto-530|<tuple|B.3.4.25|?>>
+    <associate|auto-531|<tuple|B.3.4.26|?>>
+    <associate|auto-532|<tuple|B.3.4.27|?>>
+    <associate|auto-533|<tuple|B.3.4.28|?>>
+    <associate|auto-534|<tuple|B.3.4.29|?>>
+    <associate|auto-535|<tuple|B.3.4.30|?>>
+    <associate|auto-536|<tuple|B.3.4.31|?>>
+    <associate|auto-537|<tuple|B.3.4.32|?>>
+    <associate|auto-538|<tuple|B.3.4.33|?>>
+    <associate|auto-539|<tuple|B.3.4.34|?>>
     <associate|auto-54|<tuple|3.5.1|?>>
+    <associate|auto-540|<tuple|B.3.4.35|?>>
+    <associate|auto-541|<tuple|B.3.4.36|?>>
+    <associate|auto-542|<tuple|B.3.4.37|?>>
+    <associate|auto-543|<tuple|B.3.4.38|?>>
+    <associate|auto-544|<tuple|B.3.4.39|?>>
+    <associate|auto-545|<tuple|B.3.4.40|?>>
+    <associate|auto-546|<tuple|B.3.4.41|?>>
+    <associate|auto-547|<tuple|B.3.4.42|?>>
+    <associate|auto-548|<tuple|B.3.4.43|?>>
+    <associate|auto-549|<tuple|B.3.4.44|?>>
     <associate|auto-55|<tuple|3.5.2|?>>
+    <associate|auto-550|<tuple|B.3.4.45|?>>
+    <associate|auto-551|<tuple|B.3.4.46|?>>
+    <associate|auto-552|<tuple|B.3.4.47|?>>
+    <associate|auto-553|<tuple|B.3.5|?>>
+    <associate|auto-554|<tuple|B.3.5.1|?>>
+    <associate|auto-555|<tuple|B.3.5.2|?>>
+    <associate|auto-556|<tuple|B.3.5.3|?>>
+    <associate|auto-557|<tuple|B.3.5.4|?>>
+    <associate|auto-558|<tuple|B.3.5.5|?>>
+    <associate|auto-559|<tuple|B.3.5.6|?>>
     <associate|auto-56|<tuple|3.1|?>>
+    <associate|auto-560|<tuple|B.3.5.7|?>>
+    <associate|auto-561|<tuple|B.3.5.8|?>>
+    <associate|auto-562|<tuple|B.3.5.9|?>>
+    <associate|auto-563|<tuple|B.3.6|?>>
+    <associate|auto-564|<tuple|B.3.6.1|?>>
+    <associate|auto-565|<tuple|B.3.6.2|?>>
+    <associate|auto-566|<tuple|B.3.6.3|?>>
+    <associate|auto-567|<tuple|B.3.6.4|?>>
+    <associate|auto-568|<tuple|B.3.6.5|?>>
+    <associate|auto-569|<tuple|B.3.6.6|?>>
     <associate|auto-57|<tuple|3.5.2.1|?>>
+    <associate|auto-570|<tuple|B.3.6.7|?>>
+    <associate|auto-571|<tuple|B.3.6.8|?>>
+    <associate|auto-572|<tuple|B.3.7|?>>
+    <associate|auto-573|<tuple|B.3.7.1|?>>
+    <associate|auto-574|<tuple|B.3.7.2|?>>
+    <associate|auto-575|<tuple|B.3.7.3|?>>
+    <associate|auto-576|<tuple|B.3.7.4|?>>
+    <associate|auto-577|<tuple|B.3.7.5|?>>
+    <associate|auto-578|<tuple|B.3.7.6|?>>
+    <associate|auto-579|<tuple|B.3.7.7|?>>
     <associate|auto-58|<tuple|3.5.2.2|?>>
+    <associate|auto-580|<tuple|B.3.7.8|?>>
+    <associate|auto-581|<tuple|B.3.7.9|?>>
+    <associate|auto-582|<tuple|B.3.7.10|?>>
+    <associate|auto-583|<tuple|B.3.7.11|?>>
+    <associate|auto-584|<tuple|B.3.7.12|?>>
+    <associate|auto-585|<tuple|B.3.7.13|?>>
+    <associate|auto-586|<tuple|B.3.7.14|?>>
+    <associate|auto-587|<tuple|B.3.7.15|?>>
+    <associate|auto-588|<tuple|B.3.7.16|?>>
+    <associate|auto-589|<tuple|B.3.7.17|?>>
     <associate|auto-59|<tuple|3.5.2.3|?>>
+    <associate|auto-590|<tuple|B.3.7.18|?>>
+    <associate|auto-591|<tuple|B.3.7.19|?>>
+    <associate|auto-592|<tuple|B.3.7.20|?>>
+    <associate|auto-593|<tuple|B.3.7.21|?>>
+    <associate|auto-594|<tuple|B.3.7.22|?>>
+    <associate|auto-595|<tuple|B.3.7.23|?>>
+    <associate|auto-596|<tuple|B.3.7.24|?>>
+    <associate|auto-597|<tuple|B.3.7.25|?>>
+    <associate|auto-598|<tuple|B.3.7.26|?>>
+    <associate|auto-599|<tuple|B.3.7.27|?>>
     <associate|auto-6|<tuple|1.2.3|?>>
     <associate|auto-60|<tuple|3.5.2.4|?>>
+    <associate|auto-600|<tuple|B.3.7.28|?>>
+    <associate|auto-601|<tuple|B.3.7.29|?>>
+    <associate|auto-602|<tuple|B.3.7.30|?>>
+    <associate|auto-603|<tuple|B.3.7.31|?>>
+    <associate|auto-604|<tuple|B.3.7.32|?>>
+    <associate|auto-605|<tuple|B.3.7.33|?>>
+    <associate|auto-606|<tuple|B.3.7.34|?>>
+    <associate|auto-607|<tuple|B.3.7.35|?>>
+    <associate|auto-608|<tuple|B.3.7.36|?>>
+    <associate|auto-609|<tuple|B.3.7.37|?>>
     <associate|auto-61|<tuple|3.5.2.5|?>>
+    <associate|auto-610|<tuple|B.3.7.38|?>>
+    <associate|auto-611|<tuple|B.3.7.39|?>>
+    <associate|auto-612|<tuple|B.3.7.40|?>>
+    <associate|auto-613|<tuple|B.3.7.41|?>>
+    <associate|auto-614|<tuple|B.3.7.42|?>>
+    <associate|auto-615|<tuple|B.3.7.43|?>>
+    <associate|auto-616|<tuple|B.3.7.44|?>>
+    <associate|auto-617|<tuple|B.3.7.45|?>>
+    <associate|auto-618|<tuple|B.3.7.46|?>>
+    <associate|auto-619|<tuple|B.3.7.47|?>>
     <associate|auto-62|<tuple|3.5.2.6|?>>
+    <associate|auto-620|<tuple|B.3.7.48|?>>
+    <associate|auto-621|<tuple|C|?>>
+    <associate|auto-622|<tuple|C|?>>
     <associate|auto-63|<tuple|3.5.3|?>>
     <associate|auto-64|<tuple|3.5.3.1|?>>
     <associate|auto-65|<tuple|3.6|?>>
@@ -13511,19 +14363,19 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-372>>
 
-      <with|par-left|<quote|2tab>|B.3.3.1<space|2spc><with|font-family|<quote|ss>|input-issuance>
+      <with|par-left|<quote|2tab>|B.3.3.1<space|2spc><with|font-family|<quote|ss>|issuance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-373>>
 
-      <with|par-left|<quote|2tab>|B.3.3.2<space|2spc><with|font-family|<quote|ss>|input-issuance-asset>
+      <with|par-left|<quote|2tab>|B.3.3.2<space|2spc><with|font-family|<quote|ss>|issuance-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-374>>
 
-      <with|par-left|<quote|2tab>|B.3.3.3<space|2spc><with|font-family|<quote|ss>|input-issuance-token>
+      <with|par-left|<quote|2tab>|B.3.3.3<space|2spc><with|font-family|<quote|ss>|issuance-token>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-375>>
 
-      <with|par-left|<quote|2tab>|B.3.3.4<space|2spc><with|font-family|<quote|ss>|input-issuance-entropy>
+      <with|par-left|<quote|2tab>|B.3.3.4<space|2spc><with|font-family|<quote|ss>|issuance-entropy>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-376>>
 
@@ -13543,14 +14395,210 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-380>>
 
+      <with|par-left|<quote|1tab>|B.3.4<space|2spc>Transaction
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-381>>
+
+      <with|par-left|<quote|2tab>|B.3.4.1<space|2spc><with|font-family|<quote|ss>|script-cmr>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-382>>
+
+      <with|par-left|<quote|2tab>|B.3.4.2<space|2spc><with|font-family|<quote|ss>|internal-key>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-383>>
+
+      <with|par-left|<quote|2tab>|B.3.4.3<space|2spc><with|font-family|<quote|ss>|current-index>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-384>>
+
+      <with|par-left|<quote|2tab>|B.3.4.4<space|2spc><with|font-family|<quote|ss>|num-inputs>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-385>>
+
+      <with|par-left|<quote|2tab>|B.3.4.5<space|2spc><with|font-family|<quote|ss>|num-outputs>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-386>>
+
+      <with|par-left|<quote|2tab>|B.3.4.6<space|2spc><with|font-family|<quote|ss>|lock-time>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-387>>
+
+      <with|par-left|<quote|2tab>|B.3.4.7<space|2spc><with|font-family|<quote|ss>|output-asset>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-388>>
+
+      <with|par-left|<quote|2tab>|B.3.4.8<space|2spc><with|font-family|<quote|ss>|output-amount>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-389>>
+
+      <with|par-left|<quote|2tab>|B.3.4.9<space|2spc><with|font-family|<quote|ss>|output-nonce>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-390>>
+
+      <with|par-left|<quote|2tab>|B.3.4.10<space|2spc><with|font-family|<quote|ss>|output-script-hash>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-391>>
+
+      <with|par-left|<quote|2tab>|B.3.4.11<space|2spc><with|font-family|<quote|ss>|output-null-datum>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-392>>
+
+      <with|par-left|<quote|2tab>|B.3.4.12<space|2spc><with|font-family|<quote|ss>|output-surjection-proof>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-393>>
+
+      <with|par-left|<quote|2tab>|B.3.4.13<space|2spc><with|font-family|<quote|ss>|output-range-proof>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-394>>
+
+      <with|par-left|<quote|2tab>|B.3.4.14<space|2spc><with|font-family|<quote|ss>|total-fee>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-395>>
+
+      <with|par-left|<quote|2tab>|B.3.4.15<space|2spc><with|font-family|<quote|ss>|current-is-pegin>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-396>>
+
+      <with|par-left|<quote|2tab>|B.3.4.16<space|2spc><with|font-family|<quote|ss>|current-prev-outpoint>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-397>>
+
+      <with|par-left|<quote|2tab>|B.3.4.17<space|2spc><with|font-family|<quote|ss>|current-asset>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-398>>
+
+      <with|par-left|<quote|2tab>|B.3.4.18<space|2spc><with|font-family|<quote|ss>|current-amount>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-399>>
+
+      <with|par-left|<quote|2tab>|B.3.4.19<space|2spc><with|font-family|<quote|ss>|current-script-hash>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-400>>
+
+      <with|par-left|<quote|2tab>|B.3.4.20<space|2spc><with|font-family|<quote|ss>|current-sequence>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-401>>
+
+      <with|par-left|<quote|2tab>|B.3.4.21<space|2spc><with|font-family|<quote|ss>|current-annex-hash>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-402>>
+
+      <with|par-left|<quote|2tab>|B.3.4.22<space|2spc><with|font-family|<quote|ss>|current-script-sig-hash>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-403>>
+
+      <with|par-left|<quote|2tab>|B.3.4.23<space|2spc><with|font-family|<quote|ss>|current-reissuance-blinding>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-404>>
+
+      <with|par-left|<quote|2tab>|B.3.4.24<space|2spc><with|font-family|<quote|ss>|current-new-issuance-contract>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-405>>
+
+      <with|par-left|<quote|2tab>|B.3.4.25<space|2spc><with|font-family|<quote|ss>|current-reissuance-entropy>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-406>>
+
+      <with|par-left|<quote|2tab>|B.3.4.26<space|2spc><with|font-family|<quote|ss>|current-issuance-asset-amount>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-407>>
+
+      <with|par-left|<quote|2tab>|B.3.4.27<space|2spc><with|font-family|<quote|ss>|current-issuance-token-amount>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-408>>
+
+      <with|par-left|<quote|2tab>|B.3.4.28<space|2spc><with|font-family|<quote|ss>|current-issuance-asset-proof>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-409>>
+
+      <with|par-left|<quote|2tab>|B.3.4.29<space|2spc><with|font-family|<quote|ss>|current-issuance-token-proof>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-410>>
+
+      <with|par-left|<quote|2tab>|B.3.4.30<space|2spc><with|font-family|<quote|ss>|input-is-pegin>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-411>>
+
+      <with|par-left|<quote|2tab>|B.3.4.31<space|2spc><with|font-family|<quote|ss>|input-prev-outpoint>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-412>>
+
+      <with|par-left|<quote|2tab>|B.3.4.32<space|2spc><with|font-family|<quote|ss>|input-asset>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-413>>
+
+      <with|par-left|<quote|2tab>|B.3.4.33<space|2spc><with|font-family|<quote|ss>|input-amount>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-414>>
+
+      <with|par-left|<quote|2tab>|B.3.4.34<space|2spc><with|font-family|<quote|ss>|input-script-hash>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-415>>
+
+      <with|par-left|<quote|2tab>|B.3.4.35<space|2spc><with|font-family|<quote|ss>|input-sequence>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-416>>
+
+      <with|par-left|<quote|2tab>|B.3.4.36<space|2spc><with|font-family|<quote|ss>|input-annex-hash>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-417>>
+
+      <with|par-left|<quote|2tab>|B.3.4.37<space|2spc><with|font-family|<quote|ss>|input-script-sig-hash>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-418>>
+
+      <with|par-left|<quote|2tab>|B.3.4.38<space|2spc><with|font-family|<quote|ss>|reissuance-blinding>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-419>>
+
+      <with|par-left|<quote|2tab>|B.3.4.39<space|2spc><with|font-family|<quote|ss>|new-issuance-contract>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-420>>
+
+      <with|par-left|<quote|2tab>|B.3.4.40<space|2spc><with|font-family|<quote|ss>|reissuance-entropy>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-421>>
+
+      <with|par-left|<quote|2tab>|B.3.4.41<space|2spc><with|font-family|<quote|ss>|issuance-asset-amount>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-422>>
+
+      <with|par-left|<quote|2tab>|B.3.4.42<space|2spc><with|font-family|<quote|ss>|issuance-token-amount>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-423>>
+
+      <with|par-left|<quote|2tab>|B.3.4.43<space|2spc><with|font-family|<quote|ss>|issuance-asset-proof>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-424>>
+
+      <with|par-left|<quote|2tab>|B.3.4.44<space|2spc><with|font-family|<quote|ss>|issuance-token-proof>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-425>>
+
+      <with|par-left|<quote|2tab>|B.3.4.45<space|2spc><with|font-family|<quote|ss>|tapleaf-version>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-426>>
+
+      <with|par-left|<quote|2tab>|B.3.4.46<space|2spc><with|font-family|<quote|ss>|tapbranch>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-427>>
+
+      <with|par-left|<quote|2tab>|B.3.4.47<space|2spc><with|font-family|<quote|ss>|version>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-428>>
+
+      <with|par-left|<quote|2tab>|B.3.4.48<space|2spc><with|font-family|<quote|ss>|genesis-block-hash>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-429>>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       C<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-381><vspace|0.5fn>
+      <no-break><pageref|auto-430><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-382><vspace|0.5fn>
+      <no-break><pageref|auto-431><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

@@ -30,9 +30,10 @@ jetList = sortBy (compare `on` name) $ Map.elems jetMap
   name (SomeArrow j) = jetName j
 
 primList :: [SomeArrow Prim]
-primList = sortBy (compare `on` name) $ enumerate (const getPrimBit)
+primList = sortBy (compare `on` name) . filter nonJet $ enumerate (const getPrimBit)
  where
   name (SomeArrow j) = primName j
+  nonJet (SomeArrow x) = upperSnakeCase (primName x) `notElem` (map (\(SomeArrow x) -> upperSnakeCase (jetName x)) jetList)
 
 snakeCase :: String -> String
 snakeCase str = intercalate "_" . groupSingles $ (split . keepDelimsL . dropInitBlank . whenElt) isUpper =<< splitDigit

@@ -6,7 +6,7 @@ module Simplicity.Elements.Primitive
   , PrimEnv, primEnv, envTx, envIx, envTap, envScriptCMR
   , primSem
   -- * Re-exported Types
-  , S, Conf
+  , S, Conf, PubKey
   -- * Unimplemented
   , getPrimByte, putPrimByte
   ) where
