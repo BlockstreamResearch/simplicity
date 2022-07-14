@@ -352,6 +352,60 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 8: *result = CALCULATE_CONFIDENTIAL_TOKEN; return 0;
         }
         break;
+       case 4: /* Transaction jets chapter */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return code;
+        switch (code) {
+         case 1: *result = SCRIPT_CMR; return 0;
+         case 2: *result = INTERNAL_KEY; return 0;
+         case 3: *result = CURRENT_INDEX; return 0;
+         case 4: *result = NUM_INPUTS; return 0;
+         case 5: *result = NUM_OUTPUTS; return 0;
+         case 6: *result = LOCK_TIME; return 0;
+         case 7: *result = OUTPUT_ASSET; return 0;
+         case 8: *result = OUTPUT_ASSET_AMOUNT; return 0;
+         case 9: *result = OUTPUT_NONCE; return 0;
+         case 10: *result = OUTPUT_SCRIPT_HASH; return 0;
+         case 11: *result = OUTPUT_NULL_DATUM; return 0;
+         case 12: *result = OUTPUT_SURJECTION_PROOF; return 0;
+         case 13: *result = OUTPUT_RANGE_PROOF; return 0;
+         /* case 14: *result = TOTAL_FEE; return 0; */
+         case 15: *result = CURRENT_IS_PEGIN; return 0;
+         case 16: *result = CURRENT_PREV_OUTPOINT; return 0;
+         case 17: *result = CURRENT_ASSET; return 0;
+         case 18: *result = CURRENT_ASSET_AMOUNT; return 0;
+         case 19: *result = CURRENT_SCRIPT_HASH; return 0;
+         case 20: *result = CURRENT_SEQUENCE; return 0;
+         /* case 21: *result = CURRENT_ANNEX_HASH; return 0; */
+         /* case 22: *result = CURRENT_SCRIPT_SIG_HASH; return 0; */
+         case 23: *result = CURRENT_REISSUANCE_BLINDING; return 0;
+         case 24: *result = CURRENT_NEW_ISSUANCE_CONTRACT; return 0;
+         case 25: *result = CURRENT_REISSUANCE_ENTROPY; return 0;
+         case 26: *result = CURRENT_ISSUANCE_ASSET_AMOUNT; return 0;
+         case 27: *result = CURRENT_ISSUANCE_TOKEN_AMOUNT; return 0;
+         case 28: *result = CURRENT_ISSUANCE_ASSET_PROOF; return 0;
+         case 29: *result = CURRENT_ISSUANCE_TOKEN_PROOF; return 0;
+         case 30: *result = INPUT_IS_PEGIN; return 0;
+         case 31: *result = INPUT_PREV_OUTPOINT; return 0;
+         case 32: *result = INPUT_ASSET; return 0;
+         case 33: *result = INPUT_ASSET_AMOUNT; return 0;
+         case 34: *result = INPUT_SCRIPT_HASH; return 0;
+         case 35: *result = INPUT_SEQUENCE; return 0;
+         /* case 36: *result = INPUT_ANNEX_HASH; return 0; */
+         /* case 37: *result = INPUT_SCRIPT_SIG_HASH; return 0; */
+         case 38: *result = REISSUANCE_BLINDING; return 0;
+         case 39: *result = NEW_ISSUANCE_CONTRACT; return 0;
+         case 40: *result = REISSUANCE_ENTROPY; return 0;
+         case 41: *result = ISSUANCE_ASSET_AMOUNT; return 0;
+         case 42: *result = ISSUANCE_TOKEN_AMOUNT; return 0;
+         case 43: *result = ISSUANCE_ASSET_PROOF; return 0;
+         case 44: *result = ISSUANCE_TOKEN_PROOF; return 0;
+         case 45: *result = TAPLEAF_VERSION; return 0;
+         case 46: *result = TAPBRANCH; return 0;
+         case 47: *result = VERSION; return 0;
+         /* case 48: *result = GENESIS_BLOCK_HASH; return 0; */
+        }
+        break;
       }
       return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
     }
