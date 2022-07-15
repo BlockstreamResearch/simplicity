@@ -156,7 +156,7 @@ tests = testGroup "Programs"
         , testProperty "scalar_square" prop_scalar_square
         , testProperty "scalar_multiply" prop_scalar_multiply
         , testProperty "scalar_negate" prop_scalar_negate
-        , testProperty "scalar_invert" prop_scalar_invert
+        , testProperty "scalar_invert" (withMaxSuccess 10 prop_scalar_invert)
         , testProperty "scalar_split_lambda" prop_scalar_split_lambda
         , testProperty "wnaf5" prop_wnaf5
         , testProperty "wnaf15" prop_wnaf15

@@ -7,7 +7,7 @@ import Control.Arrow ((***))
 import Lens.Family2 ((^.), (^..), over, allOf, review, zipWithOf)
 import Test.Tasty (TestTree, defaultMain, testGroup)
 import Test.Tasty.QuickCheck ( Arbitrary(..), Gen, Property, arbitraryBoundedIntegral, arbitrarySizedBoundedIntegral, shrinkIntegral
-                             , choose, forAll, property, Discard(Discard), testProperty, vectorOf
+                             , choose, forAll, property, Discard(Discard), testProperty, vectorOf, withMaxSuccess
                              )
 import Test.Tasty.HUnit (Assertion, (@=?), assertBool, testCase)
 
@@ -62,7 +62,7 @@ tests = testGroup "C / SPEC"
         , testProperty "fe_square"        prop_fe_square
         , testProperty "fe_multiply"      prop_fe_multiply
         , testProperty "fe_multiply_beta" prop_fe_multiply_beta
-        , testProperty "fe_invert"        prop_fe_invert
+        , testProperty "fe_invert"        (withMaxSuccess 10 prop_fe_invert)
         , testProperty "fe_square_root"   prop_fe_square_root
         , testProperty "fe_is_zero"       prop_fe_is_zero
         , testProperty "fe_is_odd"        prop_fe_is_odd
@@ -74,7 +74,7 @@ tests = testGroup "C / SPEC"
         , testProperty "scalar_square"          prop_scalar_square
         , testProperty "scalar_multiply"        prop_scalar_multiply
         , testProperty "scalar_multiply_lambda" prop_scalar_multiply_lambda
-        , testProperty "scalar_invert"          prop_scalar_invert
+        , testProperty "scalar_invert"          (withMaxSuccess 10 prop_scalar_invert)
         , testProperty "scalar_is_zero"         prop_scalar_is_zero
         ]
       , testGroup "group"
