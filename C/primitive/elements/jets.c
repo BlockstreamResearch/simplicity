@@ -23,34 +23,29 @@ static void prevOutpoint(frameItem* dst, const outpoint* op) {
   write32(dst, op->ix);
 }
 
-/* Write an confidential asset to the 'dst' frame, advancing the cursor 258 cells, unless 'asset->prefix == NONE'.
- * Returns 'asset->prefix != NONE'.
+/* Write an confidential asset to the 'dst' frame, advancing the cursor 258 cells.
  *
  * Precondition: '*dst' is a valid write frame for 258 more cells;
  *               NULL != asset;
  */
-static bool asset(frameItem* dst, const confidential* asset) {
-  if (NONE == asset->prefix) return false;
-
+static void asset(frameItem* dst, const confidential* asset) {
   if (writeBit(dst, EXPLICIT == asset->prefix)) {
     skipBits(dst, 1);
   } else {
     writeBit(dst, ODD_Y == asset->prefix);
   }
   writeHash(dst, &asset->data);
-  return true;
 }
 
 /* Write an confidential amount to the 'dst' frame, advancing the cursor 258 cells.
- * Writes an explicit amount of 0 when 'amt->prefix' is NONE.
  *
  * Precondition: '*dst' is a valid write frame for 258 more cells;
  *               NULL != amt;
  */
 static void amt(frameItem* dst, const confAmount* amt) {
-  if (writeBit(dst, NONE == amt->prefix || EXPLICIT == amt->prefix)) {
+  if (writeBit(dst, EXPLICIT == amt->prefix)) {
     skipBits(dst, 1 + 256 - 64);
-    write64(dst, EXPLICIT == amt->prefix ? amt->explicit : 0);
+    write64(dst, amt->explicit);
   } else {
     writeBit(dst, ODD_Y == amt->prefix);
     writeHash(dst, &amt->confidential);
@@ -200,11 +195,11 @@ bool input_prev_outpoint(frameItem* dst, frameItem src, const txEnv* env) {
 bool input_asset(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
-    return asset(dst, &env->tx->input[i].txo.asset);
+    asset(dst, &env->tx->input[i].txo.asset);
   } else {
     skipBits(dst, 258);
-    return true;
   }
+  return true;
 }
 
 /* input_amount : TWO^32 |- S (Conf TWO^64) */
@@ -222,7 +217,7 @@ bool input_amount(frameItem* dst, frameItem src, const txEnv* env) {
 bool input_asset_amount(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
-    if (!asset(dst, &env->tx->input[i].txo.asset)) return false;
+    asset(dst, &env->tx->input[i].txo.asset);
     amt(dst, &env->tx->input[i].txo.amt);
   } else {
     skipBits(dst, 516);
@@ -359,11 +354,11 @@ bool input_script_sig_hash(frameItem* dst, frameItem src, const txEnv* env) {
 bool output_asset(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
-    return asset(dst, &env->tx->output[i].asset);
+    asset(dst, &env->tx->output[i].asset);
   } else {
     skipBits(dst, 258);
-    return true;
   }
+  return true;
 }
 
 /* output_amount : TWO^32 |- S (Conf TWO^64) */
@@ -381,7 +376,7 @@ bool output_amount(frameItem* dst, frameItem src, const txEnv* env) {
 bool output_asset_amount(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
-    if (!asset(dst, &env->tx->output[i].asset)) return false;
+    asset(dst, &env->tx->output[i].asset);
     amt(dst, &env->tx->output[i].amt);
   } else {
     skipBits(dst, 516);
@@ -531,7 +526,8 @@ bool current_prev_outpoint(frameItem* dst, frameItem src, const txEnv* env) {
 bool current_asset(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
-  return asset(dst, &env->tx->input[env->ix].txo.asset);
+  asset(dst, &env->tx->input[env->ix].txo.asset);
+  return true;
 }
 
 /* current_amount : ONE |- Conf TWO^64 */
@@ -546,7 +542,7 @@ bool current_amount(frameItem* dst, frameItem src, const txEnv* env) {
 bool current_asset_amount(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
-  if (!asset(dst, &env->tx->input[env->ix].txo.asset)) return false;
+  asset(dst, &env->tx->input[env->ix].txo.asset);
   amt(dst, &env->tx->input[env->ix].txo.amt);
   return true;
 }

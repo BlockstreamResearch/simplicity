@@ -47,7 +47,7 @@ typedef struct confidential {
  * When 'prefix' is either 'EVEN_Y' or 'ODD_Y' then 'confidential' contains the x-coordinate of the point on the secp256k1 curve
  * representing the blinded value.
  * When 'prefix' is 'EXPLICIT' then 'explicit' is the unblinded 256-bit hash.
- * When 'prefix' is 'NONE' the value is "NULL" and the 'confidential' and 'explicit' fields are unused.
+ * invariant: 'prefix' != 'NONE'
  */
 typedef struct confAmount {
   union {
