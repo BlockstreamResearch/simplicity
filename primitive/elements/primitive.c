@@ -83,7 +83,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
 
     switch (code) {
      case 0x0: return either(result, VERSION, LOCK_TIME, stream);
-     case 0x1: *result = INPUT_IS_PEGIN; return 0;
+     case 0x1: *result = INPUT_PEGIN; return 0;
      case 0x2: return either(result, INPUT_PREV_OUTPOINT, INPUT_ASSET, stream);
      case 0x3: *result = INPUT_AMOUNT; return 0;
      case 0x4: return either(result, INPUT_SCRIPT_HASH, INPUT_SEQUENCE, stream);
@@ -98,7 +98,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
      case 0xd: *result = OUTPUT_SURJECTION_PROOF; return 0;
      case 0xe: *result = OUTPUT_RANGE_PROOF; return 0;
      case 0xf: *result = SCRIPT_CMR; return 0;
-     case 0x10: return either(result, CURRENT_INDEX, CURRENT_IS_PEGIN, stream);
+     case 0x10: return either(result, CURRENT_INDEX, CURRENT_PEGIN, stream);
      case 0x11: *result = CURRENT_PREV_OUTPOINT; return 0;
      case 0x12: return either(result, CURRENT_ASSET, CURRENT_AMOUNT, stream);
      case 0x13: *result = CURRENT_SCRIPT_HASH; return 0;
@@ -370,7 +370,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 12: *result = OUTPUT_SURJECTION_PROOF; return 0;
          case 13: *result = OUTPUT_RANGE_PROOF; return 0;
          /* case 14: *result = TOTAL_FEE; return 0; */
-         case 15: *result = CURRENT_IS_PEGIN; return 0;
+         case 15: *result = CURRENT_PEGIN; return 0;
          case 16: *result = CURRENT_PREV_OUTPOINT; return 0;
          case 17: *result = CURRENT_ASSET; return 0;
          case 18: *result = CURRENT_ASSET_AMOUNT; return 0;
@@ -385,7 +385,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 27: *result = CURRENT_ISSUANCE_TOKEN_AMOUNT; return 0;
          case 28: *result = CURRENT_ISSUANCE_ASSET_PROOF; return 0;
          case 29: *result = CURRENT_ISSUANCE_TOKEN_PROOF; return 0;
-         case 30: *result = INPUT_IS_PEGIN; return 0;
+         case 30: *result = INPUT_PEGIN; return 0;
          case 31: *result = INPUT_PREV_OUTPOINT; return 0;
          case 32: *result = INPUT_ASSET; return 0;
          case 33: *result = INPUT_ASSET_AMOUNT; return 0;

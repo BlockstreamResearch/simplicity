@@ -170,13 +170,17 @@ bool lock_time(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_is_pegin : TWO^32 |- S TWO */
-bool input_is_pegin(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_pegin : TWO^32 |- S (S TWO^256) */
+bool input_pegin(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
-    writeBit(dst, env->tx->input[i].isPegin);
+    if (writeBit(dst, env->tx->input[i].isPegin)) {
+      writeHash(dst, &env->tx->input[i].pegin);
+    } else {
+      skipBits(dst, 256);
+    }
   } else {
-    skipBits(dst, 1);
+    skipBits(dst, 257);
   }
   return true;
 }
@@ -503,11 +507,15 @@ bool current_index(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* current_is_pegin : ONE |- TWO */
-bool current_is_pegin(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_pegin : ONE |- S TWO^256 */
+bool current_pegin(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
-  writeBit(dst, env->tx->input[env->ix].isPegin);
+  if (writeBit(dst, env->tx->input[env->ix].isPegin)) {
+    writeHash(dst, &env->tx->input[env->ix].pegin);
+  } else {
+    skipBits(dst, 256);
+  }
   return true;
 }
 

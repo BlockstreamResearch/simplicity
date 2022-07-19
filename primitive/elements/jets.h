@@ -8,7 +8,7 @@
 /* Primitives for the Elements application of Simplicity. */
 bool version(frameItem* dst, frameItem src, const txEnv* env);
 bool lock_time(frameItem* dst, frameItem src, const txEnv* env);
-bool input_is_pegin(frameItem* dst, frameItem src, const txEnv* env);
+bool input_pegin(frameItem* dst, frameItem src, const txEnv* env);
 bool input_prev_outpoint(frameItem* dst, frameItem src, const txEnv* env);
 bool input_asset(frameItem* dst, frameItem src, const txEnv* env);
 bool input_amount(frameItem* dst, frameItem src, const txEnv* env);
@@ -38,7 +38,7 @@ bool output_range_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool genesis_block_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool script_cmr(frameItem* dst, frameItem src, const txEnv* env);
 bool current_index(frameItem* dst, frameItem src, const txEnv* env);
-bool current_is_pegin(frameItem* dst, frameItem src, const txEnv* env);
+bool current_pegin(frameItem* dst, frameItem src, const txEnv* env);
 bool current_prev_outpoint(frameItem* dst, frameItem src, const txEnv* env);
 bool current_asset(frameItem* dst, frameItem src, const txEnv* env);
 bool current_amount(frameItem* dst, frameItem src, const txEnv* env);
