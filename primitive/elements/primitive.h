@@ -173,13 +173,16 @@ typedef struct assetIssuance {
 } assetIssuance;
 
 /* A structure representing data from one input from an Elements transaction along with the utxo data of the output being redeemed.
+ * When 'hasAnnex' then 'annexHash' is a cache of the hash of the input's segwit annex.
  * When 'isPegin' then the 'prevOutpoint' represents an outpoint of another chain.
  */
 typedef struct sigInput {
+  sha256_midstate annexHash;
   outpoint prevOutpoint;
   utxo txo;
   uint_fast32_t sequence;
   assetIssuance issuance;
+  bool hasAnnex;
   bool isPegin;
 } sigInput;
 

@@ -376,7 +376,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 18: *result = CURRENT_ASSET_AMOUNT; return 0;
          case 19: *result = CURRENT_SCRIPT_HASH; return 0;
          case 20: *result = CURRENT_SEQUENCE; return 0;
-         /* case 21: *result = CURRENT_ANNEX_HASH; return 0; */
+         case 21: *result = CURRENT_ANNEX_HASH; return 0;
          /* case 22: *result = CURRENT_SCRIPT_SIG_HASH; return 0; */
          case 23: *result = CURRENT_REISSUANCE_BLINDING; return 0;
          case 24: *result = CURRENT_NEW_ISSUANCE_CONTRACT; return 0;
@@ -391,7 +391,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 33: *result = INPUT_ASSET_AMOUNT; return 0;
          case 34: *result = INPUT_SCRIPT_HASH; return 0;
          case 35: *result = INPUT_SEQUENCE; return 0;
-         /* case 36: *result = INPUT_ANNEX_HASH; return 0; */
+         case 36: *result = INPUT_ANNEX_HASH; return 0;
          /* case 37: *result = INPUT_SCRIPT_SIG_HASH; return 0; */
          case 38: *result = REISSUANCE_BLINDING; return 0;
          case 39: *result = NEW_ISSUANCE_CONTRACT; return 0;
