@@ -61,6 +61,7 @@ typedef struct rawInput {
     const unsigned char* value;
     rawBuffer scriptPubKey;
   } txo;
+  rawBuffer scriptSig;
   uint32_t prevIx;
   uint32_t sequence;
   bool isPegin;

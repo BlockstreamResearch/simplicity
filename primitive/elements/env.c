@@ -189,6 +189,7 @@ static void copyInput(sigInput* result, const rawInput* input) {
   hashBuffer(&result->txo.scriptPubKey, &input->txo.scriptPubKey);
   copyRawConfidential(&result->txo.asset, input->txo.asset);
   copyRawAmt(&result->txo.amt, input->txo.value);
+  hashBuffer(&result->scriptSigHash, &input->scriptSig);
   hashBuffer(&result->issuance.assetRangeProofHash, &(rawBuffer){0});
   hashBuffer(&result->issuance.tokenRangeProofHash, &(rawBuffer){0});
   if (input->issuance.amount || input->issuance.inflationKeys) {
