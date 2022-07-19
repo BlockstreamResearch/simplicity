@@ -101,7 +101,7 @@ data TransactionJet a b where
   OutputNullDatum :: TransactionJet (Word32, Word32) (S (S (Either (Word2, Word256) (Either Bit Word4))))
   OutputSurjectionProof :: TransactionJet Word32 (S Word256)
   OutputRangeProof :: TransactionJet Word32 (S Word256)
-  CurrentIsPegin :: TransactionJet () Bit
+  CurrentPegin :: TransactionJet () (S Word256)
   CurrentPrevOutpoint :: TransactionJet () (Word256,Word32)
   CurrentAsset :: TransactionJet () (Conf Word256)
   CurrentAssetAmount :: TransactionJet () (Conf Word256, Conf Word64)
@@ -116,7 +116,7 @@ data TransactionJet a b where
   CurrentIssuanceTokenAmount :: TransactionJet () (S (Conf Word64))
   CurrentIssuanceAssetProof :: TransactionJet () Word256
   CurrentIssuanceTokenProof :: TransactionJet () Word256
-  InputIsPegin :: TransactionJet Word32 (S Bit)
+  InputPegin :: TransactionJet Word32 (S (S Word256))
   InputPrevOutpoint :: TransactionJet Word32 (S (Word256,Word32))
   InputAsset :: TransactionJet Word32 (S (Conf Word256))
   InputAssetAmount :: TransactionJet Word32 (S (Conf Word256, Conf Word64))
@@ -178,7 +178,7 @@ specificationTransaction OutputScriptHash = primitive Prim.OutputScriptHash
 specificationTransaction OutputNullDatum = primitive Prim.OutputNullDatum
 specificationTransaction OutputSurjectionProof = primitive Prim.OutputSurjectionProof
 specificationTransaction OutputRangeProof = primitive Prim.OutputRangeProof
-specificationTransaction CurrentIsPegin = primitive Prim.CurrentIsPegin
+specificationTransaction CurrentPegin = primitive Prim.CurrentPegin
 specificationTransaction CurrentPrevOutpoint = primitive Prim.CurrentPrevOutpoint
 specificationTransaction CurrentAsset = primitive Prim.CurrentAsset
 specificationTransaction CurrentAssetAmount = Prog.currentAssetAmount
@@ -193,7 +193,7 @@ specificationTransaction CurrentIssuanceAssetAmount = primitive Prim.CurrentIssu
 specificationTransaction CurrentIssuanceTokenAmount = primitive Prim.CurrentIssuanceTokenAmt
 specificationTransaction CurrentIssuanceAssetProof = primitive Prim.CurrentIssuanceAssetProof
 specificationTransaction CurrentIssuanceTokenProof = primitive Prim.CurrentIssuanceTokenProof
-specificationTransaction InputIsPegin = primitive Prim.InputIsPegin
+specificationTransaction InputPegin = primitive Prim.InputPegin
 specificationTransaction InputPrevOutpoint = primitive Prim.InputPrevOutpoint
 specificationTransaction InputAsset = primitive Prim.InputAsset
 specificationTransaction InputAssetAmount = Prog.inputAssetAmount
@@ -346,7 +346,7 @@ getJetBitElements abort next = getPositive next >>= match
     matchTransaction 12 = makeArrow OutputSurjectionProof
     matchTransaction 13 = makeArrow OutputRangeProof
 
-    matchTransaction 15 = makeArrow CurrentIsPegin
+    matchTransaction 15 = makeArrow CurrentPegin
     matchTransaction 16 = makeArrow CurrentPrevOutpoint
     matchTransaction 17 = makeArrow CurrentAsset
     matchTransaction 18 = makeArrow CurrentAssetAmount
@@ -361,7 +361,7 @@ getJetBitElements abort next = getPositive next >>= match
     matchTransaction 27 = makeArrow CurrentIssuanceTokenAmount
     matchTransaction 28 = makeArrow CurrentIssuanceAssetProof
     matchTransaction 29 = makeArrow CurrentIssuanceTokenProof
-    matchTransaction 30 = makeArrow InputIsPegin
+    matchTransaction 30 = makeArrow InputPegin
     matchTransaction 31 = makeArrow InputPrevOutpoint
     matchTransaction 32 = makeArrow InputAsset
     matchTransaction 33 = makeArrow InputAssetAmount
@@ -422,7 +422,7 @@ putJetBitTransaction OutputNullDatum            = putPositive 11
 putJetBitTransaction OutputSurjectionProof      = putPositive 12
 putJetBitTransaction OutputRangeProof           = putPositive 13
 
-putJetBitTransaction CurrentIsPegin             = putPositive 15
+putJetBitTransaction CurrentPegin               = putPositive 15
 putJetBitTransaction CurrentPrevOutpoint        = putPositive 16
 putJetBitTransaction CurrentAsset               = putPositive 17
 putJetBitTransaction CurrentAssetAmount         = putPositive 18
@@ -437,7 +437,7 @@ putJetBitTransaction CurrentIssuanceAssetAmount = putPositive 26
 putJetBitTransaction CurrentIssuanceTokenAmount = putPositive 27
 putJetBitTransaction CurrentIssuanceAssetProof  = putPositive 28
 putJetBitTransaction CurrentIssuanceTokenProof  = putPositive 29
-putJetBitTransaction InputIsPegin               = putPositive 30
+putJetBitTransaction InputPegin                 = putPositive 30
 putJetBitTransaction InputPrevOutpoint          = putPositive 31
 putJetBitTransaction InputAsset                 = putPositive 32
 putJetBitTransaction InputAssetAmount           = putPositive 33
@@ -492,7 +492,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (TransactionJet OutputNullDatum)
   , mkAssoc (TransactionJet OutputSurjectionProof)
   , mkAssoc (TransactionJet OutputRangeProof)
-  , mkAssoc (TransactionJet CurrentIsPegin)
+  , mkAssoc (TransactionJet CurrentPegin)
   , mkAssoc (TransactionJet CurrentPrevOutpoint)
   , mkAssoc (TransactionJet CurrentAsset)
   , mkAssoc (TransactionJet CurrentAssetAmount)
@@ -507,7 +507,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (TransactionJet CurrentIssuanceTokenAmount)
   , mkAssoc (TransactionJet CurrentIssuanceAssetProof)
   , mkAssoc (TransactionJet CurrentIssuanceTokenProof)
-  , mkAssoc (TransactionJet InputIsPegin)
+  , mkAssoc (TransactionJet InputPegin)
   , mkAssoc (TransactionJet InputPrevOutpoint)
   , mkAssoc (TransactionJet InputAsset)
   , mkAssoc (TransactionJet InputAssetAmount)

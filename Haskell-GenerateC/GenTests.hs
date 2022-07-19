@@ -226,7 +226,7 @@ checkSigHashAllTx1 = Example
    where
     assetId = Asset . Explicit $ review (over be256) 0x230f4f5d4b7c6fa845806ee4f67713459e1b69e8e60fcee2e4940c7a0d5de1b2
     input0 = SigTxInput
-      { sigTxiIsPegin = False
+      { sigTxiPegin = Nothing
       , sigTxiPreviousOutpoint = Outpoint (review (over be256) 0xeb04b68e9a26d116046c76e8ff47332fb71dda90ff4bef5370f25226d3bc09fc) 0
       , sigTxiTxo = UTXO
           { utxoAsset = assetId

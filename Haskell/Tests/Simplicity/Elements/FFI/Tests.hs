@@ -63,7 +63,7 @@ tests = testGroup "Elements"
           , testProperty "output_null_datum" prop_output_null_datum
           , testProperty "output_surjection_proof" prop_output_surjection_proof
           , testProperty "output_range_proof" prop_output_range_proof
-          , testProperty "current_is_pegin" prop_current_is_pegin
+          , testProperty "current_pegin" prop_current_pegin
           , testProperty "current_prev_outpoint" prop_current_prev_outpoint
           , testProperty "current_asset" prop_current_asset
           , testProperty "current_amount" prop_current_amount
@@ -78,7 +78,7 @@ tests = testGroup "Elements"
           , testProperty "current_issuance_token_amount" prop_current_issuance_token_amount
           , testProperty "current_issuance_asset_proof" prop_current_issuance_asset_proof
           , testProperty "current_issuance_token_proof" prop_current_issuance_token_proof
-          , testProperty "input_is_pegin" prop_input_is_pegin
+          , testProperty "input_pegin" prop_input_pegin
           , testProperty "input_prev_outpoint" prop_input_prev_outpoint
           , testProperty "input_asset" prop_input_asset
           , testProperty "input_amount" prop_input_amount
@@ -267,10 +267,10 @@ prop_output_range_proof = forallOutPrimEnv $ \env i -> fast_output_range_proof e
  where
   fast_output_range_proof = testEval (specification (ElementsJet (TransactionJet OutputRangeProof)))
 
-prop_current_is_pegin :: Property
-prop_current_is_pegin = forallPrimEnv $ \env -> fast_current_is_pegin env () == current_is_pegin env ()
+prop_current_pegin :: Property
+prop_current_pegin = forallPrimEnv $ \env -> fast_current_pegin env () == current_pegin env ()
  where
-  fast_current_is_pegin = testEval (specification (ElementsJet (TransactionJet CurrentIsPegin)))
+  fast_current_pegin = testEval (specification (ElementsJet (TransactionJet CurrentPegin)))
 
 prop_current_prev_outpoint :: Property
 prop_current_prev_outpoint = forallPrimEnv $ \env -> fast_current_prev_outpoint env () == current_prev_outpoint env ()
@@ -342,10 +342,10 @@ prop_current_issuance_token_proof = forallPrimEnv $ \env -> fast_current_issuanc
  where
   fast_current_issuance_token_proof = testEval (specification (ElementsJet (TransactionJet CurrentIssuanceTokenProof)))
 
-prop_input_is_pegin :: Property
-prop_input_is_pegin = forallInPrimEnv $ \env i -> fast_input_is_pegin env (toW32 i) == input_is_pegin env (toW32 i)
+prop_input_pegin :: Property
+prop_input_pegin = forallInPrimEnv $ \env i -> fast_input_pegin env (toW32 i) == input_pegin env (toW32 i)
  where
-  fast_input_is_pegin = testEval (specification (ElementsJet (TransactionJet InputIsPegin)))
+  fast_input_pegin = testEval (specification (ElementsJet (TransactionJet InputPegin)))
 
 prop_input_prev_outpoint :: Property
 prop_input_prev_outpoint = forallInPrimEnv $ \env i -> fast_input_prev_outpoint env (toW32 i) == input_prev_outpoint env (toW32 i)

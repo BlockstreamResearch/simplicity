@@ -23,8 +23,7 @@ void c_set_rawOutput(rawOutput* result, const char* asset, const char* value, co
                        , .rangeProof = *rangeProof };
 }
 
-void c_set_rawInput(rawInput* result, bool isPegin,
-                                      const rawBuffer* annex, const rawBuffer* scriptSig,
+void c_set_rawInput(rawInput* result, const rawBuffer* annex, const char* pegin, const rawBuffer* scriptSig,
                                       const char* prevTxid, unsigned int prevIx,
                                       const char* asset, const char* value, const rawBuffer* scriptPubKey,
                                       unsigned int sequence,
@@ -33,6 +32,7 @@ void c_set_rawInput(rawInput* result, bool isPegin,
   *result = (rawInput){ .annex = annex
                       , .scriptSig = *scriptSig
                       , .prevTxid = prevTxid
+                      , .pegin = pegin
                       , .issuance = { .blindingNonce = blindingNonce
                                     , .assetEntropy = assetEntropy
                                     , .amount = amount
@@ -43,7 +43,6 @@ void c_set_rawInput(rawInput* result, bool isPegin,
                       , .txo = {.asset = asset, .value = value, .scriptPubKey = *scriptPubKey}
                       , .prevIx = prevIx
                       , .sequence = sequence
-                      , .isPegin = isPegin
                       };
 }
 

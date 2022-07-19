@@ -180,11 +180,12 @@ static void copyRawAmt(confAmount* amt, const unsigned char* rawAmt) {
 static void copyInput(sigInput* result, const rawInput* input) {
   *result = (sigInput){ .prevOutpoint = { .ix = input->prevIx }
                       , .sequence = input->sequence
-                      , .isPegin = input->isPegin
+                      , .isPegin = !!input->pegin
                       , .hasAnnex = !!input->annex
                       };
 
   if (input->annex) hashBuffer(&result->annexHash, input->annex);
+  if (input->pegin) sha256_toMidstate(result->pegin.s, input->pegin);
   sha256_toMidstate(result->prevOutpoint.txid.s, input->prevTxid);
   hashBuffer(&result->txo.scriptPubKey, &input->txo.scriptPubKey);
   copyRawConfidential(&result->txo.asset, input->txo.asset);

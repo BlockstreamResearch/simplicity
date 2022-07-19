@@ -109,7 +109,7 @@ instance Arbitrary Reissuance where
   arbitrary = Reissuance <$> arbitraryHash256 <*> arbitraryHash256 <*> (arbitraryAmountWithWitness `suchThat` nonZeroAmount)
 
 instance Arbitrary SigTxInput where
-  arbitrary = SigTxInput <$> arbitrary
+  arbitrary = SigTxInput <$> oneof [return Nothing, Just <$> arbitraryHash256]
                          <*> arbitrary
                          <*> arbitrary
                          <*> oneof [return maxBound, arbitraryBoundedIntegral]

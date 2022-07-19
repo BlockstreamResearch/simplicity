@@ -83,12 +83,6 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w32
 }
-,[CURRENT_IS_PEGIN] =
-{ .tag = JET
-, .jet = current_is_pegin
-, .sourceIx = ty_u
-, .targetIx = ty_b
-}
 ,[CURRENT_ISSUANCE_ASSET_AMOUNT] =
 { .tag = JET
 , .jet = current_issuance_asset_amount
@@ -116,6 +110,12 @@
 ,[CURRENT_NEW_ISSUANCE_CONTRACT] =
 { .tag = JET
 , .jet = current_new_issuance_contract
+, .sourceIx = ty_u
+, .targetIx = ty_mw256
+}
+,[CURRENT_PEGIN] =
+{ .tag = JET
+, .jet = current_pegin
 , .sourceIx = ty_u
 , .targetIx = ty_mw256
 }
@@ -359,11 +359,11 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mpspbw256w256spbw256w64
 }
-,[INPUT_IS_PEGIN] =
+,[INPUT_PEGIN] =
 { .tag = JET
-, .jet = input_is_pegin
+, .jet = input_pegin
 , .sourceIx = ty_w32
-, .targetIx = ty_mb
+, .targetIx = ty_mmw256
 }
 ,[INPUT_PREV_OUTPOINT] =
 { .tag = JET

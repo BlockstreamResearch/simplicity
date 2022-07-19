@@ -42,7 +42,7 @@ data Prim a b where
   InputsHash :: Prim () Word256
   OutputsHash :: Prim () Word256
   NumInputs :: Prim () Word32
-  InputIsPegin :: Prim Word32 (S Bit)
+  InputPegin :: Prim Word32 (S (S Word256))
   InputPrevOutpoint :: Prim Word32 (S (Word256,Word32))
   InputAsset :: Prim Word32 (S (Conf Word256))
   InputAmount :: Prim Word32 (S (Conf Word64))
@@ -58,7 +58,7 @@ data Prim a b where
   IssuanceAssetProof :: Prim Word32 (S Word256)
   IssuanceTokenProof :: Prim Word32 (S Word256)
   CurrentIndex :: Prim () Word32
-  CurrentIsPegin :: Prim () Bit
+  CurrentPegin :: Prim () (S Word256)
   CurrentPrevOutpoint :: Prim () (Word256,Word32)
   CurrentAsset :: Prim () (Conf Word256)
   CurrentAmount :: Prim () (Conf Word64)
@@ -95,7 +95,7 @@ instance Eq (Prim a b) where
   InputsHash == InputsHash = True
   OutputsHash == OutputsHash = True
   NumInputs == NumInputs = True
-  InputIsPegin == InputIsPegin = True
+  InputPegin == InputPegin = True
   InputPrevOutpoint == InputPrevOutpoint = True
   InputAsset == InputAsset = True
   InputAmount == InputAmount = True
@@ -111,7 +111,7 @@ instance Eq (Prim a b) where
   IssuanceAssetProof == IssuanceAssetProof = True
   IssuanceTokenProof == IssuanceTokenProof = True
   CurrentIndex == CurrentIndex = True
-  CurrentIsPegin == CurrentIsPegin = True
+  CurrentPegin == CurrentPegin = True
   CurrentPrevOutpoint == CurrentPrevOutpoint = True
   CurrentAsset == CurrentAsset = True
   CurrentAmount == CurrentAmount = True
@@ -153,7 +153,7 @@ primName LockTime = "lockTime"
 primName InputsHash = "inputsHash"
 primName OutputsHash = "outputsHash"
 primName NumInputs = "numInputs"
-primName InputIsPegin = "inputIsPegin"
+primName InputPegin = "inputPegin"
 primName InputPrevOutpoint = "inputPrevOutpoint"
 primName InputAsset = "inputAsset"
 primName InputAmount = "inputAmount"
@@ -169,7 +169,7 @@ primName IssuanceTokenAmt = "issuanceTokenAmt"
 primName IssuanceAssetProof = "issuanceAssetProof"
 primName IssuanceTokenProof = "issuanceTokenProof"
 primName CurrentIndex = "currentIndex"
-primName CurrentIsPegin = "currentIsPegin"
+primName CurrentPegin = "currentPegin"
 primName CurrentPrevOutpoint = "currentPrevOutpoint"
 primName CurrentAsset = "currentAsset"
 primName CurrentAmount = "currentAmount"
@@ -202,11 +202,11 @@ primName ScriptCMR = "scriptCMR"
 
 getPrimBit :: Monad m => m Bool -> m (SomeArrow Prim)
 getPrimBit next =
-  (((((makeArrow Version & makeArrow LockTime) & makeArrow InputIsPegin) & ((makeArrow InputPrevOutpoint & makeArrow InputAsset) & makeArrow InputAmount)) &
+  (((((makeArrow Version & makeArrow LockTime) & makeArrow InputPegin) & ((makeArrow InputPrevOutpoint & makeArrow InputAsset) & makeArrow InputAmount)) &
     (((makeArrow InputScriptHash & makeArrow InputSequence) & makeArrow ReissuanceBlinding) & ((makeArrow NewIssuanceContract & makeArrow ReissuanceEntropy) & makeArrow IssuanceAssetAmt))) &
    ((((makeArrow IssuanceTokenAmt & makeArrow IssuanceAssetProof) & makeArrow IssuanceTokenProof) & ((makeArrow OutputAsset & makeArrow OutputAmount) & makeArrow OutputNonce)) &
     (((makeArrow OutputScriptHash & makeArrow OutputNullDatum) & makeArrow OutputSurjectionProof) & (makeArrow OutputRangeProof & makeArrow ScriptCMR)))) &
-  (((((makeArrow CurrentIndex & makeArrow CurrentIsPegin) & makeArrow CurrentPrevOutpoint) & ((makeArrow CurrentAsset & makeArrow CurrentAmount) & makeArrow CurrentScriptHash)) &
+  (((((makeArrow CurrentIndex & makeArrow CurrentPegin) & makeArrow CurrentPrevOutpoint) & ((makeArrow CurrentAsset & makeArrow CurrentAmount) & makeArrow CurrentScriptHash)) &
     (((makeArrow CurrentSequence & makeArrow CurrentReissuanceBlinding) & makeArrow CurrentNewIssuanceContract) & ((makeArrow CurrentReissuanceEntropy & makeArrow CurrentIssuanceAssetAmt) & makeArrow CurrentIssuanceTokenAmt))) &
    ((((makeArrow CurrentIssuanceAssetProof & makeArrow CurrentIssuanceTokenProof ) & makeArrow TapleafVersion) & ((makeArrow Tapbranch & makeArrow InternalKey) & makeArrow AnnexHash)) &
     (((makeArrow InputsHash & makeArrow OutputsHash) & makeArrow NumInputs) & (makeArrow NumOutputs & makeArrow Fee))))
@@ -220,7 +220,7 @@ putPrimBit = go
   go :: Prim a b -> DList Bool
   go Version                      = ([o,o,o,o,o,o]++)
   go LockTime                     = ([o,o,o,o,o,i]++)
-  go InputIsPegin                 = ([o,o,o,o,i]++)
+  go InputPegin                   = ([o,o,o,o,i]++)
   go InputPrevOutpoint            = ([o,o,o,i,o,o]++)
   go InputAsset                   = ([o,o,o,i,o,i]++)
   go InputAmount                  = ([o,o,o,i,i]++)
@@ -243,7 +243,7 @@ putPrimBit = go
   go ScriptCMR                    = ([o,i,i,i,i]++)
   go CurrentIndex                 = ([i,o,o,o,o,o]++)
 -- :TODO: Below here are primitives that are likely candidates for being jets instead of primitives (see https://github.com/ElementsProject/simplicity/issues/5).
-  go CurrentIsPegin               = ([i,o,o,o,o,i]++)
+  go CurrentPegin                 = ([i,o,o,o,o,i]++)
   go CurrentPrevOutpoint          = ([i,o,o,o,i]++)
   go CurrentAsset                 = ([i,o,o,i,o,o]++)
   go CurrentAmount                = ([i,o,o,i,o,i]++)
@@ -356,7 +356,7 @@ primSem p a env = interpret p a
   interpret InputsHash = element . return . encodeHash $ envInputsHash env
   interpret OutputsHash = element . return . encodeHash $ envOutputsHash env
   interpret NumInputs = element . return . toWord32 . toInteger $ 1 + maxInput
-  interpret InputIsPegin = return . (atInput $ toBit . sigTxiIsPegin)
+  interpret InputPegin = return . (atInput $ cast . fmap encodeHash . sigTxiPegin)
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutpoint)
   interpret InputAsset = return . (atInput $ encodeAsset . utxoAsset . sigTxiTxo)
   interpret InputAmount = return . (atInput $ encodeAmount . utxoAmount . sigTxiTxo)
@@ -377,7 +377,7 @@ primSem p a env = interpret p a
   interpret IssuanceAssetProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceAmount.under amount.prf_))
   interpret IssuanceTokenProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceTokenAmount.under amount.prf_))
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
-  interpret CurrentIsPegin = element $ toBit . sigTxiIsPegin <$> currentInput
+  interpret CurrentPegin = element $ cast . fmap encodeHash . sigTxiPegin <$> currentInput
   interpret CurrentPrevOutpoint = element $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
   interpret CurrentAsset = element $ encodeAsset . utxoAsset . sigTxiTxo <$> currentInput
   interpret CurrentAmount = element $ encodeAmount . utxoAmount . sigTxiTxo <$> currentInput

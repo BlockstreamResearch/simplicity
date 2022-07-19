@@ -38,6 +38,7 @@ typedef struct rawOutput {
  * plus all the segwit annexes.
  *
  * Invariant: unsigned char prevTxid[32];
+ *            unsigned char pegin[32] or pegin == NULL;
  *            unsigned char issuance.blindingNonce[32] or (issuance.amount == NULL and issuance.inflationKeys == NULL);
  *            unsigned char issuance.assetEntropy[32] or (issuance.amount == NULL and issuance.inflationKeys == NULL);
  *            unsigned char issuance.amount[issuance.amount[0] == 1 ? 9 : 33] or issuance.amount == NULL;
@@ -48,6 +49,7 @@ typedef struct rawOutput {
 typedef struct rawInput {
   const rawBuffer* annex;
   const unsigned char* prevTxid;
+  const unsigned char* pegin;
   struct {
     const unsigned char* blindingNonce;
     const unsigned char* assetEntropy;
@@ -64,7 +66,6 @@ typedef struct rawInput {
   rawBuffer scriptSig;
   uint32_t prevIx;
   uint32_t sequence;
-  bool isPegin;
 } rawInput;
 
 /* A structure representing data for an Elements transaction, including the TXO data of each output being redeemed.

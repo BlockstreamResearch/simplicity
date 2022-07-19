@@ -17,7 +17,7 @@ module Simplicity.Elements.DataTypes
   , Issuance
   , Outpoint(Outpoint), opHash, opIndex
   , UTXO(UTXO), utxoAsset, utxoAmount, utxoScript
-  , SigTxInput(SigTxInput), sigTxiIsPegin, sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiIssuance, sigTxiAnnex, sigTxiScriptSig
+  , SigTxInput(SigTxInput), sigTxiPegin, sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiIssuance, sigTxiAnnex, sigTxiScriptSig
   , sigTxiIssuanceEntropy, sigTxiIssuanceAsset, sigTxiIssuanceToken
   , TxOutput(TxOutput), txoAsset, txoAmount, txoNonce, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
@@ -260,7 +260,7 @@ data UTXO = UTXO { utxoAsset :: Asset
 
 -- | The data type for signed transaction inputs, including a copy of the TXO being spent.
 -- For pegins, the TXO data in 'sigTxiTxo' is synthesized.
-data SigTxInput = SigTxInput { sigTxiIsPegin :: Bool
+data SigTxInput = SigTxInput { sigTxiPegin :: Maybe Hash256
                              , sigTxiPreviousOutpoint :: Outpoint
                              , sigTxiTxo :: UTXO
                              , sigTxiSequence :: Word32

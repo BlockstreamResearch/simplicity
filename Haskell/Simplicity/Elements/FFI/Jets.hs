@@ -3,7 +3,7 @@
 module Simplicity.Elements.FFI.Jets
  ( version
  , lock_time
- , input_is_pegin
+ , input_pegin
  , input_prev_outpoint
  , input_asset
  , input_amount
@@ -30,7 +30,7 @@ module Simplicity.Elements.FFI.Jets
  , genesis_block_hash
  , script_cmr
  , current_index
- , current_is_pegin
+ , current_pegin
  , current_prev_outpoint
  , current_asset
  , current_amount
@@ -90,7 +90,7 @@ unsafeLocalJet jet env = unsafeLocalCoreJet (\dst src -> withPrimEnv env (jet ds
 
 foreign import ccall unsafe "" c_version :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_lock_time :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_input_is_pegin :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_pegin :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_prev_outpoint :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_asset :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_amount :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -117,7 +117,7 @@ foreign import ccall unsafe "" c_output_range_proof :: Ptr FrameItem -> Ptr Fram
 foreign import ccall unsafe "" c_genesis_block_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_script_cmr :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_index :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_current_is_pegin :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_current_pegin :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_prev_outpoint :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_asset :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_amount :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -174,8 +174,8 @@ outputs_hash = unsafeLocalJet c_outputs_hash
 num_inputs :: PrimEnv -> () -> Maybe Word32
 num_inputs = unsafeLocalJet c_num_inputs
 
-input_is_pegin :: PrimEnv -> Word32 -> Maybe (S Bit)
-input_is_pegin = unsafeLocalJet c_input_is_pegin
+input_pegin :: PrimEnv -> Word32 -> Maybe (S (S Word256))
+input_pegin = unsafeLocalJet c_input_pegin
 
 input_prev_outpoint :: PrimEnv -> Word32 -> Maybe (S (Word256, Word32))
 input_prev_outpoint = unsafeLocalJet c_input_prev_outpoint
@@ -225,8 +225,8 @@ input_script_sig_hash = unsafeLocalJet c_input_script_sig_hash
 current_index :: PrimEnv -> () -> Maybe Word32
 current_index = unsafeLocalJet c_current_index
 
-current_is_pegin :: PrimEnv -> () -> Maybe Bit
-current_is_pegin = unsafeLocalJet c_current_is_pegin
+current_pegin :: PrimEnv -> () -> Maybe (S Word256)
+current_pegin = unsafeLocalJet c_current_pegin
 
 current_prev_outpoint :: PrimEnv -> () -> Maybe (Word256, Word32)
 current_prev_outpoint = unsafeLocalJet c_current_prev_outpoint

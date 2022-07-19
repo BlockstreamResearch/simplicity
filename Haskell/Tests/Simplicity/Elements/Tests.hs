@@ -75,7 +75,7 @@ tests = testGroup "Elements"
           , testProperty "output_null_datum" prop_output_null_datum
           , testProperty "output_surjection_proof" prop_output_surjection_proof
           , testProperty "output_range_proof" prop_output_range_proof
-          , testProperty "current_is_pegin" prop_current_is_pegin
+          , testProperty "current_pegin" prop_current_pegin
           , testProperty "current_prev_outpoint" prop_current_prev_outpoint
           , testProperty "current_asset" prop_current_asset
           , testProperty "current_amount" prop_current_amount
@@ -90,7 +90,7 @@ tests = testGroup "Elements"
           , testProperty "current_issuance_token_amount" prop_current_issuance_token_amount
           , testProperty "current_issuance_asset_proof" prop_current_issuance_asset_proof
           , testProperty "current_issuance_token_proof" prop_current_issuance_token_proof
-          , testProperty "input_is_pegin" prop_input_is_pegin
+          , testProperty "input_pegin" prop_input_pegin
           , testProperty "input_prev_outpoint" prop_input_prev_outpoint
           , testProperty "input_asset" prop_input_asset
           , testProperty "input_amount" prop_input_amount
@@ -273,9 +273,9 @@ prop_output_range_proof :: Property
 prop_output_range_proof = checkJet (ElementsJet (TransactionJet OutputRangeProof))
                         $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
 
-prop_current_is_pegin :: Property
-prop_current_is_pegin = checkJet (ElementsJet (TransactionJet CurrentIsPegin))
-                      $ \check -> forallPrimEnv $ \env -> check env ()
+prop_current_pegin :: Property
+prop_current_pegin = checkJet (ElementsJet (TransactionJet CurrentPegin))
+                   $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_current_prev_outpoint :: Property
 prop_current_prev_outpoint = checkJet (ElementsJet (TransactionJet CurrentPrevOutpoint))
@@ -333,9 +333,9 @@ prop_current_issuance_token_proof :: Property
 prop_current_issuance_token_proof = checkJet (ElementsJet (TransactionJet CurrentIssuanceTokenProof))
                                   $ \check -> forallPrimEnv $ \env -> check env ()
 
-prop_input_is_pegin :: Property
-prop_input_is_pegin = checkJet (ElementsJet (TransactionJet InputIsPegin))
-                    $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+prop_input_pegin :: Property
+prop_input_pegin = checkJet (ElementsJet (TransactionJet InputPegin))
+                 $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 prop_input_prev_outpoint :: Property
 prop_input_prev_outpoint = checkJet (ElementsJet (TransactionJet InputPrevOutpoint))
@@ -481,7 +481,7 @@ tx1 = SigTx
  where
   assetId = Asset . Explicit $ review (over be256) 0x230f4f5d4b7c6fa845806ee4f67713459e1b69e8e60fcee2e4940c7a0d5de1b2
   input0 = SigTxInput
-    { sigTxiIsPegin = False
+    { sigTxiPegin = Nothing
     , sigTxiPreviousOutpoint = Outpoint (review (over be256) 0xeb04b68e9a26d116046c76e8ff47332fb71dda90ff4bef5370f25226d3bc09fc) 0
     , sigTxiTxo = UTXO
         { utxoAsset = assetId
