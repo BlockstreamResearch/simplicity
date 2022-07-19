@@ -1,11 +1,13 @@
 #include <simplicity/elements/env.h>
 
+#include <assert.h>
 #include <stdlib.h>
 #include <stdalign.h>
 #include <string.h>
 #include "primitive.h"
 #include "ops.h"
 #include "../../sha256.h"
+#include "../../unreachable.h"
 
 #define PADDING(alignType, allocated) ((alignof(alignType) - (allocated) % alignof(alignType)) % alignof(alignType))
 
@@ -76,9 +78,7 @@ static void sha256_confNonce(sha256_context* ctx, const confidential* nonce) {
  */
 static void sha256_confAmt(sha256_context* ctx, const confAmount* amt) {
   switch (amt->prefix) {
-   case NONE:
-    sha256_uchar(ctx, 0x00);
-    return;
+   case NONE: assert(false); UNREACHABLE;
    case EXPLICIT:
     sha256_uchar(ctx, 0x01);
     sha256_u64be(ctx, amt->explicit);
@@ -110,20 +110,32 @@ static void hashBuffer(sha256_midstate* result, const rawBuffer* buffer) {
 static void sha256_issuance(sha256_context* ctx, const assetIssuance* issuance) {
   switch (issuance->type) {
    case NO_ISSUANCE:
-    sha256_confAmt(ctx, &(confAmount){0});
-    sha256_confAmt(ctx, &(confAmount){0});
+    sha256_uchar(ctx, 0);
+    sha256_uchar(ctx, 0);
     break;
    case NEW_ISSUANCE:
-    sha256_confAmt(ctx, &issuance->assetAmt);
-    sha256_confAmt(ctx, &issuance->tokenAmt);
+    if (EXPLICIT == issuance->assetAmt.prefix  && 0 == issuance->assetAmt.explicit) {
+      sha256_uchar(ctx, 0);
+    } else {
+      sha256_confAmt(ctx, &issuance->assetAmt);
+    }
+    if (EXPLICIT == issuance->tokenAmt.prefix  && 0 == issuance->tokenAmt.explicit) {
+      sha256_uchar(ctx, 0);
+    } else {
+      sha256_confAmt(ctx, &issuance->tokenAmt);
+    }
     sha256_hash(ctx, &(sha256_midstate){0});
     sha256_hash(ctx, &issuance->contractHash);
     sha256_hash(ctx, &issuance->assetRangeProofHash);
     sha256_hash(ctx, &issuance->tokenRangeProofHash);
     break;
    case REISSUANCE:
-    sha256_confAmt(ctx, &issuance->assetAmt);
-    sha256_confAmt(ctx, &(confAmount){0});
+    if (EXPLICIT == issuance->assetAmt.prefix  && 0 == issuance->assetAmt.explicit) {
+      sha256_uchar(ctx, 0);
+    } else {
+      sha256_confAmt(ctx, &issuance->assetAmt);
+    }
+    sha256_uchar(ctx, 0);
     sha256_hash(ctx, &issuance->blindingNonce);
     sha256_hash(ctx, &issuance->entropy);
     sha256_hash(ctx, &issuance->assetRangeProofHash);
@@ -168,7 +180,8 @@ static void copyRawAmt(confAmount* amt, const unsigned char* rawAmt) {
       sha256_toMidstate(amt->confidential.s, &rawAmt[1]);
     }
   } else {
-    amt->prefix = NONE;
+    amt->prefix = EXPLICIT;
+    amt->explicit = 0;
   }
 }
 
