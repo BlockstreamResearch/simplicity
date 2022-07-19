@@ -34,10 +34,12 @@ data Prim a b where
   CurrentPrevOutpoint :: Prim () (Word256,Word32)
   CurrentValue :: Prim () Word64
   CurrentSequence :: Prim () Word32
+  CurrentAnnexHash :: Prim () (Either () Word256)
   CurrentIndex :: Prim () Word32
   InputPrevOutpoint :: Prim Word32 (Either () (Word256,Word32))
   InputValue :: Prim Word32 (Either () Word64)
   InputSequence :: Prim Word32 (Either () Word32)
+  InputAnnexHash :: Prim Word32 (Either () (Either () Word256))
   NumOutputs :: Prim () Word32
   TotalOutputValue :: Prim () Word64
   OutputValue :: Prim Word32 (Either () Word64)
@@ -60,10 +62,12 @@ instance Eq (Prim a b) where
   CurrentPrevOutpoint == CurrentPrevOutpoint = True
   CurrentValue == CurrentValue = True
   CurrentSequence == CurrentSequence = True
+  CurrentAnnexHash == CurrentAnnexHash = True
   CurrentIndex == CurrentIndex = True
   InputPrevOutpoint == InputPrevOutpoint = True
   InputValue == InputValue = True
   InputSequence == InputSequence = True
+  InputAnnexHash == InputAnnexHash = True
   NumOutputs == NumOutputs = True
   TotalOutputValue == TotalOutputValue = True
   OutputValue == OutputValue = True
@@ -89,10 +93,12 @@ primName TotalInputValue = "totalInputValue"
 primName CurrentPrevOutpoint = "currentPrevOutpoint"
 primName CurrentValue = "currentValue"
 primName CurrentSequence = "currentSequence"
+primName CurrentAnnexHash = "currentAnnexHash"
 primName CurrentIndex = "currentIndex"
 primName InputPrevOutpoint = "inputPrevOutpoint"
 primName InputValue = "inputValue"
 primName InputSequence = "inputSequence"
+primName InputAnnexHash = "inputAnnexHash"
 primName NumOutputs = "maxOutputs"
 primName TotalOutputValue = "totalOutputValue"
 primName OutputValue = "outputValue"
@@ -261,10 +267,12 @@ primSem p a env = interpret p a
   interpret CurrentPrevOutpoint = element $ encodeOutpoint . sigTxiPreviousOutpoint <$> currentInput
   interpret CurrentValue = element $ toWord64 . toInteger . sigTxiValue <$> currentInput
   interpret CurrentSequence = element $ toWord32 . toInteger . sigTxiSequence <$> currentInput
+  interpret CurrentAnnexHash = element $ cast . fmap (encodeHash . bslHash) . sigTxiAnnex <$> currentInput
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutpoint)
   interpret InputValue = return . (atInput $ toWord64 . toInteger . sigTxiValue)
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
+  interpret InputAnnexHash = return . (atInput $ cast . fmap (encodeHash . bslHash) . sigTxiAnnex)
   interpret NumOutputs = element . return . toWord32 . toInteger $ 1 + maxOutput
   interpret TotalOutputValue = element . return . toWord64 . fromIntegral . List.sum $ txoValue <$> sigTxOut tx
   interpret OutputValue = return . (atOutput $ toWord64 . fromIntegral . txoValue)

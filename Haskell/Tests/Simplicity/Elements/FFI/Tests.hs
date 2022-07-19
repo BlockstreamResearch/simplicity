@@ -69,6 +69,7 @@ tests = testGroup "Elements"
           , testProperty "current_amount" prop_current_amount
           , testProperty "current_script_hash" prop_current_script_hash
           , testProperty "current_sequence" prop_current_sequence
+          , testProperty "current_annex_hash" prop_current_annex_hash
           , testProperty "current_reissuance_blinding" prop_current_reissuance_blinding
           , testProperty "current_new_issuance_contract" prop_current_new_issuance_contract
           , testProperty "current_reissuance_entropy" prop_current_reissuance_entropy
@@ -82,6 +83,7 @@ tests = testGroup "Elements"
           , testProperty "input_amount" prop_input_amount
           , testProperty "input_script_hash" prop_input_script_hash
           , testProperty "input_sequence" prop_input_sequence
+          , testProperty "input_annex_hash" prop_input_annex_hash
           , testProperty "reissuance_blinding" prop_reissuance_blinding
           , testProperty "new_issuance_contract" prop_new_issuance_contract
           , testProperty "reissuance_entropy" prop_reissuance_entropy
@@ -292,6 +294,11 @@ prop_current_sequence = forallPrimEnv $ \env -> fast_current_sequence env () == 
  where
   fast_current_sequence = testEval (specification (ElementsJet (TransactionJet CurrentSequence)))
 
+prop_current_annex_hash :: Property
+prop_current_annex_hash = forallPrimEnv $ \env -> fast_current_annex_hash env () == current_annex_hash env ()
+ where
+  fast_current_annex_hash = testEval (specification (ElementsJet (TransactionJet CurrentAnnexHash)))
+
 prop_current_reissuance_blinding :: Property
 prop_current_reissuance_blinding = forallPrimEnv $ \env -> fast_current_reissuance_blinding env () == current_reissuance_blinding env ()
  where
@@ -356,6 +363,11 @@ prop_input_sequence :: Property
 prop_input_sequence = forallInPrimEnv $ \env i -> fast_input_sequence env (toW32 i) == input_sequence env (toW32 i)
  where
   fast_input_sequence = testEval (specification (ElementsJet (TransactionJet InputSequence)))
+
+prop_input_annex_hash :: Property
+prop_input_annex_hash = forallInPrimEnv $ \env i -> fast_input_annex_hash env (toW32 i) == input_annex_hash env (toW32 i)
+ where
+  fast_input_annex_hash = testEval (specification (ElementsJet (TransactionJet InputAnnexHash)))
 
 prop_reissuance_blinding :: Property
 prop_reissuance_blinding = forallInPrimEnv $ \env i -> fast_reissuance_blinding env (toW32 i) == reissuance_blinding env (toW32 i)

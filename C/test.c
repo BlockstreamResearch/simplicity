@@ -273,7 +273,8 @@ static void test_elements(void) {
   {
     rawTransaction testTx1 = (rawTransaction)
       { .input = (rawInput[])
-                 { { .prevTxid = (unsigned char[32]){"\xeb\x04\xb6\x8e\x9a\x26\xd1\x16\x04\x6c\x76\xe8\xff\x47\x33\x2f\xb7\x1d\xda\x90\xff\x4b\xef\x53\x70\xf2\x52\x26\xd3\xbc\x09\xfc"}
+                 { { .annex = NULL
+                   , .prevTxid = (unsigned char[32]){"\xeb\x04\xb6\x8e\x9a\x26\xd1\x16\x04\x6c\x76\xe8\xff\x47\x33\x2f\xb7\x1d\xda\x90\xff\x4b\xef\x53\x70\xf2\x52\x26\xd3\xbc\x09\xfc"}
                    , .prevIx = 0
                    , .sequence = 0xfffffffe
                    , .isPegin = false

@@ -325,6 +325,21 @@ bool issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
+/* input_annex_hash : TWO^32 |- S (S (TWO^256)) */
+bool input_annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numInputs)) {
+    if (writeBit(dst, env->tx->input[i].hasAnnex)) {
+      writeHash(dst, &env->tx->input[i].annexHash);
+    } else {
+      skipBits(dst, 256);
+    }
+  } else {
+    skipBits(dst, 257);
+  }
+  return true;
+}
+
 /* output_asset : TWO^32 |- S (Conf TWO^256) */
 bool output_asset(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
@@ -579,6 +594,18 @@ bool current_issuance_token_proof(frameItem* dst, frameItem src, const txEnv* en
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   writeHash(dst, &env->tx->input[env->ix].issuance.tokenRangeProofHash);
+  return true;
+}
+
+/* current_annex_hash : ONE |- S (TWO^256) */
+bool current_annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  if (env->tx->numInputs <= env->ix) return false;
+  if (writeBit(dst, env->tx->input[env->ix].hasAnnex)) {
+    writeHash(dst, &env->tx->input[env->ix].annexHash);
+  } else {
+    skipBits(dst, 256);
+  }
   return true;
 }
 

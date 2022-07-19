@@ -81,6 +81,7 @@ tests = testGroup "Elements"
           , testProperty "current_amount" prop_current_amount
           , testProperty "current_script_hash" prop_current_script_hash
           , testProperty "current_sequence" prop_current_sequence
+          , testProperty "current_annex_hash" prop_current_annex_hash
           , testProperty "current_reissuance_blinding" prop_current_reissuance_blinding
           , testProperty "current_new_issuance_contract" prop_current_new_issuance_contract
           , testProperty "current_reissuance_entropy" prop_current_reissuance_entropy
@@ -94,6 +95,7 @@ tests = testGroup "Elements"
           , testProperty "input_amount" prop_input_amount
           , testProperty "input_script_hash" prop_input_script_hash
           , testProperty "input_sequence" prop_input_sequence
+          , testProperty "input_annex_hash" prop_input_annex_hash
           , testProperty "reissuance_blinding" prop_reissuance_blinding
           , testProperty "new_issuance_contract" prop_new_issuance_contract
           , testProperty "reissuance_entropy" prop_reissuance_entropy
@@ -292,6 +294,10 @@ prop_current_sequence :: Property
 prop_current_sequence = checkJet (ElementsJet (TransactionJet CurrentSequence))
                       $ \check -> forallPrimEnv $ \env -> check env ()
 
+prop_current_annex_hash :: Property
+prop_current_annex_hash = checkJet (ElementsJet (TransactionJet CurrentAnnexHash))
+                        $ \check -> forallPrimEnv $ \env -> check env ()
+
 prop_current_reissuance_blinding :: Property
 prop_current_reissuance_blinding = checkJet (ElementsJet (TransactionJet CurrentReissuanceBlinding))
                                  $ \check -> forallPrimEnv $ \env -> check env ()
@@ -343,6 +349,10 @@ prop_input_script_hash = checkJet (ElementsJet (TransactionJet InputScriptHash))
 prop_input_sequence :: Property
 prop_input_sequence = checkJet (ElementsJet (TransactionJet InputSequence))
                     $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_input_annex_hash :: Property
+prop_input_annex_hash = checkJet (ElementsJet (TransactionJet InputAnnexHash))
+                      $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 prop_reissuance_blinding :: Property
 prop_reissuance_blinding = checkJet (ElementsJet (TransactionJet ReissuanceBlinding))
@@ -466,6 +476,7 @@ tx1 = SigTx
         }
     , sigTxiSequence = 0xfffffffe
     , sigTxiIssuance = Nothing
+    , sigTxiAnnex = Nothing
     }
   output0 = TxOutput
     { txoAsset = assetId

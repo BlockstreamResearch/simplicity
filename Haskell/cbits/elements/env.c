@@ -24,12 +24,14 @@ void c_set_rawOutput(rawOutput* result, const char* asset, const char* value, co
 }
 
 void c_set_rawInput(rawInput* result, bool isPegin,
+                                      const rawBuffer* annex,
                                       const char* prevTxid, unsigned int prevIx,
                                       const char* asset, const char* value, const rawBuffer* scriptPubKey,
                                       unsigned int sequence,
                                       const char* blindingNonce, const char* assetEntropy, const char* amount, const char* inflationKeys,
                                       const rawBuffer* amountRangePrf, const rawBuffer* inflationKeysRangePrf) {
-  *result = (rawInput){ .prevTxid = prevTxid
+  *result = (rawInput){ .annex = annex
+                      , .prevTxid = prevTxid
                       , .issuance = { .blindingNonce = blindingNonce
                                     , .assetEntropy = assetEntropy
                                     , .amount = amount

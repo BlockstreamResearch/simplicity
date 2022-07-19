@@ -59,6 +59,12 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_u
 }
+,[CURRENT_ANNEX_HASH] =
+{ .tag = JET
+, .jet = current_annex_hash
+, .sourceIx = ty_u
+, .targetIx = ty_mw256
+}
 ,[CURRENT_ASSET] =
 { .tag = JET
 , .jet = current_asset
@@ -322,6 +328,12 @@
 , .jet = generate
 , .sourceIx = ty_w256
 , .targetIx = ty_pw512w256
+}
+,[INPUT_ANNEX_HASH] =
+{ .tag = JET
+, .jet = input_annex_hash
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
 }
 ,[INPUT_ASSET] =
 { .tag = JET

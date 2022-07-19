@@ -17,7 +17,7 @@ module Simplicity.Elements.DataTypes
   , Issuance
   , Outpoint(Outpoint), opHash, opIndex
   , UTXO(UTXO), utxoAsset, utxoAmount, utxoScript
-  , SigTxInput(SigTxInput), sigTxiIsPegin, sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiIssuance
+  , SigTxInput(SigTxInput), sigTxiIsPegin, sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiIssuance, sigTxiAnnex
   , sigTxiIssuanceEntropy, sigTxiIssuanceAsset, sigTxiIssuanceToken
   , TxOutput(TxOutput), txoAsset, txoAmount, txoNonce, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
@@ -265,6 +265,7 @@ data SigTxInput = SigTxInput { sigTxiIsPegin :: Bool
                              , sigTxiTxo :: UTXO
                              , sigTxiSequence :: Word32
                              , sigTxiIssuance :: Maybe Issuance
+                             , sigTxiAnnex :: Maybe BSL.ByteString
                              } deriving Show
 
 -- | The data type for transaction outputs.

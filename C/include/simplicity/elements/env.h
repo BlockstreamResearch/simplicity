@@ -34,7 +34,8 @@ typedef struct rawOutput {
   rawBuffer rangeProof;
 } rawOutput;
 
-/* A structure representing data for one input from an Elements transaction, plus the TXO data of the output being redeemed.
+/* A structure representing data for one input from an Elements transaction, plus the TXO data of the output being redeemed,
+ * plus all the segwit annexes.
  *
  * Invariant: unsigned char prevTxid[32];
  *            unsigned char issuance.blindingNonce[32] or (issuance.amount == NULL and issuance.inflationKeys == NULL);
@@ -45,6 +46,7 @@ typedef struct rawOutput {
  *            unsigned char txo.value[txo.value[0] == 1 ? 9 : 33] or txo.value == NULL;
  */
 typedef struct rawInput {
+  const rawBuffer* annex;
   const unsigned char* prevTxid;
   struct {
     const unsigned char* blindingNonce;

@@ -10,6 +10,7 @@ module Simplicity.Elements.FFI.Jets
  , input_asset_amount
  , input_script_hash
  , input_sequence
+ , input_annex_hash
  , reissuance_blinding
  , new_issuance_contract
  , reissuance_entropy
@@ -41,6 +42,7 @@ module Simplicity.Elements.FFI.Jets
  , current_issuance_token_amount
  , current_issuance_asset_proof
  , current_issuance_token_proof
+ , current_annex_hash
  , tapleaf_version
  , tapbranch
  , internal_key
@@ -92,6 +94,7 @@ foreign import ccall unsafe "" c_input_amount :: Ptr FrameItem -> Ptr FrameItem 
 foreign import ccall unsafe "" c_input_asset_amount :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_script_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_sequence :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_annex_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_reissuance_blinding :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_new_issuance_contract :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_reissuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -123,6 +126,7 @@ foreign import ccall unsafe "" c_current_issuance_asset_amount :: Ptr FrameItem 
 foreign import ccall unsafe "" c_current_issuance_token_amount :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_issuance_asset_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_issuance_token_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_current_annex_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tapleaf_version :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tapbranch :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_internal_key :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -206,6 +210,9 @@ issuance_asset_proof = unsafeLocalJet c_issuance_asset_proof
 issuance_token_proof :: PrimEnv -> Word32 -> Maybe (S Word256)
 issuance_token_proof = unsafeLocalJet c_issuance_token_proof
 
+input_annex_hash :: PrimEnv -> Word32 -> Maybe (S (S Word256))
+input_annex_hash = unsafeLocalJet c_input_annex_hash
+
 current_index :: PrimEnv -> () -> Maybe Word32
 current_index = unsafeLocalJet c_current_index
 
@@ -250,6 +257,9 @@ current_issuance_asset_proof = unsafeLocalJet c_current_issuance_asset_proof
 
 current_issuance_token_proof :: PrimEnv -> () -> Maybe Word256
 current_issuance_token_proof = unsafeLocalJet c_current_issuance_token_proof
+
+current_annex_hash :: PrimEnv -> () -> Maybe (S Word256)
+current_annex_hash = unsafeLocalJet c_current_annex_hash
 
 tapleaf_version :: PrimEnv -> () -> Maybe Word8
 tapleaf_version = unsafeLocalJet c_tapleaf_version

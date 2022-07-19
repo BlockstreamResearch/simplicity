@@ -80,9 +80,11 @@ data TransactionJet a b where
   CurrentPrevOutpoint :: TransactionJet () (Word256,Word32)
   CurrentValue :: TransactionJet () Word64
   CurrentSequence :: TransactionJet () Word32
+  CurrentAnnexHash :: TransactionJet () (Either () Word256)
   InputPrevOutpoint :: TransactionJet Word32 (Either () (Word256,Word32))
   InputValue :: TransactionJet Word32 (Either () Word64)
   InputSequence :: TransactionJet Word32 (Either () Word32)
+  InputAnnexHash :: TransactionJet Word32 (Either () (Either () Word256))
   TotalInputValue :: TransactionJet () Word64
   TapleafVersion :: TransactionJet () Word8
   Tapbranch :: TransactionJet Word8 (Either () Word256)
@@ -119,9 +121,11 @@ specificationTransaction TotalOutputValue = primitive Prim.TotalOutputValue
 specificationTransaction CurrentPrevOutpoint = primitive Prim.CurrentPrevOutpoint
 specificationTransaction CurrentValue = primitive Prim.CurrentValue
 specificationTransaction CurrentSequence = primitive Prim.CurrentSequence
+specificationTransaction CurrentAnnexHash = primitive Prim.CurrentAnnexHash
 specificationTransaction InputPrevOutpoint = primitive Prim.InputPrevOutpoint
 specificationTransaction InputValue = primitive Prim.InputValue
 specificationTransaction InputSequence = primitive Prim.InputSequence
+specificationTransaction InputAnnexHash = primitive Prim.InputAnnexHash
 specificationTransaction TotalInputValue = primitive Prim.TotalInputValue
 specificationTransaction TapleafVersion = primitive Prim.TapleafVersion
 specificationTransaction Tapbranch = primitive Prim.Tapbranch
@@ -186,13 +190,13 @@ getJetBitBitcoin abort next = getPositive next >>= match
     matchTransaction 12 = makeArrow CurrentValue
 
     matchTransaction 14 = makeArrow CurrentSequence
-
+    matchTransaction 15 = makeArrow CurrentAnnexHash
 
     matchTransaction 17 = makeArrow InputPrevOutpoint
     matchTransaction 18 = makeArrow InputValue
 
     matchTransaction 20 = makeArrow InputSequence
-
+    matchTransaction 21 = makeArrow InputAnnexHash
 
     matchTransaction 23 = makeArrow TotalInputValue
     matchTransaction 24 = makeArrow TapleafVersion
@@ -229,13 +233,13 @@ putJetBitTransaction CurrentPrevOutpoint = putPositive 11
 putJetBitTransaction CurrentValue        = putPositive 12
 
 putJetBitTransaction CurrentSequence     = putPositive 14
-
+putJetBitTransaction CurrentAnnexHash    = putPositive 15
 
 putJetBitTransaction InputPrevOutpoint   = putPositive 17
 putJetBitTransaction InputValue          = putPositive 18
 
 putJetBitTransaction InputSequence       = putPositive 20
-
+putJetBitTransaction InputAnnexHash      = putPositive 21
 
 putJetBitTransaction TotalInputValue     = putPositive 23
 putJetBitTransaction TapleafVersion      = putPositive 24
@@ -267,9 +271,11 @@ bitcoinJetMap = Map.fromList
   , mkAssoc (TransactionJet CurrentPrevOutpoint)
   , mkAssoc (TransactionJet CurrentValue)
   , mkAssoc (TransactionJet CurrentSequence)
+  , mkAssoc (TransactionJet CurrentAnnexHash)
   , mkAssoc (TransactionJet InputPrevOutpoint)
   , mkAssoc (TransactionJet InputValue)
   , mkAssoc (TransactionJet InputSequence)
+  , mkAssoc (TransactionJet InputAnnexHash)
   , mkAssoc (TransactionJet TotalInputValue)
   , mkAssoc (TransactionJet TapleafVersion)
   , mkAssoc (TransactionJet Tapbranch)

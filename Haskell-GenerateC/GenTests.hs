@@ -234,6 +234,7 @@ checkSigHashAllTx1 = Example
           }
       , sigTxiSequence = 0xfffffffe
       , sigTxiIssuance = Nothing
+      , sigTxiAnnex = Nothing
       }
     output0 = TxOutput
       { txoAsset = assetId
