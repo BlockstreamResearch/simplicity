@@ -209,7 +209,8 @@ checkSigHashAllTx1 = Example
   Just msg = fastEval (Simplicity.Programs.CheckSigHash.sigHash libSha256 (unwrap hashMode)) env ()
   hashMode = jetSubst $ Simplicity.Elements.Programs.CheckSigHashAll.Lib.hashAll
   libSha256 = Simplicity.Programs.Sha256.lib
-  Just env = primEnv tx1 0 tapEnv cmr
+  genesis = review (over be256) 0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
+  Just env = primEnv tx1 0 tapEnv genesis cmr
   cmr = commitmentRoot . unwrap $ program (Simplicity.LibSecp256k1.Spec.Sig 0 0)
   tapEnv = TapEnv { tapAnnex = Nothing
                   , tapLeafVersion = 0xbe

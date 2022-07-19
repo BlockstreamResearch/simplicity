@@ -96,6 +96,7 @@ tests = testGroup "Elements"
           , testProperty "tapleaf_version" prop_tapleaf_version
           , testProperty "tapbranch" prop_tapbranch
           , testProperty "version" prop_version
+          , testProperty "genesis_block_hash" prop_genesis_block_hash
           ]
         ]
 
@@ -432,3 +433,7 @@ prop_version = forallPrimEnv $ \env -> fast_version env () == version env ()
  where
   fast_version = testEval (specification (ElementsJet (TransactionJet Version)))
 
+prop_genesis_block_hash :: Property
+prop_genesis_block_hash = forallPrimEnv $ \env -> fast_genesis_block_hash env () == genesis_block_hash env ()
+ where
+  fast_genesis_block_hash = testEval (specification (ElementsJet (TransactionJet GenesisBlockHash)))

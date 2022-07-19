@@ -262,6 +262,7 @@ static void test_occursCheck(void) {
 
 static void test_elements(void) {
   unsigned char cmr[32], amr[32];
+  unsigned char genesisHash[32] = "\x0f\x91\x88\xf1\x3c\xb7\xb2\xc7\x1f\x2a\x33\x5e\x3a\x4f\xc3\x28\xbf\x5b\xeb\x43\x60\x12\xaf\xca\x59\x0b\x1a\x11\x46\x6e\x22\x06";
   rawTapEnv rawTaproot = (rawTapEnv)
     { .annex = NULL
     , .controlBlock = (unsigned char [33]){"\xbe\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x3b\x78\xce\x56\x3f\x89\xa0\xed\x94\x14\xf5\xaa\x28\xad\x0d\x96\xd6\x79\x5f\x9c\x63"}
@@ -311,7 +312,7 @@ static void test_elements(void) {
       {
         FILE* file = fmemopen_rb(elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
         unsigned char imrResult[32];
-        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, cmr, amr, file) && execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, cmr, amr, file) && execResult) {
           sha256_midstate imr;
           sha256_toMidstate(imr.s, imrResult);
           if (0 == memcmp(imr.s, elementsCheckSigHashAllTx1_imr, sizeof(uint32_t[8]))) {
@@ -332,7 +333,7 @@ static void test_elements(void) {
         memcpy(brokenSig, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
         brokenSig[sizeof_elementsCheckSigHashAllTx1 - 1] ^= 0x80;
         FILE* file = fmemopen_rb(brokenSig, sizeof_elementsCheckSigHashAllTx1);
-        if (elements_simplicity_execSimplicity(&execResult, NULL, tx1, 0, taproot, NULL, NULL, file) && !execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, NULL, tx1, 0, taproot, genesisHash, NULL, NULL, file) && !execResult) {
           successes++;
         } else {
           failures++;
@@ -383,7 +384,7 @@ static void test_elements(void) {
       bool execResult;
       {
         FILE* file = fmemopen_rb(elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
-        if (elements_simplicity_execSimplicity(&execResult, NULL, tx2, 0, taproot, NULL, NULL, file) && !execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, NULL, tx2, 0, taproot, genesisHash, NULL, NULL, file) && !execResult) {
           successes++;
         } else {
           failures++;

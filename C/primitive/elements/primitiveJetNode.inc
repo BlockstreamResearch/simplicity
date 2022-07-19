@@ -335,6 +335,12 @@
 , .sourceIx = ty_w256
 , .targetIx = ty_pw512w256
 }
+,[GENESIS_BLOCK_HASH] =
+{ .tag = JET
+, .jet = genesis_block_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[INPUT_ANNEX_HASH] =
 { .tag = JET
 , .jet = input_annex_hash

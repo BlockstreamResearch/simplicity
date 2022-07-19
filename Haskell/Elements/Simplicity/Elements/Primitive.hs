@@ -3,7 +3,7 @@
 module Simplicity.Elements.Primitive
   ( Prim(..), primPrefix, primName
   , getPrimBit, putPrimBit
-  , PrimEnv, primEnv, envTx, envIx, envTap, envScriptCMR
+  , PrimEnv, primEnv, envTx, envIx, envTap, envGenesisBlock, envScriptCMR
   , primSem
   -- * Re-exported Types
   , S, Conf, PubKey
@@ -86,6 +86,7 @@ data Prim a b where
   OutputSurjectionProof :: Prim Word32 (S Word256)
   OutputRangeProof :: Prim Word32 (S Word256)
   Fee :: Prim Word256 Word64
+  GenesisBlockHash :: Prim () Word256
   ScriptCMR :: Prim () Word256
 
 instance Eq (Prim a b) where
@@ -138,6 +139,7 @@ instance Eq (Prim a b) where
   OutputSurjectionProof == OutputSurjectionProof = True
   OutputRangeProof == OutputRangeProof = True
   Fee == Fee = True
+  GenesisBlockHash == GenesisBlockHash = True
   ScriptCMR == ScriptCMR = True
   _ == _ = False
 
@@ -195,6 +197,7 @@ primName OutputNullDatum = "outputNullDatum"
 primName OutputSurjectionProof = "outputSurjectionProof"
 primName OutputRangeProof = "outputRangeProof"
 primName Fee = "fee"
+primName GenesisBlockHash = "genesisBlockHash"
 primName ScriptCMR = "scriptCMR"
 
 getPrimBit :: Monad m => m Bool -> m (SomeArrow Prim)
@@ -264,11 +267,11 @@ putPrimBit = go
   go Fee                          = ([i,i,i,i,i]++)
   (o,i) = (False, True)
 
-data PrimEnv = PrimEnv { -- envParentGenesisBlockHash :: Hash256
-                         envTx :: SigTx
+data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32
                        , envTap :: TapEnv
                        , envScriptCMR :: Hash256
+                       , envGenesisBlock :: Hash256
                        , envInputsHash :: Hash256
                        , envOutputsHash :: Hash256
                        }
@@ -284,14 +287,15 @@ instance Show PrimEnv where
                   . showString " "
                   . showsPrec 11 (envScriptCMR env)
 
-primEnv :: SigTx -> Data.Word.Word32 -> TapEnv -> Hash256 -> Maybe PrimEnv
-primEnv tx ix tap scmr | cond = Just $ PrimEnv { envTx = tx
-                                               , envIx = ix
-                                               , envTap = tap
-                                               , envScriptCMR = scmr
-                                               , envInputsHash = sigTxInputsHash tx
-                                               , envOutputsHash = sigTxOutputsHash tx
-                                               }
+primEnv :: SigTx -> Data.Word.Word32 -> TapEnv -> Hash256 -> Hash256 -> Maybe PrimEnv
+primEnv tx ix tap gen scmr | cond = Just $ PrimEnv { envTx = tx
+                                                   , envIx = ix
+                                                   , envTap = tap
+                                                   , envGenesisBlock = gen
+                                                   , envScriptCMR = scmr
+                                                   , envInputsHash = sigTxInputsHash tx
+                                                   , envOutputsHash = sigTxOutputsHash tx
+                                                   }
                    | otherwise = Nothing
  where
   cond = fromIntegral ix < Vector.length (sigTxIn tx)
@@ -416,6 +420,7 @@ primSem p a env = interpret p a
       guard $ assetId == encodeHash a
       Explicit v <- Just . view (under amount) $ txoAmount txo
       return (Monoid.Sum v)
+  interpret GenesisBlockHash = element . return . encodeHash $ envGenesisBlock env
   interpret ScriptCMR = element . return . encodeHash $ envScriptCMR env
 
 getPrimByte :: Data.Word.Word8 -> Get (Maybe (SomeArrow Prim))

@@ -25,12 +25,14 @@
  *               NULL != imr implies unsigned char imr[32]
  *               NULL != tx;
  *               NULL != taproot;
+ *               unsigned char genesisBlockHash[32]
  *               NULL != cmr implies unsigned char cmr[32]
  *               NULL != amr implies unsigned char amr[32]
  *               NULL != file;
  */
 extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* imr
                                               , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
+                                              , const unsigned char* genesisBlockHash
                                               , const unsigned char* cmr, const unsigned char* amr, FILE* file) {
   if (!success || !tx || !taproot || !file) return false;
 
@@ -40,10 +42,11 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
   void* witnessAlloc = NULL;
   bitstring witness;
   int32_t len;
-  sha256_midstate cmr_hash, amr_hash;
+  sha256_midstate cmr_hash, amr_hash, genesis_hash;
 
   if (cmr) sha256_toMidstate(cmr_hash.s, cmr);
   if (amr) sha256_toMidstate(amr_hash.s, amr);
+  sha256_toMidstate(genesis_hash.s, genesisBlockHash);
 
   {
     bitstream stream = initializeBitstream(file);
@@ -97,7 +100,11 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
       }
       if (*success) {
         result = evalTCOProgram(success, dag, type_dag, (size_t)len,
-          &(txEnv){.tx = tx, .taproot = taproot, .scriptCMR = dag[len-1].cmr.s, .ix = ix});
+          &(txEnv){ .tx = tx
+                  , .taproot = taproot
+                  , .genesisHash = genesis_hash.s
+                  , .scriptCMR = dag[len-1].cmr.s
+                  , .ix = ix});
       }
       free(type_dag);
     }

@@ -108,6 +108,7 @@ tests = testGroup "Elements"
           , testProperty "tapleaf_version" prop_tapleaf_version
           , testProperty "tapbranch" prop_tapbranch
           , testProperty "version" prop_version
+          , testProperty "genesis_block_hash" prop_genesis_block_hash
           , testCase "issuance_entropy_1" assert_issuance_entropy_1
           , testCase "calculate_asset_1" assert_calculate_asset_1
           , testCase "calculcate_token_1" assert_calculcate_token_1
@@ -406,6 +407,9 @@ prop_version :: Property
 prop_version = checkJet (ElementsJet (TransactionJet Version))
              $ \check -> forallPrimEnv $ \env -> check env ()
 
+prop_genesis_block_hash :: Property
+prop_genesis_block_hash = checkJet (ElementsJet (TransactionJet GenesisBlockHash))
+                        $ \check -> forallPrimEnv $ \env -> check env ()
 
 -- example test data from Elements Core 0.17
 (assert_issuance_entropy_1, assert_calculate_asset_1, assert_calculcate_token_1) =
@@ -509,9 +513,10 @@ hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
                    [fromWord256 <$> (sem sigHashAll txEnv ()), fromWord256 <$> (sem (sigHash Sha256.lib hashAll) txEnv ())]
  where
   ix = 0
+  genesis = review (over be256) 0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
   cmr = review (over be256) 0x896b16e4692350cb43c4807c8f9f63637f70f84a17b678ca9467109ff1e50f61
   txo = sigTxiTxo (sigTxIn tx1 ! (fromIntegral ix))
-  Just txEnv = primEnv tx1 ix tapEnv cmr
+  Just txEnv = primEnv tx1 ix tapEnv genesis cmr
   sigHashTag = bsHash $ BSC.pack "Simplicity-Draft\USSigHash"
   taproot_spec = bsHash $ encode cmr <> encode (tapLeafVersion tapEnv)
   asset_spec (Asset (Explicit id)) = bsHash $ encode (0x01 :: Word.Word256) <> encode id

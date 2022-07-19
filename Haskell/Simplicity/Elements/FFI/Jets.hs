@@ -27,6 +27,7 @@ module Simplicity.Elements.FFI.Jets
  , output_null_datum
  , output_surjection_proof
  , output_range_proof
+ , genesis_block_hash
  , script_cmr
  , current_index
  , current_is_pegin
@@ -113,6 +114,7 @@ foreign import ccall unsafe "" c_output_script_hash :: Ptr FrameItem -> Ptr Fram
 foreign import ccall unsafe "" c_output_null_datum :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_surjection_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_range_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_genesis_block_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_script_cmr :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_index :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_is_pegin :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -311,6 +313,9 @@ output_range_proof :: PrimEnv -> Word32 -> Maybe (S Word256)
 output_range_proof = unsafeLocalJet c_output_range_proof
 
 -- fee :: PrimEnv -> Word256 -> Maybe Word64
+
+genesis_block_hash :: PrimEnv -> () -> Maybe Word256
+genesis_block_hash = unsafeLocalJet c_genesis_block_hash
 
 script_cmr :: PrimEnv -> () -> Maybe Word256
 script_cmr = unsafeLocalJet c_script_cmr

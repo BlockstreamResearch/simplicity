@@ -482,6 +482,13 @@ bool output_range_proof(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
+/* genesis_block_hash : ONE |- TWO^256 */
+bool genesis_block_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  write32s(dst, env->genesisHash, 8);
+  return true;
+}
+
 /* script_cmr : ONE |- TWO^256 */
 bool script_cmr(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;

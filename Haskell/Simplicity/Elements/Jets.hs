@@ -134,6 +134,7 @@ data TransactionJet a b where
   TapleafVersion :: TransactionJet () Word8
   Tapbranch :: TransactionJet Word8 (S Word256)
   Version :: TransactionJet () Word32
+  GenesisBlockHash :: TransactionJet () Word256
 deriving instance Eq (TransactionJet a b)
 deriving instance Show (TransactionJet a b)
 
@@ -210,6 +211,7 @@ specificationTransaction IssuanceTokenProof = primitive Prim.IssuanceTokenProof
 specificationTransaction TapleafVersion = primitive Prim.TapleafVersion
 specificationTransaction Tapbranch = primitive Prim.Tapbranch
 specificationTransaction Version = primitive Prim.Version
+specificationTransaction GenesisBlockHash = primitive Prim.GenesisBlockHash
 
 implementationElements :: ElementsJet a b -> PrimEnv -> a -> Maybe b
 implementationElements (TimeLockJet x) = implementationTimeLock x
@@ -377,6 +379,7 @@ getJetBitElements abort next = getPositive next >>= match
     matchTransaction 45 = makeArrow TapleafVersion
     matchTransaction 46 = makeArrow Tapbranch
     matchTransaction 47 = makeArrow Version
+    matchTransaction 48 = makeArrow GenesisBlockHash
 
 putJetBitElements :: ElementsJet a b -> DList Bool
 putJetBitElements (TimeLockJet x)    = putPositive 2 . putJetBitTimeLock x
@@ -452,6 +455,7 @@ putJetBitTransaction IssuanceTokenProof         = putPositive 44
 putJetBitTransaction TapleafVersion             = putPositive 45
 putJetBitTransaction Tapbranch                  = putPositive 46
 putJetBitTransaction Version                    = putPositive 47
+putJetBitTransaction GenesisBlockHash           = putPositive 48
 
 elementsJetMap :: Map.Map Hash256 (SomeArrow ElementsJet)
 elementsJetMap = Map.fromList
@@ -521,6 +525,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (TransactionJet TapleafVersion)
   , mkAssoc (TransactionJet Tapbranch)
   , mkAssoc (TransactionJet Version)
+  , mkAssoc (TransactionJet GenesisBlockHash)
   ]
  where
   mkAssoc :: (TyC a, TyC b) => ElementsJet a b -> (Hash256, (SomeArrow ElementsJet))

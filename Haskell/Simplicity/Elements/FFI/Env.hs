@@ -56,7 +56,7 @@ foreign import ccall unsafe "" c_set_rawTransaction :: Ptr RawTransaction -> CUI
                                                                           -> Ptr RawOutput -> CUInt
                                                                           -> CUInt -> IO ()
 foreign import ccall unsafe "" c_set_rawTapEnv :: Ptr RawTapEnv -> Ptr RawBuffer -> Ptr CChar -> CUChar -> IO ()
-foreign import ccall unsafe "" c_set_txEnv :: Ptr CTxEnv -> Ptr CTransaction -> Ptr CTapEnv -> Ptr CUInt -> CUInt -> IO ()
+foreign import ccall unsafe "" c_set_txEnv :: Ptr CTxEnv -> Ptr CTransaction -> Ptr CTapEnv -> Ptr CUInt -> Ptr CUInt -> CUInt -> IO ()
 
 foreign import ccall unsafe "&" c_free_transaction :: FunPtr (Ptr CTransaction -> IO ())
 foreign import ccall unsafe "&" c_free_tapEnv :: FunPtr (Ptr CTapEnv -> IO ())
@@ -196,20 +196,22 @@ marshallTapEnv :: TapEnv -> IO (ForeignPtr CTapEnv)
 marshallTapEnv env = withRawTapEnv env
                    $ \pRawTapEnv -> elements_simplicity_mallocTapEnv pRawTapEnv >>= newForeignPtr c_free_tapEnv
 
-withEnv :: ForeignPtr CTransaction -> Word32 -> ForeignPtr CTapEnv -> Hash256 -> (Ptr CTxEnv -> IO b) -> IO b
-withEnv cTransaction ix cTapEnv cmr k =
+withEnv :: ForeignPtr CTransaction -> Word32 -> ForeignPtr CTapEnv -> Hash256 -> Hash256 -> (Ptr CTxEnv -> IO b) -> IO b
+withEnv cTransaction ix cTapEnv genesisHash cmr k =
   allocaBytes sizeof_txEnv $ \pTxEnv ->
   withForeignPtr cTransaction $ \pTransaction ->
   withForeignPtr cTapEnv $ \pTapEnv ->
-  withArray cmrList $ \pCmr -> do
-   c_set_txEnv pTxEnv pTransaction pTapEnv pCmr (fromIntegral ix)
+  withArray (mkList genesisHash) $ \pGenesis ->
+  withArray (mkList cmr) $ \pCmr -> do
+   c_set_txEnv pTxEnv pTransaction pTapEnv pGenesis pCmr (fromIntegral ix)
    k pTxEnv
  where
-  icmr = integerHash256 cmr
-  cmrList = [ fromInteger $ icmr `div` 2^(32*i) | i <- [7,6..0] ]
+  mkList h = [ fromInteger $ (integerHash256 h) `div` 2^(32*i) | i <- [7,6..0] ]
+  withMaybeArray Nothing = ($ nullPtr)
+  withMaybeArray (Just arr) = withArray arr
 
 withPrimEnv :: PrimEnv -> (Ptr CTxEnv -> IO b) -> IO b
 withPrimEnv env k = do
   cTransaction <- marshallTransaction (envTx env)
   cTapEnv <- marshallTapEnv (envTap env)
-  withEnv cTransaction (envIx env) cTapEnv (envScriptCMR env) k
+  withEnv cTransaction (envIx env) cTapEnv (envGenesisBlock env) (envScriptCMR env) k

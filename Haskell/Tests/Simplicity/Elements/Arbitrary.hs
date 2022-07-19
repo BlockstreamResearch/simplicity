@@ -135,9 +135,10 @@ genPrimEnv :: Gen (Maybe PrimEnv)
 genPrimEnv = do
    tx <- arbitrary
    tapenv <- arbitrary
+   gen <- arbitraryHash256
    cmr <- arbitraryHash256
    ix <- fromIntegral <$> choose (0, length (sigTxIn tx) - 1)
-   return $ primEnv tx ix tapenv cmr
+   return $ primEnv tx ix tapenv gen cmr
 
 forallPrimEnv :: Testable prop => (PrimEnv -> prop) -> Property
 forallPrimEnv p = forAll genPrimEnv go
