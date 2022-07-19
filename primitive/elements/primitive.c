@@ -403,7 +403,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 45: *result = TAPLEAF_VERSION; return 0;
          case 46: *result = TAPBRANCH; return 0;
          case 47: *result = VERSION; return 0;
-         /* case 48: *result = GENESIS_BLOCK_HASH; return 0; */
+         case 48: *result = GENESIS_BLOCK_HASH; return 0;
         }
         break;
       }

@@ -226,11 +226,13 @@ typedef struct tapEnv {
  * It includes
  * + the transaction data, which may be shared when Simplicity expressions are used for multiple inputs in the same transaction),
  * + the input index under consideration,
+ * + the hash of the genesis block for the chain,
  * + and the commitment Merkle root of the Simplicity expression being executed.
  */
 typedef struct txEnv {
   const transaction* tx;
   const tapEnv* taproot;
+  const uint32_t* genesisHash;
   const uint32_t* scriptCMR;
   uint_fast32_t ix;
 } txEnv;

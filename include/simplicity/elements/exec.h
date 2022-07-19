@@ -22,11 +22,13 @@
  * Precondition: NULL != success;
  *               NULL != imr implies unsigned char imr[32]
  *               NULL != tx;
+ *               unsigned char genesisBlockHash[32]
  *               NULL != cmr implies unsigned char cmr[32]
  *               NULL != amr implies unsigned char amr[32]
  *               NULL != file;
  */
 extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* imr
                                               , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
+                                              , const unsigned char* genesisBlockHash
                                               , const unsigned char* cmr, const unsigned char* amr, FILE* file);
 #endif
