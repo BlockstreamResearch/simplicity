@@ -143,6 +143,12 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 }
+,[CURRENT_SCRIPT_SIG_HASH] =
+{ .tag = JET
+, .jet = current_script_sig_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[CURRENT_SEQUENCE] =
 { .tag = JET
 , .jet = current_sequence
@@ -362,6 +368,12 @@
 ,[INPUT_SCRIPT_HASH] =
 { .tag = JET
 , .jet = input_script_hash
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+}
+,[INPUT_SCRIPT_SIG_HASH] =
+{ .tag = JET
+, .jet = input_script_sig_hash
 , .sourceIx = ty_w32
 , .targetIx = ty_mw256
 }

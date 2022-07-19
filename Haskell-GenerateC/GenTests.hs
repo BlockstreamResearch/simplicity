@@ -235,6 +235,7 @@ checkSigHashAllTx1 = Example
       , sigTxiSequence = 0xfffffffe
       , sigTxiIssuance = Nothing
       , sigTxiAnnex = Nothing
+      , sigTxiScriptSig = BSL.empty
       }
     output0 = TxOutput
       { txoAsset = assetId

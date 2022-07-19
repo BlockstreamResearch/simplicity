@@ -340,6 +340,17 @@ bool input_annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
+/* input_script_sig_hash : TWO^32 |- (S (TWO^256) */
+bool input_script_sig_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numInputs)) {
+    writeHash(dst, &env->tx->input[i].scriptSigHash);
+  } else {
+    skipBits(dst, 256);
+  }
+  return true;
+}
+
 /* output_asset : TWO^32 |- S (Conf TWO^256) */
 bool output_asset(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
@@ -594,6 +605,14 @@ bool current_issuance_token_proof(frameItem* dst, frameItem src, const txEnv* en
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   writeHash(dst, &env->tx->input[env->ix].issuance.tokenRangeProofHash);
+  return true;
+}
+
+/* current_script_sig_hash : ONE |- TWO^256 */
+bool current_script_sig_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  if (env->tx->numInputs <= env->ix) return false;
+  writeHash(dst, &env->tx->input[env->ix].scriptSigHash);
   return true;
 }
 

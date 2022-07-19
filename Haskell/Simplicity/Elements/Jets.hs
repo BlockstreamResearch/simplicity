@@ -108,6 +108,7 @@ data TransactionJet a b where
   CurrentScriptHash :: TransactionJet () Word256
   CurrentSequence :: TransactionJet () Word32
   CurrentAnnexHash :: TransactionJet () (S Word256)
+  CurrentScriptSigHash :: TransactionJet () Word256
   CurrentReissuanceBlinding :: TransactionJet () (S Word256)
   CurrentNewIssuanceContract :: TransactionJet () (S Word256)
   CurrentReissuanceEntropy :: TransactionJet () (S Word256)
@@ -122,6 +123,7 @@ data TransactionJet a b where
   InputScriptHash :: TransactionJet Word32 (S Word256)
   InputSequence :: TransactionJet Word32 (S Word32)
   InputAnnexHash :: TransactionJet Word32 (S (S Word256))
+  InputScriptSigHash :: TransactionJet Word32 (S Word256)
   ReissuanceBlinding :: TransactionJet Word32 (S (S Word256))
   NewIssuanceContract :: TransactionJet Word32 (S (S Word256))
   ReissuanceEntropy :: TransactionJet Word32 (S (S Word256))
@@ -182,6 +184,7 @@ specificationTransaction CurrentAssetAmount = Prog.currentAssetAmount
 specificationTransaction CurrentScriptHash = primitive Prim.CurrentScriptHash
 specificationTransaction CurrentSequence = primitive Prim.CurrentSequence
 specificationTransaction CurrentAnnexHash = primitive Prim.CurrentAnnexHash
+specificationTransaction CurrentScriptSigHash = primitive Prim.CurrentScriptSigHash
 specificationTransaction CurrentReissuanceBlinding = primitive Prim.CurrentReissuanceBlinding
 specificationTransaction CurrentNewIssuanceContract = primitive Prim.CurrentNewIssuanceContract
 specificationTransaction CurrentReissuanceEntropy = primitive Prim.CurrentReissuanceEntropy
@@ -196,6 +199,7 @@ specificationTransaction InputAssetAmount = Prog.inputAssetAmount
 specificationTransaction InputScriptHash = primitive Prim.InputScriptHash
 specificationTransaction InputSequence = primitive Prim.InputSequence
 specificationTransaction InputAnnexHash = primitive Prim.InputAnnexHash
+specificationTransaction InputScriptSigHash = primitive Prim.InputScriptSigHash
 specificationTransaction ReissuanceBlinding = primitive Prim.ReissuanceBlinding
 specificationTransaction NewIssuanceContract = primitive Prim.NewIssuanceContract
 specificationTransaction ReissuanceEntropy = primitive Prim.ReissuanceEntropy
@@ -347,7 +351,7 @@ getJetBitElements abort next = getPositive next >>= match
     matchTransaction 19 = makeArrow CurrentScriptHash
     matchTransaction 20 = makeArrow CurrentSequence
     matchTransaction 21 = makeArrow CurrentAnnexHash
-
+    matchTransaction 22 = makeArrow CurrentScriptSigHash
     matchTransaction 23 = makeArrow CurrentReissuanceBlinding
     matchTransaction 24 = makeArrow CurrentNewIssuanceContract
     matchTransaction 25 = makeArrow CurrentReissuanceEntropy
@@ -362,7 +366,7 @@ getJetBitElements abort next = getPositive next >>= match
     matchTransaction 34 = makeArrow InputScriptHash
     matchTransaction 35 = makeArrow InputSequence
     matchTransaction 36 = makeArrow InputAnnexHash
-
+    matchTransaction 37 = makeArrow InputScriptSigHash
     matchTransaction 38 = makeArrow ReissuanceBlinding
     matchTransaction 39 = makeArrow NewIssuanceContract
     matchTransaction 40 = makeArrow ReissuanceEntropy
@@ -422,7 +426,7 @@ putJetBitTransaction CurrentAssetAmount         = putPositive 18
 putJetBitTransaction CurrentScriptHash          = putPositive 19
 putJetBitTransaction CurrentSequence            = putPositive 20
 putJetBitTransaction CurrentAnnexHash           = putPositive 21
-
+putJetBitTransaction CurrentScriptSigHash       = putPositive 22
 putJetBitTransaction CurrentReissuanceBlinding  = putPositive 23
 putJetBitTransaction CurrentNewIssuanceContract = putPositive 24
 putJetBitTransaction CurrentReissuanceEntropy   = putPositive 25
@@ -437,7 +441,7 @@ putJetBitTransaction InputAssetAmount           = putPositive 33
 putJetBitTransaction InputScriptHash            = putPositive 34
 putJetBitTransaction InputSequence              = putPositive 35
 putJetBitTransaction InputAnnexHash             = putPositive 36
-
+putJetBitTransaction InputScriptSigHash         = putPositive 37
 putJetBitTransaction ReissuanceBlinding         = putPositive 38
 putJetBitTransaction NewIssuanceContract        = putPositive 39
 putJetBitTransaction ReissuanceEntropy          = putPositive 40
@@ -491,6 +495,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (TransactionJet CurrentScriptHash)
   , mkAssoc (TransactionJet CurrentSequence)
   , mkAssoc (TransactionJet CurrentAnnexHash)
+  , mkAssoc (TransactionJet CurrentScriptSigHash)
   , mkAssoc (TransactionJet CurrentReissuanceBlinding)
   , mkAssoc (TransactionJet CurrentNewIssuanceContract)
   , mkAssoc (TransactionJet CurrentReissuanceEntropy)
@@ -505,6 +510,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (TransactionJet InputScriptHash)
   , mkAssoc (TransactionJet InputSequence)
   , mkAssoc (TransactionJet InputAnnexHash)
+  , mkAssoc (TransactionJet InputScriptSigHash)
   , mkAssoc (TransactionJet ReissuanceBlinding)
   , mkAssoc (TransactionJet NewIssuanceContract)
   , mkAssoc (TransactionJet ReissuanceEntropy)

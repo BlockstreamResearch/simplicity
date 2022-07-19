@@ -49,6 +49,7 @@ data Prim a b where
   InputScriptHash :: Prim Word32 (S Word256)
   InputSequence :: Prim Word32 (S Word32)
   InputAnnexHash :: Prim Word32 (S (S Word256))
+  InputScriptSigHash :: Prim Word32 (S Word256)
   ReissuanceBlinding :: Prim Word32 (S (S Word256))
   NewIssuanceContract :: Prim Word32 (S (S Word256))
   ReissuanceEntropy :: Prim Word32 (S (S Word256))
@@ -71,6 +72,7 @@ data Prim a b where
   CurrentIssuanceAssetProof :: Prim () Word256
   CurrentIssuanceTokenProof :: Prim () Word256
   CurrentAnnexHash :: Prim () (S Word256)
+  CurrentScriptSigHash :: Prim () Word256
   TapleafVersion :: Prim () Word8
   Tapbranch :: Prim Word8 (S Word256)
   InternalKey :: Prim () PubKey
@@ -99,6 +101,7 @@ instance Eq (Prim a b) where
   InputScriptHash == InputScriptHash = True
   InputSequence == InputSequence = True
   InputAnnexHash == InputAnnexHash = True
+  InputScriptSigHash == InputScriptSigHash = True
   ReissuanceBlinding == ReissuanceBlinding = True
   NewIssuanceContract == NewIssuanceContract = True
   ReissuanceEntropy == ReissuanceEntropy = True
@@ -121,6 +124,7 @@ instance Eq (Prim a b) where
   CurrentIssuanceAssetProof == CurrentIssuanceAssetProof = True
   CurrentIssuanceTokenProof == CurrentIssuanceTokenProof = True
   CurrentAnnexHash == CurrentAnnexHash = True
+  CurrentScriptSigHash == CurrentScriptSigHash = True
   TapleafVersion == TapleafVersion = True
   Tapbranch == Tapbranch = True
   InternalKey == InternalKey = True
@@ -154,6 +158,7 @@ primName InputAmount = "inputAmount"
 primName InputScriptHash = "inputScriptHash"
 primName InputSequence = "inputSequence"
 primName InputAnnexHash = "inputAnnexHash"
+primName InputScriptSigHash = "inputScriptSigHash"
 primName ReissuanceBlinding = "reissuanceBlinding"
 primName NewIssuanceContract = "newIssuanceContract"
 primName ReissuanceEntropy = "reissuanceEntropy"
@@ -176,6 +181,7 @@ primName CurrentIssuanceTokenAmt = "currentIssuanceTokenAmt"
 primName CurrentIssuanceAssetProof = "currentIssuanceAssetProof"
 primName CurrentIssuanceTokenProof = "currentIssuanceTokenProof"
 primName CurrentAnnexHash = "currentAnnexHash"
+primName CurrentScriptSigHash = "currentScriptSigHash"
 primName TapleafVersion = "tapleafVersion"
 primName Tapbranch = "tapbranch"
 primName InternalKey = "internalKey"
@@ -353,6 +359,7 @@ primSem p a env = interpret p a
   interpret InputScriptHash = return . (atInput $ encodeHash . bslHash . utxoScript . sigTxiTxo)
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
   interpret InputAnnexHash = return . (atInput $ cast . fmap (encodeHash . bslHash) . sigTxiAnnex)
+  interpret InputScriptSigHash = return . (atInput $ encodeHash . bslHash . sigTxiScriptSig)
   interpret ReissuanceBlinding = return . (atInput $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceBlindingNonce) <=< sigTxiIssuance))
   interpret NewIssuanceContract = return . (atInput $
@@ -385,6 +392,7 @@ primSem p a env = interpret p a
   interpret CurrentIssuanceAssetProof = element $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceAmount.under amount.prf_) <$> currentInput
   interpret CurrentIssuanceTokenProof = element $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceTokenAmount.under amount.prf_) <$> currentInput
   interpret CurrentAnnexHash = element $ cast . fmap (encodeHash . bslHash) . sigTxiAnnex <$> currentInput
+  interpret CurrentScriptSigHash = element $ encodeHash . bslHash . sigTxiScriptSig <$> currentInput
   interpret TapleafVersion = element . return . toWord8 . toInteger . tapLeafVersion $ envTap env
   interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapBranch (envTap env)) . fromInteger . fromWord8
   interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env

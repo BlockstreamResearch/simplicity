@@ -178,6 +178,7 @@ typedef struct assetIssuance {
  */
 typedef struct sigInput {
   sha256_midstate annexHash;
+  sha256_midstate scriptSigHash;
   outpoint prevOutpoint;
   utxo txo;
   uint_fast32_t sequence;

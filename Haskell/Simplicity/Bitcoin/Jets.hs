@@ -81,10 +81,12 @@ data TransactionJet a b where
   CurrentValue :: TransactionJet () Word64
   CurrentSequence :: TransactionJet () Word32
   CurrentAnnexHash :: TransactionJet () (Either () Word256)
+  CurrentScriptSigHash :: TransactionJet () Word256
   InputPrevOutpoint :: TransactionJet Word32 (Either () (Word256,Word32))
   InputValue :: TransactionJet Word32 (Either () Word64)
   InputSequence :: TransactionJet Word32 (Either () Word32)
   InputAnnexHash :: TransactionJet Word32 (Either () (Either () Word256))
+  InputScriptSigHash :: TransactionJet Word32 (Either () Word256)
   TotalInputValue :: TransactionJet () Word64
   TapleafVersion :: TransactionJet () Word8
   Tapbranch :: TransactionJet Word8 (Either () Word256)
@@ -122,10 +124,12 @@ specificationTransaction CurrentPrevOutpoint = primitive Prim.CurrentPrevOutpoin
 specificationTransaction CurrentValue = primitive Prim.CurrentValue
 specificationTransaction CurrentSequence = primitive Prim.CurrentSequence
 specificationTransaction CurrentAnnexHash = primitive Prim.CurrentAnnexHash
+specificationTransaction CurrentScriptSigHash = primitive Prim.CurrentScriptSigHash
 specificationTransaction InputPrevOutpoint = primitive Prim.InputPrevOutpoint
 specificationTransaction InputValue = primitive Prim.InputValue
 specificationTransaction InputSequence = primitive Prim.InputSequence
 specificationTransaction InputAnnexHash = primitive Prim.InputAnnexHash
+specificationTransaction InputScriptSigHash = primitive Prim.InputScriptSigHash
 specificationTransaction TotalInputValue = primitive Prim.TotalInputValue
 specificationTransaction TapleafVersion = primitive Prim.TapleafVersion
 specificationTransaction Tapbranch = primitive Prim.Tapbranch
@@ -191,13 +195,13 @@ getJetBitBitcoin abort next = getPositive next >>= match
 
     matchTransaction 14 = makeArrow CurrentSequence
     matchTransaction 15 = makeArrow CurrentAnnexHash
-
+    matchTransaction 16 = makeArrow CurrentScriptSigHash
     matchTransaction 17 = makeArrow InputPrevOutpoint
     matchTransaction 18 = makeArrow InputValue
 
     matchTransaction 20 = makeArrow InputSequence
     matchTransaction 21 = makeArrow InputAnnexHash
-
+    matchTransaction 22 = makeArrow InputScriptSigHash
     matchTransaction 23 = makeArrow TotalInputValue
     matchTransaction 24 = makeArrow TapleafVersion
     matchTransaction 25 = makeArrow Tapbranch
@@ -219,32 +223,32 @@ putJetBitTimeLock TxLockDuration = putPositive 8
 putJetBitTimeLock TxIsFinal      = putPositive 9
 
 putJetBitTransaction :: TransactionJet a b -> DList Bool
-putJetBitTransaction ScriptCMR           = putPositive 1
-putJetBitTransaction InternalKey         = putPositive 2
-putJetBitTransaction CurrentIndex        = putPositive 3
-putJetBitTransaction NumInputs           = putPositive 4
-putJetBitTransaction NumOutputs          = putPositive 5
-putJetBitTransaction LockTime            = putPositive 6
+putJetBitTransaction ScriptCMR            = putPositive 1
+putJetBitTransaction InternalKey          = putPositive 2
+putJetBitTransaction CurrentIndex         = putPositive 3
+putJetBitTransaction NumInputs            = putPositive 4
+putJetBitTransaction NumOutputs           = putPositive 5
+putJetBitTransaction LockTime             = putPositive 6
 
-putJetBitTransaction OutputValue         = putPositive 8
-putJetBitTransaction OutputScriptHash    = putPositive 9
-putJetBitTransaction TotalOutputValue    = putPositive 10
-putJetBitTransaction CurrentPrevOutpoint = putPositive 11
-putJetBitTransaction CurrentValue        = putPositive 12
+putJetBitTransaction OutputValue          = putPositive 8
+putJetBitTransaction OutputScriptHash     = putPositive 9
+putJetBitTransaction TotalOutputValue     = putPositive 10
+putJetBitTransaction CurrentPrevOutpoint  = putPositive 11
+putJetBitTransaction CurrentValue         = putPositive 12
 
-putJetBitTransaction CurrentSequence     = putPositive 14
-putJetBitTransaction CurrentAnnexHash    = putPositive 15
+putJetBitTransaction CurrentSequence      = putPositive 14
+putJetBitTransaction CurrentAnnexHash     = putPositive 15
+putJetBitTransaction CurrentScriptSigHash = putPositive 16
+putJetBitTransaction InputPrevOutpoint    = putPositive 17
+putJetBitTransaction InputValue           = putPositive 18
 
-putJetBitTransaction InputPrevOutpoint   = putPositive 17
-putJetBitTransaction InputValue          = putPositive 18
-
-putJetBitTransaction InputSequence       = putPositive 20
-putJetBitTransaction InputAnnexHash      = putPositive 21
-
-putJetBitTransaction TotalInputValue     = putPositive 23
-putJetBitTransaction TapleafVersion      = putPositive 24
-putJetBitTransaction Tapbranch           = putPositive 25
-putJetBitTransaction Version             = putPositive 26
+putJetBitTransaction InputSequence        = putPositive 20
+putJetBitTransaction InputAnnexHash       = putPositive 21
+putJetBitTransaction InputScriptSigHash   = putPositive 22
+putJetBitTransaction TotalInputValue      = putPositive 23
+putJetBitTransaction TapleafVersion       = putPositive 24
+putJetBitTransaction Tapbranch            = putPositive 25
+putJetBitTransaction Version              = putPositive 26
 
 bitcoinJetMap :: Map.Map Hash256 (SomeArrow BitcoinJet)
 bitcoinJetMap = Map.fromList
@@ -272,10 +276,12 @@ bitcoinJetMap = Map.fromList
   , mkAssoc (TransactionJet CurrentValue)
   , mkAssoc (TransactionJet CurrentSequence)
   , mkAssoc (TransactionJet CurrentAnnexHash)
+  , mkAssoc (TransactionJet CurrentScriptSigHash)
   , mkAssoc (TransactionJet InputPrevOutpoint)
   , mkAssoc (TransactionJet InputValue)
   , mkAssoc (TransactionJet InputSequence)
   , mkAssoc (TransactionJet InputAnnexHash)
+  , mkAssoc (TransactionJet InputScriptSigHash)
   , mkAssoc (TransactionJet TotalInputValue)
   , mkAssoc (TransactionJet TapleafVersion)
   , mkAssoc (TransactionJet Tapbranch)

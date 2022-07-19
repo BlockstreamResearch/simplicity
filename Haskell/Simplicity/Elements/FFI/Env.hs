@@ -45,7 +45,7 @@ foreign import ccall unsafe "&" c_sizeof_txEnv :: Ptr CSize
 foreign import ccall unsafe "" c_set_rawBuffer :: Ptr RawBuffer -> Ptr CChar -> CUInt -> IO ()
 foreign import ccall unsafe "" c_set_rawOutput :: Ptr RawOutput -> Ptr CChar -> Ptr CChar -> Ptr CChar -> Ptr RawBuffer -> Ptr RawBuffer -> Ptr RawBuffer -> IO ()
 foreign import ccall unsafe "" c_set_rawInput :: Ptr RawInput -> Bool
-                                                              -> Ptr RawBuffer
+                                                              -> Ptr RawBuffer -> Ptr RawBuffer
                                                               -> Ptr CChar -> CUInt
                                                               -> Ptr CChar -> Ptr CChar -> Ptr RawBuffer
                                                               -> CUInt
@@ -148,13 +148,14 @@ withRawInputs txis k =
   pokeRawInput :: SigTxInput -> Ptr RawInput -> IO b -> IO b
   pokeRawInput txi pRawInput k =
     withMaybeRawBuffer (sigTxiAnnex txi) $ \pAnnex ->
+    withRawBuffer (sigTxiScriptSig txi) $ \pScriptSig ->
     BS.useAsCString (encode . opHash $ sigTxiPreviousOutpoint txi) $ \pPrevTxid ->
     BS.useAsCString (runPut . putAsset . utxoAsset $ sigTxiTxo txi) $ \pAsset ->
     BS.useAsCString (runPut . putAmount . utxoAmount $ sigTxiTxo txi) $ \pValue ->
     withRawBuffer (utxoScript $ sigTxiTxo txi) $ \pScript ->
     withIssuance (sigTxiIssuance txi) $ \pBlindingNonce pAssetEntropy pAmount pInflationKeys pAmountRangeProof pInflationKeysRangeProof -> do
       c_set_rawInput pRawInput (sigTxiIsPegin txi)
-                               pAnnex
+                               pAnnex pScriptSig
                                pPrevTxid (fromIntegral . opIndex . sigTxiPreviousOutpoint $ txi)
                                pAsset pValue pScript
                                (fromIntegral . sigTxiSequence $ txi)

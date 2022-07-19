@@ -2,7 +2,7 @@
 module Simplicity.Bitcoin.DataTypes
   ( Script, Lock, Value
   , Outpoint(Outpoint), opHash, opIndex
-  , SigTxInput(SigTxInput), sigTxiPreviousOutpoint, sigTxiValue, sigTxiSequence, sigTxiAnnex
+  , SigTxInput(SigTxInput), sigTxiPreviousOutpoint, sigTxiValue, sigTxiSequence, sigTxiAnnex, sigTxiScriptSig
   , TxOutput(TxOutput), txoValue, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock, sigTxInputsHash, sigTxOutputsHash
   , TapEnv(..)
@@ -90,6 +90,7 @@ data SigTxInput = SigTxInput { sigTxiPreviousOutpoint :: Outpoint
                              , sigTxiValue :: Value
                              , sigTxiSequence :: Word32
                              , sigTxiAnnex :: Maybe BSL.ByteString
+                             , sigTxiScriptSig :: Script -- length must be strictly less than 2^32.
                              } deriving Show
 
 {-

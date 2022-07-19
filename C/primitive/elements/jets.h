@@ -16,6 +16,7 @@ bool input_asset_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool input_script_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool input_sequence(frameItem* dst, frameItem src, const txEnv* env);
 bool input_annex_hash(frameItem* dst, frameItem src, const txEnv* env);
+bool input_script_sig_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool reissuance_blinding(frameItem* dst, frameItem src, const txEnv* env);
 bool new_issuance_contract(frameItem* dst, frameItem src, const txEnv* env);
 bool reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env);
@@ -54,6 +55,7 @@ bool current_issuance_token_amount(frameItem* dst, frameItem src, const txEnv* e
 bool current_issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool current_issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool current_annex_hash(frameItem* dst, frameItem src, const txEnv* env);
+bool current_script_sig_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool tapleaf_version(frameItem* dst, frameItem src, const txEnv* env);
 bool tapbranch(frameItem* dst, frameItem src, const txEnv* env);
 bool internal_key(frameItem* dst, frameItem src, const txEnv* env);
