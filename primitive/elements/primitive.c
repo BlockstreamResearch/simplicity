@@ -110,7 +110,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
      case 0x19: *result = TAPLEAF_VERSION; return 0;
      case 0x1a: return either(result, TAPBRANCH, INTERNAL_KEY,stream);
      case 0x1b: *result = ANNEX_HASH; return 0;
-     case 0x1c: return either(result, INPUTS_HASH, OUTPUTS_HASH, stream);
+     case 0x1c: return either(result, INPUTS_HASH_DEPRECATED, OUTPUTS_HASH_DEPRECATED, stream);
      case 0x1d: *result = NUM_INPUTS; return 0;
      case 0x1e: *result = NUM_OUTPUTS; return 0;
      case 0x1f:

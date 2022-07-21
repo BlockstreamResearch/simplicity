@@ -195,8 +195,8 @@ typedef struct sigInput {
 typedef struct transaction {
   const sigInput* input;
   const sigOutput* output;
-  sha256_midstate inputsHash;
-  sha256_midstate outputsHash;
+  sha256_midstate inputsHash_deprecated;
+  sha256_midstate outputsHash_deprecated;
   uint_fast32_t numInputs;
   uint_fast32_t numOutputs;
   uint_fast32_t version;

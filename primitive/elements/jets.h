@@ -61,8 +61,8 @@ bool tapleaf_version(frameItem* dst, frameItem src, const txEnv* env);
 bool tapbranch(frameItem* dst, frameItem src, const txEnv* env);
 bool internal_key(frameItem* dst, frameItem src, const txEnv* env);
 bool annex_hash(frameItem* dst, frameItem src, const txEnv* env);
-bool inputs_hash(frameItem* dst, frameItem src, const txEnv* env);
-bool outputs_hash(frameItem* dst, frameItem src, const txEnv* env);
+bool inputs_hash_deprecated(frameItem* dst, frameItem src, const txEnv* env);
+bool outputs_hash_deprecated(frameItem* dst, frameItem src, const txEnv* env);
 bool num_inputs(frameItem* dst, frameItem src, const txEnv* env);
 bool num_outputs(frameItem* dst, frameItem src, const txEnv* env);
 
