@@ -234,9 +234,20 @@ typedef struct tapEnv {
 typedef struct txEnv {
   const transaction* tx;
   const tapEnv* taproot;
-  const uint32_t* genesisHash;
-  const uint32_t* scriptCMR;
+  sha256_midstate genesisHash;
+  sha256_midstate scriptCMR;
   uint_fast32_t ix;
 } txEnv;
+
+/* Contstruct a txEnv structure from its components.
+ * This function will precompute any cached values.
+ *
+ * Precondition: NULL != tx
+ *               NULL != taproot
+ *               NULL != genesisHash
+ *               NULL != scriptCMR
+ *               ix < tx->numInputs
+ */
+txEnv build_txEnv(const transaction* tx, const tapEnv* taproot, const sha256_midstate* genesisHash, const sha256_midstate* scriptCMR, uint_fast32_t ix);
 
 #endif

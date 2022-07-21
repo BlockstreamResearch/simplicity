@@ -99,12 +99,8 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
         free(analysis);
       }
       if (*success) {
-        result = evalTCOProgram(success, dag, type_dag, (size_t)len,
-          &(txEnv){ .tx = tx
-                  , .taproot = taproot
-                  , .genesisHash = genesis_hash.s
-                  , .scriptCMR = dag[len-1].cmr.s
-                  , .ix = ix});
+        txEnv env = build_txEnv(tx, taproot, &genesis_hash, &dag[len-1].cmr, ix);
+        result = evalTCOProgram(success, dag, type_dag, (size_t)len, &env);
       }
       free(type_dag);
     }
