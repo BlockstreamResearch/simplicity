@@ -55,7 +55,7 @@ foreign import ccall unsafe "" c_set_rawTransaction :: Ptr RawTransaction -> CUI
                                                                           -> Ptr RawOutput -> CUInt
                                                                           -> CUInt -> IO ()
 foreign import ccall unsafe "" c_set_rawTapEnv :: Ptr RawTapEnv -> Ptr RawBuffer -> Ptr CChar -> CUChar -> IO ()
-foreign import ccall unsafe "" c_set_txEnv :: Ptr CTxEnv -> Ptr CTransaction -> Ptr CTapEnv -> Ptr CUInt -> Ptr CUInt -> CUInt -> IO ()
+foreign import ccall unsafe "" c_set_txEnv :: Ptr CTxEnv -> Ptr CTransaction -> Ptr CTapEnv -> Ptr CChar -> Ptr CChar -> CUInt -> IO ()
 
 foreign import ccall unsafe "&" c_free_transaction :: FunPtr (Ptr CTransaction -> IO ())
 foreign import ccall unsafe "&" c_free_tapEnv :: FunPtr (Ptr CTapEnv -> IO ())
@@ -202,14 +202,10 @@ withEnv cTransaction ix cTapEnv genesisHash cmr k =
   allocaBytes sizeof_txEnv $ \pTxEnv ->
   withForeignPtr cTransaction $ \pTransaction ->
   withForeignPtr cTapEnv $ \pTapEnv ->
-  withArray (mkList genesisHash) $ \pGenesis ->
-  withArray (mkList cmr) $ \pCmr -> do
+  BS.useAsCString (encode genesisHash) $ \pGenesis -> do
+  BS.useAsCString (encode cmr) $ \pCmr -> do
    c_set_txEnv pTxEnv pTransaction pTapEnv pGenesis pCmr (fromIntegral ix)
    k pTxEnv
- where
-  mkList h = [ fromInteger $ (integerHash256 h) `div` 2^(32*i) | i <- [7,6..0] ]
-  withMaybeArray Nothing = ($ nullPtr)
-  withMaybeArray (Just arr) = withArray arr
 
 withPrimEnv :: PrimEnv -> (Ptr CTxEnv -> IO b) -> IO b
 withPrimEnv env k = do
