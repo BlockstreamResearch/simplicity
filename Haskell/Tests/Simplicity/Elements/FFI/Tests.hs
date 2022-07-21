@@ -26,8 +26,8 @@ toW8 = toWord8 . fromIntegral
 tests :: TestTree
 tests = testGroup "Elements"
         [ testGroup "Primitives"
-          [ testProperty "inputs_hash" prop_inputs_hash
-          , testProperty "outputs_hash" prop_outputs_hash
+          [ testProperty "inputs_hash_deprecated" prop_inputs_hash_deprecated
+          , testProperty "outputs_hash_deprecated" prop_outputs_hash_deprecated
           , testProperty "annex_hash" prop_annex_hash
           ]
         , testGroup "Jets"
@@ -100,11 +100,11 @@ tests = testGroup "Elements"
           ]
         ]
 
-prop_inputs_hash :: Property
-prop_inputs_hash = forallPrimEnv $ \env -> Prim.primSem Prim.InputsHash () env == inputs_hash env ()
+prop_inputs_hash_deprecated :: Property
+prop_inputs_hash_deprecated = forallPrimEnv $ \env -> Prim.primSem Prim.InputsHashDeprecated () env == inputs_hash_deprecated env ()
 
-prop_outputs_hash :: Property
-prop_outputs_hash = forallPrimEnv $ \env -> Prim.primSem Prim.OutputsHash () env == outputs_hash env ()
+prop_outputs_hash_deprecated :: Property
+prop_outputs_hash_deprecated = forallPrimEnv $ \env -> Prim.primSem Prim.OutputsHashDeprecated () env == outputs_hash_deprecated env ()
 
 prop_annex_hash :: Property
 prop_annex_hash = forallPrimEnv $ \env -> Prim.primSem Prim.AnnexHash () env == annex_hash env ()

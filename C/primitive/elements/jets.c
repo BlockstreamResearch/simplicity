@@ -679,17 +679,17 @@ bool annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* inputs_hash : ONE |- TWO^256 */
-bool inputs_hash(frameItem* dst, frameItem src, const txEnv* env) {
+/* inputs_hash_deprecated : ONE |- TWO^256 */
+bool inputs_hash_deprecated(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  writeHash(dst, &env->tx->inputsHash);
+  writeHash(dst, &env->tx->inputsHash_deprecated);
   return true;
 }
 
-/* outputs_hash : ONE |- TWO^256 */
-bool outputs_hash(frameItem* dst, frameItem src, const txEnv* env) {
+/* outputs_hash_deprecated : ONE |- TWO^256 */
+bool outputs_hash_deprecated(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  writeHash(dst, &env->tx->outputsHash);
+  writeHash(dst, &env->tx->outputsHash_deprecated);
   return true;
 }
 

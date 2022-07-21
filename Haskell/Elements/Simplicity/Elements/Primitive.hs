@@ -39,8 +39,8 @@ just_ f = some_ f
 data Prim a b where
   Version :: Prim () Word32
   LockTime :: Prim () Word32
-  InputsHash :: Prim () Word256
-  OutputsHash :: Prim () Word256
+  InputsHashDeprecated :: Prim () Word256
+  OutputsHashDeprecated :: Prim () Word256
   NumInputs :: Prim () Word32
   InputPegin :: Prim Word32 (S (S Word256))
   InputPrevOutpoint :: Prim Word32 (S (Word256,Word32))
@@ -92,8 +92,8 @@ data Prim a b where
 instance Eq (Prim a b) where
   Version == Version = True
   LockTime == LockTime = True
-  InputsHash == InputsHash = True
-  OutputsHash == OutputsHash = True
+  InputsHashDeprecated == InputsHashDeprecated = True
+  OutputsHashDeprecated == OutputsHashDeprecated = True
   NumInputs == NumInputs = True
   InputPegin == InputPegin = True
   InputPrevOutpoint == InputPrevOutpoint = True
@@ -150,8 +150,8 @@ primPrefix = "Elements"
 primName :: Prim a b -> String
 primName Version = "version"
 primName LockTime = "lockTime"
-primName InputsHash = "inputsHash"
-primName OutputsHash = "outputsHash"
+primName InputsHashDeprecated = "inputsHashDeprecated"
+primName OutputsHashDeprecated = "outputsHashDeprecated"
 primName NumInputs = "numInputs"
 primName InputPegin = "inputPegin"
 primName InputPrevOutpoint = "inputPrevOutpoint"
@@ -209,7 +209,7 @@ getPrimBit next =
   (((((makeArrow CurrentIndex & makeArrow CurrentPegin) & makeArrow CurrentPrevOutpoint) & ((makeArrow CurrentAsset & makeArrow CurrentAmount) & makeArrow CurrentScriptHash)) &
     (((makeArrow CurrentSequence & makeArrow CurrentReissuanceBlinding) & makeArrow CurrentNewIssuanceContract) & ((makeArrow CurrentReissuanceEntropy & makeArrow CurrentIssuanceAssetAmt) & makeArrow CurrentIssuanceTokenAmt))) &
    ((((makeArrow CurrentIssuanceAssetProof & makeArrow CurrentIssuanceTokenProof ) & makeArrow TapleafVersion) & ((makeArrow Tapbranch & makeArrow InternalKey) & makeArrow AnnexHash)) &
-    (((makeArrow InputsHash & makeArrow OutputsHash) & makeArrow NumInputs) & (makeArrow NumOutputs & makeArrow Fee))))
+    (((makeArrow InputsHashDeprecated & makeArrow OutputsHashDeprecated) & makeArrow NumInputs) & (makeArrow NumOutputs & makeArrow Fee))))
  where
   l & r = next >>= \b -> if b then r else l
   makeArrow p = return (SomeArrow p)
@@ -260,8 +260,8 @@ putPrimBit = go
   go Tapbranch                    = ([i,i,o,i,o,o]++)
   go InternalKey                  = ([i,i,o,i,o,i]++)
   go AnnexHash                    = ([i,i,o,i,i]++)
-  go InputsHash                   = ([i,i,i,o,o,o]++)
-  go OutputsHash                  = ([i,i,i,o,o,i]++)
+  go InputsHashDeprecated         = ([i,i,i,o,o,o]++)
+  go OutputsHashDeprecated        = ([i,i,i,o,o,i]++)
   go NumInputs                    = ([i,i,i,o,i]++)
   go NumOutputs                   = ([i,i,i,i,o]++)
   go Fee                          = ([i,i,i,i,i]++)
@@ -272,8 +272,8 @@ data PrimEnv = PrimEnv { envTx :: SigTx
                        , envTap :: TapEnv
                        , envScriptCMR :: Hash256
                        , envGenesisBlock :: Hash256
-                       , envInputsHash :: Hash256
-                       , envOutputsHash :: Hash256
+                       , envInputsHashDeprecated :: Hash256
+                       , envOutputsHashDeprecated :: Hash256
                        }
 
 instance Show PrimEnv where
@@ -293,8 +293,8 @@ primEnv tx ix tap gen scmr | cond = Just $ PrimEnv { envTx = tx
                                                    , envTap = tap
                                                    , envGenesisBlock = gen
                                                    , envScriptCMR = scmr
-                                                   , envInputsHash = sigTxInputsHash tx
-                                                   , envOutputsHash = sigTxOutputsHash tx
+                                                   , envInputsHashDeprecated = sigTxInputsHash tx
+                                                   , envOutputsHashDeprecated = sigTxOutputsHash tx
                                                    }
                    | otherwise = Nothing
  where
@@ -353,8 +353,8 @@ primSem p a env = interpret p a
   issuanceTokenAmount = either newIssuanceTokenAmount (const (Amount (Explicit 0)))
   interpret Version = element . return . toWord32 . toInteger $ sigTxVersion tx
   interpret LockTime = element . return . toWord32 . toInteger $ sigTxLock tx
-  interpret InputsHash = element . return . encodeHash $ envInputsHash env
-  interpret OutputsHash = element . return . encodeHash $ envOutputsHash env
+  interpret InputsHashDeprecated = element . return . encodeHash $ envInputsHashDeprecated env
+  interpret OutputsHashDeprecated = element . return . encodeHash $ envOutputsHashDeprecated env
   interpret NumInputs = element . return . toWord32 . toInteger $ 1 + maxInput
   interpret InputPegin = return . (atInput $ cast . fmap encodeHash . sigTxiPegin)
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutpoint)

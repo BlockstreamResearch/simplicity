@@ -809,9 +809,9 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mspbw256w64
 }
-,[INPUTS_HASH] =
+,[INPUTS_HASH_DEPRECATED] =
 { .tag = JET
-, .jet = inputs_hash
+, .jet = inputs_hash_deprecated
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 }
@@ -833,9 +833,9 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mspbw256w64
 }
-,[OUTPUTS_HASH] =
+,[OUTPUTS_HASH_DEPRECATED] =
 { .tag = JET
-, .jet = outputs_hash
+, .jet = outputs_hash_deprecated
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 }

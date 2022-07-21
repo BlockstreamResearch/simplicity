@@ -91,7 +91,7 @@ mkLib Sha256.Lib{..} = lib
                (match (take (cond (scribe (toWord256 9) &&& iden) (scribe (toWord256 8) &&& iden)))
                       (drop (scribe (toWord256 1)) &&& (drop (zero word128) &&& (drop (zero word64) &&& oh)))))
            >>> hb) &&& scribe (toWord512 (2^511 + 512)) >>> hb
-    blk1 = primitive InputsHash &&& primitive OutputsHash
+    blk1 = primitive InputsHashDeprecated &&& primitive OutputsHashDeprecated
     blk2 = annex &&& taprootPath
     blk3 = curAsset &&& curAmt
     blk4 = (((primitive Version &&& primitive LockTime) &&& (primitive CurrentIndex &&& scribe (toWord32 (2^31)))) &&& zero word128)

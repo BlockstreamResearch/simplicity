@@ -416,7 +416,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
                      };
 
   {
-    sha256_context ctx = sha256_init(tx->inputsHash.s);
+    sha256_context ctx = sha256_init(tx->inputsHash_deprecated.s);
     for (uint_fast32_t i = 0; i < tx->numInputs; ++i) {
       copyInput(&input[i], &rawTx->input[i]);
       if (input[i].sequence < 0xffffffff) { tx->isFinal = false; }
@@ -436,7 +436,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
   }
 
   {
-    sha256_context ctx = sha256_init(tx->outputsHash.s);
+    sha256_context ctx = sha256_init(tx->outputsHash_deprecated.s);
     for (uint_fast32_t i = 0; i < tx->numOutputs; ++i) {
       copyOutput(&output[i], &ops, &opsLen, &rawTx->output[i]);
       sha256_confAsset(&ctx, &output[i].asset);

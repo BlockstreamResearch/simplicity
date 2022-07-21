@@ -50,8 +50,8 @@ module Simplicity.Elements.FFI.Jets
  , tapbranch
  , internal_key
  , annex_hash
- , inputs_hash
- , outputs_hash
+ , inputs_hash_deprecated
+ , outputs_hash_deprecated
  , num_inputs
  , num_outputs
  , tx_is_final
@@ -137,8 +137,8 @@ foreign import ccall unsafe "" c_tapleaf_version :: Ptr FrameItem -> Ptr FrameIt
 foreign import ccall unsafe "" c_tapbranch :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_internal_key :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_annex_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_inputs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_outputs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_inputs_hash_deprecated :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_outputs_hash_deprecated :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_num_inputs :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_num_outputs :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tx_is_final :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -165,11 +165,11 @@ version = unsafeLocalJet c_version
 lock_time :: PrimEnv -> () -> Maybe Word32
 lock_time = unsafeLocalJet c_lock_time
 
-inputs_hash :: PrimEnv -> () -> Maybe Word256
-inputs_hash = unsafeLocalJet c_inputs_hash
+inputs_hash_deprecated :: PrimEnv -> () -> Maybe Word256
+inputs_hash_deprecated = unsafeLocalJet c_inputs_hash_deprecated
 
-outputs_hash :: PrimEnv -> () -> Maybe Word256
-outputs_hash = unsafeLocalJet c_outputs_hash
+outputs_hash_deprecated :: PrimEnv -> () -> Maybe Word256
+outputs_hash_deprecated = unsafeLocalJet c_outputs_hash_deprecated
 
 num_inputs :: PrimEnv -> () -> Maybe Word32
 num_inputs = unsafeLocalJet c_num_inputs
