@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE DeriveTraversable, TupleSections #-}
 -- | This module defines the data structures that make up the signed data in a Bitcoin transaction.
 module Simplicity.Elements.DataTypes
   ( Point(..)
@@ -183,16 +183,16 @@ putAmount :: Putter Amount
 putAmount (Amount (Explicit v)) = putWord8 0x01 >> putWord64be v
 putAmount (Amount (Confidential (Point by x) _)) = putWord8 (if by then 0x09 else 0x08) >> putFE x
 
-newtype Nonce = Nonce { nonce :: Confidential () Hash256 } deriving Show
+newtype Nonce = Nonce { nonce :: Either (Bool, Word256) Hash256 } deriving Show
 
 instance Serialize Nonce where
-  put (Nonce (Explicit h)) = putWord8 0x01 >> put h
-  put (Nonce (Confidential (Point by x) _)) = putWord8 (if by then 0x03 else 0x02) >> putFE x
+  put (Nonce (Right h)) = putWord8 0x01 >> put h
+  put (Nonce (Left (by, x))) = putWord8 (if by then 0x03 else 0x02) >> put x
   get = lookAhead getWord8 >>= go
    where
-    go 0x01 = getWord8 *> (Nonce . Explicit <$> get)
-    go 0x02 = Nonce . flip Confidential () . Point False <$> getFE
-    go 0x03 = Nonce . flip Confidential () . Point True <$> getFE
+    go 0x01 = getWord8 *> (Nonce . Right <$> get)
+    go 0x02 = Nonce . Left . (False,) <$> get
+    go 0x03 = Nonce . Left . (True,) <$> get
     go _ = fail "Serialize.get{Simplicity.Primitive.Elements.DataTypes.Nonce}: bad prefix."
 
 putMaybeConfidential :: Putter a -> Putter (Maybe a)

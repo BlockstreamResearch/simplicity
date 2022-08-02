@@ -11,6 +11,7 @@ module Simplicity.Elements.Primitive
   , getPrimByte, putPrimByte
   ) where
 
+import Control.Arrow ((***), (+++))
 import Control.Monad ((<=<), guard)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.List as List
@@ -324,7 +325,7 @@ primSem p a env = interpret p a
   encodeConfidential enc (Confidential (Point by x) ()) = Left (toBit by, toWord256 . Schnorr.fe_repr $ x)
   encodeAsset = encodeConfidential encodeHash . view (under asset)
   encodeAmount = encodeConfidential (toWord64 . toInteger) . view (under amount)
-  encodeNonce = cast . fmap (encodeConfidential encodeHash . nonce)
+  encodeNonce = cast . fmap (((toBit *** (toWord256 . toInteger)) +++ encodeHash) . nonce)
   encodeOutpoint op = (encodeHash $ opHash op, toWord32 . fromIntegral $ opIndex op)
   encodeKey (Schnorr.PubKey x) = toWord256 . toInteger $ x
   encodeNullDatum (Immediate h) = Left (toWord2 0, encodeHash h)

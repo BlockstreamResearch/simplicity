@@ -87,7 +87,7 @@ arbitraryAmountWithWitness :: Gen AmountWithWitness
 arbitraryAmountWithWitness = Amount <$> arbitraryConfidential arbitraryBS arbitrarySizedBoundedIntegral
 
 instance Arbitrary Nonce where
-  arbitrary = Nonce <$> arbitraryConfidential (return ()) arbitraryHash256
+  arbitrary = Nonce <$> oneof [Left <$> ((,) <$> arbitrary <*> (fromInteger <$> arbitrary)),  Right <$> arbitraryHash256]
 
 instance Arbitrary TxOutput where
   arbitrary = TxOutput <$> arbitraryAssetWithWitness <*> arbitraryAmountWithWitness <*> arbitrary <*> oneof [arbitraryBS, arbitraryNullData, arbitraryNonNullData]
