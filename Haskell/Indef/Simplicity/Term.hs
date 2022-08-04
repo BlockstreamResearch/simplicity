@@ -1,4 +1,4 @@
-{-# LANGUAGE UndecidableInstances, RankNTypes #-}
+{-# LANGUAGE FlexibleContexts, UndecidableInstances, RankNTypes #-}
 -- | This module extends "Simplicity.Term.Core" to the full Simplicity languages by defining the remaining language extensions: 'Primitive' and 'Jet'.
 -- The 'Simplicity' class combines all the features of the full Simplicity language under one constraint.
 --

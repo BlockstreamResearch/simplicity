@@ -2,7 +2,7 @@
 , coq     ? true
 , c       ? true
 , nixpkgs ? import <nixpkgs> {}
-, ghc ? "ghc8107"
+, ghc ? "ghc94"
 , coqPackages ? "coqPackages_8_15"
 }:
 let

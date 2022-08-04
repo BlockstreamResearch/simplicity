@@ -1,5 +1,5 @@
 { nixpkgs ? import <nixpkgs> {}
-, ghc ? "ghc8107"
+, ghc ? "ghc94"
 , coqPackages ? "coqPackages_8_15"
 , secp256k1git ? null
 }:
