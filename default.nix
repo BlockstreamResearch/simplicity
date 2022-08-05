@@ -23,7 +23,8 @@ let hp = nixpkgs.haskell.packages.${ghc};
   c = nixpkgs.callPackage ./Simplicity.C.nix {};
 
   compcert = nixpkgs.callPackage ./compcert-opensource.nix {
-    inherit (cp) coq flocq;
+    inherit (cp) coq;
+    flocq = cp.flocq.override { version = "3.4.3"; }; # remove after upgrading to compcert 3.11
     inherit (cp.coq.ocamlPackages) ocaml menhir menhirLib findlib;
     ccomp-platform = "x86_64-linux";
   };
