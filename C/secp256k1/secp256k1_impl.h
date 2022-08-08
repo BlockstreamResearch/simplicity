@@ -13,6 +13,7 @@
 
 #include "assumptions.h"
 #include "util.h"
+#include "int128_impl.h"
 #include "field_impl.h"
 #include "scalar_impl.h"
 #include "group_impl.h"
