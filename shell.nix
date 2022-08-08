@@ -14,6 +14,7 @@ let
   coqDevEnv       = [ nixpkgs.python3Packages.alectryon
                       nixpkgs.${coqPackages}.serapi
                       nixpkgs.${coqPackages}.coq
+                      nixpkgs.${coqPackages}.coqide
                     ];
 
 in
