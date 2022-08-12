@@ -100,6 +100,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
 typedef struct rawTapEnv {
   const rawBuffer* annex;
   const unsigned char* controlBlock;
+  const unsigned char* scriptCMR;
   unsigned char branchLen;
 } rawTapEnv;
 

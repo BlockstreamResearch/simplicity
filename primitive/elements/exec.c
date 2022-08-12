@@ -11,7 +11,6 @@
 /* Deserialize a Simplicity program from 'file' and execute it in the environment of the 'ix'th input of 'tx'.
  * If the file isn't a proper encoding of a Simplicity program, '*success' is set to false.
  * If EOF isn't encountered at the end of decoding, '*success' is set to false.
- * If 'cmr != NULL' and the commitment Merkle root of the decoded expression doesn't match 'cmr' then '*success' is set to false.
  * If 'amr != NULL' and the annotated Merkle root of the decoded expression doesn't match 'amr' then '*success' is set to false.
  * Otherwise evaluation proceeds and '*success' is set to the result of evaluation.
  * If 'imr != NULL' and '*success' is set to true, then the identity Merkle root of the decoded expression is written to 'imr'.
@@ -26,14 +25,13 @@
  *               NULL != tx;
  *               NULL != taproot;
  *               unsigned char genesisBlockHash[32]
- *               NULL != cmr implies unsigned char cmr[32]
  *               NULL != amr implies unsigned char amr[32]
  *               NULL != file;
  */
 extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* imr
                                               , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
                                               , const unsigned char* genesisBlockHash
-                                              , const unsigned char* cmr, const unsigned char* amr, FILE* file) {
+                                              , const unsigned char* amr, FILE* file) {
   if (!success || !tx || !taproot || !file) return false;
 
   bool result;
@@ -42,9 +40,8 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
   void* witnessAlloc = NULL;
   bitstring witness;
   int32_t len;
-  sha256_midstate cmr_hash, amr_hash, genesis_hash;
+  sha256_midstate amr_hash, genesis_hash;
 
-  if (cmr) sha256_toMidstate(cmr_hash.s, cmr);
   if (amr) sha256_toMidstate(amr_hash.s, amr);
   sha256_toMidstate(genesis_hash.s, genesisBlockHash);
 
@@ -69,7 +66,7 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
   }
 
   if (*success) {
-    *success = !cmr || 0 == memcmp(cmr_hash.s, dag[len-1].cmr.s, sizeof(uint32_t[8]));
+    *success = 0 == memcmp(taproot->scriptCMR.s, dag[len-1].cmr.s, sizeof(uint32_t[8]));
     if (*success) {
       type* type_dag;
       result = mallocTypeInference(&type_dag, dag, (size_t)len, &census);
@@ -99,7 +96,7 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
         free(analysis);
       }
       if (*success) {
-        txEnv env = build_txEnv(tx, taproot, &genesis_hash, &dag[len-1].cmr, ix);
+        txEnv env = build_txEnv(tx, taproot, &genesis_hash, ix);
         result = evalTCOProgram(success, dag, type_dag, (size_t)len, &env);
       }
       free(type_dag);

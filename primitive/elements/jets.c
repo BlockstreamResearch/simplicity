@@ -491,7 +491,7 @@ bool genesis_block_hash(frameItem* dst, frameItem src, const txEnv* env) {
 /* script_cmr : ONE |- TWO^256 */
 bool script_cmr(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write32s(dst, env->scriptCMR.s, 8);
+  write32s(dst, env->taproot->scriptCMR.s, 8);
   return true;
 }
 
