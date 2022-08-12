@@ -517,6 +517,7 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
                  , .branch = branch
                  , .branchLen = rawEnv->branchLen
                  };
+  sha256_toMidstate(env->scriptCMR.s, rawEnv->scriptCMR);
 
   if (annexHash) {
     hashBuffer(annexHash, rawEnv->annex);
@@ -535,14 +536,12 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
  * Precondition: NULL != tx
  *               NULL != taproot
  *               NULL != genesisHash
- *               NULL != scriptCMR
  *               ix < tx->numInputs
  */
-txEnv build_txEnv(const transaction* tx, const tapEnv* taproot, const sha256_midstate* genesisHash, const sha256_midstate* scriptCMR, uint_fast32_t ix) {
+txEnv build_txEnv(const transaction* tx, const tapEnv* taproot, const sha256_midstate* genesisHash, uint_fast32_t ix) {
   txEnv result = { .tx = tx
                  , .taproot = taproot
                  , .genesisHash = *genesisHash
-                 , .scriptCMR = *scriptCMR
                  , .ix = ix
                  };
 

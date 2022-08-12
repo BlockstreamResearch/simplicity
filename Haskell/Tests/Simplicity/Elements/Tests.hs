@@ -469,6 +469,7 @@ tapEnv = TapEnv
          , tapLeafVersion = 0xbe
          , tapInternalKey = Schnorr.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
          , tapBranch = []
+         , tapScriptCMR = review (over be256) 0x896b16e4692350cb43c4807c8f9f63637f70f84a17b678ca9467109ff1e50f61
          }
 
 tx1 :: SigTx
@@ -514,11 +515,10 @@ hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
  where
   ix = 0
   genesis = review (over be256) 0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
-  cmr = review (over be256) 0x896b16e4692350cb43c4807c8f9f63637f70f84a17b678ca9467109ff1e50f61
   txo = sigTxiTxo (sigTxIn tx1 ! (fromIntegral ix))
-  Just txEnv = primEnv tx1 ix tapEnv genesis cmr
+  Just txEnv = primEnv tx1 ix tapEnv genesis
   sigHashTag = bsHash $ BSC.pack "Simplicity-Draft\USSigHash"
-  taproot_spec = bsHash $ encode cmr <> encode (tapLeafVersion tapEnv)
+  taproot_spec = bsHash $ encode (tapScriptCMR tapEnv) <> encode (tapLeafVersion tapEnv)
   asset_spec (Asset (Explicit id)) = bsHash $ encode (0x01 :: Word.Word256) <> encode id
   asset_spec (Asset (Confidential (Point b x) _)) = bsHash $ encode (if b then 0x0b else 0x0a :: Word.Word256) <> encode (Schnorr.fe_pack x)
   amount_spec (Amount (Explicit amt)) = bsHash $ encode (0x01 :: Word.Word256) <> encode (fromIntegral amt :: Word.Word256)

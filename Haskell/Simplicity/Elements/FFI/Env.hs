@@ -54,8 +54,8 @@ foreign import ccall unsafe "" c_set_rawTransaction :: Ptr RawTransaction -> CUI
                                                                           -> Ptr RawInput -> CUInt
                                                                           -> Ptr RawOutput -> CUInt
                                                                           -> CUInt -> IO ()
-foreign import ccall unsafe "" c_set_rawTapEnv :: Ptr RawTapEnv -> Ptr RawBuffer -> Ptr CChar -> CUChar -> IO ()
-foreign import ccall unsafe "" c_set_txEnv :: Ptr CTxEnv -> Ptr CTransaction -> Ptr CTapEnv -> Ptr CChar -> Ptr CChar -> CUInt -> IO ()
+foreign import ccall unsafe "" c_set_rawTapEnv :: Ptr RawTapEnv -> Ptr RawBuffer -> Ptr CChar -> CUChar -> Ptr CChar -> IO ()
+foreign import ccall unsafe "" c_set_txEnv :: Ptr CTxEnv -> Ptr CTransaction -> Ptr CTapEnv -> Ptr CChar -> CUInt -> IO ()
 
 foreign import ccall unsafe "&" c_free_transaction :: FunPtr (Ptr CTransaction -> IO ())
 foreign import ccall unsafe "&" c_free_tapEnv :: FunPtr (Ptr CTapEnv -> IO ())
@@ -182,7 +182,8 @@ withRawTapEnv tapEnv k | length (tapBranch tapEnv) <= 128 =
   allocaBytes sizeof_rawTapEnv $ \pRawTapEnv ->
   withMaybeAnnex (tapAnnex tapEnv) $ \pAnnex ->
   BS.useAsCString encodeBranch $ \pControlBlock -> do
-   c_set_rawTapEnv pRawTapEnv pAnnex pControlBlock (fromIntegral . length $ tapBranch tapEnv)
+  BS.useAsCString (encode $ tapScriptCMR tapEnv) $ \pCmr -> do
+   c_set_rawTapEnv pRawTapEnv pAnnex pControlBlock (fromIntegral . length $ tapBranch tapEnv) pCmr
    k pRawTapEnv
  where
   withMaybeAnnex Nothing = ($ nullPtr)
@@ -197,18 +198,17 @@ marshallTapEnv :: TapEnv -> IO (ForeignPtr CTapEnv)
 marshallTapEnv env = withRawTapEnv env
                    $ \pRawTapEnv -> elements_simplicity_mallocTapEnv pRawTapEnv >>= newForeignPtr c_free_tapEnv
 
-withEnv :: ForeignPtr CTransaction -> Word32 -> ForeignPtr CTapEnv -> Hash256 -> Hash256 -> (Ptr CTxEnv -> IO b) -> IO b
-withEnv cTransaction ix cTapEnv genesisHash cmr k =
+withEnv :: ForeignPtr CTransaction -> Word32 -> ForeignPtr CTapEnv -> Hash256 -> (Ptr CTxEnv -> IO b) -> IO b
+withEnv cTransaction ix cTapEnv genesisHash k =
   allocaBytes sizeof_txEnv $ \pTxEnv ->
   withForeignPtr cTransaction $ \pTransaction ->
   withForeignPtr cTapEnv $ \pTapEnv ->
   BS.useAsCString (encode genesisHash) $ \pGenesis -> do
-  BS.useAsCString (encode cmr) $ \pCmr -> do
-   c_set_txEnv pTxEnv pTransaction pTapEnv pGenesis pCmr (fromIntegral ix)
+   c_set_txEnv pTxEnv pTransaction pTapEnv pGenesis (fromIntegral ix)
    k pTxEnv
 
 withPrimEnv :: PrimEnv -> (Ptr CTxEnv -> IO b) -> IO b
 withPrimEnv env k = do
   cTransaction <- marshallTransaction (envTx env)
   cTapEnv <- marshallTapEnv (envTap env)
-  withEnv cTransaction (envIx env) cTapEnv (envGenesisBlock env) (envScriptCMR env) k
+  withEnv cTransaction (envIx env) cTapEnv (envGenesisBlock env) k

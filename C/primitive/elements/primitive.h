@@ -219,6 +219,7 @@ typedef struct tapEnv {
   const sha256_midstate *annexHash;
   const sha256_midstate *branch;
   sha256_midstate internalKey;
+  sha256_midstate scriptCMR;
   unsigned char branchLen;
   unsigned char leafVersion;
 } tapEnv;
@@ -229,13 +230,11 @@ typedef struct tapEnv {
  * + the transaction data, which may be shared when Simplicity expressions are used for multiple inputs in the same transaction),
  * + the input index under consideration,
  * + the hash of the genesis block for the chain,
- * + and the commitment Merkle root of the Simplicity expression being executed.
  */
 typedef struct txEnv {
   const transaction* tx;
   const tapEnv* taproot;
   sha256_midstate genesisHash;
-  sha256_midstate scriptCMR;
   uint_fast32_t ix;
 } txEnv;
 
@@ -245,9 +244,8 @@ typedef struct txEnv {
  * Precondition: NULL != tx
  *               NULL != taproot
  *               NULL != genesisHash
- *               NULL != scriptCMR
  *               ix < tx->numInputs
  */
-txEnv build_txEnv(const transaction* tx, const tapEnv* taproot, const sha256_midstate* genesisHash, const sha256_midstate* scriptCMR, uint_fast32_t ix);
+txEnv build_txEnv(const transaction* tx, const tapEnv* taproot, const sha256_midstate* genesisHash, uint_fast32_t ix);
 
 #endif

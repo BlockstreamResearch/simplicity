@@ -3,7 +3,7 @@
 module Simplicity.Elements.Primitive
   ( Prim(..), primPrefix, primName
   , getPrimBit, putPrimBit
-  , PrimEnv, primEnv, envTx, envIx, envTap, envGenesisBlock, envScriptCMR
+  , PrimEnv, primEnv, envTx, envIx, envTap, envGenesisBlock
   , primSem
   -- * Re-exported Types
   , S, Conf, PubKey
@@ -271,7 +271,6 @@ putPrimBit = go
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32
                        , envTap :: TapEnv
-                       , envScriptCMR :: Hash256
                        , envGenesisBlock :: Hash256
                        , envInputsHashDeprecated :: Hash256
                        , envOutputsHashDeprecated :: Hash256
@@ -285,19 +284,16 @@ instance Show PrimEnv where
                   . showsPrec 11 (envIx env)
                   . showString " "
                   . showsPrec 11 (envTap env)
-                  . showString " "
-                  . showsPrec 11 (envScriptCMR env)
 
-primEnv :: SigTx -> Data.Word.Word32 -> TapEnv -> Hash256 -> Hash256 -> Maybe PrimEnv
-primEnv tx ix tap gen scmr | cond = Just $ PrimEnv { envTx = tx
-                                                   , envIx = ix
-                                                   , envTap = tap
-                                                   , envGenesisBlock = gen
-                                                   , envScriptCMR = scmr
-                                                   , envInputsHashDeprecated = sigTxInputsHash tx
-                                                   , envOutputsHashDeprecated = sigTxOutputsHash tx
-                                                   }
-                   | otherwise = Nothing
+primEnv :: SigTx -> Data.Word.Word32 -> TapEnv -> Hash256 -> Maybe PrimEnv
+primEnv tx ix tap gen | cond = Just $ PrimEnv { envTx = tx
+                                              , envIx = ix
+                                              , envTap = tap
+                                              , envGenesisBlock = gen
+                                              , envInputsHashDeprecated = sigTxInputsHash tx
+                                              , envOutputsHashDeprecated = sigTxOutputsHash tx
+                                              }
+                      | otherwise = Nothing
  where
   cond = fromIntegral ix < Vector.length (sigTxIn tx)
 
@@ -422,7 +418,7 @@ primSem p a env = interpret p a
       Explicit v <- Just . view (under amount) $ txoAmount txo
       return (Monoid.Sum v)
   interpret GenesisBlockHash = element . return . encodeHash $ envGenesisBlock env
-  interpret ScriptCMR = element . return . encodeHash $ envScriptCMR env
+  interpret ScriptCMR = element . return . encodeHash . tapScriptCMR $ envTap env
 
 getPrimByte :: Data.Word.Word8 -> Get (Maybe (SomeArrow Prim))
 getPrimByte = error "Simplicity.Elements.Primitive.getPrimByte is not implemented"

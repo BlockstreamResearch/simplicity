@@ -128,6 +128,7 @@ instance Arbitrary TapEnv where
                      <*> ((0xfe .&.) <$> arbitraryBoundedIntegral)
                      <*> (mkPubKey <$> arbitraryPoint)
                      <*> listOf arbitraryHash256
+                     <*> arbitraryHash256
    where
     mkPubKey (Point _ x) = PubKey (fe_pack x)
 
@@ -136,9 +137,8 @@ genPrimEnv = do
    tx <- arbitrary
    tapenv <- arbitrary
    gen <- arbitraryHash256
-   cmr <- arbitraryHash256
    ix <- fromIntegral <$> choose (0, length (sigTxIn tx) - 1)
-   return $ primEnv tx ix tapenv gen cmr
+   return $ primEnv tx ix tapenv gen
 
 forallPrimEnv :: Testable prop => (PrimEnv -> prop) -> Property
 forallPrimEnv p = forAll genPrimEnv go

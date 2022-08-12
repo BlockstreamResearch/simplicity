@@ -214,7 +214,6 @@ putPrimByte = putWord8 . encode
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32
                        , envTap :: TapEnv
-                       , envScriptCMR :: Hash256
                        , envInputsHash :: Hash256
                        , envOutputsHash :: Hash256
                        }
@@ -227,18 +226,15 @@ instance Show PrimEnv where
                   . showsPrec 11 (envIx env)
                   . showString " "
                   . showsPrec 11 (envTap env)
-                  . showString " "
-                  . showsPrec 11 (envScriptCMR env)
 
-primEnv :: SigTx -> Data.Word.Word32 -> TapEnv -> Hash256 -> Maybe PrimEnv
-primEnv tx ix tap scmr | cond = Just $ PrimEnv { envTx = tx
-                                               , envIx = ix
-                                               , envTap = tap
-                                               , envScriptCMR = scmr
-                                               , envInputsHash = sigTxInputsHash tx
-                                               , envOutputsHash = sigTxOutputsHash tx
-                                               }
-                   | otherwise = Nothing
+primEnv :: SigTx -> Data.Word.Word32 -> TapEnv -> Maybe PrimEnv
+primEnv tx ix tap | cond = Just $ PrimEnv { envTx = tx
+                                          , envIx = ix
+                                          , envTap = tap
+                                          , envInputsHash = sigTxInputsHash tx
+                                          , envOutputsHash = sigTxOutputsHash tx
+                                          }
+                  | otherwise = Nothing
  where
   cond = fromIntegral ix < Vector.length (sigTxIn tx)
 
@@ -289,4 +285,4 @@ primSem p a env = interpret p a
   interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapBranch (envTap env)) . fromInteger . fromWord8
   interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env
   interpret AnnexHash = element . return . cast $ encodeHash . bslHash <$> tapAnnex (envTap env)
-  interpret ScriptCMR = element . return . toWord256 . integerHash256 $ envScriptCMR env
+  interpret ScriptCMR = element . return . toWord256 . integerHash256 . tapScriptCMR $ envTap env

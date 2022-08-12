@@ -57,16 +57,14 @@ void c_set_rawTransaction(rawTransaction* result, unsigned int version,
                             };
 }
 
-void c_set_rawTapEnv(rawTapEnv* result, const rawBuffer* annex, const char* controlBlock, unsigned char branchLen) {
-  *result = (rawTapEnv){ .annex = annex, .controlBlock = controlBlock, .branchLen = branchLen };
+void c_set_rawTapEnv(rawTapEnv* result, const rawBuffer* annex, const char* controlBlock, unsigned char branchLen, const char* scriptCMR) {
+  *result = (rawTapEnv){ .annex = annex, .controlBlock = controlBlock, .branchLen = branchLen, .scriptCMR = scriptCMR };
 }
 
-void c_set_txEnv(txEnv* result, const transaction* tx, const tapEnv* taproot, const char* genesisHash, const char* scriptCMR, unsigned int ix) {
+void c_set_txEnv(txEnv* result, const transaction* tx, const tapEnv* taproot, const char* genesisHash, unsigned int ix) {
   sha256_midstate genesis;
-  sha256_midstate script;
   sha256_toMidstate(genesis.s, genesisHash);
-  sha256_toMidstate(script.s, scriptCMR);
-  *result = build_txEnv(tx, taproot, &genesis, &script, ix);
+  *result = build_txEnv(tx, taproot, &genesis, ix);
 }
 
 void c_free_tapEnv(tapEnv* env) {
