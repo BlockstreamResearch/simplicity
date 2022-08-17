@@ -20,7 +20,7 @@ import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Primitive
 import Simplicity.Elements.Jets (JetType, WrappedSimplicity, fastEval, jetSubst, unwrap)
 import Simplicity.Elements.Serialization.BitString
-import qualified Simplicity.Elements.Programs.CheckSigHashAll.Lib
+import qualified Simplicity.Elements.Programs.SigHash.Lib
 import Simplicity.Elements.Term
 import qualified Simplicity.LibSecp256k1.Spec
 import Simplicity.MerkleRoot
@@ -189,7 +189,7 @@ checkSigHashAllTx1 :: ExampleProg
 checkSigHashAllTx1 = Example
   { _name = "checkSigHashAllTx1"
   , _path = ["primitive", "elements"]
-  , _text = [ "Simplicity.Programs.CheckSigHash.checkSigHash' Simplicity.Elements.Programs.CheckSigHashAll.Lib.hashAll"
+  , _text = [ "Simplicity.Programs.CheckSigHash.checkSigHash' Simplicity.Elements.Programs.SigHash.Lib.sigAllHash"
             , "(Simplicity.LibSecp256k1.Spec.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63)"
             , "(Simplicity.LibSecp256k1.Spec.Sig 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63"
             , "                                  0x" ++ sh s ++ ")"
@@ -207,7 +207,7 @@ checkSigHashAllTx1 = Example
     s = Numeric.showHex v ""
   s = insecureSig . fromIntegral . Arith.fromWord256 $ msg
   Just msg = fastEval (Simplicity.Programs.CheckSigHash.sigHash libSha256 (unwrap hashMode)) env ()
-  hashMode = jetSubst $ Simplicity.Elements.Programs.CheckSigHashAll.Lib.hashAll
+  hashMode = jetSubst $ Simplicity.Elements.Programs.SigHash.Lib.sigAllHash
   libSha256 = Simplicity.Programs.Sha256.lib
   genesis = review (over be256) 0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
   Just env = primEnv tx1 0 tapEnv genesis

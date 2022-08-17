@@ -16,8 +16,7 @@ import Simplicity.Elements.Arbitrary
 import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Jets
 import Simplicity.Elements.TestEval
-import Simplicity.Elements.Primitive (primEnv, envTx, envTap)
-import Simplicity.Elements.Programs.CheckSigHashAll.Lib
+import Simplicity.Elements.Primitive (primEnv, primEnvHash, envTx, envTap)
 import qualified Simplicity.Elements.Programs.TimeLock as Prog
 import Simplicity.Elements.Semantics
 import qualified Simplicity.LibSecp256k1.Spec as Schnorr
@@ -26,6 +25,7 @@ import Simplicity.Programs.CheckSigHash
 import qualified Simplicity.Programs.Sha256 as Sha256
 import qualified Simplicity.Programs.Elements.Lib as Prog
 import qualified Simplicity.Elements.Programs.Issuance.Lib as Prog
+import qualified Simplicity.Elements.Programs.SigHash.Lib as Prog
 import Simplicity.TestCoreEval
 import Simplicity.Ty.Arbitrary
 import Simplicity.Ty.Word
@@ -630,32 +630,14 @@ tx1 = SigTx
     }
 
 hunit_sigHashAll :: Bool
-hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
-                   [fromWord256 <$> (sem sigHashAll txEnv ()), fromWord256 <$> (sem (sigHash Sha256.lib hashAll) txEnv ())]
+hunit_sigHashAll = Just (integerHash256 sigHashAll_spec) == (fromWord256 <$> (sem (sigHash Sha256.lib Prog.sigAllHash) txEnv ()))
  where
   ix = 0
   genesis = review (over be256) 0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
   txo = sigTxiTxo (sigTxIn tx1 ! (fromIntegral ix))
   Just txEnv = primEnv tx1 ix tapEnv genesis
-  sigHashTag = bsHash $ BSC.pack "Simplicity-Draft\USSigHash"
-  taproot_spec = bsHash $ encode (tapScriptCMR tapEnv) <> encode (tapleafVersion tapEnv)
-  asset_spec (Asset (Explicit id)) = bsHash $ encode (0x01 :: Word.Word256) <> encode id
-  asset_spec (Asset (Confidential (Point b x) _)) = bsHash $ encode (if b then 0x0b else 0x0a :: Word.Word256) <> encode (Schnorr.fe_pack x)
-  amount_spec (Amount (Explicit amt)) = bsHash $ encode (0x01 :: Word.Word256) <> encode (fromIntegral amt :: Word.Word256)
-  amount_spec (Amount (Confidential (Point b x) _)) = bsHash $ encode (if b then 0x09 else 0x08 :: Word.Word256) <> encode (Schnorr.fe_pack x)
-  hashAll_spec = bslHash . runPutLazy
-               $ put sigHashTag >> put sigHashTag
-              >> put (sigTxInputsHash tx1)
-              >> put (sigTxOutputsHash tx1)
-              >> put (bsHash mempty)
-              >> put taproot_spec
-              >> put (asset_spec (utxoAsset txo))
-              >> put (amount_spec (utxoAmount txo))
-              >> putWord32be (sigTxVersion tx1)
-              >> putWord32be (sigTxLock tx1)
-              >> putWord32be ix
   signatureTag = bsHash $ BSC.pack "Simplicity-Draft\USSignature"
   sigHashAll_spec = bslHash . runPutLazy
                   $ put signatureTag >> put signatureTag
-                 >> put (commitmentRoot hashAll)
-                 >> put hashAll_spec
+                 >> put (commitmentRoot Prog.sigAllHash)
+                 >> put (primEnvHash txEnv)
