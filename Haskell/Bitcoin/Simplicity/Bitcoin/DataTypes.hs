@@ -138,9 +138,9 @@ sigTxOutputsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxOut tx)
 
 -- | Taproot specific environment data about the input being spent.
 data TapEnv = TapEnv { tapAnnex :: Maybe BSL.ByteString
-                     , tapLeafVersion :: Word8
+                     , tapleafVersion :: Word8
                      , tapInternalKey :: PubKey
-                     , tapBranch :: [Hash256]
+                     , tapbranch :: [Hash256]
                      , tapScriptCMR :: Hash256
                      } deriving Show
 

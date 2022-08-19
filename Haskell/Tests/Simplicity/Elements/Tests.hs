@@ -399,9 +399,9 @@ prop_tapleaf_version = checkJet (ElementsJet (TransactionJet TapleafVersion))
 
 prop_tapbranch :: Property
 prop_tapbranch = checkJet (ElementsJet (TransactionJet Tapbranch))
-               $ \check -> forallPrimEnv $ \env -> forAll (genTapBranchIx env) $ \i -> check env (toW8 i)
+               $ \check -> forallPrimEnv $ \env -> forAll (genTapbranchIx env) $ \i -> check env (toW8 i)
  where
-  genTapBranchIx = genBoundaryCases . fromIntegral . length . tapBranch . envTap
+  genTapbranchIx = genBoundaryCases . fromIntegral . length . tapbranch . envTap
 
 prop_version :: Property
 prop_version = checkJet (ElementsJet (TransactionJet Version))
@@ -466,9 +466,9 @@ prop_genesis_block_hash = checkJet (ElementsJet (TransactionJet GenesisBlockHash
 tapEnv :: TapEnv
 tapEnv = TapEnv
          { tapAnnex = Nothing
-         , tapLeafVersion = 0xbe
+         , tapleafVersion = 0xbe
          , tapInternalKey = Schnorr.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
-         , tapBranch = []
+         , tapbranch = []
          , tapScriptCMR = review (over be256) 0x896b16e4692350cb43c4807c8f9f63637f70f84a17b678ca9467109ff1e50f61
          }
 
@@ -518,7 +518,7 @@ hunit_sigHashAll = all (Just (integerHash256 sigHashAll_spec) ==)
   txo = sigTxiTxo (sigTxIn tx1 ! (fromIntegral ix))
   Just txEnv = primEnv tx1 ix tapEnv genesis
   sigHashTag = bsHash $ BSC.pack "Simplicity-Draft\USSigHash"
-  taproot_spec = bsHash $ encode (tapScriptCMR tapEnv) <> encode (tapLeafVersion tapEnv)
+  taproot_spec = bsHash $ encode (tapScriptCMR tapEnv) <> encode (tapleafVersion tapEnv)
   asset_spec (Asset (Explicit id)) = bsHash $ encode (0x01 :: Word.Word256) <> encode id
   asset_spec (Asset (Confidential (Point b x) _)) = bsHash $ encode (if b then 0x0b else 0x0a :: Word.Word256) <> encode (Schnorr.fe_pack x)
   amount_spec (Amount (Explicit amt)) = bsHash $ encode (0x01 :: Word.Word256) <> encode (fromIntegral amt :: Word.Word256)

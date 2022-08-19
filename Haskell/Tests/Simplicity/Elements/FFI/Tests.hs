@@ -5,7 +5,7 @@ import Test.Tasty.QuickCheck (NonNegative(..), Property, forAll, testProperty)
 
 import Simplicity.Arbitrary
 import Simplicity.Elements.Arbitrary
-import Simplicity.Elements.DataTypes
+import qualified Simplicity.Elements.DataTypes as Prim
 import Simplicity.Elements.FFI.Jets
 import Simplicity.Elements.Jets
 import qualified Simplicity.Elements.Primitive as Prim
@@ -423,10 +423,10 @@ prop_tapleaf_version = forallPrimEnv $ \env -> fast_tapleaf_version env () == ta
   fast_tapleaf_version = testEval (specification (ElementsJet (TransactionJet TapleafVersion)))
 
 prop_tapbranch :: Property
-prop_tapbranch = forallPrimEnv $ \env -> forAll (genTapBranchIx env) $ \i -> fast_tapbranch env (toW8 i) == tapbranch env (toW8 i)
+prop_tapbranch = forallPrimEnv $ \env -> forAll (genTapbranchIx env) $ \i -> fast_tapbranch env (toW8 i) == tapbranch env (toW8 i)
  where
   fast_tapbranch = testEval (specification (ElementsJet (TransactionJet Tapbranch)))
-  genTapBranchIx = genBoundaryCases . fromIntegral . length . tapBranch . Prim.envTap
+  genTapbranchIx = genBoundaryCases . fromIntegral . length . Prim.tapbranch . Prim.envTap
 
 prop_version :: Property
 prop_version = forallPrimEnv $ \env -> fast_version env () == version env ()
