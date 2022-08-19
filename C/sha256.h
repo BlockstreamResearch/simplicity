@@ -52,18 +52,18 @@ static inline void WriteBE64(unsigned char* ptr, uint_fast64_t x) {
   ptr[7] = 0xff & x;
 }
 
-/* Unpacks 4 bytes from a 'uint32_t' into an 'unsigned char' array in "big endian" order.
+/* Unpacks 4 bytes from a 'uint_fast32_t' into an 'unsigned char' array in "big endian" order.
  *
  * Precondition: unsigned char ptr[4]
  */
-static inline void WriteBE32(unsigned char* ptr, uint32_t x) {
+static inline void WriteBE32(unsigned char* ptr, uint_fast32_t x) {
   ptr[0] = (unsigned char)(x >> 24);
   ptr[1] = (x >> 16) & 0xff;
   ptr[2] = (x >> 8) & 0xff;
   ptr[3] = x & 0xff;
 }
 
-/* Unpacks 4 bytes from a 'uint64_t' into an 'unsigned char' array in "little endian" order.
+/* Unpacks 4 bytes from a 'uint_fast32_t' into an 'unsigned char' array in "little endian" order.
  *
  * Precondition: unsigned char ptr[4]
  */
@@ -238,6 +238,18 @@ static inline void sha256_u64be(sha256_context* ctx, uint_fast64_t x) {
 static inline void sha256_u32le(sha256_context* ctx, uint_fast32_t x) {
   unsigned char buf[4];
   WriteLE32(buf, x);
+  sha256_uchars(ctx, buf, sizeof(buf));
+}
+
+/* Add a 32-bit word to be consumed in big endian byte-order by an ongoing SHA-256 evaluation.
+ * For greater certainty, only the least 32 bits of 'x' are consumed.
+ * Furthermore the bits within each byte are consumed in big endian order.
+ *
+ * Precondition: NULL != ctx;
+ */
+static inline void sha256_u32be(sha256_context* ctx, uint_fast32_t x) {
+  unsigned char buf[4];
+  WriteBE32(buf, x);
   sha256_uchars(ctx, buf, sizeof(buf));
 }
 

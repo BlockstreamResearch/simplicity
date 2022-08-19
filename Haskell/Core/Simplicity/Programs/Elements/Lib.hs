@@ -5,7 +5,8 @@
 module Simplicity.Programs.Elements.Lib
   ( Elements.Conf
   , calculateIssuanceEntropy, calculateAsset, calculateExplicitToken, calculateConfidentialToken
-  , Elements.Hash
+  , outpointHash, assetAmountHash, nonceHash, annexHash
+  , Elements.Hash, Elements.Ctx8
   ) where
 
 import qualified Simplicity.Programs.Elements as Elements
@@ -15,3 +16,7 @@ calculateIssuanceEntropy = Elements.calculateIssuanceEntropy Elements.lib
 calculateAsset = Elements.calculateAsset Elements.lib
 calculateExplicitToken = Elements.calculateExplicitToken Elements.lib
 calculateConfidentialToken = Elements.calculateConfidentialToken Elements.lib
+outpointHash = Elements.outpointHash Elements.libAssert
+assetAmountHash = Elements.assetAmountHash Elements.libAssert
+nonceHash = Elements.nonceHash Elements.libAssert
+annexHash = Elements.annexHash Elements.libAssert

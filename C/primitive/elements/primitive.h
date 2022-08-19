@@ -190,13 +190,33 @@ typedef struct sigInput {
 } sigInput;
 
 /* A structure representing data from an Elements transaction (along with the utxo data of the outputs being redeemed).
- * 'inputsHash' and 'outputsHash' are a cache of the hash of the input and output data respectively.
+ * Includes a variety of cached hash values that are used in signature hash jets.
  */
 typedef struct transaction {
   const sigInput* input;
   const sigOutput* output;
   sha256_midstate inputsHash_deprecated;
   sha256_midstate outputsHash_deprecated;
+  sha256_midstate outputAssetAmountsHash;
+  sha256_midstate outputNoncesHash;
+  sha256_midstate outputScriptsHash;
+  sha256_midstate outputRangeProofsHash;
+  sha256_midstate outputSurjectionProofsHash;
+  sha256_midstate outputsHash;
+  sha256_midstate inputOutpointsHash;
+  sha256_midstate inputAssetAmountsHash;
+  sha256_midstate inputScriptsHash;
+  sha256_midstate inputUTXOsHash;
+  sha256_midstate inputSequencesHash;
+  sha256_midstate inputAnnexesHash;
+  sha256_midstate inputScriptSigsHash;
+  sha256_midstate inputsHash;
+  sha256_midstate issuanceAssetAmountsHash;
+  sha256_midstate issuanceTokenAmountsHash;
+  sha256_midstate issuanceRangeProofsHash;
+  sha256_midstate issuanceBlindingEntropyHash;
+  sha256_midstate issuancesHash;
+  sha256_midstate txHash;
   uint_fast32_t numInputs;
   uint_fast32_t numOutputs;
   uint_fast32_t version;
@@ -218,6 +238,9 @@ typedef struct transaction {
 typedef struct tapEnv {
   const sha256_midstate *annexHash;
   const sha256_midstate *branch;
+  sha256_midstate tapLeafHash;
+  sha256_midstate tapbranchHash;
+  sha256_midstate tapEnvHash;
   sha256_midstate internalKey;
   sha256_midstate scriptCMR;
   unsigned char branchLen;
@@ -235,6 +258,7 @@ typedef struct txEnv {
   const transaction* tx;
   const tapEnv* taproot;
   sha256_midstate genesisHash;
+  sha256_midstate sigAllHash;
   uint_fast32_t ix;
 } txEnv;
 

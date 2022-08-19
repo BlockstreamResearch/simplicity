@@ -62,6 +62,30 @@ tests = testGroup "Elements"
           , testProperty "input_issuance_asset" prop_input_issuance_asset
           , testProperty "input_issuance_token" prop_input_issuance_token
           , testProperty "input_issuance_entropy" prop_input_issuance_entropy
+          , testProperty "output_asset_amounts_hash" prop_output_asset_amounts_hash
+          , testProperty "output_nonces_hash" prop_output_nonces_hash
+          , testProperty "output_scripts_hash" prop_output_scripts_hash
+          , testProperty "output_range_proofs_hash" prop_output_range_proofs_hash
+          , testProperty "output_surjection_proofs_hash" prop_output_surjection_proofs_hash
+          , testProperty "outputs_hash" prop_outputs_hash
+          , testProperty "input_outpoints_hash" prop_input_outpoints_hash
+          , testProperty "input_asset_amounts_hash" prop_input_asset_amounts_hash
+          , testProperty "input_scripts_hash" prop_input_scripts_hash
+          , testProperty "input_utxos_hash" prop_input_utxos_hash
+          , testProperty "input_sequences_hash" prop_input_sequences_hash
+          , testProperty "input_annexes_hash" prop_input_annexes_hash
+          , testProperty "input_script_sigs_hash" prop_input_script_sigs_hash
+          , testProperty "inputs_hash" prop_inputs_hash
+          , testProperty "issuance_asset_amounts_hash" prop_issuance_asset_amounts_hash
+          , testProperty "issuance_token_amounts_hash" prop_issuance_token_amounts_hash
+          , testProperty "issuance_range_proofs_hash" prop_issuance_range_proofs_hash
+          , testProperty "issuance_blinding_entropy_hash" prop_issuance_blinding_entropy_hash
+          , testProperty "issuances_hash" prop_issuances_hash
+          , testProperty "tx_hash" prop_tx_hash
+          , testProperty "tap_env_hash" prop_tap_env_hash
+          , testProperty "tapbranch_hash" prop_tapbranch_hash
+          , testProperty "tapleaf_hash" prop_tapleaf_hash
+          , testProperty "sig_all_hash" prop_sig_all_hash
           , testProperty "script_cmr" prop_script_cmr
           , testProperty "internal_key" prop_internal_key
           , testProperty "current_index" prop_current_index
@@ -220,6 +244,102 @@ prop_input_issuance_token = checkJet (ElementsJet (IssuanceJet IssuanceToken))
 prop_input_issuance_entropy :: Property
 prop_input_issuance_entropy = checkJet (ElementsJet (IssuanceJet IssuanceEntropy))
                             $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_output_asset_amounts_hash :: Property
+prop_output_asset_amounts_hash = checkJet (ElementsJet (SigHashJet OutputAssetAmountsHash))
+                               $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_output_nonces_hash :: Property
+prop_output_nonces_hash = checkJet (ElementsJet (SigHashJet OutputNoncesHash))
+                        $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_output_scripts_hash :: Property
+prop_output_scripts_hash = checkJet (ElementsJet (SigHashJet OutputScriptsHash))
+                         $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_output_range_proofs_hash :: Property
+prop_output_range_proofs_hash = checkJet (ElementsJet (SigHashJet OutputRangeProofsHash))
+                              $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_output_surjection_proofs_hash :: Property
+prop_output_surjection_proofs_hash = checkJet (ElementsJet (SigHashJet OutputSurjectionProofsHash))
+                                   $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_outputs_hash :: Property
+prop_outputs_hash = checkJet (ElementsJet (SigHashJet OutputsHash))
+                  $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_input_outpoints_hash :: Property
+prop_input_outpoints_hash = checkJet (ElementsJet (SigHashJet InputOutpointsHash))
+                          $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_input_asset_amounts_hash :: Property
+prop_input_asset_amounts_hash = checkJet (ElementsJet (SigHashJet InputAssetAmountsHash))
+                              $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_input_scripts_hash :: Property
+prop_input_scripts_hash = checkJet (ElementsJet (SigHashJet InputScriptsHash))
+                        $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_input_utxos_hash :: Property
+prop_input_utxos_hash = checkJet (ElementsJet (SigHashJet InputUtxosHash))
+                      $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_input_sequences_hash :: Property
+prop_input_sequences_hash = checkJet (ElementsJet (SigHashJet InputSequencesHash))
+                          $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_input_annexes_hash :: Property
+prop_input_annexes_hash = checkJet (ElementsJet (SigHashJet InputAnnexesHash))
+                        $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_input_script_sigs_hash :: Property
+prop_input_script_sigs_hash = checkJet (ElementsJet (SigHashJet InputScriptSigsHash))
+                            $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_inputs_hash :: Property
+prop_inputs_hash = checkJet (ElementsJet (SigHashJet InputsHash))
+                 $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_issuance_asset_amounts_hash :: Property
+prop_issuance_asset_amounts_hash = checkJet (ElementsJet (SigHashJet IssuanceAssetAmountsHash))
+                                 $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_issuance_token_amounts_hash :: Property
+prop_issuance_token_amounts_hash = checkJet (ElementsJet (SigHashJet IssuanceTokenAmountsHash))
+                                 $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_issuance_range_proofs_hash :: Property
+prop_issuance_range_proofs_hash = checkJet (ElementsJet (SigHashJet IssuanceRangeProofsHash))
+                                $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_issuance_blinding_entropy_hash :: Property
+prop_issuance_blinding_entropy_hash = checkJet (ElementsJet (SigHashJet IssuanceBlindingEntropyHash))
+                                    $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_issuances_hash :: Property
+prop_issuances_hash = checkJet (ElementsJet (SigHashJet IssuancesHash))
+                    $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_tx_hash :: Property
+prop_tx_hash = checkJet (ElementsJet (SigHashJet TxHash))
+             $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_tapbranch_hash :: Property
+prop_tapbranch_hash = checkJet (ElementsJet (SigHashJet TapbranchHash))
+                    $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_tapleaf_hash :: Property
+prop_tapleaf_hash = checkJet (ElementsJet (SigHashJet TapleafHash))
+                  $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_tap_env_hash :: Property
+prop_tap_env_hash = checkJet (ElementsJet (SigHashJet TapEnvHash))
+                  $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_sig_all_hash :: Property
+prop_sig_all_hash = checkJet (ElementsJet (SigHashJet SigAllHash))
+                  $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_script_cmr :: Property
 prop_script_cmr = checkJet (ElementsJet (TransactionJet ScriptCMR))

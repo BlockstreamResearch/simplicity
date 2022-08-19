@@ -22,6 +22,7 @@ module Simplicity.Programs.Sha256.Lib
  , ctx8Add512
  , ctx8AddBuffer511
  , ctx8Finalize
+ , hashLoop
  ) where
 
 import qualified Simplicity.Programs.Sha256 as Sha256
@@ -44,3 +45,4 @@ ctx8Add256 = ctx8Addn vector256
 ctx8Add512 = ctx8Addn vector512
 ctx8AddBuffer511 = ctx8AddBuffer buffer511
 ctx8Finalize = Sha256.ctx8Finalize Sha256.libAssert
+hashLoop = Sha256.hashLoop

@@ -12,6 +12,7 @@ module Simplicity.Programs.Sha256
  , ctx8Addn
  , ctx8AddBuffer
  , ctx8Finalize
+ , hashLoop
  -- * Example instances
  , libAssert
  ) where
@@ -143,6 +144,18 @@ lib = l
     rotateW32 = rotate_const word32
     shiftW32 = shift_const_by false word32
     buffer63Empty = bufferEmpty buffer63
+
+-- | Given an "array", which is a term that maps an index @w@ to a vector of bytes @v@, returning nothing if the index is out of bounds,
+-- hash all the bytes of the "array" in seqeuenced until the end of the array (i.e. upto the first index where the "array" term returns nothing).
+--
+-- A context value of type "c" is available to be pass into the "array" term.
+hashLoop :: (Assert term, TyC c, TyC w, TyC v) => Vector Word8 v -> Word w -> term (c, w) (S v) -> term (c, Ctx8) Ctx8
+hashLoop v = \w array ->
+  let body = take array &&& ih
+         >>> match (injl ih) (injr (ih &&& oh >>> ctx8Addv))
+  in forWhile w body >>> copair iden iden
+ where
+  ctx8Addv = ctx8Addn libAssert v
 
 -- | Build the Sha256 'LibAssert' library.
 mkLibAssert :: Assert term => Lib term -> LibAssert term

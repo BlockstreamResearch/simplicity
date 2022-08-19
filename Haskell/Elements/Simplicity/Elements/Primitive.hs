@@ -4,6 +4,7 @@ module Simplicity.Elements.Primitive
   ( Prim(..), primPrefix, primName
   , getPrimBit, putPrimBit
   , PrimEnv, primEnv, envTx, envIx, envTap, envGenesisBlock
+  , primEnvHash
   , primSem
   -- * Re-exported Types
   , S, Conf, PubKey
@@ -18,7 +19,7 @@ import qualified Data.List as List
 import Data.Maybe (fromMaybe, listToMaybe)
 import qualified Data.Monoid as Monoid
 import Data.Serialize (Get, getWord8,
-                       Putter, put, putWord8, putWord32le, putWord64le, runPutLazy)
+                       Putter, put, putWord8, putWord32be, putWord32le, putWord64le, runPutLazy)
 import qualified Data.Word
 import Data.Vector as Vector ((!?), length)
 import Lens.Family2 (to, view, under)
@@ -296,6 +297,22 @@ primEnv tx ix tap gen | cond = Just $ PrimEnv { envTx = tx
                       | otherwise = Nothing
  where
   cond = fromIntegral ix < Vector.length (sigTxIn tx)
+
+-- | A hash of
+--
+-- * 'envGenesisBlock' twice (this effictively makes a tagged hash).
+-- * 'txHash'
+-- * 'tapEnvHash'
+-- * 'envIx'
+--
+-- Note: this is the hash used for the "sig-all" hash.
+primEnvHash :: PrimEnv -> Hash256
+primEnvHash env = bslHash . runPutLazy $ do
+                    put $ envGenesisBlock env
+                    put $ envGenesisBlock env
+                    put $ txHash (envTx env)
+                    put $ tapEnvHash (envTap env)
+                    putWord32be $ envIx env
 
 primSem :: Prim a b -> a -> PrimEnv -> Maybe b
 primSem p a env = interpret p a

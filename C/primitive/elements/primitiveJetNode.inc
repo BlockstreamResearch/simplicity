@@ -347,6 +347,12 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mmw256
 }
+,[INPUT_ANNEXES_HASH] =
+{ .tag = JET
+, .jet = input_annexes_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[INPUT_ASSET] =
 { .tag = JET
 , .jet = input_asset
@@ -358,6 +364,18 @@
 , .jet = input_asset_amount
 , .sourceIx = ty_w32
 , .targetIx = ty_mpspbw256w256spbw256w64
+}
+,[INPUT_ASSET_AMOUNTS_HASH] =
+{ .tag = JET
+, .jet = input_asset_amounts_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
+,[INPUT_OUTPOINTS_HASH] =
+{ .tag = JET
+, .jet = input_outpoints_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
 }
 ,[INPUT_PEGIN] =
 { .tag = JET
@@ -383,11 +401,41 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mw256
 }
+,[INPUT_SCRIPT_SIGS_HASH] =
+{ .tag = JET
+, .jet = input_script_sigs_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
+,[INPUT_SCRIPTS_HASH] =
+{ .tag = JET
+, .jet = input_scripts_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[INPUT_SEQUENCE] =
 { .tag = JET
 , .jet = input_sequence
 , .sourceIx = ty_w32
 , .targetIx = ty_mw32
+}
+,[INPUT_SEQUENCES_HASH] =
+{ .tag = JET
+, .jet = input_sequences_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
+,[INPUT_UTXOS_HASH] =
+{ .tag = JET
+, .jet = input_utxos_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
+,[INPUTS_HASH] =
+{ .tag = JET
+, .jet = inputs_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
 }
 ,[INTERNAL_KEY] =
 { .tag = JET
@@ -413,17 +461,35 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mmspbw256w64
 }
+,[ISSUANCE_ASSET_AMOUNTS_HASH] =
+{ .tag = JET
+, .jet = issuance_asset_amounts_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[ISSUANCE_ASSET_PROOF] =
 { .tag = JET
 , .jet = issuance_asset_proof
 , .sourceIx = ty_w32
 , .targetIx = ty_mw256
 }
+,[ISSUANCE_BLINDING_ENTROPY_HASH] =
+{ .tag = JET
+, .jet = issuance_blinding_entropy_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[ISSUANCE_ENTROPY] =
 { .tag = JET
 , .jet = issuance_entropy
 , .sourceIx = ty_w32
 , .targetIx = ty_mmw256
+}
+,[ISSUANCE_RANGE_PROOFS_HASH] =
+{ .tag = JET
+, .jet = issuance_range_proofs_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
 }
 ,[ISSUANCE_TOKEN] =
 { .tag = JET
@@ -437,11 +503,23 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mmspbw256w64
 }
+,[ISSUANCE_TOKEN_AMOUNTS_HASH] =
+{ .tag = JET
+, .jet = issuance_token_amounts_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[ISSUANCE_TOKEN_PROOF] =
 { .tag = JET
 , .jet = issuance_token_proof
 , .sourceIx = ty_w32
 , .targetIx = ty_mw256
+}
+,[ISSUANCES_HASH] =
+{ .tag = JET
+, .jet = issuances_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
 }
 ,[LINEAR_COMBINATION_1] =
 { .tag = JET
@@ -509,11 +587,23 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mpspbw256w256spbw256w64
 }
+,[OUTPUT_ASSET_AMOUNTS_HASH] =
+{ .tag = JET
+, .jet = output_asset_amounts_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[OUTPUT_NONCE] =
 { .tag = JET
 , .jet = output_nonce
 , .sourceIx = ty_w32
 , .targetIx = ty_mmspbw256w256
+}
+,[OUTPUT_NONCES_HASH] =
+{ .tag = JET
+, .jet = output_nonces_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
 }
 ,[OUTPUT_NULL_DATUM] =
 { .tag = JET
@@ -527,17 +617,41 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mw256
 }
+,[OUTPUT_RANGE_PROOFS_HASH] =
+{ .tag = JET
+, .jet = output_range_proofs_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[OUTPUT_SCRIPT_HASH] =
 { .tag = JET
 , .jet = output_script_hash
 , .sourceIx = ty_w32
 , .targetIx = ty_mw256
 }
+,[OUTPUT_SCRIPTS_HASH] =
+{ .tag = JET
+, .jet = output_scripts_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[OUTPUT_SURJECTION_PROOF] =
 { .tag = JET
 , .jet = output_surjection_proof
 , .sourceIx = ty_w32
 , .targetIx = ty_mw256
+}
+,[OUTPUT_SURJECTION_PROOFS_HASH] =
+{ .tag = JET
+, .jet = output_surjection_proofs_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
+,[OUTPUTS_HASH] =
+{ .tag = JET
+, .jet = outputs_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
 }
 ,[PARSE_LOCK] =
 { .tag = JET
@@ -719,11 +833,23 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 }
+,[SIG_ALL_HASH] =
+{ .tag = JET
+, .jet = sig_all_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[SUBTRACT_32] =
 { .tag = JET
 , .jet = subtract_32
 , .sourceIx = ty_w64
 , .targetIx = ty_pbw32
+}
+,[TAP_ENV_HASH] =
+{ .tag = JET
+, .jet = tap_env_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
 }
 ,[TAPBRANCH] =
 { .tag = JET
@@ -731,11 +857,29 @@
 , .sourceIx = ty_w8
 , .targetIx = ty_mw256
 }
+,[TAPBRANCH_HASH] =
+{ .tag = JET
+, .jet = tapbranch_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
+,[TAPLEAF_HASH] =
+{ .tag = JET
+, .jet = tapleaf_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[TAPLEAF_VERSION] =
 { .tag = JET
 , .jet = tapleaf_version
 , .sourceIx = ty_u
 , .targetIx = ty_w8
+}
+,[TX_HASH] =
+{ .tag = JET
+, .jet = tx_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
 }
 ,[TX_IS_FINAL] =
 { .tag = JET

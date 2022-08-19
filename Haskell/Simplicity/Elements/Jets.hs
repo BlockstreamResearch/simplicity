@@ -1,7 +1,7 @@
 -- | This module provides a cannonical set of known jets for Simplicity for Elements. (At the moment this just consists of 'CoreJet's.)
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Elements.Jets
-  ( JetType(..), ElementsJet(..), TimeLockJet(..), IssuanceJet(..), TransactionJet(..)
+  ( JetType(..), ElementsJet(..), SigHashJet(..), TimeLockJet(..), IssuanceJet(..), TransactionJet(..)
   , jetSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
@@ -32,10 +32,11 @@ import qualified Simplicity.Elements.Dag as Dag
 import Simplicity.Elements.Term
 import Simplicity.Elements.DataTypes
 import qualified Simplicity.Elements.JetType
-import Simplicity.Elements.Primitive (PrimEnv, S, Conf, PubKey, envTx)
+import Simplicity.Elements.Primitive (PrimEnv, S, Conf, PubKey, primEnvHash, envTx, envTap)
 import qualified Simplicity.Elements.Primitive as Prim
 import qualified Simplicity.Elements.Serialization.BitString as BitString
 import qualified Simplicity.Elements.Semantics as Semantics
+import qualified Simplicity.Elements.Programs.SigHash.Lib as SigHash
 import qualified Simplicity.Elements.Programs.Issuance.Lib as Issuance
 import qualified Simplicity.Elements.Programs.TimeLock as TimeLock
 import qualified Simplicity.Elements.Programs.Transaction.Lib as Prog
@@ -56,11 +57,40 @@ deriving instance Eq (JetType a b)
 deriving instance Show (JetType a b)
 
 data ElementsJet a b where
+  SigHashJet :: SigHashJet a b -> ElementsJet a b
   TimeLockJet :: TimeLockJet a b -> ElementsJet a b
   IssuanceJet :: IssuanceJet a b -> ElementsJet a b
   TransactionJet :: TransactionJet a b -> ElementsJet a b
 deriving instance Eq (ElementsJet a b)
 deriving instance Show (ElementsJet a b)
+
+data SigHashJet a b where
+  SigAllHash :: SigHashJet () Word256
+  TxHash :: SigHashJet () Word256
+  TapEnvHash :: SigHashJet () Word256
+  OutputsHash :: SigHashJet () Word256
+  InputsHash :: SigHashJet () Word256
+  IssuancesHash :: SigHashJet () Word256
+  InputUtxosHash :: SigHashJet () Word256
+  OutputAssetAmountsHash :: SigHashJet () Word256
+  OutputScriptsHash :: SigHashJet () Word256
+  OutputNoncesHash :: SigHashJet () Word256
+  OutputRangeProofsHash :: SigHashJet () Word256
+  OutputSurjectionProofsHash :: SigHashJet () Word256
+  InputOutpointsHash :: SigHashJet () Word256
+  InputSequencesHash :: SigHashJet () Word256
+  InputAnnexesHash :: SigHashJet () Word256
+  InputScriptSigsHash :: SigHashJet () Word256
+  IssuanceAssetAmountsHash :: SigHashJet () Word256
+  IssuanceTokenAmountsHash :: SigHashJet () Word256
+  IssuanceRangeProofsHash :: SigHashJet () Word256
+  IssuanceBlindingEntropyHash :: SigHashJet () Word256
+  InputAssetAmountsHash :: SigHashJet () Word256
+  InputScriptsHash :: SigHashJet () Word256
+  TapleafHash :: SigHashJet () Word256
+  TapbranchHash :: SigHashJet () Word256
+deriving instance Eq (SigHashJet a b)
+deriving instance Show (SigHashJet a b)
 
 data TimeLockJet a b where
   CheckLockHeight :: TimeLockJet TimeLock.Height ()
@@ -139,9 +169,36 @@ deriving instance Eq (TransactionJet a b)
 deriving instance Show (TransactionJet a b)
 
 specificationElements :: (Assert term, Primitive term) => ElementsJet a b -> term a b
+specificationElements (SigHashJet x) = specificationSigHash x
 specificationElements (TimeLockJet x) = specificationTimeLock x
 specificationElements (IssuanceJet x) = specificationIssuance x
 specificationElements (TransactionJet x) = specificationTransaction x
+
+specificationSigHash :: (Assert term, Primitive term) => SigHashJet a b -> term a b
+specificationSigHash SigAllHash = SigHash.sigAllHash
+specificationSigHash TxHash = SigHash.txHash
+specificationSigHash TapEnvHash = SigHash.tapEnvHash
+specificationSigHash OutputsHash = SigHash.outputsHash
+specificationSigHash InputsHash = SigHash.inputsHash
+specificationSigHash IssuancesHash = SigHash.issuancesHash
+specificationSigHash InputUtxosHash = SigHash.inputUtxosHash
+specificationSigHash OutputAssetAmountsHash = SigHash.outputAssetAmountsHash
+specificationSigHash OutputScriptsHash = SigHash.outputScriptsHash
+specificationSigHash OutputNoncesHash = SigHash.outputNoncesHash
+specificationSigHash OutputRangeProofsHash = SigHash.outputRangeProofsHash
+specificationSigHash OutputSurjectionProofsHash = SigHash.outputSurjectionProofsHash
+specificationSigHash InputOutpointsHash = SigHash.inputOutpointsHash
+specificationSigHash InputSequencesHash = SigHash.inputSequencesHash
+specificationSigHash InputAnnexesHash = SigHash.inputAnnexesHash
+specificationSigHash InputScriptSigsHash = SigHash.inputScriptSigsHash
+specificationSigHash IssuanceAssetAmountsHash = SigHash.issuanceAssetAmountsHash
+specificationSigHash IssuanceTokenAmountsHash = SigHash.issuanceTokenAmountsHash
+specificationSigHash IssuanceRangeProofsHash = SigHash.issuanceRangeProofsHash
+specificationSigHash IssuanceBlindingEntropyHash = SigHash.issuanceBlindingEntropyHash
+specificationSigHash InputAssetAmountsHash = SigHash.inputAssetAmountsHash
+specificationSigHash InputScriptsHash = SigHash.inputScriptsHash
+specificationSigHash TapleafHash = SigHash.tapleafHash
+specificationSigHash TapbranchHash = SigHash.tapbranchHash
 
 specificationTimeLock :: (Assert term, Primitive term) => TimeLockJet a b -> term a b
 specificationTimeLock CheckLockHeight = TimeLock.checkLockHeight
@@ -214,9 +271,36 @@ specificationTransaction Version = primitive Prim.Version
 specificationTransaction GenesisBlockHash = primitive Prim.GenesisBlockHash
 
 implementationElements :: ElementsJet a b -> PrimEnv -> a -> Maybe b
+implementationElements (SigHashJet x) = implementationSigHash x
 implementationElements (TimeLockJet x) = implementationTimeLock x
 implementationElements (IssuanceJet x) = implementationIssuance x
 implementationElements (TransactionJet x) = implementationTransaction x
+
+implementationSigHash :: SigHashJet a b -> PrimEnv -> a -> Maybe b
+implementationSigHash SigAllHash env _ = Just . toWord256 . integerHash256 $ primEnvHash env
+implementationSigHash TxHash env _ = Just . toWord256 . integerHash256 $ txHash (envTx env)
+implementationSigHash TapEnvHash env _ = Just . toWord256 . integerHash256 $ tapEnvHash (envTap env)
+implementationSigHash OutputsHash env _ = Just . toWord256 . integerHash256 $ outputsHash (envTx env)
+implementationSigHash InputsHash env _ = Just . toWord256 . integerHash256 $ inputsHash (envTx env)
+implementationSigHash IssuancesHash env _ = Just . toWord256 . integerHash256 $ issuancesHash (envTx env)
+implementationSigHash InputUtxosHash env _ = Just . toWord256 . integerHash256 $ inputUtxosHash (envTx env)
+implementationSigHash OutputAssetAmountsHash env _ = Just . toWord256 . integerHash256 $ outputAssetAmountsHash (envTx env)
+implementationSigHash OutputScriptsHash env _ = Just . toWord256 . integerHash256 $ outputScriptsHash (envTx env)
+implementationSigHash OutputNoncesHash env _ = Just . toWord256 . integerHash256 $ outputNoncesHash (envTx env)
+implementationSigHash OutputRangeProofsHash env _ = Just . toWord256 . integerHash256 $ outputRangeProofsHash (envTx env)
+implementationSigHash OutputSurjectionProofsHash env _ = Just . toWord256 . integerHash256 $ outputSurjectionProofsHash (envTx env)
+implementationSigHash InputOutpointsHash env _ = Just . toWord256 . integerHash256 $ inputOutpointsHash (envTx env)
+implementationSigHash InputSequencesHash env _ = Just . toWord256 . integerHash256 $ inputSequencesHash (envTx env)
+implementationSigHash InputAnnexesHash env _ = Just . toWord256 . integerHash256 $ inputAnnexesHash (envTx env)
+implementationSigHash InputScriptSigsHash env _ = Just . toWord256 . integerHash256 $ inputScriptSigsHash (envTx env)
+implementationSigHash IssuanceAssetAmountsHash env _ = Just . toWord256 . integerHash256 $ issuanceAssetAmountsHash (envTx env)
+implementationSigHash IssuanceTokenAmountsHash env _ = Just . toWord256 . integerHash256 $ issuanceTokenAmountsHash (envTx env)
+implementationSigHash IssuanceRangeProofsHash env _ = Just . toWord256 . integerHash256 $ issuanceRangeProofsHash (envTx env)
+implementationSigHash IssuanceBlindingEntropyHash env _ = Just . toWord256 . integerHash256 $ issuanceBlindingEntropyHash (envTx env)
+implementationSigHash InputAssetAmountsHash env _ = Just . toWord256 . integerHash256 $ inputAssetAmountsHash (envTx env)
+implementationSigHash InputScriptsHash env _ = Just . toWord256 . integerHash256 $ inputScriptsHash (envTx env)
+implementationSigHash TapleafHash env _ = Just . toWord256 . integerHash256 $ tapleafHash (envTap env)
+implementationSigHash TapbranchHash env _ = Just . toWord256 . integerHash256 $ tapbranchHash (envTap env)
 
 implementationTimeLock :: TimeLockJet a b -> PrimEnv -> a -> Maybe b
 implementationTimeLock CheckLockHeight env x | txIsFinal (envTx env) = guard $ fromWord32 x <= 0
@@ -304,10 +388,37 @@ getJetBitElements :: (Monad m) => m Void -> m Bool -> m (SomeArrow ElementsJet)
 getJetBitElements abort next = getPositive next >>= match
  where
   makeArrow p = return (SomeArrow p)
+  match 1 = (someArrowMap SigHashJet) <$> getJetBitSigHash
   match 2 = (someArrowMap TimeLockJet) <$> getJetBitTimeLock
   match 3 = (someArrowMap IssuanceJet) <$> getJetBitIssuance
   match 4 = (someArrowMap TransactionJet) <$> getJetBitTransaction
   match _ = vacuous abort
+  getJetBitSigHash = getPositive next >>= matchSigHash
+   where
+    matchSigHash 1 = makeArrow SigAllHash
+    matchSigHash 2 = makeArrow TxHash
+    matchSigHash 3 = makeArrow TapEnvHash
+    matchSigHash 4 = makeArrow InputsHash
+    matchSigHash 5 = makeArrow OutputsHash
+    matchSigHash 6 = makeArrow IssuancesHash
+    matchSigHash 7 = makeArrow InputUtxosHash
+    matchSigHash 8 = makeArrow OutputAssetAmountsHash
+    matchSigHash 9 = makeArrow OutputScriptsHash
+    matchSigHash 10 = makeArrow OutputNoncesHash
+    matchSigHash 11 = makeArrow OutputRangeProofsHash
+    matchSigHash 12 = makeArrow OutputSurjectionProofsHash
+    matchSigHash 13 = makeArrow InputOutpointsHash
+    matchSigHash 14 = makeArrow InputSequencesHash
+    matchSigHash 15 = makeArrow InputAnnexesHash
+    matchSigHash 16 = makeArrow InputScriptSigsHash
+    matchSigHash 17 = makeArrow IssuanceAssetAmountsHash
+    matchSigHash 18 = makeArrow IssuanceTokenAmountsHash
+    matchSigHash 19 = makeArrow IssuanceRangeProofsHash
+    matchSigHash 20 = makeArrow IssuanceBlindingEntropyHash
+    matchSigHash 21 = makeArrow InputAssetAmountsHash
+    matchSigHash 22 = makeArrow InputScriptsHash
+    matchSigHash 23 = makeArrow TapleafHash
+    matchSigHash 24 = makeArrow TapbranchHash
   getJetBitTimeLock = getPositive next >>= matchTimeLock
    where
     matchTimeLock 1 = makeArrow CheckLockHeight
@@ -382,9 +493,36 @@ getJetBitElements abort next = getPositive next >>= match
     matchTransaction 48 = makeArrow GenesisBlockHash
 
 putJetBitElements :: ElementsJet a b -> DList Bool
+putJetBitElements (SigHashJet x)     = putPositive 1 . putJetBitSigHash x
 putJetBitElements (TimeLockJet x)    = putPositive 2 . putJetBitTimeLock x
 putJetBitElements (IssuanceJet x)    = putPositive 3 . putJetBitIssuance x
 putJetBitElements (TransactionJet x) = putPositive 4 . putJetBitTransaction x
+
+putJetBitSigHash :: SigHashJet a b -> DList Bool
+putJetBitSigHash SigAllHash                  = putPositive 1
+putJetBitSigHash TxHash                      = putPositive 2
+putJetBitSigHash TapEnvHash                  = putPositive 3
+putJetBitSigHash InputsHash                  = putPositive 4
+putJetBitSigHash OutputsHash                 = putPositive 5
+putJetBitSigHash IssuancesHash               = putPositive 6
+putJetBitSigHash InputUtxosHash              = putPositive 7
+putJetBitSigHash OutputAssetAmountsHash      = putPositive 8
+putJetBitSigHash OutputScriptsHash           = putPositive 9
+putJetBitSigHash OutputNoncesHash            = putPositive 10
+putJetBitSigHash OutputRangeProofsHash       = putPositive 11
+putJetBitSigHash OutputSurjectionProofsHash  = putPositive 12
+putJetBitSigHash InputOutpointsHash          = putPositive 13
+putJetBitSigHash InputSequencesHash          = putPositive 14
+putJetBitSigHash InputAnnexesHash            = putPositive 15
+putJetBitSigHash InputScriptSigsHash         = putPositive 16
+putJetBitSigHash IssuanceAssetAmountsHash    = putPositive 17
+putJetBitSigHash IssuanceTokenAmountsHash    = putPositive 18
+putJetBitSigHash IssuanceRangeProofsHash     = putPositive 19
+putJetBitSigHash IssuanceBlindingEntropyHash = putPositive 20
+putJetBitSigHash InputAssetAmountsHash       = putPositive 21
+putJetBitSigHash InputScriptsHash            = putPositive 22
+putJetBitSigHash TapleafHash                 = putPositive 23
+putJetBitSigHash TapbranchHash               = putPositive 24
 
 putJetBitTimeLock :: TimeLockJet a b -> DList Bool
 putJetBitTimeLock CheckLockHeight   = putPositive 1
@@ -459,8 +597,33 @@ putJetBitTransaction GenesisBlockHash           = putPositive 48
 
 elementsJetMap :: Map.Map Hash256 (SomeArrow ElementsJet)
 elementsJetMap = Map.fromList
-  [ -- TimeLockJet
-    mkAssoc (TimeLockJet CheckLockHeight)
+  [ -- SigHashJet
+    mkAssoc (SigHashJet SigAllHash)
+  , mkAssoc (SigHashJet TxHash)
+  , mkAssoc (SigHashJet TapEnvHash)
+  , mkAssoc (SigHashJet OutputsHash)
+  , mkAssoc (SigHashJet InputsHash)
+  , mkAssoc (SigHashJet IssuancesHash)
+  , mkAssoc (SigHashJet InputUtxosHash)
+  , mkAssoc (SigHashJet OutputAssetAmountsHash)
+  , mkAssoc (SigHashJet OutputScriptsHash)
+  , mkAssoc (SigHashJet OutputNoncesHash)
+  , mkAssoc (SigHashJet OutputRangeProofsHash)
+  , mkAssoc (SigHashJet OutputSurjectionProofsHash)
+  , mkAssoc (SigHashJet InputOutpointsHash)
+  , mkAssoc (SigHashJet InputSequencesHash)
+  , mkAssoc (SigHashJet InputAnnexesHash)
+  , mkAssoc (SigHashJet InputScriptSigsHash)
+  , mkAssoc (SigHashJet IssuanceAssetAmountsHash)
+  , mkAssoc (SigHashJet IssuanceTokenAmountsHash)
+  , mkAssoc (SigHashJet IssuanceRangeProofsHash)
+  , mkAssoc (SigHashJet IssuanceBlindingEntropyHash)
+  , mkAssoc (SigHashJet InputAssetAmountsHash)
+  , mkAssoc (SigHashJet InputScriptsHash)
+  , mkAssoc (SigHashJet TapleafHash)
+  , mkAssoc (SigHashJet TapbranchHash)
+    -- TimeLockJet
+  , mkAssoc (TimeLockJet CheckLockHeight)
   , mkAssoc (TimeLockJet CheckLockTime)
   , mkAssoc (TimeLockJet CheckLockDistance)
   , mkAssoc (TimeLockJet CheckLockDuration)

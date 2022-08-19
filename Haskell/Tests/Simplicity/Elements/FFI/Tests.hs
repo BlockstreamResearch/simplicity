@@ -48,6 +48,30 @@ tests = testGroup "Elements"
           , testProperty "issuance_asset" prop_issuance_asset
           , testProperty "issuance_token" prop_issuance_token
           , testProperty "issuance_entropy" prop_issuance_entropy
+          , testProperty "output_asset_amounts_hash" prop_output_asset_amounts_hash
+          , testProperty "output_nonces_hash" prop_output_nonces_hash
+          , testProperty "output_scripts_hash" prop_output_scripts_hash
+          , testProperty "output_range_proofs_hash" prop_output_range_proofs_hash
+          , testProperty "output_surjection_proofs_hash" prop_output_surjection_proofs_hash
+          , testProperty "outputs_hash" prop_outputs_hash
+          , testProperty "input_outpoints_hash" prop_input_outpoints_hash
+          , testProperty "input_asset_amounts_hash" prop_input_asset_amounts_hash
+          , testProperty "input_scripts_hash" prop_input_scripts_hash
+          , testProperty "input_utxos_hash" prop_input_utxos_hash
+          , testProperty "input_sequences_hash" prop_input_sequences_hash
+          , testProperty "input_annexes_hash" prop_input_annexes_hash
+          , testProperty "input_script_sigs_hash" prop_input_script_sigs_hash
+          , testProperty "inputs_hash" prop_inputs_hash
+          , testProperty "issuance_asset_amounts_hash" prop_issuance_asset_amounts_hash
+          , testProperty "issuance_token_amounts_hash" prop_issuance_token_amounts_hash
+          , testProperty "issuance_range_proofs_hash" prop_issuance_range_proofs_hash
+          , testProperty "issuance_blinding_entropy_hash" prop_issuance_blinding_entropy_hash
+          , testProperty "issuances_hash" prop_issuances_hash
+          , testProperty "tx_hash" prop_tx_hash
+          , testProperty "tapleaf_hash" prop_tapleaf_hash
+          , testProperty "tapbranch_hash" prop_tapbranch_hash
+          , testProperty "tap_env_hash" prop_tap_env_hash
+          , testProperty "sig_all_hash" prop_sig_all_hash
           ]
         , testGroup "Transaction"
           [ testProperty "script_cmr" prop_script_cmr
@@ -201,6 +225,126 @@ prop_issuance_entropy = forallInPrimEnv $ \env i ->
    fast_issuance_entropy env (toW32 i) == issuance_entropy env (toW32 i)
  where
   fast_issuance_entropy = testEval (specification (ElementsJet (IssuanceJet IssuanceEntropy)))
+
+prop_output_asset_amounts_hash :: Property
+prop_output_asset_amounts_hash = forallPrimEnv $ \env -> fast_output_asset_amounts_hash env () == output_asset_amounts_hash env ()
+ where
+  fast_output_asset_amounts_hash = testEval (specification (ElementsJet (SigHashJet OutputAssetAmountsHash)))
+
+prop_output_nonces_hash :: Property
+prop_output_nonces_hash = forallPrimEnv $ \env -> fast_output_nonces_hash env () == output_nonces_hash env ()
+ where
+  fast_output_nonces_hash = testEval (specification (ElementsJet (SigHashJet OutputNoncesHash)))
+
+prop_output_scripts_hash :: Property
+prop_output_scripts_hash = forallPrimEnv $ \env -> fast_output_scripts_hash env () == output_scripts_hash env ()
+ where
+  fast_output_scripts_hash = testEval (specification (ElementsJet (SigHashJet OutputScriptsHash)))
+
+prop_output_range_proofs_hash :: Property
+prop_output_range_proofs_hash = forallPrimEnv $ \env -> fast_output_range_proofs_hash env () == output_range_proofs_hash env ()
+ where
+  fast_output_range_proofs_hash = testEval (specification (ElementsJet (SigHashJet OutputRangeProofsHash)))
+
+prop_output_surjection_proofs_hash :: Property
+prop_output_surjection_proofs_hash = forallPrimEnv $ \env -> fast_output_surjection_proofs_hash env () == output_surjection_proofs_hash env ()
+ where
+  fast_output_surjection_proofs_hash = testEval (specification (ElementsJet (SigHashJet OutputSurjectionProofsHash)))
+
+prop_outputs_hash :: Property
+prop_outputs_hash = forallPrimEnv $ \env -> fast_outputs_hash env () == outputs_hash env ()
+ where
+  fast_outputs_hash = testEval (specification (ElementsJet (SigHashJet OutputsHash)))
+
+prop_input_outpoints_hash :: Property
+prop_input_outpoints_hash = forallPrimEnv $ \env -> fast_input_outpoints_hash env () == input_outpoints_hash env ()
+ where
+  fast_input_outpoints_hash = testEval (specification (ElementsJet (SigHashJet InputOutpointsHash)))
+
+prop_input_asset_amounts_hash :: Property
+prop_input_asset_amounts_hash = forallPrimEnv $ \env -> fast_input_asset_amounts_hash env () == input_asset_amounts_hash env ()
+ where
+  fast_input_asset_amounts_hash = testEval (specification (ElementsJet (SigHashJet InputAssetAmountsHash)))
+
+prop_input_scripts_hash :: Property
+prop_input_scripts_hash = forallPrimEnv $ \env -> fast_input_scripts_hash env () == input_scripts_hash env ()
+ where
+  fast_input_scripts_hash = testEval (specification (ElementsJet (SigHashJet InputScriptsHash)))
+
+prop_input_utxos_hash :: Property
+prop_input_utxos_hash = forallPrimEnv $ \env -> fast_input_utxos_hash env () == input_utxos_hash env ()
+ where
+  fast_input_utxos_hash = testEval (specification (ElementsJet (SigHashJet InputUtxosHash)))
+
+prop_input_sequences_hash :: Property
+prop_input_sequences_hash = forallPrimEnv $ \env -> fast_input_sequences_hash env () == input_sequences_hash env ()
+ where
+  fast_input_sequences_hash = testEval (specification (ElementsJet (SigHashJet InputSequencesHash)))
+
+prop_input_annexes_hash :: Property
+prop_input_annexes_hash = forallPrimEnv $ \env -> fast_input_annexes_hash env () == input_annexes_hash env ()
+ where
+  fast_input_annexes_hash = testEval (specification (ElementsJet (SigHashJet InputAnnexesHash)))
+
+prop_input_script_sigs_hash :: Property
+prop_input_script_sigs_hash = forallPrimEnv $ \env -> fast_input_script_sigs_hash env () == input_script_sigs_hash env ()
+ where
+  fast_input_script_sigs_hash = testEval (specification (ElementsJet (SigHashJet InputScriptSigsHash)))
+
+prop_inputs_hash :: Property
+prop_inputs_hash = forallPrimEnv $ \env -> fast_inputs_hash env () == inputs_hash env ()
+ where
+  fast_inputs_hash = testEval (specification (ElementsJet (SigHashJet InputsHash)))
+
+prop_issuance_asset_amounts_hash :: Property
+prop_issuance_asset_amounts_hash = forallPrimEnv $ \env -> fast_issuance_asset_amounts_hash env () == issuance_asset_amounts_hash env ()
+ where
+  fast_issuance_asset_amounts_hash = testEval (specification (ElementsJet (SigHashJet IssuanceAssetAmountsHash)))
+
+prop_issuance_token_amounts_hash :: Property
+prop_issuance_token_amounts_hash = forallPrimEnv $ \env -> fast_issuance_token_amounts_hash env () == issuance_token_amounts_hash env ()
+ where
+  fast_issuance_token_amounts_hash = testEval (specification (ElementsJet (SigHashJet IssuanceTokenAmountsHash)))
+
+prop_issuance_range_proofs_hash :: Property
+prop_issuance_range_proofs_hash = forallPrimEnv $ \env -> fast_issuance_range_proofs_hash env () == issuance_range_proofs_hash env ()
+ where
+  fast_issuance_range_proofs_hash = testEval (specification (ElementsJet (SigHashJet IssuanceRangeProofsHash)))
+
+prop_issuance_blinding_entropy_hash :: Property
+prop_issuance_blinding_entropy_hash = forallPrimEnv $ \env -> fast_issuance_blinding_entropy_hash env () == issuance_blinding_entropy_hash env ()
+ where
+  fast_issuance_blinding_entropy_hash = testEval (specification (ElementsJet (SigHashJet IssuanceBlindingEntropyHash)))
+
+prop_issuances_hash :: Property
+prop_issuances_hash = forallPrimEnv $ \env -> fast_issuances_hash env () == issuances_hash env ()
+ where
+  fast_issuances_hash = testEval (specification (ElementsJet (SigHashJet IssuancesHash)))
+
+prop_tx_hash :: Property
+prop_tx_hash = forallPrimEnv $ \env -> fast_tx_hash env () == tx_hash env ()
+ where
+  fast_tx_hash = testEval (specification (ElementsJet (SigHashJet TxHash)))
+
+prop_tapleaf_hash :: Property
+prop_tapleaf_hash = forallPrimEnv $ \env -> fast_tapleaf_hash env () == tapleaf_hash env ()
+ where
+  fast_tapleaf_hash = testEval (specification (ElementsJet (SigHashJet TapleafHash)))
+
+prop_tapbranch_hash :: Property
+prop_tapbranch_hash = forallPrimEnv $ \env -> fast_tapbranch_hash env () == tapbranch_hash env ()
+ where
+  fast_tapbranch_hash = testEval (specification (ElementsJet (SigHashJet TapbranchHash)))
+
+prop_tap_env_hash :: Property
+prop_tap_env_hash = forallPrimEnv $ \env -> fast_tap_env_hash env () == tap_env_hash env ()
+ where
+  fast_tap_env_hash = testEval (specification (ElementsJet (SigHashJet TapEnvHash)))
+
+prop_sig_all_hash :: Property
+prop_sig_all_hash = forallPrimEnv $ \env -> fast_sig_all_hash env () == sig_all_hash env ()
+ where
+  fast_sig_all_hash = testEval (specification (ElementsJet (SigHashJet SigAllHash)))
 
 prop_script_cmr :: Property
 prop_script_cmr = forallPrimEnv $ \env -> fast_script_cmr env () == script_cmr env ()
