@@ -429,7 +429,20 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
                      };
 
   {
-    sha256_context ctx = sha256_init(tx->inputsHash_deprecated.s);
+    sha256_context ctx_inputsHash_deprecated = sha256_init(tx->inputsHash_deprecated.s);
+    sha256_context ctx_inputOutpointsHash = sha256_init(tx->inputOutpointsHash.s);
+    sha256_context ctx_inputAssetAmountsHash = sha256_init(tx->inputAssetAmountsHash.s);
+    sha256_context ctx_inputScriptsHash = sha256_init(tx->inputScriptsHash.s);
+    sha256_context ctx_inputUTXOsHash = sha256_init(tx->inputUTXOsHash.s);
+    sha256_context ctx_inputSequencesHash = sha256_init(tx->inputSequencesHash.s);
+    sha256_context ctx_inputAnnexesHash = sha256_init(tx->inputAnnexesHash.s);
+    sha256_context ctx_inputScriptSigsHash = sha256_init(tx->inputScriptSigsHash.s);
+    sha256_context ctx_inputsHash = sha256_init(tx->inputsHash.s);
+    sha256_context ctx_issuanceAssetAmountsHash = sha256_init(tx->issuanceAssetAmountsHash.s);
+    sha256_context ctx_issuanceTokenAmountsHash = sha256_init(tx->issuanceTokenAmountsHash.s);
+    sha256_context ctx_issuanceRangeProofsHash = sha256_init(tx->issuanceRangeProofsHash.s);
+    sha256_context ctx_issuanceBlindingEntropyHash = sha256_init(tx->issuanceBlindingEntropyHash.s);
+    sha256_context ctx_issuancesHash = sha256_init(tx->issuancesHash.s);
     for (uint_fast32_t i = 0; i < tx->numInputs; ++i) {
       copyInput(&input[i], &rawTx->input[i]);
       if (input[i].sequence < 0xffffffff) { tx->isFinal = false; }
@@ -441,25 +454,128 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
             if (tx->lockDistance < maskedSequence) tx->lockDistance = maskedSequence;
          }
       }
-      sha256_outpoint(&ctx, &input[i].prevOutpoint);
-      sha256_u32le(&ctx, input[i].sequence);
-      sha256_issuance(&ctx, &input[i].issuance);
+      sha256_outpoint(&ctx_inputsHash_deprecated, &input[i].prevOutpoint);
+      sha256_u32le(&ctx_inputsHash_deprecated, input[i].sequence);
+      sha256_issuance(&ctx_inputsHash_deprecated, &input[i].issuance);
+      if (input[i].isPegin) {
+        sha256_uchar(&ctx_inputOutpointsHash, 1);
+        sha256_hash(&ctx_inputOutpointsHash, &input[i].pegin);
+      } else {
+        sha256_uchar(&ctx_inputOutpointsHash, 0);
+      }
+      sha256_hash(&ctx_inputOutpointsHash, &input[i].prevOutpoint.txid);
+      sha256_u32be(&ctx_inputOutpointsHash, input[i].prevOutpoint.ix);
+      sha256_confAsset(&ctx_inputAssetAmountsHash, &input[i].txo.asset);
+      sha256_confAmt(&ctx_inputAssetAmountsHash, &input[i].txo.amt);
+      sha256_hash(&ctx_inputScriptsHash, &input[i].txo.scriptPubKey);
+      sha256_u32be(&ctx_inputSequencesHash, input[i].sequence);
+      if (input[i].hasAnnex) {
+        sha256_uchar(&ctx_inputAnnexesHash, 1);
+        sha256_hash(&ctx_inputAnnexesHash, &input[i].annexHash);
+      } else {
+        sha256_uchar(&ctx_inputAnnexesHash, 0);
+      }
+      sha256_hash(&ctx_inputScriptSigsHash, &input[i].scriptSigHash);
+      if (NO_ISSUANCE == input[i].issuance.type) {
+        sha256_uchar(&ctx_issuanceAssetAmountsHash, 0);
+        sha256_uchar(&ctx_issuanceAssetAmountsHash, 0);
+        sha256_uchar(&ctx_issuanceTokenAmountsHash, 0);
+        sha256_uchar(&ctx_issuanceTokenAmountsHash, 0);
+        sha256_uchar(&ctx_issuanceBlindingEntropyHash, 0);
+      } else {
+        sha256_confAsset(&ctx_issuanceAssetAmountsHash, &(confidential){ .prefix = EXPLICIT, .data = input[i].issuance.assetId});
+        sha256_confAsset(&ctx_issuanceTokenAmountsHash, &(confidential){ .prefix = EXPLICIT, .data = input[i].issuance.tokenId});
+        sha256_confAmt(&ctx_issuanceAssetAmountsHash, &input[i].issuance.assetAmt);
+        sha256_confAmt(&ctx_issuanceTokenAmountsHash, NEW_ISSUANCE == input[i].issuance.type
+                                                    ? &input[i].issuance.tokenAmt
+                                                    : &(confAmount){ .prefix = EXPLICIT, .explicit = 0});
+        sha256_uchar(&ctx_issuanceBlindingEntropyHash, 1);
+        if (NEW_ISSUANCE == input[i].issuance.type) {
+          sha256_uchars(&ctx_issuanceBlindingEntropyHash, (unsigned char[32]){0}, 32);
+          sha256_hash(&ctx_issuanceBlindingEntropyHash, &input[i].issuance.contractHash);
+        } else {
+          sha256_hash(&ctx_issuanceBlindingEntropyHash, &input[i].issuance.blindingNonce);
+          sha256_hash(&ctx_issuanceBlindingEntropyHash, &input[i].issuance.entropy);
+        }
+      }
+      sha256_hash(&ctx_issuanceRangeProofsHash, &input[i].issuance.assetRangeProofHash);
+      sha256_hash(&ctx_issuanceRangeProofsHash, &input[i].issuance.tokenRangeProofHash);
     }
-    sha256_finalize(&ctx);
+    sha256_finalize(&ctx_inputsHash_deprecated);
+    sha256_finalize(&ctx_inputOutpointsHash);
+    sha256_finalize(&ctx_inputAssetAmountsHash);
+    sha256_finalize(&ctx_inputScriptsHash);
+    sha256_finalize(&ctx_inputSequencesHash);
+    sha256_finalize(&ctx_inputAnnexesHash);
+    sha256_finalize(&ctx_inputScriptSigsHash);
+
+    sha256_hash(&ctx_inputUTXOsHash, &tx->inputAssetAmountsHash);
+    sha256_hash(&ctx_inputUTXOsHash, &tx->inputScriptsHash);
+    sha256_finalize(&ctx_inputUTXOsHash);
+
+    sha256_hash(&ctx_inputsHash, &tx->inputOutpointsHash);
+    sha256_hash(&ctx_inputsHash, &tx->inputSequencesHash);
+    sha256_hash(&ctx_inputsHash, &tx->inputAnnexesHash);
+    sha256_finalize(&ctx_inputsHash);
+
+    sha256_finalize(&ctx_issuanceAssetAmountsHash);
+    sha256_finalize(&ctx_issuanceTokenAmountsHash);
+    sha256_finalize(&ctx_issuanceRangeProofsHash);
+    sha256_finalize(&ctx_issuanceBlindingEntropyHash);
+
+    sha256_hash(&ctx_issuancesHash, &tx->issuanceAssetAmountsHash);
+    sha256_hash(&ctx_issuancesHash, &tx->issuanceTokenAmountsHash);
+    sha256_hash(&ctx_issuancesHash, &tx->issuanceRangeProofsHash);
+    sha256_hash(&ctx_issuancesHash, &tx->issuanceBlindingEntropyHash);
+    sha256_finalize(&ctx_issuancesHash);
   }
 
   {
-    sha256_context ctx = sha256_init(tx->outputsHash_deprecated.s);
+    sha256_context ctx_outputsHash_deprecated = sha256_init(tx->outputsHash_deprecated.s);
+    sha256_context ctx_outputAssetAmountsHash = sha256_init(tx->outputAssetAmountsHash.s);
+    sha256_context ctx_outputNoncesHash = sha256_init(tx->outputNoncesHash.s);
+    sha256_context ctx_outputScriptsHash = sha256_init(tx->outputScriptsHash.s);
+    sha256_context ctx_outputRangeProofsHash = sha256_init(tx->outputRangeProofsHash.s);
+    sha256_context ctx_outputSurjectionProofsHash = sha256_init(tx->outputSurjectionProofsHash.s);
+    sha256_context ctx_outputsHash = sha256_init(tx->outputsHash.s);
     for (uint_fast32_t i = 0; i < tx->numOutputs; ++i) {
       copyOutput(&output[i], &ops, &opsLen, &rawTx->output[i]);
-      sha256_confAsset(&ctx, &output[i].asset);
-      sha256_confAmt(&ctx, &output[i].amt);
-      sha256_confNonce(&ctx, &output[i].nonce);
-      sha256_hash(&ctx, &output[i].scriptPubKey);
-      sha256_hash(&ctx, &output[i].surjectionProofHash);
-      sha256_hash(&ctx, &output[i].rangeProofHash);
+      sha256_confAsset(&ctx_outputsHash_deprecated, &output[i].asset);
+      sha256_confAmt(&ctx_outputsHash_deprecated, &output[i].amt);
+      sha256_confNonce(&ctx_outputsHash_deprecated, &output[i].nonce);
+      sha256_hash(&ctx_outputsHash_deprecated, &output[i].scriptPubKey);
+      sha256_hash(&ctx_outputsHash_deprecated, &output[i].surjectionProofHash);
+      sha256_hash(&ctx_outputsHash_deprecated, &output[i].rangeProofHash);
+      sha256_confAsset(&ctx_outputAssetAmountsHash, &output[i].asset);
+      sha256_confAmt(&ctx_outputAssetAmountsHash, &output[i].amt);
+      sha256_confNonce(&ctx_outputNoncesHash, &output[i].nonce);
+      sha256_hash(&ctx_outputScriptsHash, &output[i].scriptPubKey);
+      sha256_hash(&ctx_outputRangeProofsHash, &output[i].rangeProofHash);
+      sha256_hash(&ctx_outputSurjectionProofsHash, &output[i].surjectionProofHash);
     }
-    sha256_finalize(&ctx);
+    sha256_finalize(&ctx_outputsHash_deprecated);
+    sha256_finalize(&ctx_outputAssetAmountsHash);
+    sha256_finalize(&ctx_outputNoncesHash);
+    sha256_finalize(&ctx_outputScriptsHash);
+    sha256_finalize(&ctx_outputRangeProofsHash);
+    sha256_finalize(&ctx_outputSurjectionProofsHash);
+
+    sha256_hash(&ctx_outputsHash, &tx->outputAssetAmountsHash);
+    sha256_hash(&ctx_outputsHash, &tx->outputNoncesHash);
+    sha256_hash(&ctx_outputsHash, &tx->outputScriptsHash);
+    sha256_hash(&ctx_outputsHash, &tx->outputRangeProofsHash);
+    sha256_finalize(&ctx_outputsHash);
+  }
+  {
+    sha256_context ctx_txHash = sha256_init(tx->txHash.s);
+    sha256_u32be(&ctx_txHash, tx->version);
+    sha256_u32be(&ctx_txHash, tx->lockTime);
+    sha256_hash(&ctx_txHash, &tx->inputsHash);
+    sha256_hash(&ctx_txHash, &tx->outputsHash);
+    sha256_hash(&ctx_txHash, &tx->issuancesHash);
+    sha256_hash(&ctx_txHash, &tx->outputSurjectionProofsHash);
+    sha256_hash(&ctx_txHash, &tx->inputUTXOsHash);
+    sha256_finalize(&ctx_txHash);
   }
 
   return tx;
@@ -523,10 +639,40 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
     hashBuffer(annexHash, rawEnv->annex);
   }
 
-  for (int i = 0; i < env->branchLen; ++i) {
-    sha256_toMidstate(branch[i].s,  &rawEnv->controlBlock[33+32*i]);
+  {
+    sha256_context ctx = sha256_init(env->tapbranchHash.s);
+    for (int i = 0; i < env->branchLen; ++i) {
+      sha256_toMidstate(branch[i].s,  &rawEnv->controlBlock[33+32*i]);
+      sha256_hash(&ctx, &branch[i]);
+    }
+    sha256_finalize(&ctx);
   }
 
+  {
+    sha256_midstate tapLeafTag;
+    {
+      static unsigned char tagName[] = "TapLeaf";
+      sha256_context ctx = sha256_init(tapLeafTag.s);
+      sha256_uchars(&ctx, tagName, sizeof(tagName) - 1);
+      sha256_finalize(&ctx);
+    }
+
+    sha256_context ctx = sha256_init(env->tapLeafHash.s);
+    sha256_hash(&ctx, &tapLeafTag);
+    sha256_hash(&ctx, &tapLeafTag);
+    sha256_uchar(&ctx, env->leafVersion);
+    sha256_uchar(&ctx, 32);
+    sha256_hash(&ctx, &env->scriptCMR);
+    sha256_finalize(&ctx);
+  }
+
+  {
+    sha256_context ctx = sha256_init(env->tapEnvHash.s);
+    sha256_hash(&ctx, &env->tapLeafHash);
+    sha256_hash(&ctx, &env->tapbranchHash);
+    sha256_hash(&ctx, &env->internalKey);
+    sha256_finalize(&ctx);
+  }
   return env;
 }
 
@@ -544,6 +690,13 @@ txEnv build_txEnv(const transaction* tx, const tapEnv* taproot, const sha256_mid
                  , .genesisHash = *genesisHash
                  , .ix = ix
                  };
+  sha256_context ctx = sha256_init(result.sigAllHash.s);
+  sha256_hash(&ctx, genesisHash);
+  sha256_hash(&ctx, genesisHash);
+  sha256_hash(&ctx, &tx->txHash);
+  sha256_hash(&ctx, &taproot->tapEnvHash);
+  sha256_u32be(&ctx, ix);
+  sha256_finalize(&ctx);
 
   return result;
 }

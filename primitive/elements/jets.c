@@ -884,3 +884,171 @@ bool issuance_token(frameItem* dst, frameItem src, const txEnv* env) {
   }
   return true;
 }
+
+/* output_asset_amounts_hash : ONE |- TWO^256 */
+bool output_asset_amounts_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->outputAssetAmountsHash);
+  return true;
+}
+
+/* output_nonces_hash : ONE |- TWO^256 */
+bool output_nonces_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->outputNoncesHash);
+  return true;
+}
+
+/* output_scripts_hash : ONE |- TWO^256 */
+bool output_scripts_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->outputScriptsHash);
+  return true;
+}
+
+/* output_range_proofs_hash : ONE |- TWO^256 */
+bool output_range_proofs_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->outputRangeProofsHash);
+  return true;
+}
+
+/* output_surjection_proofs_hash : ONE |- TWO^256 */
+bool output_surjection_proofs_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->outputSurjectionProofsHash);
+  return true;
+}
+
+/* outputs_hash : ONE |- TWO^256 */
+bool outputs_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->outputsHash);
+  return true;
+}
+
+/* input_outpoints_hash : ONE |- TWO^256 */
+bool input_outpoints_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->inputOutpointsHash);
+  return true;
+}
+
+/* input_asset_amounts_hash : ONE |- TWO^256 */
+bool input_asset_amounts_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->inputAssetAmountsHash);
+  return true;
+}
+
+/* input_scripts_hash : ONE |- TWO^256 */
+bool input_scripts_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->inputScriptsHash);
+  return true;
+}
+
+/* input_utxos_hash : ONE |- TWO^256 */
+bool input_utxos_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->inputUTXOsHash);
+  return true;
+}
+
+/* input_sequences_hash : ONE |- TWO^256 */
+bool input_sequences_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->inputSequencesHash);
+  return true;
+}
+
+/* input_annexes_hash : ONE |- TWO^256 */
+bool input_annexes_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->inputAnnexesHash);
+  return true;
+}
+
+/* input_script_sigs_hash : ONE |- TWO^256 */
+bool input_script_sigs_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->inputScriptSigsHash);
+  return true;
+}
+
+/* inputs_hash : ONE |- TWO^256 */
+bool inputs_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->inputsHash);
+  return true;
+}
+
+/* issuance_asset_amounts_hash : ONE |- TWO^256 */
+bool issuance_asset_amounts_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->issuanceAssetAmountsHash);
+  return true;
+}
+
+/* issuance_token_amounts_hash : ONE |- TWO^256 */
+bool issuance_token_amounts_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->issuanceTokenAmountsHash);
+  return true;
+}
+
+/* issuance_range_proofs_hash : ONE |- TWO^256 */
+bool issuance_range_proofs_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->issuanceRangeProofsHash);
+  return true;
+}
+
+/* issuance_blinding_entropy_hash : ONE |- TWO^256 */
+bool issuance_blinding_entropy_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->issuanceBlindingEntropyHash);
+  return true;
+}
+
+/* issuances_hash : ONE |- TWO^256 */
+bool issuances_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->issuancesHash);
+  return true;
+}
+
+/* tx_hash : ONE |- TWO^256 */
+bool tx_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->tx->txHash);
+  return true;
+}
+
+/* tapleaf_hash : ONE |- TWO^256 */
+bool tapleaf_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->taproot->tapLeafHash);
+  return true;
+}
+
+/* tapbranch_hash : ONE |- TWO^256 */
+bool tapbranch_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->taproot->tapbranchHash);
+  return true;
+}
+
+/* tap_env_hash : ONE |- TWO^256 */
+bool tap_env_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->taproot->tapEnvHash);
+  return true;
+}
+
+/* sig_all_hash : ONE |- TWO^256 */
+bool sig_all_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  writeHash(dst, &env->sigAllHash);
+  return true;
+}

@@ -323,6 +323,35 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
       int32_t code = decodeUptoMaxInt(stream);
       if (code < 0) return code;
       switch (code) {
+       case 1: /* SigHash jets chapter */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return code;
+        switch (code) {
+         case 1: *result = SIG_ALL_HASH; return 0;
+         case 2: *result = TX_HASH; return 0;
+         case 3: *result = TAP_ENV_HASH; return 0;
+         case 4: *result = INPUTS_HASH; return 0;
+         case 5: *result = OUTPUTS_HASH; return 0;
+         case 6: *result = ISSUANCES_HASH; return 0;
+         case 7: *result = INPUT_UTXOS_HASH; return 0;
+         case 8: *result = OUTPUT_ASSET_AMOUNTS_HASH; return 0;
+         case 9: *result = OUTPUT_SCRIPTS_HASH; return 0;
+         case 10: *result = OUTPUT_NONCES_HASH; return 0;
+         case 11: *result = OUTPUT_RANGE_PROOFS_HASH; return 0;
+         case 12: *result = OUTPUT_SURJECTION_PROOFS_HASH; return 0;
+         case 13: *result = INPUT_OUTPOINTS_HASH; return 0;
+         case 14: *result = INPUT_SEQUENCES_HASH; return 0;
+         case 15: *result = INPUT_ANNEXES_HASH; return 0;
+         case 16: *result = INPUT_SCRIPT_SIGS_HASH; return 0;
+         case 17: *result = ISSUANCE_ASSET_AMOUNTS_HASH; return 0;
+         case 18: *result = ISSUANCE_TOKEN_AMOUNTS_HASH; return 0;
+         case 19: *result = ISSUANCE_RANGE_PROOFS_HASH; return 0;
+         case 20: *result = ISSUANCE_BLINDING_ENTROPY_HASH; return 0;
+         case 21: *result = INPUT_ASSET_AMOUNTS_HASH; return 0;
+         case 22: *result = INPUT_SCRIPTS_HASH; return 0;
+         case 23: *result = TAPBRANCH_HASH; return 0;
+        }
+        break;
        case 2: /* Timelock jets chapter */
         code = decodeUptoMaxInt(stream);
         if (code < 0) return code;
