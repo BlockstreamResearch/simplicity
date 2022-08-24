@@ -286,7 +286,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 5: *result = OUTPUTS_HASH; return 0;
          case 6: *result = ISSUANCES_HASH; return 0;
          case 7: *result = INPUT_UTXOS_HASH; return 0;
-         case 8: *result = OUTPUT_ASSET_AMOUNTS_HASH; return 0;
+         case 8: *result = OUTPUT_AMOUNTS_HASH; return 0;
          case 9: *result = OUTPUT_SCRIPTS_HASH; return 0;
          case 10: *result = OUTPUT_NONCES_HASH; return 0;
          case 11: *result = OUTPUT_RANGE_PROOFS_HASH; return 0;
@@ -299,7 +299,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 18: *result = ISSUANCE_TOKEN_AMOUNTS_HASH; return 0;
          case 19: *result = ISSUANCE_RANGE_PROOFS_HASH; return 0;
          case 20: *result = ISSUANCE_BLINDING_ENTROPY_HASH; return 0;
-         case 21: *result = INPUT_ASSET_AMOUNTS_HASH; return 0;
+         case 21: *result = INPUT_AMOUNTS_HASH; return 0;
          case 22: *result = INPUT_SCRIPTS_HASH; return 0;
          case 23: *result = TAPLEAF_HASH; return 0;
          case 24: *result = TAPBRANCH_HASH; return 0;
@@ -345,7 +345,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 5: *result = NUM_OUTPUTS; return 0;
          case 6: *result = LOCK_TIME; return 0;
          case 7: *result = OUTPUT_ASSET; return 0;
-         case 8: *result = OUTPUT_ASSET_AMOUNT; return 0;
+         case 8: *result = OUTPUT_AMOUNT; return 0;
          case 9: *result = OUTPUT_NONCE; return 0;
          case 10: *result = OUTPUT_SCRIPT_HASH; return 0;
          case 11: *result = OUTPUT_NULL_DATUM; return 0;
@@ -355,7 +355,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 15: *result = CURRENT_PEGIN; return 0;
          case 16: *result = CURRENT_PREV_OUTPOINT; return 0;
          case 17: *result = CURRENT_ASSET; return 0;
-         case 18: *result = CURRENT_ASSET_AMOUNT; return 0;
+         case 18: *result = CURRENT_AMOUNT; return 0;
          case 19: *result = CURRENT_SCRIPT_HASH; return 0;
          case 20: *result = CURRENT_SEQUENCE; return 0;
          case 21: *result = CURRENT_ANNEX_HASH; return 0;
@@ -370,7 +370,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 30: *result = INPUT_PEGIN; return 0;
          case 31: *result = INPUT_PREV_OUTPOINT; return 0;
          case 32: *result = INPUT_ASSET; return 0;
-         case 33: *result = INPUT_ASSET_AMOUNT; return 0;
+         case 33: *result = INPUT_AMOUNT; return 0;
          case 34: *result = INPUT_SCRIPT_HASH; return 0;
          case 35: *result = INPUT_SEQUENCE; return 0;
          case 36: *result = INPUT_ANNEX_HASH; return 0;
