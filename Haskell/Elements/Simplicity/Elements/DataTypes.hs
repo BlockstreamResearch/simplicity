@@ -24,9 +24,9 @@ module Simplicity.Elements.DataTypes
   , TapEnv(..)
   , txIsFinal, txLockDistance, txLockDuration
   , calculateIssuanceEntropy, calculateAsset, calculateToken
-  , outputAssetAmountsHash, outputNoncesHash, outputScriptsHash
+  , outputAmountsHash, outputNoncesHash, outputScriptsHash
   , outputRangeProofsHash, outputSurjectionProofsHash, outputsHash
-  , inputOutpointsHash, inputAssetAmountsHash, inputScriptsHash, inputUtxosHash
+  , inputOutpointsHash, inputAmountsHash, inputScriptsHash, inputUtxosHash
   , inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash
   , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuancesHash, issuanceBlindingEntropyHash
   , txHash
@@ -357,8 +357,8 @@ sigTxiIssuanceToken txi = calculateToken <$> amount <*> entropy
   entropy = sigTxiIssuanceEntropy txi
 
 -- | A hash of all 'txoAsset's and 'txoAmount's.
-outputAssetAmountsHash :: SigTx -> Hash256
-outputAssetAmountsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxOut tx)
+outputAmountsHash :: SigTx -> Hash256
+outputAmountsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxOut tx)
  where
   go txo = putAsset (clearAssetPrf $ txoAsset txo)
         >> putAmount (clearAmountPrf $ txoAmount txo)
@@ -381,7 +381,7 @@ outputSurjectionProofsHash tx = bslHash . runPutLazy $ mapM_ (put . bslHash . vi
 
 -- | A hash of
 --
--- * 'outputAssetAmountsHash'
+-- * 'outputAmountsHash'
 -- * 'outputNoncesHash'
 -- * 'outputScriptsHash'
 -- * 'outputRangeProofsHash'
@@ -389,7 +389,7 @@ outputSurjectionProofsHash tx = bslHash . runPutLazy $ mapM_ (put . bslHash . vi
 -- Note that 'outputSurjectionProofsHash' is excluded.
 outputsHash :: SigTx -> Hash256
 outputsHash tx = bslHash . runPutLazy $ do
-                   put $ outputAssetAmountsHash tx
+                   put $ outputAmountsHash tx
                    put $ outputNoncesHash tx
                    put $ outputScriptsHash tx
                    put $ outputRangeProofsHash tx
@@ -406,8 +406,8 @@ inputOutpointsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
         >> putWord32be (opIndex (sigTxiPreviousOutpoint txi))
 
 -- | A hash of all 'utxoAsset's and 'utxoAmount's.
-inputAssetAmountsHash :: SigTx -> Hash256
-inputAssetAmountsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
+inputAmountsHash :: SigTx -> Hash256
+inputAmountsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
  where
   go txi = putAsset (clearAssetPrf . utxoAsset $ sigTxiTxo txi)
         >> putAmount (clearAmountPrf . utxoAmount $ sigTxiTxo txi)
@@ -418,11 +418,11 @@ inputScriptsHash tx = bslHash . runPutLazy $ mapM_ (put . bslHash . utxoScript .
 
 -- | A hash of
 --
--- * 'inputAssetAmountsHash'
+-- * 'inputAmountsHash'
 -- * 'inputScriptsHash'
 inputUtxosHash :: SigTx -> Hash256
 inputUtxosHash tx = bslHash . runPutLazy $ do
-                      put $ inputAssetAmountsHash tx
+                      put $ inputAmountsHash tx
                       put $ inputScriptsHash tx
 
 -- | A hash of all 'sigTxiSequence's.

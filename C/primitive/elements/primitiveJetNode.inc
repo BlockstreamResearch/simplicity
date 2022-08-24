@@ -59,6 +59,12 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_u
 }
+,[CURRENT_AMOUNT] =
+{ .tag = JET
+, .jet = current_amount
+, .sourceIx = ty_u
+, .targetIx = ty_pspbw256w256spbw256w64
+}
 ,[CURRENT_ANNEX_HASH] =
 { .tag = JET
 , .jet = current_annex_hash
@@ -70,12 +76,6 @@
 , .jet = current_asset
 , .sourceIx = ty_u
 , .targetIx = ty_spbw256w256
-}
-,[CURRENT_ASSET_AMOUNT] =
-{ .tag = JET
-, .jet = current_asset_amount
-, .sourceIx = ty_u
-, .targetIx = ty_pspbw256w256spbw256w64
 }
 ,[CURRENT_INDEX] =
 { .tag = JET
@@ -341,6 +341,18 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 }
+,[INPUT_AMOUNT] =
+{ .tag = JET
+, .jet = input_amount
+, .sourceIx = ty_w32
+, .targetIx = ty_mpspbw256w256spbw256w64
+}
+,[INPUT_AMOUNTS_HASH] =
+{ .tag = JET
+, .jet = input_amounts_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[INPUT_ANNEX_HASH] =
 { .tag = JET
 , .jet = input_annex_hash
@@ -358,18 +370,6 @@
 , .jet = input_asset
 , .sourceIx = ty_w32
 , .targetIx = ty_mspbw256w256
-}
-,[INPUT_ASSET_AMOUNT] =
-{ .tag = JET
-, .jet = input_asset_amount
-, .sourceIx = ty_w32
-, .targetIx = ty_mpspbw256w256spbw256w64
-}
-,[INPUT_ASSET_AMOUNTS_HASH] =
-{ .tag = JET
-, .jet = input_asset_amounts_hash
-, .sourceIx = ty_u
-, .targetIx = ty_w256
 }
 ,[INPUT_OUTPOINTS_HASH] =
 { .tag = JET
@@ -575,23 +575,23 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w32
 }
+,[OUTPUT_AMOUNT] =
+{ .tag = JET
+, .jet = output_amount
+, .sourceIx = ty_w32
+, .targetIx = ty_mpspbw256w256spbw256w64
+}
+,[OUTPUT_AMOUNTS_HASH] =
+{ .tag = JET
+, .jet = output_amounts_hash
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+}
 ,[OUTPUT_ASSET] =
 { .tag = JET
 , .jet = output_asset
 , .sourceIx = ty_w32
 , .targetIx = ty_mspbw256w256
-}
-,[OUTPUT_ASSET_AMOUNT] =
-{ .tag = JET
-, .jet = output_asset_amount
-, .sourceIx = ty_w32
-, .targetIx = ty_mpspbw256w256spbw256w64
-}
-,[OUTPUT_ASSET_AMOUNTS_HASH] =
-{ .tag = JET
-, .jet = output_asset_amounts_hash
-, .sourceIx = ty_u
-, .targetIx = ty_w256
 }
 ,[OUTPUT_NONCE] =
 { .tag = JET

@@ -3,9 +3,9 @@
 -- Users should prefer to use 'Simplicity.Elements.Programs.SigHash.mkLib' in order to share library dependencies.
 -- This module is provided mostly for testing purposes.
 module Simplicity.Elements.Programs.SigHash.Lib
- ( outputAssetAmountsHash, outputNoncesHash, outputScriptsHash
+ ( outputAmountsHash, outputNoncesHash, outputScriptsHash
  , outputRangeProofsHash, outputSurjectionProofsHash, outputsHash
- , inputAssetAmountsHash, inputScriptsHash, inputUtxosHash
+ , inputAmountsHash, inputScriptsHash, inputUtxosHash
  , inputOutpointsHash, inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash
  , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuanceBlindingEntropyHash, issuancesHash
  , txHash
@@ -15,13 +15,13 @@ module Simplicity.Elements.Programs.SigHash.Lib
 
 import qualified Simplicity.Elements.Programs.SigHash as SigHash
 
-outputAssetAmountsHash = SigHash.outputAssetAmountsHash SigHash.lib
+outputAmountsHash = SigHash.outputAmountsHash SigHash.lib
 outputNoncesHash = SigHash.outputNoncesHash SigHash.lib
 outputScriptsHash = SigHash.outputScriptsHash SigHash.lib
 outputRangeProofsHash = SigHash.outputRangeProofsHash SigHash.lib
 outputSurjectionProofsHash = SigHash.outputSurjectionProofsHash SigHash.lib
 outputsHash = SigHash.outputsHash SigHash.lib
-inputAssetAmountsHash = SigHash.inputAssetAmountsHash SigHash.lib
+inputAmountsHash = SigHash.inputAmountsHash SigHash.lib
 inputScriptsHash = SigHash.inputScriptsHash SigHash.lib
 inputUtxosHash = SigHash.inputUtxosHash SigHash.lib
 inputOutpointsHash = SigHash.inputOutpointsHash SigHash.lib

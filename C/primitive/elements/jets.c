@@ -202,8 +202,8 @@ bool input_asset(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_asset_amount : TWO^32 |- S (Conf TWO^256, Conf TWO^64) */
-bool input_asset_amount(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_amount : TWO^32 |- S (Conf TWO^256, Conf TWO^64) */
+bool input_amount(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     asset(dst, &env->tx->input[i].txo.asset);
@@ -350,8 +350,8 @@ bool output_asset(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* output_asset_amount : TWO^32 |- S (Conf TWO^256, Conf TWO^64) */
-bool output_asset_amount(frameItem* dst, frameItem src, const txEnv* env) {
+/* output_amount : TWO^32 |- S (Conf TWO^256, Conf TWO^64) */
+bool output_amount(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     asset(dst, &env->tx->output[i].asset);
@@ -508,8 +508,8 @@ bool current_asset(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* current_asset_amount : ONE |- (Conf TWO^256, Conf TWO^64) */
-bool current_asset_amount(frameItem* dst, frameItem src, const txEnv* env) {
+/* current_amount : ONE |- (Conf TWO^256, Conf TWO^64) */
+bool current_amount(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
   asset(dst, &env->tx->input[env->ix].txo.asset);
@@ -830,8 +830,8 @@ bool issuance_token(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* output_asset_amounts_hash : ONE |- TWO^256 */
-bool output_asset_amounts_hash(frameItem* dst, frameItem src, const txEnv* env) {
+/* output_amounts_hash : ONE |- TWO^256 */
+bool output_amounts_hash(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   writeHash(dst, &env->tx->outputAssetAmountsHash);
   return true;
@@ -879,8 +879,8 @@ bool input_outpoints_hash(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* input_asset_amounts_hash : ONE |- TWO^256 */
-bool input_asset_amounts_hash(frameItem* dst, frameItem src, const txEnv* env) {
+/* input_amounts_hash : ONE |- TWO^256 */
+bool input_amounts_hash(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   writeHash(dst, &env->tx->inputAssetAmountsHash);
   return true;

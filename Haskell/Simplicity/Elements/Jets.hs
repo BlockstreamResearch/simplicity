@@ -72,7 +72,7 @@ data SigHashJet a b where
   InputsHash :: SigHashJet () Word256
   IssuancesHash :: SigHashJet () Word256
   InputUtxosHash :: SigHashJet () Word256
-  OutputAssetAmountsHash :: SigHashJet () Word256
+  OutputAmountsHash :: SigHashJet () Word256
   OutputScriptsHash :: SigHashJet () Word256
   OutputNoncesHash :: SigHashJet () Word256
   OutputRangeProofsHash :: SigHashJet () Word256
@@ -85,7 +85,7 @@ data SigHashJet a b where
   IssuanceTokenAmountsHash :: SigHashJet () Word256
   IssuanceRangeProofsHash :: SigHashJet () Word256
   IssuanceBlindingEntropyHash :: SigHashJet () Word256
-  InputAssetAmountsHash :: SigHashJet () Word256
+  InputAmountsHash :: SigHashJet () Word256
   InputScriptsHash :: SigHashJet () Word256
   TapleafHash :: SigHashJet () Word256
   TapbranchHash :: SigHashJet () Word256
@@ -125,7 +125,7 @@ data TransactionJet a b where
   NumOutputs :: TransactionJet () Word32
   LockTime :: TransactionJet () Word32
   OutputAsset :: TransactionJet Word32 (S (Conf Word256))
-  OutputAssetAmount :: TransactionJet Word32 (S (Conf Word256, Conf Word64))
+  OutputAmount :: TransactionJet Word32 (S (Conf Word256, Conf Word64))
   OutputNonce :: TransactionJet Word32 (S (S (Conf Word256)))
   OutputScriptHash :: TransactionJet Word32 (S Word256)
   OutputNullDatum :: TransactionJet (Word32, Word32) (S (S (Either (Word2, Word256) (Either Bit Word4))))
@@ -134,7 +134,7 @@ data TransactionJet a b where
   CurrentPegin :: TransactionJet () (S Word256)
   CurrentPrevOutpoint :: TransactionJet () (Word256,Word32)
   CurrentAsset :: TransactionJet () (Conf Word256)
-  CurrentAssetAmount :: TransactionJet () (Conf Word256, Conf Word64)
+  CurrentAmount :: TransactionJet () (Conf Word256, Conf Word64)
   CurrentScriptHash :: TransactionJet () Word256
   CurrentSequence :: TransactionJet () Word32
   CurrentAnnexHash :: TransactionJet () (S Word256)
@@ -149,7 +149,7 @@ data TransactionJet a b where
   InputPegin :: TransactionJet Word32 (S (S Word256))
   InputPrevOutpoint :: TransactionJet Word32 (S (Word256,Word32))
   InputAsset :: TransactionJet Word32 (S (Conf Word256))
-  InputAssetAmount :: TransactionJet Word32 (S (Conf Word256, Conf Word64))
+  InputAmount :: TransactionJet Word32 (S (Conf Word256, Conf Word64))
   InputScriptHash :: TransactionJet Word32 (S Word256)
   InputSequence :: TransactionJet Word32 (S Word32)
   InputAnnexHash :: TransactionJet Word32 (S (S Word256))
@@ -182,7 +182,7 @@ specificationSigHash OutputsHash = SigHash.outputsHash
 specificationSigHash InputsHash = SigHash.inputsHash
 specificationSigHash IssuancesHash = SigHash.issuancesHash
 specificationSigHash InputUtxosHash = SigHash.inputUtxosHash
-specificationSigHash OutputAssetAmountsHash = SigHash.outputAssetAmountsHash
+specificationSigHash OutputAmountsHash = SigHash.outputAmountsHash
 specificationSigHash OutputScriptsHash = SigHash.outputScriptsHash
 specificationSigHash OutputNoncesHash = SigHash.outputNoncesHash
 specificationSigHash OutputRangeProofsHash = SigHash.outputRangeProofsHash
@@ -195,7 +195,7 @@ specificationSigHash IssuanceAssetAmountsHash = SigHash.issuanceAssetAmountsHash
 specificationSigHash IssuanceTokenAmountsHash = SigHash.issuanceTokenAmountsHash
 specificationSigHash IssuanceRangeProofsHash = SigHash.issuanceRangeProofsHash
 specificationSigHash IssuanceBlindingEntropyHash = SigHash.issuanceBlindingEntropyHash
-specificationSigHash InputAssetAmountsHash = SigHash.inputAssetAmountsHash
+specificationSigHash InputAmountsHash = SigHash.inputAmountsHash
 specificationSigHash InputScriptsHash = SigHash.inputScriptsHash
 specificationSigHash TapleafHash = SigHash.tapleafHash
 specificationSigHash TapbranchHash = SigHash.tapbranchHash
@@ -229,7 +229,7 @@ specificationTransaction NumInputs = Prog.numInputs
 specificationTransaction NumOutputs = Prog.numOutputs
 specificationTransaction LockTime = primitive Prim.LockTime
 specificationTransaction OutputAsset = primitive Prim.OutputAsset
-specificationTransaction OutputAssetAmount = Prog.outputAssetAmount
+specificationTransaction OutputAmount = Prog.outputAmount
 specificationTransaction OutputNonce = primitive Prim.OutputNonce
 specificationTransaction OutputScriptHash = primitive Prim.OutputScriptHash
 specificationTransaction OutputNullDatum = primitive Prim.OutputNullDatum
@@ -238,7 +238,7 @@ specificationTransaction OutputRangeProof = primitive Prim.OutputRangeProof
 specificationTransaction CurrentPegin = Prog.currentPegin
 specificationTransaction CurrentPrevOutpoint = Prog.currentPrevOutpoint
 specificationTransaction CurrentAsset = Prog.currentAsset
-specificationTransaction CurrentAssetAmount = Prog.currentAssetAmount
+specificationTransaction CurrentAmount = Prog.currentAmount
 specificationTransaction CurrentScriptHash = Prog.currentScriptHash
 specificationTransaction CurrentSequence = Prog.currentSequence
 specificationTransaction CurrentAnnexHash = Prog.currentAnnexHash
@@ -246,14 +246,14 @@ specificationTransaction CurrentScriptSigHash = Prog.currentScriptSigHash
 specificationTransaction CurrentReissuanceBlinding = Prog.currentReissuanceBlinding
 specificationTransaction CurrentNewIssuanceContract = Prog.currentNewIssuanceContract
 specificationTransaction CurrentReissuanceEntropy = Prog.currentReissuanceEntropy
-specificationTransaction CurrentIssuanceAssetAmount = Prog.currentIssuanceAssetAmt
-specificationTransaction CurrentIssuanceTokenAmount = Prog.currentIssuanceTokenAmt
+specificationTransaction CurrentIssuanceAssetAmount = Prog.currentIssuanceAssetAmount
+specificationTransaction CurrentIssuanceTokenAmount = Prog.currentIssuanceTokenAmount
 specificationTransaction CurrentIssuanceAssetProof = Prog.currentIssuanceAssetProof
 specificationTransaction CurrentIssuanceTokenProof = Prog.currentIssuanceTokenProof
 specificationTransaction InputPegin = primitive Prim.InputPegin
 specificationTransaction InputPrevOutpoint = primitive Prim.InputPrevOutpoint
 specificationTransaction InputAsset = primitive Prim.InputAsset
-specificationTransaction InputAssetAmount = Prog.inputAssetAmount
+specificationTransaction InputAmount = Prog.inputAmount
 specificationTransaction InputScriptHash = primitive Prim.InputScriptHash
 specificationTransaction InputSequence = primitive Prim.InputSequence
 specificationTransaction InputAnnexHash = primitive Prim.InputAnnexHash
@@ -261,8 +261,8 @@ specificationTransaction InputScriptSigHash = primitive Prim.InputScriptSigHash
 specificationTransaction ReissuanceBlinding = primitive Prim.ReissuanceBlinding
 specificationTransaction NewIssuanceContract = primitive Prim.NewIssuanceContract
 specificationTransaction ReissuanceEntropy = primitive Prim.ReissuanceEntropy
-specificationTransaction IssuanceAssetAmount = primitive Prim.IssuanceAssetAmt
-specificationTransaction IssuanceTokenAmount = primitive Prim.IssuanceTokenAmt
+specificationTransaction IssuanceAssetAmount = primitive Prim.IssuanceAssetAmount
+specificationTransaction IssuanceTokenAmount = primitive Prim.IssuanceTokenAmount
 specificationTransaction IssuanceAssetProof = primitive Prim.IssuanceAssetProof
 specificationTransaction IssuanceTokenProof = primitive Prim.IssuanceTokenProof
 specificationTransaction TapleafVersion = primitive Prim.TapleafVersion
@@ -284,7 +284,7 @@ implementationSigHash OutputsHash env _ = Just . toWord256 . integerHash256 $ ou
 implementationSigHash InputsHash env _ = Just . toWord256 . integerHash256 $ inputsHash (envTx env)
 implementationSigHash IssuancesHash env _ = Just . toWord256 . integerHash256 $ issuancesHash (envTx env)
 implementationSigHash InputUtxosHash env _ = Just . toWord256 . integerHash256 $ inputUtxosHash (envTx env)
-implementationSigHash OutputAssetAmountsHash env _ = Just . toWord256 . integerHash256 $ outputAssetAmountsHash (envTx env)
+implementationSigHash OutputAmountsHash env _ = Just . toWord256 . integerHash256 $ outputAmountsHash (envTx env)
 implementationSigHash OutputScriptsHash env _ = Just . toWord256 . integerHash256 $ outputScriptsHash (envTx env)
 implementationSigHash OutputNoncesHash env _ = Just . toWord256 . integerHash256 $ outputNoncesHash (envTx env)
 implementationSigHash OutputRangeProofsHash env _ = Just . toWord256 . integerHash256 $ outputRangeProofsHash (envTx env)
@@ -297,7 +297,7 @@ implementationSigHash IssuanceAssetAmountsHash env _ = Just . toWord256 . intege
 implementationSigHash IssuanceTokenAmountsHash env _ = Just . toWord256 . integerHash256 $ issuanceTokenAmountsHash (envTx env)
 implementationSigHash IssuanceRangeProofsHash env _ = Just . toWord256 . integerHash256 $ issuanceRangeProofsHash (envTx env)
 implementationSigHash IssuanceBlindingEntropyHash env _ = Just . toWord256 . integerHash256 $ issuanceBlindingEntropyHash (envTx env)
-implementationSigHash InputAssetAmountsHash env _ = Just . toWord256 . integerHash256 $ inputAssetAmountsHash (envTx env)
+implementationSigHash InputAmountsHash env _ = Just . toWord256 . integerHash256 $ inputAmountsHash (envTx env)
 implementationSigHash InputScriptsHash env _ = Just . toWord256 . integerHash256 $ inputScriptsHash (envTx env)
 implementationSigHash TapleafHash env _ = Just . toWord256 . integerHash256 $ tapleafHash (envTap env)
 implementationSigHash TapbranchHash env _ = Just . toWord256 . integerHash256 $ tapbranchHash (envTap env)
@@ -402,7 +402,7 @@ getJetBitElements abort next = getPositive next >>= match
     matchSigHash 5 = makeArrow OutputsHash
     matchSigHash 6 = makeArrow IssuancesHash
     matchSigHash 7 = makeArrow InputUtxosHash
-    matchSigHash 8 = makeArrow OutputAssetAmountsHash
+    matchSigHash 8 = makeArrow OutputAmountsHash
     matchSigHash 9 = makeArrow OutputScriptsHash
     matchSigHash 10 = makeArrow OutputNoncesHash
     matchSigHash 11 = makeArrow OutputRangeProofsHash
@@ -415,7 +415,7 @@ getJetBitElements abort next = getPositive next >>= match
     matchSigHash 18 = makeArrow IssuanceTokenAmountsHash
     matchSigHash 19 = makeArrow IssuanceRangeProofsHash
     matchSigHash 20 = makeArrow IssuanceBlindingEntropyHash
-    matchSigHash 21 = makeArrow InputAssetAmountsHash
+    matchSigHash 21 = makeArrow InputAmountsHash
     matchSigHash 22 = makeArrow InputScriptsHash
     matchSigHash 23 = makeArrow TapleafHash
     matchSigHash 24 = makeArrow TapbranchHash
@@ -450,7 +450,7 @@ getJetBitElements abort next = getPositive next >>= match
     matchTransaction 5 = makeArrow NumOutputs
     matchTransaction 6 = makeArrow LockTime
     matchTransaction 7 = makeArrow OutputAsset
-    matchTransaction 8 = makeArrow OutputAssetAmount
+    matchTransaction 8 = makeArrow OutputAmount
     matchTransaction 9 = makeArrow OutputNonce
     matchTransaction 10 = makeArrow OutputScriptHash
     matchTransaction 11 = makeArrow OutputNullDatum
@@ -460,7 +460,7 @@ getJetBitElements abort next = getPositive next >>= match
     matchTransaction 15 = makeArrow CurrentPegin
     matchTransaction 16 = makeArrow CurrentPrevOutpoint
     matchTransaction 17 = makeArrow CurrentAsset
-    matchTransaction 18 = makeArrow CurrentAssetAmount
+    matchTransaction 18 = makeArrow CurrentAmount
     matchTransaction 19 = makeArrow CurrentScriptHash
     matchTransaction 20 = makeArrow CurrentSequence
     matchTransaction 21 = makeArrow CurrentAnnexHash
@@ -475,7 +475,7 @@ getJetBitElements abort next = getPositive next >>= match
     matchTransaction 30 = makeArrow InputPegin
     matchTransaction 31 = makeArrow InputPrevOutpoint
     matchTransaction 32 = makeArrow InputAsset
-    matchTransaction 33 = makeArrow InputAssetAmount
+    matchTransaction 33 = makeArrow InputAmount
     matchTransaction 34 = makeArrow InputScriptHash
     matchTransaction 35 = makeArrow InputSequence
     matchTransaction 36 = makeArrow InputAnnexHash
@@ -506,7 +506,7 @@ putJetBitSigHash InputsHash                  = putPositive 4
 putJetBitSigHash OutputsHash                 = putPositive 5
 putJetBitSigHash IssuancesHash               = putPositive 6
 putJetBitSigHash InputUtxosHash              = putPositive 7
-putJetBitSigHash OutputAssetAmountsHash      = putPositive 8
+putJetBitSigHash OutputAmountsHash           = putPositive 8
 putJetBitSigHash OutputScriptsHash           = putPositive 9
 putJetBitSigHash OutputNoncesHash            = putPositive 10
 putJetBitSigHash OutputRangeProofsHash       = putPositive 11
@@ -519,7 +519,7 @@ putJetBitSigHash IssuanceAssetAmountsHash    = putPositive 17
 putJetBitSigHash IssuanceTokenAmountsHash    = putPositive 18
 putJetBitSigHash IssuanceRangeProofsHash     = putPositive 19
 putJetBitSigHash IssuanceBlindingEntropyHash = putPositive 20
-putJetBitSigHash InputAssetAmountsHash       = putPositive 21
+putJetBitSigHash InputAmountsHash            = putPositive 21
 putJetBitSigHash InputScriptsHash            = putPositive 22
 putJetBitSigHash TapleafHash                 = putPositive 23
 putJetBitSigHash TapbranchHash               = putPositive 24
@@ -553,7 +553,7 @@ putJetBitTransaction NumInputs                  = putPositive 4
 putJetBitTransaction NumOutputs                 = putPositive 5
 putJetBitTransaction LockTime                   = putPositive 6
 putJetBitTransaction OutputAsset                = putPositive 7
-putJetBitTransaction OutputAssetAmount          = putPositive 8
+putJetBitTransaction OutputAmount               = putPositive 8
 putJetBitTransaction OutputNonce                = putPositive 9
 putJetBitTransaction OutputScriptHash           = putPositive 10
 putJetBitTransaction OutputNullDatum            = putPositive 11
@@ -563,7 +563,7 @@ putJetBitTransaction OutputRangeProof           = putPositive 13
 putJetBitTransaction CurrentPegin               = putPositive 15
 putJetBitTransaction CurrentPrevOutpoint        = putPositive 16
 putJetBitTransaction CurrentAsset               = putPositive 17
-putJetBitTransaction CurrentAssetAmount         = putPositive 18
+putJetBitTransaction CurrentAmount              = putPositive 18
 putJetBitTransaction CurrentScriptHash          = putPositive 19
 putJetBitTransaction CurrentSequence            = putPositive 20
 putJetBitTransaction CurrentAnnexHash           = putPositive 21
@@ -578,7 +578,7 @@ putJetBitTransaction CurrentIssuanceTokenProof  = putPositive 29
 putJetBitTransaction InputPegin                 = putPositive 30
 putJetBitTransaction InputPrevOutpoint          = putPositive 31
 putJetBitTransaction InputAsset                 = putPositive 32
-putJetBitTransaction InputAssetAmount           = putPositive 33
+putJetBitTransaction InputAmount                = putPositive 33
 putJetBitTransaction InputScriptHash            = putPositive 34
 putJetBitTransaction InputSequence              = putPositive 35
 putJetBitTransaction InputAnnexHash             = putPositive 36
@@ -605,7 +605,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (SigHashJet InputsHash)
   , mkAssoc (SigHashJet IssuancesHash)
   , mkAssoc (SigHashJet InputUtxosHash)
-  , mkAssoc (SigHashJet OutputAssetAmountsHash)
+  , mkAssoc (SigHashJet OutputAmountsHash)
   , mkAssoc (SigHashJet OutputScriptsHash)
   , mkAssoc (SigHashJet OutputNoncesHash)
   , mkAssoc (SigHashJet OutputRangeProofsHash)
@@ -618,7 +618,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (SigHashJet IssuanceTokenAmountsHash)
   , mkAssoc (SigHashJet IssuanceRangeProofsHash)
   , mkAssoc (SigHashJet IssuanceBlindingEntropyHash)
-  , mkAssoc (SigHashJet InputAssetAmountsHash)
+  , mkAssoc (SigHashJet InputAmountsHash)
   , mkAssoc (SigHashJet InputScriptsHash)
   , mkAssoc (SigHashJet TapleafHash)
   , mkAssoc (SigHashJet TapbranchHash)
@@ -649,7 +649,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (TransactionJet NumOutputs)
   , mkAssoc (TransactionJet LockTime)
   , mkAssoc (TransactionJet OutputAsset)
-  , mkAssoc (TransactionJet OutputAssetAmount)
+  , mkAssoc (TransactionJet OutputAmount)
   , mkAssoc (TransactionJet OutputNonce)
   , mkAssoc (TransactionJet OutputScriptHash)
   , mkAssoc (TransactionJet OutputNullDatum)
@@ -658,7 +658,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (TransactionJet CurrentPegin)
   , mkAssoc (TransactionJet CurrentPrevOutpoint)
   , mkAssoc (TransactionJet CurrentAsset)
-  , mkAssoc (TransactionJet CurrentAssetAmount)
+  , mkAssoc (TransactionJet CurrentAmount)
   , mkAssoc (TransactionJet CurrentScriptHash)
   , mkAssoc (TransactionJet CurrentSequence)
   , mkAssoc (TransactionJet CurrentAnnexHash)
@@ -673,7 +673,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (TransactionJet InputPegin)
   , mkAssoc (TransactionJet InputPrevOutpoint)
   , mkAssoc (TransactionJet InputAsset)
-  , mkAssoc (TransactionJet InputAssetAmount)
+  , mkAssoc (TransactionJet InputAmount)
   , mkAssoc (TransactionJet InputScriptHash)
   , mkAssoc (TransactionJet InputSequence)
   , mkAssoc (TransactionJet InputAnnexHash)

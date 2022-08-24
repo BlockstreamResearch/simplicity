@@ -62,14 +62,14 @@ tests = testGroup "Elements"
           , testProperty "input_issuance_asset" prop_input_issuance_asset
           , testProperty "input_issuance_token" prop_input_issuance_token
           , testProperty "input_issuance_entropy" prop_input_issuance_entropy
-          , testProperty "output_asset_amounts_hash" prop_output_asset_amounts_hash
+          , testProperty "output_amounts_hash" prop_output_amounts_hash
           , testProperty "output_nonces_hash" prop_output_nonces_hash
           , testProperty "output_scripts_hash" prop_output_scripts_hash
           , testProperty "output_range_proofs_hash" prop_output_range_proofs_hash
           , testProperty "output_surjection_proofs_hash" prop_output_surjection_proofs_hash
           , testProperty "outputs_hash" prop_outputs_hash
           , testProperty "input_outpoints_hash" prop_input_outpoints_hash
-          , testProperty "input_asset_amounts_hash" prop_input_asset_amounts_hash
+          , testProperty "input_amounts_hash" prop_input_amounts_hash
           , testProperty "input_scripts_hash" prop_input_scripts_hash
           , testProperty "input_utxos_hash" prop_input_utxos_hash
           , testProperty "input_sequences_hash" prop_input_sequences_hash
@@ -245,9 +245,9 @@ prop_input_issuance_entropy :: Property
 prop_input_issuance_entropy = checkJet (ElementsJet (IssuanceJet IssuanceEntropy))
                             $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
-prop_output_asset_amounts_hash :: Property
-prop_output_asset_amounts_hash = checkJet (ElementsJet (SigHashJet OutputAssetAmountsHash))
-                               $ \check -> forallPrimEnv $ \env -> check env ()
+prop_output_amounts_hash :: Property
+prop_output_amounts_hash = checkJet (ElementsJet (SigHashJet OutputAmountsHash))
+                         $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_output_nonces_hash :: Property
 prop_output_nonces_hash = checkJet (ElementsJet (SigHashJet OutputNoncesHash))
@@ -273,9 +273,9 @@ prop_input_outpoints_hash :: Property
 prop_input_outpoints_hash = checkJet (ElementsJet (SigHashJet InputOutpointsHash))
                           $ \check -> forallPrimEnv $ \env -> check env ()
 
-prop_input_asset_amounts_hash :: Property
-prop_input_asset_amounts_hash = checkJet (ElementsJet (SigHashJet InputAssetAmountsHash))
-                              $ \check -> forallPrimEnv $ \env -> check env ()
+prop_input_amounts_hash :: Property
+prop_input_amounts_hash = checkJet (ElementsJet (SigHashJet InputAmountsHash))
+                        $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_input_scripts_hash :: Property
 prop_input_scripts_hash = checkJet (ElementsJet (SigHashJet InputScriptsHash))
@@ -370,7 +370,7 @@ prop_output_asset = checkJet (ElementsJet (TransactionJet OutputAsset))
                   $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
 
 prop_output_amount :: Property
-prop_output_amount = checkJet (ElementsJet (TransactionJet OutputAssetAmount))
+prop_output_amount = checkJet (ElementsJet (TransactionJet OutputAmount))
                    $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
 
 prop_output_nonce :: Property
@@ -406,7 +406,7 @@ prop_current_asset = checkJet (ElementsJet (TransactionJet CurrentAsset))
                    $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_current_amount :: Property
-prop_current_amount = checkJet (ElementsJet (TransactionJet CurrentAssetAmount))
+prop_current_amount = checkJet (ElementsJet (TransactionJet CurrentAmount))
                     $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_current_script_hash :: Property
@@ -466,7 +466,7 @@ prop_input_asset = checkJet (ElementsJet (TransactionJet InputAsset))
                  $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 prop_input_amount :: Property
-prop_input_amount = checkJet (ElementsJet (TransactionJet InputAssetAmount))
+prop_input_amount = checkJet (ElementsJet (TransactionJet InputAmount))
                   $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 prop_input_script_hash :: Property

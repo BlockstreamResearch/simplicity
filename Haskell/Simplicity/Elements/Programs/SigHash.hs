@@ -2,9 +2,9 @@
 -- | This module defines Simplicity expressions that implement timelock functions from "Simplicity.Elements.DataTypes".
 module Simplicity.Elements.Programs.SigHash
  ( Lib(Lib), mkLib
- , outputAssetAmountsHash, outputNoncesHash, outputScriptsHash
+ , outputAmountsHash, outputNoncesHash, outputScriptsHash
  , outputRangeProofsHash, outputSurjectionProofsHash, outputsHash
- , inputAssetAmountsHash, inputScriptsHash, inputUtxosHash
+ , inputAmountsHash, inputScriptsHash, inputUtxosHash
  , inputOutpointsHash, inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash
  , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuanceBlindingEntropyHash, issuancesHash
  , txHash
@@ -33,8 +33,8 @@ import Simplicity.Programs.Elements.Lib
 
 data Lib term =
  Lib
-  { -- | A hash of all 'Transaction.outputAssetAmount's.
-    outputAssetAmountsHash :: term () Word256
+  { -- | A hash of all 'Transaction.outputAmount's.
+    outputAmountsHash :: term () Word256
     -- | A hash of all 'OutputNonce's.
   , outputNoncesHash :: term () Word256
     -- | A hash of all 'OutputScriptHash's.
@@ -45,20 +45,20 @@ data Lib term =
   , outputSurjectionProofsHash :: term () Word256
     -- | A hash of
     --
-    -- * 'outputAssetAmountsHash'
+    -- * 'outputAmountsHash'
     -- * 'outputNoncesHash'
     -- * 'outputScriptsHash'
     -- * 'outputRangeProofsHash'
     --
     -- Note that 'outputSurjectionProofsHash' is excluded.
   , outputsHash :: term () Word256
-    -- | A hash of all 'Transaction.inputAssetAmount's.
-  , inputAssetAmountsHash :: term () Word256
+    -- | A hash of all 'Transaction.inputAmount's.
+  , inputAmountsHash :: term () Word256
     -- | A hash of all 'InputScriptHash's.
   , inputScriptsHash :: term () Word256
     -- | A hash of
     --
-    -- * 'inputAssetAmountsHash'
+    -- * 'inputAmountsHash'
     -- * 'inputScriptsHash'
   , inputUtxosHash :: term () Word256
     -- | A hash of all 'InputPegin' and 'InputPrevOutpoint' pairs.
@@ -77,13 +77,13 @@ data Lib term =
     --
     -- Note that 'InputScriptSigHash' is excluded.
   , inputsHash :: term () Word256
-    -- | A hash of 'issuanceAsset' and 'IssuanceAssetAmt' pairs as an asset-amount hash.
+    -- | A hash of 'issuanceAsset' and 'IssuanceAssetAmount' pairs as an asset-amount hash.
     --
     -- Note that "null" amount is hashed as if it were an explicit zero.
     --
     -- When an input has no issuance, a pair of zero bytes, @0x00 0x00@ are hashed.
   , issuanceAssetAmountsHash :: term () Word256
-    -- | A hash of 'issuanceToken' and 'IssuanceAssetAmt' pairs as an asset-amount hash.
+    -- | A hash of 'issuanceToken' and 'IssuanceAssetAmount' pairs as an asset-amount hash.
     --
     -- Note that "null" amount is hashed as if it were an explicit zero.
     --
@@ -135,13 +135,13 @@ instance SimplicityFunctor Lib where
   sfmap m Lib{..} =
    Lib
     {
-      outputAssetAmountsHash = m outputAssetAmountsHash
+      outputAmountsHash = m outputAmountsHash
     , outputNoncesHash = m outputNoncesHash
     , outputScriptsHash = m outputScriptsHash
     , outputRangeProofsHash = m outputRangeProofsHash
     , outputSurjectionProofsHash = m outputSurjectionProofsHash
     , outputsHash = m outputsHash
-    , inputAssetAmountsHash = m inputAssetAmountsHash
+    , inputAmountsHash = m inputAmountsHash
     , inputScriptsHash = m inputScriptsHash
     , inputUtxosHash = m inputUtxosHash
     , inputOutpointsHash = m inputOutpointsHash
@@ -168,10 +168,10 @@ mkLib :: forall term. (Assert term, Primitive term) => Sha256.Lib term -- ^ "Sim
 mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
  where
   lib@Lib{..} = Lib {
-    outputAssetAmountsHash =
+    outputAmountsHash =
      let
        finalize = ctx8Finalize
-       body = take (drop outputAssetAmount) &&& ih
+       body = take (drop outputAmount) &&& ih
           >>> match (injl ih) (injr (ih &&& oh >>> assetAmountHash))
      in
       unit &&& ctx8Init >>> forWhile word32 body >>> copair finalize finalize
@@ -190,20 +190,20 @@ mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
 
   , outputSurjectionProofsHash = hashWord256s32 (drop (primitive OutputSurjectionProof))
 
-  , outputsHash = ctx8Init &&& ((outputAssetAmountsHash &&& outputNoncesHash) &&& (outputScriptsHash &&& outputRangeProofsHash))
+  , outputsHash = ctx8Init &&& ((outputAmountsHash &&& outputNoncesHash) &&& (outputScriptsHash &&& outputRangeProofsHash))
               >>> ctx8Addn vector128 >>> ctx8Finalize
 
-  , inputAssetAmountsHash =
+  , inputAmountsHash =
      let
       finalize = ctx8Finalize
-      body = take (drop inputAssetAmount) &&& ih
+      body = take (drop inputAmount) &&& ih
          >>> match (injl ih) (injr (ih &&& oh >>> assetAmountHash))
      in
       unit &&& ctx8Init >>> forWhile word32 body >>> copair finalize finalize
 
   , inputScriptsHash = hashWord256s32 (drop (primitive InputScriptHash))
 
-  , inputUtxosHash = ctx8Init &&& (inputAssetAmountsHash &&& inputScriptsHash) >>> ctx8Addn vector64 >>> ctx8Finalize
+  , inputUtxosHash = ctx8Init &&& (inputAmountsHash &&& inputScriptsHash) >>> ctx8Addn vector64 >>> ctx8Finalize
 
   , inputOutpointsHash =
      let
@@ -234,7 +234,7 @@ mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
   , issuanceAssetAmountsHash =
      let
       finalize = ctx8Finalize
-      body = take (drop issuanceAsset) &&& (take (drop (primitive IssuanceAssetAmt)) &&& ih)
+      body = take (drop issuanceAsset) &&& (take (drop (primitive IssuanceAssetAmount)) &&& ih)
          >>> match (injl iih) (match (injr (iih &&& (unit >>> zero word16) >>> ctx8Addn vector2)) (ioh &&& (oh &&& iih)
          >>> match (injl iih) (match (injl iih) (injr (iih &&& (injr ioh &&& oh) >>> assetAmountHash)))))
      in
@@ -243,7 +243,7 @@ mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
   , issuanceTokenAmountsHash =
      let
       finalize = ctx8Finalize
-      body = take (drop issuanceToken) &&& (take (drop (primitive IssuanceTokenAmt)) &&& ih)
+      body = take (drop issuanceToken) &&& (take (drop (primitive IssuanceTokenAmount)) &&& ih)
          >>> match (injl iih) (match (injr (iih &&& (unit >>> zero word16) >>> ctx8Addn vector2)) (ioh &&& (oh &&& iih)
          >>> match (injl iih) (match (injl iih) (injr (iih &&& (injr ioh &&& oh) >>> assetAmountHash)))))
      in

@@ -4,12 +4,12 @@ module Simplicity.Elements.Programs.Transaction
  ( Lib(Lib), lib
  , numInputs
  , numOutputs
- , outputAssetAmount
- , inputAssetAmount
+ , outputAmount
+ , inputAmount
  , currentPegin
  , currentPrevOutpoint
  , currentAsset
- , currentAssetAmount
+ , currentAmount
  , currentScriptHash
  , currentSequence
  , currentAnnexHash
@@ -17,8 +17,8 @@ module Simplicity.Elements.Programs.Transaction
  , currentReissuanceBlinding
  , currentNewIssuanceContract
  , currentReissuanceEntropy
- , currentIssuanceAssetAmt
- , currentIssuanceTokenAmt
+ , currentIssuanceAssetAmount
+ , currentIssuanceTokenAmount
  , currentIssuanceAssetProof
  , currentIssuanceTokenProof
  ) where
@@ -42,18 +42,18 @@ data Lib term =
   , numOutputs :: term () Word32
     -- | Returns a pair of asset and amounts for the given output index.
     -- Returns Nothing of the index is out of range.
-  , outputAssetAmount :: term Word32 (S (Conf Word256, Conf Word64))
+  , outputAmount :: term Word32 (S (Conf Word256, Conf Word64))
     -- | Returns a pair of asset and amounts for the given input index.
     -- Returns Nothing of the index is out of range.
-  , inputAssetAmount :: term Word32 (S (Conf Word256, Conf Word64))
+  , inputAmount :: term Word32 (S (Conf Word256, Conf Word64))
     -- | Returns the `InputPegin` of the `CurrentIndex`.
   , currentPegin :: term () (S Word256)
     -- | Returns the `InputPrevOutpoint` of the `CurrentIndex`.
   , currentPrevOutpoint :: term () (Word256,Word32)
     -- | Returns the `InputAsset` of the `CurrentIndex`.
   , currentAsset :: term () (Conf Word256)
-    -- | Returns the `inputAssetAmount` of the `CurrentIndex`.
-  , currentAssetAmount :: term () (Conf Word256, Conf Word64)
+    -- | Returns the `inputAmount` of the `CurrentIndex`.
+  , currentAmount :: term () (Conf Word256, Conf Word64)
     -- | Returns the `InputScriptHash` of the `CurrentIndex`.
   , currentScriptHash :: term () Word256
     -- | Returns the `InputSequence` of the `CurrentIndex`.
@@ -68,10 +68,10 @@ data Lib term =
   , currentNewIssuanceContract :: term () (S Word256)
     -- | Returns the `ReissuanceEntropy` of the `CurrentIndex`.
   , currentReissuanceEntropy :: term () (S Word256)
-    -- | Returns the `IssuanceAssetAmt` of the `CurrentIndex`.
-  , currentIssuanceAssetAmt :: term () (S (Conf Word64))
-    -- | Returns the `IssuanceTokenAmt` of the `CurrentIndex`.
-  , currentIssuanceTokenAmt :: term () (S (Conf Word64))
+    -- | Returns the `IssuanceAssetAmount` of the `CurrentIndex`.
+  , currentIssuanceAssetAmount :: term () (S (Conf Word64))
+    -- | Returns the `IssuanceTokenAmount` of the `CurrentIndex`.
+  , currentIssuanceTokenAmount :: term () (S (Conf Word64))
     -- | Returns the `IssuanceAssetProof` of the `CurrentIndex`.
   , currentIssuanceAssetProof :: term () Word256
     -- | Returns the `IssuanceTokenProof` of the `CurrentIndex`.
@@ -84,12 +84,12 @@ instance SimplicityFunctor Lib where
     {
       numInputs = m numInputs
     , numOutputs = m numOutputs
-    , outputAssetAmount = m outputAssetAmount
-    , inputAssetAmount = m inputAssetAmount
+    , outputAmount = m outputAmount
+    , inputAmount = m inputAmount
     , currentPegin = m currentPegin
     , currentPrevOutpoint = m currentPrevOutpoint
     , currentAsset = m currentAsset
-    , currentAssetAmount = m currentAssetAmount
+    , currentAmount = m currentAmount
     , currentScriptHash = m currentScriptHash
     , currentSequence = m currentSequence
     , currentAnnexHash = m currentAnnexHash
@@ -97,8 +97,8 @@ instance SimplicityFunctor Lib where
     , currentReissuanceBlinding = m currentReissuanceBlinding
     , currentNewIssuanceContract = m currentNewIssuanceContract
     , currentReissuanceEntropy = m currentReissuanceEntropy
-    , currentIssuanceAssetAmt = m currentIssuanceAssetAmt
-    , currentIssuanceTokenAmt = m currentIssuanceTokenAmt
+    , currentIssuanceAssetAmount = m currentIssuanceAssetAmount
+    , currentIssuanceTokenAmount = m currentIssuanceTokenAmount
     , currentIssuanceAssetProof = m currentIssuanceAssetProof
     , currentIssuanceTokenProof = m currentIssuanceTokenProof
     }
@@ -117,11 +117,11 @@ lib = l
 
   , numOutputs = firstFail (primitive OutputScriptHash)
 
-  , outputAssetAmount = primitive OutputAmount &&& primitive OutputAsset
-                    >>> match (injl unit) (ih &&& oh >>> match (injl unit) (injr iden))
+  , outputAmount = primitive OutputAmount &&& primitive OutputAsset
+               >>> match (injl unit) (ih &&& oh >>> match (injl unit) (injr iden))
 
-  , inputAssetAmount = primitive InputAmount &&& primitive InputAsset
-                   >>> match (injl unit) (ih &&& oh >>> match (injl unit) (injr iden))
+  , inputAmount = primitive InputAmount &&& primitive InputAsset
+              >>> match (injl unit) (ih &&& oh >>> match (injl unit) (injr iden))
 
   , currentPegin = primitive CurrentIndex >>> assert (primitive InputPegin)
 
@@ -129,7 +129,7 @@ lib = l
 
   , currentAsset = primitive CurrentIndex >>> assert (primitive InputAsset)
 
-  , currentAssetAmount = primitive CurrentIndex >>> assert (inputAssetAmount)
+  , currentAmount = primitive CurrentIndex >>> assert (inputAmount)
 
   , currentScriptHash = primitive CurrentIndex >>> assert (primitive InputScriptHash)
 
@@ -145,9 +145,9 @@ lib = l
 
   , currentReissuanceEntropy = primitive CurrentIndex >>> assert (primitive ReissuanceEntropy)
 
-  , currentIssuanceAssetAmt = primitive CurrentIndex >>> assert (primitive IssuanceAssetAmt)
+  , currentIssuanceAssetAmount = primitive CurrentIndex >>> assert (primitive IssuanceAssetAmount)
 
-  , currentIssuanceTokenAmt = primitive CurrentIndex >>> assert (primitive IssuanceTokenAmt)
+  , currentIssuanceTokenAmount = primitive CurrentIndex >>> assert (primitive IssuanceTokenAmount)
 
   , currentIssuanceAssetProof = primitive CurrentIndex >>> assert (primitive IssuanceAssetProof)
 

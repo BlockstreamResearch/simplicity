@@ -73,7 +73,7 @@ mkLib Elements.Lib{..} = lib
 
   , issuanceAsset = issuanceEntropy >>> copair (injl unit) (injr (copair (injl unit) (injr calculateAsset)))
 
-  , issuanceToken = issuanceEntropy &&& primitive IssuanceAssetAmt
+  , issuanceToken = issuanceEntropy &&& primitive IssuanceAssetAmount
                 >>> match (injl unit) (match (injr (injl unit)) (ih &&& oh
                 >>> match (injl unit) (match (injl unit) (injr (injr
                       (match (drop calculateConfidentialToken) (drop calculateExplicitToken)))))))

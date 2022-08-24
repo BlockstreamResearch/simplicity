@@ -3,12 +3,12 @@
 module Simplicity.Elements.Programs.Transaction.Lib
   ( numInputs
   , numOutputs
-  , outputAssetAmount
-  , inputAssetAmount
+  , outputAmount
+  , inputAmount
   , currentPegin
   , currentPrevOutpoint
   , currentAsset
-  , currentAssetAmount
+  , currentAmount
   , currentScriptHash
   , currentSequence
   , currentAnnexHash
@@ -16,8 +16,8 @@ module Simplicity.Elements.Programs.Transaction.Lib
   , currentReissuanceBlinding
   , currentNewIssuanceContract
   , currentReissuanceEntropy
-  , currentIssuanceAssetAmt
-  , currentIssuanceTokenAmt
+  , currentIssuanceAssetAmount
+  , currentIssuanceTokenAmount
   , currentIssuanceAssetProof
   , currentIssuanceTokenProof
   ) where
@@ -26,12 +26,12 @@ import qualified Simplicity.Elements.Programs.Transaction as Transaction
 
 numInputs = Transaction.numInputs Transaction.lib
 numOutputs = Transaction.numOutputs Transaction.lib
-outputAssetAmount = Transaction.outputAssetAmount Transaction.lib
-inputAssetAmount = Transaction.inputAssetAmount Transaction.lib
+outputAmount = Transaction.outputAmount Transaction.lib
+inputAmount = Transaction.inputAmount Transaction.lib
 currentPegin = Transaction.currentPegin Transaction.lib
 currentPrevOutpoint = Transaction.currentPrevOutpoint Transaction.lib
 currentAsset = Transaction.currentAsset Transaction.lib
-currentAssetAmount = Transaction.currentAssetAmount Transaction.lib
+currentAmount = Transaction.currentAmount Transaction.lib
 currentScriptHash = Transaction.currentScriptHash Transaction.lib
 currentSequence = Transaction.currentSequence Transaction.lib
 currentAnnexHash = Transaction.currentAnnexHash Transaction.lib
@@ -39,7 +39,7 @@ currentScriptSigHash = Transaction.currentScriptSigHash Transaction.lib
 currentReissuanceBlinding = Transaction.currentReissuanceBlinding Transaction.lib
 currentNewIssuanceContract = Transaction.currentNewIssuanceContract Transaction.lib
 currentReissuanceEntropy = Transaction.currentReissuanceEntropy Transaction.lib
-currentIssuanceAssetAmt = Transaction.currentIssuanceAssetAmt Transaction.lib
-currentIssuanceTokenAmt = Transaction.currentIssuanceTokenAmt Transaction.lib
+currentIssuanceAssetAmount = Transaction.currentIssuanceAssetAmount Transaction.lib
+currentIssuanceTokenAmount = Transaction.currentIssuanceTokenAmount Transaction.lib
 currentIssuanceAssetProof = Transaction.currentIssuanceAssetProof Transaction.lib
 currentIssuanceTokenProof = Transaction.currentIssuanceTokenProof Transaction.lib

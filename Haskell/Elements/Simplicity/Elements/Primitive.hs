@@ -49,8 +49,8 @@ data Prim a b where
   ReissuanceBlinding :: Prim Word32 (S (S Word256))
   NewIssuanceContract :: Prim Word32 (S (S Word256))
   ReissuanceEntropy :: Prim Word32 (S (S Word256))
-  IssuanceAssetAmt :: Prim Word32 (S (S (Conf Word64)))
-  IssuanceTokenAmt :: Prim Word32 (S (S (Conf Word64)))
+  IssuanceAssetAmount :: Prim Word32 (S (S (Conf Word64)))
+  IssuanceTokenAmount :: Prim Word32 (S (S (Conf Word64)))
   IssuanceAssetProof :: Prim Word32 (S Word256)
   IssuanceTokenProof :: Prim Word32 (S Word256)
   CurrentIndex :: Prim () Word32
@@ -82,8 +82,8 @@ instance Eq (Prim a b) where
   ReissuanceBlinding == ReissuanceBlinding = True
   NewIssuanceContract == NewIssuanceContract = True
   ReissuanceEntropy == ReissuanceEntropy = True
-  IssuanceAssetAmt == IssuanceAssetAmt = True
-  IssuanceTokenAmt == IssuanceTokenAmt = True
+  IssuanceAssetAmount == IssuanceAssetAmount = True
+  IssuanceTokenAmount == IssuanceTokenAmount = True
   IssuanceAssetProof == IssuanceAssetProof = True
   IssuanceTokenProof == IssuanceTokenProof = True
   CurrentIndex == CurrentIndex = True
@@ -120,8 +120,8 @@ primName InputScriptSigHash = "inputScriptSigHash"
 primName ReissuanceBlinding = "reissuanceBlinding"
 primName NewIssuanceContract = "newIssuanceContract"
 primName ReissuanceEntropy = "reissuanceEntropy"
-primName IssuanceAssetAmt = "issuanceAssetAmt"
-primName IssuanceTokenAmt = "issuanceTokenAmt"
+primName IssuanceAssetAmount = "issuanceAssetAmount"
+primName IssuanceTokenAmount = "issuanceTokenAmount"
 primName IssuanceAssetProof = "issuanceAssetProof"
 primName IssuanceTokenProof = "issuanceTokenProof"
 primName CurrentIndex = "currentIndex"
@@ -244,9 +244,9 @@ primSem p a env = interpret p a
       cast . fmap encodeHash . (either (Just . newIssuanceContractHash) (const Nothing) <=< sigTxiIssuance))
   interpret ReissuanceEntropy = return . (atInput $
       cast . fmap encodeHash . (either (const Nothing) (Just . reissuanceEntropy) <=< sigTxiIssuance))
-  interpret IssuanceAssetAmt = return . (atInput $
+  interpret IssuanceAssetAmount = return . (atInput $
       cast . fmap (encodeAmount . clearAmountPrf . issuanceAmount) . sigTxiIssuance)
-  interpret IssuanceTokenAmt = return . (atInput $
+  interpret IssuanceTokenAmount = return . (atInput $
       cast . fmap (encodeAmount . clearAmountPrf . issuanceTokenAmount) . sigTxiIssuance)
   interpret IssuanceAssetProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceAmount.under amount.prf_))
   interpret IssuanceTokenProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceTokenAmount.under amount.prf_))

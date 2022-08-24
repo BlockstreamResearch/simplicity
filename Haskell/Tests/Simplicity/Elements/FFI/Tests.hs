@@ -43,14 +43,14 @@ tests = testGroup "Elements"
           , testProperty "issuance_asset" prop_issuance_asset
           , testProperty "issuance_token" prop_issuance_token
           , testProperty "issuance_entropy" prop_issuance_entropy
-          , testProperty "output_asset_amounts_hash" prop_output_asset_amounts_hash
+          , testProperty "output_amounts_hash" prop_output_amounts_hash
           , testProperty "output_nonces_hash" prop_output_nonces_hash
           , testProperty "output_scripts_hash" prop_output_scripts_hash
           , testProperty "output_range_proofs_hash" prop_output_range_proofs_hash
           , testProperty "output_surjection_proofs_hash" prop_output_surjection_proofs_hash
           , testProperty "outputs_hash" prop_outputs_hash
           , testProperty "input_outpoints_hash" prop_input_outpoints_hash
-          , testProperty "input_asset_amounts_hash" prop_input_asset_amounts_hash
+          , testProperty "input_amounts_hash" prop_input_amounts_hash
           , testProperty "input_scripts_hash" prop_input_scripts_hash
           , testProperty "input_utxos_hash" prop_input_utxos_hash
           , testProperty "input_sequences_hash" prop_input_sequences_hash
@@ -212,10 +212,10 @@ prop_issuance_entropy = forallInPrimEnv $ \env i ->
  where
   fast_issuance_entropy = testEval (specification (ElementsJet (IssuanceJet IssuanceEntropy)))
 
-prop_output_asset_amounts_hash :: Property
-prop_output_asset_amounts_hash = forallPrimEnv $ \env -> fast_output_asset_amounts_hash env () == output_asset_amounts_hash env ()
+prop_output_amounts_hash :: Property
+prop_output_amounts_hash = forallPrimEnv $ \env -> fast_output_amounts_hash env () == output_amounts_hash env ()
  where
-  fast_output_asset_amounts_hash = testEval (specification (ElementsJet (SigHashJet OutputAssetAmountsHash)))
+  fast_output_amounts_hash = testEval (specification (ElementsJet (SigHashJet OutputAmountsHash)))
 
 prop_output_nonces_hash :: Property
 prop_output_nonces_hash = forallPrimEnv $ \env -> fast_output_nonces_hash env () == output_nonces_hash env ()
@@ -247,10 +247,10 @@ prop_input_outpoints_hash = forallPrimEnv $ \env -> fast_input_outpoints_hash en
  where
   fast_input_outpoints_hash = testEval (specification (ElementsJet (SigHashJet InputOutpointsHash)))
 
-prop_input_asset_amounts_hash :: Property
-prop_input_asset_amounts_hash = forallPrimEnv $ \env -> fast_input_asset_amounts_hash env () == input_asset_amounts_hash env ()
+prop_input_amounts_hash :: Property
+prop_input_amounts_hash = forallPrimEnv $ \env -> fast_input_amounts_hash env () == input_amounts_hash env ()
  where
-  fast_input_asset_amounts_hash = testEval (specification (ElementsJet (SigHashJet InputAssetAmountsHash)))
+  fast_input_amounts_hash = testEval (specification (ElementsJet (SigHashJet InputAmountsHash)))
 
 prop_input_scripts_hash :: Property
 prop_input_scripts_hash = forallPrimEnv $ \env -> fast_input_scripts_hash env () == input_scripts_hash env ()
@@ -368,9 +368,9 @@ prop_output_asset = forallOutPrimEnv $ \env i -> fast_output_asset env (toW32 i)
   fast_output_asset = testEval (specification (ElementsJet (TransactionJet OutputAsset)))
 
 prop_output_amount :: Property
-prop_output_amount = forallOutPrimEnv $ \env i -> fast_output_amount env (toW32 i) == output_asset_amount env (toW32 i)
+prop_output_amount = forallOutPrimEnv $ \env i -> fast_output_amount env (toW32 i) == output_amount env (toW32 i)
  where
-  fast_output_amount = testEval (specification (ElementsJet (TransactionJet OutputAssetAmount)))
+  fast_output_amount = testEval (specification (ElementsJet (TransactionJet OutputAmount)))
 
 prop_output_nonce :: Property
 prop_output_nonce = forallOutPrimEnv $ \env i -> fast_output_nonce env (toW32 i) == output_nonce env (toW32 i)
@@ -413,9 +413,9 @@ prop_current_asset = forallPrimEnv $ \env -> fast_current_asset env () == curren
   fast_current_asset = testEval (specification (ElementsJet (TransactionJet CurrentAsset)))
 
 prop_current_amount :: Property
-prop_current_amount = forallPrimEnv $ \env -> fast_current_amount env () == current_asset_amount env ()
+prop_current_amount = forallPrimEnv $ \env -> fast_current_amount env () == current_amount env ()
  where
-  fast_current_amount = testEval (specification (ElementsJet (TransactionJet CurrentAssetAmount)))
+  fast_current_amount = testEval (specification (ElementsJet (TransactionJet CurrentAmount)))
 
 prop_current_script_hash :: Property
 prop_current_script_hash = forallPrimEnv $ \env -> fast_current_script_hash env () == current_script_hash env ()
@@ -488,9 +488,9 @@ prop_input_asset = forallInPrimEnv $ \env i -> fast_input_asset env (toW32 i) ==
   fast_input_asset = testEval (specification (ElementsJet (TransactionJet InputAsset)))
 
 prop_input_amount :: Property
-prop_input_amount = forallInPrimEnv $ \env i -> fast_input_amount env (toW32 i) == input_asset_amount env (toW32 i)
+prop_input_amount = forallInPrimEnv $ \env i -> fast_input_amount env (toW32 i) == input_amount env (toW32 i)
  where
-  fast_input_amount = testEval (specification (ElementsJet (TransactionJet InputAssetAmount)))
+  fast_input_amount = testEval (specification (ElementsJet (TransactionJet InputAmount)))
 
 prop_input_script_hash :: Property
 prop_input_script_hash = forallInPrimEnv $ \env i -> fast_input_script_hash env (toW32 i) == input_script_hash env (toW32 i)
