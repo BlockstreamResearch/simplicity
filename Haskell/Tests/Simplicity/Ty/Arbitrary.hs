@@ -28,7 +28,6 @@ import Test.Tasty.QuickCheck (Arbitrary(..), Gen
                              , shrinkIntegral
                              )
 
-
 maybeToTy :: Maybe a -> Either () a
 maybeToTy Nothing = Left ()
 maybeToTy (Just x) = Right x
@@ -197,7 +196,7 @@ data Sha256CtxElement = Sha256CtxElement [W.Word8] W.Word64 HashElement deriving
 instance Arbitrary Sha256CtxElement where
   arbitrary = do
     preLen <- arbitrary
-    count <- oneof [pure id, pure (2^55 +)] <*> arbitrary
+    count <- oneof [pure id, pure (2^55 +)] <*> ((`div` 256) <$> arbitrary)
     Sha256CtxElement <$> (vectorOf (preLen `mod` 64) arbitraryBoundedIntegral) <*> pure (fromInteger count) <*> arbitrary
   shrink (Sha256CtxElement l w h) = [Sha256CtxElement l w h | (l,w,h) <- shrink (l, w, h)]
 

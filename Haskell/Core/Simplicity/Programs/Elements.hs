@@ -109,9 +109,7 @@ mkLibAssert :: forall term. Assert term => Sha256.LibAssert term -- ^ "Simplicit
 mkLibAssert Sha256.LibAssert{..} = libAssert
  where
   libAssert@LibAssert{..} = LibAssert {
-    outpointHash = ((ioh &&& oh >>> match (ih &&& take (zero word8) >>> ctx8Add1)
-                                        ((ih &&& (unit >>> scribe (toWord8 0x01)) >>> ctx8Add1) &&& oh >>> ctx8Add32))
-               &&& iioh >>> ctx8Add32) &&& iiih >>> ctx8Add4
+    outpointHash = ((oh &&& ioh >>> annexHash) &&& iioh >>> ctx8Add32) &&& iiih >>> ctx8Add4
   , assetAmountHash = (oh &&& ioh >>> assetHash) &&& iih >>> amountHash
   , nonceHash = ih &&& oh
             >>> match (ih &&& take (zero word8) >>> ctx8Add1)

@@ -5,6 +5,18 @@
 , .sourceIx = ty_w64
 , .targetIx = ty_pbw32
 }
+,[ANNEX_HASH] =
+{ .tag = JET
+, .jet = annex_hash
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256mw256
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
+,[ASSET_AMOUNT_HASH] =
+{ .tag = JET
+, .jet = asset_amount_hash
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pspbw256w256spbw256w64
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
 ,[BIP_0340_VERIFY] =
 { .tag = JET
 , .jet = bip_0340_verify
@@ -557,6 +569,12 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mmw256
 }
+,[NONCE_HASH] =
+{ .tag = JET
+, .jet = nonce_hash
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256mspbw256w256
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+}
 ,[NUM_INPUTS] =
 { .tag = JET
 , .jet = num_inputs
@@ -574,6 +592,12 @@
 , .jet = one_32
 , .sourceIx = ty_u
 , .targetIx = ty_w32
+}
+,[OUTPOINT_HASH] =
+{ .tag = JET
+, .jet = outpoint_hash
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw256pw256w32
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
 ,[OUTPUT_AMOUNT] =
 { .tag = JET

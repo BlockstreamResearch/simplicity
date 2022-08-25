@@ -11642,6 +11642,88 @@
   version and the taproot internal key. \ Using the notation of BIP-0341, it
   returns the SHA256 hash of <math|c<around*|[|33:33+32m|]>>.
 
+  <subsubsection|<samp|outpoint-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'outpoint-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <\math>
+    <text|<samp|<samp|outpoint-hash>>> :Ctx8\<times\><around*|(|<maybe><around*|(|<2><rsup|256>|)>\<times\>Outpoint|)>\<vdash\>Ctx8
+  </math>
+
+  \;
+
+  Continues a SHA256 hash with an optional pegin and an outpoint by appending
+  the following:
+
+  <\itemize-dot>
+    <item>If the input is not a pegin, then the byte <verbatim|0x00>.
+
+    <item>If the input is a pegin, then the byte <verbatim|0x01> followed by
+    the given parent genesis hash (32 bytes).
+
+    <item>The input's previous transaction id (32 bytes).
+
+    <item>The input's previous transaction index in big endian format (4
+    bytes).
+  </itemize-dot>
+
+  <subsubsection|<samp|asset-amount-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'asset-amount-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <\math>
+    <text|<samp|<samp|asset-amount-hash>>>
+    :Ctx8\<times\><around*|(|Asset<around*|(|<1>|)>\<times\>Amount<around*|(|<1>|)>|)>\<vdash\>Ctx8
+
+    \;
+  </math>
+
+  Continues a SHA256 hash with the serialization of a confidential asset
+  followed by the serialization of a confidential amount.
+
+  <subsubsection|<samp|nonce-hash>>
+
+  \;
+
+  <\math>
+    <rep|<text|<samp|'nonce-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>
+  </math>
+
+  <\math>
+    <text|<samp|<samp|nonce-hash>>> :Ctx8\<times\><around*|(|<maybe><around*|(|Nonce|)>|)>\<vdash\>Ctx8
+  </math>
+
+  \;
+
+  Continues a SHA256 hash with the serialization of an optional nonce.
+
+  <subsubsection|<samp|annex-hash>>
+
+  \;
+
+  <\math>
+    <rep|<text|<samp|'annex-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>
+  </math>
+
+  <\math>
+    <text|<samp|<samp|annex-hash>>> :Ctx8\<times\><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>\<vdash\>Ctx8
+  </math>
+
+  \;
+
+  Continues a SHA256 hash with an optional hash by appending the following:
+
+  <\itemize-dot>
+    <item>If there is no hash, then the byte <verbatim|0x00>.
+
+    <item>If there is a hash, then the byte <verbatim|0x01> followed by the
+    given hash (32 bytes).
+  </itemize-dot>
+
   <subsection|Time Locks>
 
   In this section we define <math|Height\<assign\><2><rsup|32>>,
@@ -12036,13 +12118,14 @@
 
   <math|<text|<samp|total-fee>> \<of\> ExplicitAsset\<vdash\>ExplicitAmount>
 
-  <subsubsection|<samp|current-is-pegin>>
+  <subsubsection|<samp|current-pegin>>
 
   \;
 
-  <math|<rep|<text|<samp|'current-is-pegin'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-pegin'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|current-is-pegin>> \<of\> <value|1>\<vdash\><2>>
+  <math|<text|<samp|current-pegin>> \<of\>
+  <value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
 
   <subsubsection|<samp|current-prev-outpoint>>
 
@@ -12169,14 +12252,13 @@
   <math|<text|<samp|current-issuance-token-proof>> \<of\>
   <value|1>\<vdash\><2><rsup|256>>
 
-  <subsubsection|<samp|input-is-pegin>>
+  <subsubsection|<samp|input-pegin>>
 
   \;
 
-  <math|<rep|<text|<samp|'input-is-pegin'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-pegin'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|input-is-pegin>> \<of\>
-  <2><rsup|32>\<vdash\><maybe><around*|(|<2>|)>>
+  <math|<text|<samp|input-pegin>> \<of\> <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
 
   <subsubsection|<samp|input-prev-outpoint>>
 
@@ -12923,84 +13005,88 @@
     <associate|auto-409|<tuple|B.3.1.23|?>>
     <associate|auto-41|<tuple|3.3.1|?>>
     <associate|auto-410|<tuple|B.3.1.24|?>>
-    <associate|auto-411|<tuple|B.3.2|?>>
-    <associate|auto-412|<tuple|B.3.2.1|?>>
-    <associate|auto-413|<tuple|B.3.2.2|?>>
-    <associate|auto-414|<tuple|B.3.2.3|?>>
-    <associate|auto-415|<tuple|B.3.2.4|?>>
-    <associate|auto-416|<tuple|B.3.2.5|?>>
-    <associate|auto-417|<tuple|B.3.2.6|?>>
-    <associate|auto-418|<tuple|B.3.2.7|?>>
-    <associate|auto-419|<tuple|B.3.2.8|?>>
+    <associate|auto-411|<tuple|B.3.1.25|?>>
+    <associate|auto-412|<tuple|B.3.1.26|?>>
+    <associate|auto-413|<tuple|B.3.1.27|?>>
+    <associate|auto-414|<tuple|B.3.1.28|?>>
+    <associate|auto-415|<tuple|B.3.2|?>>
+    <associate|auto-416|<tuple|B.3.2.1|?>>
+    <associate|auto-417|<tuple|B.3.2.2|?>>
+    <associate|auto-418|<tuple|B.3.2.3|?>>
+    <associate|auto-419|<tuple|B.3.2.4|?>>
     <associate|auto-42|<tuple|3.3.2|?>>
-    <associate|auto-420|<tuple|B.3.2.9|?>>
-    <associate|auto-421|<tuple|B.3.3|?>>
-    <associate|auto-422|<tuple|B.3.3.1|?>>
-    <associate|auto-423|<tuple|B.3.3.2|?>>
-    <associate|auto-424|<tuple|B.3.3.3|?>>
-    <associate|auto-425|<tuple|B.3.3.4|?>>
-    <associate|auto-426|<tuple|B.3.3.5|?>>
-    <associate|auto-427|<tuple|B.3.3.6|?>>
-    <associate|auto-428|<tuple|B.3.3.7|?>>
-    <associate|auto-429|<tuple|B.3.3.8|?>>
+    <associate|auto-420|<tuple|B.3.2.5|?>>
+    <associate|auto-421|<tuple|B.3.2.6|?>>
+    <associate|auto-422|<tuple|B.3.2.7|?>>
+    <associate|auto-423|<tuple|B.3.2.8|?>>
+    <associate|auto-424|<tuple|B.3.2.9|?>>
+    <associate|auto-425|<tuple|B.3.3|?>>
+    <associate|auto-426|<tuple|B.3.3.1|?>>
+    <associate|auto-427|<tuple|B.3.3.2|?>>
+    <associate|auto-428|<tuple|B.3.3.3|?>>
+    <associate|auto-429|<tuple|B.3.3.4|?>>
     <associate|auto-43|<tuple|3.3.3|?>>
-    <associate|auto-430|<tuple|B.3.4|?>>
-    <associate|auto-431|<tuple|B.3.4.1|?>>
-    <associate|auto-432|<tuple|B.3.4.2|?>>
-    <associate|auto-433|<tuple|B.3.4.3|?>>
-    <associate|auto-434|<tuple|B.3.4.4|?>>
-    <associate|auto-435|<tuple|B.3.4.5|?>>
-    <associate|auto-436|<tuple|B.3.4.6|?>>
-    <associate|auto-437|<tuple|B.3.4.7|?>>
-    <associate|auto-438|<tuple|B.3.4.8|?>>
-    <associate|auto-439|<tuple|B.3.4.9|?>>
+    <associate|auto-430|<tuple|B.3.3.5|?>>
+    <associate|auto-431|<tuple|B.3.3.6|?>>
+    <associate|auto-432|<tuple|B.3.3.7|?>>
+    <associate|auto-433|<tuple|B.3.3.8|?>>
+    <associate|auto-434|<tuple|B.3.4|?>>
+    <associate|auto-435|<tuple|B.3.4.1|?>>
+    <associate|auto-436|<tuple|B.3.4.2|?>>
+    <associate|auto-437|<tuple|B.3.4.3|?>>
+    <associate|auto-438|<tuple|B.3.4.4|?>>
+    <associate|auto-439|<tuple|B.3.4.5|?>>
     <associate|auto-44|<tuple|3.3.4|?>>
-    <associate|auto-440|<tuple|B.3.4.10|?>>
-    <associate|auto-441|<tuple|B.3.4.11|?>>
-    <associate|auto-442|<tuple|B.3.4.12|?>>
-    <associate|auto-443|<tuple|B.3.4.13|?>>
-    <associate|auto-444|<tuple|B.3.4.14|?>>
-    <associate|auto-445|<tuple|B.3.4.15|?>>
-    <associate|auto-446|<tuple|B.3.4.16|?>>
-    <associate|auto-447|<tuple|B.3.4.17|?>>
-    <associate|auto-448|<tuple|B.3.4.18|?>>
-    <associate|auto-449|<tuple|B.3.4.19|?>>
+    <associate|auto-440|<tuple|B.3.4.6|?>>
+    <associate|auto-441|<tuple|B.3.4.7|?>>
+    <associate|auto-442|<tuple|B.3.4.8|?>>
+    <associate|auto-443|<tuple|B.3.4.9|?>>
+    <associate|auto-444|<tuple|B.3.4.10|?>>
+    <associate|auto-445|<tuple|B.3.4.11|?>>
+    <associate|auto-446|<tuple|B.3.4.12|?>>
+    <associate|auto-447|<tuple|B.3.4.13|?>>
+    <associate|auto-448|<tuple|B.3.4.14|?>>
+    <associate|auto-449|<tuple|B.3.4.15|?>>
     <associate|auto-45|<tuple|3.3.5|?>>
-    <associate|auto-450|<tuple|B.3.4.20|?>>
-    <associate|auto-451|<tuple|B.3.4.21|?>>
-    <associate|auto-452|<tuple|B.3.4.22|?>>
-    <associate|auto-453|<tuple|B.3.4.23|?>>
-    <associate|auto-454|<tuple|B.3.4.24|?>>
-    <associate|auto-455|<tuple|B.3.4.25|?>>
-    <associate|auto-456|<tuple|B.3.4.26|?>>
-    <associate|auto-457|<tuple|B.3.4.27|?>>
-    <associate|auto-458|<tuple|B.3.4.28|?>>
-    <associate|auto-459|<tuple|B.3.4.29|?>>
+    <associate|auto-450|<tuple|B.3.4.16|?>>
+    <associate|auto-451|<tuple|B.3.4.17|?>>
+    <associate|auto-452|<tuple|B.3.4.18|?>>
+    <associate|auto-453|<tuple|B.3.4.19|?>>
+    <associate|auto-454|<tuple|B.3.4.20|?>>
+    <associate|auto-455|<tuple|B.3.4.21|?>>
+    <associate|auto-456|<tuple|B.3.4.22|?>>
+    <associate|auto-457|<tuple|B.3.4.23|?>>
+    <associate|auto-458|<tuple|B.3.4.24|?>>
+    <associate|auto-459|<tuple|B.3.4.25|?>>
     <associate|auto-46|<tuple|3.3.6|?>>
-    <associate|auto-460|<tuple|B.3.4.30|?>>
-    <associate|auto-461|<tuple|B.3.4.31|?>>
-    <associate|auto-462|<tuple|B.3.4.32|?>>
-    <associate|auto-463|<tuple|B.3.4.33|?>>
-    <associate|auto-464|<tuple|B.3.4.34|?>>
-    <associate|auto-465|<tuple|B.3.4.35|?>>
-    <associate|auto-466|<tuple|B.3.4.36|?>>
-    <associate|auto-467|<tuple|B.3.4.37|?>>
-    <associate|auto-468|<tuple|B.3.4.38|?>>
-    <associate|auto-469|<tuple|B.3.4.39|?>>
+    <associate|auto-460|<tuple|B.3.4.26|?>>
+    <associate|auto-461|<tuple|B.3.4.27|?>>
+    <associate|auto-462|<tuple|B.3.4.28|?>>
+    <associate|auto-463|<tuple|B.3.4.29|?>>
+    <associate|auto-464|<tuple|B.3.4.30|?>>
+    <associate|auto-465|<tuple|B.3.4.31|?>>
+    <associate|auto-466|<tuple|B.3.4.32|?>>
+    <associate|auto-467|<tuple|B.3.4.33|?>>
+    <associate|auto-468|<tuple|B.3.4.34|?>>
+    <associate|auto-469|<tuple|B.3.4.35|?>>
     <associate|auto-47|<tuple|3.3.6.1|?>>
-    <associate|auto-470|<tuple|B.3.4.40|?>>
-    <associate|auto-471|<tuple|B.3.4.41|?>>
-    <associate|auto-472|<tuple|B.3.4.42|?>>
-    <associate|auto-473|<tuple|B.3.4.43|?>>
-    <associate|auto-474|<tuple|B.3.4.44|?>>
-    <associate|auto-475|<tuple|B.3.4.45|?>>
-    <associate|auto-476|<tuple|B.3.4.46|?>>
-    <associate|auto-477|<tuple|B.3.4.47|?>>
-    <associate|auto-478|<tuple|B.3.4.48|?>>
-    <associate|auto-479|<tuple|C|?>>
+    <associate|auto-470|<tuple|B.3.4.36|?>>
+    <associate|auto-471|<tuple|B.3.4.37|?>>
+    <associate|auto-472|<tuple|B.3.4.38|?>>
+    <associate|auto-473|<tuple|B.3.4.39|?>>
+    <associate|auto-474|<tuple|B.3.4.40|?>>
+    <associate|auto-475|<tuple|B.3.4.41|?>>
+    <associate|auto-476|<tuple|B.3.4.42|?>>
+    <associate|auto-477|<tuple|B.3.4.43|?>>
+    <associate|auto-478|<tuple|B.3.4.44|?>>
+    <associate|auto-479|<tuple|B.3.4.45|?>>
     <associate|auto-48|<tuple|3.3.7|?>>
-    <associate|auto-480|<tuple|C|?>>
-    <associate|auto-481|<tuple|C|?>>
+    <associate|auto-480|<tuple|B.3.4.46|?>>
+    <associate|auto-481|<tuple|B.3.4.47|?>>
+    <associate|auto-482|<tuple|B.3.4.48|?>>
+    <associate|auto-483|<tuple|C|?>>
+    <associate|auto-484|<tuple|C|?>>
+    <associate|auto-485|<tuple|C|?>>
     <associate|auto-49|<tuple|3.3.7.1|?>>
     <associate|auto-5|<tuple|1.2.2|?>>
     <associate|auto-50|<tuple|3.3.7.2|?>>

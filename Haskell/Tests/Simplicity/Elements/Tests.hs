@@ -1,5 +1,6 @@
 module Simplicity.Elements.Tests (tests) where
 
+import Control.Arrow ((***), (+++))
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
 import Data.Serialize (encode, put, putWord8, putWord32be, runPutLazy)
@@ -58,6 +59,10 @@ tests = testGroup "Elements"
           , testProperty "calculate_asset" prop_calculate_asset
           , testProperty "calculate_explicit_token" prop_calculate_explicit_token
           , testProperty "calculate_confidential_token" prop_calculate_confidential_token
+          , testProperty "outpoint_hash" prop_outpoint_hash
+          , testProperty "asset_amount_hash" prop_asset_amount_hash
+          , testProperty "nonce_hash" prop_nonce_hash
+          , testProperty "annex_hash" prop_annex_hash
           , testProperty "input_issuance" prop_input_issuance
           , testProperty "input_issuance_asset" prop_input_issuance_asset
           , testProperty "input_issuance_token" prop_input_issuance_token
@@ -228,6 +233,37 @@ prop_calculate_confidential_token = \entropy ->
     implementation (ElementsJet (IssuanceJet CalculateConfidentialToken)) undefined input
  where
   fast_calculate_confidential_token = testCoreEval Prog.calculateConfidentialToken
+
+prop_outpoint_hash :: Sha256CtxElement -> Maybe HashElement -> (HashElement, Word.Word32) -> Bool
+prop_outpoint_hash = \ctx pegin op ->
+  let input = (ctxAsTy ctx, (maybe (Left ()) (Right . heAsTy) pegin, (heAsTy *** (toWord32 . fromIntegral) $ op)))
+  in fast_outpoint_hash input == implementation (ElementsJet (SigHashJet OutpointHash)) undefined input
+ where
+  fast_outpoint_hash = testCoreEval Prog.outpointHash
+
+prop_asset_amount_hash :: Sha256CtxElement -> Either PointElement Word256 -> Either PointElement Word64 -> Bool
+prop_asset_amount_hash = \ctx cw256 cw64 ->
+  let input = (ctxAsTy ctx, (cast cw256, cast cw64))
+  in fast_asset_amount_hash input == implementation (ElementsJet (SigHashJet AssetAmountHash)) undefined input
+ where
+  fast_asset_amount_hash = testCoreEval Prog.assetAmountHash
+  cast = either (Left . pointAsTy) Right
+
+prop_nonce_hash :: Sha256CtxElement -> Maybe Nonce -> Bool
+prop_nonce_hash = \ctx mnonce ->
+  let input = (ctxAsTy ctx, cast mnonce)
+  in fast_nonce_hash input == implementation (ElementsJet (SigHashJet NonceHash)) undefined input
+ where
+  fast_nonce_hash = testCoreEval Prog.nonceHash
+  cast = maybe (Left ()) (Right . ((toBit *** (toWord256 . fromIntegral)) +++ (toWord256 . integerHash256)) . nonce)
+
+prop_annex_hash :: Sha256CtxElement -> Maybe Word256 -> Bool
+prop_annex_hash = \ctx mw256 ->
+  let input = (ctxAsTy ctx, cast mw256)
+  in fast_annex_hash input == implementation (ElementsJet (SigHashJet AnnexHash)) undefined input
+ where
+  fast_annex_hash = testCoreEval Prog.annexHash
+  cast = maybe (Left ()) Right
 
 prop_input_issuance :: Property
 prop_input_issuance = checkJet (ElementsJet (IssuanceJet Issuance))

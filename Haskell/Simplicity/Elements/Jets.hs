@@ -15,14 +15,17 @@ module Simplicity.Elements.Jets
 
 import Prelude hiding (fail, drop, take)
 
+import Control.Arrow ((***), (+++))
 import Control.Monad (guard)
+import qualified Data.ByteString as BS
 import Data.Either (isRight)
 import qualified Data.Map as Map
 import Data.Proxy (Proxy(Proxy))
+import Data.Serialize (runPut, put, putWord8)
 import Data.Type.Equality ((:~:)(Refl))
 import Data.Vector ((!?))
 import Data.Void (Void, vacuous)
-import Lens.Family2 (over, review)
+import Lens.Family2 ((^..), over, review)
 
 import Simplicity.Digest
 import Simplicity.CoreJets (CoreJet, coreJetMap)
@@ -40,12 +43,15 @@ import qualified Simplicity.Elements.Programs.SigHash.Lib as SigHash
 import qualified Simplicity.Elements.Programs.Issuance.Lib as Issuance
 import qualified Simplicity.Elements.Programs.TimeLock as TimeLock
 import qualified Simplicity.Elements.Programs.Transaction.Lib as Prog
+import Simplicity.LibSecp256k1.Spec (fe)
 import Simplicity.MerkleRoot
-import qualified Simplicity.Programs.Elements.Lib as Issuance
+import Simplicity.Programs.Elements.Lib (Ctx8)
+import qualified Simplicity.Programs.Elements.Lib as Prog
 import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Ty.Bit
 import Simplicity.Ty.Word
+import qualified Simplicity.Word as W
 
 -- | A type of tokens for the cannonical set of known jets for Simplicity for Elements. (At the moment this just consists of 'CoreJet's.)
 --
@@ -89,6 +95,10 @@ data SigHashJet a b where
   InputScriptsHash :: SigHashJet () Word256
   TapleafHash :: SigHashJet () Word256
   TapbranchHash :: SigHashJet () Word256
+  OutpointHash :: SigHashJet (Ctx8, (S Word256, (Word256, Word32))) Ctx8
+  AssetAmountHash :: SigHashJet (Ctx8, (Conf Word256, Conf Word64)) Ctx8
+  NonceHash :: SigHashJet (Ctx8, S (Conf Word256)) Ctx8
+  AnnexHash :: SigHashJet (Ctx8, S Word256) Ctx8
 deriving instance Eq (SigHashJet a b)
 deriving instance Show (SigHashJet a b)
 
@@ -199,6 +209,10 @@ specificationSigHash InputAmountsHash = SigHash.inputAmountsHash
 specificationSigHash InputScriptsHash = SigHash.inputScriptsHash
 specificationSigHash TapleafHash = SigHash.tapleafHash
 specificationSigHash TapbranchHash = SigHash.tapbranchHash
+specificationSigHash OutpointHash = Prog.outpointHash
+specificationSigHash AssetAmountHash = Prog.assetAmountHash
+specificationSigHash NonceHash = Prog.nonceHash
+specificationSigHash AnnexHash = Prog.annexHash
 
 specificationTimeLock :: (Assert term, Primitive term) => TimeLockJet a b -> term a b
 specificationTimeLock CheckLockHeight = TimeLock.checkLockHeight
@@ -216,10 +230,10 @@ specificationIssuance Issuance = Issuance.issuance
 specificationIssuance IssuanceAsset = Issuance.issuanceAsset
 specificationIssuance IssuanceToken = Issuance.issuanceToken
 specificationIssuance IssuanceEntropy = Issuance.issuanceEntropy
-specificationIssuance CalculateIssuanceEntropy = Issuance.calculateIssuanceEntropy
-specificationIssuance CalculateAsset = Issuance.calculateAsset
-specificationIssuance CalculateExplicitToken = Issuance.calculateExplicitToken
-specificationIssuance CalculateConfidentialToken = Issuance.calculateConfidentialToken
+specificationIssuance CalculateIssuanceEntropy = Prog.calculateIssuanceEntropy
+specificationIssuance CalculateAsset = Prog.calculateAsset
+specificationIssuance CalculateExplicitToken = Prog.calculateExplicitToken
+specificationIssuance CalculateConfidentialToken = Prog.calculateConfidentialToken
 
 specificationTransaction :: (Assert term, Primitive term) => TransactionJet a b -> term a b
 specificationTransaction ScriptCMR = primitive Prim.ScriptCMR
@@ -301,6 +315,30 @@ implementationSigHash InputAmountsHash env _ = Just . toWord256 . integerHash256
 implementationSigHash InputScriptsHash env _ = Just . toWord256 . integerHash256 $ inputScriptsHash (envTx env)
 implementationSigHash TapleafHash env _ = Just . toWord256 . integerHash256 $ tapleafHash (envTap env)
 implementationSigHash TapbranchHash env _ = Just . toWord256 . integerHash256 $ tapbranchHash (envTap env)
+implementationSigHash OutpointHash _env (ctx, (mw256, op)) = toCtx <$> (flip ctxAdd (runPut (putMW256 mw256 >> putOutpointBE (cast op))) =<< fromCtx ctx)
+ where
+  putMW256 (Left _) = putWord8 0x00
+  putMW256 (Right w256) = putWord8 0x01 >> put (fromIntegral (fromWord256 w256) :: W.Word256)
+  cast (h, i) = Outpoint (review (over be256) (fromW256 h)) (fromW32 i)
+  fromW256 = fromIntegral . fromWord256
+  fromW32 = fromIntegral . fromWord32
+implementationSigHash AssetAmountHash _env (ctx, (cw256, cw64)) = toCtx <$> (flip ctxAdd (runPut (put256 cw256 >> put64 cw64)) =<< fromCtx ctx)
+ where
+  put256 (Left (by, x)) = putWord8 (if fromBit by then 0xb else 0x0a) >> put (fromW256 x)
+  put256 (Right w256) = putWord8 0x01 >> put (fromW256 w256)
+  put64 (Left (by, x)) = putWord8 (if fromBit by then 0x9 else 0x08) >> put (fromW256 x)
+  put64 (Right w64) = putWord8 0x01 >> put (fromW64 w64)
+  fromW256 :: Word256 -> W.Word256
+  fromW256 = fromIntegral . fromWord256
+  fromW64 :: Word64 -> W.Word64
+  fromW64 = fromIntegral . fromWord64
+implementationSigHash NonceHash _env (ctx, mcw256) = toCtx <$> (flip ctxAdd (runPut . putNonce $ nonce) =<< fromCtx ctx)
+ where
+  nonce = either (const Nothing) (Just . Nonce . ((fromBit *** (fromIntegral . fromWord256)) +++ fromHash)) mcw256
+implementationSigHash AnnexHash _env (ctx, mw256) = toCtx <$> (flip ctxAdd (runPut . putMW256 $ mw256) =<< fromCtx ctx)
+ where
+  putMW256 (Left _) = putWord8 0x00
+  putMW256 (Right w256) = putWord8 0x01 >> put (fromIntegral (fromWord256 w256) :: W.Word256)
 
 implementationTimeLock :: TimeLockJet a b -> PrimEnv -> a -> Maybe b
 implementationTimeLock CheckLockHeight env x | txIsFinal (envTx env) = guard $ fromWord32 x <= 0
@@ -419,6 +457,10 @@ getJetBitElements abort next = getPositive next >>= match
     matchSigHash 22 = makeArrow InputScriptsHash
     matchSigHash 23 = makeArrow TapleafHash
     matchSigHash 24 = makeArrow TapbranchHash
+    matchSigHash 25 = makeArrow OutpointHash
+    matchSigHash 26 = makeArrow AssetAmountHash
+    matchSigHash 27 = makeArrow NonceHash
+    matchSigHash 28 = makeArrow AnnexHash
   getJetBitTimeLock = getPositive next >>= matchTimeLock
    where
     matchTimeLock 1 = makeArrow CheckLockHeight
@@ -523,6 +565,10 @@ putJetBitSigHash InputAmountsHash            = putPositive 21
 putJetBitSigHash InputScriptsHash            = putPositive 22
 putJetBitSigHash TapleafHash                 = putPositive 23
 putJetBitSigHash TapbranchHash               = putPositive 24
+putJetBitSigHash OutpointHash                = putPositive 25
+putJetBitSigHash AssetAmountHash             = putPositive 26
+putJetBitSigHash NonceHash                   = putPositive 27
+putJetBitSigHash AnnexHash                   = putPositive 28
 
 putJetBitTimeLock :: TimeLockJet a b -> DList Bool
 putJetBitTimeLock CheckLockHeight   = putPositive 1
@@ -622,6 +668,10 @@ elementsJetMap = Map.fromList
   , mkAssoc (SigHashJet InputScriptsHash)
   , mkAssoc (SigHashJet TapleafHash)
   , mkAssoc (SigHashJet TapbranchHash)
+  , mkAssoc (SigHashJet OutpointHash)
+  , mkAssoc (SigHashJet AssetAmountHash)
+  , mkAssoc (SigHashJet NonceHash)
+  , mkAssoc (SigHashJet AnnexHash)
     -- TimeLockJet
   , mkAssoc (TimeLockJet CheckLockHeight)
   , mkAssoc (TimeLockJet CheckLockTime)
@@ -781,3 +831,14 @@ instance Assert MatcherInfo where
 
 instance Primitive MatcherInfo where
   primitive p = MatcherInfo (primitive p)
+
+fromPoint (by, x) = Point (fromBit by) (fe (fromWord256 x))
+fromHash = review (over be256) . fromIntegral . fromWord256
+fromCtx (buffer, (count, midstate)) = ctxBuild (fromInteger . fromWord8 <$> buffer^..buffer_ buffer63)
+                                               (fromWord64 count)
+                                               (fromHash midstate)
+toCtx ctx = (buffer, (count, midstate))
+ where
+  buffer = fst $ bufferFill buffer63 (toWord8 . fromIntegral <$> BS.unpack (ctxBuffer ctx))
+  count = toWord64 . fromIntegral $ ctxCounter ctx
+  midstate = toWord256 . integerHash256 . ivHash $ ctxIV ctx

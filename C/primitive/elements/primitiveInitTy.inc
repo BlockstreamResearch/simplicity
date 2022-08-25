@@ -54,6 +54,7 @@
 (*bound_var)[ty_pmw32pmw16mw8] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_mw32], &(*bound_var)[ty_pmw16mw8] } }};
 (*bound_var)[ty_pmw64pmw32pmw16mw8] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_mw64], &(*bound_var)[ty_pmw32pmw16mw8] } }};
 (*bound_var)[ty_pmw128pmw64pmw32pmw16mw8] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_mw128], &(*bound_var)[ty_pmw64pmw32pmw16mw8] } }};
+(*bound_var)[ty_pmw256pw256w32] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_mw256], &(*bound_var)[ty_pw256w32] } }};
 (*bound_var)[ty_pmw256pmw128pmw64pmw32pmw16mw8] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_mw256], &(*bound_var)[ty_pmw128pmw64pmw32pmw16mw8] } }};
 (*bound_var)[ty_pmw512pmw256pmw128pmw64pmw32pmw16mw8] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_mw512], &(*bound_var)[ty_pmw256pmw128pmw64pmw32pmw16mw8] } }};
 (*bound_var)[ty_pmw1024pmw512pmw256pmw128pmw64pmw32pmw16mw8] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_mw1024], &(*bound_var)[ty_pmw512pmw256pmw128pmw64pmw32pmw16mw8] } }};
@@ -79,4 +80,8 @@
 (*bound_var)[ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w1024] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256], &(*bound_var)[ty_w1024] } }};
 (*bound_var)[ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w2048] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256], &(*bound_var)[ty_w2048] } }};
 (*bound_var)[ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w4096] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256], &(*bound_var)[ty_w4096] } }};
+(*bound_var)[ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256mw256] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256], &(*bound_var)[ty_mw256] } }};
+(*bound_var)[ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256mspbw256w256] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256], &(*bound_var)[ty_mspbw256w256] } }};
+(*bound_var)[ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw256pw256w32] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256], &(*bound_var)[ty_pmw256pw256w32] } }};
 (*bound_var)[ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw2048pmw1024pmw512pmw256pmw128pmw64pmw32pmw16mw8] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256], &(*bound_var)[ty_pmw2048pmw1024pmw512pmw256pmw128pmw64pmw32pmw16mw8] } }};
+(*bound_var)[ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pspbw256w256spbw256w64] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256], &(*bound_var)[ty_pspbw256w256spbw256w64] } }};

@@ -15,7 +15,7 @@ module Simplicity.Elements.DataTypes
   , NewIssuance(..)
   , Reissuance(..)
   , Issuance
-  , Outpoint(Outpoint), opHash, opIndex
+  , Outpoint(Outpoint), opHash, opIndex, putOutpointBE
   , UTXO(UTXO), utxoAsset, utxoAmount, utxoScript
   , SigTxInput(SigTxInput), sigTxiPegin, sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiIssuance, sigTxiAnnex, sigTxiScriptSig
   , sigTxiIssuanceEntropy, sigTxiIssuanceAsset, sigTxiIssuanceToken
@@ -263,6 +263,11 @@ instance Serialize Outpoint where
   get = Outpoint <$> get <*> getWord32le
   put (Outpoint h i) = put h >> putWord32le i
 
+-- | Big endian serialization of an 'Outpoint'
+putOutpointBE :: Putter Outpoint
+putOutpointBE op = put (opHash op)
+                >> putWord32be (opIndex op)
+
 -- | The data type for unspent transaction outputs.
 data UTXO = UTXO { utxoAsset :: Asset
                  , utxoAmount :: Amount
@@ -402,8 +407,7 @@ inputOutpointsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
   maybePut _ Nothing = putWord8 0x00
   maybePut putter (Just x) = putWord8 0x01 >> putter x
   go txi = maybePut put (sigTxiPegin txi)
-        >> put (opHash (sigTxiPreviousOutpoint txi))
-        >> putWord32be (opIndex (sigTxiPreviousOutpoint txi))
+        >> putOutpointBE (sigTxiPreviousOutpoint txi)
 
 -- | A hash of all 'utxoAsset's and 'utxoAmount's.
 inputAmountsHash :: SigTx -> Hash256

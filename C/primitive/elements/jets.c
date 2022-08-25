@@ -766,6 +766,142 @@ bool calculate_confidential_token(frameItem* dst, frameItem src, const txEnv* en
   return true;
 }
 
+/* outpoint_hash : CTX8 * S TWO^256 * TWO^256 * TWO^32 |- CTX8 */
+bool outpoint_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  sha256_midstate midstate;
+  unsigned char buf[36];
+  sha256_context ctx = {.output = midstate.s};
+
+  /* Read a SHA-256 context. */
+  if (!read_sha256_context(&ctx, &src)) return false;
+
+  /* Read an optional pegin parent chain hash. */
+  if (readBit(&src)) {
+    /* Read a pegin parent chain hash. */
+    read8s(buf, 32, &src);
+    sha256_uchar(&ctx, 0x01);
+    sha256_uchars(&ctx, buf, 32);
+  } else {
+    /* No pegin. */
+    sha256_uchar(&ctx, 0x00);
+    forwardBits(&src, 256);
+  }
+
+  /* Read an outpoint (hash and index). */
+  read8s(buf, 36, &src);
+  sha256_uchars(&ctx, buf, 36);
+
+  return write_sha256_context(dst, &ctx);
+}
+
+/* asset_amount_hash : CTX8 * Conf TWO^256 * Conf TWO^64 |- CTX8 */
+bool asset_amount_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  sha256_midstate midstate;
+  unsigned char buf[32];
+  sha256_context ctx = {.output = midstate.s};
+
+  /* Read a SHA-256 context. */
+  if (!read_sha256_context(&ctx, &src)) return false;
+
+  /* Read an asset id prefix. (2 bits) */
+  if (readBit(&src)) {
+    /* Read an explicit asset id prefix. (1 bit) */
+    forwardBits(&src, 1);
+    sha256_uchar(&ctx, 0x01);
+  } else {
+    /* Read an confidential asset id prefix. (1 bit) */
+    if (readBit(&src)) {
+      sha256_uchar(&ctx, 0x0b);
+    } else {
+      sha256_uchar(&ctx, 0x0a);
+    }
+  }
+  /* Read an asset id body (both confidential and explicit asset bodies are the same size). (256 bits) */
+  read8s(buf, 32, &src);
+  sha256_uchars(&ctx, buf, 32);
+
+  /* Read an amount. (258 bits) */
+  if (readBit(&src)) {
+    /* Read an explicit amount. (257 bits) */
+    sha256_uchar(&ctx, 0x01);
+    forwardBits(&src, 257-64);
+    read8s(buf, 8, &src);
+    sha256_uchars(&ctx, buf, 8);
+  } else {
+    /* Read an confidential amount. (257 bits) */
+    if (readBit(&src)) {
+      sha256_uchar(&ctx, 0x09);
+    } else {
+      sha256_uchar(&ctx, 0x08);
+    }
+    read8s(buf, 32, &src);
+    sha256_uchars(&ctx, buf, 32);
+  }
+
+  return write_sha256_context(dst, &ctx);
+}
+
+/* nonce_hash : CTX8 * S (Conf TWO^256) |- CTX8 */
+bool nonce_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  sha256_midstate midstate;
+  unsigned char buf[32];
+  sha256_context ctx = {.output = midstate.s};
+
+  /* Read a SHA-256 context. */
+  if (!read_sha256_context(&ctx, &src)) return false;
+
+  /* Read an optional nonce. (259 bits) */
+  if (readBit(&src)) {
+    /* Read a nonce prefix. (2 bits) */
+    if (readBit(&src)) {
+      /* Read an explict none prefix. (1 bit) */
+      forwardBits(&src, 1);
+      sha256_uchar(&ctx, 0x01);
+    } else {
+      /* Read a confidential none prefix. (1 bit) */
+      if (readBit(&src)) {
+        sha256_uchar(&ctx, 0x03);
+      } else {
+        sha256_uchar(&ctx, 0x02);
+      }
+    }
+    /* Read a nonce id body (both confidential and explicit nonce bodies are the same size). (256 bits) */
+    read8s(buf, 32, &src);
+    sha256_uchars(&ctx, buf, 32);
+  } else {
+    sha256_uchar(&ctx, 0x00);
+  }
+
+  return write_sha256_context(dst, &ctx);
+}
+
+/* annex_hash : CTX8 * S TWO^256 |- CTX8 */
+bool annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  sha256_midstate midstate;
+  unsigned char buf[32];
+  sha256_context ctx = {.output = midstate.s};
+
+  /* Read a SHA-256 context. */
+  if (!read_sha256_context(&ctx, &src)) return false;
+
+  /* Read an optional hash. (257 bits) */
+  if (readBit(&src)) {
+    /* Read a hash. (256 bits) */
+    read8s(buf, 32, &src);
+    sha256_uchar(&ctx, 0x01);
+    sha256_uchars(&ctx, buf, 32);
+  } else {
+    /* No hash. */
+    sha256_uchar(&ctx, 0x00);
+  }
+
+  return write_sha256_context(dst, &ctx);
+}
+
 /* issuance : TWO^256 |- S (S TWO) */
 bool issuance(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast32_t i = read32(&src);

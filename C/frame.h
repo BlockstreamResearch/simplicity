@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "uword.h"
+#include "sha256.h"
 
 /* A Bit Machine frame contains an '.edge' pointer to a slice of an array of UWORDs to hold the frame's cells.
  * The '.offset' is used to represent the cursors position.
@@ -143,4 +144,57 @@ static inline void read32s(uint32_t* x, size_t n, frameItem* frame) {
 static inline void write32s(frameItem* frame, const uint32_t* x, size_t n) {
   for(; n; --n) write32(frame, *(x++));
 }
+
+/* Read bytes from a Simplicity buffer of type (TWO^8)^<2^(n+1) into 'buf'.
+ * Set 'len' to the number of bytes read from the buffer.
+ * Advance the 'src' frame to the end of the buffer type.
+ *
+ * The notation X^<2 is notation for the type (S X)
+ * The notation X^<(2*n) is notation for the type S (X^n) * X^<n
+ *
+ * Precondition: unsigned char buf[2^(n+1)-1];
+ *               NULL != len;
+ *               '*src' is a valid read frame for 8*(2^(n+1)-1)+n+1 more cells;
+ *               0 <= n < 16
+ */
+void read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n);
+
+/* Write 'len' bytes to a Simplicity buffer of type (TWO^8)^<2^(n+1) from 'buf'.
+ * Advance the 'dst' frame to the end of the buffer type.
+ *
+ * The notation X^<2 is notation for the type (S X)
+ * The notation X^<(2*n) is notation for the type S (X^n) * X^<n
+ *
+ * Precondition: '*dst' is a valid write frame for 8*(2^(n+1)-1)+n+1 more cells;
+ *               unsigned char buf[len];
+ *               len < 2^(n+1);
+ *               0 <= n < 16;
+ */
+void write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n);
+
+/* Read data from a Simplicity CTX8 type (TWO^8)^<2^64 * TWO^64 * TWO^256 and fill in a sha256_context value.
+ * Advance the 'src' frame to the end of the CTX8 type.
+ * Returns false if the context's counter is too large (i.e. the compression count is greater than or equal to 2^55).
+ *
+ * The notation X^<2 is notation for the type (S X)
+ * The notation X^<(2*n) is notation for the type S (X^n) * X^<n
+ *
+ * Precondition: NULL != ctx->output;
+ *               '*src' is a valid read frame for 838 more cells;
+ */
+bool read_sha256_context(sha256_context* ctx, frameItem* src);
+
+/* Write data to a Simplicity CTX8 type (TWO^8)^<2^64 * TWO^64 * TWO^256 from a sha256_context value.
+ * Advance the 'dst' frame to the end of the CTX8 type.
+ * Returns false if the ctx had overflowed.
+ *
+ * The notation X^<2 is notation for the type (S X)
+ * The notation X^<(2*n) is notation for the type S (X^n) * X^<n
+ *
+ * Precondition: '*dst' is a valid write frame for 838 more cells;
+ *               NULL != ctx->output;
+ *               ctx->counter < 2^61;
+ */
+bool write_sha256_context(frameItem* dst, const sha256_context* ctx);
+
 #endif
