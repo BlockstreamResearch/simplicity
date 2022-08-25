@@ -11781,9 +11781,11 @@
   Returns a SHA256 hash of the following:
 
   <\itemize-dot>
-    <item>The hash of the ASCII string <verbatim|TapLeaf> (32 bytes).
+    <item>The hash of the ASCII string <verbatim|TapLeaf/elements> (32
+    bytes).
 
-    <item>The hash of the ASCII string <verbatim|TapLeaf> again (32 bytes).
+    <item>The hash of the ASCII string <verbatim|TapLeaf/elements> again (32
+    bytes).
 
     <item>The result of <samp|tapleaf-version> (1 byte).
 
@@ -11794,7 +11796,7 @@
 
   \;
 
-  Note: this matches BIP-0341's definition of tapleaf hash.
+  Note: this matches Element's modified BIP-0341 definition of tapleaf hash.
 
   <subsubsection|<samp|tapbranch-hash>>
 

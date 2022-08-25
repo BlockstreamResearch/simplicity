@@ -286,7 +286,7 @@ mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
   , sigAllHash = (ctx8Init &&& ((primitive GenesisBlockHash >>> iden &&& iden) &&& (txHash &&& tapEnvHash)) >>> ctx8Addn vector128)
              &&& primitive CurrentIndex >>> ctx8Addn vector4 >>> ctx8Finalize
   }
-  tapleafTag = toWord256 . integerHash256 . bsHash $ fromString "TapLeaf"
+  tapleafTag = toWord256 . integerHash256 . bsHash $ fromString "TapLeaf/elements"
   hashLoop256 :: (TyC w, TyC c) => Word w -> term (c, w) (S Word256) -> term (c, Ctx8) Ctx8
   hashLoop256 = Sha256.hashLoop vector32
   hashWord256s :: (TyC w, TyC c) => Word w -> term (c, w) (S Word256) -> term c Word256

@@ -555,7 +555,7 @@ tapleafHash tapEnv = bslHash . runPutLazy $ do
   putWord8 32
   put $ tapScriptCMR tapEnv
  where
-  tag = bsHash (fromString "TapLeaf")
+  tag = bsHash (fromString "TapLeaf/elements")
 
 -- | A hash of 'tapbranch's.
 tapbranchHash :: TapEnv -> Hash256

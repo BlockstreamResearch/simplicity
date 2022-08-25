@@ -651,7 +651,7 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
   {
     sha256_midstate tapLeafTag;
     {
-      static unsigned char tagName[] = "TapLeaf";
+      static unsigned char tagName[] = "TapLeaf/elements";
       sha256_context ctx = sha256_init(tapLeafTag.s);
       sha256_uchars(&ctx, tagName, sizeof(tagName) - 1);
       sha256_finalize(&ctx);
