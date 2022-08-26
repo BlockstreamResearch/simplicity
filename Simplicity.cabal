@@ -248,3 +248,22 @@ executable GenPrimitive
                       mtl >=2.2 && <2.3,
                       split >=0.2.3 && <0.3,
                       unification-fd >=0.10 && <0.12,
+
+executable GenTests
+    main-is:          GenTests.hs
+    ghc-options:      -main-is GenTests
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    hs-source-dirs:   Haskell-GenerateC
+    default-language: Haskell2010
+    build-depends:    Simplicity,
+                      base >=4.9 && <4.16,
+                      bytestring >=0.10 && <0.11,
+                      cereal >=0.5 && <0.6,
+                      lens-family >=2.0 && <2.2,
+                      split >=0.2.3 && <0.3,
+                      vector >=0.12 && <0.13,
