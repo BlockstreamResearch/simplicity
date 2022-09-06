@@ -186,12 +186,13 @@ static bool read_sha256_context(sha256_context* ctx, frameItem* src) {
   compressionCount = read64(src);
   ctx->counter = ((compressionCount*1U) << 6) + len;
   read32s(ctx->output, 8, src);
-
-  return (ctx->counter <= 0x1fffffffffffffff && ctx->counter >> 6 == compressionCount);
+  ctx->overflow = (sha256_max_counter >> 6) <= compressionCount;
+  return !ctx->overflow;
 }
 
 /* Write data to a Simplicity CTX8 type (TWO^8)^<2^64 * TWO^64 * TWO^256 from a sha256_context value.
  * Advance the 'dst' frame to the end of the CTX8 type.
+ * Returns false if the ctx had overflowed.
  *
  * The notation X^<2 is notation for the type (S X)
  * The notation X^<(2*n) is notation for the type S (X^n) * X^<n
@@ -200,11 +201,11 @@ static bool read_sha256_context(sha256_context* ctx, frameItem* src) {
  *               NULL != ctx->output;
  *               ctx->counter < 2^61;
  */
-static void write_sha256_context(frameItem* dst, const sha256_context* ctx) {
-  assert(ctx->counter <= 0x1fffffffffffffff);
+static bool write_sha256_context(frameItem* dst, const sha256_context* ctx) {
   write_buffer8(dst, ctx->block, ctx->counter % 64, 5);
   write64(dst, ctx->counter >> 6);
   write32s(dst, ctx->output, 8);
+  return !ctx->overflow;
 }
 
 /* sha_256_ctx_8_init : ONE |- CTX8
@@ -218,8 +219,7 @@ bool sha_256_ctx_8_init(frameItem* dst, frameItem src, const txEnv* env) {
   uint32_t iv[8];
   sha256_context ctx = sha256_init(iv);
 
-  write_sha256_context(dst, &ctx);
-  return true;
+  return write_sha256_context(dst, &ctx);
 }
 
 /* sha_256_ctx_8_add_n : CTX8 * (TWO^8)^n |- CTX8
@@ -235,12 +235,9 @@ static bool sha_256_ctx_8_add_n(frameItem* dst, frameItem *src, size_t n) {
   sha256_context ctx = {.output = midstate.s};
 
   if (!read_sha256_context(&ctx, src)) return false;
-  if (0x1fffffffffffffff - ctx.counter < n) return false;
-
   read8s(buf, n, src);
   sha256_uchars(&ctx, buf, n);
-  write_sha256_context(dst, &ctx);
-  return true;
+  return write_sha256_context(dst, &ctx);
 }
 
 /* sha_256_ctx_8_add_1 : CTX8 * TWO^8 |- CTX8
@@ -347,11 +344,8 @@ bool sha_256_ctx_8_add_buffer_511(frameItem* dst, frameItem src, const txEnv* en
   if (!read_sha256_context(&ctx, &src)) return false;
 
   read_buffer8(buf, &buf_len, &src, 8);
-  if (0x1fffffffffffffff - ctx.counter < buf_len) return false;
-
   sha256_uchars(&ctx, buf, buf_len);
-  write_sha256_context(dst, &ctx);
-  return true;
+  return write_sha256_context(dst, &ctx);
 }
 
 /* sha_256_ctx_8_finalize : CTX8 |- TWO^256
