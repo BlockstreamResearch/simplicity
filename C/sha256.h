@@ -1,6 +1,7 @@
 #ifndef SIMPLICITY_SHA256_H
 #define SIMPLICITY_SHA256_H
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 #include "bitstring.h"
@@ -176,7 +177,14 @@ typedef struct sha256_context {
   uint32_t* const output;
   uint_fast64_t counter;
   unsigned char block[64];
+  bool overflow;
 } sha256_context;
+
+/* SHA-256 is limited to strictly less than 2^64 bits or 2^56 bytes of data.
+ * This limit cannot be reached in practice under proper use of the SHA-256 interface.
+ * However some jets in simplicity load and store this context and it is easy to syntesize contexts with absurdly large counter values.
+ */
+static const uint_fast64_t sha256_max_counter = 0x2000000000000000;
 
 /* Initialize a sha256_context given a buffer in which the final output will be written to.
  * Note that the 'output' buffer may be updated during the computation to hold a SHA-256 midstate.
@@ -189,13 +197,15 @@ static inline sha256_context sha256_init(uint32_t* output) {
 }
 
 /* Add an array of bytes to be consumed by an ongoing SHA-256 evaluation.
+ * Returns false if the counter overflows.
  *
  * Precondition: NULL != ctx;
  *               if 0 < len then unsigned char arr[len];
  */
-static inline void sha256_uchars(sha256_context* ctx, const unsigned char* arr, size_t len) {
+static inline bool sha256_uchars(sha256_context* ctx, const unsigned char* arr, size_t len) {
   size_t delta = 64 - ctx->counter % 64;
   unsigned char *block = ctx->block + ctx->counter % 64;
+  ctx->overflow = ctx->overflow || sha256_max_counter - ctx->counter <= len;
   ctx->counter += len;
 
   while (delta <= len) {
@@ -208,59 +218,72 @@ static inline void sha256_uchars(sha256_context* ctx, const unsigned char* arr, 
   }
 
   if (len) memcpy(block, arr, len);
+  return !ctx->overflow;
 }
 
-/* Add one bytes to be consumed by an ongoing SHA-256 evaluation.
+/* Add one byte to be consumed by an ongoing SHA-256 evaluation.
+ *
+ * Returns false if the counter overflows.
  *
  * Precondition: NULL != ctx;
  */
-static inline void sha256_uchar(sha256_context* ctx, unsigned char x) {
-  sha256_uchars(ctx, &x, 1);
+static inline bool sha256_uchar(sha256_context* ctx, unsigned char x) {
+  return sha256_uchars(ctx, &x, 1);
 }
 
 /* Add a 64-bit word to be consumed in big endian order by an ongoing SHA-256 evaluation.
  * For greater certainty, only the least 64 bits of 'x' are consumed.
  *
+ * Returns false if the counter overflows.
+ *
  * Precondition: NULL != ctx;
  */
-static inline void sha256_u64be(sha256_context* ctx, uint_fast64_t x) {
+static inline bool sha256_u64be(sha256_context* ctx, uint_fast64_t x) {
   unsigned char buf[8];
   WriteBE64(buf, x);
-  sha256_uchars(ctx, buf, sizeof(buf));
+  return sha256_uchars(ctx, buf, sizeof(buf));
 }
 
 /* Add a 32-bit word to be consumed in little endian byte-order by an ongoing SHA-256 evaluation.
  * For greater certainty, only the least 32 bits of 'x' are consumed.
  * Furthermore the bits within each byte are consumed in big endian order.
  *
+ * Returns false if the counter overflows.
+ *
  * Precondition: NULL != ctx;
  */
-static inline void sha256_u32le(sha256_context* ctx, uint_fast32_t x) {
+static inline bool sha256_u32le(sha256_context* ctx, uint_fast32_t x) {
   unsigned char buf[4];
   WriteLE32(buf, x);
-  sha256_uchars(ctx, buf, sizeof(buf));
+  return sha256_uchars(ctx, buf, sizeof(buf));
 }
 
 /* Add a 32-bit word to be consumed in big endian byte-order by an ongoing SHA-256 evaluation.
  * For greater certainty, only the least 32 bits of 'x' are consumed.
  * Furthermore the bits within each byte are consumed in big endian order.
  *
+ * Returns false if the counter overflows.
+ *
  * Precondition: NULL != ctx;
  */
-static inline void sha256_u32be(sha256_context* ctx, uint_fast32_t x) {
+static inline bool sha256_u32be(sha256_context* ctx, uint_fast32_t x) {
   unsigned char buf[4];
   WriteBE32(buf, x);
-  sha256_uchars(ctx, buf, sizeof(buf));
+  return sha256_uchars(ctx, buf, sizeof(buf));
 }
 
 /* Finish the SHA-256 computation by consuming and digesting the SHA-256 padding.
  * The final result is stored in the original 'output' buffer that was given to 'sha256_init'.
  *
+ * Returns false if the counter had overflowed.
+ *
  * Precondition: NULL != ctx;
  */
-static inline void sha256_finalize(sha256_context* ctx) {
+static inline bool sha256_finalize(sha256_context* ctx) {
+  bool result = !ctx->overflow;
   uint_fast64_t length = ctx->counter * 8;
   sha256_uchars(ctx, (const unsigned char[64]){0x80}, 1 + (64 + 56 - ctx->counter % 64 - 1) % 64);
   sha256_u64be(ctx, length);
+  return result;
 }
 #endif
