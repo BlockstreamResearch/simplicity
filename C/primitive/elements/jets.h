@@ -68,6 +68,8 @@ bool calculate_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env)
 bool calculate_asset(frameItem* dst, frameItem src, const txEnv* env);
 bool calculate_explicit_token(frameItem* dst, frameItem src, const txEnv* env);
 bool calculate_confidential_token(frameItem* dst, frameItem src, const txEnv* env);
+bool build_tapleaf_simplicity(frameItem* dst, frameItem src, const txEnv* env);
+bool build_tapbranch(frameItem* dst, frameItem src, const txEnv* env);
 bool outpoint_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool asset_amount_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool nonce_hash(frameItem* dst, frameItem src, const txEnv* env);

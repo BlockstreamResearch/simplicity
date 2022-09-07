@@ -46,6 +46,8 @@ tests = testGroup "Elements"
           , testProperty "asset_amount_hash" prop_asset_amount_hash
           , testProperty "nonce_hash" prop_nonce_hash
           , testProperty "annex_hash" prop_annex_hash
+          , testProperty "build_tapleaf_simplicity" prop_build_tapleaf_simplicity
+          , testProperty "build_tapbranch" prop_build_tapbranch
           , testProperty "issuance" prop_issuance
           , testProperty "issuance_asset" prop_issuance_asset
           , testProperty "issuance_token" prop_issuance_token
@@ -226,6 +228,18 @@ prop_annex_hash = \ctx mw256 ->
   fast_annex_hash = testCoreEval Prog.annexHash
   cast = maybe (Left ()) Right
 
+prop_build_tapleaf_simplicity :: Word256 -> Bool
+prop_build_tapleaf_simplicity = \w ->
+  build_tapleaf_simplicity w == fast_build_tapleaf_simplicity w
+ where
+  fast_build_tapleaf_simplicity = testCoreEval Prog.buildTapleafSimplicity
+   
+prop_build_tapbranch :: Word256 -> Word256 -> Bool
+prop_build_tapbranch = \a b ->
+  build_tapbranch (a, b) == fast_build_tapbranch (a, b)
+ where
+  fast_build_tapbranch = testCoreEval Prog.buildTapbranch
+   
 prop_issuance :: Property
 prop_issuance = forallInPrimEnv $ \env i ->
    fast_issuance env (toW32 i) == issuance env (toW32 i)

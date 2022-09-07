@@ -22,6 +22,7 @@ import Data.Either (isRight)
 import qualified Data.Map as Map
 import Data.Proxy (Proxy(Proxy))
 import Data.Serialize (runPut, put, putWord8)
+import Data.String (fromString)
 import Data.Type.Equality ((:~:)(Refl))
 import Data.Vector ((!?))
 import Data.Void (Void, vacuous)
@@ -99,6 +100,8 @@ data SigHashJet a b where
   AssetAmountHash :: SigHashJet (Ctx8, (Conf Word256, Conf Word64)) Ctx8
   NonceHash :: SigHashJet (Ctx8, S (Conf Word256)) Ctx8
   AnnexHash :: SigHashJet (Ctx8, S Word256) Ctx8
+  BuildTapleafSimplicity :: SigHashJet Word256 Word256
+  BuildTapbranch :: SigHashJet (Word256, Word256) Word256
 deriving instance Eq (SigHashJet a b)
 deriving instance Show (SigHashJet a b)
 
@@ -213,6 +216,8 @@ specificationSigHash OutpointHash = Prog.outpointHash
 specificationSigHash AssetAmountHash = Prog.assetAmountHash
 specificationSigHash NonceHash = Prog.nonceHash
 specificationSigHash AnnexHash = Prog.annexHash
+specificationSigHash BuildTapleafSimplicity = Prog.buildTapleafSimplicity
+specificationSigHash BuildTapbranch = Prog.buildTapbranch
 
 specificationTimeLock :: (Assert term, Primitive term) => TimeLockJet a b -> term a b
 specificationTimeLock CheckLockHeight = TimeLock.checkLockHeight
@@ -339,6 +344,24 @@ implementationSigHash AnnexHash _env (ctx, mw256) = toCtx <$> (flip ctxAdd (runP
  where
   putMW256 (Left _) = putWord8 0x00
   putMW256 (Right w256) = putWord8 0x01 >> put (fromIntegral (fromWord256 w256) :: W.Word256)
+implementationSigHash BuildTapleafSimplicity _env cmr = Just . toWord256 . integerHash256 . bsHash . runPut
+                                                      $ put tag >> put tag >> putWord8 tapleafSimplicityVersion >> putWord8 32 >> put (fromW256 cmr)
+ where
+  tag = bsHash (fromString "TapLeaf/elements")
+  tapleafSimplicityVersion = 0xbe
+  fromW256 :: Word256 -> W.Word256
+  fromW256 = fromIntegral . fromWord256
+
+implementationSigHash BuildTapbranch _env (wa,wb) = Just . toWord256 . integerHash256 . bsHash . runPut
+                                                  $ put tag >> put tag >> put min >> put max
+ where
+  a = fromW256 wa
+  b = fromW256 wb
+  min = if a < b then a else b
+  max = if a < b then b else a
+  tag = bsHash (fromString "TapBranch/elements")
+  fromW256 :: Word256 -> W.Word256
+  fromW256 = fromIntegral . fromWord256
 
 implementationTimeLock :: TimeLockJet a b -> PrimEnv -> a -> Maybe b
 implementationTimeLock CheckLockHeight env x | txIsFinal (envTx env) = guard $ fromWord32 x <= 0
@@ -461,6 +484,8 @@ getJetBitElements abort next = getPositive next >>= match
     matchSigHash 26 = makeArrow AssetAmountHash
     matchSigHash 27 = makeArrow NonceHash
     matchSigHash 28 = makeArrow AnnexHash
+    matchSigHash 29 = makeArrow BuildTapleafSimplicity
+    matchSigHash 30 = makeArrow BuildTapbranch
   getJetBitTimeLock = getPositive next >>= matchTimeLock
    where
     matchTimeLock 1 = makeArrow CheckLockHeight
@@ -569,6 +594,8 @@ putJetBitSigHash OutpointHash                = putPositive 25
 putJetBitSigHash AssetAmountHash             = putPositive 26
 putJetBitSigHash NonceHash                   = putPositive 27
 putJetBitSigHash AnnexHash                   = putPositive 28
+putJetBitSigHash BuildTapleafSimplicity      = putPositive 29
+putJetBitSigHash BuildTapbranch              = putPositive 30
 
 putJetBitTimeLock :: TimeLockJet a b -> DList Bool
 putJetBitTimeLock CheckLockHeight   = putPositive 1
@@ -672,6 +699,8 @@ elementsJetMap = Map.fromList
   , mkAssoc (SigHashJet AssetAmountHash)
   , mkAssoc (SigHashJet NonceHash)
   , mkAssoc (SigHashJet AnnexHash)
+  , mkAssoc (SigHashJet BuildTapleafSimplicity)
+  , mkAssoc (SigHashJet BuildTapbranch)
     -- TimeLockJet
   , mkAssoc (TimeLockJet CheckLockHeight)
   , mkAssoc (TimeLockJet CheckLockTime)

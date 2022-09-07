@@ -4,6 +4,15 @@
 #include "primitive.h"
 #include "../../unreachable.h"
 
+/* Read a 256-bit hash value from the 'src' frame, advancing the cursor 256 cells.
+ *
+ * Precondition: '*src' is a valid read frame for 256 more cells;
+ *               NULL != h;
+ */
+static void readHash(sha256_midstate* h, frameItem *src) {
+  read32s(h->s, 8, src);
+}
+
 /* Write a 256-bit hash value to the 'dst' frame, advancing the cursor 256 cells.
  *
  * Precondition: '*dst' is a valid write frame for 256 more cells;
@@ -762,6 +771,28 @@ bool calculate_confidential_token(frameItem* dst, frameItem src, const txEnv* en
   read32s(entropy.s, 8, &src);
   result = calculateToken(&entropy, EVEN_Y /* ODD_Y would also work. */);
 
+  writeHash(dst, &result);
+  return true;
+}
+
+/* build_tapleaf_simplicity : TWO^256 |- TWO^256 */
+bool build_tapleaf_simplicity(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  sha256_midstate cmr;
+  readHash(&cmr, &src);
+  sha256_midstate result = make_tapleaf(0xbe, &cmr);
+  writeHash(dst, &result);
+  return true;
+}
+
+/* build_tapbranch : TWO^256 * TWO^256 |- TWO^256 */
+bool build_tapbranch(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  sha256_midstate a, b;
+  readHash(&a, &src);
+  readHash(&b, &src);
+
+  sha256_midstate result = make_tapbranch(&a, &b);
   writeHash(dst, &result);
   return true;
 }

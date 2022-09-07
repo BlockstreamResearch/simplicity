@@ -4,6 +4,7 @@ module Simplicity.Programs.Elements
   ( Lib(Lib), mkLib
   , Conf
   , calculateIssuanceEntropy, calculateAsset, calculateExplicitToken, calculateConfidentialToken
+  , buildTapleafSimplicity, buildTapbranch
   , LibAssert(LibAssert), mkLibAssert
   , outpointHash, assetAmountHash, nonceHash, annexHash
   -- * Example instances
@@ -13,7 +14,9 @@ module Simplicity.Programs.Elements
   ) where
 
 import Prelude hiding (Word, drop, not, subtract, take)
+import Data.String (fromString)
 
+import Simplicity.Digest
 import Simplicity.Functor
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
@@ -43,6 +46,12 @@ data Lib term =
 
     -- | An implementation of CalculateReissuanceToken for confidential values from Element's @issuance.cpp@.
   , calculateConfidentialToken :: term Hash Hash
+
+    -- | Compute a Simplicity tapleaf hash from a CMR.
+  , buildTapleafSimplicity :: term Hash Hash
+
+    -- | Compute a tapbranch hash from two branches.
+  , buildTapbranch :: term (Hash, Hash) Hash
   }
 
 -- | A collection of Simplicity with Assertions expressions for Elements calculations.
@@ -66,6 +75,8 @@ instance SimplicityFunctor Lib where
     , calculateAsset = m calculateAsset
     , calculateExplicitToken = m calculateExplicitToken
     , calculateConfidentialToken = m calculateConfidentialToken
+    , buildTapleafSimplicity = m buildTapleafSimplicity
+    , buildTapbranch = m buildTapbranch
     }
 
 instance SimplicityFunctor LibAssert where
@@ -90,7 +101,18 @@ mkLib Sha256.Lib{..} = lib
   , calculateExplicitToken = (unit >>> iv) &&& (iden &&& (unit >>> scribe (toWord256 (2^248)))) >>> hashBlock
 
   , calculateConfidentialToken = (unit >>> iv) &&& (iden &&& (unit >>> scribe (toWord256 (2*2^248)))) >>> hashBlock
+  , buildTapleafSimplicity = (unit >>> tapleafPrefix)
+                         &&& ((unit >>> (simplicityVersion &&& scribe (toWord8 32))) &&& iden >>> full_shift word16 word256 >>>
+                              (oh &&& ((((ih &&& (unit >>> scribe (toWord16 0x8000))) &&& (unit >>> zero word32)) &&& (unit >>> zero word64)) &&& (unit >>> scribe (toWord128 (512+16+256))))))
+                         >>> hashBlock
+  , buildTapbranch = ((unit >>> tapbranchPrefix)
+                 &&& (lt word256 &&& iden >>> cond iden (ih &&& oh))
+                 >>> hashBlock)
+                 &&& (unit >>> scribe (toWord512 $ 2^511 + 1024)) >>> hashBlock
   } where
+    tapleafPrefix = scribe . toWord256 . integerHash256 . ivHash . tagIv $ fromString "TapLeaf/elements"
+    tapbranchPrefix = scribe . toWord256 . integerHash256 . ivHash . tagIv $ fromString "TapBranch/elements"
+    simplicityVersion = scribe . toWord8 $ 0xbe
     opHash :: term (Hash, Word32) Hash
     opHash = (unit >>> iv)
          &&& (((unit >>> iv) &&& (oh &&& (((drop (drop (ih &&& oh) &&& take (ih &&& oh)) &&& scribe (toWord32 (2^31))) &&& (unit >>> zero word64)) &&& (unit >>> scribe (toWord128 (256+32))))) >>> hashBlock)

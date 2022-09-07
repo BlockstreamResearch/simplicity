@@ -13,18 +13,20 @@ module Simplicity.Programs.Sha256
  , ctx8AddBuffer
  , ctx8Finalize
  , hashLoop
+ , ctx8InitTag
  -- * Example instances
  , libAssert
  ) where
 
 import Prelude hiding (Word, drop, not, take)
 
+import Simplicity.Digest
 import Simplicity.Functor
 import Simplicity.Programs.Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Word
-import Simplicity.Term.Core
+import Simplicity.Term.Core hiding (one)
 
 -- | In SHA-256, each block of data passed to the compression function is a 512-bit 'Word'.
 type Block = Word512
@@ -156,6 +158,12 @@ hashLoop v = \w array ->
   in forWhile w body >>> copair iden iden
  where
   ctx8Addv = ctx8Addn libAssert v
+
+ctx8InitTag :: Core term => String -> term () Ctx8
+ctx8InitTag tag = buffer63Empty &&& (one word64 &&& prefix)
+ where
+  prefix = scribe . toWord256 . integerHash256 . ivHash . tagIv $ tag
+  buffer63Empty = bufferEmpty buffer63
 
 -- | Build the Sha256 'LibAssert' library.
 mkLibAssert :: Assert term => Lib term -> LibAssert term

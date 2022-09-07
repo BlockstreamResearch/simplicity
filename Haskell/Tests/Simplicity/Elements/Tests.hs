@@ -63,6 +63,8 @@ tests = testGroup "Elements"
           , testProperty "asset_amount_hash" prop_asset_amount_hash
           , testProperty "nonce_hash" prop_nonce_hash
           , testProperty "annex_hash" prop_annex_hash
+          , testProperty "build_tapleaf_simplicity" prop_build_tapleaf_simplicity
+          , testProperty "build_tapbranch" prop_build_tapbranch
           , testProperty "input_issuance" prop_input_issuance
           , testProperty "input_issuance_asset" prop_input_issuance_asset
           , testProperty "input_issuance_token" prop_input_issuance_token
@@ -233,6 +235,22 @@ prop_calculate_confidential_token = \entropy ->
     implementation (ElementsJet (IssuanceJet CalculateConfidentialToken)) undefined input
  where
   fast_calculate_confidential_token = testCoreEval Prog.calculateConfidentialToken
+
+prop_build_tapleaf_simplicity :: HashElement -> Bool
+prop_build_tapleaf_simplicity = \cmr ->
+  let input = heAsTy cmr in
+  fast_build_tapleaf_simplicity input ==
+    implementation (ElementsJet (SigHashJet BuildTapleafSimplicity)) undefined input
+ where
+  fast_build_tapleaf_simplicity = testCoreEval Prog.buildTapleafSimplicity
+
+prop_build_tapbranch :: HashElement -> HashElement -> Bool
+prop_build_tapbranch = \a b ->
+  let input = (heAsTy a, heAsTy b) in
+  fast_build_tapbranch input ==
+    implementation (ElementsJet (SigHashJet BuildTapbranch)) undefined input
+ where
+  fast_build_tapbranch = testCoreEval Prog.buildTapbranch
 
 prop_outpoint_hash :: Sha256CtxElement -> Maybe HashElement -> (HashElement, Word.Word32) -> Bool
 prop_outpoint_hash = \ctx pegin op ->

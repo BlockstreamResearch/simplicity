@@ -23,6 +23,18 @@
 , .sourceIx = ty_w1024
 , .targetIx = ty_u
 }
+,[BUILD_TAPBRANCH] =
+{ .tag = JET
+, .jet = build_tapbranch
+, .sourceIx = ty_w512
+, .targetIx = ty_w256
+}
+,[BUILD_TAPLEAF_SIMPLICITY] =
+{ .tag = JET
+, .jet = build_tapleaf_simplicity
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+}
 ,[CALCULATE_ASSET] =
 { .tag = JET
 , .jet = calculate_asset

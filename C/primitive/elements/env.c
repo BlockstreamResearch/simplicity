@@ -11,17 +11,6 @@
 
 #define PADDING(alignType, allocated) ((alignof(alignType) - (allocated) % alignof(alignType)) % alignof(alignType))
 
-/* Add a 256-bit hash to be consumed by an ongoing SHA-256 evaluation.
- *
- * Precondition: NULL != ctx;
- *               NULL != h;
- */
-static void sha256_hash(sha256_context* ctx, const sha256_midstate* h) {
-  unsigned char buf[32];
-  sha256_fromMidstate(buf, h->s);
-  sha256_uchars(ctx, buf, sizeof(buf));
-}
-
 /* Add an 'confidential' value to be consumed by an ongoing SHA-256 evaluation.
  * If the 'confidential' value is blinded, then the 'evenPrefix' used if the y coordinate is even,
  * and the 'oddPrefix' is used if the y coordinate is odd.
@@ -566,23 +555,7 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
     sha256_finalize(&ctx);
   }
 
-  {
-    sha256_midstate tapLeafTag;
-    {
-      static unsigned char tagName[] = "TapLeaf/elements";
-      sha256_context ctx = sha256_init(tapLeafTag.s);
-      sha256_uchars(&ctx, tagName, sizeof(tagName) - 1);
-      sha256_finalize(&ctx);
-    }
-
-    sha256_context ctx = sha256_init(env->tapLeafHash.s);
-    sha256_hash(&ctx, &tapLeafTag);
-    sha256_hash(&ctx, &tapLeafTag);
-    sha256_uchar(&ctx, env->leafVersion);
-    sha256_uchar(&ctx, 32);
-    sha256_hash(&ctx, &env->scriptCMR);
-    sha256_finalize(&ctx);
-  }
+  env->tapLeafHash = make_tapleaf(env->leafVersion, &env->scriptCMR);
 
   {
     sha256_context ctx = sha256_init(env->tapEnvHash.s);
