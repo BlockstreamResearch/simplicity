@@ -28,4 +28,19 @@ sha256_midstate calculateAsset(const sha256_midstate* entropy);
  */
 sha256_midstate calculateToken(const sha256_midstate* entropy, confPrefix prefix);
 
+/* Compute an Element's tapleaf hash from a tapleaf version and a 256-bit script value.
+ * A reimplementation of ComputeTapleafHash from Element's 'interpreter.cpp'.
+ * Only 256-bit script values are supported as that is the size used for Simplicity CMRs.
+ *
+ * Precondition: NULL != cmr;
+ */
+sha256_midstate make_tapleaf(unsigned char version, const sha256_midstate* cmr);
+
+/* Compute an Element's tapbrach hash from two branches.
+ *
+ * Precondition: NULL != a;
+ *               NULL != b;
+ */
+sha256_midstate make_tapbranch(const sha256_midstate* a, const sha256_midstate* b);
+
 #endif

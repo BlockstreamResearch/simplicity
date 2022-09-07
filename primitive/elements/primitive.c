@@ -307,6 +307,8 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
          case 26: *result = ASSET_AMOUNT_HASH; return 0;
          case 27: *result = NONCE_HASH; return 0;
          case 28: *result = ANNEX_HASH; return 0;
+         case 29: *result = BUILD_TAPLEAF_SIMPLICITY; return 0;
+         case 30: *result = BUILD_TAPBRANCH; return 0;
         }
         break;
        case 2: /* Timelock jets chapter */

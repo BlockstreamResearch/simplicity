@@ -286,4 +286,32 @@ static inline bool sha256_finalize(sha256_context* ctx) {
   sha256_u64be(ctx, length);
   return result;
 }
+
+/* Add a 256-bit hash to be consumed by an ongoing SHA-256 evaluation.
+ *
+ * Precondition: NULL != ctx;
+ *               NULL != h;
+ */
+static inline void sha256_hash(sha256_context* ctx, const sha256_midstate* h) {
+  unsigned char buf[32];
+  sha256_fromMidstate(buf, h->s);
+  sha256_uchars(ctx, buf, sizeof(buf));
+}
+
+/* Compare two hash interprted as big endian values.
+ *
+ * Precondition: NULL != a;
+ *               NULL != b;
+ */
+static inline int sha256_cmp_be(const sha256_midstate* a, const sha256_midstate* b) {
+  if (a->s[0] != b->s[0]) return a->s[0] < b->s[0] ? -1 : 1;
+  if (a->s[1] != b->s[1]) return a->s[1] < b->s[1] ? -1 : 1;
+  if (a->s[2] != b->s[2]) return a->s[2] < b->s[2] ? -1 : 1;
+  if (a->s[3] != b->s[3]) return a->s[3] < b->s[3] ? -1 : 1;
+  if (a->s[4] != b->s[4]) return a->s[4] < b->s[4] ? -1 : 1;
+  if (a->s[5] != b->s[5]) return a->s[5] < b->s[5] ? -1 : 1;
+  if (a->s[6] != b->s[6]) return a->s[6] < b->s[6] ? -1 : 1;
+  if (a->s[7] != b->s[7]) return a->s[7] < b->s[7] ? -1 : 1;
+  return 0;
+}
 #endif
