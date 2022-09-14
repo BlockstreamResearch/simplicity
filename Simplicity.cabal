@@ -244,7 +244,7 @@ executable GenPrecomputed
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    hs-source-dirs:   Haskell-GenerateC
+    hs-source-dirs:   Haskell-Generate
     default-language: Haskell2010
     build-depends:    Simplicity,
                       base >=4.9 && <4.18,
@@ -260,7 +260,7 @@ executable GenPrimitive
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    hs-source-dirs:   Haskell-GenerateC
+    hs-source-dirs:   Haskell-Generate
     default-language: Haskell2010
     build-depends:    Simplicity,
                       base >=4.9 && <4.18,
@@ -278,7 +278,7 @@ executable GenTests
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    hs-source-dirs:   Haskell-GenerateC
+    hs-source-dirs:   Haskell-Generate
     default-language: Haskell2010
     build-depends:    Simplicity,
                       base >=4.9 && <4.18,
