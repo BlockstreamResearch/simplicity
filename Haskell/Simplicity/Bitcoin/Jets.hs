@@ -1,7 +1,7 @@
 -- | This module provides a cannonical set of known jets for Simplicity for Bitcoin. (At the moment this just consists of 'CoreJet's.)
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Bitcoin.Jets
-  ( JetType
+  ( JetType(..)
   , jetSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
