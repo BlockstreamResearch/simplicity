@@ -59,7 +59,10 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
   if (bit < 0) return bit;
   dag[i] = (dag_node){0};
   if (bit) {
-    return decodeJet(&dag[i], stream);
+    bit = getBit(stream);
+    if (bit < 0) return bit;
+    if (bit) return decodeJet(&dag[i], stream);
+    return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
   } else {
     int32_t code = getNBits(2, stream);
     if (code < 0) return code;
