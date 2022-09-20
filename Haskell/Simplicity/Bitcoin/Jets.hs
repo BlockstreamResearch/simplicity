@@ -313,14 +313,17 @@ instance Simplicity.Bitcoin.JetType.JetType JetType where
       otherwise -> error "mathcher{Simplicity.Bitcoin.Jets.JetType}: type match error"
 
   getJetBit abort next = do
-   b <- next
-   if b then someArrowMap BitcoinJet <$> getJetBitBitcoin abort next
-        else someArrowMap CoreJet <$> CoreJets.getJetBit abort next
+    b <- next
+    if b then do
+               c <- next
+               if c then someArrowMap BitcoinJet <$> getJetBitBitcoin abort next
+                    else someArrowMap CoreJet <$> CoreJets.getJetBit abort next
+         else vacuous abort
 
   putJetBit = go
    where
-    go (CoreJet jt) = ([o]++) . CoreJets.putJetBit jt
-    go (BitcoinJet jt) = ([i]++) . putJetBitBitcoin jt
+    go (CoreJet jt) = ([i,o]++) . CoreJets.putJetBit jt
+    go (BitcoinJet jt) = ([i,i]++) . putJetBitBitcoin jt
     (o,i) = (False,True)
 
 -- This map is used in the 'matcher' method above.

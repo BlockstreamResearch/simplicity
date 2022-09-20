@@ -794,14 +794,17 @@ instance Simplicity.Elements.JetType.JetType JetType where
       otherwise -> error "mathcher{Simplicity.Elements.Jets.JetType}: type match error"
 
   getJetBit abort next = do
-   b <- next
-   if b then someArrowMap ElementsJet <$> getJetBitElements abort next
-        else someArrowMap CoreJet <$> CoreJets.getJetBit abort next
+    b <- next
+    if b then do
+               c <- next
+               if c then someArrowMap ElementsJet <$> getJetBitElements abort next
+                    else someArrowMap CoreJet <$> CoreJets.getJetBit abort next
+         else vacuous abort
 
   putJetBit = go
    where
-    go (CoreJet jt) = ([o]++) . CoreJets.putJetBit jt
-    go (ElementsJet jt) = ([i]++) . putJetBitElements jt
+    go (CoreJet jt) = ([i,o]++) . CoreJets.putJetBit jt
+    go (ElementsJet jt) = ([i,i]++) . putJetBitElements jt
     (o,i) = (False,True)
 
 -- This map is used in the 'matcher' method above.
