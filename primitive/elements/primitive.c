@@ -96,6 +96,7 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
           if (code < 0) return code;
           switch (code) {
            case 5: *result = EQ_32; return 0;
+           case 8: *result = EQ_256; return 0;
           }
           break;
         }
@@ -152,6 +153,13 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
           if (code < 0) return code;
           switch (code) {
            case 5: *result = MULTIPLY_32; return 0;
+          }
+          break;
+         case 16: /* Le */
+          code = decodeUptoMaxInt(stream);
+          if (code < 0) return code;
+          switch (code) {
+           case 5: *result = LE_32; return 0;
           }
           break;
         }
