@@ -84,14 +84,16 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return code;
         switch (code) {
-         case 1: /* Low */
+         case 1: /* Verify */
+          *result = VERIFY; return 0;
+         case 2: /* Low */
           code = decodeUptoMaxInt(stream);
           if (code < 0) return code;
           switch (code) {
            case 5: *result = LOW_32; return 0;
           }
           break;
-         case 12: /* Eq */
+         case 13: /* Eq */
           code = decodeUptoMaxInt(stream);
           if (code < 0) return code;
           switch (code) {

@@ -965,6 +965,12 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w32
 }
+,[VERIFY] =
+{ .tag = JET
+, .jet = verify
+, .sourceIx = ty_b
+, .targetIx = ty_u
+}
 ,[VERSION] =
 { .tag = JET
 , .jet = version

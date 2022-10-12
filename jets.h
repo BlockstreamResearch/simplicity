@@ -21,6 +21,7 @@ typedef struct txEnv txEnv;
  */
 typedef bool (*jet_ptr)(frameItem* dst, frameItem src, const txEnv* env);
 
+bool verify(frameItem* dst, frameItem src, const txEnv* env);
 bool low_32(frameItem* dst, frameItem src, const txEnv* env);
 bool one_32(frameItem* dst, frameItem src, const txEnv* env);
 bool eq_32(frameItem* dst, frameItem src, const txEnv* env);

@@ -1,9 +1,16 @@
 #include "jets.h"
 
+/* verify : TWO |- ONE */
+bool verify(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+  (void) dst; // dst is unused;
+  return readBit(&src);
+}
+
 /* low_32 : ONE |- TWO^32 */
 bool low_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
-  (void) src; // env is unused;
+  (void) src; // src is unused;
   write32(dst, 0);
   return true;
 }
@@ -11,7 +18,7 @@ bool low_32(frameItem* dst, frameItem src, const txEnv* env) {
 /* one_32 : ONE |- TWO^32 */
 bool one_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
-  (void) src; // env is unused;
+  (void) src; // src is unused;
   write32(dst, 1);
   return true;
 }
