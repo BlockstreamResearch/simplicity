@@ -1,7 +1,8 @@
 -- | This module binds the C implementation of jets for Simplicity for assertions.
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Simplicity.FFI.Jets
- ( low_32, one_32
+ ( verify
+ , low_32, one_32
  , eq_32, eq_256
  , add_32, full_add_32
  , subtract_32, full_subtract_32
@@ -40,6 +41,7 @@ import Simplicity.Programs.LibSecp256k1.Lib (FE, Scalar, GE, GEJ, Point, PubKey,
 import qualified Simplicity.Programs.LibSecp256k1.Lib as LibSecp256k1
 import Simplicity.Ty.Word
 
+foreign import ccall unsafe "" c_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_low_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_one_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_eq_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -110,6 +112,9 @@ foreign import ccall unsafe "" c_check_sig_verify :: Ptr FrameItem -> Ptr FrameI
 foreign import ccall unsafe "" c_bip_0340_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_parse_lock :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_parse_sequence :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+
+verify :: Bit -> Maybe ()
+verify = unsafeLocalCoreJet c_verify
 
 low_32 :: () -> Maybe Word32
 low_32 = unsafeLocalCoreJet c_low_32

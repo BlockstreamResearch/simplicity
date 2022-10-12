@@ -27,6 +27,7 @@ import Simplicity.Digest
 import Simplicity.FFI.Jets as FFI
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
+import Simplicity.Programs.Bit as Prog
 import Simplicity.Programs.Arith as Prog
 import Simplicity.Programs.Generic as Prog
 import qualified Simplicity.Programs.CheckSig.Lib as CheckSig
@@ -49,6 +50,7 @@ deriving instance Eq (CoreJet a b)
 deriving instance Show (CoreJet a b)
 
 data WordJet a b where
+  Verify :: WordJet Bit ()
   Low32 :: WordJet () Word32
   Eq32 :: WordJet (Word32, Word32) Bit
   Eq256 :: WordJet (Word256, Word256) Bit
@@ -150,6 +152,7 @@ specification (SignatureJet x) = specificationSignature x
 specification (BitcoinJet x) = specificationBitcoin x
 
 specificationWord :: Assert term => WordJet a b -> term a b
+specificationWord Verify = assert iden
 specificationWord Low32 = zero word32
 specificationWord Eq32 = eq
 specificationWord Eq256 = eq
@@ -243,6 +246,7 @@ implementation (SignatureJet x) = implementationSignature x
 implementation (BitcoinJet x) = implementationBitcoin x
 
 implementationWord :: WordJet a b -> a -> Maybe b
+implementationWord Verify = either (const Nothing) Just
 implementationWord Low32 = const . return $ toWord32 0
 implementationWord Eq32 = \(x, y) -> return (toBit (x == y))
 implementationWord Eq256 = \(x, y) -> return (toBit (x == y))
@@ -373,8 +377,9 @@ getJetBit abort next =  getPositive next >>= match
   getJetBitWord :: (Monad m) => m Void -> m Bool -> m (SomeArrow WordJet)
   getJetBitWord abort next = getPositive next >>= matchWord
    where
-    matchWord 1 = getPositive next >>= matchLow
-    matchWord 12 = getPositive next >>= matchEq
+    matchWord 1 = makeArrow Verify
+    matchWord 2 = getPositive next >>= matchLow
+    matchWord 13 = getPositive next >>= matchEq
     matchLow 5 = makeArrow Low32
     matchLow _ = vacuous abort
     matchEq 5 = makeArrow Eq32
@@ -501,9 +506,10 @@ putJetBit (SignatureJet x) = putPositive 5 . putJetBitSignature x
 putJetBit (BitcoinJet x) = putPositive 7 . putJetBitBitcoin x
 
 putJetBitWord :: WordJet a b -> DList Bool
-putJetBitWord Low32 = putPositive 1 . putPositive 5
-putJetBitWord Eq32 = putPositive 12 . putPositive 5
-putJetBitWord Eq256 = putPositive 12 . putPositive 8
+putJetBitWord Verify = putPositive 1 . putPositive 5
+putJetBitWord Low32  = putPositive 2 . putPositive 5
+putJetBitWord Eq32   = putPositive 13 . putPositive 5
+putJetBitWord Eq256  = putPositive 13 . putPositive 8
 
 putJetBitArith :: ArithJet a b -> DList Bool
 putJetBitArith One32          = putPositive 1 . putPositive 5
@@ -585,7 +591,8 @@ putJetBitBitcoin ParseSequence  = putPositive 2
 coreJetMap :: Map.Map Hash256 (SomeArrow CoreJet)
 coreJetMap = Map.fromList
   [ -- WordJet
-    mkAssoc (WordJet Low32)
+    mkAssoc (WordJet Verify)
+  , mkAssoc (WordJet Low32)
   , mkAssoc (WordJet Eq32)
   , mkAssoc (WordJet Eq256)
     -- ArithJet

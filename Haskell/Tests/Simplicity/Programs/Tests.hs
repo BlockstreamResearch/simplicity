@@ -51,7 +51,8 @@ toW16 = toWord16 . fromIntegral
 tests :: TestTree
 tests = testGroup "Programs"
       [ testGroup "Word"
-        [ testCase "low word8" assert_low8
+        [ testCase "verify" assert_verify
+        , testCase "low word8" assert_low8
         , testCase "high word8" assert_high8
         , testCase "low_32" assert_low_32
         , testProperty "compelment word8" prop_complement8
@@ -188,6 +189,15 @@ tests = testGroup "Programs"
         , testProperty "parse_sequence" prop_parse_sequence
         ]
       ]
+
+assert_verify :: Assertion
+assert_verify =
+  (fastF (toBit False), fastF (toBit True))
+    @=?
+  (implF (toBit False), implF (toBit True))
+ where
+  fastF = testCoreEval (specification (WordJet Verify))
+  implF = implementation (WordJet Verify)
 
 assert_low8 :: Assertion
 assert_low8 = 0 @=? fromWord8 (low word8 ())

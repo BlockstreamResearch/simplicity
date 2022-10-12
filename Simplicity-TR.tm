@@ -8519,6 +8519,14 @@
   <with|color|red|TODO: define <math|bit<rsub|n,m> :
   <2><rsup|n>\<rightarrow\><2>>>
 
+  <subsubsection|verify>
+
+  \;
+
+  <math|<rep|<text|<samp|'verify'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|verify>>\<of\><2>\<vdash\><1>>
+
   <subsubsection|<samp|low>>
 
   \;
@@ -12846,312 +12854,313 @@
     <associate|auto-208|<tuple|B.1.1.28|?>>
     <associate|auto-209|<tuple|B.1.1.29|?>>
     <associate|auto-21|<tuple|2.4.1|?>>
-    <associate|auto-210|<tuple|B.1.2|?>>
-    <associate|auto-211|<tuple|B.1.2.1|?>>
-    <associate|auto-212|<tuple|B.1.2.2|?>>
-    <associate|auto-213|<tuple|B.1.2.3|?>>
-    <associate|auto-214|<tuple|B.1.2.4|?>>
-    <associate|auto-215|<tuple|B.1.2.5|?>>
-    <associate|auto-216|<tuple|B.1.2.6|?>>
-    <associate|auto-217|<tuple|B.1.2.7|?>>
-    <associate|auto-218|<tuple|B.1.2.8|?>>
-    <associate|auto-219|<tuple|B.1.2.9|?>>
+    <associate|auto-210|<tuple|B.1.1.30|?>>
+    <associate|auto-211|<tuple|B.1.2|?>>
+    <associate|auto-212|<tuple|B.1.2.1|?>>
+    <associate|auto-213|<tuple|B.1.2.2|?>>
+    <associate|auto-214|<tuple|B.1.2.3|?>>
+    <associate|auto-215|<tuple|B.1.2.4|?>>
+    <associate|auto-216|<tuple|B.1.2.5|?>>
+    <associate|auto-217|<tuple|B.1.2.6|?>>
+    <associate|auto-218|<tuple|B.1.2.7|?>>
+    <associate|auto-219|<tuple|B.1.2.8|?>>
     <associate|auto-22|<tuple|2.4.2|?>>
-    <associate|auto-220|<tuple|B.1.2.10|?>>
-    <associate|auto-221|<tuple|B.1.2.11|?>>
-    <associate|auto-222|<tuple|B.1.2.12|?>>
-    <associate|auto-223|<tuple|B.1.2.13|?>>
-    <associate|auto-224|<tuple|B.1.2.14|?>>
-    <associate|auto-225|<tuple|B.1.2.15|?>>
-    <associate|auto-226|<tuple|B.1.2.16|?>>
-    <associate|auto-227|<tuple|B.1.2.17|?>>
-    <associate|auto-228|<tuple|B.1.2.18|?>>
-    <associate|auto-229|<tuple|B.1.2.19|?>>
+    <associate|auto-220|<tuple|B.1.2.9|?>>
+    <associate|auto-221|<tuple|B.1.2.10|?>>
+    <associate|auto-222|<tuple|B.1.2.11|?>>
+    <associate|auto-223|<tuple|B.1.2.12|?>>
+    <associate|auto-224|<tuple|B.1.2.13|?>>
+    <associate|auto-225|<tuple|B.1.2.14|?>>
+    <associate|auto-226|<tuple|B.1.2.15|?>>
+    <associate|auto-227|<tuple|B.1.2.16|?>>
+    <associate|auto-228|<tuple|B.1.2.17|?>>
+    <associate|auto-229|<tuple|B.1.2.18|?>>
     <associate|auto-23|<tuple|3|?>>
-    <associate|auto-230|<tuple|B.1.2.20|?>>
-    <associate|auto-231|<tuple|B.1.2.21|?>>
-    <associate|auto-232|<tuple|B.1.2.22|?>>
-    <associate|auto-233|<tuple|B.1.2.23|?>>
-    <associate|auto-234|<tuple|B.1.2.24|?>>
-    <associate|auto-235|<tuple|B.1.2.25|?>>
-    <associate|auto-236|<tuple|B.1.2.26|?>>
-    <associate|auto-237|<tuple|B.1.2.27|?>>
-    <associate|auto-238|<tuple|B.1.2.28|?>>
-    <associate|auto-239|<tuple|B.1.2.29|?>>
+    <associate|auto-230|<tuple|B.1.2.19|?>>
+    <associate|auto-231|<tuple|B.1.2.20|?>>
+    <associate|auto-232|<tuple|B.1.2.21|?>>
+    <associate|auto-233|<tuple|B.1.2.22|?>>
+    <associate|auto-234|<tuple|B.1.2.23|?>>
+    <associate|auto-235|<tuple|B.1.2.24|?>>
+    <associate|auto-236|<tuple|B.1.2.25|?>>
+    <associate|auto-237|<tuple|B.1.2.26|?>>
+    <associate|auto-238|<tuple|B.1.2.27|?>>
+    <associate|auto-239|<tuple|B.1.2.28|?>>
     <associate|auto-24|<tuple|3.1|?>>
-    <associate|auto-240|<tuple|B.1.2.30|?>>
-    <associate|auto-241|<tuple|B.1.2.31|?>>
-    <associate|auto-242|<tuple|B.1.2.32|?>>
-    <associate|auto-243|<tuple|B.1.2.33|?>>
-    <associate|auto-244|<tuple|B.1.2.34|?>>
-    <associate|auto-245|<tuple|B.1.2.35|?>>
-    <associate|auto-246|<tuple|B.1.2.36|?>>
-    <associate|auto-247|<tuple|B.1.2.37|?>>
-    <associate|auto-248|<tuple|B.1.2.38|?>>
-    <associate|auto-249|<tuple|B.1.2.39|?>>
+    <associate|auto-240|<tuple|B.1.2.29|?>>
+    <associate|auto-241|<tuple|B.1.2.30|?>>
+    <associate|auto-242|<tuple|B.1.2.31|?>>
+    <associate|auto-243|<tuple|B.1.2.32|?>>
+    <associate|auto-244|<tuple|B.1.2.33|?>>
+    <associate|auto-245|<tuple|B.1.2.34|?>>
+    <associate|auto-246|<tuple|B.1.2.35|?>>
+    <associate|auto-247|<tuple|B.1.2.36|?>>
+    <associate|auto-248|<tuple|B.1.2.37|?>>
+    <associate|auto-249|<tuple|B.1.2.38|?>>
     <associate|auto-25|<tuple|3.1.1|?>>
-    <associate|auto-250|<tuple|B.1.2.40|?>>
-    <associate|auto-251|<tuple|B.1.2.41|?>>
-    <associate|auto-252|<tuple|B.1.2.42|?>>
-    <associate|auto-253|<tuple|B.1.2.43|?>>
-    <associate|auto-254|<tuple|B.1.3|?>>
-    <associate|auto-255|<tuple|B.1.3.1|?>>
-    <associate|auto-256|<tuple|B.1.3.1.1|?>>
-    <associate|auto-257|<tuple|B.1.3.1.2|?>>
-    <associate|auto-258|<tuple|B.1.3.1.3|?>>
-    <associate|auto-259|<tuple|B.1.3.1.4|?>>
+    <associate|auto-250|<tuple|B.1.2.39|?>>
+    <associate|auto-251|<tuple|B.1.2.40|?>>
+    <associate|auto-252|<tuple|B.1.2.41|?>>
+    <associate|auto-253|<tuple|B.1.2.42|?>>
+    <associate|auto-254|<tuple|B.1.2.43|?>>
+    <associate|auto-255|<tuple|B.1.3|?>>
+    <associate|auto-256|<tuple|B.1.3.1|?>>
+    <associate|auto-257|<tuple|B.1.3.1.1|?>>
+    <associate|auto-258|<tuple|B.1.3.1.2|?>>
+    <associate|auto-259|<tuple|B.1.3.1.3|?>>
     <associate|auto-26|<tuple|3.1.2|?>>
-    <associate|auto-260|<tuple|B.1.3.1.5|?>>
-    <associate|auto-261|<tuple|B.1.3.1.6|?>>
-    <associate|auto-262|<tuple|B.1.3.2|?>>
-    <associate|auto-263|<tuple|B.1.3.2.1|?>>
-    <associate|auto-264|<tuple|B.1.3.2.2|?>>
-    <associate|auto-265|<tuple|B.1.3.2.3|?>>
-    <associate|auto-266|<tuple|B.1.3.2.4|?>>
-    <associate|auto-267|<tuple|B.1.3.2.5|?>>
-    <associate|auto-268|<tuple|B.1.3.2.6|?>>
-    <associate|auto-269|<tuple|B.1.3.3|?>>
+    <associate|auto-260|<tuple|B.1.3.1.4|?>>
+    <associate|auto-261|<tuple|B.1.3.1.5|?>>
+    <associate|auto-262|<tuple|B.1.3.1.6|?>>
+    <associate|auto-263|<tuple|B.1.3.2|?>>
+    <associate|auto-264|<tuple|B.1.3.2.1|?>>
+    <associate|auto-265|<tuple|B.1.3.2.2|?>>
+    <associate|auto-266|<tuple|B.1.3.2.3|?>>
+    <associate|auto-267|<tuple|B.1.3.2.4|?>>
+    <associate|auto-268|<tuple|B.1.3.2.5|?>>
+    <associate|auto-269|<tuple|B.1.3.2.6|?>>
     <associate|auto-27|<tuple|3.1.3|?>>
-    <associate|auto-270|<tuple|B.1.3.4|?>>
-    <associate|auto-271|<tuple|B.1.4|?>>
-    <associate|auto-272|<tuple|B.1.4.1|?>>
-    <associate|auto-273|<tuple|B.1.4.1.1|?>>
-    <associate|auto-274|<tuple|B.1.4.1.2|?>>
-    <associate|auto-275|<tuple|B.1.4.1.3|?>>
-    <associate|auto-276|<tuple|B.1.4.1.4|?>>
-    <associate|auto-277|<tuple|B.1.4.1.5|?>>
-    <associate|auto-278|<tuple|B.1.4.1.6|?>>
-    <associate|auto-279|<tuple|B.1.4.1.7|?>>
+    <associate|auto-270|<tuple|B.1.3.3|?>>
+    <associate|auto-271|<tuple|B.1.3.4|?>>
+    <associate|auto-272|<tuple|B.1.4|?>>
+    <associate|auto-273|<tuple|B.1.4.1|?>>
+    <associate|auto-274|<tuple|B.1.4.1.1|?>>
+    <associate|auto-275|<tuple|B.1.4.1.2|?>>
+    <associate|auto-276|<tuple|B.1.4.1.3|?>>
+    <associate|auto-277|<tuple|B.1.4.1.4|?>>
+    <associate|auto-278|<tuple|B.1.4.1.5|?>>
+    <associate|auto-279|<tuple|B.1.4.1.6|?>>
     <associate|auto-28|<tuple|3.2|?>>
-    <associate|auto-280|<tuple|B.1.4.1.8|?>>
-    <associate|auto-281|<tuple|B.1.4.1.9|?>>
-    <associate|auto-282|<tuple|B.1.4.1.10|?>>
-    <associate|auto-283|<tuple|B.1.4.1.11|?>>
-    <associate|auto-284|<tuple|B.1.4.1.12|?>>
-    <associate|auto-285|<tuple|B.1.4.1.13|?>>
-    <associate|auto-286|<tuple|B.1.4.1.14|?>>
-    <associate|auto-287|<tuple|B.1.4.1.15|?>>
-    <associate|auto-288|<tuple|B.1.4.1.16|?>>
-    <associate|auto-289|<tuple|B.1.4.1.17|?>>
+    <associate|auto-280|<tuple|B.1.4.1.7|?>>
+    <associate|auto-281|<tuple|B.1.4.1.8|?>>
+    <associate|auto-282|<tuple|B.1.4.1.9|?>>
+    <associate|auto-283|<tuple|B.1.4.1.10|?>>
+    <associate|auto-284|<tuple|B.1.4.1.11|?>>
+    <associate|auto-285|<tuple|B.1.4.1.12|?>>
+    <associate|auto-286|<tuple|B.1.4.1.13|?>>
+    <associate|auto-287|<tuple|B.1.4.1.14|?>>
+    <associate|auto-288|<tuple|B.1.4.1.15|?>>
+    <associate|auto-289|<tuple|B.1.4.1.16|?>>
     <associate|auto-29|<tuple|3.2.1|?>>
-    <associate|auto-290|<tuple|B.1.4.1.18|?>>
-    <associate|auto-291|<tuple|B.1.4.1.19|?>>
-    <associate|auto-292|<tuple|B.1.4.1.20|?>>
-    <associate|auto-293|<tuple|B.1.4.1.21|?>>
-    <associate|auto-294|<tuple|B.1.4.1.22|?>>
-    <associate|auto-295|<tuple|B.1.4.1.23|?>>
-    <associate|auto-296|<tuple|B.1.4.1.24|?>>
-    <associate|auto-297|<tuple|B.1.4.1.25|?>>
-    <associate|auto-298|<tuple|B.1.4.1.26|?>>
-    <associate|auto-299|<tuple|B.1.4.1.27|?>>
+    <associate|auto-290|<tuple|B.1.4.1.17|?>>
+    <associate|auto-291|<tuple|B.1.4.1.18|?>>
+    <associate|auto-292|<tuple|B.1.4.1.19|?>>
+    <associate|auto-293|<tuple|B.1.4.1.20|?>>
+    <associate|auto-294|<tuple|B.1.4.1.21|?>>
+    <associate|auto-295|<tuple|B.1.4.1.22|?>>
+    <associate|auto-296|<tuple|B.1.4.1.23|?>>
+    <associate|auto-297|<tuple|B.1.4.1.24|?>>
+    <associate|auto-298|<tuple|B.1.4.1.25|?>>
+    <associate|auto-299|<tuple|B.1.4.1.26|?>>
     <associate|auto-3|<tuple|1.2|?>>
     <associate|auto-30|<tuple|3.2.2|?>>
-    <associate|auto-300|<tuple|B.1.4.1.28|?>>
-    <associate|auto-301|<tuple|B.1.4.1.29|?>>
-    <associate|auto-302|<tuple|B.1.4.1.30|?>>
-    <associate|auto-303|<tuple|B.1.4.1.31|?>>
-    <associate|auto-304|<tuple|B.1.4.1.32|?>>
-    <associate|auto-305|<tuple|B.1.4.1.33|?>>
-    <associate|auto-306|<tuple|B.1.4.1.34|?>>
-    <associate|auto-307|<tuple|B.1.4.1.35|?>>
-    <associate|auto-308|<tuple|B.1.4.1.36|?>>
-    <associate|auto-309|<tuple|B.1.4.1.37|?>>
+    <associate|auto-300|<tuple|B.1.4.1.27|?>>
+    <associate|auto-301|<tuple|B.1.4.1.28|?>>
+    <associate|auto-302|<tuple|B.1.4.1.29|?>>
+    <associate|auto-303|<tuple|B.1.4.1.30|?>>
+    <associate|auto-304|<tuple|B.1.4.1.31|?>>
+    <associate|auto-305|<tuple|B.1.4.1.32|?>>
+    <associate|auto-306|<tuple|B.1.4.1.33|?>>
+    <associate|auto-307|<tuple|B.1.4.1.34|?>>
+    <associate|auto-308|<tuple|B.1.4.1.35|?>>
+    <associate|auto-309|<tuple|B.1.4.1.36|?>>
     <associate|auto-31|<tuple|3.2.3|?>>
-    <associate|auto-310|<tuple|B.1.4.1.38|?>>
-    <associate|auto-311|<tuple|B.1.4.1.39|?>>
-    <associate|auto-312|<tuple|B.1.4.1.40|?>>
-    <associate|auto-313|<tuple|B.1.4.1.41|?>>
-    <associate|auto-314|<tuple|B.1.4.1.42|?>>
-    <associate|auto-315|<tuple|B.1.4.1.43|?>>
-    <associate|auto-316|<tuple|B.1.4.1.44|?>>
-    <associate|auto-317|<tuple|B.1.4.1.45|?>>
-    <associate|auto-318|<tuple|B.1.5|?>>
-    <associate|auto-319|<tuple|B.1.5.1|?>>
+    <associate|auto-310|<tuple|B.1.4.1.37|?>>
+    <associate|auto-311|<tuple|B.1.4.1.38|?>>
+    <associate|auto-312|<tuple|B.1.4.1.39|?>>
+    <associate|auto-313|<tuple|B.1.4.1.40|?>>
+    <associate|auto-314|<tuple|B.1.4.1.41|?>>
+    <associate|auto-315|<tuple|B.1.4.1.42|?>>
+    <associate|auto-316|<tuple|B.1.4.1.43|?>>
+    <associate|auto-317|<tuple|B.1.4.1.44|?>>
+    <associate|auto-318|<tuple|B.1.4.1.45|?>>
+    <associate|auto-319|<tuple|B.1.5|?>>
     <associate|auto-32|<tuple|3.2.4|?>>
-    <associate|auto-320|<tuple|B.1.5.1.1|?>>
-    <associate|auto-321|<tuple|B.1.5.1.2|?>>
-    <associate|auto-322|<tuple|B.1.5.1.3|?>>
-    <associate|auto-323|<tuple|B.1.5.1.4|?>>
-    <associate|auto-324|<tuple|B.1.5.1.5|?>>
-    <associate|auto-325|<tuple|B.1.5.1.6|?>>
-    <associate|auto-326|<tuple|B.1.5.1.7|?>>
-    <associate|auto-327|<tuple|B.1.6|?>>
-    <associate|auto-328|<tuple|B.1.6.1|?>>
-    <associate|auto-329|<tuple|B.1.6.1.1|?>>
+    <associate|auto-320|<tuple|B.1.5.1|?>>
+    <associate|auto-321|<tuple|B.1.5.1.1|?>>
+    <associate|auto-322|<tuple|B.1.5.1.2|?>>
+    <associate|auto-323|<tuple|B.1.5.1.3|?>>
+    <associate|auto-324|<tuple|B.1.5.1.4|?>>
+    <associate|auto-325|<tuple|B.1.5.1.5|?>>
+    <associate|auto-326|<tuple|B.1.5.1.6|?>>
+    <associate|auto-327|<tuple|B.1.5.1.7|?>>
+    <associate|auto-328|<tuple|B.1.6|?>>
+    <associate|auto-329|<tuple|B.1.6.1|?>>
     <associate|auto-33|<tuple|3.2.5|?>>
-    <associate|auto-330|<tuple|B.1.6.1.2|?>>
-    <associate|auto-331|<tuple|B.1.6.1.3|?>>
-    <associate|auto-332|<tuple|B.1.6.1.4|?>>
-    <associate|auto-333|<tuple|B.1.6.1.5|?>>
-    <associate|auto-334|<tuple|B.1.6.1.6|?>>
-    <associate|auto-335|<tuple|B.1.6.1.7|?>>
-    <associate|auto-336|<tuple|B.1.6.1.8|?>>
-    <associate|auto-337|<tuple|B.1.6.1.9|?>>
-    <associate|auto-338|<tuple|B.1.6.1.10|?>>
-    <associate|auto-339|<tuple|B.1.6.1.11|?>>
+    <associate|auto-330|<tuple|B.1.6.1.1|?>>
+    <associate|auto-331|<tuple|B.1.6.1.2|?>>
+    <associate|auto-332|<tuple|B.1.6.1.3|?>>
+    <associate|auto-333|<tuple|B.1.6.1.4|?>>
+    <associate|auto-334|<tuple|B.1.6.1.5|?>>
+    <associate|auto-335|<tuple|B.1.6.1.6|?>>
+    <associate|auto-336|<tuple|B.1.6.1.7|?>>
+    <associate|auto-337|<tuple|B.1.6.1.8|?>>
+    <associate|auto-338|<tuple|B.1.6.1.9|?>>
+    <associate|auto-339|<tuple|B.1.6.1.10|?>>
     <associate|auto-34|<tuple|3.2.6|?>>
-    <associate|auto-340|<tuple|B.1.6.1.12|?>>
-    <associate|auto-341|<tuple|B.1.6.1.13|?>>
-    <associate|auto-342|<tuple|B.1.6.1.14|?>>
-    <associate|auto-343|<tuple|B.1.7|?>>
-    <associate|auto-344|<tuple|B.1.7.1|?>>
-    <associate|auto-345|<tuple|B.1.7.2|?>>
-    <associate|auto-346|<tuple|B.2|?>>
-    <associate|auto-347|<tuple|B.2.1|?>>
-    <associate|auto-348|<tuple|B.2.2|?>>
-    <associate|auto-349|<tuple|B.2.2.1|?>>
+    <associate|auto-340|<tuple|B.1.6.1.11|?>>
+    <associate|auto-341|<tuple|B.1.6.1.12|?>>
+    <associate|auto-342|<tuple|B.1.6.1.13|?>>
+    <associate|auto-343|<tuple|B.1.6.1.14|?>>
+    <associate|auto-344|<tuple|B.1.7|?>>
+    <associate|auto-345|<tuple|B.1.7.1|?>>
+    <associate|auto-346|<tuple|B.1.7.2|?>>
+    <associate|auto-347|<tuple|B.2|?>>
+    <associate|auto-348|<tuple|B.2.1|?>>
+    <associate|auto-349|<tuple|B.2.2|?>>
     <associate|auto-35|<tuple|3.2.7|?>>
-    <associate|auto-350|<tuple|B.2.2.2|?>>
-    <associate|auto-351|<tuple|B.2.2.3|?>>
-    <associate|auto-352|<tuple|B.2.2.4|?>>
-    <associate|auto-353|<tuple|B.2.2.5|?>>
-    <associate|auto-354|<tuple|B.2.2.6|?>>
-    <associate|auto-355|<tuple|B.2.2.7|?>>
-    <associate|auto-356|<tuple|B.2.2.8|?>>
-    <associate|auto-357|<tuple|B.2.2.9|?>>
-    <associate|auto-358|<tuple|B.2.3|?>>
-    <associate|auto-359|<tuple|B.2.3.1|?>>
+    <associate|auto-350|<tuple|B.2.2.1|?>>
+    <associate|auto-351|<tuple|B.2.2.2|?>>
+    <associate|auto-352|<tuple|B.2.2.3|?>>
+    <associate|auto-353|<tuple|B.2.2.4|?>>
+    <associate|auto-354|<tuple|B.2.2.5|?>>
+    <associate|auto-355|<tuple|B.2.2.6|?>>
+    <associate|auto-356|<tuple|B.2.2.7|?>>
+    <associate|auto-357|<tuple|B.2.2.8|?>>
+    <associate|auto-358|<tuple|B.2.2.9|?>>
+    <associate|auto-359|<tuple|B.2.3|?>>
     <associate|auto-36|<tuple|3.2.8|?>>
-    <associate|auto-360|<tuple|B.2.3.2|?>>
-    <associate|auto-361|<tuple|B.2.3.3|?>>
-    <associate|auto-362|<tuple|B.2.3.4|?>>
-    <associate|auto-363|<tuple|B.2.3.5|?>>
-    <associate|auto-364|<tuple|B.2.3.6|?>>
-    <associate|auto-365|<tuple|B.2.3.7|?>>
-    <associate|auto-366|<tuple|B.2.3.8|?>>
-    <associate|auto-367|<tuple|B.2.3.9|?>>
-    <associate|auto-368|<tuple|B.2.3.10|?>>
-    <associate|auto-369|<tuple|B.2.3.11|?>>
+    <associate|auto-360|<tuple|B.2.3.1|?>>
+    <associate|auto-361|<tuple|B.2.3.2|?>>
+    <associate|auto-362|<tuple|B.2.3.3|?>>
+    <associate|auto-363|<tuple|B.2.3.4|?>>
+    <associate|auto-364|<tuple|B.2.3.5|?>>
+    <associate|auto-365|<tuple|B.2.3.6|?>>
+    <associate|auto-366|<tuple|B.2.3.7|?>>
+    <associate|auto-367|<tuple|B.2.3.8|?>>
+    <associate|auto-368|<tuple|B.2.3.9|?>>
+    <associate|auto-369|<tuple|B.2.3.10|?>>
     <associate|auto-37|<tuple|3.2.9|?>>
-    <associate|auto-370|<tuple|B.2.3.12|?>>
-    <associate|auto-371|<tuple|B.2.3.13|?>>
-    <associate|auto-372|<tuple|B.2.3.14|?>>
-    <associate|auto-373|<tuple|B.2.3.15|?>>
-    <associate|auto-374|<tuple|B.2.3.16|?>>
-    <associate|auto-375|<tuple|B.2.3.17|?>>
-    <associate|auto-376|<tuple|B.2.3.18|?>>
-    <associate|auto-377|<tuple|B.2.3.19|?>>
-    <associate|auto-378|<tuple|B.2.3.20|?>>
-    <associate|auto-379|<tuple|B.2.3.21|?>>
+    <associate|auto-370|<tuple|B.2.3.11|?>>
+    <associate|auto-371|<tuple|B.2.3.12|?>>
+    <associate|auto-372|<tuple|B.2.3.13|?>>
+    <associate|auto-373|<tuple|B.2.3.14|?>>
+    <associate|auto-374|<tuple|B.2.3.15|?>>
+    <associate|auto-375|<tuple|B.2.3.16|?>>
+    <associate|auto-376|<tuple|B.2.3.17|?>>
+    <associate|auto-377|<tuple|B.2.3.18|?>>
+    <associate|auto-378|<tuple|B.2.3.19|?>>
+    <associate|auto-379|<tuple|B.2.3.20|?>>
     <associate|auto-38|<tuple|3.2.10|?>>
-    <associate|auto-380|<tuple|B.2.3.22|?>>
-    <associate|auto-381|<tuple|B.2.3.23|?>>
-    <associate|auto-382|<tuple|B.2.3.24|?>>
-    <associate|auto-383|<tuple|B.2.3.25|?>>
-    <associate|auto-384|<tuple|B.2.3.26|?>>
-    <associate|auto-385|<tuple|B.3|?>>
-    <associate|auto-386|<tuple|B.3.1|?>>
-    <associate|auto-387|<tuple|B.3.1.1|?>>
-    <associate|auto-388|<tuple|B.3.1.2|?>>
-    <associate|auto-389|<tuple|B.3.1.3|?>>
+    <associate|auto-380|<tuple|B.2.3.21|?>>
+    <associate|auto-381|<tuple|B.2.3.22|?>>
+    <associate|auto-382|<tuple|B.2.3.23|?>>
+    <associate|auto-383|<tuple|B.2.3.24|?>>
+    <associate|auto-384|<tuple|B.2.3.25|?>>
+    <associate|auto-385|<tuple|B.2.3.26|?>>
+    <associate|auto-386|<tuple|B.3|?>>
+    <associate|auto-387|<tuple|B.3.1|?>>
+    <associate|auto-388|<tuple|B.3.1.1|?>>
+    <associate|auto-389|<tuple|B.3.1.2|?>>
     <associate|auto-39|<tuple|3.2.11|?>>
-    <associate|auto-390|<tuple|B.3.1.4|?>>
-    <associate|auto-391|<tuple|B.3.1.5|?>>
-    <associate|auto-392|<tuple|B.3.1.6|?>>
-    <associate|auto-393|<tuple|B.3.1.7|?>>
-    <associate|auto-394|<tuple|B.3.1.8|?>>
-    <associate|auto-395|<tuple|B.3.1.9|?>>
-    <associate|auto-396|<tuple|B.3.1.10|?>>
-    <associate|auto-397|<tuple|B.3.1.11|?>>
-    <associate|auto-398|<tuple|B.3.1.12|?>>
-    <associate|auto-399|<tuple|B.3.1.13|?>>
+    <associate|auto-390|<tuple|B.3.1.3|?>>
+    <associate|auto-391|<tuple|B.3.1.4|?>>
+    <associate|auto-392|<tuple|B.3.1.5|?>>
+    <associate|auto-393|<tuple|B.3.1.6|?>>
+    <associate|auto-394|<tuple|B.3.1.7|?>>
+    <associate|auto-395|<tuple|B.3.1.8|?>>
+    <associate|auto-396|<tuple|B.3.1.9|?>>
+    <associate|auto-397|<tuple|B.3.1.10|?>>
+    <associate|auto-398|<tuple|B.3.1.11|?>>
+    <associate|auto-399|<tuple|B.3.1.12|?>>
     <associate|auto-4|<tuple|1.2.1|?>>
     <associate|auto-40|<tuple|3.3|?>>
-    <associate|auto-400|<tuple|B.3.1.14|?>>
-    <associate|auto-401|<tuple|B.3.1.15|?>>
-    <associate|auto-402|<tuple|B.3.1.16|?>>
-    <associate|auto-403|<tuple|B.3.1.17|?>>
-    <associate|auto-404|<tuple|B.3.1.18|?>>
-    <associate|auto-405|<tuple|B.3.1.19|?>>
-    <associate|auto-406|<tuple|B.3.1.20|?>>
-    <associate|auto-407|<tuple|B.3.1.21|?>>
-    <associate|auto-408|<tuple|B.3.1.22|?>>
-    <associate|auto-409|<tuple|B.3.1.23|?>>
+    <associate|auto-400|<tuple|B.3.1.13|?>>
+    <associate|auto-401|<tuple|B.3.1.14|?>>
+    <associate|auto-402|<tuple|B.3.1.15|?>>
+    <associate|auto-403|<tuple|B.3.1.16|?>>
+    <associate|auto-404|<tuple|B.3.1.17|?>>
+    <associate|auto-405|<tuple|B.3.1.18|?>>
+    <associate|auto-406|<tuple|B.3.1.19|?>>
+    <associate|auto-407|<tuple|B.3.1.20|?>>
+    <associate|auto-408|<tuple|B.3.1.21|?>>
+    <associate|auto-409|<tuple|B.3.1.22|?>>
     <associate|auto-41|<tuple|3.3.1|?>>
-    <associate|auto-410|<tuple|B.3.1.24|?>>
-    <associate|auto-411|<tuple|B.3.1.25|?>>
-    <associate|auto-412|<tuple|B.3.1.26|?>>
-    <associate|auto-413|<tuple|B.3.1.27|?>>
-    <associate|auto-414|<tuple|B.3.1.28|?>>
-    <associate|auto-415|<tuple|B.3.1.29|?>>
-    <associate|auto-416|<tuple|B.3.1.30|?>>
-    <associate|auto-417|<tuple|B.3.2|?>>
-    <associate|auto-418|<tuple|B.3.2.1|?>>
-    <associate|auto-419|<tuple|B.3.2.2|?>>
+    <associate|auto-410|<tuple|B.3.1.23|?>>
+    <associate|auto-411|<tuple|B.3.1.24|?>>
+    <associate|auto-412|<tuple|B.3.1.25|?>>
+    <associate|auto-413|<tuple|B.3.1.26|?>>
+    <associate|auto-414|<tuple|B.3.1.27|?>>
+    <associate|auto-415|<tuple|B.3.1.28|?>>
+    <associate|auto-416|<tuple|B.3.1.29|?>>
+    <associate|auto-417|<tuple|B.3.1.30|?>>
+    <associate|auto-418|<tuple|B.3.2|?>>
+    <associate|auto-419|<tuple|B.3.2.1|?>>
     <associate|auto-42|<tuple|3.3.2|?>>
-    <associate|auto-420|<tuple|B.3.2.3|?>>
-    <associate|auto-421|<tuple|B.3.2.4|?>>
-    <associate|auto-422|<tuple|B.3.2.5|?>>
-    <associate|auto-423|<tuple|B.3.2.6|?>>
-    <associate|auto-424|<tuple|B.3.2.7|?>>
-    <associate|auto-425|<tuple|B.3.2.8|?>>
-    <associate|auto-426|<tuple|B.3.2.9|?>>
-    <associate|auto-427|<tuple|B.3.3|?>>
-    <associate|auto-428|<tuple|B.3.3.1|?>>
-    <associate|auto-429|<tuple|B.3.3.2|?>>
+    <associate|auto-420|<tuple|B.3.2.2|?>>
+    <associate|auto-421|<tuple|B.3.2.3|?>>
+    <associate|auto-422|<tuple|B.3.2.4|?>>
+    <associate|auto-423|<tuple|B.3.2.5|?>>
+    <associate|auto-424|<tuple|B.3.2.6|?>>
+    <associate|auto-425|<tuple|B.3.2.7|?>>
+    <associate|auto-426|<tuple|B.3.2.8|?>>
+    <associate|auto-427|<tuple|B.3.2.9|?>>
+    <associate|auto-428|<tuple|B.3.3|?>>
+    <associate|auto-429|<tuple|B.3.3.1|?>>
     <associate|auto-43|<tuple|3.3.3|?>>
-    <associate|auto-430|<tuple|B.3.3.3|?>>
-    <associate|auto-431|<tuple|B.3.3.4|?>>
-    <associate|auto-432|<tuple|B.3.3.5|?>>
-    <associate|auto-433|<tuple|B.3.3.6|?>>
-    <associate|auto-434|<tuple|B.3.3.7|?>>
-    <associate|auto-435|<tuple|B.3.3.8|?>>
-    <associate|auto-436|<tuple|B.3.4|?>>
-    <associate|auto-437|<tuple|B.3.4.1|?>>
-    <associate|auto-438|<tuple|B.3.4.2|?>>
-    <associate|auto-439|<tuple|B.3.4.3|?>>
+    <associate|auto-430|<tuple|B.3.3.2|?>>
+    <associate|auto-431|<tuple|B.3.3.3|?>>
+    <associate|auto-432|<tuple|B.3.3.4|?>>
+    <associate|auto-433|<tuple|B.3.3.5|?>>
+    <associate|auto-434|<tuple|B.3.3.6|?>>
+    <associate|auto-435|<tuple|B.3.3.7|?>>
+    <associate|auto-436|<tuple|B.3.3.8|?>>
+    <associate|auto-437|<tuple|B.3.4|?>>
+    <associate|auto-438|<tuple|B.3.4.1|?>>
+    <associate|auto-439|<tuple|B.3.4.2|?>>
     <associate|auto-44|<tuple|3.3.4|?>>
-    <associate|auto-440|<tuple|B.3.4.4|?>>
-    <associate|auto-441|<tuple|B.3.4.5|?>>
-    <associate|auto-442|<tuple|B.3.4.6|?>>
-    <associate|auto-443|<tuple|B.3.4.7|?>>
-    <associate|auto-444|<tuple|B.3.4.8|?>>
-    <associate|auto-445|<tuple|B.3.4.9|?>>
-    <associate|auto-446|<tuple|B.3.4.10|?>>
-    <associate|auto-447|<tuple|B.3.4.11|?>>
-    <associate|auto-448|<tuple|B.3.4.12|?>>
-    <associate|auto-449|<tuple|B.3.4.13|?>>
+    <associate|auto-440|<tuple|B.3.4.3|?>>
+    <associate|auto-441|<tuple|B.3.4.4|?>>
+    <associate|auto-442|<tuple|B.3.4.5|?>>
+    <associate|auto-443|<tuple|B.3.4.6|?>>
+    <associate|auto-444|<tuple|B.3.4.7|?>>
+    <associate|auto-445|<tuple|B.3.4.8|?>>
+    <associate|auto-446|<tuple|B.3.4.9|?>>
+    <associate|auto-447|<tuple|B.3.4.10|?>>
+    <associate|auto-448|<tuple|B.3.4.11|?>>
+    <associate|auto-449|<tuple|B.3.4.12|?>>
     <associate|auto-45|<tuple|3.3.5|?>>
-    <associate|auto-450|<tuple|B.3.4.14|?>>
-    <associate|auto-451|<tuple|B.3.4.15|?>>
-    <associate|auto-452|<tuple|B.3.4.16|?>>
-    <associate|auto-453|<tuple|B.3.4.17|?>>
-    <associate|auto-454|<tuple|B.3.4.18|?>>
-    <associate|auto-455|<tuple|B.3.4.19|?>>
-    <associate|auto-456|<tuple|B.3.4.20|?>>
-    <associate|auto-457|<tuple|B.3.4.21|?>>
-    <associate|auto-458|<tuple|B.3.4.22|?>>
-    <associate|auto-459|<tuple|B.3.4.23|?>>
+    <associate|auto-450|<tuple|B.3.4.13|?>>
+    <associate|auto-451|<tuple|B.3.4.14|?>>
+    <associate|auto-452|<tuple|B.3.4.15|?>>
+    <associate|auto-453|<tuple|B.3.4.16|?>>
+    <associate|auto-454|<tuple|B.3.4.17|?>>
+    <associate|auto-455|<tuple|B.3.4.18|?>>
+    <associate|auto-456|<tuple|B.3.4.19|?>>
+    <associate|auto-457|<tuple|B.3.4.20|?>>
+    <associate|auto-458|<tuple|B.3.4.21|?>>
+    <associate|auto-459|<tuple|B.3.4.22|?>>
     <associate|auto-46|<tuple|3.3.6|?>>
-    <associate|auto-460|<tuple|B.3.4.24|?>>
-    <associate|auto-461|<tuple|B.3.4.25|?>>
-    <associate|auto-462|<tuple|B.3.4.26|?>>
-    <associate|auto-463|<tuple|B.3.4.27|?>>
-    <associate|auto-464|<tuple|B.3.4.28|?>>
-    <associate|auto-465|<tuple|B.3.4.29|?>>
-    <associate|auto-466|<tuple|B.3.4.30|?>>
-    <associate|auto-467|<tuple|B.3.4.31|?>>
-    <associate|auto-468|<tuple|B.3.4.32|?>>
-    <associate|auto-469|<tuple|B.3.4.33|?>>
+    <associate|auto-460|<tuple|B.3.4.23|?>>
+    <associate|auto-461|<tuple|B.3.4.24|?>>
+    <associate|auto-462|<tuple|B.3.4.25|?>>
+    <associate|auto-463|<tuple|B.3.4.26|?>>
+    <associate|auto-464|<tuple|B.3.4.27|?>>
+    <associate|auto-465|<tuple|B.3.4.28|?>>
+    <associate|auto-466|<tuple|B.3.4.29|?>>
+    <associate|auto-467|<tuple|B.3.4.30|?>>
+    <associate|auto-468|<tuple|B.3.4.31|?>>
+    <associate|auto-469|<tuple|B.3.4.32|?>>
     <associate|auto-47|<tuple|3.3.6.1|?>>
-    <associate|auto-470|<tuple|B.3.4.34|?>>
-    <associate|auto-471|<tuple|B.3.4.35|?>>
-    <associate|auto-472|<tuple|B.3.4.36|?>>
-    <associate|auto-473|<tuple|B.3.4.37|?>>
-    <associate|auto-474|<tuple|B.3.4.38|?>>
-    <associate|auto-475|<tuple|B.3.4.39|?>>
-    <associate|auto-476|<tuple|B.3.4.40|?>>
-    <associate|auto-477|<tuple|B.3.4.41|?>>
-    <associate|auto-478|<tuple|B.3.4.42|?>>
-    <associate|auto-479|<tuple|B.3.4.43|?>>
+    <associate|auto-470|<tuple|B.3.4.33|?>>
+    <associate|auto-471|<tuple|B.3.4.34|?>>
+    <associate|auto-472|<tuple|B.3.4.35|?>>
+    <associate|auto-473|<tuple|B.3.4.36|?>>
+    <associate|auto-474|<tuple|B.3.4.37|?>>
+    <associate|auto-475|<tuple|B.3.4.38|?>>
+    <associate|auto-476|<tuple|B.3.4.39|?>>
+    <associate|auto-477|<tuple|B.3.4.40|?>>
+    <associate|auto-478|<tuple|B.3.4.41|?>>
+    <associate|auto-479|<tuple|B.3.4.42|?>>
     <associate|auto-48|<tuple|3.3.7|?>>
-    <associate|auto-480|<tuple|B.3.4.44|?>>
-    <associate|auto-481|<tuple|B.3.4.45|?>>
-    <associate|auto-482|<tuple|B.3.4.46|?>>
-    <associate|auto-483|<tuple|B.3.4.47|?>>
-    <associate|auto-484|<tuple|B.3.4.48|?>>
-    <associate|auto-485|<tuple|C|?>>
+    <associate|auto-480|<tuple|B.3.4.43|?>>
+    <associate|auto-481|<tuple|B.3.4.44|?>>
+    <associate|auto-482|<tuple|B.3.4.45|?>>
+    <associate|auto-483|<tuple|B.3.4.46|?>>
+    <associate|auto-484|<tuple|B.3.4.47|?>>
+    <associate|auto-485|<tuple|B.3.4.48|?>>
     <associate|auto-486|<tuple|C|?>>
+    <associate|auto-487|<tuple|C|?>>
     <associate|auto-49|<tuple|3.3.7.1|?>>
     <associate|auto-5|<tuple|1.2.2|?>>
     <associate|auto-50|<tuple|3.3.7.2|?>>
@@ -15077,286 +15086,294 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-414>>
 
-      <with|par-left|<quote|1tab>|B.3.2<space|2spc>Time Locks
+      <with|par-left|<quote|2tab>|B.3.1.29<space|2spc><with|font-family|<quote|ss>|build-tapleaf-simplicity>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-415>>
 
-      <with|par-left|<quote|2tab>|B.3.2.1<space|2spc><with|font-family|<quote|ss>|check-lock-height>
+      <with|par-left|<quote|2tab>|B.3.1.30<space|2spc><with|font-family|<quote|ss>|build-tapbranch>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-416>>
 
-      <with|par-left|<quote|2tab>|B.3.2.2<space|2spc><with|font-family|<quote|ss>|check-lock-time>
+      <with|par-left|<quote|1tab>|B.3.2<space|2spc>Time Locks
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-417>>
 
-      <with|par-left|<quote|2tab>|B.3.2.3<space|2spc><with|font-family|<quote|ss>|check-lock-distance>
+      <with|par-left|<quote|2tab>|B.3.2.1<space|2spc><with|font-family|<quote|ss>|check-lock-height>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-418>>
 
-      <with|par-left|<quote|2tab>|B.3.2.4<space|2spc><with|font-family|<quote|ss>|check-lock-duration>
+      <with|par-left|<quote|2tab>|B.3.2.2<space|2spc><with|font-family|<quote|ss>|check-lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-419>>
 
-      <with|par-left|<quote|2tab>|B.3.2.5<space|2spc><with|font-family|<quote|ss>|tx-lock-height>
+      <with|par-left|<quote|2tab>|B.3.2.3<space|2spc><with|font-family|<quote|ss>|check-lock-distance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-420>>
 
-      <with|par-left|<quote|2tab>|B.3.2.6<space|2spc><with|font-family|<quote|ss>|tx-lock-time>
+      <with|par-left|<quote|2tab>|B.3.2.4<space|2spc><with|font-family|<quote|ss>|check-lock-duration>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-421>>
 
-      <with|par-left|<quote|2tab>|B.3.2.7<space|2spc><with|font-family|<quote|ss>|tx-lock-distance>
+      <with|par-left|<quote|2tab>|B.3.2.5<space|2spc><with|font-family|<quote|ss>|tx-lock-height>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-422>>
 
-      <with|par-left|<quote|2tab>|B.3.2.8<space|2spc><with|font-family|<quote|ss>|tx-lock-duration>
+      <with|par-left|<quote|2tab>|B.3.2.6<space|2spc><with|font-family|<quote|ss>|tx-lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-423>>
 
-      <with|par-left|<quote|2tab>|B.3.2.9<space|2spc><with|font-family|<quote|ss>|tx-is-final>
+      <with|par-left|<quote|2tab>|B.3.2.7<space|2spc><with|font-family|<quote|ss>|tx-lock-distance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-424>>
 
-      <with|par-left|<quote|1tab>|B.3.3<space|2spc>Issuance
+      <with|par-left|<quote|2tab>|B.3.2.8<space|2spc><with|font-family|<quote|ss>|tx-lock-duration>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-425>>
 
-      <with|par-left|<quote|2tab>|B.3.3.1<space|2spc><with|font-family|<quote|ss>|issuance>
+      <with|par-left|<quote|2tab>|B.3.2.9<space|2spc><with|font-family|<quote|ss>|tx-is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-426>>
 
-      <with|par-left|<quote|2tab>|B.3.3.2<space|2spc><with|font-family|<quote|ss>|issuance-asset>
+      <with|par-left|<quote|1tab>|B.3.3<space|2spc>Issuance
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-427>>
 
-      <with|par-left|<quote|2tab>|B.3.3.3<space|2spc><with|font-family|<quote|ss>|issuance-token>
+      <with|par-left|<quote|2tab>|B.3.3.1<space|2spc><with|font-family|<quote|ss>|issuance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-428>>
 
-      <with|par-left|<quote|2tab>|B.3.3.4<space|2spc><with|font-family|<quote|ss>|issuance-entropy>
+      <with|par-left|<quote|2tab>|B.3.3.2<space|2spc><with|font-family|<quote|ss>|issuance-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-429>>
 
-      <with|par-left|<quote|2tab>|B.3.3.5<space|2spc><with|font-family|<quote|ss>|calculate-issuance-entropy>
+      <with|par-left|<quote|2tab>|B.3.3.3<space|2spc><with|font-family|<quote|ss>|issuance-token>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-430>>
 
-      <with|par-left|<quote|2tab>|B.3.3.6<space|2spc><with|font-family|<quote|ss>|calculate-asset>
+      <with|par-left|<quote|2tab>|B.3.3.4<space|2spc><with|font-family|<quote|ss>|issuance-entropy>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-431>>
 
-      <with|par-left|<quote|2tab>|B.3.3.7<space|2spc><with|font-family|<quote|ss>|calculate-explicit-token>
+      <with|par-left|<quote|2tab>|B.3.3.5<space|2spc><with|font-family|<quote|ss>|calculate-issuance-entropy>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-432>>
 
-      <with|par-left|<quote|2tab>|B.3.3.8<space|2spc><with|font-family|<quote|ss>|calculate-confidential-token>
+      <with|par-left|<quote|2tab>|B.3.3.6<space|2spc><with|font-family|<quote|ss>|calculate-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-433>>
 
-      <with|par-left|<quote|1tab>|B.3.4<space|2spc>Transaction
+      <with|par-left|<quote|2tab>|B.3.3.7<space|2spc><with|font-family|<quote|ss>|calculate-explicit-token>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-434>>
 
-      <with|par-left|<quote|2tab>|B.3.4.1<space|2spc><with|font-family|<quote|ss>|script-cmr>
+      <with|par-left|<quote|2tab>|B.3.3.8<space|2spc><with|font-family|<quote|ss>|calculate-confidential-token>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-435>>
 
-      <with|par-left|<quote|2tab>|B.3.4.2<space|2spc><with|font-family|<quote|ss>|internal-key>
+      <with|par-left|<quote|1tab>|B.3.4<space|2spc>Transaction
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-436>>
 
-      <with|par-left|<quote|2tab>|B.3.4.3<space|2spc><with|font-family|<quote|ss>|current-index>
+      <with|par-left|<quote|2tab>|B.3.4.1<space|2spc><with|font-family|<quote|ss>|script-cmr>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-437>>
 
-      <with|par-left|<quote|2tab>|B.3.4.4<space|2spc><with|font-family|<quote|ss>|num-inputs>
+      <with|par-left|<quote|2tab>|B.3.4.2<space|2spc><with|font-family|<quote|ss>|internal-key>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-438>>
 
-      <with|par-left|<quote|2tab>|B.3.4.5<space|2spc><with|font-family|<quote|ss>|num-outputs>
+      <with|par-left|<quote|2tab>|B.3.4.3<space|2spc><with|font-family|<quote|ss>|current-index>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-439>>
 
-      <with|par-left|<quote|2tab>|B.3.4.6<space|2spc><with|font-family|<quote|ss>|lock-time>
+      <with|par-left|<quote|2tab>|B.3.4.4<space|2spc><with|font-family|<quote|ss>|num-inputs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-440>>
 
-      <with|par-left|<quote|2tab>|B.3.4.7<space|2spc><with|font-family|<quote|ss>|output-asset>
+      <with|par-left|<quote|2tab>|B.3.4.5<space|2spc><with|font-family|<quote|ss>|num-outputs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-441>>
 
-      <with|par-left|<quote|2tab>|B.3.4.8<space|2spc><with|font-family|<quote|ss>|output-amount>
+      <with|par-left|<quote|2tab>|B.3.4.6<space|2spc><with|font-family|<quote|ss>|lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-442>>
 
-      <with|par-left|<quote|2tab>|B.3.4.9<space|2spc><with|font-family|<quote|ss>|output-nonce>
+      <with|par-left|<quote|2tab>|B.3.4.7<space|2spc><with|font-family|<quote|ss>|output-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-443>>
 
-      <with|par-left|<quote|2tab>|B.3.4.10<space|2spc><with|font-family|<quote|ss>|output-script-hash>
+      <with|par-left|<quote|2tab>|B.3.4.8<space|2spc><with|font-family|<quote|ss>|output-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-444>>
 
-      <with|par-left|<quote|2tab>|B.3.4.11<space|2spc><with|font-family|<quote|ss>|output-null-datum>
+      <with|par-left|<quote|2tab>|B.3.4.9<space|2spc><with|font-family|<quote|ss>|output-nonce>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-445>>
 
-      <with|par-left|<quote|2tab>|B.3.4.12<space|2spc><with|font-family|<quote|ss>|output-surjection-proof>
+      <with|par-left|<quote|2tab>|B.3.4.10<space|2spc><with|font-family|<quote|ss>|output-script-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-446>>
 
-      <with|par-left|<quote|2tab>|B.3.4.13<space|2spc><with|font-family|<quote|ss>|output-range-proof>
+      <with|par-left|<quote|2tab>|B.3.4.11<space|2spc><with|font-family|<quote|ss>|output-null-datum>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-447>>
 
-      <with|par-left|<quote|2tab>|B.3.4.14<space|2spc><with|font-family|<quote|ss>|total-fee>
+      <with|par-left|<quote|2tab>|B.3.4.12<space|2spc><with|font-family|<quote|ss>|output-surjection-proof>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-448>>
 
-      <with|par-left|<quote|2tab>|B.3.4.15<space|2spc><with|font-family|<quote|ss>|current-pegin>
+      <with|par-left|<quote|2tab>|B.3.4.13<space|2spc><with|font-family|<quote|ss>|output-range-proof>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-449>>
 
-      <with|par-left|<quote|2tab>|B.3.4.16<space|2spc><with|font-family|<quote|ss>|current-prev-outpoint>
+      <with|par-left|<quote|2tab>|B.3.4.14<space|2spc><with|font-family|<quote|ss>|total-fee>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-450>>
 
-      <with|par-left|<quote|2tab>|B.3.4.17<space|2spc><with|font-family|<quote|ss>|current-asset>
+      <with|par-left|<quote|2tab>|B.3.4.15<space|2spc><with|font-family|<quote|ss>|current-pegin>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-451>>
 
-      <with|par-left|<quote|2tab>|B.3.4.18<space|2spc><with|font-family|<quote|ss>|current-amount>
+      <with|par-left|<quote|2tab>|B.3.4.16<space|2spc><with|font-family|<quote|ss>|current-prev-outpoint>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-452>>
 
-      <with|par-left|<quote|2tab>|B.3.4.19<space|2spc><with|font-family|<quote|ss>|current-script-hash>
+      <with|par-left|<quote|2tab>|B.3.4.17<space|2spc><with|font-family|<quote|ss>|current-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-453>>
 
-      <with|par-left|<quote|2tab>|B.3.4.20<space|2spc><with|font-family|<quote|ss>|current-sequence>
+      <with|par-left|<quote|2tab>|B.3.4.18<space|2spc><with|font-family|<quote|ss>|current-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-454>>
 
-      <with|par-left|<quote|2tab>|B.3.4.21<space|2spc><with|font-family|<quote|ss>|current-annex-hash>
+      <with|par-left|<quote|2tab>|B.3.4.19<space|2spc><with|font-family|<quote|ss>|current-script-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-455>>
 
-      <with|par-left|<quote|2tab>|B.3.4.22<space|2spc><with|font-family|<quote|ss>|current-script-sig-hash>
+      <with|par-left|<quote|2tab>|B.3.4.20<space|2spc><with|font-family|<quote|ss>|current-sequence>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-456>>
 
-      <with|par-left|<quote|2tab>|B.3.4.23<space|2spc><with|font-family|<quote|ss>|current-reissuance-blinding>
+      <with|par-left|<quote|2tab>|B.3.4.21<space|2spc><with|font-family|<quote|ss>|current-annex-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-457>>
 
-      <with|par-left|<quote|2tab>|B.3.4.24<space|2spc><with|font-family|<quote|ss>|current-new-issuance-contract>
+      <with|par-left|<quote|2tab>|B.3.4.22<space|2spc><with|font-family|<quote|ss>|current-script-sig-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-458>>
 
-      <with|par-left|<quote|2tab>|B.3.4.25<space|2spc><with|font-family|<quote|ss>|current-reissuance-entropy>
+      <with|par-left|<quote|2tab>|B.3.4.23<space|2spc><with|font-family|<quote|ss>|current-reissuance-blinding>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-459>>
 
-      <with|par-left|<quote|2tab>|B.3.4.26<space|2spc><with|font-family|<quote|ss>|current-issuance-asset-amount>
+      <with|par-left|<quote|2tab>|B.3.4.24<space|2spc><with|font-family|<quote|ss>|current-new-issuance-contract>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-460>>
 
-      <with|par-left|<quote|2tab>|B.3.4.27<space|2spc><with|font-family|<quote|ss>|current-issuance-token-amount>
+      <with|par-left|<quote|2tab>|B.3.4.25<space|2spc><with|font-family|<quote|ss>|current-reissuance-entropy>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-461>>
 
-      <with|par-left|<quote|2tab>|B.3.4.28<space|2spc><with|font-family|<quote|ss>|current-issuance-asset-proof>
+      <with|par-left|<quote|2tab>|B.3.4.26<space|2spc><with|font-family|<quote|ss>|current-issuance-asset-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-462>>
 
-      <with|par-left|<quote|2tab>|B.3.4.29<space|2spc><with|font-family|<quote|ss>|current-issuance-token-proof>
+      <with|par-left|<quote|2tab>|B.3.4.27<space|2spc><with|font-family|<quote|ss>|current-issuance-token-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-463>>
 
-      <with|par-left|<quote|2tab>|B.3.4.30<space|2spc><with|font-family|<quote|ss>|input-pegin>
+      <with|par-left|<quote|2tab>|B.3.4.28<space|2spc><with|font-family|<quote|ss>|current-issuance-asset-proof>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-464>>
 
-      <with|par-left|<quote|2tab>|B.3.4.31<space|2spc><with|font-family|<quote|ss>|input-prev-outpoint>
+      <with|par-left|<quote|2tab>|B.3.4.29<space|2spc><with|font-family|<quote|ss>|current-issuance-token-proof>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-465>>
 
-      <with|par-left|<quote|2tab>|B.3.4.32<space|2spc><with|font-family|<quote|ss>|input-asset>
+      <with|par-left|<quote|2tab>|B.3.4.30<space|2spc><with|font-family|<quote|ss>|input-pegin>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-466>>
 
-      <with|par-left|<quote|2tab>|B.3.4.33<space|2spc><with|font-family|<quote|ss>|input-amount>
+      <with|par-left|<quote|2tab>|B.3.4.31<space|2spc><with|font-family|<quote|ss>|input-prev-outpoint>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-467>>
 
-      <with|par-left|<quote|2tab>|B.3.4.34<space|2spc><with|font-family|<quote|ss>|input-script-hash>
+      <with|par-left|<quote|2tab>|B.3.4.32<space|2spc><with|font-family|<quote|ss>|input-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-468>>
 
-      <with|par-left|<quote|2tab>|B.3.4.35<space|2spc><with|font-family|<quote|ss>|input-sequence>
+      <with|par-left|<quote|2tab>|B.3.4.33<space|2spc><with|font-family|<quote|ss>|input-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-469>>
 
-      <with|par-left|<quote|2tab>|B.3.4.36<space|2spc><with|font-family|<quote|ss>|input-annex-hash>
+      <with|par-left|<quote|2tab>|B.3.4.34<space|2spc><with|font-family|<quote|ss>|input-script-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-470>>
 
-      <with|par-left|<quote|2tab>|B.3.4.37<space|2spc><with|font-family|<quote|ss>|input-script-sig-hash>
+      <with|par-left|<quote|2tab>|B.3.4.35<space|2spc><with|font-family|<quote|ss>|input-sequence>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-471>>
 
-      <with|par-left|<quote|2tab>|B.3.4.38<space|2spc><with|font-family|<quote|ss>|reissuance-blinding>
+      <with|par-left|<quote|2tab>|B.3.4.36<space|2spc><with|font-family|<quote|ss>|input-annex-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-472>>
 
-      <with|par-left|<quote|2tab>|B.3.4.39<space|2spc><with|font-family|<quote|ss>|new-issuance-contract>
+      <with|par-left|<quote|2tab>|B.3.4.37<space|2spc><with|font-family|<quote|ss>|input-script-sig-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-473>>
 
-      <with|par-left|<quote|2tab>|B.3.4.40<space|2spc><with|font-family|<quote|ss>|reissuance-entropy>
+      <with|par-left|<quote|2tab>|B.3.4.38<space|2spc><with|font-family|<quote|ss>|reissuance-blinding>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-474>>
 
-      <with|par-left|<quote|2tab>|B.3.4.41<space|2spc><with|font-family|<quote|ss>|issuance-asset-amount>
+      <with|par-left|<quote|2tab>|B.3.4.39<space|2spc><with|font-family|<quote|ss>|new-issuance-contract>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-475>>
 
-      <with|par-left|<quote|2tab>|B.3.4.42<space|2spc><with|font-family|<quote|ss>|issuance-token-amount>
+      <with|par-left|<quote|2tab>|B.3.4.40<space|2spc><with|font-family|<quote|ss>|reissuance-entropy>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-476>>
 
-      <with|par-left|<quote|2tab>|B.3.4.43<space|2spc><with|font-family|<quote|ss>|issuance-asset-proof>
+      <with|par-left|<quote|2tab>|B.3.4.41<space|2spc><with|font-family|<quote|ss>|issuance-asset-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-477>>
 
-      <with|par-left|<quote|2tab>|B.3.4.44<space|2spc><with|font-family|<quote|ss>|issuance-token-proof>
+      <with|par-left|<quote|2tab>|B.3.4.42<space|2spc><with|font-family|<quote|ss>|issuance-token-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-478>>
 
-      <with|par-left|<quote|2tab>|B.3.4.45<space|2spc><with|font-family|<quote|ss>|tapleaf-version>
+      <with|par-left|<quote|2tab>|B.3.4.43<space|2spc><with|font-family|<quote|ss>|issuance-asset-proof>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-479>>
 
-      <with|par-left|<quote|2tab>|B.3.4.46<space|2spc><with|font-family|<quote|ss>|tapbranch>
+      <with|par-left|<quote|2tab>|B.3.4.44<space|2spc><with|font-family|<quote|ss>|issuance-token-proof>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-480>>
 
-      <with|par-left|<quote|2tab>|B.3.4.47<space|2spc><with|font-family|<quote|ss>|version>
+      <with|par-left|<quote|2tab>|B.3.4.45<space|2spc><with|font-family|<quote|ss>|tapleaf-version>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-481>>
 
-      <with|par-left|<quote|2tab>|B.3.4.48<space|2spc><with|font-family|<quote|ss>|genesis-block-hash>
+      <with|par-left|<quote|2tab>|B.3.4.46<space|2spc><with|font-family|<quote|ss>|tapbranch>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-482>>
+
+      <with|par-left|<quote|2tab>|B.3.4.47<space|2spc><with|font-family|<quote|ss>|version>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-483>>
+
+      <with|par-left|<quote|2tab>|B.3.4.48<space|2spc><with|font-family|<quote|ss>|genesis-block-hash>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-484>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       C<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-483><vspace|0.5fn>
+      <no-break><pageref|auto-485><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-484><vspace|0.5fn>
+      <no-break><pageref|auto-486><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

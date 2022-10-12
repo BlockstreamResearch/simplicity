@@ -1,6 +1,7 @@
 #include "jets.h"
 #include "wrappers.h"
 
+COREWRAP_(verify)
 COREWRAP_(low_32)
 COREWRAP_(one_32)
 COREWRAP_(eq_32)

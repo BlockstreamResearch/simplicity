@@ -30,7 +30,8 @@ main = defaultMain tests
 tests :: TestTree
 tests = testGroup "C / SPEC"
       [ testGroup "word" $
-        [ testCase     "low_32" assert_low_32
+        [ testCase     "verify" assert_verify
+        , testCase     "low_32" assert_low_32
         , testProperty "eq_32"  prop_eq_32
         , testProperty "eq_256"  prop_eq_256
         ]
@@ -141,6 +142,13 @@ tests = testGroup "C / SPEC"
         , testProperty "check_sig_verify_true" prop_check_sig_verify_true
         ]
       ]
+assert_verify :: Assertion
+assert_verify =
+  (fastF (toBit False), fastF (toBit True))
+    @=?
+  (verify (toBit False), verify (toBit True))
+ where
+  fastF = testCoreEval (specification (WordJet Verify))
 
 assert_low_32 :: Assertion
 assert_low_32 = fastF () @=? C.low_32 ()
