@@ -51,6 +51,7 @@ deriving instance Show (CoreJet a b)
 data WordJet a b where
   Low32 :: WordJet () Word32
   Eq32 :: WordJet (Word32, Word32) Bit
+  Eq256 :: WordJet (Word256, Word256) Bit
 deriving instance Eq (WordJet a b)
 deriving instance Show (WordJet a b)
 
@@ -62,6 +63,7 @@ data ArithJet a b where
   FullSubtract32 :: ArithJet (Bit, (Word32, Word32)) (Bit, Word32)
   Multiply32 :: ArithJet (Word32, Word32) Word64
   FullMultiply32 :: ArithJet ((Word32, Word32), (Word32, Word32)) Word64
+  Le32 :: ArithJet (Word32, Word32) Bit
 deriving instance Eq (ArithJet a b)
 deriving instance Show (ArithJet a b)
 
@@ -150,6 +152,7 @@ specification (BitcoinJet x) = specificationBitcoin x
 specificationWord :: Assert term => WordJet a b -> term a b
 specificationWord Low32 = zero word32
 specificationWord Eq32 = eq
+specificationWord Eq256 = eq
 
 specificationArith :: Assert term => ArithJet a b -> term a b
 specificationArith One32 = Prog.one word32
@@ -159,6 +162,7 @@ specificationArith Subtract32 = subtract word32
 specificationArith FullSubtract32 = full_subtract word32
 specificationArith Multiply32 = multiply word32
 specificationArith FullMultiply32 = full_multiply word32
+specificationArith Le32 = le word32
 
 specificationHash :: Assert term => HashJet a b -> term a b
 specificationHash Sha256Block = Sha256.hashBlock
@@ -241,6 +245,7 @@ implementation (BitcoinJet x) = implementationBitcoin x
 implementationWord :: WordJet a b -> a -> Maybe b
 implementationWord Low32 = const . return $ toWord32 0
 implementationWord Eq32 = \(x, y) -> return (toBit (x == y))
+implementationWord Eq256 = \(x, y) -> return (toBit (x == y))
 
 implementationArith :: ArithJet a b -> a -> Maybe b
 implementationArith One32 = const . return $ toWord32 1
@@ -262,6 +267,9 @@ implementationArith Multiply32 = \(x, y) -> do
 implementationArith FullMultiply32 = \((x, y), (a, b)) -> do
   let z = fromWord32 x * fromWord32 y + fromWord32 a + fromWord32 b
   return (toWord64 z)
+implementationArith Le32 = \(x, y) -> do
+  let z = fromWord32 x <= fromWord32 y
+  return (toBit z)
 
 implementationHash :: HashJet a b -> a -> Maybe b
 implementationHash = go
@@ -370,6 +378,7 @@ getJetBit abort next =  getPositive next >>= match
     matchLow 5 = makeArrow Low32
     matchLow _ = vacuous abort
     matchEq 5 = makeArrow Eq32
+    matchEq 8 = makeArrow Eq256
     matchEq _ = vacuous abort
   getJetBitArith :: (Monad m) => m Void -> m Bool -> m (SomeArrow ArithJet)
   getJetBitArith abort next = getPositive next >>= matchArith
@@ -381,6 +390,7 @@ getJetBit abort next =  getPositive next >>= match
     matchArith 8 = getPositive next >>= matchSubtract
     matchArith 12 = getPositive next >>= matchFullMultiply
     matchArith 13 = getPositive next >>= matchMultiply
+    matchArith 16 = getPositive next >>= matchLe
     matchArith _ = vacuous abort
     matchOne 5 = makeArrow Add32
     matchOne _ = vacuous abort
@@ -396,6 +406,8 @@ getJetBit abort next =  getPositive next >>= match
     matchMultiply _ = vacuous abort
     matchFullMultiply 5 = makeArrow FullMultiply32
     matchFullMultiply _ = vacuous abort
+    matchLe 5 = makeArrow Le32
+    matchLe _ = vacuous abort
   getJetBitHash :: (Monad m) => m Void -> m Bool -> m (SomeArrow HashJet)
   getJetBitHash abort next = getPositive next >>= matchHash
    where
@@ -491,6 +503,7 @@ putJetBit (BitcoinJet x) = putPositive 7 . putJetBitBitcoin x
 putJetBitWord :: WordJet a b -> DList Bool
 putJetBitWord Low32 = putPositive 1 . putPositive 5
 putJetBitWord Eq32 = putPositive 12 . putPositive 5
+putJetBitWord Eq256 = putPositive 12 . putPositive 8
 
 putJetBitArith :: ArithJet a b -> DList Bool
 putJetBitArith One32          = putPositive 1 . putPositive 5
@@ -500,6 +513,7 @@ putJetBitArith FullSubtract32 = putPositive 7 . putPositive 5
 putJetBitArith Subtract32     = putPositive 8 . putPositive 5
 putJetBitArith FullMultiply32 = putPositive 12 . putPositive 5
 putJetBitArith Multiply32     = putPositive 13 . putPositive 5
+putJetBitArith Le32           = putPositive 16 . putPositive 5
 
 putJetBitHash :: HashJet a b -> DList Bool
 putJetBitHash Sha256Block = putPositive 1 . putPositive 1
@@ -573,6 +587,7 @@ coreJetMap = Map.fromList
   [ -- WordJet
     mkAssoc (WordJet Low32)
   , mkAssoc (WordJet Eq32)
+  , mkAssoc (WordJet Eq256)
     -- ArithJet
   , mkAssoc (ArithJet One32)
   , mkAssoc (ArithJet Add32)
@@ -581,6 +596,7 @@ coreJetMap = Map.fromList
   , mkAssoc (ArithJet FullAdd32)
   , mkAssoc (ArithJet FullSubtract32)
   , mkAssoc (ArithJet FullMultiply32)
+  , mkAssoc (ArithJet Le32)
     -- HashJet
   , mkAssoc (HashJet Sha256Block)
   , mkAssoc (HashJet Sha256Iv)

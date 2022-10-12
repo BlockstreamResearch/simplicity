@@ -2,10 +2,11 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Simplicity.FFI.Jets
  ( low_32, one_32
+ , eq_32, eq_256
  , add_32, full_add_32
  , subtract_32, full_subtract_32
  , multiply_32, full_multiply_32
- , eq_32
+ , le_32
  , sha_256_iv, sha_256_block
  , sha_256_ctx_8_init
  , sha_256_ctx_8_add_1
@@ -41,13 +42,15 @@ import Simplicity.Ty.Word
 
 foreign import ccall unsafe "" c_low_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_one_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_eq_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_eq_256 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_add_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_add_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_subtract_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_subtract_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
-foreign import ccall unsafe "" c_eq_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_le_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 foreign import ccall unsafe "" c_sha_256_iv :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_sha_256_block :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -114,6 +117,12 @@ low_32 = unsafeLocalCoreJet c_low_32
 one_32 :: () -> Maybe Word32
 one_32 = unsafeLocalCoreJet c_one_32
 
+eq_32 :: (Word32, Word32) -> Maybe Bit
+eq_32 = unsafeLocalCoreJet c_eq_32
+
+eq_256 :: (Word256, Word256) -> Maybe Bit
+eq_256 = unsafeLocalCoreJet c_eq_256
+
 add_32 :: (Word32, Word32) -> Maybe (Bit, Word32)
 add_32 = unsafeLocalCoreJet c_add_32
 
@@ -132,8 +141,8 @@ multiply_32 = unsafeLocalCoreJet c_multiply_32
 full_multiply_32 :: ((Word32, Word32), (Word32, Word32)) -> Maybe Word64
 full_multiply_32 = unsafeLocalCoreJet c_full_multiply_32
 
-eq_32 :: (Word32, Word32) -> Maybe Bit
-eq_32 = unsafeLocalCoreJet c_eq_32
+le_32 :: (Word32, Word32) -> Maybe Bit
+le_32 = unsafeLocalCoreJet c_le_32
 
 sha_256_iv :: () -> Maybe Sha256.Hash
 sha_256_iv = unsafeLocalCoreJet c_sha_256_iv

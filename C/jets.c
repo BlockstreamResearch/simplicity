@@ -16,6 +16,30 @@ bool one_32(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
+/* eq_32 : TWO^32 * TWO^32 |- TWO */
+bool eq_32(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+  uint_fast32_t x = read32(&src);
+  uint_fast32_t y = read32(&src);
+  writeBit(dst, x == y);
+  return true;
+}
+
+/* eq_256 : TWO^256 * TWO^256 |- TWO */
+bool eq_256(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+  uint32_t arr[16];
+  read32s(arr, 16, &src);
+  for (int i = 0; i < 8; ++i) {
+    if (arr[i] != arr[i+8]) {
+      writeBit(dst, false);
+      return true;
+    }
+  }
+  writeBit(dst, true);
+  return true;
+}
+
 bool add_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
   uint_fast32_t x = read32(&src);
@@ -84,12 +108,12 @@ bool full_multiply_32(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* eq_32 : TWO^32 * TWO^32 |- TWO */
-bool eq_32(frameItem* dst, frameItem src, const txEnv* env) {
+/* le_32 : TWO^32 * TWO^32 |- TWO */
+bool le_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
   uint_fast32_t x = read32(&src);
   uint_fast32_t y = read32(&src);
-  writeBit(dst, x == y);
+  writeBit(dst, x <= y);
   return true;
 }
 

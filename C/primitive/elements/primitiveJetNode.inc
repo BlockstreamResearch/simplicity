@@ -191,6 +191,12 @@
 , .sourceIx = ty_pbw256
 , .targetIx = ty_mw512
 }
+,[EQ_256] =
+{ .tag = JET
+, .jet = eq_256
+, .sourceIx = ty_w512
+, .targetIx = ty_b
+}
 ,[EQ_32] =
 { .tag = JET
 , .jet = eq_32
@@ -550,6 +556,12 @@
 , .jet = issuances_hash
 , .sourceIx = ty_u
 , .targetIx = ty_w256
+}
+,[LE_32] =
+{ .tag = JET
+, .jet = le_32
+, .sourceIx = ty_w64
+, .targetIx = ty_b
 }
 ,[LINEAR_COMBINATION_1] =
 { .tag = JET

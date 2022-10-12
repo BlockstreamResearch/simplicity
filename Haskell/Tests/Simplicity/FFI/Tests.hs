@@ -32,9 +32,11 @@ tests = testGroup "C / SPEC"
       [ testGroup "word" $
         [ testCase     "low_32" assert_low_32
         , testProperty "eq_32"  prop_eq_32
+        , testProperty "eq_256"  prop_eq_256
         ]
       , testGroup "arith" $
         [ testCase "one_32" assert_one_32
+        , testProperty "le_32"  prop_le_32
         ]
       , testGroup "sha256" $
         [ testCase     "sha_256_iv"                   assert_sha_256_iv
@@ -145,6 +147,11 @@ assert_low_32 = fastF () @=? C.low_32 ()
  where
   fastF = testCoreEval (specification (WordJet Low32))
 
+assert_one_32 :: Assertion
+assert_one_32 = fastF () @=? C.one_32 ()
+ where
+  fastF = testCoreEval (specification (ArithJet One32))
+
 prop_eq_32 :: W.Word32 -> W.Word32 -> Bool
 prop_eq_32 = \x y -> let input = (toW32 x, toW32 y)
                       in fastF input == C.eq_32 input
@@ -152,10 +159,19 @@ prop_eq_32 = \x y -> let input = (toW32 x, toW32 y)
   toW32 = toWord32 . fromIntegral
   fastF = testCoreEval (specification (WordJet Eq32))
 
-assert_one_32 :: Assertion
-assert_one_32 = fastF () @=? C.one_32 ()
+prop_eq_256 :: W.Word256 -> W.Word256 -> Bool
+prop_eq_256 = \x y -> let input = (toW256 x, toW256 y)
+                      in fastF input == C.eq_256 input
  where
-  fastF = testCoreEval (specification (ArithJet One32))
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Eq256))
+
+prop_le_32 :: W.Word32 -> W.Word32 -> Bool
+prop_le_32 = \x y -> let input = (toW32 x, toW32 y)
+                      in fastF input == C.le_32 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Le32))
 
 assert_sha_256_iv :: Assertion
 assert_sha_256_iv = fastF () @=? C.sha_256_iv ()

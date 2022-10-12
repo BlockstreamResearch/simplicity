@@ -3,13 +3,15 @@
 
 COREWRAP_(low_32)
 COREWRAP_(one_32)
+COREWRAP_(eq_32)
+COREWRAP_(eq_256)
 COREWRAP_(add_32)
 COREWRAP_(full_add_32)
 COREWRAP_(subtract_32)
 COREWRAP_(full_subtract_32)
 COREWRAP_(multiply_32)
 COREWRAP_(full_multiply_32)
-COREWRAP_(eq_32)
+COREWRAP_(le_32)
 
 COREWRAP_(sha_256_iv)
 COREWRAP_(sha_256_block)

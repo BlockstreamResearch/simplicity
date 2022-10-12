@@ -38,6 +38,9 @@ import Test.Tasty.QuickCheck (Arbitrary(..), Gen, Property
                              , testProperty, withMaxSuccess
                              )
 
+toW256 :: W.Word256 -> Word256
+toW256 = toWord256 . fromIntegral
+
 toW32 :: W.Word32 -> Word32
 toW32 = toWord32 . fromIntegral
 
@@ -61,6 +64,7 @@ tests = testGroup "Programs"
         , testProperty "some word4" prop_some4
         , testProperty "all word4" prop_all4
         , testProperty "eq_32" prop_eq_32
+        , testProperty "eq_256" prop_eq_256
         , testProperty "shift_const_by false word8" prop_shift_const_by_false8
         , testProperty "rotate_const word8" prop_rotate_const8
         , testProperty "transpose zv2 zv8" prop_transpose_2x8
@@ -70,6 +74,7 @@ tests = testGroup "Programs"
         [ testCase "zero word8" assert_zero8
         , testCase "one word8" assert_one8
         , testCase "one_32" assert_one_32
+        , testProperty "le_32" prop_le_32
         , testProperty "full_add word8" prop_full_add8
         , testProperty "add word8" prop_fe_add8
         , testProperty "full_increment word8" prop_full_increment8
@@ -199,6 +204,12 @@ prop_eq_32 = \x y -> let input = (toW32 x, toW32 y)
  where
   fastF = testCoreEval (specification (WordJet Eq32))
 
+prop_eq_256 :: W.Word256 -> W.Word256 -> Bool
+prop_eq_256 = \x y -> let input = (toW256 x, toW256 y)
+                      in fastF input == implementation (WordJet Eq256) input
+ where
+  fastF = testCoreEval (specification (WordJet Eq256))
+
 prop_complement8 :: Word8 -> Bool
 prop_complement8 x = W.complement (fromInteger . fromWord8 $ x) == (fromInteger . fromWord8 $ complement word8 x :: W.Word8)
 
@@ -276,6 +287,12 @@ assert_one8 = 0x1 @=? fromWord8 (Arith.one word8 ())
 
 assert_one_32 :: Assertion
 assert_one_32 = testCoreEval (specification (ArithJet One32)) () @=? implementation (ArithJet One32) ()
+
+prop_le_32 :: W.Word32 -> W.Word32 -> Bool
+prop_le_32 = \x y -> let input = (toW32 x, toW32 y)
+                      in fastF input == implementation (ArithJet Le32) input
+ where
+  fastF = testCoreEval (specification (ArithJet Le32))
 
 -- The specification for full adder on Word8
 prop_full_add8 :: Bit -> Word8 -> Word8 -> Bool
