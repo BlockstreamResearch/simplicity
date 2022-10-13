@@ -5,10 +5,10 @@
 #include <stdint.h>
 
 /* A length-prefixed encoding of the following Simplicity program:
- *     Simplicity.Programs.CheckSigHash.checkSigHash' Simplicity.Elements.Programs.SigHash.Lib.sigAllHash
+ *     Simplicity.Programs.CheckSig.Lib.checkSigVerify' Simplicity.Elements.Programs.SigHash.Lib.sigAllHash
  *     (Simplicity.LibSecp256k1.Spec.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63)
  *     (Simplicity.LibSecp256k1.Spec.Sig 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
- *                                       0xeaefd9fc552f60bc7d3289d95c1cd3da586a815d90878ea482d119cd8b96d80a)
+ *                                       0x1bc38bb0d7bd75ea36b31f11b2e96ff11125aaa6d3ddd6c31c70efc01c02d82b)
  * with jets.
  */
 extern const unsigned char elementsCheckSigHashAllTx1[];
