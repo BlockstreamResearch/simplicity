@@ -30,7 +30,7 @@ library Simplicity-Core
                        Simplicity.Programs.Word, Simplicity.Programs.Arith,
                        Simplicity.Programs.Sha256, Simplicity.Programs.Sha256.Lib,
                        Simplicity.Programs.LibSecp256k1, Simplicity.Programs.LibSecp256k1.Lib,
-                       Simplicity.Programs.CheckSigHash,
+                       Simplicity.Programs.CheckSig, Simplicity.Programs.CheckSig.Lib,
                        Simplicity.Programs.Elements, Simplicity.Programs.Elements.Lib,
                        Simplicity.Programs.TimeLock,
                        Simplicity.Digest, Simplicity.Digest.Pure.SHA
@@ -140,7 +140,7 @@ library
                        Simplicity.Programs.Word, Simplicity.Programs.Arith,
                        Simplicity.Programs.Sha256, Simplicity.Programs.Sha256.Lib,
                        Simplicity.Programs.LibSecp256k1, Simplicity.Programs.LibSecp256k1.Lib,
-                       Simplicity.Programs.CheckSigHash,
+                       Simplicity.Programs.CheckSig, Simplicity.Programs.CheckSig.Lib,
                        Simplicity.Programs.Elements, Simplicity.Programs.Elements.Lib,
                        Simplicity.Programs.TimeLock,
                        Simplicity.Digest,

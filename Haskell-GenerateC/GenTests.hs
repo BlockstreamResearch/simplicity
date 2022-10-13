@@ -29,7 +29,7 @@ import qualified Simplicity.Programs.Arith as Arith
 import qualified Simplicity.Programs.Sha256
 import Simplicity.Programs.Sha256.Lib
 import qualified Simplicity.Programs.LibSecp256k1.Lib
-import qualified Simplicity.Programs.CheckSigHash
+import qualified Simplicity.Programs.CheckSig.Lib
 import Simplicity.Serialization
 import Simplicity.Word
 
@@ -189,7 +189,7 @@ checkSigHashAllTx1 :: ExampleProg
 checkSigHashAllTx1 = Example
   { _name = "checkSigHashAllTx1"
   , _path = ["primitive", "elements"]
-  , _text = [ "Simplicity.Programs.CheckSigHash.checkSigHash' Simplicity.Elements.Programs.SigHash.Lib.sigAllHash"
+  , _text = [ "Simplicity.Programs.CheckSig.Lib.checkSigVerify' Simplicity.Elements.Programs.SigHash.Lib.sigAllHash"
             , "(Simplicity.LibSecp256k1.Spec.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63)"
             , "(Simplicity.LibSecp256k1.Spec.Sig 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63"
             , "                                  0x" ++ sh s ++ ")"
@@ -201,14 +201,13 @@ checkSigHashAllTx1 = Example
    }
  where
   pk = Simplicity.LibSecp256k1.Spec.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
-  program sig = jetSubst $ Simplicity.Programs.CheckSigHash.checkSigHash' (unwrap hashMode) pk sig
+  program sig = jetSubst $ Simplicity.Programs.CheckSig.Lib.checkSigVerify' (unwrap hashMode) pk sig
   sh v = replicate (64 - length s) '0' ++ s
    where
     s = Numeric.showHex v ""
   s = insecureSig . fromIntegral . Arith.fromWord256 $ msg
-  Just msg = fastEval (Simplicity.Programs.CheckSigHash.sigHash libSha256 (unwrap hashMode)) env ()
+  Just msg = fastEval (Simplicity.Programs.CheckSig.Lib.sigHash' (unwrap hashMode)) env ()
   hashMode = jetSubst $ Simplicity.Elements.Programs.SigHash.Lib.sigAllHash
-  libSha256 = Simplicity.Programs.Sha256.lib
   genesis = review (over be256) 0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
   Just env = primEnv tx1 0 tapEnv genesis
   cmr = commitmentRoot . unwrap $ program (Simplicity.LibSecp256k1.Spec.Sig 0 0)

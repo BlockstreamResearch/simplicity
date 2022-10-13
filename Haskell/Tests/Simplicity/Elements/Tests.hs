@@ -16,13 +16,14 @@ import Simplicity.Digest
 import Simplicity.Elements.Arbitrary
 import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Jets
+import Simplicity.Elements.Term
 import Simplicity.Elements.TestEval
 import Simplicity.Elements.Primitive (primEnv, primEnvHash, envTx, envTap)
 import qualified Simplicity.Elements.Programs.TimeLock as Prog
 import Simplicity.Elements.Semantics
 import qualified Simplicity.LibSecp256k1.Spec as Schnorr
 import Simplicity.MerkleRoot
-import Simplicity.Programs.CheckSigHash
+import Simplicity.Programs.CheckSig.Lib
 import qualified Simplicity.Programs.Sha256 as Sha256
 import qualified Simplicity.Programs.Elements.Lib as Prog
 import qualified Simplicity.Elements.Programs.Issuance.Lib as Prog
@@ -683,7 +684,7 @@ tx1 = SigTx
     }
 
 hunit_sigHashAll :: Bool
-hunit_sigHashAll = Just (integerHash256 sigHashAll_spec) == (fromWord256 <$> (sem (sigHash Sha256.lib Prog.sigAllHash) txEnv ()))
+hunit_sigHashAll = Just (integerHash256 sigHashAll_spec) == (fromWord256 <$> (sem (sigHash' Prog.sigAllHash) txEnv ()))
  where
   ix = 0
   genesis = review (over be256) 0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
