@@ -49,34 +49,34 @@ static sha256_midstate imr_disconnectIV,
 static sha256_midstate identityIV,
                        hiddenIV;
 static void static_initialize(void) {
-  MK_TAG(&cmr_compIV, COMMITMENT_TAG("comp"));
-  MK_TAG(&cmr_caseIV, COMMITMENT_TAG("case"));
-  MK_TAG(&cmr_pairIV, COMMITMENT_TAG("pair"));
-  MK_TAG(&cmr_disconnectIV, COMMITMENT_TAG("disconnect"));
-  MK_TAG(&cmr_injlIV, COMMITMENT_TAG("injl"));
-  MK_TAG(&cmr_injrIV, COMMITMENT_TAG("injr"));
-  MK_TAG(&cmr_takeIV, COMMITMENT_TAG("take"));
-  MK_TAG(&cmr_dropIV, COMMITMENT_TAG("drop"));
-  MK_TAG(&cmr_idenIV, COMMITMENT_TAG("iden"));
-  MK_TAG(&cmr_unitIV, COMMITMENT_TAG("unit"));
-  MK_TAG(&cmr_witnessIV, COMMITMENT_TAG("witness"));
-  MK_TAG(&amr_compIV, ANNOTATED_TAG("comp"));
-  MK_TAG(&amr_assertlIV, ANNOTATED_TAG("assertl"));
-  MK_TAG(&amr_assertrIV, ANNOTATED_TAG("assertr"));
-  MK_TAG(&amr_caseIV, ANNOTATED_TAG("case"));
-  MK_TAG(&amr_pairIV, ANNOTATED_TAG("pair"));
-  MK_TAG(&amr_disconnectIV, ANNOTATED_TAG("disconnect"));
-  MK_TAG(&amr_injlIV, ANNOTATED_TAG("injl"));
-  MK_TAG(&amr_injrIV, ANNOTATED_TAG("injr"));
-  MK_TAG(&amr_takeIV, ANNOTATED_TAG("take"));
-  MK_TAG(&amr_dropIV, ANNOTATED_TAG("drop"));
-  MK_TAG(&amr_idenIV, ANNOTATED_TAG("iden"));
-  MK_TAG(&amr_unitIV, ANNOTATED_TAG("unit"));
-  MK_TAG(&amr_witnessIV, ANNOTATED_TAG("witness"));
-  MK_TAG(&imr_disconnectIV, IDENTITY_TAG("disconnect"));
-  MK_TAG(&imr_witnessIV, IDENTITY_TAG("witness"));
-  MK_TAG(&identityIV, SIMPLICITY_PREFIX "\x1F" "Identity");
-  MK_TAG(&hiddenIV, SIMPLICITY_PREFIX "\x1F" "Hidden");
+  MK_TAG(cmr_compIV.s, COMMITMENT_TAG("comp"));
+  MK_TAG(cmr_caseIV.s, COMMITMENT_TAG("case"));
+  MK_TAG(cmr_pairIV.s, COMMITMENT_TAG("pair"));
+  MK_TAG(cmr_disconnectIV.s, COMMITMENT_TAG("disconnect"));
+  MK_TAG(cmr_injlIV.s, COMMITMENT_TAG("injl"));
+  MK_TAG(cmr_injrIV.s, COMMITMENT_TAG("injr"));
+  MK_TAG(cmr_takeIV.s, COMMITMENT_TAG("take"));
+  MK_TAG(cmr_dropIV.s, COMMITMENT_TAG("drop"));
+  MK_TAG(cmr_idenIV.s, COMMITMENT_TAG("iden"));
+  MK_TAG(cmr_unitIV.s, COMMITMENT_TAG("unit"));
+  MK_TAG(cmr_witnessIV.s, COMMITMENT_TAG("witness"));
+  MK_TAG(amr_compIV.s, ANNOTATED_TAG("comp"));
+  MK_TAG(amr_assertlIV.s, ANNOTATED_TAG("assertl"));
+  MK_TAG(amr_assertrIV.s, ANNOTATED_TAG("assertr"));
+  MK_TAG(amr_caseIV.s, ANNOTATED_TAG("case"));
+  MK_TAG(amr_pairIV.s, ANNOTATED_TAG("pair"));
+  MK_TAG(amr_disconnectIV.s, ANNOTATED_TAG("disconnect"));
+  MK_TAG(amr_injlIV.s, ANNOTATED_TAG("injl"));
+  MK_TAG(amr_injrIV.s, ANNOTATED_TAG("injr"));
+  MK_TAG(amr_takeIV.s, ANNOTATED_TAG("take"));
+  MK_TAG(amr_dropIV.s, ANNOTATED_TAG("drop"));
+  MK_TAG(amr_idenIV.s, ANNOTATED_TAG("iden"));
+  MK_TAG(amr_unitIV.s, ANNOTATED_TAG("unit"));
+  MK_TAG(amr_witnessIV.s, ANNOTATED_TAG("witness"));
+  MK_TAG(imr_disconnectIV.s, IDENTITY_TAG("disconnect"));
+  MK_TAG(imr_witnessIV.s, IDENTITY_TAG("witness"));
+  MK_TAG(identityIV.s, SIMPLICITY_PREFIX "\x1F" "Identity");
+  MK_TAG(hiddenIV.s, SIMPLICITY_PREFIX "\x1F" "Hidden");
 }
 
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.

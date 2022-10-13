@@ -20,9 +20,9 @@ static sha256_midstate unitIV,
                        sumIV,
                        prodIV;
 static void static_initialize(void) {
-  MK_TAG(&unitIV, TYPE_TAG("unit"));
-  MK_TAG(&sumIV, TYPE_TAG("sum"));
-  MK_TAG(&prodIV, TYPE_TAG("prod"));
+  MK_TAG(unitIV.s, TYPE_TAG("unit"));
+  MK_TAG(sumIV.s, TYPE_TAG("sum"));
+  MK_TAG(prodIV.s, TYPE_TAG("prod"));
 }
 
 /* Given a the 'kind' of a Simplicity type, return the SHA-256 hash of its associated TMR tag.

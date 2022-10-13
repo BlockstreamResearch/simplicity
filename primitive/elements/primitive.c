@@ -410,7 +410,7 @@ static dag_node jet_node[] = {
 static void static_initialize(void) {
   {
     sha256_midstate jet_iv;
-    MK_TAG(&jet_iv, JET_TAG);
+    MK_TAG(jet_iv.s, JET_TAG);
 
 #define MK_JET(name, h0, h1, h2, h3, h4, h5, h6, h7) \
   do { \
