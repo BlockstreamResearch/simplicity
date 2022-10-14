@@ -83,6 +83,12 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_u
 }
+,[CHECK_SIG_VERIFY] =
+{ .tag = JET
+, .jet = check_sig_verify
+, .sourceIx = ty_ppw256w512w512
+, .targetIx = ty_u
+}
 ,[CURRENT_AMOUNT] =
 { .tag = JET
 , .jet = current_amount
