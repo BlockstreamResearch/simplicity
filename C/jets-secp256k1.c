@@ -1,7 +1,9 @@
 #include "jets.h"
 
+#include "prefix.h"
 #include "sha256.h"
 #include "secp256k1/secp256k1_impl.h"
+#include "tag.h"
 
 /* Read a secp256k1 field element value from the 'src' frame, advancing the cursor 256 cells.
  *
@@ -582,7 +584,7 @@ bool bip_0340_verify(frameItem* dst, frameItem src, const txEnv* env) {
   (void) dst; // dst is unused;
   (void) env; // env is unused;
 
-  unsigned char buf[64];
+  unsigned char buf[32];
   secp256k1_xonly_pubkey pubkey;
   unsigned char msg[32];
   unsigned char sig[64];
@@ -594,4 +596,30 @@ bool bip_0340_verify(frameItem* dst, frameItem src, const txEnv* env) {
   read8s(sig, 64, &src);
 
   return secp256k1_schnorrsig_verify(sig, msg, sizeof(msg), &pubkey);
+}
+
+/* check_sig_verify : TWO^256*TWO^512*TWO^512 |- ONE */
+bool check_sig_verify(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) dst; // dst is unused;
+  (void) env; // env is unused;
+
+  unsigned char buf[32];
+  secp256k1_xonly_pubkey pubkey;
+  unsigned char msg[64];
+  unsigned char sig[64];
+
+  read8s(buf, 32, &src);
+  if (!secp256k1_xonly_pubkey_parse(&pubkey, buf)) return false;
+
+  {
+    sha256_midstate output;
+    sha256_context ctx = MK_TAG(output.s, SIMPLICITY_PREFIX "\x1F" "Signature");
+    read8s(msg, 64, &src);
+    sha256_uchars(&ctx, msg, 64);
+    sha256_finalize(&ctx);
+    sha256_fromMidstate(buf, output.s);
+  }
+
+  read8s(sig, 64, &src);
+  return secp256k1_schnorrsig_verify(sig, buf, sizeof(buf), &pubkey);
 }

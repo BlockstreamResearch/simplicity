@@ -4,7 +4,7 @@ module Simplicity.Digest
   ( Hash256, be256, be256_, le256, le256_
   , get256Bits, put256Bits
   , integerHash256, hash0
-  , IV, noTagIv, tagIv, ivHash, bslHash, bsHash, bitStringHash
+  , IV, noTagIv, tagIv, ivHash, bslHash, bsHash, taggedHash, bitStringHash
   , Block512, compress, compressHalf
   , freeStart
   , Ctx(..), ctxInit, ctxBuild, ctxAdd, ctxFinalize
@@ -109,7 +109,7 @@ ivHash (IV state) =  case pushEndOfInput state of
   _          -> error "getHash256 unexpected decoder state"
 
 -- | Restore an IV from an given midstate.
--- 
+--
 -- WARNING: Use of 'freeStart' may violate the security assumptions about SHA-256.
 freeStart :: Hash256 -> IV
 freeStart midstate = IV $ runSHAIncremental midstateSHA256State processSHA256Block
@@ -123,6 +123,15 @@ bslHash = ivHash . IV . pushChunks sha256Incremental . padSHA1
 -- | Computes a SHA-256 hash from a 'BS.ByteString'.
 bsHash :: BS.ByteString -> Hash256
 bsHash = bslHash . BSL.fromStrict
+
+-- | Computes a SHA-256 tagged hash.
+taggedHash :: String -- ^ tag
+           -> BS.ByteString -- ^ message
+           -> Hash256
+taggedHash tag str = ivHash . IV . pushChunks state $ BSL.fromStrict str <> BSL.fromChunks (padSHA1Chunks (len + 64))
+ where
+  IV state = tagIv tag
+  len = BS.length str
 
 -- Perpare a bit string for SHA-256 hashing by adding the padding and grouping bits into blocks.
 padSha256 :: [Bool] -> [Block512]

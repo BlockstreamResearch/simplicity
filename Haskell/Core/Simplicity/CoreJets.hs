@@ -17,6 +17,7 @@ import Prelude hiding (fail, drop, take, subtract)
 import Control.Arrow ((+++), Kleisli(Kleisli), runKleisli)
 import qualified Data.ByteString as BS
 import qualified Data.Map as Map
+import Data.Serialize (encode)
 import Data.Type.Equality ((:~:)(Refl))
 import Data.Void (Void, vacuous)
 import Lens.Family2 ((^..), over, review)
@@ -28,6 +29,7 @@ import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Programs.Arith as Prog
 import Simplicity.Programs.Generic as Prog
+import qualified Simplicity.Programs.CheckSig.Lib as CheckSig
 import qualified Simplicity.Programs.TimeLock as TimeLock
 import qualified Simplicity.Programs.LibSecp256k1.Lib as Secp256k1
 import qualified Simplicity.Programs.Sha256.Lib as Sha256
@@ -125,6 +127,7 @@ deriving instance Eq (Secp256k1Jet a b)
 deriving instance Show (Secp256k1Jet a b)
 
 data SignatureJet a b where
+  CheckSigVerify :: SignatureJet ((Secp256k1.PubKey, Word512),Secp256k1.Sig) ()
   Bip0340Verify :: SignatureJet ((Secp256k1.PubKey, Word256),Secp256k1.Sig) ()
 deriving instance Eq (SignatureJet a b)
 deriving instance Show (SignatureJet a b)
@@ -215,6 +218,7 @@ specificationSecp256k1 PointVerify1 = Secp256k1.point_verify_1
 specificationSecp256k1 Decompress = Secp256k1.decompress
 
 specificationSignature :: Assert term => SignatureJet a b -> term a b
+specificationSignature CheckSigVerify = CheckSig.checkSigVerify
 specificationSignature Bip0340Verify = Secp256k1.bip_0340_verify
 
 specificationBitcoin :: Assert term => BitcoinJet a b -> term a b
@@ -330,7 +334,11 @@ implementationSecp256k1 PointVerify1 = FFI.point_verify_1
 implementationSecp256k1 Decompress = FFI.decompress
 
 implementationSignature :: SignatureJet a b -> a -> Maybe b
-implementationSignature Bip0340Verify = FFI.bip_0340_verify
+implementationSignature CheckSigVerify ((pk, (ir, h)), sig) = FFI.bip_0340_verify ((pk, msg), sig)
+  where
+   msg = toWord256 . integerHash256 $ sigHash (mkHash ir) (mkHash h)
+   mkHash = review (over be256) . fromInteger . fromWord256
+implementationSignature Bip0340Verify a = FFI.bip_0340_verify a
 
 implementationBitcoin :: BitcoinJet a b -> a -> Maybe b
 implementationBitcoin ParseLock v = Just . (toW32 +++ toW32) . parseLock $ fromW32 v
@@ -461,7 +469,8 @@ getJetBit abort next =  getPositive next >>= match
   getJetBitSignature :: (Monad m) => m Void -> m Bool -> m (SomeArrow SignatureJet)
   getJetBitSignature abort next = getPositive next >>= matchSignature
    where
-    matchSignature 1 = makeArrow Bip0340Verify
+    matchSignature 1 = makeArrow CheckSigVerify
+    matchSignature 2 = makeArrow Bip0340Verify
     matchSignature _ = vacuous abort
   getJetBitBitcoin :: (Monad m) => m Void -> m Bool -> m (SomeArrow BitcoinJet)
   getJetBitBitcoin abort next = getPositive next >>= matchBitcoin
@@ -550,7 +559,8 @@ putJetBitSecp256k1 PointVerify1 = putPositive 1 . putPositive 1
 putJetBitSecp256k1 Decompress = putPositive 2
 
 putJetBitSignature :: SignatureJet a b -> DList Bool
-putJetBitSignature Bip0340Verify  = putPositive 1
+putJetBitSignature CheckSigVerify = putPositive 1
+putJetBitSignature Bip0340Verify = putPositive 2
 
 putJetBitBitcoin :: BitcoinJet a b -> DList Bool
 putJetBitBitcoin ParseLock  = putPositive 1
@@ -627,6 +637,7 @@ coreJetMap = Map.fromList
   , mkAssoc (Secp256k1Jet PointVerify1)
   , mkAssoc (Secp256k1Jet Decompress)
     -- SignatureJet
+  , mkAssoc (SignatureJet CheckSigVerify)
   , mkAssoc (SignatureJet Bip0340Verify)
     -- BitcoinJet
   , mkAssoc (BitcoinJet ParseLock)

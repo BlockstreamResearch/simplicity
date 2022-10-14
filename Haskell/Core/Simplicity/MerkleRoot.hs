@@ -6,7 +6,7 @@ module Simplicity.MerkleRoot
   , IdentityRoot, identityRoot
   , AnnotatedRoot, annotatedRoot
   , hiddenRoot
-  , signatureTag, sigHashTag
+  , signatureTag, sigHash
   , cmrFail0
   ) where
 

@@ -26,3 +26,6 @@ data Sig = Sig Word256 Word256
 instance Serialize Sig where
   get = Sig <$> get <*> get
   put (Sig r s) = put r >> put s
+
+instance Show Sig where
+  showsPrec p (Sig r s) = showParen (p > 10) . showString $ "Sig 0x" ++ showHex256 r ++ " 0x" ++ showHex256 s

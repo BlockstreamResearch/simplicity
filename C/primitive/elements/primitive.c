@@ -257,7 +257,8 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return code;
         switch (code) {
-         case 1: *result = BIP_0340_VERIFY; return 0;
+         case 1: *result = CHECK_SIG_VERIFY; return 0;
+         case 2: *result = BIP_0340_VERIFY; return 0;
         }
         break;
        case 7: /* Bitcoin jets chapter */

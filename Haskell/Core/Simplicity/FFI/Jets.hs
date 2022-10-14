@@ -25,6 +25,7 @@ module Simplicity.FFI.Jets
  , gej_infinity, gej_rescale, gej_normalize, gej_negate, ge_negate, gej_double, gej_add, gej_ge_add_ex, gej_ge_add, gej_is_infinity, gej_x_equiv, gej_y_is_odd, gej_is_on_curve, ge_is_on_curve
  , scale, generate, linear_combination_1, linear_verify_1
  , decompress, point_verify_1
+ , check_sig_verify
  , bip_0340_verify
  , parse_lock, parse_sequence
  ) where
@@ -102,6 +103,7 @@ foreign import ccall unsafe "" c_linear_combination_1 :: Ptr FrameItem -> Ptr Fr
 foreign import ccall unsafe "" c_linear_verify_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_decompress :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_point_verify_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_check_sig_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_bip_0340_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_parse_lock :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_parse_sequence :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -291,6 +293,9 @@ decompress = unsafeLocalCoreJet c_decompress
 
 point_verify_1 :: (((Scalar, Point), Scalar), Point) -> Maybe ()
 point_verify_1 = unsafeLocalCoreJet c_point_verify_1
+
+check_sig_verify :: ((PubKey, Word512), Sig) -> Maybe ()
+check_sig_verify = unsafeLocalCoreJet c_check_sig_verify
 
 bip_0340_verify :: ((PubKey, Word256), Sig) -> Maybe ()
 bip_0340_verify = unsafeLocalCoreJet c_bip_0340_verify

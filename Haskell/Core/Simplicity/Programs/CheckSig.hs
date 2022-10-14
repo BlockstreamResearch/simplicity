@@ -13,7 +13,7 @@ import Prelude hiding (drop, take)
 import Simplicity.Digest
 import Simplicity.Functor
 import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
-import Simplicity.MerkleRoot
+import Simplicity.MerkleRoot hiding (sigHash)
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Sha256 hiding (Lib(Lib), lib)
 import qualified Simplicity.Programs.Sha256 as Sha256

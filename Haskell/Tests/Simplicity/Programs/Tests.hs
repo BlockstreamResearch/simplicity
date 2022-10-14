@@ -11,12 +11,15 @@ import qualified Data.List as L
 import Lens.Family2 ((^..), allOf, over, zipWithOf)
 import Lens.Family2.Stock (backwards, both_)
 
+import Simplicity.Arbitrary
 import Simplicity.Bip0340
 import Simplicity.CoreJets
 import Simplicity.Digest
 import Simplicity.Elements.Arbitrary (arbitraryLock)
+import Simplicity.LibSecp256k1.Schnorr
 import Simplicity.LibSecp256k1.Spec ((.+.), (.*.), (.^.))
 import qualified Simplicity.LibSecp256k1.Spec as Spec
+import Simplicity.MerkleRoot
 import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.LibSecp256k1.Lib
@@ -171,6 +174,8 @@ tests = testGroup "Programs"
         [ testProperty "pubkey_unpack" prop_pubkey_unpack
         , testProperty "pubkey_unpack_neg" prop_pubkey_unpack_neg
         , testProperty "signature_unpack" prop_signature_unpack
+        , testProperty "check_sig_verify" prop_check_sig_verify
+        , testProperty "check_sig_verify_true" prop_check_sig_verify_true
         ]
       , group_bip_0340_check
       , testGroup "timelock"
@@ -805,6 +810,24 @@ group_bip_0340_check = testGroup "bip_0340_check" (zipWith case_bip_0340_check_v
   case_bip_0340_check_vector n tv = testCase name (assert_bip_0340_check_vector tv)
    where
     name = "bip_0340_vector_" ++ show n
+
+prop_check_sig_verify :: FieldElement -> HashElement -> HashElement -> FieldElement -> ScalarElement -> Bool
+prop_check_sig_verify = \pk m1 m2 r s ->
+   let input = ((feAsTy pk, (heAsTy m1, heAsTy m2)), (feAsTy r, scalarAsTy s))
+   in fast_check_sig_verify input == implementation (SignatureJet CheckSigVerify) input
+ where
+  fast_check_sig_verify = testCoreEval (specification (SignatureJet CheckSigVerify))
+
+prop_check_sig_verify_true :: HashElement -> HashElement -> Property
+prop_check_sig_verify_true = \m1 m2 ->
+   let msg = sigHash (heAsSpec m1) (heAsSpec m2)
+   in forAll (genSignature msg) $ \(PubKey pk, Sig r s) ->
+     let input = ((toW256 pk, (heAsTy m1, heAsTy m2)), (toW256 r, toW256 s))
+     in Just () == implementation (SignatureJet CheckSigVerify) input
+     && Just () == fast_check_sig_verify input
+ where
+  toW256 = toWord256 . fromIntegral
+  fast_check_sig_verify = testCoreEval (specification (SignatureJet CheckSigVerify))
 
 prop_parse_lock = forAll arbitraryLock
                 $ \a -> fastF (toW32 a) == implementation (BitcoinJet ParseLock) (toW32 a)
