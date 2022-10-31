@@ -8,11 +8,11 @@ assert lib.versionAtLeast coq.coq-version "8.9";
 
 stdenv.mkDerivation {
   pname = "compcert";
-  version = "3.10";
+  version = "3.11";
 
   src = fetchurl {
-    url = "https://github.com/AbsInt/CompCert/archive/v3.10.tar.gz";
-    hash = "sha256-ideImkHZ0pXulZ/53nrtGgp8gT93+ppmi+7avq3pGSc=";
+    url = "https://github.com/AbsInt/CompCert/archive/v3.11.tar.gz";
+    hash = "sha256-c5JMfudz9Hbxas3Y5m7n/GFql3YKrhZQuq4A8jNYs74=";
   };
 
   # Unpack only those files that are open source licensed (GPL2 or GPL3).
@@ -67,7 +67,6 @@ stdenv.mkDerivation {
       -install-coqdev \
       -use-external-Flocq \
       -coqdevdir $out/lib/coq/${coq.coq-version}/user-contrib/compcert \
-      -ignore-coq-version \
       ${ccomp-platform}
   '';
 

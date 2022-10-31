@@ -1,11 +1,11 @@
 {stdenv, fetchFromGitHub, coq, compcert } :
 stdenv.mkDerivation {
-  name = "vst-sha256-2.9.1";
+  name = "vst-sha256-2.11";
   src = fetchFromGitHub {
     owner = "PrincetonUniversity";
     repo = "VST";
-    rev ="v2.9.1";
-    hash = "sha256-q/Us8bG1Sek2cuAT6mvwxihBKrVl77RW9m0N5uWOQL4=";
+    rev ="v2.11";
+    hash = "sha256-4+bKlP5qu+qzdcsxzJ/0a7D3op/dzvwM56OAt8WBGio=";
   };
 
   buildInputs = [ coq ];

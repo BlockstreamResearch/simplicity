@@ -3,7 +3,7 @@
 , c       ? true
 , nixpkgs ? import <nixpkgs> {}
 , ghc ? "ghc8107"
-, coqPackages ? "coqPackages_8_14"
+, coqPackages ? "coqPackages_8_15"
 }:
 let
   simplicity      = import ./. {inherit nixpkgs ghc coqPackages;};

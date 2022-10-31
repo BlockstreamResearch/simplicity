@@ -152,7 +152,7 @@ intros Ht a ctx.
 repeat eapply seq_correct.
 - pose (ls1 := {| readLocalState := encode a; writeLocalState := newWriteFrame (max (bitSize B) (bitSize C)) |}).
   pose (ls2 := {| readLocalState := nil; writeLocalState := newWriteFrame 1 |}).
-  change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 ls2)) at 1.
   rewrite <- context_action.
   apply write_correct.
 - rewrite context_action.
@@ -160,17 +160,17 @@ repeat eapply seq_correct.
   rewrite <- padL_bitSize.
   pose (ls1 := {| readLocalState := encode a; writeLocalState := {| writeData := Some false :: nil; writeEmpty := bitSize B |}|}).
   pose (ls2 := {| readLocalState := nil; writeLocalState := newWriteFrame (padL B C)|}).
-  change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 ls2)) at 1.
   rewrite <- context_action.
   apply skip_correct.
 - rewrite context_action.
   unfold appendLocalState; cbn.
   rewrite <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize B)).
   pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some false :: repeat None (padL B C))|}).
-  change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))) at 1.
   unfold LocalStateEnd, fullWriteFrame; cbn.
   rewrite <- (app_nil_r (encode a)), rev_app_distr, <- app_assoc.
-  change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState ls1 (LocalStateEnd t a))).
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateEnd t a))) at 2.
   do 2 rewrite <- context_action.
   apply Ht.
 Qed.
@@ -183,7 +183,7 @@ intros Ht a ctx.
 repeat eapply seq_correct.
 - pose (ls1 := {| readLocalState := encode a; writeLocalState := newWriteFrame (max (bitSize B) (bitSize C)) |}).
   pose (ls2 := {| readLocalState := nil; writeLocalState := newWriteFrame 1 |}).
-  change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 ls2)) at 1.
   rewrite <- context_action.
   apply write_correct.
 - rewrite context_action.
@@ -191,17 +191,17 @@ repeat eapply seq_correct.
   rewrite <- padR_bitSize.
   pose (ls1 := {| readLocalState := encode a; writeLocalState := {| writeData := Some true :: nil; writeEmpty := bitSize C |}|}).
   pose (ls2 := {| readLocalState := nil; writeLocalState := newWriteFrame (padR B C)|}).
-  change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 ls2)).
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 ls2)) at 1.
   rewrite <- context_action.
   apply skip_correct.
 - rewrite context_action.
   unfold appendLocalState; cbn.
   rewrite <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize C)).
   pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some true :: repeat None (padR B C))|}).
-  change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))) at 1.
   unfold LocalStateEnd, fullWriteFrame; cbn.
   rewrite <- (app_nil_r (encode a)), rev_app_distr, <- app_assoc.
-  change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState ls1 (LocalStateEnd t a))).
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateEnd t a))) at 2.
   do 2 rewrite <- context_action.
   apply Ht.
 Qed.
@@ -220,11 +220,11 @@ rewrite <- app_assoc.
 rewrite <- (@repeat_length Cell None (padL A B)) at 1.
 set (prefix := Some false :: repeat None (padL A B)).
 pose (ls2 := {| readLocalState := prefix; writeLocalState := newWriteFrame 0 |}).
-change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState (LocalStateBegin s (a,c)) ls2)).
-change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState (LocalStateEnd s (a,c)) ls2)).
+change (fillContext _ _) with (fillContext ctx (appendLocalState (LocalStateBegin s (a,c)) ls2)) at 1.
+change (fillContext _ _) with (fillContext ctx (appendLocalState (LocalStateEnd s (a,c)) ls2)) at 2.
 repeat rewrite <- context_action.
-change (fillContext _ _) at 1 with (fillReadFrame (fillContext ctx (LocalStateBegin s (a,c))) {| prevData := nil; nextData := prefix |}).
-change (fillContext _ _) at 2 with (fillReadFrame (fillContext ctx (LocalStateEnd s (a,c))) {| prevData := nil; nextData := prefix |}).
+change (fillContext _ _) with (fillReadFrame (fillContext ctx (LocalStateBegin s (a,c))) {| prevData := nil; nextData := prefix |}) at 1.
+change (fillContext _ _) with (fillReadFrame (fillContext ctx (LocalStateEnd s (a,c))) {| prevData := nil; nextData := prefix |}) at 2.
 apply bump_correct.
 apply (Hs _ (fillReadFrame ctx {| prevData := rev (prefix); nextData := nil |})).
 Qed.
@@ -243,11 +243,11 @@ rewrite <- app_assoc.
 rewrite <- (@repeat_length Cell None (padR A B)) at 1.
 set (prefix := Some true :: repeat None (padR A B)).
 pose (ls2 := {| readLocalState := prefix; writeLocalState := newWriteFrame 0 |}).
-change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState (LocalStateBegin t (b,c)) ls2)).
-change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState (LocalStateEnd t (b,c)) ls2)).
+change (fillContext _ _) with (fillContext ctx (appendLocalState (LocalStateBegin t (b,c)) ls2)) at 1.
+change (fillContext _ _) with (fillContext ctx (appendLocalState (LocalStateEnd t (b,c)) ls2)) at 2.
 repeat rewrite <- context_action.
-change (fillContext _ _) at 1 with (fillReadFrame (fillContext ctx (LocalStateBegin t (b,c))) {| prevData := nil; nextData := prefix |}).
-change (fillContext _ _) at 2 with (fillReadFrame (fillContext ctx (LocalStateEnd t (b,c))) {| prevData := nil; nextData := prefix |}).
+change (fillContext _ _) with (fillReadFrame (fillContext ctx (LocalStateBegin t (b,c))) {| prevData := nil; nextData := prefix |}) at 1.
+change (fillContext _ _) with (fillReadFrame (fillContext ctx (LocalStateEnd t (b,c))) {| prevData := nil; nextData := prefix |}) at 2.
 apply bump_correct.
 apply (Ht _ (fillReadFrame ctx {| prevData := rev (prefix); nextData := nil |})).
 Qed.
@@ -270,7 +270,7 @@ unfold LocalStateBegin, LocalStateEnd.
 eapply seq_correct.
 - rewrite <- (app_nil_r (encode a)) at 1.
   pose (ls1 := {| readLocalState := nil; writeLocalState := newWriteFrame (bitSize C) |}).
-  change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin s a))).
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateBegin s a))) at 1.
   rewrite <- context_action.
   apply Hs.
 - rewrite context_action.
@@ -278,8 +278,8 @@ eapply seq_correct.
   rewrite (app_nil_r (rev _)), <- (Plus.plus_0_r (bitSize C)), rev_app_distr.
   rewrite <- (app_nil_r (encode a)) at 2.
   pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (encode (s a)) |}).
-  change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
-  change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState ls1 (LocalStateEnd t a))).
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))) at 1.
+  change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateEnd t a))) at 2.
   do 2 rewrite <- context_action.
   apply Ht.
 Qed.
@@ -292,8 +292,8 @@ intros Ht [a b] ctx.
 unfold LocalStateBegin, LocalStateEnd, fullWriteFrame; cbn.
 rewrite <- (Plus.plus_0_r (bitSize C)), <- (app_nil_r (rev _)).
 pose (ls1 := {| readLocalState := encode b; writeLocalState := newWriteFrame 0 |}).
-change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))).
-change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState ls1 (LocalStateEnd t a))).
+change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))) at 1.
+change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateEnd t a))) at 2.
 do 2 rewrite <- context_action.
 apply Ht.
 Qed.
@@ -304,11 +304,11 @@ Lemma drop_spec {A B C : Ty} (t : Arrow B C) pt :
 Proof.
 intros Ht [a b] ctx; cbn.
 pose (ls2 := {| readLocalState := encode a; writeLocalState := newWriteFrame 0 |}).
-change (fillContext _ _) at 1 with (fillContext ctx (appendLocalState (LocalStateBegin t b) ls2)).
-change (fillContext _ _) at 2 with (fillContext ctx (appendLocalState (LocalStateEnd t b) ls2)).
+change (fillContext _ _) with (fillContext ctx (appendLocalState (LocalStateBegin t b) ls2)) at 1.
+change (fillContext _ _) with (fillContext ctx (appendLocalState (LocalStateEnd t b) ls2)) at 2.
 repeat rewrite <- context_action.
-change (fillContext _ _) at 1 with (fillReadFrame (fillContext ctx (LocalStateBegin t b)) {| prevData := nil; nextData := encode a |}).
-change (fillContext _ _) at 2 with (fillReadFrame (fillContext ctx (LocalStateEnd t b)) {| prevData := nil; nextData := encode a |}).
+change (fillContext _ _) with (fillReadFrame (fillContext ctx (LocalStateBegin t b)) {| prevData := nil; nextData := encode a |}) at 1.
+change (fillContext _ _) with (fillReadFrame (fillContext ctx (LocalStateEnd t b)) {| prevData := nil; nextData := encode a |}) at 2.
 rewrite <- (encode_length a).
 apply bump_correct.
 apply (Ht _ (fillReadFrame ctx {| prevData := rev (encode a); nextData := nil |})).
