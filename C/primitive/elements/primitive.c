@@ -2,6 +2,7 @@
  */
 #include "primitive.h"
 
+#include <stdlib.h>
 #include "jets.h"
 #include "../../callonce.h"
 #include "../../prefix.h"
@@ -59,7 +60,6 @@ typedef enum jetName
  * All jets begin with a bit prefix of '1' which needs to have already been consumed from the 'stream'.
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
- * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * In the above error cases, 'result' may be modified.
  * Returns 0 if successful.
  *
@@ -448,7 +448,6 @@ static dag_node jetNode(jetName name) {
  * All jets begin with a bit prefix of '1' which needs to have already been consumed from the 'stream'.
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
- * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
  *

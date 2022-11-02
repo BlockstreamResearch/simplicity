@@ -15,15 +15,6 @@
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
 
-static FILE* fmemopen_rb(const void *buf, size_t size) {
-  FILE* result = fmemopen((void *)(uintptr_t)buf, size, "rb"); /* Casting away const. */
-  if (!result) {
-    fprintf(stderr, "fmemopen failed.");
-    exit(EXIT_FAILURE);
-  }
-  return result;
-}
-
 static int successes = 0;
 static int failures = 0;
 
@@ -39,8 +30,7 @@ static void test_decodeUptoMaxInt(void) {
   , 0xffff, 0x10000, 0x40000000, 0x7fffffff, SIMPLICITY_ERR_DATA_OUT_OF_RANGE
   };
 
-  FILE* file = fmemopen_rb(buf, sizeof(buf));
-  bitstream stream = initializeBitstream(file);
+  bitstream stream = initializeBitstream(buf, sizeof(buf));
   for (size_t i = 0; i < sizeof(expected)/sizeof(expected[0]); ++i) {
     int32_t result = decodeUptoMaxInt(&stream);
     if (expected[i] == result) {
@@ -50,7 +40,6 @@ static void test_decodeUptoMaxInt(void) {
       printf("Unexpected result during parsing.  Expected %d and received %d\n", expected[i], result);
     }
   }
-  fclose(file);
 }
 
 static void test_hashBlock(void) {
@@ -58,23 +47,20 @@ static void test_hashBlock(void) {
   dag_node* dag;
   combinator_counters census;
   int32_t len, err = 0;
-  void* witnessAlloc = NULL;
   bitstring witness;
   {
-    FILE* file = fmemopen_rb(hashBlock, sizeof_hashBlock);
-    bitstream stream = initializeBitstream(file);
+    bitstream stream = initializeBitstream(hashBlock, sizeof_hashBlock);
     len = decodeMallocDag(&dag, &census, &stream);
     if (!dag) {
       failures++;
       printf("Error parsing dag: %d\n", len);
     } else {
-      err = decodeMallocWitnessData(&witnessAlloc, &witness, &stream);
+      err = decodeWitnessData(&witness, &stream);
       if (err < 0) {
         failures++;
         printf("Error parsing witness: %d\n", err);
       }
     }
-    fclose(file);
   }
   if (dag && 0 <= err) {
     successes++;
@@ -150,25 +136,23 @@ static void test_hashBlock(void) {
     free(type_dag);
   }
   free(dag);
-  free(witnessAlloc);
 }
 
-static void test_program(char* name, FILE* file, bool expectedResult, const uint32_t* expectedCMR,
+static void test_program(char* name, const unsigned char* program, size_t program_len, bool expectedResult, const uint32_t* expectedCMR,
                          const uint32_t* expectedIMR, const uint32_t* expectedAMR) {
   printf("Test %s\n", name);
   dag_node* dag;
   combinator_counters census;
   int32_t len, err = 0;
-  void* witnessAlloc = NULL;
   bitstring witness;
   {
-    bitstream stream = initializeBitstream(file);
+    bitstream stream = initializeBitstream(program, program_len);
     len = decodeMallocDag(&dag, &census, &stream);
     if (!dag) {
       failures++;
       printf("Error parsing dag: %d\n", len);
     } else {
-      err = decodeMallocWitnessData(&witnessAlloc, &witness, &stream);
+      err = decodeWitnessData(&witness, &stream);
       if (err < 0) {
         failures++;
         printf("Error parsing witness: %d\n", err);
@@ -229,7 +213,6 @@ static void test_program(char* name, FILE* file, bool expectedResult, const uint
     free(type_dag);
   }
   free(dag);
-  free(witnessAlloc);
 }
 
 static void test_occursCheck(void) {
@@ -240,10 +223,8 @@ static void test_occursCheck(void) {
   combinator_counters census;
   int32_t len;
   {
-    FILE* file = fmemopen_rb(buf, sizeof(buf));
-    bitstream stream = initializeBitstream(file);
+    bitstream stream = initializeBitstream(buf, sizeof(buf));
     len = decodeMallocDag(&dag, &census, &stream);
-    fclose(file);
   }
   if (!dag) {
     printf("Error parsing dag: %d\n", len);
@@ -310,9 +291,8 @@ static void test_elements(void) {
       successes++;
       bool execResult;
       {
-        FILE* file = fmemopen_rb(elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
         unsigned char imrResult[32];
-        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, amr, file) && execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && execResult) {
           sha256_midstate imr;
           sha256_toMidstate(imr.s, imrResult);
           if (0 == memcmp(imr.s, elementsCheckSigHashAllTx1_imr, sizeof(uint32_t[8]))) {
@@ -325,21 +305,18 @@ static void test_elements(void) {
           failures++;
           printf("execSimplicity of elementsCheckSigHashAllTx1 on tx1 failed\n");
         }
-        fclose(file);
       }
       {
         /* test the same transaction with a erronous signature. */
         unsigned char brokenSig[sizeof_elementsCheckSigHashAllTx1];
         memcpy(brokenSig, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
         brokenSig[sizeof_elementsCheckSigHashAllTx1 - 1] ^= 0x80;
-        FILE* file = fmemopen_rb(brokenSig, sizeof_elementsCheckSigHashAllTx1);
-        if (elements_simplicity_execSimplicity(&execResult, NULL, tx1, 0, taproot, genesisHash, NULL, file) && !execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, NULL, tx1, 0, taproot, genesisHash, NULL, brokenSig, sizeof_elementsCheckSigHashAllTx1) && !execResult) {
           successes++;
         } else {
           failures++;
           printf("execSimplicity of brokenSig on tx1 unexpectedly succeeded\n");
         }
-        fclose(file);
       }
     } else {
       printf("mallocTransaction(&rawTx1) failed\n");
@@ -382,14 +359,12 @@ static void test_elements(void) {
       successes++;
       bool execResult;
       {
-        FILE* file = fmemopen_rb(elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
-        if (elements_simplicity_execSimplicity(&execResult, NULL, tx2, 0, taproot, genesisHash, NULL, file) && !execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, NULL, tx2, 0, taproot, genesisHash, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && !execResult) {
           successes++;
         } else {
           failures++;
           printf("execSimplicity of elementsCheckSigHashAllTx1 on tx2 unexpectedly succeeded\n");
         }
-        fclose(file);
       }
     } else {
       printf("mallocTransaction(&testTx2) failed\n");
@@ -454,16 +429,8 @@ int main(void) {
   test_hasDuplicates("hasDuplicates all duplicates testcase", true, rsort_all_duplicates, 10000);
   test_hasDuplicates("hasDuplicates one duplicate testcase", true, rsort_one_duplicate, 10000);
 
-  {
-    FILE* file = fmemopen_rb(schnorr0, sizeof_schnorr0);
-    test_program("schnorr0", file, true, schnorr0_cmr, schnorr0_imr, schnorr0_amr);
-    fclose(file);
-  }
-  {
-    FILE* file = fmemopen_rb(schnorr6, sizeof_schnorr6);
-    test_program("schnorr6", file, false, schnorr6_cmr, schnorr6_imr, schnorr6_amr);
-    fclose(file);
-  }
+  test_program("schnorr0", schnorr0, sizeof_schnorr0, true, schnorr0_cmr, schnorr0_imr, schnorr0_amr);
+  test_program("schnorr6", schnorr6, sizeof_schnorr6, false, schnorr6_cmr, schnorr6_imr, schnorr6_amr);
   test_elements();
 
   printf("Successes: %d\n", successes);

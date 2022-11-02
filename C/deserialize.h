@@ -14,7 +14,6 @@
  * Returns 'SIMPLICITY_ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'SIMPLICITY_ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
- * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * Returns 'SIMPLICITY_ERR_MALLOC' if malloc fails.
  * In the above error cases, '*dag' is set to NULL.
  * If successful, returns a positive value equal to the length of an allocated array of (*dag).
@@ -34,24 +33,14 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
  * This is the format in which the data for 'WITNESS' nodes are encoded.
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the encoded string of bits exceeds this decoder's limits.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
- * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
- * Returns 'SIMPLICITY_ERR_MALLOC' if malloc fails.
  * If successful, '*witness' is set to the decoded bitstring,
- *                '*allocation' points to memory allocated for this bitstring,
  *                and 0 is returned.
  *
- * If an error is returned '*allocation' is set to 'NULL' and '*witness' might be modified.
+ * If an error is returned '*witness' might be modified.
  *
- * Precondition: NULL != allocation;
- *               NULL != witness;
+ * Precondition: NULL != witness;
  *               NULL != stream;
- *
- * Postcondition: if the function returns '0'
- *                  '*witness' represents a some bitstring
- *                   and '*allocation' points to allocated memory sufficient for at least the 'witness->arr' array.
- *                       (Note that '*allocation' may be 'NULL' if 'n == 0')
- *                if the function returns a negative value then '*allocation == NULL'
  */
-int32_t decodeMallocWitnessData(void** allocation, bitstring* witness, bitstream* stream);
+int32_t decodeWitnessData(bitstring* witness, bitstream* stream);
 
 #endif
