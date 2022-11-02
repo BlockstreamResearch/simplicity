@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "bitstring.h"
 #include "errorCodes.h"
 
@@ -11,26 +12,33 @@
 /* Datatype representing a bit stream.
  * Bits are streamed from MSB to LSB.
  *
- * Invariant: NULL != file
- *            0 <= available <= CHAR_BIT
+ * Invariant: unsigned char arr[len]
+ *            0 <= offset < CHAR_BIT
+ *            0 == len implies 0 == offset
  */
 typedef struct bitstream {
-  FILE* file;          /* Underlying byte stream */
-  int available;       /* Number of bits unparsed from 'byte' */
-  unsigned char byte;  /* Current, partially parsed byte */
+  const unsigned char *arr;  /* Underlying byte array */
+  size_t len;                /* Length of arr (in bytes) */
+  unsigned char offset;      /* Number of bits parsed from the beginning of arr */
 } bitstream;
 
-/* Initialize a bit stream, 'stream', from a given byte stream, 'file'.
- * Precondition: NULL != file
+/* Initialize a bit stream, 'stream', from a given byte array.
+ * Precondition: unsigned char arr[len];
  */
-static inline bitstream initializeBitstream(FILE* file) {
-  return (bitstream){ .file = file, .available = 0 };
+static inline bitstream initializeBitstream(const unsigned char* arr, size_t len) {
+  return (bitstream){ .arr = arr, .len = len };
 }
+
+/* Closes a bitstream by consuming all remaining bits.
+ * Returns false if CHAR_BIT or more bits remain in the stream or if any remaining bits are non-zero.
+ *
+ * Precondition: NULL != stream
+ */
+bool closeBitstream(bitstream* stream);
 
 /* Fetches up to 31 bits from 'stream' as the 'n' least significant bits of return value.
  * The 'n' bits are set from the MSB to the LSB.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if not enough bits are available.
- * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  *
  * Precondition: 0 <= n < 32
  *               NULL != stream
@@ -39,7 +47,6 @@ int32_t getNBits(int n, bitstream* stream);
 
 /* Returns one bit from 'stream', 0 or 1.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if no bits are available.
- * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  *
  * Precondition: NULL != stream
  */
@@ -57,25 +64,15 @@ static inline int32_t getBit(bitstream* stream) {
  */
 int32_t decodeUptoMaxInt(bitstream* stream);
 
-/* Allocates a 'bitstring' containing 'n' bits from 'stream'.
+/* Fills a 'bitstring' containing 'n' bits from 'stream'.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if not enough bits are available.
- * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
- * Returns 'SIMPLICITY_ERR_MALLOC' if malloc fails.
- * If successful, '*result' is set to a bitstring with 'n' bits read from 'stream',
- *                '*allocation' points to memory allocated for this bitstring,
- *                and 0 is returned.
+ * If successful, '*result' is set to a bitstring with 'n' bits read from 'stream' and 0 is returned.
  *
- * If an error is returned '*allocation' is set to 'NULL' and '*result' might be modified.
+ * If an error is returned '*result' might be modified.
  *
- * Precondition: NULL != allocation
- *               NULL != result;
- *               NULL != stream;
- *
- * Postcondition: if the function returns '0'
- *                  '*result' represents a some bitstring with 'result->len' = n
- *                   and '*allocation' points to allocated memory sufficient for at least the 'result->arr' array.
- *                       (Note that '*allocation' may be 'NULL' if 'n == 0')
- *                if the function returns a negative value then '*allocation == NULL'
+ * Precondition: NULL != result
+ *               n <= 2^31
+ *               NULL != stream
  */
-int32_t getMallocBitstring(void** allocation, bitstring* result, size_t n, bitstream* stream);
+int32_t getBitstring(bitstring* result, size_t n, bitstream* stream);
 #endif

@@ -29,7 +29,6 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* 
  * All jets begin with a bit prefix of '1' which needs to have already been consumed from the 'stream'.
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
- * Returns 'SIMPLICITY_ERR_BITSTREAM_ERROR' if an I/O error occurs when reading from the 'stream'.
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
  *

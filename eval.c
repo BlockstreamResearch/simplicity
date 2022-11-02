@@ -1,6 +1,7 @@
 #include "eval.h"
 
 #include <string.h>
+#include <stdlib.h>
 #include "bounded.h"
 #include "unreachable.h"
 
