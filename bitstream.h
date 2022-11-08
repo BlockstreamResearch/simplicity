@@ -43,15 +43,15 @@ bool closeBitstream(bitstream* stream);
  * Precondition: 0 <= n < 32
  *               NULL != stream
  */
-int32_t getNBits(int n, bitstream* stream);
+int32_t readNBits(int n, bitstream* stream);
 
 /* Returns one bit from 'stream', 0 or 1.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if no bits are available.
  *
  * Precondition: NULL != stream
  */
-static inline int32_t getBit(bitstream* stream) {
-  return getNBits(1, stream);
+static inline int32_t read1Bit(bitstream* stream) {
+  return readNBits(1, stream);
 }
 
 /* Decode an encoded number between 1 and 2^31 - 1 inclusive.
@@ -74,5 +74,5 @@ int32_t decodeUptoMaxInt(bitstream* stream);
  *               n <= 2^31
  *               NULL != stream
  */
-int32_t getBitstring(bitstring* result, size_t n, bitstream* stream);
+int32_t readBitstring(bitstring* result, size_t n, bitstream* stream);
 #endif

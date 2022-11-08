@@ -67,7 +67,7 @@ typedef enum jetName
  *               NULL != stream
  */
 static int32_t decodePrimitive(jetName* result, bitstream* stream) {
-  int32_t bit = getBit(stream);
+  int32_t bit = read1Bit(stream);
   if (bit < 0) return bit;
   if (!bit) {
     /* Core jets */
