@@ -27,7 +27,7 @@ bool closeBitstream(bitstream* stream) {
  * Precondition: 0 <= n < 32
  *               NULL != stream
  */
-int32_t getNBits(int n, bitstream* stream) {
+int32_t readNBits(int n, bitstream* stream) {
   assert(0 <= n && n < 32);
 
   uint32_t result = 0;
@@ -57,14 +57,14 @@ int32_t getNBits(int n, bitstream* stream) {
  *               NULL != stream
  */
 static int32_t decodeUpto1Bit(int32_t* result, bitstream* stream) {
-  *result = getBit(stream);
+  *result = read1Bit(stream);
   if (*result <= 0) return *result;
 
-  *result = getBit(stream);
+  *result = read1Bit(stream);
   if (*result < 0) return *result;
   if (0 != *result) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
 
-  *result = getBit(stream);
+  *result = read1Bit(stream);
   if (*result < 0) return *result;
   return 1;
 }
@@ -97,7 +97,7 @@ static int32_t decodeUpto3(bitstream* stream) {
  *               NULL != stream
  */
 static int32_t decodeUpto3Bits(int32_t* result, bitstream* stream) {
-  int32_t bit = getBit(stream);
+  int32_t bit = read1Bit(stream);
   if (bit < 0) return bit;
 
   *result = 0;
@@ -106,7 +106,7 @@ static int32_t decodeUpto3Bits(int32_t* result, bitstream* stream) {
   } else {
     int32_t n = decodeUpto3(stream);
     if (0 <= n) {
-      *result = getNBits(n, stream);
+      *result = readNBits(n, stream);
       if (*result < 0) return *result;
     }
     return n;
@@ -141,7 +141,7 @@ static int32_t decodeUpto15(bitstream* stream) {
  *               NULL != stream
  */
 static int32_t decodeUpto15Bits(int32_t* result, bitstream* stream) {
-  int32_t bit = getBit(stream);
+  int32_t bit = read1Bit(stream);
   if (bit < 0) return bit;
 
   *result = 0;
@@ -150,7 +150,7 @@ static int32_t decodeUpto15Bits(int32_t* result, bitstream* stream) {
   } else {
     int32_t n = decodeUpto15(stream);
     if (0 <= n) {
-      *result = getNBits(n, stream);
+      *result = readNBits(n, stream);
       if (*result < 0) return *result;
     }
     return n;
@@ -182,7 +182,7 @@ static int32_t decodeUpto65535(bitstream* stream) {
  * Precondition: NULL != stream
  */
 int32_t decodeUptoMaxInt(bitstream* stream) {
-  int32_t bit = getBit(stream);
+  int32_t bit = read1Bit(stream);
   if (bit < 0) return bit;
   if (0 == bit) {
     return 1;
@@ -191,7 +191,7 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
     if (n < 0) return n;
     if (30 < n) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
     {
-      int32_t result = getNBits(n, stream);
+      int32_t result = readNBits(n, stream);
       if (result < 0) return result;
       return ((1 << n) | result);
     }
@@ -208,7 +208,7 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
  *               n <= 2^31
  *               NULL != stream
  */
-int32_t getBitstring(bitstring* result, size_t n, bitstream* stream) {
+int32_t readBitstring(bitstring* result, size_t n, bitstream* stream) {
   static_assert(0x8000u + 2*(CHAR_BIT - 1) <= SIZE_MAX, "size_t needs to be at least 32-bits");
   assert(n <= 0x8000u);
   size_t total_offset = n + stream->offset;

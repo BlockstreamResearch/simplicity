@@ -16,11 +16,11 @@
  */
 static int32_t getWord32Array(uint32_t* result, const size_t len, bitstream* stream) {
   for (size_t i = 0; i < len; ++i) {
-    /* Due to error codes, getNBits cannot fetch 32 bits at once. Instead we fetch two groups of 16 bits. */
-    int32_t bits16 = getNBits(16, stream);
+    /* Due to error codes, readNBits cannot fetch 32 bits at once. Instead we fetch two groups of 16 bits. */
+    int32_t bits16 = readNBits(16, stream);
     if (bits16 < 0) return bits16;
     result[i] = (uint32_t)bits16 << 16;
-    bits16 = getNBits(16, stream);
+    bits16 = readNBits(16, stream);
     if (bits16 < 0) return bits16;
     result[i] |= (uint32_t)bits16;
   }
@@ -55,18 +55,18 @@ static int32_t getHash(sha256_midstate* result, bitstream* stream) {
  *               NULL != stream
  */
 static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
-  int32_t bit = getBit(stream);
+  int32_t bit = read1Bit(stream);
   if (bit < 0) return bit;
   dag[i] = (dag_node){0};
   if (bit) {
-    bit = getBit(stream);
+    bit = read1Bit(stream);
     if (bit < 0) return bit;
     if (bit) return decodeJet(&dag[i], stream);
     return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
   } else {
-    int32_t code = getNBits(2, stream);
+    int32_t code = readNBits(2, stream);
     if (code < 0) return code;
-    int32_t subcode = getNBits(code < 3 ? 2 : 1, stream);
+    int32_t subcode = readNBits(code < 3 ? 2 : 1, stream);
     if (subcode < 0) return subcode;
     for (int32_t j = 0; j < 2 - code; ++j) {
       int32_t ix = decodeUptoMaxInt(stream);
@@ -209,10 +209,10 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
  *               NULL != stream;
  */
 int32_t decodeWitnessData(bitstring* witness, bitstream* stream) {
-  int32_t witnessLen = getBit(stream);
+  int32_t witnessLen = read1Bit(stream);
   if (witnessLen < 0) return witnessLen;
   if (0 < witnessLen) witnessLen = decodeUptoMaxInt(stream);
   if (witnessLen < 0) return witnessLen;
 
-  return getBitstring(witness, (size_t)witnessLen, stream);
+  return readBitstring(witness, (size_t)witnessLen, stream);
 }
