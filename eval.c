@@ -238,7 +238,7 @@ static void copyBits(frameItem* dst, const frameItem* src, size_t n) {
  */
 static void writeWitness(frameItem* dst, const bitstring* data, size_t typeIx, type* type_dag) {
   size_t cur = typeSkip(typeIx, type_dag);
-  size_t offset = data->offset;
+  size_t offset = 0;
   bool calling = true;
   type_dag[cur].back = 0;
   while (cur) {
@@ -246,7 +246,7 @@ static void writeWitness(frameItem* dst, const bitstring* data, size_t typeIx, t
       assert(calling);
 
       /* Write one bit to the write frame and then skip over any padding bits. */
-      bool bit = 1 & (data->arr[offset/CHAR_BIT] >> (CHAR_BIT - 1 - offset % CHAR_BIT));
+      bool bit = getBit(data, offset);
       offset++;
       writeBit(dst, bit);
       skip(dst, pad(bit, type_dag[type_dag[cur].typeArg[0]].bitSize, type_dag[type_dag[cur].typeArg[1]].bitSize));
