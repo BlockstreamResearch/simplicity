@@ -47,7 +47,8 @@ static sha256_midstate amr_compIV,
 static sha256_midstate imr_disconnectIV,
                        imr_witnessIV;
 static sha256_midstate identityIV,
-                       hiddenIV;
+                       hiddenIV,
+                       jetIV;
 static void static_initialize(void) {
   MK_TAG(cmr_compIV.s, COMMITMENT_TAG("comp"));
   MK_TAG(cmr_caseIV.s, COMMITMENT_TAG("case"));
@@ -77,6 +78,7 @@ static void static_initialize(void) {
   MK_TAG(imr_witnessIV.s, IDENTITY_TAG("witness"));
   MK_TAG(identityIV.s, SIMPLICITY_PREFIX "\x1F" "Identity");
   MK_TAG(hiddenIV.s, SIMPLICITY_PREFIX "\x1F" "Hidden");
+  MK_TAG(jetIV.s, SIMPLICITY_PREFIX "\x1F" "Jet");
 }
 
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
@@ -152,6 +154,21 @@ static sha256_midstate amrIV(tag_t tag) {
   }
   assert(false);
   UNREACHABLE;
+}
+
+/* Given the IMR of a jet specification, return the CMR for a jet that implements that specification.
+ *
+ * Precondition: uint32_t imr[8]
+ */
+sha256_midstate mkJetCMR(uint32_t *imr) {
+  call_once(&static_initialized, &static_initialize);
+
+  sha256_midstate result = jetIV;
+  uint32_t block[16] = {0};
+  memcpy(&block[8], imr, sizeof(uint32_t[8]));
+  sha256_compression(result.s, block);
+
+  return result;
 }
 
 /* Given a well-formed dag[i + 1], such that for all 'j', 0 <= 'j' < 'i',

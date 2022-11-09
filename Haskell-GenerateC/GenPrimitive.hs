@@ -107,7 +107,8 @@ jetName :: JetType x y -> String
 jetName = filter isAlphaNum . last . words . show
 
 cInitializeJet :: (TyC x, TyC y) => JetType x y -> String
-cInitializeJet jet = "MK_JET(" ++ upperSnakeCase (jetName jet) ++ ", " ++ showCHash (identityRoot (specification jet)) ++ ");"
+cInitializeJet jet = "jet_node[" ++ upperSnakeCase (jetName jet) ++
+                     "].cmr = mkJetCMR((uint32_t[8]){" ++ showCHash (identityRoot (specification jet)) ++ "});"
 
 tyList :: [Ty]
 tyList = Map.elems . foldr combine Map.empty $ (tys =<< jetList)
