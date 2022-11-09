@@ -10,8 +10,6 @@
 #include "../../tag.h"
 #include "../../unreachable.h"
 
-#define JET_TAG SIMPLICITY_PREFIX "\x1F" "Jet"
-
 /* An enumeration of all the types we need to construct to specify the input and output types of all jets created by 'decodeJet'. */
 enum TypeNamesForJets {
 #include "primitiveEnumTy.inc"
@@ -414,24 +412,12 @@ static dag_node jet_node[] = {
  };
 static void static_initialize(void) {
   {
-    sha256_midstate jet_iv;
-    MK_TAG(jet_iv.s, JET_TAG);
-
-#define MK_JET(name, h0, h1, h2, h3, h4, h5, h6, h7) \
-  do { \
-    jet_node[name].cmr = jet_iv; \
-    sha256_compression(jet_node[name].cmr.s, (uint32_t[16]){ [8] = h0, h1, h2, h3, h4, h5, h6, h7 }); \
-  } while(0)
-
     /* Jets are identified by their specification's identity Merkle roots. */
 #include "primitiveInitJet.inc"
-#undef MK_JET
-
   }
 }
 
-/* Return a copy of the Simplicity node corresponding to the given Elements specific jet 'name'.
- */
+/* Return a copy of the Simplicity node corresponding to the given Elements specific jet 'name'. */
 static dag_node jetNode(jetName name) {
   call_once(&static_initialized, &static_initialize);
 

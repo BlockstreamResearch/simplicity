@@ -86,6 +86,12 @@ static inline size_t numChildren(tag_t tag) {
   }
 }
 
+/* Given the IMR of a jet specification, return the CMR for a jet that implements that specification.
+ *
+ * Precondition: uint32_t imr[8]
+ */
+sha256_midstate mkJetCMR(uint32_t *imr);
+
 /* A node the the DAG of a Simplicity expression.
  * It consists of a 'tag' indicating the kind of expression the node represents.
  * The contents of a node depend on the kind of the expressions.
