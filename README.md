@@ -23,9 +23,7 @@ Software artifacts can be built using [Nix](https://nixos.org/nix/).
 * For a Simplicity-Haskell development environment, type `nix-shell --arg coq false`.
 * Typing `nix-shell` will provide a full C, Coq and Haskell development environment.
 
-### Building without Nix
-
-#### Building the C project
+### Building the C project manually
 
 Install the [GNU Compiler Collection](https://gcc.gnu.org/) and [GNU Make](https://www.gnu.org/software/make/).
 Binary packages are available for Debian (`apt install gcc make`) and other Linux distributions.
@@ -37,41 +35,53 @@ Binary packages are available for Debian (`apt install gcc make`) and other Linu
 1. To install locally: `make install out=/path/to/dir`
 1. To remove generated files: `make clean`
 
-#### Building the Coq project
+### Building the Coq project manually
 
-These instructions assume you start within the `simplicity` root directory of this repository.
+Requires [Coq 8.15.0](https://coq.inria.fr/),
+[CompCert 3.11](http://compcert.inria.fr/)
+and [VST 2.11](https://vst.cs.princeton.edu/).
+Packages in the Coq ecosystem are managed by the [opam package manager](https://opam.ocaml.org/).
 
-Coq 8.12.0 is most easily installed via [opam](https://opam.ocaml.org/) by following the instruction at <https://coq.inria.fr/opam-using.html>.
+#### Installing Coq
 
 1. Install `opam` using your distribution's package manager.
 1. `opam init`
 1. `eval $(opam env)`
-1. `opam pin -j$(nproc) add coq 8.12.0`
-1. `opam install -j$(nproc) coqide # optional step`
+1. `opam pin -j$(nproc) add coq 8.15.0`
 
-Next we use opam to install the [CompCert](http://compcert.inria.fr/) dependency
+#### Optional: Installing CoqIDE
+
+[CoqIDE](https://coq.inria.fr/refman/practical-tools/coqide.html) is a user-friendly GUI for writing proofs in Coq.
+
+1. `opam install -j$(nproc) coqide`
+
+#### Installing CompCert
 
 1. `opam repo add coq-released https://coq.inria.fr/opam/released`
-1. `opam install -j$(nproc) coq-compcert.3.7+8.12~coq_platform~open_source`
+1. `opam install -j$(nproc) coq-compcert`
 
-While the [VST](https://vst.cs.princeton.edu/) dependency is available via opam, we need a custom build.
+#### Installing VST
 
-1. `wget -O - https://github.com/PrincetonUniversity/VST/archive/v2.6.tar.gz | tar -xvzf -`
-1. `cd VST-2.6`
-    1. `make -j$(nproc) default_target sha`
-    1. `make install`
-    1. `install -d $(coqc -where)/user-contrib/sha`
-    1. `install -m 0644 -t $(coqc -where)/user-contrib/sha sha/*.v sha/*.vo`
-    1. `cd ..`
+We need a custom build and **cannot** use opam for this step.
 
-Now we can build (and install) the Simplicity Coq library.
+1. `wget -O - https://github.com/PrincetonUniversity/VST/archive/v2.11.tar.gz | tar -xvzf -`
+1. `cd VST-2.11`
+1. `make -j$(nproc) default_target sha`
+1. `make install`
+1. `install -d $(coqc -where)/user-contrib/sha`
+1. `install -m 0644 -t $(coqc -where)/user-contrib/sha sha/*.v sha/*.vo`
 
-1. `cd Coq`
-    1. `coq_makefile -f _CoqProject -o CoqMakefile`
-    1. `make -f CoqMakefile -j$(nproc)`
-    1. `make -f CoqMakefile install # optional`
+#### Building the Simplicity Coq library
 
-#### Building the Haskell project
+1. Change into the `Coq` directory of this repository
+1. `coq_makefile -f _CoqProject -o CoqMakefile`
+1. `make -f CoqMakefile -j$(nproc)`
+
+#### Optional: Installing the library
+
+1. `make -f CoqMakefile install`
+
+### Building the Haskell project manually
 
 Install the [Glasgow Haskell Compiler](https://www.haskell.org/ghc/) and [Cabal](https://www.haskell.org/cabal/).
 Binary packages are available for Debian (`apt install ghc cabal-install`) and other Linux distributions.
