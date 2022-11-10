@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "bounded.h"
 #include "callonce.h"
+#include "precomputed.h"
 #include "prefix.h"
 #include "rsort.h"
 #include "sha256.h"
@@ -84,7 +85,7 @@ static void static_initialize(void) {
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
  *
- * Precondition: 'tag' \notin {HIDDEN, JET}
+ * Precondition: 'tag' \notin {HIDDEN, JET, WORD}
  */
 static sha256_midstate cmrIV(tag_t tag) {
   call_once(&static_initialized, &static_initialize);
@@ -104,6 +105,7 @@ static sha256_midstate cmrIV(tag_t tag) {
    case UNIT: return cmr_unitIV;
    case WITNESS: return cmr_witnessIV;
    /* Precondition violated. */
+   case WORD:
    case HIDDEN:
    case JET:
     break;
@@ -115,7 +117,7 @@ static sha256_midstate cmrIV(tag_t tag) {
 /* Given a tag for a node, return the SHA-256 hash of its associated IMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
  *
- * Precondition: 'tag' \notin {HIDDEN, JET}
+ * Precondition: 'tag' \notin {HIDDEN, JET, WORD}
  */
 static sha256_midstate imrIV(tag_t tag) {
   call_once(&static_initialized, &static_initialize);
@@ -128,7 +130,7 @@ static sha256_midstate imrIV(tag_t tag) {
 /* Given a tag for a node, return the SHA-256 hash of its associated AMR tag.
  * This is the "initial value" for computing the annotated Merkle root for that expression.
  *
- * Precondition: 'tag' \notin {HIDDEN, JET}
+ * Precondition: 'tag' \notin {HIDDEN, JET, WORD}
  */
 static sha256_midstate amrIV(tag_t tag) {
   call_once(&static_initialized, &static_initialize);
@@ -150,6 +152,7 @@ static sha256_midstate amrIV(tag_t tag) {
    /* Precondition violated. */
    case HIDDEN:
    case JET:
+   case WORD:
     break;
   }
   assert(false);
@@ -171,6 +174,53 @@ sha256_midstate mkJetCMR(uint32_t *imr) {
   return result;
 }
 
+/* Compute the CMR of a jet of scribe(v) : ONE |- TWO^(2^n) that outputs a given bitstring.
+ *
+ * Precondition: 2^n == value->len
+ */
+sha256_midstate computeWordCMR(const bitstring* value, size_t n) {
+  call_once(&static_initialized, &static_initialize);
+
+  /* 'stack' is an array of 33 hashes consiting of 8 'uint32_t's each. */
+  uint32_t stack[8*33] = {0};
+  uint32_t *stack_ptr = stack;
+  sha256_midstate imr = identityIV;
+  assert(n < 32);
+  assert((size_t)1 << n == value->len);
+  /* Pass 1: Compute the CMR for the expression that writes 'value'.
+   * This expression consists of deeply nested PAIRs of expressions that write one bit each.
+   *
+   * :TODO: This can be optimized by a constant factor by precomputing a table of CMRs of expressions
+   * that, for example, write out every possible byte sequence.
+   */
+  /* stack[0..7] (8 bytes) is kept as all zeros for later.
+   * We start the stack_ptr at the second item.
+   */
+  for(size_t i = 0; i < value->len; ++i) {
+    /* stack_ptr == stack + 8*<count of the number of set bits in the value i> */
+    stack_ptr += 8;
+    memcpy(stack_ptr, &bit_cmr[getBit(value, i)], sizeof(uint32_t[8]));
+    /* This inner for loop runs in ammortized constant time. */
+    for (size_t j = i; j & 1; j = j >> 1) {
+      sha256_midstate pair = cmrIV(PAIR);
+      stack_ptr -= 8;
+      sha256_compression(pair.s, stack_ptr);
+      memcpy(stack_ptr, pair.s, sizeof(uint32_t[8]));
+    }
+  }
+  /* value->len is a power of 2.*/
+  assert(stack_ptr == stack + 8);
+
+  /* Pass 2: Compute the IMR for the expression by adding the type roots of ONE and TWO^(2^n) to the CMR. */
+  sha256_compression(imr.s, stack);
+  memcpy(&stack[0], word_type_root[0].s, sizeof(uint32_t[8]));
+  memcpy(&stack[8], word_type_root[n+1].s, sizeof(uint32_t[8]));
+  sha256_compression(imr.s, stack);
+
+  /* Pass 3: Compute the jet's CMR from the specificion's IMR. */
+  return mkJetCMR(imr.s);
+}
+
 /* Given a well-formed dag[i + 1], such that for all 'j', 0 <= 'j' < 'i',
  * 'dag[j].cmr' is the CMR of the subexpression denoted by the slice
  *
@@ -179,7 +229,7 @@ sha256_midstate mkJetCMR(uint32_t *imr) {
  * then we set the value of 'dag[i].cmr' to be the CMR of the subexpression denoted by 'dag'.
  *
  * Precondition: dag_node dag[i + 1] and 'dag' is well-formed.
- *               dag[i].'tag' \notin {HIDDEN, JET}
+ *               dag[i].'tag' \notin {HIDDEN, JET, WORD}
  */
 void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
   uint32_t block[16] = {0};
@@ -187,6 +237,7 @@ void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
 
   assert (HIDDEN != dag[i].tag);
   assert (JET != dag[i].tag);
+  assert (WORD != dag[i].tag);
 
   dag[i].cmr = cmrIV(dag[i].tag);
 
@@ -212,6 +263,7 @@ void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
    case WITNESS:
    case HIDDEN:
    case JET:
+   case WORD:
     break;
   }
 }
@@ -231,13 +283,14 @@ static void computeIdentityMerkleRoot(sha256_midstate* imr, const dag_node* dag,
     uint32_t block[16] = {0};
     size_t j = 8;
 
-    /* For jets and primitives, the first pass identity Merkle root is the same as their commitment Merkle root. */
+    /* For jets, the first pass identity Merkle root is the same as their commitment Merkle root. */
     imr[i] = HIDDEN == dag[i].tag ? dag[i].cmr
            : JET == dag[i].tag ? dag[i].cmr
+           : WORD == dag[i].tag ? dag[i].cmr
            : imrIV(dag[i].tag);
     switch (dag[i].tag) {
      case WITNESS:
-      sha256_bitstring(block, &dag[i].witness);
+      sha256_bitstring(block, &dag[i].compactValue);
       memcpy(block + 8, type_dag[WITNESS_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(imr[i].s, block);
       break;
@@ -260,6 +313,7 @@ static void computeIdentityMerkleRoot(sha256_midstate* imr, const dag_node* dag,
      case UNIT:
      case HIDDEN:
      case JET:
+     case WORD:
       break;
     }
   }
@@ -298,9 +352,10 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
   for (size_t i = 0; i < len; ++i) {
     uint32_t block[16] = {0};
 
-    /* For jets and primitives, their annotated Merkle root is the same as their commitment Merkle root. */
+    /* For jets, their annotated Merkle root is the same as their commitment Merkle root. */
     analysis[i].annotatedMerkleRoot = HIDDEN == dag[i].tag ? dag[i].cmr
                                     : JET == dag[i].tag ? dag[i].cmr
+                                    : WORD == dag[i].tag ? dag[i].cmr
                                     : amrIV(dag[i].tag);
     switch (dag[i].tag) {
      case ASSERTL:
@@ -378,11 +433,12 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
       memcpy(block + 8, type_dag[WITNESS_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[WITNESS_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_bitstring(block + 8, &dag[i].witness);
+      sha256_bitstring(block + 8, &dag[i].compactValue);
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case HIDDEN:
      case JET:
+     case WORD:
       break;
     }
   }
@@ -447,6 +503,7 @@ bool verifyCanonicalOrder(dag_node* dag, const size_t len) {
      case WITNESS:
      case HIDDEN:
      case JET:
+     case WORD:
       break;
     }
 
@@ -474,6 +531,7 @@ bool verifyCanonicalOrder(dag_node* dag, const size_t len) {
      case WITNESS:
      case HIDDEN:
      case JET:
+     case WORD:
       break;
     }
 
@@ -506,11 +564,11 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
     if (WITNESS == dag[i].tag) {
       if (witness.len <= 0) {
         /* There is no more data left in witness. */
-        dag[i].witness = (bitstring){0};
+        dag[i].compactValue = (bitstring){0};
         /* This is fine as long as the witness type is trivial */
         if (type_dag[WITNESS_B(dag, type_dag, i)].bitSize) return false;
       } else {
-        dag[i].witness = (bitstring)
+        dag[i].compactValue = (bitstring)
           { .arr = &witness.arr[witness.offset/CHAR_BIT]
           , .offset = witness.offset % CHAR_BIT
           , .len = witness.len /* The value of .len will be finalized after the while loop. */
@@ -562,7 +620,7 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
         /* The length of this 'WITNESS' node's witness value is
          * the difference between the remaining witness length from before and after parsing.
          */
-        dag[i].witness.len -= witness.len;
+        dag[i].compactValue.len -= witness.len;
 
         /* Note: Above we use 'typeSkip' to skip over long chains of products against trivial types
          * This avoids a potential DOS vulnerability where a DAG of deeply nested products of unit types with sharing is traversed,

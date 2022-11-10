@@ -229,14 +229,18 @@ static void copyBits(frameItem* dst, const frameItem* src, size_t n) {
   dst->offset -= n;
 }
 
-/* Given the contents of a 'witness v : A |- B' expression, write the value 'v' to a write frame and advance its cursor.
+/* Given a compact bit representation of a value 'v : B', write the value 'v' to a write frame, skipping cells as needed
+ * and advance its cursor.
  * Cells in front of the '*dst's cursor's final position may be overwritten.
  *
+ * :TODO: Consider writing an optimized version of this function for word type 'TWO^(2^n)' which is a very common case and
+ * doesn't need any skipping of cells.
+ *
  * Precondition: '*dst' is a valid write frame for 'bitSize(B)' more cells;
- *               'data' is a compact bitstring representation of a value 'v : B';
+ *               'compactValue' is a compact bitstring representation of a value 'v : B';
  *               'type_dag[typeIx]' is a type dag for the type B.
  */
-static void writeWitness(frameItem* dst, const bitstring* data, size_t typeIx, type* type_dag) {
+static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typeIx, type* type_dag) {
   size_t cur = typeSkip(typeIx, type_dag);
   size_t offset = 0;
   bool calling = true;
@@ -246,7 +250,7 @@ static void writeWitness(frameItem* dst, const bitstring* data, size_t typeIx, t
       assert(calling);
 
       /* Write one bit to the write frame and then skip over any padding bits. */
-      bool bit = getBit(data, offset);
+      bool bit = getBit(compactValue, offset);
       offset++;
       writeBit(dst, bit);
       skip(dst, pad(bit, type_dag[type_dag[cur].typeArg[0]].bitSize, type_dag[type_dag[cur].typeArg[1]].bitSize));
@@ -288,7 +292,7 @@ static void writeWitness(frameItem* dst, const bitstring* data, size_t typeIx, t
    * taking exponential time.
    * While traversing still could take exponential time in terms of the size of the type's dag,
    * at least one bit of witness data is required per PRODUCT type encountered.
-   * This ought to limit the total number of times through the above loop to no more that 3 * data.len.
+   * This ought to limit the total number of times through the above loop to no more that 3 * compactValue->len.
    */
 }
 
@@ -532,13 +536,13 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
       }
       break;
      case IDEN:
+     case WORD:
      case WITNESS:
       if (IDEN == tag) {
         /* COPY(BITSIZE(A)) */
         copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[IDEN_A(dag, type_dag, pc)].bitSize);
       } else {
-        assert(WITNESS == tag);
-        writeWitness(state.activeWriteFrame, &dag[pc].witness, WITNESS_B(dag, type_dag, pc), type_dag);
+        writeValue(state.activeWriteFrame, &dag[pc].compactValue, dag[pc].targetType, type_dag);
       }
       /*@fallthrough@*/
      case UNIT:
@@ -679,6 +683,7 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
      case HIDDEN:
      case WITNESS:
      case JET:
+     case WORD:
       bound[i].extraCellsBoundTCO[0] = bound[i].extraCellsBoundTCO[1] = 0;
       bound[i].extraStackBound[0] = bound[i].extraStackBound[1] = 0;
     }

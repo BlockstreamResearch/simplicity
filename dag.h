@@ -27,6 +27,7 @@ typedef enum tag_t
 , HIDDEN
 , WITNESS
 , JET
+, WORD
 } tag_t;
 
 /* This structure is use to count the different kinds of combinators in a Simplicity DAG. */
@@ -57,6 +58,7 @@ static inline void enumerator(combinator_counters* census, tag_t tag) {
    case HIDDEN:
    case WITNESS:
    case JET:
+   case WORD:
     return;
   }
 }
@@ -82,6 +84,7 @@ static inline size_t numChildren(tag_t tag) {
    case HIDDEN:
    case WITNESS:
    case JET:
+   case WORD:
     return 0;
   }
 }
@@ -92,15 +95,22 @@ static inline size_t numChildren(tag_t tag) {
  */
 sha256_midstate mkJetCMR(uint32_t *imr);
 
+/* Compute the CMR of a jet of scribe(v) : ONE |- TWO^(2^n) that outputs a given bitstring.
+ *
+ * Precondition: 2^n == value->len
+ */
+sha256_midstate computeWordCMR(const bitstring* value, size_t n);
+
 /* A node the the DAG of a Simplicity expression.
  * It consists of a 'tag' indicating the kind of expression the node represents.
  * The contents of a node depend on the kind of the expressions.
  * The node may have references to children, when it is a combinator kind of expression.
  *
  * Invariant: 'NULL != jet' when 'tag == JET';
- *            bitstring witness is be active when tag == WITNESS and the node has witness data;
- *            size_t sourceIx, targetIx are active when tag == JET;
- *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, WITNESS, JET};
+ *            bitstring compactValue is active when tag == WITNESS and the node has witness data;
+ *            bitstring compactValue is also active and has a length that is a power of 2 when tag == WORD;
+ *            size_t sourceIx is active when tag == JET;
+ *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, WITNESS, JET, WORD};
  */
 typedef struct dag_node {
   jet_ptr jet;
@@ -113,13 +123,14 @@ typedef struct dag_node {
   };
   union {
     struct {
-      size_t sourceIx, targetIx;
+      size_t sourceIx;
     };
     struct {
       size_t child[2];
     };
-    bitstring witness;
+    bitstring compactValue;
   };
+  size_t targetIx;
   tag_t tag;
 } dag_node;
 
@@ -320,7 +331,7 @@ typedef struct analyses {
  * then we set the value of 'dag[i].cmr' to be the CMR of the subexpression denoted by 'dag'.
  *
  * Precondition: dag_node dag[i + 1] and 'dag' is well-formed.
- *               dag[i].'tag' \notin {HIDDEN, JET}
+ *               dag[i].'tag' \notin {HIDDEN, JET, WORD}
  */
 void computeCommitmentMerkleRoot(dag_node* dag, size_t i);
 

@@ -45,7 +45,8 @@ static int32_t getHash(sha256_midstate* result, bitstream* stream) {
  * Returns 'SIMPLICITY_ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'SIMPLICITY_ERR_HIDDEN' if the decoded node has illegal HIDDEN children.
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the node's child isn't a reference to one of the preceding nodes.
- *                                            or some encoding for a non-existent jet is encountered.
+ *                                            or some encoding for a non-existent jet is encountered
+ *                                            or the size of a WORD encoding is greater than 2^31 bits.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * In the above error cases, 'dag' may be modified.
  * Returns 0 if successful.
@@ -61,8 +62,21 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
   if (bit) {
     bit = read1Bit(stream);
     if (bit < 0) return bit;
-    if (bit) return decodeJet(&dag[i], stream);
-    return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+    if (bit) {
+      return decodeJet(&dag[i], stream);
+    } else {
+      /* Decode WORD. */
+      int32_t depth = decodeUptoMaxInt(stream);
+      if (depth < 0) return depth;
+      if (32 < depth) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+      {
+        int32_t result = readBitstring(&dag[i].compactValue, (size_t)1 << (depth - 1), stream);
+        if (result < 0) return result;
+      }
+      dag[i].tag = WORD;
+      dag[i].targetIx = (size_t)depth;
+      dag[i].cmr = computeWordCMR(&dag[i].compactValue, (size_t)(depth - 1));
+    }
   } else {
     int32_t code = readNBits(2, stream);
     if (code < 0) return code;
@@ -121,9 +135,8 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
     }
 
     computeCommitmentMerkleRoot(dag, i);
-
-    return 0;
   }
+  return 0;
 }
 
 /* Decode a Simplicity DAG consisting of 'len' nodes from 'stream' into 'dag'.

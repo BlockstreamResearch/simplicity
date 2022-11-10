@@ -20,7 +20,7 @@
 ,[BIP_0340_VERIFY] =
 { .tag = JET
 , .jet = bip_0340_verify
-, .sourceIx = ty_w1024
+, .sourceIx = ty_w1Ki
 , .targetIx = ty_u
 }
 ,[BUILD_TAPBRANCH] =
@@ -812,7 +812,7 @@
 ,[SHA_256_CTX_8_ADD_128] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_128
-, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w1024
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w1Ki
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
 ,[SHA_256_CTX_8_ADD_16] =
@@ -830,7 +830,7 @@
 ,[SHA_256_CTX_8_ADD_256] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_256
-, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w2048
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w2Ki
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
 ,[SHA_256_CTX_8_ADD_32] =
@@ -848,7 +848,7 @@
 ,[SHA_256_CTX_8_ADD_512] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_512
-, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w4096
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w4Ki
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
 ,[SHA_256_CTX_8_ADD_64] =
@@ -866,7 +866,7 @@
 ,[SHA_256_CTX_8_ADD_BUFFER_511] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_buffer_511
-, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw2048pmw1024pmw512pmw256pmw128pmw64pmw32pmw16mw8
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw2Kipmw1Kipmw512pmw256pmw128pmw64pmw32pmw16mw8
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 }
 ,[SHA_256_CTX_8_FINALIZE] =

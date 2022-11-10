@@ -362,6 +362,11 @@ static bool typeInference(unification_arrow* arrow, const dag_node* dag, const s
       arrow[i] = (unification_arrow){0};
       UNIFY(&(bound_var[dag[i].sourceIx]),&arrow[i].source);
       UNIFY(&(bound_var[dag[i].targetIx]),&arrow[i].target);
+      break;
+     case WORD:
+      /* WORD only imposes trivial bindings, so we do not increment 'bindings_used'. */
+      arrow[i] = (unification_arrow){ .source = { .isBound = true, .bound = { .kind = ONE } } };
+      UNIFY(&(bound_var[dag[i].targetIx]),&arrow[i].target);
       #undef APPLY_BINDING
       #undef UNIFY
     }
