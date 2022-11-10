@@ -20,6 +20,7 @@ import Simplicity.Primitive
 import Simplicity.Term.Core
 import Simplicity.Tensor
 import Simplicity.Ty
+import Simplicity.Programs.Word
 
 -- | This class embeds Blockchain 'Prim'itives into the Simplicity language.
 -- The semantics for these primitives is mediated by the 'Simplicity.Primitive' module.
@@ -92,3 +93,6 @@ instance Jet AnnotatedRoot where
   jet t = jetAnnotatedImpl t
 
 instance Simplicity AnnotatedRoot where
+
+instance Primitive ConstWord where
+  primitive _ = NotConstWord

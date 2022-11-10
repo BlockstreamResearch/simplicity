@@ -2,20 +2,24 @@
 --
 -- While the 'CoreJet' data type could be made an instance of 'Simplicity.JetType.JetType', we instead generally expect it to be used as a substructure of all jets used in each specific Simplicity application.
 -- The other exports of this library aid in building an instance of 'Simplicity.JetType.JetType' for those that make use of 'CoreJet' as a substructure.
-{-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
+{-# LANGUAGE RankNTypes, GADTs, StandaloneDeriving, ScopedTypeVariables, TypeFamilies #-}
 module Simplicity.CoreJets
  ( CoreJet(..), WordJet(..), ArithJet(..), HashJet(..), Secp256k1Jet(..), SignatureJet(..), BitcoinJet(..)
  , specification, coreJetMap, coreJetLookup
  , implementation
  , fastCoreEval
  , putJetBit, getJetBit
+ , ConstWordContent(..), specificationConstWord, implementationConstWord, putConstWordBit
+ , SomeConstWordContent(..), getConstWordBit
  , FastCoreEval
  ) where
 
-import Prelude hiding (fail, drop, take, subtract)
+import Prelude hiding (fail, drop, take, subtract, Word)
 
 import Control.Arrow ((+++), Kleisli(Kleisli), runKleisli)
+import Data.Bits (shift)
 import qualified Data.ByteString as BS
+import qualified Data.List as List
 import qualified Data.Map as Map
 import Data.Serialize (encode)
 import Data.Type.Equality ((:~:)(Refl))
@@ -680,6 +684,54 @@ coreJetLookup ir = do
   case (equalTyReflect ira jta, equalTyReflect irb jtb) of
     (Just Refl, Just Refl) -> return jt
     otherwise -> error "Simplicity.CoreJets.coreJetLookup: type match error"
+
+-- | The contents of the serialized content of a constant word jet.
+-- It consists of a "depth" indicating what word type the word jet produces,
+-- and a numeric value that the jet outputs.
+-- This numeric value fits with the size of the word type.
+data ConstWordContent b = ConstWordContent (Word b) Integer
+instance Eq (ConstWordContent b) where
+  ConstWordContent _ x == ConstWordContent _ y = x == y
+instance Show (ConstWordContent b) where
+  show (ConstWordContent w v) = show v ++ ": 2^" ++ show (wordSize w)
+
+-- | @Exists b. (Ty b) *> ConstWordContent b@
+data SomeConstWordContent = forall b. (TyC b) => SomeConstWordContent (ConstWordContent b)
+
+-- | Returns the specification of a constant word jet corresponding to the contents of a given 'ConstWordContent'.
+specificationConstWord :: (Core term, TyC b) => ConstWordContent b -> term () b
+specificationConstWord (ConstWordContent w v) = scribe (toWord w v)
+
+-- | Returns an implementation of a constant word jet corresponding to the contents of a given 'ConstWordContent'.
+implementationConstWord :: ConstWordContent b -> () -> Maybe b
+implementationConstWord (ConstWordContent w v) _ = Just (toWord w v)
+
+-- | Parses the depth and value of a constant word jet and returns 'SomeConstWordContent'.
+getConstWordBit :: forall m. (Monad m) => m Void -> m Bool -> m SomeConstWordContent
+getConstWordBit abort next = do
+  depth <- (\x -> x - 1) <$> getPositive next
+  unDepth depth (fmap SomeConstWordContent . getValue)
+ where
+  unDepth :: Integer -> (forall b. TyC b => Word b -> o) -> o
+  unDepth 0 k = k SingleV
+  unDepth n k = unDepth (n-1) (k . DoubleV)
+  getValue :: TyC b => Word b -> m (ConstWordContent b)
+  getValue w@SingleV = do
+   b <- next
+   return $ ConstWordContent w (if b then 1 else 0)
+  getValue ww@(DoubleV w) = do
+   (ConstWordContent _ v1) <- getValue w
+   (ConstWordContent _ v2) <- getValue w
+   return (ConstWordContent ww (shift v1 (wordSize w) + v2))
+
+-- | Given a 'ConstWordContent' of some type, output the serialization of that depth and value.
+putConstWordBit :: ConstWordContent b -> DList Bool
+putConstWordBit (ConstWordContent w v) = putPositive (1 + depth w) . (bits ++)
+ where
+  depth :: Word b -> Integer
+  depth (SingleV) = 0
+  depth (DoubleV w) = 1 + depth w
+  bits = List.reverse . List.take (wordSize w) $ List.unfoldr (\i -> Just (odd i, i `div` 2)) v
 
 -- | An Assert instance for 'fastCoreEval'.
 data FastCoreEval a b = FastCoreEval { fastCoreEvalSem :: Kleisli Maybe a b

@@ -15,13 +15,14 @@ module Simplicity.Bitcoin.Jets
 
 import Prelude hiding (fail, drop, take)
 
+import Control.Applicative ((<|>))
 import qualified Data.Map as Map
 import Data.Proxy (Proxy(Proxy))
 import Data.Type.Equality ((:~:)(Refl))
 import Data.Void (Void, vacuous)
 
 import Simplicity.Digest
-import Simplicity.CoreJets (CoreJet, coreJetMap)
+import Simplicity.CoreJets (CoreJet, coreJetMap, ConstWordContent(..), SomeConstWordContent(..))
 import qualified Simplicity.CoreJets as CoreJets
 import Simplicity.Bitcoin.Dag hiding (jetSubst)
 import qualified Simplicity.Bitcoin.Dag as Dag
@@ -35,7 +36,9 @@ import qualified Simplicity.Bitcoin.Semantics as Semantics
 import qualified Simplicity.Bitcoin.Programs.TimeLock as TimeLock
 import qualified Simplicity.Bitcoin.Programs.Transaction.Lib as Prog
 import Simplicity.MerkleRoot
+import Simplicity.Programs.Word
 import Simplicity.Serialization
+import Simplicity.Tensor
 import Simplicity.Ty
 import Simplicity.Ty.Bit
 import Simplicity.Ty.Word
@@ -44,6 +47,7 @@ import Simplicity.Ty.Word
 --
 -- The tokens themselves are not exported.  You are expected to use 'Simplicity.Dag.jetDag' to substitute known jets found in Simplicity expressions.
 data JetType a b where
+  ConstWordJet :: ConstWordContent b -> JetType () b
   CoreJet :: CoreJet a b -> JetType a b
   BitcoinJet :: BitcoinJet a b -> JetType a b
 deriving instance Eq (JetType a b)
@@ -292,18 +296,19 @@ bitcoinJetMap = Map.fromList
   mkAssoc :: (TyC a, TyC b) => BitcoinJet a b -> (Hash256, (SomeArrow BitcoinJet))
   mkAssoc jt = (identityRoot (specificationBitcoin jt), SomeArrow jt)
 
-data MatcherInfo a b = MatcherInfo (IdentityRoot a b)
+data MatcherInfo a b = MatcherInfo (Product ConstWord IdentityRoot a b)
 
 instance Simplicity.Bitcoin.JetType.JetType JetType where
   type MatcherInfo JetType = MatcherInfo
 
+  specification (ConstWordJet cw) = CoreJets.specificationConstWord cw
   specification (CoreJet jt) = CoreJets.specification jt
   specification (BitcoinJet jt) = specificationBitcoin jt
 
   implementation (CoreJet jt) _env = CoreJets.implementation jt
   implementation (BitcoinJet jt) env = implementationBitcoin jt env
 
-  matcher (MatcherInfo ir) = do
+  matcher (MatcherInfo (Product cw ir)) = (do
     SomeArrow jt <- Map.lookup (identityRoot ir) jetMap
     let (ira, irb) = reifyArrow ir
     let (jta, jtb) = reifyArrow jt
@@ -311,6 +316,9 @@ instance Simplicity.Bitcoin.JetType.JetType JetType where
     case (equalTyReflect ira jta, equalTyReflect irb jtb) of
       (Just Refl, Just Refl) -> return jt
       otherwise -> error "mathcher{Simplicity.Bitcoin.Jets.JetType}: type match error"
+    ) <|> case cw of
+      (ConstWord w v) -> return (ConstWordJet (ConstWordContent w v))
+      otherwise -> Nothing
 
   getJetBit abort next = do
     b <- next
@@ -318,10 +326,13 @@ instance Simplicity.Bitcoin.JetType.JetType JetType where
                c <- next
                if c then someArrowMap BitcoinJet <$> getJetBitBitcoin abort next
                     else someArrowMap CoreJet <$> CoreJets.getJetBit abort next
-         else vacuous abort
+         else mkConstWordJet <$> CoreJets.getConstWordBit abort next
+   where
+     mkConstWordJet (SomeConstWordContent cw) = SomeArrow (ConstWordJet cw)
 
   putJetBit = go
    where
+    go (ConstWordJet cw) = ([o]++) . CoreJets.putConstWordBit cw
     go (CoreJet jt) = ([i,o]++) . CoreJets.putJetBit jt
     go (BitcoinJet jt) = ([i,i]++) . putJetBitBitcoin jt
     (o,i) = (False,True)

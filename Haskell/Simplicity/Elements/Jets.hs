@@ -15,6 +15,7 @@ module Simplicity.Elements.Jets
 
 import Prelude hiding (fail, drop, take)
 
+import Control.Applicative ((<|>))
 import Control.Arrow ((***), (+++))
 import Control.Monad (guard)
 import qualified Data.ByteString as BS
@@ -29,7 +30,7 @@ import Data.Void (Void, vacuous)
 import Lens.Family2 ((^..), over, review)
 
 import Simplicity.Digest
-import Simplicity.CoreJets (CoreJet, coreJetMap)
+import Simplicity.CoreJets (CoreJet, coreJetMap, ConstWordContent(..), SomeConstWordContent(..))
 import qualified Simplicity.CoreJets as CoreJets
 import Simplicity.Elements.Dag hiding (jetSubst)
 import qualified Simplicity.Elements.Dag as Dag
@@ -48,7 +49,9 @@ import Simplicity.LibSecp256k1.Spec (fe)
 import Simplicity.MerkleRoot
 import Simplicity.Programs.Elements.Lib (Ctx8)
 import qualified Simplicity.Programs.Elements.Lib as Prog
+import Simplicity.Programs.Word
 import Simplicity.Serialization
+import Simplicity.Tensor
 import Simplicity.Ty
 import Simplicity.Ty.Bit
 import Simplicity.Ty.Word
@@ -58,6 +61,7 @@ import qualified Simplicity.Word as W
 --
 -- The tokens themselves are not exported.  You are expected to use 'Simplicity.Dag.jetDag' to substitute known jets found in Simplicity expressions.
 data JetType a b where
+  ConstWordJet :: ConstWordContent b -> JetType () b
   CoreJet :: CoreJet a b -> JetType a b
   ElementsJet :: ElementsJet a b -> JetType a b
 deriving instance Eq (JetType a b)
@@ -773,18 +777,20 @@ elementsJetMap = Map.fromList
   mkAssoc :: (TyC a, TyC b) => ElementsJet a b -> (Hash256, (SomeArrow ElementsJet))
   mkAssoc jt = (identityRoot (specificationElements jt), SomeArrow jt)
 
-data MatcherInfo a b = MatcherInfo (IdentityRoot a b)
+data MatcherInfo a b = MatcherInfo (Product ConstWord IdentityRoot a b)
 
 instance Simplicity.Elements.JetType.JetType JetType where
   type MatcherInfo JetType = MatcherInfo
 
+  specification (ConstWordJet cw) = CoreJets.specificationConstWord cw
   specification (CoreJet jt) = CoreJets.specification jt
   specification (ElementsJet jt) = specificationElements jt
 
+  implementation (ConstWordJet cw) _env = CoreJets.implementationConstWord cw
   implementation (CoreJet jt) _env = CoreJets.implementation jt
   implementation (ElementsJet jt) env = implementationElements jt env
 
-  matcher (MatcherInfo ir) = do
+  matcher (MatcherInfo (Product cw ir)) = (do
     SomeArrow jt <- Map.lookup (identityRoot ir) jetMap
     let (ira, irb) = reifyArrow ir
     let (jta, jtb) = reifyArrow jt
@@ -792,6 +798,9 @@ instance Simplicity.Elements.JetType.JetType JetType where
     case (equalTyReflect ira jta, equalTyReflect irb jtb) of
       (Just Refl, Just Refl) -> return jt
       otherwise -> error "mathcher{Simplicity.Elements.Jets.JetType}: type match error"
+    ) <|> case cw of
+      (ConstWord w v) -> return (ConstWordJet (ConstWordContent w v))
+      otherwise -> Nothing
 
   getJetBit abort next = do
     b <- next
@@ -799,10 +808,13 @@ instance Simplicity.Elements.JetType.JetType JetType where
                c <- next
                if c then someArrowMap ElementsJet <$> getJetBitElements abort next
                     else someArrowMap CoreJet <$> CoreJets.getJetBit abort next
-         else vacuous abort
+         else mkConstWordJet <$> CoreJets.getConstWordBit abort next
+   where
+    mkConstWordJet (SomeConstWordContent cw) = SomeArrow (ConstWordJet cw)
 
   putJetBit = go
    where
+    go (ConstWordJet cw) = ([o]++) . CoreJets.putConstWordBit cw
     go (CoreJet jt) = ([i,o]++) . CoreJets.putJetBit jt
     go (ElementsJet jt) = ([i,i]++) . putJetBitElements jt
     (o,i) = (False,True)

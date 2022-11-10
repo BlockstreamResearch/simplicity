@@ -33,7 +33,8 @@ library Simplicity-Core
                        Simplicity.Programs.CheckSig, Simplicity.Programs.CheckSig.Lib,
                        Simplicity.Programs.Elements, Simplicity.Programs.Elements.Lib,
                        Simplicity.Programs.TimeLock,
-                       Simplicity.Digest, Simplicity.Digest.Pure.SHA
+                       Simplicity.Digest, Simplicity.Digest.Pure.SHA,
+                       Simplicity.Tags,
                        Simplicity.MerkleRoot, Simplicity.MerkleRoot.Impl,
                        Simplicity.Delegator, Simplicity.Delegator.Impl,
                        Simplicity.Serialization,
@@ -144,6 +145,7 @@ library
                        Simplicity.Programs.Elements, Simplicity.Programs.Elements.Lib,
                        Simplicity.Programs.TimeLock,
                        Simplicity.Digest,
+                       Simplicity.Tags,
                        Simplicity.MerkleRoot,
                        Simplicity.Delegator,
                        Simplicity.Serialization,
@@ -230,6 +232,22 @@ Test-Suite testsuite
                        tasty-quickcheck >=0.8 && <0.11,
                        transformers >=0.5 && <0.6,
                        vector >=0.12 && <0.13
+
+executable GenPrecomputed
+    main-is:          GenPrecomputed.hs
+    ghc-options:      -main-is GenPrecomputed
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    hs-source-dirs:   Haskell-GenerateC
+    default-language: Haskell2010
+    build-depends:    Simplicity,
+                      base >=4.9 && <4.18,
+                      prettyprinter >=1.7 && <1.8,
+                      split >=0.2.3 && <0.3,
 
 executable GenPrimitive
     main-is:          GenPrimitive.hs

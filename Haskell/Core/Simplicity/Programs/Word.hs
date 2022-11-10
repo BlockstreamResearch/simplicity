@@ -13,6 +13,7 @@ module Simplicity.Programs.Word
   , mapZV, transpose
   , bufferEmpty, bufferSnoc
   , forWhile
+  , ConstWord(..)
   , module Simplicity.Ty.Word
   ) where
 
@@ -293,3 +294,44 @@ forWhile SingleV body = (((oh &&& false) &&& ih) >>> monobody) &&& oh
  where
   monobody = body
 forWhile (DoubleV n) body = forWhile n (forWhile n ((oooh &&& (ooih &&& oih)) &&& ih >>> body))
+
+-- | Used to match Simplicity expressions to see of they are of the form scribe(v) : term () (Word b).
+data ConstWord a b where
+  NotConstWord :: ConstWord a b
+  EmptyConstWord :: ConstWord a ()
+  ConstWord :: Word b -> !Integer -> ConstWord () b
+
+constBit :: (TyC a, TyC b) => Bool -> ConstWord a b
+constBit bit = result
+ where
+  result = case reifyArrow result of
+    (OneR, SumR OneR OneR) -> ConstWord word1 (if bit then 1 else 0)
+    _ -> NotConstWord
+
+instance Core ConstWord where
+  iden = NotConstWord
+  comp _ t = NotConstWord
+  unit = EmptyConstWord
+  injl EmptyConstWord = constBit False
+  injl _ = NotConstWord
+  injr EmptyConstWord = constBit True
+  injr _ = NotConstWord
+  match _ _ = NotConstWord
+  pair (ConstWord ws vs) (ConstWord wt vt) = case compareVectorSize ws wt of
+    Right (Left Refl) -> ConstWord (DoubleV ws) (Bits.shift vs (wordSize ws) + vt)
+    _ -> NotConstWord
+  pair _ _ = NotConstWord
+  take _ = NotConstWord
+  drop _ = NotConstWord
+
+instance Assert ConstWord where
+  assertl _ _ = NotConstWord
+  assertr _ _ = NotConstWord
+  fail _ = NotConstWord
+
+instance Witness ConstWord where
+  witness _ = NotConstWord
+
+instance Delegate ConstWord where
+  disconnect _ _ = NotConstWord
+

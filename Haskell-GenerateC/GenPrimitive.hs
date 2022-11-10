@@ -1,9 +1,11 @@
 module GenPrimitives where
 
+import Prelude hiding (sum)
+
 import Control.Monad.Cont (Cont, cont, runCont)
 import Data.Char (isAlphaNum, isDigit, isUpper, toLower, toUpper)
 import Data.Function (on)
-import Data.Functor.Fixedpoint (Fix(..))
+import Data.Functor.Fixedpoint (Fix(..), cata)
 import Data.List (groupBy, intercalate, sortBy)
 import Data.List.Split (chunksOf, condense, dropInitBlank, keepDelimsL, split, whenElt)
 import Data.Maybe (isJust)
@@ -58,7 +60,7 @@ showCHash h = intercalate ", " (format <$> chunksOf 8 str_h)
     text = showHex (integerHash256 h) ""
 
 compactTy :: Ty -> CompactTy
-compactTy = memoCataTy go
+compactTy = cata go -- memoCataTy go
  where
   go One = CTyOne
   go (Sum CTyOne CTyOne) = CTyWord 1
@@ -72,24 +74,32 @@ compactCName s = showString "ty_" . go s
  where
   go CTyOne = showString "u"
   go (CTyWord 1) = showString "b"
-  go (CTyWord n) = showString "w" . shows n
+  go (CTyWord n) | n < 2^10 = showString "w" . shows n
+                 | n < 2^20 = showString "w" . shows (n `div` (2^10)) . showString "Ki"
+                 | n < 2^30 = showString "w" . shows (n `div` (2^20)) . showString "Mi"
+                 | otherwise = showString "w" . shows (n `div` (2^30)) . showString "Gi"
   go (CTyMaybe x) = showString "m" . go x
   go (CTySum x y) = showString "s" . go x . go y
   go (CTyProd x y) = showString "p" . go x . go y
 
-cInitializeTy :: Ty -> String
-cInitializeTy ty = showString "(*bound_var)[" . compactCName (compactTy ty)
+cInitializeTy :: CompactTy -> String
+cInitializeTy ty = showString "(*bound_var)[" . compactCName ty
                  . showString "] = (unification_var){ .isBound = true, .bound = " . cBoundTy ty
                  . showString "};"
                  $ ""
  where
-  cBoundTy (Fix One) = showString "{ .kind = ONE }"
-  cBoundTy (Fix (Sum x y)) = showString "{ .kind = SUM, .arg = { &(*bound_var)[" . compactCName (compactTy x)
-                           . showString "], &(*bound_var)[" . compactCName (compactTy y)
-                           . showString "] } }"
-  cBoundTy (Fix (Prod x y)) = showString "{ .kind = PRODUCT, .arg = { &(*bound_var)[" . compactCName (compactTy x)
-                            . showString "], &(*bound_var)[" . compactCName (compactTy y)
-                            . showString "] } }"
+  cBoundTy CTyOne = showString "{ .kind = ONE }"
+  cBoundTy (CTyWord 1) = cBoundTy (CTySum CTyOne CTyOne)
+  cBoundTy (CTyWord n) = cBoundTy (CTyProd rec rec)
+   where
+    rec = CTyWord (n `div` 2)
+  cBoundTy (CTyMaybe x) = cBoundTy (CTySum CTyOne x)
+  cBoundTy (CTySum x y) = showString "{ .kind = SUM, .arg = { &(*bound_var)[" . compactCName x
+                        . showString "], &(*bound_var)[" . compactCName y
+                        . showString "] } }"
+  cBoundTy (CTyProd x y) = showString "{ .kind = PRODUCT, .arg = { &(*bound_var)[" . compactCName x
+                         . showString "], &(*bound_var)[" . compactCName y
+                         . showString "] } }"
 
 cJetNode :: (TyC x, TyC y) => String -> a x y -> String
 cJetNode name jet = unlines
@@ -110,9 +120,12 @@ cInitializeJet :: (TyC x, TyC y) => JetType x y -> String
 cInitializeJet jet = "jet_node[" ++ upperSnakeCase (jetName jet) ++
                      "].cmr = mkJetCMR((uint32_t[8]){" ++ showCHash (identityRoot (specification jet)) ++ "});"
 
-tyList :: [Ty]
-tyList = Map.elems . foldr combine Map.empty $ (tys =<< jetList)
+tyList :: [CompactTy]
+tyList = Map.keys . foldr combine wordMap $ (tys =<< jetList)
  where
+  wordMap = Map.fromList [(CTyWord n, ty) | (n, ty) <- take 32 words]
+   where
+    words = (1, sum one one) : [(2*n, prod ty ty) | (n, ty) <- words]
   tys (SomeArrow jet) = [unreflect x, unreflect y]
    where
     (x,y) = reifyArrow jet
@@ -125,7 +138,12 @@ tyList = Map.elems . foldr combine Map.empty $ (tys =<< jetList)
     children (Fix (Prod x y)) = [x,y]
 
 cEnumTyFile :: String
-cEnumTyFile = unlines . fmap (($ ",") . compactCName . compactTy) $ tyList
+cEnumTyFile = unlines . fmap item $ tyList
+ where
+  item ty@CTyOne = compactCName ty " = 0,"
+  item ty@(CTyWord n) = compactCName ty " = " ++ show (1 + ln n) ++ ","
+  item ty = compactCName ty ","
+  ln n = length . tail . takeWhile (0 <) $ iterate (`div` 2) n
 
 cInitializeTyFile :: String
 cInitializeTyFile = unlines $ cInitializeTy <$> tyList
