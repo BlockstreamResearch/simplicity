@@ -457,7 +457,7 @@ Hint Immediate hashBlock_Parametric : parametricity.
 Require Import Simplicity.MerkleRoot.
 
 Fact identityRoot_hashBlock : map Byte.unsigned (hash256_to_bytelist (identityRoot hashBlock)) =
-  map Byte.unsigned (sha.functional_prog.hexstring_to_bytelist "da10f0e8530695d07564f0b32feebe77265a1d69cf802e22d77289daf6641b8d").
+  map Byte.unsigned (sha.functional_prog.hexstring_to_bytelist "a123e1c054e91dd8ebc691666621dcb6cd91618e49d2a06d8fca709a0d706952").
 Proof.
 vm_compute.
 reflexivity.
