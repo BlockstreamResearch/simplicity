@@ -278,10 +278,7 @@ Definition adderBit {term : Core.Algebra} : term (Bit * Bit) (Bit * Bit) :=
   cond (iden &&& not iden) (false &&& iden).
 
 Definition fullAdderBit {term : Core.Algebra} : term (Bit * (Bit * Bit)) (Bit * Bit) :=
-  let add := adderBit in
-    drop add &&& O H
->>> O O H &&& (O I H &&& I H >>> add)
->>> cond true O H &&& I I H.
+  maj &&& xor3.
 
 Definition buildFullAdder {W} {term : Core.Algebra} (rec : term (Bit * (W * W)) (Bit * W)) :
   term (Bit * ((W * W) * (W * W))) (Bit * (W * W)) :=
