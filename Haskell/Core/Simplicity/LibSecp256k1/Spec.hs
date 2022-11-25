@@ -285,11 +285,10 @@ gej_add_ex a@(GEJ ax ay az) b@(GEJ bx by bz) | gej_is_infinity a = (fe_zero, GEJ
   y = (t .-. x) .*. i .-. h .^. 3 .*. s1
 
 instance Semigroup GEJ where
-  (<>) = mappend
+  a <> b = snd $ gej_add_ex a b
 
 instance Monoid GEJ where
   mempty = GEJ fe_zero fe_zero fe_zero
-  mappend a b = snd $ gej_add_ex a b
 
 -- | Check if the x-coordinate of the point represented by a 'GEJ' has a given value.
 gej_x_equiv :: FE -> GEJ -> Bool

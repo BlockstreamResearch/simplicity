@@ -181,16 +181,16 @@ data Stats = Stats { memSize :: !Int   -- ^ Maximum total number of 'Cell's occu
                    } deriving Show
 
 instance Semigroup Stats where
-  (<>) = mappend
+  a <> b = Stats { memSize = max (memSize a) (memSize b)
+                 , stackSize = max (stackSize a) (stackSize b)
+                 }
 
 -- The monoid instance for statistics combine intermediate execution profiles of the Bit Machine's state.
 instance Monoid Stats where
   mempty = Stats { memSize = 0
                  , stackSize = 0
                  }
-  a `mappend` b = Stats { memSize = max (memSize a) (memSize b)
-                        , stackSize = max (stackSize a) (stackSize b)
-                        }
+  mappend = (<>)
 
 -- This function computes the memory statistics of a snapshot of the Bit Machine's state.
 profile :: State -> Stats
