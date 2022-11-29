@@ -34,8 +34,8 @@ typedef struct rawOutput {
   rawBuffer rangeProof;
 } rawOutput;
 
-/* A structure representing data for one input from an Elements transaction, plus the TXO data of the output being redeemed,
- * plus all the segwit annexes.
+/* A structure representing data for one input from an Elements transaction, including its taproot annex,
+ * plus the TXO data of the output being redeemed.
  *
  * Invariant: unsigned char prevTxid[32];
  *            unsigned char pegin[32] or pegin == NULL;
