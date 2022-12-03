@@ -268,7 +268,7 @@ Section Definitions.
 
 Section Arith.
 
-Fixpoint zero {n : nat} {A} {term : Core.Algebra} : term A (Word n) :=
+Fixpoint zero {n : nat} {term : Core.Algebra} : term Unit (Word n) :=
 match n with
 | 0 => false
 | S n => zero &&& zero
@@ -318,7 +318,7 @@ match n with
 end.
 
 Definition multiplier {n : nat} {term : Core.Algebra} : term (Word n * Word n) (Word (S n)) :=
-   iden &&& (zero &&& zero) >>> fullMultiplier.
+   iden &&& (unit >>> zero &&& zero) >>> fullMultiplier.
 
 End Arith.
 
@@ -339,7 +339,7 @@ end.
 Fixpoint subseq0_le {n m} {term : Core.Algebra} : term (Word n) (Word (m + n)) :=
 match m with
 | 0 => iden
-| S m => zero &&& subseq0_le 
+| S m => (unit >>> zero) &&& subseq0_le
 end.
 
 Fixpoint subseq0_ge {n m} {term : Core.Algebra} : term (Word (m + n)) (Word n) :=
@@ -370,14 +370,14 @@ match (Z.eq_dec z 0)%Z with
   match Z_lt_le_dec z (two_power_nat n) with
   | Specif.right _ =>
     match Z_lt_le_dec z (two_power_nat (S n)) with
-    | Specif.right _ => zero
+    | Specif.right _ => unit >>> zero
     | Specif.left _ => take (rec (z - two_power_nat n)%Z)
     end
   | Specif.left Hz0 =>
     match Z_lt_le_dec (two_power_nat n) (z + two_power_nat m) with
     | Specif.right _ => 
       match Z_lt_le_dec 0 (z + two_power_nat m) with
-      | Specif.right _ => zero
+      | Specif.right _ => unit >>> zero
       | Specif.left _ => drop (rec z)
       end
     | Specif.left Hz1 =>
@@ -450,7 +450,7 @@ End Definitions.
 
 Section Specifications.
 
-Lemma zero_correct n (A : Ty) (a : A) : toZ (|[zero (n:=n)]| a) = 0%Z.
+Lemma zero_correct n : toZ (|[zero (n:=n)]| tt) = 0%Z.
 Proof.
 induction n; cbn;[|rewrite IHn];reflexivity.
 Qed.
@@ -763,7 +763,7 @@ Qed.
 
 End Specifications.
 
-Lemma zero_Parametric {n A} {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) : R A (Word n) zero zero.
+Lemma zero_Parametric {n} {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) : R _ (Word n) zero zero.
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
