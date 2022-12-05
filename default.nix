@@ -12,6 +12,12 @@ let hp = nixpkgs.haskell.packages.${ghc};
   haskellPackages = hp.override {
     overrides = self: super: {
       Simplicity = haskell;
+
+      # Temporary work around for compiling hlint and hasktags in ghc94.
+      microlens = self.microlens_0_4_13_0;
+      microlens-ghc = self.microlens-ghc_0_4_14_0;
+      microlens-platform = self.microlens-platform_0_4_3_2;
+      hlint = self.hlint_3_5;
     };
   };
 
