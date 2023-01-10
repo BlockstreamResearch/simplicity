@@ -12,16 +12,19 @@
 #    error "Please select int128 implementation"
 #  endif
 
+/* Construct an unsigned 128-bit value from a high and a low 64-bit value. */
+static SECP256K1_INLINE void secp256k1_u128_load(secp256k1_uint128 *r, uint64_t hi, uint64_t lo);
+
 /* Multiply two unsigned 64-bit values a and b and write the result to r. */
 static SECP256K1_INLINE void secp256k1_u128_mul(secp256k1_uint128 *r, uint64_t a, uint64_t b);
 
 /* Multiply two unsigned 64-bit values a and b and add the result to r.
- * The final result is taken moduluo 2^128.
+ * The final result is taken modulo 2^128.
  */
 static SECP256K1_INLINE void secp256k1_u128_accum_mul(secp256k1_uint128 *r, uint64_t a, uint64_t b);
 
 /* Add an unsigned 64-bit value a to r.
- * The final result is taken moduluo 2^128.
+ * The final result is taken modulo 2^128.
  */
 static SECP256K1_INLINE void secp256k1_u128_accum_u64(secp256k1_uint128 *r, uint64_t a);
 
@@ -44,6 +47,9 @@ static SECP256K1_INLINE void secp256k1_u128_from_u64(secp256k1_uint128 *r, uint6
  */
 static SECP256K1_INLINE int secp256k1_u128_check_bits(const secp256k1_uint128 *r, unsigned int n);
 
+/* Construct an signed 128-bit value from a high and a low 64-bit value. */
+static SECP256K1_INLINE void secp256k1_i128_load(secp256k1_int128 *r, int64_t hi, uint64_t lo);
+
 /* Multiply two signed 64-bit values a and b and write the result to r. */
 static SECP256K1_INLINE void secp256k1_i128_mul(secp256k1_int128 *r, int64_t a, int64_t b);
 
@@ -60,7 +66,12 @@ static SECP256K1_INLINE void secp256k1_i128_det(secp256k1_int128 *r, int64_t a, 
  */
 static SECP256K1_INLINE void secp256k1_i128_rshift(secp256k1_int128 *r, unsigned int b);
 
-/* Return the low 64-bits of a 128-bit value interpreted as an signed 64-bit value. */
+/* Return the input value modulo 2^64. */
+static SECP256K1_INLINE uint64_t secp256k1_i128_to_u64(const secp256k1_int128 *a);
+
+/* Return the value as a signed 64-bit value.
+ * Requires the input to be between INT64_MIN and INT64_MAX.
+ */
 static SECP256K1_INLINE int64_t secp256k1_i128_to_i64(const secp256k1_int128 *a);
 
 /* Write a signed 64-bit value to r. */
