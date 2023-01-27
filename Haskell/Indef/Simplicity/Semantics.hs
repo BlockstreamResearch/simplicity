@@ -4,7 +4,7 @@
 module Simplicity.Semantics
  ( Semantics, sem
  , fastEval
- , FastEval
+ , FastEval(..)
  , PrimEnv
  ) where
 

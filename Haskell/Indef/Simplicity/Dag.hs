@@ -26,6 +26,7 @@ import Simplicity.Digest
 import Simplicity.Inference
 import Simplicity.JetType
 import Simplicity.MerkleRoot
+import Simplicity.Semantics
 import Simplicity.Tensor
 import Simplicity.Term
 
@@ -52,7 +53,7 @@ tellNode h iterm = StateT go
 -- @'JetDag' jt@ is used to create DAGs containing jets of @'JetType' jt@ by finding subexpressions that match the jet specifications of @jt@.
 data JetDag jt a b = Dag { dagRoot :: IdentityRoot a b
                          , dagMap :: Map.Map Hash256 (DagMapContents jt)
-                         , dagMatcher :: Maybe (MatcherInfo jt a b)
+                         , dagEval :: FastEval jt a b
                          }
 
 -- Each entry in the 'dagMap' contains an untyped term with references to the map index of its subexpressions, and the 'MatcherInfo' of some 'JetType'.
@@ -125,79 +126,84 @@ jetSubst t = k :@: jetDag t
                  Left e -> error $ "subJets: " ++ e
 
 -- These combinators are used in to assist making 'Dag' instances.
-mkLeaf idComb jmComb uComb =
+mkLeaf idComb eComb uComb =
    Dag { dagRoot = root
        , dagMap = Map.singleton (identityRoot root) (DMC uComb (SomeArrow <$> jm))
-       , dagMatcher = jm
+       , dagEval = eval
        }
   where
    root = idComb
-   jm = jmComb
+   eval = eComb
+   jm = fastEvalMatcher eval
 
-mkUnary idComb jmComb uComb t =
+mkUnary idComb eComb uComb t =
    Dag { dagRoot = root
        , dagMap = Map.insert (identityRoot root) (DMC (uComb (identityRoot (dagRoot t))) (SomeArrow <$> jm))
                 $ dagMap t
-       , dagMatcher = jm
+       , dagEval = eval
        }
   where
    root = idComb (dagRoot t)
-   jm = jmComb <*> dagMatcher t
+   eval = eComb (dagEval t)
+   jm = fastEvalMatcher eval
 
-mkBinary idComb jmComb uComb s t =
+mkBinary idComb eComb uComb s t =
    Dag { dagRoot = root
        , dagMap = Map.insert (identityRoot root) (DMC (uComb (identityRoot (dagRoot s)) (identityRoot (dagRoot t))) (SomeArrow <$> jm))
                 $ union
-       , dagMatcher = jm
+       , dagEval = eval
        }
   where
    root = idComb (dagRoot s) (dagRoot t)
-   jm = jmComb <*> dagMatcher s <*> dagMatcher t
+   eval = eComb (dagEval s) (dagEval t)
+   jm = fastEvalMatcher eval
    union = Map.union (dagMap s) (dagMap t)
 
 -- 'Dag' instances for Simplicity expressions.
 instance JetType jt => Core (JetDag jt) where
-  iden = mkLeaf iden (pure iden) uIden
-  comp = mkBinary comp (pure comp) uComp
-  unit = mkLeaf unit (pure unit) uUnit
-  injl = mkUnary injl (pure injl) uInjl
-  injr = mkUnary injr (pure injr) uInjr
-  match = mkBinary match (pure match) uCase
-  pair = mkBinary pair (pure pair) uPair
-  take = mkUnary take (pure take) uTake
-  drop = mkUnary drop (pure drop) uDrop
+  iden = mkLeaf iden iden uIden
+  comp = mkBinary comp comp uComp
+  unit = mkLeaf unit unit uUnit
+  injl = mkUnary injl injl uInjl
+  injr = mkUnary injr injr uInjr
+  match = mkBinary match match uCase
+  pair = mkBinary pair pair uPair
+  take = mkUnary take take uTake
+  drop = mkUnary drop drop uDrop
 
 instance JetType jt => Assert (JetDag jt) where
   assertl s h = Dag { dagRoot = root
                     , dagMap = Map.insert (identityRoot root) (DMC (uCase (identityRoot (dagRoot s)) hRoot) (SomeArrow <$> jm))
                              . Map.insert hRoot (DMC (uHidden h) Nothing)
                              $ dagMap s
-                    , dagMatcher = jm
+                    , dagEval = eval
                     }
    where
     hRoot = hiddenRoot h
     root = assertl (dagRoot s) h
-    jm = assertl <$> dagMatcher s <*> pure h
+    eval = assertl (dagEval s) h
+    jm = fastEvalMatcher eval
   assertr h t = Dag { dagRoot = root
                     , dagMap = Map.insert (identityRoot root) (DMC (uCase hRoot (identityRoot (dagRoot t))) (SomeArrow <$> jm))
                              . Map.insert hRoot (DMC (uHidden h) Nothing)
                              $ dagMap t
-                    , dagMatcher = jm
+                    , dagEval = eval
                     }
    where
     hRoot = hiddenRoot h
     root = assertr h (dagRoot t)
-    jm = assertr h <$> dagMatcher t
-  fail b = mkLeaf (fail b) (pure (fail b)) (uFail b)
+    eval = assertr h (dagEval t)
+    jm = fastEvalMatcher eval
+  fail b = mkLeaf (fail b) (fail b) (uFail b)
 
 instance Witness (JetDag jt) where
-  witness v = mkLeaf (witness v) empty (uWitness (untypedValue v))
+  witness v = mkLeaf (witness v) (witness v) (uWitness (untypedValue v))
 
-instance Delegate (JetDag jt) where
-  disconnect = mkBinary disconnect empty uDisconnect
+instance JetType jt => Delegate (JetDag jt) where
+  disconnect = mkBinary disconnect disconnect uDisconnect
 
 instance JetType jt => Primitive (JetDag jt)  where
-  primitive p = mkLeaf (primitive p) (pure (primitive p)) (Prim (SomeArrow p))
+  primitive p = mkLeaf (primitive p) (primitive p) (Prim (SomeArrow p))
 
 -- Exisiting jets are discarded when coverting to a dag.  They are reconstructed using a jet matcher.
 instance JetType jt => Jet (JetDag jt) where
@@ -206,12 +212,13 @@ instance JetType jt => Jet (JetDag jt) where
               -- This lets the jet matcher match on nodes marked as jets, but otherwise the JetDag ignores marked jets.
               , dagMap = Map.insert (identityRoot root) (DMC (dmcTerm (map ! identityRoot (dagRoot dag))) (SomeArrow <$> jm))
                        $ map
-              , dagMatcher = jm
+              , dagEval = eval
               }
    where
     dag = t
     root = jet t
-    jm = dagMatcher dag
+    eval = dagEval dag
+    jm = fastEvalMatcher eval
     map = dagMap dag
 
 instance JetType jt => Simplicity (JetDag jt) where
