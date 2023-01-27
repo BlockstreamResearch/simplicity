@@ -62,12 +62,14 @@ proxyImplementation :: (JetType jt, TyC a, TyC b) => proxy jt a b -> jt a b -> P
 proxyImplementation _proxy = implementation
 
 withJets :: (JetType jt, TyC a, TyC b) => FastEval jt a b -> FastEval jt a b
-withJets ~fe@(FastEval ~(Delegator rs fs) jm) | Just jt <- matcher =<< jm =
+withJets ~fe@(FastEval ~(Delegator rs (Kleisli fs)) jm) =
   -- 'withJets' does not adjust the commitment root.
-  FastEval { fastEvalSem = Delegator rs . Kleisli $ ReaderT . flip (proxyImplementation fe jt)
-           , fastEvalMatcher = fastEvalMatcher fe
+  FastEval { fastEvalSem = Delegator rs (Kleisli optfs)
+           , fastEvalMatcher = jm
            }
-withJets fe | otherwise = fe
+ where
+  optfs a | Just jt <- matcher =<< jm = ReaderT $ flip (proxyImplementation fe jt) a
+          | otherwise = fs a
 
 mkLeaf sComb jmComb = withJets $
   FastEval { fastEvalSem = sComb
