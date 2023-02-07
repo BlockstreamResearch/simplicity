@@ -5,6 +5,12 @@
 
 #include "dag.h"
 
+typedef unsigned char flags_type;
+#define CHECK_NONE 0
+#define CHECK_EXEC 0x10
+#define CHECK_CASE 0x60
+#define CHECK_ALL ((flags_type)(-1))
+
 /* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]'.
  * If 'NULL != input', initialize the active read frame's data with 'input[ROUND_UWORD(inputSize)]'.
  *
@@ -12,10 +18,15 @@
  * If static analysis results determines the bound on memory allocation requirements exceed the allowed limits,
  * '*evalSuccess' is set to 'false'.
  * If during execution an 'assertr' or 'assertl' combinator fails, '*evalSuccess' is set to 'false'
+ *
+ * If none of the above conditions fail and 'NULL != output', then a copy the final active write frame's data is written to 'output[roundWord(outputSize)]'.
+ *
+ * If 'anti_dos_checks' includes the CHECK_EXEC flag, and not every dag node is executed, '*evalSuccess' is set to 'false'
+ * If 'anti_dos_checks' includes the CHECK_CASE flag, and not every case node has both branches executed, '*evalSuccess' is set to 'false'
+ *
  * Otherwise '*evalSuccess' is set to 'true'.
  *
- * If the function returns 'true' and '*evalSuccess' and 'NULL != output',
- * copy the final active write frame's data to 'output[roundWord(outputSize)]'.
+ * Note: Consensus applications should be uisng 'evalTCOProgram' which operate on programs and include all anti-DOS checks.
  *
  * Precondition: NULL != evalSuccess
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type A |- B;
@@ -25,16 +36,16 @@
  *               input == NULL or UWORD input[ROUND_UWORD(inputSize)];
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
-bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
+bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
                       , const dag_node* dag, type* type_dag, size_t len, const txEnv* env
                       );
 
 /* Run the Bit Machine on the well-typed Simplicity program 'dag[len]'.
  *
- * If static analysis results determines the bound on memory allocation requirements exceed the allowed limits,
- * set '*evalSuccess' to 'false' and return 'true'.
  * If malloc fails, return 'false', otherwise return 'true'.
- * If during execution an 'assertr' or 'assertl' combinator fails, '*evalSuccess' is set to 'false'
+ * If static analysis results determines the bound on memory allocation requirements exceed the allowed limits, set '*evalSuccess' to 'false'.
+ * If during execution an 'assertr' or 'assertl' combinator fails, '*evalSuccess' is set to 'false'.
+ * If after execution the anti-DOS checks fail, '*evalSuccess' is set to 'false'.
  * Otherwise '*evalSuccess' is set to 'true'.
  *
  * Precondition: NULL != evalSuccess
@@ -42,6 +53,6 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
 static inline bool evalTCOProgram(bool *evalSuccess, const dag_node* dag, type* type_dag, size_t len, const txEnv* env) {
-  return evalTCOExpression(evalSuccess, NULL, 0, NULL, 0, dag, type_dag, len, env);
+  return evalTCOExpression(evalSuccess, CHECK_ALL, NULL, 0, NULL, 0, dag, type_dag, len, env);
 }
 #endif

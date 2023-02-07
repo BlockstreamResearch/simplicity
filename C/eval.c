@@ -306,7 +306,6 @@ typedef struct evalState {
   frameItem* activeWriteFrame;
 } evalState;
 
-typedef unsigned char flags_type;
 /* 'call' is an item is used to track the "call stack" of the Bit Machine during evaluation.
  * Each call stack frame remembers where to return to after the call and a set of flags to hold various bits of state.
  */
@@ -317,6 +316,9 @@ typedef struct call {
 
 #define FLAG_TCO        0x01 // Whether TCO is on (1) or off (0).
 #define FLAG_LAST_CASE  0x02 // For case combinators, last branch executed was right (1) or left (0).
+#define FLAG_EXEC       0x10 // Whether this combinator has ever been executed (1) or not (0).
+#define FLAG_CASE_LEFT  0x20 // For case combinators, whether the left branch has ever been executed (1) or not (0).
+#define FLAG_CASE_RIGHT 0x40 // For case combinators, whether the right branch has ever been executed (1) or not (0).
 
 static inline bool get_tco_flag(const call *stack) {
   return FLAG_TCO == (stack->flags & FLAG_TCO);
@@ -387,6 +389,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
 
   /* :TODO: Use static analysis to limit the number of iterations through this loop. */
   while(pc < len) {
+    stack[pc].flags |= FLAG_EXEC;
     tag_t tag = dag[pc].tag;
     assert(state.activeReadFrame < state.activeWriteFrame);
     assert(state.activeReadFrame->edge <= state.activeWriteFrame->edge);
@@ -427,6 +430,12 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
      case CASE:
       if (calling) {
         bool bit = peekBit(state.activeReadFrame);
+
+        if (bit) {
+           stack[pc].flags |= FLAG_CASE_RIGHT;
+        } else {
+           stack[pc].flags |= FLAG_CASE_LEFT;
+        }
 
         /* FWD(1 + PADL(A,B) when bit = 0; FWD(1 + PADR(A,B) when bit = 1 */
         forward(state.activeReadFrame, 1 + pad( bit
@@ -587,6 +596,41 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
     }
   }
   assert(pc == len);
+
+  return true;
+}
+
+/* Inspects the stack contents after a successful runTCO execution to verify anti-DOS properties:
+ * 1. If 'checks' inclues CHECK_EXEC, then check that all dag nodes were executed at least once.
+ * 2. If 'checks' inclues CHECK_CASE, then check that both branches of every CASE node were executed.
+ *
+ * If these are violated, it means that the dag had unpruned nodes.
+ *
+ * Returns false if any of the anti-DOS checks fail.  Otherwise returns true.
+ *
+ * Precondition: call stack[len];
+ *               dag_node dag[len];
+ */
+static bool antiDos(flags_type checks, const call* stack, const dag_node* dag, size_t len) {
+  static_assert(CHECK_EXEC == FLAG_EXEC);
+  static_assert(CHECK_CASE == (FLAG_CASE_LEFT | FLAG_CASE_RIGHT));
+
+  if (!checks) return true;
+
+  for(size_t i = 0; i < len; ++i) {
+    /* All combinators must be executed at least once. */
+    flags_type test_flags = CHECK_EXEC;
+
+    /* Both branches of every case combinator must be executed at least once. */
+    if (CASE == dag[i].tag) test_flags |= CHECK_CASE;
+
+    /* Only enable requested checks */
+    test_flags &= checks;
+    if (test_flags != (test_flags & stack[i].flags)) {
+      return false;
+    }
+  }
+
   return true;
 }
 
@@ -724,10 +768,13 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
  * If static analysis results determines the bound on memory allocation requirements exceed the allowed limits,
  * '*evalSuccess' is set to 'false'.
  * If during execution an 'assertr' or 'assertl' combinator fails, '*evalSuccess' is set to 'false'
- * Otherwise '*evalSuccess' is set to 'true'.
  *
- * If the function returns 'true' and '*evalSuccess' and 'NULL != output',
- * copy the final active write frame's data to 'output[roundWord(outputSize)]'.
+ * If none of the above conditions fail and 'NULL != output', then a copy the final active write frame's data is written to 'output[roundWord(outputSize)]'.
+ *
+ * If 'anti_dos_checks' includes the CHECK_EXEC flag, and not every dag node is executed, '*evalSuccess' is set to 'false'
+ * If 'anti_dos_checks' includes the CHECK_CASE flag, and not every case node has both branches executed, '*evalSuccess' is set to 'false'
+ *
+ * Otherwise '*evalSuccess' is set to 'true'.
  *
  * Precondition: NULL != evalSuccess
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type A |- B;
@@ -737,7 +784,7 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
  *               input == NULL or UWORD input[ROUND_UWORD(inputSize)];
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
-bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
+bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
                       , const dag_node* dag, type* type_dag, size_t len, const txEnv* env
                       ) {
   memBound bound;
@@ -777,6 +824,8 @@ bool evalTCOExpression( bool *evalSuccess, UWORD* output, size_t outputSize, con
     if (*evalSuccess && output) {
       memcpy(output, state.activeWriteFrame->edge, ROUND_UWORD(outputSize) * sizeof(UWORD));
     }
+
+    if (*evalSuccess) *evalSuccess = antiDos(anti_dos_checks, stack, dag, len);
   }
 
   free(stack);
