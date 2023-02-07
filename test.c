@@ -115,7 +115,7 @@ static void test_hashBlock(void) {
         write32s(&frame, (uint32_t[16]){ [0] = 0x61626380, [15] = 0x18 }, 16);
       }
       bool evalSuccess;
-      if (evalTCOExpression(&evalSuccess, output, 256, input, 256+512, dag, type_dag, (size_t)len, NULL) && evalSuccess) {
+      if (evalTCOExpression(&evalSuccess, CHECK_NONE, output, 256, input, 256+512, dag, type_dag, (size_t)len, NULL) && evalSuccess) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
                                          , 0xb00361a3ul, 0x96177a9cul, 0xb410ff61ul, 0xf20015adul };
@@ -179,7 +179,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       failures++;
       printf("Unexpected failure of fillWitnessData.\n");
     } else {
-      { 
+      {
         analyses analysis[len];
         computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)len);
         if (expectedAMR) {
