@@ -10,6 +10,7 @@ module Simplicity.Elements.Jets
   -- * Re-exports
   , WrappedSimplicity, unwrap
   , Simplicity.Elements.JetType.specification, Simplicity.Elements.JetType.implementation
+  , Simplicity.Elements.JetType.getJetBit, Simplicity.Elements.JetType.putJetBit
   , Semantics.FastEval
   ) where
 

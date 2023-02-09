@@ -10,6 +10,7 @@ module Simplicity.Bitcoin.Jets
   -- * Re-exports
   , WrappedSimplicity, unwrap
   , Simplicity.Bitcoin.JetType.specification, Simplicity.Bitcoin.JetType.implementation
+  , Simplicity.Bitcoin.JetType.getJetBit, Simplicity.Bitcoin.JetType.putJetBit
   , Semantics.FastEval
   ) where
 

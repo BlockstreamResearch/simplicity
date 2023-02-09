@@ -304,4 +304,5 @@ executable GenRustJets
                       containers >=0.5.10 && <0.7,
                       prettyprinter >=1.7 && <1.8,
                       split >=0.2.3 && <0.3,
+                      transformers >=0.5 && <0.6,
                       unification-fd >=0.10 && <0.12,

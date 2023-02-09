@@ -2,6 +2,7 @@
 module GenRustJets where
 
 import Data.Char (isAlphaNum, isDigit, isUpper, toLower, toUpper)
+import Data.Foldable (toList)
 import Data.Function (on)
 import Data.Functor.Fixedpoint (Fix(..))
 import Data.List (groupBy, intercalate, sortBy)
@@ -9,7 +10,7 @@ import Data.List.Split (chunksOf, condense, dropInitBlank, keepDelimsL, split, w
 import Data.Maybe (fromMaybe)
 import qualified Data.Map as Map
 import Numeric (showHex)
-import Prettyprinter ( Doc, (<+>), comma, fillSep, line, nest, pretty, punctuate, semi, vsep
+import Prettyprinter ( Doc, (<+>), braces, comma, fillSep, line, nest, pretty, punctuate, semi, tupled, vsep
                      , SimpleDocStream, LayoutOptions(..), PageWidth(..), defaultLayoutOptions, layoutPretty
                      )
 import Prettyprinter.Render.Text (renderIO)
@@ -21,9 +22,12 @@ import Simplicity.Digest
 import qualified Simplicity.Elements.Jets as Elements
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
+import Simplicity.Tree
 import Simplicity.Ty
 
 x <-> y = x <> line <> y
+
+nestBraces x = braces (nest 4 (line <> x) <> line)
 
 data JetModule = CoreModule | BitcoinModule | ElementsModule
   deriving Eq
@@ -67,20 +71,25 @@ bitcoinJetData jet = JetData { jetName = mkName jet
             | otherwise = BitcoinModule
 
 data Module = Module { moduleName :: Maybe String
-                     , moduleJets :: [SomeArrow JetData]
+                     , moduleCodes :: BinTree (SomeArrow JetData)
                      }
+moduleJets :: Module -> [SomeArrow JetData]
+moduleJets = sortJetName . toList . moduleCodes
 
 rustModuleName = fromMaybe "Core" . moduleName
 lowerRustModuleName = map toLower . rustModuleName
 
 coreModule :: Module
-coreModule = Module Nothing (sortJetName [SomeArrow (coreJetData jet) | (SomeArrow jet) <- Map.elems coreJetMap])
+coreModule = Module Nothing (someArrowMap coreJetData <$> (treeEvalBitStream getJetBit))
+
+-- Take Right is used to drop the (infinite) branch of constant word jets.
+takeRight (Branch _ r) = r
 
 elementsModule :: Module
-elementsModule = Module (Just "Elements") (sortJetName [SomeArrow (elementsJetData jet) | (SomeArrow jet) <- Map.elems Elements.jetMap])
+elementsModule = Module (Just "Elements") (someArrowMap elementsJetData <$> takeRight (treeEvalBitStream Elements.getJetBit))
 
 bitcoinModule :: Module
-bitcoinModule = Module (Just "Bitcoin") (sortJetName [SomeArrow (bitcoinJetData jet) | (SomeArrow jet) <- Map.elems Bitcoin.jetMap])
+bitcoinModule = Module (Just "Bitcoin") (someArrowMap bitcoinJetData <$> takeRight (treeEvalBitStream Bitcoin.getJetBit))
 
 data CompactTy = CTyOne
                | CTyWord Int
@@ -214,6 +223,29 @@ rustJetPtr mod = vsep $
  where
   modname = rustModuleName mod
 
+rustJetEncode :: Module -> Doc a
+rustJetEncode mod =
+  "fn encode<W: Write>(&self, w: &mut BitWriter<W>) -> std::io::Result<usize>" <+>
+  nestBraces ("let (n, len) = match self" <+>
+    nestBraces (vsep (foldMapWithPath item (moduleCodes mod))) <> semi <-> line <> "w.write_bits_be(n, len)")
+ where
+  item path (SomeArrow jet) = [pretty (rustModuleName mod ++ "::" ++ jetName jet) <+> "=>"
+                          <+> tupled [pretty (code path 0 :: Int), pretty (length path)] <> comma]
+  code [] n = n
+  code (b : l) n = code l (2*n + if b then 1 else 0)
+
+rustJetDecode :: Module -> Doc a
+rustJetDecode mod =
+  "fn decode<I: Iterator<Item = u8>>(bits: &mut BitIter<I>) -> Result<Self, Error>" <+>
+  nestBraces ("decode_bits!(bits," <+> braces (docTree (moduleCodes mod)) <> ")")
+ where
+  docTree Dead = mempty
+  docTree (Leaf (SomeArrow jet)) = pretty (rustModuleName mod ++ "::" ++ jetName jet)
+  docTree (Branch l r) = nest 4
+                       ( line <> ("0" <+> "=>" <+> braces (docTree l)) <> comma
+                     <-> ("1" <+> "=>" <+> braces (docTree r))
+                       ) <> line
+
 rustJetImpl :: Module -> Doc a
 rustJetImpl mod = vsep $
   [ nest 4 (vsep $ punctuate line
@@ -222,8 +254,8 @@ rustJetImpl mod = vsep $
     , rustJetCmr mod
     , rustJetSourceTy mod
     , rustJetTargetTy mod
-    , encodeStub
-    , decodeStub
+    , rustJetEncode mod
+    , rustJetDecode mod
     , rustJetPtr mod
     ])
   , "}"
@@ -249,17 +281,6 @@ rustJetImpl mod = vsep $
             | Just "Bitcoin" == moduleName mod = "unimplemented!(\"Unspecified CJetEnvironment for Bitcoin jets\")"
             | otherwise = "env.c_tx_env()"
 
-  encodeStub = vsep
-    [ "fn encode<W: Write>(&self, w: &mut BitWriter<W>) -> std::io::Result<usize> {"
-    , "    self.encode_manual(w)"
-    , "}"
-    ]
-  decodeStub = vsep
-    [ "fn decode<I: Iterator<Item = u8>>(bits: &mut BitIter<I>) -> Result<Self, Error> {"
-    , "    Self::decode_manual(bits)"
-    , "}"
-    ]
-
 rustJetEnum :: Module -> Doc a
 rustJetEnum mod = vsep
  [ pretty $ "/// " ++ rustModuleName mod ++ " jet family"
@@ -280,6 +301,7 @@ rustImports mod = vsep (map (<> semi)
   , "use crate::jet::Jet"
   , "use crate::merkle::cmr::Cmr"
   , "use crate::decode_bits"
+  , "use crate::Error"
   , "use bitcoin_hashes::sha256::Midstate"
   , "use simplicity_sys::CFrameItem"
   , "use std::io::Write"
