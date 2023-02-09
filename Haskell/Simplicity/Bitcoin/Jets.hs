@@ -39,6 +39,7 @@ import Simplicity.MerkleRoot
 import Simplicity.Programs.Word
 import Simplicity.Serialization
 import Simplicity.Tensor
+import Simplicity.Tree
 import Simplicity.Ty
 import Simplicity.Ty.Bit
 import Simplicity.Ty.Word
@@ -165,52 +166,52 @@ implementationTransaction :: TransactionJet a b -> PrimEnv -> a -> Maybe b
 implementationTransaction x env i = Semantics.sem (specificationTransaction x) env i
 
 getJetBitBitcoin :: (Monad m) => m Void -> m Bool -> m (SomeArrow BitcoinJet)
-getJetBitBitcoin abort next = getPositive next >>= match
+getJetBitBitcoin = getCatalogue bitcoinCatalogue
  where
-  makeArrow p = return (SomeArrow p)
-  match 2 = (someArrowMap TimeLockJet) <$> getJetBitTimeLock
-  match 3 = (someArrowMap TransactionJet) <$> getJetBitTransaction
-  match _ = vacuous abort
-  getJetBitTimeLock = getPositive next >>= matchTimeLock
-   where
-    matchTimeLock 1 = makeArrow CheckLockHeight
-    matchTimeLock 2 = makeArrow CheckLockTime
-    matchTimeLock 3 = makeArrow CheckLockDistance
-    matchTimeLock 4 = makeArrow CheckLockDuration
-    matchTimeLock 5 = makeArrow TxLockHeight
-    matchTimeLock 6 = makeArrow TxLockTime
-    matchTimeLock 7 = makeArrow TxLockDistance
-    matchTimeLock 8 = makeArrow TxLockDuration
-    matchTimeLock 9 = makeArrow TxIsFinal
-    matchTimeLock _ = vacuous abort
-  getJetBitTransaction = getPositive next >>= matchTransaction
-   where
-    matchTransaction 1 = makeArrow ScriptCMR
-    matchTransaction 2 = makeArrow InternalKey
-    matchTransaction 3 = makeArrow CurrentIndex
-    matchTransaction 4 = makeArrow NumInputs
-    matchTransaction 5 = makeArrow NumOutputs
-    matchTransaction 6 = makeArrow LockTime
-
-    matchTransaction 8 = makeArrow OutputValue
-    matchTransaction 9 = makeArrow OutputScriptHash
-    matchTransaction 10 = makeArrow TotalOutputValue
-    matchTransaction 11 = makeArrow CurrentPrevOutpoint
-    matchTransaction 12 = makeArrow CurrentValue
-
-    matchTransaction 14 = makeArrow CurrentSequence
-    matchTransaction 15 = makeArrow CurrentAnnexHash
-    matchTransaction 16 = makeArrow CurrentScriptSigHash
-    matchTransaction 17 = makeArrow InputPrevOutpoint
-    matchTransaction 18 = makeArrow InputValue
-
-    matchTransaction 20 = makeArrow InputSequence
-    matchTransaction 21 = makeArrow InputAnnexHash
-    matchTransaction 22 = makeArrow InputScriptSigHash
-    matchTransaction 23 = makeArrow TotalInputValue
-    matchTransaction 24 = makeArrow TapleafVersion
-    matchTransaction 25 = makeArrow Tapbranch
-    matchTransaction 26 = makeArrow Version
+  bitcoinCatalogue = Shelf
+   [ Missing
+   , someArrowMap TimeLockJet <$> timeLockCatalogue
+   , someArrowMap TransactionJet <$> transactionCatalogue
+   ]
+  timeLockCatalogue = book
+   [ SomeArrow CheckLockHeight
+   , SomeArrow CheckLockTime
+   , SomeArrow CheckLockDistance
+   , SomeArrow CheckLockDuration
+   , SomeArrow TxLockHeight
+   , SomeArrow TxLockTime
+   , SomeArrow TxLockDistance
+   , SomeArrow TxLockDuration
+   , SomeArrow TxIsFinal
+   ]
+  transactionCatalogue = Shelf
+   [ Item $ SomeArrow ScriptCMR
+   , Item $ SomeArrow InternalKey
+   , Item $ SomeArrow CurrentIndex
+   , Item $ SomeArrow NumInputs
+   , Item $ SomeArrow NumOutputs
+   , Item $ SomeArrow LockTime
+   , Missing
+   , Item $ SomeArrow OutputValue
+   , Item $ SomeArrow OutputScriptHash
+   , Item $ SomeArrow TotalOutputValue
+   , Item $ SomeArrow CurrentPrevOutpoint
+   , Item $ SomeArrow CurrentValue
+   , Missing
+   , Item $ SomeArrow CurrentSequence
+   , Item $ SomeArrow CurrentAnnexHash
+   , Item $ SomeArrow CurrentScriptSigHash
+   , Item $ SomeArrow InputPrevOutpoint
+   , Item $ SomeArrow InputValue
+   , Missing
+   , Item $ SomeArrow InputSequence
+   , Item $ SomeArrow InputAnnexHash
+   , Item $ SomeArrow InputScriptSigHash
+   , Item $ SomeArrow TotalInputValue
+   , Item $ SomeArrow TapleafVersion
+   , Item $ SomeArrow Tapbranch
+   , Item $ SomeArrow Version
+   ]
 
 putJetBitBitcoin :: BitcoinJet a b -> DList Bool
 putJetBitBitcoin (TimeLockJet x) = putPositive 2 . putJetBitTimeLock x

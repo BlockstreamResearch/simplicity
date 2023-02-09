@@ -39,6 +39,7 @@ import qualified Simplicity.Programs.TimeLock as TimeLock
 import qualified Simplicity.Programs.LibSecp256k1.Lib as Secp256k1
 import qualified Simplicity.Programs.Sha256.Lib as Sha256
 import Simplicity.Term.Core
+import Simplicity.Tree
 
 -- | A data type of (typed) tokens representing known "core" jets.
 --
@@ -368,137 +369,198 @@ implementationBitcoin ParseSequence v = Just . maybe (Left ()) (Right . (toW16 +
 
 -- | A canonical deserialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.getJetBit' method.
 getJetBit :: (Monad m) => m Void -> m Bool -> m (SomeArrow CoreJet)
-getJetBit abort next =  getPositive next >>= match
+getJetBit = getCatalogue coreCatalogue
  where
-  makeArrow p = return (SomeArrow p)
-  match 1 = (someArrowMap WordJet) <$> getJetBitWord abort next
-  match 2 = (someArrowMap ArithJet) <$> getJetBitArith abort next
-  match 3 = (someArrowMap HashJet) <$> getJetBitHash abort next
-  match 4 = (someArrowMap Secp256k1Jet) <$> getJetBitSecp256k1 abort next
-  match 5 = (someArrowMap SignatureJet) <$> getJetBitSignature abort next
-  match 7 = (someArrowMap BitcoinJet) <$> getJetBitBitcoin abort next
-  match _ = vacuous abort
-  getJetBitWord :: (Monad m) => m Void -> m Bool -> m (SomeArrow WordJet)
-  getJetBitWord abort next = getPositive next >>= matchWord
-   where
-    matchWord 1 = makeArrow Verify
-    matchWord 2 = getPositive next >>= matchLow
-    matchWord 13 = getPositive next >>= matchEq
-    matchLow 5 = makeArrow Low32
-    matchLow _ = vacuous abort
-    matchEq 5 = makeArrow Eq32
-    matchEq 8 = makeArrow Eq256
-    matchEq _ = vacuous abort
-  getJetBitArith :: (Monad m) => m Void -> m Bool -> m (SomeArrow ArithJet)
-  getJetBitArith abort next = getPositive next >>= matchArith
-   where
-    matchArith 1 = getPositive next >>= matchOne
-    matchArith 2 = getPositive next >>= matchFullAdd
-    matchArith 3 = getPositive next >>= matchAdd
-    matchArith 7 = getPositive next >>= matchFullSubtract
-    matchArith 8 = getPositive next >>= matchSubtract
-    matchArith 12 = getPositive next >>= matchFullMultiply
-    matchArith 13 = getPositive next >>= matchMultiply
-    matchArith 16 = getPositive next >>= matchLe
-    matchArith _ = vacuous abort
-    matchOne 5 = makeArrow Add32
-    matchOne _ = vacuous abort
-    matchAdd 5 = makeArrow Add32
-    matchAdd _ = vacuous abort
-    matchFullAdd 5 = makeArrow FullAdd32
-    matchFullAdd _ = vacuous abort
-    matchSubtract 5 = makeArrow Subtract32
-    matchSubtract _ = vacuous abort
-    matchFullSubtract 5 = makeArrow FullSubtract32
-    matchFullSubtract _ = vacuous abort
-    matchMultiply 5 = makeArrow Multiply32
-    matchMultiply _ = vacuous abort
-    matchFullMultiply 5 = makeArrow FullMultiply32
-    matchFullMultiply _ = vacuous abort
-    matchLe 5 = makeArrow Le32
-    matchLe _ = vacuous abort
-  getJetBitHash :: (Monad m) => m Void -> m Bool -> m (SomeArrow HashJet)
-  getJetBitHash abort next = getPositive next >>= matchHash
-   where
-    matchHash 1 = getPositive next >>= matchSha2
-    matchHash _ = vacuous abort
-    matchSha2 1 = makeArrow Sha256Block
-    matchSha2 2 = makeArrow Sha256Iv
-    matchSha2 3 = getPositive next >>= matchSha2Addn
-    matchSha2 4 = makeArrow Sha256Ctx8AddBuffer511
-    matchSha2 5 = makeArrow Sha256Ctx8Finalize
-    matchSha2 6 = makeArrow Sha256Ctx8Init
-    matchSha2 _ = vacuous abort
-    matchSha2Addn 1 = makeArrow Sha256Ctx8Add1
-    matchSha2Addn 2 = makeArrow Sha256Ctx8Add2
-    matchSha2Addn 3 = makeArrow Sha256Ctx8Add4
-    matchSha2Addn 4 = makeArrow Sha256Ctx8Add8
-    matchSha2Addn 5 = makeArrow Sha256Ctx8Add16
-    matchSha2Addn 6 = makeArrow Sha256Ctx8Add32
-    matchSha2Addn 7 = makeArrow Sha256Ctx8Add64
-    matchSha2Addn 8 = makeArrow Sha256Ctx8Add128
-    matchSha2Addn 9 = makeArrow Sha256Ctx8Add256
-    matchSha2Addn 10 = makeArrow Sha256Ctx8Add512
-    matchSha2Addn _ = vacuous abort
-  getJetBitSecp256k1 :: (Monad m) => m Void -> m Bool -> m (SomeArrow Secp256k1Jet)
-  getJetBitSecp256k1 abort next = getPositive next >>= matchSecp256k1
-   where
-    matchSecp256k1 35 = makeArrow FeNormalize
-    matchSecp256k1 36 = makeArrow FeNegate
-    matchSecp256k1 37 = makeArrow FeAdd
-    matchSecp256k1 38 = makeArrow FeSquare
-    matchSecp256k1 39 = makeArrow FeMultiply
-    matchSecp256k1 40 = makeArrow FeMultiplyBeta
-    matchSecp256k1 41 = makeArrow FeInvert
-    matchSecp256k1 42 = makeArrow FeSquareRoot
-    matchSecp256k1 43 = makeArrow FeIsZero
-    matchSecp256k1 44 = makeArrow FeIsOdd
-    matchSecp256k1 23 = makeArrow ScalarNormalize
-    matchSecp256k1 24 = makeArrow ScalarNegate
-    matchSecp256k1 25 = makeArrow ScalarAdd
-    matchSecp256k1 26 = makeArrow ScalarSquare
-    matchSecp256k1 27 = makeArrow ScalarMultiply
-    matchSecp256k1 28 = makeArrow ScalarMultiplyLambda
-    matchSecp256k1 29 = makeArrow ScalarInvert
-    matchSecp256k1 30 = makeArrow ScalarIsZero
-    matchSecp256k1 7  = makeArrow GejInfinity
-    matchSecp256k1 8  = makeArrow GejNormalize
-    matchSecp256k1 9  = makeArrow GejNegate
-    matchSecp256k1 10 = makeArrow GeNegate
-    matchSecp256k1 11 = makeArrow GejDouble
-    matchSecp256k1 12 = makeArrow GejAdd
-    matchSecp256k1 13 = makeArrow GejGeAddEx
-    matchSecp256k1 14 = makeArrow GejGeAdd
-    matchSecp256k1 15 = makeArrow GejRescale
-    matchSecp256k1 16 = makeArrow GejIsInfinity
-    matchSecp256k1 19 = makeArrow GejXEquiv
-    matchSecp256k1 20 = makeArrow GejYIsOdd
-    matchSecp256k1 21 = makeArrow GejIsOnCurve
-    matchSecp256k1 22 = makeArrow GeIsOnCurve
-    matchSecp256k1 6  = makeArrow Generate
-    matchSecp256k1 5  = makeArrow Scale
-    matchSecp256k1 4  = getPositive next >>= matchLinearCombination
-    matchSecp256k1 3  = getPositive next >>= matchLinearVerify
-    matchSecp256k1 1  = getPositive next >>= matchPointVerify
-    matchSecp256k1 2  = makeArrow Decompress
-    matchLinearCombination 1 = makeArrow LinearCombination1
-    matchLinearCombination _ = vacuous abort
-    matchLinearVerify 1 = makeArrow LinearVerify1
-    matchLinearVerify _ = vacuous abort
-    matchPointVerify 1 = makeArrow PointVerify1
-    matchPointVerify _ = vacuous abort
-  getJetBitSignature :: (Monad m) => m Void -> m Bool -> m (SomeArrow SignatureJet)
-  getJetBitSignature abort next = getPositive next >>= matchSignature
-   where
-    matchSignature 1 = makeArrow CheckSigVerify
-    matchSignature 2 = makeArrow Bip0340Verify
-    matchSignature _ = vacuous abort
-  getJetBitBitcoin :: (Monad m) => m Void -> m Bool -> m (SomeArrow BitcoinJet)
-  getJetBitBitcoin abort next = getPositive next >>= matchBitcoin
-   where
-    matchBitcoin 1 = makeArrow ParseLock
-    matchBitcoin 2 = makeArrow ParseSequence
-    matchBitcoin _ = vacuous abort
+  coreCatalogue = Shelf
+    [ someArrowMap WordJet <$> wordBook
+    , someArrowMap ArithJet <$> arithBook
+    , someArrowMap HashJet <$> hashBook
+    , someArrowMap Secp256k1Jet <$> secp256k1Book
+    , someArrowMap SignatureJet <$> signatureBook
+    , Missing
+    , someArrowMap BitcoinJet <$> bitcoinBook
+    ]
+  wordBook = Shelf
+    [ Item $ SomeArrow Verify
+    , lowBook
+    , Missing
+    , Missing
+    , Missing
+    , Missing
+    , Missing
+    , Missing
+    , Missing
+    , Missing
+    , Missing
+    , Missing
+    , eqBook
+    ]
+  lowBook = Shelf
+    [ Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow Low32
+    ]
+  eqBook = Shelf
+    [ Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow Eq32
+    , Missing
+    , Missing
+    , Item $ SomeArrow Eq256
+    ]
+  arithBook = Shelf
+    [ oneBook
+    , fullAddBook
+    , addBook
+    , Missing
+    , Missing
+    , Missing
+    , fullSubtractBook
+    , subtractBook
+    , Missing
+    , Missing
+    , Missing
+    , fullMultiplyBook
+    , multiplyBook
+    , Missing
+    , Missing
+    , leBook
+    ]
+  oneBook = Shelf
+    [ Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow One32
+    ]
+  addBook = Shelf
+    [ Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow Add32
+    ]
+  fullAddBook = Shelf
+    [ Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow FullAdd32
+    ]
+  subtractBook = Shelf
+    [ Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow Subtract32
+    ]
+  fullSubtractBook = Shelf
+    [ Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow FullSubtract32
+    ]
+  multiplyBook = Shelf
+    [ Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow Multiply32
+    ]
+  fullMultiplyBook = Shelf
+    [ Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow FullMultiply32
+    ]
+  leBook = Shelf
+    [ Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow Le32
+    ]
+  hashBook = Shelf [sha2Book]
+  sha2Book = Shelf
+    [ Item $ SomeArrow Sha256Block
+    , Item $ SomeArrow Sha256Iv
+    , sha2AddBook
+    , Item $ SomeArrow Sha256Ctx8AddBuffer511
+    , Item $ SomeArrow Sha256Ctx8Finalize
+    , Item $ SomeArrow Sha256Ctx8Init
+    ]
+  sha2AddBook = book
+    [ SomeArrow Sha256Ctx8Add1
+    , SomeArrow Sha256Ctx8Add2
+    , SomeArrow Sha256Ctx8Add4
+    , SomeArrow Sha256Ctx8Add8
+    , SomeArrow Sha256Ctx8Add16
+    , SomeArrow Sha256Ctx8Add32
+    , SomeArrow Sha256Ctx8Add64
+    , SomeArrow Sha256Ctx8Add128
+    , SomeArrow Sha256Ctx8Add256
+    , SomeArrow Sha256Ctx8Add512
+    ]
+  secp256k1Book = Shelf
+    [ Shelf [Item $ SomeArrow PointVerify1]
+    , Item $ SomeArrow Decompress
+    , Shelf [Item $ SomeArrow LinearVerify1]
+    , Shelf [Item $ SomeArrow LinearCombination1]
+    , Item $ SomeArrow Scale
+    , Item $ SomeArrow Generate
+    , Item $ SomeArrow GejInfinity
+    , Item $ SomeArrow GejNormalize
+    , Item $ SomeArrow GejNegate
+    , Item $ SomeArrow GeNegate
+    , Item $ SomeArrow GejDouble
+    , Item $ SomeArrow GejAdd
+    , Item $ SomeArrow GejGeAddEx
+    , Item $ SomeArrow GejGeAdd
+    , Item $ SomeArrow GejRescale
+    , Item $ SomeArrow GejIsInfinity
+    , Missing
+    , Missing
+    , Item $ SomeArrow GejXEquiv
+    , Item $ SomeArrow GejYIsOdd
+    , Item $ SomeArrow GejIsOnCurve
+    , Item $ SomeArrow GeIsOnCurve
+    , Item $ SomeArrow ScalarNormalize
+    , Item $ SomeArrow ScalarNegate
+    , Item $ SomeArrow ScalarAdd
+    , Item $ SomeArrow ScalarSquare
+    , Item $ SomeArrow ScalarMultiply
+    , Item $ SomeArrow ScalarMultiplyLambda
+    , Item $ SomeArrow ScalarInvert
+    , Item $ SomeArrow ScalarIsZero
+    , Missing
+    , Missing
+    , Missing
+    , Missing
+    , Item $ SomeArrow FeNormalize
+    , Item $ SomeArrow FeNegate
+    , Item $ SomeArrow FeAdd
+    , Item $ SomeArrow FeSquare
+    , Item $ SomeArrow FeMultiply
+    , Item $ SomeArrow FeMultiplyBeta
+    , Item $ SomeArrow FeInvert
+    , Item $ SomeArrow FeSquareRoot
+    , Item $ SomeArrow FeIsZero
+    , Item $ SomeArrow FeIsOdd
+    ]
+  signatureBook = book
+    [ SomeArrow CheckSigVerify
+    , SomeArrow Bip0340Verify
+    ]
+  bitcoinBook = book
+    [ SomeArrow ParseLock
+    , SomeArrow ParseSequence
+    ]
 
 -- | A canonical serialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.putJetBit' method.
 putJetBit :: CoreJet a b -> DList Bool

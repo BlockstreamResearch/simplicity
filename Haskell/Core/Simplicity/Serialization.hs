@@ -1,17 +1,21 @@
 -- | This modules provides functionality to aid serializiang and deserializing to and from bit streams using difference lists and Van Laarhoven free monad representations.
 module Simplicity.Serialization
   ( DList, putBitString, putPositive
-  , getBitString, getPositive
+  , getBitString, getPositive, getPositiveUpTo
+  , getItem
+  , getCatalogue
   , evalStream, evalExactVector
   , evalStreamWithError
   , Error(..)
-  , getEvalBitStream, putBitStream
+  , getEvalBitStream, treeEvalBitStream
+  , putBitStream
   ) where
 
 import Prelude hiding (length)
 
 import Control.Monad (forM_, guard)
 import Control.Monad.Trans (lift)
+import Control.Monad.Trans.Cont (Cont, cont, runCont)
 import Control.Monad.Trans.State (StateT(..), evalStateT, get, put)
 import Data.Bits (setBit, testBit)
 import Data.List (foldl', genericLength, unfoldr)
@@ -19,7 +23,10 @@ import Data.List.Split (chunksOf)
 import Data.Serialize.Get (Get, getWord8)
 import Data.Serialize.Put (Putter, putWord8)
 import Data.Vector.Unboxed (Vector, Unbox, indexM, length)
+import Data.Void (Void, vacuous)
 import Data.Word (Word8)
+
+import Simplicity.Tree
 
 -- | A type for difference lists: an efficent type for appending to lists.
 --
@@ -82,6 +89,57 @@ getPositive = fmap (foldl' f 1) . getBitString
  where
   f i False = 2*i
   f i True  = 2*i + 1
+
+-- | Decodes the self-delimiting encoding of a positive integer that is less than or equal to a given bound.
+--
+-- If the encoded value exceeds the bound, then nothing is returned.
+--
+-- Note that the type @forall m. Monad m => m void -> m b -> m a@ is isomorphic to the free monad over the @X^b + 1@ functor at @a@.
+-- In other words, 'getPositiveUpTo' returns the type of a binary branching tree with leaves containing 'Integer' values or nothing.
+getPositiveUpTo :: Monad m => Integer -> m Void -> m Bool -> m Integer
+getPositiveUpTo bound abort | 0 < bound = getUpTo (putPositive bound []) (\abort_ -> getPositive) abort
+                            | otherwise = \next_ -> vacuous abort
+ where
+  getUpTo :: Monad m => [Bool] -> (StateT [Bool] m Void -> StateT [Bool] m Bool -> StateT [Bool] m a) -> m Void -> m Bool -> m a
+  getUpTo bound prog abort next = evalStateT (prog (lift abort) (StateT boundNext)) bound
+   where
+    boundNext [] = vacuous abort
+    boundNext (hd:tl) = next >>= k
+     where
+      k b | b <= hd = return (b, if b == hd then tl else repeat True)
+          | otherwise = vacuous abort
+
+-- | Decodes the self-delimiting encoding of a positive integer that repesents an item in a list.
+--
+-- If the encoded value exceeds the length of the list, then nothing is returned.
+--
+-- Note: Because only positive integers have an encoding, the indexing into the list is 1-based rather than the usual 0-based.
+--
+-- Note that the type @forall m. Monad m => m void -> m b -> m a@ is isomorphic to the free monad over the @X^b + 1@ functor at @a@.
+-- In other words, 'getItem' returns the type of a binary branching tree with leaves containing 'a' values or nothing.
+getItem :: Monad m => [a] -> m Void -> m Bool -> m a
+getItem items abort next = select <$> getPositiveUpTo (genericLength items) abort next
+ where
+  select n = items !! fromInteger (n - 1)
+
+-- | Decodes the self-delimiting encoding of a sequence of positive integers that repesents an item in a 'Catalogue'.
+-- Guided by the 'Catalogue' the 'getItem' decods a positive integer to select an item from a 'Shelf'.
+-- If that item is another 'Catalogue', then it recursively decodes another positive integer, otherwise it returns the 'Item' from the 'Shelf'.
+--
+-- If an encoded value exceeds the length of any shelf list, then nothing is returned.
+--
+-- If an encoded value references a 'Missing' item, then nothing is returned.
+--
+-- Note: Because only positive integers have an encoding, the indexing into a 'Shelf' is 1-based rather than the usual 0-based.
+--
+-- Note that the type @forall m. Monad m => m void -> m b -> m a@ is isomorphic to the free monad over the @X^b + 1@ functor at @a@.
+-- In other words, 'getCatalogue' returns the type of a binary branching tree with leaves containing 'a' values or nothing.
+getCatalogue :: Monad m => Catalogue a -> m Void -> m Bool -> m a
+getCatalogue Missing abort next = vacuous abort
+getCatalogue (Item a) abort next = return a
+getCatalogue (Shelf shelf) abort next = do
+  item <- getItem shelf abort next
+  getCatalogue item abort next
 
 -- | @evalStream :: (forall m. Monad m => m b -> m a) -> [b] -> Maybe a@
 --
@@ -159,6 +217,19 @@ getEvalBitStream prog = evalStateT (prog (fail "Simplicity.Serialization.getEval
    return (testBit w 7, Just (w, 6))
   next (Just (w, i)) | i < 0     = next Nothing
                      | otherwise = return (testBit w i, Just (w, i-1))
+
+-- Cont is a poor-man's Codensity Monad.
+-- | @treeEvalBitStream :: (forall m. Monad m => m void -> m Bool -> m a) -> BinTree a@
+--
+-- Reifies the free monad represenation of a bit-stream transformer with failure as a 'BinTree'.
+--
+-- Note that the type @forall m. Monad m => m void -> m Bool -> m a@ is isomorphic to the free monad over the @X^b + 1@ functor at @a@,
+-- which is the 'BinTree a' type.
+treeEvalBitStream :: (Cont (BinTree a) void -> Cont (BinTree a) Bool -> Cont (BinTree a) a) -> BinTree a
+treeEvalBitStream prog = runCont (prog abort next) Leaf
+ where
+   abort = cont $ const Dead
+   next = cont $ \k -> branch (k False) (k True)
 
 -- | Packs and writes out a list of 'Bool's via the 'Data.Serialize.Put.Put' monad.
 -- It writes starting from MSB (most sigificant bit) to LSB (least sigificant bit) within a byte.

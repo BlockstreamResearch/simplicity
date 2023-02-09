@@ -52,6 +52,7 @@ import qualified Simplicity.Programs.Elements.Lib as Prog
 import Simplicity.Programs.Word
 import Simplicity.Serialization
 import Simplicity.Tensor
+import Simplicity.Tree
 import Simplicity.Ty
 import Simplicity.Ty.Bit
 import Simplicity.Ty.Word
@@ -450,118 +451,117 @@ implementationTransaction :: TransactionJet a b -> PrimEnv -> a -> Maybe b
 implementationTransaction x env i = Semantics.sem (specificationTransaction x) env i
 
 getJetBitElements :: (Monad m) => m Void -> m Bool -> m (SomeArrow ElementsJet)
-getJetBitElements abort next = getPositive next >>= match
+getJetBitElements = getCatalogue elementsCatalogue
  where
-  makeArrow p = return (SomeArrow p)
-  match 1 = (someArrowMap SigHashJet) <$> getJetBitSigHash
-  match 2 = (someArrowMap TimeLockJet) <$> getJetBitTimeLock
-  match 3 = (someArrowMap IssuanceJet) <$> getJetBitIssuance
-  match 4 = (someArrowMap TransactionJet) <$> getJetBitTransaction
-  match _ = vacuous abort
-  getJetBitSigHash = getPositive next >>= matchSigHash
-   where
-    matchSigHash 1 = makeArrow SigAllHash
-    matchSigHash 2 = makeArrow TxHash
-    matchSigHash 3 = makeArrow TapEnvHash
-    matchSigHash 4 = makeArrow InputsHash
-    matchSigHash 5 = makeArrow OutputsHash
-    matchSigHash 6 = makeArrow IssuancesHash
-    matchSigHash 7 = makeArrow InputUtxosHash
-    matchSigHash 8 = makeArrow OutputAmountsHash
-    matchSigHash 9 = makeArrow OutputScriptsHash
-    matchSigHash 10 = makeArrow OutputNoncesHash
-    matchSigHash 11 = makeArrow OutputRangeProofsHash
-    matchSigHash 12 = makeArrow OutputSurjectionProofsHash
-    matchSigHash 13 = makeArrow InputOutpointsHash
-    matchSigHash 14 = makeArrow InputSequencesHash
-    matchSigHash 15 = makeArrow InputAnnexesHash
-    matchSigHash 16 = makeArrow InputScriptSigsHash
-    matchSigHash 17 = makeArrow IssuanceAssetAmountsHash
-    matchSigHash 18 = makeArrow IssuanceTokenAmountsHash
-    matchSigHash 19 = makeArrow IssuanceRangeProofsHash
-    matchSigHash 20 = makeArrow IssuanceBlindingEntropyHash
-    matchSigHash 21 = makeArrow InputAmountsHash
-    matchSigHash 22 = makeArrow InputScriptsHash
-    matchSigHash 23 = makeArrow TapleafHash
-    matchSigHash 24 = makeArrow TapbranchHash
-    matchSigHash 25 = makeArrow OutpointHash
-    matchSigHash 26 = makeArrow AssetAmountHash
-    matchSigHash 27 = makeArrow NonceHash
-    matchSigHash 28 = makeArrow AnnexHash
-    matchSigHash 29 = makeArrow BuildTapleafSimplicity
-    matchSigHash 30 = makeArrow BuildTapbranch
-  getJetBitTimeLock = getPositive next >>= matchTimeLock
-   where
-    matchTimeLock 1 = makeArrow CheckLockHeight
-    matchTimeLock 2 = makeArrow CheckLockTime
-    matchTimeLock 3 = makeArrow CheckLockDistance
-    matchTimeLock 4 = makeArrow CheckLockDuration
-    matchTimeLock 5 = makeArrow TxLockHeight
-    matchTimeLock 6 = makeArrow TxLockTime
-    matchTimeLock 7 = makeArrow TxLockDistance
-    matchTimeLock 8 = makeArrow TxLockDuration
-    matchTimeLock 9 = makeArrow TxIsFinal
-    matchTimeLock _ = vacuous abort
-  getJetBitIssuance = getPositive next >>= matchIssuance
-   where
-    matchIssuance 1 = makeArrow Issuance
-    matchIssuance 2 = makeArrow IssuanceAsset
-    matchIssuance 3 = makeArrow IssuanceToken
-    matchIssuance 4 = makeArrow IssuanceEntropy
-    matchIssuance 5 = makeArrow CalculateIssuanceEntropy
-    matchIssuance 6 = makeArrow CalculateAsset
-    matchIssuance 7 = makeArrow CalculateExplicitToken
-    matchIssuance 8 = makeArrow CalculateConfidentialToken
-  getJetBitTransaction = getPositive next >>= matchTransaction
-   where
-    matchTransaction 1 = makeArrow ScriptCMR
-    matchTransaction 2 = makeArrow InternalKey
-    matchTransaction 3 = makeArrow CurrentIndex
-    matchTransaction 4 = makeArrow NumInputs
-    matchTransaction 5 = makeArrow NumOutputs
-    matchTransaction 6 = makeArrow LockTime
-    matchTransaction 7 = makeArrow OutputAsset
-    matchTransaction 8 = makeArrow OutputAmount
-    matchTransaction 9 = makeArrow OutputNonce
-    matchTransaction 10 = makeArrow OutputScriptHash
-    matchTransaction 11 = makeArrow OutputNullDatum
-    matchTransaction 12 = makeArrow OutputSurjectionProof
-    matchTransaction 13 = makeArrow OutputRangeProof
-
-    matchTransaction 15 = makeArrow CurrentPegin
-    matchTransaction 16 = makeArrow CurrentPrevOutpoint
-    matchTransaction 17 = makeArrow CurrentAsset
-    matchTransaction 18 = makeArrow CurrentAmount
-    matchTransaction 19 = makeArrow CurrentScriptHash
-    matchTransaction 20 = makeArrow CurrentSequence
-    matchTransaction 21 = makeArrow CurrentAnnexHash
-    matchTransaction 22 = makeArrow CurrentScriptSigHash
-    matchTransaction 23 = makeArrow CurrentReissuanceBlinding
-    matchTransaction 24 = makeArrow CurrentNewIssuanceContract
-    matchTransaction 25 = makeArrow CurrentReissuanceEntropy
-    matchTransaction 26 = makeArrow CurrentIssuanceAssetAmount
-    matchTransaction 27 = makeArrow CurrentIssuanceTokenAmount
-    matchTransaction 28 = makeArrow CurrentIssuanceAssetProof
-    matchTransaction 29 = makeArrow CurrentIssuanceTokenProof
-    matchTransaction 30 = makeArrow InputPegin
-    matchTransaction 31 = makeArrow InputPrevOutpoint
-    matchTransaction 32 = makeArrow InputAsset
-    matchTransaction 33 = makeArrow InputAmount
-    matchTransaction 34 = makeArrow InputScriptHash
-    matchTransaction 35 = makeArrow InputSequence
-    matchTransaction 36 = makeArrow InputAnnexHash
-    matchTransaction 37 = makeArrow InputScriptSigHash
-    matchTransaction 38 = makeArrow ReissuanceBlinding
-    matchTransaction 39 = makeArrow NewIssuanceContract
-    matchTransaction 40 = makeArrow ReissuanceEntropy
-    matchTransaction 41 = makeArrow IssuanceAssetAmount
-    matchTransaction 42 = makeArrow IssuanceTokenAmount
-    matchTransaction 43 = makeArrow IssuanceAssetProof
-    matchTransaction 44 = makeArrow IssuanceTokenProof
-    matchTransaction 45 = makeArrow TapleafVersion
-    matchTransaction 46 = makeArrow Tapbranch
-    matchTransaction 47 = makeArrow Version
-    matchTransaction 48 = makeArrow GenesisBlockHash
+  elementsCatalogue = Shelf
+   [ someArrowMap SigHashJet <$> sigHashCatalogue
+   , someArrowMap TimeLockJet <$> timeLockCatalogue
+   , someArrowMap IssuanceJet <$> issuanceCatalogue
+   , someArrowMap TransactionJet <$> transactionCatalogue
+   ]
+  sigHashCatalogue = book
+   [ SomeArrow SigAllHash
+   , SomeArrow TxHash
+   , SomeArrow TapEnvHash
+   , SomeArrow InputsHash
+   , SomeArrow OutputsHash
+   , SomeArrow IssuancesHash
+   , SomeArrow InputUtxosHash
+   , SomeArrow OutputAmountsHash
+   , SomeArrow OutputScriptsHash
+   , SomeArrow OutputNoncesHash
+   , SomeArrow OutputRangeProofsHash
+   , SomeArrow OutputSurjectionProofsHash
+   , SomeArrow InputOutpointsHash
+   , SomeArrow InputSequencesHash
+   , SomeArrow InputAnnexesHash
+   , SomeArrow InputScriptSigsHash
+   , SomeArrow IssuanceAssetAmountsHash
+   , SomeArrow IssuanceTokenAmountsHash
+   , SomeArrow IssuanceRangeProofsHash
+   , SomeArrow IssuanceBlindingEntropyHash
+   , SomeArrow InputAmountsHash
+   , SomeArrow InputScriptsHash
+   , SomeArrow TapleafHash
+   , SomeArrow TapbranchHash
+   , SomeArrow OutpointHash
+   , SomeArrow AssetAmountHash
+   , SomeArrow NonceHash
+   , SomeArrow AnnexHash
+   , SomeArrow BuildTapleafSimplicity
+   , SomeArrow BuildTapbranch
+   ]
+  timeLockCatalogue = book
+   [ SomeArrow CheckLockHeight
+   , SomeArrow CheckLockTime
+   , SomeArrow CheckLockDistance
+   , SomeArrow CheckLockDuration
+   , SomeArrow TxLockHeight
+   , SomeArrow TxLockTime
+   , SomeArrow TxLockDistance
+   , SomeArrow TxLockDuration
+   , SomeArrow TxIsFinal
+   ]
+  issuanceCatalogue = book
+   [ SomeArrow Issuance
+   , SomeArrow IssuanceAsset
+   , SomeArrow IssuanceToken
+   , SomeArrow IssuanceEntropy
+   , SomeArrow CalculateIssuanceEntropy
+   , SomeArrow CalculateAsset
+   , SomeArrow CalculateExplicitToken
+   , SomeArrow CalculateConfidentialToken
+   ]
+  transactionCatalogue = Shelf
+   [ Item $ SomeArrow ScriptCMR
+   , Item $ SomeArrow InternalKey
+   , Item $ SomeArrow CurrentIndex
+   , Item $ SomeArrow NumInputs
+   , Item $ SomeArrow NumOutputs
+   , Item $ SomeArrow LockTime
+   , Item $ SomeArrow OutputAsset
+   , Item $ SomeArrow OutputAmount
+   , Item $ SomeArrow OutputNonce
+   , Item $ SomeArrow OutputScriptHash
+   , Item $ SomeArrow OutputNullDatum
+   , Item $ SomeArrow OutputSurjectionProof
+   , Item $ SomeArrow OutputRangeProof
+   , Missing -- TODO: TotalFee
+   , Item $ SomeArrow CurrentPegin
+   , Item $ SomeArrow CurrentPrevOutpoint
+   , Item $ SomeArrow CurrentAsset
+   , Item $ SomeArrow CurrentAmount
+   , Item $ SomeArrow CurrentScriptHash
+   , Item $ SomeArrow CurrentSequence
+   , Item $ SomeArrow CurrentAnnexHash
+   , Item $ SomeArrow CurrentScriptSigHash
+   , Item $ SomeArrow CurrentReissuanceBlinding
+   , Item $ SomeArrow CurrentNewIssuanceContract
+   , Item $ SomeArrow CurrentReissuanceEntropy
+   , Item $ SomeArrow CurrentIssuanceAssetAmount
+   , Item $ SomeArrow CurrentIssuanceTokenAmount
+   , Item $ SomeArrow CurrentIssuanceAssetProof
+   , Item $ SomeArrow CurrentIssuanceTokenProof
+   , Item $ SomeArrow InputPegin
+   , Item $ SomeArrow InputPrevOutpoint
+   , Item $ SomeArrow InputAsset
+   , Item $ SomeArrow InputAmount
+   , Item $ SomeArrow InputScriptHash
+   , Item $ SomeArrow InputSequence
+   , Item $ SomeArrow InputAnnexHash
+   , Item $ SomeArrow InputScriptSigHash
+   , Item $ SomeArrow ReissuanceBlinding
+   , Item $ SomeArrow NewIssuanceContract
+   , Item $ SomeArrow ReissuanceEntropy
+   , Item $ SomeArrow IssuanceAssetAmount
+   , Item $ SomeArrow IssuanceTokenAmount
+   , Item $ SomeArrow IssuanceAssetProof
+   , Item $ SomeArrow IssuanceTokenProof
+   , Item $ SomeArrow TapleafVersion
+   , Item $ SomeArrow Tapbranch
+   , Item $ SomeArrow Version
+   , Item $ SomeArrow GenesisBlockHash
+   ]
 
 putJetBitElements :: ElementsJet a b -> DList Bool
 putJetBitElements (SigHashJet x)     = putPositive 1 . putJetBitSigHash x
