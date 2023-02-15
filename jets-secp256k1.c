@@ -14,7 +14,7 @@ static inline void read_fe(secp256k1_fe* r, frameItem* src) {
   unsigned char buf[32];
 
   read8s(buf, 32, src);
-  if (!secp256k1_fe_set_b32(r, buf)) secp256k1_fe_normalize(r);
+  if (!secp256k1_fe_set_b32(r, buf)) secp256k1_fe_normalize_var(r);
 }
 
 /* Write a secp256k1 field element value to the 'dst' frame, advancing the cursor 256 cells.
@@ -26,7 +26,7 @@ static inline void read_fe(secp256k1_fe* r, frameItem* src) {
 static inline void write_fe(frameItem* dst, secp256k1_fe* r) {
   unsigned char buf[32];
 
-  secp256k1_fe_normalize(r);
+  secp256k1_fe_normalize_var(r);
   secp256k1_fe_get_b32(buf, r);
   write8s(dst, buf, 32);
 }
@@ -440,7 +440,7 @@ bool gej_y_is_odd(frameItem* dst, frameItem src, const txEnv* env) {
      writeBit(dst, false);
   } else {
     secp256k1_ge_set_gej_var(&b, &a);
-    secp256k1_fe_normalize(&b.y);
+    secp256k1_fe_normalize_var(&b.y);
     writeBit(dst, secp256k1_fe_is_odd(&b.y));
   }
   return true;
