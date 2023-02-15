@@ -605,9 +605,9 @@ static void secp256k1_ge_to_storage(secp256k1_ge_storage *r, const secp256k1_ge 
     secp256k1_fe x, y;
     VERIFY_CHECK(!a->infinity);
     x = a->x;
-    secp256k1_fe_normalize(&x);
+    secp256k1_fe_normalize_var(&x);
     y = a->y;
-    secp256k1_fe_normalize(&y);
+    secp256k1_fe_normalize_var(&y);
     secp256k1_fe_to_storage(&r->x, &x);
     secp256k1_fe_to_storage(&r->y, &y);
 }

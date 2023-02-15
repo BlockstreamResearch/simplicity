@@ -28,10 +28,12 @@
 #error "Please select wide multiplication implementation"
 #endif
 
+#if 0
 /** Normalize a field element. This brings the field element to a canonical representation, reduces
  *  its magnitude to 1, and reduces it modulo field size `p`.
  */
 static void secp256k1_fe_normalize(secp256k1_fe *r);
+#endif
 
 /** Weakly normalize a field element: reduce its magnitude to 1, but don't fully normalize. */
 static void secp256k1_fe_normalize_weak(secp256k1_fe *r);
