@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-/* Unless explicitly stated all pointer arguments must not be NULL.
+/** Unless explicitly stated all pointer arguments must not be NULL.
  *
  * The following rules specify the order of arguments in API calls:
  *
@@ -44,9 +44,9 @@ typedef struct {
 
 #define SECP256K1_INLINE inline
 
-/**Warning attributes
-  * NONNULL is not used if SECP256K1_BUILD is set to avoid the compiler optimizing out
-  * some paranoid null checks. */
+/* Warning attributes
+ * NONNULL is not used if SECP256K1_BUILD is set to avoid the compiler optimizing out
+ * some paranoid null checks. */
 # if defined(__GNUC__) && SECP256K1_GNUC_PREREQ(3, 4)
 #  define SECP256K1_WARN_UNUSED_RESULT __attribute__ ((__warn_unused_result__))
 # else

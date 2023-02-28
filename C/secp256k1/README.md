@@ -1,14 +1,14 @@
-This directory contains a modified copy of the libsecp256k1 branch `9a5a87e0f1276e0284446af1172056ea4693737f` from <https://github.com/bitcoin-core/secp256k1/commit/9a5a87e0f1276e0284446af1172056ea4693737f>.
+This directory contains a modified copy of the libsecp256k1 at `21ffe4b22a9683cf24ae0763359e401d1284cc7a` from <https://github.com/bitcoin-core/secp256k1/tree/v0.2.0>.
 In general, the files in this directory should be compared with the corresponding files in the `src` directory from libsecp256k1.
 There are some exceptions however:
 
+* `precompute_ecmult.h` should be compared with `src/precompute_ecmult.c`
 * `secp256k1.h` should be compared with `include/secp256k1.h`.
 * `secp256k1_impl.h` should be compared with `src/secp256k1.c`.
 * `extrakeys.h` should be compared with `include/secp256k1_extrakeys.h`.
 * `extrakeys_impl.h` should be compared with `src/modules/extrakeys/main_impl.h`.
 * `schnorrsig.h` should be compared with `include/secp256k1_schnorrsig.h`.
 * `schnorrsig_impl.h` should be compared with `src/modules/schnorrsig/main_impl.h`.
-
 
 Our use of libsecp256k1 for various jets requires access to the internal functions that are not exposed by the their API, so we cannot use libsecp256k1's normal interface.
 Furthermore, because Simplicity has no abstract data types, the specific details of the representation of field and group elements computed by jetted functions ends up being consensus critical.
@@ -25,7 +25,7 @@ In some cases we have made minor code changes:
 
 * `secp256k1_fe_sqrt` has been modified to call `secp256k1_fe_equal_var` (as `secp256k1_fe_equal` has been removed).  The function has been renamed to `secp256k1_fe_sqrt_var` and similar for other indirect callers.
 * The uses of secp256k1's `hash.h` for Schnorr signatures has been replaced with calls to Simplicity's internal `sha256.h` implementation.  This removes the duplication of functionality and replaces the non-portable use of the `WORDS_BIGENDIAN` flag in `hash_impl.h` with our portable implementation.
-* `checked_malloc` and `checked_realloc` have been removed along with any functions that called themm.
+* `checked_malloc` and `checked_realloc` have been removed along with any functions that called them.
 * `ARG_CHECK` doesn't call the callback.
 * Callbacks have been removed.
 * `secp256k1_context` has been removed.

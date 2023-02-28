@@ -9,7 +9,10 @@
 
 #include "field.h"
 
-/** A group element of the secp256k1 curve, in affine coordinates. */
+/** A group element in affine coordinates on the secp256k1 curve,
+ *  or occasionally on an isomorphic curve of the form y^2 = x^3 + 7*t^6.
+ *  Note: For exhaustive test mode, secp256k1 is replaced by a small subgroup of a different curve.
+ */
 typedef struct {
     secp256k1_fe x;
     secp256k1_fe y;
@@ -19,7 +22,9 @@ typedef struct {
 #define SECP256K1_GE_CONST(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) {SECP256K1_FE_CONST((a),(b),(c),(d),(e),(f),(g),(h)), SECP256K1_FE_CONST((i),(j),(k),(l),(m),(n),(o),(p)), 0}
 #define SECP256K1_GE_CONST_INFINITY {SECP256K1_FE_CONST(0, 0, 0, 0, 0, 0, 0, 0), SECP256K1_FE_CONST(0, 0, 0, 0, 0, 0, 0, 0), 1}
 
-/** A group element of the secp256k1 curve, in jacobian coordinates. */
+/** A group element of the secp256k1 curve, in jacobian coordinates.
+ *  Note: For exhastive test mode, secp256k1 is replaced by a small subgroup of a different curve.
+ */
 typedef struct {
     secp256k1_fe x; /* actual X: x/z^2 */
     secp256k1_fe y; /* actual Y: y/z^3 */
@@ -55,6 +60,11 @@ static int secp256k1_ge_is_valid_var(const secp256k1_ge *a);
 /** Set r equal to the inverse of a (i.e., mirrored around the X axis) */
 static void secp256k1_ge_neg(secp256k1_ge *r, const secp256k1_ge *a);
 
+#if 0
+/** Set a group element equal to another which is given in jacobian coordinates. Constant time. */
+static void secp256k1_ge_set_gej(secp256k1_ge *r, secp256k1_gej *a);
+#endif
+
 /** Set a group element equal to another which is given in jacobian coordinates. */
 static void secp256k1_ge_set_gej_var(secp256k1_ge *r, secp256k1_gej *a);
 
@@ -63,12 +73,24 @@ static void secp256k1_ge_set_gej_var(secp256k1_ge *r, secp256k1_gej *a);
 static void secp256k1_ge_set_all_gej_var(secp256k1_ge *r, const secp256k1_gej *a, size_t len);
 #endif
 
-/** Bring a batch inputs given in jacobian coordinates (with known z-ratios) to
- *  the same global z "denominator". zr must contain the known z-ratios such
- *  that mul(a[i].z, zr[i+1]) == a[i+1].z. zr[0] is ignored. The x and y
- *  coordinates of the result are stored in r, the common z coordinate is
- *  stored in globalz. */
-static void secp256k1_ge_globalz_set_table_gej(size_t len, secp256k1_ge *r, secp256k1_fe *globalz, const secp256k1_gej *a, const secp256k1_fe *zr);
+/** Bring a batch of inputs to the same global z "denominator", based on ratios between
+ *  (omitted) z coordinates of adjacent elements.
+ *
+ *  Although the elements a[i] are _ge rather than _gej, they actually represent elements
+ *  in Jacobian coordinates with their z coordinates omitted.
+ *
+ *  Using the notation z(b) to represent the omitted z coordinate of b, the array zr of
+ *  z coordinate ratios must satisfy zr[i] == z(a[i]) / z(a[i-1]) for 0 < 'i' < len.
+ *  The zr[0] value is unused.
+ *
+ *  This function adjusts the coordinates of 'a' in place so that for all 'i', z(a[i]) == z(a[len-1]).
+ *  In other words, the initial value of z(a[len-1]) becomes the global z "denominator". Only the
+ *  a[i].x and a[i].y coordinates are explicitly modified; the adjustment of the omitted z coordinate is
+ *  implicit.
+ *
+ *  The coordinates of the final element a[len-1] are not changed.
+ */
+static void secp256k1_ge_table_set_globalz(size_t len, secp256k1_ge *a, const secp256k1_fe *zr);
 
 /** Set a group element (affine) equal to the point at infinity. */
 static void secp256k1_ge_set_infinity(secp256k1_ge *r);
@@ -78,6 +100,11 @@ static void secp256k1_gej_set_infinity(secp256k1_gej *r);
 
 /** Set a group element (jacobian) equal to another which is given in affine coordinates. */
 static void secp256k1_gej_set_ge(secp256k1_gej *r, const secp256k1_ge *a);
+
+#if 0
+/** Check two group elements (jacobian) for equality in variable time. */
+static int secp256k1_gej_eq_var(const secp256k1_gej *a, const secp256k1_gej *b);
+#endif
 
 /** Compare the X coordinate of a group element (jacobian). */
 static int secp256k1_gej_eq_x_var(const secp256k1_fe *x, const secp256k1_gej *a);
@@ -110,10 +137,10 @@ static void secp256k1_gej_add_ge_var(secp256k1_gej *r, const secp256k1_gej *a, c
 /** Set r equal to the sum of a and b (with the inverse of b's Z coordinate passed as bzinv). */
 static void secp256k1_gej_add_zinv_var(secp256k1_gej *r, const secp256k1_gej *a, const secp256k1_ge *b, const secp256k1_fe *bzinv);
 
+#if 0
 /** Set r to be equal to lambda times a, where lambda is chosen in a way such that this is very fast. */
 static void secp256k1_ge_mul_lambda(secp256k1_ge *r, const secp256k1_ge *a);
 
-#if 0
 /** Clear a secp256k1_gej to prevent leaking sensitive information. */
 static void secp256k1_gej_clear(secp256k1_gej *r);
 
@@ -127,8 +154,13 @@ static void secp256k1_ge_to_storage(secp256k1_ge_storage *r, const secp256k1_ge 
 /** Convert a group element back from the storage type. */
 static void secp256k1_ge_from_storage(secp256k1_ge *r, const secp256k1_ge_storage *a);
 
+#if 0
+/** If flag is true, set *r equal to *a; otherwise leave it. Constant-time.  Both *r and *a must be initialized.*/
+static void secp256k1_gej_cmov(secp256k1_gej *r, const secp256k1_gej *a, int flag);
+
 /** If flag is true, set *r equal to *a; otherwise leave it. Constant-time.  Both *r and *a must be initialized.*/
 static void secp256k1_ge_storage_cmov(secp256k1_ge_storage *r, const secp256k1_ge_storage *a, int flag);
+#endif
 
 /** Rescale a jacobian point by b which must be non-zero. Constant-time. */
 static void secp256k1_gej_rescale(secp256k1_gej *r, const secp256k1_fe *b);

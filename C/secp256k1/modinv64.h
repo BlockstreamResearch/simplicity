@@ -7,10 +7,6 @@
 #ifndef SECP256K1_MODINV64_H
 #define SECP256K1_MODINV64_H
 
-#if defined HAVE_CONFIG_H
-#include "libsecp256k1-config.h"
-#endif
-
 #include "util.h"
 
 #ifndef SECP256K1_WIDEMUL_INT128
@@ -39,5 +35,10 @@ typedef struct {
  * On output, all of x's limbs will be in [0, 2^62).
  */
 static void secp256k1_modinv64_var(secp256k1_modinv64_signed62 *x, const secp256k1_modinv64_modinfo *modinfo);
+
+#if 0
+/* Same as secp256k1_modinv64_var, but constant time in x (not in the modulus). */
+static void secp256k1_modinv64(secp256k1_modinv64_signed62 *x, const secp256k1_modinv64_modinfo *modinfo);
+#endif
 
 #endif /* SECP256K1_MODINV64_H */

@@ -26,8 +26,7 @@ typedef struct {
  *
  *  Out: pubkey: pointer to a pubkey object. If 1 is returned, it is set to a
  *               parsed version of input. If not, it's set to an invalid value.
- *               (cannot be NULL).
- *  In: input32: pointer to a serialized xonly_pubkey (cannot be NULL)
+ *  In: input32: pointer to a serialized xonly_pubkey.
  */
 static SECP256K1_WARN_UNUSED_RESULT int secp256k1_xonly_pubkey_parse(
     secp256k1_xonly_pubkey* pubkey,
