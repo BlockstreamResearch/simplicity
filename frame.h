@@ -30,7 +30,7 @@ typedef struct frameItem {
  */
 static inline frameItem initReadFrame(size_t n, UWORD* from) {
   const size_t len = ROUND_UWORD(n);
-/* '(1U * len) * UWORD_BIT - n' equals the numer of padding bits in a frame of size 'n'.
+/* '(1U * len) * UWORD_BIT - n' equals the number of padding bits in a frame of size 'n'.
  * Note that even if (len * UWORD_BIT) overflows,
  * (1) We have ensured an unsigned computation by multiplying by 1U so the behaviour is well-defined.
  * (2) after subtracting 'n' we are left with a value in the range 0 .. UWORD-BIT - 1.

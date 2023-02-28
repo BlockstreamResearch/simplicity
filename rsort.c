@@ -73,8 +73,8 @@ static void swap(const sha256_midstate** a, const sha256_midstate** b) {
 
 /* Attempts to (partially) sort an array of pointers to 'sha256_midstate's in place in an implementation specific order.
  * If duplicate entries are found, the sorting is aborted and one of pointers to a duplicate entry is returned.
- * Otherwise if no duplicate entires are found 'NULL' is returned.
- * The sort order is determined by the first 'level' 'char's of the internal represenation of 'sha256_midsate'.
+ * Otherwise if no duplicate entries are found 'NULL' is returned.
+ * The sort order is determined by the first 'level' 'char's of the internal representation of 'sha256_midsate'.
  *
  * The maximum recursion depth is 'level'.  With some effort 'rsort' could be rewritten to be non-recursive.
  * The time complexity of rsort is O('len').
@@ -111,7 +111,7 @@ const sha256_midstate* rsort(size_t* scratch, const sha256_midstate** a, size_t 
       size_t start = bucketStart(bucketEnds, i);
       while (bucketSize[i]) {
         /* Each time through this loop some bucketSize is decremented.
-         * Therefore this body is exectued 'len' many times per call to rsort.
+         * Therefore this body is executed 'len' many times per call to rsort.
          */
         size_t bucket = readLevel(a[start], level - 1);
         assert(bucketSize[bucket]);

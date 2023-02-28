@@ -307,7 +307,7 @@ static void test_elements(void) {
         }
       }
       {
-        /* test the same transaction with a erronous signature. */
+        /* test the same transaction with a erroneous signature. */
         unsigned char brokenSig[sizeof_elementsCheckSigHashAllTx1];
         memcpy(brokenSig, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
         brokenSig[sizeof_elementsCheckSigHashAllTx1 - 1] ^= 0x80;

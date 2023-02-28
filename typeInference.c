@@ -409,7 +409,7 @@ static size_t getFrozenIx(unification_var* var) {
  * Precondition: NULL != result;
  *               type type_dag[*type_dag_used + n]
  *                 where 'n' is the number of unfrozen unification variables that have non-trivial bindings
- *                   that are accessable from 'var' array;
+ *                   that are accessible from 'var' array;
  *               type type_dag[*type_dag_used] is well-formed;
  *               NULL != type_dag_used;
  *               NULL != var

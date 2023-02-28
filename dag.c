@@ -181,7 +181,7 @@ sha256_midstate mkJetCMR(uint32_t *imr) {
 sha256_midstate computeWordCMR(const bitstring* value, size_t n) {
   call_once(&static_initialized, &static_initialize);
 
-  /* 'stack' is an array of 33 hashes consiting of 8 'uint32_t's each. */
+  /* 'stack' is an array of 33 hashes consisting of 8 'uint32_t's each. */
   uint32_t stack[8*33] = {0};
   uint32_t *stack_ptr = stack;
   sha256_midstate imr = identityIV;
@@ -473,7 +473,7 @@ bool verifyCanonicalOrder(dag_node* dag, const size_t len) {
      Thus this loop iterates at most O('len') times.
    */
   while (top < len) {
-    /* We determine cannonical order by iterating through the dag in canonical (pre-)order,
+    /* We determine canonical order by iterating through the dag in canonical (pre-)order,
        incrementing 'bottom' each time we encounter a node that is (correctly) placed at the 'bottom' index.
        We take advantage of the precondition that the dag is well-formed to know in advance that any children
        of a node have index strictly less than the node itself.
@@ -574,7 +574,7 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
           , .len = witness.len /* The value of .len will be finalized after the while loop. */
           };
 
-        /* Traverse the witness type to parse the witness's compact representation as a bit sting. */
+        /* Traverse the witness type to parse the witness's compact representation as a bit string. */
         size_t cur = typeSkip(WITNESS_B(dag, type_dag, i), type_dag);
         bool calling = true;
         type_dag[cur].back = 0;

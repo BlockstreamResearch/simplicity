@@ -101,12 +101,12 @@ static void secp256k1_fe_sqr(secp256k1_fe *r, const secp256k1_fe *a);
  *  The input's magnitude can be at most 8. The output magnitude is 1 (but not
  *  guaranteed to be normalized). The result in r will always be a square
  *  itself.
- *  No constant-time guarentee. */
+ *  No constant-time guarantee. */
 static int secp256k1_fe_sqrt_var(secp256k1_fe *r, const secp256k1_fe *a);
 
 /** Sets a field element to be the (modular) inverse of another. Requires the input's magnitude to be
  *  at most 8. The output magnitude is 1 (but not guaranteed to be normalized).
- *  No constant-time guarentee. */
+ *  No constant-time guarantee. */
 static void secp256k1_fe_inv_var(secp256k1_fe *r, const secp256k1_fe *a);
 
 /** Convert a field element to the storage type. */
