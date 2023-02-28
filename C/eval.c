@@ -269,7 +269,7 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
       if (calling) {
         next = typeSkip(type_dag[cur].typeArg[0], type_dag);
         if (next) {
-          /* Travese the first element of the product type, if it has any data. */
+          /* Traverse the first element of the product type, if it has any data. */
           type_dag[next].back = cur;
           cur = next;
           continue;
@@ -277,7 +277,7 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
       }
       next = typeSkip(type_dag[cur].typeArg[1], type_dag);
       if (next) {
-        /* Travese the second element of the product type, if it has any data. */
+        /* Traverse the second element of the product type, if it has any data. */
         type_dag[next].back = type_dag[cur].back;
         cur = next;
         calling = true;
@@ -355,7 +355,7 @@ static inline void set_case_last_flag(call *stack, bool flag) {
  * Precondition: The gap between 'state.activeReadFrame' and 'state.activeWriteFrame' is sufficient for execution of 'dag'
  *                 and the values are initialized;
  *               The gap between 'activeReadFrame(state)->edge' and 'activeWriteFrame(state)->edge'
- *                 is sufficent for execution of 'dag';
+ *                 is sufficient for execution of 'dag';
  *               '*activeReadFrame(state)' is a valid read frame for 'bitSize(A)' more cells.
  *               '*activeWriteFrame(state)' is a valid write frame for 'bitSize(B)' more cells.
  *               call stack[len];
@@ -601,8 +601,8 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
 }
 
 /* Inspects the stack contents after a successful runTCO execution to verify anti-DOS properties:
- * 1. If 'checks' inclues CHECK_EXEC, then check that all dag nodes were executed at least once.
- * 2. If 'checks' inclues CHECK_CASE, then check that both branches of every CASE node were executed.
+ * 1. If 'checks' includes CHECK_EXEC, then check that all dag nodes were executed at least once.
+ * 2. If 'checks' includes CHECK_CASE, then check that both branches of every CASE node were executed.
  *
  * If these are violated, it means that the dag had unpruned nodes.
  *

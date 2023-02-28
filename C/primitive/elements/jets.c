@@ -888,7 +888,7 @@ bool nonce_hash(frameItem* dst, frameItem src, const txEnv* env) {
   if (readBit(&src)) {
     /* Read a nonce prefix. (2 bits) */
     if (readBit(&src)) {
-      /* Read an explict none prefix. (1 bit) */
+      /* Read an explicit none prefix. (1 bit) */
       forwardBits(&src, 1);
       sha256_uchar(&ctx, 0x01);
     } else {

@@ -15,7 +15,7 @@
  *
  * Prefer to call this function through the 'MK_TAG' macro.
  *
- * Precondition: uint32_t ouput[8]
+ * Precondition: uint32_t output[8]
  *               unsigned char tagName[len];
  */
 static inline sha256_context mkTag(uint32_t* output, const unsigned char* tagName, const size_t len) {

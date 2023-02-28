@@ -27,7 +27,7 @@ typedef enum confPrefix {
   ODD_Y = 3
 } confPrefix;
 
-/* Returns true when the prefix indicates the associated value is a confidental value. */
+/* Returns true when the prefix indicates the associated value is a confidential value. */
 static inline bool is_confidential(confPrefix prefix) {
   return EVEN_Y == prefix || ODD_Y == prefix;
 }
@@ -59,7 +59,7 @@ typedef struct confAmount {
 
 /* In Elements, a null-data scriptPubKey consists of an OP_RETURN followed by data only pushes (i.e. only opcodes less than OP_16).
  * This is an enumeration of all such data only push operation names.
- * OP_IMMEDIATE represents OP_0 and all the one-byte prefixes of data pushes upto 75 bytes.
+ * OP_IMMEDIATE represents OP_0 and all the one-byte prefixes of data pushes up to 75 bytes.
  */
 typedef enum opcodeType {
   OP_IMMEDIATE,
@@ -128,7 +128,7 @@ typedef struct sigOutput {
 
 /* The data held by an Elements unspent transaction output database.
  * This 'scriptPubKey' of the unspent transaction output, which in our application is digested as a SHA-256 hash.
- * This also includes the asset and amout of the output, each of which may or may not be blinded.
+ * This also includes the asset and amount of the output, each of which may or may not be blinded.
  */
 typedef struct utxo {
   sha256_midstate scriptPubKey;
@@ -136,7 +136,7 @@ typedef struct utxo {
   confAmount amt;
 } utxo;
 
-/* In Elements, a trasaction input can optionally issue a new asset or reissue an existing asset.
+/* In Elements, a transaction input can optionally issue a new asset or reissue an existing asset.
  * This enumerates those possibilities.
  */
 typedef enum issuanceType {
@@ -145,7 +145,7 @@ typedef enum issuanceType {
   REISSUANCE
 } issuanceType;
 
-/* In Elements, a trasaction input can optionally issue a new asset or reissue an existing asset.
+/* In Elements, a transaction input can optionally issue a new asset or reissue an existing asset.
  * This structure contains data about such an issuance.
  * 'assetRangeProofHash' is the SHA-256 hash of the asset amount's range proof.
  * 'tokenRangeProofHash' is the SHA-256 hash of the token amount's range proof.
