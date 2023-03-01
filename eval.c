@@ -612,8 +612,8 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
  *               dag_node dag[len];
  */
 static bool antiDos(flags_type checks, const call* stack, const dag_node* dag, size_t len) {
-  static_assert(CHECK_EXEC == FLAG_EXEC);
-  static_assert(CHECK_CASE == (FLAG_CASE_LEFT | FLAG_CASE_RIGHT));
+  static_assert(CHECK_EXEC == FLAG_EXEC, "CHECK_EXEC does not match FLAG_EXEC");
+  static_assert(CHECK_CASE == (FLAG_CASE_LEFT | FLAG_CASE_RIGHT), "CHECK_CASE does not match FLAG_CASE");
 
   if (!checks) return true;
 
