@@ -13,17 +13,17 @@ static inline void call_once(once_flag* initialized, void (*initialize)(void)) {
   }
 }
 
-#elif defined __STDC_NO_THREADS__
+#elif __STDC_VERSION__ >= 201112L && !defined(__STDC_NO_THREADS__)
+
+#include <threads.h>
+
+#else
 
 #include <pthread.h>
 
 #define once_flag pthread_once_t
 #define ONCE_FLAG_INIT PTHREAD_ONCE_INIT
 #define call_once pthread_once
-
-#else
-
-#include <threads.h>
 
 #endif
 
