@@ -14,6 +14,7 @@ import Numeric (showHex)
 
 import Simplicity.Digest
 import Simplicity.Elements.Jets
+import Simplicity.Elements.Term
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Ty
@@ -117,13 +118,13 @@ jetName :: JetType x y -> String
 jetName = filter isAlphaNum . last . words . show
 
 cInitializeJet :: (TyC x, TyC y) => JetType x y -> String
-cInitializeJet jet = "jet_node[" ++ upperSnakeCase (jetName jet) ++
-                     "].cmr = mkJetCMR((uint32_t[8]){" ++ showCHash (identityRoot (specification jet)) ++ "});"
+cInitializeJet jt = "jet_node[" ++ upperSnakeCase (jetName jt) ++
+                    "].cmr = (sha256_midstate){{" ++ showCHash (commitmentRoot (jet (specification jt))) ++ "}};"
 
 tyList :: [CompactTy]
 tyList = Map.keys . foldr combine wordMap $ (tys =<< jetList)
  where
-  wordMap = Map.fromList [(CTyWord n, ty) | (n, ty) <- take 32 words]
+  wordMap = Map.fromList [(CTyWord n, ty) | (n, ty) <- Prelude.take 32 words]
    where
     words = (1, sum one one) : [(2*n, prod ty ty) | (n, ty) <- words]
   tys (SomeArrow jet) = [unreflect x, unreflect y]
