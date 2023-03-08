@@ -9,7 +9,7 @@ let
   simplicity      = import ./. {inherit nixpkgs ghc coqPackages;};
   optional        = nixpkgs.lib.optional;
   haskellDevTools = pkgs: with pkgs; [cabal-install hlint hasktags];
-  haskellPkgs     = pkgs: simplicity.haskell.propagatedBuildInputs ++ haskellDevTools pkgs;
+  haskellPkgs     = pkgs: simplicity.haskell.buildInputs ++ simplicity.haskell.propagatedBuildInputs ++ haskellDevTools pkgs;
   haskellDevEnv   = simplicity.haskellPackages.ghcWithPackages haskellPkgs;
   coqDevEnv       = [ nixpkgs.python3Packages.alectryon
                       nixpkgs.${coqPackages}.serapi
