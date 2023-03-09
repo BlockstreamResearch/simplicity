@@ -102,24 +102,21 @@ cInitializeTy ty = showString "(*bound_var)[" . compactCName ty
                          . showString "], &(*bound_var)[" . compactCName y
                          . showString "] } }"
 
-cJetNode :: (TyC x, TyC y) => String -> a x y -> String
-cJetNode name jet = unlines
+cJetNode :: (TyC x, TyC y) => String -> JetType x y -> String
+cJetNode name jt = unlines
   [ "[" ++ upperSnakeCase name ++ "] ="
   , "{ .tag = JET"
   , ", .jet = " ++ lowerSnakeCase name
+  , ", .cmr = {{" ++ showCHash (commitmentRoot (jet (specification jt))) ++ "}}"
   , ", .sourceIx = " ++ compactCName (compactTy (unreflect tyx)) ""
   , ", .targetIx = " ++ compactCName (compactTy (unreflect tyy)) ""
   , "}"
   ]
  where
-  (tyx, tyy) = reifyArrow jet
+  (tyx, tyy) = reifyArrow jt
 
 jetName :: JetType x y -> String
 jetName = filter isAlphaNum . last . words . show
-
-cInitializeJet :: (TyC x, TyC y) => JetType x y -> String
-cInitializeJet jt = "jet_node[" ++ upperSnakeCase (jetName jt) ++
-                    "].cmr = (sha256_midstate){{" ++ showCHash (commitmentRoot (jet (specification jt))) ++ "}};"
 
 tyList :: [CompactTy]
 tyList = Map.keys . foldr combine wordMap $ (tys =<< jetList)
@@ -159,11 +156,6 @@ cJetNodeFile = intercalate "," $ map f jetList
  where
   f (SomeArrow jet) = cJetNode (jetName jet) jet
 
-cInitializeJetFile :: String
-cInitializeJetFile = unlines $ map f jetList
- where
-  f (SomeArrow jet) = cInitializeJet jet
-
 writeIncludeFile :: FilePath -> String -> IO ()
 writeIncludeFile name content = writeFile name (header ++ content)
  where
@@ -174,4 +166,3 @@ main = do
   writeIncludeFile "primitiveInitTy.inc" cInitializeTyFile
   writeIncludeFile "primitiveEnumJet.inc" cEnumJetFile
   writeIncludeFile "primitiveJetNode.inc" cJetNodeFile
-  writeIncludeFile "primitiveInitJet.inc" cInitializeJetFile
