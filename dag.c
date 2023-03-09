@@ -3,84 +3,12 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "bounded.h"
-#include "callonce.h"
 #include "precomputed.h"
 #include "prefix.h"
 #include "rsort.h"
 #include "sha256.h"
-#include "tag.h"
 #include "uword.h"
 #include "unreachable.h"
-
-/* Prepends Simplicity tag prefixes to a string literal 's'. */
-#define COMMITMENT_TAG(s) SIMPLICITY_PREFIX "\x1F" "Commitment\x1F" s
-#define ANNOTATED_TAG(s) SIMPLICITY_PREFIX "\x1F" "Annotated\x1F" s
-#define IDENTITY_TAG(s) SIMPLICITY_PREFIX "\x1F" "Identity\x1F" s
-
-/* Cached initial values for all the tags.
- * Only to be accessed through 'cmrIV' or 'amrIV'.
- */
-static once_flag static_initialized = ONCE_FLAG_INIT;
-static sha256_midstate cmr_compIV,
-                       cmr_caseIV,
-                       cmr_pairIV,
-                       cmr_disconnectIV,
-                       cmr_injlIV,
-                       cmr_injrIV,
-                       cmr_takeIV,
-                       cmr_dropIV,
-                       cmr_idenIV,
-                       cmr_unitIV,
-                       cmr_witnessIV;
-static sha256_midstate amr_compIV,
-                       amr_assertlIV,
-                       amr_assertrIV,
-                       amr_caseIV,
-                       amr_pairIV,
-                       amr_disconnectIV,
-                       amr_injlIV,
-                       amr_injrIV,
-                       amr_takeIV,
-                       amr_dropIV,
-                       amr_idenIV,
-                       amr_unitIV,
-                       amr_witnessIV;
-static sha256_midstate imr_disconnectIV,
-                       imr_witnessIV;
-static sha256_midstate identityIV,
-                       hiddenIV,
-                       jetIV;
-static void static_initialize(void) {
-  MK_TAG(cmr_compIV.s, COMMITMENT_TAG("comp"));
-  MK_TAG(cmr_caseIV.s, COMMITMENT_TAG("case"));
-  MK_TAG(cmr_pairIV.s, COMMITMENT_TAG("pair"));
-  MK_TAG(cmr_disconnectIV.s, COMMITMENT_TAG("disconnect"));
-  MK_TAG(cmr_injlIV.s, COMMITMENT_TAG("injl"));
-  MK_TAG(cmr_injrIV.s, COMMITMENT_TAG("injr"));
-  MK_TAG(cmr_takeIV.s, COMMITMENT_TAG("take"));
-  MK_TAG(cmr_dropIV.s, COMMITMENT_TAG("drop"));
-  MK_TAG(cmr_idenIV.s, COMMITMENT_TAG("iden"));
-  MK_TAG(cmr_unitIV.s, COMMITMENT_TAG("unit"));
-  MK_TAG(cmr_witnessIV.s, COMMITMENT_TAG("witness"));
-  MK_TAG(amr_compIV.s, ANNOTATED_TAG("comp"));
-  MK_TAG(amr_assertlIV.s, ANNOTATED_TAG("assertl"));
-  MK_TAG(amr_assertrIV.s, ANNOTATED_TAG("assertr"));
-  MK_TAG(amr_caseIV.s, ANNOTATED_TAG("case"));
-  MK_TAG(amr_pairIV.s, ANNOTATED_TAG("pair"));
-  MK_TAG(amr_disconnectIV.s, ANNOTATED_TAG("disconnect"));
-  MK_TAG(amr_injlIV.s, ANNOTATED_TAG("injl"));
-  MK_TAG(amr_injrIV.s, ANNOTATED_TAG("injr"));
-  MK_TAG(amr_takeIV.s, ANNOTATED_TAG("take"));
-  MK_TAG(amr_dropIV.s, ANNOTATED_TAG("drop"));
-  MK_TAG(amr_idenIV.s, ANNOTATED_TAG("iden"));
-  MK_TAG(amr_unitIV.s, ANNOTATED_TAG("unit"));
-  MK_TAG(amr_witnessIV.s, ANNOTATED_TAG("witness"));
-  MK_TAG(imr_disconnectIV.s, IDENTITY_TAG("disconnect"));
-  MK_TAG(imr_witnessIV.s, IDENTITY_TAG("witness"));
-  MK_TAG(identityIV.s, SIMPLICITY_PREFIX "\x1F" "Identity");
-  MK_TAG(hiddenIV.s, SIMPLICITY_PREFIX "\x1F" "Hidden");
-  MK_TAG(jetIV.s, SIMPLICITY_PREFIX "\x1F" "Jet");
-}
 
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
@@ -88,8 +16,6 @@ static void static_initialize(void) {
  * Precondition: 'tag' \notin {HIDDEN, JET, WORD}
  */
 static sha256_midstate cmrIV(tag_t tag) {
-  call_once(&static_initialized, &static_initialize);
-
   switch (tag) {
    case COMP: return cmr_compIV;
    case ASSERTL:
@@ -120,8 +46,6 @@ static sha256_midstate cmrIV(tag_t tag) {
  * Precondition: 'tag' \notin {HIDDEN, JET, WORD}
  */
 static sha256_midstate imrIV(tag_t tag) {
-  call_once(&static_initialized, &static_initialize);
-
   return DISCONNECT == tag ? imr_disconnectIV
        : WITNESS == tag ? imr_witnessIV
        : cmrIV(tag);
@@ -133,8 +57,6 @@ static sha256_midstate imrIV(tag_t tag) {
  * Precondition: 'tag' \notin {HIDDEN, JET, WORD}
  */
 static sha256_midstate amrIV(tag_t tag) {
-  call_once(&static_initialized, &static_initialize);
-
   switch (tag) {
    case COMP: return amr_compIV;
    case ASSERTL: return amr_assertlIV;
@@ -164,8 +86,6 @@ static sha256_midstate amrIV(tag_t tag) {
  * Precondition: uint32_t imr[8]
  */
 sha256_midstate mkJetCMR(uint32_t *imr) {
-  call_once(&static_initialized, &static_initialize);
-
   sha256_midstate result = jetIV;
   uint32_t block[16] = {0};
   memcpy(&block[8], imr, sizeof(uint32_t[8]));
@@ -179,8 +99,6 @@ sha256_midstate mkJetCMR(uint32_t *imr) {
  * Precondition: 2^n == value->len
  */
 sha256_midstate computeWordCMR(const bitstring* value, size_t n) {
-  call_once(&static_initialized, &static_initialize);
-
   /* 'stack' is an array of 33 hashes consisting of 8 'uint32_t's each. */
   uint32_t stack[8*33] = {0};
   uint32_t *stack_ptr = stack;
@@ -276,8 +194,6 @@ void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' and contains witnesses.
  */
 static void computeIdentityMerkleRoot(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t len) {
-  call_once(&static_initialized, &static_initialize);
-
   /* Pass 1 */
   for (size_t i = 0; i < len; ++i) {
     uint32_t block[16] = {0};

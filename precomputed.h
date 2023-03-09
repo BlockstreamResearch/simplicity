@@ -12,6 +12,66 @@ static const sha256_midstate sumIV =
 static const sha256_midstate prodIV =
   {{0xc1719687u, 0x4b5121fdu, 0x5dbe2fefu, 0x5ba0d2edu, 0xce2392e3u, 0x5515a2f2u, 0x06b22bbeu, 0x088bb1afu}};
 
+/* Initial values for all the tags for 'CMR's, 'AMR's and 'IMR's. */
+static const sha256_midstate cmr_compIV =
+  {{0x259190d1u, 0xc4690c86u, 0x4974c5cau, 0x25752133u, 0x7c94edf5u, 0xeeb490aeu, 0x568944bdu, 0x8509e058u}};
+static const sha256_midstate cmr_caseIV =
+  {{0xacb7606du, 0x3c55cea3u, 0x61e3e4a0u, 0x9142f5ecu, 0x6bb979ddu, 0x1cf8a192u, 0x9124444cu, 0xc5cbb93au}};
+static const sha256_midstate cmr_pairIV =
+  {{0x8c8665b4u, 0x6b903c23u, 0x7a2e1c54u, 0x77b69ac3u, 0x28987661u, 0x287092d3u, 0x6a3c9976u, 0x9685c658u}};
+static const sha256_midstate cmr_disconnectIV =
+  {{0x36134881u, 0x7e0b72d2u, 0xfa283822u, 0x5d0eca86u, 0xe8cc75dau, 0x29efd14au, 0x0bcb0d2eu, 0x1b3b0d1eu}};
+static const sha256_midstate cmr_injlIV =
+  {{0xd80718a9u, 0xdf51d764u, 0x362211abu, 0xa47dafc9u, 0x3af0701bu, 0x5dd536a5u, 0x7b25b949u, 0xdf494f71u}};
+static const sha256_midstate cmr_injrIV =
+  {{0x3a3ae1a1u, 0xc62bcf45u, 0x6b5da2c1u, 0x1d60c898u, 0xbc3bd06fu, 0xe9c66d56u, 0xc7032a63u, 0x207a7bf6u}};
+static const sha256_midstate cmr_takeIV =
+  {{0xeae2b689u, 0x82ba678fu, 0x976e6d96u, 0xc7704207u, 0x867b4fdbu, 0xc76da80du, 0xb7b95969u, 0x203cbf17u}};
+static const sha256_midstate cmr_dropIV =
+  {{0xb305bdafu, 0x53932989u, 0x1281cb21u, 0xa4a6e9ccu, 0x9e568515u, 0x8079cacau, 0xa941fe65u, 0x7567ddb7u}};
+static const sha256_midstate cmr_idenIV =
+  {{0xdbfefcfcu, 0x7796acfcu, 0x86b435c1u, 0xf81ed8a1u, 0x65dab264u, 0x9dc48b0fu, 0x35f83264u, 0x7868fb5eu}};
+static const sha256_midstate cmr_unitIV =
+  {{0x62274a89u, 0x833ece8bu, 0xa5ff57b2u, 0x8118c006u, 0x3d3d4a85u, 0xdd25aae0u, 0x6f876176u, 0x04402715u}};
+static const sha256_midstate cmr_witnessIV =
+  {{0xbf12681au, 0x76fc7c00u, 0xc63e583cu, 0x25cc9723u, 0x7337d6acu, 0xa30d3f4au, 0x66407544u, 0x5385c648u}};
+static const sha256_midstate amr_assertlIV =
+  {{0x5c376038u, 0x81c5e4c3u, 0x9d4a057eu, 0xf12b860bu, 0xbdcbb4dbu, 0x08b63587u, 0x99e23c4bu, 0x94a9745bu}};
+static const sha256_midstate amr_assertrIV =
+  {{0xe7604dc0u, 0xa1e16e73u, 0x8c7b1378u, 0xa3f16306u, 0x19479087u, 0x95aa2c2au, 0x51976fcdu, 0x0cd5b68bu}};
+static const sha256_midstate amr_compIV =
+  {{0x614523eeu, 0x8f531e69u, 0x6d688301u, 0x41cb8518u, 0x841b0dd1u, 0x98b97b54u, 0xe808b82cu, 0x210991ccu}};
+static const sha256_midstate amr_caseIV =
+  {{0x9e6e5a58u, 0x03002bc6u, 0x19e2d012u, 0xfd09ea31u, 0x73abd01du, 0x940cb59bu, 0x1935894eu, 0xc3fedf04u}};
+static const sha256_midstate amr_pairIV =
+  {{0xffe83ac0u, 0x36a20ba2u, 0x1601c5d1u, 0xcefbb051u, 0x2558a039u, 0xf141b6a4u, 0xcfbe3386u, 0x956247deu}};
+static const sha256_midstate amr_disconnectIV =
+  {{0x428dfbc9u, 0x8ca7e553u, 0x8eeb05a6u, 0xd167fb49u, 0x63f7e42au, 0x74a37436u, 0x3c6940acu, 0x9aa1a3efu}};
+static const sha256_midstate amr_injlIV =
+  {{0xc2a12f43u, 0x6e0331e4u, 0x36c81e87u, 0xeb72c6d8u, 0xd390a5a8u, 0x0795e36cu, 0x6b8f91b4u, 0x60deeecdu}};
+static const sha256_midstate amr_injrIV =
+  {{0x18c6f138u, 0x18afd4e2u, 0x48cdf27au, 0xa6057f91u, 0xca393da5u, 0x01de6947u, 0xdc8961abu, 0x77582ad1u}};
+static const sha256_midstate amr_takeIV =
+  {{0xb2b1ede0u, 0xedd5e713u, 0x84f913c7u, 0x14a63f24u, 0x405ef61au, 0x01ef02adu, 0x409a84e9u, 0x095a4b13u}};
+static const sha256_midstate amr_dropIV =
+  {{0x09f52a27u, 0xa9fac46eu, 0x2326bc62u, 0xf86b819cu, 0xad70f260u, 0x4c204858u, 0xa914f929u, 0x159a7b5fu}};
+static const sha256_midstate amr_idenIV =
+  {{0xb17c6f06u, 0x6661cfbbu, 0x685df815u, 0x0186b593u, 0xe4fccacfu, 0x8a8796c4u, 0xcb15ccd4u, 0x7d9fa458u}};
+static const sha256_midstate amr_unitIV =
+  {{0x950d69a6u, 0x6004a0e2u, 0x03e95de2u, 0x3d4abd1au, 0xcb6ad14fu, 0x9a1f74fbu, 0x60c24759u, 0x87c578b7u}};
+static const sha256_midstate amr_witnessIV =
+  {{0xedb29895u, 0xbe3530b7u, 0xb6ccae11u, 0xffbd0b2cu, 0xa84ab6cau, 0xecf3b0cfu, 0x641aa710u, 0x39dc4397u}};
+static const sha256_midstate imr_disconnectIV =
+  {{0xbbd4996bu, 0x6ab7cfc2u, 0xf17e4cb6u, 0xc8dadde5u, 0xe40af23bu, 0xce2da63bu, 0x80918526u, 0x5d3e5311u}};
+static const sha256_midstate imr_witnessIV =
+  {{0xd7f8834au, 0x2571f9abu, 0x85c10cceu, 0xb4563b83u, 0x795e358au, 0xbd1410ddu, 0x737df982u, 0x91317825u}};
+static const sha256_midstate identityIV =
+  {{0x84d0d2c2u, 0x289093d6u, 0x4b068585u, 0x04cf5fb3u, 0x36dc4043u, 0x71b28864u, 0x81ee6783u, 0xa4fb0010u}};
+static const sha256_midstate hiddenIV =
+  {{0x0308705du, 0xdc7485ebu, 0x94f05f48u, 0xf01c92cbu, 0x62a1e057u, 0xaae4ece6u, 0xfd271c8fu, 0x1c49654bu}};
+static const sha256_midstate jetIV =
+  {{0xb3f14291u, 0xa2787fa8u, 0x14f81466u, 0x27815668u, 0x6d7d3f43u, 0x24e81bd4u, 0x61abf4ddu, 0x201ad3a8u}};
+
 /* This array contains the cmr of all canonical expressions of type X |- 2 that output distinct values. */
 static const sha256_midstate bit_cmr[] =
   { {{0xbd0cce93u, 0xe713a2aeu, 0x961bf91cu, 0x7d113edbu, 0x0671c786u, 0x9c722513u, 0x64682ac8u, 0x977eade7u}}
