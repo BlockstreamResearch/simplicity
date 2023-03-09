@@ -19,6 +19,8 @@ import Simplicity.Tags
 import Simplicity.Ty
 import Simplicity.Ty.Word
 
+x <-> y = x <> line <> y
+
 class Enumerable a where
   allValues :: [a]
 
@@ -44,6 +46,12 @@ prettyCHash h = bracket (format <$> chunksOf 8 str_h)
    where
     padding = replicate (64 - length text) '0'
     text = showHex (integerHash256 h) ""
+
+declareTyIVs :: Doc a
+declareTyIVs = vsep $ "/* Initial values for all the 'typeName's. */":(declTy <$> ["unit", "sum", "prod"])
+ where
+  declTy name = nest 2 $ (pretty $ "static const sha256_midstate "++name++"IV =")
+            <-> (bracket . single . prettyCHash . ivHash $ typeTag name) <> semi
 
 declareWord1CMR :: Doc a
 declareWord1CMR = vsep
@@ -88,6 +96,7 @@ footer = vsep $
 precomputed_h :: SimpleDocStream a
 precomputed_h = layoutPretty layoutOptions $ vsep (map (<> line)
   [ header
+  , declareTyIVs
   , declareWord1CMR
   , declareWordTypeRoots
   , footer

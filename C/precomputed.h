@@ -4,6 +4,14 @@
 
 #include "sha256.h"
 
+/* Initial values for all the 'typeName's. */
+static const sha256_midstate unitIV =
+  {{0x12b4c4a9u, 0xa4b0edf6u, 0x5a44f30eu, 0xa762578fu, 0xdd59f105u, 0xf0e4d8f3u, 0x88cb9b6bu, 0xd2c13adfu}};
+static const sha256_midstate sumIV =
+  {{0x05cc9dddu, 0x0e50b0ecu, 0x99fd5fadu, 0xdc4d9506u, 0xcd3e7bb8u, 0xedeb40cau, 0x9833866eu, 0x3a0abc33u}};
+static const sha256_midstate prodIV =
+  {{0xc1719687u, 0x4b5121fdu, 0x5dbe2fefu, 0x5ba0d2edu, 0xce2392e3u, 0x5515a2f2u, 0x06b22bbeu, 0x088bb1afu}};
+
 /* This array contains the cmr of all canonical expressions of type X |- 2 that output distinct values. */
 static const sha256_midstate bit_cmr[] =
   { {{0xbd0cce93u, 0xe713a2aeu, 0x961bf91cu, 0x7d113edbu, 0x0671c786u, 0x9c722513u, 0x64682ac8u, 0x977eade7u}}
