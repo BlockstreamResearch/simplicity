@@ -8,17 +8,7 @@ ifneq ($(doCheck), 1)
 CPPFLAGS := $(CPPFLAGS) -DNDEBUG
 endif
 
-ifneq ($(strip $(SINGLE_THREADED)),)
-  # SINGLE_THREADED is non-empty
-  CPPFLAGS := $(CPPFLAGS) -DSINGLE_THREADED
-endif
-
 CFLAGS := -I include
-
-ifeq ($(strip $(SINGLE_THREADED)),)
-  # SINGLE_THREADED is empty
-  LDFLAGS := -pthread
-endif
 
 # libsecp256k1 is full of conversion warnings, so we compile jets-secp256k1.c separately.
 jets-secp256k1.o: jets-secp256k1.c
