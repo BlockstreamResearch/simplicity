@@ -4,10 +4,8 @@
 
 #include <stdlib.h>
 #include "jets.h"
-#include "../../callonce.h"
 #include "../../prefix.h"
 #include "../../primitive.h"
-#include "../../tag.h"
 #include "../../unreachable.h"
 
 /* An enumeration of all the types we need to construct to specify the input and output types of all jets created by 'decodeJet'. */
@@ -403,23 +401,11 @@ static int32_t decodePrimitive(jetName* result, bitstream* stream) {
   }
 }
 
-/* Cached copy of each node for all the Elements specific jets.
- * Only to be accessed through 'jetNode'.
- */
-static once_flag static_initialized = ONCE_FLAG_INIT;
-static dag_node jet_node[] = {
-#include "primitiveJetNode.inc"
- };
-static void static_initialize(void) {
-  {
-    /* Jets are identified by their specification's identity Merkle roots. */
-#include "primitiveInitJet.inc"
-  }
-}
-
 /* Return a copy of the Simplicity node corresponding to the given Elements specific jet 'name'. */
 static dag_node jetNode(jetName name) {
-  call_once(&static_initialized, &static_initialize);
+  static const dag_node jet_node[] = {
+    #include "primitiveJetNode.inc"
+  };
 
   return jet_node[name];
 }
