@@ -4,6 +4,10 @@
 
 #include "sha256.h"
 
+/* Initial values for Simplicity's standard tagged message digest. */
+static const sha256_midstate signatureIV =
+  {{0x9470c4e3u, 0xe445a32fu, 0x7e5273b8u, 0x33ead715u, 0xd509cbc5u, 0x1fd3feb9u, 0xacdac827u, 0xf31f4123u}};
+
 /* Initial values for all the 'typeName's. */
 static const sha256_midstate unitIV =
   {{0x12b4c4a9u, 0xa4b0edf6u, 0x5a44f30eu, 0xa762578fu, 0xdd59f105u, 0xf0e4d8f3u, 0x88cb9b6bu, 0xd2c13adfu}};

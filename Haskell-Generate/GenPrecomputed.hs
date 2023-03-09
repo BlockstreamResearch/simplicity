@@ -50,6 +50,12 @@ prettyCHash h = bracket (format <$> chunksOf 8 str_h)
 declIV :: String -> IV -> Doc a
 declIV name iv = nest 2 $ (pretty $ "static const sha256_midstate "++name++"IV =") <-> (bracket . single . prettyCHash $ ivHash iv) <> semi
 
+declareSignatureIV :: Doc a
+declareSignatureIV = vsep
+                   [ "/* Initial values for Simplicity's standard tagged message digest. */"
+                   , declIV "signature" signatureTag
+                   ]
+
 declareTyIVs :: Doc a
 declareTyIVs = vsep $ "/* Initial values for all the 'typeName's. */":(declTy <$> ["unit", "sum", "prod"])
  where
@@ -110,6 +116,7 @@ footer = vsep $
 precomputed_h :: SimpleDocStream a
 precomputed_h = layoutPretty layoutOptions $ vsep (map (<> line)
   [ header
+  , declareSignatureIV
   , declareTyIVs
   , declareMRIVs
   , declareWord1CMR

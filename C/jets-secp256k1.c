@@ -1,9 +1,9 @@
 #include "jets.h"
 
+#include "precomputed.h"
 #include "prefix.h"
 #include "sha256.h"
 #include "secp256k1/secp256k1_impl.h"
-#include "tag.h"
 
 /* Read a secp256k1 field element value from the 'src' frame, advancing the cursor 256 cells.
  *
@@ -613,7 +613,7 @@ bool check_sig_verify(frameItem* dst, frameItem src, const txEnv* env) {
 
   {
     sha256_midstate output;
-    sha256_context ctx = MK_TAG(output.s, SIMPLICITY_PREFIX "\x1F" "Signature");
+    sha256_context ctx = sha256_tagged_init(output.s, &signatureIV);
     read8s(msg, 64, &src);
     sha256_uchars(&ctx, msg, 64);
     sha256_finalize(&ctx);

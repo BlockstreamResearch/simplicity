@@ -196,6 +196,18 @@ static inline sha256_context sha256_init(uint32_t* output) {
   return (sha256_context){ .output = output };
 }
 
+/* Initialize a sha256_context given a buffer in which the final output will be written to,
+ * and the midstate of a tagged hash.
+ *
+ * Note that the 'output' buffer may be updated during the computation to hold a SHA-256 midstate.
+ * Precondition: unit32_t output[8]
+ *               unit32_t iv[8]
+ */
+static inline sha256_context sha256_tagged_init(uint32_t* output, const sha256_midstate* iv) {
+  memcpy(output, iv->s, sizeof(uint32_t[8]));
+  return (sha256_context){ .output = output, .counter = 64 };
+}
+
 /* Add an array of bytes to be consumed by an ongoing SHA-256 evaluation.
  * Returns false if the counter overflows.
  *
