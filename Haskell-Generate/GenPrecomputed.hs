@@ -47,11 +47,25 @@ prettyCHash h = bracket (format <$> chunksOf 8 str_h)
     padding = replicate (64 - length text) '0'
     text = showHex (integerHash256 h) ""
 
+declIV :: String -> IV -> Doc a
+declIV name iv = nest 2 $ (pretty $ "static const sha256_midstate "++name++"IV =") <-> (bracket . single . prettyCHash $ ivHash iv) <> semi
+
 declareTyIVs :: Doc a
 declareTyIVs = vsep $ "/* Initial values for all the 'typeName's. */":(declTy <$> ["unit", "sum", "prod"])
  where
-  declTy name = nest 2 $ (pretty $ "static const sha256_midstate "++name++"IV =")
-            <-> (bracket . single . prettyCHash . ivHash $ typeTag name) <> semi
+  declTy name = declIV name (typeTag name)
+
+declareMRIVs :: Doc a
+declareMRIVs = vsep $ ["/* Initial values for all the tags for 'CMR's, 'AMR's and 'IMR's. */"]
+            ++ (declCMR <$> names)
+            ++ (declAMR <$> ["assertl", "assertr"] ++ names)
+            ++ (declIMR <$> ["disconnect", "witness"])
+            ++ [declIV "identity" identityRootTag, declIV "hidden" hiddenTag, declIV "jet" jetTag]
+ where
+  declCMR name = declIV ("cmr_" ++ name) (commitmentTag name)
+  declAMR name = declIV ("amr_" ++ name) (annotatedTag name)
+  declIMR name = declIV ("imr_" ++ name) (identityTag name)
+  names = ["comp", "case", "pair", "disconnect", "injl", "injr", "take", "drop", "iden", "unit", "witness"]
 
 declareWord1CMR :: Doc a
 declareWord1CMR = vsep
@@ -97,6 +111,7 @@ precomputed_h :: SimpleDocStream a
 precomputed_h = layoutPretty layoutOptions $ vsep (map (<> line)
   [ header
   , declareTyIVs
+  , declareMRIVs
   , declareWord1CMR
   , declareWordTypeRoots
   , footer
