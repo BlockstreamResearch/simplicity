@@ -23,7 +23,7 @@
 ,[BIP_0340_VERIFY] =
 { .tag = JET
 , .jet = bip_0340_verify
-, .cmr = {{0xccafd80bu, 0x8a1c8eb2u, 0x5f237409u, 0x8a24829fu, 0x0070bb1cu, 0xf06602dfu, 0xa9bde7f8u, 0x9e1de251u}}
+, .cmr = {{0xaf924cbeu, 0xc941fd9bu, 0x9e8293efu, 0x903e237bu, 0x01dbcb34u, 0x2b9610beu, 0xf95f59b8u, 0x136ef804u}}
 , .sourceIx = ty_w1Ki
 , .targetIx = ty_u
 }
@@ -100,7 +100,7 @@
 ,[CHECK_SIG_VERIFY] =
 { .tag = JET
 , .jet = check_sig_verify
-, .cmr = {{0x686023a6u, 0x928954f3u, 0xc618864cu, 0x21f8c326u, 0x0ef7e505u, 0x492a3c61u, 0x15114da0u, 0x180859d7u}}
+, .cmr = {{0x297459d8u, 0x373f8727u, 0xda9f92dau, 0xeab7196bu, 0xed0bd523u, 0x64405521u, 0x4455723au, 0xbac0b085u}}
 , .sourceIx = ty_ppw256w512w512
 , .targetIx = ty_u
 }
@@ -345,28 +345,28 @@
 ,[GEJ_ADD] =
 { .tag = JET
 , .jet = gej_add
-, .cmr = {{0x344a27e5u, 0xb67fba55u, 0xa05ad62bu, 0x1aea06b7u, 0x9567c4b9u, 0x26631b6bu, 0xf34c3c62u, 0x63005d9fu}}
+, .cmr = {{0x285485c4u, 0x70844925u, 0x10373df4u, 0x3df53407u, 0xacec8fb1u, 0xbd010380u, 0x897b517cu, 0x39cd6319u}}
 , .sourceIx = ty_ppw512w256pw512w256
 , .targetIx = ty_pw512w256
 }
 ,[GEJ_DOUBLE] =
 { .tag = JET
 , .jet = gej_double
-, .cmr = {{0x8a77c127u, 0x4a4dcbf2u, 0x0e1258b4u, 0x4c29588fu, 0xf6e4afddu, 0x25364290u, 0xc68570afu, 0xea8bd2e7u}}
+, .cmr = {{0x71077458u, 0x5775f91fu, 0x4ce578adu, 0x8d1e6445u, 0x41e21fc6u, 0xc810abdbu, 0x3b3ed211u, 0x5e39cdaeu}}
 , .sourceIx = ty_pw512w256
 , .targetIx = ty_pw512w256
 }
 ,[GEJ_GE_ADD] =
 { .tag = JET
 , .jet = gej_ge_add
-, .cmr = {{0x4f2143fau, 0xae3fe86eu, 0x88c3fe03u, 0x7909e3e8u, 0x584453f1u, 0x6143f5dcu, 0x641532d1u, 0x87fa6d43u}}
+, .cmr = {{0x7d7f426eu, 0x42458e45u, 0x771291ccu, 0x9e607e67u, 0x267a3885u, 0xadbebdc3u, 0x69df5966u, 0x3220befbu}}
 , .sourceIx = ty_ppw512w256w512
 , .targetIx = ty_pw512w256
 }
 ,[GEJ_GE_ADD_EX] =
 { .tag = JET
 , .jet = gej_ge_add_ex
-, .cmr = {{0x450c56f0u, 0x364ad9d4u, 0xff2e5b31u, 0xb690dee2u, 0xb98e5453u, 0x2f24d5bau, 0xfdf389a1u, 0x0bde9e28u}}
+, .cmr = {{0xcddae78du, 0x33a22128u, 0xbc2f72a6u, 0x02e0066fu, 0x63fe1862u, 0x57ea348cu, 0x2bb1f7e9u, 0xbf9b0d73u}}
 , .sourceIx = ty_ppw512w256w512
 , .targetIx = ty_pw256pw512w256
 }
@@ -429,7 +429,7 @@
 ,[GENERATE] =
 { .tag = JET
 , .jet = generate
-, .cmr = {{0xf532787au, 0xce24188au, 0x81c887bbu, 0x179932d4u, 0x73c58d62u, 0x9856649fu, 0x86b9ca09u, 0x69a67d81u}}
+, .cmr = {{0x0e91f455u, 0x7cb7d4c3u, 0xbbf3f2d0u, 0x74dd6946u, 0x423a3b4fu, 0xacb57a00u, 0xcae43fd6u, 0xa7352a13u}}
 , .sourceIx = ty_w256
 , .targetIx = ty_pw512w256
 }
@@ -660,14 +660,14 @@
 ,[LINEAR_COMBINATION_1] =
 { .tag = JET
 , .jet = linear_combination_1
-, .cmr = {{0x2b6fb7d6u, 0x100029b6u, 0xe6cd30cau, 0xa82e5831u, 0xcacf48ddu, 0x130c4d69u, 0x056c530du, 0x25633f89u}}
+, .cmr = {{0x950786efu, 0xa65a7122u, 0xe2554c6fu, 0xb55124f9u, 0xe5acd82cu, 0x29817affu, 0xc19fc7a9u, 0x27d3a070u}}
 , .sourceIx = ty_ppw256pw512w256w256
 , .targetIx = ty_pw512w256
 }
 ,[LINEAR_VERIFY_1] =
 { .tag = JET
 , .jet = linear_verify_1
-, .cmr = {{0x6fb2c331u, 0xcdf2e736u, 0x425704f2u, 0xc3ac15d6u, 0x23777480u, 0x0898522au, 0xb8267b4eu, 0x426eb455u}}
+, .cmr = {{0x635571b1u, 0x27c01565u, 0x7c1bfb1du, 0x9267bb84u, 0x6a7bf949u, 0x7507aea6u, 0x65373574u, 0x08e711a3u}}
 , .sourceIx = ty_pppw256w512w256w512
 , .targetIx = ty_u
 }
@@ -842,7 +842,7 @@
 ,[POINT_VERIFY_1] =
 { .tag = JET
 , .jet = point_verify_1
-, .cmr = {{0x518de762u, 0x3870e865u, 0x46392850u, 0x02cb2064u, 0x515bfcadu, 0x962675c5u, 0xb64901e7u, 0xd5527c29u}}
+, .cmr = {{0x6a089d61u, 0xca200a42u, 0x58e8b5b4u, 0xfe5c08d5u, 0x74856249u, 0x8d75f6c6u, 0x2609bb68u, 0xc98b407cu}}
 , .sourceIx = ty_pppw256pbw256w256pbw256
 , .targetIx = ty_u
 }
@@ -919,7 +919,7 @@
 ,[SCALE] =
 { .tag = JET
 , .jet = scale
-, .cmr = {{0xb192675au, 0xe82f0964u, 0xdb948030u, 0x9508f15cu, 0x75a3bd36u, 0x458121ceu, 0x0891ca01u, 0x809c7dd4u}}
+, .cmr = {{0x229c9fafu, 0xadd9745eu, 0x00d108b8u, 0x2b836205u, 0x9e83570du, 0xfc36cb1au, 0x2ce9c5c2u, 0xd913c644u}}
 , .sourceIx = ty_pw256pw512w256
 , .targetIx = ty_pw512w256
 }

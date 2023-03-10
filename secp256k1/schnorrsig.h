@@ -13,7 +13,7 @@
  *
  *  Returns: 1: correct signature
  *           0: incorrect signature
- *  In:    sig64: pointer to the 64-byte signature to verify (cannot be NULL)
+ *  In:    sig64: pointer to the 64-byte signature to verify.
  *           msg: the message being verified. Can only be NULL if msglen is 0.
  *        msglen: length of the message
  *        pubkey: pointer to an x-only public key to verify with (cannot be NULL)
