@@ -1,5 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables, GADTs, RankNTypes, RecordWildCards #-}
--- | This module defines a library of Simplicity expressions that replicate the functional behaviour of (a specific version of) libsecp256k1's elliptic curve operations <https://github.com/bitcoin-core/secp256k1/tree/1e6f1f5ad5e7f1e3ef79313ec02023902bf8175c>.
+-- | This module defines a library of Simplicity expressions that replicate the functional behaviour of (a specific version of) libsecp256k1's elliptic curve operations <https://github.com/bitcoin-core/secp256k1/tree/v0.3.0>.
 -- The functions defined here return precisely the same field and point representatives that the corresponding libsecp256k1's functions do, with a few exceptions with the way the point at infinity is handled.
 -- This makes these expressions suitable for being jetted by using libsecp256k1 functions.
 module Simplicity.Programs.LibSecp256k1
@@ -8,7 +8,7 @@ module Simplicity.Programs.LibSecp256k1
   -- * Field operations
   , FE, fe_zero, fe_one, fe_is_zero
   , fe_normalize
-  , fe_add, fe_negate, fe_square, fe_multiply, fe_multiply_beta, fe_invert, fe_square_root
+  , fe_add, fe_negate, fe_halve, fe_square, fe_multiply, fe_multiply_beta, fe_invert, fe_square_root
   , fe_is_odd, fe_is_quad
   -- * Point operations
   , Point, GE, GEJ, gej_is_on_curve
@@ -106,6 +106,9 @@ data Lib term =
 
     -- | Negates a field element.
   , fe_negate :: term FE FE
+
+    -- | Halves a field element.
+  , fe_halve :: term FE FE
 
     -- | Multiplies two field elements.
   , fe_multiply :: term (FE, FE) FE
@@ -280,6 +283,7 @@ instance SimplicityFunctor Lib where
     , fe_is_odd = m fe_is_odd
     , fe_add = m fe_add
     , fe_negate = m fe_negate
+    , fe_halve = m fe_halve
     , fe_multiply = m fe_multiply
     , fe_multiply_beta = m fe_multiply_beta
     , fe_square = m fe_square
@@ -347,6 +351,9 @@ mkLib Sha256.Lib{..} = lib
 
   scribeFeOrder :: term () Word256
   scribeFeOrder = scribe256 LibSecp256k1.fieldOrder
+
+  scribeFeHalf :: term () Word256
+  scribeFeHalf = scribe256 ((LibSecp256k1.fieldOrder + 1) `div` 2)
 
   scribeGroupOrder :: term () Word256
   scribeGroupOrder = scribe256 LibSecp256k1.groupOrder
@@ -482,6 +489,9 @@ mkLib Sha256.Lib{..} = lib
 
   , fe_square = iden &&& iden >>> fe_multiply
 
+  , fe_halve = (false &&& iden) >>> full_shift word1 word256 >>> ih &&& oh
+           >>> cond ((unit >>> scribeFeHalf) &&& iden >>> fe_add) iden
+
   , fe_invert = (unit >>> scribeFeOrder) &&& iden >>> Arith.bezout word256 >>> copair (drop fe_negate) ih
 
   , fe_square_root = iden &&& tower
@@ -503,10 +513,11 @@ mkLib Sha256.Lib{..} = lib
 
   , gej_double =
      let
-      body = (take (oh &&& (take fe_square >>> fe_multiplyInt (-3)) &&& (drop fe_square >>> fe_multiplyInt 2))                                                               -- (x, (-3*x^2, 2*y^2))
-          >>> (((drop (take fe_square)) &&& (iih &&& oh >>> fe_multiply)) &&& drop (oh &&& (drop fe_square >>> fe_multiplyInt (-2))))                                        -- ((9*x^4, 2*x*y^2), (-3*x^2, -8*y^4))
-          >>> take (oh &&& (drop (fe_multiplyInt (-4))) >>> fe_add) &&& (iih &&& (ioh &&& take (oh &&& drop (fe_multiplyInt (-6)) >>> fe_add) >>> fe_multiply) >>> fe_add))  -- (9*x^4 - 8*x*y^2, 36*x^3*y^2 - 27*x^6 - 8*y^4)
-         &&& (oih &&& ih >>> fe_multiply >>> fe_multiplyInt 2)                                                                                                               -- 2*y*z
+      body = (take (oh &&& (take fe_square >>> fe_multiplyInt 3 >>> fe_halve) &&& drop fe_square)                      -- (x, (3/2*x^2, y^2))
+          >>> ((iih &&& oh >>> fe_multiply >>> fe_negate) &&& ih)                                                      -- (-x*y^2, (3/2*x^2, y^2))
+          >>> (((take (fe_multiplyInt 2) &&& drop (take fe_square) >>> fe_add) &&& oh) &&& ih)                         -- ((9/4*x^4 - 2*x*y^2, x^2*y^4), (3/2*x^2, y^2))
+          >>> (ooh &&& ((ioh &&& (take fe_add) >>> fe_multiply) &&& drop (drop fe_square) >>> fe_add >>> fe_negate)))  -- (9/4*x^4 - 2*x*y^2, -(3/2*x^2*(9/4*x^4 - 3*x*y^2) + y^4))
+         &&& (oih &&& ih >>> fe_multiply)                                                                              -- y*z
      in
       gej_is_infinity &&& iden >>> cond (unit >>> gej_infinity) body
 
@@ -516,7 +527,7 @@ mkLib Sha256.Lib{..} = lib
          &&& ((ooih  &&& (iih >>> fe_cube) >>> fe_multiply)   &&& (drop (take (drop fe_negate)) &&& (oih >>> fe_cube) >>> fe_multiply) >>> fe_add &&& oh) &&&
              (oh &&& drop (drop fe_negate))                                                                                                                                     -- ((-h,u1),((-i,s1),(a,-bz))))
          >>> take (take fe_is_zero) &&& iden >>> cond (drop zeroH) nonZeroH
-      zeroH = take (take fe_is_zero) &&& ioh >>> cond (take (drop (fe_multiplyInt 2)) &&& gej_double) (unit >>> fe_zero &&& gej_infinity)
+      zeroH = take (take fe_is_zero) &&& ioh >>> cond (oih &&& gej_double) (unit >>> fe_zero &&& gej_infinity)
       nonZeroH = (ooh &&& ((ooh &&& drop ioih >>> fe_multiply) &&& iiih)) &&& ((take (take fe_square) &&& oih >>> fe_multiply) &&& ioh)                                         -- ((-h,(-h*az,-bz)),(t,(i,s1)))
              >>> ((ooh &&& oiih >>> fe_multiply) &&& take (drop fe_multiply)) &&& (((ooh >>> fe_cube) &&& ioh) &&& iih)                                            -- ((h*bz),z),((-h^3,t),(i,s1)))
              >>> ooh &&& drop ((((take (oh &&& drop (fe_multiplyInt (-2)) >>> fe_add) &&& drop (take fe_square) >>> fe_add) &&& oih) &&& (ioh &&& (ooh &&& iih >>> fe_multiply)))  -- (h*bz,(((x,t),(i,(-h^3*s1))),z))

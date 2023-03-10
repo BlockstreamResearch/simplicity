@@ -25,6 +25,14 @@
 static const secp256k1_scalar secp256k1_scalar_one = SECP256K1_SCALAR_CONST(0, 0, 0, 0, 0, 0, 0, 1);
 static const secp256k1_scalar secp256k1_scalar_zero = SECP256K1_SCALAR_CONST(0, 0, 0, 0, 0, 0, 0, 0);
 
+#if 0
+static int secp256k1_scalar_set_b32_seckey(secp256k1_scalar *r, const unsigned char *bin) {
+    int overflow;
+    secp256k1_scalar_set_b32(r, bin, &overflow);
+    return (!overflow) & (!secp256k1_scalar_is_zero(r));
+}
+#endif
+
 /**
  * The Secp256k1 curve has an endomorphism, where lambda * (x, y) = (beta * x, y), where
  * lambda is: */
@@ -41,7 +49,7 @@ static void secp256k1_scalar_split_lambda_verify(const secp256k1_scalar *r1, con
  * Both lambda and beta are primitive cube roots of unity.  That is lamba^3 == 1 mod n and
  * beta^3 == 1 mod p, where n is the curve order and p is the field order.
  *
- * Futhermore, because (X^3 - 1) = (X - 1)(X^2 + X + 1), the primitive cube roots of unity are
+ * Furthermore, because (X^3 - 1) = (X - 1)(X^2 + X + 1), the primitive cube roots of unity are
  * roots of X^2 + X + 1.  Therefore lambda^2 + lamba == -1 mod n and beta^2 + beta == -1 mod p.
  * (The other primitive cube roots of unity are lambda^2 and beta^2 respectively.)
  *
@@ -87,7 +95,7 @@ static void secp256k1_scalar_split_lambda_verify(const secp256k1_scalar *r1, con
  *
  * See proof below.
  */
-static void secp256k1_scalar_split_lambda(secp256k1_scalar *r1, secp256k1_scalar *r2, const secp256k1_scalar *k) {
+static void secp256k1_scalar_split_lambda(secp256k1_scalar * SECP256K1_RESTRICT r1, secp256k1_scalar * SECP256K1_RESTRICT r2, const secp256k1_scalar * SECP256K1_RESTRICT k) {
     secp256k1_scalar c1, c2;
     static const secp256k1_scalar minus_b1 = SECP256K1_SCALAR_CONST(
         0x00000000UL, 0x00000000UL, 0x00000000UL, 0x00000000UL,
@@ -107,6 +115,7 @@ static void secp256k1_scalar_split_lambda(secp256k1_scalar *r1, secp256k1_scalar
     );
     VERIFY_CHECK(r1 != k);
     VERIFY_CHECK(r2 != k);
+    VERIFY_CHECK(r1 != r2);
     /* these _var calls are constant time since the shift amount is constant */
     secp256k1_scalar_mul_shift_var(&c1, k, &g1, 384);
     secp256k1_scalar_mul_shift_var(&c2, k, &g2, 384);

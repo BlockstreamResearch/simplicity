@@ -3,7 +3,7 @@ module Simplicity.LibSecp256k1.Spec
    FE, fe, fe_repr, fe_pack, fe_unpack
  , fe_zero, fe_one
  , fe_is_zero, fe_is_odd
- , fe_negate, fe_add, fe_multiply, fe_square, fe_invert, fe_square_root
+ , fe_negate, fe_add, fe_halve, fe_multiply, fe_square, fe_invert, fe_square_root
  , (.+.), (.-.), (.*.), (.^.)
    -- * Group operations.
  , GEJ(..), _gej, gej, _x, _y, _z, g
@@ -157,6 +157,12 @@ fe_multiply a b = fe (fe_repr a * fe_repr b)
 fe_square :: FE -> FE
 fe_square a = fe_multiply a a
 
+-- | Halve a field element.
+fe_halve :: FE -> FE
+fe_halve a = fe ((x + if odd x then fieldOrder else 0) `div` 2)
+ where
+  x = fe_repr a
+
 -- | Multiply a field element by an integer.
 --
 -- @
@@ -248,9 +254,9 @@ gej_double :: GEJ -> GEJ
 gej_double a@(GEJ x y z) | gej_is_infinity a = mempty
                          | otherwise = GEJ x' y' z'
  where
-  x' = mulInt 9 (x .^. 4) .+. mulInt (-8) (x .*. y .^. 2)
-  y' = mulInt 36 (x .^. 3 .*. y .^. 2) .+. mulInt (-27) (x .^. 6) .+. mulInt (-8) (y .^. 4)
-  z' = mulInt 2 (y .*. z)
+  x' = fe_halve . fe_halve $ mulInt 9 (x .^. 4) .+. mulInt (-8) (x .*. y .^. 2)
+  y' = fe_halve . fe_halve . fe_halve $ mulInt 36 (x .^. 3 .*. y .^. 2) .+. mulInt (-27) (x .^. 6) .+. mulInt (-8) (y .^. 4)
+  z' = y .*. z
 
 -- | Compute the point addition formula for a 'GEJ'.
 -- This also returns the ratio between z-component of 'a' and z-component of the result.
@@ -267,7 +273,7 @@ gej_double a@(GEJ x y z) | gej_is_infinity a = mempty
 gej_add_ex :: GEJ -> GEJ -> (FE, GEJ)
 gej_add_ex a@(GEJ ax ay az) b@(GEJ bx by bz) | gej_is_infinity a = (fe_zero, GEJ bx by bz)
                                              | gej_is_infinity b = (fe_one, a)
-                                             | isZeroH && isZeroI = (mulInt 2 ay, gej_double a)
+                                             | isZeroH && isZeroI = (ay, gej_double a)
                                              | isZeroH = (fe_zero, mempty)
                                              | otherwise = (bz .*. h, GEJ x y z)
  where
@@ -276,13 +282,13 @@ gej_add_ex a@(GEJ ax ay az) b@(GEJ bx by bz) | gej_is_infinity a = (fe_zero, GEJ
   s1 = ay .*. bz .^. 3
   s2 = by .*. az .^. 3
   h = u2 .-. u1
-  i = s2 .-. s1
+  i = s1 .-. s2
   isZeroH = fe_is_zero h
   isZeroI = fe_is_zero i
   z = az .*. bz .*. h
-  t = u1 .*. h .^. 2
-  x = i .^. 2 .+. mulInt (-2) t .-. h .^. 3
-  y = (t .-. x) .*. i .-. h .^. 3 .*. s1
+  t = fe_negate $ u1 .*. h .^. 2
+  x = i .^. 2 .+. mulInt 2 t .-. h .^. 3
+  y = (t .+. x) .*. i .-. h .^. 3 .*. s1
 
 instance Semigroup GEJ where
   a <> b = snd $ gej_add_ex a b

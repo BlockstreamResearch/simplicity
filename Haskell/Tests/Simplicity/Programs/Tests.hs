@@ -130,6 +130,7 @@ tests = testGroup "Programs"
         , testProperty "fe_multiply" prop_fe_multiply
         , testProperty "fe_square" prop_fe_square
         , testProperty "fe_negate" prop_fe_negate
+        , testProperty "fe_halve" prop_fe_halve
         , testProperty "fe_invert" (withMaxSuccess 10 prop_fe_invert)
         , testProperty "fe_square_root" (withMaxSuccess 10 prop_fe_square_root)
         , testProperty "gej_rescale" prop_gej_rescale
@@ -580,6 +581,9 @@ prop_fe_square = fe_unary_prop fe_square Spec.fe_square
 
 prop_fe_negate :: FieldElement -> Bool
 prop_fe_negate = fe_unary_prop fe_negate Spec.fe_negate
+
+prop_fe_halve :: FieldElement -> Bool
+prop_fe_halve = fe_unary_prop fe_halve Spec.fe_halve
 
 prop_fe_invert :: FieldElement -> Bool
 prop_fe_invert = fe_unary_prop fe_invert Spec.fe_invert

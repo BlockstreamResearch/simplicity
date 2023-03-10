@@ -7,7 +7,7 @@ module Simplicity.Programs.LibSecp256k1.Lib
   -- * Field operations
     LibSecp256k1.FE, fe_zero, fe_one, fe_is_zero
   , fe_normalize
-  , fe_add, fe_negate, fe_square, fe_multiply, fe_multiply_beta, fe_invert, fe_square_root
+  , fe_add, fe_negate, fe_halve, fe_square, fe_multiply, fe_multiply_beta, fe_invert, fe_square_root
   , fe_is_odd, fe_is_quad
   -- * Point operations
   , LibSecp256k1.Point, LibSecp256k1.GE, LibSecp256k1.GEJ, gej_is_on_curve
@@ -43,6 +43,7 @@ fe_is_zero = LibSecp256k1.fe_is_zero LibSecp256k1.lib
 fe_normalize = LibSecp256k1.fe_normalize LibSecp256k1.lib
 fe_add = LibSecp256k1.fe_add LibSecp256k1.lib
 fe_negate = LibSecp256k1.fe_negate LibSecp256k1.lib
+fe_halve = LibSecp256k1.fe_halve LibSecp256k1.lib
 fe_square = LibSecp256k1.fe_square LibSecp256k1.lib
 fe_multiply = LibSecp256k1.fe_multiply LibSecp256k1.lib
 fe_multiply_beta = LibSecp256k1.fe_multiply_beta LibSecp256k1.lib

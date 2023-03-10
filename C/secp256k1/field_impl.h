@@ -17,12 +17,14 @@
 #error "Please select wide multiplication implementation"
 #endif
 
+#if 0
 SECP256K1_INLINE static int secp256k1_fe_equal(const secp256k1_fe *a, const secp256k1_fe *b) {
     secp256k1_fe na;
     secp256k1_fe_negate(&na, a, 1);
     secp256k1_fe_add(&na, b);
     return secp256k1_fe_normalizes_to_zero(&na);
 }
+#endif
 
 SECP256K1_INLINE static int secp256k1_fe_equal_var(const secp256k1_fe *a, const secp256k1_fe *b) {
     secp256k1_fe na;
@@ -130,7 +132,5 @@ static int secp256k1_fe_sqrt_var(secp256k1_fe *r, const secp256k1_fe *a) {
     secp256k1_fe_sqr(&t1, r);
     return secp256k1_fe_equal_var(&t1, a);
 }
-
-static const secp256k1_fe secp256k1_fe_one = SECP256K1_FE_CONST(0, 0, 0, 0, 0, 0, 0, 1);
 
 #endif /* SECP256K1_FIELD_IMPL_H */

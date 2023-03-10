@@ -13,10 +13,12 @@
 
 #include "assumptions.h"
 #include "util.h"
+
 #include "field_impl.h"
 #include "scalar_impl.h"
 #include "group_impl.h"
 #include "ecmult_impl.h"
+#include "int128_impl.h"
 
 #ifdef SECP256K1_NO_BUILD
 # error "secp256k1.h processed without SECP256K1_BUILD defined while building secp256k1.c"
