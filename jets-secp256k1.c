@@ -172,13 +172,9 @@ bool fe_multiply(frameItem* dst, frameItem src, const txEnv* env) {
 bool fe_multiply_beta(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
 
-  static const secp256k1_fe beta = SECP256K1_FE_CONST(
-      0x7ae96a2bul, 0x657c0710ul, 0x6e64479eul, 0xac3434e9ul,
-      0x9cf04975ul, 0x12f58995ul, 0xc1396c28ul, 0x719501eeul
-  );
   secp256k1_fe a;
   read_fe(&a, &src);
-  secp256k1_fe_mul(&a, &a, &beta);
+  secp256k1_fe_mul(&a, &a, &secp256k1_const_beta);
   write_fe(dst, &a);
   return true;
 }
