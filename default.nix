@@ -2,6 +2,7 @@
 , ghc ? "ghc94"
 , coqPackages ? "coqPackages_8_15"
 , secp256k1git ? null
+, wideMultiply ? null
 }:
 let hp = nixpkgs.haskell.packages.${ghc};
     cp = nixpkgs.${coqPackages};
@@ -26,7 +27,9 @@ let hp = nixpkgs.haskell.packages.${ghc};
     inherit vst;
   };
 
-  c = nixpkgs.callPackage ./Simplicity.C.nix {};
+  c = nixpkgs.callPackage ./Simplicity.C.nix {
+    inherit wideMultiply;
+  };
 
   compcert = nixpkgs.callPackage ./compcert-opensource.nix {
     inherit (cp) coq flocq;
