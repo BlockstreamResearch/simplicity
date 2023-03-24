@@ -29,7 +29,7 @@ static void secp256k1_schnorrsig_challenge(secp256k1_scalar* e, const unsigned c
 {
     unsigned char buf[32];
    sha256_midstate sha_buf;
- 
+
     /* tagged hash(r.x, pk.x, msg32) */
     sha256_context sha = secp256k1_schnorrsig_sha256_tagged(sha_buf.s);
     sha256_uchars(&sha, r32, 32);
