@@ -6,6 +6,7 @@
 #include "primitive.h"
 #include "../../deserialize.h"
 #include "../../eval.h"
+#include "../../limitations.h"
 #include "../../typeInference.h"
 
 /* Deserialize a Simplicity 'program' and execute it in the environment of the 'ix'th input of 'tx' with `taproot`.
@@ -46,10 +47,12 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
   {
     bitstream stream = initializeBitstream(program, program_len);
     dag_len = decodeMallocDag(&dag, &census, &stream);
-    if (dag_len < 0) {
+    if (dag_len <= 0) {
       *success = false;
+      assert(dag_len < 0);
       return PERMANENT_FAILURE(dag_len);
     }
+    assert((size_t)dag_len <= DAG_LEN_MAX);
 
     int32_t err = decodeWitnessData(&witness, &stream);
     if (err < 0) {
@@ -69,9 +72,10 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
       *success = result && type_dag && 0 == dag[dag_len-1].sourceType && 0 == dag[dag_len-1].targetType
               && fillWitnessData(dag, type_dag, (size_t)dag_len, witness);
       if (*success) {
-        sha256_midstate* imr_buf = (size_t)dag_len <= SIZE_MAX / sizeof(sha256_midstate)
-                                 ? malloc((size_t)dag_len * sizeof(sha256_midstate))
-                                 : NULL;
+        static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(sha256_midstate), "imr_buf array too large.");
+        static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
+        static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "imr_buf array index does nto fit in uint32_t.");
+        sha256_midstate* imr_buf = malloc((size_t)dag_len * sizeof(sha256_midstate));
         bool noDupsCheck;
         result = imr_buf && verifyNoDuplicateIdentityRoots(&noDupsCheck, imr_buf, dag, type_dag, (size_t)dag_len);
         *success = result && noDupsCheck;
@@ -79,9 +83,10 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
         free(imr_buf);
       }
       if (*success && amr) {
-        analyses *analysis = (size_t)dag_len <= SIZE_MAX / sizeof(analyses)
-                           ? malloc((size_t)dag_len * sizeof(analyses))
-                           : NULL;
+        static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(analyses), "analysis array too large.");
+        static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
+        static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "analysis array index does nto fit in uint32_t.");
+        analyses *analysis = malloc((size_t)dag_len * sizeof(analyses));
         if (analysis) {
           computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)dag_len);
           *success = 0 == memcmp(amr_hash.s, analysis[dag_len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]));

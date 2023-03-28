@@ -16,6 +16,7 @@
  * Precondition: NULL != bound_var;
  *               NULL != word256_ix;
  *               NULL != extra_var_start;
+ *               extra_var_len <= 6*DAG_LEN_MAX;
  *
  * Postcondition: Either '*bound_var == NULL' and the function returns 0
  *                or 'unification_var (*bound_var)[*extra_var_start + extra_var_len]' is an array of unification variables

@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include "jets.h"
+#include "../../limitations.h"
 #include "../../prefix.h"
 #include "../../primitive.h"
 #include "../../unreachable.h"
@@ -24,6 +25,7 @@ enum TypeNamesForJets {
  * Precondition: NULL != bound_var;
  *               NULL != word256_ix;
  *               NULL != extra_var_start;
+ *               extra_var_len <= 6*DAG_LEN_MAX;
  *
  * Postcondition: Either '*bound_var == NULL' and the function returns 0
  *                or 'unification_var (*bound_var)[*extra_var_start + extra_var_len]' is an array of unification variables
@@ -32,10 +34,13 @@ enum TypeNamesForJets {
  *                   and, '*word256_ix < *extra_var_start' and '(*bound_var)[*word256_ix]' is bound the type 'TWO^256'
  */
 size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* extra_var_start, size_t extra_var_len) {
-  _Static_assert(NumberOfTypeNames <= SIZE_MAX / sizeof(unification_var), "NumberOfTypeNames is too large");
-  *bound_var = extra_var_len <= SIZE_MAX / sizeof(unification_var) - NumberOfTypeNames
-             ? malloc((NumberOfTypeNames + extra_var_len) * sizeof(unification_var))
-             : NULL;
+  static_assert(1 <= NumberOfTypeNames, "Missing TypeNamesForJets.");
+  static_assert(NumberOfTypeNames <= NUMBER_OF_TYPENAMES_MAX, "Too many TypeNamesForJets.");
+  static_assert(DAG_LEN_MAX <= (SIZE_MAX - NumberOfTypeNames) / 6, "NumberOfTypeNames + 6*DAG_LEN_MAX doesn't fit in size_t");
+  static_assert(NumberOfTypeNames + 6*DAG_LEN_MAX <= SIZE_MAX/sizeof(unification_var) , "bound_var array too large");
+  static_assert(NumberOfTypeNames + 6*DAG_LEN_MAX - 1 <= UINT32_MAX, "bound_var array index doesn't fit in uint32_t");
+  assert(extra_var_len <= 6*DAG_LEN_MAX);
+  *bound_var = malloc((NumberOfTypeNames + extra_var_len) * sizeof(unification_var));
   if (!(*bound_var)) return 0;
 #include "primitiveInitTy.inc"
   *word256_ix = ty_w256;

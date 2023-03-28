@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <stdlib.h>
+#include "limitations.h"
 #include "primitive.h"
 #include "unreachable.h"
 
@@ -188,8 +189,11 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
   *dag = NULL;
   int32_t dagLen = decodeUptoMaxInt(stream);
   if (dagLen <= 0) return dagLen;
-  /* :TODO: a consensus parameter limiting the maximum length of a DAG needs to be enforced here */
-  if (PTRDIFF_MAX / sizeof(dag_node) < (size_t)dagLen) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+  static_assert(DAG_LEN_MAX <= (uint32_t)INT32_MAX, "DAG_LEN_MAX exceeds supported parsing range.");
+  if (DAG_LEN_MAX < (uint32_t)dagLen) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+  static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(dag_node), "dag array too large.");
+  static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
+  static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "dag array index does not fit in uint32_t.");
   *dag = malloc((size_t)dagLen * sizeof(dag_node));
   if (!*dag) return SIMPLICITY_ERR_MALLOC;
 
