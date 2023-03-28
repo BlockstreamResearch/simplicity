@@ -660,9 +660,7 @@ typedef struct memBound {
  *                then 'max(dag_bound->extraCellsBoundTCO[0], dag_bound->extraCellsBoundTCO[1]) == SIZE_MAX'.
  *                       or 'dag_bound->extraCellsBoundTCO' characterizes the number of UWORDs needed
  *                         for the frames allocated during evaluation of 'dag';
- *                     'dag_bound->extraStackBoundTCO[0] == SIZE_MAX'
- *                       or 'dag_bound->extraStackBoundTCO[0]' bounds the the number of stack frames needed
- *                          during execution of 'dag';
+ *                     'dag_bound->extraStackBoundTCO[0]' bounds the the number of stack frames needed during execution of 'dag';
  */
 static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const type* type_dag, const size_t len) {
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(memBound), "bound array too large.");
@@ -704,10 +702,9 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
                , max(bound[dag[i].child[0]].extraCellsBoundTCO[0], bound[dag[i].child[1]].extraCellsBoundTCO[1]))),
           bound[dag[i].child[1]].extraCellsBoundTCO[0]);
       }
-      bound[i].extraStackBound[0] = bound[i].extraStackBound[1]
-                                  = max( bounded_add(1, bound[dag[i].child[0]].extraStackBound[1])
+      bound[i].extraStackBound[1] = max( bound[dag[i].child[0]].extraStackBound[1] + 1
                                        , bound[dag[i].child[1]].extraStackBound[1]);
-      bounded_inc(&bound[i].extraStackBound[0]);
+      bound[i].extraStackBound[0] = bound[i].extraStackBound[1] + 1;
       break;
      case COMP:
       /* :TODO: replace this check with a consensus critical limit. */
@@ -724,9 +721,9 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
         bound[i].extraCellsBoundTCO[1] = bounded_add(scratch, bound[dag[i].child[0]].extraCellsBoundTCO[1]);
       }
       bound[i].extraStackBound[0] = max( bound[dag[i].child[0]].extraStackBound[0]
-                                       , bound[dag[i].child[1]].extraStackBound[1] );
-      bounded_inc(&bound[i].extraStackBound[0]);
-      bound[i].extraStackBound[1] = max( bounded_add(1, bound[dag[i].child[0]].extraStackBound[1])
+                                       , bound[dag[i].child[1]].extraStackBound[1] )
+                                  + 1;
+      bound[i].extraStackBound[1] = max( bound[dag[i].child[0]].extraStackBound[1] + 1
                                        , bound[dag[i].child[1]].extraStackBound[1] );
       break;
      case PAIR:
@@ -799,13 +796,13 @@ bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* ou
   size_t cellsBound = bounded_add( bounded_add(ROUND_UWORD(inputSize), ROUND_UWORD(outputSize))
                                  , max(bound.extraCellsBoundTCO[0], bound.extraCellsBoundTCO[1])
                                  );
-  size_t stackBound = bounded_add(bound.extraStackBound[0], 2);
+  size_t stackBound = bound.extraStackBound[0] + 2; /* add the initial input and output frames to the count. */
   /* stackBound is at most 2*len. */
   static_assert(DAG_LEN_MAX <= SIZE_MAX / 2, "2*DAG_LEN_MAX does not fit in size_t.");
   assert(stackBound <= 2*len);
 
-  /* :TODO: add reasonable, consensus critical limits to cells and stack bounds */
-  if (SIZE_MAX <= outputSize || SIZE_MAX <= inputSize || SIZE_MAX <= cellsBound || SIZE_MAX <= stackBound) {
+  /* :TODO: add reasonable, consensus critical limits to cells. */
+  if (SIZE_MAX <= outputSize || SIZE_MAX <= inputSize || SIZE_MAX <= cellsBound) {
     *evalSuccess = false;
     return true;
   }
