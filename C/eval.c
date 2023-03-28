@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "bounded.h"
+#include "limitations.h"
 #include "unreachable.h"
 
 /* We choose an unusual representation for frames of the Bit Machine.
@@ -664,9 +665,12 @@ typedef struct memBound {
  *                          during execution of 'dag';
  */
 static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const type* type_dag, const size_t len) {
-  memBound* bound = len <= SIZE_MAX / sizeof(memBound)
-                  ? malloc(len * sizeof(memBound))
-                  : NULL;
+  static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(memBound), "bound array too large.");
+  static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
+  static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "bound array index does not fit in uint32_t.");
+  assert(1 <= len);
+  assert(len <= DAG_LEN_MAX);
+  memBound* bound = malloc(len * sizeof(memBound));
   if (!bound) return false;
 
   for (size_t i = 0; i < len; ++i) {
@@ -787,6 +791,8 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
 bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
                       , const dag_node* dag, type* type_dag, size_t len, const txEnv* env
                       ) {
+  assert(1 <= len);
+  assert(len <= DAG_LEN_MAX);
   memBound bound;
   if (!computeEvalTCOBound(&bound, dag, type_dag, len)) return false;
 
@@ -794,6 +800,9 @@ bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* ou
                                  , max(bound.extraCellsBoundTCO[0], bound.extraCellsBoundTCO[1])
                                  );
   size_t stackBound = bounded_add(bound.extraStackBound[0], 2);
+  /* stackBound is at most 2*len. */
+  static_assert(DAG_LEN_MAX <= SIZE_MAX / 2, "2*DAG_LEN_MAX does not fit in size_t.");
+  assert(stackBound <= 2*len);
 
   /* :TODO: add reasonable, consensus critical limits to cells and stack bounds */
   if (SIZE_MAX <= outputSize || SIZE_MAX <= inputSize || SIZE_MAX <= cellsBound || SIZE_MAX <= stackBound) {
@@ -803,9 +812,10 @@ bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* ou
 
   /* We use calloc for 'cells' because the frame data must be initialized before we can perform bitwise operations. */
   UWORD* cells = calloc(cellsBound ? cellsBound : 1, sizeof(UWORD));
-  frameItem* frames = stackBound <= SIZE_MAX / sizeof(frameItem)
-                    ? malloc(stackBound * sizeof(frameItem))
-                    : NULL;
+  static_assert(2*DAG_LEN_MAX <= SIZE_MAX / sizeof(frameItem), "frames array does not fit in size_t.");
+  static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
+  static_assert(2*DAG_LEN_MAX - 1 <= UINT32_MAX, "frames array index does not fit in uint32_t.");
+  frameItem* frames = malloc(stackBound * sizeof(frameItem));
   call* stack = calloc(len, sizeof(call));
 
   const bool result = cells && frames && stack;

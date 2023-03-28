@@ -4,7 +4,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "bounded.h"
+#include "limitations.h"
 #include "primitive.h"
+
+static_assert(DAG_LEN_MAX <= (SIZE_MAX - NUMBER_OF_TYPENAMES_MAX) / 4, "TYPE_DAG_LEN_MAX doesn't fit in size_t.");
+#define TYPE_DAG_LEN_MAX (NUMBER_OF_TYPENAMES_MAX + 4*DAG_LEN_MAX)
 
 /* Every subexpression in a Simplicity expression has a unification variable for its inferred source and target type. */
 typedef struct unification_arrow {
@@ -538,24 +542,31 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
  */
 bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census) {
   *type_dag = NULL;
-  /* :TODO: static assert that MAX_DAG size is small enough that these sizes fit within SIZE_T. */
-  /* These arrays could be allocated on the stack, but they are potentially large, so we allocate them on the heap instead. */
-  unification_arrow* arrow = len <= SIZE_MAX / sizeof(unification_arrow)
-                           ? malloc(len * sizeof(unification_arrow))
-                           : NULL;
+  static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(unification_arrow), "arrow array too large.");
+  static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
+  static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "arrow array index does not fit in uint32_t.");
+  assert(1 <= len);
+  assert(len <= DAG_LEN_MAX);
+  unification_arrow* arrow = malloc(len * sizeof(unification_arrow));
   unification_var* bound_var;
   size_t word256_ix, extra_var_start;
-  size_t bindings_used = mallocBoundVars(&bound_var, &word256_ix, &extra_var_start, max_extra_vars(census));
+  const size_t orig_bindings_used = mallocBoundVars(&bound_var, &word256_ix, &extra_var_start, max_extra_vars(census));
+  size_t bindings_used = orig_bindings_used;
+
+  static_assert(1 <= NUMBER_OF_TYPENAMES_MAX, "NUMBER_OF_TYPENAMES_MAX is zero.");
+  assert(orig_bindings_used <= NUMBER_OF_TYPENAMES_MAX - 1);
 
   bool result = arrow && bound_var;
   if (result) {
     if (typeInference(arrow, dag, len, bound_var + extra_var_start, bound_var, word256_ix, &bindings_used)) {
       /* :TODO: constrain the root of the dag to be a Simplicity program: ONE |- ONE */
 
-      /* :TODO: static assert that MAX_DAG size is small enough that this size fits within SIZE_T. */
-      *type_dag = bindings_used < SIZE_MAX / sizeof(type)
-                ? malloc((1 + bindings_used) * sizeof(type))
-                : NULL;
+      static_assert(TYPE_DAG_LEN_MAX <= SIZE_MAX / sizeof(type), "type_dag array too large.");
+      static_assert(1 <= TYPE_DAG_LEN_MAX, "TYPE_DAG_LEN_MAX is zero.");
+      static_assert(TYPE_DAG_LEN_MAX - 1 <= UINT32_MAX, "type_dag array index does not fit in uint32_t.");
+      /* 'bindings_used' is at most 4*len plus the initial value of 'bindings_used' set by 'mallocBoundVars'. */
+      assert(bindings_used <= orig_bindings_used + 4*len);
+      *type_dag = malloc((1 + bindings_used) * sizeof(type));
       result = *type_dag;
       if (result) {
         if (!freezeTypes(*type_dag, dag, arrow, len)) {

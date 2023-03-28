@@ -299,7 +299,7 @@ static inline size_t WITNESS_B(const dag_node* dag, const type* type_dag, size_t
  *
  * such that
  *
- *     0 < len
+ *     1 <= len <= DAG_LEN_MAX
  *
  * and for all 'i', 0 <= 'i' < 'len' and for all 'j', 0 <= 'j' < 'numChildren(dag[i].tag)',
  *
