@@ -658,11 +658,10 @@ typedef struct memBound {
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
  * Postcondition: if the result is 'true'
  *                then 'max(dag_bound->extraCellsBound[0], dag_bound->extraCellsBound[1]) == SIZE_MAX'.
- *                       or 'dag_bound->extraCellsBound' characterizes the number of cells needed during evaluation of 'dag';
- *                     'max(dag_bound->extraUWORDBound[0], dag_bound->extraUWORDBound[1]) == SIZE_MAX'.
- *                       or 'dag_bound->extraUWORDBound' characterizes the number of UWORDs needed
- *                         for the frames allocated during evaluation of 'dag';
- *                     'dag_bound->extraFrameBound[0]' bounds the the number of stack frames needed during execution of 'dag';
+ *                     or 'dag_bound->extraCellsBound' characterizes the number of cells needed during evaluation of 'dag'
+ *                        and 'dag_bound->extraUWORDBound' characterizes the number of UWORDs needed
+ *                              for the frames allocated during evaluation of 'dag'
+ *                        and 'dag_bound->extraFrameBound[0]' bounds the the number of stack frames needed during execution of 'dag';
  */
 static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const type* type_dag, const size_t len) {
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(memBound), "bound array too large.");
@@ -699,8 +698,6 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
         /* 'BITSIZE(WORD256 * A)' or 'BITSIZE(B * C)' has exceeded our limits. */
         bound[i].extraCellsBound[0] = SIZE_MAX;
         bound[i].extraCellsBound[1] = SIZE_MAX;
-        bound[i].extraUWORDBound[0] = SIZE_MAX;
-        bound[i].extraUWORDBound[1] = SIZE_MAX;
       } else {
         bound[i].extraCellsBound[1] = type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize;
         bound[i].extraCellsBound[0] = max(
@@ -708,14 +705,14 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
                      , max( bounded_add(bound[i].extraCellsBound[1], bound[dag[i].child[0]].extraCellsBound[1])
                           , max(bound[dag[i].child[0]].extraCellsBound[0], bound[dag[i].child[1]].extraCellsBound[1]))),
           bound[dag[i].child[1]].extraCellsBound[0]);
-        bound[i].extraUWORDBound[1] = ROUND_UWORD(type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize);
-        bound[i].extraUWORDBound[0] = max(
-          bounded_add(
-            ROUND_UWORD(type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize),
-            max( bounded_add(bound[i].extraUWORDBound[1], bound[dag[i].child[0]].extraUWORDBound[1])
-               , max(bound[dag[i].child[0]].extraUWORDBound[0], bound[dag[i].child[1]].extraUWORDBound[1]))),
-          bound[dag[i].child[1]].extraUWORDBound[0]);
       }
+      bound[i].extraUWORDBound[1] = ROUND_UWORD(type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize);
+      bound[i].extraUWORDBound[0] = max(
+          ROUND_UWORD(type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize) +
+          max( bound[i].extraUWORDBound[1] + bound[dag[i].child[0]].extraUWORDBound[1]
+             , max(bound[dag[i].child[0]].extraUWORDBound[0], bound[dag[i].child[1]].extraUWORDBound[1])),
+        bound[dag[i].child[1]].extraUWORDBound[0]);
+
       bound[i].extraFrameBound[1] = max( bound[dag[i].child[0]].extraFrameBound[1] + 1
                                        , bound[dag[i].child[1]].extraFrameBound[1]);
       bound[i].extraFrameBound[0] = bound[i].extraFrameBound[1] + 1;
@@ -725,22 +722,21 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
         /* 'BITSIZE(B)' has exceeded our limits. */
         bound[i].extraCellsBound[0] = SIZE_MAX;
         bound[i].extraCellsBound[1] = SIZE_MAX;
-        bound[i].extraUWORDBound[0] = SIZE_MAX;
-        bound[i].extraUWORDBound[1] = SIZE_MAX;
       } else {
-        size_t scratch = type_dag[COMP_B(dag, type_dag, i)].bitSize;
-        bound[i].extraCellsBound[0] = max( bounded_add( scratch
+        bound[i].extraCellsBound[0] = max( bounded_add( type_dag[COMP_B(dag, type_dag, i)].bitSize
                                                       , max( bound[dag[i].child[0]].extraCellsBound[0]
                                                            , bound[dag[i].child[1]].extraCellsBound[1] ))
                                          , bound[dag[i].child[1]].extraCellsBound[0] );
-        bound[i].extraCellsBound[1] = bounded_add(scratch, bound[dag[i].child[0]].extraCellsBound[1]);
-        scratch = ROUND_UWORD(scratch);
-        bound[i].extraUWORDBound[0] = max( bounded_add( scratch
-                                                      , max( bound[dag[i].child[0]].extraUWORDBound[0]
-                                                           , bound[dag[i].child[1]].extraUWORDBound[1] ))
-                                         , bound[dag[i].child[1]].extraUWORDBound[0] );
-        bound[i].extraUWORDBound[1] = bounded_add(scratch, bound[dag[i].child[0]].extraUWORDBound[1]);
+        bound[i].extraCellsBound[1] = bounded_add( type_dag[COMP_B(dag, type_dag, i)].bitSize
+                                                 , bound[dag[i].child[0]].extraCellsBound[1] );
       }
+      bound[i].extraUWORDBound[0] = max( ROUND_UWORD(type_dag[COMP_B(dag, type_dag, i)].bitSize) +
+                                         max( bound[dag[i].child[0]].extraUWORDBound[0]
+                                            , bound[dag[i].child[1]].extraUWORDBound[1] )
+                                       , bound[dag[i].child[1]].extraUWORDBound[0] );
+      bound[i].extraUWORDBound[1] = ROUND_UWORD(type_dag[COMP_B(dag, type_dag, i)].bitSize)
+                                  + bound[dag[i].child[0]].extraUWORDBound[1];
+
       bound[i].extraFrameBound[0] = max( bound[dag[i].child[0]].extraFrameBound[0]
                                        , bound[dag[i].child[1]].extraFrameBound[1] )
                                   + 1;
@@ -827,9 +823,8 @@ bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* ou
   const size_t cellsBound = bounded_add( bounded_add(inputSize, outputSize)
                                        , max(bound.extraCellsBound[0], bound.extraCellsBound[1])
                                        );
-  const size_t UWORDBound = bounded_add( bounded_add(ROUND_UWORD(inputSize), ROUND_UWORD(outputSize))
-                                       , max(bound.extraUWORDBound[0], bound.extraUWORDBound[1])
-                                       );
+  const size_t UWORDBound = ROUND_UWORD(inputSize) + ROUND_UWORD(outputSize)
+                          + max(bound.extraUWORDBound[0], bound.extraUWORDBound[1]);
   const size_t frameBound = bound.extraFrameBound[0] + 2; /* add the initial input and output frames to the count. */
 
   static_assert(CELLS_MAX < SIZE_MAX, "CELLS_MAX is too large.");
