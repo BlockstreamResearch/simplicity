@@ -421,6 +421,14 @@ static void test_hasDuplicates(const char* name, bool expected, uint_fast32_t (*
 }
 
 int main(void) {
+  printf("sizeof(size_t) = %ld\n", sizeof(size_t));
+  printf("sizeof(dag_node) = %ld\n", sizeof(dag_node));
+  printf("sizeof(unification_var) = %ld\n", sizeof(unification_var));
+  printf("sizeof(type) = %ld\n", sizeof(type));
+  printf("sizeof(sha256_midstate) = %ld\n", sizeof(sha256_midstate));
+  printf("sizeof(sha256_midstate*) = %ld\n", sizeof(sha256_midstate*));
+  printf("sizeof(frameItem) = %ld\n", sizeof(frameItem));
+  printf("sizeof(UWORD) = %ld\n", sizeof(UWORD));
   test_decodeUptoMaxInt();
   test_hashBlock();
   test_occursCheck();
