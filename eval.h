@@ -3,6 +3,7 @@
 #ifndef SIMPLICITY_EVAL_H
 #define SIMPLICITY_EVAL_H
 
+#include "bounded.h"
 #include "dag.h"
 
 typedef unsigned char flags_type;
@@ -36,7 +37,7 @@ typedef unsigned char flags_type;
  *               input == NULL or UWORD input[ROUND_UWORD(inputSize)];
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
-bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
+bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* output, ubounded outputSize, const UWORD* input, ubounded inputSize
                       , const dag_node* dag, type* type_dag, size_t len, const txEnv* env
                       );
 
