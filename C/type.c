@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#include "bounded.h"
 #include "precomputed.h"
 #include "prefix.h"
 #include "unreachable.h"

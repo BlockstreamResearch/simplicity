@@ -3,6 +3,7 @@
 #define SIMPLICITY_TYPE_H
 
 #include <stddef.h>
+#include "bounded.h"
 #include "sha256.h"
 
 typedef enum typeName
@@ -17,12 +18,12 @@ typeName;
  */
 typedef struct type {
   size_t typeArg[2];
-  size_t bitSize;
   union {
     size_t skip; /* Used by 'typeSkip'. */
     size_t back; /* Sometimes used as scratch space when traversing types. */
   };
   sha256_midstate typeMerkleRoot;
+  ubounded bitSize;
   typeName kind;
 } type;
 

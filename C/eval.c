@@ -639,9 +639,9 @@ static bool antiDos(flags_type checks, const call* stack, const dag_node* dag, s
  * the Simplicity interpreter.
  */
 typedef struct memBound {
-  size_t extraCellsBound[2];
-  size_t extraUWORDBound[2];
-  size_t extraFrameBound[2]; /* extraStackBound[0] is for TCO off and extraStackBound[1] is for TCO on */
+  ubounded extraCellsBound[2];
+  ubounded extraUWORDBound[2];
+  ubounded extraFrameBound[2]; /* extraStackBound[0] is for TCO off and extraStackBound[1] is for TCO on */
 } memBound;
 
 /* :TODO: Document extraFrameBound in the Tech Report (and implement it in Haskell) */
@@ -657,7 +657,7 @@ typedef struct memBound {
  * Precondition: NULL != dag_bound
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
  * Postcondition: if the result is 'true'
- *                then 'max(dag_bound->extraCellsBound[0], dag_bound->extraCellsBound[1]) == SIZE_MAX'.
+ *                then 'max(dag_bound->extraCellsBound[0], dag_bound->extraCellsBound[1]) == BOUNDED_MAX'.
  *                     or 'dag_bound->extraCellsBound' characterizes the number of cells needed during evaluation of 'dag'
  *                        and 'dag_bound->extraUWORDBound' characterizes the number of UWORDs needed
  *                              for the frames allocated during evaluation of 'dag'
@@ -693,11 +693,11 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
                                        , bound[dag[i].child[1]].extraFrameBound[1] );
       break;
      case DISCONNECT:
-      if (SIZE_MAX <= type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize ||
-          SIZE_MAX <= type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize) {
+      if (BOUNDED_MAX <= type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize ||
+          BOUNDED_MAX <= type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize) {
         /* 'BITSIZE(WORD256 * A)' or 'BITSIZE(B * C)' has exceeded our limits. */
-        bound[i].extraCellsBound[0] = SIZE_MAX;
-        bound[i].extraCellsBound[1] = SIZE_MAX;
+        bound[i].extraCellsBound[0] = BOUNDED_MAX;
+        bound[i].extraCellsBound[1] = BOUNDED_MAX;
       } else {
         bound[i].extraCellsBound[1] = type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize;
         bound[i].extraCellsBound[0] = max(
@@ -706,9 +706,9 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
                           , max(bound[dag[i].child[0]].extraCellsBound[0], bound[dag[i].child[1]].extraCellsBound[1]))),
           bound[dag[i].child[1]].extraCellsBound[0]);
       }
-      bound[i].extraUWORDBound[1] = ROUND_UWORD(type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize);
+      bound[i].extraUWORDBound[1] = (ubounded)ROUND_UWORD(type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize);
       bound[i].extraUWORDBound[0] = max(
-          ROUND_UWORD(type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize) +
+          (ubounded)ROUND_UWORD(type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize) +
           max( bound[i].extraUWORDBound[1] + bound[dag[i].child[0]].extraUWORDBound[1]
              , max(bound[dag[i].child[0]].extraUWORDBound[0], bound[dag[i].child[1]].extraUWORDBound[1])),
         bound[dag[i].child[1]].extraUWORDBound[0]);
@@ -718,10 +718,10 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
       bound[i].extraFrameBound[0] = bound[i].extraFrameBound[1] + 1;
       break;
      case COMP:
-      if (SIZE_MAX <= type_dag[COMP_B(dag, type_dag, i)].bitSize) {
+      if (BOUNDED_MAX <= type_dag[COMP_B(dag, type_dag, i)].bitSize) {
         /* 'BITSIZE(B)' has exceeded our limits. */
-        bound[i].extraCellsBound[0] = SIZE_MAX;
-        bound[i].extraCellsBound[1] = SIZE_MAX;
+        bound[i].extraCellsBound[0] = BOUNDED_MAX;
+        bound[i].extraCellsBound[1] = BOUNDED_MAX;
       } else {
         bound[i].extraCellsBound[0] = max( bounded_add( type_dag[COMP_B(dag, type_dag, i)].bitSize
                                                       , max( bound[dag[i].child[0]].extraCellsBound[0]
@@ -730,11 +730,11 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
         bound[i].extraCellsBound[1] = bounded_add( type_dag[COMP_B(dag, type_dag, i)].bitSize
                                                  , bound[dag[i].child[0]].extraCellsBound[1] );
       }
-      bound[i].extraUWORDBound[0] = max( ROUND_UWORD(type_dag[COMP_B(dag, type_dag, i)].bitSize) +
+      bound[i].extraUWORDBound[0] = max( (ubounded)ROUND_UWORD(type_dag[COMP_B(dag, type_dag, i)].bitSize) +
                                          max( bound[dag[i].child[0]].extraUWORDBound[0]
                                             , bound[dag[i].child[1]].extraUWORDBound[1] )
                                        , bound[dag[i].child[1]].extraUWORDBound[0] );
-      bound[i].extraUWORDBound[1] = ROUND_UWORD(type_dag[COMP_B(dag, type_dag, i)].bitSize)
+      bound[i].extraUWORDBound[1] = (ubounded)ROUND_UWORD(type_dag[COMP_B(dag, type_dag, i)].bitSize)
                                   + bound[dag[i].child[0]].extraUWORDBound[1];
 
       bound[i].extraFrameBound[0] = max( bound[dag[i].child[0]].extraFrameBound[0]
@@ -812,7 +812,7 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
  *               input == NULL or UWORD input[ROUND_UWORD(inputSize)];
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
-bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* output, size_t outputSize, const UWORD* input, size_t inputSize
+bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* output, ubounded outputSize, const UWORD* input, ubounded inputSize
                       , const dag_node* dag, type* type_dag, size_t len, const txEnv* env
                       ) {
   assert(1 <= len);
@@ -820,14 +820,14 @@ bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* ou
   memBound bound;
   if (!computeEvalTCOBound(&bound, dag, type_dag, len)) return false;
 
-  const size_t cellsBound = bounded_add( bounded_add(inputSize, outputSize)
-                                       , max(bound.extraCellsBound[0], bound.extraCellsBound[1])
-                                       );
-  const size_t UWORDBound = ROUND_UWORD(inputSize) + ROUND_UWORD(outputSize)
+  const ubounded cellsBound = bounded_add( bounded_add(inputSize, outputSize)
+                                         , max(bound.extraCellsBound[0], bound.extraCellsBound[1])
+                                         );
+  const ubounded UWORDBound = (ubounded)ROUND_UWORD(inputSize) + (ubounded)ROUND_UWORD(outputSize)
                           + max(bound.extraUWORDBound[0], bound.extraUWORDBound[1]);
-  const size_t frameBound = bound.extraFrameBound[0] + 2; /* add the initial input and output frames to the count. */
+  const ubounded frameBound = bound.extraFrameBound[0] + 2; /* add the initial input and output frames to the count. */
 
-  static_assert(CELLS_MAX < SIZE_MAX, "CELLS_MAX is too large.");
+  static_assert(CELLS_MAX < BOUNDED_MAX, "CELLS_MAX is too large.");
   if (CELLS_MAX < cellsBound) {
     /* Cell count exceeds consensus limits. */
     *evalSuccess = false;
@@ -847,6 +847,7 @@ bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* ou
   assert(UWORDBound <= cellsBound);
 
   /* We use calloc for 'cells' because the frame data must be initialized before we can perform bitwise operations. */
+  static_assert(CELLS_MAX - 1 <= UINT32_MAX, "cells array index does not fit in uint32_t.");
   UWORD* cells = calloc(UWORDBound ? UWORDBound : 1, sizeof(UWORD));
   static_assert(2*DAG_LEN_MAX <= SIZE_MAX / sizeof(frameItem), "frames array does not fit in size_t.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
