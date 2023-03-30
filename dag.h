@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "bitstring.h"
+#include "bounded.h"
 #include "jets.h"
 #include "type.h"
 
@@ -110,6 +111,7 @@ sha256_midstate computeWordCMR(const bitstring* value, size_t n);
  *            bitstring compactValue is active when tag == WITNESS and the node has witness data;
  *            bitstring compactValue is also active and has a length that is a power of 2 when tag == WORD;
  *            size_t sourceIx is active when tag == JET;
+ *            unbounded cost is active when tag == JET;
  *            size_t child[numChildren(tag)] when tag \notin {HIDDEN, WITNESS, JET, WORD};
  */
 typedef struct dag_node {
@@ -131,6 +133,8 @@ typedef struct dag_node {
     bitstring compactValue;
   };
   size_t targetIx;
+  /* cost is normalized so that the 'CheckSigVerify' jet has 50 000 milli weight units.  */
+  ubounded cost; /* in milli weight units */
   tag_t tag;
 } dag_node;
 
