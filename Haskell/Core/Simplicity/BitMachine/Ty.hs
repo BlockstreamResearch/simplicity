@@ -9,8 +9,11 @@ import Data.Functor.Fixedpoint (cata)
 import Simplicity.Ty
 
 -- | Compute the number of cells needed to represent values of a Simplicity type.
-bitSize :: Ty -> Int
-bitSize = cata bitSizeF
+bitSize :: Integral i => Ty -> i
+bitSize = fromInteger . bitSizeMemo
+
+bitSizeMemo :: Ty -> Integer
+bitSizeMemo = cata bitSizeF
  where
   bitSizeF One = 0
   bitSizeF (Sum a b) = 1 + max a b
@@ -19,11 +22,11 @@ bitSize = cata bitSizeF
 -- | Compute the number of cells needed to represent values of a Simplicity type.
 --
 -- @'bitsizeR' a = 'bitSize' ('unreflect' a)@
-bitSizeR :: TyReflect a -> Int
+bitSizeR :: Integral i => TyReflect a -> i
 bitSizeR = bitSize . unreflect
 
 -- | @'padL' a b@ is the number of cells of padding used for σ^L tagged values of the Simplicity type @'sum' a b@.
-padL :: Ty -> Ty -> Int
+padL :: Integral i => Ty -> Ty -> i
 padL a b = max bsa bsb - bsa
  where
   bsa = bitSize a
@@ -32,11 +35,11 @@ padL a b = max bsa bsb - bsa
 -- | @'padLR' a b@ is the number of cells of padding used for σ^L tagged values of the Simplicity type @'SumR' a b@.
 --
 -- @'padLR' a = 'padL' ('unreflect' a)@
-padLR :: TyReflect a -> TyReflect b -> Int
+padLR :: Integral i => TyReflect a -> TyReflect b -> i
 padLR a b = padL (unreflect a) (unreflect b)
 
 -- | @'padR' a b@ is the number of cells of padding used for σ^R tagged values of the Simplicity type @'sum' a b@.
-padR :: Ty -> Ty -> Int
+padR :: Integral i => Ty -> Ty -> i
 padR a b = max bsa bsb - bsb
  where
   bsa = bitSize a
@@ -45,5 +48,5 @@ padR a b = max bsa bsb - bsb
 -- | @'padRR' a b@ is the number of cells of padding used for σ^R tagged values of the Simplicity type @'SumR' a b@.
 --
 -- @'padRR' a = 'padR' ('unreflect' a)@
-padRR :: TyReflect a -> TyReflect b -> Int
+padRR :: Integral i => TyReflect a -> TyReflect b -> i
 padRR a b = padR (unreflect a) (unreflect b)

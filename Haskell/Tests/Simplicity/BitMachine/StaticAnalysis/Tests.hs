@@ -53,8 +53,8 @@ testSquareAdj adj name program gen = testProperty name (adj (assertion <$> gen))
  where
   staticMem = Analysis.cellsBnd program
   staticMemTCO = AnalysisTCO.cellsBnd program
-  dynamicMem i = memSize . fold . execWriter . runMaybeT $ executeUsing (instrumentMachine . Translate.translate) program i
-  dynamicMemTCO i = memSize . fold . execWriter . runMaybeT $ executeUsing (instrumentMachine . TranslateTCO.translate) program i
+  dynamicMem i = fromIntegral . memSize . fold . execWriter . runMaybeT $ executeUsing (instrumentMachine . Translate.translate) program i
+  dynamicMemTCO i = fromIntegral . memSize . fold . execWriter . runMaybeT $ executeUsing (instrumentMachine . TranslateTCO.translate) program i
   square a b c d = a <= b && a <= c && b <=d && c <= d
   assertion i = square (dynamicMemTCO i) (dynamicMem i) staticMemTCO staticMem
   fold l = foldl' mappend mempty l
