@@ -642,10 +642,11 @@ typedef struct memBound {
   ubounded extraCellsBound[2];
   ubounded extraUWORDBound[2];
   ubounded extraFrameBound[2]; /* extraStackBound[0] is for TCO off and extraStackBound[1] is for TCO on */
+  ubounded cost;
 } memBound;
 
 /* :TODO: Document extraFrameBound in the Tech Report (and implement it in Haskell) */
-/* Given a well-typed dag representing a Simplicity expression, set '*dag_bound' to the memory requirement for evaluation.
+/* Given a well-typed dag representing a Simplicity expression, set '*dag_bound' to the memory and CPU requirements for evaluation.
  * For all 'i', 0 <= 'i' < 'len', compute 'bound[i]' fields for the subexpression denoted by the slice
  *
  *     (dag_nodes[i + 1])dag.
@@ -657,13 +658,17 @@ typedef struct memBound {
  * Precondition: NULL != dag_bound
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
  * Postcondition: if the result is 'true'
- *                then 'max(dag_bound->extraCellsBound[0], dag_bound->extraCellsBound[1]) == BOUNDED_MAX'.
+ *                then 'dag_bound->cost == BOUNDED_MAX' or 'dag_bound->const' bounds the dags CPU cost measured in milli weight units
+ *                 and 'max(dag_bound->extraCellsBound[0], dag_bound->extraCellsBound[1]) == BOUNDED_MAX'
  *                     or 'dag_bound->extraCellsBound' characterizes the number of cells needed during evaluation of 'dag'
  *                        and 'dag_bound->extraUWORDBound' characterizes the number of UWORDs needed
  *                              for the frames allocated during evaluation of 'dag'
- *                        and 'dag_bound->extraFrameBound[0]' bounds the the number of stack frames needed during execution of 'dag';
+ *                        and 'dag_bound->extraFrameBound[0]' bounds the the number of stack frames needed during execution of 'dag'.
+ *
+ * :TODO: The cost calculations below are estimated and need to be replaced by experimental data.
  */
 static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const type* type_dag, const size_t len) {
+  const ubounded overhead = 10 /* milli weight units */;
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(memBound), "bound array too large.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
   static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "bound array index does not fit in uint32_t.");
@@ -691,6 +696,8 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
                                        , bound[dag[i].child[1]].extraFrameBound[0] );
       bound[i].extraFrameBound[1] = max( bound[dag[i].child[0]].extraFrameBound[1]
                                        , bound[dag[i].child[1]].extraFrameBound[1] );
+      bound[i].cost = bounded_add(overhead, max( bound[dag[i].child[0]].cost
+                                               , bound[dag[i].child[1]].cost ));
       break;
      case DISCONNECT:
       if (BOUNDED_MAX <= type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize ||
@@ -716,6 +723,11 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
       bound[i].extraFrameBound[1] = max( bound[dag[i].child[0]].extraFrameBound[1] + 1
                                        , bound[dag[i].child[1]].extraFrameBound[1]);
       bound[i].extraFrameBound[0] = bound[i].extraFrameBound[1] + 1;
+      bound[i].cost = bounded_add(overhead
+                    , bounded_add(type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize
+                    , bounded_add(type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize /* counted twice because the frame is both filled in and moved. */
+                    , bounded_add(type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize
+                    , bounded_add(bound[dag[i].child[0]].cost, bound[dag[i].child[1]].cost)))));
       break;
      case COMP:
       if (BOUNDED_MAX <= type_dag[COMP_B(dag, type_dag, i)].bitSize) {
@@ -742,6 +754,9 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
                                   + 1;
       bound[i].extraFrameBound[1] = max( bound[dag[i].child[0]].extraFrameBound[1] + 1
                                        , bound[dag[i].child[1]].extraFrameBound[1] );
+      bound[i].cost = bounded_add(overhead
+                    , bounded_add(type_dag[COMP_B(dag, type_dag, i)].bitSize
+                    , bounded_add(bound[dag[i].child[0]].cost, bound[dag[i].child[1]].cost)));
       break;
      case PAIR:
       bound[i].extraCellsBound[0] = bound[dag[i].child[1]].extraCellsBound[0];
@@ -758,6 +773,8 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
                                        , bound[dag[i].child[1]].extraFrameBound[0] );
       bound[i].extraFrameBound[1] = max( bound[dag[i].child[0]].extraFrameBound[0]
                                        , bound[dag[i].child[1]].extraFrameBound[1] );
+      bound[i].cost = bounded_add(overhead, bounded_add( bound[dag[i].child[0]].cost
+                                                       , bound[dag[i].child[1]].cost ));
       break;
      case INJL:
      case INJR:
@@ -771,6 +788,7 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
 
       bound[i].extraFrameBound[0] = bound[dag[i].child[0]].extraFrameBound[0];
       bound[i].extraFrameBound[1] = bound[dag[i].child[0]].extraFrameBound[1];
+      bound[i].cost = bounded_add(overhead, bound[dag[i].child[0]].cost);
       break;
      case IDEN:
      case UNIT:
@@ -781,6 +799,11 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
       bound[i].extraCellsBound[0] = bound[i].extraCellsBound[1] = 0;
       bound[i].extraUWORDBound[0] = bound[i].extraUWORDBound[1] = 0;
       bound[i].extraFrameBound[0] = bound[i].extraFrameBound[1] = 0;
+      bound[i].cost = IDEN == dag[i].tag ? bounded_add(overhead, type_dag[IDEN_A(dag, type_dag, i)].bitSize)
+                    : WITNESS == dag[i].tag || WORD == dag[i].tag ? bounded_add(overhead, type_dag[dag[i].targetType].bitSize)
+                    : JET == dag[i].tag ? dag[i].cost
+                    : HIDDEN == dag[i].tag ? 0
+                    : overhead;
     }
   }
 
