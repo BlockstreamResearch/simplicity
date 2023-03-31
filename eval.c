@@ -833,13 +833,15 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
  *               outputSize == bitSize(B);
  *               output == NULL or UWORD output[ROUND_UWORD(outputSize)];
  *               input == NULL or UWORD input[ROUND_UWORD(inputSize)];
+ *               budget <= BUDGET_MAX
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
 bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* output, ubounded outputSize, const UWORD* input, ubounded inputSize
-                      , const dag_node* dag, type* type_dag, size_t len, const txEnv* env
+                      , const dag_node* dag, type* type_dag, size_t len, ubounded budget, const txEnv* env
                       ) {
   assert(1 <= len);
   assert(len <= DAG_LEN_MAX);
+  assert(budget <= BUDGET_MAX);
   memBound bound;
   if (!computeEvalTCOBound(&bound, dag, type_dag, len)) return false;
 
@@ -850,9 +852,11 @@ bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* ou
                           + max(bound.extraUWORDBound[0], bound.extraUWORDBound[1]);
   const ubounded frameBound = bound.extraFrameBound[0] + 2; /* add the initial input and output frames to the count. */
 
+  static_assert(1 <= BOUNDED_MAX, "BOUNDED_MAX is zero.");
+  static_assert(BUDGET_MAX <= (BOUNDED_MAX - 1) / 1000, "BUDGET_MAX is too large.");
   static_assert(CELLS_MAX < BOUNDED_MAX, "CELLS_MAX is too large.");
-  if (CELLS_MAX < cellsBound) {
-    /* Cell count exceeds consensus limits. */
+  if (budget * 1000 < bound.cost || CELLS_MAX < cellsBound) {
+    /* CPU or Memory bounds use exceeds limits. */
     *evalSuccess = false;
     return true;
   }

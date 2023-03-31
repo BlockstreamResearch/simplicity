@@ -7,7 +7,9 @@
 #include "env.h"
 
 /* Deserialize a Simplicity 'program' and execute it in the environment of the 'ix'th input of 'tx' with `taproot`.
- * If program isn't a proper encoding of a Simplicity program, including its 'program_len', '*success' is set to false.
+ * If program isn't a proper encoding of a Simplicity program, including its 'program_len', then '*success' is set to false.
+ * If the static analysis of the memory use of the Simplicity program exceeds 'CELL_MAX', then '*success' is set to false.
+ * If the static analysis of CPU use of the Simplicity program exceeds the 'budget' (or exceeds 'BUDGET_MAX') measured in weight units, then '*success' is set to false.
  * If 'amr != NULL' and the annotated Merkle root of the decoded expression doesn't match 'amr' then '*success' is set to false.
  * Otherwise evaluation proceeds and '*success' is set to the result of evaluation.
  * If 'imr != NULL' and '*success' is set to true, then the identity Merkle root of the decoded expression is written to 'imr'.
@@ -27,6 +29,7 @@
 extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* imr
                                               , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
                                               , const unsigned char* genesisBlockHash
+                                              , int64_t budget
                                               , const unsigned char* amr
                                               , const unsigned char* program, size_t program_len);
 #endif

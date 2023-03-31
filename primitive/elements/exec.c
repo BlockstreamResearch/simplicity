@@ -10,7 +10,9 @@
 #include "../../typeInference.h"
 
 /* Deserialize a Simplicity 'program' and execute it in the environment of the 'ix'th input of 'tx' with `taproot`.
- * If program isn't a proper encoding of a Simplicity program, including its 'program_len', '*success' is set to false.
+ * If program isn't a proper encoding of a Simplicity program, including its 'program_len', then '*success' is set to false.
+ * If the static analysis of the memory use of the Simplicity program exceeds 'CELL_MAX', then '*success' is set to false.
+ * If the static analysis of CPU use of the Simplicity program exceeds the 'budget' (or exceeds 'BUDGET_MAX') measured in weight units, then '*success' is set to false.
  * If 'amr != NULL' and the annotated Merkle root of the decoded expression doesn't match 'amr' then '*success' is set to false.
  * Otherwise evaluation proceeds and '*success' is set to the result of evaluation.
  * If 'imr != NULL' and '*success' is set to true, then the identity Merkle root of the decoded expression is written to 'imr'.
@@ -30,6 +32,7 @@
 extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* imr
                                               , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
                                               , const unsigned char* genesisBlockHash
+                                              , int64_t budget
                                               , const unsigned char* amr
                                               , const unsigned char* program, size_t program_len) {
   if (!success || !tx || !taproot || !program) return false;
@@ -98,7 +101,8 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
       }
       if (*success) {
         txEnv env = build_txEnv(tx, taproot, &genesis_hash, ix);
-        result = evalTCOProgram(success, dag, type_dag, (size_t)dag_len, &env);
+        static_assert(BUDGET_MAX <= BOUNDED_MAX);
+        result = evalTCOProgram(success, dag, type_dag, (size_t)dag_len, budget <= BUDGET_MAX ? (ubounded)budget : BUDGET_MAX, &env);
       }
       free(type_dag);
     }
