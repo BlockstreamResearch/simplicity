@@ -12,7 +12,7 @@ module Simplicity.Programs.Word
   , full_shift, shift_const_by, rotate_const
   , mapZV, transpose
   , bufferEmpty, bufferSnoc
-  , forWhile
+  , forWhile, firstFail
   , ConstWord(..)
   , module Simplicity.Ty.Word
   ) where
@@ -22,6 +22,7 @@ import Prelude hiding (Word, drop, take, not, or, and, last, all)
 import qualified Data.Bits as Bits
 import Data.Type.Equality ((:~:)(Refl))
 
+import Simplicity.MerkleRoot
 import Simplicity.Programs.Generic (eq)
 import Simplicity.Programs.Bit
 import Simplicity.Term.Core
@@ -294,6 +295,12 @@ forWhile SingleV body = (((oh &&& false) &&& ih) >>> monobody) &&& oh
  where
   monobody = body
 forWhile (DoubleV n) body = forWhile n (forWhile n ((oooh &&& (ooih &&& oih)) &&& ih >>> body))
+
+-- | Given op :: w |- a + b, find the first input where op returns Left.
+-- @'firstFail' w op@ will fail if op never returns Left.
+firstFail :: (Assert term, TyC w, TyC a, TyC b) => Word w -> term w (Either a b) -> term () w
+firstFail w op = (unit &&& unit) >>> forWhile w (take (drop (op &&& iden >>> match (injl ih) (injr unit))))
+         >>> iden &&& unit >>> assertl (take iden) cmrFail0
 
 -- | Used to match Simplicity expressions to see of they are of the form scribe(v) : term () (Word b).
 data ConstWord a b where

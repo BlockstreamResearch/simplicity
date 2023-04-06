@@ -22,6 +22,7 @@ import Prelude hiding (Word, drop, not, take)
 
 import Simplicity.Digest
 import Simplicity.Functor
+import Simplicity.MerkleRoot
 import Simplicity.Programs.Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
@@ -171,7 +172,7 @@ mkLibAssert Lib{..}  = l
  where
   l@LibAssert{..} = LibAssert
    { ctx8Add1 = (ooh &&& ih >>> buffer63Snoc) &&& oih
-            >>> match ((unit >>> buffer63Empty) &&& ((drop (take (increment word64) >>> cond fail0 iden)) &&& (iih &&& oh >>> hashBlock)))
+            >>> match ((unit >>> buffer63Empty) &&& ((drop (take (increment word64) >>> assertl ih cmrFail0)) &&& (iih &&& oh >>> hashBlock)))
                       iden
             >>> (verifyNumCompression &&& iden) >>> ih
    , ctx8Addn = \v -> case v of

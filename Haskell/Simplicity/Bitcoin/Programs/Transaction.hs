@@ -61,15 +61,10 @@ instance SimplicityFunctor Lib where
 lib :: forall term. (Assert term, Primitive term) => Lib term
 lib = l
  where
-  -- given op :: Word32 |- S x, find the first input where op returns Nothing.
-  -- firstFail op will abort if op never returns Nothing.
-  firstFail op = (unit &&& unit) >>> forWhile word32 (take (drop (op &&& iden >>> match (injl ih) (injr unit))))
-         >>> copair iden fail0
-
   l@Lib{..} = Lib {
-    numInputs = firstFail (primitive InputValue)
+    numInputs = firstFail word32 (primitive InputValue)
 
-  , numOutputs = firstFail (primitive OutputValue)
+  , numOutputs = firstFail word32 (primitive OutputValue)
 
   , currentPrevOutpoint = primitive CurrentIndex >>> assert (primitive InputPrevOutpoint)
 

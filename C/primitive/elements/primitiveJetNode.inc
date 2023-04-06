@@ -10,7 +10,7 @@
 ,[ANNEX_HASH] =
 { .tag = JET
 , .jet = annex_hash
-, .cmr = {{0x16b960b8u, 0x5a045e55u, 0xcf11d920u, 0xeb8daa58u, 0xc0634008u, 0x7f3e6e7cu, 0xc32d08c1u, 0x1b72c4a8u}}
+, .cmr = {{0x75b1d10eu, 0x8cfe48b1u, 0xf37ce0f0u, 0x3ebde840u, 0x2cae19feu, 0xadc01aecu, 0x28d65d2bu, 0x6445e797u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256mw256
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 465 /* milli weight units */
@@ -18,7 +18,7 @@
 ,[ASSET_AMOUNT_HASH] =
 { .tag = JET
 , .jet = asset_amount_hash
-, .cmr = {{0xbeb4e7edu, 0xd6501878u, 0x148ef110u, 0xf78cb39fu, 0x3b5f466fu, 0xb87cc7aeu, 0x4b0fcb26u, 0x5a132921u}}
+, .cmr = {{0x2bc01adeu, 0xd5d26123u, 0xd6894a1fu, 0xcb46aa8bu, 0x52a60c0cu, 0x64ec2f34u, 0x4fb60b39u, 0xbf194244u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pspbw256w256spbw256w64
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 399 /* milli weight units */
@@ -514,7 +514,7 @@
 ,[INPUT_AMOUNTS_HASH] =
 { .tag = JET
 , .jet = input_amounts_hash
-, .cmr = {{0x673f6d02u, 0x9b57d087u, 0x9cd85ae1u, 0x6c800868u, 0xba65aebeu, 0xb954e9ddu, 0x6b2a47b6u, 0xdbd00561u}}
+, .cmr = {{0x5346aaf0u, 0x3ac9caf2u, 0xf68cfcdau, 0xdec17c19u, 0xebaff03du, 0xaa15ae74u, 0x1571611bu, 0x0895044bu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 138 /* milli weight units */
@@ -530,7 +530,7 @@
 ,[INPUT_ANNEXES_HASH] =
 { .tag = JET
 , .jet = input_annexes_hash
-, .cmr = {{0x910c1a94u, 0xb6057fa6u, 0x3e28c5c2u, 0x42da6060u, 0xb298f182u, 0xa23f92f2u, 0x43c9bc13u, 0xa7b8d9a1u}}
+, .cmr = {{0x827490bfu, 0x96c1f83bu, 0xaaf7d82cu, 0x7eef453fu, 0xb7493e68u, 0xb9a5b498u, 0xc2dd9983u, 0xb638a176u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 125 /* milli weight units */
@@ -546,7 +546,7 @@
 ,[INPUT_OUTPOINTS_HASH] =
 { .tag = JET
 , .jet = input_outpoints_hash
-, .cmr = {{0xc27553e1u, 0x739f2673u, 0xd9fb2dafu, 0x257b2a67u, 0xced12ff2u, 0x65de456au, 0xfd27a2beu, 0x49a1d09eu}}
+, .cmr = {{0x120b2661u, 0x5e0373ccu, 0xb173d78eu, 0xf37e1c83u, 0x5eb8cf60u, 0x2019b8bfu, 0xf623a134u, 0x28ac63d1u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 141 /* milli weight units */
@@ -586,7 +586,7 @@
 ,[INPUT_SCRIPT_SIGS_HASH] =
 { .tag = JET
 , .jet = input_script_sigs_hash
-, .cmr = {{0xf2918f25u, 0x8bf33e87u, 0x55f2f9afu, 0x3ba6e915u, 0xbb56b0ffu, 0x1443293bu, 0x3bc825afu, 0x7c4af654u}}
+, .cmr = {{0xb1bfdae8u, 0xf6ec88afu, 0x83aa7576u, 0xc492f525u, 0x3748e8d4u, 0x1f671f9au, 0xf0448713u, 0x90800dbdu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 111 /* milli weight units */
@@ -594,7 +594,7 @@
 ,[INPUT_SCRIPTS_HASH] =
 { .tag = JET
 , .jet = input_scripts_hash
-, .cmr = {{0xedd6bec9u, 0x35af3ee2u, 0xf655000fu, 0xe56bda69u, 0x5bde4aaeu, 0x9e25c718u, 0x1df89fa5u, 0xbb5f4ad6u}}
+, .cmr = {{0x32c6b224u, 0x159f2c83u, 0x35f20a95u, 0x7b053885u, 0xa439924au, 0x2fb44e13u, 0x13800a54u, 0xdb112d61u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 156 /* milli weight units */
@@ -610,7 +610,7 @@
 ,[INPUT_SEQUENCES_HASH] =
 { .tag = JET
 , .jet = input_sequences_hash
-, .cmr = {{0xe63ff909u, 0x4ea45573u, 0xf5eead15u, 0xdd5fa171u, 0x035e42e0u, 0x315d3db1u, 0x4a0ef39fu, 0x554329bbu}}
+, .cmr = {{0xec8ed35au, 0x80eddeefu, 0x6da0a006u, 0xcd6a0e27u, 0x5010ec0fu, 0x6fc1b5ecu, 0x9969dd0eu, 0x1abe607cu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 117 /* milli weight units */
@@ -618,7 +618,7 @@
 ,[INPUT_UTXOS_HASH] =
 { .tag = JET
 , .jet = input_utxos_hash
-, .cmr = {{0x4528d663u, 0x75b6cebcu, 0x6368cf29u, 0xfb22cff9u, 0x17cddb15u, 0x452d783eu, 0xbff75d07u, 0xe084ea5cu}}
+, .cmr = {{0x39df7578u, 0x397560d5u, 0x232fadfau, 0x058f780bu, 0x44226129u, 0xcbe4dae5u, 0x40d13c42u, 0x20d89fecu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 131 /* milli weight units */
@@ -626,7 +626,7 @@
 ,[INPUTS_HASH] =
 { .tag = JET
 , .jet = inputs_hash
-, .cmr = {{0x5d613f6au, 0x5a5b6c18u, 0xc668649cu, 0xed1a461du, 0xfcc8c754u, 0xc263289du, 0xd86e9270u, 0x59b2268cu}}
+, .cmr = {{0x16053a9au, 0xd31d50ecu, 0x050495b0u, 0xdb9e0403u, 0x45df24d5u, 0x6932e207u, 0xd27a832bu, 0x6a6801a8u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 114 /* milli weight units */
@@ -666,7 +666,7 @@
 ,[ISSUANCE_ASSET_AMOUNTS_HASH] =
 { .tag = JET
 , .jet = issuance_asset_amounts_hash
-, .cmr = {{0xcf3dafbcu, 0x7d25d499u, 0x7239dc11u, 0x7460bfbeu, 0x744aa443u, 0xb7c045c4u, 0x1f08b489u, 0x39afbe60u}}
+, .cmr = {{0xb4efffbbu, 0x92f0dc9cu, 0x918934f2u, 0x9dd6bc97u, 0xe83a1127u, 0xa1b24159u, 0xf8398ac2u, 0x8990c762u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 128 /* milli weight units */
@@ -682,7 +682,7 @@
 ,[ISSUANCE_BLINDING_ENTROPY_HASH] =
 { .tag = JET
 , .jet = issuance_blinding_entropy_hash
-, .cmr = {{0x5b0a3ee0u, 0x7ed6bb04u, 0x020b96a7u, 0xd8fd1c1eu, 0x99b68a8au, 0x69d205acu, 0xfb811c40u, 0xa323945bu}}
+, .cmr = {{0x26f4cca0u, 0xb7d466dbu, 0x9b2c1f7cu, 0xd92e664du, 0x132187c2u, 0xe2cd799bu, 0x2fb01aaeu, 0x6d9bce10u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 142 /* milli weight units */
@@ -698,7 +698,7 @@
 ,[ISSUANCE_RANGE_PROOFS_HASH] =
 { .tag = JET
 , .jet = issuance_range_proofs_hash
-, .cmr = {{0x4d72a506u, 0x298a99b7u, 0xb2225deeu, 0xdecf78e0u, 0x625ab027u, 0x0bb75c2bu, 0xabf20bc0u, 0x14ddc44eu}}
+, .cmr = {{0x5cea3839u, 0x68f9fb17u, 0x457e5642u, 0x60f26fe0u, 0xb77e66d3u, 0x20b85838u, 0x2580af5cu, 0x978c8215u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 140 /* milli weight units */
@@ -722,7 +722,7 @@
 ,[ISSUANCE_TOKEN_AMOUNTS_HASH] =
 { .tag = JET
 , .jet = issuance_token_amounts_hash
-, .cmr = {{0x00602884u, 0x09e2820eu, 0x478eed8cu, 0x93ac58b0u, 0x1cabbc4au, 0x3f28f85bu, 0xafe47904u, 0x79901a85u}}
+, .cmr = {{0xd02239aeu, 0xeb45b4b1u, 0x12d4cf03u, 0xafe12899u, 0x56666d0du, 0xa0614460u, 0xa1cb342du, 0x1c839313u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 143 /* milli weight units */
@@ -738,7 +738,7 @@
 ,[ISSUANCES_HASH] =
 { .tag = JET
 , .jet = issuances_hash
-, .cmr = {{0x00462664u, 0x22ab8cfeu, 0xce40b1bfu, 0x55623a49u, 0x86dd568eu, 0x38396a16u, 0xfba27661u, 0x5530f691u}}
+, .cmr = {{0x97b7242bu, 0x3266a143u, 0x12b0b6abu, 0xb41a5341u, 0xdda8efd4u, 0xeed43ba8u, 0x58175142u, 0x774f0486u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 124 /* milli weight units */
@@ -802,7 +802,7 @@
 ,[NONCE_HASH] =
 { .tag = JET
 , .jet = nonce_hash
-, .cmr = {{0xfb66f0b0u, 0xd4d9e4d3u, 0xa8018abcu, 0xfa5ea650u, 0x8bcf62c3u, 0x7ad278c0u, 0x3e69a16bu, 0xba25b8c0u}}
+, .cmr = {{0x94e5a03du, 0xd4b87540u, 0x995f73d8u, 0x785c5621u, 0x20905061u, 0x6e765007u, 0xc48b8f25u, 0xc563d9f0u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256mspbw256w256
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 433 /* milli weight units */
@@ -810,7 +810,7 @@
 ,[NUM_INPUTS] =
 { .tag = JET
 , .jet = num_inputs
-, .cmr = {{0xae3067dau, 0xd5e57d02u, 0x7dbd3fbau, 0x708ebe7fu, 0x2f312394u, 0x4d6bb89au, 0x347309b9u, 0x35339fe3u}}
+, .cmr = {{0x8c2e0971u, 0xf3818f39u, 0x9bdf4164u, 0x7c5491feu, 0xe9aa101eu, 0xe1832ab4u, 0xb4a24c54u, 0x1e0979d5u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w32
 , .cost = 60 /* milli weight units */
@@ -818,7 +818,7 @@
 ,[NUM_OUTPUTS] =
 { .tag = JET
 , .jet = num_outputs
-, .cmr = {{0xf98222d8u, 0xf2f6be93u, 0x365579e4u, 0x96a321dcu, 0x3ef5392du, 0x92b14155u, 0xf4b91550u, 0x8ab92a1cu}}
+, .cmr = {{0x447165a3u, 0x76e3668au, 0x5a228bbbu, 0xcd41ab74u, 0xb8b51b95u, 0x61190e34u, 0xe8f668c3u, 0x956b9407u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w32
 , .cost = 60 /* milli weight units */
@@ -834,7 +834,7 @@
 ,[OUTPOINT_HASH] =
 { .tag = JET
 , .jet = outpoint_hash
-, .cmr = {{0x1842f458u, 0xe267bb8bu, 0x7527ed7bu, 0x7f3fe090u, 0x82a84ef2u, 0x9063c404u, 0x4e8b78a1u, 0x09334b12u}}
+, .cmr = {{0xb30d9892u, 0x050c76bdu, 0xeff8a67fu, 0xd8c3ed60u, 0x52620f2fu, 0x87db347du, 0x0fe61877u, 0x550f0b57u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw256pw256w32
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 427 /* milli weight units */
@@ -850,7 +850,7 @@
 ,[OUTPUT_AMOUNTS_HASH] =
 { .tag = JET
 , .jet = output_amounts_hash
-, .cmr = {{0xbb65626bu, 0xe97b99b8u, 0x35d4b5d3u, 0x2e4274fcu, 0x6e87d699u, 0xbfbebac4u, 0xda461b73u, 0xe4abca3eu}}
+, .cmr = {{0x7655791bu, 0xc50e7577u, 0xdfc652c2u, 0x10f2afb0u, 0x31369b80u, 0xa3bb38d2u, 0x99445e0bu, 0xdb84375bu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 127 /* milli weight units */
@@ -874,7 +874,7 @@
 ,[OUTPUT_NONCES_HASH] =
 { .tag = JET
 , .jet = output_nonces_hash
-, .cmr = {{0xc026ec5bu, 0xa206daabu, 0x6062e975u, 0x6471740du, 0x33b96c5eu, 0x5dce5163u, 0xcbdc627fu, 0x5615d7e7u}}
+, .cmr = {{0x23233619u, 0x96f9f9b5u, 0xd60ba02cu, 0xf49b53a3u, 0xc2c402d1u, 0x43985c67u, 0x593b22edu, 0x05c902f6u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 111 /* milli weight units */
@@ -898,7 +898,7 @@
 ,[OUTPUT_RANGE_PROOFS_HASH] =
 { .tag = JET
 , .jet = output_range_proofs_hash
-, .cmr = {{0x3429187au, 0x608f6a88u, 0x26978ca2u, 0x4a52a53fu, 0x56e2dbd8u, 0xb64bde9fu, 0x46312420u, 0x94e448aau}}
+, .cmr = {{0x3422555bu, 0xe12dda7eu, 0xc1953601u, 0x1a01acfdu, 0xf0905b39u, 0xbe475801u, 0x5c05d2fdu, 0xe6164cf1u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 111 /* milli weight units */
@@ -914,7 +914,7 @@
 ,[OUTPUT_SCRIPTS_HASH] =
 { .tag = JET
 , .jet = output_scripts_hash
-, .cmr = {{0x2d475985u, 0x6cabbcb8u, 0xb544d4d9u, 0xd74eeab3u, 0x09e74f07u, 0x8e91e399u, 0xcaca275fu, 0x25ceadb8u}}
+, .cmr = {{0x4d128cbcu, 0xfdb9e09cu, 0xd7c3599du, 0x1f29d75au, 0xe718dbf3u, 0xe93d5dbbu, 0xaf8d6e11u, 0x2d58362fu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 122 /* milli weight units */
@@ -930,7 +930,7 @@
 ,[OUTPUT_SURJECTION_PROOFS_HASH] =
 { .tag = JET
 , .jet = output_surjection_proofs_hash
-, .cmr = {{0xf5fb7852u, 0xd1604688u, 0x14971343u, 0xda8c72a0u, 0x53dc97dau, 0x635b93ceu, 0x7f0d4877u, 0xcebfa1aau}}
+, .cmr = {{0xcfc06c2fu, 0x712638a7u, 0x6474afa3u, 0x43c125c3u, 0xdafccceau, 0x7c147ac6u, 0x79b9f3b6u, 0xcc0a6184u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 163 /* milli weight units */
@@ -938,7 +938,7 @@
 ,[OUTPUTS_HASH] =
 { .tag = JET
 , .jet = outputs_hash
-, .cmr = {{0x594ca3ecu, 0xa818bd61u, 0xece03c95u, 0x7617ca49u, 0x4d8c686bu, 0x6e2f3e19u, 0xa798ea06u, 0xab6e7e88u}}
+, .cmr = {{0xdcb53803u, 0xf099efecu, 0xa0564b5bu, 0x25971269u, 0x2814069cu, 0x46dda031u, 0x5bc2678eu, 0xc2900bc1u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 136 /* milli weight units */
@@ -1074,7 +1074,7 @@
 ,[SHA_256_CTX_8_ADD_1] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_1
-, .cmr = {{0xc6456cd7u, 0x2ca6e538u, 0xca2c187au, 0x8a137b43u, 0x7b6c87eau, 0x6f479c79u, 0x986dc42cu, 0x2c570fe0u}}
+, .cmr = {{0x41665490u, 0xd6edb4c5u, 0xd5284568u, 0x2d7cbd1eu, 0x6c0745fau, 0xfcc092f3u, 0xef1b6fe9u, 0xccb42b59u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w8
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 454 /* milli weight units */
@@ -1082,7 +1082,7 @@
 ,[SHA_256_CTX_8_ADD_128] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_128
-, .cmr = {{0x409edee2u, 0x249a9b44u, 0x709440dau, 0x300a2edcu, 0x55cd6469u, 0xc47f94cau, 0xea6b4473u, 0xcee8077cu}}
+, .cmr = {{0xed92b891u, 0x9abb891cu, 0x0fd20ffeu, 0xa6caaea1u, 0xbd79b9e3u, 0xa82afe2cu, 0xc0ce4730u, 0x86f2ae2au}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w1Ki
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 401 /* milli weight units */
@@ -1090,7 +1090,7 @@
 ,[SHA_256_CTX_8_ADD_16] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_16
-, .cmr = {{0x639b7afau, 0x934c9cfeu, 0x633e01acu, 0xa2c2a366u, 0xf3f228bdu, 0xd646b138u, 0x37ce2362u, 0x7ec8e6c1u}}
+, .cmr = {{0x1ad8c219u, 0xf971a4aeu, 0x29c26995u, 0x97150a11u, 0x5bae2c09u, 0xf3bc5fd8u, 0x79502163u, 0xeedd7b8du}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w128
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 340 /* milli weight units */
@@ -1098,7 +1098,7 @@
 ,[SHA_256_CTX_8_ADD_2] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_2
-, .cmr = {{0x00116894u, 0xbf98a05cu, 0x7e34bb04u, 0x41c72517u, 0x0ce753b1u, 0xe583fb7fu, 0xd06303ddu, 0xc34e8207u}}
+, .cmr = {{0x25ab7aa9u, 0xf7f857bdu, 0x26895b89u, 0x0df33316u, 0xd70f70b0u, 0xc268ea3eu, 0xc019e03eu, 0x50c5bd7eu}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w16
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 576 /* milli weight units */
@@ -1106,7 +1106,7 @@
 ,[SHA_256_CTX_8_ADD_256] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_256
-, .cmr = {{0xd0315d4du, 0xfa128622u, 0x208eba0fu, 0xcbcaaa62u, 0xf54e7d73u, 0x4a6aa3ffu, 0xc48f0ae2u, 0x1c9b4e94u}}
+, .cmr = {{0x10de9da4u, 0xe8f7a291u, 0x80843791u, 0x2e24d248u, 0xe84dacd7u, 0x496825d3u, 0xcac50672u, 0x3c21891fu}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w2Ki
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 572 /* milli weight units */
@@ -1114,7 +1114,7 @@
 ,[SHA_256_CTX_8_ADD_32] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_32
-, .cmr = {{0x5da38cd0u, 0x4479aba8u, 0x52cf65d3u, 0xdac8d29du, 0x97806858u, 0x0b231765u, 0xf51f8a5cu, 0x1c447b2du}}
+, .cmr = {{0x6956f807u, 0xb56ed664u, 0x07ede0bfu, 0xffb61869u, 0x9fc57802u, 0xbed344b6u, 0x5eaef139u, 0xec69ef0cu}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w256
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 326 /* milli weight units */
@@ -1122,7 +1122,7 @@
 ,[SHA_256_CTX_8_ADD_4] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_4
-, .cmr = {{0x60a6f42fu, 0xf39bbe35u, 0x0ff4836bu, 0x7adacd60u, 0x6e089955u, 0x316bc0fau, 0xf0721154u, 0xf4a56aceu}}
+, .cmr = {{0x77d6f4b1u, 0x3f2c5c42u, 0x5f45fcf1u, 0x869f9aceu, 0x8cc86bd4u, 0x90e7b314u, 0x134ef599u, 0xbbf221bau}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w32
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 570 /* milli weight units */
@@ -1130,7 +1130,7 @@
 ,[SHA_256_CTX_8_ADD_512] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_512
-, .cmr = {{0xade14b49u, 0xfc100cc8u, 0x7007fefcu, 0xfabf9d5cu, 0x0ea042b2u, 0x1b6868bfu, 0x9e31e372u, 0xe2825feeu}}
+, .cmr = {{0xa8760df3u, 0x76f07e76u, 0x2df6559fu, 0x69b11761u, 0x383b3ff6u, 0xd831fb5bu, 0x542b9172u, 0xfa34b935u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w4Ki
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 559 /* milli weight units */
@@ -1138,7 +1138,7 @@
 ,[SHA_256_CTX_8_ADD_64] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_64
-, .cmr = {{0x903a42e6u, 0x122a0687u, 0xd53d2c3au, 0xb9045a15u, 0x7a54773fu, 0x86095b0cu, 0x5de95666u, 0xae7cfe45u}}
+, .cmr = {{0x8048d490u, 0x5c14b182u, 0xd8f83c81u, 0x8d0322c2u, 0xd1e47950u, 0x88981ac7u, 0xab99c87bu, 0x12c6eb88u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w512
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 475 /* milli weight units */
@@ -1146,7 +1146,7 @@
 ,[SHA_256_CTX_8_ADD_8] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_8
-, .cmr = {{0x5dea2568u, 0x078ef732u, 0x0d4603d9u, 0x243c2251u, 0x66a2676cu, 0xd0a0bfaau, 0xc1a3eb69u, 0xfbc6a79cu}}
+, .cmr = {{0xe5c839a5u, 0xa3296cb3u, 0xcd38297fu, 0x92e26363u, 0x0a6f2994u, 0xc9bbbd2au, 0xfa7da83bu, 0x1edce8fbu}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w64
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 330 /* milli weight units */
@@ -1154,7 +1154,7 @@
 ,[SHA_256_CTX_8_ADD_BUFFER_511] =
 { .tag = JET
 , .jet = sha_256_ctx_8_add_buffer_511
-, .cmr = {{0x945b37a4u, 0x243b9a11u, 0x06226d53u, 0x58c72f0bu, 0x5fd2a4dbu, 0x28547d0fu, 0x96fd96e0u, 0xe9cb75e8u}}
+, .cmr = {{0x11b13d73u, 0x30ae18e9u, 0x197b921bu, 0x8125752fu, 0x8fd9b519u, 0x7204da5au, 0x7ea924ecu, 0x072cf5feu}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw2Kipmw1Kipmw512pmw256pmw128pmw64pmw32pmw16mw8
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .cost = 412 /* milli weight units */
@@ -1162,7 +1162,7 @@
 ,[SHA_256_CTX_8_FINALIZE] =
 { .tag = JET
 , .jet = sha_256_ctx_8_finalize
-, .cmr = {{0x97df31aeu, 0x2f6604b4u, 0x7952714bu, 0x5caf7ae4u, 0x6e94c97eu, 0xd5d3d091u, 0x5e29dec7u, 0xd0668767u}}
+, .cmr = {{0xe8c270dfu, 0x3d70a395u, 0x65d2c645u, 0x3d68e61fu, 0x459783f1u, 0x9aa4f62du, 0xb56c9a1eu, 0xc1125d6au}}
 , .sourceIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .targetIx = ty_w256
 , .cost = 1205 /* milli weight units */
@@ -1186,7 +1186,7 @@
 ,[SIG_ALL_HASH] =
 { .tag = JET
 , .jet = sig_all_hash
-, .cmr = {{0x6135bd36u, 0x200ab772u, 0x47916460u, 0x517256b6u, 0xbcaa5836u, 0x9e26d5ffu, 0xfa12a1ccu, 0xd1bf20ffu}}
+, .cmr = {{0x9902bc0fu, 0xf1f59ed5u, 0xd592258bu, 0x7aa891a0u, 0x3567c13bu, 0xf9f67989u, 0xf8d8b463u, 0xf3863f65u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 135 /* milli weight units */
@@ -1202,7 +1202,7 @@
 ,[TAP_ENV_HASH] =
 { .tag = JET
 , .jet = tap_env_hash
-, .cmr = {{0xc5d3d5c9u, 0x427782abu, 0xaac698b1u, 0x292be1bfu, 0x7963bf63u, 0x74af32f6u, 0x2a4bda4cu, 0x2e084700u}}
+, .cmr = {{0xa53b8ebdu, 0xe6ed47bdu, 0xaf72a4e1u, 0x39bbf4e1u, 0x75cf69a8u, 0x5df97f9fu, 0x28c4a79fu, 0x2f427737u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 136 /* milli weight units */
@@ -1218,7 +1218,7 @@
 ,[TAPBRANCH_HASH] =
 { .tag = JET
 , .jet = tapbranch_hash
-, .cmr = {{0x3cdf086du, 0xcbaaa611u, 0xe7aaede1u, 0x9b6fe642u, 0x5a076f54u, 0x30a951f6u, 0xb3a7c749u, 0x2e49850eu}}
+, .cmr = {{0x8f90864au, 0x37619dc0u, 0xb67c8b52u, 0xe7d7ceebu, 0xd3d25ff8u, 0xcae7e7f2u, 0xb163fcaau, 0x24867e32u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 136 /* milli weight units */
@@ -1226,7 +1226,7 @@
 ,[TAPLEAF_HASH] =
 { .tag = JET
 , .jet = tapleaf_hash
-, .cmr = {{0x21013beeu, 0xb2b18a24u, 0x43c55a1cu, 0x7a47d375u, 0x423b5b5eu, 0x89aeceefu, 0xc47d4970u, 0xd404cda9u}}
+, .cmr = {{0xbce8d062u, 0xd481e813u, 0x4401dce3u, 0x1ae742acu, 0xa3c20f93u, 0xec640f90u, 0x69ab683cu, 0x167345dau}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 117 /* milli weight units */
@@ -1242,7 +1242,7 @@
 ,[TX_HASH] =
 { .tag = JET
 , .jet = tx_hash
-, .cmr = {{0x948a736fu, 0x96217f6au, 0x8feb6415u, 0xba8063fau, 0x122f83deu, 0x22510480u, 0x6d2f07a0u, 0x77d5451fu}}
+, .cmr = {{0xb7d46672u, 0x64eecda3u, 0x6019f4e3u, 0x26d39327u, 0x701b2488u, 0x4e72dfb4u, 0x810f71c4u, 0xf1782e7au}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 163 /* milli weight units */
