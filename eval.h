@@ -22,7 +22,7 @@ typedef unsigned char flags_type;
  *
  * If none of the above conditions fail and 'NULL != output', then a copy the final active write frame's data is written to 'output[roundWord(outputSize)]'.
  *
- * If 'anti_dos_checks' includes the CHECK_EXEC flag, and not every dag node is executed, '*evalSuccess' is set to 'false'
+ * If 'anti_dos_checks' includes the CHECK_EXEC flag, and not every non-HIDDEN dag node is executed, '*evalSuccess' is set to 'false'
  * If 'anti_dos_checks' includes the CHECK_CASE flag, and not every case node has both branches executed, '*evalSuccess' is set to 'false'
  *
  * Otherwise '*evalSuccess' is set to 'true'.

@@ -602,7 +602,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
 }
 
 /* Inspects the stack contents after a successful runTCO execution to verify anti-DOS properties:
- * 1. If 'checks' includes CHECK_EXEC, then check that all dag nodes were executed at least once.
+ * 1. If 'checks' includes CHECK_EXEC, then check that all non-HIDDEN dag nodes were executed at least once.
  * 2. If 'checks' includes CHECK_CASE, then check that both branches of every CASE node were executed.
  *
  * If these are violated, it means that the dag had unpruned nodes.
@@ -619,11 +619,10 @@ static bool antiDos(flags_type checks, const call* stack, const dag_node* dag, s
   if (!checks) return true;
 
   for(size_t i = 0; i < len; ++i) {
-    /* All combinators must be executed at least once. */
-    flags_type test_flags = CHECK_EXEC;
-
+    /* All non-HIDDEN nodes must be executed at least once. */
     /* Both branches of every case combinator must be executed at least once. */
-    if (CASE == dag[i].tag) test_flags |= CHECK_CASE;
+    flags_type test_flags = (HIDDEN != dag[i].tag ? CHECK_EXEC : 0)
+                          | (CASE == dag[i].tag ? CHECK_CASE : 0);
 
     /* Only enable requested checks */
     test_flags &= checks;
@@ -822,7 +821,7 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
  *
  * If none of the above conditions fail and 'NULL != output', then a copy the final active write frame's data is written to 'output[roundWord(outputSize)]'.
  *
- * If 'anti_dos_checks' includes the CHECK_EXEC flag, and not every dag node is executed, '*evalSuccess' is set to 'false'
+ * If 'anti_dos_checks' includes the CHECK_EXEC flag, and not every non-HIDDEN dag node is executed, '*evalSuccess' is set to 'false'
  * If 'anti_dos_checks' includes the CHECK_CASE flag, and not every case node has both branches executed, '*evalSuccess' is set to 'false'
  *
  * Otherwise '*evalSuccess' is set to 'true'.
