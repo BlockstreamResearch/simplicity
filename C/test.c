@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <simplicity/elements/exec.h>
+#include "ctx8Pruned.h"
+#include "ctx8Unpruned.h"
 #include "dag.h"
 #include "deserialize.h"
 #include "eval.h"
@@ -429,6 +431,14 @@ int main(void) {
   test_hasDuplicates("hasDuplicates all duplicates testcase", true, rsort_all_duplicates, 10000);
   test_hasDuplicates("hasDuplicates one duplicate testcase", true, rsort_one_duplicate, 10000);
 
+  test_program("ctx8Pruned", ctx8Pruned, sizeof_ctx8Pruned, true, ctx8Pruned_cmr, ctx8Pruned_imr, ctx8Pruned_amr);
+  test_program("ctx8Unpruned", ctx8Unpruned, sizeof_ctx8Unpruned, false, ctx8Unpruned_cmr, ctx8Unpruned_imr, ctx8Unpruned_amr);
+  if (0 == memcmp(ctx8Pruned_cmr, ctx8Unpruned_cmr, sizeof(uint32_t[8]))) {
+    successes++;
+  } else {
+    failures++;
+    printf("Pruned and Unpruned CMRs are not the same.\n");
+  }
   test_program("schnorr0", schnorr0, sizeof_schnorr0, true, schnorr0_cmr, schnorr0_imr, schnorr0_amr);
   test_program("schnorr6", schnorr6, sizeof_schnorr6, false, schnorr6_cmr, schnorr6_imr, schnorr6_amr);
   test_elements();

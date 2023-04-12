@@ -26,6 +26,7 @@ import qualified Simplicity.LibSecp256k1.Spec
 import Simplicity.MerkleRoot
 import Simplicity.Programs.Generic
 import qualified Simplicity.Programs.Arith as Arith
+import Simplicity.Programs.Bit
 import qualified Simplicity.Programs.Sha256
 import Simplicity.Programs.Sha256.Lib
 import qualified Simplicity.Programs.LibSecp256k1.Lib
@@ -134,12 +135,17 @@ writeFiles example = do
 
 main = do
   writeFiles example_hashBlock
+  writeFiles ctx8Unpruned
+  writeFiles ctx8Pruned
   writeFiles schnorr0
   writeFiles schnorr6
   writeFiles checkSigHashAllTx1
 
 noJetSubst :: (TyC a, TyC b) => Simplicity.Elements.Dag.NoJetDag a b -> WrappedSimplicity a b
 noJetSubst = Simplicity.Elements.Dag.jetSubst
+
+noJetPrune :: (TyC a, TyC b) => PrimEnv -> a -> Simplicity.Elements.Dag.NoJetDag a b -> Maybe (WrappedSimplicity a b)
+noJetPrune env a prog = Simplicity.Elements.Dag.pruneSubst prog env a
 
 example_hashBlock :: ExampleNoJets (Hash, Block) Hash
 example_hashBlock = Example
@@ -150,6 +156,38 @@ example_hashBlock = Example
   , _withJets = False
   , _prog = noJetSubst hashBlock
   }
+
+ctx8Unpruned :: ExampleNoJets () ()
+ctx8Unpruned = Example
+  { _name = "ctx8Unpruned"
+  , _path = []
+  , _text = [ "(scribe (toWord256 0x067C531269735CA7F541FDACA8F0DC76305D3CADA140F89372A410FE5EFF6E4D) &&&"
+            , " (ctx8Init &&& scribe (toWord128 0xDE188941A3375D3A8A061E67576E926D)) >>> ctx8Addn vector16 >>> ctx8Finalize) >>>"
+            , "eq >>> verify"
+            ]
+  , _withJets = False
+  , _prog = noJetSubst
+          $ (scribe (Arith.toWord256 0x067C531269735CA7F541FDACA8F0DC76305D3CADA140F89372A410FE5EFF6E4D) &&&
+              ((ctx8Init &&& scribe (Arith.toWord128 0xDE188941A3375D3A8A061E67576E926D)) >>> ctx8Addn Arith.vector16 >>> ctx8Finalize)) >>>
+            eq >>> verify
+  }
+
+ctx8Pruned :: ExampleNoJets () ()
+ctx8Pruned = Example
+  { _name = "ctx8Pruned"
+  , _path = []
+  , _text = [ "(scribe (toWord256 0x067C531269735CA7F541FDACA8F0DC76305D3CADA140F89372A410FE5EFF6E4D) &&&"
+            , " (ctx8Init &&& scribe (toWord128 0xDE188941A3375D3A8A061E67576E926D)) >>> ctx8Addn vector16 >>> ctx8Finalize) >>>"
+            , "eq >>> verify"
+            ]
+  , _withJets = False
+  , _prog = prog
+  }
+ where
+  Just prog = noJetPrune undefined ()
+            $ (scribe (Arith.toWord256 0x067C531269735CA7F541FDACA8F0DC76305D3CADA140F89372A410FE5EFF6E4D) &&&
+                ((ctx8Init &&& scribe (Arith.toWord128 0xDE188941A3375D3A8A061E67576E926D)) >>> ctx8Addn Arith.vector16 >>> ctx8Finalize)) >>>
+              eq >>> verify
 
 schnorr0 :: ExampleProg
 schnorr0 = Example

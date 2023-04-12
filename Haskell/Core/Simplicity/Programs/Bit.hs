@@ -2,7 +2,7 @@
 module Simplicity.Programs.Bit
  ( module Simplicity.Ty.Bit
  , false, true
- , cond, ch, assert
+ , cond, ch, assert, verify
  , not, and, or, xor
  , xor3, maj
  ) where
@@ -48,6 +48,12 @@ ch = cond oh ih
 -- | Requires the value produced by @t@ to not be 'false' and fails otherwise.
 assert :: (Assert term, TyC a, TyC b) => term a (Either () b) -> term a b
 assert t = t &&& unit >>> assertr cmrFail0 oh
+
+-- | Requires the 'Right' value an fails if instead the value is 'Left'.
+--
+-- When specialized, this asserts that the input bit is true and returns a unit value.
+verify :: (Assert term, TyC a) => term (Either () a) a
+verify = assert iden
 
 -- | Simplicity combinator that computes inverts the Bit result of an expression.
 not :: (Core term, TyC a) => term a Bit -> term a Bit

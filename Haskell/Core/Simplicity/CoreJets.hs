@@ -157,7 +157,7 @@ specification (SignatureJet x) = specificationSignature x
 specification (BitcoinJet x) = specificationBitcoin x
 
 specificationWord :: Assert term => WordJet a b -> term a b
-specificationWord Verify = assert iden
+specificationWord Verify = Prog.verify
 specificationWord Low32 = zero word32
 specificationWord Eq32 = eq
 specificationWord Eq256 = eq
