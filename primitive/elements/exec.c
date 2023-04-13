@@ -101,7 +101,7 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
       }
       if (*success) {
         txEnv env = build_txEnv(tx, taproot, &genesis_hash, ix);
-        static_assert(BUDGET_MAX <= BOUNDED_MAX);
+        static_assert(BUDGET_MAX <= BOUNDED_MAX, "BUDGET_MAX doesn't fit in ubounded.");
         result = evalTCOProgram(success, dag, type_dag, (size_t)dag_len, budget <= BUDGET_MAX ? (ubounded)budget : BUDGET_MAX, &env);
       }
       free(type_dag);
