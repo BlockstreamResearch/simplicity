@@ -338,16 +338,19 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
   char *allocation = malloc(allocationSize);
   if (!allocation) return NULL;
 
-  transaction* const tx = (transaction*)allocation;
+  /* Casting through void* to avoid warning about pointer alignment.
+   * Our padding is done carefully to ensure alignment.
+   */
+  transaction* const tx = (transaction*)(void*)allocation;
   allocation += sizeof(transaction) + pad1;
 
-  sigInput* const input = (sigInput*)allocation;
+  sigInput* const input = (sigInput*)(void*)allocation;
   allocation += rawTx->numInputs * sizeof(sigInput) + pad2;
 
-  sigOutput* const output = (sigOutput*)allocation;
+  sigOutput* const output = (sigOutput*)(void*)allocation;
   allocation += rawTx->numOutputs * sizeof(sigOutput) + pad3;
 
-  opcode* ops = (opcode*)allocation;
+  opcode* ops = (opcode*)(void*)allocation;
   size_t opsLen = (size_t)totalNullDataCodes;
 
   *tx = (transaction){ .input = input
@@ -525,7 +528,10 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
   char *allocation = malloc(allocationSize);
   if (!allocation) return NULL;
 
-  tapEnv* const env = (tapEnv*)allocation;
+  /* Casting through void* to avoid warning about pointer alignment.
+   * Our padding is done carefully to ensure alignment.
+   */
+  tapEnv* const env = (tapEnv*)(void*)allocation;
   sha256_midstate* branch = NULL;
   sha256_midstate internalKey;
 
@@ -535,7 +541,7 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
     allocation += sizeof(tapEnv) + pad1;
 
     if (rawEnv->branchLen) {
-      branch = (sha256_midstate*)allocation;
+      branch = (sha256_midstate*)(void*)allocation;
     }
   }
 
