@@ -35,7 +35,8 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
                                               , int64_t budget
                                               , const unsigned char* amr
                                               , const unsigned char* program, size_t program_len) {
-  if (!success || !tx || !taproot || !program) return false;
+  if (!success || !tx || !taproot) return false;
+  assert(NULL != program || 0 == program_len);
 
   bool result;
   combinator_counters census;
