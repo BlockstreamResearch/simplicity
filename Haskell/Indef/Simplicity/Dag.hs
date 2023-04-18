@@ -3,6 +3,7 @@
 module Simplicity.Dag
   ( jetDag, jetSubst
   , JetDag, NoJetDag
+  , pruneSubst
   -- * Type annoated, open recursive Simplicity terms
   , TermF(..), SimplicityDag
   -- * Wrapped Simplicity
@@ -11,18 +12,22 @@ module Simplicity.Dag
 
 import Prelude hiding (fail, drop, take)
 
+import Control.Arrow ((+++))
 import Control.Applicative (empty)
 import Control.Monad.Trans.State (StateT(..), evalStateT)
 import Control.Monad.Trans.Writer (Writer, execWriter, tell)
+import Data.Either (isLeft)
 import Data.Foldable (toList)
 import Data.Map.Strict ((!))
 import qualified Data.Map.Strict as Map
+import qualified Data.Set as Set
 import Data.Sequence (Seq)
-import Lens.Family2 ((&), (%~))
+import Lens.Family2 ((&), (%~), (.~))
 import Lens.Family2.State (use)
-import Lens.Family2.Stock (at)
+import Lens.Family2.Stock (at, some_)
 
 import Simplicity.Digest
+import Simplicity.Delegator
 import Simplicity.Inference
 import Simplicity.JetType
 import Simplicity.MerkleRoot
@@ -47,13 +52,30 @@ tellNode h iterm = StateT go
     sz = toInteger (Map.size map)
     f i = sz - i -- transform indexes to offsets
 
+-- MapSet is a commutative, idempotent monoid.
+newtype MapSet a b = MapSet { getMapSet :: Map.Map a (Set.Set b) }
+
+singleton :: a -> b -> MapSet a b
+singleton a b = MapSet $ Map.singleton a (Set.singleton b)
+
+instance (Ord a, Ord b) => Semigroup (MapSet a b) where
+  (MapSet ms1) <> (MapSet ms2) = MapSet $ Map.unionWith Set.union ms1 ms2
+
+instance (Ord a, Ord b) => Monoid (MapSet a b) where
+  mempty = MapSet Map.empty
+
 -- | A 'Simplicity' instance used with 'jetDag'.
 -- This instance merges identical typed Simplicity sub-expressions to create a DAG (directed acyclic graph) structure that represents the expression.
+--
+-- A log of branches taken during evaluation is available to facilitate pruning.
 --
 -- @'JetDag' jt@ is used to create DAGs containing jets of @'JetType' jt@ by finding subexpressions that match the jet specifications of @jt@.
 data JetDag jt a b = Dag { dagRoot :: IdentityRoot a b
                          , dagMap :: Map.Map Hash256 (DagMapContents jt)
-                         , dagEval :: FastEval jt a b
+                         -- During evaluation we log a map from the IMR of Case branches taken to the CMR of the untaken branch.
+                         -- A value of 'Right hash' is the CMR of the Right branch and it is logged when the Left branch is taken.
+                         -- A value of 'Left hash' is the CMR of the Left branch and it is logged when the Right branch is taken.
+                         , dagEval :: FastEvalLog (MapSet Hash256 (Either Hash256 Hash256)) jt a b
                          }
 
 -- Each entry in the 'dagMap' contains an untyped term with references to the map index of its subexpressions, and the 'MatcherInfo' of some 'JetType'.
@@ -62,15 +84,37 @@ data DagMapContents jt = DMC { dmcTerm :: UntypedTermF (SomeArrow jt) UntypedVal
 -- | A 'JetDag' instance that matches 'NoJets'.
 type NoJetDag a b = JetDag NoJets a b
 
--- Topologically sort the 'Dag'.
--- The type annotations are also stripped in order to ensure the result isn't accidentally serialized before inference of principle type annotations.
--- All sharing of subexpressions remains monomorphic to ensure that types can be infered in (quasi-)linear time.
+dmcTerm_ f dmc = (\x -> dmc {dmcTerm = x}) <$> f (dmcTerm dmc)
+
+rightCase_ f (Case a b c d l r) = Case a b c d l <$> f r
+rightCase_ f x = pure x
+
+leftCase_ f (Case a b c d l r) = (\x -> Case a b c d x r) <$> f l
+leftCase_ f x = pure x
+
+just_ f = some_ f
+
+pruneMap :: JetDag jt a b -> PrimEnv -> a -> Maybe (Map.Map Hash256 (DagMapContents jt))
+pruneMap t env a = Map.foldrWithKey f (dagMap t) . getMapSet <$> fastEvalLog (dagEval t) env a
+ where
+   f key logs | Set.null rights = let [Left cmr] = Set.elems lefts
+                                      hRoot = hiddenRoot cmr
+                               in Map.insert hRoot (DMC (uHidden cmr) Nothing)
+                                . ((at key.just_.dmcTerm_.leftCase_).~hRoot)
+              | Set.null lefts  = let [Right cmr] = Set.elems rights
+                                      hRoot = hiddenRoot cmr
+                               in Map.insert hRoot (DMC (uHidden cmr) Nothing)
+                                . ((at key.just_.dmcTerm_.rightCase_).~hRoot)
+                   | otherwise  = id
+    where
+     (lefts, rights) = Set.partition isLeft logs
+
+-- Topologically sort the 'Dag' into a list.
 -- Any jets found are condensed into 'uJet' nodes.
-linearizeDag :: (JetType jt, TyC a, TyC b) => JetDag jt a b -> SimplicityDag [] () (SomeArrow jt) UntypedValue
-linearizeDag dag = execLinearM . go . identityRoot . dagRoot $ dag
+linearizeDag :: (JetType jt, TyC a, TyC b) => IdentityRoot a b -> Map.Map Hash256 (DagMapContents jt) -> SimplicityDag [] () (SomeArrow jt) UntypedValue
+linearizeDag dagRoot dagMap = execLinearM . go . identityRoot $ dagRoot
  where
   someArrowMatcher (SomeArrow jm) = SomeArrow <$> matcher jm
-  dmap = dagMap dag
   go h = do
     mi <- use (at h)
     case mi of
@@ -79,28 +123,7 @@ linearizeDag dag = execLinearM . go . identityRoot . dagRoot $ dag
                   Just jt -> tellNode h (uJet jt)
                   Nothing -> traverse go (dmcTerm contents) >>= tellNode h
    where
-    contents = dmap ! h
-
--- | Given a Simplicity expression, return a type annotated 'SimplicityDag', with shared subexpressions and @'JetType' jt@ jets, that is suitable for serialization using "Simplicity.Serialization.BitString".
---
--- Any discounted jets marked in the original expression are discarded and replaced with their specification.
--- After the discounted jets are replaced, the Simplicity expression is scanned for jets matching the 'JetType' @jt@, which will introduce a new set of jets.
--- If a different set of jets are introduced, then the 'CommitmentRoot' of the result might also not match the 'CommitmentRoot' of the input.
--- This function invokes type inference to ensure that the type annotations are principle types (with type variables instantiated at unit types)
--- in order to ensure maximum sharing of expressions with identical 'identityRoot's.
-jetDag :: forall jt a b. (JetType jt, TyC a, TyC b) => JetDag jt a b -> SimplicityDag Seq Ty (SomeArrow jt) UntypedValue
-jetDag t = pass2
- where
-  pass1 :: JetDag jt a b
-  -- The patterns should never fail as we are running type inference on terms that are already known to be well typed.
-  -- A failure of a pattern match here suggests there is an error in the type inference engine.
-  -- The first pass matches jets and wraps them in a uJet combinator to ensure their types are not simplified by the type inference pass, which could possibly destroy the structure of the jets.
-  pass1 = case typeCheck =<< typeInference pass1 (linearizeDag t) of
-            Right pass -> pass
-            Left e -> error $ "jetDag.pass1: " ++ e
-  pass2 = case typeInference pass1 (linearizeDag pass1) of
-            Right pass -> pass
-            Left e -> error $ "jetDag.pass2: " ++ e
+    contents = dagMap ! h
 
 -- | A type isomorphic to @forall term. Simplicity term => term a b@ accessed by 'unwap'.
 -- Because the type @forall term. Simplicity term => term a b@ is polymorphic, it is very difficult to memoize computations that produce such a type.
@@ -114,16 +137,61 @@ data WrappedTerm simplicity a b where
 unwrap :: simplicity term => WrappedTerm simplicity a b -> term a b
 unwrap (f :@: x) = f x
 
+-- Not for export.
+-- Input DAG must be well typed.
+wrapWellTypedCheck :: (JetType jt, TyC a, TyC b) => SimplicityDag Seq Ty (SomeArrow jt) UntypedValue -> WrappedSimplicity a b
+wrapWellTypedCheck dag = k :@: dag
+ where
+  k x = case typeCheck x of
+          Right pass -> pass
+          Left e -> error $ "wrapWellTypedCheck: " ++ e
+
 -- | Find all the expressions in a term that can be replaced with jets of type @jt@.
 -- Because discounted jets are not transparent, this replacement will change the CMR of the term.
 -- In particular the CMR values passed to 'disconnect' may be different, and thus the result of
 -- evaluation could change in the presence of 'disconnect'.
 jetSubst :: forall k jt a b. (JetType jt, TyC a, TyC b) => JetDag jt a b -> WrappedSimplicity a b
-jetSubst t = k :@: jetDag t
+jetSubst t = wrapWellTypedCheck pass1
  where
-  k x = case typeCheck x of
-                 Right pass -> pass
-                 Left e -> error $ "subJets: " ++ e
+  -- The patterns should never fail as we are running type inference on terms that are already known to be well typed.
+  -- A failure of a pattern match here suggests there is an error in the type inference engine.
+  -- The first pass matches jets and wraps them in a uJet combinator to ensure their types are not simplified by the type inference pass, which could possibly destroy the structure of the jets.
+  pass1 = case typeInference t (linearizeDag (dagRoot t) (dagMap t)) of
+            Right pass -> pass
+            Left e -> error $ "jetSubst.pass1: " ++ e
+
+-- | Performs 'jetSubst' and then evaluates the expression in the given environment and input to prune unused case branches,
+-- which transforms some case expressions into assertions.
+-- The resulting expression should always have the same CMR as the expression that 'jetSubst' would return.
+pruneSubst :: forall jt a b. (JetType jt, TyC a, TyC b) => JetDag jt a b -> PrimEnv -> a -> Maybe (WrappedSimplicity a b)
+pruneSubst t env a = wrapWellTypedCheck . pass2 <$> pruneMap pass1 env a
+ where
+  -- The first pass substutes jets so we can execute them using fastEval.
+  pass1 :: JetDag jt a b
+  pass1 = unwrap (jetSubst t)
+  pass2 pMap = case typeInference t (linearizeDag (dagRoot pass1) pMap) of
+                         Right pass -> pass
+                         Left e -> error $ "jetDag.pass2: " ++ e
+
+-- | Given a Simplicity expression, return a type annotated 'SimplicityDag', with shared subexpressions and @'JetType' jt@ jets, that is suitable for serialization using "Simplicity.Serialization.BitString".
+--
+-- Any discounted jets marked in the original expression are discarded and replaced with their specification.
+-- After the discounted jets are replaced, the Simplicity expression is scanned for jets matching the 'JetType' @jt@, which will introduce a new set of jets.
+-- If a different set of jets are introduced, then the 'CommitmentRoot' of the result might also not match the 'CommitmentRoot' of the input.
+-- This function invokes type inference to ensure that the type annotations are principle types (with type variables instantiated at unit types)
+-- in order to ensure maximum sharing of expressions with identical 'identityRoot's.
+jetDag :: forall jt a b. (JetType jt, TyC a, TyC b) => JetDag jt a b -> SimplicityDag Seq Ty (SomeArrow jt) UntypedValue
+jetDag t = case typeInference t (linearizeDag (dagRoot pass1) (dagMap pass1)) of
+             Right pass -> pass
+             Left e -> error $ "jetDag.pass2: " ++ e
+ where
+  -- The first pass inferes principle types, so that witness values are properly truncated.
+  pass1 :: JetDag jt a b
+  pass1 = unwrap (jetSubst t)
+
+-- Add an entry mapping the identity root of a case combinator to the commitment root of either the left or right branch of that case expression.
+logRoot :: (TyC x, TyC a, TyC b, TyC c, TyC d) => (IdentityRoot (Either a b, c) d) -> (Either (CommitmentRoot (a, c) d) (CommitmentRoot (b, c) d)) -> JetDag jt (x, c) d -> JetDag jt (x, c) d
+logRoot ir cr ~(Dag dr dm de) = Dag dr dm (fastEvalTell (singleton (identityRoot ir) (commitmentRoot +++ commitmentRoot $ cr)) de)
 
 -- These combinators are used in to assist making 'Dag' instances.
 mkLeaf idComb eComb uComb =
@@ -166,7 +234,13 @@ instance JetType jt => Core (JetDag jt) where
   unit = mkLeaf unit unit uUnit
   injl = mkUnary injl injl uInjl
   injr = mkUnary injr injr uInjr
-  match = mkBinary match match uCase
+  -- Log the branches taken by case during evaluation for pruning purposes.
+  -- A value of 'Right hash' logs the CMR of the Right branch when the Left branch is taken.
+  -- A value of 'Left hash' logs the CMR of the Left branch when the Right branch is taken.
+  match s t = result
+   where
+    result = mkBinary match match uCase (logRoot (dagRoot result) (Right . delegatorRoot . fastEvalSem $ dagEval t) s)
+                                        (logRoot (dagRoot result) (Left  . delegatorRoot . fastEvalSem $ dagEval s) t)
   pair = mkBinary pair pair uPair
   take = mkUnary take take uTake
   drop = mkUnary drop drop uDrop

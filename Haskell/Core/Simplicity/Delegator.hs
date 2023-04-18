@@ -1,6 +1,7 @@
 -- | This module provides the functional semantics of Simplicity with 'Delegate'.
 module Simplicity.Delegator
- ( Delegator, runDelegatorCore, runDelegatorKleisli
+ ( Delegator, runDelegatorCore, runDelegatorKleisli,
+   delegatorRoot
  ) where
 
 import Control.Arrow (Kleisli, runKleisli)

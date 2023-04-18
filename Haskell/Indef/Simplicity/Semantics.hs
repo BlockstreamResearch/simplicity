@@ -3,8 +3,8 @@
 -- The 'fastEval' implements the evalutation using the jets from the specified 'JetType'.
 module Simplicity.Semantics
  ( Semantics, sem
- , fastEval
- , FastEval(..)
+ , FastEval, fastEval
+ , FastEvalLog(..), fastEvalLog, fastEvalTell
  , PrimEnv
  ) where
 
@@ -12,11 +12,31 @@ import Prelude hiding (drop, take, fail)
 
 import Control.Arrow (Kleisli(..), first)
 import Control.Monad.Reader (ReaderT(..))
+import Control.Monad.Trans.Class (lift)
+import Control.Monad.Trans.Writer (WriterT(..), tell)
 
 import Simplicity.Delegator.Impl
 import Simplicity.JetType
 import Simplicity.Primitive
 import Simplicity.Term
+
+-- | Adds logging to the 'Semantics' for Simplicity.
+--
+-- The @log@ ought to be a commutative and idempontent monoid.
+--
+-- Currently logging is used to implement pruning.
+type SemanticsLog log a b = Delegator (Kleisli (WriterT log (ReaderT PrimEnv Maybe))) a b
+
+-- | Execute the fuctional semantics of the full Simplicity language with delegation.
+-- If successfull, return the log in addition to the output value.
+semLog :: SemanticsLog log a b -> PrimEnv -> a -> Maybe (b, log)
+semLog = flip . ((runReaderT . runWriterT) .) . runKleisli . runDelegator
+
+-- | Add data to the 'SemanticsLog' of a Simplicity expression.
+--
+-- The @log@ ought to be a commutative and idempontent monoid.
+semTell :: Monoid log => log -> SemanticsLog log a b -> SemanticsLog log a b
+semTell msg ~(Delegator rs (Kleisli fs)) = Delegator rs (Kleisli $ \a -> tell msg >> fs a)
 
 -- | The functional semantics of the full Simplicity language consists of
 --
@@ -25,15 +45,15 @@ import Simplicity.Term
 -- * Environment effects via the 'Control.Monad.Reader.Reader' effect for primitives to access the 'PrimEnv'.
 --
 -- * Delegation via the 'Delegator' helper.
-type Semantics a b = Delegator (Kleisli (ReaderT PrimEnv Maybe)) a b
+type Semantics a b = SemanticsLog () a b
 
 -- | @
 -- sem :: (forall term. Simplicity term => term a b) -> PrimEnv -> a -> Maybe b
 -- @
 --
 -- Execute the fuctional semantics of the full Simplicity language with delegation.
-sem :: Semantics a b -> PrimEnv -> a -> Maybe b
-sem = flip . (runReaderT .) . runKleisli . runDelegator
+sem :: SemanticsLog () a b -> PrimEnv -> a -> Maybe b
+sem = flip . ((runReaderT . fmap fst . runWriterT) .) . runKleisli . runDelegator
 
 instance Primitive p => Primitive (Delegator p) where
   primitive p = Delegator (primitive p) (primitive p)
@@ -42,6 +62,9 @@ instance Jet p => Jet (Delegator p) where
   jet t = Delegator (jet t) (jet t)
 
 instance (Jet p, Witness p) => Simplicity (Delegator p) where
+
+-- | A Simplicity instance for 'fastEval'
+type FastEval jt a b = FastEvalLog () jt a b
 
 -- | 'fastEval' optimizes Simplicity evaluation using jets.
 -- Unlike using 'Simplicity.Dag.jetSubst', 'fastEval' will not modify the commitment roots and therefore will always return the same
@@ -54,38 +77,48 @@ fastEval :: FastEval jt a b -> PrimEnv -> a -> Maybe b
 fastEval = sem . fastEvalSem
 
 -- | A Simplicity instance for 'fastEval'
-data FastEval jt a b = FastEval { fastEvalSem :: Semantics a b
-                                , fastEvalMatcher :: Maybe (MatcherInfo jt a b)
-                                }
+data FastEvalLog log jt a b = FastEvalLog { fastEvalSem :: SemanticsLog log a b
+                                          , fastEvalMatcher :: Maybe (MatcherInfo jt a b)
+                                          }
+
+-- | Add data to the 'FastEvalLog' of a Simplicity expression.
+--
+-- The @log@ ought to be a commutative and idempontent monoid.
+fastEvalTell :: (Monoid log) => log -> FastEvalLog log jt a b -> FastEvalLog log jt a b
+fastEvalTell msg (FastEvalLog fs fm) = FastEvalLog (semTell msg fs) fm
+
+-- | If evaluation is successful, return the total of all 'fastEvalTell' data that was logged.
+fastEvalLog :: FastEvalLog log jt a b -> PrimEnv -> a -> Maybe log
+fastEvalLog prog env a = snd <$> semLog (fastEvalSem prog) env a
 
 proxyImplementation :: (JetType jt, TyC a, TyC b) => proxy jt a b -> jt a b -> PrimEnv -> a -> Maybe b
 proxyImplementation _proxy = implementation
 
-withJets :: (JetType jt, TyC a, TyC b) => FastEval jt a b -> FastEval jt a b
-withJets ~fe@(FastEval ~(Delegator rs (Kleisli fs)) jm) =
+withJets :: (Monoid log, JetType jt, TyC a, TyC b) => FastEvalLog log jt a b -> FastEvalLog log jt a b
+withJets ~fe@(FastEvalLog ~(Delegator rs (Kleisli fs)) jm) =
   -- 'withJets' does not adjust the commitment root.
-  FastEval { fastEvalSem = Delegator rs (Kleisli optfs)
-           , fastEvalMatcher = jm
-           }
+  FastEvalLog { fastEvalSem = Delegator rs (Kleisli optfs)
+              , fastEvalMatcher = jm
+              }
  where
-  optfs a | Just jt <- matcher =<< jm = ReaderT $ flip (proxyImplementation fe jt) a
+  optfs a | Just jt <- matcher =<< jm = lift . ReaderT $ flip (proxyImplementation fe jt) a
           | otherwise = fs a
 
 mkLeaf sComb jmComb = withJets $
-  FastEval { fastEvalSem = sComb
-           , fastEvalMatcher = jmComb
-           }
+  FastEvalLog { fastEvalSem = sComb
+              , fastEvalMatcher = jmComb
+              }
 
 mkUnary sComb jmComb t = withJets $
-  FastEval { fastEvalSem = sComb (fastEvalSem t)
-           , fastEvalMatcher = jmComb <*> fastEvalMatcher t
-           }
+  FastEvalLog { fastEvalSem = sComb (fastEvalSem t)
+              , fastEvalMatcher = jmComb <*> fastEvalMatcher t
+              }
 mkBinary sComb jmComb s t = withJets $
-  FastEval { fastEvalSem = sComb (fastEvalSem s) (fastEvalSem t)
-           , fastEvalMatcher = jmComb <*> fastEvalMatcher s <*> fastEvalMatcher t
-           }
+  FastEvalLog { fastEvalSem = sComb (fastEvalSem s) (fastEvalSem t)
+              , fastEvalMatcher = jmComb <*> fastEvalMatcher s <*> fastEvalMatcher t
+              }
 
-instance JetType jt => Core (FastEval jt) where
+instance (Monoid log, JetType jt) => Core (FastEvalLog log jt) where
   iden = mkLeaf iden (pure iden)
   comp = mkBinary comp (pure comp)
   unit = mkLeaf unit (pure unit)
@@ -96,29 +129,29 @@ instance JetType jt => Core (FastEval jt) where
   take = mkUnary take (pure take)
   drop = mkUnary drop (pure drop)
 
-instance JetType jt => Assert (FastEval jt) where
+instance (Monoid log, JetType jt) => Assert (FastEvalLog log jt) where
   assertl s h = mkUnary (flip assertl h) (pure (flip assertl h)) s
   assertr h t = mkUnary (assertr h) (pure (assertr h)) t
   fail b = mkLeaf (fail b) (pure (fail b))
 
-instance Witness (FastEval jt) where
+instance Monoid log => Witness (FastEvalLog log jt) where
   witness v =
-    FastEval { fastEvalSem = witness v
-             , fastEvalMatcher = Nothing
-             }
+    FastEvalLog { fastEvalSem = witness v
+                , fastEvalMatcher = Nothing
+                }
 
-instance JetType jt => Delegate (FastEval jt) where
+instance (Monoid log, JetType jt) => Delegate (FastEvalLog log jt) where
   disconnect = mkBinary disconnect Nothing
 
-instance JetType jt => Primitive (FastEval jt)  where
+instance (Monoid log, JetType jt) => Primitive (FastEvalLog log jt)  where
   primitive p = mkLeaf (primitive p) (pure (primitive p))
 
-instance JetType jt => Jet (FastEval jt) where
+instance (Monoid log, JetType jt) => Jet (FastEvalLog log jt) where
   jet t = result
    where
-    result = FastEval { fastEvalSem = Delegator (jet t) fs
-                      , fastEvalMatcher = jm
-                      }
-    FastEval (Delegator _ fs) jm = t `asTypeOf` result
+    result = FastEvalLog { fastEvalSem = Delegator (jet t) fs
+                         , fastEvalMatcher = jm
+                         }
+    FastEvalLog (Delegator _ fs) jm = t `asTypeOf` result
 
-instance JetType jt => Simplicity (FastEval jt) where
+instance (Monoid log, JetType jt) => Simplicity (FastEvalLog log jt) where

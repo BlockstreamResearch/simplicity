@@ -1,7 +1,7 @@
 -- | This internal module provides a Deleator instance that perform a semantic conversion of the 'disconnect' combinator.
 -- It should only be used for semantic operations, including BitMachine translation and static analysis.
 module Simplicity.Delegator.Impl
- ( Delegator(Delegator), runDelegator
+ ( Delegator(Delegator), runDelegator, delegatorRoot
  ) where
 
 import Prelude hiding (drop, take, fail)

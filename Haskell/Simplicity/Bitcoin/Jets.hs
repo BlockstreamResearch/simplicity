@@ -2,7 +2,7 @@
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Bitcoin.Jets
   ( JetType(..)
-  , jetSubst
+  , jetSubst, pruneSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
   , fastEval
@@ -25,7 +25,7 @@ import Data.Void (Void, vacuous)
 import Simplicity.Digest
 import Simplicity.CoreJets (CoreJet, coreJetMap, ConstWordContent(..), SomeConstWordContent(..))
 import qualified Simplicity.CoreJets as CoreJets
-import Simplicity.Bitcoin.Dag hiding (jetSubst)
+import Simplicity.Bitcoin.Dag hiding (jetSubst, pruneSubst)
 import qualified Simplicity.Bitcoin.Dag as Dag
 import Simplicity.Bitcoin.Term
 import Simplicity.Bitcoin.DataTypes
@@ -350,6 +350,12 @@ jetMap = Map.union (someArrowMap CoreJet <$> coreJetMap) (someArrowMap BitcoinJe
 -- evaluation could change in the presence of 'disconnect'.
 jetSubst :: (TyC a, TyC b) => JetDag JetType a b -> WrappedSimplicity a b
 jetSubst = Dag.jetSubst
+
+-- | Performs 'jetSubst' and then evaluates the program in the given environment to prune unused case branches,
+-- which transforms some case expressions into assertions.
+-- The resulting expression should always have the same CMR as the expression that 'jetSubst' would return.
+pruneSubst :: JetDag JetType () () -> PrimEnv -> Maybe (WrappedSimplicity () ())
+pruneSubst prog env = Dag.pruneSubst prog env ()
 
 -- | This is an instance of 'BitString.getTermStopCode' that specifically decodes the canonical 'JetType' set of known jets.
 getTermStopCode :: (Monad m, Simplicity term, TyC a, TyC b) => m Void -> m Bool -> m (term a b)
