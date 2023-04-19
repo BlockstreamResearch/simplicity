@@ -450,68 +450,106 @@ typeCheck s = result
                                  SomeTy ra -> return (someArrowR ra ra iden)
       typeCheckTerm (Unit a) = case reflect a of
                                  SomeTy ra -> return (someArrowR ra OneR unit)
-      typeCheckTerm (Injl a b c it) = case reflect c of
-                                       SomeTy rc -> do
+      typeCheckTerm (Injl a b c it) = case (reflect a, reflect b, reflect c) of
+                                       (SomeTy ra, SomeTy rb, SomeTy rc) -> do
                                          SomeArrow t <- lookup it
-                                         let (ra, rb) = reifyArrow t
+                                         let (ra0, rb0) = reifyArrow t
+                                         Refl <- assertEqualTyReflect ra ra0
+                                         Refl <- assertEqualTyReflect rb rb0
                                          return (someArrowR ra (SumR rb rc) (injl t))
-      typeCheckTerm (Injr a b c it) = case reflect b of
-                                       SomeTy rb -> do
+      typeCheckTerm (Injr a b c it) = case (reflect a, reflect b, reflect c) of
+                                       (SomeTy ra, SomeTy rb, SomeTy rc) -> do
                                          SomeArrow t <- lookup it
-                                         let (ra, rc) = reifyArrow t
+                                         let (ra0, rc0) = reifyArrow t
+                                         Refl <- assertEqualTyReflect ra ra0
+                                         Refl <- assertEqualTyReflect rc rc0
                                          return (someArrowR ra (SumR rb rc) (injr t))
-      typeCheckTerm (Take a b c it) = case reflect b of
-                                       SomeTy rb -> do
+      typeCheckTerm (Take a b c it) = case (reflect a, reflect b, reflect c) of
+                                       (SomeTy ra, SomeTy rb, SomeTy rc) -> do
                                          SomeArrow t <- lookup it
-                                         let (ra, rc) = reifyArrow t
+                                         let (ra0, rc0) = reifyArrow t
+                                         Refl <- assertEqualTyReflect ra ra0
+                                         Refl <- assertEqualTyReflect rc rc0
                                          return (someArrowR (ProdR ra rb) rc (take t))
-      typeCheckTerm (Drop a b c it) = case reflect a of
-                                       SomeTy ra -> do
+      typeCheckTerm (Drop a b c it) = case (reflect a, reflect b, reflect c) of
+                                       (SomeTy ra, SomeTy rb, SomeTy rc) -> do
                                          SomeArrow t <- lookup it
-                                         let (rb, rc) = reifyArrow t
+                                         let (rb0, rc0) = reifyArrow t
+                                         Refl <- assertEqualTyReflect rb rb0
+                                         Refl <- assertEqualTyReflect rc rc0
                                          return (someArrowR (ProdR ra rb) rc (drop t))
-      typeCheckTerm (Comp a b c is it) = do SomeArrow s <- lookup is
+      typeCheckTerm (Comp a b c is it) = case (reflect a, reflect b, reflect c) of
+                                          (SomeTy ra, SomeTy rb, SomeTy rc) -> do
+                                            SomeArrow s <- lookup is
                                             SomeArrow t <- lookup it
-                                            let (ra, rb0) = reifyArrow s
-                                            let (rb1, rc) = reifyArrow t
-                                            Refl <- assertEqualTyReflect rb0 rb1
+                                            let (ra0, rb0) = reifyArrow s
+                                            let (rb1, rc1) = reifyArrow t
+                                            Refl <- assertEqualTyReflect ra ra0
+                                            Refl <- assertEqualTyReflect rb rb0
+                                            Refl <- assertEqualTyReflect rb rb1
+                                            Refl <- assertEqualTyReflect rc rc1
                                             return (someArrowR ra rc (comp s t))
       typeCheckTerm (Case a b c d is it) | Hidden hs <- index s (i - is) =
-                                             case reflect a of
-                                               SomeTy ra -> do
+                                             case (reflect a, reflect b, reflect c, reflect d) of
+                                               (SomeTy ra, SomeTy rb, SomeTy rc, SomeTy rd) -> do
                                                  SomeArrow t <- lookup it
-                                                 let (rbc, rd) = reifyArrow t
-                                                 case rbc of
-                                                   ProdR rb rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertr hs t))
+                                                 let (rbc0, rd0) = reifyArrow t
+                                                 case rbc0 of
+                                                   ProdR rb0 rc0 -> do
+                                                     Refl <- assertEqualTyReflect rb rb0
+                                                     Refl <- assertEqualTyReflect rc rc0
+                                                     Refl <- assertEqualTyReflect rd rd0
+                                                     return (someArrowR (ProdR (SumR ra rb) rc) rd (assertr hs t))
                                          | Hidden ht <- index s (i - it) =
-                                             case reflect b of
-                                               SomeTy rb -> do
+                                             case (reflect a, reflect b, reflect c, reflect d) of
+                                               (SomeTy ra, SomeTy rb, SomeTy rc, SomeTy rd) -> do
                                                  SomeArrow s <- lookup is
-                                                 let (rac, rd) = reifyArrow s
-                                                 case rac of
-                                                   ProdR ra rc -> return (someArrowR (ProdR (SumR ra rb) rc) rd (assertl s ht))
-                                         | otherwise = do SomeArrow s <- lookup is
+                                                 let (rac0, rd0) = reifyArrow s
+                                                 case rac0 of
+                                                   ProdR ra0 rc0 -> do
+                                                     Refl <- assertEqualTyReflect ra ra0
+                                                     Refl <- assertEqualTyReflect rc rc0
+                                                     Refl <- assertEqualTyReflect rd rd0
+                                                     return (someArrowR (ProdR (SumR ra rb) rc) rd (assertl s ht))
+                                         | otherwise = case (reflect a, reflect b, reflect c, reflect d) of
+                                                        (SomeTy ra, SomeTy rb, SomeTy rc, SomeTy rd) -> do
+                                                          SomeArrow s <- lookup is
                                                           SomeArrow t <- lookup it
                                                           let (rac0, rd0) = reifyArrow s
                                                           let (rbc1, rd1) = reifyArrow t
                                                           case (rac0, rbc1) of
-                                                            (ProdR ra rc0, ProdR rb rc1) -> do
-                                                              Refl <- assertEqualTyReflect rc0 rc1
-                                                              Refl <- assertEqualTyReflect rd0 rd1
+                                                            (ProdR ra0 rc0, ProdR rb1 rc1) -> do
+                                                              Refl <- assertEqualTyReflect ra ra0
+                                                              Refl <- assertEqualTyReflect rb rb1
+                                                              Refl <- assertEqualTyReflect rc rc0
+                                                              Refl <- assertEqualTyReflect rc rc1
+                                                              Refl <- assertEqualTyReflect rd rd0
+                                                              Refl <- assertEqualTyReflect rd rd1
                                                               return (someArrowR (ProdR (SumR ra rb) rc0) rd0 (match s t))
-      typeCheckTerm (Pair a b c is it) = do SomeArrow s <- lookup is
+      typeCheckTerm (Pair a b c is it) = case (reflect a, reflect b, reflect c) of
+                                          (SomeTy ra, SomeTy rb, SomeTy rc) -> do
+                                            SomeArrow s <- lookup is
                                             SomeArrow t <- lookup it
-                                            let (ra0, rb) = reifyArrow s
-                                            let (ra1, rc) = reifyArrow t
-                                            Refl <- assertEqualTyReflect ra0 ra1
+                                            let (ra0, rb0) = reifyArrow s
+                                            let (ra1, rc1) = reifyArrow t
+                                            Refl <- assertEqualTyReflect ra ra0
+                                            Refl <- assertEqualTyReflect ra ra1
+                                            Refl <- assertEqualTyReflect rb rb0
+                                            Refl <- assertEqualTyReflect rc rc1
                                             return (someArrowR ra0 (ProdR rb rc) (pair s t))
-      typeCheckTerm (Disconnect a b c d is it) = do SomeArrow s <- lookup is
+      typeCheckTerm (Disconnect a b c d is it) = case (reflect a, reflect b, reflect c, reflect d) of
+                                                  (SomeTy ra, SomeTy rb, SomeTy rc, SomeTy rd) -> do
+                                                    SomeArrow s <- lookup is
                                                     SomeArrow t <- lookup it
-                                                    let (rc1, rd) = reifyArrow t
+                                                    let (rc1, rd1) = reifyArrow t
                                                     case reifyArrow s of
-                                                      ((ProdR rw ra), (ProdR rb rc0)) -> do
-                                                        Refl <- assertEqualTyReflect rw (reify :: TyReflect Word256)
-                                                        Refl <- assertEqualTyReflect rc0 rc1
+                                                      ((ProdR rw0 ra0), (ProdR rb0 rc0)) -> do
+                                                        Refl <- assertEqualTyReflect (reify :: TyReflect Word256) rw0
+                                                        Refl <- assertEqualTyReflect ra ra0
+                                                        Refl <- assertEqualTyReflect rb rb0
+                                                        Refl <- assertEqualTyReflect rc rc0
+                                                        Refl <- assertEqualTyReflect rc rc1
+                                                        Refl <- assertEqualTyReflect rd rd1
                                                         return (someArrowR ra (ProdR rb rd) (disconnect s t))
       typeCheckTerm (Hidden _) = Left "Simplicity.Inference.typeCheck: encountered illegal use of Hidden node"
       typeCheckTerm (Witness a b w) = case (reflect a, reflect b) of
