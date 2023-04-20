@@ -8,7 +8,7 @@ ifneq ($(doCheck), 1)
 CPPFLAGS := $(CPPFLAGS) -DNDEBUG
 endif
 
-CFLAGS := -I include
+CFLAGS := $(CFLAGS) -I include
 
 # libsecp256k1 is full of conversion warnings, so we compile jets-secp256k1.c separately.
 jets-secp256k1.o: jets-secp256k1.c
