@@ -3,6 +3,7 @@
 , coqPackages ? "coqPackages_8_15"
 , secp256k1git ? null
 , wideMultiply ? null
+, withCoverage ? false
 , env ? "stdenv"
 }:
 let hp = nixpkgs.haskell.packages.${ghc};
@@ -29,7 +30,7 @@ let hp = nixpkgs.haskell.packages.${ghc};
   };
 
   c = nixpkgs.callPackage ./Simplicity.C.nix {
-    inherit wideMultiply;
+    inherit wideMultiply withCoverage;
     stdenv = nixpkgs.${env};
   };
 
