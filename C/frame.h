@@ -5,10 +5,10 @@
 #ifndef SIMPLICITY_FRAME_H
 #define SIMPLICITY_FRAME_H
 
-#include <assert.h>
 #include <stdbool.h>
-#include "uword.h"
 #include "sha256.h"
+#include "simplicity_assert.h"
+#include "uword.h"
 
 /* A Bit Machine frame contains an '.edge' pointer to a slice of an array of UWORDs to hold the frame's cells.
  * The '.offset' is used to represent the cursors position.
@@ -78,7 +78,7 @@ static inline bool readBit(frameItem* frame) {
  * Precondition: '*frame' is a valid write frame for 1 more cell.
  */
 static inline bool writeBit(frameItem* frame, bool bit) {
-  assert(0 < frame->offset);
+  simplicity_debug_assert(0 < frame->offset);
   frame->offset--;
   UWORD* dst_ptr = frame->edge + frame->offset / UWORD_BIT;
   if (bit) {
@@ -102,7 +102,7 @@ static inline void forwardBits(frameItem* frame, size_t n) {
  * Precondition: '*frame' is a valid write frame for 'n' more cells.
  */
 static inline void skipBits(frameItem* frame, size_t n) {
-  assert(n <= frame->offset);
+  simplicity_debug_assert(n <= frame->offset);
   frame->offset -= n;
 }
 

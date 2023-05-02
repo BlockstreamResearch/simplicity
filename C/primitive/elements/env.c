@@ -1,13 +1,12 @@
 #include <simplicity/elements/env.h>
 
-#include <assert.h>
 #include <stdlib.h>
 #include <stdalign.h>
 #include <string.h>
 #include "primitive.h"
 #include "ops.h"
 #include "../../sha256.h"
-#include "../../unreachable.h"
+#include "../../simplicity_assert.h"
 
 #define PADDING(alignType, allocated) ((alignof(alignType) - (allocated) % alignof(alignType)) % alignof(alignType))
 
@@ -55,7 +54,7 @@ static void sha256_confNonce(sha256_context* ctx, const confidential* nonce) {
  */
 static void sha256_confAmt(sha256_context* ctx, const confAmount* amt) {
   switch (amt->prefix) {
-   case NONE: assert(false); UNREACHABLE;
+   case NONE: SIMPLICITY_UNREACHABLE;
    case EXPLICIT:
     sha256_uchar(ctx, 0x01);
     sha256_u64be(ctx, amt->explicit);

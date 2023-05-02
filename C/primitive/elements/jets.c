@@ -2,7 +2,7 @@
 
 #include "ops.h"
 #include "primitive.h"
-#include "../../unreachable.h"
+#include "../../simplicity_assert.h"
 
 /* Read a 256-bit hash value from the 'src' frame, advancing the cursor 256 cells.
  *
@@ -419,10 +419,10 @@ bool output_null_datum(frameItem* dst, frameItem src, const txEnv* env) {
             case OP_14: writeBit(dst, 1); writeBit(dst, 1); writeBit(dst, 0); writeBit(dst, 1); break;
             case OP_15: writeBit(dst, 1); writeBit(dst, 1); writeBit(dst, 1); writeBit(dst, 0); break;
             case OP_16: writeBit(dst, 1); writeBit(dst, 1); writeBit(dst, 1); writeBit(dst, 1); break;
-            default: assert(false); UNREACHABLE;
+            default: SIMPLICITY_UNREACHABLE;
           }
         } else {
-          assert(OP_RESERVED == env->tx->output[i].pnd.op[j].code ||
+          simplicity_debug_assert(OP_RESERVED == env->tx->output[i].pnd.op[j].code ||
                  OP_1NEGATE == env->tx->output[i].pnd.op[j].code);
           skipBits(dst, 3);
           writeBit(dst, OP_RESERVED == env->tx->output[i].pnd.op[j].code);
@@ -433,7 +433,7 @@ bool output_null_datum(frameItem* dst, frameItem src, const txEnv* env) {
           case OP_PUSHDATA: writeBit(dst, 0); writeBit(dst, 1); break;
           case OP_PUSHDATA2: writeBit(dst, 1); writeBit(dst, 0); break;
           case OP_PUSHDATA4: writeBit(dst, 1); writeBit(dst, 1); break;
-          default: assert(false); UNREACHABLE;
+          default: SIMPLICITY_UNREACHABLE;
         }
         writeHash(dst, &env->tx->output[i].pnd.op[j].dataHash);
       }

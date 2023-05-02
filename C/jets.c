@@ -169,7 +169,7 @@ bool sha_256_ctx_8_init(frameItem* dst, frameItem src, const txEnv* env) {
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
 static bool sha_256_ctx_8_add_n(frameItem* dst, frameItem *src, size_t n) {
-  assert(0 < n && n <= 512 && (n & (n - 1)) == 0);
+  simplicity_debug_assert(0 < n && n <= 512 && (n & (n - 1)) == 0);
   sha256_midstate midstate;
   unsigned char buf[512];
   sha256_context ctx = {.output = midstate.s};

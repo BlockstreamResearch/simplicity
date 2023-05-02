@@ -5,7 +5,7 @@ mkDerivation (rec {
   src = lib.sourceFilesBySuffices
       (lib.sourceByRegex ./. ["^LICENSE$" "^Simplicity\.cabal$" "^Setup.hs$" "^Tests.hs$" "^Haskell$" "^Haskell/.*"
                               "^Haskell-Generate$" "^Haskell-Generate/.*"
-                              "^C$" "^C/uword.h" "^C/bitstring.h" "^C/frame.*" "^C/jets.*" "^C/sha256.*" "^C/unreachable.h"
+                              "^C$" "^C/uword.h" "^C/bitstring.h" "^C/frame.*" "^C/jets.*" "^C/sha256.*" "^C/simplicity_assert.h"
                               "^C/precomputed.h" "^C/prefix.h"
                               "^C/jets-secp256k1.c$" "^C/secp256k1$" "^C/secp256k1/.*"
                               "^C/include$" "^C/include/simplicity$" "^C/include/simplicity/elements$" "^C/include/simplicity/elements/env.h"

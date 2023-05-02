@@ -1,8 +1,8 @@
 #include "bitstream.h"
 
-#include <assert.h>
 #include <limits.h>
 #include <stdlib.h>
+#include "simplicity_assert.h"
 
 /* Closes a bitstream by consuming all remaining bits.
  * Returns false if CHAR_BIT or more bits remain in the stream or if any remaining bits are non-zero.
@@ -28,7 +28,7 @@ bool closeBitstream(bitstream* stream) {
  *               NULL != stream
  */
 int32_t readNBits(int n, bitstream* stream) {
-  assert(0 <= n && n < 32);
+  simplicity_assert(0 <= n && n < 32);
 
   uint32_t result = 0;
   while (CHAR_BIT <= stream->offset + n) {
@@ -210,7 +210,7 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
  */
 int32_t readBitstring(bitstring* result, size_t n, bitstream* stream) {
   static_assert(0x8000u + 2*(CHAR_BIT - 1) <= SIZE_MAX, "size_t needs to be at least 32-bits");
-  assert(n <= 0x8000u);
+  simplicity_assert(n <= 0x8000u);
   size_t total_offset = n + stream->offset;
   /* |= stream->len * CHAR_BIT < total_offset iff stream->len < (total_offset + (CHAR_BIT - 1)) / CHAR_BIT */
   if (stream->len < (total_offset + (CHAR_BIT - 1)) / CHAR_BIT) return SIMPLICITY_ERR_BITSTREAM_EOF;

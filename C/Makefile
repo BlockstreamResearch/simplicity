@@ -5,7 +5,7 @@ TEST_OBJS := test.o ctx8Pruned.o ctx8Unpruned.o hashBlock.o schnorr0.o schnorr6.
 CWARN := -Werror -Wall -Wextra -Wcast-qual -Wcast-align -Wstrict-aliasing -Wpointer-arith -Winit-self -Wshadow -Wswitch-enum -Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls -Wfloat-equal -Wundef -Wconversion
 
 ifneq ($(doCheck), 1)
-CPPFLAGS := $(CPPFLAGS) -DNDEBUG
+CPPFLAGS := $(CPPFLAGS) -DPRODUCTION
 endif
 
 CFLAGS := $(CFLAGS) -I include

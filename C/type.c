@@ -1,11 +1,10 @@
 #include "type.h"
 
-#include <assert.h>
 #include <stdbool.h>
 
 #include "precomputed.h"
 #include "prefix.h"
-#include "unreachable.h"
+#include "simplicity_assert.h"
 
 /* Given a the 'kind' of a Simplicity type, return the SHA-256 hash of its associated TMR tag.
  * This is the "initial value" for computing the type Merkle root for that type.
@@ -17,8 +16,7 @@ static sha256_midstate tmrIV(typeName kind) {
    case PRODUCT: return prodIV;
   }
   /* Impossible to reach here (unless you call with uninitialized values). */
-  assert(false);
-  UNREACHABLE;
+  SIMPLICITY_UNREACHABLE;
 }
 
 /* Given a well-formed 'type_dag', compute the bitSizes, skips, and type Merkle roots of all subexpressions.

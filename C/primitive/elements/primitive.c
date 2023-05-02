@@ -7,7 +7,7 @@
 #include "../../limitations.h"
 #include "../../prefix.h"
 #include "../../primitive.h"
-#include "../../unreachable.h"
+#include "../../simplicity_assert.h"
 
 /* An enumeration of all the types we need to construct to specify the input and output types of all jets created by 'decodeJet'. */
 enum TypeNamesForJets {
@@ -39,7 +39,7 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* 
   static_assert(DAG_LEN_MAX <= (SIZE_MAX - NumberOfTypeNames) / 6, "NumberOfTypeNames + 6*DAG_LEN_MAX doesn't fit in size_t");
   static_assert(NumberOfTypeNames + 6*DAG_LEN_MAX <= SIZE_MAX/sizeof(unification_var) , "bound_var array too large");
   static_assert(NumberOfTypeNames + 6*DAG_LEN_MAX - 1 <= UINT32_MAX, "bound_var array index doesn't fit in uint32_t");
-  assert(extra_var_len <= 6*DAG_LEN_MAX);
+  simplicity_assert(extra_var_len <= 6*DAG_LEN_MAX);
   *bound_var = malloc((NumberOfTypeNames + extra_var_len) * sizeof(unification_var));
   if (!(*bound_var)) return 0;
 #include "primitiveInitTy.inc"

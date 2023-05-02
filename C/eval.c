@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "bounded.h"
 #include "limitations.h"
-#include "unreachable.h"
+#include "simplicity_assert.h"
 
 /* We choose an unusual representation for frames of the Bit Machine.
  *
@@ -130,7 +130,7 @@ static void forward(frameItem* frame, size_t n) {
  * Precondition: n <= frame->offset
  */
 static void backward(frameItem* frame, size_t n) {
-  assert(n <= frame->offset);
+  simplicity_debug_assert(n <= frame->offset);
   frame->offset -= n;
 }
 
@@ -139,7 +139,7 @@ static void backward(frameItem* frame, size_t n) {
  * Precondition: n <= frame->offset
  */
 static void skip(frameItem* frame, size_t n) {
-  assert(n <= frame->offset);
+  simplicity_debug_assert(n <= frame->offset);
   frame->offset -= n;
 }
 
@@ -248,7 +248,7 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
   type_dag[cur].back = 0;
   while (cur) {
     if (SUM == type_dag[cur].kind) {
-      assert(calling);
+      simplicity_debug_assert(calling);
 
       /* Write one bit to the write frame and then skip over any padding bits. */
       bool bit = getBit(compactValue, offset);
@@ -265,7 +265,7 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
         calling = false;
       }
     } else {
-      assert(PRODUCT == type_dag[cur].kind);
+      simplicity_debug_assert(PRODUCT == type_dag[cur].kind);
       size_t next;
       if (calling) {
         next = typeSkip(type_dag[cur].typeArg[0], type_dag);
@@ -392,8 +392,8 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
   while(pc < len) {
     stack[pc].flags |= FLAG_EXEC;
     tag_t tag = dag[pc].tag;
-    assert(state.activeReadFrame < state.activeWriteFrame);
-    assert(state.activeReadFrame->edge <= state.activeWriteFrame->edge);
+    simplicity_debug_assert(state.activeReadFrame < state.activeWriteFrame);
+    simplicity_debug_assert(state.activeReadFrame->edge <= state.activeWriteFrame->edge);
     if (dag[pc].jet) {
       if(!dag[pc].jet(state.activeWriteFrame, *state.activeReadFrame, env)) return false;
       /* Like IDEN and WITNESS, we want to "fallthrough" to the UNIT case. */
@@ -412,7 +412,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
         pc = dag[pc].child[0];
       } else {
         /* MOVE_FRAME */
-        assert(0 == state.activeWriteFrame->offset);
+        simplicity_debug_assert(0 == state.activeWriteFrame->offset);
         memmove( state.activeReadFrame->edge, state.activeWriteFrame->edge
                , (size_t)((state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge) * sizeof(UWORD)
                );
@@ -494,7 +494,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
         }
 
         /* MOVE_FRAME */
-        assert(0 == state.activeWriteFrame->offset);
+        simplicity_debug_assert(0 == state.activeWriteFrame->offset);
         memmove( state.activeReadFrame->edge, state.activeWriteFrame->edge
                , (size_t)((state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge) * sizeof(UWORD)
                );
@@ -513,7 +513,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
         pc = dag[pc].child[0];
       } else {
         /* MOVE_FRAME */
-        assert(0 == state.activeWriteFrame->offset);
+        simplicity_debug_assert(0 == state.activeWriteFrame->offset);
         memmove( state.activeReadFrame->edge, state.activeWriteFrame->edge
                , (size_t)((state.activeWriteFrame + 1)->edge - state.activeWriteFrame->edge) * sizeof(UWORD)
                );
@@ -545,7 +545,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
                                  , type_dag[INJ_C(dag, type_dag, pc)].bitSize));
       /*@fallthrough@*/
      case TAKE:
-      assert(calling);
+      simplicity_debug_assert(calling);
       /* TAIL_CALL(dag[pc].child[0], SAME_TCO); */
       stack[dag[pc].child[0]].return_to = stack[pc].return_to;
       set_tco_flag(&stack[dag[pc].child[0]], get_tco_flag(&stack[pc]));
@@ -579,7 +579,7 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
       }
       /*@fallthrough@*/
      case UNIT:
-      assert(calling);
+      simplicity_debug_assert(calling);
       if (get_tco_flag(&stack[pc])) {
         /* DROP_FRAME */
         state.activeReadFrame--;
@@ -592,11 +592,10 @@ static bool runTCO(evalState state, call* stack, const dag_node* dag, type* type
      case HIDDEN: return false; /* We have failed an 'ASSERTL' or 'ASSERTR' combinator. */
      case JET:
       /* Jets (and primitives) should already have been processed by dag[i].jet already */
-      assert(false);
-      UNREACHABLE;
+      SIMPLICITY_UNREACHABLE;
     }
   }
-  assert(pc == len);
+  simplicity_assert(pc == len);
 
   return true;
 }
@@ -671,8 +670,8 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(memBound), "bound array too large.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
   static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "bound array index does not fit in uint32_t.");
-  assert(1 <= len);
-  assert(len <= DAG_LEN_MAX);
+  simplicity_assert(1 <= len);
+  simplicity_assert(len <= DAG_LEN_MAX);
   memBound* bound = malloc(len * sizeof(memBound));
   if (!bound) return false;
 
@@ -838,9 +837,9 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
 bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* output, ubounded outputSize, const UWORD* input, ubounded inputSize
                       , const dag_node* dag, type* type_dag, size_t len, ubounded budget, const txEnv* env
                       ) {
-  assert(1 <= len);
-  assert(len <= DAG_LEN_MAX);
-  assert(budget <= BUDGET_MAX);
+  simplicity_assert(1 <= len);
+  simplicity_assert(len <= DAG_LEN_MAX);
+  simplicity_assert(budget <= BUDGET_MAX);
   memBound bound;
   if (!computeEvalTCOBound(&bound, dag, type_dag, len)) return false;
 
@@ -862,15 +861,15 @@ bool evalTCOExpression( bool *evalSuccess, flags_type anti_dos_checks, UWORD* ou
 
   /* frameBound is at most 2*len. */
   static_assert(DAG_LEN_MAX <= SIZE_MAX / 2, "2*DAG_LEN_MAX does not fit in size_t.");
-  assert(frameBound <= 2*len);
+  simplicity_assert(frameBound <= 2*len);
 
   /* UWORDBound * UWORD_BIT, the number of bits actually allocacted, is at most the cellBound count plus (worse case) padding bits in each frame. */
   static_assert(1 <= UWORD_BIT, "UWORD_BIT is zero.");
   static_assert(2*DAG_LEN_MAX <= (SIZE_MAX - CELLS_MAX) / (UWORD_BIT - 1), "cellsBound + frameBound*(UWORD_BIT - 1) doesn't fit in size_t.");
-  assert(UWORDBound <= (cellsBound + frameBound*(UWORD_BIT - 1)) / UWORD_BIT);
+  simplicity_assert(UWORDBound <= (cellsBound + frameBound*(UWORD_BIT - 1)) / UWORD_BIT);
 
   /* UWORDBound, is also at most the cellsBound, with an entire UWORD per cell (the rest of the UWORD being padding). */
-  assert(UWORDBound <= cellsBound);
+  simplicity_assert(UWORDBound <= cellsBound);
 
   /* We use calloc for 'cells' because the frame data must be initialized before we can perform bitwise operations. */
   static_assert(CELLS_MAX - 1 <= UINT32_MAX, "cells array index does not fit in uint32_t.");

@@ -1,6 +1,5 @@
 #include "dag.h"
 
-#include <assert.h>
 #include <stdbool.h>
 #include "bounded.h"
 #include "precomputed.h"
@@ -8,7 +7,6 @@
 #include "rsort.h"
 #include "sha256.h"
 #include "uword.h"
-#include "unreachable.h"
 
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
  * This is the "initial value" for computing the commitment Merkle root for that expression.
@@ -36,8 +34,7 @@ static sha256_midstate cmrIV(tag_t tag) {
    case JET:
     break;
   }
-  assert(false);
-  UNREACHABLE;
+  SIMPLICITY_UNREACHABLE;
 }
 
 /* Given a tag for a node, return the SHA-256 hash of its associated IMR tag.
@@ -77,8 +74,7 @@ static sha256_midstate amrIV(tag_t tag) {
    case WORD:
     break;
   }
-  assert(false);
-  UNREACHABLE;
+  SIMPLICITY_UNREACHABLE;
 }
 
 /* Given the IMR of a jet specification, return the CMR for a jet that implements that specification.
@@ -103,8 +99,8 @@ sha256_midstate computeWordCMR(const bitstring* value, size_t n) {
   uint32_t stack[8*33] = {0};
   uint32_t *stack_ptr = stack;
   sha256_midstate imr = identityIV;
-  assert(n < 32);
-  assert((size_t)1 << n == value->len);
+  simplicity_assert(n < 32);
+  simplicity_assert((size_t)1 << n == value->len);
   /* Pass 1: Compute the CMR for the expression that writes 'value'.
    * This expression consists of deeply nested PAIRs of expressions that write one bit each.
    *
@@ -127,7 +123,7 @@ sha256_midstate computeWordCMR(const bitstring* value, size_t n) {
     }
   }
   /* value->len is a power of 2.*/
-  assert(stack_ptr == stack + 8);
+  simplicity_assert(stack_ptr == stack + 8);
 
   /* Pass 2: Compute the IMR for the expression by adding the type roots of ONE and TWO^(2^n) to the CMR. */
   sha256_compression(imr.s, stack);
@@ -153,9 +149,9 @@ void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
   uint32_t block[16] = {0};
   size_t j = 8;
 
-  assert (HIDDEN != dag[i].tag);
-  assert (JET != dag[i].tag);
-  assert (WORD != dag[i].tag);
+  simplicity_assert(HIDDEN != dag[i].tag);
+  simplicity_assert(JET != dag[i].tag);
+  simplicity_assert(WORD != dag[i].tag);
 
   dag[i].cmr = cmrIV(dag[i].tag);
 
@@ -376,7 +372,7 @@ bool verifyCanonicalOrder(dag_node* dag, const size_t len) {
   size_t top = len-1; /* Underflow is checked below. */
 
   if (!len) {
-    assert(false); /* A well-formed dag has non-zero length */
+    simplicity_assert(false); /* A well-formed dag has non-zero length */
     return true; /* However, an empty dag is technically in canonical order */
   }
 
@@ -457,7 +453,7 @@ bool verifyCanonicalOrder(dag_node* dag, const size_t len) {
     /* top < bottom */
     top = dag[top].aux; /* Return. */
   }
-  assert(bottom == top && top == len);
+  simplicity_assert(bottom == top && top == len);
 
   return true;
 }
@@ -497,7 +493,7 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
         while (cur) {
           if (SUM == type_dag[cur].kind) {
             /* Parse one bit and traverse the left type or the right type depending on the value of the bit parsed. */
-            assert(calling);
+            simplicity_assert(calling);
             if (witness.len <= 0) return false;
             bool bit = 1 & (witness.arr[witness.offset/CHAR_BIT] >> (CHAR_BIT - 1 - witness.offset % CHAR_BIT));
             witness.offset++; witness.len--;
@@ -510,7 +506,7 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
               calling = false;
             }
           } else {
-            assert(PRODUCT == type_dag[cur].kind);
+            simplicity_assert(PRODUCT == type_dag[cur].kind);
             size_t next;
             if (calling) {
               next = typeSkip(type_dag[cur].typeArg[0], type_dag);
