@@ -7,8 +7,8 @@
  */
 #include "sha256.h"
 
-#include <assert.h>
 #include <limits.h>
+#include "simplicity_assert.h"
 
 /* Multiplying a uint32_t by 1U promotes a value's type to the wider of unsigned int and uint32_t,
  * avoiding any possible issues with signed integer promotions causing havoc with unsigned modular arithmetic.
@@ -190,6 +190,6 @@ void sha256_bitstring(uint32_t* h, const bitstring* s) {
       count += delta;
     }
   }
-  assert(count == s->len);
+  simplicity_assert(count == s->len);
   sha256_end(h, block, s->len);
 }

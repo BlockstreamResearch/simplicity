@@ -1,6 +1,5 @@
 #include "rsort.h"
 
-#include <assert.h>
 #include <string.h>
 
 /* Return the 'i'th char of the internal representation of the midstate pointed to by a.
@@ -90,7 +89,7 @@ const sha256_midstate* rsort(size_t* scratch, const sha256_midstate** a, size_t 
   /* An array of empty strings of length 2 or more has duplicates. */
   if (0 == level) return a[0];
 
-  assert(level <= sizeof((*a)->s));
+  simplicity_assert(level <= sizeof((*a)->s));
 
   size_t* bucketEnds = scratch;
 
@@ -105,7 +104,7 @@ const sha256_midstate* rsort(size_t* scratch, const sha256_midstate** a, size_t 
     };
 
     cumulative(bucketEnds, bucketSize);
-    assert(len == bucketEnds[UCHAR_MAX]);
+    simplicity_assert(len == bucketEnds[UCHAR_MAX]);
 
     for (size_t i = 0; i < CHAR_COUNT; ++i) {
       size_t start = bucketStart(bucketEnds, i);
@@ -114,7 +113,7 @@ const sha256_midstate* rsort(size_t* scratch, const sha256_midstate** a, size_t 
          * Therefore this body is executed 'len' many times per call to rsort.
          */
         size_t bucket = readLevel(a[start], level - 1);
-        assert(bucketSize[bucket]);
+        simplicity_assert(bucketSize[bucket]);
         bucketSize[bucket]--;
         swap(a + start, a + bucketStart(bucketEnds, bucket) + bucketSize[bucket]);
       }

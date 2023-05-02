@@ -1,11 +1,11 @@
 #include "typeInference.h"
 
-#include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include "bounded.h"
 #include "limitations.h"
 #include "primitive.h"
+#include "simplicity_assert.h"
 
 static_assert(DAG_LEN_MAX <= (SIZE_MAX - NUMBER_OF_TYPENAMES_MAX) / 4, "TYPE_DAG_LEN_MAX doesn't fit in size_t.");
 #define TYPE_DAG_LEN_MAX (NUMBER_OF_TYPENAMES_MAX + 4*DAG_LEN_MAX)
@@ -95,7 +95,7 @@ static bool applyBinding_cont(unification_var* alpha, binding* bound, unificatio
                                     , .next = (*cont)->next
                                     };
     (*cont)->next = &(bound->cont);
-    assert(0 < *bindings_used);
+    simplicity_assert(0 < *bindings_used);
     (*bindings_used)--;
   }
   return true;
@@ -387,7 +387,7 @@ static bool typeInference(unification_arrow* arrow, const dag_node* dag, const s
  * Precondition: NULL == var->parent
  */
 static bool isFrozen(unification_var* var) {
-  assert (!var->isBound || ONE != var->bound.kind || 0 == var->bound.frozen_ix);
+  simplicity_assert(!var->isBound || ONE != var->bound.kind || 0 == var->bound.frozen_ix);
   return !var->isBound || ONE == var->bound.kind || var->bound.frozen_ix;
 }
 
@@ -432,7 +432,7 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
    * Create a one item stack of unification variables 'var' to be frozen.
    */
   var->next = NULL;
-  assert(!var->bound.occursCheck);
+  simplicity_assert(!var->bound.occursCheck);
   var->bound.occursCheck = true;
 
   /* Attempt to freeze all variables on the stack, pushing new variables onto the stack to recursively freeze them if needed.
@@ -545,8 +545,8 @@ bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(unification_arrow), "arrow array too large.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
   static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "arrow array index does not fit in uint32_t.");
-  assert(1 <= len);
-  assert(len <= DAG_LEN_MAX);
+  simplicity_assert(1 <= len);
+  simplicity_assert(len <= DAG_LEN_MAX);
   unification_arrow* arrow = malloc(len * sizeof(unification_arrow));
   unification_var* bound_var;
   size_t word256_ix, extra_var_start;
@@ -554,7 +554,7 @@ bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const
   size_t bindings_used = orig_bindings_used;
 
   static_assert(1 <= NUMBER_OF_TYPENAMES_MAX, "NUMBER_OF_TYPENAMES_MAX is zero.");
-  assert(orig_bindings_used <= NUMBER_OF_TYPENAMES_MAX - 1);
+  simplicity_assert(orig_bindings_used <= NUMBER_OF_TYPENAMES_MAX - 1);
 
   bool result = arrow && bound_var;
   if (result) {
@@ -565,7 +565,7 @@ bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const
       static_assert(1 <= TYPE_DAG_LEN_MAX, "TYPE_DAG_LEN_MAX is zero.");
       static_assert(TYPE_DAG_LEN_MAX - 1 <= UINT32_MAX, "type_dag array index does not fit in uint32_t.");
       /* 'bindings_used' is at most 4*len plus the initial value of 'bindings_used' set by 'mallocBoundVars'. */
-      assert(bindings_used <= orig_bindings_used + 4*len);
+      simplicity_assert(bindings_used <= orig_bindings_used + 4*len);
       *type_dag = malloc((1 + bindings_used) * sizeof(type));
       result = *type_dag;
       if (result) {

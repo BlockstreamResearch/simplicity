@@ -2,9 +2,9 @@
 #ifndef SIMPLICITY_BITSTRING_H
 #define SIMPLICITY_BITSTRING_H
 
-#include <assert.h>
 #include <limits.h>
 #include <stdbool.h>
+#include "simplicity_assert.h"
 
 /* Represents a bitstring of length 'len' bits using an array of unsigned char.
  * The bit at index 'n', where 0 <= 'n' < 'len', is located at bit '1 << (CHAR_BIT - 1 - (offset + n) % CHAR_BIT)' of
@@ -28,7 +28,7 @@ typedef struct bitstring {
  */
 static inline bool getBit(const bitstring *s, size_t n) {
   size_t total_offset = s->offset + n;
-  assert(n < s->len);
+  simplicity_assert(n < s->len);
   return 1 & (s->arr[total_offset / CHAR_BIT] >> (CHAR_BIT - 1 - (total_offset % CHAR_BIT)));
 }
 

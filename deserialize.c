@@ -1,11 +1,10 @@
 #include "deserialize.h"
 
-#include <assert.h>
 #include <limits.h>
 #include <stdlib.h>
 #include "limitations.h"
 #include "primitive.h"
-#include "unreachable.h"
+#include "simplicity_assert.h"
 
 /* Fetches 'len' 'uint32_t's from 'stream' into 'result'.
  * The bits in each 'uint32_t' are set from the MSB to the LSB and the 'uint32_t's of 'result' are set from 0 up to 'len'.

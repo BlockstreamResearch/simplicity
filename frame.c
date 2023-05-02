@@ -100,7 +100,7 @@ WRITE_(64)
  *               0 <= n < 16
  */
 void read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n) {
-  assert(0 <= n && n < 16);
+  simplicity_debug_assert(0 <= n && n < 16);
   *len = 0;
 
   for (size_t i = (size_t)1 << n; 0 < i; i /= 2) {
@@ -125,8 +125,8 @@ void read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n) {
  *               0 <= n < 16;
  */
 void write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n) {
-  assert(0 <= n && n < 16);
-  assert(len < ((size_t)1<<(n+1)));
+  simplicity_debug_assert(0 <= n && n < 16);
+  simplicity_debug_assert(len < ((size_t)1<<(n+1)));
   for (size_t i = (size_t)1 << n; 0 < i; i /= 2) {
     if (writeBit(dst, i <= len)) {
       write8s(dst, buf, i);

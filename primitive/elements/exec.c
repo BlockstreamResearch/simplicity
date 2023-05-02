@@ -7,6 +7,7 @@
 #include "../../deserialize.h"
 #include "../../eval.h"
 #include "../../limitations.h"
+#include "../../simplicity_assert.h"
 #include "../../typeInference.h"
 
 /* Deserialize a Simplicity 'program' and execute it in the environment of the 'ix'th input of 'tx' with `taproot`.
@@ -36,7 +37,7 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
                                               , const unsigned char* amr
                                               , const unsigned char* program, size_t program_len) {
   if (!success || !tx || !taproot) return false;
-  assert(NULL != program || 0 == program_len);
+  simplicity_assert(NULL != program || 0 == program_len);
 
   bool result;
   combinator_counters census;
@@ -53,10 +54,10 @@ extern bool elements_simplicity_execSimplicity( bool* success, unsigned char* im
     dag_len = decodeMallocDag(&dag, &census, &stream);
     if (dag_len <= 0) {
       *success = false;
-      assert(dag_len < 0);
+      simplicity_assert(dag_len < 0);
       return PERMANENT_FAILURE(dag_len);
     }
-    assert((size_t)dag_len <= DAG_LEN_MAX);
+    simplicity_assert((size_t)dag_len <= DAG_LEN_MAX);
 
     int32_t err = decodeWitnessData(&witness, &stream);
     if (err < 0) {

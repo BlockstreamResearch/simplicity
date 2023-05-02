@@ -8,6 +8,7 @@
 
 #include "limitations.h"
 #include "sha256.h"
+#include "simplicity_assert.h"
 
 _Static_assert(UCHAR_MAX < SIZE_MAX, "UCHAR_MAX >= SIZE_MAX");
 #define CHAR_COUNT ((size_t)1 << CHAR_BIT)
@@ -35,8 +36,8 @@ static inline bool hasDuplicates(bool* duplicates, const sha256_midstate* a, siz
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(const sha256_midstate*), "perm array too large.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
   static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "perm array index does not fit in uint32_t.");
-  assert(len <= SIZE_MAX / sizeof(const sha256_midstate*));
-  assert(len - 1 <= UINT32_MAX);
+  simplicity_assert(len <= SIZE_MAX / sizeof(const sha256_midstate*));
+  simplicity_assert(len - 1 <= UINT32_MAX);
   const sha256_midstate **perm = malloc(len * sizeof(const sha256_midstate*));
   bool result = scratch && perm;
 
