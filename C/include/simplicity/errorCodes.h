@@ -46,4 +46,59 @@ static inline bool IS_OK(simplicity_err err) {
   return SIMPLICITY_NO_ERROR == err;
 }
 
+static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
+  switch (err) {
+  case SIMPLICITY_NO_ERROR:
+    return "No error";
+  case SIMPLICITY_ERR_MALLOC:
+    return "Memory allocation failed";
+  case SIMPLICITY_ERR_BITSTREAM_EOF:
+    return "Unexpected end of bitstream";
+  case SIMPLICITY_ERR_NOT_YET_IMPLEMENTED:
+    return "Incomplete implementation (this should not occur)";
+  case SIMPLICITY_ERR_DATA_OUT_OF_RANGE:
+    return "Value out of range";
+  case SIMPLICITY_ERR_DATA_OUT_OF_ORDER:
+    return "Non-canonical order";
+  case SIMPLICITY_ERR_FAIL_CODE:
+    return "Program has FAIL node";
+  case SIMPLICITY_ERR_STOP_CODE:
+    return "Program has STOP node";
+  case SIMPLICITY_ERR_HIDDEN:
+    return "Program has illegal HIDDEN node";
+  case SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES:
+    return "Unused bytes at the end of the program";
+  case SIMPLICITY_ERR_BITSTREAM_UNUSED_BITS:
+    return "Unused bits at the end of the program";
+  case SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION:
+    return "Unification failure";
+  case SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK:
+    return "Occurs check failure";
+  case SIMPLICITY_ERR_TYPE_INFERENCE_NOT_PROGRAM:
+    return "Expression not unit to unit";
+  case SIMPLICITY_ERR_WITNESS_EOF:
+    return "Unexpected end of witness block";
+  case SIMPLICITY_ERR_WITNESS_UNUSED_BITS:
+    return "Unused data at the end of the witness block";
+  case SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION:
+    return "Subexpression not properly shared";
+  case SIMPLICITY_ERR_CMR:
+    return "Program's CMR does not match";
+  case SIMPLICITY_ERR_AMR:
+    return "Program's AMR does not match";
+  case SIMPLICITY_ERR_EXEC_BUDGET:
+    return "Program's execution cost could exceed budget";
+  case SIMPLICITY_ERR_EXEC_MEMORY:
+    return "Program's memory cost could exceed limit";
+  case SIMPLICITY_ERR_EXEC_JET:
+    return "Assertion failed inside jet";
+  case SIMPLICITY_ERR_EXEC_ASSERT:
+    return "Assertion failed";
+  case SIMPLICITY_ERR_ANTIDOS:
+    return "Anti-DOS check failed";
+  default:
+    return "Unknown error code";
+  }
+}
+
 #endif
