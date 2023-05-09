@@ -86,19 +86,13 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
     if (IS_OK(*error)) {
       *error = fillWitnessData(dag, type_dag, (size_t)dag_len, witness);
     }
-    if (IS_OK(*error)) {
+      if (IS_OK(*error)) {
+      sha256_midstate imr_buf;
       static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(sha256_midstate), "imr_buf array too large.");
       static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
       static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "imr_buf array index does nto fit in uint32_t.");
-      /* :TODO: Have the verifyNoDuplicateIdentityRoots allocate and free the memory. */
-      sha256_midstate* imr_buf = malloc((size_t)dag_len * sizeof(sha256_midstate));
-      if (imr_buf) {
-        *error = verifyNoDuplicateIdentityRoots(imr_buf, dag, type_dag, (size_t)dag_len);
-        if (IS_OK(*error) && imr) sha256_fromMidstate(imr, imr_buf[dag_len-1].s);
-        free(imr_buf);
-      } else {
-        *error = SIMPLICITY_ERR_MALLOC;
-      }
+      *error = verifyNoDuplicateIdentityRoots(&imr_buf, dag, type_dag, (size_t)dag_len);
+      if (IS_OK(*error) && imr) sha256_fromMidstate(imr, imr_buf.s);
     }
     if (IS_OK(*error) && amr) {
       static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(analyses), "analysis array too large.");
