@@ -550,21 +550,31 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
   return 0 == witness.len ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_WITNESS_UNUSED_BITS;
 }
 
-/* Computes the identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses.
- * imr[i]' is set to the identity Merkle root of the subexpression 'dag[i]'.
- * When 'HIDDEN == dag[i].tag', then 'imr[i]' is instead set to a hidden root hash for that hidden node.
+/* Verifies that identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses are all unique,
+ * including that each hidden root hash for every 'HIDDEN' node is unique.
+ *
+ * if 'imr' is not NULL, then '*imr' is set to the identity Merkle root of the 'dag'.
  *
  * If malloc fails, returns 'SIMPLICITY_ERR_MALLOC'.
  * If all the identity Merkle roots (and hidden roots) are all unique, returns 'SIMPLICITY_NO_ERROR'.
  * Otherwise returns 'SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION'.
  *
- * Precondition: sha256_midstate imr[len];
- *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' and contains witnesses.
+ * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' and contains witnesses.
  */
-simplicity_err verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t len) {
-  computeIdentityMerkleRoot(imr, dag, type_dag, len);
+simplicity_err verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t dag_len) {
+  simplicity_assert(0 < dag_len);
+  sha256_midstate* imr_buf = malloc((size_t)dag_len * sizeof(sha256_midstate));
+  if (!imr_buf) return SIMPLICITY_ERR_MALLOC;
 
-  switch (hasDuplicates(imr, len)) {
+  computeIdentityMerkleRoot(imr_buf, dag, type_dag, dag_len);
+
+  if (imr) *imr = imr_buf[dag_len-1];
+
+  int result = hasDuplicates(imr_buf, dag_len);
+
+  free(imr_buf);
+
+  switch (result) {
   case -1: return SIMPLICITY_ERR_MALLOC;
   case 0: return SIMPLICITY_NO_ERROR;
   default: return SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION;

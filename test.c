@@ -96,9 +96,9 @@ static void test_hashBlock(void) {
         }
       }
       {
-        sha256_midstate imr[len];
-        if (IS_OK(verifyNoDuplicateIdentityRoots(imr, dag, type_dag, (size_t)len)) &&
-            0 == memcmp(hashBlock_imr, imr[len-1].s, sizeof(uint32_t[8]))) {
+        sha256_midstate imr;
+        if (IS_OK(verifyNoDuplicateIdentityRoots(&imr, dag, type_dag, (size_t)len)) &&
+            0 == memcmp(hashBlock_imr, imr.s, sizeof(uint32_t[8]))) {
           successes++;
         } else {
           failures++;
@@ -196,9 +196,9 @@ static void test_program(char* name, const unsigned char* program, size_t progra
         }
       }
       {
-        sha256_midstate imr[len];
-        if (IS_OK(verifyNoDuplicateIdentityRoots(imr, dag, type_dag, (size_t)len)) &&
-            0 == memcmp(expectedIMR, imr[len-1].s, sizeof(uint32_t[8]))) {
+        sha256_midstate imr;
+        if (IS_OK(verifyNoDuplicateIdentityRoots(&imr, dag, type_dag, (size_t)len)) &&
+            0 == memcmp(expectedIMR, imr.s, sizeof(uint32_t[8]))) {
           successes++;
         } else {
           failures++;
