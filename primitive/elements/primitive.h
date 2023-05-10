@@ -116,9 +116,9 @@ typedef struct parsedNullData {
  * 'isNullData' is true if the output has a null-data scriptPubKey.
  */
 typedef struct sigOutput {
+  confidential asset;
   sha256_midstate surjectionProofHash;
   sha256_midstate rangeProofHash;
-  confidential asset;
   confAmount amt;
   confidential nonce;
   sha256_midstate scriptPubKey;
