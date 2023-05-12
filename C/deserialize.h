@@ -2,9 +2,9 @@
 #ifndef SIMPLICITY_DESERIALIZE_H
 #define SIMPLICITY_DESERIALIZE_H
 
+#include <simplicity/errorCodes.h>
 #include "bitstream.h"
 #include "dag.h"
-#include "errorCodes.h"
 
 /* Decode a length-prefixed Simplicity DAG from 'stream'.
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' the length prefix's value is too large.

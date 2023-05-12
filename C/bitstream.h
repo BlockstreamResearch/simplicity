@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <simplicity/errorCodes.h>
 #include "bitstring.h"
-#include "errorCodes.h"
 
 /* :TODO: consider adding an 'invalid' state that can be set when parsing has failed and should not be resumed. */
 /* Datatype representing a bit stream.
