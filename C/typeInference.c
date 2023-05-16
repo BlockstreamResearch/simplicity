@@ -243,6 +243,8 @@ static size_t max_extra_vars(const combinator_counters* census) {
  *               unification_var bound_var[N];
  *               forall '0 <= i < len', if 'dag[i].tag == JET'
  *                                      then 'dag[i].sourceIx < N' and 'dag[i].targetIx < N'
+ *                                      and if 'jet[i].tag == WORD'
+ *                                      then 'dag[i].targetIx < N'
  *               word256_ix < N and 'bound_var[word256_ix]' is bound to the type 'TWO^256';
  *               '*bindings_used' is at least the number of unification variables that have
  *                 non-trivial bindings that are accessible from the 'bound_var' array.
