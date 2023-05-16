@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <simplicity/errorCodes.h>
 #include "bitstring.h"
 #include "bounded.h"
 #include "jets.h"
@@ -357,40 +358,41 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
  * right branches, with the exception that nodes under right braches may (cross-)reference identical nodes that already occur under
  * left branches.
  *
- * Returns 'true' if the 'dag' is in canonical order, and returns 'false' if it is not.
+ * Returns 'SIMPLICITY_NO_ERROR' if the 'dag' is in canonical order, and returns 'SIMPLICITY_ERR_DATA_OUT_OF_ORDER' if it is not.
  *
  * May modify dag[i].aux values and invalidate dag[i].sourceType and dag[i].targetType.
  * This function should only be used prior to calling 'mallocTypeInference'.
  *
  * Precondition: dag_node dag[len] and 'dag' is well-formed.
  */
-bool verifyCanonicalOrder(dag_node* dag, const size_t len);
+simplicity_err verifyCanonicalOrder(dag_node* dag, const size_t len);
 
 /* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
  * to construct a compact representation of a witness value of type B.
- * This function only returns 'true' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
+ * This function only returns 'SIMPLICITY_NO_ERROR' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
+ * If extra bits remain, then 'SIMPLICITY_ERR_WITNESS_UNUSED_BITS' is returned.
+ * If there are not enough bits, then 'SIMPLICITY_ERR_WITNESS_EOF' is returned.
  *
  * Precondition: dag_node dag[len] and 'dag' without witness data and is well-typed with 'type_dag';
  *               witness is a valid bitstring;
  *
  * Postcondition: dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'
- *                  when the result is 'true';
+ *                  when the result is 'SIMPLICITY_NO_ERROR';
  */
-bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring witness);
+simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring witness);
 
 /* Computes the identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses.
  * imr[i]' is set to the identity Merkle root of the subexpression 'dag[i]'.
  * When 'HIDDEN == dag[i].tag', then 'imr[i]' is instead set to a hidden root hash for that hidden node.
  *
- * If malloc fails, return 'false', otherwise return 'true'.
- * If 'true' is returned then '*success' is set to true if all the identity Merkle roots (and hidden roots) are all unique.
+ * If malloc fails, returns 'SIMPLICITY_ERR_MALLOC'.
+ * If all the identity Merkle roots (and hidden roots) are all unique, returns 'SIMPLICITY_NO_ERROR'.
+ * Otherwise returns 'SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION'.
  *
- * Precondition: NULL != success;
- *               sha256_midstate imr[len];
+ * Precondition: sha256_midstate imr[len];
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' and contains witnesses.
  */
-bool verifyNoDuplicateIdentityRoots(bool* success, sha256_midstate* imr,
-                                    const dag_node* dag, const type* type_dag, const size_t len);
+simplicity_err verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t len);
 
 #endif

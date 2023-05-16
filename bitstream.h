@@ -30,11 +30,13 @@ static inline bitstream initializeBitstream(const unsigned char* arr, size_t len
 }
 
 /* Closes a bitstream by consuming all remaining bits.
- * Returns false if CHAR_BIT or more bits remain in the stream or if any remaining bits are non-zero.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES' if CHAR_BIT or more bits remain in the stream.
+ * Otherwise, returns 'SIMPLICITY_ERR_BITSTREAM_UNUSED_BITS' if any remaining bits are non-zero.
+ * Otherwise returns 'SIMPLICITY_NO_ERROR'.
  *
  * Precondition: NULL != stream
  */
-bool closeBitstream(bitstream* stream);
+simplicity_err closeBitstream(bitstream* stream);
 
 /* Fetches up to 31 bits from 'stream' as the 'n' least significant bits of return value.
  * The 'n' bits are set from the MSB to the LSB.
@@ -66,7 +68,7 @@ int32_t decodeUptoMaxInt(bitstream* stream);
 
 /* Fills a 'bitstring' containing 'n' bits from 'stream'.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if not enough bits are available.
- * If successful, '*result' is set to a bitstring with 'n' bits read from 'stream' and 0 is returned.
+ * If successful, '*result' is set to a bitstring with 'n' bits read from 'stream' and 'SIMPLICITY_NO_ERROR' is returned.
  *
  * If an error is returned '*result' might be modified.
  *
@@ -74,5 +76,5 @@ int32_t decodeUptoMaxInt(bitstream* stream);
  *               n <= 2^31
  *               NULL != stream
  */
-int32_t readBitstring(bitstring* result, size_t n, bitstream* stream);
+simplicity_err readBitstring(bitstring* result, size_t n, bitstream* stream);
 #endif

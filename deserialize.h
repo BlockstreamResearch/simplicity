@@ -34,13 +34,13 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the encoded string of bits exceeds this decoder's limits.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * If successful, '*witness' is set to the decoded bitstring,
- *                and 0 is returned.
+ *                and 'SIMPLICITY_NO_ERR' is returned.
  *
  * If an error is returned '*witness' might be modified.
  *
  * Precondition: NULL != witness;
  *               NULL != stream;
  */
-int32_t decodeWitnessData(bitstring* witness, bitstream* stream);
+simplicity_err decodeWitnessData(bitstring* witness, bitstream* stream);
 
 #endif

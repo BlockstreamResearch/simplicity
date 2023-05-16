@@ -31,11 +31,11 @@ size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* 
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the stream's prefix doesn't match any valid code for a jet.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * In the above error cases, 'dag' may be modified.
- * Returns 0 if successful.
+ * Returns 'SIMPLICITY_NO_ERROR' if successful.
  *
  * Precondition: NULL != node
  *               NULL != stream
  */
-int32_t decodeJet(dag_node* node, bitstream* stream);
+simplicity_err decodeJet(dag_node* node, bitstream* stream);
 
 #endif

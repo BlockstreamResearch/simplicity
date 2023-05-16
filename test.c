@@ -48,23 +48,25 @@ static void test_hashBlock(void) {
   printf("Test hashBlock\n");
   dag_node* dag;
   combinator_counters census;
-  int32_t len, err = 0;
+  int32_t len;
+  simplicity_err error;
   bitstring witness;
   {
     bitstream stream = initializeBitstream(hashBlock, sizeof_hashBlock);
     len = decodeMallocDag(&dag, &census, &stream);
     if (!dag) {
+      error = len;
       failures++;
-      printf("Error parsing dag: %d\n", len);
+      printf("Error parsing dag: %d\n", error);
     } else {
-      err = decodeWitnessData(&witness, &stream);
-      if (err < 0) {
+      error = decodeWitnessData(&witness, &stream);
+      if (0 != error) {
         failures++;
-        printf("Error parsing witness: %d\n", err);
+        printf("Error parsing witness: %d\n", error);
       }
     }
   }
-  if (dag && 0 <= err) {
+  if (dag && 0 == error) {
     successes++;
 
     if (0 == memcmp(hashBlock_cmr, dag[len-1].cmr.s, sizeof(uint32_t[8]))) {
@@ -75,11 +77,11 @@ static void test_hashBlock(void) {
     }
 
     type* type_dag;
-    if (!mallocTypeInference(&type_dag, dag, (size_t)len, &census) || !type_dag ||
+    if (0 != mallocTypeInference(&type_dag, dag, (size_t)len, &census) || !type_dag ||
         type_dag[dag[len-1].sourceType].bitSize != 768 || type_dag[dag[len-1].targetType].bitSize != 256) {
       failures++;
       printf("Unexpected failure of type inference for hashblock\n");
-    } else if (!fillWitnessData(dag, type_dag, (size_t)len, witness)) {
+    } else if (0 != fillWitnessData(dag, type_dag, (size_t)len, witness)) {
       failures++;
       printf("Unexpected failure of fillWitnessData for hashblock\n");
     } else {
@@ -95,9 +97,8 @@ static void test_hashBlock(void) {
       }
       {
         sha256_midstate imr[len];
-        bool noDups;
-        if (verifyNoDuplicateIdentityRoots(&noDups, imr, dag, type_dag, (size_t)len) && noDups
-            && 0 == memcmp(hashBlock_imr, imr[len-1].s, sizeof(uint32_t[8]))) {
+        if (0 == verifyNoDuplicateIdentityRoots(imr, dag, type_dag, (size_t)len) &&
+            0 == memcmp(hashBlock_imr, imr[len-1].s, sizeof(uint32_t[8]))) {
           successes++;
         } else {
           failures++;
@@ -116,8 +117,7 @@ static void test_hashBlock(void) {
         /* Set the block to be compressed to "abc" with padding. */
         write32s(&frame, (uint32_t[16]){ [0] = 0x61626380, [15] = 0x18 }, 16);
       }
-      bool evalSuccess;
-      if (evalTCOExpression(&evalSuccess, CHECK_NONE, output, 256, input, 256+512, dag, type_dag, (size_t)len, 29100, NULL) && evalSuccess) {
+      if (0 == evalTCOExpression(CHECK_NONE, output, 256, input, 256+512, dag, type_dag, (size_t)len, 29100, NULL)) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
                                          , 0xb00361a3ul, 0x96177a9cul, 0xb410ff61ul, 0xf20015adul };
@@ -140,28 +140,30 @@ static void test_hashBlock(void) {
   free(dag);
 }
 
-static void test_program(char* name, const unsigned char* program, size_t program_len, bool expectedResult, const uint32_t* expectedCMR,
+static void test_program(char* name, const unsigned char* program, size_t program_len, simplicity_err expectedResult, const uint32_t* expectedCMR,
                          const uint32_t* expectedIMR, const uint32_t* expectedAMR) {
   printf("Test %s\n", name);
   dag_node* dag;
   combinator_counters census;
-  int32_t len, err = 0;
+  int32_t len;
+  simplicity_err error;
   bitstring witness;
   {
     bitstream stream = initializeBitstream(program, program_len);
     len = decodeMallocDag(&dag, &census, &stream);
     if (!dag) {
+      error = len;
       failures++;
-      printf("Error parsing dag: %d\n", len);
+      printf("Error parsing dag: %d\n", error);
     } else {
-      err = decodeWitnessData(&witness, &stream);
-      if (err < 0) {
+      error = decodeWitnessData(&witness, &stream);
+      if (0 != error) {
         failures++;
-        printf("Error parsing witness: %d\n", err);
+        printf("Error parsing witness: %d\n", error);
       }
     }
   }
-  if (dag && 0 <= err) {
+  if (dag && 0 == error) {
     successes++;
 
     if (expectedCMR) {
@@ -173,11 +175,11 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       }
     }
     type* type_dag;
-    if (!mallocTypeInference(&type_dag, dag, (size_t)len, &census) || !type_dag ||
+    if (0 != mallocTypeInference(&type_dag, dag, (size_t)len, &census) || !type_dag ||
         dag[len-1].sourceType != 0 || dag[len-1].targetType != 0) {
       failures++;
       printf("Unexpected failure of type inference.\n");
-    } else if (!fillWitnessData(dag, type_dag, (size_t)len, witness)) {
+    } else if (0 != fillWitnessData(dag, type_dag, (size_t)len, witness)) {
       failures++;
       printf("Unexpected failure of fillWitnessData.\n");
     } else {
@@ -195,21 +197,21 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       }
       {
         sha256_midstate imr[len];
-        bool noDups;
-        if (verifyNoDuplicateIdentityRoots(&noDups, imr, dag, type_dag, (size_t)len) && noDups
-            && 0 == memcmp(expectedIMR, imr[len-1].s, sizeof(uint32_t[8]))) {
+        if (0 == verifyNoDuplicateIdentityRoots(imr, dag, type_dag, (size_t)len) &&
+            0 == memcmp(expectedIMR, imr[len-1].s, sizeof(uint32_t[8]))) {
           successes++;
         } else {
           failures++;
           printf("Unexpected IMR.\n");
         }
       }
-      bool evalSuccess;
-      if (evalTCOProgram(&evalSuccess, dag, type_dag, (size_t)len, BUDGET_MAX, NULL) && expectedResult == evalSuccess) {
+
+      simplicity_err actualResult = evalTCOProgram(dag, type_dag, (size_t)len, BUDGET_MAX, NULL);
+      if (expectedResult == actualResult) {
         successes++;
       } else {
         failures++;
-        printf(expectedResult ? "Unexpected failure of evaluation.\n" : "Unexpected success of evaluation.\n");
+        printf("Expected %d from evaluation, but got %d instead.\n", expectedResult, actualResult);
       }
     }
     free(type_dag);
@@ -232,7 +234,8 @@ static void test_occursCheck(void) {
     printf("Error parsing dag: %d\n", len);
   } else {
     type* type_dag;
-    if (mallocTypeInference(&type_dag, dag, (size_t)len, &census) && !type_dag) {
+    if (SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK == mallocTypeInference(&type_dag, dag, (size_t)len, &census) &&
+        !type_dag) {
       successes++;
     } else {
       printf("Unexpected occurs check success\n");
@@ -291,10 +294,10 @@ static void test_elements(void) {
     transaction* tx1 = elements_simplicity_mallocTransaction(&testTx1);
     if (tx1) {
       successes++;
-      bool execResult;
+      simplicity_err execResult;
       {
         unsigned char imrResult[32];
-        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, BUDGET_MAX, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, BUDGET_MAX, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && 0 == execResult) {
           sha256_midstate imr;
           sha256_toMidstate(imr.s, imrResult);
           if (0 == memcmp(imr.s, elementsCheckSigHashAllTx1_imr, sizeof(uint32_t[8]))) {
@@ -305,7 +308,7 @@ static void test_elements(void) {
           }
         } else {
           failures++;
-          printf("execSimplicity of elementsCheckSigHashAllTx1 on tx1 failed\n");
+          printf("execSimplicity of elementsCheckSigHashAllTx1 on tx1 unexpectedly produced %d.\n", execResult);
         }
       }
       {
@@ -313,11 +316,11 @@ static void test_elements(void) {
         unsigned char brokenSig[sizeof_elementsCheckSigHashAllTx1];
         memcpy(brokenSig, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1);
         brokenSig[sizeof_elementsCheckSigHashAllTx1 - 1] ^= 0x80;
-        if (elements_simplicity_execSimplicity(&execResult, NULL, tx1, 0, taproot, genesisHash, BUDGET_MAX, NULL, brokenSig, sizeof_elementsCheckSigHashAllTx1) && !execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, NULL, tx1, 0, taproot, genesisHash, BUDGET_MAX, NULL, brokenSig, sizeof_elementsCheckSigHashAllTx1) && SIMPLICITY_ERR_EXEC_JET == execResult) {
           successes++;
         } else {
           failures++;
-          printf("execSimplicity of brokenSig on tx1 unexpectedly succeeded\n");
+          printf("execSimplicity of brokenSig on tx1 unexpectedly produced %d.\n", execResult);
         }
       }
     } else {
@@ -359,13 +362,13 @@ static void test_elements(void) {
     transaction* tx2 = elements_simplicity_mallocTransaction(&testTx2);
     if (tx2) {
       successes++;
-      bool execResult;
+      simplicity_err execResult;
       {
-        if (elements_simplicity_execSimplicity(&execResult, NULL, tx2, 0, taproot, genesisHash, BUDGET_MAX, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && !execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, NULL, tx2, 0, taproot, genesisHash, BUDGET_MAX, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && SIMPLICITY_ERR_EXEC_JET == execResult) {
           successes++;
         } else {
           failures++;
-          printf("execSimplicity of elementsCheckSigHashAllTx1 on tx2 unexpectedly succeeded\n");
+          printf("execSimplicity of elementsCheckSigHashAllTx1 on tx2 unexpectedly produced %d.\n", execResult);
         }
       }
     } else {
@@ -399,7 +402,7 @@ static uint_fast32_t rsort_one_duplicate(size_t i) {
   return i ? i : 1;
 }
 
-static void test_hasDuplicates(const char* name, bool expected, uint_fast32_t (*f)(size_t), size_t n) {
+static void test_hasDuplicates(const char* name, int expected, uint_fast32_t (*f)(size_t), size_t n) {
   sha256_midstate hashes[n];
 
   printf("Test %s\n", name);
@@ -407,18 +410,18 @@ static void test_hasDuplicates(const char* name, bool expected, uint_fast32_t (*
     hashes[i] = hashint(f(i));
   }
 
-  bool duplicates;
-  if (!hasDuplicates(&duplicates, hashes, n)) {
+  int actual = hasDuplicates(hashes, n);
+  if (expected == actual) {
+    successes++;
+  } else if (actual < 0) {
     failures++;
     printf("Unexpected failure of hasDuplicates\n");
-  } else if (expected == duplicates) {
-    successes++;
-  } else if (expected) {
-    failures++;
-    printf("Expected duplicates but found none.\n");
-  } else {
+  } else if (0 == expected) {
     failures++;
     printf("Expected no duplicate but found some.\n");
+  } else {
+    failures++;
+    printf("Expected duplicates but found none.\n");
   }
 }
 
@@ -427,20 +430,20 @@ int main(void) {
   test_hashBlock();
   test_occursCheck();
 
-  test_hasDuplicates("hasDuplicates no duplicates testcase", false, rsort_no_duplicates, 10000);
-  test_hasDuplicates("hasDuplicates all duplicates testcase", true, rsort_all_duplicates, 10000);
-  test_hasDuplicates("hasDuplicates one duplicate testcase", true, rsort_one_duplicate, 10000);
+  test_hasDuplicates("hasDuplicates no duplicates testcase", 0, rsort_no_duplicates, 10000);
+  test_hasDuplicates("hasDuplicates all duplicates testcase", 1, rsort_all_duplicates, 10000);
+  test_hasDuplicates("hasDuplicates one duplicate testcase", 1, rsort_one_duplicate, 10000);
 
-  test_program("ctx8Pruned", ctx8Pruned, sizeof_ctx8Pruned, true, ctx8Pruned_cmr, ctx8Pruned_imr, ctx8Pruned_amr);
-  test_program("ctx8Unpruned", ctx8Unpruned, sizeof_ctx8Unpruned, false, ctx8Unpruned_cmr, ctx8Unpruned_imr, ctx8Unpruned_amr);
+  test_program("ctx8Pruned", ctx8Pruned, sizeof_ctx8Pruned, SIMPLICITY_NO_ERROR, ctx8Pruned_cmr, ctx8Pruned_imr, ctx8Pruned_amr);
+  test_program("ctx8Unpruned", ctx8Unpruned, sizeof_ctx8Unpruned, SIMPLICITY_ERR_ANTIDOS, ctx8Unpruned_cmr, ctx8Unpruned_imr, ctx8Unpruned_amr);
   if (0 == memcmp(ctx8Pruned_cmr, ctx8Unpruned_cmr, sizeof(uint32_t[8]))) {
     successes++;
   } else {
     failures++;
     printf("Pruned and Unpruned CMRs are not the same.\n");
   }
-  test_program("schnorr0", schnorr0, sizeof_schnorr0, true, schnorr0_cmr, schnorr0_imr, schnorr0_amr);
-  test_program("schnorr6", schnorr6, sizeof_schnorr6, false, schnorr6_cmr, schnorr6_imr, schnorr6_amr);
+  test_program("schnorr0", schnorr0, sizeof_schnorr0, SIMPLICITY_NO_ERROR, schnorr0_cmr, schnorr0_imr, schnorr0_amr);
+  test_program("schnorr6", schnorr6, sizeof_schnorr6, SIMPLICITY_ERR_EXEC_JET, schnorr6_cmr, schnorr6_imr, schnorr6_amr);
   test_elements();
 
   printf("Successes: %d\n", successes);
