@@ -428,7 +428,7 @@ static dag_node jetNode(jetName name) {
 simplicity_err decodeJet(dag_node* node, bitstream* stream) {
   jetName name;
   simplicity_err error = decodePrimitive(&name, stream);
-  if (0 != error) return error;
+  if (!IS_OK(error)) return error;
   *node = jetNode(name);
   return SIMPLICITY_NO_ERROR;
 }

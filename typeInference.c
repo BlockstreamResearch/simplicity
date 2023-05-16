@@ -567,10 +567,10 @@ simplicity_err mallocTypeInference(type** type_dag, dag_node* dag, const size_t 
   simplicity_assert(orig_bindings_used <= NUMBER_OF_TYPENAMES_MAX - 1);
 
   simplicity_err result = arrow && bound_var ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_MALLOC;
-  if (0 == result) {
+  if (IS_OK(result)) {
     result = typeInference(arrow, dag, len, bound_var + extra_var_start, bound_var, word256_ix, &bindings_used);
   }
-  if (0 == result) {
+  if (IS_OK(result)) {
     /* :TODO: constrain the root of the dag to be a Simplicity program: ONE |- ONE */
     static_assert(TYPE_DAG_LEN_MAX <= SIZE_MAX / sizeof(type), "type_dag array too large.");
     static_assert(1 <= TYPE_DAG_LEN_MAX, "TYPE_DAG_LEN_MAX is zero.");
@@ -579,10 +579,10 @@ simplicity_err mallocTypeInference(type** type_dag, dag_node* dag, const size_t 
     simplicity_assert(bindings_used <= orig_bindings_used + 4*len);
     *type_dag = malloc((1 + bindings_used) * sizeof(type));
     result = *type_dag ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_MALLOC;
-    if (0 == result) {
+    if (IS_OK(result)) {
       result = freezeTypes(*type_dag, dag, arrow, len);
     }
-    if (0 != result) {
+    if (!IS_OK(result)) {
       free(*type_dag);
       *type_dag = NULL;
     }

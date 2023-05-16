@@ -41,4 +41,9 @@ static inline bool IS_PERMANENT(simplicity_err err) {
   return !(err & 1);
 }
 
+/* Check if no failure. */
+static inline bool IS_OK(simplicity_err err) {
+  return SIMPLICITY_NO_ERROR == err;
+}
+
 #endif
