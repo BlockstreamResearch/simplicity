@@ -360,20 +360,20 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
  * right branches, with the exception that nodes under right braches may (cross-)reference identical nodes that already occur under
  * left branches.
  *
- * Returns 'true' if the 'dag' is in canonical order, and returns 'false' if it is not.
+ * Returns 'SIMPLICITY_NO_ERROR' if the 'dag' is in canonical order, and returns 'SIMPLICITY_ERR_DATA_OUT_OF_ORDER' if it is not.
  *
  * May modify dag[i].aux values and invalidate dag[i].sourceType and dag[i].targetType.
  * This function should only be used prior to calling 'mallocTypeInference'.
  *
  * Precondition: dag_node dag[len] and 'dag' is well-formed.
  */
-bool verifyCanonicalOrder(dag_node* dag, const size_t len) {
+simplicity_err verifyCanonicalOrder(dag_node* dag, const size_t len) {
   size_t bottom = 0;
   size_t top = len-1; /* Underflow is checked below. */
 
   if (!len) {
     simplicity_assert(false); /* A well-formed dag has non-zero length */
-    return true; /* However, an empty dag is technically in canonical order */
+    return SIMPLICITY_NO_ERROR; /* However, an empty dag is technically in canonical order */
   }
 
   /* We use dag[i].aux as a "stack" to manage the traversal of the DAG. */
@@ -448,20 +448,22 @@ bool verifyCanonicalOrder(dag_node* dag, const size_t len) {
     }
 
     /* Check current node. */
-    if (bottom < top) return false; /* Not in canonical order.  */
+    if (bottom < top) return SIMPLICITY_ERR_DATA_OUT_OF_ORDER;
     if (bottom == top) bottom++;
     /* top < bottom */
     top = dag[top].aux; /* Return. */
   }
   simplicity_assert(bottom == top && top == len);
 
-  return true;
+  return SIMPLICITY_NO_ERROR;
 }
 
 /* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
  * to construct a compact representation of a witness value of type B.
- * This function only returns 'true' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
+ * This function only returns 'SIMPLICITY_NO_ERROR' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
+ * If extra bits remain, then 'SIMPLICITY_ERR_WITNESS_UNUSED_BITS' is returned.
+ * If there are not enough bits, then 'SIMPLICITY_ERR_WITNESS_EOF' is returned.
  *
  * Note: the 'witness' value is passed by copy because the implementation manipulates a local copy of the structure.
  *
@@ -469,16 +471,16 @@ bool verifyCanonicalOrder(dag_node* dag, const size_t len) {
  *               witness is a valid bitstring;
  *
  * Postcondition: dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'
- *                  when the result is 'true';
+ *                  when the result is 'SIMPLICITY_NO_ERROR';
  */
-bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring witness) {
+simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring witness) {
   for (size_t i = 0; i < len; ++i) {
     if (WITNESS == dag[i].tag) {
       if (witness.len <= 0) {
         /* There is no more data left in witness. */
         dag[i].compactValue = (bitstring){0};
         /* This is fine as long as the witness type is trivial */
-        if (type_dag[WITNESS_B(dag, type_dag, i)].bitSize) return false;
+        if (type_dag[WITNESS_B(dag, type_dag, i)].bitSize) return SIMPLICITY_ERR_WITNESS_EOF;
       } else {
         dag[i].compactValue = (bitstring)
           { .arr = &witness.arr[witness.offset/CHAR_BIT]
@@ -494,7 +496,7 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
           if (SUM == type_dag[cur].kind) {
             /* Parse one bit and traverse the left type or the right type depending on the value of the bit parsed. */
             simplicity_assert(calling);
-            if (witness.len <= 0) return false;
+            if (witness.len <= 0) return SIMPLICITY_ERR_WITNESS_EOF;
             bool bit = 1 & (witness.arr[witness.offset/CHAR_BIT] >> (CHAR_BIT - 1 - witness.offset % CHAR_BIT));
             witness.offset++; witness.len--;
             size_t next = typeSkip(type_dag[cur].typeArg[bit], type_dag);
@@ -545,28 +547,26 @@ bool fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring 
       }
     }
   }
-  return (0 == witness.len);
+  return 0 == witness.len ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_WITNESS_UNUSED_BITS;
 }
 
 /* Computes the identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses.
  * imr[i]' is set to the identity Merkle root of the subexpression 'dag[i]'.
  * When 'HIDDEN == dag[i].tag', then 'imr[i]' is instead set to a hidden root hash for that hidden node.
  *
- * If malloc fails, return 'false', otherwise return 'true'.
- * If 'true' is returned then '*success' is set to true if all the identity Merkle roots (and hidden roots) are all unique.
+ * If malloc fails, returns 'SIMPLICITY_ERR_MALLOC'.
+ * If all the identity Merkle roots (and hidden roots) are all unique, returns 'SIMPLICITY_NO_ERROR'.
+ * Otherwise returns 'SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION'.
  *
- * Precondition: NULL != success;
- *               sha256_midstate imr[len];
+ * Precondition: sha256_midstate imr[len];
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag' and contains witnesses.
  */
-bool verifyNoDuplicateIdentityRoots(bool* success, sha256_midstate* imr,
-                                    const dag_node* dag, const type* type_dag, const size_t len) {
-  bool result, duplicates;
-
+simplicity_err verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t len) {
   computeIdentityMerkleRoot(imr, dag, type_dag, len);
 
-  result = hasDuplicates(&duplicates, imr, len);
-  *success = result && !duplicates;
-
-  return result;
+  switch (hasDuplicates(imr, len)) {
+  case -1: return SIMPLICITY_ERR_MALLOC;
+  case 0: return SIMPLICITY_NO_ERROR;
+  default: return SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION;
+  }
 }

@@ -77,18 +77,20 @@ struct unification_var {
  * and update the '.sourceType' and '.targetType' fields within each node of the 'dag' 'type_dag[dag[i].sourceType]'
  * and 'type_dag[dag[i].targetType]' are the inferred types of the Simplicity subexpression at dag[i].
  *
- * If malloc fails, return 'false', otherwise return 'true'.
- * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL.
+ * If malloc fails, returns 'SIMPLICITY_ERR_MALLOC'.
+ * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL,
+ * and either 'SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION' or 'SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK' is returned.
+ * Otherwise 'SIMPLICITY_NO_ERROR' is returned.
  *
  * Precondition: NULL != type_dag;
  *               dag_node dag[len] is well-formed;
  *               '*census' contains a tally of the different tags that occur in 'dag'.
  *
- * Postcondition: if the return value is 'true'
+ * Postcondition: if the return value is 'SIMPLICITY_NO_ERROR'
  *                then either NULL == '*type_dag'
  *                     or 'dag' is well-typed with '*type_dag' and without witness values
- *                if the return value is 'false' then 'NULL == *type_dag'
+ *                if the return value is not 'SIMPLICITY_NO_ERROR' then 'NULL == *type_dag'
  */
-bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census);
+simplicity_err mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census);
 
 #endif

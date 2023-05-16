@@ -9,32 +9,32 @@
 /* Fetches 'len' 'uint32_t's from 'stream' into 'result'.
  * The bits in each 'uint32_t' are set from the MSB to the LSB and the 'uint32_t's of 'result' are set from 0 up to 'len'.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if not enough bits are available ('result' may be modified).
- * Returns 0 if successful.
+ * Returns 'SIMPLICITY_NO_ERROR' if successful.
  *
  * Precondition: uint32_t result[len];
  *               NULL != stream
  */
-static int32_t getWord32Array(uint32_t* result, const size_t len, bitstream* stream) {
+static simplicity_err getWord32Array(uint32_t* result, const size_t len, bitstream* stream) {
   for (size_t i = 0; i < len; ++i) {
     /* Due to error codes, readNBits cannot fetch 32 bits at once. Instead we fetch two groups of 16 bits. */
     int32_t bits16 = readNBits(16, stream);
-    if (bits16 < 0) return bits16;
+    if (bits16 < 0) return (simplicity_err)bits16;
     result[i] = (uint32_t)bits16 << 16;
     bits16 = readNBits(16, stream);
-    if (bits16 < 0) return bits16;
+    if (bits16 < 0) return (simplicity_err)bits16;
     result[i] |= (uint32_t)bits16;
   }
-  return 0;
+  return SIMPLICITY_NO_ERROR;
 }
 
 /* Fetches a 256-bit hash value from 'stream' into 'result'.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if not enough bits are available ('result' may be modified).
- * Returns 0 if successful.
+ * Returns 'SIMPLICITY_NO_ERROR' if successful.
  *
  * Precondition: NULL != result
  *               NULL != stream
  */
-static int32_t getHash(sha256_midstate* result, bitstream* stream) {
+static simplicity_err getHash(sha256_midstate* result, bitstream* stream) {
   return getWord32Array(result->s, 8, stream);
 }
 
@@ -49,29 +49,29 @@ static int32_t getHash(sha256_midstate* result, bitstream* stream) {
  *                                            or the size of a WORD encoding is greater than 2^31 bits.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * In the above error cases, 'dag' may be modified.
- * Returns 0 if successful.
+ * Returns 'SIMPLICITY_NO_ERROR' if successful.
  *
  * Precondition: dag_node dag[i + 1];
  *               i < 2^31 - 1
  *               NULL != stream
  */
-static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
+static simplicity_err decodeNode(dag_node* dag, size_t i, bitstream* stream) {
   int32_t bit = read1Bit(stream);
-  if (bit < 0) return bit;
+  if (bit < 0) return (simplicity_err)bit;
   dag[i] = (dag_node){0};
   if (bit) {
     bit = read1Bit(stream);
-    if (bit < 0) return bit;
+    if (bit < 0) return (simplicity_err)bit;
     if (bit) {
       return decodeJet(&dag[i], stream);
     } else {
       /* Decode WORD. */
       int32_t depth = decodeUptoMaxInt(stream);
-      if (depth < 0) return depth;
+      if (depth < 0) return (simplicity_err)depth;
       if (32 < depth) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
       {
-        int32_t result = readBitstring(&dag[i].compactValue, (size_t)1 << (depth - 1), stream);
-        if (result < 0) return result;
+        simplicity_err error = readBitstring(&dag[i].compactValue, (size_t)1 << (depth - 1), stream);
+        if (0 != error) return error;
       }
       dag[i].tag = WORD;
       dag[i].targetIx = (size_t)depth;
@@ -79,12 +79,12 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
     }
   } else {
     int32_t code = readNBits(2, stream);
-    if (code < 0) return code;
+    if (code < 0) return (simplicity_err)code;
     int32_t subcode = readNBits(code < 3 ? 2 : 1, stream);
-    if (subcode < 0) return subcode;
+    if (subcode < 0) return (simplicity_err)subcode;
     for (int32_t j = 0; j < 2 - code; ++j) {
       int32_t ix = decodeUptoMaxInt(stream);
-      if (ix < 0) return ix;
+      if (ix < 0) return (simplicity_err)ix;
       if (i < (uint32_t)ix) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
       dag[i].child[j] = i - (uint32_t)ix;
     }
@@ -136,7 +136,7 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
 
     computeCommitmentMerkleRoot(dag, i);
   }
-  return 0;
+  return SIMPLICITY_NO_ERROR;
 }
 
 /* Decode a Simplicity DAG consisting of 'len' nodes from 'stream' into 'dag'.
@@ -147,20 +147,20 @@ static int32_t decodeNode(dag_node* dag, size_t i, bitstream* stream) {
  * Returns 'SIMPLICITY_ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * In the above error cases, 'dag' may be modified.
- * Returns 0 if successful.
+ * Returns 'SIMPLICITY_NO_ERROR' if successful.
  *
  * Precondition: dag_node dag[len];
  *               len < 2^31
  *               NULL != stream
  */
-static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* census, bitstream* stream) {
+static simplicity_err decodeDag(dag_node* dag, const size_t len, combinator_counters* census, bitstream* stream) {
   for (size_t i = 0; i < len; ++i) {
-    int32_t err = decodeNode(dag, i, stream);
-    if (err < 0) return err;
+    simplicity_err error = decodeNode(dag, i, stream);
+    if (0 != error) return error;
 
     enumerator(census, dag[i].tag);
   }
-  return 0;
+  return SIMPLICITY_NO_ERROR;
 }
 
 /* Decode a length-prefixed Simplicity DAG from 'stream'.
@@ -171,6 +171,7 @@ static int32_t decodeDag(dag_node* dag, const size_t len, combinator_counters* c
  * Returns 'SIMPLICITY_ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'SIMPLICITY_ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
+ * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_ORDER' if nodes are not serialized in the canonical order.
  * Returns 'SIMPLICITY_ERR_MALLOC' if malloc fails.
  * In the above error cases, '*dag' is set to NULL.
  * If successful, returns a positive value equal to the length of an allocated array of (*dag).
@@ -197,16 +198,16 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
   if (!*dag) return SIMPLICITY_ERR_MALLOC;
 
   if (census) *census = (combinator_counters){0};
-  int32_t err = decodeDag(*dag, (size_t)dagLen, census, stream);
+  simplicity_err error = decodeDag(*dag, (size_t)dagLen, census, stream);
 
-  if (0 <= err && !verifyCanonicalOrder(*dag, (size_t)(dagLen))) {
-    err = SIMPLICITY_ERR_DATA_OUT_OF_ORDER;
+  if (0 == error) {
+    error = verifyCanonicalOrder(*dag, (size_t)(dagLen));
   }
 
-  if (err < 0) {
+  if (0 != error) {
     free(*dag);
     *dag = NULL;
-    return err;
+    return (int32_t)error;
   } else {
     return dagLen;
   }
@@ -217,18 +218,18 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the encoded string of bits exceeds this decoder's limits.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * If successful, '*witness' is set to the decoded bitstring,
- *                and 0 is returned.
+ *                and 'SIMPLICITY_NO_ERROR' is returned.
  *
  * If an error is returned '*witness' might be modified.
  *
  * Precondition: NULL != witness;
  *               NULL != stream;
  */
-int32_t decodeWitnessData(bitstring* witness, bitstream* stream) {
+simplicity_err decodeWitnessData(bitstring* witness, bitstream* stream) {
   int32_t witnessLen = read1Bit(stream);
-  if (witnessLen < 0) return witnessLen;
+  if (witnessLen < 0) return (simplicity_err)witnessLen;
   if (0 < witnessLen) witnessLen = decodeUptoMaxInt(stream);
-  if (witnessLen < 0) return witnessLen;
+  if (witnessLen < 0) return (simplicity_err)witnessLen;
 
   return readBitstring(witness, (size_t)witnessLen, stream);
 }

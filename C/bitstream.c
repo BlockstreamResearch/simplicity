@@ -5,19 +5,23 @@
 #include "simplicity_assert.h"
 
 /* Closes a bitstream by consuming all remaining bits.
- * Returns false if CHAR_BIT or more bits remain in the stream or if any remaining bits are non-zero.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES' if CHAR_BIT or more bits remain in the stream.
+ * Otherwise, returns 'SIMPLICITY_ERR_BITSTREAM_UNUSED_BITS' if any remaining bits are non-zero.
+ * Otherwise returns 'SIMPLICITY_NO_ERROR'.
  *
  * Precondition: NULL != stream
  */
-bool closeBitstream(bitstream* stream) {
-  if (1 < stream->len) return false; /* If there is more than one byte remaining. */
-  if (1 == stream->len &&                                  /* If there is one byte remaining */
-      (0 == stream->offset ||                              /* and either no bits have been consumed */
-       0 != (*stream->arr & (UCHAR_MAX >> stream->offset)) /* or any of the unconsumed bits are non-zero */
-     )) return false;
+simplicity_err closeBitstream(bitstream* stream) {
+  if (1 < stream->len) return SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES;        /* If there is more than one byte remaining. */
+  if (1 == stream->len) {
+    if (0 == stream->offset) return SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES;  /* If there is one byte remaining */
+    if (0 != (*stream->arr & (UCHAR_MAX >> stream->offset))) {              /* If any of the unconsumed bits are non-zero */
+      return SIMPLICITY_ERR_BITSTREAM_UNUSED_BITS;
+    }
+  }
   /* Otherwise there are either 0 bits remaining or there are between 1 and CHAR_BITS-1 bits remaining and they are all zero. */
   *stream = (bitstream){0};
-  return true;
+  return SIMPLICITY_NO_ERROR;
 }
 
 /* Fetches up to 31 bits from 'stream' as the 'n' least significant bits of return value.
@@ -200,7 +204,7 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
 
 /* Fills a 'bitstring' containing 'n' bits from 'stream'.
  * Returns 'SIMPLICITY_ERR_BITSTREAM_EOF' if not enough bits are available.
- * If successful, '*result' is set to a bitstring with 'n' bits read from 'stream' and 0 is returned.
+ * If successful, '*result' is set to a bitstring with 'n' bits read from 'stream' and 'SIMPLICITY_NO_ERROR' is returned.
  *
  * If an error is returned '*result' might be modified.
  *
@@ -208,7 +212,7 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
  *               n <= 2^31
  *               NULL != stream
  */
-int32_t readBitstring(bitstring* result, size_t n, bitstream* stream) {
+simplicity_err readBitstring(bitstring* result, size_t n, bitstream* stream) {
   static_assert(0x8000u + 2*(CHAR_BIT - 1) <= SIZE_MAX, "size_t needs to be at least 32-bits");
   simplicity_assert(n <= 0x8000u);
   size_t total_offset = n + stream->offset;
@@ -226,5 +230,5 @@ int32_t readBitstring(bitstring* result, size_t n, bitstream* stream) {
     stream->offset = total_offset % CHAR_BIT;
     /* Note that if 0 == stream->len then 0 == stream->offset. */
   }
-  return 0;
+  return SIMPLICITY_NO_ERROR;
 }

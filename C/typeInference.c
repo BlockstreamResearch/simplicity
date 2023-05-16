@@ -230,11 +230,13 @@ static size_t max_extra_vars(const combinator_counters* census) {
  * If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexprssions),
  * then 'arrow[i]'s and 'source' and 'target' fields are set to unification variables
  * that are bound to the principal source and target types of subexpression denoted by the slice '(dag_nodes[i + 1])dag'.
- * If the 'dag' does not have a principal type then either 'false' is returned
+ * If the 'dag' does not have a principal type then either 'SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION' is returned
  * or there will be a cycle in the graph of the bindings of the unification variables accessible from the resulting 'arrows' array.
  *
- * If 'false' is returned, then '*arrow', '*extra_var', '*word256Type', '*bindings_used', and values referenced by these structures
- * may be modified.
+ * If 'SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION' is not returned, then 'SIMPLICITY_NO_ERR' is returned.
+ *
+ * If 'SIMPLICITY_NO_ERR' is not returned,
+ * then '*arrow', '*extra_var', '*word256Type', '*bindings_used', and values referenced by these structures may be modified.
  *
  * Precondition: unification_arrow arrow[len];
  *               dag_node dag[len] is well-formed;
@@ -249,17 +251,18 @@ static size_t max_extra_vars(const combinator_counters* census) {
  *               '*bindings_used' is at least the number of unification variables that have
  *                 non-trivial bindings that are accessible from the 'bound_var' array.
  *
- * Postcondition: if 'true' is returned
+ * Postcondition: if 'SIMPLICITY_NO_ERR' is returned
  *                  then '*bindings_used' is at least the number of unification variables that have non-trivial bindings
  *                    that are accessible from the 'arrow' array and 'bound_var' array.
  *                  and 'arrow' is a graph of bindings that satisfies the typing constraints of imposed by 'dag'.
  */
-static bool typeInference(unification_arrow* arrow, const dag_node* dag, const size_t len,
-                          unification_var* extra_var, unification_var* bound_var, size_t word256_ix, size_t* bindings_used) {
+static simplicity_err typeInference( unification_arrow* arrow, const dag_node* dag, const size_t len,
+                                     unification_var* extra_var, unification_var* bound_var, size_t word256_ix, size_t* bindings_used
+                                   ) {
   for (size_t i = 0; i < len; ++i) {
     switch (dag[i].tag) {
-      #define UNIFY(a, b) { if (!unify((a), (b), bindings_used)) return false; }
-      #define APPLY_BINDING(a, b) { if (!applyBinding((a), (b), bindings_used)) return false; }
+      #define UNIFY(a, b) { if (!unify((a), (b), bindings_used)) return SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION; }
+      #define APPLY_BINDING(a, b) { if (!applyBinding((a), (b), bindings_used)) return SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION; }
      case COMP:
       arrow[i] = (unification_arrow){0};
       UNIFY(&(arrow[dag[i].child[0]].source), &(arrow[i].source));
@@ -378,7 +381,7 @@ static bool typeInference(unification_arrow* arrow, const dag_node* dag, const s
     }
   }
 
-  return true;
+  return SIMPLICITY_NO_ERROR;
 }
 
 /* Determine if the representative of an equivalence class of unification variables already has a reference
@@ -488,7 +491,7 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
  * of subexpression denoted by the slice '(dag_nodes[i + 1])dag', then we create a well-formed 'type_dag' (see 'type.h')
  * that includes the input and output types for every subexpression in 'dag', with all free type variables instantiated to the type
  * 'ONE' and add references to these type annotations to 'dag'
- * and return 'true'.
+ * and returns 'SIMPLICITY_NO_ERROR'.
  *
  * The type Merkle roots of the 'type_dag' are also filled in.
  *
@@ -497,11 +500,12 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
  * Hidden nodes are not actually typed and are instead assigned references to the type 'ONE' for their input and output types.
  *
  * If the Simplicity DAG, 'dag' does not have a principal type, yet the precondition on 'arrow' below is still satisfied,
- * then there must be a cycle in the graph of bindings accessible through the 'arrow' array, and in this case we return 'false'.
+ * then there must be a cycle in the graph of bindings accessible through the 'arrow' array,
+ * and in this case we return 'SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK'.
  *
  * In either case, '*arrow', and values referenced by these structures may be modified.
  *
- * If 'false' is returned, then the 'type_dag' array, and the '.sourceType', '.targetType' within the 'dag' array may be modified.
+ * If 'SIMPLICITY_NO_ERROR' is not returned, then the 'type_dag' array, and the '.sourceType', '.targetType' within the 'dag' array may be modified.
  *
  * Precondition: type type_dag[1 + n]
  *                 where 'n' is the number of unification variables that have non-trivial bindings
@@ -509,19 +513,21 @@ static bool freeze(size_t* result, type* type_dag, size_t* type_dag_used, unific
  *               dag_node dag[len] is well-formed;
  *               unification_arrow arrow[len] is a graph of bindings that satisfies the typing constraints of imposed by 'dag'.
  */
-static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow, const size_t len) {
+static simplicity_err freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow, const size_t len) {
   /* First entry of type_dag gets assigned to the ONE type. */
   type_dag[0] = (type){ .kind = ONE };
   size_t type_dag_used = 1;
 
   for (size_t i = 0; i < len; ++i) {
     if (!(freeze(&(dag[i].sourceType), type_dag, &type_dag_used, &(arrow[i].source)) &&
-          freeze(&(dag[i].targetType), type_dag, &type_dag_used, &(arrow[i].target)))) return false;
+          freeze(&(dag[i].targetType), type_dag, &type_dag_used, &(arrow[i].target)))) {
+      return SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK;
+    }
   }
 
   computeTypeAnalyses(type_dag, type_dag_used);
 
-  return true;
+  return SIMPLICITY_NO_ERROR;
 }
 
 /* If the Simplicity DAG, 'dag', has a principal type (including constraints due to sharing of subexpressions),
@@ -530,19 +536,21 @@ static bool freezeTypes(type* type_dag, dag_node* dag, unification_arrow* arrow,
  * and update the '.sourceType' and '.targetType' fields within each node of the 'dag' 'type_dag[dag[i].sourceType]'
  * and 'type_dag[dag[i].targetType]' are the inferred types of the Simplicity subexpression at dag[i].
  *
- * If malloc fails, return 'false', otherwise return 'true'.
- * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL.
+ * If malloc fails, returns 'SIMPLICITY_ERR_MALLOC'.
+ * If the Simplicity DAG, 'dag', has no principal type (because it has a type error), then '*type_dag' is set to NULL,
+ * and either 'SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION' or 'SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK' is returned.
+ * Otherwise 'SIMPLICITY_NO_ERROR' is returned.
  *
  * Precondition: NULL != type_dag;
  *               dag_node dag[len] is well-formed;
  *               '*census' contains a tally of the different tags that occur in 'dag'.
  *
- * Postcondition: if the return value is 'true'
+ * Postcondition: if the return value is 'SIMPLICITY_NO_ERROR'
  *                then either NULL == '*type_dag'
  *                     or 'dag' is well-typed with '*type_dag' and without witness values
- *                if the return value is 'false' then 'NULL == *type_dag'
+ *                if the return value is not 'SIMPLICITY_NO_ERROR' then 'NULL == *type_dag'
  */
-bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census) {
+simplicity_err mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census) {
   *type_dag = NULL;
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(unification_arrow), "arrow array too large.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
@@ -550,7 +558,7 @@ bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const
   simplicity_assert(1 <= len);
   simplicity_assert(len <= DAG_LEN_MAX);
   unification_arrow* arrow = malloc(len * sizeof(unification_arrow));
-  unification_var* bound_var;
+  unification_var* bound_var = NULL;
   size_t word256_ix, extra_var_start;
   const size_t orig_bindings_used = mallocBoundVars(&bound_var, &word256_ix, &extra_var_start, max_extra_vars(census));
   size_t bindings_used = orig_bindings_used;
@@ -558,24 +566,25 @@ bool mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const
   static_assert(1 <= NUMBER_OF_TYPENAMES_MAX, "NUMBER_OF_TYPENAMES_MAX is zero.");
   simplicity_assert(orig_bindings_used <= NUMBER_OF_TYPENAMES_MAX - 1);
 
-  bool result = arrow && bound_var;
-  if (result) {
-    if (typeInference(arrow, dag, len, bound_var + extra_var_start, bound_var, word256_ix, &bindings_used)) {
-      /* :TODO: constrain the root of the dag to be a Simplicity program: ONE |- ONE */
-
-      static_assert(TYPE_DAG_LEN_MAX <= SIZE_MAX / sizeof(type), "type_dag array too large.");
-      static_assert(1 <= TYPE_DAG_LEN_MAX, "TYPE_DAG_LEN_MAX is zero.");
-      static_assert(TYPE_DAG_LEN_MAX - 1 <= UINT32_MAX, "type_dag array index does not fit in uint32_t.");
-      /* 'bindings_used' is at most 4*len plus the initial value of 'bindings_used' set by 'mallocBoundVars'. */
-      simplicity_assert(bindings_used <= orig_bindings_used + 4*len);
-      *type_dag = malloc((1 + bindings_used) * sizeof(type));
-      result = *type_dag;
-      if (result) {
-        if (!freezeTypes(*type_dag, dag, arrow, len)) {
-          free(*type_dag);
-          *type_dag = NULL;
-        }
-      }
+  simplicity_err result = arrow && bound_var ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_MALLOC;
+  if (0 == result) {
+    result = typeInference(arrow, dag, len, bound_var + extra_var_start, bound_var, word256_ix, &bindings_used);
+  }
+  if (0 == result) {
+    /* :TODO: constrain the root of the dag to be a Simplicity program: ONE |- ONE */
+    static_assert(TYPE_DAG_LEN_MAX <= SIZE_MAX / sizeof(type), "type_dag array too large.");
+    static_assert(1 <= TYPE_DAG_LEN_MAX, "TYPE_DAG_LEN_MAX is zero.");
+    static_assert(TYPE_DAG_LEN_MAX - 1 <= UINT32_MAX, "type_dag array index does not fit in uint32_t.");
+    /* 'bindings_used' is at most 4*len plus the initial value of 'bindings_used' set by 'mallocBoundVars'. */
+    simplicity_assert(bindings_used <= orig_bindings_used + 4*len);
+    *type_dag = malloc((1 + bindings_used) * sizeof(type));
+    result = *type_dag ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_MALLOC;
+    if (0 == result) {
+      result = freezeTypes(*type_dag, dag, arrow, len);
+    }
+    if (0 != result) {
+      free(*type_dag);
+      *type_dag = NULL;
     }
   }
 
