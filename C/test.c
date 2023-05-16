@@ -60,13 +60,13 @@ static void test_hashBlock(void) {
       printf("Error parsing dag: %d\n", error);
     } else {
       error = decodeWitnessData(&witness, &stream);
-      if (0 != error) {
+      if (!IS_OK(error)) {
         failures++;
         printf("Error parsing witness: %d\n", error);
       }
     }
   }
-  if (dag && 0 == error) {
+  if (dag && IS_OK(error)) {
     successes++;
 
     if (0 == memcmp(hashBlock_cmr, dag[len-1].cmr.s, sizeof(uint32_t[8]))) {
@@ -77,11 +77,11 @@ static void test_hashBlock(void) {
     }
 
     type* type_dag;
-    if (0 != mallocTypeInference(&type_dag, dag, (size_t)len, &census) || !type_dag ||
+    if (!IS_OK(mallocTypeInference(&type_dag, dag, (size_t)len, &census)) || !type_dag ||
         type_dag[dag[len-1].sourceType].bitSize != 768 || type_dag[dag[len-1].targetType].bitSize != 256) {
       failures++;
       printf("Unexpected failure of type inference for hashblock\n");
-    } else if (0 != fillWitnessData(dag, type_dag, (size_t)len, witness)) {
+    } else if (!IS_OK(fillWitnessData(dag, type_dag, (size_t)len, witness))) {
       failures++;
       printf("Unexpected failure of fillWitnessData for hashblock\n");
     } else {
@@ -97,7 +97,7 @@ static void test_hashBlock(void) {
       }
       {
         sha256_midstate imr[len];
-        if (0 == verifyNoDuplicateIdentityRoots(imr, dag, type_dag, (size_t)len) &&
+        if (IS_OK(verifyNoDuplicateIdentityRoots(imr, dag, type_dag, (size_t)len)) &&
             0 == memcmp(hashBlock_imr, imr[len-1].s, sizeof(uint32_t[8]))) {
           successes++;
         } else {
@@ -117,7 +117,7 @@ static void test_hashBlock(void) {
         /* Set the block to be compressed to "abc" with padding. */
         write32s(&frame, (uint32_t[16]){ [0] = 0x61626380, [15] = 0x18 }, 16);
       }
-      if (0 == evalTCOExpression(CHECK_NONE, output, 256, input, 256+512, dag, type_dag, (size_t)len, 29100, NULL)) {
+      if (IS_OK(evalTCOExpression(CHECK_NONE, output, 256, input, 256+512, dag, type_dag, (size_t)len, 29100, NULL))) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
                                          , 0xb00361a3ul, 0x96177a9cul, 0xb410ff61ul, 0xf20015adul };
@@ -157,13 +157,13 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       printf("Error parsing dag: %d\n", error);
     } else {
       error = decodeWitnessData(&witness, &stream);
-      if (0 != error) {
+      if (!IS_OK(error)) {
         failures++;
         printf("Error parsing witness: %d\n", error);
       }
     }
   }
-  if (dag && 0 == error) {
+  if (dag && IS_OK(error)) {
     successes++;
 
     if (expectedCMR) {
@@ -175,11 +175,11 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       }
     }
     type* type_dag;
-    if (0 != mallocTypeInference(&type_dag, dag, (size_t)len, &census) || !type_dag ||
+    if (!IS_OK(mallocTypeInference(&type_dag, dag, (size_t)len, &census)) || !type_dag ||
         dag[len-1].sourceType != 0 || dag[len-1].targetType != 0) {
       failures++;
       printf("Unexpected failure of type inference.\n");
-    } else if (0 != fillWitnessData(dag, type_dag, (size_t)len, witness)) {
+    } else if (!IS_OK(fillWitnessData(dag, type_dag, (size_t)len, witness))) {
       failures++;
       printf("Unexpected failure of fillWitnessData.\n");
     } else {
@@ -197,7 +197,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       }
       {
         sha256_midstate imr[len];
-        if (0 == verifyNoDuplicateIdentityRoots(imr, dag, type_dag, (size_t)len) &&
+        if (IS_OK(verifyNoDuplicateIdentityRoots(imr, dag, type_dag, (size_t)len)) &&
             0 == memcmp(expectedIMR, imr[len-1].s, sizeof(uint32_t[8]))) {
           successes++;
         } else {
@@ -297,7 +297,7 @@ static void test_elements(void) {
       simplicity_err execResult;
       {
         unsigned char imrResult[32];
-        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, BUDGET_MAX, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && 0 == execResult) {
+        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, BUDGET_MAX, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && IS_OK(execResult)) {
           sha256_midstate imr;
           sha256_toMidstate(imr.s, imrResult);
           if (0 == memcmp(imr.s, elementsCheckSigHashAllTx1_imr, sizeof(uint32_t[8]))) {

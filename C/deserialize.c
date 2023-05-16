@@ -71,7 +71,7 @@ static simplicity_err decodeNode(dag_node* dag, size_t i, bitstream* stream) {
       if (32 < depth) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
       {
         simplicity_err error = readBitstring(&dag[i].compactValue, (size_t)1 << (depth - 1), stream);
-        if (0 != error) return error;
+        if (!IS_OK(error)) return error;
       }
       dag[i].tag = WORD;
       dag[i].targetIx = (size_t)depth;
@@ -156,7 +156,7 @@ static simplicity_err decodeNode(dag_node* dag, size_t i, bitstream* stream) {
 static simplicity_err decodeDag(dag_node* dag, const size_t len, combinator_counters* census, bitstream* stream) {
   for (size_t i = 0; i < len; ++i) {
     simplicity_err error = decodeNode(dag, i, stream);
-    if (0 != error) return error;
+    if (!IS_OK(error)) return error;
 
     enumerator(census, dag[i].tag);
   }
@@ -200,16 +200,16 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
   if (census) *census = (combinator_counters){0};
   simplicity_err error = decodeDag(*dag, (size_t)dagLen, census, stream);
 
-  if (0 == error) {
+  if (IS_OK(error)) {
     error = verifyCanonicalOrder(*dag, (size_t)(dagLen));
   }
 
-  if (0 != error) {
+  if (IS_OK(error)) {
+    return dagLen;
+  } else {
     free(*dag);
     *dag = NULL;
     return (int32_t)error;
-  } else {
-    return dagLen;
   }
 }
 

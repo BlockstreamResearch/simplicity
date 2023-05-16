@@ -882,7 +882,7 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, ubo
   call* stack = calloc(len, sizeof(call));
 
   simplicity_err result = cells && frames && stack ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_MALLOC;
-  if (0 == result) {
+  if (IS_OK(result)) {
     if (input) memcpy(cells, input, ROUND_UWORD(inputSize) * sizeof(UWORD));
 
     evalState state =
@@ -894,7 +894,7 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, ubo
 
     result = runTCO(state, stack, dag, type_dag, len, env);
 
-    if (0 == result) {
+    if (IS_OK(result)) {
       if (output) memcpy(output, state.activeWriteFrame->edge, ROUND_UWORD(outputSize) * sizeof(UWORD));
 
       result = antiDos(anti_dos_checks, stack, dag, len);
