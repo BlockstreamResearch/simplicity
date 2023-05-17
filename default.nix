@@ -42,6 +42,22 @@ let hp = nixpkgs.haskell.packages.${ghc};
     ccomp-platform = "x86_64-linux";
   };
 
+  pdf = nixpkgs.runCommand "Simplicity-TR" {} ''
+    export TEXMACS_HOME_PATH=$NIX_BUILD_TOP
+    mkdir -p $out/share/
+
+    cp ${./Simplicity-TR.tm} Simplicity-TR.tm
+    cp ${./Simplicity.bib} Simplicity.bib
+
+    mkdir -p $TEXMACS_HOME_PATH/progs
+    cat <<EOF > $TEXMACS_HOME_PATH/progs/my-init-buffer.scm
+    ; inspired by http://savannah.gnu.org/bugs/?32944
+    (generate-all-aux) (print-to-file "Simplicity-TR.pdf") (style-clear-cache)
+    EOF
+
+    ${nixpkgs.xvfb-run}/bin/xvfb-run ${nixpkgs.texmacs}/bin/texmacs -c Simplicity-TR.tm $out/share/Simplicity-TR.pdf -q
+  '';
+
   vst = nixpkgs.callPackage ./vst.nix {
     inherit (cp) coq;
     inherit compcert;
