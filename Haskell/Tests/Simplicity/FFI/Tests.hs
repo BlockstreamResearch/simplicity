@@ -31,13 +31,56 @@ tests :: TestTree
 tests = testGroup "C / SPEC"
       [ testGroup "word" $
         [ testCase     "verify" assert_verify
+        , testCase     "low_8" assert_low_8
+        , testCase     "low_16" assert_low_16
         , testCase     "low_32" assert_low_32
+        , testCase     "low_64" assert_low_64
+        , testProperty "eq_8"  prop_eq_8
+        , testProperty "eq_16"  prop_eq_16
         , testProperty "eq_32"  prop_eq_32
+        , testProperty "eq_64"  prop_eq_64
         , testProperty "eq_256"  prop_eq_256
+        , testProperty "eq_diag_8"  prop_eq_diag_8
+        , testProperty "eq_diag_16"  prop_eq_diag_16
+        , testProperty "eq_diag_32"  prop_eq_diag_32
+        , testProperty "eq_diag_64"  prop_eq_diag_64
+        , testProperty "eq_diag_256"  prop_eq_diag_256
         ]
       , testGroup "arith" $
-        [ testCase "one_32" assert_one_32
+        [ testCase     "one_8" assert_one_8
+        , testCase     "one_16" assert_one_16
+        , testCase     "one_32" assert_one_32
+        , testCase     "one_64" assert_one_64
+        , testProperty "add_8"  prop_add_8
+        , testProperty "add_16"  prop_add_16
+        , testProperty "add_32"  prop_add_32
+        , testProperty "add_64"  prop_add_64
+        , testProperty "full_add_8"  prop_full_add_8
+        , testProperty "full_add_16"  prop_full_add_16
+        , testProperty "full_add_32"  prop_full_add_32
+        , testProperty "full_add_64"  prop_full_add_64
+        , testProperty "subtract_8"  prop_subtract_8
+        , testProperty "subtract_16"  prop_subtract_16
+        , testProperty "subtract_32"  prop_subtract_32
+        , testProperty "subtract_64"  prop_subtract_64
+        , testProperty "full_subtract_8"  prop_full_subtract_8
+        , testProperty "full_subtract_16"  prop_full_subtract_16
+        , testProperty "full_subtract_32"  prop_full_subtract_32
+        , testProperty "full_subtract_64"  prop_full_subtract_64
+        , testProperty "multiply_8"  prop_multiply_8
+        , testProperty "multiply_16"  prop_multiply_16
+        , testProperty "multiply_32"  prop_multiply_32
+        , testProperty "full_multiply_8"  prop_full_multiply_8
+        , testProperty "full_multiply_16"  prop_full_multiply_16
+        , testProperty "full_multiply_32"  prop_full_multiply_32
+        , testProperty "le_8"  prop_le_8
+        , testProperty "le_16"  prop_le_16
         , testProperty "le_32"  prop_le_32
+        , testProperty "le_64"  prop_le_64
+        , testProperty "le_diag_8"  prop_le_diag_8
+        , testProperty "le_diag_16"  prop_le_diag_16
+        , testProperty "le_diag_32"  prop_le_diag_32
+        , testProperty "le_diag_64"  prop_le_diag_64
         ]
       , testGroup "sha256" $
         [ testCase     "sha_256_iv"                   assert_sha_256_iv
@@ -150,15 +193,59 @@ assert_verify =
  where
   fastF = testCoreEval (specification (WordJet Verify))
 
+assert_low_8 :: Assertion
+assert_low_8 = fastF () @=? C.low_8 ()
+ where
+  fastF = testCoreEval (specification (WordJet Low8))
+
+assert_low_16 :: Assertion
+assert_low_16 = fastF () @=? C.low_16 ()
+ where
+  fastF = testCoreEval (specification (WordJet Low16))
+
 assert_low_32 :: Assertion
 assert_low_32 = fastF () @=? C.low_32 ()
  where
   fastF = testCoreEval (specification (WordJet Low32))
 
+assert_low_64 :: Assertion
+assert_low_64 = fastF () @=? C.low_64 ()
+ where
+  fastF = testCoreEval (specification (WordJet Low64))
+
+assert_one_8 :: Assertion
+assert_one_8 = fastF () @=? C.one_8 ()
+ where
+  fastF = testCoreEval (specification (ArithJet One8))
+
+assert_one_16 :: Assertion
+assert_one_16 = fastF () @=? C.one_16 ()
+ where
+  fastF = testCoreEval (specification (ArithJet One16))
+
 assert_one_32 :: Assertion
 assert_one_32 = fastF () @=? C.one_32 ()
  where
   fastF = testCoreEval (specification (ArithJet One32))
+
+assert_one_64 :: Assertion
+assert_one_64 = fastF () @=? C.one_64 ()
+ where
+  fastF = testCoreEval (specification (ArithJet One64))
+
+prop_eq_8 :: W.Word8 -> W.Word8 -> Bool
+prop_eq_8 = \x y -> let input = (toW8 x, toW8 y)
+                     in fastF input == C.eq_8 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Eq8))
+
+prop_eq_16 :: W.Word16 -> W.Word16 -> Bool
+prop_eq_16 = \x y -> let input = (toW16 x, toW16 y)
+                      in fastF input == C.eq_16 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Eq16))
 
 prop_eq_32 :: W.Word32 -> W.Word32 -> Bool
 prop_eq_32 = \x y -> let input = (toW32 x, toW32 y)
@@ -167,12 +254,222 @@ prop_eq_32 = \x y -> let input = (toW32 x, toW32 y)
   toW32 = toWord32 . fromIntegral
   fastF = testCoreEval (specification (WordJet Eq32))
 
+prop_eq_64 :: W.Word64 -> W.Word64 -> Bool
+prop_eq_64 = \x y -> let input = (toW64 x, toW64 y)
+                      in fastF input == C.eq_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Eq64))
+
 prop_eq_256 :: W.Word256 -> W.Word256 -> Bool
 prop_eq_256 = \x y -> let input = (toW256 x, toW256 y)
-                      in fastF input == C.eq_256 input
+                       in fastF input == C.eq_256 input
  where
   toW256 = toWord256 . fromIntegral
   fastF = testCoreEval (specification (WordJet Eq256))
+
+prop_eq_diag_8 :: W.Word8 -> Bool
+prop_eq_diag_8 = \x -> let input = (toW8 x, toW8 x)
+                         in fastF input == C.eq_8 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Eq8))
+
+prop_eq_diag_16 :: W.Word16 -> Bool
+prop_eq_diag_16 = \x -> let input = (toW16 x, toW16 x)
+                         in fastF input == C.eq_16 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Eq16))
+
+prop_eq_diag_32 :: W.Word32 -> Bool
+prop_eq_diag_32 = \x -> let input = (toW32 x, toW32 x)
+                         in fastF input == C.eq_32 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Eq32))
+
+prop_eq_diag_64 :: W.Word64 -> Bool
+prop_eq_diag_64 = \x -> let input = (toW64 x, toW64 x)
+                         in fastF input == C.eq_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Eq64))
+
+prop_eq_diag_256 :: W.Word256 -> Bool
+prop_eq_diag_256 = \x -> let input = (toW256 x, toW256 x)
+                         in fastF input == C.eq_256 input
+ where
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Eq256))
+
+prop_add_8 :: W.Word8 -> W.Word8 -> Bool
+prop_add_8 = \x y -> let input = (toW8 x, toW8 y)
+                      in fastF input == C.add_8 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Add8))
+
+prop_add_16 :: W.Word16 -> W.Word16 -> Bool
+prop_add_16 = \x y -> let input = (toW16 x, toW16 y)
+                       in fastF input == C.add_16 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Add16))
+
+prop_add_32 :: W.Word32 -> W.Word32 -> Bool
+prop_add_32 = \x y -> let input = (toW32 x, toW32 y)
+                       in fastF input == C.add_32 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Add32))
+
+prop_add_64 :: W.Word64 -> W.Word64 -> Bool
+prop_add_64 = \x y -> let input = (toW64 x, toW64 y)
+                       in fastF input == C.add_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Add64))
+
+prop_full_add_8 :: Bool -> W.Word8 -> W.Word8 -> Bool
+prop_full_add_8 = \c x y -> let input = (toBit c, (toW8 x, toW8 y))
+                             in fastF input == C.full_add_8 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullAdd8))
+
+prop_full_add_16 :: Bool -> W.Word16 -> W.Word16 -> Bool
+prop_full_add_16 = \c x y -> let input = (toBit c, (toW16 x, toW16 y))
+                              in fastF input == C.full_add_16 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullAdd16))
+
+prop_full_add_32 :: Bool -> W.Word32 -> W.Word32 -> Bool
+prop_full_add_32 = \c x y -> let input = (toBit c, (toW32 x, toW32 y))
+                              in fastF input == C.full_add_32 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullAdd32))
+
+prop_full_add_64 :: Bool -> W.Word64 -> W.Word64 -> Bool
+prop_full_add_64 = \c x y -> let input = (toBit c, (toW64 x, toW64 y))
+                              in fastF input == C.full_add_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullAdd64))
+
+prop_subtract_8 :: W.Word8 -> W.Word8 -> Bool
+prop_subtract_8 = \x y -> let input = (toW8 x, toW8 y)
+                           in fastF input == C.subtract_8 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Subtract8))
+
+prop_subtract_16 :: W.Word16 -> W.Word16 -> Bool
+prop_subtract_16 = \x y -> let input = (toW16 x, toW16 y)
+                            in fastF input == C.subtract_16 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Subtract16))
+
+prop_subtract_32 :: W.Word32 -> W.Word32 -> Bool
+prop_subtract_32 = \x y -> let input = (toW32 x, toW32 y)
+                            in fastF input == C.subtract_32 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Subtract32))
+
+prop_subtract_64 :: W.Word64 -> W.Word64 -> Bool
+prop_subtract_64 = \x y -> let input = (toW64 x, toW64 y)
+                            in fastF input == C.subtract_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Subtract64))
+
+prop_full_subtract_8 :: Bool -> W.Word8 -> W.Word8 -> Bool
+prop_full_subtract_8 = \c x y -> let input = (toBit c, (toW8 x, toW8 y))
+                                  in fastF input == C.full_subtract_8 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullSubtract8))
+
+prop_full_subtract_16 :: Bool -> W.Word16 -> W.Word16 -> Bool
+prop_full_subtract_16 = \c x y -> let input = (toBit c, (toW16 x, toW16 y))
+                                   in fastF input == C.full_subtract_16 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullSubtract16))
+
+prop_full_subtract_32 :: Bool -> W.Word32 -> W.Word32 -> Bool
+prop_full_subtract_32 = \c x y -> let input = (toBit c, (toW32 x, toW32 y))
+                                   in fastF input == C.full_subtract_32 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullSubtract32))
+
+prop_full_subtract_64 :: Bool -> W.Word64 -> W.Word64 -> Bool
+prop_full_subtract_64 = \c x y -> let input = (toBit c, (toW64 x, toW64 y))
+                                   in fastF input == C.full_subtract_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullSubtract64))
+
+prop_multiply_8 :: W.Word8 -> W.Word8 -> Bool
+prop_multiply_8 = \x y -> let input = (toW8 x, toW8 y)
+                           in fastF input == C.multiply_8 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Multiply8))
+
+prop_multiply_16 :: W.Word16 -> W.Word16 -> Bool
+prop_multiply_16 = \x y -> let input = (toW16 x, toW16 y)
+                            in fastF input == C.multiply_16 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Multiply16))
+
+prop_multiply_32 :: W.Word32 -> W.Word32 -> Bool
+prop_multiply_32 = \x y -> let input = (toW32 x, toW32 y)
+                            in fastF input == C.multiply_32 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Multiply32))
+
+prop_full_multiply_8 :: W.Word8 -> W.Word8 -> W.Word8 -> W.Word8 -> Bool
+prop_full_multiply_8 = \x y z w -> let input = ((toW8 x, toW8 y), (toW8 z, toW8 w))
+                                    in fastF input == C.full_multiply_8 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullMultiply8))
+
+prop_full_multiply_16 :: W.Word16 -> W.Word16 -> W.Word16 -> W.Word16 -> Bool
+prop_full_multiply_16 = \x y z w -> let input = ((toW16 x, toW16 y), (toW16 z, toW16 w))
+                                     in fastF input == C.full_multiply_16 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullMultiply16))
+
+prop_full_multiply_32 :: W.Word32 -> W.Word32 -> W.Word32 -> W.Word32 -> Bool
+prop_full_multiply_32 = \x y z w -> let input = ((toW32 x, toW32 y), (toW32 z, toW32 w))
+                                     in fastF input == C.full_multiply_32 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullMultiply32))
+
+prop_le_8 :: W.Word8 -> W.Word8 -> Bool
+prop_le_8 = \x y -> let input = (toW8 x, toW8 y)
+                     in fastF input == C.le_8 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Le8))
+
+prop_le_16 :: W.Word16 -> W.Word16 -> Bool
+prop_le_16 = \x y -> let input = (toW16 x, toW16 y)
+                      in fastF input == C.le_16 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Le16))
 
 prop_le_32 :: W.Word32 -> W.Word32 -> Bool
 prop_le_32 = \x y -> let input = (toW32 x, toW32 y)
@@ -180,6 +477,41 @@ prop_le_32 = \x y -> let input = (toW32 x, toW32 y)
  where
   toW32 = toWord32 . fromIntegral
   fastF = testCoreEval (specification (ArithJet Le32))
+
+prop_le_64 :: W.Word64 -> W.Word64 -> Bool
+prop_le_64 = \x y -> let input = (toW64 x, toW64 y)
+                      in fastF input == C.le_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Le64))
+
+prop_le_diag_8 :: W.Word8 -> Bool
+prop_le_diag_8 = \x -> let input = (toW8 x, toW8 x)
+                         in fastF input == C.le_8 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Le8))
+
+prop_le_diag_16 :: W.Word16 -> Bool
+prop_le_diag_16 = \x -> let input = (toW16 x, toW16 x)
+                         in fastF input == C.le_16 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Le16))
+
+prop_le_diag_32 :: W.Word32 -> Bool
+prop_le_diag_32 = \x -> let input = (toW32 x, toW32 x)
+                         in fastF input == C.le_32 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Le32))
+
+prop_le_diag_64 :: W.Word64 -> Bool
+prop_le_diag_64 = \x -> let input = (toW64 x, toW64 x)
+                         in fastF input == C.le_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Le64))
 
 assert_sha_256_iv :: Assertion
 assert_sha_256_iv = fastF () @=? C.sha_256_iv ()

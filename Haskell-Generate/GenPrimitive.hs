@@ -337,7 +337,36 @@ rawBenchmark "TxLockHeight" = 32.48502494409075
 rawBenchmark "TxLockTime" = 27.757312699406825
 rawBenchmark "Verify" = 20.46853995788889
 rawBenchmark "Version" = 79.99308762988846
-rawBenchmark "GeNegate" = 723.6308629543321 -- :TODO: This value is missing.  Using made-up value instead.
+-- :TODO: Values below are missing.
+rawBenchmark "GeNegate" = rawBenchmark "GejNegate"
+rawBenchmark "Low8" = rawBenchmark "Low32"
+rawBenchmark "Low16" = rawBenchmark "Low32"
+rawBenchmark "Low64" = rawBenchmark "Low32"
+rawBenchmark "One8" = rawBenchmark "One32"
+rawBenchmark "One16" = rawBenchmark "One32"
+rawBenchmark "One64" = rawBenchmark "One32"
+rawBenchmark "Eq8" = rawBenchmark "Eq32"
+rawBenchmark "Eq16" = rawBenchmark "Eq32"
+rawBenchmark "Eq64" = rawBenchmark "Eq32"
+rawBenchmark "Add8" = rawBenchmark "Add32"
+rawBenchmark "Add16" = rawBenchmark "Add32"
+rawBenchmark "Add64" = rawBenchmark "Add32"
+rawBenchmark "FullAdd8" = rawBenchmark "FullAdd32"
+rawBenchmark "FullAdd16" = rawBenchmark "FullAdd32"
+rawBenchmark "FullAdd64" = rawBenchmark "FullAdd32"
+rawBenchmark "Subtract8" = rawBenchmark "Subtract32"
+rawBenchmark "Subtract16" = rawBenchmark "Subtract32"
+rawBenchmark "Subtract64" = rawBenchmark "Subtract32"
+rawBenchmark "FullSubtract8" = rawBenchmark "FullSubtract32"
+rawBenchmark "FullSubtract16" = rawBenchmark "FullSubtract32"
+rawBenchmark "FullSubtract64" = rawBenchmark "FullSubtract32"
+rawBenchmark "Multiply8" = rawBenchmark "Multiply32"
+rawBenchmark "Multiply16" = rawBenchmark "Multiply32"
+rawBenchmark "FullMultiply8" = rawBenchmark "FullMultiply32"
+rawBenchmark "FullMultiply16" = rawBenchmark "FullMultiply32"
+rawBenchmark "Le8" = rawBenchmark "Le32"
+rawBenchmark "Le16" = rawBenchmark "Le32"
+rawBenchmark "Le64" = rawBenchmark "Le32"
 rawBenchmark str = error $ "rawBenchmark missing " ++ str ++ "."
 
 -- benchmark adjusts the raw benchmark by giving a discount to batch verifiable jets.

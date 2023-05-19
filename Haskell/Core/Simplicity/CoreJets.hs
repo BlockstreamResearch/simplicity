@@ -57,21 +57,49 @@ deriving instance Show (CoreJet a b)
 
 data WordJet a b where
   Verify :: WordJet Bit ()
+  Low8 :: WordJet () Word8
+  Low16 :: WordJet () Word16
   Low32 :: WordJet () Word32
+  Low64 :: WordJet () Word64
+  Eq8 :: WordJet (Word8, Word8) Bit
+  Eq16 :: WordJet (Word16, Word16) Bit
   Eq32 :: WordJet (Word32, Word32) Bit
+  Eq64 :: WordJet (Word64, Word64) Bit
   Eq256 :: WordJet (Word256, Word256) Bit
 deriving instance Eq (WordJet a b)
 deriving instance Show (WordJet a b)
 
 data ArithJet a b where
+  One8 :: ArithJet () Word8
+  One16 :: ArithJet () Word16
   One32 :: ArithJet () Word32
+  One64 :: ArithJet () Word64
+  Add8 :: ArithJet (Word8, Word8) (Bit, Word8)
+  Add16 :: ArithJet (Word16, Word16) (Bit, Word16)
   Add32 :: ArithJet (Word32, Word32) (Bit, Word32)
+  Add64 :: ArithJet (Word64, Word64) (Bit, Word64)
+  FullAdd8 :: ArithJet (Bit, (Word8, Word8)) (Bit, Word8)
+  FullAdd16 :: ArithJet (Bit, (Word16, Word16)) (Bit, Word16)
   FullAdd32 :: ArithJet (Bit, (Word32, Word32)) (Bit, Word32)
+  FullAdd64 :: ArithJet (Bit, (Word64, Word64)) (Bit, Word64)
+  Subtract8 :: ArithJet (Word8, Word8) (Bit, Word8)
+  Subtract16 :: ArithJet (Word16, Word16) (Bit, Word16)
   Subtract32 :: ArithJet (Word32, Word32) (Bit, Word32)
+  Subtract64 :: ArithJet (Word64, Word64) (Bit, Word64)
+  FullSubtract8 :: ArithJet (Bit, (Word8, Word8)) (Bit, Word8)
+  FullSubtract16 :: ArithJet (Bit, (Word16, Word16)) (Bit, Word16)
   FullSubtract32 :: ArithJet (Bit, (Word32, Word32)) (Bit, Word32)
+  FullSubtract64 :: ArithJet (Bit, (Word64, Word64)) (Bit, Word64)
+  Multiply8 :: ArithJet (Word8, Word8) Word16
+  Multiply16 :: ArithJet (Word16, Word16) Word32
   Multiply32 :: ArithJet (Word32, Word32) Word64
+  FullMultiply8 :: ArithJet ((Word8, Word8), (Word8, Word8)) Word16
+  FullMultiply16 :: ArithJet ((Word16, Word16), (Word16, Word16)) Word32
   FullMultiply32 :: ArithJet ((Word32, Word32), (Word32, Word32)) Word64
+  Le8 :: ArithJet (Word8, Word8) Bit
+  Le16 :: ArithJet (Word16, Word16) Bit
   Le32 :: ArithJet (Word32, Word32) Bit
+  Le64 :: ArithJet (Word64, Word64) Bit
 deriving instance Eq (ArithJet a b)
 deriving instance Show (ArithJet a b)
 
@@ -159,19 +187,47 @@ specification (BitcoinJet x) = specificationBitcoin x
 
 specificationWord :: Assert term => WordJet a b -> term a b
 specificationWord Verify = Prog.verify
+specificationWord Low8 = zero word8
+specificationWord Low16 = zero word16
 specificationWord Low32 = zero word32
+specificationWord Low64 = zero word64
+specificationWord Eq8 = eq
+specificationWord Eq16 = eq
 specificationWord Eq32 = eq
+specificationWord Eq64 = eq
 specificationWord Eq256 = eq
 
 specificationArith :: Assert term => ArithJet a b -> term a b
+specificationArith One8 = Prog.one word8
+specificationArith One16 = Prog.one word16
 specificationArith One32 = Prog.one word32
+specificationArith One64 = Prog.one word64
+specificationArith Add8 = add word8
+specificationArith Add16 = add word16
 specificationArith Add32 = add word32
+specificationArith Add64 = add word64
+specificationArith FullAdd8 = full_add word8
+specificationArith FullAdd16 = full_add word16
 specificationArith FullAdd32 = full_add word32
+specificationArith FullAdd64 = full_add word64
+specificationArith Subtract8 = subtract word8
+specificationArith Subtract16 = subtract word16
 specificationArith Subtract32 = subtract word32
+specificationArith Subtract64 = subtract word64
+specificationArith FullSubtract8 = full_subtract word8
+specificationArith FullSubtract16 = full_subtract word16
 specificationArith FullSubtract32 = full_subtract word32
+specificationArith FullSubtract64 = full_subtract word64
+specificationArith Multiply8 = multiply word8
+specificationArith Multiply16 = multiply word16
 specificationArith Multiply32 = multiply word32
+specificationArith FullMultiply8 = full_multiply word8
+specificationArith FullMultiply16 = full_multiply word16
 specificationArith FullMultiply32 = full_multiply word32
+specificationArith Le8 = le word8
+specificationArith Le16 = le word16
 specificationArith Le32 = le word32
+specificationArith Le64 = le word64
 
 specificationHash :: Assert term => HashJet a b -> term a b
 specificationHash Sha256Block = Sha256.hashBlock
@@ -253,32 +309,98 @@ implementation (BitcoinJet x) = implementationBitcoin x
 
 implementationWord :: WordJet a b -> a -> Maybe b
 implementationWord Verify = either (const Nothing) Just
+implementationWord Low8 = const . return $ toWord8 0
+implementationWord Low16 = const . return $ toWord16 0
 implementationWord Low32 = const . return $ toWord32 0
+implementationWord Low64 = const . return $ toWord64 0
+implementationWord Eq8 = \(x, y) -> return (toBit (x == y))
+implementationWord Eq16 = \(x, y) -> return (toBit (x == y))
 implementationWord Eq32 = \(x, y) -> return (toBit (x == y))
+implementationWord Eq64 = \(x, y) -> return (toBit (x == y))
 implementationWord Eq256 = \(x, y) -> return (toBit (x == y))
 
 implementationArith :: ArithJet a b -> a -> Maybe b
+implementationArith One8 = const . return $ toWord8 1
+implementationArith One16 = const . return $ toWord16 1
 implementationArith One32 = const . return $ toWord32 1
+implementationArith One64 = const . return $ toWord64 1
+implementationArith Add8 = \(x, y) -> do
+  let z = fromWord8 x + fromWord8 y
+  return (toBit (z >= 2 ^ 8), toWord8 z)
+implementationArith Add16 = \(x, y) -> do
+  let z = fromWord16 x + fromWord16 y
+  return (toBit (z >= 2 ^ 16), toWord16 z)
 implementationArith Add32 = \(x, y) -> do
   let z = fromWord32 x + fromWord32 y
   return (toBit (z >= 2 ^ 32), toWord32 z)
+implementationArith Add64 = \(x, y) -> do
+  let z = fromWord64 x + fromWord64 y
+  return (toBit (z >= 2 ^ 64), toWord64 z)
+implementationArith FullAdd8 = \(c, (x, y)) -> do
+  let z = fromWord8 x + fromWord8 y + fromWord1 c
+  return (toBit (z >= 2 ^ 8), toWord8 z)
+implementationArith FullAdd16 = \(c, (x, y)) -> do
+  let z = fromWord16 x + fromWord16 y + fromWord1 c
+  return (toBit (z >= 2 ^ 16), toWord16 z)
 implementationArith FullAdd32 = \(c, (x, y)) -> do
   let z = fromWord32 x + fromWord32 y + fromWord1 c
   return (toBit (z >= 2 ^ 32), toWord32 z)
+implementationArith FullAdd64 = \(c, (x, y)) -> do
+  let z = fromWord64 x + fromWord64 y + fromWord1 c
+  return (toBit (z >= 2 ^ 64), toWord64 z)
+implementationArith Subtract8 = \(x, y) -> do
+  let z = fromWord8 x - fromWord8 y
+  return (toBit (z < 0), toWord8 z)
+implementationArith Subtract16 = \(x, y) -> do
+  let z = fromWord16 x - fromWord16 y
+  return (toBit (z < 0), toWord16 z)
 implementationArith Subtract32 = \(x, y) -> do
   let z = fromWord32 x - fromWord32 y
   return (toBit (z < 0), toWord32 z)
+implementationArith Subtract64 = \(x, y) -> do
+  let z = fromWord64 x - fromWord64 y
+  return (toBit (z < 0), toWord64 z)
+implementationArith FullSubtract8 = \(b, (x, y)) -> do
+  let z = fromWord8 x - fromWord8 y - fromWord1 b
+  return (toBit (z < 0), toWord8 z)
+implementationArith FullSubtract16 = \(b, (x, y)) -> do
+  let z = fromWord16 x - fromWord16 y - fromWord1 b
+  return (toBit (z < 0), toWord16 z)
 implementationArith FullSubtract32 = \(b, (x, y)) -> do
   let z = fromWord32 x - fromWord32 y - fromWord1 b
   return (toBit (z < 0), toWord32 z)
+implementationArith FullSubtract64 = \(b, (x, y)) -> do
+  let z = fromWord64 x - fromWord64 y - fromWord1 b
+  return (toBit (z < 0), toWord64 z)
+implementationArith Multiply8 = \(x, y) -> do
+  let z = fromWord8 x * fromWord8 y
+  return (toWord16 z)
+implementationArith Multiply16 = \(x, y) -> do
+  let z = fromWord16 x * fromWord16 y
+  return (toWord32 z)
 implementationArith Multiply32 = \(x, y) -> do
   let z = fromWord32 x * fromWord32 y
   return (toWord64 z)
+implementationArith FullMultiply8 = \((x, y), (a, b)) -> do
+  let z = fromWord8 x * fromWord8 y + fromWord8 a + fromWord8 b
+  return (toWord16 z)
+implementationArith FullMultiply16 = \((x, y), (a, b)) -> do
+  let z = fromWord16 x * fromWord16 y + fromWord16 a + fromWord16 b
+  return (toWord32 z)
 implementationArith FullMultiply32 = \((x, y), (a, b)) -> do
   let z = fromWord32 x * fromWord32 y + fromWord32 a + fromWord32 b
   return (toWord64 z)
+implementationArith Le8 = \(x, y) -> do
+  let z = fromWord8 x <= fromWord8 y
+  return (toBit z)
+implementationArith Le16 = \(x, y) -> do
+  let z = fromWord16 x <= fromWord16 y
+  return (toBit z)
 implementationArith Le32 = \(x, y) -> do
   let z = fromWord32 x <= fromWord32 y
+  return (toBit z)
+implementationArith Le64 = \(x, y) -> do
+  let z = fromWord64 x <= fromWord64 y
   return (toBit z)
 
 implementationHash :: HashJet a b -> a -> Maybe b
@@ -400,17 +522,18 @@ wordBook = Shelf
 lowBook = Shelf
   [ Missing
   , Missing
-  , Missing
-  , Missing
+  , Item $ SomeArrow Low8
+  , Item $ SomeArrow Low16
   , Item $ SomeArrow Low32
+  , Item $ SomeArrow Low64
   ]
 eqBook = Shelf
   [ Missing
   , Missing
-  , Missing
-  , Missing
+  , Item $ SomeArrow Eq8
+  , Item $ SomeArrow Eq16
   , Item $ SomeArrow Eq32
-  , Missing
+  , Item $ SomeArrow Eq64
   , Missing
   , Item $ SomeArrow Eq256
   ]
@@ -435,58 +558,64 @@ arithBook = Shelf
 oneBook = Shelf
   [ Missing
   , Missing
-  , Missing
-  , Missing
+  , Item $ SomeArrow One8
+  , Item $ SomeArrow One16
   , Item $ SomeArrow One32
+  , Item $ SomeArrow One64
   ]
 addBook = Shelf
   [ Missing
   , Missing
-  , Missing
-  , Missing
+  , Item $ SomeArrow Add8
+  , Item $ SomeArrow Add16
   , Item $ SomeArrow Add32
+  , Item $ SomeArrow Add64
   ]
 fullAddBook = Shelf
   [ Missing
   , Missing
-  , Missing
-  , Missing
+  , Item $ SomeArrow FullAdd8
+  , Item $ SomeArrow FullAdd16
   , Item $ SomeArrow FullAdd32
+  , Item $ SomeArrow FullAdd64
   ]
 subtractBook = Shelf
   [ Missing
   , Missing
-  , Missing
-  , Missing
+  , Item $ SomeArrow Subtract8
+  , Item $ SomeArrow Subtract16
   , Item $ SomeArrow Subtract32
+  , Item $ SomeArrow Subtract64
   ]
 fullSubtractBook = Shelf
   [ Missing
   , Missing
-  , Missing
-  , Missing
+  , Item $ SomeArrow FullSubtract8
+  , Item $ SomeArrow FullSubtract16
   , Item $ SomeArrow FullSubtract32
+  , Item $ SomeArrow FullSubtract64
   ]
 multiplyBook = Shelf
   [ Missing
   , Missing
-  , Missing
-  , Missing
+  , Item $ SomeArrow Multiply8
+  , Item $ SomeArrow Multiply16
   , Item $ SomeArrow Multiply32
   ]
 fullMultiplyBook = Shelf
   [ Missing
   , Missing
-  , Missing
-  , Missing
+  , Item $ SomeArrow FullMultiply8
+  , Item $ SomeArrow FullMultiply16
   , Item $ SomeArrow FullMultiply32
   ]
 leBook = Shelf
   [ Missing
   , Missing
-  , Missing
-  , Missing
+  , Item $ SomeArrow Le8
+  , Item $ SomeArrow Le16
   , Item $ SomeArrow Le32
+  , Item $ SomeArrow Le64
   ]
 hashBook = Shelf [sha2Book]
 sha2Book = Shelf
