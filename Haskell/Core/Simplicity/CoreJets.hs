@@ -19,6 +19,7 @@ import Prelude hiding (fail, drop, take, subtract, Word)
 import Control.Arrow ((+++), Kleisli(Kleisli), runKleisli)
 import Data.Bits (shift)
 import qualified Data.ByteString as BS
+import Data.Foldable (toList)
 import qualified Data.List as List
 import qualified Data.Map as Map
 import Data.Serialize (encode)
@@ -370,197 +371,198 @@ implementationBitcoin ParseSequence v = Just . maybe (Left ()) (Right . (toW16 +
 -- | A canonical deserialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.getJetBit' method.
 getJetBit :: (Monad m) => m Void -> m Bool -> m (SomeArrow CoreJet)
 getJetBit = getCatalogue coreCatalogue
- where
-  coreCatalogue = Shelf
-    [ someArrowMap WordJet <$> wordBook
-    , someArrowMap ArithJet <$> arithBook
-    , someArrowMap HashJet <$> hashBook
-    , someArrowMap Secp256k1Jet <$> secp256k1Book
-    , someArrowMap SignatureJet <$> signatureBook
-    , Missing
-    , someArrowMap BitcoinJet <$> bitcoinBook
-    ]
-  wordBook = Shelf
-    [ Item $ SomeArrow Verify
-    , lowBook
-    , Missing
-    , Missing
-    , Missing
-    , Missing
-    , Missing
-    , Missing
-    , Missing
-    , Missing
-    , Missing
-    , Missing
-    , eqBook
-    ]
-  lowBook = Shelf
-    [ Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow Low32
-    ]
-  eqBook = Shelf
-    [ Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow Eq32
-    , Missing
-    , Missing
-    , Item $ SomeArrow Eq256
-    ]
-  arithBook = Shelf
-    [ oneBook
-    , fullAddBook
-    , addBook
-    , Missing
-    , Missing
-    , Missing
-    , fullSubtractBook
-    , subtractBook
-    , Missing
-    , Missing
-    , Missing
-    , fullMultiplyBook
-    , multiplyBook
-    , Missing
-    , Missing
-    , leBook
-    ]
-  oneBook = Shelf
-    [ Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow One32
-    ]
-  addBook = Shelf
-    [ Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow Add32
-    ]
-  fullAddBook = Shelf
-    [ Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow FullAdd32
-    ]
-  subtractBook = Shelf
-    [ Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow Subtract32
-    ]
-  fullSubtractBook = Shelf
-    [ Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow FullSubtract32
-    ]
-  multiplyBook = Shelf
-    [ Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow Multiply32
-    ]
-  fullMultiplyBook = Shelf
-    [ Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow FullMultiply32
-    ]
-  leBook = Shelf
-    [ Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow Le32
-    ]
-  hashBook = Shelf [sha2Book]
-  sha2Book = Shelf
-    [ Item $ SomeArrow Sha256Block
-    , Item $ SomeArrow Sha256Iv
-    , sha2AddBook
-    , Item $ SomeArrow Sha256Ctx8AddBuffer511
-    , Item $ SomeArrow Sha256Ctx8Finalize
-    , Item $ SomeArrow Sha256Ctx8Init
-    ]
-  sha2AddBook = book
-    [ SomeArrow Sha256Ctx8Add1
-    , SomeArrow Sha256Ctx8Add2
-    , SomeArrow Sha256Ctx8Add4
-    , SomeArrow Sha256Ctx8Add8
-    , SomeArrow Sha256Ctx8Add16
-    , SomeArrow Sha256Ctx8Add32
-    , SomeArrow Sha256Ctx8Add64
-    , SomeArrow Sha256Ctx8Add128
-    , SomeArrow Sha256Ctx8Add256
-    , SomeArrow Sha256Ctx8Add512
-    ]
-  secp256k1Book = Shelf
-    [ Shelf [Item $ SomeArrow PointVerify1]
-    , Item $ SomeArrow Decompress
-    , Shelf [Item $ SomeArrow LinearVerify1]
-    , Shelf [Item $ SomeArrow LinearCombination1]
-    , Item $ SomeArrow Scale
-    , Item $ SomeArrow Generate
-    , Item $ SomeArrow GejInfinity
-    , Item $ SomeArrow GejNormalize
-    , Item $ SomeArrow GejNegate
-    , Item $ SomeArrow GeNegate
-    , Item $ SomeArrow GejDouble
-    , Item $ SomeArrow GejAdd
-    , Item $ SomeArrow GejGeAddEx
-    , Item $ SomeArrow GejGeAdd
-    , Item $ SomeArrow GejRescale
-    , Item $ SomeArrow GejIsInfinity
-    , Missing
-    , Missing
-    , Item $ SomeArrow GejXEquiv
-    , Item $ SomeArrow GejYIsOdd
-    , Item $ SomeArrow GejIsOnCurve
-    , Item $ SomeArrow GeIsOnCurve
-    , Item $ SomeArrow ScalarNormalize
-    , Item $ SomeArrow ScalarNegate
-    , Item $ SomeArrow ScalarAdd
-    , Item $ SomeArrow ScalarSquare
-    , Item $ SomeArrow ScalarMultiply
-    , Item $ SomeArrow ScalarMultiplyLambda
-    , Item $ SomeArrow ScalarInvert
-    , Item $ SomeArrow ScalarIsZero
-    , Missing
-    , Missing
-    , Missing
-    , Missing
-    , Item $ SomeArrow FeNormalize
-    , Item $ SomeArrow FeNegate
-    , Item $ SomeArrow FeAdd
-    , Item $ SomeArrow FeSquare
-    , Item $ SomeArrow FeMultiply
-    , Item $ SomeArrow FeMultiplyBeta
-    , Item $ SomeArrow FeInvert
-    , Item $ SomeArrow FeSquareRoot
-    , Item $ SomeArrow FeIsZero
-    , Item $ SomeArrow FeIsOdd
-    ]
-  signatureBook = book
-    [ SomeArrow CheckSigVerify
-    , SomeArrow Bip0340Verify
-    ]
-  bitcoinBook = book
-    [ SomeArrow ParseLock
-    , SomeArrow ParseSequence
-    ]
+
+coreCatalogue :: Catalogue (SomeArrow CoreJet)
+coreCatalogue = Shelf
+  [ someArrowMap WordJet <$> wordBook
+  , someArrowMap ArithJet <$> arithBook
+  , someArrowMap HashJet <$> hashBook
+  , someArrowMap Secp256k1Jet <$> secp256k1Book
+  , someArrowMap SignatureJet <$> signatureBook
+  , Missing
+  , someArrowMap BitcoinJet <$> bitcoinBook
+  ]
+wordBook = Shelf
+  [ Item $ SomeArrow Verify
+  , lowBook
+  , Missing
+  , Missing
+  , Missing
+  , Missing
+  , Missing
+  , Missing
+  , Missing
+  , Missing
+  , Missing
+  , Missing
+  , eqBook
+  ]
+lowBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow Low32
+  ]
+eqBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow Eq32
+  , Missing
+  , Missing
+  , Item $ SomeArrow Eq256
+  ]
+arithBook = Shelf
+  [ oneBook
+  , fullAddBook
+  , addBook
+  , Missing
+  , Missing
+  , Missing
+  , fullSubtractBook
+  , subtractBook
+  , Missing
+  , Missing
+  , Missing
+  , fullMultiplyBook
+  , multiplyBook
+  , Missing
+  , Missing
+  , leBook
+  ]
+oneBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow One32
+  ]
+addBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow Add32
+  ]
+fullAddBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow FullAdd32
+  ]
+subtractBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow Subtract32
+  ]
+fullSubtractBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow FullSubtract32
+  ]
+multiplyBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow Multiply32
+  ]
+fullMultiplyBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow FullMultiply32
+  ]
+leBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow Le32
+  ]
+hashBook = Shelf [sha2Book]
+sha2Book = Shelf
+  [ Item $ SomeArrow Sha256Block
+  , Item $ SomeArrow Sha256Iv
+  , sha2AddBook
+  , Item $ SomeArrow Sha256Ctx8AddBuffer511
+  , Item $ SomeArrow Sha256Ctx8Finalize
+  , Item $ SomeArrow Sha256Ctx8Init
+  ]
+sha2AddBook = book
+  [ SomeArrow Sha256Ctx8Add1
+  , SomeArrow Sha256Ctx8Add2
+  , SomeArrow Sha256Ctx8Add4
+  , SomeArrow Sha256Ctx8Add8
+  , SomeArrow Sha256Ctx8Add16
+  , SomeArrow Sha256Ctx8Add32
+  , SomeArrow Sha256Ctx8Add64
+  , SomeArrow Sha256Ctx8Add128
+  , SomeArrow Sha256Ctx8Add256
+  , SomeArrow Sha256Ctx8Add512
+  ]
+secp256k1Book = Shelf
+  [ Shelf [Item $ SomeArrow PointVerify1]
+  , Item $ SomeArrow Decompress
+  , Shelf [Item $ SomeArrow LinearVerify1]
+  , Shelf [Item $ SomeArrow LinearCombination1]
+  , Item $ SomeArrow Scale
+  , Item $ SomeArrow Generate
+  , Item $ SomeArrow GejInfinity
+  , Item $ SomeArrow GejNormalize
+  , Item $ SomeArrow GejNegate
+  , Item $ SomeArrow GeNegate
+  , Item $ SomeArrow GejDouble
+  , Item $ SomeArrow GejAdd
+  , Item $ SomeArrow GejGeAddEx
+  , Item $ SomeArrow GejGeAdd
+  , Item $ SomeArrow GejRescale
+  , Item $ SomeArrow GejIsInfinity
+  , Missing
+  , Missing
+  , Item $ SomeArrow GejXEquiv
+  , Item $ SomeArrow GejYIsOdd
+  , Item $ SomeArrow GejIsOnCurve
+  , Item $ SomeArrow GeIsOnCurve
+  , Item $ SomeArrow ScalarNormalize
+  , Item $ SomeArrow ScalarNegate
+  , Item $ SomeArrow ScalarAdd
+  , Item $ SomeArrow ScalarSquare
+  , Item $ SomeArrow ScalarMultiply
+  , Item $ SomeArrow ScalarMultiplyLambda
+  , Item $ SomeArrow ScalarInvert
+  , Item $ SomeArrow ScalarIsZero
+  , Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow FeNormalize
+  , Item $ SomeArrow FeNegate
+  , Item $ SomeArrow FeAdd
+  , Item $ SomeArrow FeSquare
+  , Item $ SomeArrow FeMultiply
+  , Item $ SomeArrow FeMultiplyBeta
+  , Item $ SomeArrow FeInvert
+  , Item $ SomeArrow FeSquareRoot
+  , Item $ SomeArrow FeIsZero
+  , Item $ SomeArrow FeIsOdd
+  ]
+signatureBook = book
+  [ SomeArrow CheckSigVerify
+  , SomeArrow Bip0340Verify
+  ]
+bitcoinBook = book
+  [ SomeArrow ParseLock
+  , SomeArrow ParseSequence
+  ]
 
 -- | A canonical serialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.putJetBit' method.
 putJetBit :: CoreJet a b -> DList Bool
@@ -655,86 +657,10 @@ putJetBitBitcoin ParseSequence  = putPositive 2
 -- | A 'Map.Map' from the identity roots of the "core" jet specification to their corresponding token.
 -- This can be used to help instantiate the 'Simplicity.JetType.matcher' method.
 coreJetMap :: Map.Map Hash256 (SomeArrow CoreJet)
-coreJetMap = Map.fromList
-  [ -- WordJet
-    mkAssoc (WordJet Verify)
-  , mkAssoc (WordJet Low32)
-  , mkAssoc (WordJet Eq32)
-  , mkAssoc (WordJet Eq256)
-    -- ArithJet
-  , mkAssoc (ArithJet One32)
-  , mkAssoc (ArithJet Add32)
-  , mkAssoc (ArithJet Subtract32)
-  , mkAssoc (ArithJet Multiply32)
-  , mkAssoc (ArithJet FullAdd32)
-  , mkAssoc (ArithJet FullSubtract32)
-  , mkAssoc (ArithJet FullMultiply32)
-  , mkAssoc (ArithJet Le32)
-    -- HashJet
-  , mkAssoc (HashJet Sha256Block)
-  , mkAssoc (HashJet Sha256Iv)
-  , mkAssoc (HashJet Sha256Ctx8Add1)
-  , mkAssoc (HashJet Sha256Ctx8Add2)
-  , mkAssoc (HashJet Sha256Ctx8Add4)
-  , mkAssoc (HashJet Sha256Ctx8Add8)
-  , mkAssoc (HashJet Sha256Ctx8Add16)
-  , mkAssoc (HashJet Sha256Ctx8Add32)
-  , mkAssoc (HashJet Sha256Ctx8Add64)
-  , mkAssoc (HashJet Sha256Ctx8Add128)
-  , mkAssoc (HashJet Sha256Ctx8Add256)
-  , mkAssoc (HashJet Sha256Ctx8Add512)
-  , mkAssoc (HashJet Sha256Ctx8AddBuffer511)
-  , mkAssoc (HashJet Sha256Ctx8Finalize)
-  , mkAssoc (HashJet Sha256Ctx8Init)
-    -- Secp256k1Jet
-  , mkAssoc (Secp256k1Jet FeNormalize)
-  , mkAssoc (Secp256k1Jet FeNegate)
-  , mkAssoc (Secp256k1Jet FeAdd)
-  , mkAssoc (Secp256k1Jet FeSquare)
-  , mkAssoc (Secp256k1Jet FeMultiply)
-  , mkAssoc (Secp256k1Jet FeMultiplyBeta)
-  , mkAssoc (Secp256k1Jet FeInvert)
-  , mkAssoc (Secp256k1Jet FeSquareRoot)
-  , mkAssoc (Secp256k1Jet FeIsZero)
-  , mkAssoc (Secp256k1Jet FeIsOdd)
-  , mkAssoc (Secp256k1Jet ScalarNormalize)
-  , mkAssoc (Secp256k1Jet ScalarNegate)
-  , mkAssoc (Secp256k1Jet ScalarAdd)
-  , mkAssoc (Secp256k1Jet ScalarSquare)
-  , mkAssoc (Secp256k1Jet ScalarMultiply)
-  , mkAssoc (Secp256k1Jet ScalarMultiplyLambda)
-  , mkAssoc (Secp256k1Jet ScalarInvert)
-  , mkAssoc (Secp256k1Jet ScalarIsZero)
-  , mkAssoc (Secp256k1Jet GejInfinity)
-  , mkAssoc (Secp256k1Jet GejNormalize)
-  , mkAssoc (Secp256k1Jet GejNegate)
-  , mkAssoc (Secp256k1Jet GeNegate)
-  , mkAssoc (Secp256k1Jet GejDouble)
-  , mkAssoc (Secp256k1Jet GejAdd)
-  , mkAssoc (Secp256k1Jet GejGeAddEx)
-  , mkAssoc (Secp256k1Jet GejGeAdd)
-  , mkAssoc (Secp256k1Jet GejRescale)
-  , mkAssoc (Secp256k1Jet GejIsInfinity)
-  , mkAssoc (Secp256k1Jet GejXEquiv)
-  , mkAssoc (Secp256k1Jet GejYIsOdd)
-  , mkAssoc (Secp256k1Jet GejIsOnCurve)
-  , mkAssoc (Secp256k1Jet GeIsOnCurve)
-  , mkAssoc (Secp256k1Jet Generate)
-  , mkAssoc (Secp256k1Jet Scale)
-  , mkAssoc (Secp256k1Jet LinearCombination1)
-  , mkAssoc (Secp256k1Jet LinearVerify1)
-  , mkAssoc (Secp256k1Jet PointVerify1)
-  , mkAssoc (Secp256k1Jet Decompress)
-    -- SignatureJet
-  , mkAssoc (SignatureJet CheckSigVerify)
-  , mkAssoc (SignatureJet Bip0340Verify)
-    -- BitcoinJet
-  , mkAssoc (BitcoinJet ParseLock)
-  , mkAssoc (BitcoinJet ParseSequence)
-  ]
+coreJetMap = Map.fromList . fmap mkAssoc $ toList coreCatalogue
  where
-  mkAssoc :: (TyC a, TyC b) => CoreJet a b -> (Hash256, (SomeArrow CoreJet))
-  mkAssoc jt = (identityRoot (specification jt), SomeArrow jt)
+  mkAssoc :: SomeArrow CoreJet -> (Hash256, (SomeArrow CoreJet))
+  mkAssoc wrapped@(SomeArrow jt) = (identityRoot (specification jt), wrapped)
 
 -- | Performs a lookup from `coreJetMap` from an `IdentityRoot`.
 -- This operation preserves the Simplicity types.
