@@ -24,7 +24,9 @@ static SECP256K1_INLINE int64_t secp256k1_mul128(int64_t a, int64_t b, int64_t* 
 #    else
 /* On x84_64 MSVC, use native _(u)mul128 for 64x64->128 multiplications. */
 #        define secp256k1_umul128 _umul128
-#        define secp256k1_mul128 _mul128
+static SECP256K1_INLINE uint64_t secp256k1_mul128(int64_t a, int64_t b, int64_t* hi) {
+    return (uint64_t)_mul128(a, b, hi)
+}
 #    endif
 #else
 /* On other systems, emulate 64x64->128 multiplications using 32x32->64 multiplications. */
@@ -38,13 +40,13 @@ static SECP256K1_INLINE uint64_t secp256k1_umul128(uint64_t a, uint64_t b, uint6
     return (mid34 << 32) + (uint32_t)ll;
 }
 
-static SECP256K1_INLINE int64_t secp256k1_mul128(int64_t a, int64_t b, int64_t* hi) {
+static SECP256K1_INLINE uint64_t secp256k1_mul128(int64_t a, int64_t b, int64_t* hi) {
     uint64_t ll = (uint64_t)(uint32_t)a * (uint32_t)b;
     int64_t lh = (uint32_t)a * (b >> 32);
     int64_t hl = (a >> 32) * (uint32_t)b;
     int64_t hh = (a >> 32) * (b >> 32);
     uint64_t mid34 = (ll >> 32) + (uint32_t)lh + (uint32_t)hl;
-    *hi = hh + (lh >> 32) + (hl >> 32) + (mid34 >> 32);
+    *hi = hh + (lh >> 32) + (hl >> 32) + (int64_t)(mid34 >> 32);
     return (mid34 << 32) + (uint32_t)ll;
 }
 #endif
@@ -104,19 +106,19 @@ static SECP256K1_INLINE int secp256k1_u128_check_bits(const secp256k1_uint128 *r
 }
 
 static SECP256K1_INLINE void secp256k1_i128_load(secp256k1_int128 *r, int64_t hi, uint64_t lo) {
-    r->hi = hi;
+    r->hi = (uint64_t)hi;
     r->lo = lo;
 }
 
 static SECP256K1_INLINE void secp256k1_i128_mul(secp256k1_int128 *r, int64_t a, int64_t b) {
    int64_t hi;
-   r->lo = (uint64_t)secp256k1_mul128(a, b, &hi);
+   r->lo = secp256k1_mul128(a, b, &hi);
    r->hi = (uint64_t)hi;
 }
 
 static SECP256K1_INLINE void secp256k1_i128_accum_mul(secp256k1_int128 *r, int64_t a, int64_t b) {
    int64_t hi;
-   uint64_t lo = (uint64_t)secp256k1_mul128(a, b, &hi);
+   uint64_t lo = secp256k1_mul128(a, b, &hi);
    r->lo += lo;
    hi += r->lo < lo;
    /* Verify no overflow.
@@ -130,12 +132,12 @@ static SECP256K1_INLINE void secp256k1_i128_accum_mul(secp256k1_int128 *r, int64
     * then we require that the resulting value also be negative (the sign bit is set).
     */
    VERIFY_CHECK((r->hi > 0x7fffffffffffffffu && (uint64_t)hi > 0x7fffffffffffffffu) <= (r->hi + (uint64_t)hi > 0x7fffffffffffffffu));
-   r->hi += hi;
+   r->hi += (uint64_t)hi;
 }
 
 static SECP256K1_INLINE void secp256k1_i128_dissip_mul(secp256k1_int128 *r, int64_t a, int64_t b) {
    int64_t hi;
-   uint64_t lo = (uint64_t)secp256k1_mul128(a, b, &hi);
+   uint64_t lo = secp256k1_mul128(a, b, &hi);
    hi += r->lo < lo;
    /* Verify no overflow.
     * If r represents a positive value (the sign bit is not set) and the value we are subtracting is a negative value (the sign bit is set),
@@ -147,7 +149,7 @@ static SECP256K1_INLINE void secp256k1_i128_dissip_mul(secp256k1_int128 *r, int6
     * then we require that the resulting value also be negative (the sign bit is set).
     */
    VERIFY_CHECK((r->hi > 0x7fffffffffffffffu && (uint64_t)hi <= 0x7fffffffffffffffu) <= (r->hi - (uint64_t)hi > 0x7fffffffffffffffu));
-   r->hi -= hi;
+   r->hi -= (uint64_t)hi;
    r->lo -= lo;
 }
 

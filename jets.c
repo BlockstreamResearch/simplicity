@@ -1,4 +1,18 @@
 #include "jets.h"
+#include "secp256k1/secp256k1.h"
+#include "secp256k1/util.h"
+#ifdef SECP256K1_WIDEMUL_INT128
+# include "secp256k1/int128.h"
+# include "secp256k1/int128_impl.h"
+#else
+# include "secp256k1/int128_struct.h"
+# include "secp256k1/int128_struct_impl.h"
+#endif
+
+static void write128(frameItem* frame, const secp256k1_uint128* x) {
+  write64(frame, secp256k1_u128_hi_u64(x));
+  write64(frame, secp256k1_u128_to_u64(x));
+}
 
 /* verify : TWO |- ONE */
 bool verify(frameItem* dst, frameItem src, const txEnv* env) {
@@ -136,6 +150,16 @@ MULTIPLY_(8, 16)
 MULTIPLY_(16, 32)
 MULTIPLY_(32, 64)
 
+bool multiply_64(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  uint_fast64_t x = read64(&src);
+  uint_fast64_t y = read64(&src);
+  secp256k1_uint128 r;
+  secp256k1_u128_mul(&r, x, y);
+  write128(dst, &r);
+  return true;
+}
+
 #define FULL_MULTIPLY_(bits,bitsx2)                                          \
 bool full_multiply_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
   (void) env; /* env is unused. */                                           \
@@ -149,6 +173,20 @@ bool full_multiply_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
 FULL_MULTIPLY_(8, 16)
 FULL_MULTIPLY_(16, 32)
 FULL_MULTIPLY_(32, 64)
+
+bool full_multiply_64(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  uint_fast64_t x = read64(&src);
+  uint_fast64_t y = read64(&src);
+  uint_fast64_t z = read64(&src);
+  uint_fast64_t w = read64(&src);
+  secp256k1_uint128 r;
+  secp256k1_u128_mul(&r, x, y);
+  secp256k1_u128_accum_u64(&r, z);
+  secp256k1_u128_accum_u64(&r, w);
+  write128(dst, &r);
+  return true;
+}
 
 #define LE_(bits)                                                 \
 /* le_n : TWO^n * TWO^n |- TWO */                                 \

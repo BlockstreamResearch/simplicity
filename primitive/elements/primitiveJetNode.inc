@@ -447,6 +447,14 @@
 , .targetIx = ty_w64
 , .cost = 138 /* milli weight units */
 }
+,[FULL_MULTIPLY_64] =
+{ .tag = JET
+, .jet = full_multiply_64
+, .cmr = {{0xdccc7e3cu, 0x397c150au, 0xfdf383beu, 0xd89e95e5u, 0x0594b285u, 0xb8c7d624u, 0xd1b9e059u, 0xe9f7230au}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w128
+, .cost = 138 /* milli weight units */
+}
 ,[FULL_MULTIPLY_8] =
 { .tag = JET
 , .jet = full_multiply_8
@@ -957,6 +965,14 @@
 , .cmr = {{0x0f2d9ff6u, 0x5ba4942cu, 0x5ffa4d8eu, 0x6e1f5d91u, 0x0c1abbfeu, 0x24d865a0u, 0x2e066720u, 0xe7a4cb66u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_w64
+, .cost = 87 /* milli weight units */
+}
+,[MULTIPLY_64] =
+{ .tag = JET
+, .jet = multiply_64
+, .cmr = {{0x6a6d34feu, 0xccf3c6cdu, 0xa6355a41u, 0xd074e318u, 0xf91ac098u, 0x21ce0a49u, 0xe25215a9u, 0xce8b4157u}}
+, .sourceIx = ty_w128
+, .targetIx = ty_w128
 , .cost = 87 /* milli weight units */
 }
 ,[MULTIPLY_8] =
