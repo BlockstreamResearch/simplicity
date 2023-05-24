@@ -167,6 +167,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
          case 3: *result = FULL_MULTIPLY_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = FULL_MULTIPLY_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = FULL_MULTIPLY_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = FULL_MULTIPLY_64; return SIMPLICITY_NO_ERROR;
         }
         break;
        case 13: /* Multiply */
@@ -176,6 +177,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
          case 3: *result = MULTIPLY_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = MULTIPLY_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = MULTIPLY_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = MULTIPLY_64; return SIMPLICITY_NO_ERROR;
         }
         break;
        case 16: /* Le */

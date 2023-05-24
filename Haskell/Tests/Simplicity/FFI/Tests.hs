@@ -70,9 +70,11 @@ tests = testGroup "C / SPEC"
         , testProperty "multiply_8"  prop_multiply_8
         , testProperty "multiply_16"  prop_multiply_16
         , testProperty "multiply_32"  prop_multiply_32
+        , testProperty "multiply_64"  prop_multiply_64
         , testProperty "full_multiply_8"  prop_full_multiply_8
         , testProperty "full_multiply_16"  prop_full_multiply_16
         , testProperty "full_multiply_32"  prop_full_multiply_32
+        , testProperty "full_multiply_64"  prop_full_multiply_64
         , testProperty "le_8"  prop_le_8
         , testProperty "le_16"  prop_le_16
         , testProperty "le_32"  prop_le_32
@@ -436,6 +438,13 @@ prop_multiply_32 = \x y -> let input = (toW32 x, toW32 y)
   toW32 = toWord32 . fromIntegral
   fastF = testCoreEval (specification (ArithJet Multiply32))
 
+prop_multiply_64 :: W.Word64 -> W.Word64 -> Bool
+prop_multiply_64 = \x y -> let input = (toW64 x, toW64 y)
+                            in fastF input == C.multiply_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Multiply64))
+
 prop_full_multiply_8 :: W.Word8 -> W.Word8 -> W.Word8 -> W.Word8 -> Bool
 prop_full_multiply_8 = \x y z w -> let input = ((toW8 x, toW8 y), (toW8 z, toW8 w))
                                     in fastF input == C.full_multiply_8 input
@@ -456,6 +465,13 @@ prop_full_multiply_32 = \x y z w -> let input = ((toW32 x, toW32 y), (toW32 z, t
  where
   toW32 = toWord32 . fromIntegral
   fastF = testCoreEval (specification (ArithJet FullMultiply32))
+
+prop_full_multiply_64 :: W.Word64 -> W.Word64 -> W.Word64 -> W.Word64 -> Bool
+prop_full_multiply_64 = \x y z w -> let input = ((toW64 x, toW64 y), (toW64 z, toW64 w))
+                                     in fastF input == C.full_multiply_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet FullMultiply64))
 
 prop_le_8 :: W.Word8 -> W.Word8 -> Bool
 prop_le_8 = \x y -> let input = (toW8 x, toW8 y)

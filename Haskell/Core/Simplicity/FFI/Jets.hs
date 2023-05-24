@@ -9,8 +9,8 @@ module Simplicity.FFI.Jets
  , full_add_8, full_add_16, full_add_32, full_add_64
  , subtract_8, subtract_16, subtract_32, subtract_64
  , full_subtract_8, full_subtract_16, full_subtract_32, full_subtract_64
- , multiply_8, multiply_16, multiply_32
- , full_multiply_8, full_multiply_16, full_multiply_32
+ , multiply_8, multiply_16, multiply_32, multiply_64
+ , full_multiply_8, full_multiply_16, full_multiply_32, full_multiply_64
  , le_8, le_16, le_32, le_64
  , sha_256_iv, sha_256_block
  , sha_256_ctx_8_init
@@ -78,9 +78,11 @@ foreign import ccall unsafe "" c_full_subtract_64 :: Ptr FrameItem -> Ptr FrameI
 foreign import ccall unsafe "" c_multiply_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_multiply_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_multiply_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_multiply_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_multiply_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_multiply_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_le_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_le_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_le_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -244,6 +246,9 @@ multiply_16 = unsafeLocalCoreJet c_multiply_16
 multiply_32 :: (Word32, Word32) -> Maybe Word64
 multiply_32 = unsafeLocalCoreJet c_multiply_32
 
+multiply_64 :: (Word64, Word64) -> Maybe Word128
+multiply_64 = unsafeLocalCoreJet c_multiply_64
+
 full_multiply_8 :: ((Word8, Word8), (Word8, Word8)) -> Maybe Word16
 full_multiply_8 = unsafeLocalCoreJet c_full_multiply_8
 
@@ -252,6 +257,9 @@ full_multiply_16 = unsafeLocalCoreJet c_full_multiply_16
 
 full_multiply_32 :: ((Word32, Word32), (Word32, Word32)) -> Maybe Word64
 full_multiply_32 = unsafeLocalCoreJet c_full_multiply_32
+
+full_multiply_64 :: ((Word64, Word64), (Word64, Word64)) -> Maybe Word128
+full_multiply_64 = unsafeLocalCoreJet c_full_multiply_64
 
 le_8 :: (Word8, Word8) -> Maybe Bit
 le_8 = unsafeLocalCoreJet c_le_8

@@ -93,9 +93,11 @@ data ArithJet a b where
   Multiply8 :: ArithJet (Word8, Word8) Word16
   Multiply16 :: ArithJet (Word16, Word16) Word32
   Multiply32 :: ArithJet (Word32, Word32) Word64
+  Multiply64 :: ArithJet (Word64, Word64) Word128
   FullMultiply8 :: ArithJet ((Word8, Word8), (Word8, Word8)) Word16
   FullMultiply16 :: ArithJet ((Word16, Word16), (Word16, Word16)) Word32
   FullMultiply32 :: ArithJet ((Word32, Word32), (Word32, Word32)) Word64
+  FullMultiply64 :: ArithJet ((Word64, Word64), (Word64, Word64)) Word128
   Le8 :: ArithJet (Word8, Word8) Bit
   Le16 :: ArithJet (Word16, Word16) Bit
   Le32 :: ArithJet (Word32, Word32) Bit
@@ -221,9 +223,11 @@ specificationArith FullSubtract64 = full_subtract word64
 specificationArith Multiply8 = multiply word8
 specificationArith Multiply16 = multiply word16
 specificationArith Multiply32 = multiply word32
+specificationArith Multiply64 = multiply word64
 specificationArith FullMultiply8 = full_multiply word8
 specificationArith FullMultiply16 = full_multiply word16
 specificationArith FullMultiply32 = full_multiply word32
+specificationArith FullMultiply64 = full_multiply word64
 specificationArith Le8 = le word8
 specificationArith Le16 = le word16
 specificationArith Le32 = le word32
@@ -381,6 +385,9 @@ implementationArith Multiply16 = \(x, y) -> do
 implementationArith Multiply32 = \(x, y) -> do
   let z = fromWord32 x * fromWord32 y
   return (toWord64 z)
+implementationArith Multiply64 = \(x, y) -> do
+  let z = fromWord64 x * fromWord64 y
+  return (toWord128 z)
 implementationArith FullMultiply8 = \((x, y), (a, b)) -> do
   let z = fromWord8 x * fromWord8 y + fromWord8 a + fromWord8 b
   return (toWord16 z)
@@ -390,6 +397,9 @@ implementationArith FullMultiply16 = \((x, y), (a, b)) -> do
 implementationArith FullMultiply32 = \((x, y), (a, b)) -> do
   let z = fromWord32 x * fromWord32 y + fromWord32 a + fromWord32 b
   return (toWord64 z)
+implementationArith FullMultiply64 = \((x, y), (a, b)) -> do
+  let z = fromWord64 x * fromWord64 y + fromWord64 a + fromWord64 b
+  return (toWord128 z)
 implementationArith Le8 = \(x, y) -> do
   let z = fromWord8 x <= fromWord8 y
   return (toBit z)
@@ -601,6 +611,7 @@ multiplyBook = Shelf
   , Item $ SomeArrow Multiply8
   , Item $ SomeArrow Multiply16
   , Item $ SomeArrow Multiply32
+  , Item $ SomeArrow Multiply64
   ]
 fullMultiplyBook = Shelf
   [ Missing
@@ -608,6 +619,7 @@ fullMultiplyBook = Shelf
   , Item $ SomeArrow FullMultiply8
   , Item $ SomeArrow FullMultiply16
   , Item $ SomeArrow FullMultiply32
+  , Item $ SomeArrow FullMultiply64
   ]
 leBook = Shelf
   [ Missing
