@@ -14,7 +14,8 @@ module Simplicity.CoreJets
  , FastCoreEval
  ) where
 
-import Prelude hiding (fail, drop, take, subtract, Word)
+import qualified Prelude
+import Prelude hiding (fail, drop, take, negate, subtract, min, max, Word)
 
 import Control.Arrow ((+++), Kleisli(Kleisli), runKleisli)
 import Data.Bits (shift)
@@ -33,7 +34,7 @@ import Simplicity.FFI.Jets as FFI
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Programs.Bit as Prog
-import Simplicity.Programs.Arith as Prog
+import qualified Simplicity.Programs.Arith as Prog
 import Simplicity.Programs.Generic as Prog
 import qualified Simplicity.Programs.CheckSig.Lib as CheckSig
 import qualified Simplicity.Programs.TimeLock as TimeLock
@@ -41,6 +42,7 @@ import qualified Simplicity.Programs.LibSecp256k1.Lib as Secp256k1
 import qualified Simplicity.Programs.Sha256.Lib as Sha256
 import Simplicity.Term.Core
 import Simplicity.Tree
+import Simplicity.Ty.Word
 
 -- | A data type of (typed) tokens representing known "core" jets.
 --
@@ -82,6 +84,14 @@ data ArithJet a b where
   FullAdd16 :: ArithJet (Bit, (Word16, Word16)) (Bit, Word16)
   FullAdd32 :: ArithJet (Bit, (Word32, Word32)) (Bit, Word32)
   FullAdd64 :: ArithJet (Bit, (Word64, Word64)) (Bit, Word64)
+  FullIncrement8 :: ArithJet (Bit, Word8) (Bit, Word8)
+  FullIncrement16 :: ArithJet (Bit, Word16) (Bit, Word16)
+  FullIncrement32 :: ArithJet (Bit, Word32) (Bit, Word32)
+  FullIncrement64 :: ArithJet (Bit, Word64) (Bit, Word64)
+  Increment8 :: ArithJet Word8 (Bit, Word8)
+  Increment16 :: ArithJet Word16 (Bit, Word16)
+  Increment32 :: ArithJet Word32 (Bit, Word32)
+  Increment64 :: ArithJet Word64 (Bit, Word64)
   Subtract8 :: ArithJet (Word8, Word8) (Bit, Word8)
   Subtract16 :: ArithJet (Word16, Word16) (Bit, Word16)
   Subtract32 :: ArithJet (Word32, Word32) (Bit, Word32)
@@ -90,6 +100,18 @@ data ArithJet a b where
   FullSubtract16 :: ArithJet (Bit, (Word16, Word16)) (Bit, Word16)
   FullSubtract32 :: ArithJet (Bit, (Word32, Word32)) (Bit, Word32)
   FullSubtract64 :: ArithJet (Bit, (Word64, Word64)) (Bit, Word64)
+  Negate8 :: ArithJet Word8 (Bit, Word8)
+  Negate16 :: ArithJet Word16 (Bit, Word16)
+  Negate32 :: ArithJet Word32 (Bit, Word32)
+  Negate64 :: ArithJet Word64 (Bit, Word64)
+  FullDecrement8 :: ArithJet (Bit, Word8) (Bit, Word8)
+  FullDecrement16 :: ArithJet (Bit, Word16) (Bit, Word16)
+  FullDecrement32 :: ArithJet (Bit, Word32) (Bit, Word32)
+  FullDecrement64 :: ArithJet (Bit, Word64) (Bit, Word64)
+  Decrement8 :: ArithJet Word8 (Bit, Word8)
+  Decrement16 :: ArithJet Word16 (Bit, Word16)
+  Decrement32 :: ArithJet Word32 (Bit, Word32)
+  Decrement64 :: ArithJet Word64 (Bit, Word64)
   Multiply8 :: ArithJet (Word8, Word8) Word16
   Multiply16 :: ArithJet (Word16, Word16) Word32
   Multiply32 :: ArithJet (Word32, Word32) Word64
@@ -98,10 +120,34 @@ data ArithJet a b where
   FullMultiply16 :: ArithJet ((Word16, Word16), (Word16, Word16)) Word32
   FullMultiply32 :: ArithJet ((Word32, Word32), (Word32, Word32)) Word64
   FullMultiply64 :: ArithJet ((Word64, Word64), (Word64, Word64)) Word128
+  IsZero8 :: ArithJet Word8 Bit
+  IsZero16 :: ArithJet Word16 Bit
+  IsZero32 :: ArithJet Word32 Bit
+  IsZero64 :: ArithJet Word64 Bit
+  IsOne8 :: ArithJet Word8 Bit
+  IsOne16 :: ArithJet Word16 Bit
+  IsOne32 :: ArithJet Word32 Bit
+  IsOne64 :: ArithJet Word64 Bit
   Le8 :: ArithJet (Word8, Word8) Bit
   Le16 :: ArithJet (Word16, Word16) Bit
   Le32 :: ArithJet (Word32, Word32) Bit
   Le64 :: ArithJet (Word64, Word64) Bit
+  Lt8 :: ArithJet (Word8, Word8) Bit
+  Lt16 :: ArithJet (Word16, Word16) Bit
+  Lt32 :: ArithJet (Word32, Word32) Bit
+  Lt64 :: ArithJet (Word64, Word64) Bit
+  Min8 :: ArithJet (Word8, Word8) Word8
+  Min16 :: ArithJet (Word16, Word16) Word16
+  Min32 :: ArithJet (Word32, Word32) Word32
+  Min64 :: ArithJet (Word64, Word64) Word64
+  Max8 :: ArithJet (Word8, Word8) Word8
+  Max16 :: ArithJet (Word16, Word16) Word16
+  Max32 :: ArithJet (Word32, Word32) Word32
+  Max64 :: ArithJet (Word64, Word64) Word64
+  Median8 :: ArithJet (Word8, (Word8, Word8)) Word8
+  Median16 :: ArithJet (Word16, (Word16, Word16)) Word16
+  Median32 :: ArithJet (Word32, (Word32, Word32)) Word32
+  Median64 :: ArithJet (Word64, (Word64, Word64)) Word64
 deriving instance Eq (ArithJet a b)
 deriving instance Show (ArithJet a b)
 
@@ -189,10 +235,10 @@ specification (BitcoinJet x) = specificationBitcoin x
 
 specificationWord :: Assert term => WordJet a b -> term a b
 specificationWord Verify = Prog.verify
-specificationWord Low8 = zero word8
-specificationWord Low16 = zero word16
-specificationWord Low32 = zero word32
-specificationWord Low64 = zero word64
+specificationWord Low8 = Prog.zero word8
+specificationWord Low16 = Prog.zero word16
+specificationWord Low32 = Prog.zero word32
+specificationWord Low64 = Prog.zero word64
 specificationWord Eq8 = eq
 specificationWord Eq16 = eq
 specificationWord Eq32 = eq
@@ -204,34 +250,78 @@ specificationArith One8 = Prog.one word8
 specificationArith One16 = Prog.one word16
 specificationArith One32 = Prog.one word32
 specificationArith One64 = Prog.one word64
-specificationArith Add8 = add word8
-specificationArith Add16 = add word16
-specificationArith Add32 = add word32
-specificationArith Add64 = add word64
-specificationArith FullAdd8 = full_add word8
-specificationArith FullAdd16 = full_add word16
-specificationArith FullAdd32 = full_add word32
-specificationArith FullAdd64 = full_add word64
-specificationArith Subtract8 = subtract word8
-specificationArith Subtract16 = subtract word16
-specificationArith Subtract32 = subtract word32
-specificationArith Subtract64 = subtract word64
-specificationArith FullSubtract8 = full_subtract word8
-specificationArith FullSubtract16 = full_subtract word16
-specificationArith FullSubtract32 = full_subtract word32
-specificationArith FullSubtract64 = full_subtract word64
-specificationArith Multiply8 = multiply word8
-specificationArith Multiply16 = multiply word16
-specificationArith Multiply32 = multiply word32
-specificationArith Multiply64 = multiply word64
-specificationArith FullMultiply8 = full_multiply word8
-specificationArith FullMultiply16 = full_multiply word16
-specificationArith FullMultiply32 = full_multiply word32
-specificationArith FullMultiply64 = full_multiply word64
-specificationArith Le8 = le word8
-specificationArith Le16 = le word16
-specificationArith Le32 = le word32
-specificationArith Le64 = le word64
+specificationArith Add8 = Prog.add word8
+specificationArith Add16 = Prog.add word16
+specificationArith Add32 = Prog.add word32
+specificationArith Add64 = Prog.add word64
+specificationArith FullAdd8 = Prog.full_add word8
+specificationArith FullAdd16 = Prog.full_add word16
+specificationArith FullAdd32 = Prog.full_add word32
+specificationArith FullAdd64 = Prog.full_add word64
+specificationArith FullIncrement8 = Prog.full_increment word8
+specificationArith FullIncrement16 = Prog.full_increment word16
+specificationArith FullIncrement32 = Prog.full_increment word32
+specificationArith FullIncrement64 = Prog.full_increment word64
+specificationArith Increment8 = Prog.increment word8
+specificationArith Increment16 = Prog.increment word16
+specificationArith Increment32 = Prog.increment word32
+specificationArith Increment64 = Prog.increment word64
+specificationArith Subtract8 = Prog.subtract word8
+specificationArith Subtract16 = Prog.subtract word16
+specificationArith Subtract32 = Prog.subtract word32
+specificationArith Subtract64 = Prog.subtract word64
+specificationArith FullSubtract8 = Prog.full_subtract word8
+specificationArith FullSubtract16 = Prog.full_subtract word16
+specificationArith FullSubtract32 = Prog.full_subtract word32
+specificationArith FullSubtract64 = Prog.full_subtract word64
+specificationArith Negate8 = Prog.negate word8
+specificationArith Negate16 = Prog.negate word16
+specificationArith Negate32 = Prog.negate word32
+specificationArith Negate64 = Prog.negate word64
+specificationArith FullDecrement8 = Prog.full_decrement word8
+specificationArith FullDecrement16 = Prog.full_decrement word16
+specificationArith FullDecrement32 = Prog.full_decrement word32
+specificationArith FullDecrement64 = Prog.full_decrement word64
+specificationArith Decrement8 = Prog.decrement word8
+specificationArith Decrement16 = Prog.decrement word16
+specificationArith Decrement32 = Prog.decrement word32
+specificationArith Decrement64 = Prog.decrement word64
+specificationArith Multiply8 = Prog.multiply word8
+specificationArith Multiply16 = Prog.multiply word16
+specificationArith Multiply32 = Prog.multiply word32
+specificationArith Multiply64 = Prog.multiply word64
+specificationArith FullMultiply8 = Prog.full_multiply word8
+specificationArith FullMultiply16 = Prog.full_multiply word16
+specificationArith FullMultiply32 = Prog.full_multiply word32
+specificationArith FullMultiply64 = Prog.full_multiply word64
+specificationArith IsZero8 = Prog.is_zero word8
+specificationArith IsZero16 = Prog.is_zero word16
+specificationArith IsZero32 = Prog.is_zero word32
+specificationArith IsZero64 = Prog.is_zero word64
+specificationArith IsOne8 = Prog.is_one word8
+specificationArith IsOne16 = Prog.is_one word16
+specificationArith IsOne32 = Prog.is_one word32
+specificationArith IsOne64 = Prog.is_one word64
+specificationArith Le8 = Prog.le word8
+specificationArith Le16 = Prog.le word16
+specificationArith Le32 = Prog.le word32
+specificationArith Le64 = Prog.le word64
+specificationArith Lt8 = Prog.lt word8
+specificationArith Lt16 = Prog.lt word16
+specificationArith Lt32 = Prog.lt word32
+specificationArith Lt64 = Prog.lt word64
+specificationArith Min8 = Prog.min word8
+specificationArith Min16 = Prog.min word16
+specificationArith Min32 = Prog.min word32
+specificationArith Min64 = Prog.min word64
+specificationArith Max8 = Prog.max word8
+specificationArith Max16 = Prog.max word16
+specificationArith Max32 = Prog.max word32
+specificationArith Max64 = Prog.max word64
+specificationArith Median8 = Prog.median word8
+specificationArith Median16 = Prog.median word16
+specificationArith Median32 = Prog.median word32
+specificationArith Median64 = Prog.median word64
 
 specificationHash :: Assert term => HashJet a b -> term a b
 specificationHash Sha256Block = Sha256.hashBlock
@@ -352,6 +442,30 @@ implementationArith FullAdd32 = \(c, (x, y)) -> do
 implementationArith FullAdd64 = \(c, (x, y)) -> do
   let z = fromWord64 x + fromWord64 y + fromWord1 c
   return (toBit (z >= 2 ^ 64), toWord64 z)
+implementationArith FullIncrement8 = \(b, x) -> do
+  let z = fromWord8 x + fromWord1 b
+  return (toBit (z >= 2 ^ 8), toWord8 z)
+implementationArith FullIncrement16 = \(b, x) -> do
+  let z = fromWord16 x + fromWord1 b
+  return (toBit (z >= 2 ^ 16), toWord16 z)
+implementationArith FullIncrement32 = \(b, x) -> do
+  let z = fromWord32 x + fromWord1 b
+  return (toBit (z >= 2 ^ 32), toWord32 z)
+implementationArith FullIncrement64 = \(b, x) -> do
+  let z = fromWord64 x + fromWord1 b
+  return (toBit (z >= 2 ^ 64), toWord64 z)
+implementationArith Increment8 = \x -> do
+  let z = fromWord8 x + 1
+  return (toBit (z >= 2 ^ 8), toWord8 z)
+implementationArith Increment16 = \x -> do
+  let z = fromWord16 x + 1
+  return (toBit (z >= 2 ^ 16), toWord16 z)
+implementationArith Increment32 = \x -> do
+  let z = fromWord32 x + 1
+  return (toBit (z >= 2 ^ 32), toWord32 z)
+implementationArith Increment64 = \x -> do
+  let z = fromWord64 x + 1
+  return (toBit (z >= 2 ^ 64), toWord64 z)
 implementationArith Subtract8 = \(x, y) -> do
   let z = fromWord8 x - fromWord8 y
   return (toBit (z < 0), toWord8 z)
@@ -375,6 +489,42 @@ implementationArith FullSubtract32 = \(b, (x, y)) -> do
   return (toBit (z < 0), toWord32 z)
 implementationArith FullSubtract64 = \(b, (x, y)) -> do
   let z = fromWord64 x - fromWord64 y - fromWord1 b
+  return (toBit (z < 0), toWord64 z)
+implementationArith Negate8 = \x -> do
+  let z = - fromWord8 x
+  return (toBit (z < 0), toWord8 z)
+implementationArith Negate16 = \x -> do
+  let z = - fromWord16 x
+  return (toBit (z < 0), toWord16 z)
+implementationArith Negate32 = \x -> do
+  let z = - fromWord32 x
+  return (toBit (z < 0), toWord32 z)
+implementationArith Negate64 = \x -> do
+  let z = - fromWord64 x
+  return (toBit (z < 0), toWord64 z)
+implementationArith FullDecrement8 = \(b, x) -> do
+  let z = fromWord8 x - fromWord1 b
+  return (toBit (z < 0), toWord8 z)
+implementationArith FullDecrement16 = \(b, x) -> do
+  let z = fromWord16 x - fromWord1 b
+  return (toBit (z < 0), toWord16 z)
+implementationArith FullDecrement32 = \(b, x) -> do
+  let z = fromWord32 x - fromWord1 b
+  return (toBit (z < 0), toWord32 z)
+implementationArith FullDecrement64 = \(b, x) -> do
+  let z = fromWord64 x - fromWord1 b
+  return (toBit (z < 0), toWord64 z)
+implementationArith Decrement8 = \x -> do
+  let z = fromWord8 x - 1
+  return (toBit (z < 0), toWord8 z)
+implementationArith Decrement16 = \x -> do
+  let z = fromWord16 x - 1
+  return (toBit (z < 0), toWord16 z)
+implementationArith Decrement32 = \x -> do
+  let z = fromWord32 x - 1
+  return (toBit (z < 0), toWord32 z)
+implementationArith Decrement64 = \x -> do
+  let z = fromWord64 x - 1
   return (toBit (z < 0), toWord64 z)
 implementationArith Multiply8 = \(x, y) -> do
   let z = fromWord8 x * fromWord8 y
@@ -400,6 +550,30 @@ implementationArith FullMultiply32 = \((x, y), (a, b)) -> do
 implementationArith FullMultiply64 = \((x, y), (a, b)) -> do
   let z = fromWord64 x * fromWord64 y + fromWord64 a + fromWord64 b
   return (toWord128 z)
+implementationArith IsZero8 = \x -> do
+  let z = fromWord8 x == 0
+  return (toBit z)
+implementationArith IsZero16 = \x -> do
+  let z = fromWord16 x == 0
+  return (toBit z)
+implementationArith IsZero32 = \x -> do
+  let z = fromWord32 x == 0
+  return (toBit z)
+implementationArith IsZero64 = \x -> do
+  let z = fromWord64 x == 0
+  return (toBit z)
+implementationArith IsOne8 = \x -> do
+  let z = fromWord8 x == 1
+  return (toBit z)
+implementationArith IsOne16 = \x -> do
+  let z = fromWord16 x == 1
+  return (toBit z)
+implementationArith IsOne32 = \x -> do
+  let z = fromWord32 x == 1
+  return (toBit z)
+implementationArith IsOne64 = \x -> do
+  let z = fromWord64 x == 1
+  return (toBit z)
 implementationArith Le8 = \(x, y) -> do
   let z = fromWord8 x <= fromWord8 y
   return (toBit z)
@@ -412,6 +586,54 @@ implementationArith Le32 = \(x, y) -> do
 implementationArith Le64 = \(x, y) -> do
   let z = fromWord64 x <= fromWord64 y
   return (toBit z)
+implementationArith Lt8 = \(x, y) -> do
+  let z = fromWord8 x < fromWord8 y
+  return (toBit z)
+implementationArith Lt16 = \(x, y) -> do
+  let z = fromWord16 x < fromWord16 y
+  return (toBit z)
+implementationArith Lt32 = \(x, y) -> do
+  let z = fromWord32 x < fromWord32 y
+  return (toBit z)
+implementationArith Lt64 = \(x, y) -> do
+  let z = fromWord64 x < fromWord64 y
+  return (toBit z)
+implementationArith Min8 = \(x, y) -> do
+  let z = Prelude.min (fromWord8 x) (fromWord8 y)
+  return (toWord8 z)
+implementationArith Min16 = \(x, y) -> do
+  let z = Prelude.min (fromWord16 x) (fromWord16 y)
+  return (toWord16 z)
+implementationArith Min32 = \(x, y) -> do
+  let z = Prelude.min (fromWord32 x) (fromWord32 y)
+  return (toWord32 z)
+implementationArith Min64 = \(x, y) -> do
+  let z = Prelude.min (fromWord64 x) (fromWord64 y)
+  return (toWord64 z)
+implementationArith Max8 = \(x, y) -> do
+  let z = Prelude.max (fromWord8 x) (fromWord8 y)
+  return (toWord8 z)
+implementationArith Max16 = \(x, y) -> do
+  let z = Prelude.max (fromWord16 x) (fromWord16 y)
+  return (toWord16 z)
+implementationArith Max32 = \(x, y) -> do
+  let z = Prelude.max (fromWord32 x) (fromWord32 y)
+  return (toWord32 z)
+implementationArith Max64 = \(x, y) -> do
+  let z = Prelude.max (fromWord64 x) (fromWord64 y)
+  return (toWord64 z)
+implementationArith Median8 = \(x, (y, z)) -> do
+  let r = median (fromWord8 x) (fromWord8 y) (fromWord8 z)
+  return (toWord8 r)
+implementationArith Median16 = \(x, (y, z)) -> do
+  let r = median (fromWord16 x) (fromWord16 y) (fromWord16 z)
+  return (toWord16 r)
+implementationArith Median32 = \(x, (y, z)) -> do
+  let r = median (fromWord32 x) (fromWord32 y) (fromWord32 z)
+  return (toWord32 r)
+implementationArith Median64 = \(x, (y, z)) -> do
+  let r = median (fromWord64 x) (fromWord64 y) (fromWord64 z)
+  return (toWord64 r)
 
 implementationHash :: HashJet a b -> a -> Maybe b
 implementationHash = go
@@ -551,19 +773,23 @@ arithBook = Shelf
   [ oneBook
   , fullAddBook
   , addBook
-  , Missing
-  , Missing
+  , fullIncrementBook
+  , incrementBook
   , Missing
   , fullSubtractBook
   , subtractBook
-  , Missing
-  , Missing
-  , Missing
+  , negateBook
+  , fullDecrementBook
+  , decrementBook
   , fullMultiplyBook
   , multiplyBook
-  , Missing
-  , Missing
+  , isZeroBook
+  , isOneBook
   , leBook
+  , ltBook
+  , minBook
+  , maxBook
+  , medianBook
   ]
 oneBook = Shelf
   [ Missing
@@ -589,6 +815,22 @@ fullAddBook = Shelf
   , Item $ SomeArrow FullAdd32
   , Item $ SomeArrow FullAdd64
   ]
+fullIncrementBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow FullIncrement8
+  , Item $ SomeArrow FullIncrement16
+  , Item $ SomeArrow FullIncrement32
+  , Item $ SomeArrow FullIncrement64
+  ]
+incrementBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow Increment8
+  , Item $ SomeArrow Increment16
+  , Item $ SomeArrow Increment32
+  , Item $ SomeArrow Increment64
+  ]
 subtractBook = Shelf
   [ Missing
   , Missing
@@ -604,6 +846,30 @@ fullSubtractBook = Shelf
   , Item $ SomeArrow FullSubtract16
   , Item $ SomeArrow FullSubtract32
   , Item $ SomeArrow FullSubtract64
+  ]
+negateBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow Negate8
+  , Item $ SomeArrow Negate16
+  , Item $ SomeArrow Negate32
+  , Item $ SomeArrow Negate64
+  ]
+fullDecrementBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow FullDecrement8
+  , Item $ SomeArrow FullDecrement16
+  , Item $ SomeArrow FullDecrement32
+  , Item $ SomeArrow FullDecrement64
+  ]
+decrementBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow Decrement8
+  , Item $ SomeArrow Decrement16
+  , Item $ SomeArrow Decrement32
+  , Item $ SomeArrow Decrement64
   ]
 multiplyBook = Shelf
   [ Missing
@@ -621,6 +887,22 @@ fullMultiplyBook = Shelf
   , Item $ SomeArrow FullMultiply32
   , Item $ SomeArrow FullMultiply64
   ]
+isZeroBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow IsZero8
+  , Item $ SomeArrow IsZero16
+  , Item $ SomeArrow IsZero32
+  , Item $ SomeArrow IsZero64
+  ]
+isOneBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow IsOne8
+  , Item $ SomeArrow IsOne16
+  , Item $ SomeArrow IsOne32
+  , Item $ SomeArrow IsOne64
+  ]
 leBook = Shelf
   [ Missing
   , Missing
@@ -628,6 +910,38 @@ leBook = Shelf
   , Item $ SomeArrow Le16
   , Item $ SomeArrow Le32
   , Item $ SomeArrow Le64
+  ]
+ltBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow Lt8
+  , Item $ SomeArrow Lt16
+  , Item $ SomeArrow Lt32
+  , Item $ SomeArrow Lt64
+  ]
+minBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow Min8
+  , Item $ SomeArrow Min16
+  , Item $ SomeArrow Min32
+  , Item $ SomeArrow Min64
+  ]
+maxBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow Max8
+  , Item $ SomeArrow Max16
+  , Item $ SomeArrow Max32
+  , Item $ SomeArrow Max64
+  ]
+medianBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow Median8
+  , Item $ SomeArrow Median16
+  , Item $ SomeArrow Median32
+  , Item $ SomeArrow Median64
   ]
 hashBook = Shelf [sha2Book]
 sha2Book = Shelf
@@ -910,3 +1224,5 @@ instance Assert FastCoreEval where
   assertl s h = mkUnary (flip assertl h) (flip assertl h) s
   assertr h t = mkUnary (assertr h) (assertr h) t
   fail b = mkLeaf (fail b) (fail b)
+
+median x y z = List.sort [x,y,z] !! 1

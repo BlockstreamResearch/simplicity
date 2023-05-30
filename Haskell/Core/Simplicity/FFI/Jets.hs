@@ -7,11 +7,22 @@ module Simplicity.FFI.Jets
  , eq_8, eq_16, eq_32, eq_64, eq_256
  , add_8, add_16, add_32, add_64
  , full_add_8, full_add_16, full_add_32, full_add_64
+ , full_increment_8, full_increment_16, full_increment_32, full_increment_64
+ , increment_8, increment_16, increment_32, increment_64
  , subtract_8, subtract_16, subtract_32, subtract_64
  , full_subtract_8, full_subtract_16, full_subtract_32, full_subtract_64
+ , negate_8, negate_16, negate_32, negate_64
+ , full_decrement_8, full_decrement_16, full_decrement_32, full_decrement_64
+ , decrement_8, decrement_16, decrement_32, decrement_64
  , multiply_8, multiply_16, multiply_32, multiply_64
  , full_multiply_8, full_multiply_16, full_multiply_32, full_multiply_64
+ , is_zero_8, is_zero_16, is_zero_32, is_zero_64
+ , is_one_8, is_one_16, is_one_32, is_one_64
  , le_8, le_16, le_32, le_64
+ , lt_8, lt_16, lt_32, lt_64
+ , min_8, min_16, min_32, min_64
+ , max_8, max_16, max_32, max_64
+ , median_8, median_16, median_32, median_64
  , sha_256_iv, sha_256_block
  , sha_256_ctx_8_init
  , sha_256_ctx_8_add_1
@@ -67,6 +78,14 @@ foreign import ccall unsafe "" c_full_add_8 :: Ptr FrameItem -> Ptr FrameItem ->
 foreign import ccall unsafe "" c_full_add_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_add_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_add_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_increment_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_increment_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_increment_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_increment_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_increment_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_increment_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_increment_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_increment_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_subtract_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_subtract_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_subtract_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -75,6 +94,18 @@ foreign import ccall unsafe "" c_full_subtract_8 :: Ptr FrameItem -> Ptr FrameIt
 foreign import ccall unsafe "" c_full_subtract_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_subtract_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_subtract_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_negate_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_negate_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_negate_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_negate_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_decrement_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_decrement_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_decrement_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_decrement_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_decrement_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_decrement_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_decrement_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_decrement_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_multiply_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_multiply_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -83,10 +114,34 @@ foreign import ccall unsafe "" c_full_multiply_8 :: Ptr FrameItem -> Ptr FrameIt
 foreign import ccall unsafe "" c_full_multiply_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_multiply_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_full_multiply_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_is_zero_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_is_zero_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_is_zero_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_is_zero_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_is_one_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_is_one_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_is_one_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_is_one_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_le_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_le_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_le_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_le_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_lt_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_lt_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_lt_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_lt_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_min_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_min_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_min_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_min_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_max_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_max_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_max_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_max_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_median_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_median_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_median_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_median_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 foreign import ccall unsafe "" c_sha_256_iv :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_sha_256_block :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -213,6 +268,30 @@ full_add_32 = unsafeLocalCoreJet c_full_add_32
 full_add_64 :: (Bit, (Word64, Word64)) -> Maybe (Bit, Word64)
 full_add_64 = unsafeLocalCoreJet c_full_add_64
 
+full_increment_8 :: (Bit, Word8) -> Maybe (Bit, Word8)
+full_increment_8 = unsafeLocalCoreJet c_full_increment_8
+
+full_increment_16 :: (Bit, Word16) -> Maybe (Bit, Word16)
+full_increment_16 = unsafeLocalCoreJet c_full_increment_16
+
+full_increment_32 :: (Bit, Word32) -> Maybe (Bit, Word32)
+full_increment_32 = unsafeLocalCoreJet c_full_increment_32
+
+full_increment_64 :: (Bit, Word64) -> Maybe (Bit, Word64)
+full_increment_64 = unsafeLocalCoreJet c_full_increment_64
+
+increment_8 :: Word8 -> Maybe (Bit, Word8)
+increment_8 = unsafeLocalCoreJet c_increment_8
+
+increment_16 :: Word16 -> Maybe (Bit, Word16)
+increment_16 = unsafeLocalCoreJet c_increment_16
+
+increment_32 :: Word32 -> Maybe (Bit, Word32)
+increment_32 = unsafeLocalCoreJet c_increment_32
+
+increment_64 :: Word64 -> Maybe (Bit, Word64)
+increment_64 = unsafeLocalCoreJet c_increment_64
+
 subtract_8 :: (Word8, Word8) -> Maybe (Bit, Word8)
 subtract_8 = unsafeLocalCoreJet c_subtract_8
 
@@ -236,6 +315,42 @@ full_subtract_32 = unsafeLocalCoreJet c_full_subtract_32
 
 full_subtract_64 :: (Bit, (Word64, Word64)) -> Maybe (Bit, Word64)
 full_subtract_64 = unsafeLocalCoreJet c_full_subtract_64
+
+negate_8 :: Word8 -> Maybe (Bit, Word8)
+negate_8 = unsafeLocalCoreJet c_negate_8
+
+negate_16 :: Word16 -> Maybe (Bit, Word16)
+negate_16 = unsafeLocalCoreJet c_negate_16
+
+negate_32 :: Word32 -> Maybe (Bit, Word32)
+negate_32 = unsafeLocalCoreJet c_negate_32
+
+negate_64 :: Word64 -> Maybe (Bit, Word64)
+negate_64 = unsafeLocalCoreJet c_negate_64
+
+full_decrement_8 :: (Bit, Word8) -> Maybe (Bit, Word8)
+full_decrement_8 = unsafeLocalCoreJet c_full_decrement_8
+
+full_decrement_16 :: (Bit, Word16) -> Maybe (Bit, Word16)
+full_decrement_16 = unsafeLocalCoreJet c_full_decrement_16
+
+full_decrement_32 :: (Bit, Word32) -> Maybe (Bit, Word32)
+full_decrement_32 = unsafeLocalCoreJet c_full_decrement_32
+
+full_decrement_64 :: (Bit, Word64) -> Maybe (Bit, Word64)
+full_decrement_64 = unsafeLocalCoreJet c_full_decrement_64
+
+decrement_8 :: Word8 -> Maybe (Bit, Word8)
+decrement_8 = unsafeLocalCoreJet c_decrement_8
+
+decrement_16 :: Word16 -> Maybe (Bit, Word16)
+decrement_16 = unsafeLocalCoreJet c_decrement_16
+
+decrement_32 :: Word32 -> Maybe (Bit, Word32)
+decrement_32 = unsafeLocalCoreJet c_decrement_32
+
+decrement_64 :: Word64 -> Maybe (Bit, Word64)
+decrement_64 = unsafeLocalCoreJet c_decrement_64
 
 multiply_8 :: (Word8, Word8) -> Maybe Word16
 multiply_8 = unsafeLocalCoreJet c_multiply_8
@@ -261,6 +376,30 @@ full_multiply_32 = unsafeLocalCoreJet c_full_multiply_32
 full_multiply_64 :: ((Word64, Word64), (Word64, Word64)) -> Maybe Word128
 full_multiply_64 = unsafeLocalCoreJet c_full_multiply_64
 
+is_zero_8 :: Word8 -> Maybe Bit
+is_zero_8 = unsafeLocalCoreJet c_is_zero_8
+
+is_zero_16 :: Word16 -> Maybe Bit
+is_zero_16 = unsafeLocalCoreJet c_is_zero_16
+
+is_zero_32 :: Word32 -> Maybe Bit
+is_zero_32 = unsafeLocalCoreJet c_is_zero_32
+
+is_zero_64 :: Word64 -> Maybe Bit
+is_zero_64 = unsafeLocalCoreJet c_is_zero_64
+
+is_one_8 :: Word8 -> Maybe Bit
+is_one_8 = unsafeLocalCoreJet c_is_one_8
+
+is_one_16 :: Word16 -> Maybe Bit
+is_one_16 = unsafeLocalCoreJet c_is_one_16
+
+is_one_32 :: Word32 -> Maybe Bit
+is_one_32 = unsafeLocalCoreJet c_is_one_32
+
+is_one_64 :: Word64 -> Maybe Bit
+is_one_64 = unsafeLocalCoreJet c_is_one_64
+
 le_8 :: (Word8, Word8) -> Maybe Bit
 le_8 = unsafeLocalCoreJet c_le_8
 
@@ -272,6 +411,54 @@ le_32 = unsafeLocalCoreJet c_le_32
 
 le_64 :: (Word64, Word64) -> Maybe Bit
 le_64 = unsafeLocalCoreJet c_le_64
+
+lt_8 :: (Word8, Word8) -> Maybe Bit
+lt_8 = unsafeLocalCoreJet c_lt_8
+
+lt_16 :: (Word16, Word16) -> Maybe Bit
+lt_16 = unsafeLocalCoreJet c_lt_16
+
+lt_32 :: (Word32, Word32) -> Maybe Bit
+lt_32 = unsafeLocalCoreJet c_lt_32
+
+lt_64 :: (Word64, Word64) -> Maybe Bit
+lt_64 = unsafeLocalCoreJet c_lt_64
+
+min_8 :: (Word8, Word8) -> Maybe Word8
+min_8 = unsafeLocalCoreJet c_min_8
+
+min_16 :: (Word16, Word16) -> Maybe Word16
+min_16 = unsafeLocalCoreJet c_min_16
+
+min_32 :: (Word32, Word32) -> Maybe Word32
+min_32 = unsafeLocalCoreJet c_min_32
+
+min_64 :: (Word64, Word64) -> Maybe Word64
+min_64 = unsafeLocalCoreJet c_min_64
+
+max_8 :: (Word8, Word8) -> Maybe Word8
+max_8 = unsafeLocalCoreJet c_max_8
+
+max_16 :: (Word16, Word16) -> Maybe Word16
+max_16 = unsafeLocalCoreJet c_max_16
+
+max_32 :: (Word32, Word32) -> Maybe Word32
+max_32 = unsafeLocalCoreJet c_max_32
+
+max_64 :: (Word64, Word64) -> Maybe Word64
+max_64 = unsafeLocalCoreJet c_max_64
+
+median_8 :: (Word8, (Word8, Word8)) -> Maybe Word8
+median_8 = unsafeLocalCoreJet c_median_8
+
+median_16 :: (Word16, (Word16, Word16)) -> Maybe Word16
+median_16 = unsafeLocalCoreJet c_median_16
+
+median_32 :: (Word32, (Word32, Word32)) -> Maybe Word32
+median_32 = unsafeLocalCoreJet c_median_32
+
+median_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
+median_64 = unsafeLocalCoreJet c_median_64
 
 sha_256_iv :: () -> Maybe Sha256.Hash
 sha_256_iv = unsafeLocalCoreJet c_sha_256_iv
