@@ -107,6 +107,35 @@ FULL_ADD_(16)
 FULL_ADD_(32)
 FULL_ADD_(64)
 
+#define FULL_INCREMENT_(bits)                                                 \
+/* full_increment_n : TWO * TWO^n |- TWO * TWO^n */                           \
+bool full_increment_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  bool z = readBit(&src);                                                     \
+  uint_fast##bits##_t x = read##bits(&src);                                   \
+  writeBit(dst, 1U * UINT##bits##_MAX - z < x);                               \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x + z));                        \
+  return true;                                                                \
+}
+FULL_INCREMENT_(8)
+FULL_INCREMENT_(16)
+FULL_INCREMENT_(32)
+FULL_INCREMENT_(64)
+
+#define INCREMENT_(bits)                                                 \
+/* increment_n : TWO^n |- TWO * TWO^n */                                 \
+bool increment_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                       \
+  uint_fast##bits##_t x = read##bits(&src);                              \
+  writeBit(dst, 1U * UINT##bits##_MAX - 1 < x);                          \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x + 1));                   \
+  return true;                                                           \
+}
+INCREMENT_(8)
+INCREMENT_(16)
+INCREMENT_(32)
+INCREMENT_(64)
+
 #define SUBTRACT_(bits)                                                 \
 /* subtract_n : TWO^n * TWO^n |- TWO * TWO^n */                         \
 bool subtract_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
@@ -121,6 +150,49 @@ SUBTRACT_(8)
 SUBTRACT_(16)
 SUBTRACT_(32)
 SUBTRACT_(64)
+
+#define NEGATE_(bits)                                                 \
+/* negate_n : TWO^n |- TWO * TWO^n */                                 \
+bool negate_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                    \
+  uint_fast##bits##_t x = read##bits(&src);                           \
+  writeBit(dst, x != 0);                                              \
+  write##bits(dst, (uint_fast##bits##_t)(- (1U * x)));                \
+  return true;                                                        \
+}
+NEGATE_(8)
+NEGATE_(16)
+NEGATE_(32)
+NEGATE_(64)
+
+#define FULL_DECREMENT_(bits)                                                 \
+/* full_decrement_n : TWO * TWO^n |- TWO * TWO^n */                           \
+bool full_decrement_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  bool z = readBit(&src);                                                     \
+  uint_fast##bits##_t x = read##bits(&src);                                   \
+  writeBit(dst, x < z);                                                       \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x - z));                        \
+  return true;                                                                \
+}
+FULL_DECREMENT_(8)
+FULL_DECREMENT_(16)
+FULL_DECREMENT_(32)
+FULL_DECREMENT_(64)
+
+#define DECREMENT_(bits)                                                 \
+/* decrement_n : TWO^n |- TWO * TWO^n */                                 \
+bool decrement_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                       \
+  uint_fast##bits##_t x = read##bits(&src);                              \
+  writeBit(dst, x < 1);                                                  \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x - 1));                   \
+  return true;                                                           \
+}
+DECREMENT_(8)
+DECREMENT_(16)
+DECREMENT_(32)
+DECREMENT_(64)
 
 #define FULL_SUBTRACT_(bits)                                                 \
 /* full_subtract_n : TWO * TWO^n * TWO^n |- TWO * TWO^n */                   \
@@ -188,6 +260,32 @@ bool full_multiply_64(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
+#define IS_ZERO_(bits)                                                 \
+/* is_zero_n : TWO^n |- TWO */                                         \
+bool is_zero_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                     \
+  uint_fast##bits##_t x = read##bits(&src);                            \
+  writeBit(dst, x == 0);                                               \
+  return true;                                                         \
+}
+IS_ZERO_(8)
+IS_ZERO_(16)
+IS_ZERO_(32)
+IS_ZERO_(64)
+
+#define IS_ONE_(bits)                                                 \
+/* is_one_n : TWO^n |- TWO */                                         \
+bool is_one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                    \
+  uint_fast##bits##_t x = read##bits(&src);                           \
+  writeBit(dst, x == 1);                                              \
+  return true;                                                        \
+}
+IS_ONE_(8)
+IS_ONE_(16)
+IS_ONE_(32)
+IS_ONE_(64)
+
 #define LE_(bits)                                                 \
 /* le_n : TWO^n * TWO^n |- TWO */                                 \
 bool le_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
@@ -201,6 +299,65 @@ LE_(8)
 LE_(16)
 LE_(32)
 LE_(64)
+
+#define LT_(bits)                                                     \
+/* lt_n : TWO^n * TWO^n |- TWO */                                     \
+bool lt_##bits(frameItem* dst, frameItem src, const txEnv* env) {     \
+  (void) env; /* env is unused. */                                    \
+  uint_fast##bits##_t x = read##bits(&src);                           \
+  uint_fast##bits##_t y = read##bits(&src);                           \
+  writeBit(dst, x < y);                                               \
+  return true;                                                        \
+}
+LT_(8)
+LT_(16)
+LT_(32)
+LT_(64)
+
+#define MIN_(bits)                                                    \
+/* min_n : TWO^n * TWO^n |- TWO^n */                                  \
+bool min_##bits(frameItem* dst, frameItem src, const txEnv* env) {    \
+  (void) env; /* env is unused. */                                    \
+  uint_fast##bits##_t x = read##bits(&src);                           \
+  uint_fast##bits##_t y = read##bits(&src);                           \
+  write##bits(dst, x < y ? x : y);                                    \
+  return true;                                                        \
+}
+MIN_(8)
+MIN_(16)
+MIN_(32)
+MIN_(64)
+
+#define MAX_(bits)                                                    \
+/* max_n : TWO^n * TWO^n |- TWO^n */                                  \
+bool max_##bits(frameItem* dst, frameItem src, const txEnv* env) {    \
+  (void) env; /* env is unused. */                                    \
+  uint_fast##bits##_t x = read##bits(&src);                           \
+  uint_fast##bits##_t y = read##bits(&src);                           \
+  write##bits(dst, x < y ? y : x);                                    \
+  return true;                                                        \
+}
+MAX_(8)
+MAX_(16)
+MAX_(32)
+MAX_(64)
+
+#define MEDIAN_(bits)                                                 \
+/* median_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \
+bool median_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                    \
+  uint_fast##bits##_t x = read##bits(&src);                           \
+  uint_fast##bits##_t y = read##bits(&src);                           \
+  uint_fast##bits##_t z = read##bits(&src);                           \
+  write##bits(dst, x < y                                              \
+                 ? (y < z ? y : (z < x ? x : z))                      \
+                 : (x < z ? x : (z < y ? y : z)));                    \
+  return true;                                                        \
+}
+MEDIAN_(8)
+MEDIAN_(16)
+MEDIAN_(32)
+MEDIAN_(64)
 
 /* sha_256_iv : ONE |- TWO^256 */
 bool sha_256_iv(frameItem* dst, frameItem src, const txEnv* env) {
