@@ -148,6 +148,22 @@ data ArithJet a b where
   Median16 :: ArithJet (Word16, (Word16, Word16)) Word16
   Median32 :: ArithJet (Word32, (Word32, Word32)) Word32
   Median64 :: ArithJet (Word64, (Word64, Word64)) Word64
+  DivMod8 :: ArithJet (Word8, Word8) (Word8, Word8)
+  DivMod16 :: ArithJet (Word16, Word16) (Word16, Word16)
+  DivMod32 :: ArithJet (Word32, Word32) (Word32, Word32)
+  DivMod64 :: ArithJet (Word64, Word64) (Word64, Word64)
+  Divide8 :: ArithJet (Word8, Word8) Word8
+  Divide16 :: ArithJet (Word16, Word16) Word16
+  Divide32 :: ArithJet (Word32, Word32) Word32
+  Divide64 :: ArithJet (Word64, Word64) Word64
+  Modulo8 :: ArithJet (Word8, Word8) Word8
+  Modulo16 :: ArithJet (Word16, Word16) Word16
+  Modulo32 :: ArithJet (Word32, Word32) Word32
+  Modulo64 :: ArithJet (Word64, Word64) Word64
+  Divides8 :: ArithJet (Word8, Word8) Bit
+  Divides16 :: ArithJet (Word16, Word16) Bit
+  Divides32 :: ArithJet (Word32, Word32) Bit
+  Divides64 :: ArithJet (Word64, Word64) Bit
 deriving instance Eq (ArithJet a b)
 deriving instance Show (ArithJet a b)
 
@@ -322,6 +338,22 @@ specificationArith Median8 = Prog.median word8
 specificationArith Median16 = Prog.median word16
 specificationArith Median32 = Prog.median word32
 specificationArith Median64 = Prog.median word64
+specificationArith DivMod8 = Prog.div_mod word8
+specificationArith DivMod16 = Prog.div_mod word16
+specificationArith DivMod32 = Prog.div_mod word32
+specificationArith DivMod64 = Prog.div_mod word64
+specificationArith Divide8 = Prog.divide word8
+specificationArith Divide16 = Prog.divide word16
+specificationArith Divide32 = Prog.divide word32
+specificationArith Divide64 = Prog.divide word64
+specificationArith Modulo8 = Prog.modulo word8
+specificationArith Modulo16 = Prog.modulo word16
+specificationArith Modulo32 = Prog.modulo word32
+specificationArith Modulo64 = Prog.modulo word64
+specificationArith Divides8 = Prog.divides word8
+specificationArith Divides16 = Prog.divides word16
+specificationArith Divides32 = Prog.divides word32
+specificationArith Divides64 = Prog.divides word64
 
 specificationHash :: Assert term => HashJet a b -> term a b
 specificationHash Sha256Block = Sha256.hashBlock
@@ -634,6 +666,54 @@ implementationArith Median32 = \(x, (y, z)) -> do
 implementationArith Median64 = \(x, (y, z)) -> do
   let r = median (fromWord64 x) (fromWord64 y) (fromWord64 z)
   return (toWord64 r)
+implementationArith DivMod8 = \(x, y) -> do
+  let (d,m) = Prelude.divMod (fromWord8 x) (fromWord8 y)
+  return (if 0 == fromWord8 y then (y, x) else (toWord8 d, toWord8 m))
+implementationArith DivMod16 = \(x, y) -> do
+  let (d,m) = Prelude.divMod (fromWord16 x) (fromWord16 y)
+  return (if 0 == fromWord16 y then (y, x) else (toWord16 d, toWord16 m))
+implementationArith DivMod32 = \(x, y) -> do
+  let (d,m) = Prelude.divMod (fromWord32 x) (fromWord32 y)
+  return (if 0 == fromWord32 y then (y, x) else (toWord32 d, toWord32 m))
+implementationArith DivMod64 = \(x, y) -> do
+  let (d,m) = Prelude.divMod (fromWord64 x) (fromWord64 y)
+  return (if 0 == fromWord64 y then (y, x) else (toWord64 d, toWord64 m))
+implementationArith Divide8 = \(x, y) -> do
+  let z = Prelude.div (fromWord8 x) (fromWord8 y)
+  return (if 0 == fromWord8 y then y else toWord8 z)
+implementationArith Divide16 = \(x, y) -> do
+  let z = Prelude.div (fromWord16 x) (fromWord16 y)
+  return (if 0 == fromWord16 y then y else toWord16 z)
+implementationArith Divide32 = \(x, y) -> do
+  let z = Prelude.div (fromWord32 x) (fromWord32 y)
+  return (if 0 == fromWord32 y then y else toWord32 z)
+implementationArith Divide64 = \(x, y) -> do
+  let z = Prelude.div (fromWord64 x) (fromWord64 y)
+  return (if 0 == fromWord64 y then y else toWord64 z)
+implementationArith Modulo8 = \(x, y) -> do
+  let z = Prelude.mod (fromWord8 x) (fromWord8 y)
+  return (if 0 == fromWord8 y then x else toWord8 z)
+implementationArith Modulo16 = \(x, y) -> do
+  let z = Prelude.mod (fromWord16 x) (fromWord16 y)
+  return (if 0 == fromWord16 y then x else toWord16 z)
+implementationArith Modulo32 = \(x, y) -> do
+  let z = Prelude.mod (fromWord32 x) (fromWord32 y)
+  return (if 0 == fromWord32 y then x else toWord32 z)
+implementationArith Modulo64 = \(x, y) -> do
+  let z = Prelude.mod (fromWord64 x) (fromWord64 y)
+  return (if 0 == fromWord64 y then x else toWord64 z)
+implementationArith Divides8 = \(x, y) -> do
+  let z = Prelude.mod (fromWord8 y) (fromWord8 x)
+  return (toBit (0 == if 0 == fromWord8 x then fromWord8 y else z))
+implementationArith Divides16 = \(x, y) -> do
+  let z = Prelude.mod (fromWord16 y) (fromWord16 x)
+  return (toBit (0 == if 0 == fromWord16 x then fromWord16 y else z))
+implementationArith Divides32 = \(x, y) -> do
+  let z = Prelude.mod (fromWord32 y) (fromWord32 x)
+  return (toBit (0 == if 0 == fromWord32 x then fromWord32 y else z))
+implementationArith Divides64 = \(x, y) -> do
+  let z = Prelude.mod (fromWord64 y) (fromWord64 x)
+  return (toBit (0 == if 0 == fromWord64 x then fromWord64 y else z))
 
 implementationHash :: HashJet a b -> a -> Maybe b
 implementationHash = go
@@ -790,6 +870,11 @@ arithBook = Shelf
   , minBook
   , maxBook
   , medianBook
+  , Missing
+  , divModBook
+  , divideBook
+  , moduloBook
+  , dividesBook
   ]
 oneBook = Shelf
   [ Missing
@@ -942,6 +1027,38 @@ medianBook = Shelf
   , Item $ SomeArrow Median16
   , Item $ SomeArrow Median32
   , Item $ SomeArrow Median64
+  ]
+divModBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow DivMod8
+  , Item $ SomeArrow DivMod16
+  , Item $ SomeArrow DivMod32
+  , Item $ SomeArrow DivMod64
+  ]
+divideBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow Divide8
+  , Item $ SomeArrow Divide16
+  , Item $ SomeArrow Divide32
+  , Item $ SomeArrow Divide64
+  ]
+moduloBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow Modulo8
+  , Item $ SomeArrow Modulo16
+  , Item $ SomeArrow Modulo32
+  , Item $ SomeArrow Modulo64
+  ]
+dividesBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow Divides8
+  , Item $ SomeArrow Divides16
+  , Item $ SomeArrow Divides32
+  , Item $ SomeArrow Divides64
   ]
 hashBook = Shelf [sha2Book]
 sha2Book = Shelf

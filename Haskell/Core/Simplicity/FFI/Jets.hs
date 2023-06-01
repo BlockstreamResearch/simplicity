@@ -23,6 +23,10 @@ module Simplicity.FFI.Jets
  , min_8, min_16, min_32, min_64
  , max_8, max_16, max_32, max_64
  , median_8, median_16, median_32, median_64
+ , div_mod_8, div_mod_16, div_mod_32, div_mod_64
+ , divide_8, divide_16, divide_32, divide_64
+ , modulo_8, modulo_16, modulo_32, modulo_64
+ , divides_8, divides_16, divides_32, divides_64
  , sha_256_iv, sha_256_block
  , sha_256_ctx_8_init
  , sha_256_ctx_8_add_1
@@ -142,6 +146,22 @@ foreign import ccall unsafe "" c_median_8 :: Ptr FrameItem -> Ptr FrameItem -> I
 foreign import ccall unsafe "" c_median_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_median_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_median_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_div_mod_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_div_mod_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_div_mod_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_div_mod_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_divide_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_divide_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_divide_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_divide_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_modulo_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_modulo_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_modulo_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_modulo_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_divides_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_divides_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_divides_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_divides_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 foreign import ccall unsafe "" c_sha_256_iv :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_sha_256_block :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -459,6 +479,54 @@ median_32 = unsafeLocalCoreJet c_median_32
 
 median_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
 median_64 = unsafeLocalCoreJet c_median_64
+
+div_mod_8 :: (Word8, Word8) -> Maybe (Word8, Word8)
+div_mod_8 = unsafeLocalCoreJet c_div_mod_8
+
+div_mod_16 :: (Word16, Word16) -> Maybe (Word16, Word16)
+div_mod_16 = unsafeLocalCoreJet c_div_mod_16
+
+div_mod_32 :: (Word32, Word32) -> Maybe (Word32, Word32)
+div_mod_32 = unsafeLocalCoreJet c_div_mod_32
+
+div_mod_64 :: (Word64, Word64) -> Maybe (Word64, Word64)
+div_mod_64 = unsafeLocalCoreJet c_div_mod_64
+
+divide_8 :: (Word8, Word8) -> Maybe Word8
+divide_8 = unsafeLocalCoreJet c_divide_8
+
+divide_16 :: (Word16, Word16) -> Maybe Word16
+divide_16 = unsafeLocalCoreJet c_divide_16
+
+divide_32 :: (Word32, Word32) -> Maybe Word32
+divide_32 = unsafeLocalCoreJet c_divide_32
+
+divide_64 :: (Word64, Word64) -> Maybe Word64
+divide_64 = unsafeLocalCoreJet c_divide_64
+
+modulo_8 :: (Word8, Word8) -> Maybe Word8
+modulo_8 = unsafeLocalCoreJet c_modulo_8
+
+modulo_16 :: (Word16, Word16) -> Maybe Word16
+modulo_16 = unsafeLocalCoreJet c_modulo_16
+
+modulo_32 :: (Word32, Word32) -> Maybe Word32
+modulo_32 = unsafeLocalCoreJet c_modulo_32
+
+modulo_64 :: (Word64, Word64) -> Maybe Word64
+modulo_64 = unsafeLocalCoreJet c_modulo_64
+
+divides_8 :: (Word8, Word8) -> Maybe Bit
+divides_8 = unsafeLocalCoreJet c_divides_8
+
+divides_16 :: (Word16, Word16) -> Maybe Bit
+divides_16 = unsafeLocalCoreJet c_divides_16
+
+divides_32 :: (Word32, Word32) -> Maybe Bit
+divides_32 = unsafeLocalCoreJet c_divides_32
+
+divides_64 :: (Word64, Word64) -> Maybe Bit
+divides_64 = unsafeLocalCoreJet c_divides_64
 
 sha_256_iv :: () -> Maybe Sha256.Hash
 sha_256_iv = unsafeLocalCoreJet c_sha_256_iv

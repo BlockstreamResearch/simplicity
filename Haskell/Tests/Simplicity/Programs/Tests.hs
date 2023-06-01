@@ -74,10 +74,6 @@ tests = testGroup "Programs"
       , testGroup "Arith"
         [ testProperty "lsb word8" prop_lsb8
         , testProperty "msb word8" prop_msb8
-        , testProperty "div_mod word8" prop_div_mod8
-        , testProperty "divide word8" prop_divide8
-        , testProperty "modulo word8" prop_modulo8
-        , testProperty "divides word8" prop_divides8
         , testProperty "bezout word8" prop_bezout8
         , testProperty "cofactors word8" prop_cofactors8
         , testProperty "gcd word8" prop_gcd8
@@ -192,6 +188,38 @@ tests = testGroup "Programs"
         , testProperty "median_16"  prop_median_16
         , testProperty "median_32"  prop_median_32
         , testProperty "median_64"  prop_median_64
+        , testProperty "div_mod_8"  prop_div_mod_8
+        , testProperty "div_mod_16"  prop_div_mod_16
+        , testProperty "div_mod_32"  prop_div_mod_32
+        , testProperty "div_mod_64"  prop_div_mod_64
+        , testProperty "divide_8"  prop_divide_8
+        , testProperty "divide_16"  prop_divide_16
+        , testProperty "divide_32"  prop_divide_32
+        , testProperty "divide_64"  prop_divide_64
+        , testProperty "modulo_8"  prop_modulo_8
+        , testProperty "modulo_16"  prop_modulo_16
+        , testProperty "modulo_32"  prop_modulo_32
+        , testProperty "modulo_64"  prop_modulo_64
+        , testProperty "divides_8"  prop_divides_8
+        , testProperty "divides_16"  prop_divides_16
+        , testProperty "divides_32"  prop_divides_32
+        , testProperty "divides_64"  prop_divides_64
+        , testProperty "div_mod_zero_8"  prop_div_mod_zero_8
+        , testProperty "div_mod_zero_16"  prop_div_mod_zero_16
+        , testProperty "div_mod_zero_32"  prop_div_mod_zero_32
+        , testProperty "div_mod_zero_64"  prop_div_mod_zero_64
+        , testProperty "divide_zero_8"  prop_divide_zero_8
+        , testProperty "divide_zero_16"  prop_divide_zero_16
+        , testProperty "divide_zero_32"  prop_divide_zero_32
+        , testProperty "divide_zero_64"  prop_divide_zero_64
+        , testProperty "modulo_zero_8"  prop_modulo_zero_8
+        , testProperty "modulo_zero_16"  prop_modulo_zero_16
+        , testProperty "modulo_zero_32"  prop_modulo_zero_32
+        , testProperty "modulo_zero_64"  prop_modulo_zero_64
+        , testProperty "divides_zero_8"  prop_divides_zero_8
+        , testProperty "divides_zero_16"  prop_divides_zero_16
+        , testProperty "divides_zero_32"  prop_divides_zero_32
+        , testProperty "divides_zero_64"  prop_divides_zero_64
         ]
       , testGroup "Hash"
         [ testCase "sha_256_iv" assert_sha_256_iv
@@ -381,31 +409,6 @@ prop_lsb8 x = W.testBit (fromWord8 x) 0 == fromBit (Arith.lsb word8 x)
 
 prop_msb8 :: Word8 -> Bool
 prop_msb8 x = W.testBit (fromWord8 x) 7 == fromBit (Arith.msb word8 x)
-
-prop_div_mod8 :: Word8 -> Word8 -> Bool
-prop_div_mod8 x y = div_mod_spec (fromWord8 x) (fromWord8 y) == (fromWord8 a, fromWord8 b)
- where
-  div_mod_spec x 0 = (0, x)
-  div_mod_spec x y = divMod x y
-  (a, b) = Arith.div_mod word8 (x, y)
-
-prop_divide8 :: Word8 -> Word8 -> Bool
-prop_divide8 x y = div_spec (fromWord8 x) (fromWord8 y) == fromWord8 (Arith.divide word8 (x, y))
- where
-  div_spec x 0 = 0
-  div_spec x y = div x y
-
-prop_modulo8 :: Word8 -> Word8 -> Bool
-prop_modulo8 x y = mod_spec (fromWord8 x) (fromWord8 y) == fromWord8 (Arith.modulo word8 (x, y))
- where
-  mod_spec x 0 = x
-  mod_spec x y = mod x y
-
-prop_divides8 :: Word8 -> Word8 -> Bool
-prop_divides8 x y = divides_spec (fromWord8 x) (fromWord8 y) == fromBit (Arith.divides word8 (x, y))
- where
-  divides_spec 0 y = y == 0
-  divides_spec x y = y `mod` x == 0
 
 prop_bezout8 :: Word8 -> Word8 -> Bool
 prop_bezout8 x y = a * x' + b * y' == d
@@ -1175,6 +1178,230 @@ prop_median_64 = \x y z -> let input = (toW64 x, (toW64 y, toW64 z))
  where
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (ArithJet Median64))
+
+prop_div_mod_8 :: W.Word8 -> W.Word8 -> Bool
+prop_div_mod_8 = \x y -> let input = (toW8 x, toW8 y)
+                     in fastF input == implementation (ArithJet DivMod8) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod8))
+
+prop_div_mod_16 :: W.Word16 -> W.Word16 -> Bool
+prop_div_mod_16 = \x y -> let input = (toW16 x, toW16 y)
+                      in fastF input == implementation (ArithJet DivMod16) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod16))
+
+prop_div_mod_32 :: W.Word32 -> W.Word32 -> Bool
+prop_div_mod_32 = \x y -> let input = (toW32 x, toW32 y)
+                      in fastF input == implementation (ArithJet DivMod32) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod32))
+
+prop_div_mod_64 :: W.Word64 -> W.Word64 -> Bool
+prop_div_mod_64 = \x y -> let input = (toW64 x, toW64 y)
+                      in fastF input == implementation (ArithJet DivMod64) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod64))
+
+prop_divide_8 :: W.Word8 -> W.Word8 -> Bool
+prop_divide_8 = \x y -> let input = (toW8 x, toW8 y)
+                     in fastF input == implementation (ArithJet Divide8) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divide8))
+
+prop_divide_16 :: W.Word16 -> W.Word16 -> Bool
+prop_divide_16 = \x y -> let input = (toW16 x, toW16 y)
+                      in fastF input == implementation (ArithJet Divide16) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divide16))
+
+prop_divide_32 :: W.Word32 -> W.Word32 -> Bool
+prop_divide_32 = \x y -> let input = (toW32 x, toW32 y)
+                      in fastF input == implementation (ArithJet Divide32) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divide32))
+
+prop_divide_64 :: W.Word64 -> W.Word64 -> Bool
+prop_divide_64 = \x y -> let input = (toW64 x, toW64 y)
+                      in fastF input == implementation (ArithJet Divide64) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divide64))
+
+prop_modulo_8 :: W.Word8 -> W.Word8 -> Bool
+prop_modulo_8 = \x y -> let input = (toW8 x, toW8 y)
+                     in fastF input == implementation (ArithJet Modulo8) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Modulo8))
+
+prop_modulo_16 :: W.Word16 -> W.Word16 -> Bool
+prop_modulo_16 = \x y -> let input = (toW16 x, toW16 y)
+                      in fastF input == implementation (ArithJet Modulo16) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Modulo16))
+
+prop_modulo_32 :: W.Word32 -> W.Word32 -> Bool
+prop_modulo_32 = \x y -> let input = (toW32 x, toW32 y)
+                      in fastF input == implementation (ArithJet Modulo32) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Modulo32))
+
+prop_modulo_64 :: W.Word64 -> W.Word64 -> Bool
+prop_modulo_64 = \x y -> let input = (toW64 x, toW64 y)
+                      in fastF input == implementation (ArithJet Modulo64) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Modulo64))
+
+prop_divides_8 :: W.Word8 -> W.Word8 -> Bool
+prop_divides_8 = \x y -> let input = (toW8 x, toW8 y)
+                     in fastF input == implementation (ArithJet Divides8) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divides8))
+
+prop_divides_16 :: W.Word16 -> W.Word16 -> Bool
+prop_divides_16 = \x y -> let input = (toW16 x, toW16 y)
+                      in fastF input == implementation (ArithJet Divides16) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divides16))
+
+prop_divides_32 :: W.Word32 -> W.Word32 -> Bool
+prop_divides_32 = \x y -> let input = (toW32 x, toW32 y)
+                      in fastF input == implementation (ArithJet Divides32) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divides32))
+
+prop_divides_64 :: W.Word64 -> W.Word64 -> Bool
+prop_divides_64 = \x y -> let input = (toW64 x, toW64 y)
+                      in fastF input == implementation (ArithJet Divides64) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divides64))
+
+prop_div_mod_zero_8 :: W.Word8 -> Bool
+prop_div_mod_zero_8 = \x -> let input = (toW8 x, toW8 0)
+                     in fastF input == implementation (ArithJet DivMod8) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod8))
+
+prop_div_mod_zero_16 :: W.Word16 -> Bool
+prop_div_mod_zero_16 = \x -> let input = (toW16 x, toW16 0)
+                      in fastF input == implementation (ArithJet DivMod16) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod16))
+
+prop_div_mod_zero_32 :: W.Word32 -> Bool
+prop_div_mod_zero_32 = \x -> let input = (toW32 x, toW32 0)
+                      in fastF input == implementation (ArithJet DivMod32) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod32))
+
+prop_div_mod_zero_64 :: W.Word64 -> Bool
+prop_div_mod_zero_64 = \x -> let input = (toW64 x, toW64 0)
+                      in fastF input == implementation (ArithJet DivMod64) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod64))
+
+prop_divide_zero_8 :: W.Word8 -> Bool
+prop_divide_zero_8 = \x -> let input = (toW8 x, toW8 0)
+                     in fastF input == implementation (ArithJet Divide8) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divide8))
+
+prop_divide_zero_16 :: W.Word16 -> Bool
+prop_divide_zero_16 = \x -> let input = (toW16 x, toW16 0)
+                      in fastF input == implementation (ArithJet Divide16) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divide16))
+
+prop_divide_zero_32 :: W.Word32 -> Bool
+prop_divide_zero_32 = \x -> let input = (toW32 x, toW32 0)
+                      in fastF input == implementation (ArithJet Divide32) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divide32))
+
+prop_divide_zero_64 :: W.Word64 -> Bool
+prop_divide_zero_64 = \x -> let input = (toW64 x, toW64 0)
+                      in fastF input == implementation (ArithJet Divide64) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divide64))
+
+prop_modulo_zero_8 :: W.Word8 -> Bool
+prop_modulo_zero_8 = \x -> let input = (toW8 x, toW8 0)
+                     in fastF input == implementation (ArithJet Modulo8) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Modulo8))
+
+prop_modulo_zero_16 :: W.Word16 -> Bool
+prop_modulo_zero_16 = \x -> let input = (toW16 x, toW16 0)
+                      in fastF input == implementation (ArithJet Modulo16) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Modulo16))
+
+prop_modulo_zero_32 :: W.Word32 -> Bool
+prop_modulo_zero_32 = \x -> let input = (toW32 x, toW32 0)
+                      in fastF input == implementation (ArithJet Modulo32) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Modulo32))
+
+prop_modulo_zero_64 :: W.Word64 -> Bool
+prop_modulo_zero_64 = \x -> let input = (toW64 x, toW64 0)
+                      in fastF input == implementation (ArithJet Modulo64) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Modulo64))
+
+prop_divides_zero_8 :: W.Word8 -> Bool
+prop_divides_zero_8 = \x -> let input = (toW8 x, toW8 0)
+                     in fastF input == implementation (ArithJet Divides8) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divides8))
+
+prop_divides_zero_16 :: W.Word16 -> Bool
+prop_divides_zero_16 = \x -> let input = (toW16 x, toW16 0)
+                      in fastF input == implementation (ArithJet Divides16) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divides16))
+
+prop_divides_zero_32 :: W.Word32 -> Bool
+prop_divides_zero_32 = \x -> let input = (toW32 x, toW32 0)
+                      in fastF input == implementation (ArithJet Divides32) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divides32))
+
+prop_divides_zero_64 :: W.Word64 -> Bool
+prop_divides_zero_64 = \x -> let input = (toW64 x, toW64 0)
+                      in fastF input == implementation (ArithJet Divides64) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet Divides64))
 
 assert_sha_256_iv :: Assertion
 assert_sha_256_iv = fastF () @=? implementation (HashJet Sha256Iv) ()
