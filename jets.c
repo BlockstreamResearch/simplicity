@@ -359,6 +359,63 @@ MEDIAN_(16)
 MEDIAN_(32)
 MEDIAN_(64)
 
+#define DIV_MOD_(bits)                                                  \
+  /* div_mod_n : TWO^n * TWO^n |- TWO^n * TWO^n */                      \
+  bool div_mod_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+    (void) env; /* env is unused. */                                    \
+    uint_fast##bits##_t x = read##bits(&src);                           \
+    uint_fast##bits##_t y = read##bits(&src);                           \
+    write##bits(dst, 0 == y ? 0 : x / y);                               \
+    write##bits(dst, 0 == y ? x : x % y);                               \
+    return true;                                                        \
+  }
+DIV_MOD_(8)
+DIV_MOD_(16)
+DIV_MOD_(32)
+DIV_MOD_(64)
+
+#define DIVIDE_(bits)                                                  \
+  /* divide_n : TWO^n * TWO^n |- TWO^n */                      \
+  bool divide_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+    (void) env; /* env is unused. */                                    \
+    uint_fast##bits##_t x = read##bits(&src);                           \
+    uint_fast##bits##_t y = read##bits(&src);                           \
+    write##bits(dst, 0 == y ? 0 : x / y);                               \
+    return true;                                                        \
+  }
+DIVIDE_(8)
+DIVIDE_(16)
+DIVIDE_(32)
+DIVIDE_(64)
+
+#define MODULO_(bits)                                                   \
+  /* modulo_n : TWO^n * TWO^n |- TWO^n */                               \
+  bool modulo_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+    (void) env; /* env is unused. */                                    \
+    uint_fast##bits##_t x = read##bits(&src);                           \
+    uint_fast##bits##_t y = read##bits(&src);                           \
+    write##bits(dst, 0 == y ? x : x % y);                               \
+    return true;                                                        \
+  }
+MODULO_(8)
+MODULO_(16)
+MODULO_(32)
+MODULO_(64)
+
+#define DIVIDES_(bits)                                                   \
+  /* divides_n : TWO^n * TWO^n |- TWO */                                 \
+  bool divides_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+    (void) env; /* env is unused. */                                     \
+    uint_fast##bits##_t x = read##bits(&src);                            \
+    uint_fast##bits##_t y = read##bits(&src);                            \
+    writeBit(dst, 0 == (0 == x ? y : y % x));                            \
+    return true;                                                         \
+  }
+DIVIDES_(8)
+DIVIDES_(16)
+DIVIDES_(32)
+DIVIDES_(64)
+
 /* sha_256_iv : ONE |- TWO^256 */
 bool sha_256_iv(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */

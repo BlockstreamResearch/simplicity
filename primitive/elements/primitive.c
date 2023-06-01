@@ -300,6 +300,46 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
          case 6: *result = MEDIAN_64; return SIMPLICITY_NO_ERROR;
         }
         break;
+       case 22: /* DivMod */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = DIV_MOD_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = DIV_MOD_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = DIV_MOD_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = DIV_MOD_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 23: /* Divide */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = DIVIDE_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = DIVIDE_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = DIVIDE_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = DIVIDE_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 24: /* Modulo */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = MODULO_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = MODULO_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = MODULO_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = MODULO_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 25: /* Divides */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = DIVIDES_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = DIVIDES_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = DIVIDES_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = DIVIDES_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
       }
       break;
      case 3: /* Hash jets chapter */
