@@ -10,7 +10,7 @@ import Data.List.Split (chunksOf, condense, dropInitBlank, keepDelimsL, split, w
 import Data.Maybe (fromMaybe)
 import qualified Data.Map as Map
 import Numeric (showHex)
-import Prettyprinter ( Doc, (<+>), braces, comma, fillSep, line, nest, pretty, punctuate, semi, tupled, vsep
+import Prettyprinter ( Doc, (<+>), braces, comma, dquotes, fillSep, line, nest, parens, pretty, punctuate, semi, tupled, vsep
                      , SimpleDocStream, LayoutOptions(..), PageWidth(..), defaultLayoutOptions, layoutPretty
                      )
 import Prettyprinter.Render.Text (renderIO)
@@ -290,6 +290,40 @@ rustJetEnum mod = vsep
  , "}"
  ]
 
+rustJetDisplay :: Module -> Doc a
+rustJetDisplay mod =
+  "impl fmt::Display for" <+> pretty modname <+>
+    nestBraces ("fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result" <+>
+      nestBraces ("match self" <+>
+        nestBraces (vsep (
+          map (<>comma)
+            [ pretty modname <> "::" <> pretty (jetName jet) <+> "=> f.write_str" <> (parens . dquotes . pretty $ cJetName jet)
+            | SomeArrow jet <- moduleJets mod
+            ]))
+      )
+    )
+ where
+  modname = rustModuleName mod
+
+rustJetFromStr :: Module -> Doc a
+rustJetFromStr mod =
+  "impl str::FromStr for" <+> pretty modname <+>
+    nestBraces (vsep
+    [ "type Err = Error;"
+    , mempty
+    , ("fn from_str(s: &str) -> Result<Self, Error>" <+>
+        nestBraces ("match s" <+>
+          nestBraces (vsep (
+            map (<> comma)
+              ([ dquotes (pretty (cJetName jet)) <+> "=> Ok" <> parens (pretty modname <> "::" <> pretty (jetName jet))
+               | SomeArrow jet <- moduleJets mod
+               ] ++ [ "x => Err(Error::InvalidJetName(x.to_owned()))" ]
+              )))
+      ))
+    ])
+ where
+  modname = rustModuleName mod
+
 rustHeader :: Doc a
 rustHeader = "/* This file has been automatically generated. */"
 
@@ -305,6 +339,7 @@ rustImports mod = vsep (map (<> semi)
   , "use bitcoin_hashes::sha256::Midstate"
   , "use simplicity_sys::CFrameItem"
   , "use std::io::Write"
+  , "use std::{fmt, str}"
   ] ++ envImports))
  where
   envImports | Nothing == moduleName mod = []
@@ -320,6 +355,8 @@ rustJetDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
   , rustImports mod
   , rustJetEnum mod
   , rustJetImpl mod
+  , rustJetDisplay mod
+  , rustJetFromStr mod
   ])
 
 rustFFIImports :: Doc a
