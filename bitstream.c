@@ -213,8 +213,8 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
  *               NULL != stream
  */
 simplicity_err readBitstring(bitstring* result, size_t n, bitstream* stream) {
-  static_assert(0x8000u + 2*(CHAR_BIT - 1) <= SIZE_MAX, "size_t needs to be at least 32-bits");
-  simplicity_assert(n <= 0x8000u);
+  static_assert(0x80000000u + 2*(CHAR_BIT - 1) <= SIZE_MAX, "size_t needs to be at least 32-bits");
+  simplicity_assert(n <= 0x80000000u);
   size_t total_offset = n + stream->offset;
   /* |= stream->len * CHAR_BIT < total_offset iff stream->len < (total_offset + (CHAR_BIT - 1)) / CHAR_BIT */
   if (stream->len < (total_offset + (CHAR_BIT - 1)) / CHAR_BIT) return SIMPLICITY_ERR_BITSTREAM_EOF;
