@@ -158,8 +158,12 @@ static void test_program(char* name, const unsigned char* program, size_t progra
     } else {
       error = decodeWitnessData(&witness, &stream);
       if (!IS_OK(error)) {
-        failures++;
-        printf("Error parsing witness: %d\n", error);
+        if (expectedResult == error) {
+          successes++;
+        } else {
+          failures++;
+          printf("Error parsing witness: %d\n", error);
+        }
       }
     }
   }
@@ -198,7 +202,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       {
         sha256_midstate imr;
         if (IS_OK(verifyNoDuplicateIdentityRoots(&imr, dag, type_dag, (size_t)len)) &&
-            0 == memcmp(expectedIMR, imr.s, sizeof(uint32_t[8]))) {
+            (!expectedIMR || 0 == memcmp(expectedIMR, imr.s, sizeof(uint32_t[8])))) {
           successes++;
         } else {
           failures++;
@@ -425,6 +429,14 @@ static void test_hasDuplicates(const char* name, int expected, uint_fast32_t (*f
   }
 }
 
+static void regression_tests(void) {
+  {
+    /* Unit program with incomplete witness of size 2^31. */
+    const unsigned char regression1[] = {0x27, 0xe1, 0xe0, 0x00, 0x00, 0x00, 0x00};
+    test_program("regression1", regression1, sizeof(regression1), SIMPLICITY_ERR_DATA_OUT_OF_RANGE, NULL, NULL, NULL);
+  }
+}
+
 int main(void) {
   test_decodeUptoMaxInt();
   test_hashBlock();
@@ -445,6 +457,7 @@ int main(void) {
   test_program("schnorr0", schnorr0, sizeof_schnorr0, SIMPLICITY_NO_ERROR, schnorr0_cmr, schnorr0_imr, schnorr0_amr);
   test_program("schnorr6", schnorr6, sizeof_schnorr6, SIMPLICITY_ERR_EXEC_JET, schnorr6_cmr, schnorr6_imr, schnorr6_amr);
   test_elements();
+  regression_tests();
 
   printf("Successes: %d\n", successes);
   printf("Failures: %d\n", failures);
