@@ -435,6 +435,20 @@ static void regression_tests(void) {
     const unsigned char regression1[] = {0x27, 0xe1, 0xe0, 0x00, 0x00, 0x00, 0x00};
     test_program("regression1", regression1, sizeof(regression1), SIMPLICITY_ERR_DATA_OUT_OF_RANGE, NULL, NULL, NULL);
   }
+  {
+    /* Unit program with incomplete witness of size 2^31-1. */
+    const unsigned char regression2[] = {0x27, 0xe1, 0xdf, 0xff, 0xff,  0xff, 0xff};
+    test_program("regression2", regression2, sizeof(regression2), SIMPLICITY_ERR_BITSTREAM_EOF, NULL, NULL, NULL);
+  }
+  {
+    /* word("2^23 zero bits") ; unit */
+    size_t sizeof_regression3 = ((size_t)1 << 20) + 4;
+    unsigned char *regression3 = calloc(sizeof_regression3, 1);
+    assert(regression3);
+    regression3[0] = 0xb7; regression3[1] = 0x08;
+    regression3[sizeof_regression3 - 2] = 0x48; regression3[sizeof_regression3 - 1] = 0x20;
+    test_program("regression3", regression3, sizeof_regression3, SIMPLICITY_ERR_EXEC_MEMORY, NULL, NULL, NULL);
+  }
 }
 
 int main(void) {
