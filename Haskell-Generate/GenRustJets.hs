@@ -144,24 +144,6 @@ showRustHash h = fillSep $ ((<> comma) . format <$> chunksOf 2 str_h)
     padding = replicate (64 - length text) '0'
     text = showHex (integerHash256 h) ""
 
-rustJetNode :: (TyC x, TyC y) => String -> JetData x y -> Doc a
-rustJetNode modname jet = vsep $
-  [ nest 4 (vsep ("pub const" <+> pretty (upperSnakeCase name) <> pretty (": JetNode<" ++ modname ++ "> = JetNode {") :
-      map (<>comma)
-      [ "name:" <+> pretty (modname ++ "JetName::" ++ name)
-      , "cmr:" <+> nest 4 (vsep
-        [ "Cmr(Midstate(["
-        , showRustHash (identityRoot (jetIdentity jet))
-        ]) <-> "]))"
-      , "source_ty:" <+> pretty (compactRustName (compactTy (unreflect tyx)) "")
-      , "target_ty:" <+> pretty (compactRustName (compactTy (unreflect tyy)) "")
-      ]))
-  , "};"
-  ]
- where
-  name = jetName jet
-  (tyx, tyy) = reifyArrow jet
-
 rustJetCmr :: Module -> Doc a
 rustJetCmr mod = vsep $
   [ nest 4 (vsep ("fn cmr(&self) -> Cmr {" :
