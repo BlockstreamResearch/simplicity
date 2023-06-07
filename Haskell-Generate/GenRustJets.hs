@@ -17,9 +17,11 @@ import Prettyprinter.Render.Text (renderIO)
 import System.IO (IOMode(WriteMode), withFile)
 
 import qualified Simplicity.Bitcoin.Jets as Bitcoin
+import qualified Simplicity.Bitcoin.Term as Bitcoin
 import Simplicity.CoreJets
 import Simplicity.Digest
 import qualified Simplicity.Elements.Jets as Elements
+import qualified Simplicity.Elements.Term as Elements
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Tree
@@ -33,7 +35,7 @@ data JetModule = CoreModule | BitcoinModule | ElementsModule
   deriving Eq
 
 data JetData x y = JetData { jetName :: String
-                           , jetIdentity :: IdentityRoot x y
+                           , jetCMR :: CommitmentRoot x y
                            , jetModule :: JetModule
                            }
 
@@ -48,13 +50,17 @@ mkName = filter isAlphaNum . last . words . show
 
 coreJetData :: (TyC x, TyC y) => CoreJet x y -> JetData x y
 coreJetData jet = JetData { jetName = mkName jet
-                          , jetIdentity = specification jet
+                          , jetCMR = cmr
                           , jetModule = CoreModule
                           }
+  where
+    cmr | result == Elements.jet (specification jet) = result
+      where
+       result = Bitcoin.jet (specification jet)
 
 elementsJetData :: (TyC x, TyC y) => Elements.JetType x y -> JetData x y
 elementsJetData jet = JetData { jetName = mkName jet
-                              , jetIdentity = Elements.specification jet
+                              , jetCMR = Elements.jet (Elements.specification jet)
                               , jetModule = jetModule
                               }
  where
@@ -63,7 +69,7 @@ elementsJetData jet = JetData { jetName = mkName jet
 
 bitcoinJetData :: (TyC x, TyC y) => Bitcoin.JetType x y -> JetData x y
 bitcoinJetData jet = JetData { jetName = mkName jet
-                             , jetIdentity = Bitcoin.specification jet
+                             , jetCMR = Bitcoin.jet (Bitcoin.specification jet)
                              , jetModule = jetModule
                              }
  where
@@ -151,7 +157,7 @@ rustJetCmr mod = vsep $
         map (<>comma)
         [ nest 4 (vsep
           [ pretty modname <> "::" <> pretty (jetName jet) <+> "=> ["
-          , showRustHash (identityRoot (jetIdentity jet))
+          , showRustHash (commitmentRoot (jetCMR jet))
           ]) <-> "]"
         | (SomeArrow jet) <- moduleJets mod
         ]))
