@@ -3,6 +3,16 @@
 module Simplicity.FFI.Jets
  ( verify
  , low_8, low_16, low_32, low_64
+ , high_8, high_16, high_32, high_64
+ , complement_8, complement_16, complement_32, complement_64
+ , and_8, and_16, and_32, and_64
+ , or_8, or_16, or_32, or_64
+ , xor_8, xor_16, xor_32, xor_64
+ , maj_8, maj_16, maj_32, maj_64
+ , xor3_8, xor3_16, xor3_32, xor3_64
+ , ch_8, ch_16, ch_32, ch_64
+ , some_8, some_16, some_32, some_64
+ , all_8, all_16, all_32, all_64
  , one_8, one_16, one_32, one_64
  , eq_8, eq_16, eq_32, eq_64, eq_256
  , add_8, add_16, add_32, add_64
@@ -65,6 +75,46 @@ foreign import ccall unsafe "" c_low_8 :: Ptr FrameItem -> Ptr FrameItem -> IO C
 foreign import ccall unsafe "" c_low_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_low_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_low_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_high_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_high_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_high_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_high_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_complement_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_complement_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_complement_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_complement_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_and_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_and_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_and_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_and_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_or_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_or_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_or_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_or_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_maj_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_maj_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_maj_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_maj_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor3_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor3_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor3_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor3_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_ch_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_ch_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_ch_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_ch_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_some_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_some_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_some_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_some_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_all_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_all_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_all_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_all_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_one_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_one_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_one_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -236,6 +286,126 @@ low_32 = unsafeLocalCoreJet c_low_32
 
 low_64 :: () -> Maybe Word64
 low_64 = unsafeLocalCoreJet c_low_64
+
+high_8 :: () -> Maybe Word8
+high_8 = unsafeLocalCoreJet c_high_8
+
+high_16 :: () -> Maybe Word16
+high_16 = unsafeLocalCoreJet c_high_16
+
+high_32 :: () -> Maybe Word32
+high_32 = unsafeLocalCoreJet c_high_32
+
+high_64 :: () -> Maybe Word64
+high_64 = unsafeLocalCoreJet c_high_64
+
+complement_8 :: Word8 -> Maybe Word8
+complement_8 = unsafeLocalCoreJet c_complement_8
+
+complement_16 :: Word16 -> Maybe Word16
+complement_16 = unsafeLocalCoreJet c_complement_16
+
+complement_32 :: Word32 -> Maybe Word32
+complement_32 = unsafeLocalCoreJet c_complement_32
+
+complement_64 :: Word64 -> Maybe Word64
+complement_64 = unsafeLocalCoreJet c_complement_64
+
+and_8 :: (Word8, Word8) -> Maybe Word8
+and_8 = unsafeLocalCoreJet c_and_8
+
+and_16 :: (Word16, Word16) -> Maybe Word16
+and_16 = unsafeLocalCoreJet c_and_16
+
+and_32 :: (Word32, Word32) -> Maybe Word32
+and_32 = unsafeLocalCoreJet c_and_32
+
+and_64 :: (Word64, Word64) -> Maybe Word64
+and_64 = unsafeLocalCoreJet c_and_64
+
+or_8 :: (Word8, Word8) -> Maybe Word8
+or_8 = unsafeLocalCoreJet c_or_8
+
+or_16 :: (Word16, Word16) -> Maybe Word16
+or_16 = unsafeLocalCoreJet c_or_16
+
+or_32 :: (Word32, Word32) -> Maybe Word32
+or_32 = unsafeLocalCoreJet c_or_32
+
+or_64 :: (Word64, Word64) -> Maybe Word64
+or_64 = unsafeLocalCoreJet c_or_64
+
+xor_8 :: (Word8, Word8) -> Maybe Word8
+xor_8 = unsafeLocalCoreJet c_xor_8
+
+xor_16 :: (Word16, Word16) -> Maybe Word16
+xor_16 = unsafeLocalCoreJet c_xor_16
+
+xor_32 :: (Word32, Word32) -> Maybe Word32
+xor_32 = unsafeLocalCoreJet c_xor_32
+
+xor_64 :: (Word64, Word64) -> Maybe Word64
+xor_64 = unsafeLocalCoreJet c_xor_64
+
+maj_8 :: (Word8, (Word8, Word8)) -> Maybe Word8
+maj_8 = unsafeLocalCoreJet c_maj_8
+
+maj_16 :: (Word16, (Word16, Word16)) -> Maybe Word16
+maj_16 = unsafeLocalCoreJet c_maj_16
+
+maj_32 :: (Word32, (Word32, Word32)) -> Maybe Word32
+maj_32 = unsafeLocalCoreJet c_maj_32
+
+maj_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
+maj_64 = unsafeLocalCoreJet c_maj_64
+
+xor3_8 :: (Word8, (Word8, Word8)) -> Maybe Word8
+xor3_8 = unsafeLocalCoreJet c_xor3_8
+
+xor3_16 :: (Word16, (Word16, Word16)) -> Maybe Word16
+xor3_16 = unsafeLocalCoreJet c_xor3_16
+
+xor3_32 :: (Word32, (Word32, Word32)) -> Maybe Word32
+xor3_32 = unsafeLocalCoreJet c_xor3_32
+
+xor3_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
+xor3_64 = unsafeLocalCoreJet c_xor3_64
+
+ch_8 :: (Word8, (Word8, Word8)) -> Maybe Word8
+ch_8 = unsafeLocalCoreJet c_ch_8
+
+ch_16 :: (Word16, (Word16, Word16)) -> Maybe Word16
+ch_16 = unsafeLocalCoreJet c_ch_16
+
+ch_32 :: (Word32, (Word32, Word32)) -> Maybe Word32
+ch_32 = unsafeLocalCoreJet c_ch_32
+
+ch_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
+ch_64 = unsafeLocalCoreJet c_ch_64
+
+some_8 :: Word8 -> Maybe Bit
+some_8 = unsafeLocalCoreJet c_some_8
+
+some_16 :: Word16 -> Maybe Bit
+some_16 = unsafeLocalCoreJet c_some_16
+
+some_32 :: Word32 -> Maybe Bit
+some_32 = unsafeLocalCoreJet c_some_32
+
+some_64 :: Word64 -> Maybe Bit
+some_64 = unsafeLocalCoreJet c_some_64
+
+all_8 :: Word8 -> Maybe Bit
+all_8 = unsafeLocalCoreJet c_all_8
+
+all_16 :: Word16 -> Maybe Bit
+all_16 = unsafeLocalCoreJet c_all_16
+
+all_32 :: Word32 -> Maybe Bit
+all_32 = unsafeLocalCoreJet c_all_32
+
+all_64 :: Word64 -> Maybe Bit
+all_64 = unsafeLocalCoreJet c_all_64
 
 one_8 :: () -> Maybe Word8
 one_8 = unsafeLocalCoreJet c_one_8

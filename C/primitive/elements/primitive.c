@@ -92,6 +92,106 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
          case 6: *result = LOW_64; return SIMPLICITY_NO_ERROR;
         }
         break;
+       case 3: /* High */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = HIGH_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = HIGH_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = HIGH_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = HIGH_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 4: /* Complement */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = COMPLEMENT_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = COMPLEMENT_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = COMPLEMENT_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = COMPLEMENT_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 5: /* And */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = AND_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = AND_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = AND_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = AND_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 6: /* Or */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = OR_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = OR_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = OR_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = OR_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 7: /* Xor */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = XOR_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = XOR_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = XOR_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = XOR_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 8: /* Maj */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = MAJ_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = MAJ_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = MAJ_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = MAJ_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 9: /* Xor3 */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = XOR3_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = XOR3_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = XOR3_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = XOR3_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 10: /* Ch */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = CH_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = CH_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = CH_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = CH_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 11: /* Some */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = SOME_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = SOME_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = SOME_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = SOME_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 12: /* All */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = ALL_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = ALL_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = ALL_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = ALL_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
        case 13: /* Eq */
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;

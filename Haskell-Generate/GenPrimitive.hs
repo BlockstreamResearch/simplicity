@@ -34,6 +34,9 @@ jetList = sortBy (compare `on` name) $ Map.elems jetMap
   name (SomeArrow j) = jetName j
 
 snakeCase :: String -> String
+-- :TODO: Need a better CamelCase convention that doesn't cause "xor3 2" and "xor 32" to both be named "xor32".
+-- Or we need to rename the xor3 jet to some "xor three" or something.
+snakeCase ('X':'o':'r':'3':bits) | bits /= "2" = "Xor3_" ++ bits
 snakeCase str = intercalate "_" . groupSingles $ (split . keepDelimsL . dropInitBlank . whenElt) isUpper =<< splitDigit
  where
   splitDigit = (split . condense . whenElt) isDigit $ str
@@ -429,6 +432,46 @@ rawBenchmark "Divides8" = rawBenchmark "FullMultiply32"
 rawBenchmark "Divides16" = rawBenchmark "FullMultiply32"
 rawBenchmark "Divides32" = rawBenchmark "FullMultiply32"
 rawBenchmark "Divides64" = rawBenchmark "FullMultiply32"
+rawBenchmark "High8" = rawBenchmark "Low32"
+rawBenchmark "High16" = rawBenchmark "Low32"
+rawBenchmark "High32" = rawBenchmark "Low32"
+rawBenchmark "High64" = rawBenchmark "Low32"
+rawBenchmark "Complement8" = rawBenchmark "Add32"
+rawBenchmark "Complement16" = rawBenchmark "Add32"
+rawBenchmark "Complement32" = rawBenchmark "Add32"
+rawBenchmark "Complement64" = rawBenchmark "Add32"
+rawBenchmark "And8" = rawBenchmark "Add32"
+rawBenchmark "And16" = rawBenchmark "Add32"
+rawBenchmark "And32" = rawBenchmark "Add32"
+rawBenchmark "And64" = rawBenchmark "Add32"
+rawBenchmark "Or8" = rawBenchmark "Add32"
+rawBenchmark "Or16" = rawBenchmark "Add32"
+rawBenchmark "Or32" = rawBenchmark "Add32"
+rawBenchmark "Or64" = rawBenchmark "Add32"
+rawBenchmark "Xor8" = rawBenchmark "Add32"
+rawBenchmark "Xor16" = rawBenchmark "Add32"
+rawBenchmark "Xor32" = rawBenchmark "Add32"
+rawBenchmark "Xor64" = rawBenchmark "Add32"
+rawBenchmark "Maj8" = rawBenchmark "Add32"
+rawBenchmark "Maj16" = rawBenchmark "Add32"
+rawBenchmark "Maj32" = rawBenchmark "Add32"
+rawBenchmark "Maj64" = rawBenchmark "Add32"
+rawBenchmark "Xor38" = rawBenchmark "Add32"
+rawBenchmark "Xor316" = rawBenchmark "Add32"
+rawBenchmark "Xor332" = rawBenchmark "Add32"
+rawBenchmark "Xor364" = rawBenchmark "Add32"
+rawBenchmark "Ch8" = rawBenchmark "Add32"
+rawBenchmark "Ch16" = rawBenchmark "Add32"
+rawBenchmark "Ch32" = rawBenchmark "Add32"
+rawBenchmark "Ch64" = rawBenchmark "Add32"
+rawBenchmark "Some8" = rawBenchmark "IsZero32"
+rawBenchmark "Some16" = rawBenchmark "IsZero32"
+rawBenchmark "Some32" = rawBenchmark "IsZero32"
+rawBenchmark "Some64" = rawBenchmark "IsZero32"
+rawBenchmark "All8" = rawBenchmark "IsZero32"
+rawBenchmark "All16" = rawBenchmark "IsZero32"
+rawBenchmark "All32" = rawBenchmark "IsZero32"
+rawBenchmark "All64" = rawBenchmark "IsZero32"
 rawBenchmark str = error $ "rawBenchmark missing " ++ str ++ "."
 
 -- benchmark adjusts the raw benchmark by giving a discount to batch verifiable jets.
