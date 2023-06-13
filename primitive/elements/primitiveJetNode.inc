@@ -2287,44 +2287,12 @@
 , .targetIx = ty_w16
 , .cost = 133 /* milli weight units */
 }
-,[XOR3_16] =
-{ .tag = JET
-, .jet = xor3_16
-, .cmr = {{0x5b1cd287u, 0x52729029u, 0x6eba6dffu, 0xc564536du, 0x4f7a0412u, 0x12af8c27u, 0x1cb5b162u, 0xc20b871du}}
-, .sourceIx = ty_pw16w32
-, .targetIx = ty_w16
-, .cost = 133 /* milli weight units */
-}
 ,[XOR_32] =
 { .tag = JET
 , .jet = xor_32
 , .cmr = {{0x146d0172u, 0x5176eb83u, 0x200a70ccu, 0x4b793ce9u, 0x525cfe28u, 0x9944d4bdu, 0xf2f1c29fu, 0x890a86f9u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_w32
-, .cost = 133 /* milli weight units */
-}
-,[XOR3_32] =
-{ .tag = JET
-, .jet = xor3_32
-, .cmr = {{0x4f96b4f5u, 0x655dd3c7u, 0x59fe0a4cu, 0x38d10794u, 0x79bec4edu, 0x992529ffu, 0x1a075924u, 0xbb1c63c1u}}
-, .sourceIx = ty_pw32w64
-, .targetIx = ty_w32
-, .cost = 133 /* milli weight units */
-}
-,[XOR3_64] =
-{ .tag = JET
-, .jet = xor3_64
-, .cmr = {{0x350087bfu, 0xdc119d8cu, 0x8577e9a2u, 0xf5239e28u, 0xfecc430fu, 0x4c2d41c0u, 0x187d263fu, 0x7966796cu}}
-, .sourceIx = ty_pw64w128
-, .targetIx = ty_w64
-, .cost = 133 /* milli weight units */
-}
-,[XOR3_8] =
-{ .tag = JET
-, .jet = xor3_8
-, .cmr = {{0xdc4a3581u, 0xeef9f3a4u, 0x0ed12facu, 0x10915cc6u, 0x604320c0u, 0xdec94f19u, 0xe5851127u, 0xf94f2d36u}}
-, .sourceIx = ty_pw8w16
-, .targetIx = ty_w8
 , .cost = 133 /* milli weight units */
 }
 ,[XOR_64] =
@@ -2340,6 +2308,38 @@
 , .jet = xor_8
 , .cmr = {{0x4e790651u, 0x60c45368u, 0xa0f6a760u, 0xd31d9eebu, 0x0b92b332u, 0x74147237u, 0x1057ad04u, 0x7902d3dau}}
 , .sourceIx = ty_w16
+, .targetIx = ty_w8
+, .cost = 133 /* milli weight units */
+}
+,[XOR_XOR_16] =
+{ .tag = JET
+, .jet = xor_xor_16
+, .cmr = {{0x5b1cd287u, 0x52729029u, 0x6eba6dffu, 0xc564536du, 0x4f7a0412u, 0x12af8c27u, 0x1cb5b162u, 0xc20b871du}}
+, .sourceIx = ty_pw16w32
+, .targetIx = ty_w16
+, .cost = 133 /* milli weight units */
+}
+,[XOR_XOR_32] =
+{ .tag = JET
+, .jet = xor_xor_32
+, .cmr = {{0x4f96b4f5u, 0x655dd3c7u, 0x59fe0a4cu, 0x38d10794u, 0x79bec4edu, 0x992529ffu, 0x1a075924u, 0xbb1c63c1u}}
+, .sourceIx = ty_pw32w64
+, .targetIx = ty_w32
+, .cost = 133 /* milli weight units */
+}
+,[XOR_XOR_64] =
+{ .tag = JET
+, .jet = xor_xor_64
+, .cmr = {{0x350087bfu, 0xdc119d8cu, 0x8577e9a2u, 0xf5239e28u, 0xfecc430fu, 0x4c2d41c0u, 0x187d263fu, 0x7966796cu}}
+, .sourceIx = ty_pw64w128
+, .targetIx = ty_w64
+, .cost = 133 /* milli weight units */
+}
+,[XOR_XOR_8] =
+{ .tag = JET
+, .jet = xor_xor_8
+, .cmr = {{0xdc4a3581u, 0xeef9f3a4u, 0x0ed12facu, 0x10915cc6u, 0x604320c0u, 0xdec94f19u, 0xe5851127u, 0xf94f2d36u}}
+, .sourceIx = ty_pw8w16
 , .targetIx = ty_w8
 , .cost = 133 /* milli weight units */
 }
