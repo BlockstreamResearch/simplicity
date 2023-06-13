@@ -88,10 +88,10 @@ data WordJet a b where
   Maj16 :: WordJet (Word16, (Word16, Word16)) Word16
   Maj32 :: WordJet (Word32, (Word32, Word32)) Word32
   Maj64 :: WordJet (Word64, (Word64, Word64)) Word64
-  Xor38 :: WordJet (Word8, (Word8, Word8)) Word8
-  Xor316 :: WordJet (Word16, (Word16, Word16)) Word16
-  Xor332 :: WordJet (Word32, (Word32, Word32)) Word32
-  Xor364 :: WordJet (Word64, (Word64, Word64)) Word64
+  XorXor8 :: WordJet (Word8, (Word8, Word8)) Word8
+  XorXor16 :: WordJet (Word16, (Word16, Word16)) Word16
+  XorXor32 :: WordJet (Word32, (Word32, Word32)) Word32
+  XorXor64 :: WordJet (Word64, (Word64, Word64)) Word64
   Ch8 :: WordJet (Word8, (Word8, Word8)) Word8
   Ch16 :: WordJet (Word16, (Word16, Word16)) Word16
   Ch32 :: WordJet (Word32, (Word32, Word32)) Word32
@@ -320,10 +320,10 @@ specificationWord Maj8 = Prog.bitwise_maj word8
 specificationWord Maj16 = Prog.bitwise_maj word16
 specificationWord Maj32 = Prog.bitwise_maj word32
 specificationWord Maj64 = Prog.bitwise_maj word64
-specificationWord Xor38 = Prog.bitwise_xor3 word8
-specificationWord Xor316 = Prog.bitwise_xor3 word16
-specificationWord Xor332 = Prog.bitwise_xor3 word32
-specificationWord Xor364 = Prog.bitwise_xor3 word64
+specificationWord XorXor8 = Prog.bitwise_xor_xor word8
+specificationWord XorXor16 = Prog.bitwise_xor_xor word16
+specificationWord XorXor32 = Prog.bitwise_xor_xor word32
+specificationWord XorXor64 = Prog.bitwise_xor_xor word64
 specificationWord Ch8 = Prog.bitwise_ch word8
 specificationWord Ch16 = Prog.bitwise_ch word16
 specificationWord Ch32 = Prog.bitwise_ch word32
@@ -552,10 +552,10 @@ implementationWord Maj32 = \(x, (y, z)) -> return (toWord32 (fromWord32 x .&. fr
 implementationWord Maj64 = \(x, (y, z)) -> return (toWord64 (fromWord64 x .&. fromWord64 y
                                                          .|. fromWord64 y .&. fromWord64 z
                                                          .|. fromWord64 z .&. fromWord64 x))
-implementationWord Xor38 = \(x, (y, z)) -> return (toWord8 (fromWord8 x `xor` fromWord8 y `xor` fromWord8 z))
-implementationWord Xor316 = \(x, (y, z)) -> return (toWord16 (fromWord16 x `xor` fromWord16 y `xor` fromWord16 z))
-implementationWord Xor332 = \(x, (y, z)) -> return (toWord32 (fromWord32 x `xor` fromWord32 y `xor` fromWord32 z))
-implementationWord Xor364 = \(x, (y, z)) -> return (toWord64 (fromWord64 x `xor` fromWord64 y `xor` fromWord64 z))
+implementationWord XorXor8 = \(x, (y, z)) -> return (toWord8 (fromWord8 x `xor` fromWord8 y `xor` fromWord8 z))
+implementationWord XorXor16 = \(x, (y, z)) -> return (toWord16 (fromWord16 x `xor` fromWord16 y `xor` fromWord16 z))
+implementationWord XorXor32 = \(x, (y, z)) -> return (toWord32 (fromWord32 x `xor` fromWord32 y `xor` fromWord32 z))
+implementationWord XorXor64 = \(x, (y, z)) -> return (toWord64 (fromWord64 x `xor` fromWord64 y `xor` fromWord64 z))
 implementationWord Ch8 = \(x, (y, z)) -> return (toWord8 (fromWord8 x .&. fromWord8 y
                                                       .|. complement (fromWord8 x) .&. fromWord8 z))
 implementationWord Ch16 = \(x, (y, z)) -> return (toWord16 (fromWord16 x .&. fromWord16 y
@@ -974,7 +974,7 @@ wordBook = Shelf
   , orBook
   , xorBook
   , majBook
-  , xor3Book
+  , xorXorBook
   , chBook
   , someBook
   , allBook
@@ -1036,13 +1036,13 @@ majBook = Shelf
   , Item $ SomeArrow Maj32
   , Item $ SomeArrow Maj64
   ]
-xor3Book = Shelf
+xorXorBook = Shelf
   [ Missing
   , Missing
-  , Item $ SomeArrow Xor38
-  , Item $ SomeArrow Xor316
-  , Item $ SomeArrow Xor332
-  , Item $ SomeArrow Xor364
+  , Item $ SomeArrow XorXor8
+  , Item $ SomeArrow XorXor16
+  , Item $ SomeArrow XorXor32
+  , Item $ SomeArrow XorXor64
   ]
 chBook = Shelf
   [ Missing

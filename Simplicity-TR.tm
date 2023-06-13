@@ -8694,15 +8694,15 @@
 
   <math|<around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|<around*|\<llbracket\>|<text|<samp|maj>><rsub|2<rsup|n>>|\<rrbracket\>><around*|\<langle\>|x,<around*|\<langle\>|y,z|\<rangle\>>|\<rangle\>>|)>|\<rceil\>><rsub|1>=\<chi\><around*|(|2\<leq\><around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|x|)>|\<rceil\>><rsub|1>+<around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|y|)>|\<rceil\>><rsub|1>+<around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|z|)>|\<rceil\>><rsub|1>|)>>
 
-  <subsubsection|<samp|xor3>>
+  <subsubsection|<samp|xor-xor>>
 
   \;
 
   <\math>
-    <rep|<text|<samp|'xor3'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>
+    <rep|<text|<samp|'xor-xor'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>
   </math>
 
-  <math|<text|<samp|xor3>><rsub|2<rsup|n>>
+  <math|<text|<samp|xor-xor>><rsub|2<rsup|n>>
   :<2><rsup|2<rsup|n>>\<times\><around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>\<vdash\><2><rsup|2<rsup|n>>>
   for <math|0\<leq\>n>
 
@@ -8710,7 +8710,7 @@
 
   Properties:
 
-  <math|<around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|<around*|\<llbracket\>|<text|<samp|xor3>><rsub|2<rsup|n>>|\<rrbracket\>><around*|\<langle\>|x,<around*|\<langle\>|y,z|\<rangle\>>|\<rangle\>>|)>|\<rceil\>><rsub|1>\<equiv\><around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|x|)>|\<rceil\>><rsub|1>+<around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|y|)>|\<rceil\>><rsub|1>+<around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|z|)>|\<rceil\>><rsub|1><around*|(|mod
+  <math|<around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|<around*|\<llbracket\>|<text|<samp|xor-xor>><rsub|2<rsup|n>>|\<rrbracket\>><around*|\<langle\>|x,<around*|\<langle\>|y,z|\<rangle\>>|\<rangle\>>|)>|\<rceil\>><rsub|1>\<equiv\><around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|x|)>|\<rceil\>><rsub|1>+<around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|y|)>|\<rceil\>><rsub|1>+<around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|z|)>|\<rceil\>><rsub|1><around*|(|mod
   2|)>>
 
   <subsubsection|<samp|ch>>

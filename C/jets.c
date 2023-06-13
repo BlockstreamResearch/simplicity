@@ -117,20 +117,20 @@ MAJ_(16)
 MAJ_(32)
 MAJ_(64)
 
-#define XOR3_(bits)                                                 \
-/* xor3_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \
-bool xor3_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                  \
-  uint_fast##bits##_t x = read##bits(&src);                         \
-  uint_fast##bits##_t y = read##bits(&src);                         \
-  uint_fast##bits##_t z = read##bits(&src);                         \
-  write##bits(dst, x ^ y ^ z);                                      \
-  return true;                                                      \
+#define XOR_XOR_(bits)                                                 \
+/* xor_xor_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \
+bool xor_xor_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                     \
+  uint_fast##bits##_t x = read##bits(&src);                            \
+  uint_fast##bits##_t y = read##bits(&src);                            \
+  uint_fast##bits##_t z = read##bits(&src);                            \
+  write##bits(dst, x ^ y ^ z);                                         \
+  return true;                                                         \
 }
-XOR3_(8)
-XOR3_(16)
-XOR3_(32)
-XOR3_(64)
+XOR_XOR_(8)
+XOR_XOR_(16)
+XOR_XOR_(32)
+XOR_XOR_(64)
 
 #define CH_(bits)                                                 \
 /* ch_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \

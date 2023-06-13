@@ -34,9 +34,6 @@ jetList = sortBy (compare `on` name) $ Map.elems jetMap
   name (SomeArrow j) = jetName j
 
 snakeCase :: String -> String
--- :TODO: Need a better CamelCase convention that doesn't cause "xor3 2" and "xor 32" to both be named "xor32".
--- Or we need to rename the xor3 jet to some "xor three" or something.
-snakeCase ('X':'o':'r':'3':bits) | bits /= "2" = "Xor3_" ++ bits
 snakeCase str = intercalate "_" . groupSingles $ (split . keepDelimsL . dropInitBlank . whenElt) isUpper =<< splitDigit
  where
   splitDigit = (split . condense . whenElt) isDigit $ str
@@ -456,10 +453,10 @@ rawBenchmark "Maj8" = rawBenchmark "Add32"
 rawBenchmark "Maj16" = rawBenchmark "Add32"
 rawBenchmark "Maj32" = rawBenchmark "Add32"
 rawBenchmark "Maj64" = rawBenchmark "Add32"
-rawBenchmark "Xor38" = rawBenchmark "Add32"
-rawBenchmark "Xor316" = rawBenchmark "Add32"
-rawBenchmark "Xor332" = rawBenchmark "Add32"
-rawBenchmark "Xor364" = rawBenchmark "Add32"
+rawBenchmark "XorXor8" = rawBenchmark "Add32"
+rawBenchmark "XorXor16" = rawBenchmark "Add32"
+rawBenchmark "XorXor32" = rawBenchmark "Add32"
+rawBenchmark "XorXor64" = rawBenchmark "Add32"
 rawBenchmark "Ch8" = rawBenchmark "Add32"
 rawBenchmark "Ch16" = rawBenchmark "Add32"
 rawBenchmark "Ch32" = rawBenchmark "Add32"

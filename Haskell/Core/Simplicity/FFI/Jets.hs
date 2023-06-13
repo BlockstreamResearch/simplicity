@@ -9,7 +9,7 @@ module Simplicity.FFI.Jets
  , or_8, or_16, or_32, or_64
  , xor_8, xor_16, xor_32, xor_64
  , maj_8, maj_16, maj_32, maj_64
- , xor3_8, xor3_16, xor3_32, xor3_64
+ , xor_xor_8, xor_xor_16, xor_xor_32, xor_xor_64
  , ch_8, ch_16, ch_32, ch_64
  , some_8, some_16, some_32, some_64
  , all_8, all_16, all_32, all_64
@@ -99,10 +99,10 @@ foreign import ccall unsafe "" c_maj_8 :: Ptr FrameItem -> Ptr FrameItem -> IO C
 foreign import ccall unsafe "" c_maj_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_maj_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_maj_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
-foreign import ccall unsafe "" c_xor3_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
-foreign import ccall unsafe "" c_xor3_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
-foreign import ccall unsafe "" c_xor3_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
-foreign import ccall unsafe "" c_xor3_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor_xor_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor_xor_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor_xor_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor_xor_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_ch_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_ch_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_ch_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -359,17 +359,17 @@ maj_32 = unsafeLocalCoreJet c_maj_32
 maj_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
 maj_64 = unsafeLocalCoreJet c_maj_64
 
-xor3_8 :: (Word8, (Word8, Word8)) -> Maybe Word8
-xor3_8 = unsafeLocalCoreJet c_xor3_8
+xor_xor_8 :: (Word8, (Word8, Word8)) -> Maybe Word8
+xor_xor_8 = unsafeLocalCoreJet c_xor_xor_8
 
-xor3_16 :: (Word16, (Word16, Word16)) -> Maybe Word16
-xor3_16 = unsafeLocalCoreJet c_xor3_16
+xor_xor_16 :: (Word16, (Word16, Word16)) -> Maybe Word16
+xor_xor_16 = unsafeLocalCoreJet c_xor_xor_16
 
-xor3_32 :: (Word32, (Word32, Word32)) -> Maybe Word32
-xor3_32 = unsafeLocalCoreJet c_xor3_32
+xor_xor_32 :: (Word32, (Word32, Word32)) -> Maybe Word32
+xor_xor_32 = unsafeLocalCoreJet c_xor_xor_32
 
-xor3_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
-xor3_64 = unsafeLocalCoreJet c_xor3_64
+xor_xor_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
+xor_xor_64 = unsafeLocalCoreJet c_xor_xor_64
 
 ch_8 :: (Word8, (Word8, Word8)) -> Maybe Word8
 ch_8 = unsafeLocalCoreJet c_ch_8

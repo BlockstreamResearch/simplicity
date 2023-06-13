@@ -4,7 +4,7 @@ module Simplicity.Programs.Bit
  , false, true
  , cond, ch, assert, verify
  , not, and, or, xor
- , xor3, maj
+ , xor_xor, maj
  ) where
 
 import Prelude hiding (drop, take, not, and, or)
@@ -72,8 +72,8 @@ xor :: (Core term, TyC a) => term a Bit -> term a Bit -> term a Bit
 xor s t = s &&& iden >>> cond (not t) t
 
 -- | Simplicity expression that returns the three-way xor of three bits.
-xor3 :: Core term => term (Bit, (Bit, Bit)) Bit
-xor3 = cond (cond iden (not iden)) (cond (not iden) iden)
+xor_xor :: Core term => term (Bit, (Bit, Bit)) Bit
+xor_xor = cond (cond iden (not iden)) (cond (not iden) iden)
 
 -- | Simplicity expression that returns the majority value of three bits.
 maj :: Core term => term (Bit, (Bit, Bit)) Bit

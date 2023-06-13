@@ -152,14 +152,14 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
          case 6: *result = MAJ_64; return SIMPLICITY_NO_ERROR;
         }
         break;
-       case 9: /* Xor3 */
+       case 9: /* Xor_Xor */
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
-         case 3: *result = XOR3_8; return SIMPLICITY_NO_ERROR;
-         case 4: *result = XOR3_16; return SIMPLICITY_NO_ERROR;
-         case 5: *result = XOR3_32; return SIMPLICITY_NO_ERROR;
-         case 6: *result = XOR3_64; return SIMPLICITY_NO_ERROR;
+         case 3: *result = XOR_XOR_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = XOR_XOR_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = XOR_XOR_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = XOR_XOR_64; return SIMPLICITY_NO_ERROR;
         }
         break;
        case 10: /* Ch */

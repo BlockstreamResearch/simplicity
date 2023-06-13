@@ -5,7 +5,7 @@ module Simplicity.Programs.Word
   , complement
   , bitwise_bin, bitwise_tri
   , bitwise_and, bitwise_or, bitwise_xor
-  , bitwise_maj, bitwise_xor3, bitwise_ch
+  , bitwise_maj, bitwise_xor_xor, bitwise_ch
   , some, all, eq
   , leftmost, left_pad_low, left_pad_high, left_extend
   , rightmost, right_pad_low, right_pad_high, right_extend
@@ -86,9 +86,9 @@ bitwise_xor = bitwise_bin (xor oh ih)
 bitwise_maj :: Core term => Word a -> term (a, (a, a)) a
 bitwise_maj = bitwise_tri maj
 
--- | Bitwise 'xor3' over a triple of words.
-bitwise_xor3 :: Core term => Word a -> term (a, (a, a)) a
-bitwise_xor3 = bitwise_tri xor3
+-- | Bitwise 'xor_xor' over a triple of words.
+bitwise_xor_xor :: Core term => Word a -> term (a, (a, a)) a
+bitwise_xor_xor = bitwise_tri xor_xor
 
 -- | Bitwise 'ch' over a triple of words.
 bitwise_ch :: Core term => Word a -> term (a, (a, a)) a

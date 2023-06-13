@@ -50,7 +50,7 @@ one w = true >>> left_pad_low word1 w
 --   (cout, z) = 'full_add' w (cin, (x, y))
 -- @
 full_add :: Core term => Word a -> term (Bit, (a, a)) (Bit, a)
-full_add SingleV = maj &&& xor3
+full_add SingleV = maj &&& xor_xor
 full_add (DoubleV w) = drop (ooh &&& ioh) &&& (oh &&& drop (oih &&& iih) >>> rec)
                    >>> iih &&& (ioh &&& oh >>> rec)
                    >>> ioh &&& (iih &&& oh)
