@@ -830,7 +830,7 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
  *
  * Otherwise 'SIMPLICITY_NO_ERROR' is returned.
  *
- * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type A |- B;
+ * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' for an expression of type A |- B;
  *               inputSize == bitSize(A);
  *               outputSize == bitSize(B);
  *               output == NULL or UWORD output[ROUND_UWORD(outputSize)];

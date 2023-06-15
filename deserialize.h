@@ -13,6 +13,7 @@
  *  (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'SIMPLICITY_ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'SIMPLICITY_ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
+ * Returns 'SIMPLICITY_ERR_HIDDEN_ROOT' if the root of the DAG is a HIDDEN node.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * Returns 'SIMPLICITY_ERR_MALLOC' if malloc fails.
  * In the above error cases, '*dag' is set to NULL.

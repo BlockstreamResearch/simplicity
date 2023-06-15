@@ -34,6 +34,7 @@ typedef enum {
   SIMPLICITY_ERR_EXEC_JET = -38,
   SIMPLICITY_ERR_EXEC_ASSERT = -40,
   SIMPLICITY_ERR_ANTIDOS = -42,
+  SIMPLICITY_ERR_HIDDEN_ROOT = -44,
 } simplicity_err;
 
 /* Check if failure is permanent (or success which is always permanent). */
@@ -65,7 +66,7 @@ static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
   case SIMPLICITY_ERR_STOP_CODE:
     return "Program has STOP node";
   case SIMPLICITY_ERR_HIDDEN:
-    return "Program has illegal HIDDEN node";
+    return "Program has illegal HIDDEN child node";
   case SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES:
     return "Unused bytes at the end of the program";
   case SIMPLICITY_ERR_BITSTREAM_UNUSED_BITS:
@@ -96,6 +97,8 @@ static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
     return "Assertion failed";
   case SIMPLICITY_ERR_ANTIDOS:
     return "Anti-DOS check failed";
+  case SIMPLICITY_ERR_HIDDEN_ROOT:
+    return "Program's root is HIDDEN";
   default:
     return "Unknown error code";
   }

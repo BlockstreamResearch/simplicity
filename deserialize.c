@@ -170,6 +170,7 @@ static simplicity_err decodeDag(dag_node* dag, const size_t len, combinator_coun
  *  (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'SIMPLICITY_ERR_STOP_CODE' if the encoding of a stop tag is encountered.
  * Returns 'SIMPLICITY_ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
+ * Returns 'SIMPLICITY_ERR_HIDDEN_ROOT' if the root of the DAG is a HIDDEN node.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_ORDER' if nodes are not serialized in the canonical order.
  * Returns 'SIMPLICITY_ERR_MALLOC' if malloc fails.
@@ -201,7 +202,9 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
   simplicity_err error = decodeDag(*dag, (size_t)dagLen, census, stream);
 
   if (IS_OK(error)) {
-    error = verifyCanonicalOrder(*dag, (size_t)(dagLen));
+    error = HIDDEN == (*dag)[dagLen - 1].tag
+          ? SIMPLICITY_ERR_HIDDEN_ROOT
+          : verifyCanonicalOrder(*dag, (size_t)(dagLen));
   }
 
   if (IS_OK(error)) {
