@@ -28,7 +28,7 @@ typedef unsigned char flags_type;
  *
  * Otherwise 'SIMPLICITY_NO_ERROR' is returned.
  *
- * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type A |- B;
+ * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' for an expression of type A |- B;
  *               inputSize == bitSize(A);
  *               outputSize == bitSize(B);
  *               output == NULL or UWORD output[ROUND_UWORD(outputSize)];
@@ -52,7 +52,7 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, ubo
  *
  * Otherwise 'SIMPLICITY_NO_ERROR' is returned.
  *
- * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' of type 1 |- 1;
+ * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' for an expression of type ONE |- ONE;
  *               budget <= BUDGET_MAX
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
