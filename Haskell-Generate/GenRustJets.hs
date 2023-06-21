@@ -317,13 +317,11 @@ rustHeader = "/* This file has been automatically generated. */"
 
 rustImports :: Module -> Doc a
 rustImports mod = vsep (map (<> semi)
-  ([ "use crate::bititer::BitIter"
-  , "use crate::bitwriter::BitWriter"
-  , "use crate::jet::type_name::TypeName"
+  ([ "use crate::jet::type_name::TypeName"
   , "use crate::jet::Jet"
   , "use crate::merkle::cmr::Cmr"
   , "use crate::decode_bits"
-  , "use crate::Error"
+  , "use crate::{BitIter, BitWriter, Error}"
   , "use bitcoin_hashes::sha256::Midstate"
   , "use simplicity_sys::CFrameItem"
   , "use std::io::Write"
