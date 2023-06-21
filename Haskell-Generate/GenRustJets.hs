@@ -224,7 +224,7 @@ rustJetEncode mod =
 
 rustJetDecode :: Module -> Doc a
 rustJetDecode mod =
-  "fn decode<I: Iterator<Item = u8>>(bits: &mut BitIter<I>) -> Result<Self, Error>" <+>
+  "fn decode<I: Iterator<Item = u8>>(bits: &mut BitIter<I>) -> Result<Self, decode::Error>" <+>
   nestBraces ("decode_bits!(bits," <+> braces (docTree (moduleCodes mod)) <> ")")
  where
   docTree Dead = mempty
@@ -297,15 +297,15 @@ rustJetFromStr :: Module -> Doc a
 rustJetFromStr mod =
   "impl str::FromStr for" <+> pretty modname <+>
     nestBraces (vsep
-    [ "type Err = Error;"
+    [ "type Err = crate::Error;"
     , mempty
-    , ("fn from_str(s: &str) -> Result<Self, Error>" <+>
+    , ("fn from_str(s: &str) -> Result<Self, Self::Err>" <+>
         nestBraces ("match s" <+>
           nestBraces (vsep (
             map (<> comma)
               ([ dquotes (pretty (cJetName jet)) <+> "=> Ok" <> parens (pretty modname <> "::" <> pretty (jetName jet))
                | SomeArrow jet <- moduleJets mod
-               ] ++ [ "x => Err(Error::InvalidJetName(x.to_owned()))" ]
+               ] ++ [ "x => Err(crate::Error::InvalidJetName(x.to_owned()))" ]
               )))
       ))
     ])
@@ -321,7 +321,7 @@ rustImports mod = vsep (map (<> semi)
   , "use crate::jet::Jet"
   , "use crate::merkle::cmr::Cmr"
   , "use crate::decode_bits"
-  , "use crate::{BitIter, BitWriter, Error}"
+  , "use crate::{decode, BitIter, BitWriter}"
   , "use bitcoin_hashes::sha256::Midstate"
   , "use simplicity_sys::CFrameItem"
   , "use std::io::Write"
