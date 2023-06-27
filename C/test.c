@@ -106,10 +106,12 @@ static void test_hashBlock(void) {
         }
       }
 
-      _Static_assert(UWORD_BIT - 1 <= SIZE_MAX - (256+512), "UWORD_BIT is far too large.");
-      UWORD output[ROUND_UWORD(256)];
-      UWORD input[ROUND_UWORD(256+512)];
-      { frameItem frame = initWriteFrame(256+512, &input[ROUND_UWORD(256+512)]);
+      ubounded inputBitSize = type_dag[dag[len-1].sourceType].bitSize;
+      ubounded outputBitSize = type_dag[dag[len-1].targetType].bitSize;
+      UWORD input[ROUND_UWORD(inputBitSize)];
+      UWORD output[ROUND_UWORD(outputBitSize)];
+      { frameItem frame = initWriteFrame(inputBitSize, &input[ROUND_UWORD(inputBitSize)]);
+        simplicity_assert(256+512 == inputBitSize);
         /* Set SHA-256's initial value. */
         write32s(&frame, (uint32_t[8])
             { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 }
@@ -117,12 +119,13 @@ static void test_hashBlock(void) {
         /* Set the block to be compressed to "abc" with padding. */
         write32s(&frame, (uint32_t[16]){ [0] = 0x61626380, [15] = 0x18 }, 16);
       }
-      if (IS_OK(evalTCOExpression(CHECK_NONE, output, 256, input, 256+512, dag, type_dag, (size_t)len, 29100, NULL))) {
+      if (IS_OK(evalTCOExpression(CHECK_NONE, output, outputBitSize, input, inputBitSize, dag, type_dag, (size_t)len, 29100, NULL))) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
                                          , 0xb00361a3ul, 0x96177a9cul, 0xb410ff61ul, 0xf20015adul };
-        frameItem frame = initReadFrame(256, &output[0]);
+        frameItem frame = initReadFrame(outputBitSize, &output[0]);
         uint32_t result[8];
+        simplicity_assert(256 == outputBitSize);
         read32s(result, 8, &frame);
         if (0 == memcmp(expectedHash, result, sizeof(uint32_t[8]))) {
           successes++;
