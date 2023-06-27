@@ -27,6 +27,8 @@ import Simplicity.Serialization
 import Simplicity.Tree
 import Simplicity.Ty
 
+import Benchmarks
+
 x <-> y = x <> line <> y
 
 nestBraces x = braces (nest 4 (line <> x) <> line)
@@ -234,6 +236,24 @@ rustJetDecode mod =
                      <-> ("1" <+> "=>" <+> braces (docTree r))
                        ) <> line
 
+rustJetCost :: Module -> Doc a
+rustJetCost mod = vsep $
+  [ nest 4 (vsep ("fn cost(&self) -> Cost {" :
+    [ nest 4 (vsep ("match self {" :
+        map (<>comma)
+        [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
+          if BitcoinModule == jetModule jet
+          then "unimplemented!(\"Unspecified cost of Bitcoin jets\")"
+          else "Cost::from_milliweight(" <> (pretty . milliWeight . cost $ jetName jet) <> ")"
+        | SomeArrow jet <- moduleJets mod
+        ]))
+    , "}"
+    ]))
+  , "}"
+  ]
+ where
+  modname = rustModuleName mod
+
 rustJetImpl :: Module -> Doc a
 rustJetImpl mod = vsep $
   [ nest 4 (vsep $ punctuate line
@@ -245,6 +265,7 @@ rustJetImpl mod = vsep $
     , rustJetEncode mod
     , rustJetDecode mod
     , rustJetPtr mod
+    , rustJetCost mod
     ])
   , "}"
   ]
@@ -322,6 +343,7 @@ rustImports mod = vsep (map (<> semi)
   , "use crate::merkle::cmr::Cmr"
   , "use crate::decode_bits"
   , "use crate::{decode, BitIter, BitWriter}"
+  , "use crate::analysis::Cost"
   , "use bitcoin_hashes::sha256::Midstate"
   , "use simplicity_sys::CFrameItem"
   , "use std::io::Write"

@@ -292,6 +292,7 @@ executable GenTests
                       vector >=0.12 && <0.13,
 executable GenRustJets
     main-is:          GenRustJets.hs
+    other-modules:    Benchmarks
     ghc-options:      -main-is GenRustJets
 
     -- Modules included in this executable, other than Main.
