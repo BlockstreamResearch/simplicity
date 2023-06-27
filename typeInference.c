@@ -62,6 +62,7 @@ static unification_var* findRoot(unification_var* alpha) {
  *
  * Preconditon: NULL != alpha and NULL == alpha->parent;
  *              NULL != bound;
+ *              &alpha->bound != bound
  *              NULL != cont and '*cont' is a non-empty stack;
  *              NULL != bindings_used
  */
@@ -70,6 +71,14 @@ static bool applyBinding_cont(unification_var* alpha, binding* bound, unificatio
     /* alpha is currently a free variable.  Copy the provided binding. */
     alpha->isBound = true;
     alpha->bound = *bound;
+    *cont = (*cont)->next;
+    return true;
+  }
+
+  if (&alpha->bound == bound) {
+    simplicity_assert(false); /* The algorithm should never try to bind an already bound variable to it's own binding. */
+
+    /* However, if it does happen then just return successfully without pushing any new unification constraints. */
     *cont = (*cont)->next;
     return true;
   }
