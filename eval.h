@@ -12,6 +12,30 @@ typedef unsigned char flags_type;
 #define CHECK_CASE 0x60
 #define CHECK_ALL ((flags_type)(-1))
 
+/* Given a well-typed dag representing a Simplicity expression, compute the memory and CPU requirements for evaluation.
+ *
+ * If 'malloc' fails, then returns SIMPLICITY_ERR_MALLOC.
+ * If the bounds on the number of cells needed for evaluation of 'dag' on an idealized Bit Machine exceeds maxCells,
+ * then return SIMPLICITY_ERR_EXEC_MEMORY.
+ * If the bounds on the dag's CPU cost exceeds 'maxCost', then return SIMPLICITY_ERR_EXEC_BUDGET.
+ * Otherwise returns SIMPLICITY_NO_ERR.
+ *
+ * Precondition: NULL != cellsBound
+ *               NULL != UWORDBound
+ *               NULL != frameBound
+ *               NULL != costBound
+ *               maxCells < BOUNDED_MAX
+ *               maxCost < BOUNDED_MAX
+ *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
+ * Postcondition: if the result is 'SIMPLICITY_NO_ERR'
+ *                then '*costBound' bounds the dag's CPU cost measured in milli weight units
+ *                 and '*cellsBound' bounds the number of cells needed for evaluation of 'dag' on an idealized Bit Machine
+ *                 and '*UWORDBound' bounds the number of UWORDs needed for the frames during evaluation of 'dag'
+ *                 and '*frameBound' bounds the number of stack frames needed during execution of 'dag'.
+ */
+simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubounded *frameBound, ubounded *costBound
+                            , ubounded maxCells, ubounded maxCost, const dag_node* dag, const type* type_dag, const size_t len);
+
 /* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]' of type A |- B.
  * If bitSize(A) > 0, initialize the active read frame's data with 'input[ROUND_UWORD(bitSize(A))]'.
  *
