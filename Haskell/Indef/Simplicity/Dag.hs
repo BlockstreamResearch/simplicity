@@ -277,7 +277,7 @@ instance JetType jt => Delegate (JetDag jt) where
   disconnect = mkBinary disconnect disconnect uDisconnect
 
 instance JetType jt => Primitive (JetDag jt)  where
-  primitive p = mkLeaf (primitive p) (primitive p) (Prim (SomeArrow p))
+  primitive p = mkLeaf (primitive p) (primitive p) (error "Primitives cannot be directly serialized.  They can only be part of jet specifications.")
 
 -- Exisiting jets are discarded when coverting to a dag.  They are reconstructed using a jet matcher.
 instance JetType jt => Jet (JetDag jt) where

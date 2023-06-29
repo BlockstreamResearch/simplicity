@@ -37,7 +37,7 @@ instance (MonadReader PrimEnv m, Fail.MonadFail m) => Primitive (Kleisli m) wher
 
 -- | This class creates expressions for discounted jets.
 -- A jet's specification is a Simplicity expression that isn't allowed to contain witness data, delgations or other jets.
-class (Assert term, Primitive term) => Jet term where
+class Assert term => Jet term where
   jet :: (TyC a, TyC b) => Weight -> (forall term0. (Assert term0, Primitive term0) => term0 a b) -> term a b
 
 -- | The Monad 'm' should be a commutative monad.

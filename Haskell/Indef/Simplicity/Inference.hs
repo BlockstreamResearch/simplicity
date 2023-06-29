@@ -15,7 +15,6 @@ module Simplicity.Inference
   -- *  optical (like) accessors for TermF data.
   , tyAnnotation, witnessData, jetData
   -- * Constructors for 'UntypedTermF'.
-  -- | There is no @uPrim@.  You must use 'Simplicity.Inference.Prim' instead.
   , uIden, uUnit, uInjl, uInjr
   , uTake, uDrop, uComp, uCase, uPair, uDisconnect
   , uHidden, uWitness, uJet, uFail
@@ -71,7 +70,6 @@ data TermF ty j w a = Iden ty
                     | Disconnect ty ty ty ty a a
                     | Hidden Hash256
                     | Witness ty ty w
-                    | Prim (SomeArrow Prim)
                     | Jet j
   deriving (Functor, Foldable, Traversable)
 
@@ -130,9 +128,6 @@ instance (Show ty, Show j, Show w, Show a) => Show (TermF ty j w a) where
                               $ showString "Witness " . showsPrec 11 a
                               . showString " " . showsPrec 11 b
                               . showString " " . showsPrec 11 w
-  showsPrec p (Prim (SomeArrow prim)) = showParen (10 < p)
-                                      $ showString "Prim "
-                                      . (showParen True $ showString "someArrow " . showString (primName prim))
   showsPrec p (Jet j) = showParen (10 < p)
                       $ showString "Jet " . showsPrec 11 j
 
@@ -158,7 +153,6 @@ instance Traversable (FocusTy j w a)  where
   traverse f (FocusTy (Disconnect a b c d x y)) = fmap FocusTy $ Disconnect <$> f a <*> f b <*> f c <*> f d <*> pure x <*> pure y
   traverse f (FocusTy (Hidden x)) = pure (FocusTy (Hidden x))
   traverse f (FocusTy (Witness a b x)) = fmap FocusTy $ Witness <$> f a <*> f b <*> pure x
-  traverse f (FocusTy (Prim p)) = pure (FocusTy (Prim p))
   traverse f (FocusTy (Jet j)) = pure (FocusTy (Jet j))
 
 -- | A traversal of the type annotations of 'TermF'.
@@ -183,7 +177,6 @@ witnessData f (Pair a b c x y) = pure $ Pair a b c x y
 witnessData f (Disconnect a b c d x y) = pure $ Disconnect a b c d x y
 witnessData f (Hidden x) = pure $ Hidden x
 witnessData f (Witness a b x) = Witness a b <$> f b x
-witnessData f (Prim p) = pure $ Prim p
 witnessData f (Jet p) = pure $ Jet p
 
 -- | An (affine) traversal for the 'Jet' values of a 'TermF'.
@@ -200,7 +193,6 @@ jetData f (Pair a b c x y) = pure $ Pair a b c x y
 jetData f (Disconnect a b c d x y) = pure $ Disconnect a b c d x y
 jetData f (Hidden x) = pure $ Hidden x
 jetData f (Witness a b x) = pure $ Witness a b x
-jetData f (Prim p) = pure $ Prim p
 jetData f (Jet j) = Jet <$> f j
 
 -- InferenceError holds the possible errors that can occur during the 'inference' step.
@@ -275,9 +267,6 @@ termFArrow (Pair a b c _ _) = return (a, UTerm (Prod b c))
 termFArrow (Disconnect a b c d _ _) = return (a, UTerm (Prod b d))
 termFArrow (Hidden _) = throwE HiddenError
 termFArrow (Witness a b _) = return (a, b)
-termFArrow (Prim (SomeArrow p)) = return (unfreeze (unreflect ra), unfreeze (unreflect rb))
- where
-  (ra, rb) = reifyArrow p
 termFArrow (Jet (SomeArrow j)) = return (unfreeze (unreflect ra), unfreeze (unreflect rb))
  where
   (ra, rb) = reifyArrow j
@@ -374,7 +363,6 @@ inference = foldM loop empty
       return (Disconnect a b c d (fromInteger is) (fromInteger it))
     go (Hidden h) = pure (Hidden h)
     go (Witness _ _ w) = Witness <$> fresh <*> fresh <*> pure w
-    go (Prim p) = pure (Prim p)
     go (Jet j) = pure (Jet j)
 
 -- Given the output of 'inference', execute unification and return the container of type annotated Simplicity nodes.
@@ -558,5 +546,4 @@ typeCheck s = result
                                         return (someArrowR ra rb (witness vb))
        where
         err = Left "Simplicity.Inference.typeCheck: decode error in Witness value"
-      typeCheckTerm (Prim (SomeArrow p)) = return (SomeArrow (primitive p))
       typeCheckTerm (Jet (SomeArrow j)) = return . SomeArrow $ asJet j
