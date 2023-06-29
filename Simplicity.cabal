@@ -255,6 +255,7 @@ executable GenPrecomputed
 
 executable GenPrimitive
     main-is:          GenPrimitive.hs
+    other-modules:    Benchmarks
     ghc-options:      -main-is GenPrimitives
 
     -- Modules included in this executable, other than Main.
