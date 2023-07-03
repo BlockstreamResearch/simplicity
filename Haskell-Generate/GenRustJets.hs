@@ -198,12 +198,12 @@ rustJetTargetTy = rustJetTy "target_ty" (\(SomeArrow jet) -> unreflect (snd (rei
 rustJetPtr :: Module -> Doc a
 rustJetPtr mod = vsep $
   [ nest 4 (vsep ("fn c_jet_ptr(&self) -> &dyn Fn(&mut CFrameItem, CFrameItem, &Self::CJetEnvironment) -> bool {" :
-    [ nest 4 (vsep ("match self {" :
+    if modname == "Bitcoin"
+    then ["unimplemented!(\"Bitcoin jets have not yet been implemented.\")"]
+    else [ nest 4 (vsep ("match self {" :
         map (<>comma)
         [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
-          if BitcoinModule == jetModule jet
-          then "unimplemented!(\"Bitcoin jets have not yet been implemented.\")"
-          else pretty ("&simplicity_sys::c_jets::jets_wrapper::"++cJetName jet)
+          pretty ("&simplicity_sys::c_jets::jets_wrapper::"++cJetName jet)
         | SomeArrow jet <- moduleJets mod
         ]))
     , "}"
@@ -239,12 +239,12 @@ rustJetDecode mod =
 rustJetCost :: Module -> Doc a
 rustJetCost mod = vsep $
   [ nest 4 (vsep ("fn cost(&self) -> Cost {" :
-    [ nest 4 (vsep ("match self {" :
+    if modname == "Bitcoin"
+    then ["unimplemented!(\"Unspecified cost of Bitcoin jets\")"]
+    else [ nest 4 (vsep ("match self {" :
         map (<>comma)
         [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
-          if BitcoinModule == jetModule jet
-          then "unimplemented!(\"Unspecified cost of Bitcoin jets\")"
-          else "Cost::from_milliweight(" <> (pretty . milliWeight . cost $ jetName jet) <> ")"
+          "Cost::from_milliweight(" <> (pretty . milliWeight . cost $ jetName jet) <> ")"
         | SomeArrow jet <- moduleJets mod
         ]))
     , "}"
