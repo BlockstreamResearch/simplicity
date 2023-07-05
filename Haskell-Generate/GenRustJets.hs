@@ -18,7 +18,8 @@ import System.IO (IOMode(WriteMode), withFile)
 
 import qualified Simplicity.Bitcoin.Jets as Bitcoin
 import qualified Simplicity.Bitcoin.Term as Bitcoin
-import Simplicity.CoreJets
+import qualified Simplicity.CoreJets as Core
+import Simplicity.CoreJets (CoreJet)
 import Simplicity.Digest
 import qualified Simplicity.Elements.Jets as Elements
 import qualified Simplicity.Elements.Term as Elements
@@ -26,8 +27,7 @@ import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Tree
 import Simplicity.Ty
-
-import Benchmarks
+import Simplicity.Weight
 
 x <-> y = x <> line <> y
 
@@ -39,6 +39,7 @@ data JetModule = CoreModule | BitcoinModule | ElementsModule
 data JetData x y = JetData { jetName :: String
                            , jetCMR :: CommitmentRoot x y
                            , jetModule :: JetModule
+                           , jetCost :: Weight
                            }
 
 sortJetName = sortBy (compare `on` name)
@@ -54,16 +55,18 @@ coreJetData :: (TyC x, TyC y) => CoreJet x y -> JetData x y
 coreJetData jet = JetData { jetName = mkName jet
                           , jetCMR = cmr
                           , jetModule = CoreModule
+                          , jetCost = Core.jetCost jet
                           }
   where
-    cmr | result == Elements.jet (specification jet) = result
+    cmr | result == Elements.asJet (Elements.CoreJet jet) = result
       where
-       result = Bitcoin.jet (specification jet)
+       result = Bitcoin.asJet (Bitcoin.CoreJet jet)
 
 elementsJetData :: (TyC x, TyC y) => Elements.JetType x y -> JetData x y
 elementsJetData jet = JetData { jetName = mkName jet
-                              , jetCMR = Elements.jet (Elements.specification jet)
+                              , jetCMR = Elements.asJet jet
                               , jetModule = jetModule
+                              , jetCost = Elements.jetCost jet
                               }
  where
   jetModule | Elements.CoreJet _ <- jet = CoreModule
@@ -71,8 +74,9 @@ elementsJetData jet = JetData { jetName = mkName jet
 
 bitcoinJetData :: (TyC x, TyC y) => Bitcoin.JetType x y -> JetData x y
 bitcoinJetData jet = JetData { jetName = mkName jet
-                             , jetCMR = Bitcoin.jet (Bitcoin.specification jet)
+                             , jetCMR = Bitcoin.asJet jet
                              , jetModule = jetModule
+                             , jetCost = Bitcoin.jetCost jet
                              }
  where
   jetModule | Bitcoin.CoreJet _ <- jet = CoreModule
@@ -88,7 +92,7 @@ rustModuleName = fromMaybe "Core" . moduleName
 lowerRustModuleName = map toLower . rustModuleName
 
 coreModule :: Module
-coreModule = Module Nothing (someArrowMap coreJetData <$> (treeEvalBitStream getJetBit))
+coreModule = Module Nothing (someArrowMap coreJetData <$> (treeEvalBitStream Core.getJetBit))
 
 -- Take Right is used to drop the (infinite) branch of constant word jets.
 takeRight (Branch _ r) = r
@@ -244,7 +248,7 @@ rustJetCost mod = vsep $
     else [ nest 4 (vsep ("match self {" :
         map (<>comma)
         [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
-          "Cost::from_milliweight(" <> (pretty . milliWeight . cost $ jetName jet) <> ")"
+          "Cost::from_milliweight(" <> (pretty . milliWeight $ jetCost jet) <> ")"
         | SomeArrow jet <- moduleJets mod
         ]))
     , "}"

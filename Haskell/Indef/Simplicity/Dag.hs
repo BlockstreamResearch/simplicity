@@ -281,16 +281,16 @@ instance JetType jt => Primitive (JetDag jt)  where
 
 -- Exisiting jets are discarded when coverting to a dag.  They are reconstructed using a jet matcher.
 instance JetType jt => Jet (JetDag jt) where
-  jet t = Dag { dagRoot = root
-              -- We make this identityRoot point to the same subexpression as the root of t.
-              -- This lets the jet matcher match on nodes marked as jets, but otherwise the JetDag ignores marked jets.
-              , dagMap = Map.insert (identityRoot root) (DMC (dmcTerm (map ! identityRoot (dagRoot dag))) (SomeArrow <$> jm))
-                       $ map
-              , dagEval = eval
-              }
+  jet w t = Dag { dagRoot = root
+                -- We make this identityRoot point to the same subexpression as the root of t.
+                -- This lets the jet matcher match on nodes marked as jets, but otherwise the JetDag ignores marked jets.
+                , dagMap = Map.insert (identityRoot root) (DMC (dmcTerm (map ! identityRoot (dagRoot dag))) (SomeArrow <$> jm))
+                         $ map
+                , dagEval = eval
+                }
    where
     dag = t
-    root = jet t
+    root = jet w t
     eval = dagEval dag
     jm = fastEvalMatcher eval
     map = dagMap dag

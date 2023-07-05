@@ -559,4 +559,4 @@ typeCheck s = result
        where
         err = Left "Simplicity.Inference.typeCheck: decode error in Witness value"
       typeCheckTerm (Prim (SomeArrow p)) = return (SomeArrow (primitive p))
-      typeCheckTerm (Jet (SomeArrow j)) = return . SomeArrow $ jet (specification j)
+      typeCheckTerm (Jet (SomeArrow j)) = return . SomeArrow $ asJet j

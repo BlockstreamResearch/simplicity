@@ -2,6 +2,7 @@
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Bitcoin.Jets
   ( JetType(..)
+  , asJet
   , jetSubst, pruneSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
@@ -11,6 +12,7 @@ module Simplicity.Bitcoin.Jets
   , WrappedSimplicity, unwrap
   , Simplicity.Bitcoin.JetType.specification, Simplicity.Bitcoin.JetType.implementation
   , Simplicity.Bitcoin.JetType.getJetBit, Simplicity.Bitcoin.JetType.putJetBit
+  , Simplicity.Bitcoin.JetType.jetCost
   , Semantics.FastEval
   ) where
 
@@ -338,6 +340,14 @@ instance Simplicity.Bitcoin.JetType.JetType JetType where
     go (CoreJet jt) = ([i,o]++) . CoreJets.putJetBit jt
     go (BitcoinJet jt) = ([i,i]++) . putJetBitBitcoin jt
     (o,i) = (False,True)
+
+  jetCost (ConstWordJet cw) = CoreJets.costConstWord cw
+  jetCost (CoreJet jt) = CoreJets.jetCost jt
+  jetCost (BitcoinJet jt) = error "Simplicity.Bitcoin.Jets.jetCost: :TODO: Implement jets for Bitcoin and benchmark them."
+
+-- | Generate a 'Jet' using the 'Simplicity.Bitcoin.JetType.jetCost' and 'Simplicity.Bitcoin.JetType.specification' of a 'JetType'.
+asJet :: (Jet term, TyC a, TyC b) => JetType a b -> term a b
+asJet = Simplicity.Bitcoin.JetType.asJet
 
 -- This map is used in the 'matcher' method above.
 -- We have floated it out here to make sure the map is shared between invokations of the 'matcher' function.

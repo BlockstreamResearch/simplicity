@@ -2,6 +2,7 @@
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Elements.Jets
   ( JetType(..), ElementsJet(..), SigHashJet(..), TimeLockJet(..), IssuanceJet(..), TransactionJet(..)
+  , asJet
   , jetSubst, pruneSubst
   , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
@@ -11,6 +12,7 @@ module Simplicity.Elements.Jets
   , WrappedSimplicity, unwrap
   , Simplicity.Elements.JetType.specification, Simplicity.Elements.JetType.implementation
   , Simplicity.Elements.JetType.getJetBit, Simplicity.Elements.JetType.putJetBit
+  , Simplicity.Elements.JetType.jetCost
   , Semantics.FastEval
   ) where
 
@@ -30,6 +32,7 @@ import Data.Vector ((!?))
 import Data.Void (Void, vacuous)
 import Lens.Family2 ((^..), over, review)
 
+import qualified Simplicity.Benchmarks as Benchmarks
 import Simplicity.Digest
 import Simplicity.CoreJets (CoreJet, coreJetMap, ConstWordContent(..), SomeConstWordContent(..))
 import qualified Simplicity.CoreJets as CoreJets
@@ -58,6 +61,7 @@ import Simplicity.Ty
 import Simplicity.Ty.Bit
 import Simplicity.Ty.Word
 import qualified Simplicity.Word as W
+import Simplicity.Weight
 
 -- | A type of tokens for the cannonical set of known jets for Simplicity for Elements. (At the moment this just consists of 'CoreJet's.)
 --
@@ -819,6 +823,122 @@ instance Simplicity.Elements.JetType.JetType JetType where
     go (CoreJet jt) = ([i,o]++) . CoreJets.putJetBit jt
     go (ElementsJet jt) = ([i,i]++) . putJetBitElements jt
     (o,i) = (False,True)
+
+  jetCost (ConstWordJet cw) = CoreJets.costConstWord cw
+  jetCost (CoreJet jt) = CoreJets.jetCost jt
+  jetCost (ElementsJet jt) = jetCostElements jt
+
+jetCostElements :: ElementsJet a b -> Weight
+jetCostElements (SigHashJet x) = jetCostSigHash x
+jetCostElements (TimeLockJet x) = jetCostTimeLock x
+jetCostElements (IssuanceJet x) = jetCostIssuance x
+jetCostElements (TransactionJet x) = jetCostTransaction x
+
+jetCostSigHash :: SigHashJet a b -> Weight
+jetCostSigHash SigAllHash = Benchmarks.cost "SigAllHash"
+jetCostSigHash TxHash = Benchmarks.cost "TxHash"
+jetCostSigHash TapEnvHash = Benchmarks.cost "TapEnvHash"
+jetCostSigHash OutputsHash = Benchmarks.cost "OutputsHash"
+jetCostSigHash InputsHash = Benchmarks.cost "InputsHash"
+jetCostSigHash IssuancesHash = Benchmarks.cost "IssuancesHash"
+jetCostSigHash InputUtxosHash = Benchmarks.cost "InputUtxosHash"
+jetCostSigHash OutputAmountsHash = Benchmarks.cost "OutputAmountsHash"
+jetCostSigHash OutputScriptsHash = Benchmarks.cost "OutputScriptsHash"
+jetCostSigHash OutputNoncesHash = Benchmarks.cost "OutputNoncesHash"
+jetCostSigHash OutputRangeProofsHash = Benchmarks.cost "OutputRangeProofsHash"
+jetCostSigHash OutputSurjectionProofsHash = Benchmarks.cost "OutputSurjectionProofsHash"
+jetCostSigHash InputOutpointsHash = Benchmarks.cost "InputOutpointsHash"
+jetCostSigHash InputSequencesHash = Benchmarks.cost "InputSequencesHash"
+jetCostSigHash InputAnnexesHash = Benchmarks.cost "InputAnnexesHash"
+jetCostSigHash InputScriptSigsHash = Benchmarks.cost "InputScriptSigsHash"
+jetCostSigHash IssuanceAssetAmountsHash = Benchmarks.cost "IssuanceAssetAmountsHash"
+jetCostSigHash IssuanceTokenAmountsHash = Benchmarks.cost "IssuanceTokenAmountsHash"
+jetCostSigHash IssuanceRangeProofsHash = Benchmarks.cost "IssuanceRangeProofsHash"
+jetCostSigHash IssuanceBlindingEntropyHash = Benchmarks.cost "IssuanceBlindingEntropyHash"
+jetCostSigHash InputAmountsHash = Benchmarks.cost "InputAmountsHash"
+jetCostSigHash InputScriptsHash = Benchmarks.cost "InputScriptsHash"
+jetCostSigHash TapleafHash = Benchmarks.cost "TapleafHash"
+jetCostSigHash TapbranchHash = Benchmarks.cost "TapbranchHash"
+jetCostSigHash OutpointHash = Benchmarks.cost "OutpointHash"
+jetCostSigHash AssetAmountHash = Benchmarks.cost "AssetAmountHash"
+jetCostSigHash NonceHash = Benchmarks.cost "NonceHash"
+jetCostSigHash AnnexHash = Benchmarks.cost "AnnexHash"
+jetCostSigHash BuildTapleafSimplicity = Benchmarks.cost "BuildTapleafSimplicity"
+jetCostSigHash BuildTapbranch = Benchmarks.cost "BuildTapbranch"
+
+jetCostTimeLock :: TimeLockJet a b -> Weight
+jetCostTimeLock CheckLockHeight = Benchmarks.cost "CheckLockHeight"
+jetCostTimeLock CheckLockTime = Benchmarks.cost "CheckLockTime"
+jetCostTimeLock CheckLockDistance = Benchmarks.cost "CheckLockDistance"
+jetCostTimeLock CheckLockDuration = Benchmarks.cost "CheckLockDuration"
+jetCostTimeLock TxLockHeight = Benchmarks.cost "TxLockHeight"
+jetCostTimeLock TxLockTime = Benchmarks.cost "TxLockTime"
+jetCostTimeLock TxLockDistance = Benchmarks.cost "TxLockDistance"
+jetCostTimeLock TxLockDuration = Benchmarks.cost "TxLockDuration"
+jetCostTimeLock TxIsFinal = Benchmarks.cost "TxIsFinal"
+
+jetCostIssuance :: IssuanceJet a b -> Weight
+jetCostIssuance Issuance = Benchmarks.cost "Issuance"
+jetCostIssuance IssuanceAsset = Benchmarks.cost "IssuanceAsset"
+jetCostIssuance IssuanceToken = Benchmarks.cost "IssuanceToken"
+jetCostIssuance IssuanceEntropy = Benchmarks.cost "IssuanceEntropy"
+jetCostIssuance CalculateIssuanceEntropy = Benchmarks.cost "CalculateIssuanceEntropy"
+jetCostIssuance CalculateAsset = Benchmarks.cost "CalculateAsset"
+jetCostIssuance CalculateExplicitToken = Benchmarks.cost "CalculateExplicitToken"
+jetCostIssuance CalculateConfidentialToken = Benchmarks.cost "CalculateConfidentialToken"
+
+jetCostTransaction :: TransactionJet a b -> Weight
+jetCostTransaction ScriptCMR = Benchmarks.cost "ScriptCMR"
+jetCostTransaction InternalKey = Benchmarks.cost "InternalKey"
+jetCostTransaction CurrentIndex = Benchmarks.cost "CurrentIndex"
+jetCostTransaction NumInputs = Benchmarks.cost "NumInputs"
+jetCostTransaction NumOutputs = Benchmarks.cost "NumOutputs"
+jetCostTransaction LockTime = Benchmarks.cost "LockTime"
+jetCostTransaction OutputAsset = Benchmarks.cost "OutputAsset"
+jetCostTransaction OutputAmount = Benchmarks.cost "OutputAmount"
+jetCostTransaction OutputNonce = Benchmarks.cost "OutputNonce"
+jetCostTransaction OutputScriptHash = Benchmarks.cost "OutputScriptHash"
+jetCostTransaction OutputNullDatum = Benchmarks.cost "OutputNullDatum"
+jetCostTransaction OutputSurjectionProof = Benchmarks.cost "OutputSurjectionProof"
+jetCostTransaction OutputRangeProof = Benchmarks.cost "OutputRangeProof"
+jetCostTransaction CurrentPegin = Benchmarks.cost "CurrentPegin"
+jetCostTransaction CurrentPrevOutpoint = Benchmarks.cost "CurrentPrevOutpoint"
+jetCostTransaction CurrentAsset = Benchmarks.cost "CurrentAsset"
+jetCostTransaction CurrentAmount = Benchmarks.cost "CurrentAmount"
+jetCostTransaction CurrentScriptHash = Benchmarks.cost "CurrentScriptHash"
+jetCostTransaction CurrentSequence = Benchmarks.cost "CurrentSequence"
+jetCostTransaction CurrentAnnexHash = Benchmarks.cost "CurrentAnnexHash"
+jetCostTransaction CurrentScriptSigHash = Benchmarks.cost "CurrentScriptSigHash"
+jetCostTransaction CurrentReissuanceBlinding = Benchmarks.cost "CurrentReissuanceBlinding"
+jetCostTransaction CurrentNewIssuanceContract = Benchmarks.cost "CurrentNewIssuanceContract"
+jetCostTransaction CurrentReissuanceEntropy = Benchmarks.cost "CurrentReissuanceEntropy"
+jetCostTransaction CurrentIssuanceAssetAmount = Benchmarks.cost "CurrentIssuanceAssetAmount"
+jetCostTransaction CurrentIssuanceTokenAmount = Benchmarks.cost "CurrentIssuanceTokenAmount"
+jetCostTransaction CurrentIssuanceAssetProof = Benchmarks.cost "CurrentIssuanceAssetProof"
+jetCostTransaction CurrentIssuanceTokenProof = Benchmarks.cost "CurrentIssuanceTokenProof"
+jetCostTransaction InputPegin = Benchmarks.cost "InputPegin"
+jetCostTransaction InputPrevOutpoint = Benchmarks.cost "InputPrevOutpoint"
+jetCostTransaction InputAsset = Benchmarks.cost "InputAsset"
+jetCostTransaction InputAmount = Benchmarks.cost "InputAmount"
+jetCostTransaction InputScriptHash = Benchmarks.cost "InputScriptHash"
+jetCostTransaction InputSequence = Benchmarks.cost "InputSequence"
+jetCostTransaction InputAnnexHash = Benchmarks.cost "InputAnnexHash"
+jetCostTransaction InputScriptSigHash = Benchmarks.cost "InputScriptSigHash"
+jetCostTransaction ReissuanceBlinding = Benchmarks.cost "ReissuanceBlinding"
+jetCostTransaction NewIssuanceContract = Benchmarks.cost "NewIssuanceContract"
+jetCostTransaction ReissuanceEntropy = Benchmarks.cost "ReissuanceEntropy"
+jetCostTransaction IssuanceAssetAmount = Benchmarks.cost "IssuanceAssetAmount"
+jetCostTransaction IssuanceTokenAmount = Benchmarks.cost "IssuanceTokenAmount"
+jetCostTransaction IssuanceAssetProof = Benchmarks.cost "IssuanceAssetProof"
+jetCostTransaction IssuanceTokenProof = Benchmarks.cost "IssuanceTokenProof"
+jetCostTransaction TapleafVersion = Benchmarks.cost "TapleafVersion"
+jetCostTransaction Tapbranch = Benchmarks.cost "Tapbranch"
+jetCostTransaction Version = Benchmarks.cost "Version"
+jetCostTransaction GenesisBlockHash = Benchmarks.cost "GenesisBlockHash"
+
+-- | Generate a 'Jet' using the 'Simplicity.Elements.JetType.jetCost' and 'Simplicity.Elements.JetType.specification' of a 'JetType'.
+asJet :: (Jet term, TyC a, TyC b) => JetType a b -> term a b
+asJet = Simplicity.Elements.JetType.asJet
 
 -- This map is used in the 'matcher' method above.
 -- We have floated it out here to make sure the map is shared between invokations of the 'matcher' function.

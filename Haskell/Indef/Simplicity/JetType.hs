@@ -2,7 +2,10 @@
 -- | This modules defines the 'JetType' class, and provides the trivial empty instance of this class, 'NoJets'.
 module Simplicity.JetType
   ( JetType(..)
+  , asJet
   , NoJets(..)
+-- * Reexports
+  , Weight
   ) where
 
 import Control.Arrow (runKleisli)
@@ -13,6 +16,7 @@ import Simplicity.Primitive
 import Simplicity.Serialization
 import Simplicity.Tensor
 import Simplicity.Term
+import Simplicity.Weight
 
 -- | A 'JetType' is a data structure that represets a set of known jets.
 -- Every known jet has a 'specification' which is defined by some Simplicity expression (see 'Jet').
@@ -66,6 +70,11 @@ class (Assert (MatcherInfo jt), Primitive (MatcherInfo jt)) => JetType jt where
   matcher :: (TyC a, TyC b) => MatcherInfo jt a b -> Maybe (jt a b)
   getJetBit :: Monad m => m Void -> m Bool -> m (SomeArrow jt)
   putJetBit :: (TyC a, TyC b) => jt a b -> DList Bool
+  jetCost :: (TyC a, TyC b) => jt a b -> Weight
+
+-- | Generate a 'Jet' using the 'jetCost' and 'specification' of a 'JetType'.
+asJet :: (JetType jt, Jet term, TyC a, TyC b) => jt a b -> term a b
+asJet jt = jet (jetCost jt) (specification jt)
 
 -- | 'NoJets' is an empty type that is an instance of 'JetType'.
 -- It allows one not to match any jets at all.
@@ -77,3 +86,4 @@ instance JetType NoJets where
   matcher _ = Nothing
   getJetBit abort next = vacuous abort
   putJetBit noJets = case noJets of {}
+  jetCost noJets = case noJets of {}

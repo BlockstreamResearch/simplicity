@@ -1,15 +1,13 @@
 module Simplicity.BitMachine.StaticAnalysis.Cost
-  ( Weight, TermWeight(..)
+  ( TermWeight(..)
+  , overhead
+-- * Reexports
+  , Weight
   ) where
 
-import Data.Fixed (Milli)
-
-import Simplicity.Term.Core
 import Simplicity.BitMachine.Ty
-
--- | Simplicity CPU cost is measured in 'Weight' units, the same units as Bitcoin transaction size.
--- Simplicity expressions are weighed to 3 decimal places of accuracy.
-type Weight = Milli
+import Simplicity.Term.Core
+import Simplicity.Weight
 
 -- | The CPU weight of a Simplicity expression.
 --
@@ -43,8 +41,7 @@ instance Delegate TermWeight where
   disconnect s0@(TermWeight s) t0@(TermWeight t) = TermWeight $ overhead + milli (2 * bitSizeR (reifyProxy s0) + bitSizeR (reifyProxy t0)) + s + t
 
 -- :TODO: This overhead is just estimated.  It needs to be replaced with a measured value.
+-- :TODO: Perhaps fold this into a generic 'mkTermWeight' or 'withOverhead' constructor that adds in the overhead.
+-- | Helper value for creating 'TermWeight' instaces.
 overhead :: Weight
 overhead = 0.01
-
-milli :: Integer -> Weight
-milli n = fromInteger n / 1000

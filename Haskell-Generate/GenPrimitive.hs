@@ -18,8 +18,7 @@ import Simplicity.Elements.Term
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Ty
-
-import Benchmarks
+import Simplicity.Weight
 
 -- :TODO: This tool should probably be moved to Simplicity.Serialization for general use.
 enumerate :: (Cont (DList a) void -> Cont (DList a) Bool -> Cont (DList a) a) -> [a]
@@ -109,10 +108,10 @@ cJetNode name jt = unlines
   [ "[" ++ upperSnakeCase name ++ "] ="
   , "{ .tag = JET"
   , ", .jet = " ++ lowerSnakeCase name
-  , ", .cmr = {{" ++ showCHash (commitmentRoot (jet (specification jt))) ++ "}}"
+  , ", .cmr = {{" ++ showCHash (commitmentRoot (asJet jt)) ++ "}}"
   , ", .sourceIx = " ++ compactCName (compactTy (unreflect tyx)) ""
   , ", .targetIx = " ++ compactCName (compactTy (unreflect tyy)) ""
-  , ", .cost = " ++ show (milliWeight (cost name)) ++ " /* milli weight units */"
+  , ", .cost = " ++ show (milliWeight (jetCost jt)) ++ " /* milli weight units */"
   , "}"
   ]
  where

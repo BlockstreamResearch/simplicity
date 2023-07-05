@@ -43,7 +43,9 @@ library Simplicity-Core
                        Simplicity.Word,
                        Simplicity.LibSecp256k1.Schnorr,
                        Simplicity.LibSecp256k1.Spec,
-                       Simplicity.Bitcoin
+                       Simplicity.Bitcoin,
+                       Simplicity.Benchmarks,
+                       Simplicity.Weight
   other-extensions:    BangPatterns,
                        FlexibleContexts,
                        GADTs, StandaloneDeriving, TypeFamilies
@@ -172,7 +174,8 @@ library
                        Simplicity.Elements.Inference,
                        Simplicity.Elements.JetType,
                        Simplicity.Elements.Serialization.BitString,
-                       Simplicity.Elements.Serialization.ByteString
+                       Simplicity.Elements.Serialization.ByteString,
+                       Simplicity.Weight
   mixins:              Simplicity-Indef
                          (Simplicity.Term as Simplicity.Bitcoin.Term,
                           Simplicity.Semantics as Simplicity.Bitcoin.Semantics,
@@ -255,7 +258,6 @@ executable GenPrecomputed
 
 executable GenPrimitive
     main-is:          GenPrimitive.hs
-    other-modules:    Benchmarks
     ghc-options:      -main-is GenPrimitives
 
     -- Modules included in this executable, other than Main.
@@ -292,7 +294,6 @@ executable GenTests
                       vector >=0.12 && <0.13,
 executable GenRustJets
     main-is:          GenRustJets.hs
-    other-modules:    Benchmarks
     ghc-options:      -main-is GenRustJets
 
     -- Modules included in this executable, other than Main.

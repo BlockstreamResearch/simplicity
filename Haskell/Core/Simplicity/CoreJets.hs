@@ -9,7 +9,8 @@ module Simplicity.CoreJets
  , implementation
  , fastCoreEval
  , putJetBit, getJetBit
- , ConstWordContent(..), specificationConstWord, implementationConstWord, putConstWordBit
+ , jetCost
+ , ConstWordContent(..), specificationConstWord, implementationConstWord, putConstWordBit, costConstWord
  , SomeConstWordContent(..), getConstWordBit
  , FastCoreEval
  ) where
@@ -28,7 +29,9 @@ import Data.Type.Equality ((:~:)(Refl))
 import Data.Void (Void, vacuous)
 import Lens.Family2 ((^..), over, review)
 
+import qualified Simplicity.Benchmarks as Benchmarks
 import Simplicity.Bitcoin
+import Simplicity.BitMachine.StaticAnalysis.Cost
 import Simplicity.Digest
 import Simplicity.FFI.Jets as FFI
 import Simplicity.MerkleRoot
@@ -44,6 +47,7 @@ import qualified Simplicity.Programs.Word as Prog
 import Simplicity.Term.Core
 import Simplicity.Tree
 import Simplicity.Ty.Word
+import Simplicity.Weight
 
 -- | A data type of (typed) tokens representing known "core" jets.
 --
@@ -1463,6 +1467,226 @@ coreJetMap = Map.fromList . fmap mkAssoc $ toList coreCatalogue
   mkAssoc :: SomeArrow CoreJet -> (Hash256, (SomeArrow CoreJet))
   mkAssoc wrapped@(SomeArrow jt) = (identityRoot (specification jt), wrapped)
 
+-- | The costs of "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.jetCost' method.
+jetCost :: CoreJet a b -> Weight
+jetCost (WordJet x) = jetCostWord x
+jetCost (ArithJet x) = jetCostArith x
+jetCost (HashJet x) = jetCostHash x
+jetCost (Secp256k1Jet x) = jetCostSecp256k1 x
+jetCost (SignatureJet x) = jetCostSignature x
+jetCost (BitcoinJet x) = jetCostBitcoin x
+
+jetCostWord :: WordJet a b -> Weight
+jetCostWord Verify = Benchmarks.cost "Verify"
+jetCostWord Low8 = Benchmarks.cost "Low8"
+jetCostWord Low16 = Benchmarks.cost "Low16"
+jetCostWord Low32 = Benchmarks.cost "Low32"
+jetCostWord Low64 = Benchmarks.cost "Low64"
+jetCostWord High8 = Benchmarks.cost "High8"
+jetCostWord High16 = Benchmarks.cost "High16"
+jetCostWord High32 = Benchmarks.cost "High32"
+jetCostWord High64 = Benchmarks.cost "High64"
+jetCostWord Complement8 = Benchmarks.cost "Complement8"
+jetCostWord Complement16 = Benchmarks.cost "Complement16"
+jetCostWord Complement32 = Benchmarks.cost "Complement32"
+jetCostWord Complement64 = Benchmarks.cost "Complement64"
+jetCostWord And8 = Benchmarks.cost "And8"
+jetCostWord And16 = Benchmarks.cost "And16"
+jetCostWord And32 = Benchmarks.cost "And32"
+jetCostWord And64 = Benchmarks.cost "And64"
+jetCostWord Or8 = Benchmarks.cost "Or8"
+jetCostWord Or16 = Benchmarks.cost "Or16"
+jetCostWord Or32 = Benchmarks.cost "Or32"
+jetCostWord Or64 = Benchmarks.cost "Or64"
+jetCostWord Xor8 = Benchmarks.cost "Xor8"
+jetCostWord Xor16 = Benchmarks.cost "Xor16"
+jetCostWord Xor32 = Benchmarks.cost "Xor32"
+jetCostWord Xor64 = Benchmarks.cost "Xor64"
+jetCostWord Maj8 = Benchmarks.cost "Maj8"
+jetCostWord Maj16 = Benchmarks.cost "Maj16"
+jetCostWord Maj32 = Benchmarks.cost "Maj32"
+jetCostWord Maj64 = Benchmarks.cost "Maj64"
+jetCostWord XorXor8 = Benchmarks.cost "XorXor8"
+jetCostWord XorXor16 = Benchmarks.cost "XorXor16"
+jetCostWord XorXor32 = Benchmarks.cost "XorXor32"
+jetCostWord XorXor64 = Benchmarks.cost "XorXor64"
+jetCostWord Ch8 = Benchmarks.cost "Ch8"
+jetCostWord Ch16 = Benchmarks.cost "Ch16"
+jetCostWord Ch32 = Benchmarks.cost "Ch32"
+jetCostWord Ch64 = Benchmarks.cost "Ch64"
+jetCostWord Some8 = Benchmarks.cost "Some8"
+jetCostWord Some16 = Benchmarks.cost "Some16"
+jetCostWord Some32 = Benchmarks.cost "Some32"
+jetCostWord Some64 = Benchmarks.cost "Some64"
+jetCostWord All8 = Benchmarks.cost "All8"
+jetCostWord All16 = Benchmarks.cost "All16"
+jetCostWord All32 = Benchmarks.cost "All32"
+jetCostWord All64 = Benchmarks.cost "All64"
+jetCostWord Eq8 = Benchmarks.cost "Eq8"
+jetCostWord Eq16 = Benchmarks.cost "Eq16"
+jetCostWord Eq32 = Benchmarks.cost "Eq32"
+jetCostWord Eq64 = Benchmarks.cost "Eq64"
+jetCostWord Eq256 = Benchmarks.cost "Eq256"
+
+jetCostArith :: ArithJet a b -> Weight
+jetCostArith One8 = Benchmarks.cost "One8"
+jetCostArith One16 = Benchmarks.cost "One16"
+jetCostArith One32 = Benchmarks.cost "One32"
+jetCostArith One64 = Benchmarks.cost "One64"
+jetCostArith FullAdd8 = Benchmarks.cost "FullAdd8"
+jetCostArith FullAdd16 = Benchmarks.cost "FullAdd16"
+jetCostArith FullAdd32 = Benchmarks.cost "FullAdd32"
+jetCostArith FullAdd64 = Benchmarks.cost "FullAdd64"
+jetCostArith Add8 = Benchmarks.cost "Add8"
+jetCostArith Add16 = Benchmarks.cost "Add16"
+jetCostArith Add32 = Benchmarks.cost "Add32"
+jetCostArith Add64 = Benchmarks.cost "Add64"
+jetCostArith FullIncrement8 = Benchmarks.cost "FullIncrement8"
+jetCostArith FullIncrement16 = Benchmarks.cost "FullIncrement16"
+jetCostArith FullIncrement32 = Benchmarks.cost "FullIncrement32"
+jetCostArith FullIncrement64 = Benchmarks.cost "FullIncrement64"
+jetCostArith Increment8 = Benchmarks.cost "Increment8"
+jetCostArith Increment16 = Benchmarks.cost "Increment16"
+jetCostArith Increment32 = Benchmarks.cost "Increment32"
+jetCostArith Increment64 = Benchmarks.cost "Increment64"
+jetCostArith FullSubtract8 = Benchmarks.cost "FullSubtract8"
+jetCostArith FullSubtract16 = Benchmarks.cost "FullSubtract16"
+jetCostArith FullSubtract32 = Benchmarks.cost "FullSubtract32"
+jetCostArith FullSubtract64 = Benchmarks.cost "FullSubtract64"
+jetCostArith Subtract8 = Benchmarks.cost "Subtract8"
+jetCostArith Subtract16 = Benchmarks.cost "Subtract16"
+jetCostArith Subtract32 = Benchmarks.cost "Subtract32"
+jetCostArith Subtract64 = Benchmarks.cost "Subtract64"
+jetCostArith Negate8 = Benchmarks.cost "Negate8"
+jetCostArith Negate16 = Benchmarks.cost "Negate16"
+jetCostArith Negate32 = Benchmarks.cost "Negate32"
+jetCostArith Negate64 = Benchmarks.cost "Negate64"
+jetCostArith FullDecrement8 = Benchmarks.cost "FullDecrement8"
+jetCostArith FullDecrement16 = Benchmarks.cost "FullDecrement16"
+jetCostArith FullDecrement32 = Benchmarks.cost "FullDecrement32"
+jetCostArith FullDecrement64 = Benchmarks.cost "FullDecrement64"
+jetCostArith Decrement8 = Benchmarks.cost "Decrement8"
+jetCostArith Decrement16 = Benchmarks.cost "Decrement16"
+jetCostArith Decrement32 = Benchmarks.cost "Decrement32"
+jetCostArith Decrement64 = Benchmarks.cost "Decrement64"
+jetCostArith Multiply8 = Benchmarks.cost "Multiply8"
+jetCostArith Multiply16 = Benchmarks.cost "Multiply16"
+jetCostArith Multiply32 = Benchmarks.cost "Multiply32"
+jetCostArith Multiply64 = Benchmarks.cost "Multiply64"
+jetCostArith FullMultiply8 = Benchmarks.cost "FullMultiply8"
+jetCostArith FullMultiply16 = Benchmarks.cost "FullMultiply16"
+jetCostArith FullMultiply32 = Benchmarks.cost "FullMultiply32"
+jetCostArith FullMultiply64 = Benchmarks.cost "FullMultiply64"
+jetCostArith IsZero8 = Benchmarks.cost "IsZero8"
+jetCostArith IsZero16 = Benchmarks.cost "IsZero16"
+jetCostArith IsZero32 = Benchmarks.cost "IsZero32"
+jetCostArith IsZero64 = Benchmarks.cost "IsZero64"
+jetCostArith IsOne8 = Benchmarks.cost "IsOne8"
+jetCostArith IsOne16 = Benchmarks.cost "IsOne16"
+jetCostArith IsOne32 = Benchmarks.cost "IsOne32"
+jetCostArith IsOne64 = Benchmarks.cost "IsOne64"
+jetCostArith Le8 = Benchmarks.cost "Le8"
+jetCostArith Le16 = Benchmarks.cost "Le16"
+jetCostArith Le32 = Benchmarks.cost "Le32"
+jetCostArith Le64 = Benchmarks.cost "Le64"
+jetCostArith Lt8 = Benchmarks.cost "Lt8"
+jetCostArith Lt16 = Benchmarks.cost "Lt16"
+jetCostArith Lt32 = Benchmarks.cost "Lt32"
+jetCostArith Lt64 = Benchmarks.cost "Lt64"
+jetCostArith Min8 = Benchmarks.cost "Min8"
+jetCostArith Min16 = Benchmarks.cost "Min16"
+jetCostArith Min32 = Benchmarks.cost "Min32"
+jetCostArith Min64 = Benchmarks.cost "Min64"
+jetCostArith Max8 = Benchmarks.cost "Max8"
+jetCostArith Max16 = Benchmarks.cost "Max16"
+jetCostArith Max32 = Benchmarks.cost "Max32"
+jetCostArith Max64 = Benchmarks.cost "Max64"
+jetCostArith Median8 = Benchmarks.cost "Median8"
+jetCostArith Median16 = Benchmarks.cost "Median16"
+jetCostArith Median32 = Benchmarks.cost "Median32"
+jetCostArith Median64 = Benchmarks.cost "Median64"
+jetCostArith DivMod8 = Benchmarks.cost "DivMod8"
+jetCostArith DivMod16 = Benchmarks.cost "DivMod16"
+jetCostArith DivMod32 = Benchmarks.cost "DivMod32"
+jetCostArith DivMod64 = Benchmarks.cost "DivMod64"
+jetCostArith Divide8 = Benchmarks.cost "Divide8"
+jetCostArith Divide16 = Benchmarks.cost "Divide16"
+jetCostArith Divide32 = Benchmarks.cost "Divide32"
+jetCostArith Divide64 = Benchmarks.cost "Divide64"
+jetCostArith Modulo8 = Benchmarks.cost "Modulo8"
+jetCostArith Modulo16 = Benchmarks.cost "Modulo16"
+jetCostArith Modulo32 = Benchmarks.cost "Modulo32"
+jetCostArith Modulo64 = Benchmarks.cost "Modulo64"
+jetCostArith Divides8 = Benchmarks.cost "Divides8"
+jetCostArith Divides16 = Benchmarks.cost "Divides16"
+jetCostArith Divides32 = Benchmarks.cost "Divides32"
+jetCostArith Divides64 = Benchmarks.cost "Divides64"
+
+jetCostHash :: HashJet a b -> Weight
+jetCostHash Sha256Block = Benchmarks.cost "Sha256Block"
+jetCostHash Sha256Iv = Benchmarks.cost "Sha256Iv"
+jetCostHash Sha256Ctx8Add1 = Benchmarks.cost "Sha256Ctx8Add1"
+jetCostHash Sha256Ctx8Add2 = Benchmarks.cost "Sha256Ctx8Add2"
+jetCostHash Sha256Ctx8Add4 = Benchmarks.cost "Sha256Ctx8Add4"
+jetCostHash Sha256Ctx8Add8 = Benchmarks.cost "Sha256Ctx8Add8"
+jetCostHash Sha256Ctx8Add16 = Benchmarks.cost "Sha256Ctx8Add16"
+jetCostHash Sha256Ctx8Add32 = Benchmarks.cost "Sha256Ctx8Add32"
+jetCostHash Sha256Ctx8Add64 = Benchmarks.cost "Sha256Ctx8Add64"
+jetCostHash Sha256Ctx8Add128 = Benchmarks.cost "Sha256Ctx8Add128"
+jetCostHash Sha256Ctx8Add256 = Benchmarks.cost "Sha256Ctx8Add256"
+jetCostHash Sha256Ctx8Add512 = Benchmarks.cost "Sha256Ctx8Add512"
+jetCostHash Sha256Ctx8AddBuffer511 = Benchmarks.cost "Sha256Ctx8AddBuffer511"
+jetCostHash Sha256Ctx8Finalize = Benchmarks.cost "Sha256Ctx8Finalize"
+jetCostHash Sha256Ctx8Init = Benchmarks.cost "Sha256Ctx8Init"
+
+jetCostSecp256k1 :: Secp256k1Jet a b -> Weight
+jetCostSecp256k1 FeNormalize = Benchmarks.cost "FeNormalize"
+jetCostSecp256k1 FeNegate = Benchmarks.cost "FeNegate"
+jetCostSecp256k1 FeAdd = Benchmarks.cost "FeAdd"
+jetCostSecp256k1 FeSquare = Benchmarks.cost "FeSquare"
+jetCostSecp256k1 FeMultiply = Benchmarks.cost "FeMultiply"
+jetCostSecp256k1 FeMultiplyBeta = Benchmarks.cost "FeMultiplyBeta"
+jetCostSecp256k1 FeInvert = Benchmarks.cost "FeInvert"
+jetCostSecp256k1 FeSquareRoot = Benchmarks.cost "FeSquareRoot"
+jetCostSecp256k1 FeIsZero = Benchmarks.cost "FeIsZero"
+jetCostSecp256k1 FeIsOdd = Benchmarks.cost "FeIsOdd"
+jetCostSecp256k1 ScalarNormalize = Benchmarks.cost "ScalarNormalize"
+jetCostSecp256k1 ScalarNegate = Benchmarks.cost "ScalarNegate"
+jetCostSecp256k1 ScalarAdd = Benchmarks.cost "ScalarAdd"
+jetCostSecp256k1 ScalarSquare = Benchmarks.cost "ScalarSquare"
+jetCostSecp256k1 ScalarMultiply = Benchmarks.cost "ScalarMultiply"
+jetCostSecp256k1 ScalarMultiplyLambda = Benchmarks.cost "ScalarMultiplyLambda"
+jetCostSecp256k1 ScalarInvert = Benchmarks.cost "ScalarInvert"
+jetCostSecp256k1 ScalarIsZero = Benchmarks.cost "ScalarIsZero"
+jetCostSecp256k1 GejInfinity = Benchmarks.cost "GejInfinity"
+jetCostSecp256k1 GejNormalize = Benchmarks.cost "GejNormalize"
+jetCostSecp256k1 GejNegate = Benchmarks.cost "GejNegate"
+jetCostSecp256k1 GeNegate = Benchmarks.cost "GeNegate"
+jetCostSecp256k1 GejDouble = Benchmarks.cost "GejDouble"
+jetCostSecp256k1 GejAdd = Benchmarks.cost "GejAdd"
+jetCostSecp256k1 GejGeAddEx = Benchmarks.cost "GejGeAddEx"
+jetCostSecp256k1 GejGeAdd = Benchmarks.cost "GejGeAdd"
+jetCostSecp256k1 GejRescale = Benchmarks.cost "GejRescale"
+jetCostSecp256k1 GejIsInfinity = Benchmarks.cost "GejIsInfinity"
+jetCostSecp256k1 GejXEquiv = Benchmarks.cost "GejXEquiv"
+jetCostSecp256k1 GejYIsOdd = Benchmarks.cost "GejYIsOdd"
+jetCostSecp256k1 GejIsOnCurve = Benchmarks.cost "GejIsOnCurve"
+jetCostSecp256k1 GeIsOnCurve = Benchmarks.cost "GeIsOnCurve"
+jetCostSecp256k1 Generate = Benchmarks.cost "Generate"
+jetCostSecp256k1 Scale = Benchmarks.cost "Scale"
+jetCostSecp256k1 LinearCombination1 = Benchmarks.cost "LinearCombination1"
+jetCostSecp256k1 LinearVerify1 = Benchmarks.cost "LinearVerify1"
+jetCostSecp256k1 PointVerify1 = Benchmarks.cost "PointVerify1"
+jetCostSecp256k1 Decompress = Benchmarks.cost "Decompress"
+
+jetCostSignature :: SignatureJet a b -> Weight
+jetCostSignature CheckSigVerify = Benchmarks.cost "CheckSigVerify"
+jetCostSignature Bip0340Verify = Benchmarks.cost "Bip0340Verify"
+
+jetCostBitcoin :: BitcoinJet a b -> Weight
+jetCostBitcoin ParseLock = Benchmarks.cost "ParseLock"
+jetCostBitcoin ParseSequence = Benchmarks.cost "ParseSequence"
+
 -- | Performs a lookup from `coreJetMap` from an `IdentityRoot`.
 -- This operation preserves the Simplicity types.
 coreJetLookup :: (TyC a, TyC b) => IdentityRoot a b -> Maybe (CoreJet a b)
@@ -1494,6 +1718,10 @@ specificationConstWord (ConstWordContent w v) = scribe (toWord w v)
 -- | Returns an implementation of a constant word jet corresponding to the contents of a given 'ConstWordContent'.
 implementationConstWord :: ConstWordContent b -> () -> Maybe b
 implementationConstWord (ConstWordContent w v) _ = Just (toWord w v)
+
+-- | Returns the cost of a constant word jet corresponding to the contents of a given 'ConstWordContent'.
+costConstWord :: ConstWordContent b -> Weight
+costConstWord (ConstWordContent w _) = overhead + milli (wordSize w)
 
 -- | Parses the depth and value of a constant word jet and returns 'SomeConstWordContent'.
 getConstWordBit :: forall m. (Monad m) => m Void -> m Bool -> m SomeConstWordContent

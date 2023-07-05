@@ -59,7 +59,7 @@ instance Primitive p => Primitive (Delegator p) where
   primitive p = Delegator (primitive p) (primitive p)
 
 instance Jet p => Jet (Delegator p) where
-  jet t = Delegator (jet t) (jet t)
+  jet w t = Delegator (jet w t) (jet w t)
 
 instance (Jet p, Witness p) => Simplicity (Delegator p) where
 
@@ -147,9 +147,9 @@ instance (Monoid log, JetType jt) => Primitive (FastEvalLog log jt)  where
   primitive p = mkLeaf (primitive p) (pure (primitive p))
 
 instance (Monoid log, JetType jt) => Jet (FastEvalLog log jt) where
-  jet t = result
+  jet w t = result
    where
-    result = FastEvalLog { fastEvalSem = Delegator (jet t) fs
+    result = FastEvalLog { fastEvalSem = Delegator (jet w t) fs
                          , fastEvalMatcher = jm
                          }
     FastEvalLog (Delegator _ fs) jm = t `asTypeOf` result

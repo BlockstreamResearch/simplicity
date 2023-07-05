@@ -1,5 +1,5 @@
-module Benchmarks
- ( cost, milliWeight
+module Simplicity.Benchmarks
+ ( cost
  ) where
 
 import Simplicity.BitMachine.StaticAnalysis.Cost
@@ -316,6 +316,3 @@ cost :: String -> Weight
 cost jetName = realToFrac $ benchmark jetName * factor
  where
   factor = 50 / benchmark "CheckSigVerify"
-
-milliWeight :: Weight -> Integer
-milliWeight = round . (1000*)
