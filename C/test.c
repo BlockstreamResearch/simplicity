@@ -119,6 +119,16 @@ static void test_hashBlock(void) {
         /* Set the block to be compressed to "abc" with padding. */
         write32s(&frame, (uint32_t[16]){ [0] = 0x61626380, [15] = 0x18 }, 16);
       }
+      {
+        ubounded cellsBound, UWORDBound, frameBound, costBound;
+        if (IS_OK(analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, BOUNDED_MAX, BOUNDED_MAX, dag, type_dag, (size_t)len))
+            && hashBlock_cost == costBound) {
+          successes++;
+        } else {
+          failures++;
+          printf("Expected %d for cost, but got %d instead.\n", hashBlock_cost, costBound);
+        }
+      }
       if (IS_OK(evalTCOExpression(CHECK_NONE, output, input, dag, type_dag, (size_t)len, 29100, NULL))) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
@@ -144,7 +154,7 @@ static void test_hashBlock(void) {
 }
 
 static void test_program(char* name, const unsigned char* program, size_t program_len, simplicity_err expectedResult, const uint32_t* expectedCMR,
-                         const uint32_t* expectedIMR, const uint32_t* expectedAMR) {
+                         const uint32_t* expectedIMR, const uint32_t* expectedAMR, const ubounded *expectedCost) {
   printf("Test %s\n", name);
   dag_node* dag;
   combinator_counters census;
@@ -212,7 +222,16 @@ static void test_program(char* name, const unsigned char* program, size_t progra
           printf("Unexpected IMR.\n");
         }
       }
-
+      if (expectedCost) {
+        ubounded cellsBound, UWORDBound, frameBound, costBound;
+        if (IS_OK(analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, BOUNDED_MAX, BOUNDED_MAX, dag, type_dag, (size_t)len))
+           && *expectedCost == costBound) {
+          successes++;
+        } else {
+          failures++;
+          printf("Expected %d for cost, but got %d instead.\n", *expectedCost, costBound);
+        }
+      }
       simplicity_err actualResult = evalTCOProgram(dag, type_dag, (size_t)len, BUDGET_MAX, NULL);
       if (expectedResult == actualResult) {
         successes++;
@@ -304,7 +323,7 @@ static void test_elements(void) {
       simplicity_err execResult;
       {
         unsigned char imrResult[32];
-        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, BUDGET_MAX, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && IS_OK(execResult)) {
+        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, (elementsCheckSigHashAllTx1_cost + 999)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && IS_OK(execResult)) {
           sha256_midstate imr;
           sha256_toMidstate(imr.s, imrResult);
           if (0 == memcmp(imr.s, elementsCheckSigHashAllTx1_imr, sizeof(uint32_t[8]))) {
@@ -316,6 +335,16 @@ static void test_elements(void) {
         } else {
           failures++;
           printf("execSimplicity of elementsCheckSigHashAllTx1 on tx1 unexpectedly produced %d.\n", execResult);
+        }
+        if (elementsCheckSigHashAllTx1_cost){
+          /* test the same transaction without adequate budget. */
+          simplicity_assert(elementsCheckSigHashAllTx1_cost);
+          if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, (elementsCheckSigHashAllTx1_cost - 1)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && SIMPLICITY_ERR_EXEC_BUDGET == execResult) {
+            successes++;
+          } else {
+            failures++;
+            printf("execSimplicity of elementsCheckSigHashAllTx1 on tx1 unexpectedly produced %d.\n", execResult);
+          }
         }
       }
       {
@@ -436,12 +465,12 @@ static void regression_tests(void) {
   {
     /* Unit program with incomplete witness of size 2^31. */
     const unsigned char regression1[] = {0x27, 0xe1, 0xe0, 0x00, 0x00, 0x00, 0x00};
-    test_program("regression1", regression1, sizeof(regression1), SIMPLICITY_ERR_DATA_OUT_OF_RANGE, NULL, NULL, NULL);
+    test_program("regression1", regression1, sizeof(regression1), SIMPLICITY_ERR_DATA_OUT_OF_RANGE, NULL, NULL, NULL, NULL);
   }
   {
     /* Unit program with incomplete witness of size 2^31-1. */
     const unsigned char regression2[] = {0x27, 0xe1, 0xdf, 0xff, 0xff,  0xff, 0xff};
-    test_program("regression2", regression2, sizeof(regression2), SIMPLICITY_ERR_BITSTREAM_EOF, NULL, NULL, NULL);
+    test_program("regression2", regression2, sizeof(regression2), SIMPLICITY_ERR_BITSTREAM_EOF, NULL, NULL, NULL, NULL);
   }
   {
     /* word("2^23 zero bits") ; unit */
@@ -450,7 +479,7 @@ static void regression_tests(void) {
     assert(regression3);
     regression3[0] = 0xb7; regression3[1] = 0x08;
     regression3[sizeof_regression3 - 2] = 0x48; regression3[sizeof_regression3 - 1] = 0x20;
-    test_program("regression3", regression3, sizeof_regression3, SIMPLICITY_ERR_EXEC_MEMORY, NULL, NULL, NULL);
+    test_program("regression3", regression3, sizeof_regression3, SIMPLICITY_ERR_EXEC_MEMORY, NULL, NULL, NULL, NULL);
   }
 }
 
@@ -463,16 +492,16 @@ int main(void) {
   test_hasDuplicates("hasDuplicates all duplicates testcase", 1, rsort_all_duplicates, 10000);
   test_hasDuplicates("hasDuplicates one duplicate testcase", 1, rsort_one_duplicate, 10000);
 
-  test_program("ctx8Pruned", ctx8Pruned, sizeof_ctx8Pruned, SIMPLICITY_NO_ERROR, ctx8Pruned_cmr, ctx8Pruned_imr, ctx8Pruned_amr);
-  test_program("ctx8Unpruned", ctx8Unpruned, sizeof_ctx8Unpruned, SIMPLICITY_ERR_ANTIDOS, ctx8Unpruned_cmr, ctx8Unpruned_imr, ctx8Unpruned_amr);
+  test_program("ctx8Pruned", ctx8Pruned, sizeof_ctx8Pruned, SIMPLICITY_NO_ERROR, ctx8Pruned_cmr, ctx8Pruned_imr, ctx8Pruned_amr, &ctx8Pruned_cost);
+  test_program("ctx8Unpruned", ctx8Unpruned, sizeof_ctx8Unpruned, SIMPLICITY_ERR_ANTIDOS, ctx8Unpruned_cmr, ctx8Unpruned_imr, ctx8Unpruned_amr, &ctx8Unpruned_cost);
   if (0 == memcmp(ctx8Pruned_cmr, ctx8Unpruned_cmr, sizeof(uint32_t[8]))) {
     successes++;
   } else {
     failures++;
     printf("Pruned and Unpruned CMRs are not the same.\n");
   }
-  test_program("schnorr0", schnorr0, sizeof_schnorr0, SIMPLICITY_NO_ERROR, schnorr0_cmr, schnorr0_imr, schnorr0_amr);
-  test_program("schnorr6", schnorr6, sizeof_schnorr6, SIMPLICITY_ERR_EXEC_JET, schnorr6_cmr, schnorr6_imr, schnorr6_amr);
+  test_program("schnorr0", schnorr0, sizeof_schnorr0, SIMPLICITY_NO_ERROR, schnorr0_cmr, schnorr0_imr, schnorr0_amr, &schnorr0_cost);
+  test_program("schnorr6", schnorr6, sizeof_schnorr6, SIMPLICITY_ERR_EXEC_JET, schnorr6_cmr, schnorr6_imr, schnorr6_amr, &schnorr0_cost);
   test_elements();
   regression_tests();
 
