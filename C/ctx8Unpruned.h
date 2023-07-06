@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "bounded.h"
 
 /* A length-prefixed encoding of the following Simplicity program:
  *     (scribe (toWord256 0x067C531269735CA7F541FDACA8F0DC76305D3CADA140F89372A410FE5EFF6E4D) &&&
@@ -20,5 +21,8 @@ extern const uint32_t ctx8Unpruned_imr[];
 
 /* The annotated Merkle root of the above ctx8Unpruned Simplicity expression. */
 extern const uint32_t ctx8Unpruned_amr[];
+
+/* The cost of the above ctx8Unpruned Simplicity expression in milli weight units. */
+extern const ubounded ctx8Unpruned_cost;
 
 #endif

@@ -20,6 +20,7 @@ import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Primitive
 import Simplicity.Elements.Jets (JetType, WrappedSimplicity, fastEval, jetSubst, unwrap)
 import Simplicity.Elements.Serialization.BitString
+import Simplicity.Elements.StaticAnalysis.Cost
 import qualified Simplicity.Elements.Programs.SigHash.Lib
 import Simplicity.Elements.Term
 import qualified Simplicity.LibSecp256k1.Spec
@@ -98,18 +99,23 @@ fileC example = "#include \""++example^.name++".h\"\n"
         ++ "\n"
         ++ "/* The annotated Merkle root of the above "++example^.fullname++" Simplicity expression. */\n"
         ++ showHash (example^.fullname++"_amr") amr
+        ++ "\n"
+        ++ "/* The cost of the above "++example^.fullname++" Simplicity expression in milli weight units. */\n"
+        ++ "const ubounded "++example^.fullname++"_cost = "++show cost++";\n"
  where
   binary = BS.unpack . runPut . putBitStream . putTermLengthCode
          $ (unwrap (example^.prog) :: Simplicity.Elements.Dag.JetDag jt a b)
   cmr = commitmentRoot . unwrap $ example^.prog
   imr = identityRoot . unwrap $ example^.prog
   amr = annotatedRoot . unwrap $ example^.prog
+  cost = milliWeigh . unwrap $ example^.prog
 
 fileH example = "#ifndef "++headerDef++"\n"
              ++ "#define "++headerDef++"\n"
              ++ "\n"
              ++ "#include <stddef.h>\n"
              ++ "#include <stdint.h>\n"
+             ++ "#include \""++concat (replicate (length (example^.path)) "../")++"bounded.h\"\n"
              ++ "\n"
              ++ showComment (example^.withJets) (example^.text)
              ++ "extern const unsigned char "++example^.fullname++"[];\n"
@@ -123,6 +129,9 @@ fileH example = "#ifndef "++headerDef++"\n"
              ++ "\n"
              ++ "/* The annotated Merkle root of the above "++example^.fullname++" Simplicity expression. */\n"
              ++ "extern const uint32_t "++example^.fullname++"_amr[];\n"
+             ++ "\n"
+             ++ "/* The cost of the above "++example^.fullname++" Simplicity expression in milli weight units. */\n"
+             ++ "extern const ubounded "++example^.fullname++"_cost;\n"
              ++ "\n"
              ++ "#endif\n"
  where

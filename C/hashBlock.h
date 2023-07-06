@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "bounded.h"
 
 /* A length-prefixed encoding of the following Simplicity program:
  *     hashBlock
@@ -18,5 +19,8 @@ extern const uint32_t hashBlock_imr[];
 
 /* The annotated Merkle root of the above hashBlock Simplicity expression. */
 extern const uint32_t hashBlock_amr[];
+
+/* The cost of the above hashBlock Simplicity expression in milli weight units. */
+extern const ubounded hashBlock_cost;
 
 #endif

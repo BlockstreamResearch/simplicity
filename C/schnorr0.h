@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "bounded.h"
 
 /* A length-prefixed encoding of the following Simplicity program:
  *     (scribe (toWord256 0xF9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9) &&&
@@ -22,5 +23,8 @@ extern const uint32_t schnorr0_imr[];
 
 /* The annotated Merkle root of the above schnorr0 Simplicity expression. */
 extern const uint32_t schnorr0_amr[];
+
+/* The cost of the above schnorr0 Simplicity expression in milli weight units. */
+extern const ubounded schnorr0_cost;
 
 #endif

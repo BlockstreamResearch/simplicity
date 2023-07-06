@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "../../bounded.h"
 
 /* A length-prefixed encoding of the following Simplicity program:
  *     Simplicity.Programs.CheckSig.Lib.checkSigVerify' Simplicity.Elements.Programs.SigHash.Lib.sigAllHash
@@ -22,5 +23,8 @@ extern const uint32_t elementsCheckSigHashAllTx1_imr[];
 
 /* The annotated Merkle root of the above elementsCheckSigHashAllTx1 Simplicity expression. */
 extern const uint32_t elementsCheckSigHashAllTx1_amr[];
+
+/* The cost of the above elementsCheckSigHashAllTx1 Simplicity expression in milli weight units. */
+extern const ubounded elementsCheckSigHashAllTx1_cost;
 
 #endif

@@ -1,6 +1,7 @@
 module Simplicity.BitMachine.StaticAnalysis.Cost
   ( TermWeight(..)
   , overhead
+  , milliWeigh
 -- * Reexports
   , Weight
   ) where
@@ -13,6 +14,10 @@ import Simplicity.Weight
 --
 -- Note that serializing an expression could generalize the types of expressions and sub-expressions, lowering the weight.
 newtype TermWeight a b = TermWeight { weigh :: Weight }
+
+-- | Cost of a term in milli weight units
+milliWeigh :: TermWeight a b -> Integer
+milliWeigh = milliWeight . weigh
 
 instance Core TermWeight where
   iden = result

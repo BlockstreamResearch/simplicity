@@ -101,7 +101,8 @@ library Simplicity-Indef
                        Simplicity.Semantics,
                        Simplicity.Dag, Simplicity.Inference
                        Simplicity.JetType,
-                       Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString
+                       Simplicity.Serialization.BitString, Simplicity.Serialization.ByteString,
+                       Simplicity.StaticAnalysis.Cost
   signatures:          Simplicity.Primitive
   other-extensions:    EmptyCase, EmptyDataDecls, EmptyDataDeriving,
                        ScopedTypeVariables,
@@ -175,6 +176,7 @@ library
                        Simplicity.Elements.JetType,
                        Simplicity.Elements.Serialization.BitString,
                        Simplicity.Elements.Serialization.ByteString,
+                       Simplicity.Elements.StaticAnalysis.Cost,
                        Simplicity.Weight
   mixins:              Simplicity-Indef
                          (Simplicity.Term as Simplicity.Bitcoin.Term,
@@ -183,7 +185,8 @@ library
                           Simplicity.Inference as Simplicity.Bitcoin.Inference,
                           Simplicity.JetType as Simplicity.Bitcoin.JetType,
                           Simplicity.Serialization.BitString as Simplicity.Bitcoin.Serialization.BitString,
-                          Simplicity.Serialization.ByteString as Simplicity.Bitcoin.Serialization.ByteString)
+                          Simplicity.Serialization.ByteString as Simplicity.Bitcoin.Serialization.ByteString,
+                          Simplicity.StaticAnalysis.Cost as Simplicity.Bitcoin.StaticAnalysis.Cost)
                        requires
                          (Simplicity.Primitive as Simplicity.Bitcoin.Primitive),
                        Simplicity-Indef
@@ -193,7 +196,8 @@ library
                           Simplicity.Inference as Simplicity.Elements.Inference,
                           Simplicity.JetType as Simplicity.Elements.JetType,
                           Simplicity.Serialization.BitString as Simplicity.Elements.Serialization.BitString,
-                          Simplicity.Serialization.ByteString as Simplicity.Elements.Serialization.ByteString)
+                          Simplicity.Serialization.ByteString as Simplicity.Elements.Serialization.ByteString,
+                          Simplicity.StaticAnalysis.Cost as Simplicity.Elements.StaticAnalysis.Cost)
                        requires
                          (Simplicity.Primitive as Simplicity.Elements.Primitive)
   other-extensions:    ConstraintKinds, GADTs, StandaloneDeriving, TypeFamilies
