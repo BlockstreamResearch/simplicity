@@ -119,7 +119,7 @@ static void test_hashBlock(void) {
         /* Set the block to be compressed to "abc" with padding. */
         write32s(&frame, (uint32_t[16]){ [0] = 0x61626380, [15] = 0x18 }, 16);
       }
-      if (IS_OK(evalTCOExpression(CHECK_NONE, output, outputBitSize, input, inputBitSize, dag, type_dag, (size_t)len, 29100, NULL))) {
+      if (IS_OK(evalTCOExpression(CHECK_NONE, output, input, dag, type_dag, (size_t)len, 29100, NULL))) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
                                          , 0xb00361a3ul, 0x96177a9cul, 0xb410ff61ul, 0xf20015adul };

@@ -814,8 +814,8 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
   return true;
 }
 
-/* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]'.
- * If 'NULL != input', initialize the active read frame's data with 'input[ROUND_UWORD(inputSize)]'.
+/* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]' of type A |- B.
+ * If bitSize(A) > 0, initialize the active read frame's data with 'input[ROUND_UWORD(bitSize(A))]'.
  *
  * If malloc fails, returns 'SIMPLICITY_ERR_MALLOC'.
  * If static analysis results determines the bound on cpu requirements exceed the allowed budget, returns 'SIMPLICITY_ERR_EXEC_BUDGET'
@@ -823,7 +823,7 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
  * If during execution some jet execution fails, returns 'SIMPLICITY_ERR_EXEC_JET'.
  * If during execution some 'assertr' or 'assertl' combinator fails, returns 'SIMPLICITY_ERR_EXEC_ASESRT'.
  *
- * If none of the above conditions fail and 'NULL != output', then a copy the final active write frame's data is written to 'output[roundWord(outputSize)]'.
+ * If none of the above conditions fail and bitSize(B) > 0, then a copy the final active write frame's data is written to 'output[roundWord(bitSize(B))]'.
  *
  * If 'anti_dos_checks' includes the 'CHECK_EXEC' flag, and not every non-HIDDEN dag node is executed, returns 'SIMPLICITY_ERR_ANTIDOS'
  * If 'anti_dos_checks' includes the 'CHECK_CASE' flag, and not every case node has both branches executed, returns 'SIMPLICITY_ERR_ANTIDOS'
@@ -831,19 +831,21 @@ static bool computeEvalTCOBound(memBound *dag_bound, const dag_node* dag, const 
  * Otherwise 'SIMPLICITY_NO_ERROR' is returned.
  *
  * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' for an expression of type A |- B;
- *               inputSize == bitSize(A);
- *               outputSize == bitSize(B);
- *               output == NULL or UWORD output[ROUND_UWORD(outputSize)];
- *               input == NULL or UWORD input[ROUND_UWORD(inputSize)];
+ *               bitSize(A) == 0 or UWORD input[ROUND_UWORD(bitSize(A))];
+ *               bitSize(B) == 0 or UWORD output[ROUND_UWORD(bitSize(B))];
  *               budget <= BUDGET_MAX
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
-simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, ubounded outputSize, const UWORD* input, ubounded inputSize
+simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, const UWORD* input
                                 , const dag_node* dag, type* type_dag, size_t len, ubounded budget, const txEnv* env
                                 ) {
   simplicity_assert(1 <= len);
   simplicity_assert(len <= DAG_LEN_MAX);
   simplicity_assert(budget <= BUDGET_MAX);
+  const ubounded inputSize = type_dag[dag[len-1].sourceType].bitSize;
+  const ubounded outputSize = type_dag[dag[len-1].targetType].bitSize;
+  simplicity_assert(NULL != input || 0 == inputSize);
+  simplicity_assert(NULL != output || 0 == outputSize);
   memBound bound;
   if (!computeEvalTCOBound(&bound, dag, type_dag, len)) return SIMPLICITY_ERR_MALLOC;
 
@@ -883,7 +885,7 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, ubo
 
   simplicity_err result = cells && frames && stack ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_MALLOC;
   if (IS_OK(result)) {
-    if (input) memcpy(cells, input, ROUND_UWORD(inputSize) * sizeof(UWORD));
+    if (inputSize) memcpy(cells, input, ROUND_UWORD(inputSize) * sizeof(UWORD));
 
     evalState state =
       { .activeReadFrame = frames
@@ -895,7 +897,7 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, ubo
     result = runTCO(state, stack, dag, type_dag, len, env);
 
     if (IS_OK(result)) {
-      if (output) memcpy(output, state.activeWriteFrame->edge, ROUND_UWORD(outputSize) * sizeof(UWORD));
+      if (outputSize) memcpy(output, state.activeWriteFrame->edge, ROUND_UWORD(outputSize) * sizeof(UWORD));
 
       result = antiDos(anti_dos_checks, stack, dag, len);
     }
