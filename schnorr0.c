@@ -33,3 +33,6 @@ const uint32_t schnorr0_imr[] = {
 const uint32_t schnorr0_amr[] = {
   0x02796d1du, 0x7d906a15u, 0xd0a1ebedu, 0x9d702e33u, 0x4b21e9ccu, 0x52a578c2u, 0x4fca0fb7u, 0xbe82fac0u
 };
+
+/* The cost of the above schnorr0 Simplicity expression in milli weight units. */
+const ubounded schnorr0_cost = 564301;

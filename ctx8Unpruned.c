@@ -265,3 +265,6 @@ const uint32_t ctx8Unpruned_imr[] = {
 const uint32_t ctx8Unpruned_amr[] = {
   0xcd6dfe2eu, 0x0579451du, 0x65c1d64du, 0xb488bfd8u, 0x94800a7cu, 0xd9a966bau, 0x9c232b6fu, 0xd643ba00u
 };
+
+/* The cost of the above ctx8Unpruned Simplicity expression in milli weight units. */
+const ubounded ctx8Unpruned_cost = 730611815;

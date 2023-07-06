@@ -32,3 +32,6 @@ const uint32_t elementsCheckSigHashAllTx1_imr[] = {
 const uint32_t elementsCheckSigHashAllTx1_amr[] = {
   0xd86bfbeau, 0x33d8a02fu, 0xf921652eu, 0x7dce5bd5u, 0x69f19d9fu, 0x6507012au, 0x5fc0c4f5u, 0x5af314eau
 };
+
+/* The cost of the above elementsCheckSigHashAllTx1 Simplicity expression in milli weight units. */
+const ubounded elementsCheckSigHashAllTx1_cost = 564755;
