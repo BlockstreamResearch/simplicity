@@ -12,8 +12,8 @@ typedef unsigned char flags_type;
 #define CHECK_CASE 0x60
 #define CHECK_ALL ((flags_type)(-1))
 
-/* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]'.
- * If 'NULL != input', initialize the active read frame's data with 'input[ROUND_UWORD(inputSize)]'.
+/* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]' of type A |- B.
+ * If bitSize(A) > 0, initialize the active read frame's data with 'input[ROUND_UWORD(bitSize(A))]'.
  *
  * If malloc fails, returns 'SIMPLICITY_ERR_MALLOC'.
  * If static analysis results determines the bound on cpu requirements exceed the allowed budget, returns 'SIMPLICITY_ERR_EXEC_BUDGET'
@@ -21,7 +21,7 @@ typedef unsigned char flags_type;
  * If during execution some jet execution fails, returns 'SIMPLICITY_ERR_EXEC_JET'.
  * If during execution some 'assertr' or 'assertl' combinator fails, returns 'SIMPLICITY_ERR_EXEC_ASESRT'.
  *
- * If none of the above conditions fail and 'NULL != output', then a copy the final active write frame's data is written to 'output[roundWord(outputSize)]'.
+ * If none of the above conditions fail and bitSize(B) > 0, then a copy the final active write frame's data is written to 'output[roundWord(bitSize(B))]'.
  *
  * If 'anti_dos_checks' includes the 'CHECK_EXEC' flag, and not every non-HIDDEN dag node is executed, returns 'SIMPLICITY_ERR_ANTIDOS'
  * If 'anti_dos_checks' includes the 'CHECK_CASE' flag, and not every case node has both branches executed, returns 'SIMPLICITY_ERR_ANTIDOS'
@@ -29,14 +29,12 @@ typedef unsigned char flags_type;
  * Otherwise 'SIMPLICITY_NO_ERROR' is returned.
  *
  * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' for an expression of type A |- B;
- *               inputSize == bitSize(A);
- *               outputSize == bitSize(B);
- *               output == NULL or UWORD output[ROUND_UWORD(outputSize)];
- *               input == NULL or UWORD input[ROUND_UWORD(inputSize)];
+ *               bitSize(A) == 0 or UWORD input[ROUND_UWORD(bitSize(A))];
+ *               bitSize(B) == 0 or UWORD output[ROUND_UWORD(bitSize(B))];
  *               budget <= BUDGET_MAX
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
-simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, ubounded outputSize, const UWORD* input, ubounded inputSize
+simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, const UWORD* input
                                 , const dag_node* dag, type* type_dag, size_t len, ubounded budget, const txEnv* env
                                 );
 
@@ -57,6 +55,6 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, ubo
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
 static inline simplicity_err evalTCOProgram(const dag_node* dag, type* type_dag, size_t len, ubounded budget, const txEnv* env) {
-  return evalTCOExpression(CHECK_ALL, NULL, 0, NULL, 0, dag, type_dag, len, budget, env);
+  return evalTCOExpression(CHECK_ALL, NULL, NULL, dag, type_dag, len, budget, env);
 }
 #endif
