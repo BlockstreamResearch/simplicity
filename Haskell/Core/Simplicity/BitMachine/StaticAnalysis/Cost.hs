@@ -40,7 +40,7 @@ instance Assert TermWeight where
 instance Witness TermWeight where
   witness _ = result
    where
-    result = TermWeight $ fromInteger (bitSizeR (reifyProxy result))
+    result = TermWeight $ overhead + milli (bitSizeR (reifyProxy result))
 
 instance Delegate TermWeight where
   disconnect s0@(TermWeight s) t0@(TermWeight t) = TermWeight $ overhead + milli (2 * bitSizeR (reifyProxy s0) + bitSizeR (reifyProxy t0)) + s + t
