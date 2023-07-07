@@ -732,7 +732,8 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
                     , bounded_add(type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize
                     , bounded_add(type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize /* counted twice because the frame is both filled in and moved. */
                     , bounded_add(type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize
-                    , bounded_add(bound[dag[i].child[0]].cost, bound[dag[i].child[1]].cost)))));
+                    , bounded_add(type_dag[DISCONNECT_B(dag, type_dag, i)].bitSize
+                    , bounded_add(bound[dag[i].child[0]].cost, bound[dag[i].child[1]].cost))))));
       break;
      case COMP:
       if (BOUNDED_MAX <= type_dag[COMP_B(dag, type_dag, i)].bitSize) {
