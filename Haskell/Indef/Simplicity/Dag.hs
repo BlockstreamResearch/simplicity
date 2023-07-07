@@ -291,7 +291,7 @@ instance JetType jt => Jet (JetDag jt) where
    where
     dag = t
     root = jet w t
-    eval = dagEval dag
+    eval = jet w t
     jm = fastEvalMatcher eval
     map = dagMap dag
 

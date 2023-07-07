@@ -5,6 +5,7 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
 import Data.Char (toUpper)
+import Data.Maybe (fromJust)
 import Data.List (intercalate)
 import Data.List.Split (chunksOf)
 import Data.Serialize (encode, runPut)
@@ -18,7 +19,7 @@ import qualified Simplicity.Elements.JetType
 import qualified Simplicity.Elements.Dag
 import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Primitive
-import Simplicity.Elements.Jets (JetType, WrappedSimplicity, fastEval, jetSubst, unwrap)
+import Simplicity.Elements.Jets (JetType, WrappedSimplicity, fastEval, jetSubst, pruneSubst, unwrap)
 import Simplicity.Elements.Serialization.BitString
 import Simplicity.Elements.StaticAnalysis.Cost
 import qualified Simplicity.Elements.Programs.SigHash.Lib
@@ -242,13 +243,14 @@ checkSigHashAllTx1 = Example
             , "                                  0x" ++ sh s ++ ")"
             ]
   , _withJets = True
-  , _prog = program
+  , _prog = prunedProg
           $ (Simplicity.LibSecp256k1.Spec.Sig 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
                                               s)
    }
  where
   pk = Simplicity.LibSecp256k1.Spec.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
   program sig = jetSubst $ Simplicity.Programs.CheckSig.Lib.checkSigVerify' (unwrap hashMode) pk sig
+  prunedProg sig = fromJust $ pruneSubst (Simplicity.Programs.CheckSig.Lib.checkSigVerify' (unwrap hashMode) pk sig) env
   sh v = replicate (64 - length s) '0' ++ s
    where
     s = Numeric.showHex v ""
