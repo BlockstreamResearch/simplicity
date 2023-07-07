@@ -43,7 +43,9 @@ instance Witness TermWeight where
     result = TermWeight $ overhead + milli (bitSizeR (reifyProxy result))
 
 instance Delegate TermWeight where
-  disconnect s0@(TermWeight s) t0@(TermWeight t) = TermWeight $ overhead + milli (2 * bitSizeR (reifyProxy s0) + bitSizeR (reifyProxy t0)) + s + t
+  disconnect s0@(TermWeight s) t0@(TermWeight t) = TermWeight $ overhead + milli (2 * bitSizeR w256a + bitSizeR bc) + s + t
+   where
+    (w256a, bc) = reifyArrow s0
 
 -- :TODO: This overhead is just estimated.  It needs to be replaced with a measured value.
 -- :TODO: Perhaps fold this into a generic 'mkTermWeight' or 'withOverhead' constructor that adds in the overhead.
