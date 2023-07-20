@@ -348,7 +348,7 @@ rustImports mod = vsep (map (<> semi)
   , "use crate::decode_bits"
   , "use crate::{decode, BitIter, BitWriter}"
   , "use crate::analysis::Cost"
-  , "use bitcoin_hashes::sha256::Midstate"
+  , "use hashes::sha256::Midstate"
   , "use simplicity_sys::CFrameItem"
   , "use std::io::Write"
   , "use std::{fmt, str}"
