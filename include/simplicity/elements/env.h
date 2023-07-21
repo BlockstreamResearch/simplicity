@@ -94,13 +94,13 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
 
 /* A structure representing taproot spending data for an Elements transaction.
  *
- * Invariant: branchLen <= 128;
- *            unsigned char controlBlock[33+branchLen*32];
+ * Invariant: pathLen <= 128;
+ *            unsigned char controlBlock[33+pathLen*32];
  */
 typedef struct rawTapEnv {
   const unsigned char* controlBlock;
   const unsigned char* scriptCMR;
-  unsigned char branchLen;
+  unsigned char pathLen;
 } rawTapEnv;
 
 /* A forward declaration for the structure containing a copy (and digest) of the rawTapEnv data */
@@ -109,7 +109,7 @@ typedef struct tapEnv tapEnv;
 /* Allocate and initialize a 'tapEnv' from a 'rawTapEnv', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
- * Precondition: *rawEnv is well-formed (i.e. rawEnv->branchLen <= 128.)
+ * Precondition: *rawEnv is well-formed (i.e. rawEnv->pathLen <= 128.)
  */
 extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv);
 #endif

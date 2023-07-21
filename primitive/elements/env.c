@@ -504,15 +504,15 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
 /* Allocate and initialize a 'tapEnv' from a 'rawTapEnv', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
- * Precondition: *rawEnv is well-formed (i.e. rawEnv->branchLen <= 128.)
+ * Precondition: *rawEnv is well-formed (i.e. rawEnv->pathLen <= 128.)
  */
 extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
   if (!rawEnv) return NULL;
-  if (128 < rawEnv->branchLen) return NULL;
+  if (128 < rawEnv->pathLen) return NULL;
 
   size_t allocationSize = sizeof(tapEnv);
 
-  const size_t numMidstate = rawEnv->branchLen;
+  const size_t numMidstate = rawEnv->pathLen;
   const size_t pad1 = PADDING(sha256_midstate, allocationSize);
 
   if (numMidstate) {
@@ -531,7 +531,7 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
    * Our padding is done carefully to ensure alignment.
    */
   tapEnv* const env = (tapEnv*)(void*)allocation;
-  sha256_midstate* branch = NULL;
+  sha256_midstate* path = NULL;
   sha256_midstate internalKey;
 
   sha256_toMidstate(internalKey.s,  &rawEnv->controlBlock[1]);
@@ -539,23 +539,23 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
   if (numMidstate)  {
     allocation += sizeof(tapEnv) + pad1;
 
-    if (rawEnv->branchLen) {
-      branch = (sha256_midstate*)(void*)allocation;
+    if (rawEnv->pathLen) {
+      path = (sha256_midstate*)(void*)allocation;
     }
   }
 
   *env = (tapEnv){ .leafVersion = rawEnv->controlBlock[0] & 0xfe
                  , .internalKey = internalKey
-                 , .branch = branch
-                 , .branchLen = rawEnv->branchLen
+                 , .path = path
+                 , .pathLen = rawEnv->pathLen
                  };
   sha256_toMidstate(env->scriptCMR.s, rawEnv->scriptCMR);
 
   {
-    sha256_context ctx = sha256_init(env->tapbranchHash.s);
-    for (int i = 0; i < env->branchLen; ++i) {
-      sha256_toMidstate(branch[i].s,  &rawEnv->controlBlock[33+32*i]);
-      sha256_hash(&ctx, &branch[i]);
+    sha256_context ctx = sha256_init(env->tappathHash.s);
+    for (int i = 0; i < env->pathLen; ++i) {
+      sha256_toMidstate(path[i].s,  &rawEnv->controlBlock[33+32*i]);
+      sha256_hash(&ctx, &path[i]);
     }
     sha256_finalize(&ctx);
   }
@@ -565,7 +565,7 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
   {
     sha256_context ctx = sha256_init(env->tapEnvHash.s);
     sha256_hash(&ctx, &env->tapLeafHash);
-    sha256_hash(&ctx, &env->tapbranchHash);
+    sha256_hash(&ctx, &env->tappathHash);
     sha256_hash(&ctx, &env->internalKey);
     sha256_finalize(&ctx);
   }

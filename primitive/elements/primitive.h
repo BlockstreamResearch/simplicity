@@ -229,17 +229,17 @@ typedef struct transaction {
 
 /* A structure representing taproot spending data from an Elements transaction.
  *
- * Invariant: branchLen <= 128
- *            sha256_midstate branch[branchLen];
+ * Invariant: pathLen <= 128
+ *            sha256_midstate path[pathLen];
  */
 typedef struct tapEnv {
-  const sha256_midstate *branch;
+  const sha256_midstate *path;
   sha256_midstate tapLeafHash;
-  sha256_midstate tapbranchHash;
+  sha256_midstate tappathHash;
   sha256_midstate tapEnvHash;
   sha256_midstate internalKey;
   sha256_midstate scriptCMR;
-  unsigned char branchLen;
+  unsigned char pathLen;
   unsigned char leafVersion;
 } tapEnv;
 

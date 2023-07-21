@@ -2106,7 +2106,7 @@
 ,[SIG_ALL_HASH] =
 { .tag = JET
 , .jet = sig_all_hash
-, .cmr = {{0x9902bc0fu, 0xf1f59ed5u, 0xd592258bu, 0x7aa891a0u, 0x3567c13bu, 0xf9f67989u, 0xf8d8b463u, 0xf3863f65u}}
+, .cmr = {{0xe3c8c275u, 0xc9c9043cu, 0xa305f5d6u, 0xa6836aadu, 0x435b3285u, 0xafbda120u, 0x581d79dcu, 0xf12ba352u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 135 /* milli weight units */
@@ -2178,23 +2178,7 @@
 ,[TAP_ENV_HASH] =
 { .tag = JET
 , .jet = tap_env_hash
-, .cmr = {{0xa53b8ebdu, 0xe6ed47bdu, 0xaf72a4e1u, 0x39bbf4e1u, 0x75cf69a8u, 0x5df97f9fu, 0x28c4a79fu, 0x2f427737u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 136 /* milli weight units */
-}
-,[TAPBRANCH] =
-{ .tag = JET
-, .jet = tapbranch
-, .cmr = {{0x22516da6u, 0x8f110893u, 0x5cb3f1c5u, 0x8fa0a4fdu, 0x3b004f81u, 0xf56d62f2u, 0x9388d420u, 0xe2954991u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_mw256
-, .cost = 94 /* milli weight units */
-}
-,[TAPBRANCH_HASH] =
-{ .tag = JET
-, .jet = tapbranch_hash
-, .cmr = {{0x8f90864au, 0x37619dc0u, 0xb67c8b52u, 0xe7d7ceebu, 0xd3d25ff8u, 0xcae7e7f2u, 0xb163fcaau, 0x24867e32u}}
+, .cmr = {{0x2aceafadu, 0xafb88b76u, 0x43003e07u, 0x8505c22eu, 0xa751d9e0u, 0x2db248e2u, 0x3272b5efu, 0xe7c9377cu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 136 /* milli weight units */
@@ -2214,6 +2198,22 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w8
 , .cost = 80 /* milli weight units */
+}
+,[TAPPATH] =
+{ .tag = JET
+, .jet = tappath
+, .cmr = {{0x7f650203u, 0xc1fc5a8bu, 0xebb0c9c5u, 0x1aea8681u, 0x7906d3d8u, 0x726d1f66u, 0x0ee45af9u, 0xea5e58cfu}}
+, .sourceIx = ty_w8
+, .targetIx = ty_mw256
+, .cost = 94 /* milli weight units */
+}
+,[TAPPATH_HASH] =
+{ .tag = JET
+, .jet = tappath_hash
+, .cmr = {{0x255d7341u, 0x15b6d064u, 0x49d876e7u, 0x83ed0e46u, 0xf79a6c02u, 0x6f8dd6e0u, 0xb20f4e04u, 0x38d823fcu}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 136 /* milli weight units */
 }
 ,[TX_HASH] =
 { .tag = JET

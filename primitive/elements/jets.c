@@ -625,11 +625,11 @@ bool tapleaf_version(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* tapbranch : TWO^8 |- S (TWO^256) */
-bool tapbranch(frameItem* dst, frameItem src, const txEnv* env) {
+/* tappath : TWO^8 |- S (TWO^256) */
+bool tappath(frameItem* dst, frameItem src, const txEnv* env) {
   uint_fast8_t i = read8(&src);
-  if (writeBit(dst, i < env->taproot->branchLen)) {
-    writeHash(dst, &env->taproot->branch[i]);
+  if (writeBit(dst, i < env->taproot->pathLen)) {
+    writeHash(dst, &env->taproot->path[i]);
   } else {
     skipBits(dst, 256);
   }
@@ -1144,10 +1144,10 @@ bool tapleaf_hash(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* tapbranch_hash : ONE |- TWO^256 */
-bool tapbranch_hash(frameItem* dst, frameItem src, const txEnv* env) {
+/* tappath_hash : ONE |- TWO^256 */
+bool tappath_hash(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  writeHash(dst, &env->taproot->tapbranchHash);
+  writeHash(dst, &env->taproot->tappathHash);
   return true;
 }
 
