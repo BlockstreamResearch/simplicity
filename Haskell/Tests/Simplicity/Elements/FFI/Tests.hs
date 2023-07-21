@@ -73,7 +73,7 @@ tests = testGroup "Elements"
           , testProperty "issuances_hash" prop_issuances_hash
           , testProperty "tx_hash" prop_tx_hash
           , testProperty "tapleaf_hash" prop_tapleaf_hash
-          , testProperty "tapbranch_hash" prop_tapbranch_hash
+          , testProperty "tappath_hash" prop_tappath_hash
           , testProperty "tap_env_hash" prop_tap_env_hash
           , testProperty "sig_all_hash" prop_sig_all_hash
           ]
@@ -122,7 +122,7 @@ tests = testGroup "Elements"
           , testProperty "issuance_asset_proof" prop_issuance_asset_proof
           , testProperty "issuance_token_proof" prop_issuance_token_proof
           , testProperty "tapleaf_version" prop_tapleaf_version
-          , testProperty "tapbranch" prop_tapbranch
+          , testProperty "tappath" prop_tappath
           , testProperty "version" prop_version
           , testProperty "genesis_block_hash" prop_genesis_block_hash
           ]
@@ -369,10 +369,10 @@ prop_tapleaf_hash = forallPrimEnv $ \env -> fast_tapleaf_hash env () == tapleaf_
  where
   fast_tapleaf_hash = testEval (specification (ElementsJet (SigHashJet TapleafHash)))
 
-prop_tapbranch_hash :: Property
-prop_tapbranch_hash = forallPrimEnv $ \env -> fast_tapbranch_hash env () == tapbranch_hash env ()
+prop_tappath_hash :: Property
+prop_tappath_hash = forallPrimEnv $ \env -> fast_tappath_hash env () == tappath_hash env ()
  where
-  fast_tapbranch_hash = testEval (specification (ElementsJet (SigHashJet TapbranchHash)))
+  fast_tappath_hash = testEval (specification (ElementsJet (SigHashJet TappathHash)))
 
 prop_tap_env_hash :: Property
 prop_tap_env_hash = forallPrimEnv $ \env -> fast_tap_env_hash env () == tap_env_hash env ()
@@ -604,11 +604,11 @@ prop_tapleaf_version = forallPrimEnv $ \env -> fast_tapleaf_version env () == ta
  where
   fast_tapleaf_version = testEval (specification (ElementsJet (TransactionJet TapleafVersion)))
 
-prop_tapbranch :: Property
-prop_tapbranch = forallPrimEnv $ \env -> forAll (genTapbranchIx env) $ \i -> fast_tapbranch env (toW8 i) == tapbranch env (toW8 i)
+prop_tappath :: Property
+prop_tappath = forallPrimEnv $ \env -> forAll (genTappathIx env) $ \i -> fast_tappath env (toW8 i) == tappath env (toW8 i)
  where
-  fast_tapbranch = testEval (specification (ElementsJet (TransactionJet Tapbranch)))
-  genTapbranchIx = genBoundaryCases . fromIntegral . length . Prim.tapbranch . Prim.envTap
+  fast_tappath = testEval (specification (ElementsJet (TransactionJet Tappath)))
+  genTappathIx = genBoundaryCases . fromIntegral . length . Prim.tappath . Prim.envTap
 
 prop_version :: Property
 prop_version = forallPrimEnv $ \env -> fast_version env () == version env ()

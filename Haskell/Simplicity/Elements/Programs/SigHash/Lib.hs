@@ -9,7 +9,7 @@ module Simplicity.Elements.Programs.SigHash.Lib
  , inputOutpointsHash, inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash
  , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuanceBlindingEntropyHash, issuancesHash
  , txHash
- , tapleafHash, tapbranchHash, tapEnvHash
+ , tapleafHash, tappathHash, tapEnvHash
  , sigAllHash
  ) where
 
@@ -36,6 +36,6 @@ issuancesHash = SigHash.issuancesHash SigHash.lib
 inputScriptSigsHash = SigHash.inputScriptSigsHash SigHash.lib
 txHash = SigHash.txHash SigHash.lib
 tapleafHash = SigHash.tapleafHash SigHash.lib
-tapbranchHash = SigHash.tapbranchHash SigHash.lib
+tappathHash = SigHash.tappathHash SigHash.lib
 tapEnvHash = SigHash.tapEnvHash SigHash.lib
 sigAllHash = SigHash.sigAllHash SigHash.lib

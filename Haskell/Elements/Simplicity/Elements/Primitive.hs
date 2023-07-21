@@ -55,7 +55,7 @@ data Prim a b where
   IssuanceTokenProof :: Prim Word32 (S Word256)
   CurrentIndex :: Prim () Word32
   TapleafVersion :: Prim () Word8
-  Tapbranch :: Prim Word8 (S Word256)
+  Tappath :: Prim Word8 (S Word256)
   InternalKey :: Prim () PubKey
   OutputAsset :: Prim Word32 (S (Conf Word256))
   OutputAmount :: Prim Word32 (S (Conf Word64))
@@ -88,7 +88,7 @@ instance Eq (Prim a b) where
   IssuanceTokenProof == IssuanceTokenProof = True
   CurrentIndex == CurrentIndex = True
   TapleafVersion == TapleafVersion = True
-  Tapbranch == Tapbranch = True
+  Tappath == Tappath = True
   InternalKey == InternalKey = True
   OutputAsset == OutputAsset = True
   OutputAmount == OutputAmount = True
@@ -126,7 +126,7 @@ primName IssuanceAssetProof = "issuanceAssetProof"
 primName IssuanceTokenProof = "issuanceTokenProof"
 primName CurrentIndex = "currentIndex"
 primName TapleafVersion = "tapleafVersion"
-primName Tapbranch = "tapbranch"
+primName Tappath = "tappath"
 primName InternalKey = "internalKey"
 primName OutputAsset = "outputAsset"
 primName OutputAmount = "outputAmount"
@@ -252,7 +252,7 @@ primSem p a env = interpret p a
   interpret IssuanceTokenProof = return . (atInput $ encodeHash . bslHash . view (to sigTxiIssuance.just_.to issuanceTokenAmount.under amount.prf_))
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
   interpret TapleafVersion = element . return . toWord8 . toInteger . tapleafVersion $ envTap env
-  interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapbranch (envTap env)) . fromInteger . fromWord8
+  interpret Tappath = return . cast . fmap encodeHash . listToMaybe . flip drop (tappath (envTap env)) . fromInteger . fromWord8
   interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env
   interpret OutputAsset = return . (atOutput $ encodeAsset . clearAssetPrf . txoAsset)
   interpret OutputAmount = return . (atOutput $ encodeAmount . clearAmountPrf . txoAmount)

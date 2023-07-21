@@ -178,14 +178,14 @@ withRawTransaction tx k =
   lockTime = fromIntegral (sigTxLock tx)
 
 withRawTapEnv :: TapEnv -> (Ptr RawTapEnv -> IO b) -> IO b
-withRawTapEnv tapEnv k | length (tapbranch tapEnv) <= 128 =
+withRawTapEnv tapEnv k | length (tappath tapEnv) <= 128 =
   allocaBytes sizeof_rawTapEnv $ \pRawTapEnv ->
-  BS.useAsCString encodeBranch $ \pControlBlock -> do
+  BS.useAsCString encodePath $ \pControlBlock -> do
   BS.useAsCString (encode $ tapScriptCMR tapEnv) $ \pCmr -> do
-   c_set_rawTapEnv pRawTapEnv pControlBlock (fromIntegral . length $ tapbranch tapEnv) pCmr
+   c_set_rawTapEnv pRawTapEnv pControlBlock (fromIntegral . length $ tappath tapEnv) pCmr
    k pRawTapEnv
  where
-  encodeBranch = BS.cons (tapleafVersion tapEnv) (BS.concat (encode (tapInternalKey tapEnv) : map encode (tapbranch tapEnv)))
+  encodePath = BS.cons (tapleafVersion tapEnv) (BS.concat (encode (tapInternalKey tapEnv) : map encode (tappath tapEnv)))
 
 marshallTransaction :: SigTx -> IO (ForeignPtr CTransaction)
 marshallTransaction tx = withRawTransaction tx

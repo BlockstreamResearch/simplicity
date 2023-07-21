@@ -8,7 +8,7 @@ module Simplicity.Elements.Programs.SigHash
  , inputOutpointsHash, inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash
  , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuanceBlindingEntropyHash, issuancesHash
  , txHash
- , tapleafHash, tapbranchHash, tapEnvHash
+ , tapleafHash, tappathHash, tapEnvHash
  , sigAllHash
  -- * Example instances
  , lib
@@ -115,12 +115,12 @@ data Lib term =
     -- * 'TapleafVersion'
     -- * 'ScriptCMR'
   , tapleafHash :: term () Word256
-    -- | A hash of all 'Tapbranch's.
-  , tapbranchHash :: term () Word256
+    -- | A hash of all 'Tappath's.
+  , tappathHash :: term () Word256
     -- | A hash of
     --
     -- * 'tapleafHash'
-    -- * 'tapbranchHash'
+    -- * 'tappathHash'
     -- * 'InternalKey'
   , tapEnvHash :: term () Word256
     -- | A hash of
@@ -156,7 +156,7 @@ instance SimplicityFunctor Lib where
     , inputScriptSigsHash = m inputScriptSigsHash
     , txHash = m txHash
     , tapleafHash = m tapleafHash
-    , tapbranchHash = m tapbranchHash
+    , tappathHash = m tappathHash
     , tapEnvHash = m tapEnvHash
     , sigAllHash = m sigAllHash
     }
@@ -278,10 +278,10 @@ mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
               &&& (primitive TapleafVersion &&& scribe (toWord8 32)) >>> ctx8Addn vector2)
               &&& (primitive ScriptCMR) >>> ctx8Addn vector32 >>> ctx8Finalize
 
-  , tapbranchHash = hashWord256s8 (drop (primitive Tapbranch))
+  , tappathHash = hashWord256s8 (drop (primitive Tappath))
 
   , tapEnvHash = (ctx8Init &&& tapleafHash >>> ctx8Addn vector32)
-             &&& (tapbranchHash &&& primitive InternalKey) >>> ctx8Addn vector64 >>> ctx8Finalize
+             &&& (tappathHash &&& primitive InternalKey) >>> ctx8Addn vector64 >>> ctx8Finalize
 
   , sigAllHash = (ctx8Init &&& ((primitive GenesisBlockHash >>> iden &&& iden) &&& (txHash &&& tapEnvHash)) >>> ctx8Addn vector128)
              &&& primitive CurrentIndex >>> ctx8Addn vector4 >>> ctx8Finalize

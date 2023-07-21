@@ -37,7 +37,7 @@ data Prim a b where
   OutputValue :: Prim Word32 (Either () Word64)
   OutputScriptHash :: Prim Word32 (Either () Word256)
   TapleafVersion :: Prim () Word8
-  Tapbranch :: Prim Word8 (Either () Word256)
+  Tappath :: Prim Word8 (Either () Word256)
   InternalKey :: Prim () PubKey
   ScriptCMR :: Prim () Word256
 -- Other possible ideas:
@@ -57,7 +57,7 @@ instance Eq (Prim a b) where
   OutputValue == OutputValue = True
   OutputScriptHash == OutputScriptHash = True
   TapleafVersion == TapleafVersion = True
-  Tapbranch == Tapbranch = True
+  Tappath == Tappath = True
   InternalKey == InternalKey = True
   ScriptCMR == ScriptCMR = True
   _ == _ = False
@@ -80,7 +80,7 @@ primName TotalOutputValue = "totalOutputValue"
 primName OutputValue = "outputValue"
 primName OutputScriptHash = "outputScriptHash"
 primName TapleafVersion = "tapleafVersion"
-primName Tapbranch = "tapbranch"
+primName Tappath = "tappath"
 primName InternalKey = "internalKey"
 primName ScriptCMR = "scriptCMR"
 
@@ -142,6 +142,6 @@ primSem p a env = interpret p a
   interpret OutputValue = return . (atOutput $ toWord64 . fromIntegral . txoValue)
   interpret OutputScriptHash = return . (atOutput $ encodeHash . bslHash . txoScript)
   interpret TapleafVersion = element . return . toWord8 . toInteger . tapleafVersion $ envTap env
-  interpret Tapbranch = return . cast . fmap encodeHash . listToMaybe . flip drop (tapbranch (envTap env)) . fromInteger . fromWord8
+  interpret Tappath = return . cast . fmap encodeHash . listToMaybe . flip drop (tappath (envTap env)) . fromInteger . fromWord8
   interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env
   interpret ScriptCMR = element . return . toWord256 . integerHash256 . tapScriptCMR $ envTap env

@@ -105,7 +105,7 @@ data SigHashJet a b where
   InputAmountsHash :: SigHashJet () Word256
   InputScriptsHash :: SigHashJet () Word256
   TapleafHash :: SigHashJet () Word256
-  TapbranchHash :: SigHashJet () Word256
+  TappathHash :: SigHashJet () Word256
   OutpointHash :: SigHashJet (Ctx8, (S Word256, (Word256, Word32))) Ctx8
   AssetAmountHash :: SigHashJet (Ctx8, (Conf Word256, Conf Word64)) Ctx8
   NonceHash :: SigHashJet (Ctx8, S (Conf Word256)) Ctx8
@@ -185,7 +185,7 @@ data TransactionJet a b where
   IssuanceAssetProof :: TransactionJet Word32 (S Word256)
   IssuanceTokenProof :: TransactionJet Word32 (S Word256)
   TapleafVersion :: TransactionJet () Word8
-  Tapbranch :: TransactionJet Word8 (S Word256)
+  Tappath :: TransactionJet Word8 (S Word256)
   Version :: TransactionJet () Word32
   GenesisBlockHash :: TransactionJet () Word256
 deriving instance Eq (TransactionJet a b)
@@ -221,7 +221,7 @@ specificationSigHash IssuanceBlindingEntropyHash = SigHash.issuanceBlindingEntro
 specificationSigHash InputAmountsHash = SigHash.inputAmountsHash
 specificationSigHash InputScriptsHash = SigHash.inputScriptsHash
 specificationSigHash TapleafHash = SigHash.tapleafHash
-specificationSigHash TapbranchHash = SigHash.tapbranchHash
+specificationSigHash TappathHash = SigHash.tappathHash
 specificationSigHash OutpointHash = Prog.outpointHash
 specificationSigHash AssetAmountHash = Prog.assetAmountHash
 specificationSigHash NonceHash = Prog.nonceHash
@@ -295,7 +295,7 @@ specificationTransaction IssuanceTokenAmount = primitive Prim.IssuanceTokenAmoun
 specificationTransaction IssuanceAssetProof = primitive Prim.IssuanceAssetProof
 specificationTransaction IssuanceTokenProof = primitive Prim.IssuanceTokenProof
 specificationTransaction TapleafVersion = primitive Prim.TapleafVersion
-specificationTransaction Tapbranch = primitive Prim.Tapbranch
+specificationTransaction Tappath = primitive Prim.Tappath
 specificationTransaction Version = primitive Prim.Version
 specificationTransaction GenesisBlockHash = primitive Prim.GenesisBlockHash
 
@@ -329,7 +329,7 @@ implementationSigHash IssuanceBlindingEntropyHash env _ = Just . toWord256 . int
 implementationSigHash InputAmountsHash env _ = Just . toWord256 . integerHash256 $ inputAmountsHash (envTx env)
 implementationSigHash InputScriptsHash env _ = Just . toWord256 . integerHash256 $ inputScriptsHash (envTx env)
 implementationSigHash TapleafHash env _ = Just . toWord256 . integerHash256 $ tapleafHash (envTap env)
-implementationSigHash TapbranchHash env _ = Just . toWord256 . integerHash256 $ tapbranchHash (envTap env)
+implementationSigHash TappathHash env _ = Just . toWord256 . integerHash256 $ tappathHash (envTap env)
 implementationSigHash OutpointHash _env (ctx, (mw256, op)) = toCtx <$> (flip ctxAdd (runPut (putMW256 mw256 >> putOutpointBE (cast op))) =<< fromCtx ctx)
  where
   putMW256 (Left _) = putWord8 0x00
@@ -488,7 +488,7 @@ getJetBitElements = getCatalogue elementsCatalogue
    , SomeArrow InputAmountsHash
    , SomeArrow InputScriptsHash
    , SomeArrow TapleafHash
-   , SomeArrow TapbranchHash
+   , SomeArrow TappathHash
    , SomeArrow OutpointHash
    , SomeArrow AssetAmountHash
    , SomeArrow NonceHash
@@ -563,7 +563,7 @@ getJetBitElements = getCatalogue elementsCatalogue
    , Item $ SomeArrow IssuanceAssetProof
    , Item $ SomeArrow IssuanceTokenProof
    , Item $ SomeArrow TapleafVersion
-   , Item $ SomeArrow Tapbranch
+   , Item $ SomeArrow Tappath
    , Item $ SomeArrow Version
    , Item $ SomeArrow GenesisBlockHash
    ]
@@ -598,7 +598,7 @@ putJetBitSigHash IssuanceBlindingEntropyHash = putPositive 20
 putJetBitSigHash InputAmountsHash            = putPositive 21
 putJetBitSigHash InputScriptsHash            = putPositive 22
 putJetBitSigHash TapleafHash                 = putPositive 23
-putJetBitSigHash TapbranchHash               = putPositive 24
+putJetBitSigHash TappathHash               = putPositive 24
 putJetBitSigHash OutpointHash                = putPositive 25
 putJetBitSigHash AssetAmountHash             = putPositive 26
 putJetBitSigHash NonceHash                   = putPositive 27
@@ -673,7 +673,7 @@ putJetBitTransaction IssuanceTokenAmount        = putPositive 42
 putJetBitTransaction IssuanceAssetProof         = putPositive 43
 putJetBitTransaction IssuanceTokenProof         = putPositive 44
 putJetBitTransaction TapleafVersion             = putPositive 45
-putJetBitTransaction Tapbranch                  = putPositive 46
+putJetBitTransaction Tappath                  = putPositive 46
 putJetBitTransaction Version                    = putPositive 47
 putJetBitTransaction GenesisBlockHash           = putPositive 48
 
@@ -703,7 +703,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (SigHashJet InputAmountsHash)
   , mkAssoc (SigHashJet InputScriptsHash)
   , mkAssoc (SigHashJet TapleafHash)
-  , mkAssoc (SigHashJet TapbranchHash)
+  , mkAssoc (SigHashJet TappathHash)
   , mkAssoc (SigHashJet OutpointHash)
   , mkAssoc (SigHashJet AssetAmountHash)
   , mkAssoc (SigHashJet NonceHash)
@@ -774,7 +774,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (TransactionJet IssuanceAssetProof)
   , mkAssoc (TransactionJet IssuanceTokenProof)
   , mkAssoc (TransactionJet TapleafVersion)
-  , mkAssoc (TransactionJet Tapbranch)
+  , mkAssoc (TransactionJet Tappath)
   , mkAssoc (TransactionJet Version)
   , mkAssoc (TransactionJet GenesisBlockHash)
   ]
@@ -858,7 +858,7 @@ jetCostSigHash IssuanceBlindingEntropyHash = Benchmarks.cost "IssuanceBlindingEn
 jetCostSigHash InputAmountsHash = Benchmarks.cost "InputAmountsHash"
 jetCostSigHash InputScriptsHash = Benchmarks.cost "InputScriptsHash"
 jetCostSigHash TapleafHash = Benchmarks.cost "TapleafHash"
-jetCostSigHash TapbranchHash = Benchmarks.cost "TapbranchHash"
+jetCostSigHash TappathHash = Benchmarks.cost "TappathHash"
 jetCostSigHash OutpointHash = Benchmarks.cost "OutpointHash"
 jetCostSigHash AssetAmountHash = Benchmarks.cost "AssetAmountHash"
 jetCostSigHash NonceHash = Benchmarks.cost "NonceHash"
@@ -932,7 +932,7 @@ jetCostTransaction IssuanceTokenAmount = Benchmarks.cost "IssuanceTokenAmount"
 jetCostTransaction IssuanceAssetProof = Benchmarks.cost "IssuanceAssetProof"
 jetCostTransaction IssuanceTokenProof = Benchmarks.cost "IssuanceTokenProof"
 jetCostTransaction TapleafVersion = Benchmarks.cost "TapleafVersion"
-jetCostTransaction Tapbranch = Benchmarks.cost "Tapbranch"
+jetCostTransaction Tappath = Benchmarks.cost "Tappath"
 jetCostTransaction Version = Benchmarks.cost "Version"
 jetCostTransaction GenesisBlockHash = Benchmarks.cost "GenesisBlockHash"
 

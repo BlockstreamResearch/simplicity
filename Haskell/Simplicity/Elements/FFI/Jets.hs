@@ -44,7 +44,7 @@ module Simplicity.Elements.FFI.Jets
  , current_annex_hash
  , current_script_sig_hash
  , tapleaf_version
- , tapbranch
+ , tappath
  , internal_key
  , num_inputs
  , num_outputs
@@ -92,7 +92,7 @@ module Simplicity.Elements.FFI.Jets
  , issuances_hash
  , tx_hash
  , tapleaf_hash
- , tapbranch_hash
+ , tappath_hash
  , tap_env_hash
  , sig_all_hash
  ) where
@@ -155,7 +155,7 @@ foreign import ccall unsafe "" c_current_issuance_token_proof :: Ptr FrameItem -
 foreign import ccall unsafe "" c_current_annex_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_script_sig_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tapleaf_version :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_tapbranch :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_tappath :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_internal_key :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_num_inputs :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_num_outputs :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -203,7 +203,7 @@ foreign import ccall unsafe "" c_issuance_blinding_entropy_hash :: Ptr FrameItem
 foreign import ccall unsafe "" c_issuances_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tx_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tapleaf_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_tapbranch_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_tappath_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tap_env_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_sig_all_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 
@@ -312,8 +312,8 @@ current_script_sig_hash = unsafeLocalJet c_current_script_sig_hash
 tapleaf_version :: PrimEnv -> () -> Maybe Word8
 tapleaf_version = unsafeLocalJet c_tapleaf_version
 
-tapbranch :: PrimEnv -> Word8 -> Maybe (S Word256)
-tapbranch = unsafeLocalJet c_tapbranch
+tappath :: PrimEnv -> Word8 -> Maybe (S Word256)
+tappath = unsafeLocalJet c_tappath
 
 internal_key :: PrimEnv -> () -> Maybe PubKey
 internal_key = unsafeLocalJet c_internal_key
@@ -482,8 +482,8 @@ tx_hash = unsafeLocalJet c_tx_hash
 tapleaf_hash :: PrimEnv -> () -> Maybe Word256
 tapleaf_hash = unsafeLocalJet c_tapleaf_hash
 
-tapbranch_hash :: PrimEnv -> () -> Maybe Word256
-tapbranch_hash = unsafeLocalJet c_tapbranch_hash
+tappath_hash :: PrimEnv -> () -> Maybe Word256
+tappath_hash = unsafeLocalJet c_tappath_hash
 
 tap_env_hash :: PrimEnv -> () -> Maybe Word256
 tap_env_hash = unsafeLocalJet c_tap_env_hash

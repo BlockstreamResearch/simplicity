@@ -262,7 +262,7 @@ checkSigHashAllTx1 = Example
   cmr = commitmentRoot . unwrap $ program (Simplicity.LibSecp256k1.Spec.Sig 0 0)
   tapEnv = TapEnv { tapleafVersion = 0xbe
                   , tapInternalKey = pk
-                  , tapbranch = []
+                  , tappath = []
                   , tapScriptCMR = cmr
                   }
   tx1 = SigTx

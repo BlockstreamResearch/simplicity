@@ -91,7 +91,7 @@ tests = testGroup "Elements"
           , testProperty "issuances_hash" prop_issuances_hash
           , testProperty "tx_hash" prop_tx_hash
           , testProperty "tap_env_hash" prop_tap_env_hash
-          , testProperty "tapbranch_hash" prop_tapbranch_hash
+          , testProperty "tappath_hash" prop_tappath_hash
           , testProperty "tapleaf_hash" prop_tapleaf_hash
           , testProperty "sig_all_hash" prop_sig_all_hash
           , testProperty "script_cmr" prop_script_cmr
@@ -138,7 +138,7 @@ tests = testGroup "Elements"
           , testProperty "issuance_asset_proof" prop_issuance_asset_proof
           , testProperty "issuance_token_proof" prop_issuance_token_proof
           , testProperty "tapleaf_version" prop_tapleaf_version
-          , testProperty "tapbranch" prop_tapbranch
+          , testProperty "tappath" prop_tappath
           , testProperty "version" prop_version
           , testProperty "genesis_block_hash" prop_genesis_block_hash
           , testCase "issuance_entropy_1" assert_issuance_entropy_1
@@ -380,8 +380,8 @@ prop_tx_hash :: Property
 prop_tx_hash = checkJet (ElementsJet (SigHashJet TxHash))
              $ \check -> forallPrimEnv $ \env -> check env ()
 
-prop_tapbranch_hash :: Property
-prop_tapbranch_hash = checkJet (ElementsJet (SigHashJet TapbranchHash))
+prop_tappath_hash :: Property
+prop_tappath_hash = checkJet (ElementsJet (SigHashJet TappathHash))
                     $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_tapleaf_hash :: Property
@@ -572,11 +572,11 @@ prop_tapleaf_version :: Property
 prop_tapleaf_version = checkJet (ElementsJet (TransactionJet TapleafVersion))
                      $ \check -> forallPrimEnv $ \env -> check env ()
 
-prop_tapbranch :: Property
-prop_tapbranch = checkJet (ElementsJet (TransactionJet Tapbranch))
-               $ \check -> forallPrimEnv $ \env -> forAll (genTapbranchIx env) $ \i -> check env (toW8 i)
+prop_tappath :: Property
+prop_tappath = checkJet (ElementsJet (TransactionJet Tappath))
+               $ \check -> forallPrimEnv $ \env -> forAll (genTappathIx env) $ \i -> check env (toW8 i)
  where
-  genTapbranchIx = genBoundaryCases . fromIntegral . length . tapbranch . envTap
+  genTappathIx = genBoundaryCases . fromIntegral . length . tappath . envTap
 
 prop_version :: Property
 prop_version = checkJet (ElementsJet (TransactionJet Version))
@@ -642,7 +642,7 @@ tapEnv :: TapEnv
 tapEnv = TapEnv
          { tapleafVersion = 0xbe
          , tapInternalKey = Schnorr.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
-         , tapbranch = []
+         , tappath = []
          , tapScriptCMR = review (over be256) 0x896b16e4692350cb43c4807c8f9f63637f70f84a17b678ca9467109ff1e50f61
          }
 

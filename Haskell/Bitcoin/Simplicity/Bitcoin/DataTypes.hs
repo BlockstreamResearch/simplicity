@@ -128,7 +128,7 @@ instance Serialize Tx where
 -- | Taproot specific environment data about the input being spent.
 data TapEnv = TapEnv { tapleafVersion :: Word8
                      , tapInternalKey :: PubKey
-                     , tapbranch :: [Hash256]
+                     , tappath :: [Hash256]
                      , tapScriptCMR :: Hash256
                      } deriving Show
 

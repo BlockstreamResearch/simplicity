@@ -30,7 +30,7 @@ module Simplicity.Elements.DataTypes
   , inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash
   , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuancesHash, issuanceBlindingEntropyHash
   , txHash
-  , tapleafHash, tapbranchHash, tapEnvHash
+  , tapleafHash, tappathHash, tapEnvHash
   , module Simplicity.Bitcoin
   ) where
 
@@ -304,7 +304,7 @@ data SigTx = SigTx { sigTxVersion :: Word32
 -- | Taproot specific environment data about the input being spent.
 data TapEnv = TapEnv { tapleafVersion :: Word8
                      , tapInternalKey :: PubKey
-                     , tapbranch :: [Hash256]
+                     , tappath :: [Hash256]
                      , tapScriptCMR :: Hash256
                      } deriving Show
 
@@ -545,17 +545,17 @@ tapleafHash tapEnv = bslHash . runPutLazy $ do
  where
   tag = bsHash (fromString "TapLeaf/elements")
 
--- | A hash of 'tapbranch's.
-tapbranchHash :: TapEnv -> Hash256
-tapbranchHash tapEnv = bslHash . runPutLazy $ mapM_ put (tapbranch tapEnv)
+-- | A hash of 'tappath's.
+tappathHash :: TapEnv -> Hash256
+tappathHash tapEnv = bslHash . runPutLazy $ mapM_ put (tappath tapEnv)
 
 -- | A hash of
 --
 -- * 'tapleafHash'
--- * 'tapbranchHash'
+-- * 'tappathHash'
 -- * 'tapInternalKey'
 tapEnvHash :: TapEnv -> Hash256
 tapEnvHash tapEnv = bslHash . runPutLazy $ do
               put $ tapleafHash tapEnv
-              put $ tapbranchHash tapEnv
+              put $ tappathHash tapEnv
               put $ tapInternalKey tapEnv

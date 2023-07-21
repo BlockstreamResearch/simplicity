@@ -98,7 +98,7 @@ data TransactionJet a b where
   InputScriptSigHash :: TransactionJet Word32 (Either () Word256)
   TotalInputValue :: TransactionJet () Word64
   TapleafVersion :: TransactionJet () Word8
-  Tapbranch :: TransactionJet Word8 (Either () Word256)
+  Tappath :: TransactionJet Word8 (Either () Word256)
   Version :: TransactionJet () Word32
 
 deriving instance Eq (TransactionJet a b)
@@ -141,7 +141,7 @@ specificationTransaction InputAnnexHash = primitive Prim.InputAnnexHash
 specificationTransaction InputScriptSigHash = primitive Prim.InputScriptSigHash
 specificationTransaction TotalInputValue = primitive Prim.TotalInputValue
 specificationTransaction TapleafVersion = primitive Prim.TapleafVersion
-specificationTransaction Tapbranch = primitive Prim.Tapbranch
+specificationTransaction Tappath = primitive Prim.Tappath
 specificationTransaction Version = primitive Prim.Version
 
 implementationBitcoin :: BitcoinJet a b -> PrimEnv -> a -> Maybe b
@@ -212,7 +212,7 @@ getJetBitBitcoin = getCatalogue bitcoinCatalogue
    , Item $ SomeArrow InputScriptSigHash
    , Item $ SomeArrow TotalInputValue
    , Item $ SomeArrow TapleafVersion
-   , Item $ SomeArrow Tapbranch
+   , Item $ SomeArrow Tappath
    , Item $ SomeArrow Version
    ]
 
@@ -256,7 +256,7 @@ putJetBitTransaction InputAnnexHash       = putPositive 21
 putJetBitTransaction InputScriptSigHash   = putPositive 22
 putJetBitTransaction TotalInputValue      = putPositive 23
 putJetBitTransaction TapleafVersion       = putPositive 24
-putJetBitTransaction Tapbranch            = putPositive 25
+putJetBitTransaction Tappath            = putPositive 25
 putJetBitTransaction Version              = putPositive 26
 
 bitcoinJetMap :: Map.Map Hash256 (SomeArrow BitcoinJet)
@@ -293,7 +293,7 @@ bitcoinJetMap = Map.fromList
   , mkAssoc (TransactionJet InputScriptSigHash)
   , mkAssoc (TransactionJet TotalInputValue)
   , mkAssoc (TransactionJet TapleafVersion)
-  , mkAssoc (TransactionJet Tapbranch)
+  , mkAssoc (TransactionJet Tappath)
   , mkAssoc (TransactionJet Version)
   ]
  where

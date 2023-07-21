@@ -589,7 +589,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
        case 21: *result = INPUT_AMOUNTS_HASH; return SIMPLICITY_NO_ERROR;
        case 22: *result = INPUT_SCRIPTS_HASH; return SIMPLICITY_NO_ERROR;
        case 23: *result = TAPLEAF_HASH; return SIMPLICITY_NO_ERROR;
-       case 24: *result = TAPBRANCH_HASH; return SIMPLICITY_NO_ERROR;
+       case 24: *result = TAPPATH_HASH; return SIMPLICITY_NO_ERROR;
        case 25: *result = OUTPOINT_HASH; return SIMPLICITY_NO_ERROR;
        case 26: *result = ASSET_AMOUNT_HASH; return SIMPLICITY_NO_ERROR;
        case 27: *result = NONCE_HASH; return SIMPLICITY_NO_ERROR;
@@ -676,7 +676,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
        case 43: *result = ISSUANCE_ASSET_PROOF; return SIMPLICITY_NO_ERROR;
        case 44: *result = ISSUANCE_TOKEN_PROOF; return SIMPLICITY_NO_ERROR;
        case 45: *result = TAPLEAF_VERSION; return SIMPLICITY_NO_ERROR;
-       case 46: *result = TAPBRANCH; return SIMPLICITY_NO_ERROR;
+       case 46: *result = TAPPATH; return SIMPLICITY_NO_ERROR;
        case 47: *result = VERSION; return SIMPLICITY_NO_ERROR;
        case 48: *result = GENESIS_BLOCK_HASH; return SIMPLICITY_NO_ERROR;
       }
