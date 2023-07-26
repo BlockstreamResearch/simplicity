@@ -81,9 +81,11 @@ static sha256_midstate amrIV(tag_t tag) {
  *
  * Precondition: uint32_t imr[8]
  */
-sha256_midstate mkJetCMR(uint32_t *imr) {
+static sha256_midstate mkJetCMR(uint32_t *imr, uint_fast64_t weight) {
   sha256_midstate result = jetIV;
   uint32_t block[16] = {0};
+  block[6] = (uint32_t)(weight >> 32);
+  block[7] = (uint32_t)weight;
   memcpy(&block[8], imr, sizeof(uint32_t[8]));
   sha256_compression(result.s, block);
 
@@ -132,7 +134,8 @@ sha256_midstate computeWordCMR(const bitstring* value, size_t n) {
   sha256_compression(imr.s, stack);
 
   /* Pass 3: Compute the jet's CMR from the specificion's IMR. */
-  return mkJetCMR(imr.s);
+  static_assert(BOUNDED_MAX <= UINT64_MAX - ((uint_fast64_t)1 << 31), "overhead too large.");
+  return mkJetCMR(imr.s, ((uint_fast64_t)1 << n) + overhead);
 }
 
 /* Given a well-formed dag[i + 1], such that for all 'j', 0 <= 'j' < 'i',
