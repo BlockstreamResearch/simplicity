@@ -68,8 +68,7 @@ instance Primitive CommitmentRoot where
   primitive = primitiveCommitmentImpl primPrefix primName
 
 instance Jet CommitmentRoot where
-  -- TODO: incorporate weight into CMR.
-  jet _w t = jetCommitmentImpl t
+  jet w t = jetCommitmentImpl t (fromInteger $ milliWeight w)
 
 instance Simplicity CommitmentRoot where
 
@@ -77,8 +76,7 @@ instance Primitive IdentityRoot where
   primitive = primitiveIdentityImpl primPrefix primName
 
 instance Jet IdentityRoot where
-  -- TODO: incorporate weight into IMR.
-  jet _w t = jetIdentityImpl t
+  jet w t = jetIdentityImpl t (fromInteger $ milliWeight w)
   -- Idea for alternative IdentityRoot instance:
   --     jet t = t
   -- Trasparent jet identites would mean we could define the jet class as
@@ -92,8 +90,7 @@ instance Primitive AnnotatedRoot where
   primitive = primitiveAnnotatedImpl primPrefix primName
 
 instance Jet AnnotatedRoot where
-  -- TODO: incorporate weight into AMR.
-  jet _w t = jetAnnotatedImpl t
+  jet w t = jetAnnotatedImpl t (fromInteger $ milliWeight w)
 
 instance Simplicity AnnotatedRoot where
 

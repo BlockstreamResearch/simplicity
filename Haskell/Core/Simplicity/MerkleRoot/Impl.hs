@@ -21,6 +21,7 @@ module Simplicity.MerkleRoot.Impl
 import Data.List (intercalate)
 import Data.Proxy (Proxy(..))
 import Data.Serialize (encode)
+import Lens.Family2 (over, review)
 
 import Simplicity.Digest
 import Simplicity.Tags
@@ -237,12 +238,12 @@ instance Delegate AnnotatedRoot where
 primitiveCommitmentImpl primPrefix primName = commit . primTag primPrefix . primName
 
 -- Jets commit to their types, so we use 'identityRoot' here.
-jetCommitmentImpl ir = commit $ compressHalf jetTag (identityRoot ir)
+jetCommitmentImpl ir milliweight = commit $ compress jetTag (review (over be256) milliweight, identityRoot ir)
 
 primitiveIdentityImpl primPrefix primName = identify . primTag primPrefix . primName
 
-jetIdentityImpl ir = identify $ compressHalf jetTag (identityRoot ir)
+jetIdentityImpl ir milliweight = identify $ compress jetTag (review (over be256) milliweight, identityRoot ir)
 
 primitiveAnnotatedImpl primPrefix primName = observe . primTag primPrefix . primName
 
-jetAnnotatedImpl ir = observe $ compressHalf jetTag (identityRoot ir)
+jetAnnotatedImpl ir milliweight = observe $ compress jetTag (review (over be256) milliweight, identityRoot ir)

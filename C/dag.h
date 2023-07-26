@@ -92,12 +92,6 @@ static inline size_t numChildren(tag_t tag) {
   }
 }
 
-/* Given the IMR of a jet specification, return the CMR for a jet that implements that specification.
- *
- * Precondition: uint32_t imr[8]
- */
-sha256_midstate mkJetCMR(uint32_t *imr);
-
 /* Compute the CMR of a jet of scribe(v) : ONE |- TWO^(2^n) that outputs a given bitstring.
  *
  * Precondition: 2^n == value->len

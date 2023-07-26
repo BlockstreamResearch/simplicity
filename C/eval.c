@@ -673,7 +673,6 @@ typedef struct boundsAnalysis {
  */
 simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubounded *frameBound, ubounded *costBound
                             , ubounded maxCells, ubounded maxCost, const dag_node* dag, const type* type_dag, const size_t len) {
-  const ubounded overhead = 10 /* milli weight units */;
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(boundsAnalysis), "bound array too large.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
   static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "bound array index does not fit in uint32_t.");
