@@ -824,8 +824,8 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
     *costBound = bound[len-1].cost;
   }
   free(bound);
-  return (maxCells <= *cellsBound) ? SIMPLICITY_ERR_EXEC_MEMORY
-       : (maxCost <= *costBound) ? SIMPLICITY_ERR_EXEC_BUDGET
+  return (maxCells < *cellsBound) ? SIMPLICITY_ERR_EXEC_MEMORY
+       : (maxCost < *costBound) ? SIMPLICITY_ERR_EXEC_BUDGET
        : SIMPLICITY_NO_ERROR;
 }
 
