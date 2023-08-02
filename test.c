@@ -1,6 +1,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <simplicity/elements/exec.h>
 #include "ctx8Pruned.h"
 #include "ctx8Unpruned.h"
@@ -508,6 +509,21 @@ static void regression_tests(void) {
   }
 }
 
+static void iden8mebi_test(void) {
+  /* iden composed with itself 2^23 times. */
+  const unsigned char iden8mebi[35] = {0xe1, 0x08, [33]=0x40};
+  const ubounded expectedCost = 167772150; /* in milliWU */
+  const double secondsPerWU = 0.5 / 1000. / 1000.;
+  clock_t start, end;
+  double diff, bound;
+  start = clock();
+  test_program("iden8mebi", iden8mebi, sizeof(iden8mebi), SIMPLICITY_NO_ERROR, NULL, NULL, NULL, &expectedCost);
+  end = clock();
+  diff = (double)(end - start) / CLOCKS_PER_SEC;
+  bound = (double)expectedCost / 1000. * secondsPerWU;
+  printf("cpu_time_used by iden8mebi: %f s.  (Should be less than %f s.)\n", diff, bound);
+}
+
 int main(void) {
   test_decodeUptoMaxInt();
   test_hashBlock();
@@ -529,6 +545,7 @@ int main(void) {
   test_program("schnorr6", schnorr6, sizeof_schnorr6, SIMPLICITY_ERR_EXEC_JET, schnorr6_cmr, schnorr6_imr, schnorr6_amr, &schnorr0_cost);
   test_elements();
   regression_tests();
+  iden8mebi_test();
 
   printf("Successes: %d\n", successes);
   printf("Failures: %d\n", failures);
