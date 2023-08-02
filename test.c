@@ -231,6 +231,31 @@ static void test_program(char* name, const unsigned char* program, size_t progra
           failures++;
           printf("Expected %d for cost, but got %d instead.\n", *expectedCost, costBound);
         }
+        /* Analysis should pass when computed bounds are used. */
+        if (IS_OK(analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, cellsBound, costBound, dag, type_dag, (size_t)len))) {
+          successes++;
+        } else {
+          failures++;
+          printf("Analysis with computed bounds failed.\n");
+        }
+        /* if cellsBound is non-zero, analysis should fail when smaller cellsBound is used. */
+        if (0 < cellsBound) {
+          if (SIMPLICITY_ERR_EXEC_MEMORY == analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, cellsBound-1, BOUNDED_MAX, dag, type_dag, (size_t)len)) {
+            successes++;
+          } else {
+            failures++;
+            printf("Analysis with too small cells bounds failed. \n");
+          }
+        }
+        /* Analysis should fail when smaller costBound is used. */
+        if (0 < *expectedCost &&
+            SIMPLICITY_ERR_EXEC_BUDGET == analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, BOUNDED_MAX, *expectedCost-1, dag, type_dag, (size_t)len)
+           ) {
+          successes++;
+        } else {
+          failures++;
+          printf("Analysis with too small cost bounds failed.\n");
+        }
       }
       simplicity_err actualResult = evalTCOProgram(dag, type_dag, (size_t)len, BUDGET_MAX, NULL);
       if (expectedResult == actualResult) {
