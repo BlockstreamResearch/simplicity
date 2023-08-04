@@ -1721,7 +1721,7 @@ implementationConstWord (ConstWordContent w v) _ = Just (toWord w v)
 
 -- | Returns the cost of a constant word jet corresponding to the contents of a given 'ConstWordContent'.
 costConstWord :: ConstWordContent b -> Weight
-costConstWord (ConstWordContent w _) = overhead + milli (wordSize w)
+costConstWord (ConstWordContent w _) = milli (wordSize w)
 
 -- | Parses the depth and value of a constant word jet and returns 'SomeConstWordContent'.
 getConstWordBit :: forall m. (Monad m) => m Void -> m Bool -> m SomeConstWordContent

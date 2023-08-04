@@ -814,7 +814,7 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
       bound[i].extraFrameBound[0] = bound[i].extraFrameBound[1] = 0;
       bound[i].cost = IDEN == dag[i].tag ? bounded_add(overhead, type_dag[IDEN_A(dag, type_dag, i)].bitSize)
                     : WITNESS == dag[i].tag || WORD == dag[i].tag ? bounded_add(overhead, type_dag[dag[i].targetType].bitSize)
-                    : JET == dag[i].tag ? dag[i].cost
+                    : JET == dag[i].tag ? bounded_add(overhead, dag[i].cost)
                     : HIDDEN == dag[i].tag ? 0
                     : overhead;
     }
