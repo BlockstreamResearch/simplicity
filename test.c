@@ -129,7 +129,7 @@ static void test_hashBlock(void) {
           printf("Expected %d for cost, but got %d instead.\n", hashBlock_cost, costBound);
         }
       }
-      if (IS_OK(evalTCOExpression(CHECK_NONE, output, input, dag, type_dag, (size_t)len, 29100, NULL))) {
+      if (IS_OK(evalTCOExpression(CHECK_NONE, output, input, dag, type_dag, (size_t)len, NULL, NULL))) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
                                          , 0xb00361a3ul, 0x96177a9cul, 0xb410ff61ul, 0xf20015adul };
@@ -229,7 +229,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
           successes++;
         } else {
           failures++;
-          printf("Expected %d for cost, but got %d instead.\n", *expectedCost, costBound);
+          printf("Expected %u for cost, but got %u instead.\n", *expectedCost, costBound);
         }
         /* Analysis should pass when computed bounds are used. */
         if (IS_OK(analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, cellsBound, costBound, dag, type_dag, (size_t)len))) {
@@ -257,7 +257,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
           printf("Analysis with too small cost bounds failed.\n");
         }
       }
-      simplicity_err actualResult = evalTCOProgram(dag, type_dag, (size_t)len, BUDGET_MAX, NULL);
+      simplicity_err actualResult = evalTCOProgram(dag, type_dag, (size_t)len, NULL, NULL);
       if (expectedResult == actualResult) {
         successes++;
       } else {
