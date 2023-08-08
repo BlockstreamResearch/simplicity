@@ -660,8 +660,8 @@ typedef struct boundsAnalysis {
  *               NULL != UWORDBound
  *               NULL != frameBound
  *               NULL != costBound
- *               maxCells < BOUNDED_MAX
- *               maxCost < BOUNDED_MAX
+ *               maxCells < UBOUNDED_MAX
+ *               maxCost < UBOUNDED_MAX
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
  * Postcondition: if the result is 'SIMPLICITY_NO_ERR'
  *                then '*costBound' bounds the dag's CPU cost measured in milli weight units
@@ -704,11 +704,11 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
                                                , bound[dag[i].child[1]].cost ));
       break;
      case DISCONNECT:
-      if (BOUNDED_MAX <= type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize ||
-          BOUNDED_MAX <= type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize) {
+      if (UBOUNDED_MAX <= type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize ||
+          UBOUNDED_MAX <= type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize) {
         /* 'BITSIZE(WORD256 * A)' or 'BITSIZE(B * C)' has exceeded our limits. */
-        bound[i].extraCellsBound[0] = BOUNDED_MAX;
-        bound[i].extraCellsBound[1] = BOUNDED_MAX;
+        bound[i].extraCellsBound[0] = UBOUNDED_MAX;
+        bound[i].extraCellsBound[1] = UBOUNDED_MAX;
       } else {
         bound[i].extraCellsBound[1] = type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize;
         bound[i].extraCellsBound[0] = max(
@@ -735,10 +735,10 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
                     , bounded_add(bound[dag[i].child[0]].cost, bound[dag[i].child[1]].cost))))));
       break;
      case COMP:
-      if (BOUNDED_MAX <= type_dag[COMP_B(dag, type_dag, i)].bitSize) {
+      if (UBOUNDED_MAX <= type_dag[COMP_B(dag, type_dag, i)].bitSize) {
         /* 'BITSIZE(B)' has exceeded our limits. */
-        bound[i].extraCellsBound[0] = BOUNDED_MAX;
-        bound[i].extraCellsBound[1] = BOUNDED_MAX;
+        bound[i].extraCellsBound[0] = UBOUNDED_MAX;
+        bound[i].extraCellsBound[1] = UBOUNDED_MAX;
       } else {
         bound[i].extraCellsBound[0] = max( bounded_add( type_dag[COMP_B(dag, type_dag, i)].bitSize
                                                       , max( bound[dag[i].child[0]].extraCellsBound[0]
@@ -857,9 +857,9 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, con
   simplicity_assert(1 <= len);
   simplicity_assert(len <= DAG_LEN_MAX);
   simplicity_assert(budget <= BUDGET_MAX);
-  static_assert(1 <= BOUNDED_MAX, "BOUNDED_MAX is zero.");
-  static_assert(BUDGET_MAX <= (BOUNDED_MAX - 1) / 1000, "BUDGET_MAX is too large.");
-  static_assert(CELLS_MAX < BOUNDED_MAX, "CELLS_MAX is too large.");
+  static_assert(1 <= UBOUNDED_MAX, "UBOUNDED_MAX is zero.");
+  static_assert(BUDGET_MAX <= (UBOUNDED_MAX - 1) / 1000, "BUDGET_MAX is too large.");
+  static_assert(CELLS_MAX < UBOUNDED_MAX, "CELLS_MAX is too large.");
   ubounded cellsBound, UWORDBound, frameBound, costBound;
   simplicity_err result = analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, CELLS_MAX, budget*1000, dag, type_dag, len);
   if (!IS_OK(result)) return result;
