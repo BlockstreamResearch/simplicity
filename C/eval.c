@@ -865,7 +865,7 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, con
   if (!IS_OK(result)) return result;
 
   /* frameBound is at most 2*len. */
-  static_assert(DAG_LEN_MAX <= SIZE_MAX / 2, "2*DAG_LEN_MAX does not fit in size_t.");
+  static_assert(DAG_LEN_MAX <= UBOUNDED_MAX / 2, "2*DAG_LEN_MAX does not fit in size_t.");
   simplicity_assert(frameBound <= 2*len);
 
   /* UWORDBound * UWORD_BIT, the number of bits actually allocacted, is at most the cellBound count plus (worse case) padding bits in each frame. */
