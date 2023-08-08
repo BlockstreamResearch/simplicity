@@ -134,7 +134,7 @@ sha256_midstate computeWordCMR(const bitstring* value, size_t n) {
   sha256_compression(imr.s, stack);
 
   /* Pass 3: Compute the jet's CMR from the specificion's IMR. */
-  static_assert(BOUNDED_MAX <= UINT64_MAX - ((uint_fast64_t)1 << 31), "overhead too large.");
+  static_assert(UBOUNDED_MAX <= UINT64_MAX - ((uint_fast64_t)1 << 31), "overhead too large.");
   return mkJetCMR(imr.s, ((uint_fast64_t)1 << n) + overhead);
 }
 

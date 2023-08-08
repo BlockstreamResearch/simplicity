@@ -121,7 +121,7 @@ static void test_hashBlock(void) {
       }
       {
         ubounded cellsBound, UWORDBound, frameBound, costBound;
-        if (IS_OK(analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, BOUNDED_MAX, BOUNDED_MAX, dag, type_dag, (size_t)len))
+        if (IS_OK(analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, UBOUNDED_MAX, dag, type_dag, (size_t)len))
             && hashBlock_cost == costBound) {
           successes++;
         } else {
@@ -224,7 +224,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       }
       if (expectedCost) {
         ubounded cellsBound, UWORDBound, frameBound, costBound;
-        if (IS_OK(analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, BOUNDED_MAX, BOUNDED_MAX, dag, type_dag, (size_t)len))
+        if (IS_OK(analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, UBOUNDED_MAX, dag, type_dag, (size_t)len))
            && *expectedCost == costBound) {
           successes++;
         } else {
@@ -240,7 +240,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
         }
         /* if cellsBound is non-zero, analysis should fail when smaller cellsBound is used. */
         if (0 < cellsBound) {
-          if (SIMPLICITY_ERR_EXEC_MEMORY == analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, cellsBound-1, BOUNDED_MAX, dag, type_dag, (size_t)len)) {
+          if (SIMPLICITY_ERR_EXEC_MEMORY == analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, cellsBound-1, UBOUNDED_MAX, dag, type_dag, (size_t)len)) {
             successes++;
           } else {
             failures++;
@@ -249,7 +249,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
         }
         /* Analysis should fail when smaller costBound is used. */
         if (0 < *expectedCost &&
-            SIMPLICITY_ERR_EXEC_BUDGET == analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, BOUNDED_MAX, *expectedCost-1, dag, type_dag, (size_t)len)
+            SIMPLICITY_ERR_EXEC_BUDGET == analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, *expectedCost-1, dag, type_dag, (size_t)len)
            ) {
           successes++;
         } else {

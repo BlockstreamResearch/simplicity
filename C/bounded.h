@@ -5,22 +5,22 @@
 #include <stdint.h>
 
 typedef uint_least32_t ubounded;
-#define BOUNDED_MAX UINT32_MAX
+#define UBOUNDED_MAX UINT32_MAX
 
 static inline ubounded max(ubounded x, ubounded y) {
   return x <= y ? y : x;
 }
 
-/* Returns min(x + y, BOUNDED_MAX) */
+/* Returns min(x + y, UBOUNDED_MAX) */
 static inline ubounded bounded_add(ubounded x, ubounded y) {
-  return BOUNDED_MAX < x ? BOUNDED_MAX
-       : BOUNDED_MAX - x < y ? BOUNDED_MAX
+  return UBOUNDED_MAX < x ? UBOUNDED_MAX
+       : UBOUNDED_MAX - x < y ? UBOUNDED_MAX
        : x + y;
 }
 
-/* *x = min(*x + 1, BOUNDED_MAX) */
+/* *x = min(*x + 1, UBOUNDED_MAX) */
 static inline void bounded_inc(ubounded* x) {
-  if (*x < BOUNDED_MAX) (*x)++;
+  if (*x < UBOUNDED_MAX) (*x)++;
 }
 
 /* 'pad(false, a, b)' computes the PADL(a, b) function.

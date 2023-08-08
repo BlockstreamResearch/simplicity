@@ -24,8 +24,8 @@ typedef unsigned char flags_type;
  *               NULL != UWORDBound
  *               NULL != frameBound
  *               NULL != costBound
- *               maxCells < BOUNDED_MAX
- *               maxCost < BOUNDED_MAX
+ *               maxCells < UBOUNDED_MAX
+ *               maxCost < UBOUNDED_MAX
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
  * Postcondition: if the result is 'SIMPLICITY_NO_ERR'
  *                then '*costBound' bounds the dag's CPU cost measured in milli weight units
