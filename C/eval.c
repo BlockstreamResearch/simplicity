@@ -651,23 +651,21 @@ typedef struct boundsAnalysis {
 /* Given a well-typed dag representing a Simplicity expression, compute the memory and CPU requirements for evaluation.
  *
  * If 'malloc' fails, then returns SIMPLICITY_ERR_MALLOC.
- * If the bounds on the number of cells needed for evaluation of 'dag' on an idealized Bit Machine exceeds maxCells,
+ * When maxCells < UBOUNDED_MAX, if the bounds on the number of cells needed for evaluation of 'dag' on an idealized Bit Machine exceeds maxCells,
  * then return SIMPLICITY_ERR_EXEC_MEMORY.
- * If the bounds on the dag's CPU cost exceeds 'maxCost', then return SIMPLICITY_ERR_EXEC_BUDGET.
+ * When maxCost < UBOUNDED_MAX, if the bounds on the dag's CPU cost exceeds 'maxCost', then return SIMPLICITY_ERR_EXEC_BUDGET.
  * Otherwise returns SIMPLICITY_NO_ERR.
  *
  * Precondition: NULL != cellsBound
  *               NULL != UWORDBound
  *               NULL != frameBound
  *               NULL != costBound
- *               maxCells < UBOUNDED_MAX
- *               maxCost < UBOUNDED_MAX
  *               dag_node dag[len] and 'dag' is well-typed with 'type_dag'.
  * Postcondition: if the result is 'SIMPLICITY_NO_ERR'
- *                then '*costBound' bounds the dag's CPU cost measured in milli weight units
- *                 and '*cellsBound' bounds the number of cells needed for evaluation of 'dag' on an idealized Bit Machine
- *                 and '*UWORDBound' bounds the number of UWORDs needed for the frames during evaluation of 'dag'
- *                 and '*frameBound' bounds the number of stack frames needed during execution of 'dag'.
+ *                then if maxCost < UBOUNDED_MAX then '*costBound' bounds the dag's CPU cost measured in milli weight units
+ *                 and if maxCells < UBOUNDED_MAX then '*cellsBound' bounds the number of cells needed for evaluation of 'dag' on an idealized Bit Machine
+ *                 and if maxCells < UBOUNDED_MAX then '*UWORDBound' bounds the number of UWORDs needed for the frames during evaluation of 'dag'
+ *                 and if maxCells < UBOUNDED_MAX then '*frameBound' bounds the number of stack frames needed during execution of 'dag'.
  *
  * :TODO: The cost calculations below are estimated and need to be replaced by experimental data.
  */
@@ -681,6 +679,16 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
   boundsAnalysis* bound = malloc(len * sizeof(boundsAnalysis));
   if (!bound) return SIMPLICITY_ERR_MALLOC;
 
+  /* Sum up the total costs.
+   * The computations for extraCells and cost are clipped at UBOUNDED_MAX,
+   * so a result of UBOUNDED_MAX means "UBOUNDED_MAX or larger".
+   *
+   * The extraUWORD computation may produce unsigned overflow.
+   * However the extraUWORD true value is less than the true value of extraCells.
+   * As long as extraCells is strictly less than UBOUNDED_MAX, extraUWORD will be too.
+   *
+   * The extraFrame computation is bounded by DAG_LEN, and cannot overflow.
+   */
   for (size_t i = 0; i < len; ++i) {
     switch (dag[i].tag) {
      case ASSERTL:
@@ -824,6 +832,9 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
     *costBound = bound[len-1].cost;
   }
   free(bound);
+  /* Note that the cellsBound and costBound computations have been clipped at UBOUNDED_MAX.
+   * Therefore setting maxCells or maxCost to UBOUNDED_MAX will disable the corresponding error check.
+   */
   return (maxCells < *cellsBound) ? SIMPLICITY_ERR_EXEC_MEMORY
        : (maxCost < *costBound) ? SIMPLICITY_ERR_EXEC_BUDGET
        : SIMPLICITY_NO_ERROR;
@@ -833,7 +844,7 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
  * If bitSize(A) > 0, initialize the active read frame's data with 'input[ROUND_UWORD(bitSize(A))]'.
  *
  * If malloc fails, returns 'SIMPLICITY_ERR_MALLOC'.
- * If static analysis results determines the bound on cpu requirements exceed the allowed budget, returns 'SIMPLICITY_ERR_EXEC_BUDGET'
+ * When a budget is given, if static analysis results determines the bound on cpu requirements exceed the allowed budget, returns 'SIMPLICITY_ERR_EXEC_BUDGET'
  * If static analysis results determines the bound on memory allocation requirements exceed the allowed limits, returns 'SIMPLICITY_ERR_EXEC_MEMORY'
  * If during execution some jet execution fails, returns 'SIMPLICITY_ERR_EXEC_JET'.
  * If during execution some 'assertr' or 'assertl' combinator fails, returns 'SIMPLICITY_ERR_EXEC_ASESRT'.
@@ -848,20 +859,20 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
  * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' for an expression of type A |- B;
  *               bitSize(A) == 0 or UWORD input[ROUND_UWORD(bitSize(A))];
  *               bitSize(B) == 0 or UWORD output[ROUND_UWORD(bitSize(B))];
- *               budget <= BUDGET_MAX
+ *               if NULL != budget then *budget <= BUDGET_MAX
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
 simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, const UWORD* input
-                                , const dag_node* dag, type* type_dag, size_t len, ubounded budget, const txEnv* env
+                                , const dag_node* dag, type* type_dag, size_t len, const ubounded* budget, const txEnv* env
                                 ) {
   simplicity_assert(1 <= len);
   simplicity_assert(len <= DAG_LEN_MAX);
-  simplicity_assert(budget <= BUDGET_MAX);
+  if (budget) { simplicity_assert(*budget <= BUDGET_MAX); }
   static_assert(1 <= UBOUNDED_MAX, "UBOUNDED_MAX is zero.");
   static_assert(BUDGET_MAX <= (UBOUNDED_MAX - 1) / 1000, "BUDGET_MAX is too large.");
   static_assert(CELLS_MAX < UBOUNDED_MAX, "CELLS_MAX is too large.");
   ubounded cellsBound, UWORDBound, frameBound, costBound;
-  simplicity_err result = analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, CELLS_MAX, budget*1000, dag, type_dag, len);
+  simplicity_err result = analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, CELLS_MAX, budget ? *budget*1000 : UBOUNDED_MAX, dag, type_dag, len);
   if (!IS_OK(result)) return result;
 
   /* frameBound is at most 2*len. */
