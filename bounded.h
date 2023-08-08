@@ -30,5 +30,5 @@ static inline ubounded pad(bool right, ubounded a, ubounded b) {
   return max(a, b) - (right ? b : a);
 }
 
-static const ubounded overhead = 10 /* milli weight units */;
+static const ubounded overhead = 100 /* milli weight units */;
 #endif

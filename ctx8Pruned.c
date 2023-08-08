@@ -277,4 +277,4 @@ const uint32_t ctx8Pruned_amr[] = {
 };
 
 /* The cost of the above ctx8Pruned Simplicity expression in milli weight units. */
-const ubounded ctx8Pruned_cost = 30964831;
+const ubounded ctx8Pruned_cost = 274149781;

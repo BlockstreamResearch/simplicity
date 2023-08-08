@@ -187,4 +187,4 @@ const uint32_t hashBlock_amr[] = {
 };
 
 /* The cost of the above hashBlock Simplicity expression in milli weight units. */
-const ubounded hashBlock_cost = 29099602;
+const ubounded hashBlock_cost = 258978952;
