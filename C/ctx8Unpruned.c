@@ -267,4 +267,4 @@ const uint32_t ctx8Unpruned_amr[] = {
 };
 
 /* The cost of the above ctx8Unpruned Simplicity expression in milli weight units. */
-const ubounded ctx8Unpruned_cost = 730611815;
+const ubounded ctx8Unpruned_cost = UBOUNDED_MAX;

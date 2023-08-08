@@ -102,7 +102,7 @@ fileC example = "#include \""++example^.name++".h\"\n"
         ++ showHash (example^.fullname++"_amr") amr
         ++ "\n"
         ++ "/* The cost of the above "++example^.fullname++" Simplicity expression in milli weight units. */\n"
-        ++ "const ubounded "++example^.fullname++"_cost = "++show cost++";\n"
+        ++ "const ubounded "++example^.fullname++"_cost = "++ (if cost < 2^32 then show cost else "UBOUNDED_MAX") ++";\n"
  where
   binary = BS.unpack . runPut . putBitStream . putTermLengthCode
          $ (unwrap (example^.prog) :: Simplicity.Elements.Dag.JetDag jt a b)

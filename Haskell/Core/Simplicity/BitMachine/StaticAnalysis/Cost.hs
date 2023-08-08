@@ -52,4 +52,4 @@ instance Delegate TermWeight where
 -- :TODO: Perhaps fold this into a generic 'mkTermWeight' or 'withOverhead' constructor that adds in the overhead.
 -- | Helper value for creating 'TermWeight' instaces.
 overhead :: Weight
-overhead = 0.01
+overhead = 0.1

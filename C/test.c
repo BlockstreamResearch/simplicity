@@ -130,7 +130,8 @@ static void test_hashBlock(void) {
           printf("Expected %d for cost, but got %d instead.\n", hashBlock_cost, costBound);
         }
       }
-      if (IS_OK(evalTCOExpression(CHECK_NONE, output, input, dag, type_dag, (size_t)len, NULL, NULL))) {
+      simplicity_err err = evalTCOExpression(CHECK_NONE, output, input, dag, type_dag, (size_t)len, NULL, NULL);
+      if (IS_OK(err)) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
                                          , 0xb00361a3ul, 0x96177a9cul, 0xb410ff61ul, 0xf20015adul };
@@ -146,7 +147,7 @@ static void test_hashBlock(void) {
         }
       } else {
         failures++;
-        printf("Unexpected failure of hashblock evaluation\n");
+        printf("Unexpected failure of hashblock evaluation: %d\n", err);
       }
     }
     free(type_dag);
@@ -512,7 +513,7 @@ static void regression_tests(void) {
 static void iden8mebi_test(void) {
   /* iden composed with itself 2^23 times. */
   const unsigned char iden8mebi[35] = {0xe1, 0x08, [33]=0x40};
-  const ubounded expectedCost = 167772150; /* in milliWU */
+  const ubounded expectedCost = 1677721500; /* in milliWU */
   const double secondsPerWU = 0.5 / 1000. / 1000.;
   clock_t start, end;
   double diff, bound;
@@ -521,7 +522,14 @@ static void iden8mebi_test(void) {
   end = clock();
   diff = (double)(end - start) / CLOCKS_PER_SEC;
   bound = (double)expectedCost / 1000. * secondsPerWU;
+
   printf("cpu_time_used by iden8mebi: %f s.  (Should be less than %f s.)\n", diff, bound);
+  if (diff <= bound) {
+    successes++;
+  } else {
+    failures++;
+    printf("iden8mebi took too long.\n");
+  }
 }
 
 int main(void) {
