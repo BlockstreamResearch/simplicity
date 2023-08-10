@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <simplicity/errorCodes.h>
 #include "limitations.h"
 #include "sha256.h"
 #include "simplicity_assert.h"
@@ -26,7 +25,7 @@ const sha256_midstate* rsort(size_t* scratch, const sha256_midstate** a, size_t 
  *               len <= DAG_LEN_MAX;
  */
 static inline int hasDuplicates(const sha256_midstate* a, size_t len) {
-  if (0 == len) return SIMPLICITY_NO_ERROR;
+  if (0 == len) return 0;
   static_assert(sizeof(a->s) * CHAR_BIT == 256, "sha256_midstate.s has unnamed padding.");
   static_assert(sizeof(a->s) < SIZE_MAX / CHAR_COUNT, "CHAR_BIT is way too large.");
   static_assert((sizeof(a->s) + 1) * CHAR_COUNT <= SIZE_MAX/sizeof(size_t), "sizeof(size_t) is way too large.");
