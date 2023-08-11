@@ -12097,11 +12097,6 @@
 
   <subsection|Transaction>
 
-  <\itemize>
-    <item><math|<text|<samp|'<samp|outputIsFee>'>>
-    :Index\<vdash\><maybe><around*|(|<2>|)>>
-  </itemize>
-
   <subsubsection|<samp|script-cmr>>
 
   \;
@@ -12194,6 +12189,15 @@
 
   <math|<text|<samp|output-null-datum>> \<of\>
   <2><rsup|32>\<times\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|2>\<times\><2><rsup|256>+<around*|(|<2>+<2><rsup|4>|)>|)>|)>>
+
+  <subsubsection|<samp|output-is-fee>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-is-fee'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|output-is-fee>> \<of\>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<2>|)>>
 
   <subsubsection|<samp|output-surjection-proof>>
 
@@ -13192,8 +13196,9 @@
     <associate|auto-484|<tuple|B.3.4.46|?>>
     <associate|auto-485|<tuple|B.3.4.47|?>>
     <associate|auto-486|<tuple|B.3.4.48|?>>
-    <associate|auto-487|<tuple|C|?>>
+    <associate|auto-487|<tuple|B.3.4.49|?>>
     <associate|auto-488|<tuple|C|?>>
+    <associate|auto-489|<tuple|C|?>>
     <associate|auto-49|<tuple|3.3.7.1|?>>
     <associate|auto-5|<tuple|1.2.2|?>>
     <associate|auto-50|<tuple|3.3.7.2|?>>
@@ -14098,7 +14103,7 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-189>>
 
-      <with|par-left|<quote|2tab>|B.1.1.9<space|2spc><with|font-family|<quote|ss>|xor3>
+      <with|par-left|<quote|2tab>|B.1.1.9<space|2spc><with|font-family|<quote|ss>|xor-xor>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-190>>
 
