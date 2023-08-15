@@ -124,6 +124,7 @@ typedef struct sigOutput {
   sha256_midstate scriptPubKey;
   parsedNullData pnd;
   bool isNullData;
+  bool emptyScript;
 } sigOutput;
 
 /* The data held by an Elements unspent transaction output database.

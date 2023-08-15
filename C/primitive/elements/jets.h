@@ -28,6 +28,7 @@ bool output_amount(frameItem* dst, frameItem src, const txEnv* env);
 bool output_nonce(frameItem* dst, frameItem src, const txEnv* env);
 bool output_script_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool output_null_datum(frameItem* dst, frameItem src, const txEnv* env);
+bool output_is_fee(frameItem* dst, frameItem src, const txEnv* env);
 bool output_surjection_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool output_range_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool genesis_block_hash(frameItem* dst, frameItem src, const txEnv* env);

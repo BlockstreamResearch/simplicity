@@ -23,6 +23,7 @@ module Simplicity.Elements.FFI.Jets
  , output_nonce
  , output_script_hash
  , output_null_datum
+ , output_is_fee
  , output_surjection_proof
  , output_range_proof
  , genesis_block_hash
@@ -134,6 +135,7 @@ foreign import ccall unsafe "" c_output_amount :: Ptr FrameItem -> Ptr FrameItem
 foreign import ccall unsafe "" c_output_nonce :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_script_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_null_datum :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_output_is_fee :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_surjection_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_range_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_genesis_block_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -335,6 +337,9 @@ output_script_hash = unsafeLocalJet c_output_script_hash
 
 output_null_datum :: PrimEnv -> (Word32,Word32) -> Maybe (S (S (Either (Word2, Word256) (Either Bit Word4))))
 output_null_datum = unsafeLocalJet c_output_null_datum
+
+output_is_fee :: PrimEnv -> Word32 -> Maybe (S Bit)
+output_is_fee = unsafeLocalJet c_output_is_fee
 
 output_surjection_proof :: PrimEnv -> Word32 -> Maybe (S Word256)
 output_surjection_proof = unsafeLocalJet c_output_surjection_proof

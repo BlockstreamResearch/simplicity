@@ -1,8 +1,10 @@
 module Simplicity.Elements.FFI.Tests (tests) where
 
 import Control.Arrow ((***), (+++))
+import Data.Maybe (isJust)
+import Data.Vector ((!?))
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.QuickCheck (NonNegative(..), Property, forAll, testProperty)
+import Test.Tasty.QuickCheck (NonNegative(..), Property, classify, forAll, testProperty)
 
 import Simplicity.Arbitrary
 import Simplicity.Digest
@@ -89,6 +91,7 @@ tests = testGroup "Elements"
           , testProperty "output_nonce" prop_output_nonce
           , testProperty "output_script_hash" prop_output_script_hash
           , testProperty "output_null_datum" prop_output_null_datum
+          , testProperty "output_is_fee" prop_output_is_fee
           , testProperty "output_surjection_proof" prop_output_surjection_proof
           , testProperty "output_range_proof" prop_output_range_proof
           , testProperty "current_pegin" prop_current_pegin
@@ -438,6 +441,13 @@ prop_output_null_datum :: NonNegative Integer -> Property
 prop_output_null_datum = \(NonNegative j) -> forallOutPrimEnv $ \env i -> fast_output_null_datum env (toW32 i, toWord32 j) == output_null_datum env (toW32 i, toWord32 j)
  where
   fast_output_null_datum = testEval (specification (ElementsJet (TransactionJet OutputNullDatum)))
+
+prop_output_is_fee :: Property
+prop_output_is_fee = forallOutPrimEnv $ \env i ->
+  classify (isJust $ Prim.sigTxOut (Prim.envTx env) !? (fromIntegral i) >>= Prim.outputFee) "is_fee"
+  $ fast_output_is_fee env (toW32 i) == output_is_fee env (toW32 i)
+ where
+  fast_output_is_fee = testEval (specification (ElementsJet (TransactionJet OutputIsFee)))
 
 prop_output_surjection_proof :: Property
 prop_output_surjection_proof = forallOutPrimEnv $ \env i -> fast_output_surjection_proof env (toW32 i) == output_surjection_proof env (toW32 i)
