@@ -287,6 +287,7 @@ static void parseNullData(parsedNullData* result, opcode** allocation, size_t* a
  */
 static void copyOutput(sigOutput* result, opcode** allocation, size_t* allocationLen, const rawOutput* output) {
   hashBuffer(&result->scriptPubKey, &output->scriptPubKey);
+  result->emptyScript = 0 == output->scriptPubKey.len;
   copyRawConfidential(&result->asset, output->asset);
   copyRawAmt(&result->amt, output->value);
   copyRawConfidential(&result->nonce, output->nonce);

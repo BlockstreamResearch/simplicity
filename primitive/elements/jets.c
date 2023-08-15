@@ -160,6 +160,11 @@ static uint_fast16_t lockDuration(const transaction* tx) {
   return 2 <= tx->version ? (uint_fast32_t)tx->lockDuration : 0;
 }
 
+static bool isFee(const sigOutput* output) {
+  /* As specified in https://github.com/ElementsProject/elements/blob/de942511a67c3a3fcbdf002a8ee7e9ba49679b78/src/primitives/transaction.h#L304-L307. */
+  return output->emptyScript && EXPLICIT == output->asset.prefix && EXPLICIT == output->amt.prefix;
+}
+
 /* version : ONE |- TWO^32 */
 bool version(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
@@ -442,6 +447,17 @@ bool output_null_datum(frameItem* dst, frameItem src, const txEnv* env) {
     }
   } else {
     skipBits(dst, 1 + 1 + 2 + 256);
+  }
+  return true;
+}
+
+/* output_is_fee : TWO^32 |- S TWO */
+bool output_is_fee(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = read32(&src);
+  if (writeBit(dst, i < env->tx->numOutputs)) {
+    writeBit(dst, isFee(&env->tx->output[i]));
+  } else {
+    skipBits(dst, 1);
   }
   return true;
 }
