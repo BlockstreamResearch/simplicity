@@ -5,6 +5,7 @@ module Simplicity.Elements.Programs.Transaction
  , numInputs
  , numOutputs
  , outputAmount
+ , outputIsFee
  , inputAmount
  , currentPegin
  , currentPrevOutpoint
@@ -30,6 +31,7 @@ import Simplicity.Elements.Primitive
 import Simplicity.Elements.Term hiding (one)
 import Simplicity.Functor
 import Simplicity.Programs.Bit
+import Simplicity.Programs.Generic
 import Simplicity.Programs.Word
 import Simplicity.Ty.Word
 
@@ -43,6 +45,9 @@ data Lib term =
     -- | Returns a pair of asset and amounts for the given output index.
     -- Returns Nothing of the index is out of range.
   , outputAmount :: term Word32 (S (Conf Word256, Conf Word64))
+    -- | An output is a fee when its script is empty and the asset and amounts are explicit.
+    -- Returns Nothing of the index is out of range.
+  , outputIsFee :: term Word32 (S Bit)
     -- | Returns a pair of asset and amounts for the given input index.
     -- Returns Nothing of the index is out of range.
   , inputAmount :: term Word32 (S (Conf Word256, Conf Word64))
@@ -85,6 +90,7 @@ instance SimplicityFunctor Lib where
       numInputs = m numInputs
     , numOutputs = m numOutputs
     , outputAmount = m outputAmount
+    , outputIsFee = m outputIsFee
     , inputAmount = m inputAmount
     , currentPegin = m currentPegin
     , currentPrevOutpoint = m currentPrevOutpoint
@@ -114,6 +120,10 @@ lib = l
 
   , outputAmount = primitive OutputAmount &&& primitive OutputAsset
                >>> match (injl unit) (ih &&& oh >>> match (injl unit) (injr iden))
+
+  , outputIsFee = outputAmount &&& (primitive OutputScriptHash &&& scribe (Right emptyHash) >>> eq)
+              >>> match (injl unit) (injr (oih &&& (ooh &&& ih)
+               >>> match false (drop (match false ih))))
 
   , inputAmount = primitive InputAmount &&& primitive InputAsset
               >>> match (injl unit) (ih &&& oh >>> match (injl unit) (injr iden))
@@ -148,3 +158,5 @@ lib = l
 
   , currentIssuanceTokenProof = primitive CurrentIndex >>> assert (primitive IssuanceTokenProof)
   }
+
+  emptyHash = toWord256 . integerHash256 $ bsHash mempty

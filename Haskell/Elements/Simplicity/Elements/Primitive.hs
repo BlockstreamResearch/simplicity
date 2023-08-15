@@ -267,10 +267,8 @@ primSem p a env = interpret p a
   interpret Fee = \assetId -> return . toWord64 . toInteger . Monoid.getSum $ foldMap (getValue assetId) (sigTxOut tx)
    where
     getValue assetId txo = fromMaybe (Monoid.Sum 0) $ do
-      guard $ BSL.null (txoScript txo)
-      Explicit a <- Just . view (under asset) $ txoAsset txo
+      (a, v) <- outputFee txo
       guard $ assetId == encodeHash a
-      Explicit v <- Just . view (under amount) $ txoAmount txo
       return (Monoid.Sum v)
   interpret GenesisBlockHash = element . return . encodeHash $ envGenesisBlock env
   interpret ScriptCMR = element . return . encodeHash . tapScriptCMR $ envTap env

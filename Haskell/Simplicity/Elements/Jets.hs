@@ -24,6 +24,7 @@ import Control.Monad (guard)
 import qualified Data.ByteString as BS
 import Data.Either (isRight)
 import qualified Data.Map as Map
+import Data.Maybe (isJust)
 import Data.Proxy (Proxy(Proxy))
 import Data.Serialize (runPut, put, putWord8)
 import Data.String (fromString)
@@ -152,6 +153,7 @@ data TransactionJet a b where
   OutputNonce :: TransactionJet Word32 (S (S (Conf Word256)))
   OutputScriptHash :: TransactionJet Word32 (S Word256)
   OutputNullDatum :: TransactionJet (Word32, Word32) (S (S (Either (Word2, Word256) (Either Bit Word4))))
+  OutputIsFee :: TransactionJet Word32 (S Bit)
   OutputSurjectionProof :: TransactionJet Word32 (S Word256)
   OutputRangeProof :: TransactionJet Word32 (S Word256)
   CurrentPegin :: TransactionJet () (S Word256)
@@ -262,6 +264,7 @@ specificationTransaction OutputAmount = Prog.outputAmount
 specificationTransaction OutputNonce = primitive Prim.OutputNonce
 specificationTransaction OutputScriptHash = primitive Prim.OutputScriptHash
 specificationTransaction OutputNullDatum = primitive Prim.OutputNullDatum
+specificationTransaction OutputIsFee = Prog.outputIsFee
 specificationTransaction OutputSurjectionProof = primitive Prim.OutputSurjectionProof
 specificationTransaction OutputRangeProof = primitive Prim.OutputRangeProof
 specificationTransaction CurrentPegin = Prog.currentPegin
@@ -453,6 +456,9 @@ implementationIssuance CalculateConfidentialToken _ x = Just (fromHash (calculat
   entropy = review (over be256) (fromW256 x)
 
 implementationTransaction :: TransactionJet a b -> PrimEnv -> a -> Maybe b
+implementationTransaction OutputIsFee env i = Just . cast $ toBit . isJust . outputFee <$> sigTxOut (envTx env) !? (fromIntegral (fromWord32 i))
+ where
+  cast = maybe (Left ()) Right
 implementationTransaction x env i = Semantics.sem (specificationTransaction x) env i
 
 getJetBitElements :: (Monad m) => m Void -> m Bool -> m (SomeArrow ElementsJet)
@@ -529,7 +535,7 @@ getJetBitElements = getCatalogue elementsCatalogue
    , Item $ SomeArrow OutputNonce
    , Item $ SomeArrow OutputScriptHash
    , Item $ SomeArrow OutputNullDatum
-   , Missing -- TODO: OutputIsFee
+   , Item $ SomeArrow OutputIsFee
    , Item $ SomeArrow OutputSurjectionProof
    , Item $ SomeArrow OutputRangeProof
    , Missing -- TODO: TotalFee
@@ -599,7 +605,7 @@ putJetBitSigHash IssuanceBlindingEntropyHash = putPositive 20
 putJetBitSigHash InputAmountsHash            = putPositive 21
 putJetBitSigHash InputScriptsHash            = putPositive 22
 putJetBitSigHash TapleafHash                 = putPositive 23
-putJetBitSigHash TappathHash               = putPositive 24
+putJetBitSigHash TappathHash                 = putPositive 24
 putJetBitSigHash OutpointHash                = putPositive 25
 putJetBitSigHash AssetAmountHash             = putPositive 26
 putJetBitSigHash NonceHash                   = putPositive 27
@@ -640,7 +646,7 @@ putJetBitTransaction OutputAmount               = putPositive 8
 putJetBitTransaction OutputNonce                = putPositive 9
 putJetBitTransaction OutputScriptHash           = putPositive 10
 putJetBitTransaction OutputNullDatum            = putPositive 11
-
+putJetBitTransaction OutputIsFee                = putPositive 11
 putJetBitTransaction OutputSurjectionProof      = putPositive 13
 putJetBitTransaction OutputRangeProof           = putPositive 14
 

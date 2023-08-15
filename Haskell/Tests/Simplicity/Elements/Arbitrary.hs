@@ -90,7 +90,7 @@ instance Arbitrary Nonce where
   arbitrary = Nonce <$> oneof [Left <$> ((,) <$> arbitrary <*> (fromInteger <$> arbitrary)),  Right <$> arbitraryHash256]
 
 instance Arbitrary TxOutput where
-  arbitrary = TxOutput <$> arbitraryAssetWithWitness <*> arbitraryAmountWithWitness <*> arbitrary <*> oneof [arbitraryBS, arbitraryNullData, arbitraryNonNullData]
+  arbitrary = TxOutput <$> arbitraryAssetWithWitness <*> arbitraryAmountWithWitness <*> arbitrary <*> oneof [pure BSL.empty, arbitraryBS, arbitraryNullData, arbitraryNonNullData]
 
 instance Arbitrary UTXO where
   arbitrary = UTXO <$> arbitraryAsset <*> arbitraryAmount <*> arbitraryBS

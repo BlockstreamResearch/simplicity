@@ -31,6 +31,7 @@ module Simplicity.Elements.DataTypes
   , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuancesHash, issuanceBlindingEntropyHash
   , txHash
   , tapleafHash, tappathHash, tapEnvHash
+  , outputFee
   , module Simplicity.Bitcoin
   ) where
 
@@ -559,3 +560,12 @@ tapEnvHash tapEnv = bslHash . runPutLazy $ do
               put $ tapleafHash tapEnv
               put $ tappathHash tapEnv
               put $ tapInternalKey tapEnv
+
+-- | Decides if an output is a fee output.
+-- If so, the (explicit) assetId and (explicit) value is returned.
+outputFee :: TxOutput -> Maybe (Hash256, Value)
+outputFee txo = do
+  guard $ BSL.null (txoScript txo)
+  Explicit assetId <- Just . view (under asset) $ txoAsset txo
+  Explicit value <- Just . view (under amount) $ txoAmount txo
+  return (assetId, value)

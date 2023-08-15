@@ -3,13 +3,14 @@ module Simplicity.Elements.Tests (tests) where
 import Control.Arrow ((***), (+++))
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
+import Data.Maybe (isJust)
 import Data.Serialize (encode, put, putWord8, putWord32be, runPutLazy)
-import Data.Vector ((!), fromList)
+import Data.Vector ((!), (!?), fromList)
 import Lens.Family2 (review, over)
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, (@?=), assertBool, testCase)
-import Test.Tasty.QuickCheck (Property, NonNegative(..), arbitrary, forAll, testProperty)
+import Test.Tasty.QuickCheck (Property, NonNegative(..), arbitrary, classify, forAll, testProperty)
 
 import Simplicity.Arbitrary
 import Simplicity.Digest
@@ -105,6 +106,7 @@ tests = testGroup "Elements"
           , testProperty "output_nonce" prop_output_nonce
           , testProperty "output_script_hash" prop_output_script_hash
           , testProperty "output_null_datum" prop_output_null_datum
+          , testProperty "output_is_fee" prop_output_is_fee
           , testProperty "output_surjection_proof" prop_output_surjection_proof
           , testProperty "output_range_proof" prop_output_range_proof
           , testProperty "current_pegin" prop_current_pegin
@@ -439,6 +441,11 @@ prop_output_script_hash = checkJet (ElementsJet (TransactionJet OutputScriptHash
 prop_output_null_datum :: Property
 prop_output_null_datum = checkJet (ElementsJet (TransactionJet OutputNullDatum))
                        $ \check -> forallOutPrimEnv $ \env i -> forAll arbitrary $ \(NonNegative j) -> check env (toW32 i, toWord32 j)
+
+prop_output_is_fee :: Property
+prop_output_is_fee = checkJet (ElementsJet (TransactionJet OutputIsFee))
+                   $ \check -> forallOutPrimEnv $ \env i ->
+                     classify (isJust $ sigTxOut (envTx env) !? (fromIntegral i) >>= outputFee) "is_fee" (check env (toW32 i))
 
 prop_output_surjection_proof :: Property
 prop_output_surjection_proof = checkJet (ElementsJet (TransactionJet OutputSurjectionProof))
