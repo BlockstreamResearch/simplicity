@@ -642,7 +642,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
        case 9: *result = OUTPUT_NONCE; return SIMPLICITY_NO_ERROR;
        case 10: *result = OUTPUT_SCRIPT_HASH; return SIMPLICITY_NO_ERROR;
        case 11: *result = OUTPUT_NULL_DATUM; return SIMPLICITY_NO_ERROR;
-       /* case 12: *result = OUTPUT_IS_FEE; return SIMPLICITY_NO_ERROR; */
+       case 12: *result = OUTPUT_IS_FEE; return SIMPLICITY_NO_ERROR;
        case 13: *result = OUTPUT_SURJECTION_PROOF; return SIMPLICITY_NO_ERROR;
        case 14: *result = OUTPUT_RANGE_PROOF; return SIMPLICITY_NO_ERROR;
        /* case 15: *result = TOTAL_FEE; return SIMPLICITY_NO_ERROR; */
