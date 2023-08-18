@@ -1783,6 +1783,14 @@
 , .targetIx = ty_mspbw256w256
 , .cost = 142 /* milli weight units */
 }
+,[OUTPUT_IS_FEE] =
+{ .tag = JET
+, .jet = output_is_fee
+, .cmr = {{0x45b8c5eau, 0x18bf697au, 0x97c342eau, 0x75e32f5bu, 0x93c0a2b1u, 0x27e05133u, 0xbdb8f2b9u, 0x1564ebc9u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mb
+, .cost = 162 /* milli weight units */
+}
 ,[OUTPUT_NONCE] =
 { .tag = JET
 , .jet = output_nonce

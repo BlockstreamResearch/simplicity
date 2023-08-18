@@ -301,6 +301,7 @@ rawBenchmark "All8" = rawBenchmark "IsZero32"
 rawBenchmark "All16" = rawBenchmark "IsZero32"
 rawBenchmark "All32" = rawBenchmark "IsZero32"
 rawBenchmark "All64" = rawBenchmark "IsZero32"
+rawBenchmark "OutputIsFee" = rawBenchmark "InputPegin"
 rawBenchmark str = error $ "rawBenchmark missing " ++ str ++ "."
 
 -- benchmark adjusts the raw benchmark by giving a discount to batch verifiable jets.

@@ -749,6 +749,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (TransactionJet OutputNonce)
   , mkAssoc (TransactionJet OutputScriptHash)
   , mkAssoc (TransactionJet OutputNullDatum)
+  , mkAssoc (TransactionJet OutputIsFee)
   , mkAssoc (TransactionJet OutputSurjectionProof)
   , mkAssoc (TransactionJet OutputRangeProof)
   , mkAssoc (TransactionJet CurrentPegin)
@@ -907,6 +908,7 @@ jetCostTransaction OutputAmount = Benchmarks.cost "OutputAmount"
 jetCostTransaction OutputNonce = Benchmarks.cost "OutputNonce"
 jetCostTransaction OutputScriptHash = Benchmarks.cost "OutputScriptHash"
 jetCostTransaction OutputNullDatum = Benchmarks.cost "OutputNullDatum"
+jetCostTransaction OutputIsFee = Benchmarks.cost "OutputIsFee"
 jetCostTransaction OutputSurjectionProof = Benchmarks.cost "OutputSurjectionProof"
 jetCostTransaction OutputRangeProof = Benchmarks.cost "OutputRangeProof"
 jetCostTransaction CurrentPegin = Benchmarks.cost "CurrentPegin"
