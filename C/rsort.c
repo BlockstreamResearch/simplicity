@@ -1,6 +1,10 @@
 #include "rsort.h"
 
 #include <string.h>
+#include "simplicity_assert.h"
+
+static_assert(UCHAR_MAX < SIZE_MAX, "UCHAR_MAX >= SIZE_MAX");
+#define CHAR_COUNT ((size_t)1 << CHAR_BIT)
 
 /* Return the 'i'th char of the object representation of the midstate pointed to by a.
  *
@@ -113,7 +117,7 @@ static void sort_buckets(const sha256_midstate** a, uint32_t* restrict bucketSiz
  * Precondition: For all 0 <= i < len, NULL != a[i];
  *               uint32_t stack[(CHAR_COUNT - 1)*(sizeof(*a)->s) + 1];
  */
-const sha256_midstate* rsort(const sha256_midstate** a, uint_fast32_t len, uint32_t* stack) {
+static const sha256_midstate* rsort(const sha256_midstate** a, uint_fast32_t len, uint32_t* stack) {
   unsigned int depth = 0;
   size_t bucketCount[sizeof((*a)->s) + 1];
   size_t totalBucketCount = 1;
@@ -220,4 +224,35 @@ const sha256_midstate* rsort(const sha256_midstate** a, uint_fast32_t len, uint3
   simplicity_assert(0 == len);
 
   return NULL;
+}
+
+/* Searches for duplicates in an array of 'sha256_midstate's.
+ * If malloc fails, returns -1.
+ * If no duplicates are found, returns 0.
+ * If duplicates are found, returns a positive value.
+ *
+ * Precondition: const sha256_midstate a[len];
+ *               len <= DAG_LEN_MAX;
+ */
+int hasDuplicates(const sha256_midstate* a, uint_fast32_t len) {
+  if (len < 2) return 0;
+  static_assert(sizeof(a->s) * CHAR_BIT == 256, "sha256_midstate.s has unnamed padding.");
+  static_assert(DAG_LEN_MAX <= UINT32_MAX, "DAG_LEN_MAX does not fit in uint32_t.");
+  static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(const sha256_midstate*), "perm array too large.");
+  simplicity_assert(len <= SIZE_MAX / sizeof(const sha256_midstate*));
+  const sha256_midstate **perm = malloc(len * sizeof(const sha256_midstate*));
+  uint32_t *stack = malloc(((CHAR_COUNT - 1)*(sizeof((*perm)->s)) + 1) * sizeof(uint32_t));
+  int result = perm && stack ? 0 : -1;
+
+  if (0 <= result) {
+    for (uint_fast32_t i = 0; i < len; ++i) {
+      perm[i] = a + i;
+    }
+
+    result = NULL != rsort(perm, len, stack);
+  }
+
+  free(perm);
+  free(stack);
+  return result;
 }
