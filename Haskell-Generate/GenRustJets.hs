@@ -290,6 +290,7 @@ rustJetImpl mod = vsep $
     ]
    where
     env | Nothing <- moduleName mod = "()"
+        | Just "Elements" == moduleName mod = "ElementsEnv<std::sync::Arc<elements::Transaction>>"
         | Just name <- moduleName mod = name ++ "Env"
     cEnv | Just "Elements" == moduleName mod = "CElementsTxEnv"
          | otherwise = "()"
