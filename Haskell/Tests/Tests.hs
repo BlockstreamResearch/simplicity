@@ -7,9 +7,10 @@ import qualified Simplicity.BitMachine.Tests as BitMachine
 import qualified Simplicity.BitMachine.StaticAnalysis.Tests as StaticAnalysis
 import qualified Simplicity.FFI.Tests as FFI
 import qualified Simplicity.Programs.Tests as Programs
-import qualified Simplicity.Bitcoin.Serialization.Tests as Serialization
+import qualified Simplicity.Bitcoin.Serialization.Tests as BitcoinSerialization
 import qualified Simplicity.Elements.Tests as Elements
 import qualified Simplicity.Elements.FFI.Tests as ElementsFFI
+import qualified Simplicity.Serialization.Tests as Serialization
 import qualified Simplicity.Ty.Tests as Ty
 
 main :: IO ()
@@ -21,8 +22,9 @@ tests = testGroup "Tests"
       , FFI.tests
       , BitMachine.tests
       , StaticAnalysis.tests
-      , Serialization.tests
+      , BitcoinSerialization.tests
       , Ty.tests
       , Elements.tests
       , ElementsFFI.tests
+      , Serialization.tests
       ]

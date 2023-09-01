@@ -229,6 +229,7 @@ Test-Suite testsuite
                        Simplicity.Elements.TestEval, Simplicity.Elements.Tests, Simplicity.Elements.FFI.Tests,
                        Simplicity.FFI.Tests,
                        Simplicity.Programs.Tests,
+                       Simplicity.Serialization.Tests,
                        Simplicity.TestCoreEval,
                        Simplicity.Ty.Tests
   build-depends:       Simplicity,
