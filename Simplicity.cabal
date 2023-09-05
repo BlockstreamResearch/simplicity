@@ -69,7 +69,7 @@ library Simplicity-Core
                        tardis >=0.4.1 && <0.5,
                        transformers >=0.5 && <0.6,
                        unification-fd >=0.10 && <0.12,
-                       vector >=0.12 && <0.13
+                       vector >=0.12 && <0.14
 
 library Simplicity-Bitcoin
   exposed-modules:     Simplicity.Bitcoin.Primitive, Simplicity.Bitcoin.DataTypes
@@ -81,7 +81,7 @@ library Simplicity-Bitcoin
                        base >=4.9 && <4.18,
                        bytestring >=0.10 && <0.12,
                        cereal >=0.5 && <0.6,
-                       vector >=0.12 && <0.13
+                       vector >=0.12 && <0.14
 
 library Simplicity-Elements
   exposed-modules:     Simplicity.Elements.Primitive, Simplicity.Elements.DataTypes
@@ -94,7 +94,7 @@ library Simplicity-Elements
                        bytestring >=0.10 && <0.12,
                        cereal >=0.5 && <0.6,
                        lens-family >=2.0 && <2.2,
-                       vector >=0.12 && <0.13
+                       vector >=0.12 && <0.14
 
 library Simplicity-Indef
   exposed-modules:     Simplicity.Term,
@@ -120,7 +120,7 @@ library Simplicity-Indef
                        mtl >=2.2 && <2.3,
                        transformers >=0.5 && <0.6,
                        unification-fd >=0.10 && <0.12,
-                       vector >=0.12 && <0.13
+                       vector >=0.12 && <0.14
 
 library
   C-sources:           C/primitive/elements/jets.c C/primitive/elements/ops.c C/primitive/elements/env.c
@@ -210,7 +210,7 @@ library
                        cereal >=0.5 && <0.6,
                        containers >=0.5.10 && <0.7,
                        lens-family >=2.0 && <2.2,
-                       vector >=0.12 && <0.13
+                       vector >=0.12 && <0.14
 
 Test-Suite testsuite
   Type:                exitcode-stdio-1.0
@@ -243,7 +243,7 @@ Test-Suite testsuite
                        tasty-hunit >=0.9 && <0.11,
                        tasty-quickcheck >=0.8 && <0.11,
                        transformers >=0.5 && <0.6,
-                       vector >=0.12 && <0.13
+                       vector >=0.12 && <0.14
 
 executable GenPrecomputed
     main-is:          GenPrecomputed.hs
@@ -296,7 +296,7 @@ executable GenTests
                       cereal >=0.5 && <0.6,
                       lens-family >=2.0 && <2.2,
                       split >=0.2.3 && <0.3,
-                      vector >=0.12 && <0.13,
+                      vector >=0.12 && <0.14,
 executable GenRustJets
     main-is:          GenRustJets.hs
     ghc-options:      -main-is GenRustJets
