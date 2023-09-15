@@ -176,3 +176,90 @@ bool write_sha256_context(frameItem* dst, const sha256_context* ctx) {
   write32s(dst, ctx->output, 8);
   return !ctx->overflow;
 }
+
+/* Given a write frame and a read frame, copy 'n' cells from after the read frame's cursor to after the write frame's cursor,
+ * Cells in within the write frame beyond 'n' cells after the write frame's cursor may also be overwritten.
+ *
+ * Precondition: '*dst' is a valid write frame for 'n' more cells;
+ *               '*src' is a valid read frame for 'n' more cells;
+ *               '0 < n';
+ */
+static void copyBitsHelper(const frameItem* dst, const frameItem *src, size_t n) {
+  /* Pointers to the UWORDs of the read and write frame that contain the frame's cursor. */
+  UWORD* src_ptr = src->edge - 1 - src->offset / UWORD_BIT;
+  UWORD* dst_ptr = dst->edge + (dst->offset - 1) / UWORD_BIT;
+  /* The specific bit within those UWORDs that is immediately in front of their respective cursors.
+   * That bit is specifically '1 << (src_shift - 1)' for the read frame,
+   * and '1 << (dst_shift - 1)' for the write frame, unless 'dst_shift == 0', in which case it is '1 << (UWORD_BIT - 1)'.
+   */
+  size_t src_shift = UWORD_BIT - (src->offset % UWORD_BIT);
+  size_t dst_shift = dst->offset % UWORD_BIT;
+  if (dst_shift) {
+    /* The write frame's current UWORD is partially filled.
+     * Fill the rest of it without overwriting the existing data.
+     */
+    *dst_ptr = LSBclear(*dst_ptr, dst_shift);
+
+    if (src_shift < dst_shift) {
+      /* The read frame's current UWORD doesn't have enough data to entirely fill the rest of the write frame's current UWORD.
+       * Fill as much as we can and move src_ptr to the read frame's next UWORD.
+       */
+      *dst_ptr |= (UWORD)(LSBkeep(*src_ptr, src_shift) << (dst_shift - src_shift));
+      if (n <= src_shift) return;
+      n -= src_shift;
+      dst_shift -= src_shift;
+      src_ptr--;
+      src_shift = UWORD_BIT;
+    }
+
+    /* Fill the rest of the write frame's current UWORD and move dst_ptr to the write frame's next UWORD. */
+    *dst_ptr |= LSBkeep((UWORD)(*src_ptr >> (src_shift - dst_shift)), dst_shift);
+    if (n <= dst_shift) return;
+    n -= dst_shift;
+    src_shift -= dst_shift;
+    dst_ptr--;
+  }
+  /* The next cell in the write frame to be filled begins at the boundary of a UWORD. */
+
+  /* :TODO: Use static analysis to limit the total amount of copied memory. */
+  if (0 == src_shift % UWORD_BIT) {
+    /* The next cell in the read frame to be filled also begins at the boundary of a UWORD.
+     * We can use 'memcpy' to copy data in bulk.
+     */
+    size_t m = ROUND_UWORD(n);
+    /* If we went through the previous 'if (dst_shift)' block then 'src_shift == 0' and we need to decrement src_ptr.
+     * If we did not go through the previous 'if (dst_shift)' block then 'src_shift == UWORD_BIT'
+     * and we do not need to decrement src_ptr.
+     * We have folded this conditional decrement into the equation applied to 'src_ptr' below.
+     */
+    memcpy(dst_ptr - (m - 1), src_ptr - (m - src_shift / UWORD_BIT), m * sizeof(UWORD));
+  } else {
+    while(1) {
+      /* Fill the write frame's UWORD by copying the LSBs of the read frame's current UWORD
+       * to the MSBs of the write frame's current UWORD,
+       * and copy the MSBs of the read frame's next UWORD to the LSBs of the write frame's current UWORD.
+       * Then move both the src_ptr and dst_ptr to their next UWORDs.
+       */
+      *dst_ptr = (UWORD)(LSBkeep(*src_ptr, src_shift) << (UWORD_BIT - src_shift));
+      if (n <= src_shift) return;
+
+      *dst_ptr |= (UWORD)(*(src_ptr - 1) >> src_shift);
+      if (n <= UWORD_BIT) return;
+      n -= UWORD_BIT;
+      dst_ptr--; src_ptr--;
+    }
+  }
+}
+
+/* Given a write frame and a read frame, copy 'n' cells from after the read frame's cursor to after the write frame's cursor,
+ * and then advance the write frame's cursor by 'n'.
+ * Cells in front of the '*dst's cursor's final position may be overwritten.
+ *
+ * Precondition: '*dst' is a valid write frame for 'n' more cells;
+ *               '*src' is a valid read frame for 'n' more cells;
+ */
+void copyBits(frameItem* dst, const frameItem* src, size_t n) {
+  if (0 == n) return;
+  copyBitsHelper(dst, src, n);
+  dst->offset -= n;
+}
