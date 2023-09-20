@@ -63,6 +63,14 @@
 , .targetIx = ty_b
 , .cost = 113 /* milli weight units */
 }
+,[AND_1] =
+{ .tag = JET
+, .jet = and_1
+, .cmr = {{0x2dc2dbccu, 0x69c12c78u, 0x30df1170u, 0xd9e93a35u, 0xd8284cc8u, 0x15916aebu, 0x3b1b95efu, 0xdaa92c26u}}
+, .sourceIx = ty_w2
+, .targetIx = ty_b
+, .cost = 159 /* milli weight units */
+}
 ,[AND_16] =
 { .tag = JET
 , .jet = and_16
@@ -167,6 +175,14 @@
 , .targetIx = ty_w256
 , .cost = 3453 /* milli weight units */
 }
+,[CH_1] =
+{ .tag = JET
+, .jet = ch_1
+, .cmr = {{0xc2323612u, 0x4da01f3du, 0x8eb742c2u, 0xed47953fu, 0x66c8b084u, 0xd95a10c6u, 0x0cae69bau, 0x9842ae96u}}
+, .sourceIx = ty_pbw2
+, .targetIx = ty_b
+, .cost = 240 /* milli weight units */
+}
 ,[CH_16] =
 { .tag = JET
 , .jet = ch_16
@@ -238,6 +254,14 @@
 , .sourceIx = ty_ppw256w512w512
 , .targetIx = ty_u
 , .cost = 50000 /* milli weight units */
+}
+,[COMPLEMENT_1] =
+{ .tag = JET
+, .jet = complement_1
+, .cmr = {{0x7e714813u, 0x2e289282u, 0x3fcf2a26u, 0xc6220beeu, 0x039ff6c5u, 0xd7c1b4e4u, 0xca213ad8u, 0x37ab4774u}}
+, .sourceIx = ty_b
+, .targetIx = ty_b
+, .cost = 139 /* milli weight units */
 }
 ,[COMPLEMENT_16] =
 { .tag = JET
@@ -534,6 +558,14 @@
 , .sourceIx = ty_w16
 , .targetIx = ty_b
 , .cost = 142 /* milli weight units */
+}
+,[EQ_1] =
+{ .tag = JET
+, .jet = eq_1
+, .cmr = {{0x4249c5bdu, 0xec540a06u, 0x957dcdabu, 0x045a445eu, 0xb91891c0u, 0x6c3f8f96u, 0xc888e9ddu, 0xd2fbaa28u}}
+, .sourceIx = ty_w2
+, .targetIx = ty_b
+, .cost = 120 /* milli weight units */
 }
 ,[EQ_16] =
 { .tag = JET
@@ -942,6 +974,14 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 395 /* milli weight units */
+}
+,[HIGH_1] =
+{ .tag = JET
+, .jet = high_1
+, .cmr = {{0x97a143f0u, 0x4cb603f6u, 0x5f84a80du, 0x31c3364fu, 0x8fda2297u, 0x3a9ae695u, 0xa58189c3u, 0x1463a8bfu}}
+, .sourceIx = ty_u
+, .targetIx = ty_b
+, .cost = 169 /* milli weight units */
 }
 ,[HIGH_16] =
 { .tag = JET
@@ -1367,6 +1407,14 @@
 , .targetIx = ty_w32
 , .cost = 132 /* milli weight units */
 }
+,[LOW_1] =
+{ .tag = JET
+, .jet = low_1
+, .cmr = {{0xdb4a424au, 0x20aeefa4u, 0xe742d51du, 0x84929218u, 0xcbf73472u, 0x6176dc4fu, 0xf9f8bf13u, 0xde10ca2bu}}
+, .sourceIx = ty_u
+, .targetIx = ty_b
+, .cost = 173 /* milli weight units */
+}
 ,[LOW_16] =
 { .tag = JET
 , .jet = low_16
@@ -1430,6 +1478,14 @@
 , .sourceIx = ty_w16
 , .targetIx = ty_b
 , .cost = 130 /* milli weight units */
+}
+,[MAJ_1] =
+{ .tag = JET
+, .jet = maj_1
+, .cmr = {{0xae8b912eu, 0x3ad47f68u, 0x8bbb46c8u, 0xcb6d5333u, 0x69f5109au, 0x2730471eu, 0xab6efe98u, 0xe9ea5e78u}}
+, .sourceIx = ty_pbw2
+, .targetIx = ty_b
+, .cost = 241 /* milli weight units */
 }
 ,[MAJ_16] =
 { .tag = JET
@@ -1718,6 +1774,14 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w8
 , .cost = 127 /* milli weight units */
+}
+,[OR_1] =
+{ .tag = JET
+, .jet = or_1
+, .cmr = {{0x93522230u, 0x1700987du, 0xe12cb426u, 0x17218153u, 0xfd7ccd63u, 0x174a1749u, 0xfc880c39u, 0xe3e7239cu}}
+, .sourceIx = ty_w2
+, .targetIx = ty_b
+, .cost = 147 /* milli weight units */
 }
 ,[OR_16] =
 { .tag = JET
@@ -2119,6 +2183,14 @@
 , .targetIx = ty_w256
 , .cost = 265 /* milli weight units */
 }
+,[SOME_1] =
+{ .tag = JET
+, .jet = some_1
+, .cmr = {{0x0b9cb7b4u, 0x7deb4f9du, 0x95d5c020u, 0x001fd009u, 0xa2f10ce5u, 0xd918d818u, 0x1e259315u, 0xfe8eac53u}}
+, .sourceIx = ty_b
+, .targetIx = ty_b
+, .cost = 104 /* milli weight units */
+}
 ,[SOME_16] =
 { .tag = JET
 , .jet = some_16
@@ -2287,6 +2359,14 @@
 , .targetIx = ty_w32
 , .cost = 188 /* milli weight units */
 }
+,[XOR_1] =
+{ .tag = JET
+, .jet = xor_1
+, .cmr = {{0x77b714e6u, 0x89c9d6a4u, 0x8fd1add8u, 0x6522823du, 0xebc70df6u, 0xa7fe4bf2u, 0xb85de549u, 0xe0cd0a05u}}
+, .sourceIx = ty_w2
+, .targetIx = ty_b
+, .cost = 135 /* milli weight units */
+}
 ,[XOR_16] =
 { .tag = JET
 , .jet = xor_16
@@ -2318,6 +2398,14 @@
 , .sourceIx = ty_w16
 , .targetIx = ty_w8
 , .cost = 135 /* milli weight units */
+}
+,[XOR_XOR_1] =
+{ .tag = JET
+, .jet = xor_xor_1
+, .cmr = {{0x2252a986u, 0x08d20bd4u, 0x11317a20u, 0x15c15698u, 0x70a62c95u, 0x3a6165fbu, 0xe977b40du, 0x6ccea495u}}
+, .sourceIx = ty_pbw2
+, .targetIx = ty_b
+, .cost = 258 /* milli weight units */
 }
 ,[XOR_XOR_16] =
 { .tag = JET

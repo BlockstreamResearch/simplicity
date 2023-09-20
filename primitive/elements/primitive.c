@@ -86,6 +86,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = LOW_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = LOW_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = LOW_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = LOW_32; return SIMPLICITY_NO_ERROR;
@@ -96,6 +97,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = HIGH_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = HIGH_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = HIGH_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = HIGH_32; return SIMPLICITY_NO_ERROR;
@@ -106,6 +108,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = COMPLEMENT_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = COMPLEMENT_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = COMPLEMENT_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = COMPLEMENT_32; return SIMPLICITY_NO_ERROR;
@@ -116,6 +119,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = AND_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = AND_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = AND_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = AND_32; return SIMPLICITY_NO_ERROR;
@@ -126,6 +130,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = OR_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = OR_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = OR_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = OR_32; return SIMPLICITY_NO_ERROR;
@@ -136,6 +141,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = XOR_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = XOR_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = XOR_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = XOR_32; return SIMPLICITY_NO_ERROR;
@@ -146,6 +152,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = MAJ_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = MAJ_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = MAJ_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = MAJ_32; return SIMPLICITY_NO_ERROR;
@@ -156,6 +163,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = XOR_XOR_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = XOR_XOR_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = XOR_XOR_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = XOR_XOR_32; return SIMPLICITY_NO_ERROR;
@@ -166,6 +174,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = CH_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = CH_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = CH_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = CH_32; return SIMPLICITY_NO_ERROR;
@@ -176,6 +185,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = SOME_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = SOME_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = SOME_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = SOME_32; return SIMPLICITY_NO_ERROR;
@@ -196,6 +206,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
+         case 0: *result = EQ_1; return SIMPLICITY_NO_ERROR;
          case 3: *result = EQ_8; return SIMPLICITY_NO_ERROR;
          case 4: *result = EQ_16; return SIMPLICITY_NO_ERROR;
          case 5: *result = EQ_32; return SIMPLICITY_NO_ERROR;

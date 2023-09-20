@@ -21,6 +21,14 @@ bool verify(frameItem* dst, frameItem src, const txEnv* env) {
   return readBit(&src);
 }
 
+/* low_1 : ONE |- TWO */
+bool low_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  (void) src; /* src is unused. */
+  writeBit(dst, 0);
+  return true;
+}
+
 #define LOW_(bits)                                                 \
 /* low_n : ONE |- TWO^n */                                         \
 bool low_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
@@ -33,6 +41,14 @@ LOW_(8)
 LOW_(16)
 LOW_(32)
 LOW_(64)
+
+/* high_1 : ONE |- TWO */
+bool high_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  (void) src; /* src is unused. */
+  writeBit(dst, 1);
+  return true;
+}
 
 #define HIGH_(bits)                                                 \
 /* high_n : ONE |- TWO^n */                                         \
@@ -47,6 +63,14 @@ HIGH_(16)
 HIGH_(32)
 HIGH_(64)
 
+/* complement_1 : TWO |- TWO */
+bool complement_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  bool x = readBit(&src);
+  writeBit(dst, !x);
+  return true;
+}
+
 #define COMPLEMENT_(bits)                                                 \
 /* complement_n : TWO^n |- TWO^n */                                       \
 bool complement_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
@@ -59,6 +83,15 @@ COMPLEMENT_(8)
 COMPLEMENT_(16)
 COMPLEMENT_(32)
 COMPLEMENT_(64)
+
+/* and_1 : TWO * TWO |- TWO */
+bool and_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  bool x = readBit(&src);
+  bool y = readBit(&src);
+  writeBit(dst, x && y);
+  return true;
+}
 
 #define AND_(bits)                                                 \
 /* and_n : TWO^n * TWO^n |- TWO^n */                               \
@@ -74,6 +107,15 @@ AND_(16)
 AND_(32)
 AND_(64)
 
+/* or_1 : TWO * TWO |- TWO */
+bool or_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  bool x = readBit(&src);
+  bool y = readBit(&src);
+  writeBit(dst, x || y);
+  return true;
+}
+
 #define OR_(bits)                                                 \
 /* or_n : TWO^n * TWO^n |- TWO^n */                               \
 bool or_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
@@ -88,6 +130,15 @@ OR_(16)
 OR_(32)
 OR_(64)
 
+/* xor_1 : TWO * TWO |- TWO */
+bool xor_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  bool x = readBit(&src);
+  bool y = readBit(&src);
+  writeBit(dst, x ^ y);
+  return true;
+}
+
 #define XOR_(bits)                                                 \
 /* xor_n : TWO^n * TWO^n |- TWO^n */                               \
 bool xor_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
@@ -101,6 +152,16 @@ XOR_(8)
 XOR_(16)
 XOR_(32)
 XOR_(64)
+
+/* maj_1 : TWO * TWO * TWO |- TWO */
+bool maj_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  bool x = readBit(&src);
+  bool y = readBit(&src);
+  bool z = readBit(&src);
+  writeBit(dst, (x && y) || (y && z) || (z && x));
+  return true;
+}
 
 #define MAJ_(bits)                                                 \
 /* maj_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \
@@ -117,6 +178,16 @@ MAJ_(16)
 MAJ_(32)
 MAJ_(64)
 
+/* xor_xor_1 : TWO * TWO * TWO |- TWO */
+bool xor_xor_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  bool x = readBit(&src);
+  bool y = readBit(&src);
+  bool z = readBit(&src);
+  writeBit(dst, x ^ y ^ z);
+  return true;
+}
+
 #define XOR_XOR_(bits)                                                 \
 /* xor_xor_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \
 bool xor_xor_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
@@ -132,6 +203,16 @@ XOR_XOR_(16)
 XOR_XOR_(32)
 XOR_XOR_(64)
 
+/* ch_1 : TWO * TWO * TWO |- TWO */
+bool ch_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  bool x = readBit(&src);
+  bool y = readBit(&src);
+  bool z = readBit(&src);
+  writeBit(dst, x ? y : z);
+  return true;
+}
+
 #define CH_(bits)                                                 \
 /* ch_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \
 bool ch_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
@@ -146,6 +227,14 @@ CH_(8)
 CH_(16)
 CH_(32)
 CH_(64)
+
+/* some_1 : TWO |- TWO */
+bool some_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  bool x = readBit(&src);
+  writeBit(dst, x);
+  return true;
+}
 
 #define SOME_(bits)                                                 \
 /* some_n : TWO^n |- TWO */                                         \
@@ -185,6 +274,15 @@ ONE_(8)
 ONE_(16)
 ONE_(32)
 ONE_(64)
+
+/* eq_1 : TWO * TWO |- TWO */
+bool eq_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  bool x = readBit(&src);
+  bool y = readBit(&src);
+  writeBit(dst, x == y);
+  return true;
+}
 
 #define EQ_(bits)                                                 \
 /* eq_n : TWO^n * TWO^n |- TWO */                                 \
