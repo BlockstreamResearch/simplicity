@@ -19,10 +19,10 @@ let hp = nixpkgs.haskell.packages.${ghc};
       Simplicity = haskell;
 
       # Temporary work around for compiling hlint and hasktags in ghc94.
-      microlens = self.microlens_0_4_13_1;
-      microlens-ghc = self.microlens-ghc_0_4_14_1;
-      microlens-platform = self.microlens-platform_0_4_3_3;
-      hlint = self.hlint_3_5;
+      microlens = self.microlens_0_4_13_1 or super.microlens;
+      microlens-ghc = self.microlens-ghc_0_4_14_1 or super.microlens-ghc;
+      microlens-platform = self.microlens-platform_0_4_3_3 or super.microlens-platform;
+      hlint = self.hlint_3_5 or super.hlint;
     };
   };
 
