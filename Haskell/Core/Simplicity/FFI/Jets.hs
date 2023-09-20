@@ -2,19 +2,19 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Simplicity.FFI.Jets
  ( verify
- , low_8, low_16, low_32, low_64
- , high_8, high_16, high_32, high_64
- , complement_8, complement_16, complement_32, complement_64
- , and_8, and_16, and_32, and_64
- , or_8, or_16, or_32, or_64
- , xor_8, xor_16, xor_32, xor_64
- , maj_8, maj_16, maj_32, maj_64
- , xor_xor_8, xor_xor_16, xor_xor_32, xor_xor_64
- , ch_8, ch_16, ch_32, ch_64
- , some_8, some_16, some_32, some_64
+ , low_1, low_8, low_16, low_32, low_64
+ , high_1, high_8, high_16, high_32, high_64
+ , complement_1, complement_8, complement_16, complement_32, complement_64
+ , and_1, and_8, and_16, and_32, and_64
+ , or_1, or_8, or_16, or_32, or_64
+ , xor_1, xor_8, xor_16, xor_32, xor_64
+ , maj_1, maj_8, maj_16, maj_32, maj_64
+ , xor_xor_1, xor_xor_8, xor_xor_16, xor_xor_32, xor_xor_64
+ , ch_1, ch_8, ch_16, ch_32, ch_64
+ , some_1, some_8, some_16, some_32, some_64
  , all_8, all_16, all_32, all_64
  , one_8, one_16, one_32, one_64
- , eq_8, eq_16, eq_32, eq_64, eq_256
+ , eq_1, eq_8, eq_16, eq_32, eq_64, eq_256
  , add_8, add_16, add_32, add_64
  , full_add_8, full_add_16, full_add_32, full_add_64
  , full_increment_8, full_increment_16, full_increment_32, full_increment_64
@@ -71,42 +71,52 @@ import qualified Simplicity.Programs.LibSecp256k1.Lib as LibSecp256k1
 import Simplicity.Ty.Word
 
 foreign import ccall unsafe "" c_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_low_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_low_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_low_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_low_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_low_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_high_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_high_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_high_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_high_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_high_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_complement_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_complement_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_complement_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_complement_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_complement_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_and_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_and_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_and_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_and_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_and_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_or_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_or_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_or_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_or_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_or_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_xor_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_xor_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_xor_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_xor_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_maj_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_maj_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_maj_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_maj_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_maj_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_xor_xor_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_xor_xor_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_xor_xor_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_xor_xor_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_xor_xor_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_ch_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_ch_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_ch_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_ch_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_ch_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_some_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_some_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_some_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_some_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -119,6 +129,7 @@ foreign import ccall unsafe "" c_one_8 :: Ptr FrameItem -> Ptr FrameItem -> IO C
 foreign import ccall unsafe "" c_one_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_one_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_one_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_eq_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_eq_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_eq_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_eq_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -275,6 +286,9 @@ foreign import ccall unsafe "" c_parse_sequence :: Ptr FrameItem -> Ptr FrameIte
 verify :: Bit -> Maybe ()
 verify = unsafeLocalCoreJet c_verify
 
+low_1 :: () -> Maybe Word1
+low_1 = unsafeLocalCoreJet c_low_1
+
 low_8 :: () -> Maybe Word8
 low_8 = unsafeLocalCoreJet c_low_8
 
@@ -286,6 +300,9 @@ low_32 = unsafeLocalCoreJet c_low_32
 
 low_64 :: () -> Maybe Word64
 low_64 = unsafeLocalCoreJet c_low_64
+
+high_1 :: () -> Maybe Word1
+high_1 = unsafeLocalCoreJet c_high_1
 
 high_8 :: () -> Maybe Word8
 high_8 = unsafeLocalCoreJet c_high_8
@@ -299,6 +316,9 @@ high_32 = unsafeLocalCoreJet c_high_32
 high_64 :: () -> Maybe Word64
 high_64 = unsafeLocalCoreJet c_high_64
 
+complement_1 :: Word1 -> Maybe Word1
+complement_1 = unsafeLocalCoreJet c_complement_1
+
 complement_8 :: Word8 -> Maybe Word8
 complement_8 = unsafeLocalCoreJet c_complement_8
 
@@ -310,6 +330,9 @@ complement_32 = unsafeLocalCoreJet c_complement_32
 
 complement_64 :: Word64 -> Maybe Word64
 complement_64 = unsafeLocalCoreJet c_complement_64
+
+and_1 :: (Word1, Word1) -> Maybe Word1
+and_1 = unsafeLocalCoreJet c_and_1
 
 and_8 :: (Word8, Word8) -> Maybe Word8
 and_8 = unsafeLocalCoreJet c_and_8
@@ -323,6 +346,9 @@ and_32 = unsafeLocalCoreJet c_and_32
 and_64 :: (Word64, Word64) -> Maybe Word64
 and_64 = unsafeLocalCoreJet c_and_64
 
+or_1 :: (Word1, Word1) -> Maybe Word1
+or_1 = unsafeLocalCoreJet c_or_1
+
 or_8 :: (Word8, Word8) -> Maybe Word8
 or_8 = unsafeLocalCoreJet c_or_8
 
@@ -334,6 +360,9 @@ or_32 = unsafeLocalCoreJet c_or_32
 
 or_64 :: (Word64, Word64) -> Maybe Word64
 or_64 = unsafeLocalCoreJet c_or_64
+
+xor_1 :: (Word1, Word1) -> Maybe Word1
+xor_1 = unsafeLocalCoreJet c_xor_1
 
 xor_8 :: (Word8, Word8) -> Maybe Word8
 xor_8 = unsafeLocalCoreJet c_xor_8
@@ -347,6 +376,9 @@ xor_32 = unsafeLocalCoreJet c_xor_32
 xor_64 :: (Word64, Word64) -> Maybe Word64
 xor_64 = unsafeLocalCoreJet c_xor_64
 
+maj_1 :: (Word1, (Word1, Word1)) -> Maybe Word1
+maj_1 = unsafeLocalCoreJet c_maj_1
+
 maj_8 :: (Word8, (Word8, Word8)) -> Maybe Word8
 maj_8 = unsafeLocalCoreJet c_maj_8
 
@@ -358,6 +390,9 @@ maj_32 = unsafeLocalCoreJet c_maj_32
 
 maj_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
 maj_64 = unsafeLocalCoreJet c_maj_64
+
+xor_xor_1 :: (Word1, (Word1, Word1)) -> Maybe Word1
+xor_xor_1 = unsafeLocalCoreJet c_xor_xor_1
 
 xor_xor_8 :: (Word8, (Word8, Word8)) -> Maybe Word8
 xor_xor_8 = unsafeLocalCoreJet c_xor_xor_8
@@ -371,6 +406,9 @@ xor_xor_32 = unsafeLocalCoreJet c_xor_xor_32
 xor_xor_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
 xor_xor_64 = unsafeLocalCoreJet c_xor_xor_64
 
+ch_1 :: (Word1, (Word1, Word1)) -> Maybe Word1
+ch_1 = unsafeLocalCoreJet c_ch_1
+
 ch_8 :: (Word8, (Word8, Word8)) -> Maybe Word8
 ch_8 = unsafeLocalCoreJet c_ch_8
 
@@ -382,6 +420,9 @@ ch_32 = unsafeLocalCoreJet c_ch_32
 
 ch_64 :: (Word64, (Word64, Word64)) -> Maybe Word64
 ch_64 = unsafeLocalCoreJet c_ch_64
+
+some_1 :: Word1 -> Maybe Bit
+some_1 = unsafeLocalCoreJet c_some_1
 
 some_8 :: Word8 -> Maybe Bit
 some_8 = unsafeLocalCoreJet c_some_8
@@ -418,6 +459,9 @@ one_32 = unsafeLocalCoreJet c_one_32
 
 one_64 :: () -> Maybe Word64
 one_64 = unsafeLocalCoreJet c_one_64
+
+eq_1 :: (Word1, Word1) -> Maybe Bit
+eq_1 = unsafeLocalCoreJet c_eq_1
 
 eq_8 :: (Word8, Word8) -> Maybe Bit
 eq_8 = unsafeLocalCoreJet c_eq_8

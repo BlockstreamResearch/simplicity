@@ -301,6 +301,18 @@ rawBenchmark "XorXor16" = 100.14300000000001
 rawBenchmark "XorXor32" = 106.84599999999996
 rawBenchmark "XorXor64" = 121.05200000000002
 rawBenchmark "XorXor8" = 109.94677858425888
+-- :TODO: Run these following benchmarks.
+rawBenchmark "Low1" = rawBenchmark "Low8"
+rawBenchmark "High1" = rawBenchmark "High8"
+rawBenchmark "Complement1" = rawBenchmark "Complement8"
+rawBenchmark "And1" = rawBenchmark "And8"
+rawBenchmark "Or1" = rawBenchmark "Or8"
+rawBenchmark "Xor1" = rawBenchmark "Xor8"
+rawBenchmark "Maj1" = rawBenchmark "Maj8"
+rawBenchmark "XorXor1" = rawBenchmark "XorXor8"
+rawBenchmark "Ch1" = rawBenchmark "Ch8"
+rawBenchmark "Some1" = rawBenchmark "Some8"
+rawBenchmark "Eq1" = rawBenchmark "Eq8"
 
 -- benchmark adjusts the raw benchmark by giving a discount to batch verifiable jets.
 benchmark :: String -> Double

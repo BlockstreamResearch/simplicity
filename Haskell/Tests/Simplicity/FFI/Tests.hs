@@ -31,42 +31,52 @@ tests :: TestTree
 tests = testGroup "C / SPEC"
       [ testGroup "word" $
         [ testCase     "verify" assert_verify
+        , testCase     "low_1" assert_low_1
         , testCase     "low_8" assert_low_8
         , testCase     "low_16" assert_low_16
         , testCase     "low_32" assert_low_32
         , testCase     "low_64" assert_low_64
+        , testCase     "high_1" assert_high_1
         , testCase     "high_8" assert_high_8
         , testCase     "high_16" assert_high_16
         , testCase     "high_32" assert_high_32
         , testCase     "high_64" assert_high_64
+        , testProperty "complement_1"  prop_complement_1
         , testProperty "complement_8"  prop_complement_8
         , testProperty "complement_16"  prop_complement_16
         , testProperty "complement_32"  prop_complement_32
         , testProperty "complement_64"  prop_complement_64
+        , testProperty "and_1"  prop_and_1
         , testProperty "and_8"  prop_and_8
         , testProperty "and_16"  prop_and_16
         , testProperty "and_32"  prop_and_32
         , testProperty "and_64"  prop_and_64
+        , testProperty "or_1"  prop_or_1
         , testProperty "or_8"  prop_or_8
         , testProperty "or_16"  prop_or_16
         , testProperty "or_32"  prop_or_32
         , testProperty "or_64"  prop_or_64
+        , testProperty "xor_1"  prop_xor_1
         , testProperty "xor_8"  prop_xor_8
         , testProperty "xor_16"  prop_xor_16
         , testProperty "xor_32"  prop_xor_32
         , testProperty "xor_64"  prop_xor_64
+        , testProperty "maj_1"  prop_maj_1
         , testProperty "maj_8"  prop_maj_8
         , testProperty "maj_16"  prop_maj_16
         , testProperty "maj_32"  prop_maj_32
         , testProperty "maj_64"  prop_maj_64
+        , testProperty "xor_xor_1"  prop_xor_xor_1
         , testProperty "xor_xor_8"  prop_xor_xor_8
         , testProperty "xor_xor_16"  prop_xor_xor_16
         , testProperty "xor_xor_32"  prop_xor_xor_32
         , testProperty "xor_xor_64"  prop_xor_xor_64
+        , testProperty "ch_1"  prop_ch_1
         , testProperty "ch_8"  prop_ch_8
         , testProperty "ch_16"  prop_ch_16
         , testProperty "ch_32"  prop_ch_32
         , testProperty "ch_64"  prop_ch_64
+        , testProperty "some_1"  prop_some_1
         , testProperty "some_8"  prop_some_8
         , testProperty "some_16"  prop_some_16
         , testProperty "some_32"  prop_some_32
@@ -75,6 +85,7 @@ tests = testGroup "C / SPEC"
         , testProperty "all_16"  prop_all_16
         , testProperty "all_32"  prop_all_32
         , testProperty "all_64"  prop_all_64
+        , testProperty "eq_1"  prop_eq_1
         , testProperty "eq_8"  prop_eq_8
         , testProperty "eq_16"  prop_eq_16
         , testProperty "eq_32"  prop_eq_32
@@ -339,6 +350,11 @@ assert_verify =
  where
   fastF = testCoreEval (specification (WordJet Verify))
 
+assert_low_1 :: Assertion
+assert_low_1 = fastF () @=? C.low_1 ()
+ where
+  fastF = testCoreEval (specification (WordJet Low1))
+
 assert_low_8 :: Assertion
 assert_low_8 = fastF () @=? C.low_8 ()
  where
@@ -359,6 +375,11 @@ assert_low_64 = fastF () @=? C.low_64 ()
  where
   fastF = testCoreEval (specification (WordJet Low64))
 
+assert_high_1 :: Assertion
+assert_high_1 = fastF () @=? C.high_1 ()
+ where
+  fastF = testCoreEval (specification (WordJet High1))
+
 assert_high_8 :: Assertion
 assert_high_8 = fastF () @=? C.high_8 ()
  where
@@ -378,6 +399,12 @@ assert_high_64 :: Assertion
 assert_high_64 = fastF () @=? C.high_64 ()
  where
   fastF = testCoreEval (specification (WordJet High64))
+
+prop_complement_1 :: Bool -> Bool
+prop_complement_1 = \x -> let input = toBit x
+                       in fastF input == C.complement_1 input
+ where
+  fastF = testCoreEval (specification (WordJet Complement1))
 
 prop_complement_8 :: W.Word8 -> Bool
 prop_complement_8 = \x -> let input = toW8 x
@@ -407,6 +434,12 @@ prop_complement_64 = \x -> let input = toW64 x
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (WordJet Complement64))
 
+prop_and_1 :: Bool -> Bool -> Bool
+prop_and_1 = \x y -> let input = (toBit x, toBit y)
+                     in fastF input == C.and_1 input
+ where
+  fastF = testCoreEval (specification (WordJet And1))
+
 prop_and_8 :: W.Word8 -> W.Word8 -> Bool
 prop_and_8 = \x y -> let input = (toW8 x, toW8 y)
                      in fastF input == C.and_8 input
@@ -434,6 +467,12 @@ prop_and_64 = \x y -> let input = (toW64 x, toW64 y)
  where
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (WordJet And64))
+
+prop_or_1 :: Bool -> Bool -> Bool
+prop_or_1 = \x y -> let input = (toBit x, toBit y)
+                     in fastF input == C.or_1 input
+ where
+  fastF = testCoreEval (specification (WordJet Or1))
 
 prop_or_8 :: W.Word8 -> W.Word8 -> Bool
 prop_or_8 = \x y -> let input = (toW8 x, toW8 y)
@@ -463,6 +502,12 @@ prop_or_64 = \x y -> let input = (toW64 x, toW64 y)
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (WordJet Or64))
 
+prop_xor_1 :: Bool -> Bool -> Bool
+prop_xor_1 = \x y -> let input = (toBit x, toBit y)
+                     in fastF input == C.xor_1 input
+ where
+  fastF = testCoreEval (specification (WordJet Xor1))
+
 prop_xor_8 :: W.Word8 -> W.Word8 -> Bool
 prop_xor_8 = \x y -> let input = (toW8 x, toW8 y)
                      in fastF input == C.xor_8 input
@@ -490,6 +535,12 @@ prop_xor_64 = \x y -> let input = (toW64 x, toW64 y)
  where
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (WordJet Xor64))
+
+prop_maj_1 :: Bool -> Bool -> Bool -> Bool
+prop_maj_1 = \x y z -> let input = (toBit x, (toBit y, toBit z))
+                     in fastF input == C.maj_1 input
+ where
+  fastF = testCoreEval (specification (WordJet Maj1))
 
 prop_maj_8 :: W.Word8 -> W.Word8 -> W.Word8 -> Bool
 prop_maj_8 = \x y z -> let input = (toW8 x, (toW8 y, toW8 z))
@@ -519,6 +570,12 @@ prop_maj_64 = \x y z -> let input = (toW64 x, (toW64 y, toW64 z))
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (WordJet Maj64))
 
+prop_xor_xor_1 :: Bool -> Bool -> Bool -> Bool
+prop_xor_xor_1 = \x y z -> let input = (toBit x, (toBit y, toBit z))
+                     in fastF input == C.xor_xor_1 input
+ where
+  fastF = testCoreEval (specification (WordJet XorXor1))
+
 prop_xor_xor_8 :: W.Word8 -> W.Word8 -> W.Word8 -> Bool
 prop_xor_xor_8 = \x y z -> let input = (toW8 x, (toW8 y, toW8 z))
                      in fastF input == C.xor_xor_8 input
@@ -547,6 +604,12 @@ prop_xor_xor_64 = \x y z -> let input = (toW64 x, (toW64 y, toW64 z))
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (WordJet XorXor64))
 
+prop_ch_1 :: Bool -> Bool -> Bool -> Bool
+prop_ch_1 = \x y z -> let input = (toBit x, (toBit y, toBit z))
+                     in fastF input == C.ch_1 input
+ where
+  fastF = testCoreEval (specification (WordJet Ch1))
+
 prop_ch_8 :: W.Word8 -> W.Word8 -> W.Word8 -> Bool
 prop_ch_8 = \x y z -> let input = (toW8 x, (toW8 y, toW8 z))
                      in fastF input == C.ch_8 input
@@ -574,6 +637,12 @@ prop_ch_64 = \x y z -> let input = (toW64 x, (toW64 y, toW64 z))
  where
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (WordJet Ch64))
+
+prop_some_1 :: Bool -> Bool
+prop_some_1 = \x -> let input = toBit x
+                       in fastF input == C.some_1 input
+ where
+  fastF = testCoreEval (specification (WordJet Some1))
 
 prop_some_8 :: W.Word8 -> Bool
 prop_some_8 = \x -> let input = toW8 x
@@ -630,6 +699,12 @@ prop_all_64 = \x -> let input = toW64 x
  where
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (WordJet All64))
+
+prop_eq_1 :: Bool -> Bool -> Bool
+prop_eq_1 = \x y -> let input = (toBit x, toBit y)
+                     in fastF input == C.eq_1 input
+ where
+  fastF = testCoreEval (specification (WordJet Eq1))
 
 prop_eq_8 :: W.Word8 -> W.Word8 -> Bool
 prop_eq_8 = \x y -> let input = (toW8 x, toW8 y)
