@@ -646,7 +646,7 @@ putJetBitTransaction OutputAmount               = putPositive 8
 putJetBitTransaction OutputNonce                = putPositive 9
 putJetBitTransaction OutputScriptHash           = putPositive 10
 putJetBitTransaction OutputNullDatum            = putPositive 11
-putJetBitTransaction OutputIsFee                = putPositive 11
+putJetBitTransaction OutputIsFee                = putPositive 12
 putJetBitTransaction OutputSurjectionProof      = putPositive 13
 putJetBitTransaction OutputRangeProof           = putPositive 14
 

@@ -10,6 +10,7 @@ import qualified Simplicity.Programs.Tests as Programs
 import qualified Simplicity.Bitcoin.Serialization.Tests as BitcoinSerialization
 import qualified Simplicity.Elements.Tests as Elements
 import qualified Simplicity.Elements.FFI.Tests as ElementsFFI
+import qualified Simplicity.Elements.Serialization.Tests as ElementsSerialization
 import qualified Simplicity.Serialization.Tests as Serialization
 import qualified Simplicity.Ty.Tests as Ty
 
@@ -26,5 +27,6 @@ tests = testGroup "Tests"
       , Ty.tests
       , Elements.tests
       , ElementsFFI.tests
+      , ElementsSerialization.tests
       , Serialization.tests
       ]
