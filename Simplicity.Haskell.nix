@@ -14,6 +14,7 @@ mkDerivation (rec {
   libraryHaskellDepends = [ base binary cereal lens-family MemoTrie mtl split tardis unification-fd vector ];
   executableHaskellDepends = [ prettyprinter ];
   testHaskellDepends = libraryHaskellDepends ++ [ QuickCheck tasty tasty-hunit tasty-quickcheck ];
+  enableParallelBuilding = true;
   preCheck = ''
     export GHCRTS=-N$NIX_BUILD_CORES
   '';
