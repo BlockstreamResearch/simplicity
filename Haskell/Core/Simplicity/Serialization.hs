@@ -59,7 +59,8 @@ putBitString l = (True :) . putPositive (genericLength l) . (l ++)
 --
 -- @putPositive 5 = putBitString [False,True]@
 putPositive :: Integer -> DList Bool
-putPositive = putBitString . reverse . unfoldr f
+putPositive x | x <= 0 = error "Simplicity.Serialization.putPositive: non-positive value"
+              | otherwise = putBitString . reverse $ unfoldr f x
  where
   f i | i <= 1 = Nothing
       | otherwise = Just (odd i, i `div` 2)
