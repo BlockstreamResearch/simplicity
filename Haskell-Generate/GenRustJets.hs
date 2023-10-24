@@ -1,12 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 module GenRustJets where
 
-import Data.Char (isAlphaNum, isDigit, isUpper, toLower, toUpper)
+import Data.Char (toLower)
 import Data.Foldable (toList)
 import Data.Function (on)
 import Data.Functor.Fixedpoint (Fix(..))
-import Data.List (groupBy, intercalate, sortBy)
-import Data.List.Split (chunksOf, condense, dropInitBlank, keepDelimsL, split, whenElt)
+import Data.List (sortBy)
+import Data.List.Split (chunksOf)
 import Data.Maybe (fromMaybe)
 import qualified Data.Map as Map
 import Numeric (showHex)
@@ -16,6 +16,7 @@ import Prettyprinter ( Doc, (<+>), braces, comma, dquotes, fillSep, line, nest, 
 import Prettyprinter.Render.Text (renderIO)
 import System.IO (IOMode(WriteMode), withFile)
 
+import NameWrangler
 import qualified Simplicity.Bitcoin.Jets as Bitcoin
 import qualified Simplicity.Bitcoin.Term as Bitcoin
 import qualified Simplicity.CoreJets as Core
@@ -47,9 +48,6 @@ sortJetName = sortBy (compare `on` name)
   name (SomeArrow j) = jetName j
 
 cJetName = lowerSnakeCase . jetName
-
-mkName :: Show a => a -> String
-mkName = filter isAlphaNum . last . words . show
 
 coreJetData :: (TyC x, TyC y) => CoreJet x y -> JetData x y
 coreJetData jet = JetData { jetName = mkName jet
@@ -109,20 +107,6 @@ data CompactTy = CTyOne
                | CTySum CompactTy CompactTy
                | CTyProd CompactTy CompactTy
      deriving (Eq, Ord)
-
-snakeCase :: String -> String
-snakeCase str = intercalate "_" . groupSingles $ (split . keepDelimsL . dropInitBlank . whenElt) isUpper =<< splitDigit
- where
-  splitDigit = (split . condense . whenElt) isDigit $ str
-  groupSingles = map concat . groupBy singles
-   where
-    singles x y = null (tail x) && null (tail y)
-
-upperSnakeCase :: String -> String
-upperSnakeCase = map toUpper . snakeCase
-
-lowerSnakeCase :: String -> String
-lowerSnakeCase = map toLower . snakeCase
 
 compactTy :: Ty -> CompactTy
 compactTy = memoCataTy go

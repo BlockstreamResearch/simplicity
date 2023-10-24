@@ -273,6 +273,7 @@ executable GenPrimitive
     -- other-extensions:
     hs-source-dirs:   Haskell-Generate
     default-language: Haskell2010
+    other-modules:    NameWrangler
     build-depends:    Simplicity,
                       base >=4.9 && <4.18,
                       containers >=0.5.10 && <0.7,
@@ -309,6 +310,7 @@ executable GenRustJets
     -- other-extensions:
     hs-source-dirs:   Haskell-Generate
     default-language: Haskell2010
+    other-modules:    NameWrangler
     other-extensions: OverloadedStrings
     build-depends:    Simplicity,
                       base >=4.9 && <4.18,

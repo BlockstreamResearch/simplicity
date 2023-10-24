@@ -3,15 +3,15 @@ module GenPrimitives where
 import Prelude hiding (sum)
 
 import Control.Monad.Cont (Cont, cont, runCont)
-import Data.Char (isAlphaNum, isDigit, isUpper, toLower, toUpper)
 import Data.Function (on)
 import Data.Functor.Fixedpoint (Fix(..), cata)
-import Data.List (groupBy, intercalate, sortBy)
-import Data.List.Split (chunksOf, condense, dropInitBlank, keepDelimsL, split, whenElt)
+import Data.List (intercalate, sortBy)
+import Data.List.Split (chunksOf)
 import Data.Maybe (isJust)
 import qualified Data.Map as Map
 import Numeric (showHex)
 
+import NameWrangler
 import Simplicity.Digest
 import Simplicity.Elements.Jets
 import Simplicity.Elements.Term
@@ -30,21 +30,8 @@ enumerate tree = runCont (tree end branch) (:) []
 jetList :: [SomeArrow JetType]
 jetList = sortBy (compare `on` name) $ Map.elems jetMap
  where
-  name (SomeArrow j) = jetName j
-
-snakeCase :: String -> String
-snakeCase str = intercalate "_" . groupSingles $ (split . keepDelimsL . dropInitBlank . whenElt) isUpper =<< splitDigit
- where
-  splitDigit = (split . condense . whenElt) isDigit $ str
-  groupSingles = map concat . groupBy singles
-   where
-    singles x y = null (tail x) && null (tail y)
-
-upperSnakeCase :: String -> String
-upperSnakeCase = map toUpper . snakeCase
-
-lowerSnakeCase :: String -> String
-lowerSnakeCase = map toLower . snakeCase
+  name :: SomeArrow JetType -> String
+  name (SomeArrow j) = mkName j
 
 data CompactTy = CTyOne
                | CTyWord Int
@@ -117,9 +104,6 @@ cJetNode name jt = unlines
  where
   (tyx, tyy) = reifyArrow jt
 
-jetName :: JetType x y -> String
-jetName = filter isAlphaNum . last . words . show
-
 tyList :: [CompactTy]
 tyList = Map.keys . foldr combine wordMap $ (tys =<< jetList)
  where
@@ -151,12 +135,13 @@ cInitializeTyFile = unlines $ cInitializeTy <$> tyList
 cEnumJetFile :: String
 cEnumJetFile = unlines $ map f jetList
  where
-  f (SomeArrow jet) = (upperSnakeCase . jetName $ jet) ++ ","
+  f :: SomeArrow JetType -> String
+  f (SomeArrow jet) = (upperSnakeCase . mkName $ jet) ++ ","
 
 cJetNodeFile :: String
 cJetNodeFile = intercalate "," $ map f jetList
  where
-  f (SomeArrow jet) = cJetNode (jetName jet) jet
+  f (SomeArrow jet) = cJetNode (mkName jet) jet
 
 writeIncludeFile :: FilePath -> String -> IO ()
 writeIncludeFile name content = writeFile name (header ++ content)
