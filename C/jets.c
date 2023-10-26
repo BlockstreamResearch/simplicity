@@ -262,19 +262,6 @@ ALL_(16)
 ALL_(32)
 ALL_(64)
 
-#define ONE_(bits)                                                 \
-/* one_n : ONE |- TWO^n */                                         \
-bool one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                 \
-  (void) src; /* src is unused. */                                 \
-  write##bits(dst, 1);                                             \
-  return true;                                                     \
-}
-ONE_(8)
-ONE_(16)
-ONE_(32)
-ONE_(64)
-
 /* eq_1 : TWO * TWO |- TWO */
 bool eq_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
@@ -312,6 +299,19 @@ bool eq_256(frameItem* dst, frameItem src, const txEnv* env) {
   writeBit(dst, true);
   return true;
 }
+
+#define ONE_(bits)                                                 \
+/* one_n : ONE |- TWO^n */                                         \
+bool one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                 \
+  (void) src; /* src is unused. */                                 \
+  write##bits(dst, 1);                                             \
+  return true;                                                     \
+}
+ONE_(8)
+ONE_(16)
+ONE_(32)
+ONE_(64)
 
 #define ADD_(bits)                                                 \
 /* add_n : TWO^n * TWO^n |- TWO * TWO^n */                         \
