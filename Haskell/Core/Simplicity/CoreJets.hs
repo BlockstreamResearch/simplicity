@@ -124,6 +124,79 @@ data WordJet a b where
   Eq32 :: WordJet (Word32, Word32) Bit
   Eq64 :: WordJet (Word64, Word64) Bit
   Eq256 :: WordJet (Word256, Word256) Bit
+  FullLeftShift8_1 :: WordJet (Word8, Word1) (Word1, Word8)
+  FullLeftShift8_2 :: WordJet (Word8, Word2) (Word2, Word8)
+  FullLeftShift8_4 :: WordJet (Word8, Word4) (Word4, Word8)
+  FullLeftShift16_1 :: WordJet (Word16, Word1) (Word1, Word16)
+  FullLeftShift16_2 :: WordJet (Word16, Word2) (Word2, Word16)
+  FullLeftShift16_4 :: WordJet (Word16, Word4) (Word4, Word16)
+  FullLeftShift16_8 :: WordJet (Word16, Word8) (Word8, Word16)
+  FullLeftShift32_1 :: WordJet (Word32, Word1) (Word1, Word32)
+  FullLeftShift32_2 :: WordJet (Word32, Word2) (Word2, Word32)
+  FullLeftShift32_4 :: WordJet (Word32, Word4) (Word4, Word32)
+  FullLeftShift32_8 :: WordJet (Word32, Word8) (Word8, Word32)
+  FullLeftShift32_16 :: WordJet (Word32, Word16) (Word16, Word32)
+  FullLeftShift64_1 :: WordJet (Word64, Word1) (Word1, Word64)
+  FullLeftShift64_2 :: WordJet (Word64, Word2) (Word2, Word64)
+  FullLeftShift64_4 :: WordJet (Word64, Word4) (Word4, Word64)
+  FullLeftShift64_8 :: WordJet (Word64, Word8) (Word8, Word64)
+  FullLeftShift64_16 :: WordJet (Word64, Word16) (Word16, Word64)
+  FullLeftShift64_32 :: WordJet (Word64, Word32) (Word32, Word64)
+  FullRightShift8_1 :: WordJet (Word1, Word8) (Word8, Word1)
+  FullRightShift8_2 :: WordJet (Word2, Word8) (Word8, Word2)
+  FullRightShift8_4 :: WordJet (Word4, Word8) (Word8, Word4)
+  FullRightShift16_1 :: WordJet (Word1, Word16) (Word16, Word1)
+  FullRightShift16_2 :: WordJet (Word2, Word16) (Word16, Word2)
+  FullRightShift16_4 :: WordJet (Word4, Word16) (Word16, Word4)
+  FullRightShift16_8 :: WordJet (Word8, Word16) (Word16, Word8)
+  FullRightShift32_1 :: WordJet (Word1, Word32) (Word32, Word1)
+  FullRightShift32_2 :: WordJet (Word2, Word32) (Word32, Word2)
+  FullRightShift32_4 :: WordJet (Word4, Word32) (Word32, Word4)
+  FullRightShift32_8 :: WordJet (Word8, Word32) (Word32, Word8)
+  FullRightShift32_16 :: WordJet (Word16, Word32) (Word32, Word16)
+  FullRightShift64_1 :: WordJet (Word1, Word64) (Word64, Word1)
+  FullRightShift64_2 :: WordJet (Word2, Word64) (Word64, Word2)
+  FullRightShift64_4 :: WordJet (Word4, Word64) (Word64, Word4)
+  FullRightShift64_8 :: WordJet (Word8, Word64) (Word64, Word8)
+  FullRightShift64_16 :: WordJet (Word16, Word64) (Word64, Word16)
+  FullRightShift64_32 :: WordJet (Word32, Word64) (Word64, Word32)
+  Leftmost8_1 :: WordJet Word8 Word1
+  Leftmost8_2 :: WordJet Word8 Word2
+  Leftmost8_4 :: WordJet Word8 Word4
+  Leftmost16_1 :: WordJet Word16 Word1
+  Leftmost16_2 :: WordJet Word16 Word2
+  Leftmost16_4 :: WordJet Word16 Word4
+  Leftmost16_8 :: WordJet Word16 Word8
+  Leftmost32_1 :: WordJet Word32 Word1
+  Leftmost32_2 :: WordJet Word32 Word2
+  Leftmost32_4 :: WordJet Word32 Word4
+  Leftmost32_8 :: WordJet Word32 Word8
+  Leftmost32_16 :: WordJet Word32 Word16
+  Leftmost64_1 :: WordJet Word64 Word1
+  Leftmost64_2 :: WordJet Word64 Word2
+  Leftmost64_4 :: WordJet Word64 Word4
+  Leftmost64_8 :: WordJet Word64 Word8
+  Leftmost64_16 :: WordJet Word64 Word16
+  Leftmost64_32 :: WordJet Word64 Word32
+  Rightmost8_1 :: WordJet Word8 Word1
+  Rightmost8_2 :: WordJet Word8 Word2
+  Rightmost8_4 :: WordJet Word8 Word4
+  Rightmost16_1 :: WordJet Word16 Word1
+  Rightmost16_2 :: WordJet Word16 Word2
+  Rightmost16_4 :: WordJet Word16 Word4
+  Rightmost16_8 :: WordJet Word16 Word8
+  Rightmost32_1 :: WordJet Word32 Word1
+  Rightmost32_2 :: WordJet Word32 Word2
+  Rightmost32_4 :: WordJet Word32 Word4
+  Rightmost32_8 :: WordJet Word32 Word8
+  Rightmost32_16 :: WordJet Word32 Word16
+  Rightmost64_1 :: WordJet Word64 Word1
+  Rightmost64_2 :: WordJet Word64 Word2
+  Rightmost64_4 :: WordJet Word64 Word4
+  Rightmost64_8 :: WordJet Word64 Word8
+  Rightmost64_16 :: WordJet Word64 Word16
+  Rightmost64_32 :: WordJet Word64 Word32
+
 deriving instance Eq (WordJet a b)
 deriving instance Show (WordJet a b)
 
@@ -367,6 +440,78 @@ specificationWord Eq16 = eq
 specificationWord Eq32 = eq
 specificationWord Eq64 = eq
 specificationWord Eq256 = eq
+specificationWord FullLeftShift8_1 = Prog.full_shift word8 word1
+specificationWord FullLeftShift8_2 = Prog.full_shift word8 word2
+specificationWord FullLeftShift8_4 = Prog.full_shift word8 word4
+specificationWord FullLeftShift16_1 = Prog.full_shift word16 word1
+specificationWord FullLeftShift16_2 = Prog.full_shift word16 word2
+specificationWord FullLeftShift16_4 = Prog.full_shift word16 word4
+specificationWord FullLeftShift16_8 = Prog.full_shift word16 word8
+specificationWord FullLeftShift32_1 = Prog.full_shift word32 word1
+specificationWord FullLeftShift32_2 = Prog.full_shift word32 word2
+specificationWord FullLeftShift32_4 = Prog.full_shift word32 word4
+specificationWord FullLeftShift32_8 = Prog.full_shift word32 word8
+specificationWord FullLeftShift32_16 = Prog.full_shift word32 word16
+specificationWord FullLeftShift64_1 = Prog.full_shift word64 word1
+specificationWord FullLeftShift64_2 = Prog.full_shift word64 word2
+specificationWord FullLeftShift64_4 = Prog.full_shift word64 word4
+specificationWord FullLeftShift64_8 = Prog.full_shift word64 word8
+specificationWord FullLeftShift64_16 = Prog.full_shift word64 word16
+specificationWord FullLeftShift64_32 = Prog.full_shift word64 word32
+specificationWord FullRightShift8_1 = Prog.full_shift word1 word8
+specificationWord FullRightShift8_2 = Prog.full_shift word2 word8
+specificationWord FullRightShift8_4 = Prog.full_shift word4 word8
+specificationWord FullRightShift16_1 = Prog.full_shift word1 word16
+specificationWord FullRightShift16_2 = Prog.full_shift word2 word16
+specificationWord FullRightShift16_4 = Prog.full_shift word4 word16
+specificationWord FullRightShift16_8 = Prog.full_shift word8 word16
+specificationWord FullRightShift32_1 = Prog.full_shift word1 word32
+specificationWord FullRightShift32_2 = Prog.full_shift word2 word32
+specificationWord FullRightShift32_4 = Prog.full_shift word4 word32
+specificationWord FullRightShift32_8 = Prog.full_shift word8 word32
+specificationWord FullRightShift32_16 = Prog.full_shift word16 word32
+specificationWord FullRightShift64_1 = Prog.full_shift word1 word64
+specificationWord FullRightShift64_2 = Prog.full_shift word2 word64
+specificationWord FullRightShift64_4 = Prog.full_shift word4 word64
+specificationWord FullRightShift64_8 = Prog.full_shift word8 word64
+specificationWord FullRightShift64_16 = Prog.full_shift word16 word64
+specificationWord FullRightShift64_32 = Prog.full_shift word32 word64
+specificationWord Leftmost8_1 = Prog.leftmost vector8
+specificationWord Leftmost8_2 = Prog.leftmost vector4
+specificationWord Leftmost8_4 = Prog.leftmost vector2
+specificationWord Leftmost16_1 = Prog.leftmost vector16
+specificationWord Leftmost16_2 = Prog.leftmost vector8
+specificationWord Leftmost16_4 = Prog.leftmost vector4
+specificationWord Leftmost16_8 = Prog.leftmost vector2
+specificationWord Leftmost32_1 = Prog.leftmost vector32
+specificationWord Leftmost32_2 = Prog.leftmost vector16
+specificationWord Leftmost32_4 = Prog.leftmost vector8
+specificationWord Leftmost32_8 = Prog.leftmost vector4
+specificationWord Leftmost32_16 = Prog.leftmost vector2
+specificationWord Leftmost64_1 = Prog.leftmost vector64
+specificationWord Leftmost64_2 = Prog.leftmost vector32
+specificationWord Leftmost64_4 = Prog.leftmost vector16
+specificationWord Leftmost64_8 = Prog.leftmost vector8
+specificationWord Leftmost64_16 = Prog.leftmost vector4
+specificationWord Leftmost64_32 = Prog.leftmost vector2
+specificationWord Rightmost8_1 = Prog.rightmost vector8
+specificationWord Rightmost8_2 = Prog.rightmost vector4
+specificationWord Rightmost8_4 = Prog.rightmost vector2
+specificationWord Rightmost16_1 = Prog.rightmost vector16
+specificationWord Rightmost16_2 = Prog.rightmost vector8
+specificationWord Rightmost16_4 = Prog.rightmost vector4
+specificationWord Rightmost16_8 = Prog.rightmost vector2
+specificationWord Rightmost32_1 = Prog.rightmost vector32
+specificationWord Rightmost32_2 = Prog.rightmost vector16
+specificationWord Rightmost32_4 = Prog.rightmost vector8
+specificationWord Rightmost32_8 = Prog.rightmost vector4
+specificationWord Rightmost32_16 = Prog.rightmost vector2
+specificationWord Rightmost64_1 = Prog.rightmost vector64
+specificationWord Rightmost64_2 = Prog.rightmost vector32
+specificationWord Rightmost64_4 = Prog.rightmost vector16
+specificationWord Rightmost64_8 = Prog.rightmost vector8
+specificationWord Rightmost64_16 = Prog.rightmost vector4
+specificationWord Rightmost64_32 = Prog.rightmost vector2
 
 specificationArith :: Assert term => ArithJet a b -> term a b
 specificationArith One8 = Prog.one word8
@@ -635,6 +780,114 @@ implementationWord Eq16 = \(x, y) -> return (toBit (x == y))
 implementationWord Eq32 = \(x, y) -> return (toBit (x == y))
 implementationWord Eq64 = \(x, y) -> return (toBit (x == y))
 implementationWord Eq256 = \(x, y) -> return (toBit (x == y))
+implementationWord FullLeftShift8_1 = \(x, y) ->
+  return (toWord1 $ fromWord8 x `shift` (1-8), toWord8 $ fromWord8 x `shift` 1 .|. fromWord1 y)
+implementationWord FullLeftShift8_2 = \(x, y) ->
+  return (toWord2 $ fromWord8 x `shift` (2-8), toWord8 $ fromWord8 x `shift` 2 .|. fromWord2 y)
+implementationWord FullLeftShift8_4 = \(x, y) ->
+  return (toWord4 $ fromWord8 x `shift` (4-8), toWord8 $ fromWord8 x `shift` 4 .|. fromWord4 y)
+implementationWord FullLeftShift16_1 = \(x, y) ->
+  return (toWord1 $ fromWord16 x `shift` (1-16), toWord16 $ fromWord16 x `shift` 1 .|. fromWord1 y)
+implementationWord FullLeftShift16_2 = \(x, y) ->
+  return (toWord2 $ fromWord16 x `shift` (2-16), toWord16 $ fromWord16 x `shift` 2 .|. fromWord2 y)
+implementationWord FullLeftShift16_4 = \(x, y) ->
+  return (toWord4 $ fromWord16 x `shift` (4-16), toWord16 $ fromWord16 x `shift` 4 .|. fromWord4 y)
+implementationWord FullLeftShift16_8 = \(x, y) ->
+  return (toWord8 $ fromWord16 x `shift` (8-16), toWord16 $ fromWord16 x `shift` 8 .|. fromWord8 y)
+implementationWord FullLeftShift32_1 = \(x, y) ->
+  return (toWord1 $ fromWord32 x `shift` (1-32), toWord32 $ fromWord32 x `shift` 1 .|. fromWord1 y)
+implementationWord FullLeftShift32_2 = \(x, y) ->
+  return (toWord2 $ fromWord32 x `shift` (2-32), toWord32 $ fromWord32 x `shift` 2 .|. fromWord2 y)
+implementationWord FullLeftShift32_4 = \(x, y) ->
+  return (toWord4 $ fromWord32 x `shift` (4-32), toWord32 $ fromWord32 x `shift` 4 .|. fromWord4 y)
+implementationWord FullLeftShift32_8 = \(x, y) ->
+  return (toWord8 $ fromWord32 x `shift` (8-32), toWord32 $ fromWord32 x `shift` 8 .|. fromWord8 y)
+implementationWord FullLeftShift32_16 = \(x, y) ->
+  return (toWord16 $ fromWord32 x `shift` (16-32), toWord32 $ fromWord32 x `shift` 16 .|. fromWord16 y)
+implementationWord FullLeftShift64_1 = \(x, y) ->
+  return (toWord1 $ fromWord64 x `shift` (1-64), toWord64 $ fromWord64 x `shift` 1 .|. fromWord1 y)
+implementationWord FullLeftShift64_2 = \(x, y) ->
+  return (toWord2 $ fromWord64 x `shift` (2-64), toWord64 $ fromWord64 x `shift` 2 .|. fromWord2 y)
+implementationWord FullLeftShift64_4 = \(x, y) ->
+  return (toWord4 $ fromWord64 x `shift` (4-64), toWord64 $ fromWord64 x `shift` 4 .|. fromWord4 y)
+implementationWord FullLeftShift64_8 = \(x, y) ->
+  return (toWord8 $ fromWord64 x `shift` (8-64), toWord64 $ fromWord64 x `shift` 8 .|. fromWord8 y)
+implementationWord FullLeftShift64_16 = \(x, y) ->
+  return (toWord16 $ fromWord64 x `shift` (16-64), toWord64 $ fromWord64 x `shift` 16 .|. fromWord16 y)
+implementationWord FullLeftShift64_32 = \(x, y) ->
+  return (toWord32 $ fromWord64 x `shift` (32-64), toWord64 $ fromWord64 x `shift` 32 .|. fromWord32 y)
+implementationWord FullRightShift8_1 = \(x, y) ->
+  return (toWord8 $ fromWord1 x `shift` (8-1) .|. fromWord8 y `shift` (-1), toWord1 $ fromWord8 y)
+implementationWord FullRightShift8_2 = \(x, y) ->
+  return (toWord8 $ fromWord2 x `shift` (8-2) .|. fromWord8 y `shift` (-2), toWord2 $ fromWord8 y)
+implementationWord FullRightShift8_4 = \(x, y) ->
+  return (toWord8 $ fromWord4 x `shift` (8-4) .|. fromWord8 y `shift` (-4), toWord4 $ fromWord8 y)
+implementationWord FullRightShift16_1 = \(x, y) ->
+  return (toWord16 $ fromWord1 x `shift` (16-1) .|. fromWord16 y `shift` (-1), toWord1 $ fromWord16 y)
+implementationWord FullRightShift16_2 = \(x, y) ->
+  return (toWord16 $ fromWord2 x `shift` (16-2) .|. fromWord16 y `shift` (-2), toWord2 $ fromWord16 y)
+implementationWord FullRightShift16_4 = \(x, y) ->
+  return (toWord16 $ fromWord4 x `shift` (16-4) .|. fromWord16 y `shift` (-4), toWord4 $ fromWord16 y)
+implementationWord FullRightShift16_8 = \(x, y) ->
+  return (toWord16 $ fromWord8 x `shift` (16-8) .|. fromWord16 y `shift` (-8), toWord8 $ fromWord16 y)
+implementationWord FullRightShift32_1 = \(x, y) ->
+  return (toWord32 $ fromWord1 x `shift` (32-1) .|. fromWord32 y `shift` (-1), toWord1 $ fromWord32 y)
+implementationWord FullRightShift32_2 = \(x, y) ->
+  return (toWord32 $ fromWord2 x `shift` (32-2) .|. fromWord32 y `shift` (-2), toWord2 $ fromWord32 y)
+implementationWord FullRightShift32_4 = \(x, y) ->
+  return (toWord32 $ fromWord4 x `shift` (32-4) .|. fromWord32 y `shift` (-4), toWord4 $ fromWord32 y)
+implementationWord FullRightShift32_8 = \(x, y) ->
+  return (toWord32 $ fromWord8 x `shift` (32-8) .|. fromWord32 y `shift` (-8), toWord8 $ fromWord32 y)
+implementationWord FullRightShift32_16 = \(x, y) ->
+  return (toWord32 $ fromWord16 x `shift` (32-16) .|. fromWord32 y `shift` (-16), toWord16 $ fromWord32 y)
+implementationWord FullRightShift64_1 = \(x, y) ->
+  return (toWord64 $ fromWord1 x `shift` (64-1) .|. fromWord64 y `shift` (-1), toWord1 $ fromWord64 y)
+implementationWord FullRightShift64_2 = \(x, y) ->
+  return (toWord64 $ fromWord2 x `shift` (64-2) .|. fromWord64 y `shift` (-2), toWord2 $ fromWord64 y)
+implementationWord FullRightShift64_4 = \(x, y) ->
+  return (toWord64 $ fromWord4 x `shift` (64-4) .|. fromWord64 y `shift` (-4), toWord4 $ fromWord64 y)
+implementationWord FullRightShift64_8 = \(x, y) ->
+  return (toWord64 $ fromWord8 x `shift` (64-8) .|. fromWord64 y `shift` (-8), toWord8 $ fromWord64 y)
+implementationWord FullRightShift64_16 = \(x, y) ->
+  return (toWord64 $ fromWord16 x `shift` (64-16) .|. fromWord64 y `shift` (-16), toWord16 $ fromWord64 y)
+implementationWord FullRightShift64_32 = \(x, y) ->
+  return (toWord64 $ fromWord32 x `shift` (64-32) .|. fromWord64 y `shift` (-32), toWord32 $ fromWord64 y)
+implementationWord Leftmost8_1 = Just . fst . fst . fst
+implementationWord Leftmost8_2 = Just . fst . fst
+implementationWord Leftmost8_4 = Just . fst
+implementationWord Leftmost16_1 = Just . fst . fst . fst . fst
+implementationWord Leftmost16_2 = Just . fst . fst . fst
+implementationWord Leftmost16_4 = Just . fst . fst
+implementationWord Leftmost16_8 = Just . fst
+implementationWord Leftmost32_1 = Just . fst . fst . fst . fst . fst
+implementationWord Leftmost32_2 = Just . fst . fst . fst . fst
+implementationWord Leftmost32_4 = Just . fst . fst . fst
+implementationWord Leftmost32_8 = Just . fst . fst
+implementationWord Leftmost32_16 = Just . fst
+implementationWord Leftmost64_1 = Just . fst . fst . fst . fst . fst . fst
+implementationWord Leftmost64_2 = Just . fst . fst . fst . fst . fst
+implementationWord Leftmost64_4 = Just . fst . fst . fst . fst
+implementationWord Leftmost64_8 = Just . fst . fst . fst
+implementationWord Leftmost64_16 = Just . fst . fst
+implementationWord Leftmost64_32 = Just . fst
+implementationWord Rightmost8_1 = Just . snd . snd . snd
+implementationWord Rightmost8_2 = Just . snd . snd
+implementationWord Rightmost8_4 = Just . snd
+implementationWord Rightmost16_1 = Just . snd . snd . snd . snd
+implementationWord Rightmost16_2 = Just . snd . snd . snd
+implementationWord Rightmost16_4 = Just . snd . snd
+implementationWord Rightmost16_8 = Just . snd
+implementationWord Rightmost32_1 = Just . snd . snd . snd . snd . snd
+implementationWord Rightmost32_2 = Just . snd . snd . snd . snd
+implementationWord Rightmost32_4 = Just . snd . snd . snd
+implementationWord Rightmost32_8 = Just . snd . snd
+implementationWord Rightmost32_16 = Just . snd
+implementationWord Rightmost64_1 = Just . snd . snd . snd . snd . snd . snd
+implementationWord Rightmost64_2 = Just . snd . snd . snd . snd . snd
+implementationWord Rightmost64_4 = Just . snd . snd . snd . snd
+implementationWord Rightmost64_8 = Just . snd . snd . snd
+implementationWord Rightmost64_16 = Just . snd . snd
+implementationWord Rightmost64_32 = Just . snd
 
 implementationArith :: ArithJet a b -> a -> Maybe b
 implementationArith One8 = const . return $ toWord8 1
@@ -1021,6 +1274,10 @@ wordBook = Shelf
   , someBook
   , allBook
   , eqBook
+  , fullLeftShiftBook
+  , fullRightShiftBook
+  , leftmostBook
+  , rightmostBook
   ]
 lowBook = Shelf
   [ Item $ SomeArrow Low1
@@ -1119,6 +1376,146 @@ eqBook = Shelf
   , Item $ SomeArrow Eq64
   , Missing
   , Item $ SomeArrow Eq256
+  ]
+fullLeftShiftBook = Shelf
+  [ Shelf
+    [ Missing
+    , Missing
+    , Item $ SomeArrow FullLeftShift8_1
+    , Item $ SomeArrow FullLeftShift16_1
+    , Item $ SomeArrow FullLeftShift32_1
+    , Item $ SomeArrow FullLeftShift64_1
+    ]
+  , Shelf
+    [ Missing
+    , Item $ SomeArrow FullLeftShift8_2
+    , Item $ SomeArrow FullLeftShift16_2
+    , Item $ SomeArrow FullLeftShift32_2
+    , Item $ SomeArrow FullLeftShift64_2
+    ]
+  , Shelf
+    [ Item $ SomeArrow FullLeftShift8_4
+    , Item $ SomeArrow FullLeftShift16_4
+    , Item $ SomeArrow FullLeftShift32_4
+    , Item $ SomeArrow FullLeftShift64_4
+    ]
+  , Shelf
+    [ Item $ SomeArrow FullLeftShift16_8
+    , Item $ SomeArrow FullLeftShift32_8
+    , Item $ SomeArrow FullLeftShift64_8
+    ]
+  , Shelf
+    [ Item $ SomeArrow FullLeftShift32_16
+    , Item $ SomeArrow FullLeftShift64_16
+    ]
+  , Shelf
+    [ Item $ SomeArrow FullLeftShift64_32
+    ]
+  ]
+fullRightShiftBook = Shelf
+  [ Shelf
+    [ Missing
+    , Missing
+    , Item $ SomeArrow FullRightShift8_1
+    , Item $ SomeArrow FullRightShift16_1
+    , Item $ SomeArrow FullRightShift32_1
+    , Item $ SomeArrow FullRightShift64_1
+    ]
+  , Shelf
+    [ Missing
+    , Item $ SomeArrow FullRightShift8_2
+    , Item $ SomeArrow FullRightShift16_2
+    , Item $ SomeArrow FullRightShift32_2
+    , Item $ SomeArrow FullRightShift64_2
+    ]
+  , Shelf
+    [ Item $ SomeArrow FullRightShift8_4
+    , Item $ SomeArrow FullRightShift16_4
+    , Item $ SomeArrow FullRightShift32_4
+    , Item $ SomeArrow FullRightShift64_4
+    ]
+  , Shelf
+    [ Item $ SomeArrow FullRightShift16_8
+    , Item $ SomeArrow FullRightShift32_8
+    , Item $ SomeArrow FullRightShift64_8
+    ]
+  , Shelf
+    [ Item $ SomeArrow FullRightShift32_16
+    , Item $ SomeArrow FullRightShift64_16
+    ]
+  , Shelf
+    [ Item $ SomeArrow FullRightShift64_32
+    ]
+  ]
+leftmostBook = Shelf
+  [ Shelf
+    [ Missing
+    , Missing
+    , Item $ SomeArrow Leftmost8_1
+    , Item $ SomeArrow Leftmost16_1
+    , Item $ SomeArrow Leftmost32_1
+    , Item $ SomeArrow Leftmost64_1
+    ]
+  , Shelf
+    [ Missing
+    , Item $ SomeArrow Leftmost8_2
+    , Item $ SomeArrow Leftmost16_2
+    , Item $ SomeArrow Leftmost32_2
+    , Item $ SomeArrow Leftmost64_2
+    ]
+  , Shelf
+    [ Item $ SomeArrow Leftmost8_4
+    , Item $ SomeArrow Leftmost16_4
+    , Item $ SomeArrow Leftmost32_4
+    , Item $ SomeArrow Leftmost64_4
+    ]
+  , Shelf
+    [ Item $ SomeArrow Leftmost16_8
+    , Item $ SomeArrow Leftmost32_8
+    , Item $ SomeArrow Leftmost64_8
+    ]
+  , Shelf
+    [ Item $ SomeArrow Leftmost32_16
+    , Item $ SomeArrow Leftmost64_16
+    ]
+  , Shelf
+    [ Item $ SomeArrow Leftmost64_32
+    ]
+  ]
+rightmostBook = Shelf
+  [ Shelf
+    [ Missing
+    , Missing
+    , Item $ SomeArrow Rightmost8_1
+    , Item $ SomeArrow Rightmost16_1
+    , Item $ SomeArrow Rightmost32_1
+    , Item $ SomeArrow Rightmost64_1
+    ]
+  , Shelf
+    [ Missing
+    , Item $ SomeArrow Rightmost8_2
+    , Item $ SomeArrow Rightmost16_2
+    , Item $ SomeArrow Rightmost32_2
+    , Item $ SomeArrow Rightmost64_2
+    ]
+  , Shelf
+    [ Item $ SomeArrow Rightmost8_4
+    , Item $ SomeArrow Rightmost16_4
+    , Item $ SomeArrow Rightmost32_4
+    , Item $ SomeArrow Rightmost64_4
+    ]
+  , Shelf
+    [ Item $ SomeArrow Rightmost16_8
+    , Item $ SomeArrow Rightmost32_8
+    , Item $ SomeArrow Rightmost64_8
+    ]
+  , Shelf
+    [ Item $ SomeArrow Rightmost32_16
+    , Item $ SomeArrow Rightmost64_16
+    ]
+  , Shelf
+    [ Item $ SomeArrow Rightmost64_32
+    ]
   ]
 arithBook = Shelf
   [ oneBook
@@ -1478,6 +1875,78 @@ putJetBitWord Eq16   = putPositive 13 . putPositive 4
 putJetBitWord Eq32   = putPositive 13 . putPositive 5
 putJetBitWord Eq64   = putPositive 13 . putPositive 6
 putJetBitWord Eq256  = putPositive 13 . putPositive 8
+putJetBitWord FullLeftShift8_1  = putPositive 14 . putPositive 1 . putPositive 3
+putJetBitWord FullLeftShift8_2  = putPositive 14 . putPositive 2 . putPositive 2
+putJetBitWord FullLeftShift8_4  = putPositive 14 . putPositive 3 . putPositive 1
+putJetBitWord FullLeftShift16_1  = putPositive 14 . putPositive 1 . putPositive 4
+putJetBitWord FullLeftShift16_2  = putPositive 14 . putPositive 2 . putPositive 3
+putJetBitWord FullLeftShift16_4  = putPositive 14 . putPositive 3 . putPositive 2
+putJetBitWord FullLeftShift16_8  = putPositive 14 . putPositive 4 . putPositive 1
+putJetBitWord FullLeftShift32_1  = putPositive 14 . putPositive 1 . putPositive 5
+putJetBitWord FullLeftShift32_2  = putPositive 14 . putPositive 2 . putPositive 4
+putJetBitWord FullLeftShift32_4  = putPositive 14 . putPositive 3 . putPositive 3
+putJetBitWord FullLeftShift32_8  = putPositive 14 . putPositive 4 . putPositive 2
+putJetBitWord FullLeftShift32_16  = putPositive 14 . putPositive 5 . putPositive 1
+putJetBitWord FullLeftShift64_1  = putPositive 14 . putPositive 1 . putPositive 6
+putJetBitWord FullLeftShift64_2  = putPositive 14 . putPositive 2 . putPositive 5
+putJetBitWord FullLeftShift64_4  = putPositive 14 . putPositive 3 . putPositive 4
+putJetBitWord FullLeftShift64_8  = putPositive 14 . putPositive 4 . putPositive 3
+putJetBitWord FullLeftShift64_16  = putPositive 14 . putPositive 5 . putPositive 2
+putJetBitWord FullLeftShift64_32  = putPositive 14 . putPositive 6 . putPositive 1
+putJetBitWord FullRightShift8_1  = putPositive 15 . putPositive 1 . putPositive 3
+putJetBitWord FullRightShift8_2  = putPositive 15 . putPositive 2 . putPositive 2
+putJetBitWord FullRightShift8_4  = putPositive 15 . putPositive 3 . putPositive 1
+putJetBitWord FullRightShift16_1  = putPositive 15 . putPositive 1 . putPositive 4
+putJetBitWord FullRightShift16_2  = putPositive 15 . putPositive 2 . putPositive 3
+putJetBitWord FullRightShift16_4  = putPositive 15 . putPositive 3 . putPositive 2
+putJetBitWord FullRightShift16_8  = putPositive 15 . putPositive 4 . putPositive 1
+putJetBitWord FullRightShift32_1  = putPositive 15 . putPositive 1 . putPositive 5
+putJetBitWord FullRightShift32_2  = putPositive 15 . putPositive 2 . putPositive 4
+putJetBitWord FullRightShift32_4  = putPositive 15 . putPositive 3 . putPositive 3
+putJetBitWord FullRightShift32_8  = putPositive 15 . putPositive 4 . putPositive 2
+putJetBitWord FullRightShift32_16  = putPositive 15 . putPositive 5 . putPositive 1
+putJetBitWord FullRightShift64_1  = putPositive 15 . putPositive 1 . putPositive 6
+putJetBitWord FullRightShift64_2  = putPositive 15 . putPositive 2 . putPositive 5
+putJetBitWord FullRightShift64_4  = putPositive 15 . putPositive 3 . putPositive 4
+putJetBitWord FullRightShift64_8  = putPositive 15 . putPositive 4 . putPositive 3
+putJetBitWord FullRightShift64_16  = putPositive 15 . putPositive 5 . putPositive 2
+putJetBitWord FullRightShift64_32  = putPositive 15 . putPositive 6 . putPositive 1
+putJetBitWord Leftmost8_1  = putPositive 16 . putPositive 1 . putPositive 3
+putJetBitWord Leftmost8_2  = putPositive 16 . putPositive 2 . putPositive 2
+putJetBitWord Leftmost8_4  = putPositive 16 . putPositive 3 . putPositive 1
+putJetBitWord Leftmost16_1  = putPositive 16 . putPositive 1 . putPositive 4
+putJetBitWord Leftmost16_2  = putPositive 16 . putPositive 2 . putPositive 3
+putJetBitWord Leftmost16_4  = putPositive 16 . putPositive 3 . putPositive 2
+putJetBitWord Leftmost16_8  = putPositive 16 . putPositive 4 . putPositive 1
+putJetBitWord Leftmost32_1  = putPositive 16 . putPositive 1 . putPositive 5
+putJetBitWord Leftmost32_2  = putPositive 16 . putPositive 2 . putPositive 4
+putJetBitWord Leftmost32_4  = putPositive 16 . putPositive 3 . putPositive 3
+putJetBitWord Leftmost32_8  = putPositive 16 . putPositive 4 . putPositive 2
+putJetBitWord Leftmost32_16  = putPositive 16 . putPositive 5 . putPositive 1
+putJetBitWord Leftmost64_1  = putPositive 16 . putPositive 1 . putPositive 6
+putJetBitWord Leftmost64_2  = putPositive 16 . putPositive 2 . putPositive 5
+putJetBitWord Leftmost64_4  = putPositive 16 . putPositive 3 . putPositive 4
+putJetBitWord Leftmost64_8  = putPositive 16 . putPositive 4 . putPositive 3
+putJetBitWord Leftmost64_16  = putPositive 16 . putPositive 5 . putPositive 2
+putJetBitWord Leftmost64_32  = putPositive 16 . putPositive 6 . putPositive 1
+putJetBitWord Rightmost8_1  = putPositive 17 . putPositive 1 . putPositive 3
+putJetBitWord Rightmost8_2  = putPositive 17 . putPositive 2 . putPositive 2
+putJetBitWord Rightmost8_4  = putPositive 17 . putPositive 3 . putPositive 1
+putJetBitWord Rightmost16_1  = putPositive 17 . putPositive 1 . putPositive 4
+putJetBitWord Rightmost16_2  = putPositive 17 . putPositive 2 . putPositive 3
+putJetBitWord Rightmost16_4  = putPositive 17 . putPositive 3 . putPositive 2
+putJetBitWord Rightmost16_8  = putPositive 17 . putPositive 4 . putPositive 1
+putJetBitWord Rightmost32_1  = putPositive 17 . putPositive 1 . putPositive 5
+putJetBitWord Rightmost32_2  = putPositive 17 . putPositive 2 . putPositive 4
+putJetBitWord Rightmost32_4  = putPositive 17 . putPositive 3 . putPositive 3
+putJetBitWord Rightmost32_8  = putPositive 17 . putPositive 4 . putPositive 2
+putJetBitWord Rightmost32_16  = putPositive 17 . putPositive 5 . putPositive 1
+putJetBitWord Rightmost64_1  = putPositive 17 . putPositive 1 . putPositive 6
+putJetBitWord Rightmost64_2  = putPositive 17 . putPositive 2 . putPositive 5
+putJetBitWord Rightmost64_4  = putPositive 17 . putPositive 3 . putPositive 4
+putJetBitWord Rightmost64_8  = putPositive 17 . putPositive 4 . putPositive 3
+putJetBitWord Rightmost64_16  = putPositive 17 . putPositive 5 . putPositive 2
+putJetBitWord Rightmost64_32  = putPositive 17 . putPositive 6 . putPositive 1
 
 putJetBitArith :: ArithJet a b -> DList Bool
 putJetBitArith One8   = putPositive 1 . putPositive 3
@@ -1717,6 +2186,78 @@ jetCostWord Eq16 = Benchmarks.cost "Eq16"
 jetCostWord Eq32 = Benchmarks.cost "Eq32"
 jetCostWord Eq64 = Benchmarks.cost "Eq64"
 jetCostWord Eq256 = Benchmarks.cost "Eq256"
+jetCostWord FullLeftShift8_1 = Benchmarks.cost "FullLeftShift8_1"
+jetCostWord FullLeftShift8_2 = Benchmarks.cost "FullLeftShift8_2"
+jetCostWord FullLeftShift8_4 = Benchmarks.cost "FullLeftShift8_4"
+jetCostWord FullLeftShift16_1 = Benchmarks.cost "FullLeftShift16_1"
+jetCostWord FullLeftShift16_2 = Benchmarks.cost "FullLeftShift16_2"
+jetCostWord FullLeftShift16_4 = Benchmarks.cost "FullLeftShift16_4"
+jetCostWord FullLeftShift16_8 = Benchmarks.cost "FullLeftShift16_8"
+jetCostWord FullLeftShift32_1 = Benchmarks.cost "FullLeftShift32_1"
+jetCostWord FullLeftShift32_2 = Benchmarks.cost "FullLeftShift32_2"
+jetCostWord FullLeftShift32_4 = Benchmarks.cost "FullLeftShift32_4"
+jetCostWord FullLeftShift32_8 = Benchmarks.cost "FullLeftShift32_8"
+jetCostWord FullLeftShift32_16 = Benchmarks.cost "FullLeftShift32_16"
+jetCostWord FullLeftShift64_1 = Benchmarks.cost "FullLeftShift64_1"
+jetCostWord FullLeftShift64_2 = Benchmarks.cost "FullLeftShift64_2"
+jetCostWord FullLeftShift64_4 = Benchmarks.cost "FullLeftShift64_4"
+jetCostWord FullLeftShift64_8 = Benchmarks.cost "FullLeftShift64_8"
+jetCostWord FullLeftShift64_16 = Benchmarks.cost "FullLeftShift64_16"
+jetCostWord FullLeftShift64_32 = Benchmarks.cost "FullLeftShift64_32"
+jetCostWord FullRightShift8_1 = Benchmarks.cost "FullRightShift8_1"
+jetCostWord FullRightShift8_2 = Benchmarks.cost "FullRightShift8_2"
+jetCostWord FullRightShift8_4 = Benchmarks.cost "FullRightShift8_4"
+jetCostWord FullRightShift16_1 = Benchmarks.cost "FullRightShift16_1"
+jetCostWord FullRightShift16_2 = Benchmarks.cost "FullRightShift16_2"
+jetCostWord FullRightShift16_4 = Benchmarks.cost "FullRightShift16_4"
+jetCostWord FullRightShift16_8 = Benchmarks.cost "FullRightShift16_8"
+jetCostWord FullRightShift32_1 = Benchmarks.cost "FullRightShift32_1"
+jetCostWord FullRightShift32_2 = Benchmarks.cost "FullRightShift32_2"
+jetCostWord FullRightShift32_4 = Benchmarks.cost "FullRightShift32_4"
+jetCostWord FullRightShift32_8 = Benchmarks.cost "FullRightShift32_8"
+jetCostWord FullRightShift32_16 = Benchmarks.cost "FullRightShift32_16"
+jetCostWord FullRightShift64_1 = Benchmarks.cost "FullRightShift64_1"
+jetCostWord FullRightShift64_2 = Benchmarks.cost "FullRightShift64_2"
+jetCostWord FullRightShift64_4 = Benchmarks.cost "FullRightShift64_4"
+jetCostWord FullRightShift64_8 = Benchmarks.cost "FullRightShift64_8"
+jetCostWord FullRightShift64_16 = Benchmarks.cost "FullRightShift64_16"
+jetCostWord FullRightShift64_32 = Benchmarks.cost "FullRightShift64_32"
+jetCostWord Leftmost8_1 = Benchmarks.cost "Leftmost8_1"
+jetCostWord Leftmost8_2 = Benchmarks.cost "Leftmost8_2"
+jetCostWord Leftmost8_4 = Benchmarks.cost "Leftmost8_4"
+jetCostWord Leftmost16_1 = Benchmarks.cost "Leftmost16_1"
+jetCostWord Leftmost16_2 = Benchmarks.cost "Leftmost16_2"
+jetCostWord Leftmost16_4 = Benchmarks.cost "Leftmost16_4"
+jetCostWord Leftmost16_8 = Benchmarks.cost "Leftmost16_8"
+jetCostWord Leftmost32_1 = Benchmarks.cost "Leftmost32_1"
+jetCostWord Leftmost32_2 = Benchmarks.cost "Leftmost32_2"
+jetCostWord Leftmost32_4 = Benchmarks.cost "Leftmost32_4"
+jetCostWord Leftmost32_8 = Benchmarks.cost "Leftmost32_8"
+jetCostWord Leftmost32_16 = Benchmarks.cost "Leftmost32_16"
+jetCostWord Leftmost64_1 = Benchmarks.cost "Leftmost64_1"
+jetCostWord Leftmost64_2 = Benchmarks.cost "Leftmost64_2"
+jetCostWord Leftmost64_4 = Benchmarks.cost "Leftmost64_4"
+jetCostWord Leftmost64_8 = Benchmarks.cost "Leftmost64_8"
+jetCostWord Leftmost64_16 = Benchmarks.cost "Leftmost64_16"
+jetCostWord Leftmost64_32 = Benchmarks.cost "Leftmost64_32"
+jetCostWord Rightmost8_1 = Benchmarks.cost "Rightmost8_1"
+jetCostWord Rightmost8_2 = Benchmarks.cost "Rightmost8_2"
+jetCostWord Rightmost8_4 = Benchmarks.cost "Rightmost8_4"
+jetCostWord Rightmost16_1 = Benchmarks.cost "Rightmost16_1"
+jetCostWord Rightmost16_2 = Benchmarks.cost "Rightmost16_2"
+jetCostWord Rightmost16_4 = Benchmarks.cost "Rightmost16_4"
+jetCostWord Rightmost16_8 = Benchmarks.cost "Rightmost16_8"
+jetCostWord Rightmost32_1 = Benchmarks.cost "Rightmost32_1"
+jetCostWord Rightmost32_2 = Benchmarks.cost "Rightmost32_2"
+jetCostWord Rightmost32_4 = Benchmarks.cost "Rightmost32_4"
+jetCostWord Rightmost32_8 = Benchmarks.cost "Rightmost32_8"
+jetCostWord Rightmost32_16 = Benchmarks.cost "Rightmost32_16"
+jetCostWord Rightmost64_1 = Benchmarks.cost "Rightmost64_1"
+jetCostWord Rightmost64_2 = Benchmarks.cost "Rightmost64_2"
+jetCostWord Rightmost64_4 = Benchmarks.cost "Rightmost64_4"
+jetCostWord Rightmost64_8 = Benchmarks.cost "Rightmost64_8"
+jetCostWord Rightmost64_16 = Benchmarks.cost "Rightmost64_16"
+jetCostWord Rightmost64_32 = Benchmarks.cost "Rightmost64_32"
 
 jetCostArith :: ArithJet a b -> Weight
 jetCostArith One8 = Benchmarks.cost "One8"

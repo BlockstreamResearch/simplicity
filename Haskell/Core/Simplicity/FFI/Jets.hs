@@ -14,6 +14,22 @@ module Simplicity.FFI.Jets
  , some_1, some_8, some_16, some_32, some_64
  , all_8, all_16, all_32, all_64
  , eq_1, eq_8, eq_16, eq_32, eq_64, eq_256
+ , full_left_shift_8_1, full_left_shift_8_2, full_left_shift_8_4
+ , full_left_shift_16_1, full_left_shift_16_2, full_left_shift_16_4, full_left_shift_16_8
+ , full_left_shift_32_1, full_left_shift_32_2, full_left_shift_32_4, full_left_shift_32_8, full_left_shift_32_16
+ , full_left_shift_64_1, full_left_shift_64_2, full_left_shift_64_4, full_left_shift_64_8, full_left_shift_64_16, full_left_shift_64_32
+ , full_right_shift_8_1, full_right_shift_8_2, full_right_shift_8_4
+ , full_right_shift_16_1, full_right_shift_16_2, full_right_shift_16_4, full_right_shift_16_8
+ , full_right_shift_32_1, full_right_shift_32_2, full_right_shift_32_4, full_right_shift_32_8, full_right_shift_32_16
+ , full_right_shift_64_1, full_right_shift_64_2, full_right_shift_64_4, full_right_shift_64_8, full_right_shift_64_16, full_right_shift_64_32
+ , leftmost_8_1, leftmost_8_2, leftmost_8_4
+ , leftmost_16_1, leftmost_16_2, leftmost_16_4, leftmost_16_8
+ , leftmost_32_1, leftmost_32_2, leftmost_32_4, leftmost_32_8, leftmost_32_16
+ , leftmost_64_1, leftmost_64_2, leftmost_64_4, leftmost_64_8, leftmost_64_16, leftmost_64_32
+ , rightmost_8_1, rightmost_8_2, rightmost_8_4
+ , rightmost_16_1, rightmost_16_2, rightmost_16_4, rightmost_16_8
+ , rightmost_32_1, rightmost_32_2, rightmost_32_4, rightmost_32_8, rightmost_32_16
+ , rightmost_64_1, rightmost_64_2, rightmost_64_4, rightmost_64_8, rightmost_64_16, rightmost_64_32
  , one_8, one_16, one_32, one_64
  , add_8, add_16, add_32, add_64
  , full_add_8, full_add_16, full_add_32, full_add_64
@@ -131,6 +147,78 @@ foreign import ccall unsafe "" c_eq_16 :: Ptr FrameItem -> Ptr FrameItem -> IO C
 foreign import ccall unsafe "" c_eq_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_eq_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_eq_256 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_8_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_8_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_8_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_16_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_16_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_16_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_16_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_32_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_32_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_32_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_32_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_32_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_64_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_64_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_64_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_64_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_64_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_left_shift_64_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_8_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_8_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_8_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_16_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_16_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_16_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_16_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_32_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_32_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_32_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_32_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_32_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_64_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_64_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_64_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_64_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_64_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_full_right_shift_64_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_8_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_8_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_8_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_16_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_16_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_16_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_16_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_32_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_32_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_32_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_32_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_32_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_64_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_64_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_64_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_64_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_64_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_leftmost_64_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_8_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_8_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_8_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_16_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_16_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_16_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_16_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_32_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_32_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_32_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_32_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_32_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_64_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_64_2 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_64_4 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_64_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_64_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_rightmost_64_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 foreign import ccall unsafe "" c_one_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_one_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -466,6 +554,222 @@ eq_64 = unsafeLocalCoreJet c_eq_64
 
 eq_256 :: (Word256, Word256) -> Maybe Bit
 eq_256 = unsafeLocalCoreJet c_eq_256
+
+full_left_shift_8_1 :: (Word8, Word1) -> Maybe (Word1, Word8)
+full_left_shift_8_1 = unsafeLocalCoreJet c_full_left_shift_8_1
+
+full_left_shift_8_2 :: (Word8, Word2) -> Maybe (Word2, Word8)
+full_left_shift_8_2 = unsafeLocalCoreJet c_full_left_shift_8_2
+
+full_left_shift_8_4 :: (Word8, Word4) -> Maybe (Word4, Word8)
+full_left_shift_8_4 = unsafeLocalCoreJet c_full_left_shift_8_4
+
+full_left_shift_16_1 :: (Word16, Word1) -> Maybe (Word1, Word16)
+full_left_shift_16_1 = unsafeLocalCoreJet c_full_left_shift_16_1
+
+full_left_shift_16_2 :: (Word16, Word2) -> Maybe (Word2, Word16)
+full_left_shift_16_2 = unsafeLocalCoreJet c_full_left_shift_16_2
+
+full_left_shift_16_4 :: (Word16, Word4) -> Maybe (Word4, Word16)
+full_left_shift_16_4 = unsafeLocalCoreJet c_full_left_shift_16_4
+
+full_left_shift_16_8 :: (Word16, Word8) -> Maybe (Word8, Word16)
+full_left_shift_16_8 = unsafeLocalCoreJet c_full_left_shift_16_8
+
+full_left_shift_32_1 :: (Word32, Word1) -> Maybe (Word1, Word32)
+full_left_shift_32_1 = unsafeLocalCoreJet c_full_left_shift_32_1
+
+full_left_shift_32_2 :: (Word32, Word2) -> Maybe (Word2, Word32)
+full_left_shift_32_2 = unsafeLocalCoreJet c_full_left_shift_32_2
+
+full_left_shift_32_4 :: (Word32, Word4) -> Maybe (Word4, Word32)
+full_left_shift_32_4 = unsafeLocalCoreJet c_full_left_shift_32_4
+
+full_left_shift_32_8 :: (Word32, Word8) -> Maybe (Word8, Word32)
+full_left_shift_32_8 = unsafeLocalCoreJet c_full_left_shift_32_8
+
+full_left_shift_32_16 :: (Word32, Word16) -> Maybe (Word16, Word32)
+full_left_shift_32_16 = unsafeLocalCoreJet c_full_left_shift_32_16
+
+full_left_shift_64_1 :: (Word64, Word1) -> Maybe (Word1, Word64)
+full_left_shift_64_1 = unsafeLocalCoreJet c_full_left_shift_64_1
+
+full_left_shift_64_2 :: (Word64, Word2) -> Maybe (Word2, Word64)
+full_left_shift_64_2 = unsafeLocalCoreJet c_full_left_shift_64_2
+
+full_left_shift_64_4 :: (Word64, Word4) -> Maybe (Word4, Word64)
+full_left_shift_64_4 = unsafeLocalCoreJet c_full_left_shift_64_4
+
+full_left_shift_64_8 :: (Word64, Word8) -> Maybe (Word8, Word64)
+full_left_shift_64_8 = unsafeLocalCoreJet c_full_left_shift_64_8
+
+full_left_shift_64_16 :: (Word64, Word16) -> Maybe (Word16, Word64)
+full_left_shift_64_16 = unsafeLocalCoreJet c_full_left_shift_64_16
+
+full_left_shift_64_32 :: (Word64, Word32) -> Maybe (Word32, Word64)
+full_left_shift_64_32 = unsafeLocalCoreJet c_full_left_shift_64_32
+
+full_right_shift_8_1 :: (Word1, Word8) -> Maybe (Word8, Word1)
+full_right_shift_8_1 = unsafeLocalCoreJet c_full_right_shift_8_1
+
+full_right_shift_8_2 :: (Word2, Word8) -> Maybe (Word8, Word2)
+full_right_shift_8_2 = unsafeLocalCoreJet c_full_right_shift_8_2
+
+full_right_shift_8_4 :: (Word4, Word8) -> Maybe (Word8, Word4)
+full_right_shift_8_4 = unsafeLocalCoreJet c_full_right_shift_8_4
+
+full_right_shift_16_1 :: (Word1, Word16) -> Maybe (Word16, Word1)
+full_right_shift_16_1 = unsafeLocalCoreJet c_full_right_shift_16_1
+
+full_right_shift_16_2 :: (Word2, Word16) -> Maybe (Word16, Word2)
+full_right_shift_16_2 = unsafeLocalCoreJet c_full_right_shift_16_2
+
+full_right_shift_16_4 :: (Word4, Word16) -> Maybe (Word16, Word4)
+full_right_shift_16_4 = unsafeLocalCoreJet c_full_right_shift_16_4
+
+full_right_shift_16_8 :: (Word8, Word16) -> Maybe (Word16, Word8)
+full_right_shift_16_8 = unsafeLocalCoreJet c_full_right_shift_16_8
+
+full_right_shift_32_1 :: (Word1, Word32) -> Maybe (Word32, Word1)
+full_right_shift_32_1 = unsafeLocalCoreJet c_full_right_shift_32_1
+
+full_right_shift_32_2 :: (Word2, Word32) -> Maybe (Word32, Word2)
+full_right_shift_32_2 = unsafeLocalCoreJet c_full_right_shift_32_2
+
+full_right_shift_32_4 :: (Word4, Word32) -> Maybe (Word32, Word4)
+full_right_shift_32_4 = unsafeLocalCoreJet c_full_right_shift_32_4
+
+full_right_shift_32_8 :: (Word8, Word32) -> Maybe (Word32, Word8)
+full_right_shift_32_8 = unsafeLocalCoreJet c_full_right_shift_32_8
+
+full_right_shift_32_16 :: (Word16, Word32) -> Maybe (Word32, Word16)
+full_right_shift_32_16 = unsafeLocalCoreJet c_full_right_shift_32_16
+
+full_right_shift_64_1 :: (Word1, Word64) -> Maybe (Word64, Word1)
+full_right_shift_64_1 = unsafeLocalCoreJet c_full_right_shift_64_1
+
+full_right_shift_64_2 :: (Word2, Word64) -> Maybe (Word64, Word2)
+full_right_shift_64_2 = unsafeLocalCoreJet c_full_right_shift_64_2
+
+full_right_shift_64_4 :: (Word4, Word64) -> Maybe (Word64, Word4)
+full_right_shift_64_4 = unsafeLocalCoreJet c_full_right_shift_64_4
+
+full_right_shift_64_8 :: (Word8, Word64) -> Maybe (Word64, Word8)
+full_right_shift_64_8 = unsafeLocalCoreJet c_full_right_shift_64_8
+
+full_right_shift_64_16 :: (Word16, Word64) -> Maybe (Word64, Word16)
+full_right_shift_64_16 = unsafeLocalCoreJet c_full_right_shift_64_16
+
+full_right_shift_64_32 :: (Word32, Word64) -> Maybe (Word64, Word32)
+full_right_shift_64_32 = unsafeLocalCoreJet c_full_right_shift_64_32
+
+leftmost_8_1 :: Word8 -> Maybe Word1
+leftmost_8_1 = unsafeLocalCoreJet c_leftmost_8_1
+
+leftmost_8_2 :: Word8 -> Maybe Word2
+leftmost_8_2 = unsafeLocalCoreJet c_leftmost_8_2
+
+leftmost_8_4 :: Word8 -> Maybe Word4
+leftmost_8_4 = unsafeLocalCoreJet c_leftmost_8_4
+
+leftmost_16_1 :: Word16 -> Maybe Word1
+leftmost_16_1 = unsafeLocalCoreJet c_leftmost_16_1
+
+leftmost_16_2 :: Word16 -> Maybe Word2
+leftmost_16_2 = unsafeLocalCoreJet c_leftmost_16_2
+
+leftmost_16_4 :: Word16 -> Maybe Word4
+leftmost_16_4 = unsafeLocalCoreJet c_leftmost_16_4
+
+leftmost_16_8 :: Word16 -> Maybe Word8
+leftmost_16_8 = unsafeLocalCoreJet c_leftmost_16_8
+
+leftmost_32_1 :: Word32 -> Maybe Word1
+leftmost_32_1 = unsafeLocalCoreJet c_leftmost_32_1
+
+leftmost_32_2 :: Word32 -> Maybe Word2
+leftmost_32_2 = unsafeLocalCoreJet c_leftmost_32_2
+
+leftmost_32_4 :: Word32 -> Maybe Word4
+leftmost_32_4 = unsafeLocalCoreJet c_leftmost_32_4
+
+leftmost_32_8 :: Word32 -> Maybe Word8
+leftmost_32_8 = unsafeLocalCoreJet c_leftmost_32_8
+
+leftmost_32_16 :: Word32 -> Maybe Word16
+leftmost_32_16 = unsafeLocalCoreJet c_leftmost_32_16
+
+leftmost_64_1 :: Word64 -> Maybe Word1
+leftmost_64_1 = unsafeLocalCoreJet c_leftmost_64_1
+
+leftmost_64_2 :: Word64 -> Maybe Word2
+leftmost_64_2 = unsafeLocalCoreJet c_leftmost_64_2
+
+leftmost_64_4 :: Word64 -> Maybe Word4
+leftmost_64_4 = unsafeLocalCoreJet c_leftmost_64_4
+
+leftmost_64_8 :: Word64 -> Maybe Word8
+leftmost_64_8 = unsafeLocalCoreJet c_leftmost_64_8
+
+leftmost_64_16 :: Word64 -> Maybe Word16
+leftmost_64_16 = unsafeLocalCoreJet c_leftmost_64_16
+
+leftmost_64_32 :: Word64 -> Maybe Word32
+leftmost_64_32 = unsafeLocalCoreJet c_leftmost_64_32
+
+rightmost_8_1 :: Word8 -> Maybe Word1
+rightmost_8_1 = unsafeLocalCoreJet c_rightmost_8_1
+
+rightmost_8_2 :: Word8 -> Maybe Word2
+rightmost_8_2 = unsafeLocalCoreJet c_rightmost_8_2
+
+rightmost_8_4 :: Word8 -> Maybe Word4
+rightmost_8_4 = unsafeLocalCoreJet c_rightmost_8_4
+
+rightmost_16_1 :: Word16 -> Maybe Word1
+rightmost_16_1 = unsafeLocalCoreJet c_rightmost_16_1
+
+rightmost_16_2 :: Word16 -> Maybe Word2
+rightmost_16_2 = unsafeLocalCoreJet c_rightmost_16_2
+
+rightmost_16_4 :: Word16 -> Maybe Word4
+rightmost_16_4 = unsafeLocalCoreJet c_rightmost_16_4
+
+rightmost_16_8 :: Word16 -> Maybe Word8
+rightmost_16_8 = unsafeLocalCoreJet c_rightmost_16_8
+
+rightmost_32_1 :: Word32 -> Maybe Word1
+rightmost_32_1 = unsafeLocalCoreJet c_rightmost_32_1
+
+rightmost_32_2 :: Word32 -> Maybe Word2
+rightmost_32_2 = unsafeLocalCoreJet c_rightmost_32_2
+
+rightmost_32_4 :: Word32 -> Maybe Word4
+rightmost_32_4 = unsafeLocalCoreJet c_rightmost_32_4
+
+rightmost_32_8 :: Word32 -> Maybe Word8
+rightmost_32_8 = unsafeLocalCoreJet c_rightmost_32_8
+
+rightmost_32_16 :: Word32 -> Maybe Word16
+rightmost_32_16 = unsafeLocalCoreJet c_rightmost_32_16
+
+rightmost_64_1 :: Word64 -> Maybe Word1
+rightmost_64_1 = unsafeLocalCoreJet c_rightmost_64_1
+
+rightmost_64_2 :: Word64 -> Maybe Word2
+rightmost_64_2 = unsafeLocalCoreJet c_rightmost_64_2
+
+rightmost_64_4 :: Word64 -> Maybe Word4
+rightmost_64_4 = unsafeLocalCoreJet c_rightmost_64_4
+
+rightmost_64_8 :: Word64 -> Maybe Word8
+rightmost_64_8 = unsafeLocalCoreJet c_rightmost_64_8
+
+rightmost_64_16 :: Word64 -> Maybe Word16
+rightmost_64_16 = unsafeLocalCoreJet c_rightmost_64_16
+
+rightmost_64_32 :: Word64 -> Maybe Word32
+rightmost_64_32 = unsafeLocalCoreJet c_rightmost_64_32
 
 one_8 :: () -> Maybe Word8
 one_8 = unsafeLocalCoreJet c_one_8

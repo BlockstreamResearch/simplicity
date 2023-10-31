@@ -300,6 +300,115 @@ bool eq_256(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
+#define FULL_LEFT_SHIFT_(bitsN, bitsM)                                                                    \
+/* full_left_shift_n_m : TWO^n * TWO^m |- TWO^m * TWO^n */                                                \
+bool full_left_shift_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {                 \
+  (void) env; /* env is unused. */                                                                        \
+  static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
+  copyBits(dst, &src, (bitsN) + (bitsM));                                                                 \
+  return true;                                                                                            \
+}
+FULL_LEFT_SHIFT_(8,1)
+FULL_LEFT_SHIFT_(8,2)
+FULL_LEFT_SHIFT_(8,4)
+FULL_LEFT_SHIFT_(16,1)
+FULL_LEFT_SHIFT_(16,2)
+FULL_LEFT_SHIFT_(16,4)
+FULL_LEFT_SHIFT_(16,8)
+FULL_LEFT_SHIFT_(32,1)
+FULL_LEFT_SHIFT_(32,2)
+FULL_LEFT_SHIFT_(32,4)
+FULL_LEFT_SHIFT_(32,8)
+FULL_LEFT_SHIFT_(32,16)
+FULL_LEFT_SHIFT_(64,1)
+FULL_LEFT_SHIFT_(64,2)
+FULL_LEFT_SHIFT_(64,4)
+FULL_LEFT_SHIFT_(64,8)
+FULL_LEFT_SHIFT_(64,16)
+FULL_LEFT_SHIFT_(64,32)
+
+#define FULL_RIGHT_SHIFT_(bitsN, bitsM)                                                                   \
+/* full_right_shift_n_m : TWO^m * TWO^n |- TWO^n * TWO^m */                                               \
+bool full_right_shift_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {                \
+  (void) env; /* env is unused. */                                                                        \
+  static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
+  copyBits(dst, &src, (bitsN) + (bitsM));                                                                 \
+  return true;                                                                                            \
+}
+FULL_RIGHT_SHIFT_(8,1)
+FULL_RIGHT_SHIFT_(8,2)
+FULL_RIGHT_SHIFT_(8,4)
+FULL_RIGHT_SHIFT_(16,1)
+FULL_RIGHT_SHIFT_(16,2)
+FULL_RIGHT_SHIFT_(16,4)
+FULL_RIGHT_SHIFT_(16,8)
+FULL_RIGHT_SHIFT_(32,1)
+FULL_RIGHT_SHIFT_(32,2)
+FULL_RIGHT_SHIFT_(32,4)
+FULL_RIGHT_SHIFT_(32,8)
+FULL_RIGHT_SHIFT_(32,16)
+FULL_RIGHT_SHIFT_(64,1)
+FULL_RIGHT_SHIFT_(64,2)
+FULL_RIGHT_SHIFT_(64,4)
+FULL_RIGHT_SHIFT_(64,8)
+FULL_RIGHT_SHIFT_(64,16)
+FULL_RIGHT_SHIFT_(64,32)
+
+#define LEFTMOST_(bitsN, bitsM)                                                                           \
+/* leftmost_n_m : TWO^n |- TWO^m */                                                                       \
+bool leftmost_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {                        \
+  (void) env; /* env is unused. */                                                                        \
+  static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
+  copyBits(dst, &src, (bitsM));                                                                           \
+  return true;                                                                                            \
+}
+LEFTMOST_(8,1)
+LEFTMOST_(8,2)
+LEFTMOST_(8,4)
+LEFTMOST_(16,1)
+LEFTMOST_(16,2)
+LEFTMOST_(16,4)
+LEFTMOST_(16,8)
+LEFTMOST_(32,1)
+LEFTMOST_(32,2)
+LEFTMOST_(32,4)
+LEFTMOST_(32,8)
+LEFTMOST_(32,16)
+LEFTMOST_(64,1)
+LEFTMOST_(64,2)
+LEFTMOST_(64,4)
+LEFTMOST_(64,8)
+LEFTMOST_(64,16)
+LEFTMOST_(64,32)
+
+#define RIGHTMOST_(bitsN, bitsM)                                                                          \
+/* rightmost_n_m : TWO^n |- TWO^m */                                                                      \
+bool rightmost_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {                       \
+  (void) env; /* env is unused. */                                                                        \
+  static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
+  forwardBits(&src, (bitsN) - (bitsM));                                                                   \
+  copyBits(dst, &src, (bitsM));                                                                           \
+  return true;                                                                                            \
+}
+RIGHTMOST_(8,1)
+RIGHTMOST_(8,2)
+RIGHTMOST_(8,4)
+RIGHTMOST_(16,1)
+RIGHTMOST_(16,2)
+RIGHTMOST_(16,4)
+RIGHTMOST_(16,8)
+RIGHTMOST_(32,1)
+RIGHTMOST_(32,2)
+RIGHTMOST_(32,4)
+RIGHTMOST_(32,8)
+RIGHTMOST_(32,16)
+RIGHTMOST_(64,1)
+RIGHTMOST_(64,2)
+RIGHTMOST_(64,4)
+RIGHTMOST_(64,8)
+RIGHTMOST_(64,16)
+RIGHTMOST_(64,32)
+
 #define ONE_(bits)                                                 \
 /* one_n : ONE |- TWO^n */                                         \
 bool one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \

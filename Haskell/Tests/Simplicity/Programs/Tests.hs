@@ -116,6 +116,78 @@ tests = testGroup "Programs"
         , testProperty "eq_diag_32"  prop_eq_diag_32
         , testProperty "eq_diag_64"  prop_eq_diag_64
         , testProperty "eq_diag_256"  prop_eq_diag_256
+        , testProperty "full_left_shift_8_1"  prop_full_left_shift_8_1
+        , testProperty "full_left_shift_8_2"  prop_full_left_shift_8_2
+        , testProperty "full_left_shift_8_4"  prop_full_left_shift_8_4
+        , testProperty "full_left_shift_16_1"  prop_full_left_shift_16_1
+        , testProperty "full_left_shift_16_2"  prop_full_left_shift_16_2
+        , testProperty "full_left_shift_16_4"  prop_full_left_shift_16_4
+        , testProperty "full_left_shift_16_8"  prop_full_left_shift_16_8
+        , testProperty "full_left_shift_32_1"  prop_full_left_shift_32_1
+        , testProperty "full_left_shift_32_2"  prop_full_left_shift_32_2
+        , testProperty "full_left_shift_32_4"  prop_full_left_shift_32_4
+        , testProperty "full_left_shift_32_8"  prop_full_left_shift_32_8
+        , testProperty "full_left_shift_32_16"  prop_full_left_shift_32_16
+        , testProperty "full_left_shift_64_1"  prop_full_left_shift_64_1
+        , testProperty "full_left_shift_64_2"  prop_full_left_shift_64_2
+        , testProperty "full_left_shift_64_4"  prop_full_left_shift_64_4
+        , testProperty "full_left_shift_64_8"  prop_full_left_shift_64_8
+        , testProperty "full_left_shift_64_16"  prop_full_left_shift_64_16
+        , testProperty "full_left_shift_64_32"  prop_full_left_shift_64_32
+        , testProperty "full_right_shift_8_1"  prop_full_right_shift_8_1
+        , testProperty "full_right_shift_8_2"  prop_full_right_shift_8_2
+        , testProperty "full_right_shift_8_4"  prop_full_right_shift_8_4
+        , testProperty "full_right_shift_16_1"  prop_full_right_shift_16_1
+        , testProperty "full_right_shift_16_2"  prop_full_right_shift_16_2
+        , testProperty "full_right_shift_16_4"  prop_full_right_shift_16_4
+        , testProperty "full_right_shift_16_8"  prop_full_right_shift_16_8
+        , testProperty "full_right_shift_32_1"  prop_full_right_shift_32_1
+        , testProperty "full_right_shift_32_2"  prop_full_right_shift_32_2
+        , testProperty "full_right_shift_32_4"  prop_full_right_shift_32_4
+        , testProperty "full_right_shift_32_8"  prop_full_right_shift_32_8
+        , testProperty "full_right_shift_32_16"  prop_full_right_shift_32_16
+        , testProperty "full_right_shift_64_1"  prop_full_right_shift_64_1
+        , testProperty "full_right_shift_64_2"  prop_full_right_shift_64_2
+        , testProperty "full_right_shift_64_4"  prop_full_right_shift_64_4
+        , testProperty "full_right_shift_64_8"  prop_full_right_shift_64_8
+        , testProperty "full_right_shift_64_16"  prop_full_right_shift_64_16
+        , testProperty "full_right_shift_64_32"  prop_full_right_shift_64_32
+        , testProperty "leftmost_8_1"  prop_leftmost_8_1
+        , testProperty "leftmost_8_2"  prop_leftmost_8_2
+        , testProperty "leftmost_8_4"  prop_leftmost_8_4
+        , testProperty "leftmost_16_1"  prop_leftmost_16_1
+        , testProperty "leftmost_16_2"  prop_leftmost_16_2
+        , testProperty "leftmost_16_4"  prop_leftmost_16_4
+        , testProperty "leftmost_16_8"  prop_leftmost_16_8
+        , testProperty "leftmost_32_1"  prop_leftmost_32_1
+        , testProperty "leftmost_32_2"  prop_leftmost_32_2
+        , testProperty "leftmost_32_4"  prop_leftmost_32_4
+        , testProperty "leftmost_32_8"  prop_leftmost_32_8
+        , testProperty "leftmost_32_16"  prop_leftmost_32_16
+        , testProperty "leftmost_64_1"  prop_leftmost_64_1
+        , testProperty "leftmost_64_2"  prop_leftmost_64_2
+        , testProperty "leftmost_64_4"  prop_leftmost_64_4
+        , testProperty "leftmost_64_8"  prop_leftmost_64_8
+        , testProperty "leftmost_64_16"  prop_leftmost_64_16
+        , testProperty "leftmost_64_32"  prop_leftmost_64_32
+        , testProperty "rightmost_8_1"  prop_rightmost_8_1
+        , testProperty "rightmost_8_2"  prop_rightmost_8_2
+        , testProperty "rightmost_8_4"  prop_rightmost_8_4
+        , testProperty "rightmost_16_1"  prop_rightmost_16_1
+        , testProperty "rightmost_16_2"  prop_rightmost_16_2
+        , testProperty "rightmost_16_4"  prop_rightmost_16_4
+        , testProperty "rightmost_16_8"  prop_rightmost_16_8
+        , testProperty "rightmost_32_1"  prop_rightmost_32_1
+        , testProperty "rightmost_32_2"  prop_rightmost_32_2
+        , testProperty "rightmost_32_4"  prop_rightmost_32_4
+        , testProperty "rightmost_32_8"  prop_rightmost_32_8
+        , testProperty "rightmost_32_16"  prop_rightmost_32_16
+        , testProperty "rightmost_64_1"  prop_rightmost_64_1
+        , testProperty "rightmost_64_2"  prop_rightmost_64_2
+        , testProperty "rightmost_64_4"  prop_rightmost_64_4
+        , testProperty "rightmost_64_8"  prop_rightmost_64_8
+        , testProperty "rightmost_64_16"  prop_rightmost_64_16
+        , testProperty "rightmost_64_32"  prop_rightmost_64_32
         , testProperty "shift_const_by false word8" prop_shift_const_by_false8
         , testProperty "rotate_const word8" prop_rotate_const8
         , testProperty "transpose zv2 zv8" prop_transpose_2x8
@@ -862,6 +934,538 @@ prop_eq_diag_256 = \x -> let input = (toW256 x, toW256 x)
  where
   toW256 = toWord256 . fromIntegral
   fastF = testCoreEval (specification (WordJet Eq256))
+
+prop_full_left_shift_8_1 :: W.Word8 -> Bool -> Bool
+prop_full_left_shift_8_1 = \x y -> let input = (toW8 x, toBit y)
+                                   in fastF input == implementation (WordJet FullLeftShift8_1) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift8_1))
+
+prop_full_left_shift_8_2 :: W.Word8 -> W.Word8 -> Bool
+prop_full_left_shift_8_2 = \x y -> let input = (toW8 x, toW2 y)
+                                   in fastF input == implementation (WordJet FullLeftShift8_2) input
+ where
+  toW8 = toWord8 . fromIntegral
+  toW2 = toWord2 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift8_2))
+
+prop_full_left_shift_8_4 :: W.Word8 -> W.Word8 -> Bool
+prop_full_left_shift_8_4 = \x y -> let input = (toW8 x, toW4 y)
+                                   in fastF input == implementation (WordJet FullLeftShift8_4) input
+ where
+  toW8 = toWord8 . fromIntegral
+  toW4 = toWord4 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift8_4))
+
+prop_full_left_shift_16_1 :: W.Word16 -> Bool -> Bool
+prop_full_left_shift_16_1 = \x y -> let input = (toW16 x, toBit y)
+                                   in fastF input == implementation (WordJet FullLeftShift16_1) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift16_1))
+
+prop_full_left_shift_16_2 :: W.Word16 -> W.Word8 -> Bool
+prop_full_left_shift_16_2 = \x y -> let input = (toW16 x, toW2 y)
+                                   in fastF input == implementation (WordJet FullLeftShift16_2) input
+ where
+  toW16 = toWord16 . fromIntegral
+  toW2 = toWord2 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift16_2))
+
+prop_full_left_shift_16_4 :: W.Word16 -> W.Word8 -> Bool
+prop_full_left_shift_16_4 = \x y -> let input = (toW16 x, toW4 y)
+                                   in fastF input == implementation (WordJet FullLeftShift16_4) input
+ where
+  toW16 = toWord16 . fromIntegral
+  toW4 = toWord4 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift16_4))
+
+prop_full_left_shift_16_8 :: W.Word16 -> W.Word8 -> Bool
+prop_full_left_shift_16_8 = \x y -> let input = (toW16 x, toW8 y)
+                                   in fastF input == implementation (WordJet FullLeftShift16_8) input
+ where
+  toW16 = toWord16 . fromIntegral
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift16_8))
+
+prop_full_left_shift_32_1 :: W.Word32 -> Bool -> Bool
+prop_full_left_shift_32_1 = \x y -> let input = (toW32 x, toBit y)
+                                   in fastF input == implementation (WordJet FullLeftShift32_1) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift32_1))
+
+prop_full_left_shift_32_2 :: W.Word32 -> W.Word8 -> Bool
+prop_full_left_shift_32_2 = \x y -> let input = (toW32 x, toW2 y)
+                                   in fastF input == implementation (WordJet FullLeftShift32_2) input
+ where
+  toW32 = toWord32 . fromIntegral
+  toW2 = toWord2 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift32_2))
+
+prop_full_left_shift_32_4 :: W.Word32 -> W.Word8 -> Bool
+prop_full_left_shift_32_4 = \x y -> let input = (toW32 x, toW4 y)
+                                   in fastF input == implementation (WordJet FullLeftShift32_4) input
+ where
+  toW32 = toWord32 . fromIntegral
+  toW4 = toWord4 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift32_4))
+
+prop_full_left_shift_32_8 :: W.Word32 -> W.Word8 -> Bool
+prop_full_left_shift_32_8 = \x y -> let input = (toW32 x, toW8 y)
+                                   in fastF input == implementation (WordJet FullLeftShift32_8) input
+ where
+  toW32 = toWord32 . fromIntegral
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift32_8))
+
+prop_full_left_shift_32_16 :: W.Word32 -> W.Word16 -> Bool
+prop_full_left_shift_32_16 = \x y -> let input = (toW32 x, toW16 y)
+                                   in fastF input == implementation (WordJet FullLeftShift32_16) input
+ where
+  toW32 = toWord32 . fromIntegral
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift32_16))
+
+prop_full_left_shift_64_1 :: W.Word64 -> Bool -> Bool
+prop_full_left_shift_64_1 = \x y -> let input = (toW64 x, toBit y)
+                                   in fastF input == implementation (WordJet FullLeftShift64_1) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift64_1))
+
+prop_full_left_shift_64_2 :: W.Word64 -> W.Word8 -> Bool
+prop_full_left_shift_64_2 = \x y -> let input = (toW64 x, toW2 y)
+                                   in fastF input == implementation (WordJet FullLeftShift64_2) input
+ where
+  toW64 = toWord64 . fromIntegral
+  toW2 = toWord2 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift64_2))
+
+prop_full_left_shift_64_4 :: W.Word64 -> W.Word8 -> Bool
+prop_full_left_shift_64_4 = \x y -> let input = (toW64 x, toW4 y)
+                                   in fastF input == implementation (WordJet FullLeftShift64_4) input
+ where
+  toW64 = toWord64 . fromIntegral
+  toW4 = toWord4 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift64_4))
+
+prop_full_left_shift_64_8 :: W.Word64 -> W.Word8 -> Bool
+prop_full_left_shift_64_8 = \x y -> let input = (toW64 x, toW8 y)
+                                   in fastF input == implementation (WordJet FullLeftShift64_8) input
+ where
+  toW64 = toWord64 . fromIntegral
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift64_8))
+
+prop_full_left_shift_64_16 :: W.Word64 -> W.Word16 -> Bool
+prop_full_left_shift_64_16 = \x y -> let input = (toW64 x, toW16 y)
+                                   in fastF input == implementation (WordJet FullLeftShift64_16) input
+ where
+  toW64 = toWord64 . fromIntegral
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift64_16))
+
+prop_full_left_shift_64_32 :: W.Word64 -> W.Word32 -> Bool
+prop_full_left_shift_64_32 = \x y -> let input = (toW64 x, toW32 y)
+                                   in fastF input == implementation (WordJet FullLeftShift64_32) input
+ where
+  toW64 = toWord64 . fromIntegral
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullLeftShift64_32))
+
+prop_full_right_shift_8_1 :: W.Word8 -> Bool -> Bool
+prop_full_right_shift_8_1 = \x y -> let input = (toBit y, toW8 x)
+                                   in fastF input == implementation (WordJet FullRightShift8_1) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift8_1))
+
+prop_full_right_shift_8_2 :: W.Word8 -> W.Word8 -> Bool
+prop_full_right_shift_8_2 = \x y -> let input = (toW2 y, toW8 x)
+                                   in fastF input == implementation (WordJet FullRightShift8_2) input
+ where
+  toW8 = toWord8 . fromIntegral
+  toW2 = toWord2 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift8_2))
+
+prop_full_right_shift_8_4 :: W.Word8 -> W.Word8 -> Bool
+prop_full_right_shift_8_4 = \x y -> let input = (toW4 y, toW8 x)
+                                   in fastF input == implementation (WordJet FullRightShift8_4) input
+ where
+  toW8 = toWord8 . fromIntegral
+  toW4 = toWord4 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift8_4))
+
+prop_full_right_shift_16_1 :: W.Word16 -> Bool -> Bool
+prop_full_right_shift_16_1 = \x y -> let input = (toBit y, toW16 x)
+                                   in fastF input == implementation (WordJet FullRightShift16_1) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift16_1))
+
+prop_full_right_shift_16_2 :: W.Word16 -> W.Word8 -> Bool
+prop_full_right_shift_16_2 = \x y -> let input = (toW2 y, toW16 x)
+                                   in fastF input == implementation (WordJet FullRightShift16_2) input
+ where
+  toW16 = toWord16 . fromIntegral
+  toW2 = toWord2 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift16_2))
+
+prop_full_right_shift_16_4 :: W.Word16 -> W.Word8 -> Bool
+prop_full_right_shift_16_4 = \x y -> let input = (toW4 y, toW16 x)
+                                   in fastF input == implementation (WordJet FullRightShift16_4) input
+ where
+  toW16 = toWord16 . fromIntegral
+  toW4 = toWord4 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift16_4))
+
+prop_full_right_shift_16_8 :: W.Word16 -> W.Word8 -> Bool
+prop_full_right_shift_16_8 = \x y -> let input = (toW8 y, toW16 x)
+                                   in fastF input == implementation (WordJet FullRightShift16_8) input
+ where
+  toW16 = toWord16 . fromIntegral
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift16_8))
+
+prop_full_right_shift_32_1 :: W.Word32 -> Bool -> Bool
+prop_full_right_shift_32_1 = \x y -> let input = (toBit y, toW32 x)
+                                   in fastF input == implementation (WordJet FullRightShift32_1) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift32_1))
+
+prop_full_right_shift_32_2 :: W.Word32 -> W.Word8 -> Bool
+prop_full_right_shift_32_2 = \x y -> let input = (toW2 y, toW32 x)
+                                   in fastF input == implementation (WordJet FullRightShift32_2) input
+ where
+  toW32 = toWord32 . fromIntegral
+  toW2 = toWord2 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift32_2))
+
+prop_full_right_shift_32_4 :: W.Word32 -> W.Word8 -> Bool
+prop_full_right_shift_32_4 = \x y -> let input = (toW4 y, toW32 x)
+                                   in fastF input == implementation (WordJet FullRightShift32_4) input
+ where
+  toW32 = toWord32 . fromIntegral
+  toW4 = toWord4 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift32_4))
+
+prop_full_right_shift_32_8 :: W.Word32 -> W.Word8 -> Bool
+prop_full_right_shift_32_8 = \x y -> let input = (toW8 y, toW32 x)
+                                   in fastF input == implementation (WordJet FullRightShift32_8) input
+ where
+  toW32 = toWord32 . fromIntegral
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift32_8))
+
+prop_full_right_shift_32_16 :: W.Word32 -> W.Word16 -> Bool
+prop_full_right_shift_32_16 = \x y -> let input = (toW16 y, toW32 x)
+                                   in fastF input == implementation (WordJet FullRightShift32_16) input
+ where
+  toW32 = toWord32 . fromIntegral
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift32_16))
+
+prop_full_right_shift_64_1 :: W.Word64 -> Bool -> Bool
+prop_full_right_shift_64_1 = \x y -> let input = (toBit y, toW64 x)
+                                   in fastF input == implementation (WordJet FullRightShift64_1) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift64_1))
+
+prop_full_right_shift_64_2 :: W.Word64 -> W.Word8 -> Bool
+prop_full_right_shift_64_2 = \x y -> let input = (toW2 y, toW64 x)
+                                   in fastF input == implementation (WordJet FullRightShift64_2) input
+ where
+  toW64 = toWord64 . fromIntegral
+  toW2 = toWord2 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift64_2))
+
+prop_full_right_shift_64_4 :: W.Word64 -> W.Word8 -> Bool
+prop_full_right_shift_64_4 = \x y -> let input = (toW4 y, toW64 x)
+                                   in fastF input == implementation (WordJet FullRightShift64_4) input
+ where
+  toW64 = toWord64 . fromIntegral
+  toW4 = toWord4 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift64_4))
+
+prop_full_right_shift_64_8 :: W.Word64 -> W.Word8 -> Bool
+prop_full_right_shift_64_8 = \x y -> let input = (toW8 y, toW64 x)
+                                   in fastF input == implementation (WordJet FullRightShift64_8) input
+ where
+  toW64 = toWord64 . fromIntegral
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift64_8))
+
+prop_full_right_shift_64_16 :: W.Word64 -> W.Word16 -> Bool
+prop_full_right_shift_64_16 = \x y -> let input = (toW16 y, toW64 x)
+                                   in fastF input == implementation (WordJet FullRightShift64_16) input
+ where
+  toW64 = toWord64 . fromIntegral
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift64_16))
+
+prop_full_right_shift_64_32 :: W.Word64 -> W.Word32 -> Bool
+prop_full_right_shift_64_32 = \x y -> let input = (toW32 y, toW64 x)
+                                   in fastF input == implementation (WordJet FullRightShift64_32) input
+ where
+  toW64 = toWord64 . fromIntegral
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet FullRightShift64_32))
+
+prop_leftmost_8_1 :: W.Word8 -> Bool
+prop_leftmost_8_1 = \x -> let input = toW8 x
+                            in fastF input == implementation (WordJet Leftmost8_1) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost8_1))
+
+prop_leftmost_8_2 :: W.Word8 -> Bool
+prop_leftmost_8_2 = \x -> let input = toW8 x
+                            in fastF input == implementation (WordJet Leftmost8_2) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost8_2))
+
+prop_leftmost_8_4 :: W.Word8 -> Bool
+prop_leftmost_8_4 = \x -> let input = toW8 x
+                            in fastF input == implementation (WordJet Leftmost8_4) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost8_4))
+
+prop_leftmost_16_1 :: W.Word16 -> Bool
+prop_leftmost_16_1 = \x -> let input = toW16 x
+                            in fastF input == implementation (WordJet Leftmost16_1) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost16_1))
+
+prop_leftmost_16_2 :: W.Word16 -> Bool
+prop_leftmost_16_2 = \x -> let input = toW16 x
+                            in fastF input == implementation (WordJet Leftmost16_2) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost16_2))
+
+prop_leftmost_16_4 :: W.Word16 -> Bool
+prop_leftmost_16_4 = \x -> let input = toW16 x
+                            in fastF input == implementation (WordJet Leftmost16_4) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost16_4))
+
+prop_leftmost_16_8 :: W.Word16 -> Bool
+prop_leftmost_16_8 = \x -> let input = toW16 x
+                            in fastF input == implementation (WordJet Leftmost16_8) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost16_8))
+
+prop_leftmost_32_1 :: W.Word32 -> Bool
+prop_leftmost_32_1 = \x -> let input = toW32 x
+                            in fastF input == implementation (WordJet Leftmost32_1) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost32_1))
+
+prop_leftmost_32_2 :: W.Word32 -> Bool
+prop_leftmost_32_2 = \x -> let input = toW32 x
+                            in fastF input == implementation (WordJet Leftmost32_2) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost32_2))
+
+prop_leftmost_32_4 :: W.Word32 -> Bool
+prop_leftmost_32_4 = \x -> let input = toW32 x
+                            in fastF input == implementation (WordJet Leftmost32_4) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost32_4))
+
+prop_leftmost_32_8 :: W.Word32 -> Bool
+prop_leftmost_32_8 = \x -> let input = toW32 x
+                            in fastF input == implementation (WordJet Leftmost32_8) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost32_8))
+
+prop_leftmost_32_16 :: W.Word32 -> Bool
+prop_leftmost_32_16 = \x -> let input = toW32 x
+                            in fastF input == implementation (WordJet Leftmost32_16) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost32_16))
+
+prop_leftmost_64_1 :: W.Word64 -> Bool
+prop_leftmost_64_1 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Leftmost64_1) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost64_1))
+
+prop_leftmost_64_2 :: W.Word64 -> Bool
+prop_leftmost_64_2 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Leftmost64_2) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost64_2))
+
+prop_leftmost_64_4 :: W.Word64 -> Bool
+prop_leftmost_64_4 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Leftmost64_4) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost64_4))
+
+prop_leftmost_64_8 :: W.Word64 -> Bool
+prop_leftmost_64_8 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Leftmost64_8) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost64_8))
+
+prop_leftmost_64_16 :: W.Word64 -> Bool
+prop_leftmost_64_16 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Leftmost64_16) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost64_16))
+
+prop_leftmost_64_32 :: W.Word64 -> Bool
+prop_leftmost_64_32 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Leftmost64_32) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Leftmost64_32))
+
+prop_rightmost_8_1 :: W.Word8 -> Bool
+prop_rightmost_8_1 = \x -> let input = toW8 x
+                            in fastF input == implementation (WordJet Rightmost8_1) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost8_1))
+
+prop_rightmost_8_2 :: W.Word8 -> Bool
+prop_rightmost_8_2 = \x -> let input = toW8 x
+                            in fastF input == implementation (WordJet Rightmost8_2) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost8_2))
+
+prop_rightmost_8_4 :: W.Word8 -> Bool
+prop_rightmost_8_4 = \x -> let input = toW8 x
+                            in fastF input == implementation (WordJet Rightmost8_4) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost8_4))
+
+prop_rightmost_16_1 :: W.Word16 -> Bool
+prop_rightmost_16_1 = \x -> let input = toW16 x
+                            in fastF input == implementation (WordJet Rightmost16_1) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost16_1))
+
+prop_rightmost_16_2 :: W.Word16 -> Bool
+prop_rightmost_16_2 = \x -> let input = toW16 x
+                            in fastF input == implementation (WordJet Rightmost16_2) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost16_2))
+
+prop_rightmost_16_4 :: W.Word16 -> Bool
+prop_rightmost_16_4 = \x -> let input = toW16 x
+                            in fastF input == implementation (WordJet Rightmost16_4) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost16_4))
+
+prop_rightmost_16_8 :: W.Word16 -> Bool
+prop_rightmost_16_8 = \x -> let input = toW16 x
+                            in fastF input == implementation (WordJet Rightmost16_8) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost16_8))
+
+prop_rightmost_32_1 :: W.Word32 -> Bool
+prop_rightmost_32_1 = \x -> let input = toW32 x
+                            in fastF input == implementation (WordJet Rightmost32_1) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost32_1))
+
+prop_rightmost_32_2 :: W.Word32 -> Bool
+prop_rightmost_32_2 = \x -> let input = toW32 x
+                            in fastF input == implementation (WordJet Rightmost32_2) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost32_2))
+
+prop_rightmost_32_4 :: W.Word32 -> Bool
+prop_rightmost_32_4 = \x -> let input = toW32 x
+                            in fastF input == implementation (WordJet Rightmost32_4) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost32_4))
+
+prop_rightmost_32_8 :: W.Word32 -> Bool
+prop_rightmost_32_8 = \x -> let input = toW32 x
+                            in fastF input == implementation (WordJet Rightmost32_8) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost32_8))
+
+prop_rightmost_32_16 :: W.Word32 -> Bool
+prop_rightmost_32_16 = \x -> let input = toW32 x
+                            in fastF input == implementation (WordJet Rightmost32_16) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost32_16))
+
+prop_rightmost_64_1 :: W.Word64 -> Bool
+prop_rightmost_64_1 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Rightmost64_1) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost64_1))
+
+prop_rightmost_64_2 :: W.Word64 -> Bool
+prop_rightmost_64_2 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Rightmost64_2) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost64_2))
+
+prop_rightmost_64_4 :: W.Word64 -> Bool
+prop_rightmost_64_4 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Rightmost64_4) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost64_4))
+
+prop_rightmost_64_8 :: W.Word64 -> Bool
+prop_rightmost_64_8 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Rightmost64_8) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost64_8))
+
+prop_rightmost_64_16 :: W.Word64 -> Bool
+prop_rightmost_64_16 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Rightmost64_16) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost64_16))
+
+prop_rightmost_64_32 :: W.Word64 -> Bool
+prop_rightmost_64_32 = \x -> let input = toW64 x
+                            in fastF input == implementation (WordJet Rightmost64_32) input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet Rightmost64_32))
 
 assert_one_8 :: Assertion
 assert_one_8 = fastF () @=? implementation (ArithJet One8) ()

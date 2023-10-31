@@ -73,6 +73,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
   if (!bit) {
     /* Core jets */
     int32_t code = decodeUptoMaxInt(stream);
+    int32_t code2;
     if (code < 0) return (simplicity_err)code;
 
     switch (code) {
@@ -212,6 +213,206 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
          case 5: *result = EQ_32; return SIMPLICITY_NO_ERROR;
          case 6: *result = EQ_64; return SIMPLICITY_NO_ERROR;
          case 8: *result = EQ_256; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 14: /* FullLeftShift */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        code2 = decodeUptoMaxInt(stream);
+        if (code2 < 0) return (simplicity_err)code2;
+        switch (code) {
+         case 1:
+          switch (code2) {
+           case 3: *result = FULL_LEFT_SHIFT_8_1; return SIMPLICITY_NO_ERROR;
+           case 4: *result = FULL_LEFT_SHIFT_16_1; return SIMPLICITY_NO_ERROR;
+           case 5: *result = FULL_LEFT_SHIFT_32_1; return SIMPLICITY_NO_ERROR;
+           case 6: *result = FULL_LEFT_SHIFT_64_1; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 2:
+          switch (code2) {
+           case 2: *result = FULL_LEFT_SHIFT_8_2; return SIMPLICITY_NO_ERROR;
+           case 3: *result = FULL_LEFT_SHIFT_16_2; return SIMPLICITY_NO_ERROR;
+           case 4: *result = FULL_LEFT_SHIFT_32_2; return SIMPLICITY_NO_ERROR;
+           case 5: *result = FULL_LEFT_SHIFT_64_2; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 3:
+          switch (code2) {
+           case 1: *result = FULL_LEFT_SHIFT_8_4; return SIMPLICITY_NO_ERROR;
+           case 2: *result = FULL_LEFT_SHIFT_16_4; return SIMPLICITY_NO_ERROR;
+           case 3: *result = FULL_LEFT_SHIFT_32_4; return SIMPLICITY_NO_ERROR;
+           case 4: *result = FULL_LEFT_SHIFT_64_4; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 4:
+          switch (code2) {
+           case 1: *result = FULL_LEFT_SHIFT_16_8; return SIMPLICITY_NO_ERROR;
+           case 2: *result = FULL_LEFT_SHIFT_32_8; return SIMPLICITY_NO_ERROR;
+           case 3: *result = FULL_LEFT_SHIFT_64_8; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 5:
+          switch (code2) {
+           case 1: *result = FULL_LEFT_SHIFT_32_16; return SIMPLICITY_NO_ERROR;
+           case 2: *result = FULL_LEFT_SHIFT_64_16; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 6:
+          switch (code2) {
+           case 1: *result = FULL_LEFT_SHIFT_64_32; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+        }
+        break;
+       case 15: /* FullRightShift */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        code2 = decodeUptoMaxInt(stream);
+        if (code2 < 0) return (simplicity_err)code2;
+        switch (code) {
+         case 1:
+          switch (code2) {
+           case 3: *result = FULL_RIGHT_SHIFT_8_1; return SIMPLICITY_NO_ERROR;
+           case 4: *result = FULL_RIGHT_SHIFT_16_1; return SIMPLICITY_NO_ERROR;
+           case 5: *result = FULL_RIGHT_SHIFT_32_1; return SIMPLICITY_NO_ERROR;
+           case 6: *result = FULL_RIGHT_SHIFT_64_1; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 2:
+          switch (code2) {
+           case 2: *result = FULL_RIGHT_SHIFT_8_2; return SIMPLICITY_NO_ERROR;
+           case 3: *result = FULL_RIGHT_SHIFT_16_2; return SIMPLICITY_NO_ERROR;
+           case 4: *result = FULL_RIGHT_SHIFT_32_2; return SIMPLICITY_NO_ERROR;
+           case 5: *result = FULL_RIGHT_SHIFT_64_2; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 3:
+          switch (code2) {
+           case 1: *result = FULL_RIGHT_SHIFT_8_4; return SIMPLICITY_NO_ERROR;
+           case 2: *result = FULL_RIGHT_SHIFT_16_4; return SIMPLICITY_NO_ERROR;
+           case 3: *result = FULL_RIGHT_SHIFT_32_4; return SIMPLICITY_NO_ERROR;
+           case 4: *result = FULL_RIGHT_SHIFT_64_4; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 4:
+          switch (code2) {
+           case 1: *result = FULL_RIGHT_SHIFT_16_8; return SIMPLICITY_NO_ERROR;
+           case 2: *result = FULL_RIGHT_SHIFT_32_8; return SIMPLICITY_NO_ERROR;
+           case 3: *result = FULL_RIGHT_SHIFT_64_8; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 5:
+          switch (code2) {
+           case 1: *result = FULL_RIGHT_SHIFT_32_16; return SIMPLICITY_NO_ERROR;
+           case 2: *result = FULL_RIGHT_SHIFT_64_16; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 6:
+          switch (code2) {
+           case 1: *result = FULL_RIGHT_SHIFT_64_32; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+        }
+        break;
+       case 16: /* Leftmost */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        code2 = decodeUptoMaxInt(stream);
+        if (code2 < 0) return (simplicity_err)code2;
+        switch (code) {
+         case 1:
+          switch (code2) {
+           case 3: *result = LEFTMOST_8_1; return SIMPLICITY_NO_ERROR;
+           case 4: *result = LEFTMOST_16_1; return SIMPLICITY_NO_ERROR;
+           case 5: *result = LEFTMOST_32_1; return SIMPLICITY_NO_ERROR;
+           case 6: *result = LEFTMOST_64_1; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 2:
+          switch (code2) {
+           case 2: *result = LEFTMOST_8_2; return SIMPLICITY_NO_ERROR;
+           case 3: *result = LEFTMOST_16_2; return SIMPLICITY_NO_ERROR;
+           case 4: *result = LEFTMOST_32_2; return SIMPLICITY_NO_ERROR;
+           case 5: *result = LEFTMOST_64_2; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 3:
+          switch (code2) {
+           case 1: *result = LEFTMOST_8_4; return SIMPLICITY_NO_ERROR;
+           case 2: *result = LEFTMOST_16_4; return SIMPLICITY_NO_ERROR;
+           case 3: *result = LEFTMOST_32_4; return SIMPLICITY_NO_ERROR;
+           case 4: *result = LEFTMOST_64_4; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 4:
+          switch (code2) {
+           case 1: *result = LEFTMOST_16_8; return SIMPLICITY_NO_ERROR;
+           case 2: *result = LEFTMOST_32_8; return SIMPLICITY_NO_ERROR;
+           case 3: *result = LEFTMOST_64_8; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 5:
+          switch (code2) {
+           case 1: *result = LEFTMOST_32_16; return SIMPLICITY_NO_ERROR;
+           case 2: *result = LEFTMOST_64_16; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 6:
+          switch (code2) {
+           case 1: *result = LEFTMOST_64_32; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+        }
+        break;
+       case 17: /* Rightmost */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        code2 = decodeUptoMaxInt(stream);
+        if (code2 < 0) return (simplicity_err)code2;
+        switch (code) {
+         case 1:
+          switch (code2) {
+           case 3: *result = RIGHTMOST_8_1; return SIMPLICITY_NO_ERROR;
+           case 4: *result = RIGHTMOST_16_1; return SIMPLICITY_NO_ERROR;
+           case 5: *result = RIGHTMOST_32_1; return SIMPLICITY_NO_ERROR;
+           case 6: *result = RIGHTMOST_64_1; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 2:
+          switch (code2) {
+           case 2: *result = RIGHTMOST_8_2; return SIMPLICITY_NO_ERROR;
+           case 3: *result = RIGHTMOST_16_2; return SIMPLICITY_NO_ERROR;
+           case 4: *result = RIGHTMOST_32_2; return SIMPLICITY_NO_ERROR;
+           case 5: *result = RIGHTMOST_64_2; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 3:
+          switch (code2) {
+           case 1: *result = RIGHTMOST_8_4; return SIMPLICITY_NO_ERROR;
+           case 2: *result = RIGHTMOST_16_4; return SIMPLICITY_NO_ERROR;
+           case 3: *result = RIGHTMOST_32_4; return SIMPLICITY_NO_ERROR;
+           case 4: *result = RIGHTMOST_64_4; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 4:
+          switch (code2) {
+           case 1: *result = RIGHTMOST_16_8; return SIMPLICITY_NO_ERROR;
+           case 2: *result = RIGHTMOST_32_8; return SIMPLICITY_NO_ERROR;
+           case 3: *result = RIGHTMOST_64_8; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 5:
+          switch (code2) {
+           case 1: *result = RIGHTMOST_32_16; return SIMPLICITY_NO_ERROR;
+           case 2: *result = RIGHTMOST_64_16; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 6:
+          switch (code2) {
+           case 1: *result = RIGHTMOST_64_32; return SIMPLICITY_NO_ERROR;
+          }
+          break;
         }
         break;
       }
