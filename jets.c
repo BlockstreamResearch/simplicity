@@ -409,6 +409,69 @@ RIGHTMOST_(64,8)
 RIGHTMOST_(64,16)
 RIGHTMOST_(64,32)
 
+#define LEFT_PAD_LOW_1_(bitsM)                                                 \
+/* left_pad_low_1_m : TWO |- TWO^m */                                          \
+bool left_pad_low_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                             \
+  bool bit = readBit(&src);                                                    \
+  write##bitsM(dst, bit);                                                      \
+  return true;                                                                 \
+}
+LEFT_PAD_LOW_1_(8)
+LEFT_PAD_LOW_1_(16)
+LEFT_PAD_LOW_1_(32)
+LEFT_PAD_LOW_1_(64)
+
+#define LEFT_PAD_LOW_(bitsN, bitsM)                                                    \
+/* left_pad_low_n_m : TWO^n |- TWO^m */                                                \
+bool left_pad_low_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                     \
+  static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                \
+  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                \
+  static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");           \
+  for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, 0); }               \
+  copyBits(dst, &src, (bitsN));                                                        \
+  return true;                                                                         \
+}
+LEFT_PAD_LOW_(8,16)
+LEFT_PAD_LOW_(8,32)
+LEFT_PAD_LOW_(8,64)
+LEFT_PAD_LOW_(16,32)
+LEFT_PAD_LOW_(16,64)
+LEFT_PAD_LOW_(32,64)
+
+#define RIGHT_PAD_LOW_1_(bitsM)                                                          \
+/* right_pad_low_1_m : TWO |- TWO^m */                                                   \
+bool right_pad_low_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {          \
+  (void) env; /* env is unused. */                                                       \
+  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                  \
+  bool bit = readBit(&src);                                                              \
+  write##bitsM(dst, (uint_fast##bitsM##_t)((uint_fast##bitsM##_t)bit << ((bitsM) - 1))); \
+  return true;                                                                           \
+}
+RIGHT_PAD_LOW_1_(8)
+RIGHT_PAD_LOW_1_(16)
+RIGHT_PAD_LOW_1_(32)
+RIGHT_PAD_LOW_1_(64)
+
+#define RIGHT_PAD_LOW_(bitsN, bitsM)                                                    \
+/* right_pad_low_n_m : TWO^n |- TWO^m */                                                \
+bool right_pad_low_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                      \
+  static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                 \
+  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                 \
+  static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");            \
+  copyBits(dst, &src, (bitsN));                                                         \
+  for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, 0); }                \
+  return true;                                                                          \
+}
+RIGHT_PAD_LOW_(8,16)
+RIGHT_PAD_LOW_(8,32)
+RIGHT_PAD_LOW_(8,64)
+RIGHT_PAD_LOW_(16,32)
+RIGHT_PAD_LOW_(16,64)
+RIGHT_PAD_LOW_(32,64)
+
 #define ONE_(bits)                                                 \
 /* one_n : ONE |- TWO^n */                                         \
 bool one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
