@@ -168,6 +168,26 @@ tests = testGroup "C / SPEC"
         , testProperty "rightmost_64_8"  prop_rightmost_64_8
         , testProperty "rightmost_64_16"  prop_rightmost_64_16
         , testProperty "rightmost_64_32"  prop_rightmost_64_32
+        , testProperty "left_pad_low_1_8" prop_left_pad_low_1_8
+        , testProperty "left_pad_low_1_16" prop_left_pad_low_1_16
+        , testProperty "left_pad_low_8_16" prop_left_pad_low_8_16
+        , testProperty "left_pad_low_1_32" prop_left_pad_low_1_32
+        , testProperty "left_pad_low_8_32" prop_left_pad_low_8_32
+        , testProperty "left_pad_low_16_32" prop_left_pad_low_16_32
+        , testProperty "left_pad_low_1_64" prop_left_pad_low_1_64
+        , testProperty "left_pad_low_8_64" prop_left_pad_low_8_64
+        , testProperty "left_pad_low_16_64" prop_left_pad_low_16_64
+        , testProperty "left_pad_low_32_64" prop_left_pad_low_32_64
+        , testProperty "right_pad_low_1_8" prop_right_pad_low_1_8
+        , testProperty "right_pad_low_1_16" prop_right_pad_low_1_16
+        , testProperty "right_pad_low_8_16" prop_right_pad_low_8_16
+        , testProperty "right_pad_low_1_32" prop_right_pad_low_1_32
+        , testProperty "right_pad_low_8_32" prop_right_pad_low_8_32
+        , testProperty "right_pad_low_16_32" prop_right_pad_low_16_32
+        , testProperty "right_pad_low_1_64" prop_right_pad_low_1_64
+        , testProperty "right_pad_low_8_64" prop_right_pad_low_8_64
+        , testProperty "right_pad_low_16_64" prop_right_pad_low_16_64
+        , testProperty "right_pad_low_32_64" prop_right_pad_low_32_64
         ]
       , testGroup "arith" $
         [ testCase     "one_8" assert_one_8
@@ -1379,6 +1399,138 @@ prop_rightmost_64_32 = \x -> let input = toW64 x
  where
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (WordJet Rightmost64_32))
+
+prop_left_pad_low_1_8 :: Bool -> Bool
+prop_left_pad_low_1_8 = \x -> let input = toBit x
+                                in fastF input == C.left_pad_low_1_8 input
+ where
+  fastF = testCoreEval (specification (WordJet LeftPadLow1_8))
+
+prop_left_pad_low_1_16 :: Bool -> Bool
+prop_left_pad_low_1_16 = \x -> let input = toBit x
+                                in fastF input == C.left_pad_low_1_16 input
+ where
+  fastF = testCoreEval (specification (WordJet LeftPadLow1_16))
+
+prop_left_pad_low_8_16 :: W.Word8 -> Bool
+prop_left_pad_low_8_16 = \x -> let input = toW8 x
+                                in fastF input == C.left_pad_low_8_16 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftPadLow8_16))
+
+prop_left_pad_low_1_32 :: Bool -> Bool
+prop_left_pad_low_1_32 = \x -> let input = toBit x
+                                in fastF input == C.left_pad_low_1_32 input
+ where
+  fastF = testCoreEval (specification (WordJet LeftPadLow1_32))
+
+prop_left_pad_low_8_32 :: W.Word8 -> Bool
+prop_left_pad_low_8_32 = \x -> let input = toW8 x
+                                in fastF input == C.left_pad_low_8_32 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftPadLow8_32))
+
+prop_left_pad_low_16_32 :: W.Word16 -> Bool
+prop_left_pad_low_16_32 = \x -> let input = toW16 x
+                                in fastF input == C.left_pad_low_16_32 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftPadLow16_32))
+
+prop_left_pad_low_1_64 :: Bool -> Bool
+prop_left_pad_low_1_64 = \x -> let input = toBit x
+                                in fastF input == C.left_pad_low_1_64 input
+ where
+  fastF = testCoreEval (specification (WordJet LeftPadLow1_64))
+
+prop_left_pad_low_8_64 :: W.Word8 -> Bool
+prop_left_pad_low_8_64 = \x -> let input = toW8 x
+                                in fastF input == C.left_pad_low_8_64 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftPadLow8_64))
+
+prop_left_pad_low_16_64 :: W.Word16 -> Bool
+prop_left_pad_low_16_64 = \x -> let input = toW16 x
+                                in fastF input == C.left_pad_low_16_64 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftPadLow16_64))
+
+prop_left_pad_low_32_64 :: W.Word32 -> Bool
+prop_left_pad_low_32_64 = \x -> let input = toW32 x
+                                in fastF input == C.left_pad_low_32_64 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftPadLow32_64))
+
+prop_right_pad_low_1_8 :: Bool -> Bool
+prop_right_pad_low_1_8 = \x -> let input = toBit x
+                                in fastF input == C.right_pad_low_1_8 input
+ where
+  fastF = testCoreEval (specification (WordJet RightPadLow1_8))
+
+prop_right_pad_low_1_16 :: Bool -> Bool
+prop_right_pad_low_1_16 = \x -> let input = toBit x
+                                in fastF input == C.right_pad_low_1_16 input
+ where
+  fastF = testCoreEval (specification (WordJet RightPadLow1_16))
+
+prop_right_pad_low_8_16 :: W.Word8 -> Bool
+prop_right_pad_low_8_16 = \x -> let input = toW8 x
+                                in fastF input == C.right_pad_low_8_16 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightPadLow8_16))
+
+prop_right_pad_low_1_32 :: Bool -> Bool
+prop_right_pad_low_1_32 = \x -> let input = toBit x
+                                in fastF input == C.right_pad_low_1_32 input
+ where
+  fastF = testCoreEval (specification (WordJet RightPadLow1_32))
+
+prop_right_pad_low_8_32 :: W.Word8 -> Bool
+prop_right_pad_low_8_32 = \x -> let input = toW8 x
+                                in fastF input == C.right_pad_low_8_32 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightPadLow8_32))
+
+prop_right_pad_low_16_32 :: W.Word16 -> Bool
+prop_right_pad_low_16_32 = \x -> let input = toW16 x
+                                in fastF input == C.right_pad_low_16_32 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightPadLow16_32))
+
+prop_right_pad_low_1_64 :: Bool -> Bool
+prop_right_pad_low_1_64 = \x -> let input = toBit x
+                                in fastF input == C.right_pad_low_1_64 input
+ where
+  fastF = testCoreEval (specification (WordJet RightPadLow1_64))
+
+prop_right_pad_low_8_64 :: W.Word8 -> Bool
+prop_right_pad_low_8_64 = \x -> let input = toW8 x
+                                in fastF input == C.right_pad_low_8_64 input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightPadLow8_64))
+
+prop_right_pad_low_16_64 :: W.Word16 -> Bool
+prop_right_pad_low_16_64 = \x -> let input = toW16 x
+                                in fastF input == C.right_pad_low_16_64 input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightPadLow16_64))
+
+prop_right_pad_low_32_64 :: W.Word32 -> Bool
+prop_right_pad_low_32_64 = \x -> let input = toW32 x
+                                in fastF input == C.right_pad_low_32_64 input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightPadLow32_64))
 
 assert_one_8 :: Assertion
 assert_one_8 = fastF () @=? C.one_8 ()

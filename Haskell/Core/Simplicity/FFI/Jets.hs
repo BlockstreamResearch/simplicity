@@ -30,6 +30,14 @@ module Simplicity.FFI.Jets
  , rightmost_16_1, rightmost_16_2, rightmost_16_4, rightmost_16_8
  , rightmost_32_1, rightmost_32_2, rightmost_32_4, rightmost_32_8, rightmost_32_16
  , rightmost_64_1, rightmost_64_2, rightmost_64_4, rightmost_64_8, rightmost_64_16, rightmost_64_32
+ , left_pad_low_1_8
+ , left_pad_low_1_16, left_pad_low_8_16
+ , left_pad_low_1_32, left_pad_low_8_32, left_pad_low_16_32
+ , left_pad_low_1_64, left_pad_low_8_64, left_pad_low_16_64, left_pad_low_32_64
+ , right_pad_low_1_8
+ , right_pad_low_1_16, right_pad_low_8_16
+ , right_pad_low_1_32, right_pad_low_8_32, right_pad_low_16_32
+ , right_pad_low_1_64, right_pad_low_8_64, right_pad_low_16_64, right_pad_low_32_64
  , one_8, one_16, one_32, one_64
  , add_8, add_16, add_32, add_64
  , full_add_8, full_add_16, full_add_32, full_add_64
@@ -219,6 +227,26 @@ foreign import ccall unsafe "" c_rightmost_64_4 :: Ptr FrameItem -> Ptr FrameIte
 foreign import ccall unsafe "" c_rightmost_64_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_rightmost_64_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_rightmost_64_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_pad_low_1_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_pad_low_1_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_pad_low_8_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_pad_low_1_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_pad_low_8_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_pad_low_16_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_pad_low_1_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_pad_low_8_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_pad_low_16_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_pad_low_32_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_pad_low_1_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_pad_low_1_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_pad_low_8_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_pad_low_1_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_pad_low_8_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_pad_low_16_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_pad_low_1_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_pad_low_8_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_pad_low_16_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_pad_low_32_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 foreign import ccall unsafe "" c_one_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_one_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -770,6 +798,66 @@ rightmost_64_16 = unsafeLocalCoreJet c_rightmost_64_16
 
 rightmost_64_32 :: Word64 -> Maybe Word32
 rightmost_64_32 = unsafeLocalCoreJet c_rightmost_64_32
+
+left_pad_low_1_8 :: Word1 -> Maybe Word8
+left_pad_low_1_8 = unsafeLocalCoreJet c_left_pad_low_1_8
+
+left_pad_low_1_16 :: Word1 -> Maybe Word16
+left_pad_low_1_16 = unsafeLocalCoreJet c_left_pad_low_1_16
+
+left_pad_low_8_16 :: Word8 -> Maybe Word16
+left_pad_low_8_16 = unsafeLocalCoreJet c_left_pad_low_8_16
+
+left_pad_low_1_32 :: Word1 -> Maybe Word32
+left_pad_low_1_32 = unsafeLocalCoreJet c_left_pad_low_1_32
+
+left_pad_low_8_32 :: Word8 -> Maybe Word32
+left_pad_low_8_32 = unsafeLocalCoreJet c_left_pad_low_8_32
+
+left_pad_low_16_32 :: Word16 -> Maybe Word32
+left_pad_low_16_32 = unsafeLocalCoreJet c_left_pad_low_16_32
+
+left_pad_low_1_64 :: Word1 -> Maybe Word64
+left_pad_low_1_64 = unsafeLocalCoreJet c_left_pad_low_1_64
+
+left_pad_low_8_64 :: Word8 -> Maybe Word64
+left_pad_low_8_64 = unsafeLocalCoreJet c_left_pad_low_8_64
+
+left_pad_low_16_64 :: Word16 -> Maybe Word64
+left_pad_low_16_64 = unsafeLocalCoreJet c_left_pad_low_16_64
+
+left_pad_low_32_64 :: Word32 -> Maybe Word64
+left_pad_low_32_64 = unsafeLocalCoreJet c_left_pad_low_32_64
+
+right_pad_low_1_8 :: Word1 -> Maybe Word8
+right_pad_low_1_8 = unsafeLocalCoreJet c_right_pad_low_1_8
+
+right_pad_low_1_16 :: Word1 -> Maybe Word16
+right_pad_low_1_16 = unsafeLocalCoreJet c_right_pad_low_1_16
+
+right_pad_low_8_16 :: Word8 -> Maybe Word16
+right_pad_low_8_16 = unsafeLocalCoreJet c_right_pad_low_8_16
+
+right_pad_low_1_32 :: Word1 -> Maybe Word32
+right_pad_low_1_32 = unsafeLocalCoreJet c_right_pad_low_1_32
+
+right_pad_low_8_32 :: Word8 -> Maybe Word32
+right_pad_low_8_32 = unsafeLocalCoreJet c_right_pad_low_8_32
+
+right_pad_low_16_32 :: Word16 -> Maybe Word32
+right_pad_low_16_32 = unsafeLocalCoreJet c_right_pad_low_16_32
+
+right_pad_low_1_64 :: Word1 -> Maybe Word64
+right_pad_low_1_64 = unsafeLocalCoreJet c_right_pad_low_1_64
+
+right_pad_low_8_64 :: Word8 -> Maybe Word64
+right_pad_low_8_64 = unsafeLocalCoreJet c_right_pad_low_8_64
+
+right_pad_low_16_64 :: Word16 -> Maybe Word64
+right_pad_low_16_64 = unsafeLocalCoreJet c_right_pad_low_16_64
+
+right_pad_low_32_64 :: Word32 -> Maybe Word64
+right_pad_low_32_64 = unsafeLocalCoreJet c_right_pad_low_32_64
 
 one_8 :: () -> Maybe Word8
 one_8 = unsafeLocalCoreJet c_one_8

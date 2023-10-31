@@ -196,6 +196,26 @@ data WordJet a b where
   Rightmost64_8 :: WordJet Word64 Word8
   Rightmost64_16 :: WordJet Word64 Word16
   Rightmost64_32 :: WordJet Word64 Word32
+  LeftPadLow1_8 :: WordJet Word1 Word8
+  LeftPadLow1_16 :: WordJet Word1 Word16
+  LeftPadLow8_16 :: WordJet Word8 Word16
+  LeftPadLow1_32 :: WordJet Word1 Word32
+  LeftPadLow8_32 :: WordJet Word8 Word32
+  LeftPadLow16_32 :: WordJet Word16 Word32
+  LeftPadLow1_64 :: WordJet Word1 Word64
+  LeftPadLow8_64 :: WordJet Word8 Word64
+  LeftPadLow16_64 :: WordJet Word16 Word64
+  LeftPadLow32_64 :: WordJet Word32 Word64
+  RightPadLow1_8 :: WordJet Word1 Word8
+  RightPadLow1_16 :: WordJet Word1 Word16
+  RightPadLow8_16 :: WordJet Word8 Word16
+  RightPadLow1_32 :: WordJet Word1 Word32
+  RightPadLow8_32 :: WordJet Word8 Word32
+  RightPadLow16_32 :: WordJet Word16 Word32
+  RightPadLow1_64 :: WordJet Word1 Word64
+  RightPadLow8_64 :: WordJet Word8 Word64
+  RightPadLow16_64 :: WordJet Word16 Word64
+  RightPadLow32_64 :: WordJet Word32 Word64
 
 deriving instance Eq (WordJet a b)
 deriving instance Show (WordJet a b)
@@ -512,6 +532,26 @@ specificationWord Rightmost64_4 = Prog.rightmost vector16
 specificationWord Rightmost64_8 = Prog.rightmost vector8
 specificationWord Rightmost64_16 = Prog.rightmost vector4
 specificationWord Rightmost64_32 = Prog.rightmost vector2
+specificationWord LeftPadLow1_8 = Prog.left_pad_low word1 vector8
+specificationWord LeftPadLow1_16 = Prog.left_pad_low word1 vector16
+specificationWord LeftPadLow8_16 = Prog.left_pad_low word8 vector2
+specificationWord LeftPadLow1_32 = Prog.left_pad_low word1 vector32
+specificationWord LeftPadLow8_32 = Prog.left_pad_low word8 vector4
+specificationWord LeftPadLow16_32 = Prog.left_pad_low word16 vector2
+specificationWord LeftPadLow1_64 = Prog.left_pad_low word1 vector64
+specificationWord LeftPadLow8_64 = Prog.left_pad_low word8 vector8
+specificationWord LeftPadLow16_64 = Prog.left_pad_low word16 vector4
+specificationWord LeftPadLow32_64 = Prog.left_pad_low word32 vector2
+specificationWord RightPadLow1_8 = Prog.right_pad_low word1 vector8
+specificationWord RightPadLow1_16 = Prog.right_pad_low word1 vector16
+specificationWord RightPadLow8_16 = Prog.right_pad_low word8 vector2
+specificationWord RightPadLow1_32 = Prog.right_pad_low word1 vector32
+specificationWord RightPadLow8_32 = Prog.right_pad_low word8 vector4
+specificationWord RightPadLow16_32 = Prog.right_pad_low word16 vector2
+specificationWord RightPadLow1_64 = Prog.right_pad_low word1 vector64
+specificationWord RightPadLow8_64 = Prog.right_pad_low word8 vector8
+specificationWord RightPadLow16_64 = Prog.right_pad_low word16 vector4
+specificationWord RightPadLow32_64 = Prog.right_pad_low word32 vector2
 
 specificationArith :: Assert term => ArithJet a b -> term a b
 specificationArith One8 = Prog.one word8
@@ -888,6 +928,26 @@ implementationWord Rightmost64_4 = Just . snd . snd . snd . snd
 implementationWord Rightmost64_8 = Just . snd . snd . snd
 implementationWord Rightmost64_16 = Just . snd . snd
 implementationWord Rightmost64_32 = Just . snd
+implementationWord LeftPadLow1_8 = Just . toWord8 . fromWord1
+implementationWord LeftPadLow1_16 = Just . toWord16 . fromWord1
+implementationWord LeftPadLow8_16 = Just . toWord16 . fromWord8
+implementationWord LeftPadLow1_32 = Just . toWord32 . fromWord1
+implementationWord LeftPadLow8_32 = Just . toWord32 . fromWord8
+implementationWord LeftPadLow16_32 = Just . toWord32 . fromWord16
+implementationWord LeftPadLow1_64 = Just . toWord64 . fromWord1
+implementationWord LeftPadLow8_64 = Just . toWord64 . fromWord8
+implementationWord LeftPadLow16_64 = Just . toWord64 . fromWord16
+implementationWord LeftPadLow32_64 = Just . toWord64 . fromWord32
+implementationWord RightPadLow1_8 = \x -> Just . toWord8 $ fromWord1 x `shift` (8 - 1)
+implementationWord RightPadLow1_16 = \x -> Just . toWord16 $ fromWord1 x `shift` (16 - 1)
+implementationWord RightPadLow8_16 = \x -> Just . toWord16 $ fromWord8 x `shift` (16 - 8)
+implementationWord RightPadLow1_32 = \x -> Just . toWord32 $ fromWord1 x `shift` (32 - 1)
+implementationWord RightPadLow8_32 = \x -> Just . toWord32 $ fromWord8 x `shift` (32 - 8)
+implementationWord RightPadLow16_32 = \x -> Just . toWord32 $ fromWord16 x `shift` (32 - 16)
+implementationWord RightPadLow1_64 = \x -> Just . toWord64 $ fromWord1 x `shift` (64 - 1)
+implementationWord RightPadLow8_64 = \x -> Just . toWord64 $ fromWord8 x `shift` (64 - 8)
+implementationWord RightPadLow16_64 = \x -> Just . toWord64 $ fromWord16 x `shift` (64 - 16)
+implementationWord RightPadLow32_64 = \x -> Just . toWord64 $ fromWord32 x `shift` (64 - 32)
 
 implementationArith :: ArithJet a b -> a -> Maybe b
 implementationArith One8 = const . return $ toWord8 1
@@ -1278,6 +1338,10 @@ wordBook = Shelf
   , fullRightShiftBook
   , leftmostBook
   , rightmostBook
+  , leftPadLowBook
+  , Missing
+  , Missing
+  , rightPadLowBook
   ]
 lowBook = Shelf
   [ Item $ SomeArrow Low1
@@ -1515,6 +1579,54 @@ rightmostBook = Shelf
     ]
   , Shelf
     [ Item $ SomeArrow Rightmost64_32
+    ]
+  ]
+leftPadLowBook = Shelf
+  [ Shelf
+    [ Missing
+    , Missing
+    , Item $ SomeArrow LeftPadLow1_8
+    , Item $ SomeArrow LeftPadLow1_16
+    , Item $ SomeArrow LeftPadLow1_32
+    , Item $ SomeArrow LeftPadLow1_64
+    ]
+  , Missing
+  , Missing
+  , Shelf
+    [ Item $ SomeArrow LeftPadLow8_16
+    , Item $ SomeArrow LeftPadLow8_32
+    , Item $ SomeArrow LeftPadLow8_64
+    ]
+  , Shelf
+    [ Item $ SomeArrow LeftPadLow16_32
+    , Item $ SomeArrow LeftPadLow16_64
+    ]
+  , Shelf
+    [ Item $ SomeArrow LeftPadLow32_64
+    ]
+  ]
+rightPadLowBook = Shelf
+  [ Shelf
+    [ Missing
+    , Missing
+    , Item $ SomeArrow RightPadLow1_8
+    , Item $ SomeArrow RightPadLow1_16
+    , Item $ SomeArrow RightPadLow1_32
+    , Item $ SomeArrow RightPadLow1_64
+    ]
+  , Missing
+  , Missing
+  , Shelf
+    [ Item $ SomeArrow RightPadLow8_16
+    , Item $ SomeArrow RightPadLow8_32
+    , Item $ SomeArrow RightPadLow8_64
+    ]
+  , Shelf
+    [ Item $ SomeArrow RightPadLow16_32
+    , Item $ SomeArrow RightPadLow16_64
+    ]
+  , Shelf
+    [ Item $ SomeArrow RightPadLow32_64
     ]
   ]
 arithBook = Shelf
@@ -1947,6 +2059,26 @@ putJetBitWord Rightmost64_4  = putPositive 17 . putPositive 3 . putPositive 4
 putJetBitWord Rightmost64_8  = putPositive 17 . putPositive 4 . putPositive 3
 putJetBitWord Rightmost64_16  = putPositive 17 . putPositive 5 . putPositive 2
 putJetBitWord Rightmost64_32  = putPositive 17 . putPositive 6 . putPositive 1
+putJetBitWord LeftPadLow1_8  = putPositive 18 . putPositive 1 . putPositive 3
+putJetBitWord LeftPadLow1_16  = putPositive 18 . putPositive 1 . putPositive 4
+putJetBitWord LeftPadLow8_16  = putPositive 18 . putPositive 4 . putPositive 1
+putJetBitWord LeftPadLow1_32  = putPositive 18 . putPositive 1 . putPositive 5
+putJetBitWord LeftPadLow8_32  = putPositive 18 . putPositive 4 . putPositive 2
+putJetBitWord LeftPadLow16_32  = putPositive 18 . putPositive 5 . putPositive 1
+putJetBitWord LeftPadLow1_64  = putPositive 18 . putPositive 1 . putPositive 6
+putJetBitWord LeftPadLow8_64  = putPositive 18 . putPositive 4 . putPositive 3
+putJetBitWord LeftPadLow16_64  = putPositive 18 . putPositive 5 . putPositive 2
+putJetBitWord LeftPadLow32_64  = putPositive 18 . putPositive 6 . putPositive 1
+putJetBitWord RightPadLow1_8  = putPositive 21 . putPositive 1 . putPositive 3
+putJetBitWord RightPadLow1_16  = putPositive 21 . putPositive 1 . putPositive 4
+putJetBitWord RightPadLow8_16  = putPositive 21 . putPositive 4 . putPositive 1
+putJetBitWord RightPadLow1_32  = putPositive 21 . putPositive 1 . putPositive 5
+putJetBitWord RightPadLow8_32  = putPositive 21 . putPositive 4 . putPositive 2
+putJetBitWord RightPadLow16_32  = putPositive 21 . putPositive 5 . putPositive 1
+putJetBitWord RightPadLow1_64  = putPositive 21 . putPositive 1 . putPositive 6
+putJetBitWord RightPadLow8_64  = putPositive 21 . putPositive 4 . putPositive 3
+putJetBitWord RightPadLow16_64  = putPositive 21 . putPositive 5 . putPositive 2
+putJetBitWord RightPadLow32_64  = putPositive 21 . putPositive 6 . putPositive 1
 
 putJetBitArith :: ArithJet a b -> DList Bool
 putJetBitArith One8   = putPositive 1 . putPositive 3
@@ -2258,6 +2390,26 @@ jetCostWord Rightmost64_4 = Benchmarks.cost "Rightmost64_4"
 jetCostWord Rightmost64_8 = Benchmarks.cost "Rightmost64_8"
 jetCostWord Rightmost64_16 = Benchmarks.cost "Rightmost64_16"
 jetCostWord Rightmost64_32 = Benchmarks.cost "Rightmost64_32"
+jetCostWord LeftPadLow1_8 = Benchmarks.cost "LeftPadLow1_8"
+jetCostWord LeftPadLow1_16 = Benchmarks.cost "LeftPadLow1_16"
+jetCostWord LeftPadLow8_16 = Benchmarks.cost "LeftPadLow8_16"
+jetCostWord LeftPadLow1_32 = Benchmarks.cost "LeftPadLow1_32"
+jetCostWord LeftPadLow8_32 = Benchmarks.cost "LeftPadLow8_32"
+jetCostWord LeftPadLow16_32 = Benchmarks.cost "LeftPadLow16_32"
+jetCostWord LeftPadLow1_64 = Benchmarks.cost "LeftPadLow1_64"
+jetCostWord LeftPadLow8_64 = Benchmarks.cost "LeftPadLow8_64"
+jetCostWord LeftPadLow16_64 = Benchmarks.cost "LeftPadLow16_64"
+jetCostWord LeftPadLow32_64 = Benchmarks.cost "LeftPadLow32_64"
+jetCostWord RightPadLow1_8 = Benchmarks.cost "RightPadLow1_8"
+jetCostWord RightPadLow1_16 = Benchmarks.cost "RightPadLow1_16"
+jetCostWord RightPadLow8_16 = Benchmarks.cost "RightPadLow8_16"
+jetCostWord RightPadLow1_32 = Benchmarks.cost "RightPadLow1_32"
+jetCostWord RightPadLow8_32 = Benchmarks.cost "RightPadLow8_32"
+jetCostWord RightPadLow16_32 = Benchmarks.cost "RightPadLow16_32"
+jetCostWord RightPadLow1_64 = Benchmarks.cost "RightPadLow1_64"
+jetCostWord RightPadLow8_64 = Benchmarks.cost "RightPadLow8_64"
+jetCostWord RightPadLow16_64 = Benchmarks.cost "RightPadLow16_64"
+jetCostWord RightPadLow32_64 = Benchmarks.cost "RightPadLow32_64"
 
 jetCostArith :: ArithJet a b -> Weight
 jetCostArith One8 = Benchmarks.cost "One8"
