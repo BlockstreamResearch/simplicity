@@ -21,6 +21,12 @@ _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
 static int successes = 0;
 static int failures = 0;
 
+static void fprint_cmr(FILE* stream, const uint32_t* cmr) {
+  fprintf(stream, "0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x",
+          cmr[0], cmr[1], cmr[2], cmr[3], cmr[4], cmr[5], cmr[6], cmr[7]
+         );
+}
+
 static void test_decodeUptoMaxInt(void) {
   printf("Test decodeUptoMaxInt\n");
   const unsigned char buf[] =
@@ -193,7 +199,11 @@ static void test_program(char* name, const unsigned char* program, size_t progra
         successes++;
       } else {
         failures++;
-        printf("Unexpected CMR.\n");
+        printf("Unexpected CMR. Expected\n{");
+        fprint_cmr(stdout, expectedCMR);
+        printf("}, but received\n{");
+        fprint_cmr(stdout, dag[len-1].cmr.s);
+        printf("}\n");
       }
     }
     type* type_dag;
@@ -506,10 +516,13 @@ static void regression_tests(void) {
     /* word("2^23 zero bits") ; unit */
     size_t sizeof_regression3 = ((size_t)1 << 20) + 4;
     unsigned char *regression3 = calloc(sizeof_regression3, 1);
+    const uint32_t cmr[] = {
+      0x7f81c076u, 0xf0df9505u, 0xbfce61f0u, 0x41197bd9u, 0x2aaaa4f1u, 0x7015d1ecu, 0xb248ddffu, 0xe9d9da07u
+    };
     assert(regression3);
     regression3[0] = 0xb7; regression3[1] = 0x08;
     regression3[sizeof_regression3 - 2] = 0x48; regression3[sizeof_regression3 - 1] = 0x20;
-    test_program("regression3", regression3, sizeof_regression3, SIMPLICITY_ERR_EXEC_MEMORY, NULL, NULL, NULL, NULL);
+    test_program("regression3", regression3, sizeof_regression3, SIMPLICITY_ERR_EXEC_MEMORY, cmr, NULL, NULL, NULL);
     free(regression3);
   }
 }
