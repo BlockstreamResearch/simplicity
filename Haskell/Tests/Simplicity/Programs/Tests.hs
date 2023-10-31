@@ -208,6 +208,16 @@ tests = testGroup "Programs"
         , testProperty "left_pad_high_8_64" prop_left_pad_high_8_64
         , testProperty "left_pad_high_16_64" prop_left_pad_high_16_64
         , testProperty "left_pad_high_32_64" prop_left_pad_high_32_64
+        , testProperty "left_extend_1_8" prop_left_extend_1_8
+        , testProperty "left_extend_1_16" prop_left_extend_1_16
+        , testProperty "left_extend_8_16" prop_left_extend_8_16
+        , testProperty "left_extend_1_32" prop_left_extend_1_32
+        , testProperty "left_extend_8_32" prop_left_extend_8_32
+        , testProperty "left_extend_16_32" prop_left_extend_16_32
+        , testProperty "left_extend_1_64" prop_left_extend_1_64
+        , testProperty "left_extend_8_64" prop_left_extend_8_64
+        , testProperty "left_extend_16_64" prop_left_extend_16_64
+        , testProperty "left_extend_32_64" prop_left_extend_32_64
         , testProperty "right_pad_low_1_8" prop_right_pad_low_1_8
         , testProperty "right_pad_low_1_16" prop_right_pad_low_1_16
         , testProperty "right_pad_low_8_16" prop_right_pad_low_8_16
@@ -228,6 +238,12 @@ tests = testGroup "Programs"
         , testProperty "right_pad_high_8_64" prop_right_pad_high_8_64
         , testProperty "right_pad_high_16_64" prop_right_pad_high_16_64
         , testProperty "right_pad_high_32_64" prop_right_pad_high_32_64
+        , testProperty "right_extend_8_16" prop_right_extend_8_16
+        , testProperty "right_extend_8_32" prop_right_extend_8_32
+        , testProperty "right_extend_16_32" prop_right_extend_16_32
+        , testProperty "right_extend_8_64" prop_right_extend_8_64
+        , testProperty "right_extend_16_64" prop_right_extend_16_64
+        , testProperty "right_extend_32_64" prop_right_extend_32_64
         , testProperty "shift_const_by false word8" prop_shift_const_by_false8
         , testProperty "rotate_const word8" prop_rotate_const8
         , testProperty "transpose zv2 zv8" prop_transpose_2x8
@@ -1639,6 +1655,72 @@ prop_left_pad_high_32_64 = \x -> let input = toW32 x
   toW32 = toWord32 . fromIntegral
   fastF = testCoreEval (specification (WordJet LeftPadHigh32_64))
 
+prop_left_extend_1_8 :: Bool -> Bool
+prop_left_extend_1_8 = \x -> let input = toBit x
+                                in fastF input == implementation (WordJet LeftExtend1_8) input
+ where
+  fastF = testCoreEval (specification (WordJet LeftExtend1_8))
+
+prop_left_extend_1_16 :: Bool -> Bool
+prop_left_extend_1_16 = \x -> let input = toBit x
+                                in fastF input == implementation (WordJet LeftExtend1_16) input
+ where
+  fastF = testCoreEval (specification (WordJet LeftExtend1_16))
+
+prop_left_extend_8_16 :: W.Word8 -> Bool
+prop_left_extend_8_16 = \x -> let input = toW8 x
+                                in fastF input == implementation (WordJet LeftExtend8_16) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftExtend8_16))
+
+prop_left_extend_1_32 :: Bool -> Bool
+prop_left_extend_1_32 = \x -> let input = toBit x
+                                in fastF input == implementation (WordJet LeftExtend1_32) input
+ where
+  fastF = testCoreEval (specification (WordJet LeftExtend1_32))
+
+prop_left_extend_8_32 :: W.Word8 -> Bool
+prop_left_extend_8_32 = \x -> let input = toW8 x
+                                in fastF input == implementation (WordJet LeftExtend8_32) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftExtend8_32))
+
+prop_left_extend_16_32 :: W.Word16 -> Bool
+prop_left_extend_16_32 = \x -> let input = toW16 x
+                                in fastF input == implementation (WordJet LeftExtend16_32) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftExtend16_32))
+
+prop_left_extend_1_64 :: Bool -> Bool
+prop_left_extend_1_64 = \x -> let input = toBit x
+                                in fastF input == implementation (WordJet LeftExtend1_64) input
+ where
+  fastF = testCoreEval (specification (WordJet LeftExtend1_64))
+
+prop_left_extend_8_64 :: W.Word8 -> Bool
+prop_left_extend_8_64 = \x -> let input = toW8 x
+                                in fastF input == implementation (WordJet LeftExtend8_64) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftExtend8_64))
+
+prop_left_extend_16_64 :: W.Word16 -> Bool
+prop_left_extend_16_64 = \x -> let input = toW16 x
+                                in fastF input == implementation (WordJet LeftExtend16_64) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftExtend16_64))
+
+prop_left_extend_32_64 :: W.Word32 -> Bool
+prop_left_extend_32_64 = \x -> let input = toW32 x
+                                in fastF input == implementation (WordJet LeftExtend32_64) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftExtend32_64))
+
 prop_right_pad_low_1_8 :: Bool -> Bool
 prop_right_pad_low_1_8 = \x -> let input = toBit x
                                 in fastF input == implementation (WordJet RightPadLow1_8) input
@@ -1770,6 +1852,48 @@ prop_right_pad_high_32_64 = \x -> let input = toW32 x
  where
   toW32 = toWord32 . fromIntegral
   fastF = testCoreEval (specification (WordJet RightPadHigh32_64))
+
+prop_right_extend_8_16 :: W.Word8 -> Bool
+prop_right_extend_8_16 = \x -> let input = toW8 x
+                                in fastF input == implementation (WordJet RightExtend8_16) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightExtend8_16))
+
+prop_right_extend_8_32 :: W.Word8 -> Bool
+prop_right_extend_8_32 = \x -> let input = toW8 x
+                                in fastF input == implementation (WordJet RightExtend8_32) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightExtend8_32))
+
+prop_right_extend_16_32 :: W.Word16 -> Bool
+prop_right_extend_16_32 = \x -> let input = toW16 x
+                                in fastF input == implementation (WordJet RightExtend16_32) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightExtend16_32))
+
+prop_right_extend_8_64 :: W.Word8 -> Bool
+prop_right_extend_8_64 = \x -> let input = toW8 x
+                                in fastF input == implementation (WordJet RightExtend8_64) input
+ where
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightExtend8_64))
+
+prop_right_extend_16_64 :: W.Word16 -> Bool
+prop_right_extend_16_64 = \x -> let input = toW16 x
+                                in fastF input == implementation (WordJet RightExtend16_64) input
+ where
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightExtend16_64))
+
+prop_right_extend_32_64 :: W.Word32 -> Bool
+prop_right_extend_32_64 = \x -> let input = toW32 x
+                                in fastF input == implementation (WordJet RightExtend32_64) input
+ where
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightExtend32_64))
 
 assert_one_8 :: Assertion
 assert_one_8 = fastF () @=? implementation (ArithJet One8) ()

@@ -19,31 +19,31 @@ module Simplicity.Ty.Word
   -- Other word sizes can still be constructed using other 'Word' values.
 
   -- ** Word1
-  , word1, fromWord1, toWord1
+  , word1, fromWord1, fromInt1, toWord1
   -- ** Word2
-  , word2, fromWord2, toWord2
+  , word2, fromWord2, fromInt2, toWord2
   -- ** Word4
-  , word4, fromWord4, toWord4
+  , word4, fromWord4, fromInt4, toWord4
   -- ** Word8
-  , word8, fromWord8, toWord8
+  , word8, fromWord8, fromInt8, toWord8
   -- ** Word16
-  , word16, fromWord16, toWord16
+  , word16, fromWord16, fromInt16, toWord16
   -- ** Word32
-  , word32, fromWord32, toWord32
+  , word32, fromWord32, fromInt32, toWord32
   -- ** Word64
-  , word64, fromWord64, toWord64
+  , word64, fromWord64, fromInt64, toWord64
   -- ** Word128
-  , word128, fromWord128, toWord128
+  , word128, fromWord128, fromInt128, toWord128
   -- ** Word256
-  , word256, fromWord256, toWord256
+  , word256, fromWord256, fromInt256, toWord256
   -- ** Word512
-  , word512, fromWord512, toWord512
+  , word512, fromWord512, fromInt512, toWord512
   -- ** Word1024
-  , word1024, fromWord1024, toWord1024
+  , word1024, fromWord1024, fromInt1024, toWord1024
   -- ** Word2048
-  , word2048, fromWord2048, toWord2048
+  , word2048, fromWord2048, fromInt2048, toWord2048
   -- ** Word4096
-  , word4096, fromWord4096, toWord4096
+  , word4096, fromWord4096, fromInt4096, toWord4096
   -- * Zip Vector
   , ZipVector(..)
   -- ** Bit
@@ -307,16 +307,24 @@ word4096 = vector4096
 wordSize :: Word a -> Int
 wordSize = vectorSize
 
--- | Covert a value of a Simplicity word type into a standard Haskell integer.
+-- | Covert a value of a Simplicity word type as a unsigned Haskell integer.
 --
 -- @'toWord' w ('fromWord' w n) = n@
 fromWord :: Word a -> a -> Integer
-fromWord = go 0
- where
-  go :: Integer -> Word a -> a -> Integer
-  go i SingleV (Left ()) = 2 * i
-  go i SingleV (Right ()) = 2 * i + 1
-  go i (DoubleV w) (hi, lo) = go (go i w hi) w lo
+fromWord = fromWordRec 0
+
+fromWordRec :: Integer -> Word a -> a -> Integer
+fromWordRec i SingleV (Left ()) = 2 * i
+fromWordRec i SingleV (Right ()) = 2 * i + 1
+fromWordRec i (DoubleV w) (hi, lo) = fromWordRec (fromWordRec i w hi) w lo
+
+-- | Covert a value of a Simplicity word type as a signed Haskell integer.
+--
+-- @'toWord' w ('fromInt' w n) = n@
+fromInt :: Word a -> a -> Integer
+fromInt SingleV (Left ()) = 0
+fromInt SingleV (Right ()) = -1
+fromInt (DoubleV w) (hi, lo) = fromWordRec (fromInt w hi) w lo
 
 -- | Covert a standard Haskell integer into a Simplicity word type.
 -- The value is take modulo 2^@('wordSize' w)@ where @w :: 'Word' a@ is the first argument.
@@ -373,6 +381,45 @@ fromWord2048 = fromWord word2048
 
 fromWord4096 :: Word4096 -> Integer
 fromWord4096 = fromWord word4096
+
+fromInt1 :: Word1 -> Integer
+fromInt1 = fromInt word1
+
+fromInt2 :: Word2 -> Integer
+fromInt2 = fromInt word2
+
+fromInt4 :: Word4 -> Integer
+fromInt4 = fromInt word4
+
+fromInt8 :: Word8 -> Integer
+fromInt8 = fromInt word8
+
+fromInt16 :: Word16 -> Integer
+fromInt16 = fromInt word16
+
+fromInt32 :: Word32 -> Integer
+fromInt32 = fromInt word32
+
+fromInt64 :: Word64 -> Integer
+fromInt64 = fromInt word64
+
+fromInt128 :: Word128 -> Integer
+fromInt128 = fromInt word128
+
+fromInt256 :: Word256 -> Integer
+fromInt256 = fromInt word256
+
+fromInt512 :: Word512 -> Integer
+fromInt512 = fromInt word512
+
+fromInt1024 :: Word1024 -> Integer
+fromInt1024 = fromInt word1024
+
+fromInt2048 :: Word2048 -> Integer
+fromInt2048 = fromInt word2048
+
+fromInt4096 :: Word4096 -> Integer
+fromInt4096 = fromInt word4096
 
 toWord1 :: Integer -> Word1
 toWord1 = toWord word1
