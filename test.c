@@ -18,6 +18,7 @@
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
 
+static const double secondsPerWU = 0.5 / 1000. / 1000.;
 static int successes = 0;
 static int failures = 0;
 
@@ -516,13 +517,20 @@ static void regression_tests(void) {
     /* word("2^23 zero bits") ; unit */
     size_t sizeof_regression3 = ((size_t)1 << 20) + 4;
     unsigned char *regression3 = calloc(sizeof_regression3, 1);
+    clock_t start, end;
+    double diff, bound;
     const uint32_t cmr[] = {
       0x7f81c076u, 0xf0df9505u, 0xbfce61f0u, 0x41197bd9u, 0x2aaaa4f1u, 0x7015d1ecu, 0xb248ddffu, 0xe9d9da07u
     };
     assert(regression3);
     regression3[0] = 0xb7; regression3[1] = 0x08;
     regression3[sizeof_regression3 - 2] = 0x48; regression3[sizeof_regression3 - 1] = 0x20;
+    start = clock();
     test_program("regression3", regression3, sizeof_regression3, SIMPLICITY_ERR_EXEC_MEMORY, cmr, NULL, NULL, NULL);
+    end = clock();
+    diff = (double)(end - start) / CLOCKS_PER_SEC;
+    bound = (double)(sizeof_regression3) * secondsPerWU;
+    printf("cpu_time_used by regression3: %f s.  (Should be less than %f s.)\n", diff, bound);
     free(regression3);
   }
 }
@@ -531,7 +539,6 @@ static void iden8mebi_test(void) {
   /* iden composed with itself 2^23 times. */
   const unsigned char iden8mebi[23] = {0xe1, 0x08};
   const ubounded expectedCost = 1677721500; /* in milliWU */
-  const double secondsPerWU = 0.5 / 1000. / 1000.;
   clock_t start, end;
   double diff, bound;
   start = clock();
