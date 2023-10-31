@@ -483,6 +483,40 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
           break;
         }
         break;
+       case 20: /* LeftExtend */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        code2 = decodeUptoMaxInt(stream);
+        if (code2 < 0) return (simplicity_err)code2;
+        switch (code) {
+         case 1:
+          switch (code2) {
+           case 3: *result = LEFT_EXTEND_1_8; return SIMPLICITY_NO_ERROR;
+           case 4: *result = LEFT_EXTEND_1_16; return SIMPLICITY_NO_ERROR;
+           case 5: *result = LEFT_EXTEND_1_32; return SIMPLICITY_NO_ERROR;
+           case 6: *result = LEFT_EXTEND_1_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 4:
+          switch (code2) {
+           case 1: *result = LEFT_EXTEND_8_16; return SIMPLICITY_NO_ERROR;
+           case 2: *result = LEFT_EXTEND_8_32; return SIMPLICITY_NO_ERROR;
+           case 3: *result = LEFT_EXTEND_8_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 5:
+          switch (code2) {
+           case 1: *result = LEFT_EXTEND_16_32; return SIMPLICITY_NO_ERROR;
+           case 2: *result = LEFT_EXTEND_16_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 6:
+          switch (code2) {
+           case 1: *result = LEFT_EXTEND_32_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+        }
+        break;
        case 21: /* RightPadLow */
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
@@ -547,6 +581,32 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
          case 6:
           switch (code2) {
            case 1: *result = RIGHT_PAD_HIGH_32_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+        }
+        break;
+       case 23: /* RightExtend */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        code2 = decodeUptoMaxInt(stream);
+        if (code2 < 0) return (simplicity_err)code2;
+        switch (code) {
+         case 4:
+          switch (code2) {
+           case 1: *result = RIGHT_EXTEND_8_16; return SIMPLICITY_NO_ERROR;
+           case 2: *result = RIGHT_EXTEND_8_32; return SIMPLICITY_NO_ERROR;
+           case 3: *result = RIGHT_EXTEND_8_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 5:
+          switch (code2) {
+           case 1: *result = RIGHT_EXTEND_16_32; return SIMPLICITY_NO_ERROR;
+           case 2: *result = RIGHT_EXTEND_16_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 6:
+          switch (code2) {
+           case 1: *result = RIGHT_EXTEND_32_64; return SIMPLICITY_NO_ERROR;
           }
           break;
         }
