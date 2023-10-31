@@ -449,6 +449,40 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
           break;
         }
         break;
+       case 19: /* LeftPadHigh */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        code2 = decodeUptoMaxInt(stream);
+        if (code2 < 0) return (simplicity_err)code2;
+        switch (code) {
+         case 1:
+          switch (code2) {
+           case 3: *result = LEFT_PAD_HIGH_1_8; return SIMPLICITY_NO_ERROR;
+           case 4: *result = LEFT_PAD_HIGH_1_16; return SIMPLICITY_NO_ERROR;
+           case 5: *result = LEFT_PAD_HIGH_1_32; return SIMPLICITY_NO_ERROR;
+           case 6: *result = LEFT_PAD_HIGH_1_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 4:
+          switch (code2) {
+           case 1: *result = LEFT_PAD_HIGH_8_16; return SIMPLICITY_NO_ERROR;
+           case 2: *result = LEFT_PAD_HIGH_8_32; return SIMPLICITY_NO_ERROR;
+           case 3: *result = LEFT_PAD_HIGH_8_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 5:
+          switch (code2) {
+           case 1: *result = LEFT_PAD_HIGH_16_32; return SIMPLICITY_NO_ERROR;
+           case 2: *result = LEFT_PAD_HIGH_16_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 6:
+          switch (code2) {
+           case 1: *result = LEFT_PAD_HIGH_32_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+        }
+        break;
        case 21: /* RightPadLow */
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
@@ -479,6 +513,40 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
          case 6:
           switch (code2) {
            case 1: *result = RIGHT_PAD_LOW_32_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+        }
+        break;
+       case 22: /* RightPadHigh */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        code2 = decodeUptoMaxInt(stream);
+        if (code2 < 0) return (simplicity_err)code2;
+        switch (code) {
+         case 1:
+          switch (code2) {
+           case 3: *result = RIGHT_PAD_HIGH_1_8; return SIMPLICITY_NO_ERROR;
+           case 4: *result = RIGHT_PAD_HIGH_1_16; return SIMPLICITY_NO_ERROR;
+           case 5: *result = RIGHT_PAD_HIGH_1_32; return SIMPLICITY_NO_ERROR;
+           case 6: *result = RIGHT_PAD_HIGH_1_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 4:
+          switch (code2) {
+           case 1: *result = RIGHT_PAD_HIGH_8_16; return SIMPLICITY_NO_ERROR;
+           case 2: *result = RIGHT_PAD_HIGH_8_32; return SIMPLICITY_NO_ERROR;
+           case 3: *result = RIGHT_PAD_HIGH_8_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 5:
+          switch (code2) {
+           case 1: *result = RIGHT_PAD_HIGH_16_32; return SIMPLICITY_NO_ERROR;
+           case 2: *result = RIGHT_PAD_HIGH_16_64; return SIMPLICITY_NO_ERROR;
+          }
+          break;
+         case 6:
+          switch (code2) {
+           case 1: *result = RIGHT_PAD_HIGH_32_64; return SIMPLICITY_NO_ERROR;
           }
           break;
         }
