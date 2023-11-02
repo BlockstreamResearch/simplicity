@@ -5,17 +5,17 @@
 #include "simplicity_assert.h"
 
 /* Closes a bitstream by consuming all remaining bits.
- * Returns 'SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES' if CHAR_BIT or more bits remain in the stream.
+ * Returns 'SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES' if CHAR_BIT or more bits remain in the stream.
  * Otherwise, returns 'SIMPLICITY_ERR_BITSTREAM_ILLEGAL_PADDING' if any remaining bits are non-zero.
  * Otherwise returns 'SIMPLICITY_NO_ERROR'.
  *
  * Precondition: NULL != stream
  */
 simplicity_err closeBitstream(bitstream* stream) {
-  if (1 < stream->len) return SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES;        /* If there is more than one byte remaining. */
+  if (1 < stream->len) return SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES;        /* If there is more than one byte remaining. */
   if (1 == stream->len) {
-    if (0 == stream->offset) return SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES;  /* If there is one byte remaining */
-    if (0 != (*stream->arr & (UCHAR_MAX >> stream->offset))) {              /* If any of the unconsumed bits are non-zero */
+    if (0 == stream->offset) return SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES;  /* If there is one byte remaining */
+    if (0 != (*stream->arr & (UCHAR_MAX >> stream->offset))) {                /* If any of the unconsumed bits are non-zero */
       return SIMPLICITY_ERR_BITSTREAM_ILLEGAL_PADDING;
     }
   }

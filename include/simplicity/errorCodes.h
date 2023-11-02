@@ -19,7 +19,7 @@ typedef enum {
   SIMPLICITY_ERR_FAIL_CODE = -8,
   SIMPLICITY_ERR_STOP_CODE = -10,
   SIMPLICITY_ERR_HIDDEN = -12,
-  SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES = -14,
+  SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES = -14,
   SIMPLICITY_ERR_BITSTREAM_ILLEGAL_PADDING = -16,
   SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION = -18,
   SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK = -20,
@@ -67,8 +67,8 @@ static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
     return "Program has STOP node";
   case SIMPLICITY_ERR_HIDDEN:
     return "Program has illegal HIDDEN child node";
-  case SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES:
-    return "Unused bytes at the end of the program";
+  case SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES:
+    return "Trailing bytes after final byte of program";
   case SIMPLICITY_ERR_BITSTREAM_ILLEGAL_PADDING:
     return "Illegal padding in final byte of program";
   case SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION:
