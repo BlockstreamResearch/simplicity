@@ -1,4 +1,3 @@
--- This module tests the Simplicity programs on arbitrary inputs.
 module Simplicity.Arbitrary
  ( genBoundaryCases,
    genSignature
@@ -6,11 +5,13 @@ module Simplicity.Arbitrary
 
 import Data.Serialize (encode)
 
+import Simplicity.CoreJets
 import Simplicity.Digest
 import Simplicity.LibSecp256k1.Schnorr
 import Simplicity.LibSecp256k1.Spec
+import Simplicity.Ty.Word
 
-import Test.Tasty.QuickCheck (Gen, chooseBoundedIntegral, chooseInteger, oneof)
+import Test.Tasty.QuickCheck (Arbitrary(..), Gen, chooseBoundedIntegral, chooseInteger, growingElements, oneof)
 
 genBoundaryCases :: (Bounded w, Integral w) => w -> Gen w
 genBoundaryCases 0 = oneof [return 0, chooseBoundedIntegral (1, maxBound)]
@@ -29,3 +30,12 @@ genSignature msg = do
   let s = (if fe_is_odd ry then scalar_negate k else k) `scalar_add`
           (scalar_multiply e (if fe_is_odd py then scalar_negate priv else priv))
   return $ (pub, Sig (fe_pack rx) (scalar_pack s))
+
+instance Arbitrary SomeConstWordContent where
+  arbitrary = do
+    n <- growingElements [0..10]
+    v <- chooseInteger (0, 2^n - 1)
+    return $ scwc v n
+   where
+    scwc v 0 = SomeConstWordContent (ConstWordContent SingleV v)
+    scwc v n | 0 < n = case scwc v (n - 1) of SomeConstWordContent (ConstWordContent w _) -> SomeConstWordContent (ConstWordContent (DoubleV w) v)

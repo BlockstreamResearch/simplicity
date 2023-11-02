@@ -10,7 +10,7 @@ module Simplicity.CoreJets
  , fastCoreEval
  , putJetBit, getJetBit
  , jetCost
- , ConstWordContent(..), specificationConstWord, implementationConstWord, putConstWordBit, costConstWord
+ , ConstWordContent(..), specificationConstWord, implementationConstWord, putConstWordBit, putConstWordValueBit, costConstWord
  , SomeConstWordContent(..), getConstWordBit
  , FastCoreEval
  ) where
@@ -2864,6 +2864,8 @@ instance Show (ConstWordContent b) where
 
 -- | @Exists b. (Ty b) *> ConstWordContent b@
 data SomeConstWordContent = forall b. (TyC b) => SomeConstWordContent (ConstWordContent b)
+instance Show SomeConstWordContent where
+  show (SomeConstWordContent cwc) = show cwc
 
 -- | Returns the specification of a constant word jet corresponding to the contents of a given 'ConstWordContent'.
 specificationConstWord :: (Core term, TyC b) => ConstWordContent b -> term () b
@@ -2897,12 +2899,16 @@ getConstWordBit abort next = do
 
 -- | Given a 'ConstWordContent' of some type, output the serialization of that depth and value.
 putConstWordBit :: ConstWordContent b -> DList Bool
-putConstWordBit (ConstWordContent w v) = putPositive (1 + depth w) . (bits ++)
+putConstWordBit cwc@(ConstWordContent w v) = putPositive (1 + depth w) . (putConstWordValueBit cwc ++)
  where
   depth :: Word b -> Integer
   depth (SingleV) = 0
   depth (DoubleV w) = 1 + depth w
-  bits = List.reverse . List.take (wordSize w) $ List.unfoldr (\i -> Just (odd i, i `div` 2)) v
+
+-- | Given a 'ConstWordContent' of some type, output the serialization of that value.
+putConstWordValueBit :: ConstWordContent b -> [Bool]
+putConstWordValueBit (ConstWordContent w v) | 0 <= v && v < 2^(wordSize w) =
+  List.reverse . List.take (wordSize w) $ List.unfoldr (\i -> Just (odd i, i `div` 2)) v
 
 -- | An Assert instance for 'fastCoreEval'.
 data FastCoreEval a b = FastCoreEval { fastCoreEvalSem :: Kleisli Maybe a b
