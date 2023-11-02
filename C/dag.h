@@ -365,7 +365,7 @@ simplicity_err verifyCanonicalOrder(dag_node* dag, const size_t len);
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
  * to construct a compact representation of a witness value of type B.
  * This function only returns 'SIMPLICITY_NO_ERROR' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
- * If extra bits remain, then 'SIMPLICITY_ERR_WITNESS_UNUSED_BITS' is returned.
+ * If extra bits remain, then 'SIMPLICITY_ERR_WITNESS_TRAILING_BITS' is returned.
  * If there are not enough bits, then 'SIMPLICITY_ERR_WITNESS_EOF' is returned.
  *
  * Precondition: dag_node dag[len] and 'dag' without witness data and is well-typed with 'type_dag';

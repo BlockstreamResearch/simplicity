@@ -464,7 +464,7 @@ simplicity_err verifyCanonicalOrder(dag_node* dag, const size_t len) {
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
  * to construct a compact representation of a witness value of type B.
  * This function only returns 'SIMPLICITY_NO_ERROR' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
- * If extra bits remain, then 'SIMPLICITY_ERR_WITNESS_UNUSED_BITS' is returned.
+ * If extra bits remain, then 'SIMPLICITY_ERR_WITNESS_TRAILING_BITS' is returned.
  * If there are not enough bits, then 'SIMPLICITY_ERR_WITNESS_EOF' is returned.
  *
  * Note: the 'witness' value is passed by copy because the implementation manipulates a local copy of the structure.
@@ -549,7 +549,7 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
       }
     }
   }
-  return 0 == witness.len ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_WITNESS_UNUSED_BITS;
+  return 0 == witness.len ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_WITNESS_TRAILING_BITS;
 }
 
 /* Verifies that identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses are all unique,
