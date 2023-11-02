@@ -25,7 +25,7 @@ typedef enum {
   SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK = -20,
   SIMPLICITY_ERR_TYPE_INFERENCE_NOT_PROGRAM = -22,
   SIMPLICITY_ERR_WITNESS_EOF = -24,
-  SIMPLICITY_ERR_WITNESS_UNUSED_BITS = -26,
+  SIMPLICITY_ERR_WITNESS_TRAILING_BITS = -26,
   SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION = -28,
   SIMPLICITY_ERR_CMR = -30,
   SIMPLICITY_ERR_AMR = -32,
@@ -79,8 +79,8 @@ static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
     return "Expression not unit to unit";
   case SIMPLICITY_ERR_WITNESS_EOF:
     return "Unexpected end of witness block";
-  case SIMPLICITY_ERR_WITNESS_UNUSED_BITS:
-    return "Unused data at the end of the witness block";
+  case SIMPLICITY_ERR_WITNESS_TRAILING_BITS:
+    return "Trailing bits after final value of witness block";
   case SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION:
     return "Subexpression not properly shared";
   case SIMPLICITY_ERR_CMR:
