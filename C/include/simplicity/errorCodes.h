@@ -20,7 +20,7 @@ typedef enum {
   SIMPLICITY_ERR_STOP_CODE = -10,
   SIMPLICITY_ERR_HIDDEN = -12,
   SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES = -14,
-  SIMPLICITY_ERR_BITSTREAM_UNUSED_BITS = -16,
+  SIMPLICITY_ERR_BITSTREAM_ILLEGAL_PADDING = -16,
   SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION = -18,
   SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK = -20,
   SIMPLICITY_ERR_TYPE_INFERENCE_NOT_PROGRAM = -22,
@@ -69,8 +69,8 @@ static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
     return "Program has illegal HIDDEN child node";
   case SIMPLICITY_ERR_BITSTREAM_UNUSED_BYTES:
     return "Unused bytes at the end of the program";
-  case SIMPLICITY_ERR_BITSTREAM_UNUSED_BITS:
-    return "Unused bits at the end of the program";
+  case SIMPLICITY_ERR_BITSTREAM_ILLEGAL_PADDING:
+    return "Illegal padding in final byte of program";
   case SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION:
     return "Unification failure";
   case SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK:
