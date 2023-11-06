@@ -1,6 +1,6 @@
 { nixpkgs ? import <nixpkgs> {}
 , ghc ? "ghc94"
-, coqPackages ? "coqPackages_8_15"
+, coqPackages ? "coqPackages_8_16"
 , production ? false
 , secp256k1git ? null
 , wideMultiply ? null

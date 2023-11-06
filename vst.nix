@@ -1,11 +1,13 @@
-{stdenv, fetchFromGitHub, coq, compcert } :
+{lib, stdenv, fetchFromGitHub, coq, compcert,
+ ignoreCompcertVersion ? compcert.version=="3.13.1" # Temporarily allow compcert 3.13
+} :
 stdenv.mkDerivation {
-  name = "vst-sha256-2.11";
+  name = "vst-sha256-2.12";
   src = fetchFromGitHub {
     owner = "PrincetonUniversity";
     repo = "VST";
-    rev ="v2.11";
-    hash = "sha256-4+bKlP5qu+qzdcsxzJ/0a7D3op/dzvwM56OAt8WBGio=";
+    rev ="v2.12";
+    hash = "sha256-4HL0U4HA5/usKNXC0Dis1UZY/Hb/LRd2IGOrqrvdWkw=";
   };
 
   buildInputs = [ coq ];
@@ -23,7 +25,13 @@ stdenv.mkDerivation {
 
   enableParallelBuilding = true;
 
-  makeFlags = [ "COMPCERT=inst_dir" "COMPCERT_INST_DIR=${compcert}/lib/coq/${coq.coq-version}/user-contrib/compcert" "INSTALLDIR=$(out)/lib/coq/${coq.coq-version}/user-contrib/VST" ];
+  makeFlags =
+    lib.optional ignoreCompcertVersion "IGNORECOMPCERTVERSION=true" ++
+  [
+    "COMPCERT=inst_dir"
+    "COMPCERT_INST_DIR=${compcert}/lib/coq/${coq.coq-version}/user-contrib/compcert"
+    "INSTALLDIR=$(out)/lib/coq/${coq.coq-version}/user-contrib/VST"
+  ];
 
   buildFlags = [ "default_target" "sha" ];
 

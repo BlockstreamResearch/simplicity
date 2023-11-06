@@ -3,7 +3,7 @@
 , c       ? true
 , nixpkgs ? import <nixpkgs> {}
 , ghc ? "ghc94"
-, coqPackages ? "coqPackages_8_15"
+, coqPackages ? "coqPackages_8_16"
 , env ? "stdenv"
 }:
 let
