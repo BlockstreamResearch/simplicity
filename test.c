@@ -172,6 +172,9 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       printf("Error parsing dag: %d\n", error);
     } else {
       error = decodeWitnessData(&witness, &stream);
+      if (IS_OK(error)) {
+        error = closeBitstream(&stream);
+      }
       if (!IS_OK(error)) {
         if (expectedResult == error) {
           successes++;
@@ -519,7 +522,7 @@ static void iden8mebi_test(void) {
   clock_t start, end;
   double diff, bound;
   start = clock();
-  test_program("iden8mebi", iden8mebi, sizeof(iden8mebi), SIMPLICITY_NO_ERROR, NULL, NULL, NULL, &expectedCost);
+  test_program("iden8mebi", iden8mebi, sizeof(iden8mebi), SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES, NULL, NULL, NULL, &expectedCost);
   end = clock();
   diff = (double)(end - start) / CLOCKS_PER_SEC;
   bound = (double)expectedCost / 1000. * secondsPerWU;
