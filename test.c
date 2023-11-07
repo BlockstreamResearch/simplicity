@@ -516,13 +516,13 @@ static void regression_tests(void) {
 
 static void iden8mebi_test(void) {
   /* iden composed with itself 2^23 times. */
-  const unsigned char iden8mebi[35] = {0xe1, 0x08, [33]=0x40};
+  const unsigned char iden8mebi[23] = {0xe1, 0x08};
   const ubounded expectedCost = 1677721500; /* in milliWU */
   const double secondsPerWU = 0.5 / 1000. / 1000.;
   clock_t start, end;
   double diff, bound;
   start = clock();
-  test_program("iden8mebi", iden8mebi, sizeof(iden8mebi), SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES, NULL, NULL, NULL, &expectedCost);
+  test_program("iden8mebi", iden8mebi, sizeof(iden8mebi), SIMPLICITY_NO_ERROR, NULL, NULL, NULL, &expectedCost);
   end = clock();
   diff = (double)(end - start) / CLOCKS_PER_SEC;
   bound = (double)expectedCost / 1000. * secondsPerWU;
