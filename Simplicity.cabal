@@ -226,6 +226,8 @@ Test-Suite testsuite
                        Simplicity.Arbitrary, Simplicity.Ty.Arbitrary, Simplicity.Elements.Arbitrary,
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests,
                        Simplicity.Bitcoin.Serialization.Tests,
+                       Simplicity.FFI.Bitstream, Simplicity.FFI.Dag,
+                       Simplicity.Elements.FFI.Primitive,
                        Simplicity.Elements.TestEval, Simplicity.Elements.Tests, Simplicity.Elements.FFI.Tests,
                        Simplicity.Elements.Serialization.Tests,
                        Simplicity.FFI.Tests,
@@ -233,6 +235,8 @@ Test-Suite testsuite
                        Simplicity.Serialization.Tests,
                        Simplicity.TestCoreEval,
                        Simplicity.Ty.Tests
+  C-sources:           C/primitive/elements/primitive.c, C/bitstream.c
+                       Haskell/cbits/bitstream.c, Haskell/cbits/dag.c
   build-depends:       Simplicity,
                        base >=4.9 && <4.18,
                        bytestring >=0.10 && <0.12,
