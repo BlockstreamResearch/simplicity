@@ -73,13 +73,23 @@ declareMRIVs = vsep $ ["/* Initial values for all the tags for 'CMR's, 'AMR's an
   declIMR name = declIV ("imr_" ++ name) (identityTag name)
   names = ["comp", "case", "pair", "disconnect", "injl", "injr", "take", "drop", "iden", "unit", "witness"]
 
-declareWord1CMR :: Doc a
-declareWord1CMR = vsep
-                [ "/* This array contains the cmr of all canonical expressions of type X |- 2 that output distinct values. */"
+declareWordCMRs :: Doc a
+declareWordCMRs = vsep
+                [ "/* This array contains the cmr of all canonical expressions of type X |- TWO through X |- TWO^8 that output distinct values."
+                , " * word_cmr[0..1] contain the cmrs for scribe(0) .. scribe(1) : X | - TWO"
+                , " * word_cmr[2..5] contain the cmrs for scribe(0) .. scribe(3) : X | - TWO^2"
+                , " * word_cmr[6..21] contain the cmrs for scribe(0) .. scribe(15) : X | - TWO^4"
+                , " * word_cmr[22..277] contain the cmrs for scribe(0) .. scribe(255) : X | - TWO^8"
+                , " */"
                 ] <> line <> nest 2 (vsep
-                [ "static const sha256_midstate bit_cmr[] ="
-                , bracket [bracket . single . prettyCHash . commitmentRoot $ (scribe x :: CommitmentRoot () Word1) | x <- allValues] <> semi
+                [ "static const sha256_midstate word_cmr[] ="
+                , bracket (concat [word1s, word2s, word4s, word8s])  <> semi
                 ])
+ where
+  word1s = [bracket . single . prettyCHash . commitmentRoot $ (scribe x :: CommitmentRoot () Word1) | x <- allValues]
+  word2s = [bracket . single . prettyCHash . commitmentRoot $ (scribe x :: CommitmentRoot () Word2) | x <- allValues]
+  word4s = [bracket . single . prettyCHash . commitmentRoot $ (scribe x :: CommitmentRoot () Word4) | x <- allValues]
+  word8s = [bracket . single . prettyCHash . commitmentRoot $ (scribe x :: CommitmentRoot () Word8) | x <- allValues]
 
 allWordRoots :: [Hash256]
 allWordRoots = typeRoot one : iterate diag bit
@@ -119,7 +129,7 @@ precomputed_h = layoutPretty layoutOptions $ vsep (map (<> line)
   , declareSignatureIV
   , declareTyIVs
   , declareMRIVs
-  , declareWord1CMR
+  , declareWordCMRs
   , declareWordTypeRoots
   , footer
   ])

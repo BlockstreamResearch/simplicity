@@ -32,4 +32,21 @@ static inline bool getBit(const bitstring *s, size_t n) {
   return 1 & (s->arr[total_offset / CHAR_BIT] >> (CHAR_BIT - 1 - (total_offset % CHAR_BIT)));
 }
 
+/* Return 8 bits from a bitstring staring from the nth bit.
+ *
+ * Precondition: NULL != s
+ *               n + 8 <= s->len;
+ */
+static inline uint_fast8_t getByte(const bitstring *s, size_t n) {
+  simplicity_assert(8 <= s->len);
+  simplicity_assert(n <= s->len - 8);
+  size_t total_offset = s->offset + n;
+  if (total_offset % CHAR_BIT <= CHAR_BIT - 8) {
+    return (uint_fast8_t)(0xff & (s->arr[total_offset / CHAR_BIT] >> (CHAR_BIT - 8 - (total_offset % CHAR_BIT))));
+  } else {
+    /* CHAR_BIT < total_offset % CHAR_BIT + 8 */
+    return (uint_fast8_t)(0xff & (((1U * s->arr[total_offset / CHAR_BIT]) << (total_offset % CHAR_BIT - (CHAR_BIT - 8)))
+                                  | (s->arr[total_offset / CHAR_BIT + 1] >> (CHAR_BIT - (total_offset % CHAR_BIT - (CHAR_BIT - 8))))));
+  }
+}
 #endif

@@ -531,6 +531,12 @@ static void regression_tests(void) {
     diff = (double)(end - start) / CLOCKS_PER_SEC;
     bound = (double)(sizeof_regression3) * secondsPerWU;
     printf("cpu_time_used by regression3: %f s.  (Should be less than %f s.)\n", diff, bound);
+    if (diff <= bound) {
+      successes++;
+    } else {
+      failures++;
+      printf("regression3 took too long.\n");
+    }
     free(regression3);
   }
 }
