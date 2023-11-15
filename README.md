@@ -37,9 +37,9 @@ Binary packages are available for Debian (`apt install gcc make`) and other Linu
 
 ### Building the Coq project manually
 
-Requires [Coq 8.15.0](https://coq.inria.fr/),
-[CompCert 3.11](http://compcert.inria.fr/)
-and [VST 2.11](https://vst.cs.princeton.edu/).
+Requires [Coq 8.16.1](https://coq.inria.fr/),
+[CompCert 3.12](http://compcert.inria.fr/)
+and [VST 2.12](https://vst.cs.princeton.edu/).
 Packages in the Coq ecosystem are managed by the [opam package manager](https://opam.ocaml.org/).
 
 #### Installing Coq
@@ -47,7 +47,7 @@ Packages in the Coq ecosystem are managed by the [opam package manager](https://
 1. Install `opam` using your distribution's package manager.
 1. `opam init`
 1. `eval $(opam env)`
-1. `opam pin -j$(nproc) add coq 8.15.0`
+1. `opam pin -j$(nproc) add coq 8.16.1`
 
 #### Optional: Installing CoqIDE
 
@@ -58,14 +58,14 @@ Packages in the Coq ecosystem are managed by the [opam package manager](https://
 #### Installing CompCert
 
 1. `opam repo add coq-released https://coq.inria.fr/opam/released`
-1. `opam install -j$(nproc) coq-compcert`
+1. `opam install -j$(nproc) coq-compcert.3.12`
 
 #### Installing VST
 
 We need a custom build and **cannot** use opam for this step.
 
-1. `wget -O - https://github.com/PrincetonUniversity/VST/archive/v2.11.tar.gz | tar -xvzf -`
-1. `cd VST-2.11`
+1. `wget -O - https://github.com/PrincetonUniversity/VST/archive/v2.12.tar.gz | tar -xvzf -`
+1. `cd VST-2.12`
 1. `make -j$(nproc) default_target sha`
 1. `make install`
 1. `install -d $(coqc -where)/user-contrib/sha`
