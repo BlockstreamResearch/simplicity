@@ -8,7 +8,9 @@ The language and implementation is still under development.
 
 This project contains
 
+* A C implementation of a minimal, consensus-critical Simplicity runtime for full nodes.
 * A Haskell implementation of Simplicity's language semantics, type inference engine, serialization functions, and some example Simplicity code.
+* A Haskell code generator that exports Simplicity constants to C and Rust.
 * A Coq implementation of Simplicity's formal denotational and operational semantics.
 
 ## Build
