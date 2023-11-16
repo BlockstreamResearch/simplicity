@@ -15,84 +15,168 @@ This project contains
 
 ## Build
 
-### Building with Nix
+Use [Nix](https://nixos.org) for the easiest build. Alternatively, use GNU Autotools.
 
-Software artifacts can be built using [Nix](https://nixos.org/nix/).
+### C project
 
-* To build the Haskell project, run `nix-build -A haskell`.
-* To use the Haskell project, try `nix-shell -p "(import ./default.nix {}).haskellPackages.ghcWithPackages (pkgs: [pkgs.Simplicity])"`.
-* To build the Coq project, run `nix-build -A coq`.
-* For a Simplicity-Haskell development environment, type `nix-shell --arg coq false`.
-* Typing `nix-shell` will provide a full C, Coq and Haskell development environment.
+#### Nix
 
-### Building the C project manually
+Change into the root directory of this repository.
 
-Install the [GNU Compiler Collection](https://gcc.gnu.org/) and [GNU Make](https://www.gnu.org/software/make/).
-Binary packages are available for Debian (`apt install gcc make`) and other Linux distributions.
+Build the nix package.
 
-1. Open a command line.
-1. Change directory to the `C` directory of this repository.
-1. To run tests: `make check`
-1. To install globally: `make install`
-1. To install locally: `make install out=/path/to/dir`
-1. To remove generated files: `make clean`
+```bash
+nix-build -A c
+```
 
-### Building the Coq project manually
+Enter a nix shell to develop the project manually (see below).
 
-Requires [Coq 8.16.1](https://coq.inria.fr/),
-[CompCert 3.12](http://compcert.inria.fr/)
-and [VST 2.12](https://vst.cs.princeton.edu/).
-Packages in the Coq ecosystem are managed by the [opam package manager](https://opam.ocaml.org/).
+```bash
+nix-shell --arg coq false --arg haskell false
+```
 
-#### Installing Coq
+Use arguments to enable / disable the other projects.
 
-1. Install `opam` using your distribution's package manager.
-1. `opam init`
-1. `eval $(opam env)`
-1. `opam pin -j$(nproc) add coq 8.16.1`
+#### Manual
 
-#### Optional: Installing CoqIDE
+Change into the C directory of this repository.
 
-[CoqIDE](https://coq.inria.fr/refman/practical-tools/coqide.html) is a user-friendly GUI for writing proofs in Coq.
+Build the project using make.
 
-1. `opam install -j$(nproc) coqide`
+```bash
+make -j$(nproc)
+```
 
-#### Installing CompCert
+To install the project, run make.
 
-1. `opam repo add coq-released https://coq.inria.fr/opam/released`
-1. `opam install -j$(nproc) coq-compcert.3.12`
+```
+make install # use "out=/path/to/dir" for local install
+```
 
-#### Installing VST
+To run the tests, run make.
 
-We need a custom build and **cannot** use opam for this step.
+```bash
+make check
+```
 
-1. `wget -O - https://github.com/PrincetonUniversity/VST/archive/v2.12.tar.gz | tar -xvzf -`
-1. `cd VST-2.12`
-1. `make -j$(nproc) default_target sha`
-1. `make install`
-1. `install -d $(coqc -where)/user-contrib/sha`
-1. `install -m 0644 -t $(coqc -where)/user-contrib/sha sha/*.v sha/*.vo`
+### Haskell project
 
-#### Building the Simplicity Coq library
+#### Nix
 
-1. Change into the `Coq` directory of this repository
-1. `coq_makefile -f _CoqProject -o CoqMakefile`
-1. `make -f CoqMakefile -j$(nproc)`
+Change into the root directory of this repository.
 
-#### Optional: Installing the library
+Build the nix package.
 
-1. `make -f CoqMakefile install`
+```bash
+nix-build -A haskell
+```
 
-### Building the Haskell project manually
+Enter a nix shell to develop the project manually (see below).
+
+```bash
+nix-shell --arg c false --arg coq false
+```
+
+Use arguments to enable / disable the other projects.
+
+#### Manual
 
 Install the [Glasgow Haskell Compiler](https://www.haskell.org/ghc/) and [Cabal](https://www.haskell.org/cabal/).
-Binary packages are available for Debian (`apt install ghc cabal-install`) and other Linux distributions.
 
-1. Open a command line.
-1. Change directory to the root directory of this repository.
-1. `cabal repl Simplicity`
-1. Cabal will build the project and open a GHCi prompt.
-    
+Change into the root directory of this repository.
+
+Build the project using cabal.
+
+```bash
+cabal build
+```
+
+To run tests, run cabal.
+
+```bash
+cabal test # use --test-options="+RTS -N -RTS" for parallel jobs
+```
+
+To enter an interactive GHCi prompt with the project loaded, run cabal.
+
+```bash
+cabal repl Simplicity
+```
+
+### Coq project
+
+#### Nix
+
+Change into the root directory of this repository.
+
+Build the nix package.
+
+```bash
+nix-build -A coq
+```
+
+Enter a nix shell to develop the project manually (see below).
+
+The shell provides Coq, CompCert and VST.
+
+```bash
+nix-shell --arg c false --arg haskell false
+```
+
+Use arguments to enable / disable the other projects.
+
+#### Manual
+
+Install the [opam package manager](https://opam.ocaml.org/).
+
+Enter the opam environment in your shell.
+
+```bash
+opam init
+eval $(opam env)
+```
+
+Install the [Coq theorem prover](https://coq.inria.fr/).
+
+```bash
+opam pin -j$(nproc) add coq 8.16.1
+```
+
+Install the [CompCert certified C compiler](https://compcert.org/).
+
+```bash
+opam repo add coq-released https://coq.inria.fr/opam/released
+opam install -j$(nproc) coq-compcert.3.12
+```
+
+Install a custom version of the [Verified Software Toolchain](https://vst.cs.princeton.edu/).
+
+**You cannot use opam for this step!**
+
+```
+wget -O - https://github.com/PrincetonUniversity/VST/archive/v2.12.tar.gz | tar -xvzf -
+cd VST-2.12
+make -j$(nproc) default_target sha
+make install
+install -d $(coqc -where)/user-contrib/sha
+install -m 0644 -t $(coqc -where)/user-contrib/sha sha/*.v sha/*.vo
+```
+
+Enter the Coq directory of this repository.
+
+Build the project using make.
+
+```bash
+coq_makefile -f _CoqProject -o CoqMakefile
+make -f CoqMakefile -j$(nproc)
+```
+
+To install the project, run make.
+
+```bash
+make -f CoqMakefile install
+```
+
 ## Documentation
 
 Detailed documentation can be found in the `Simplicity-TR.tm` TeXmacs file.
