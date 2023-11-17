@@ -185,7 +185,7 @@ A recent PDF version can be found in the [pdf](https://github.com/ElementsProjec
 ## Further Resources
 
 * Our [paper that originally introduced Simplicity](https://arxiv.org/abs/1711.03028).  Some of the finer details are out of date, but it is still a good introduction.
-* [BPASE 2018 presentation](https://youtu.be/VOeUq3oR2fk) of the above paper ([slides](https://cyber.stanford.edu/sites/g/files/sbiybj9936/f/slides-bpase-2018.pdf)).
+* [BPASE 2018 presentation](https://youtu.be/VOeUq3oR2fk) of the above paper.
 * [Scale by the Bay 2018 presentation](https://youtu.be/M4XnDrRIKx8) that illustrates formal verification of Simplicity in Agda ([slides](https://lists.ozlabs.org/pipermail/simplicity/2018/000011.html)).
 * Our library [rust-simplicity](https://github.com/BlockstreamResearch/rust-simplicity) that implements Simplicity in Rust.
 
