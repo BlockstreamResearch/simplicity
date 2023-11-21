@@ -22,7 +22,10 @@ Simplicity/Util/Arith.v
 Simplicity/Util/Monad/Reader.v
 Simplicity/Util/PackedClass.v
 C/extraMath.v
+C/extraVST.v
 C/progressC.v
 C/jets_secp256k1.v
 C/secp256k1/spec_int128.v
 C/secp256k1/verif_int128_impl.v
+C/secp256k1/spec_field_5x52.v
+C/secp256k1/verif_field_5x52_int128_impl.v

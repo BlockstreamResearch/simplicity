@@ -28,12 +28,12 @@ destruct (Z.neg_nonneg_cases x) as [Hneg|Hpos].
   rewrite Z.mod_small; rep_lia.
 Qed.
 
-Lemma umul_bounds_tight a x y : 0 <= x <= a -> 0 <= y <= a ->
-  0 <= x * y <= a * a.
+Lemma umul_bounds_tight a b x y : 0 <= x <= a -> 0 <= y <= b ->
+  0 <= x * y <= a * b.
 Proof.
 intros Hx Hy.
 split;[lia|].
-transitivity (x * a);[apply Zmult_le_compat_l|apply Zmult_le_compat_r]; try tauto.
+transitivity (x * b);[apply Zmult_le_compat_l|apply Zmult_le_compat_r]; try tauto.
 lia.
 Qed.
 

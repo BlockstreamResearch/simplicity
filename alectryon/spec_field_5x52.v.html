@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html class="alectryon-standalone"><head><title>spec_field_5x52.v</title><meta charset="utf-8"><meta content="Alectryon" name="generator"><meta name="viewport" content="width=device-width, initial-scale=1"><link href="alectryon.css" rel="stylesheet"><link href="pygments.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/IBM-type/0.5.4/css/ibm-type.min.css" integrity="sha512-sky5cf9Ts6FY1kstGOBHSybfKqdHR41M0Ldb0BjNiv3ifltoQIsg0zIaQ+wwdwgQ0w9vKFW7Js50lxH9vqNSSw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/5.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" /><script src="alectryon.js"></script></head><body><article class="alectryon-root alectryon-windowed"><div class="alectryon-banner">Built with <a href="https://github.com/cpitclaudel/alectryon/">Alectryon</a>, running Coq+SerAPI v8.16.0+0.16.3. Bubbles (<span class="alectryon-bubble"></span>) indicate interactive fragments: hover for details, tap to reveal contents. Use <kbd>Ctrl+↑</kbd> <kbd>Ctrl+↓</kbd> to navigate, <kbd>Ctrl+🖱️</kbd> to focus. On Mac, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</div><pre class="alectryon-io highlight"><!-- Generator: Alectryon --><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Require Import</span> VST.floyd.proofauto.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Require Import</span> jets_secp256k1.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Require Import</span> extraVST.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk0" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk0"><span class="kn">Instance</span> <span class="nf">CompSpecs</span> : compspecs.</label><small class="alectryon-output"><div><div class="alectryon-messages"><blockquote class="alectryon-message">The default value <span class="kr">for</span> instance locality <span class="kr">is</span> currently
+<span class="s2">&quot;local&quot;</span> <span class="kr">in</span> a section <span class="kn">and</span> <span class="s2">&quot;global&quot;</span> otherwise, but <span class="kr">is</span>
+scheduled to <span class="nb">change</span> <span class="kr">in</span> a future release. For the <span class="kp">time</span>
+being, adding instances <span class="kn">outside</span> of sections without
+specifying an explicit locality attribute <span class="kr">is</span> therefore
+deprecated. It <span class="kr">is</span> recommended to use <span class="s2">&quot;export&quot;</span> whenever
+possible. Use the attributes #[local], #[<span class="kn">global</span>] <span class="kn">and</span>
+#[export] depending on your choice. For example:
+<span class="s2">&quot;#[export] Instance Foo : Bar := baz.&quot;</span>
+[deprecated-instance-without-locality,deprecated]</blockquote></div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">compspecs</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input">make_compspecs prog.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Defined</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_R</span> : Z := 
+<span class="kn">Eval</span> <span class="nb">compute</span> <span class="kr">in</span> <span class="mi">2</span>^<span class="mi">32</span> + <span class="mi">2</span>^<span class="mi">9</span> + <span class="mi">2</span>^<span class="mi">8</span> + <span class="mi">2</span>^<span class="mi">7</span> + <span class="mi">2</span>^<span class="mi">6</span> + <span class="mi">2</span>^<span class="mi">4</span> + <span class="mi">1</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_P</span> : Z := 
+<span class="kn">Eval</span> <span class="nb">compute</span> <span class="kr">in</span> <span class="mi">2</span>^<span class="mi">256</span> - secp256k1_R.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Opaque</span> Z.shiftl Z.shiftr Z.pow.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Module</span> <span class="nf">secp256k1_fe_array</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">from_array</span> (<span class="nv">l</span> : list Z) : Z :=
+fold_right (<span class="kr">fun</span> <span class="nv">x</span> <span class="nv">z</span> =&gt; x + (Z.shiftl z <span class="mi">52</span>)) <span class="mi">0</span> l.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">to_array</span> (<span class="nv">z</span> : Z) : list Z :=
+[Z.land z (Z.ones <span class="mi">52</span>)
+;Z.land (Z.shiftr z <span class="mi">52</span>) (Z.ones <span class="mi">52</span>)
+;Z.land (Z.shiftr z (<span class="mi">2</span>*<span class="mi">52</span>)) (Z.ones <span class="mi">52</span>)
+;Z.land (Z.shiftr z (<span class="mi">3</span>*<span class="mi">52</span>)) (Z.ones <span class="mi">52</span>)
+;Z.shiftr z (<span class="mi">4</span>*<span class="mi">52</span>)
+].</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk1" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk1"><span class="kn">Lemma</span> <span class="nf">from_to_array</span> <span class="nv">z</span> : from_array (to_array z) = z.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (to_array z) = z</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk2" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk2"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (to_array z) = z</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk3" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk3"><span class="nb">cbn</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">Z.land z (Z.ones <span class="mi">52</span>)
+  + Z.shiftl
+      (Z.land (Z.shiftr z <span class="mi">52</span>) (Z.ones <span class="mi">52</span>)
+         + Z.shiftl
+             (Z.land (Z.shiftr z <span class="mi">104</span>) (Z.ones <span class="mi">52</span>)
+                + Z.shiftl
+                    (Z.land (Z.shiftr z <span class="mi">156</span>)
+                       (Z.ones <span class="mi">52</span>)
+                       + Z.shiftl
+                           (Z.shiftr z <span class="mi">208</span>
+                              + Z.shiftl <span class="mi">0</span> <span class="mi">52</span>) <span class="mi">52</span>) <span class="mi">52</span>)
+             <span class="mi">52</span>) <span class="mi">52</span> = z</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk4" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk4"><span class="nb">rewrite</span> !Z.land_ones, !Z.shiftl_mul_pow2, !Z.shiftr_div_pow2 <span class="bp">by</span> <span class="bp">lia</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+  + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+       + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+            + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                 + (z / <span class="mi">2</span> ^ <span class="mi">208</span> + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>) * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                * <span class="mi">2</span> ^ <span class="mi">52</span>)
+           * <span class="mi">2</span> ^ <span class="mi">52</span>)
+      * <span class="mi">2</span> ^ <span class="mi">52</span> = z</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk5" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk5"><span class="nb">symmetry</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">z = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+      + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+           + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                     + (z / <span class="mi">2</span> ^ <span class="mi">208</span> + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                         * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                    * <span class="mi">2</span> ^ <span class="mi">52</span>)
+               * <span class="mi">2</span> ^ <span class="mi">52</span>)
+          * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk6" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk6"><span class="nb">rewrite</span> (Z_div_mod_eq_full z (<span class="mi">2</span>^<span class="mi">52</span>)) <span class="nb">at</span> <span class="mi">1</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">2</span> ^ <span class="mi">52</span> * (z / <span class="mi">2</span> ^ <span class="mi">52</span>) + z mod <span class="mi">2</span> ^ <span class="mi">52</span> = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                         + ((z
+                                               / <span class="mi">2</span>
+                                                 ^ <span class="mi">52</span>)
+                                            mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                              + ((z
+                                                 / <span class="mi">2</span>
+                                                 ^ <span class="mi">104</span>)
+                                                 mod 
+                                                 <span class="mi">2</span>
+                                                 ^ <span class="mi">52</span>
+                                                 + ((z
+                                                 / <span class="mi">2</span>
+                                                 ^ <span class="mi">156</span>)
+                                                 mod 
+                                                 <span class="mi">2</span>
+                                                 ^ <span class="mi">52</span>
+                                                 + (z
+                                                 / <span class="mi">2</span>
+                                                 ^ <span class="mi">208</span>
+                                                 + <span class="mi">0</span>
+                                                 * <span class="mi">2</span>
+                                                 ^ <span class="mi">52</span>)
+                                                 * <span class="mi">2</span>
+                                                 ^ <span class="mi">52</span>)
+                                                 * <span class="mi">2</span>
+                                                 ^ <span class="mi">52</span>)
+                                                 * 
+                                                 <span class="mi">2</span>
+                                                 ^ <span class="mi">52</span>)
+                                             * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk7" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk7"><span class="nb">rewrite</span> (Z_div_mod_eq_full (z / <span class="mi">2</span>^<span class="mi">52</span>) (<span class="mi">2</span>^<span class="mi">52</span>)) <span class="nb">at</span> <span class="mi">1</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">2</span> ^ <span class="mi">52</span>
+  * (<span class="mi">2</span> ^ <span class="mi">52</span> * (z / <span class="mi">2</span> ^ <span class="mi">52</span> / <span class="mi">2</span> ^ <span class="mi">52</span>)
+       + (z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+  + z mod <span class="mi">2</span> ^ <span class="mi">52</span> = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                     + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                          + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                               + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>)
+                                  mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                    + (z / <span class="mi">2</span> ^ <span class="mi">208</span>
+                                         + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                        * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                   * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                              * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                         * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk8" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk8"><span class="nb">rewrite</span> Zdiv.Zdiv_Zdiv, &lt;- Z.pow_add_r <span class="bp">by</span> <span class="bp">lia</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">2</span> ^ <span class="mi">52</span>
+  * (<span class="mi">2</span> ^ <span class="mi">52</span> * (z / <span class="mi">2</span> ^ (<span class="mi">52</span> + <span class="mi">52</span>))
+       + (z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+  + z mod <span class="mi">2</span> ^ <span class="mi">52</span> = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                     + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                          + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                               + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>)
+                                  mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                    + (z / <span class="mi">2</span> ^ <span class="mi">208</span>
+                                         + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                        * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                   * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                              * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                         * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk9" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk9"><span class="nb">simpl</span> (_ + <span class="mi">52</span>).</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">2</span> ^ <span class="mi">52</span>
+  * (<span class="mi">2</span> ^ <span class="mi">52</span> * (z / <span class="mi">2</span> ^ <span class="mi">104</span>) + (z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+  + z mod <span class="mi">2</span> ^ <span class="mi">52</span> = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                     + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                          + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                               + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>)
+                                  mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                    + (z / <span class="mi">2</span> ^ <span class="mi">208</span>
+                                         + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                        * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                   * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                              * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                         * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chka" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chka"><span class="nb">rewrite</span> (Z_div_mod_eq_full (z / <span class="mi">2</span>^<span class="mi">104</span>) (<span class="mi">2</span>^<span class="mi">52</span>)) <span class="nb">at</span> <span class="mi">1</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">2</span> ^ <span class="mi">52</span>
+  * (<span class="mi">2</span> ^ <span class="mi">52</span>
+       * (<span class="mi">2</span> ^ <span class="mi">52</span> * (z / <span class="mi">2</span> ^ <span class="mi">104</span> / <span class="mi">2</span> ^ <span class="mi">52</span>)
+            + (z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+       + (z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+  + z mod <span class="mi">2</span> ^ <span class="mi">52</span> = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                     + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                          + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                               + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>)
+                                  mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                    + (z / <span class="mi">2</span> ^ <span class="mi">208</span>
+                                         + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                        * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                   * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                              * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                         * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chkb" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chkb"><span class="nb">rewrite</span> Zdiv.Zdiv_Zdiv, &lt;- Z.pow_add_r <span class="bp">by</span> <span class="bp">lia</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">2</span> ^ <span class="mi">52</span>
+  * (<span class="mi">2</span> ^ <span class="mi">52</span>
+       * (<span class="mi">2</span> ^ <span class="mi">52</span> * (z / <span class="mi">2</span> ^ (<span class="mi">104</span> + <span class="mi">52</span>))
+            + (z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+       + (z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+  + z mod <span class="mi">2</span> ^ <span class="mi">52</span> = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                     + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                          + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                               + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>)
+                                  mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                    + (z / <span class="mi">2</span> ^ <span class="mi">208</span>
+                                         + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                        * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                   * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                              * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                         * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chkc" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chkc"><span class="nb">simpl</span> (_ + <span class="mi">52</span>).</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">2</span> ^ <span class="mi">52</span>
+  * (<span class="mi">2</span> ^ <span class="mi">52</span>
+       * (<span class="mi">2</span> ^ <span class="mi">52</span> * (z / <span class="mi">2</span> ^ <span class="mi">156</span>)
+            + (z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+       + (z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+  + z mod <span class="mi">2</span> ^ <span class="mi">52</span> = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                     + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                          + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                               + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>)
+                                  mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                    + (z / <span class="mi">2</span> ^ <span class="mi">208</span>
+                                         + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                        * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                   * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                              * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                         * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chkd" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chkd"><span class="nb">rewrite</span> (Z_div_mod_eq_full (z / <span class="mi">2</span>^<span class="mi">156</span>) (<span class="mi">2</span>^<span class="mi">52</span>)) <span class="nb">at</span> <span class="mi">1</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">2</span> ^ <span class="mi">52</span>
+  * (<span class="mi">2</span> ^ <span class="mi">52</span>
+       * (<span class="mi">2</span> ^ <span class="mi">52</span>
+            * (<span class="mi">2</span> ^ <span class="mi">52</span> * (z / <span class="mi">2</span> ^ <span class="mi">156</span> / <span class="mi">2</span> ^ <span class="mi">52</span>)
+                 + (z / <span class="mi">2</span> ^ <span class="mi">156</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+            + (z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+       + (z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+  + z mod <span class="mi">2</span> ^ <span class="mi">52</span> = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                     + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                          + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                               + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>)
+                                  mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                    + (z / <span class="mi">2</span> ^ <span class="mi">208</span>
+                                         + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                        * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                   * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                              * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                         * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chke" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chke"><span class="nb">rewrite</span> Zdiv.Zdiv_Zdiv, &lt;- Z.pow_add_r <span class="bp">by</span> <span class="bp">lia</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">2</span> ^ <span class="mi">52</span>
+  * (<span class="mi">2</span> ^ <span class="mi">52</span>
+       * (<span class="mi">2</span> ^ <span class="mi">52</span>
+            * (<span class="mi">2</span> ^ <span class="mi">52</span> * (z / <span class="mi">2</span> ^ (<span class="mi">156</span> + <span class="mi">52</span>))
+                 + (z / <span class="mi">2</span> ^ <span class="mi">156</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+            + (z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+       + (z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+  + z mod <span class="mi">2</span> ^ <span class="mi">52</span> = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                     + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                          + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                               + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>)
+                                  mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                    + (z / <span class="mi">2</span> ^ <span class="mi">208</span>
+                                         + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                        * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                   * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                              * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                         * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chkf" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chkf"><span class="nb">simpl</span> (_ + <span class="mi">52</span>).</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>z</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="mi">2</span> ^ <span class="mi">52</span>
+  * (<span class="mi">2</span> ^ <span class="mi">52</span>
+       * (<span class="mi">2</span> ^ <span class="mi">52</span>
+            * (<span class="mi">2</span> ^ <span class="mi">52</span> * (z / <span class="mi">2</span> ^ <span class="mi">208</span>)
+                 + (z / <span class="mi">2</span> ^ <span class="mi">156</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+            + (z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+       + (z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>)
+  + z mod <span class="mi">2</span> ^ <span class="mi">52</span> = z mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                     + ((z / <span class="mi">2</span> ^ <span class="mi">52</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                          + ((z / <span class="mi">2</span> ^ <span class="mi">104</span>) mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                               + ((z / <span class="mi">2</span> ^ <span class="mi">156</span>)
+                                  mod <span class="mi">2</span> ^ <span class="mi">52</span>
+                                    + (z / <span class="mi">2</span> ^ <span class="mi">208</span>
+                                         + <span class="mi">0</span> * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                        * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                                   * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                              * <span class="mi">2</span> ^ <span class="mi">52</span>)
+                         * <span class="mi">2</span> ^ <span class="mi">52</span></div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">ring</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">boundBy</span> (<span class="nv">magnitude</span> : Z) (<span class="nv">l</span> : list Z) :=
+   Forall (<span class="kr">fun</span> <span class="nv">x</span> =&gt; <span class="mi">0</span> &lt;= x &lt;= <span class="mi">2</span> * magnitude * (Z.ones <span class="mi">52</span>)) l
+/\ nth <span class="mi">4</span> l <span class="mi">0</span> &lt;= <span class="mi">2</span> * magnitude * (Z.ones <span class="mi">48</span>).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Fixpoint</span> <span class="nf">add</span> (<span class="nv">a</span> <span class="nv">b</span> : list Z) : list Z :=
+<span class="kr">match</span> a <span class="kr">with</span>
+| nil =&gt; b
+| cons a0 atl =&gt;
+  <span class="kr">match</span> b <span class="kr">with</span>
+  | nil =&gt; a
+  | cons b0 btl =&gt; cons (a0 + b0) (add atl btl)
+  <span class="kr">end</span>
+<span class="kr">end</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk10" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk10"><span class="kn">Lemma</span> <span class="nf">add_spec</span> <span class="nv">a</span> <span class="nv">b</span> : from_array (add a b) = from_array a + from_array b.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (add a b) = from_array a + from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk11" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk11"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (add a b) = from_array a + from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk12" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk12"><span class="nb">revert</span> b.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="kr">forall</span> <span class="nv">b</span> : list Z,
+from_array (add a b) = from_array a + from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk13" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk13"><span class="nb">induction</span> a;[<span class="bp">reflexivity</span>|].</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>a0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHa</var><span class="hyp-type"><b>: </b><span><span class="kr">forall</span> <span class="nv">b</span> : list Z, from_array (add a0 b) = from_array a0 + from_array b</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="kr">forall</span> <span class="nv">b</span> : list Z,
+from_array (add (a :: a0) b) = from_array (a :: a0)
+                                 + from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk14" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk14"><span class="nb">intros</span> [|b b0];[<span class="nb">cbn</span>; <span class="bp">ring</span>|].</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>a0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHa</var><span class="hyp-type"><b>: </b><span><span class="kr">forall</span> <span class="nv">b</span> : list Z, from_array (add a0 b) = from_array a0 + from_array b</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>b0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (add (a :: a0) (b :: b0)) = from_array
+                                         (a :: a0)
+                                         + from_array
+                                             (b :: b0)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk15" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk15"><span class="nb">simpl</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>a0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHa</var><span class="hyp-type"><b>: </b><span><span class="kr">forall</span> <span class="nv">b</span> : list Z, from_array (add a0 b) = from_array a0 + from_array b</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>b0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">a + b + Z.shiftl (from_array (add a0 b0)) <span class="mi">52</span> = a
+                                                 + 
+                                                 Z.shiftl
+                                                 (from_array
+                                                 a0)
+                                                 <span class="mi">52</span>
+                                                 + 
+                                                 (b
+                                                 + Z.shiftl
+                                                 (from_array
+                                                 b0)
+                                                 <span class="mi">52</span>)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk16" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk16"><span class="nb">rewrite</span> IHa, !Z.shiftl_mul_pow2 <span class="bp">by</span> <span class="bp">lia</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>a0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHa</var><span class="hyp-type"><b>: </b><span><span class="kr">forall</span> <span class="nv">b</span> : list Z, from_array (add a0 b) = from_array a0 + from_array b</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>b0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">a + b + (from_array a0 + from_array b0) * <span class="mi">2</span> ^ <span class="mi">52</span> = 
+a + from_array a0 * <span class="mi">2</span> ^ <span class="mi">52</span>
+  + (b + from_array b0 * <span class="mi">2</span> ^ <span class="mi">52</span>)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">ring</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Fixpoint</span> <span class="nf">mul</span> (<span class="nv">a</span> <span class="nv">b</span> : list Z) : list Z :=
+<span class="kr">match</span> a <span class="kr">with</span>
+| nil =&gt; nil
+| cons a0 atl =&gt; add (map (Z.mul a0) b) (cons <span class="mi">0</span> (mul atl b))
+<span class="kr">end</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk17" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk17"><span class="kn">Lemma</span> <span class="nf">scale_spec</span> <span class="nv">a</span> <span class="nv">b</span> : from_array (map (Z.mul a) b) = a * from_array b.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (map (Z.mul a) b) = a * from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk18" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk18"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (map (Z.mul a) b) = a * from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk19" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk19"><span class="nb">induction</span> b;[<span class="nb">cbn</span>; <span class="bp">ring</span>|].</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, a0</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHb</var><span class="hyp-type"><b>: </b><span>from_array (map (Z.mul a) b) = a * from_array b</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (map (Z.mul a) (a0 :: b)) = a
+                                         * from_array
+                                             (a0 :: b)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk1a" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk1a"><span class="nb">simpl</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, a0</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHb</var><span class="hyp-type"><b>: </b><span>from_array (map (Z.mul a) b) = a * from_array b</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">a * a0 + Z.shiftl (from_array (map (Z.mul a) b)) <span class="mi">52</span> = 
+a
+  * (a0 + Z.shiftl (from_array b) <span class="mi">52</span>)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk1b" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk1b"><span class="nb">rewrite</span> IHb, !Z.shiftl_mul_pow2 <span class="bp">by</span> <span class="bp">lia</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, a0</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHb</var><span class="hyp-type"><b>: </b><span>from_array (map (Z.mul a) b) = a * from_array b</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">a * a0 + a * from_array b * <span class="mi">2</span> ^ <span class="mi">52</span> = a
+                                       * (a0
+                                            + from_array
+                                                b
+                                                * 
+                                                <span class="mi">2</span>
+                                                 ^ <span class="mi">52</span>)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">ring</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk1c" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk1c"><span class="kn">Lemma</span> <span class="nf">mul_spec</span> <span class="nv">a</span> <span class="nv">b</span> : from_array (mul a b) = from_array a * from_array b.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (mul a b) = from_array a * from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk1d" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk1d"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a, b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (mul a b) = from_array a * from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk1e" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk1e"><span class="nb">revert</span> b.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="kr">forall</span> <span class="nv">b</span> : list Z,
+from_array (mul a b) = from_array a * from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk1f" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk1f"><span class="nb">induction</span> a;[<span class="bp">reflexivity</span>|].</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>a0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHa</var><span class="hyp-type"><b>: </b><span><span class="kr">forall</span> <span class="nv">b</span> : list Z, from_array (mul a0 b) = from_array a0 * from_array b</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="kr">forall</span> <span class="nv">b</span> : list Z,
+from_array (mul (a :: a0) b) = from_array (a :: a0)
+                                 * from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk20" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk20"><span class="nb">intros</span> b.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>a0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHa</var><span class="hyp-type"><b>: </b><span><span class="kr">forall</span> <span class="nv">b</span> : list Z, from_array (mul a0 b) = from_array a0 * from_array b</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (mul (a :: a0) b) = from_array (a :: a0)
+                                 * from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk21" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk21"><span class="nb">simpl</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>a0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHa</var><span class="hyp-type"><b>: </b><span><span class="kr">forall</span> <span class="nv">b</span> : list Z, from_array (mul a0 b) = from_array a0 * from_array b</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (add (map (Z.mul a) b) (<span class="mi">0</span> :: mul a0 b)) = 
+(a + Z.shiftl (from_array a0) <span class="mi">52</span>)
+  * from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk22" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk22"><span class="nb">rewrite</span> add_spec.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>a0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHa</var><span class="hyp-type"><b>: </b><span><span class="kr">forall</span> <span class="nv">b</span> : list Z, from_array (mul a0 b) = from_array a0 * from_array b</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (map (Z.mul a) b)
+  + from_array (<span class="mi">0</span> :: mul a0 b) = (a
+                                    + Z.shiftl
+                                        (from_array a0)
+                                        <span class="mi">52</span>)
+                                   * from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk23" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk23"><span class="nb">simpl</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>a0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHa</var><span class="hyp-type"><b>: </b><span><span class="kr">forall</span> <span class="nv">b</span> : list Z, from_array (mul a0 b) = from_array a0 * from_array b</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">from_array (map (Z.mul a) b)
+  + (<span class="mi">0</span> + Z.shiftl (from_array (mul a0 b)) <span class="mi">52</span>) = (a
+                                                 + Z.shiftl
+                                                 (from_array
+                                                 a0)
+                                                 <span class="mi">52</span>)
+                                                 * 
+                                                 from_array
+                                                 b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk24" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk24"><span class="nb">rewrite</span> IHa, scale_spec, !Z.shiftl_mul_pow2 <span class="bp">by</span> <span class="bp">lia</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>Z</span></span></span><br><span><var>a0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>IHa</var><span class="hyp-type"><b>: </b><span><span class="kr">forall</span> <span class="nv">b</span> : list Z, from_array (mul a0 b) = from_array a0 * from_array b</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">a * from_array b
+  + (<span class="mi">0</span> + from_array a0 * from_array b * <span class="mi">2</span> ^ <span class="mi">52</span>) = 
+(a + from_array a0 * <span class="mi">2</span> ^ <span class="mi">52</span>)
+  * from_array b</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="bp">ring</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">End</span> <span class="nf">secp256k1_fe_array</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">withOption</span> {<span class="nv">A</span> <span class="nv">B</span>} (<span class="nv">def</span> : B) (<span class="nv">f</span> : A -&gt; B) (<span class="nv">ox</span> : option A) : B :=
+<span class="kr">match</span> ox <span class="kr">with</span>
+| None =&gt; def
+| Some x =&gt; f x
+<span class="kr">end</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_fe_mul_inner_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_fe_mul_inner
+  WITH r : option (val * share),
+       a : val, sha : share, arra : list Z,
+       b : val, shb : share, arrb : list Z
+    PRE [ tptr tulong, tptr tulong, tptr tulong ]
+    PROP(writable_share (withOption sha snd r);
+         readable_share sha;
+         readable_share shb;
+         nonempty_share (Share.glb sha shb); <span class="c">(* Needed to prevent a and b from aliasing. Note: writable shares always intersect. *)</span>
+         length arra = <span class="mi">5</span>%nat;
+         length arrb = <span class="mi">5</span>%nat;
+         secp256k1_fe_array.boundBy <span class="mi">8</span> arra;
+         secp256k1_fe_array.boundBy <span class="mi">8</span> arrb)
+    PARAMS(withOption a fst r; a; b)
+  SEP(withOption emp (<span class="kr">fun</span> &#39;(v, sh) =&gt; data_at_ sh (tarray tulong <span class="mi">5</span>) v) r;
+      data_at sha (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arra) a;
+      data_at shb (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arrb) b)
+POST [ tvoid ]
+  EX arrr : list Z,
+  PROP(length arrr = <span class="mi">5</span>%nat;
+       secp256k1_fe_array.boundBy <span class="mi">1</span> arrr;
+       eqm secp256k1_P (secp256k1_fe_array.from_array arra * secp256k1_fe_array.from_array arrb) (secp256k1_fe_array.from_array arrr))
+  RETURN()
+  SEP(data_at (withOption sha snd r) (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arrr) (withOption a fst r);
+      withOption emp (<span class="kr">fun</span> <span class="nv">_</span> =&gt; (data_at sha (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arra) a)) r;
+      data_at shb (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arrb) b).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+<span class="c">(* An easier to use specification to secp256k1_fe_mul_inner for when the pointers are statically known to not be aliased. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_fe_mul_inner_spec_restrict</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_fe_mul_inner
+  WITH r : val, shr : share,
+       a : val, sha : share, arra : list Z,
+       b : val, shb : share, arrb : list Z
+  PRE [ tptr tulong, tptr tulong, tptr tulong ]
+    PROP(writable_share shr;
+         readable_share sha;
+         readable_share shb;
+         nonempty_share (Share.glb sha shb); <span class="c">(* Needed to prevent a and b from aliasing. Note: writable shares always intersect. *)</span>
+         length arra = <span class="mi">5</span>%nat;
+         length arrb = <span class="mi">5</span>%nat;
+         secp256k1_fe_array.boundBy <span class="mi">8</span> arra;
+         secp256k1_fe_array.boundBy <span class="mi">8</span> arrb)
+    PARAMS(r; a; b)
+  SEP(data_at_ shr (tarray tulong <span class="mi">5</span>) r;
+      data_at sha (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arra) a;
+      data_at shb (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arrb) b)
+POST [ tvoid ]
+  EX arrr : list Z,
+  PROP(length arrr = <span class="mi">5</span>%nat;
+       secp256k1_fe_array.boundBy <span class="mi">1</span> arrr;
+       eqm secp256k1_P (secp256k1_fe_array.from_array arra * secp256k1_fe_array.from_array arrb) (secp256k1_fe_array.from_array arrr))
+  RETURN()
+  SEP(data_at shr (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arrr) r;
+      data_at sha (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arra) a;
+      data_at shb (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arrb) b).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+<span class="c">(* Use with</span>
+<span class="c">   forward_call secp256k1_fe_mul_inner_spec_restrict_sub (r, shr, arrr, a, sha, arra, b, shb, arrb)</span>
+<span class="c">*)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk25" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk25"><span class="kn">Lemma</span> <span class="nf">secp256k1_fe_mul_inner_spec_restrict_sub</span> :
+  funspec_sub (snd secp256k1_fe_mul_inner_spec) (snd secp256k1_fe_mul_inner_spec_restrict).</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">funspec_sub (snd secp256k1_fe_mul_inner_spec)
+  (snd secp256k1_fe_mul_inner_spec_restrict)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk26" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk26"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">funspec_sub (snd secp256k1_fe_mul_inner_spec)
+  (snd secp256k1_fe_mul_inner_spec_restrict)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk27" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk27">do_funspec_sub.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>w</var><span class="hyp-type"><b>: </b><span>(val * share * val * share * list Z * val * share
+   * list Z)%type</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">(<span class="kr">let</span> (<span class="nv">p</span>, arrb) := w <span class="kr">in</span>
+ <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+ <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+ <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+ <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+ <span class="kr">let</span> (<span class="nv">p4</span>, a) := p3 <span class="kr">in</span>
+ <span class="kr">let</span> (<span class="nv">r</span>, shr) := p4 <span class="kr">in</span>
+ <span class="kr">fun</span> <span class="nv">x</span> : argsEnviron =&gt;
+ !! (writable_share shr /\
+     readable_share sha /\
+     readable_share shb /\
+     nonempty_share (Share.glb sha shb) /\
+     Datatypes.length arra = <span class="mi">5</span>%nat /\
+     Datatypes.length arrb = <span class="mi">5</span>%nat /\
+     secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+     secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+ (!! (snd x = [r; a; b]) &amp;&amp;
+  (TT &amp;&amp;
+   (data_at_ shr (tarray tulong <span class="mi">5</span>) r
+      * (data_at sha (tarray tulong <span class="mi">5</span>)
+           (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (...)) arra) a
+           * (data_at shb (tarray tulong <span class="mi">5</span>)
+                (map (... =&gt; ...) arrb) b
+                * emp)))))) (g, args)
+|-- EX (x1 : option (val * share) * val * share
+               * list Z
+               * val
+               * share
+               * list Z) (F : mpred),
+    F
+      * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+         <span class="kr">fun</span> <span class="nv">x</span> : argsEnviron =&gt;
+         !! (writable_share (withOption sha snd r) /\
+             readable_share sha /\
+             readable_share shb /\
+             nonempty_share (Share.glb sha shb) /\
+             Datatypes.length arra = <span class="mi">5</span>%nat /\
+             Datatypes.length arrb = <span class="mi">5</span>%nat /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+         (!! (snd x = [withOption a fst r; a; b]) &amp;&amp;
+          (TT &amp;&amp;
+           (withOption emp
+              (<span class="kr">fun</span> &#39;(v, sh) =&gt;
+               data_at_ sh (tarray tulong <span class="mi">5</span>) v) r
+              * (data_at sha (tarray tulong <span class="mi">5</span>)
+                   (map (... =&gt; ...) arra) a
+                   * (data_at shb (tarray tulong <span class="mi">5</span>)
+                        (map ... arrb) b
+                        * emp)))))) (g, args) &amp;&amp;
+    !! (<span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+        !! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+        (F
+           * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+              <span class="kr">fun</span> <span class="nv">_</span> : environ =&gt;
+              EX x : list Z,
+              !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                  secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                  eqm secp256k1_P (... * ...)
+                    (secp256k1_fe_array.from_array x) /\
+                  <span class="kt">True</span>) &amp;&amp;
+              (TT &amp;&amp;
+               (data_at (withOption sha snd r)
+                  (tarray tulong <span class="mi">5</span>) (map ... x)
+                  (withOption a fst r)
+                  * (withOption emp ... r * (...)))))
+               rho&#39;)
+        |-- (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := w <span class="kr">in</span>
+             <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+             <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+             <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+             <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+             <span class="kr">let</span> (<span class="nv">p4</span>, a) := p3 <span class="kr">in</span>
+             <span class="kr">let</span> (<span class="nv">r</span>, shr) := p4 <span class="kr">in</span>
+             <span class="kr">fun</span> <span class="nv">_</span> : environ =&gt;
+             EX x : list Z,
+             !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                 secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                 eqm secp256k1_P
+                   (secp256k1_fe_array.from_array arra
+                      * secp256k1_fe_array.from_array
+                          arrb)
+                   (secp256k1_fe_array.from_array x) /\
+                 <span class="kt">True</span>) &amp;&amp;
+             (TT &amp;&amp;
+              (data_at shr (tarray tulong <span class="mi">5</span>)
+                 (map (... =&gt; ...) x) r
+                 * (data_at sha (tarray tulong <span class="mi">5</span>)
+                      (map ... arra) a
+                      * (data_at shb ... ... b * emp)))))
+              rho&#39;)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk28" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk28"><span class="nb">destruct</span> w <span class="kr">as</span> [[[[[[[r shr] a] sha] arra] b] shb] arrb].</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>r</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shr</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">!! (writable_share shr /\
+    readable_share sha /\
+    readable_share shb /\
+    nonempty_share (Share.glb sha shb) /\
+    Datatypes.length arra = <span class="mi">5</span>%nat /\
+    Datatypes.length arrb = <span class="mi">5</span>%nat /\
+    secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+    secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+(!! (snd (g, args) = [r; a; b]) &amp;&amp;
+ (TT &amp;&amp;
+  (data_at_ shr (tarray tulong <span class="mi">5</span>) r
+     * (data_at sha (tarray tulong <span class="mi">5</span>)
+          (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x))
+             arra) a
+          * (data_at shb 
+               (tarray tulong <span class="mi">5</span>)
+               (map
+                  (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x))
+                  arrb) b
+               * emp)))))
+|-- EX (x1 : option (val * share) * val * share
+               * list Z
+               * val
+               * share
+               * list Z) 
+    (F : mpred),
+    F
+      * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+         <span class="kr">fun</span> <span class="nv">x</span> : argsEnviron =&gt;
+         !! (writable_share (withOption sha snd r) /\
+             readable_share sha /\
+             readable_share shb /\
+             nonempty_share (Share.glb sha shb) /\
+             Datatypes.length arra = <span class="mi">5</span>%nat /\
+             Datatypes.length arrb = <span class="mi">5</span>%nat /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+         (!! (snd x = [withOption a fst r; a; b]) &amp;&amp;
+          (TT &amp;&amp;
+           (withOption emp
+              (<span class="kr">fun</span> &#39;(v, sh) =&gt;
+               data_at_ sh (tarray tulong <span class="mi">5</span>) v) r
+              * (data_at sha 
+                   (tarray tulong <span class="mi">5</span>)
+                   (map (... =&gt; ...) arra) a
+                   * (data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map ... arrb) b
+                        * emp)))))) (
+          g, args) &amp;&amp;
+    !! (<span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+        !! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+        (F
+           * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+              <span class="kr">fun</span> <span class="nv">_</span> : environ =&gt;
+              EX x : list Z,
+              !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                  secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                  eqm secp256k1_P 
+                    (... * ...)
+                    (secp256k1_fe_array.from_array x) /\
+                  <span class="kt">True</span>) &amp;&amp;
+              (TT &amp;&amp;
+               (data_at (withOption sha snd r)
+                  (tarray tulong <span class="mi">5</span>) 
+                  (map ... x) 
+                  (withOption a fst r)
+                  * (withOption emp ... r * (...)))))
+               rho&#39;)
+        |-- EX x : list Z,
+            !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                eqm secp256k1_P
+                  (secp256k1_fe_array.from_array arra
+                     * secp256k1_fe_array.from_array
+                        arrb)
+                  (secp256k1_fe_array.from_array x) /\
+                <span class="kt">True</span>) &amp;&amp;
+            (TT &amp;&amp;
+             (data_at shr 
+                (tarray tulong <span class="mi">5</span>)
+                (map
+                   (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                    Vlong (Int64.repr x0)) x) r
+                * (data_at sha 
+                     (tarray tulong <span class="mi">5</span>)
+                     (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arra) a
+                     * (data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arrb) b
+                        * emp)))))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk29" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk29">entailer!.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>r</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shr</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share shr</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share sha</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>nonempty_share (Share.glb sha shb)</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [r; a; b]</span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>field_compatible (tarray tulong <span class="mi">5</span>) [] r</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H13</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H14</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H15</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">data_at_ shr (tarray tulong <span class="mi">5</span>) r
+  * data_at sha (tarray tulong <span class="mi">5</span>)
+      (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) a
+  * data_at shb (tarray tulong <span class="mi">5</span>)
+      (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) b
+|-- EX (x1 : option (val * share) * val * share
+               * list Z
+               * val
+               * share
+               * list Z) 
+    (F : mpred),
+    F
+      * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+         <span class="kr">fun</span> <span class="nv">x</span> : argsEnviron =&gt;
+         !! (writable_share (withOption sha snd r) /\
+             readable_share sha /\
+             readable_share shb /\
+             nonempty_share (Share.glb sha shb) /\
+             Datatypes.length arra = <span class="mi">5</span>%nat /\
+             Datatypes.length arrb = <span class="mi">5</span>%nat /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+         (!! (snd x = [withOption a fst r; a; b]) &amp;&amp;
+          (TT &amp;&amp;
+           (withOption emp
+              (<span class="kr">fun</span> &#39;(v, sh) =&gt;
+               data_at_ sh (tarray tulong <span class="mi">5</span>) v) r
+              * (data_at sha 
+                   (tarray tulong <span class="mi">5</span>)
+                   (map (... =&gt; ...) arra) a
+                   * (data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map ... arrb) b
+                        * emp)))))) (
+          g, args) &amp;&amp;
+    !! (<span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+        !! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+        (F
+           * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+              <span class="kr">fun</span> <span class="nv">_</span> : environ =&gt;
+              EX x : list Z,
+              !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                  secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                  eqm secp256k1_P 
+                    (... * ...)
+                    (secp256k1_fe_array.from_array x) /\
+                  <span class="kt">True</span>) &amp;&amp;
+              (TT &amp;&amp;
+               (data_at (withOption sha snd r)
+                  (tarray tulong <span class="mi">5</span>) 
+                  (map ... x) 
+                  (withOption a fst r)
+                  * (withOption emp ... r * (...)))))
+               rho&#39;)
+        |-- EX x : list Z,
+            !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                eqm secp256k1_P
+                  (secp256k1_fe_array.from_array arra
+                     * secp256k1_fe_array.from_array
+                        arrb)
+                  (secp256k1_fe_array.from_array x) /\
+                <span class="kt">True</span>) &amp;&amp;
+            (TT &amp;&amp;
+             (data_at shr 
+                (tarray tulong <span class="mi">5</span>)
+                (map
+                   (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                    Vlong (Int64.repr x0)) x) r
+                * (data_at sha 
+                     (tarray tulong <span class="mi">5</span>)
+                     (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arra) a
+                     * data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arrb) b))))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk2a" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk2a">Exists ((((((Some (r, shr), a), sha), arra), b), shb), arrb) emp.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>r</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shr</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share shr</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share sha</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>nonempty_share (Share.glb sha shb)</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [r; a; b]</span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>field_compatible (tarray tulong <span class="mi">5</span>) [] r</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H13</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H14</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H15</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">data_at_ shr (tarray tulong <span class="mi">5</span>) r
+  * data_at sha (tarray tulong <span class="mi">5</span>)
+      (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) a
+  * data_at shb (tarray tulong <span class="mi">5</span>)
+      (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) b
+|-- emp
+      * (!! (writable_share
+               (withOption sha snd (Some (r, shr))) /\
+             readable_share sha /\
+             readable_share shb /\
+             nonempty_share (Share.glb sha shb) /\
+             Datatypes.length arra = <span class="mi">5</span>%nat /\
+             Datatypes.length arrb = <span class="mi">5</span>%nat /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+         (!! (snd (g, args) = [
+              withOption a fst (Some (r, shr)); a; b]) &amp;&amp;
+          (TT &amp;&amp;
+           (withOption emp
+              (<span class="kr">fun</span> &#39;(v, sh) =&gt;
+               data_at_ sh (tarray tulong <span class="mi">5</span>) v)
+              (Some (r, shr))
+              * (data_at sha 
+                   (tarray tulong <span class="mi">5</span>)
+                   (map
+                      (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt;
+                       Vlong (Int64.repr x)) arra) a
+                   * (data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map
+                        (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt;
+                        Vlong (Int64.repr x)) arrb) b
+                        * emp)))))) &amp;&amp;
+    !! (<span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+        !! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+        (emp
+           * (EX x : list Z,
+              !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                  secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                  eqm secp256k1_P
+                    (secp256k1_fe_array.from_array
+                       arra
+                       * 
+                       secp256k1_fe_array.from_array
+                        arrb)
+                    (secp256k1_fe_array.from_array x) /\
+                  <span class="kt">True</span>) &amp;&amp;
+              (TT &amp;&amp;
+               (data_at
+                  (withOption sha snd (Some (r, shr)))
+                  (tarray tulong <span class="mi">5</span>)
+                  (map
+                     (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                      Vlong (Int64.repr x0)) x)
+                  (withOption a fst (Some (r, shr)))
+                  * (withOption emp
+                       (<span class="kr">fun</span> <span class="nv">_</span> : val * share =&gt;
+                        data_at sha 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (...))
+                        arra) a) 
+                       (Some (r, shr))
+                       * 
+                       (data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arrb) b
+                        * emp))))))
+        |-- EX x : list Z,
+            !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                eqm secp256k1_P
+                  (secp256k1_fe_array.from_array arra
+                     * secp256k1_fe_array.from_array
+                        arrb)
+                  (secp256k1_fe_array.from_array x) /\
+                <span class="kt">True</span>) &amp;&amp;
+            (TT &amp;&amp;
+             (data_at shr 
+                (tarray tulong <span class="mi">5</span>)
+                (map
+                   (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                    Vlong (Int64.repr x0)) x) r
+                * (data_at sha 
+                     (tarray tulong <span class="mi">5</span>)
+                     (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arra) a
+                     * data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arrb) b))))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk2b" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk2b"><span class="nb">simpl</span>; entailer!.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>r</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shr</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share shr</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share sha</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>nonempty_share (Share.glb sha shb)</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [r; a; b]</span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>field_compatible (tarray tulong <span class="mi">5</span>) [] r</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H13</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H14</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H15</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br><span><var>x0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>H17</var><span class="hyp-type"><b>: </b><span>Datatypes.length x0 = <span class="mi">5</span>%nat</span></span></span><br><span><var>H18</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">1</span> x0</span></span></span><br><span><var>H19</var><span class="hyp-type"><b>: </b><span>eqm secp256k1_P
+  (secp256k1_fe_array.from_array arra
+     * secp256k1_fe_array.from_array arrb)
+  (secp256k1_fe_array.from_array x0)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="kr">forall</span> <span class="nv">x</span> : environ,
+ve_of x = Map.empty (block * type) -&gt;
+data_at shr (tarray tulong <span class="mi">5</span>)
+  (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) x0) r
+  * (data_at sha (tarray tulong <span class="mi">5</span>)
+       (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) arra)
+       a
+       * data_at shb (tarray tulong <span class="mi">5</span>)
+           (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+              arrb) b)
+|-- EX x0 : list Z,
+    !! (Datatypes.length x0 = <span class="mi">5</span>%nat /\
+        secp256k1_fe_array.boundBy <span class="mi">1</span> x0 /\
+        eqm secp256k1_P
+          (secp256k1_fe_array.from_array arra
+             * secp256k1_fe_array.from_array arrb)
+          (secp256k1_fe_array.from_array x0) /\ <span class="kt">True</span>) &amp;&amp;
+    (TT &amp;&amp;
+     (data_at shr (tarray tulong <span class="mi">5</span>)
+        (map (<span class="kr">fun</span> <span class="nv">x1</span> : Z =&gt; Vlong (Int64.repr x1)) x0)
+        r
+        * (data_at sha (tarray tulong <span class="mi">5</span>)
+             (map
+                (<span class="kr">fun</span> <span class="nv">x1</span> : Z =&gt; Vlong (Int64.repr x1))
+                arra) a
+             * data_at shb 
+                 (tarray tulong <span class="mi">5</span>)
+                 (map
+                    (<span class="kr">fun</span> <span class="nv">x1</span> : Z =&gt;
+                     Vlong (Int64.repr x1)) arrb) b)))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk2c" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk2c"><span class="nb">intros</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>r</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shr</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share shr</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share sha</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>nonempty_share (Share.glb sha shb)</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [r; a; b]</span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>field_compatible (tarray tulong <span class="mi">5</span>) [] r</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H13</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H14</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H15</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br><span><var>x0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>H17</var><span class="hyp-type"><b>: </b><span>Datatypes.length x0 = <span class="mi">5</span>%nat</span></span></span><br><span><var>H18</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">1</span> x0</span></span></span><br><span><var>H19</var><span class="hyp-type"><b>: </b><span>eqm secp256k1_P
+  (secp256k1_fe_array.from_array arra
+     * secp256k1_fe_array.from_array arrb)
+  (secp256k1_fe_array.from_array x0)</span></span></span><br><span><var>x</var><span class="hyp-type"><b>: </b><span>environ</span></span></span><br><span><var>H16</var><span class="hyp-type"><b>: </b><span>ve_of x = Map.empty (block * type)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">data_at shr (tarray tulong <span class="mi">5</span>)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) x0) r
+  * (data_at sha (tarray tulong <span class="mi">5</span>)
+       (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)
+       a
+       * data_at shb (tarray tulong <span class="mi">5</span>)
+           (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x))
+              arrb) b)
+|-- EX x : list Z,
+    !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+        secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+        eqm secp256k1_P
+          (secp256k1_fe_array.from_array arra
+             * secp256k1_fe_array.from_array arrb)
+          (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+    (TT &amp;&amp;
+     (data_at shr (tarray tulong <span class="mi">5</span>)
+        (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) x)
+        r
+        * (data_at sha (tarray tulong <span class="mi">5</span>)
+             (map
+                (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+                arra) a
+             * data_at shb 
+                 (tarray tulong <span class="mi">5</span>)
+                 (map
+                    (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                     Vlong (Int64.repr x0)) arrb) b)))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk2d" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk2d">Exists x0.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>r</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shr</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share shr</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share sha</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>nonempty_share (Share.glb sha shb)</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [r; a; b]</span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>field_compatible (tarray tulong <span class="mi">5</span>) [] r</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H13</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H14</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H15</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br><span><var>x0</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>H17</var><span class="hyp-type"><b>: </b><span>Datatypes.length x0 = <span class="mi">5</span>%nat</span></span></span><br><span><var>H18</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">1</span> x0</span></span></span><br><span><var>H19</var><span class="hyp-type"><b>: </b><span>eqm secp256k1_P
+  (secp256k1_fe_array.from_array arra
+     * secp256k1_fe_array.from_array arrb)
+  (secp256k1_fe_array.from_array x0)</span></span></span><br><span><var>x</var><span class="hyp-type"><b>: </b><span>environ</span></span></span><br><span><var>H16</var><span class="hyp-type"><b>: </b><span>ve_of x = Map.empty (block * type)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">data_at shr (tarray tulong <span class="mi">5</span>)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) x0) r
+  * (data_at sha (tarray tulong <span class="mi">5</span>)
+       (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)
+       a
+       * data_at shb (tarray tulong <span class="mi">5</span>)
+           (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x))
+              arrb) b)
+|-- !! (Datatypes.length x0 = <span class="mi">5</span>%nat /\
+        secp256k1_fe_array.boundBy <span class="mi">1</span> x0 /\
+        eqm secp256k1_P
+          (secp256k1_fe_array.from_array arra
+             * secp256k1_fe_array.from_array arrb)
+          (secp256k1_fe_array.from_array x0) /\ <span class="kt">True</span>) &amp;&amp;
+    (TT &amp;&amp;
+     (data_at shr (tarray tulong <span class="mi">5</span>)
+        (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) x0) r
+        * (data_at sha (tarray tulong <span class="mi">5</span>)
+             (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x))
+                arra) a
+             * data_at shb 
+                 (tarray tulong <span class="mi">5</span>)
+                 (map
+                    (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x))
+                    arrb) b)))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input">entailer!.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+<span class="c">(* An easier to use specification to secp256k1_fe_mul_inner for when the pointers r and a are statically known alias. *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_fe_mul_inner_spec_alias</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_fe_mul_inner
+  WITH a : val, sha : share, arra : list Z,
+       b : val, shb : share, arrb : list Z
+  PRE [ tptr tulong, tptr tulong, tptr tulong ]
+    PROP(writable_share sha;
+         readable_share shb;
+         length arra = <span class="mi">5</span>%nat;
+         length arrb = <span class="mi">5</span>%nat;
+         secp256k1_fe_array.boundBy <span class="mi">8</span> arra;
+         secp256k1_fe_array.boundBy <span class="mi">8</span> arrb)
+    PARAMS(a; a; b)
+  SEP(data_at sha (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arra) a;
+      data_at shb (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arrb) b)
+POST [ tvoid ]
+  EX arrr : list Z,
+  PROP(length arrr = <span class="mi">5</span>%nat;
+       secp256k1_fe_array.boundBy <span class="mi">1</span> arrr;
+       eqm secp256k1_P (secp256k1_fe_array.from_array arra * secp256k1_fe_array.from_array arrb) (secp256k1_fe_array.from_array arrr))
+  RETURN()
+  SEP(data_at sha (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arrr) a;
+      data_at shb (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arrb) b).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+<span class="c">(* Use with</span>
+<span class="c">   forward_call secp256k1_fe_mul_inner_spec_restrict_sub (a, sha, arra, b, shb, arrb)</span>
+<span class="c">*)</span>
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk2e" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk2e"><span class="kn">Lemma</span> <span class="nf">secp256k1_fe_mul_inner_spec_alias_sub</span> :
+  funspec_sub (snd secp256k1_fe_mul_inner_spec) (snd secp256k1_fe_mul_inner_spec_alias).</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">funspec_sub (snd secp256k1_fe_mul_inner_spec)
+  (snd secp256k1_fe_mul_inner_spec_alias)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk2f" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk2f"><span class="kn">Proof</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">funspec_sub (snd secp256k1_fe_mul_inner_spec)
+  (snd secp256k1_fe_mul_inner_spec_alias)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk30" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk30">do_funspec_sub.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>w</var><span class="hyp-type"><b>: </b><span>(val * share * list Z * val * share * list Z)%type</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">(<span class="kr">let</span> (<span class="nv">p</span>, arrb) := w <span class="kr">in</span>
+ <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+ <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+ <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+ <span class="kr">let</span> (<span class="nv">a</span>, sha) := p2 <span class="kr">in</span>
+ <span class="kr">fun</span> <span class="nv">x</span> : argsEnviron =&gt;
+ !! (writable_share sha /\
+     readable_share shb /\
+     Datatypes.length arra = <span class="mi">5</span>%nat /\
+     Datatypes.length arrb = <span class="mi">5</span>%nat /\
+     secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+     secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+ (!! (snd x = [a; a; b]) &amp;&amp;
+  (TT &amp;&amp;
+   (data_at sha (tarray tulong <span class="mi">5</span>)
+      (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) arra)
+      a
+      * (data_at shb (tarray tulong <span class="mi">5</span>)
+           (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+              arrb) b
+           * emp))))) (g, args)
+|-- EX (x1 : option (val * share) * val * share
+               * list Z
+               * val
+               * share
+               * list Z) (F : mpred),
+    F
+      * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+         <span class="kr">fun</span> <span class="nv">x</span> : argsEnviron =&gt;
+         !! (writable_share (withOption sha snd r) /\
+             readable_share sha /\
+             readable_share shb /\
+             nonempty_share (Share.glb sha shb) /\
+             Datatypes.length arra = <span class="mi">5</span>%nat /\
+             Datatypes.length arrb = <span class="mi">5</span>%nat /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+         (!! (snd x = [withOption a fst r; a; b]) &amp;&amp;
+          (TT &amp;&amp;
+           (withOption emp
+              (<span class="kr">fun</span> &#39;(v, sh) =&gt;
+               data_at_ sh (tarray tulong <span class="mi">5</span>) v) r
+              * (data_at sha (tarray tulong <span class="mi">5</span>)
+                   (map (... =&gt; ...) arra) a
+                   * (data_at shb (tarray tulong <span class="mi">5</span>)
+                        (map ... arrb) b
+                        * emp)))))) (g, args) &amp;&amp;
+    !! (<span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+        !! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+        (F
+           * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+              <span class="kr">fun</span> <span class="nv">_</span> : environ =&gt;
+              EX x : list Z,
+              !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                  secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                  eqm secp256k1_P (... * ...)
+                    (secp256k1_fe_array.from_array x) /\
+                  <span class="kt">True</span>) &amp;&amp;
+              (TT &amp;&amp;
+               (data_at (withOption sha snd r)
+                  (tarray tulong <span class="mi">5</span>) (map ... x)
+                  (withOption a fst r)
+                  * (withOption emp ... r * (...)))))
+               rho&#39;)
+        |-- (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := w <span class="kr">in</span>
+             <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+             <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+             <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+             <span class="kr">let</span> (<span class="nv">a</span>, sha) := p2 <span class="kr">in</span>
+             <span class="kr">fun</span> <span class="nv">_</span> : environ =&gt;
+             EX x : list Z,
+             !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                 secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                 eqm secp256k1_P
+                   (secp256k1_fe_array.from_array arra
+                      * secp256k1_fe_array.from_array
+                          arrb)
+                   (secp256k1_fe_array.from_array x) /\
+                 <span class="kt">True</span>) &amp;&amp;
+             (TT &amp;&amp;
+              (data_at sha (tarray tulong <span class="mi">5</span>)
+                 (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (...)) x) a
+                 * (data_at shb (tarray tulong <span class="mi">5</span>)
+                      (map (... =&gt; ...) arrb) b
+                      * emp)))) rho&#39;)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk31" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk31"><span class="nb">destruct</span> w <span class="kr">as</span> [[[[[a sha] arra] b] shb] arrb].</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">!! (writable_share sha /\
+    readable_share shb /\
+    Datatypes.length arra = <span class="mi">5</span>%nat /\
+    Datatypes.length arrb = <span class="mi">5</span>%nat /\
+    secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+    secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+(!! (snd (g, args) = [a; a; b]) &amp;&amp;
+ (TT &amp;&amp;
+  (data_at sha (tarray tulong <span class="mi">5</span>)
+     (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) a
+     * (data_at shb (tarray tulong <span class="mi">5</span>)
+          (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x))
+             arrb) b
+          * emp))))
+|-- EX (x1 : option (val * share) * val * share
+               * list Z
+               * val
+               * share
+               * list Z) 
+    (F : mpred),
+    F
+      * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+         <span class="kr">fun</span> <span class="nv">x</span> : argsEnviron =&gt;
+         !! (writable_share (withOption sha snd r) /\
+             readable_share sha /\
+             readable_share shb /\
+             nonempty_share (Share.glb sha shb) /\
+             Datatypes.length arra = <span class="mi">5</span>%nat /\
+             Datatypes.length arrb = <span class="mi">5</span>%nat /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+         (!! (snd x = [withOption a fst r; a; b]) &amp;&amp;
+          (TT &amp;&amp;
+           (withOption emp
+              (<span class="kr">fun</span> &#39;(v, sh) =&gt;
+               data_at_ sh (tarray tulong <span class="mi">5</span>) v) r
+              * (data_at sha 
+                   (tarray tulong <span class="mi">5</span>)
+                   (map (... =&gt; ...) arra) a
+                   * (data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map ... arrb) b
+                        * emp)))))) (
+          g, args) &amp;&amp;
+    !! (<span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+        !! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+        (F
+           * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+              <span class="kr">fun</span> <span class="nv">_</span> : environ =&gt;
+              EX x : list Z,
+              !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                  secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                  eqm secp256k1_P 
+                    (... * ...)
+                    (secp256k1_fe_array.from_array x) /\
+                  <span class="kt">True</span>) &amp;&amp;
+              (TT &amp;&amp;
+               (data_at (withOption sha snd r)
+                  (tarray tulong <span class="mi">5</span>) 
+                  (map ... x) 
+                  (withOption a fst r)
+                  * (withOption emp ... r * (...)))))
+               rho&#39;)
+        |-- EX x : list Z,
+            !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                eqm secp256k1_P
+                  (secp256k1_fe_array.from_array arra
+                     * secp256k1_fe_array.from_array
+                        arrb)
+                  (secp256k1_fe_array.from_array x) /\
+                <span class="kt">True</span>) &amp;&amp;
+            (TT &amp;&amp;
+             (data_at sha 
+                (tarray tulong <span class="mi">5</span>)
+                (map
+                   (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                    Vlong (Int64.repr x0)) x) a
+                * (data_at shb 
+                     (tarray tulong <span class="mi">5</span>)
+                     (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arrb) b
+                     * emp))))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk32" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk32">entailer!.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share sha</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [a; a; b]</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">data_at sha (tarray tulong <span class="mi">5</span>)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) a
+  * data_at shb (tarray tulong <span class="mi">5</span>)
+      (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) b
+|-- EX (x1 : option (val * share) * val * share
+               * list Z
+               * val
+               * share
+               * list Z) 
+    (F : mpred),
+    F
+      * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+         <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+         <span class="kr">fun</span> <span class="nv">x</span> : argsEnviron =&gt;
+         !! (writable_share (withOption sha snd r) /\
+             readable_share sha /\
+             readable_share shb /\
+             nonempty_share (Share.glb sha shb) /\
+             Datatypes.length arra = <span class="mi">5</span>%nat /\
+             Datatypes.length arrb = <span class="mi">5</span>%nat /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+         (!! (snd x = [withOption a fst r; a; b]) &amp;&amp;
+          (TT &amp;&amp;
+           (withOption emp
+              (<span class="kr">fun</span> &#39;(v, sh) =&gt;
+               data_at_ sh (tarray tulong <span class="mi">5</span>) v) r
+              * (data_at sha 
+                   (tarray tulong <span class="mi">5</span>)
+                   (map (... =&gt; ...) arra) a
+                   * (data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map ... arrb) b
+                        * emp)))))) (
+          g, args) &amp;&amp;
+    !! (<span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+        !! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+        (F
+           * (<span class="kr">let</span> (<span class="nv">p</span>, arrb) := x1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p0</span>, shb) := p <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p1</span>, b) := p0 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p2</span>, arra) := p1 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">p3</span>, sha) := p2 <span class="kr">in</span>
+              <span class="kr">let</span> (<span class="nv">r</span>, a) := p3 <span class="kr">in</span>
+              <span class="kr">fun</span> <span class="nv">_</span> : environ =&gt;
+              EX x : list Z,
+              !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                  secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                  eqm secp256k1_P 
+                    (... * ...)
+                    (secp256k1_fe_array.from_array x) /\
+                  <span class="kt">True</span>) &amp;&amp;
+              (TT &amp;&amp;
+               (data_at (withOption sha snd r)
+                  (tarray tulong <span class="mi">5</span>) 
+                  (map ... x) 
+                  (withOption a fst r)
+                  * (withOption emp ... r * (...)))))
+               rho&#39;)
+        |-- EX x : list Z,
+            !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                eqm secp256k1_P
+                  (secp256k1_fe_array.from_array arra
+                     * secp256k1_fe_array.from_array
+                        arrb)
+                  (secp256k1_fe_array.from_array x) /\
+                <span class="kt">True</span>) &amp;&amp;
+            (TT &amp;&amp;
+             (data_at sha 
+                (tarray tulong <span class="mi">5</span>)
+                (map
+                   (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                    Vlong (Int64.repr x0)) x) a
+                * data_at shb 
+                    (tarray tulong <span class="mi">5</span>)
+                    (map
+                       (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arrb) b)))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk33" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk33">Exists ((((((@None (val * share), a), sha), arra), b), shb), arrb) emp.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share sha</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [a; a; b]</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">data_at sha (tarray tulong <span class="mi">5</span>)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) a
+  * data_at shb (tarray tulong <span class="mi">5</span>)
+      (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) b
+|-- emp
+      * (!! (writable_share (withOption sha snd None) /\
+             readable_share sha /\
+             readable_share shb /\
+             nonempty_share (Share.glb sha shb) /\
+             Datatypes.length arra = <span class="mi">5</span>%nat /\
+             Datatypes.length arrb = <span class="mi">5</span>%nat /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arra /\
+             secp256k1_fe_array.boundBy <span class="mi">8</span> arrb /\ <span class="kt">True</span>) &amp;&amp;
+         (!! (snd (g, args) = [
+              withOption a fst None; a; b]) &amp;&amp;
+          (TT &amp;&amp;
+           (withOption emp
+              (<span class="kr">fun</span> &#39;(v, sh) =&gt;
+               data_at_ sh (tarray tulong <span class="mi">5</span>) v) None
+              * (data_at sha 
+                   (tarray tulong <span class="mi">5</span>)
+                   (map
+                      (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt;
+                       Vlong (Int64.repr x)) arra) a
+                   * (data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map
+                        (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt;
+                        Vlong (Int64.repr x)) arrb) b
+                        * emp)))))) &amp;&amp;
+    !! (<span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+        !! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+        (emp
+           * (EX x : list Z,
+              !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                  secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                  eqm secp256k1_P
+                    (secp256k1_fe_array.from_array
+                       arra
+                       * 
+                       secp256k1_fe_array.from_array
+                        arrb)
+                    (secp256k1_fe_array.from_array x) /\
+                  <span class="kt">True</span>) &amp;&amp;
+              (TT &amp;&amp;
+               (data_at (withOption sha snd None)
+                  (tarray tulong <span class="mi">5</span>)
+                  (map
+                     (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                      Vlong (Int64.repr x0)) x)
+                  (withOption a fst None)
+                  * (withOption emp
+                       (<span class="kr">fun</span> <span class="nv">_</span> : val * share =&gt;
+                        data_at sha 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (...))
+                        arra) a) None
+                       * 
+                       (data_at shb 
+                        (tarray tulong <span class="mi">5</span>)
+                        (map
+                        (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arrb) b
+                        * emp))))))
+        |-- EX x : list Z,
+            !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+                secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+                eqm secp256k1_P
+                  (secp256k1_fe_array.from_array arra
+                     * secp256k1_fe_array.from_array
+                        arrb)
+                  (secp256k1_fe_array.from_array x) /\
+                <span class="kt">True</span>) &amp;&amp;
+            (TT &amp;&amp;
+             (data_at sha 
+                (tarray tulong <span class="mi">5</span>)
+                (map
+                   (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                    Vlong (Int64.repr x0)) x) a
+                * data_at shb 
+                    (tarray tulong <span class="mi">5</span>)
+                    (map
+                       (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt;
+                        Vlong (Int64.repr x0)) arrb) b)))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk34" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk34"><span class="nb">simpl</span>; entailer!.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share sha</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [a; a; b]</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">(<span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+ !! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+ (EX x : list Z,
+  emp
+    * (!! (Datatypes.length x = <span class="mi">5</span>%nat /\
+           secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+           eqm secp256k1_P
+             (secp256k1_fe_array.from_array arra
+                * secp256k1_fe_array.from_array arrb)
+             (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+       (TT &amp;&amp;
+        (data_at sha (tarray tulong <span class="mi">5</span>)
+           (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+              x) a
+           * data_at shb 
+               (tarray tulong <span class="mi">5</span>)
+               (map
+                  (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+                  arrb) b))))
+ |-- EX x : list Z,
+     !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+         secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+         eqm secp256k1_P
+           (secp256k1_fe_array.from_array arra
+              * secp256k1_fe_array.from_array arrb)
+           (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+     (TT &amp;&amp;
+      (data_at sha (tarray tulong <span class="mi">5</span>)
+         (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) x)
+         a
+         * data_at shb (tarray tulong <span class="mi">5</span>)
+             (map
+                (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+                arrb) b))) /\
+nonempty_share (Share.glb sha shb)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk35" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk35"><span class="nb">intros</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share sha</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [a; a; b]</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">(<span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+ !! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+ (EX x : list Z,
+  emp
+    * (!! (Datatypes.length x = <span class="mi">5</span>%nat /\
+           secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+           eqm secp256k1_P
+             (secp256k1_fe_array.from_array arra
+                * secp256k1_fe_array.from_array arrb)
+             (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+       (TT &amp;&amp;
+        (data_at sha (tarray tulong <span class="mi">5</span>)
+           (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+              x) a
+           * data_at shb 
+               (tarray tulong <span class="mi">5</span>)
+               (map
+                  (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+                  arrb) b))))
+ |-- EX x : list Z,
+     !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+         secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+         eqm secp256k1_P
+           (secp256k1_fe_array.from_array arra
+              * secp256k1_fe_array.from_array arrb)
+           (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+     (TT &amp;&amp;
+      (data_at sha (tarray tulong <span class="mi">5</span>)
+         (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) x)
+         a
+         * data_at shb (tarray tulong <span class="mi">5</span>)
+             (map
+                (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+                arrb) b))) /\
+nonempty_share (Share.glb sha shb)</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk36" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk36"><span class="nb">split</span>.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share sha</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [a; a; b]</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+!! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+(EX x : list Z,
+ emp
+   * (!! (Datatypes.length x = <span class="mi">5</span>%nat /\
+          secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+          eqm secp256k1_P
+            (secp256k1_fe_array.from_array arra
+               * secp256k1_fe_array.from_array arrb)
+            (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+      (TT &amp;&amp;
+       (data_at sha (tarray tulong <span class="mi">5</span>)
+          (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) x)
+          a
+          * data_at shb (tarray tulong <span class="mi">5</span>)
+              (map
+                 (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+                 arrb) b))))
+|-- EX x : list Z,
+    !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+        secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+        eqm secp256k1_P
+          (secp256k1_fe_array.from_array arra
+             * secp256k1_fe_array.from_array arrb)
+          (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+    (TT &amp;&amp;
+     (data_at sha (tarray tulong <span class="mi">5</span>)
+        (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) x)
+        a
+        * data_at shb (tarray tulong <span class="mi">5</span>)
+            (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+               arrb) b))</div></blockquote><div class="alectryon-extra-goals"><input class="alectryon-extra-goal-toggle" id="spec-field-5x52-v-chk37" style="display: none" type="checkbox"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share sha</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [a; a; b]</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br></div><label class="goal-separator" for="spec-field-5x52-v-chk37"><hr></label><div class="goal-conclusion">nonempty_share (Share.glb sha shb)</div></blockquote></div></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk38" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk38">*</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share sha</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [a; a; b]</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion"><span class="kr">forall</span> <span class="nv">rho&#39;</span> : environ,
+!! (ve_of rho&#39; = Map.empty (block * type)) &amp;&amp;
+(EX x : list Z,
+ emp
+   * (!! (Datatypes.length x = <span class="mi">5</span>%nat /\
+          secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+          eqm secp256k1_P
+            (secp256k1_fe_array.from_array arra
+               * secp256k1_fe_array.from_array arrb)
+            (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+      (TT &amp;&amp;
+       (data_at sha (tarray tulong <span class="mi">5</span>)
+          (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) x)
+          a
+          * data_at shb (tarray tulong <span class="mi">5</span>)
+              (map
+                 (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+                 arrb) b))))
+|-- EX x : list Z,
+    !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+        secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+        eqm secp256k1_P
+          (secp256k1_fe_array.from_array arra
+             * secp256k1_fe_array.from_array arrb)
+          (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+    (TT &amp;&amp;
+     (data_at sha (tarray tulong <span class="mi">5</span>)
+        (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) x)
+        a
+        * data_at shb (tarray tulong <span class="mi">5</span>)
+            (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+               arrb) b))</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk39" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk39">entailer!.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share sha</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [a; a; b]</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br><span><var>rho'</var><span class="hyp-type"><b>: </b><span>environ</span></span></span><br><span><var>H13</var><span class="hyp-type"><b>: </b><span>ve_of rho&#39; = Map.empty (block * type)</span></span></span><br><span><var>x</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>H14</var><span class="hyp-type"><b>: </b><span>Datatypes.length x = <span class="mi">5</span>%nat</span></span></span><br><span><var>H15</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">1</span> x</span></span></span><br><span><var>H16</var><span class="hyp-type"><b>: </b><span>eqm secp256k1_P
+  (secp256k1_fe_array.from_array arra
+     * secp256k1_fe_array.from_array arrb)
+  (secp256k1_fe_array.from_array x)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">data_at sha (tarray tulong <span class="mi">5</span>)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) x) a
+  * data_at shb (tarray tulong <span class="mi">5</span>)
+      (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) b
+|-- EX x : list Z,
+    !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+        secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+        eqm secp256k1_P
+          (secp256k1_fe_array.from_array arra
+             * secp256k1_fe_array.from_array arrb)
+          (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+    (TT &amp;&amp;
+     (data_at sha (tarray tulong <span class="mi">5</span>)
+        (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0)) x)
+        a
+        * data_at shb (tarray tulong <span class="mi">5</span>)
+            (map (<span class="kr">fun</span> <span class="nv">x0</span> : Z =&gt; Vlong (Int64.repr x0))
+               arrb) b))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk3a" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk3a">Exists x.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share sha</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [a; a; b]</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br><span><var>rho'</var><span class="hyp-type"><b>: </b><span>environ</span></span></span><br><span><var>H13</var><span class="hyp-type"><b>: </b><span>ve_of rho&#39; = Map.empty (block * type)</span></span></span><br><span><var>x</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>H14</var><span class="hyp-type"><b>: </b><span>Datatypes.length x = <span class="mi">5</span>%nat</span></span></span><br><span><var>H15</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">1</span> x</span></span></span><br><span><var>H16</var><span class="hyp-type"><b>: </b><span>eqm secp256k1_P
+  (secp256k1_fe_array.from_array arra
+     * secp256k1_fe_array.from_array arrb)
+  (secp256k1_fe_array.from_array x)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">data_at sha (tarray tulong <span class="mi">5</span>)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) x) a
+  * data_at shb (tarray tulong <span class="mi">5</span>)
+      (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) b
+|-- !! (Datatypes.length x = <span class="mi">5</span>%nat /\
+        secp256k1_fe_array.boundBy <span class="mi">1</span> x /\
+        eqm secp256k1_P
+          (secp256k1_fe_array.from_array arra
+             * secp256k1_fe_array.from_array arrb)
+          (secp256k1_fe_array.from_array x) /\ <span class="kt">True</span>) &amp;&amp;
+    (TT &amp;&amp;
+     (data_at sha (tarray tulong <span class="mi">5</span>)
+        (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) x) a
+        * data_at shb (tarray tulong <span class="mi">5</span>)
+            (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x))
+               arrb) b))</div></blockquote></div></div></small><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">  </span><span class="alectryon-sentence"><span class="alectryon-input">entailer!.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-field-5x52-v-chk3b" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-field-5x52-v-chk3b">*</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><div class="goal-hyps"><span><var>a</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>sha</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arra</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>b</var><span class="hyp-type"><b>: </b><span>val</span></span></span><br><span><var>shb</var><span class="hyp-type"><b>: </b><span>share</span></span></span><br><span><var>arrb</var><span class="hyp-type"><b>: </b><span>list Z</span></span></span><br><span><var>g</var><span class="hyp-type"><b>: </b><span>genviron</span></span></span><br><span><var>args</var><span class="hyp-type"><b>: </b><span>list val</span></span></span><br><span><var>H</var><span class="hyp-type"><b>: </b><span>argsHaveTyps (snd (g, args))
+  (fst
+     ([tptr tulong; tptr tulong; tptr tulong],
+      tvoid))</span></span></span><br><span><var>H0</var><span class="hyp-type"><b>: </b><span>writable_share sha</span></span></span><br><span><var>H1</var><span class="hyp-type"><b>: </b><span>readable_share shb</span></span></span><br><span><var>H2</var><span class="hyp-type"><b>: </b><span>Datatypes.length arra = <span class="mi">5</span>%nat</span></span></span><br><span><var>H3</var><span class="hyp-type"><b>: </b><span>Datatypes.length arrb = <span class="mi">5</span>%nat</span></span></span><br><span><var>H4</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arra</span></span></span><br><span><var>H5</var><span class="hyp-type"><b>: </b><span>secp256k1_fe_array.boundBy <span class="mi">8</span> arrb</span></span></span><br><span><var>H6</var><span class="hyp-type"><b>: </b><span>snd (g, args) = [a; a; b]</span></span></span><br><span><var>H7</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] a</span></span></span><br><span><var>H8</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra) = <span class="mi">5</span></span></span></span><br><span><var>H9</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arra)</span></span></span><br><span><var>H10</var><span class="hyp-type"><b>: </b><span>field_compatible (Tarray tulong <span class="mi">5</span> noattr) [] b</span></span></span><br><span><var>H11</var><span class="hyp-type"><b>: </b><span>Zlength
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb) = <span class="mi">5</span></span></span></span><br><span><var>H12</var><span class="hyp-type"><b>: </b><span>Forall (value_fits tulong)
+  (map (<span class="kr">fun</span> <span class="nv">x</span> : Z =&gt; Vlong (Int64.repr x)) arrb)</span></span></span><br></div><span class="goal-separator"><hr></span><div class="goal-conclusion">nonempty_share (Share.glb sha shb)</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="nb">apply</span> nonempty_writable_glb; <span class="bp">assumption</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Qed</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_fe_sqr_inner_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_fe_sqr_inner
+  WITH r : option (val * share),
+       a : val, sha : share, arra : list Z
+    PRE [ tptr tulong, tptr tulong ]
+    PROP(writable_share (withOption sha snd r);
+         readable_share sha;
+         length arra = <span class="mi">5</span>%nat;
+         secp256k1_fe_array.boundBy <span class="mi">8</span> arra)
+    PARAMS(withOption a fst r; a)
+  SEP(withOption emp (<span class="kr">fun</span> &#39;(v, sh) =&gt; data_at_ sh (tarray tulong <span class="mi">5</span>) v) r;
+      data_at sha (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arra) a)
+POST [ tvoid ]
+  EX arrr : list Z,
+  PROP(length arrr = <span class="mi">5</span>%nat;
+       secp256k1_fe_array.boundBy <span class="mi">1</span> arrr;
+       eqm secp256k1_P (secp256k1_fe_array.from_array arra ^ <span class="mi">2</span>) (secp256k1_fe_array.from_array arrr))
+  RETURN()
+  SEP(data_at (withOption sha snd r) (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arrr) (withOption a fst r);
+      withOption emp (<span class="kr">fun</span> <span class="nv">_</span> =&gt; (data_at sha (tarray tulong <span class="mi">5</span>) (map (<span class="kr">fun</span> <span class="nv">x</span> =&gt; Vlong (Int64.repr x)) arra) a)) r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span></pre></article></body></html>

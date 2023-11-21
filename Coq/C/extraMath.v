@@ -4,10 +4,14 @@ Require Import Lia.
 
 Local Open Scope Z.
 
-Lemma div_bounds a b c d : d * a <= b < d * c -> 0 < d -> a <= b / d < c.
+Lemma div_bounds a b c d : 0 < d -> d * a <= b < d * c <-> a <= b / d < c.
 Proof.
-intros Hb Hd.
-split;[apply Z.div_le_lower_bound|apply Z.div_lt_upper_bound];tauto.
+intros Hd.
+split; intros Hb.
+* split;[apply Z.div_le_lower_bound|apply Z.div_lt_upper_bound];tauto.
+* split.
+  - etransitivity;[apply Zmult_le_compat_l|apply Z.mul_div_le];lia.
+  - eapply Z.lt_le_trans;[apply Z.mul_succ_div_gt|apply Zmult_le_compat_l];try lia.
 Qed.
 
 Lemma Z_shiftr_neg1_l: forall n : Z, 0 <= n -> Z.shiftr (-1) n = -1.
@@ -113,7 +117,7 @@ assert (Hn : 0 <= n).
  destruct (Z.neg_nonneg_cases n); auto.
  rewrite (Z.pow_neg_r 2 n) in Hb; lia. 
 rewrite Z.shiftr_div_pow2 by assumption.
-auto using div_bounds with *.
+apply div_bounds; auto with *.
 Qed.
 
 Lemma shiftr_mod_sub_borrow n a b : 0 <= n -> Z.shiftr (a mod (2^n) - b mod (2^n)) n = - Z.b2z (a mod (2^n) <? b mod (2^n)).
@@ -212,4 +216,59 @@ do 2 f_equal.
 assert (Hx' : 0 <= (x - a)/m < 1) by (apply div_bounds; lia).
 assert (Hy' : 0 <= (y - a)/m < 1) by (apply div_bounds; lia).
 lia.
+Qed.
+
+Lemma Z_lor_pos (a b : Z) : 0 <= a -> 0 < b -> 0 < Z.lor a b.
+Proof.
+intros Ha Hb.
+cut (0 <= Z.lor a b).
+* intros Hab.
+  apply Z.le_lteq in Hab.
+  destruct Hab; try assumption.
+  cut (false = true);[discriminate|].
+  rewrite <- (Z.bits_0 (Z.log2 b)), H, Z.lor_spec, Z.bit_log2, orb_true_r; auto.
+* apply Z.lt_le_incl in Hb.
+  rewrite Z.bits_iff_nonneg_ex in *.
+  destruct Ha as [ka Ha].
+  destruct Hb as [kb Hb].
+  exists (Z.max ka kb).
+  intros m Hm.
+  rewrite Z.lor_spec, Ha, Hb; lia.
+Qed.
+
+Lemma Z_log2_lt_pow2 (a b : Z) : 0 < b -> a < 2 ^ b <-> Z.log2 a < b.
+Proof.
+intros Hb.
+destruct a as [|a|a];[|apply Z.log2_lt_pow2;lia|];auto with *.
+Qed.
+
+Lemma Z_shiftr_ones a n : 0 <= n <= a -> (Z.shiftr (Z.ones a) n) = Z.ones (a - n).
+Proof.
+intros Hn.
+apply Z.bits_inj.
+intros i.
+destruct (Z.neg_nonneg_cases i) as [Hi|Hi];
+[rewrite !Z.testbit_neg_r by lia; reflexivity|].
+rewrite Z.shiftr_spec, !Z.testbit_ones_nonneg; lia.
+Qed.
+
+Lemma Z_land_ones_min a b : 0 <= a -> 0 <= b ->
+  (Z.land (Z.ones a) (Z.ones b)) = Z.ones (Z.min a b).
+intros Ha fhb.
+apply Z.bits_inj.
+intros i.
+destruct (Z.neg_nonneg_cases i) as [Hi|Hi];
+[rewrite !Z.testbit_neg_r by lia; reflexivity|].
+rewrite Z.land_spec; rewrite !Z.testbit_ones_nonneg; lia.
+Qed.
+
+Lemma eqm_2_pow_le m n a b : 0 <= m <= n -> eqm (2^n) a b -> eqm (2^m) a b.
+Proof.
+intros Hmn.
+unfold eqm.
+rewrite <- !Z.land_ones by lia.
+replace m with (Z.min n m) by lia.
+rewrite <- !Z_land_ones_min, !Z.land_assoc by lia.
+intros ->.
+reflexivity.
 Qed.

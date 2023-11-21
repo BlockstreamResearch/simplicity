@@ -14,7 +14,9 @@ stdenv.mkDerivation {
   makefile = "CoqMakefile";
   installFlags = "COQLIB=$(out)/lib/coq/${coq.coq-version}/";
   postInstall = ''
-    alectryon --frontend coq --output-directory $doc --webpage-style windowed -R C C C/secp256k1/spec_int128.v C/secp256k1/verif_int128_impl.v
+    alectryon --frontend coq --output-directory $doc --webpage-style windowed -R C C \
+      C/secp256k1/spec_int128.v C/secp256k1/verif_int128_impl.v \
+      C/secp256k1/spec_field_5x52.v C/secp256k1/verif_field_5x52_int128_impl.v
   '';
   meta = {
     license = lib.licenses.mit;
