@@ -10,6 +10,7 @@
 }:
 let hp = nixpkgs.haskell.packages.${ghc};
     cp = nixpkgs.${coqPackages};
+    pp = nixpkgs.python3Packages;
  in rec
 {
   haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix {};
@@ -27,7 +28,8 @@ let hp = nixpkgs.haskell.packages.${ghc};
   };
 
   coq = nixpkgs.callPackage ./Simplicity.Coq.nix {
-    inherit (cp) coq;
+    inherit (pp) alectryon;
+    inherit (cp) coq serapi;
     inherit vst;
   };
 
