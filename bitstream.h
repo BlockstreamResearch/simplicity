@@ -2,7 +2,7 @@
 #ifndef SIMPLICITY_BITSTREAM_H
 #define SIMPLICITY_BITSTREAM_H
 
-#include <stdio.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <simplicity/errorCodes.h>
