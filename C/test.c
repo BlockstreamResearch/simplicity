@@ -522,7 +522,7 @@ static void regression_tests(void) {
     const uint32_t cmr[] = {
       0x7f81c076u, 0xf0df9505u, 0xbfce61f0u, 0x41197bd9u, 0x2aaaa4f1u, 0x7015d1ecu, 0xb248ddffu, 0xe9d9da07u
     };
-    assert(regression3);
+    simplicity_assert(regression3);
     regression3[0] = 0xb7; regression3[1] = 0x08;
     regression3[sizeof_regression3 - 2] = 0x48; regression3[sizeof_regression3 - 1] = 0x20;
     start = clock();
