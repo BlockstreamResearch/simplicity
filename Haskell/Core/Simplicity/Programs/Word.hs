@@ -10,6 +10,8 @@ module Simplicity.Programs.Word
   , leftmost, left_pad_low, left_pad_high, left_extend
   , rightmost, right_pad_low, right_pad_high, right_extend
   , full_shift, shift_const_by, rotate_const
+  , left_shift_with, left_shift
+  , right_shift_with, right_shift
   , mapZV, transpose
   , bufferEmpty, bufferSnoc
   , forWhile, firstFail
@@ -215,6 +217,45 @@ right_shift_const_by t v n | vectorSize v <= n = unit >>> fill t v
    where
     right_shift1 = (unit >>> t) &&& iden >>> full_right_shift1 v >>> oh
     rec = go (t &&& t) (vectorPromote v')
+
+-- | Return a list of expessions that projects out each item in the vector from left to right.
+itemsOf :: (Core term) => Vector a b -> [term b a]
+itemsOf SingleV = [iden]
+itemsOf (DoubleV v) = (take <$> rec) ++ (drop <$> rec)
+ where
+  rec = itemsOf v
+
+-- | Left shift a vector by a given amount, shifting in the value the value provided.
+left_shift_with :: (Core term, TyC a, TyC b, TyC c) => Word c -> Vector a b -> term (a, (c,b)) b
+left_shift_with c = go . reverse $ itemsOf c
+ where
+  go :: (Core term, TyC a, TyC b, TyC c) => [term c Bit] -> Vector a b -> term (a,(c,b)) b
+  go [] v = iih
+  go (control:controlBits) v =
+    oh &&& (ioh &&& (drop (take control) &&& (iih &&& oh) >>> cond (full_left_shift1 v >>> ih) oh))
+    >>> case v of
+          SingleV -> go controlBits v
+          DoubleV v' -> (oh &&& oh) &&& ih >>> go controlBits (vectorPromote v')
+
+-- | Left shift a vector by a given amount, shifting in zero bits.
+left_shift :: (Core term, TyC b, TyC c) => Word c -> Word b -> term (c,b) b
+left_shift c b = false &&& iden >>> left_shift_with c b
+
+-- | Right shift a vector by a given amount, shifting in the value the value provided.
+right_shift_with :: (Core term, TyC a, TyC b, TyC c) => Word c -> Vector a b -> term (a, (c,b)) b
+right_shift_with c = go . reverse $ itemsOf c
+ where
+  go :: (Core term, TyC a, TyC b, TyC c) => [term c Bit] -> Vector a b -> term (a,(c,b)) b
+  go [] v = iih
+  go (control:controlBits) v =
+    oh &&& (ioh &&& (drop (take control) &&& (oh &&& iih) >>> cond (full_right_shift1 v >>> oh) ih))
+    >>> case v of
+          SingleV -> go controlBits v
+          DoubleV v' -> (oh &&& oh) &&& ih >>> go controlBits (vectorPromote v')
+
+-- | Right shift a vector by a given amount, shifting in zero bits.
+right_shift :: (Core term, TyC b, TyC c) => Word c -> Word b -> term (c,b) b
+right_shift c b = false &&& iden >>> right_shift_with c b
 
 -- | Left shift a vector by shifting in the value that is shifted out.
 left_rotate1 :: (Core term, TyC a, TyC b) => Vector a b -> term b b

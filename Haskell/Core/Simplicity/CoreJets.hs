@@ -252,6 +252,22 @@ data WordJet a b where
   RightExtend8_64 :: WordJet Word8 Word64
   RightExtend16_64 :: WordJet Word16 Word64
   RightExtend32_64 :: WordJet Word32 Word64
+  LeftShiftWith8 :: WordJet (Bit, (Word4, Word8)) Word8
+  LeftShiftWith16 :: WordJet (Bit, (Word4, Word16)) Word16
+  LeftShiftWith32 :: WordJet (Bit, (Word8, Word32)) Word32
+  LeftShiftWith64 :: WordJet (Bit, (Word8, Word64)) Word64
+  LeftShift8 :: WordJet (Word4, Word8) Word8
+  LeftShift16 :: WordJet (Word4, Word16) Word16
+  LeftShift32 :: WordJet (Word8, Word32) Word32
+  LeftShift64 :: WordJet (Word8, Word64) Word64
+  RightShiftWith8 :: WordJet (Bit, (Word4, Word8)) Word8
+  RightShiftWith16 :: WordJet (Bit, (Word4, Word16)) Word16
+  RightShiftWith32 :: WordJet (Bit, (Word8, Word32)) Word32
+  RightShiftWith64 :: WordJet (Bit, (Word8, Word64)) Word64
+  RightShift8 :: WordJet (Word4, Word8) Word8
+  RightShift16 :: WordJet (Word4, Word16) Word16
+  RightShift32 :: WordJet (Word8, Word32) Word32
+  RightShift64 :: WordJet (Word8, Word64) Word64
 
 deriving instance Eq (WordJet a b)
 deriving instance Show (WordJet a b)
@@ -624,6 +640,22 @@ specificationWord RightExtend16_32 = Prog.right_extend word16 vector2
 specificationWord RightExtend8_64 = Prog.right_extend word8 vector8
 specificationWord RightExtend16_64 = Prog.right_extend word16 vector4
 specificationWord RightExtend32_64 = Prog.right_extend word32 vector2
+specificationWord LeftShiftWith8 = Prog.left_shift_with word4 word8
+specificationWord LeftShiftWith16 = Prog.left_shift_with word4 word16
+specificationWord LeftShiftWith32 = Prog.left_shift_with word8 word32
+specificationWord LeftShiftWith64 = Prog.left_shift_with word8 word64
+specificationWord LeftShift8 = Prog.left_shift word4 word8
+specificationWord LeftShift16 = Prog.left_shift word4 word16
+specificationWord LeftShift32 = Prog.left_shift word8 word32
+specificationWord LeftShift64 = Prog.left_shift word8 word64
+specificationWord RightShiftWith8 = Prog.right_shift_with word4 word8
+specificationWord RightShiftWith16 = Prog.right_shift_with word4 word16
+specificationWord RightShiftWith32 = Prog.right_shift_with word8 word32
+specificationWord RightShiftWith64 = Prog.right_shift_with word8 word64
+specificationWord RightShift8 = Prog.right_shift word4 word8
+specificationWord RightShift16 = Prog.right_shift word4 word16
+specificationWord RightShift32 = Prog.right_shift word8 word32
+specificationWord RightShift64 = Prog.right_shift word8 word64
 
 specificationArith :: Assert term => ArithJet a b -> term a b
 specificationArith One8 = Prog.one word8
@@ -1056,6 +1088,22 @@ implementationWord RightExtend16_32 = \x -> Just . toWord32 $ (fromWord16 x `shi
 implementationWord RightExtend8_64 = \x -> Just . toWord64 $ (fromWord8 x `shift` (64 - 8) .|. if odd (fromWord8 x) then (2^(64 - 8) - 1) else 0)
 implementationWord RightExtend16_64 = \x -> Just . toWord64 $ (fromWord16 x `shift` (64 - 16) .|. if odd (fromWord16 x) then (2^(64 - 16) - 1) else 0)
 implementationWord RightExtend32_64 = \x -> Just . toWord64 $ (fromWord32 x `shift` (64 - 32) .|. if odd (fromWord32 x) then (2^(64 - 32) - 1) else 0)
+implementationWord LeftShiftWith8 = \(w,(x,y)) -> Just . toWord8 $ (fromWord8 y `shift` fromInteger (fromWord4 x)) .|. if fromBit w then (2^(fromWord4 x) -1) else 0
+implementationWord LeftShiftWith16 = \(w,(x,y)) -> Just . toWord16 $ (fromWord16 y `shift` fromInteger (fromWord4 x)) .|. if fromBit w then (2^(fromWord4 x) -1) else 0
+implementationWord LeftShiftWith32 = \(w,(x,y)) -> Just . toWord32 $ (fromWord32 y `shift` fromInteger (fromWord8 x)) .|. if fromBit w then (2^(fromWord8 x) -1) else 0
+implementationWord LeftShiftWith64 = \(w,(x,y)) -> Just . toWord64 $ (fromWord64 y `shift` fromInteger (fromWord8 x)) .|. if fromBit w then (2^(fromWord8 x) -1) else 0
+implementationWord LeftShift8 = \(x,y) -> Just . toWord8 $ fromWord8 y `shift` fromInteger (fromWord4 x)
+implementationWord LeftShift16 = \(x,y) -> Just . toWord16 $ fromWord16 y `shift` fromInteger (fromWord4 x)
+implementationWord LeftShift32 = \(x,y) -> Just . toWord32 $ fromWord32 y `shift` fromInteger (fromWord8 x)
+implementationWord LeftShift64 = \(x,y) -> Just . toWord64 $ fromWord64 y `shift` fromInteger (fromWord8 x)
+implementationWord RightShiftWith8 = \(w,(x,y)) -> Just . toWord8 $ (fromWord8 y `shift` fromInteger (-fromWord4 x)) .|. if fromBit w then ((-1 :: Integer) `shift` fromInteger (8-fromWord4 x)) else 0
+implementationWord RightShiftWith16 = \(w,(x,y)) -> Just . toWord16 $ (fromWord16 y `shift` fromInteger (-fromWord4 x)) .|. if fromBit w then ((-1 :: Integer) `shift` fromInteger (16-fromWord4 x)) else 0
+implementationWord RightShiftWith32 = \(w,(x,y)) -> Just . toWord32 $ (fromWord32 y `shift` fromInteger (-fromWord8 x)) .|. if fromBit w then ((-1 :: Integer) `shift` fromInteger (32-fromWord8 x)) else 0
+implementationWord RightShiftWith64 = \(w,(x,y)) -> Just . toWord64 $ (fromWord64 y `shift` fromInteger (-fromWord8 x)) .|. if fromBit w then ((-1 :: Integer) `shift` fromInteger (64-fromWord8 x)) else 0
+implementationWord RightShift8 = \(x,y) -> Just . toWord8 $ fromWord8 y `shift` fromInteger (-fromWord4 x)
+implementationWord RightShift16 = \(x,y) -> Just . toWord16 $ fromWord16 y `shift` fromInteger (-fromWord4 x)
+implementationWord RightShift32 = \(x,y) -> Just . toWord32 $ fromWord32 y `shift` fromInteger (-fromWord8 x)
+implementationWord RightShift64 = \(x,y) -> Just . toWord64 $ fromWord64 y `shift` fromInteger (-fromWord8 x)
 
 implementationArith :: ArithJet a b -> a -> Maybe b
 implementationArith One8 = const . return $ toWord8 1
@@ -1452,6 +1500,10 @@ wordBook = Shelf
   , rightPadLowBook
   , rightPadHighBook
   , rightExtendBook
+  , leftShiftWithBook
+  , rightShiftWithBook
+  , leftShiftBook
+  , rightShiftBook
   ]
 lowBook = Shelf
   [ Item $ SomeArrow Low1
@@ -1827,6 +1879,38 @@ rightExtendBook = Shelf
   , Shelf
     [ Item $ SomeArrow RightExtend32_64
     ]
+  ]
+leftShiftWithBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow LeftShiftWith8
+  , Item $ SomeArrow LeftShiftWith16
+  , Item $ SomeArrow LeftShiftWith32
+  , Item $ SomeArrow LeftShiftWith64
+  ]
+rightShiftWithBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow RightShiftWith8
+  , Item $ SomeArrow RightShiftWith16
+  , Item $ SomeArrow RightShiftWith32
+  , Item $ SomeArrow RightShiftWith64
+  ]
+leftShiftBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow LeftShift8
+  , Item $ SomeArrow LeftShift16
+  , Item $ SomeArrow LeftShift32
+  , Item $ SomeArrow LeftShift64
+  ]
+rightShiftBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow RightShift8
+  , Item $ SomeArrow RightShift16
+  , Item $ SomeArrow RightShift32
+  , Item $ SomeArrow RightShift64
   ]
 arithBook = Shelf
   [ oneBook
@@ -2314,6 +2398,22 @@ putJetBitWord RightExtend16_32  = putPositive 23 . putPositive 5 . putPositive 1
 putJetBitWord RightExtend8_64  = putPositive 23 . putPositive 4 . putPositive 3
 putJetBitWord RightExtend16_64  = putPositive 23 . putPositive 5 . putPositive 2
 putJetBitWord RightExtend32_64  = putPositive 23 . putPositive 6 . putPositive 1
+putJetBitWord LeftShiftWith8   = putPositive 24 . putPositive 3
+putJetBitWord LeftShiftWith16  = putPositive 24 . putPositive 4
+putJetBitWord LeftShiftWith32  = putPositive 24 . putPositive 5
+putJetBitWord LeftShiftWith64  = putPositive 24 . putPositive 6
+putJetBitWord RightShiftWith8  = putPositive 25 . putPositive 3
+putJetBitWord RightShiftWith16 = putPositive 25 . putPositive 4
+putJetBitWord RightShiftWith32 = putPositive 25 . putPositive 5
+putJetBitWord RightShiftWith64 = putPositive 25 . putPositive 6
+putJetBitWord LeftShift8   = putPositive 26 . putPositive 3
+putJetBitWord LeftShift16  = putPositive 26 . putPositive 4
+putJetBitWord LeftShift32  = putPositive 26 . putPositive 5
+putJetBitWord LeftShift64  = putPositive 26 . putPositive 6
+putJetBitWord RightShift8  = putPositive 27 . putPositive 3
+putJetBitWord RightShift16 = putPositive 27 . putPositive 4
+putJetBitWord RightShift32 = putPositive 27 . putPositive 5
+putJetBitWord RightShift64 = putPositive 27 . putPositive 6
 
 putJetBitArith :: ArithJet a b -> DList Bool
 putJetBitArith One8   = putPositive 1 . putPositive 3
@@ -2681,6 +2781,22 @@ jetCostWord RightExtend16_32 = Benchmarks.cost "RightExtend16_32"
 jetCostWord RightExtend8_64 = Benchmarks.cost "RightExtend8_64"
 jetCostWord RightExtend16_64 = Benchmarks.cost "RightExtend16_64"
 jetCostWord RightExtend32_64 = Benchmarks.cost "RightExtend32_64"
+jetCostWord LeftShiftWith8 = Benchmarks.cost "LeftShiftWith8"
+jetCostWord LeftShiftWith16 = Benchmarks.cost "LeftShiftWith16"
+jetCostWord LeftShiftWith32 = Benchmarks.cost "LeftShiftWith32"
+jetCostWord LeftShiftWith64 = Benchmarks.cost "LeftShiftWith64"
+jetCostWord LeftShift8 = Benchmarks.cost "LeftShift8"
+jetCostWord LeftShift16 = Benchmarks.cost "LeftShift16"
+jetCostWord LeftShift32 = Benchmarks.cost "LeftShift32"
+jetCostWord LeftShift64 = Benchmarks.cost "LeftShift64"
+jetCostWord RightShiftWith8 = Benchmarks.cost "RightShiftWith8"
+jetCostWord RightShiftWith16 = Benchmarks.cost "RightShiftWith16"
+jetCostWord RightShiftWith32 = Benchmarks.cost "RightShiftWith32"
+jetCostWord RightShiftWith64 = Benchmarks.cost "RightShiftWith64"
+jetCostWord RightShift8 = Benchmarks.cost "RightShift8"
+jetCostWord RightShift16 = Benchmarks.cost "RightShift16"
+jetCostWord RightShift32 = Benchmarks.cost "RightShift32"
+jetCostWord RightShift64 = Benchmarks.cost "RightShift64"
 
 jetCostArith :: ArithJet a b -> Weight
 jetCostArith One8 = Benchmarks.cost "One8"
