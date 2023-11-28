@@ -112,6 +112,7 @@ static inline void skipBits(frameItem* frame, size_t n) {
  *
  * Precondition: '*frame' is a valid read frame for 'N' more cells.
  */
+uint_fast8_t read4(frameItem* frame);
 uint_fast8_t read8(frameItem* frame);
 uint_fast16_t read16(frameItem* frame);
 uint_fast32_t read32(frameItem* frame);

@@ -1,13 +1,14 @@
 #include "frame.h"
 
-#define READ_(bits)                                                                                                           \
+#define READ_(bits,size)                                                    \
 /* Given a read frame, return the value of the bits cells after the cursor and advance the frame's cursor by bits##.          \
  * The cell values are returned with the first cell in the MSB of the result and the last cell in the LSB of the result.      \
  *                                                                                                                            \
  * Precondition: '*frame' is a valid read frame for bits more cells.                                                          \
  */                                                                                                                           \
-uint_fast##bits##_t read##bits(frameItem* frame) {                                                                            \
-  uint_fast##bits##_t result = 0;                                                                                             \
+uint_fast##size##_t read##bits(frameItem* frame) {                                                                            \
+  static_assert(bits <= size, "Return type too small to hold the requested number of bits.");                                 \
+  uint_fast##size##_t result = 0;                                                                                             \
   /* Pointers to the UWORD of the read frame that contains the frame's cursor (or is immediately after the cursor). */        \
   UWORD* frame_ptr = frame->edge - 1 - frame->offset / UWORD_BIT;                                                             \
   /* The specific bit within the above UWORD that is immediately in front of the cursor.                                      \
@@ -19,14 +20,14 @@ uint_fast##bits##_t read##bits(frameItem* frame) {                              
     /* We may only want part of the LSBs from the read frame's current UWORD.                                                 \
      * Copy that data to 'x', and move the frame_ptr to the frame's next UWORD.                                               \
      */                                                                                                                       \
-    result |= (uint_fast##bits##_t)((uint_fast##bits##_t)LSBkeep(*frame_ptr, frame_shift) << (n - frame_shift));              \
+    result |= (uint_fast##size##_t)((uint_fast##size##_t)LSBkeep(*frame_ptr, frame_shift) << (n - frame_shift));              \
     frame->offset += frame_shift;                                                                                             \
     n -= frame_shift;                                                                                                         \
     frame_shift = UWORD_BIT;                                                                                                  \
     frame_ptr--;                                                                                                              \
     while (UWORD_BIT < n) {                                                                                                   \
       /* Copy the entire read frame's current UWORD to 'x', and move the frame_ptr to the frame's next UWORD. */              \
-      result |= (uint_fast##bits##_t)((uint_fast##bits##_t)(*frame_ptr) << (n - UWORD_BIT));                                  \
+      result |= (uint_fast##size##_t)((uint_fast##size##_t)(*frame_ptr) << (n - UWORD_BIT));                                  \
       frame->offset += UWORD_BIT;                                                                                             \
       n -= UWORD_BIT;                                                                                                         \
       frame_ptr--;                                                                                                            \
@@ -35,14 +36,15 @@ uint_fast##bits##_t read##bits(frameItem* frame) {                              
   /* We may only want part of the bits from the middle of the read frame's current UWORD.                                     \
    * Copy that data to fill the remainder of 'x'.                                                                             \
    */                                                                                                                         \
-  result |= (uint_fast##bits##_t)(LSBkeep((UWORD)(*frame_ptr >> (frame_shift - n)), n));                                      \
+  result |= (uint_fast##size##_t)(LSBkeep((UWORD)(*frame_ptr >> (frame_shift - n)), n));                                      \
   frame->offset += n;                                                                                                         \
   return result;                                                                                                              \
 }
-READ_(8)
-READ_(16)
-READ_(32)
-READ_(64)
+READ_(4,8)
+READ_(8,8)
+READ_(16,16)
+READ_(32,32)
+READ_(64,64)
 
 #define WRITE_(bits)                                                                                                          \
 /* Given a write frame, set the value of the bits cells after the cursor and advance the frame's cursor by bits##.            \

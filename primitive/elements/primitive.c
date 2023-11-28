@@ -611,6 +611,46 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
           break;
         }
         break;
+       case 24: /* LeftShiftWith */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+        case 3: *result = LEFT_SHIFT_WITH_8; return SIMPLICITY_NO_ERROR;
+        case 4: *result = LEFT_SHIFT_WITH_16; return SIMPLICITY_NO_ERROR;
+        case 5: *result = LEFT_SHIFT_WITH_32; return SIMPLICITY_NO_ERROR;
+        case 6: *result = LEFT_SHIFT_WITH_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 25: /* RightShiftWith */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = RIGHT_SHIFT_WITH_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = RIGHT_SHIFT_WITH_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = RIGHT_SHIFT_WITH_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = RIGHT_SHIFT_WITH_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 26: /* LeftShift */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+        case 3: *result = LEFT_SHIFT_8; return SIMPLICITY_NO_ERROR;
+        case 4: *result = LEFT_SHIFT_16; return SIMPLICITY_NO_ERROR;
+        case 5: *result = LEFT_SHIFT_32; return SIMPLICITY_NO_ERROR;
+        case 6: *result = LEFT_SHIFT_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 27: /* RightShift */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = RIGHT_SHIFT_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = RIGHT_SHIFT_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = RIGHT_SHIFT_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = RIGHT_SHIFT_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
       }
       break;
      case 2: /* Arith jets chapter */

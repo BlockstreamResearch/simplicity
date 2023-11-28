@@ -589,6 +589,74 @@ RIGHT_EXTEND_(16,32)
 RIGHT_EXTEND_(16,64)
 RIGHT_EXTEND_(32,64)
 
+#define LEFT_SHIFT_(log, bits)                                                           \
+static inline void left_shift_helper_##bits(bool with, frameItem* dst, frameItem *src) { \
+  static_assert(log <= 8, "Only log parameter upto 8 is supported.");                    \
+  uint_fast8_t amt = read##log(src);                                                     \
+  uint_fast##bits##_t output = read##bits(src);                                          \
+  if (with) output = UINT##bits##_MAX ^ output;                                          \
+  if (amt < bits) {                                                                      \
+    output = (uint_fast##bits##_t)((1U * output) << amt);                                \
+  } else {                                                                               \
+    output = 0;                                                                          \
+  }                                                                                      \
+  if (with) output = UINT##bits##_MAX ^ output;                                          \
+  write##bits(dst, output);                                                              \
+}                                                                                        \
+                                                                                         \
+/* left_shift_with_n : TWO * TWO^l * TWO^n |- TWO^n */                                   \
+bool left_shift_with_##bits(frameItem* dst, frameItem src, const txEnv* env) {           \
+  (void) env; /* env is unused. */                                                       \
+  bool with = readBit(&src);                                                             \
+  left_shift_helper_##bits(with, dst, &src);                                             \
+  return true;                                                                           \
+}                                                                                        \
+                                                                                         \
+/* left_shift_n : TWO^l * TWO^n |- TWO^n */                                              \
+bool left_shift_##bits(frameItem* dst, frameItem src, const txEnv* env) {                \
+  (void) env; /* env is unused. */                                                       \
+  left_shift_helper_##bits(0, dst, &src);                                                \
+  return true;                                                                           \
+}
+LEFT_SHIFT_(4,8)
+LEFT_SHIFT_(4,16)
+LEFT_SHIFT_(8,32)
+LEFT_SHIFT_(8,64)
+
+#define RIGHT_SHIFT_(log, bits)                                                           \
+static inline void right_shift_helper_##bits(bool with, frameItem* dst, frameItem *src) { \
+  static_assert(log <= 8, "Only log parameter upto 8 is supported.");                     \
+  uint_fast8_t amt = read##log(src);                                                      \
+  uint_fast##bits##_t output = read##bits(src);                                           \
+  if (with) output = UINT##bits##_MAX ^ output;                                           \
+  if (amt < bits) {                                                                       \
+    output = (uint_fast##bits##_t)(output >> amt);                                        \
+  } else {                                                                                \
+    output = 0;                                                                           \
+  }                                                                                       \
+  if (with) output = UINT##bits##_MAX ^ output;                                           \
+  write##bits(dst, output);                                                               \
+}                                                                                         \
+                                                                                          \
+/* right_shift_with_n : TWO * TWO^l * TWO^n |- TWO^n */                                   \
+bool right_shift_with_##bits(frameItem* dst, frameItem src, const txEnv* env) {           \
+  (void) env; /* env is unused. */                                                        \
+  bool with = readBit(&src);                                                              \
+  right_shift_helper_##bits(with, dst, &src);                                             \
+  return true;                                                                            \
+}                                                                                         \
+                                                                                          \
+/* right_shift_n : TWO^l * TWO^n |- TWO^n */                                              \
+bool right_shift_##bits(frameItem* dst, frameItem src, const txEnv* env) {                \
+  (void) env; /* env is unused. */                                                        \
+  right_shift_helper_##bits(0, dst, &src);                                                \
+  return true;                                                                            \
+}
+RIGHT_SHIFT_(4,8)
+RIGHT_SHIFT_(4,16)
+RIGHT_SHIFT_(8,32)
+RIGHT_SHIFT_(8,64)
+
 #define ONE_(bits)                                                 \
 /* one_n : ONE |- TWO^n */                                         \
 bool one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
