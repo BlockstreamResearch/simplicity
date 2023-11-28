@@ -1,4 +1,4 @@
-{ coq, lib, vst, stdenv
+{ coq, safegcd-bounds, lib, vst, stdenv
 , alectryon ? null
 , serapi ? null
 }:
@@ -15,12 +15,13 @@ stdenv.mkDerivation {
 
   buildInputs = [ coq ];
   nativeBuildInputs = lib.optional (alectryon != null) serapi;
-  propagatedBuildInputs = [ vst ];
+  propagatedBuildInputs = [ safegcd-bounds vst ];
   enableParallelBuilding = true;
   makefile = "CoqMakefile";
   postBuild = lib.optional (alectryon != null) ''
     ${alectryon}/bin/alectryon --frontend coq --output-directory $doc --webpage-style windowed -R C C \
-    C/secp256k1/spec_int128.v C/secp256k1/verif_int128_impl.v
+    C/secp256k1/spec_int128.v C/secp256k1/verif_int128_impl.v \
+    C/divstep.v C/secp256k1/spec_modinv64.v C/secp256k1/verif_modinv64_impl.v
   '';
 
   installFlags = "COQLIB=$(out)/lib/coq/${coq.coq-version}/";

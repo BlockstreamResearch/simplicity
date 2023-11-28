@@ -7,6 +7,7 @@
 , withAlectryon ? true
 , withCoverage ? false
 , withProfiler ? false
+, withSafegcdCheat ? false
 , withTiming ? true
 , withValgrind ? false
 , doCheck ? true
@@ -52,7 +53,7 @@ let hp = nixpkgs.haskell.packages.${ghc};
   coq = nixpkgs.callPackage ./Simplicity.Coq.nix {
     alectryon = if withAlectryon then pp.alectryon else null;
     inherit (cp) coq serapi;
-    inherit vst;
+    inherit safegcd-bounds vst;
   };
 
   c = nixpkgs.callPackage ./Simplicity.C.nix {
@@ -85,6 +86,11 @@ let hp = nixpkgs.haskell.packages.${ghc};
   vst = nixpkgs.callPackage ./vst.nix {
     inherit (cp) coq;
     inherit compcert;
+  };
+
+  safegcd-bounds = nixpkgs.callPackage ./safegcd-bounds.nix {
+    inherit (cp) coq;
+    cheating = withSafegcdCheat;
   };
 
   # $ nix-build -A inheritance -o inheritance.Coq.eps

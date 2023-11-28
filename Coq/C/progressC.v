@@ -258,6 +258,14 @@ rewrite Zbits.Zshiftr_div_two_p by rep_lia.
 reflexivity.
 Qed.
 
+Lemma Int64_shl_shiftl x y : Int64.shl x y = Int64.repr (Z.shiftl (Int64.signed x) (Int64.unsigned y)).
+Proof.
+rewrite Int64.shl_mul_two_p.
+rewrite Zbits.Zshiftl_mul_two_p by rep_lia.
+rewrite <- mul64_repr, Int64.repr_signed.
+reflexivity.
+Qed.
+
 Lemma mul128_tight x y (Hx : -2^63 <= x <= 2^63-1)
                        (Hy : -2^63 <= y <= 2^63-1) :
                    -2^126+2^63 <= x * y <= 2^126.

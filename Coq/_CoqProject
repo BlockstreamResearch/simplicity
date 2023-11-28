@@ -24,5 +24,9 @@ Simplicity/Util/PackedClass.v
 C/jets_secp256k1.v
 C/extraMath.v
 C/progressC.v
+C/modinv.v
+C/divstep.v
 C/secp256k1/spec_int128.v
+C/secp256k1/spec_modinv64.v
 C/secp256k1/verif_int128_impl.v
+C/secp256k1/verif_modinv64_impl.v
