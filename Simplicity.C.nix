@@ -1,6 +1,6 @@
 { lib, stdenv, gcovr ? null, wideMultiply ? null, withCoverage ? false
 , production ? false
-, gcov-executable ? if stdenv.cc.isGNU then "gcov" else
+, gcov-executable ? if stdenv.cc.isGNU then "gcov -r" else
                     if stdenv.cc.isClang then "${stdenv.cc.cc.libllvm}/bin/llvm-cov gcov"
                     else null
 , doCheck ? true
