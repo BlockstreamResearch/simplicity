@@ -2,6 +2,8 @@
 #ifndef SIMPLICITY_BITSTRING_H
 #define SIMPLICITY_BITSTRING_H
 
+#include <stddef.h>
+#include <stdint.h>
 #include <limits.h>
 #include <stdbool.h>
 #include "simplicity_assert.h"
