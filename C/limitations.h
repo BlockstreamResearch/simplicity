@@ -1,6 +1,8 @@
 #ifndef SIMPLICITY_LIMITATIONS_H
 #define SIMPLICITY_LIMITATIONS_H
 
+#include <stdint.h>
+
 #define DAG_LEN_MAX 8000000U
 #define NUMBER_OF_TYPENAMES_MAX 0x1000U
 #define CELLS_MAX 0x500000U /* 5120 Kibibits ought to be enough for anyone. */
