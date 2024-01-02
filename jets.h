@@ -230,6 +230,14 @@ bool right_shift_8(frameItem* dst, frameItem src, const txEnv* env);
 bool right_shift_16(frameItem* dst, frameItem src, const txEnv* env);
 bool right_shift_32(frameItem* dst, frameItem src, const txEnv* env);
 bool right_shift_64(frameItem* dst, frameItem src, const txEnv* env);
+bool left_rotate_8(frameItem* dst, frameItem src, const txEnv* env);
+bool left_rotate_16(frameItem* dst, frameItem src, const txEnv* env);
+bool left_rotate_32(frameItem* dst, frameItem src, const txEnv* env);
+bool left_rotate_64(frameItem* dst, frameItem src, const txEnv* env);
+bool right_rotate_8(frameItem* dst, frameItem src, const txEnv* env);
+bool right_rotate_16(frameItem* dst, frameItem src, const txEnv* env);
+bool right_rotate_32(frameItem* dst, frameItem src, const txEnv* env);
+bool right_rotate_64(frameItem* dst, frameItem src, const txEnv* env);
 
 bool add_8(frameItem* dst, frameItem src, const txEnv* env);
 bool add_16(frameItem* dst, frameItem src, const txEnv* env);
