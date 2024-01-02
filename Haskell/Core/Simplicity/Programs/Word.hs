@@ -12,6 +12,7 @@ module Simplicity.Programs.Word
   , full_shift, shift_const_by, rotate_const
   , left_shift_with, left_shift
   , right_shift_with, right_shift
+  , left_rotate, right_rotate
   , mapZV, transpose
   , bufferEmpty, bufferSnoc
   , forWhile, firstFail
@@ -279,6 +280,30 @@ rotate_const v n = compose (go v n)
                       | 3 == n `mod` 4 = right_rotate1 v : rec ((n+1) `div` 2)
    where
     rec = go (vectorPromote v')
+
+-- | Left rotate a vector by a given amount.
+left_rotate :: (Core term, TyC a, TyC b, TyC c) => Word c -> Vector a b -> term (c,b) b
+left_rotate c = go . reverse $ itemsOf c
+ where
+  go :: (Core term, TyC a, TyC b, TyC c) => [term c Bit] -> Vector a b -> term (c,b) b
+  go [] v = ih
+  go (control:controlBits) v =
+    oh &&& (take control &&& ih >>> cond (left_rotate1 v) iden)
+    >>> case v of
+          SingleV -> ih
+          DoubleV v' -> go controlBits (vectorPromote v')
+
+-- | Right rotate a vector by a given amount.
+right_rotate :: (Core term, TyC a, TyC b, TyC c) => Word c -> Vector a b -> term (c,b) b
+right_rotate c = go . reverse $ itemsOf c
+ where
+  go :: (Core term, TyC a, TyC b, TyC c) => [term c Bit] -> Vector a b -> term (c,b) b
+  go [] v = ih
+  go (control:controlBits) v =
+    oh &&& (take control &&& ih >>> cond (right_rotate1 v) iden)
+    >>> case v of
+          SingleV -> ih
+          DoubleV v' -> go controlBits (vectorPromote v')
 
 -- | Lift a provided term to map a vector of inputs to a vector of outputs of the same length.
 mapZV :: (Core term) => ZipVector x nx y ny -> term x y -> term nx ny

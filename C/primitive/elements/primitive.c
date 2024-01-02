@@ -651,6 +651,26 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
          case 6: *result = RIGHT_SHIFT_64; return SIMPLICITY_NO_ERROR;
         }
         break;
+       case 28: /* LeftRotate */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = LEFT_ROTATE_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = LEFT_ROTATE_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = LEFT_ROTATE_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = LEFT_ROTATE_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
+       case 29: /* RightRotate */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 3: *result = RIGHT_ROTATE_8; return SIMPLICITY_NO_ERROR;
+         case 4: *result = RIGHT_ROTATE_16; return SIMPLICITY_NO_ERROR;
+         case 5: *result = RIGHT_ROTATE_32; return SIMPLICITY_NO_ERROR;
+         case 6: *result = RIGHT_ROTATE_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
       }
       break;
      case 2: /* Arith jets chapter */

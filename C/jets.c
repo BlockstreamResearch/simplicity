@@ -657,6 +657,39 @@ RIGHT_SHIFT_(4,16)
 RIGHT_SHIFT_(8,32)
 RIGHT_SHIFT_(8,64)
 
+#define ROTATE_(log, bits)                                                                     \
+/* Precondition: 0 <= amt < bits */                                                            \
+static inline uint_fast##bits##_t rotate_##bits(uint_fast##bits##_t value, uint_fast8_t amt) { \
+  if (amt) {                                                                                   \
+    return (uint_fast##bits##_t)((1U * value << amt) | value >> (bits - amt));                 \
+  } else {                                                                                     \
+    return value;                                                                              \
+  }                                                                                            \
+}                                                                                              \
+                                                                                               \
+/* left_rotate_n : TWO^l * TWO^n |- TWO^n */                                                   \
+bool left_rotate_##bits(frameItem* dst, frameItem src, const txEnv* env) {                     \
+  (void) env; /* env is unused. */                                                             \
+  uint_fast8_t amt = read##log(&src) % bits;                                                   \
+  uint_fast##bits##_t input = read##bits(&src);                                                \
+  write##bits(dst, rotate_##bits(input, amt));                                                 \
+  return true;                                                                                 \
+}                                                                                              \
+                                                                                               \
+/* right_rotate_n : TWO^l * TWO^n |- TWO^n */                                                  \
+bool right_rotate_##bits(frameItem* dst, frameItem src, const txEnv* env) {                    \
+  static_assert(bits <= UINT8_MAX, "'bits' is too large.");                                    \
+  (void) env; /* env is unused. */                                                             \
+  uint_fast8_t amt = read##log(&src) % bits;                                                   \
+  uint_fast##bits##_t input = read##bits(&src);                                                \
+  write##bits(dst, rotate_##bits(input, (uint_fast8_t)((bits - amt) % bits)));                 \
+  return true;                                                                                 \
+}
+ROTATE_(4,8)
+ROTATE_(4,16)
+ROTATE_(8,32)
+ROTATE_(8,64)
+
 #define ONE_(bits)                                                 \
 /* one_n : ONE |- TWO^n */                                         \
 bool one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \

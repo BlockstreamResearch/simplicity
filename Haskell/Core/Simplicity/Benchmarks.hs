@@ -457,6 +457,14 @@ rawBenchmark "RightShift8" = rawBenchmark "Add8"
 rawBenchmark "RightShift16" = rawBenchmark "Add8"
 rawBenchmark "RightShift32" = rawBenchmark "Add8"
 rawBenchmark "RightShift64" = rawBenchmark "Add8"
+rawBenchmark "LeftRotate8" = rawBenchmark "Add8"
+rawBenchmark "LeftRotate16" = rawBenchmark "Add8"
+rawBenchmark "LeftRotate32" = rawBenchmark "Add8"
+rawBenchmark "LeftRotate64" = rawBenchmark "Add8"
+rawBenchmark "RightRotate8" = rawBenchmark "Add8"
+rawBenchmark "RightRotate16" = rawBenchmark "Add8"
+rawBenchmark "RightRotate32" = rawBenchmark "Add8"
+rawBenchmark "RightRotate64" = rawBenchmark "Add8"
 
 -- benchmark adjusts the raw benchmark by giving a discount to batch verifiable jets.
 benchmark :: String -> Double

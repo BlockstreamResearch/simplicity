@@ -57,6 +57,8 @@ module Simplicity.FFI.Jets
  , left_shift_8, left_shift_16, left_shift_32, left_shift_64
  , right_shift_with_8, right_shift_with_16, right_shift_with_32, right_shift_with_64
  , right_shift_8, right_shift_16, right_shift_32, right_shift_64
+ , left_rotate_8, left_rotate_16, left_rotate_32, left_rotate_64
+ , right_rotate_8, right_rotate_16, right_rotate_32, right_rotate_64
  , one_8, one_16, one_32, one_64
  , add_8, add_16, add_32, add_64
  , full_add_8, full_add_16, full_add_32, full_add_64
@@ -318,6 +320,14 @@ foreign import ccall unsafe "" c_right_shift_8 :: Ptr FrameItem -> Ptr FrameItem
 foreign import ccall unsafe "" c_right_shift_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_right_shift_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_right_shift_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_rotate_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_rotate_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_rotate_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_left_rotate_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_rotate_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_rotate_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_rotate_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_right_rotate_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 foreign import ccall unsafe "" c_one_8 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_one_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -1085,6 +1095,30 @@ right_shift_32 = unsafeLocalCoreJet c_right_shift_32
 
 right_shift_64 :: (Word8, Word64) -> Maybe Word64
 right_shift_64 = unsafeLocalCoreJet c_right_shift_64
+
+left_rotate_8 :: (Word4, Word8) -> Maybe Word8
+left_rotate_8 = unsafeLocalCoreJet c_left_rotate_8
+
+left_rotate_16 :: (Word4, Word16) -> Maybe Word16
+left_rotate_16 = unsafeLocalCoreJet c_left_rotate_16
+
+left_rotate_32 :: (Word8, Word32) -> Maybe Word32
+left_rotate_32 = unsafeLocalCoreJet c_left_rotate_32
+
+left_rotate_64 :: (Word8, Word64) -> Maybe Word64
+left_rotate_64 = unsafeLocalCoreJet c_left_rotate_64
+
+right_rotate_8 :: (Word4, Word8) -> Maybe Word8
+right_rotate_8 = unsafeLocalCoreJet c_right_rotate_8
+
+right_rotate_16 :: (Word4, Word16) -> Maybe Word16
+right_rotate_16 = unsafeLocalCoreJet c_right_rotate_16
+
+right_rotate_32 :: (Word8, Word32) -> Maybe Word32
+right_rotate_32 = unsafeLocalCoreJet c_right_rotate_32
+
+right_rotate_64 :: (Word8, Word64) -> Maybe Word64
+right_rotate_64 = unsafeLocalCoreJet c_right_rotate_64
 
 one_8 :: () -> Maybe Word8
 one_8 = unsafeLocalCoreJet c_one_8

@@ -19,7 +19,7 @@ import qualified Prelude
 import Prelude hiding (fail, drop, take, negate, subtract, min, max, Word)
 
 import Control.Arrow ((+++), Kleisli(Kleisli), runKleisli)
-import Data.Bits ((.&.), (.|.), complement, shift, xor)
+import Data.Bits ((.&.), (.|.), complement, rotate, shift, xor)
 import qualified Data.ByteString as BS
 import Data.Foldable (toList)
 import qualified Data.List as List
@@ -48,6 +48,7 @@ import Simplicity.Term.Core
 import Simplicity.Tree
 import Simplicity.Ty.Word
 import Simplicity.Weight
+import qualified Simplicity.Word as W
 
 -- | A data type of (typed) tokens representing known "core" jets.
 --
@@ -268,6 +269,14 @@ data WordJet a b where
   RightShift16 :: WordJet (Word4, Word16) Word16
   RightShift32 :: WordJet (Word8, Word32) Word32
   RightShift64 :: WordJet (Word8, Word64) Word64
+  LeftRotate8 :: WordJet (Word4, Word8) Word8
+  LeftRotate16 :: WordJet (Word4, Word16) Word16
+  LeftRotate32 :: WordJet (Word8, Word32) Word32
+  LeftRotate64 :: WordJet (Word8, Word64) Word64
+  RightRotate8 :: WordJet (Word4, Word8) Word8
+  RightRotate16 :: WordJet (Word4, Word16) Word16
+  RightRotate32 :: WordJet (Word8, Word32) Word32
+  RightRotate64 :: WordJet (Word8, Word64) Word64
 
 deriving instance Eq (WordJet a b)
 deriving instance Show (WordJet a b)
@@ -656,6 +665,14 @@ specificationWord RightShift8 = Prog.right_shift word4 word8
 specificationWord RightShift16 = Prog.right_shift word4 word16
 specificationWord RightShift32 = Prog.right_shift word8 word32
 specificationWord RightShift64 = Prog.right_shift word8 word64
+specificationWord LeftRotate8 = Prog.left_rotate word4 word8
+specificationWord LeftRotate16 = Prog.left_rotate word4 word16
+specificationWord LeftRotate32 = Prog.left_rotate word8 word32
+specificationWord LeftRotate64 = Prog.left_rotate word8 word64
+specificationWord RightRotate8 = Prog.right_rotate word4 word8
+specificationWord RightRotate16 = Prog.right_rotate word4 word16
+specificationWord RightRotate32 = Prog.right_rotate word8 word32
+specificationWord RightRotate64 = Prog.right_rotate word8 word64
 
 specificationArith :: Assert term => ArithJet a b -> term a b
 specificationArith One8 = Prog.one word8
@@ -1104,6 +1121,14 @@ implementationWord RightShift8 = \(x,y) -> Just . toWord8 $ fromWord8 y `shift` 
 implementationWord RightShift16 = \(x,y) -> Just . toWord16 $ fromWord16 y `shift` fromInteger (-fromWord4 x)
 implementationWord RightShift32 = \(x,y) -> Just . toWord32 $ fromWord32 y `shift` fromInteger (-fromWord8 x)
 implementationWord RightShift64 = \(x,y) -> Just . toWord64 $ fromWord64 y `shift` fromInteger (-fromWord8 x)
+implementationWord LeftRotate8 = \(x,y) -> Just . toWord8 . toInteger $ (fromInteger (fromWord8 y) :: W.Word8) `rotate` fromInteger (fromWord4 x)
+implementationWord LeftRotate16 = \(x,y) -> Just . toWord16 . toInteger $ (fromInteger (fromWord16 y) :: W.Word16) `rotate` fromInteger (fromWord4 x)
+implementationWord LeftRotate32 = \(x,y) -> Just . toWord32 . toInteger $ (fromInteger (fromWord32 y) :: W.Word32) `rotate` fromInteger (fromWord8 x)
+implementationWord LeftRotate64 = \(x,y) -> Just . toWord64 . toInteger $ (fromInteger (fromWord64 y) :: W.Word64) `rotate` fromInteger (fromWord8 x)
+implementationWord RightRotate8 = \(x,y) -> Just . toWord8 . toInteger $ (fromInteger (fromWord8 y) :: W.Word8) `rotate` fromInteger (-fromWord4 x)
+implementationWord RightRotate16 = \(x,y) -> Just . toWord16 . toInteger $ (fromInteger (fromWord16 y) :: W.Word16) `rotate` fromInteger (-fromWord4 x)
+implementationWord RightRotate32 = \(x,y) -> Just . toWord32 . toInteger $ (fromInteger (fromWord32 y) :: W.Word32) `rotate` fromInteger (-fromWord8 x)
+implementationWord RightRotate64 = \(x,y) -> Just . toWord64 . toInteger $ (fromInteger (fromWord64 y) :: W.Word64) `rotate` fromInteger (-fromWord8 x)
 
 implementationArith :: ArithJet a b -> a -> Maybe b
 implementationArith One8 = const . return $ toWord8 1
@@ -1504,6 +1529,8 @@ wordBook = Shelf
   , rightShiftWithBook
   , leftShiftBook
   , rightShiftBook
+  , leftRotateBook
+  , rightRotateBook
   ]
 lowBook = Shelf
   [ Item $ SomeArrow Low1
@@ -1911,6 +1938,22 @@ rightShiftBook = Shelf
   , Item $ SomeArrow RightShift16
   , Item $ SomeArrow RightShift32
   , Item $ SomeArrow RightShift64
+  ]
+leftRotateBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow LeftRotate8
+  , Item $ SomeArrow LeftRotate16
+  , Item $ SomeArrow LeftRotate32
+  , Item $ SomeArrow LeftRotate64
+  ]
+rightRotateBook = Shelf
+  [ Missing
+  , Missing
+  , Item $ SomeArrow RightRotate8
+  , Item $ SomeArrow RightRotate16
+  , Item $ SomeArrow RightRotate32
+  , Item $ SomeArrow RightRotate64
   ]
 arithBook = Shelf
   [ oneBook
@@ -2414,6 +2457,14 @@ putJetBitWord RightShift8  = putPositive 27 . putPositive 3
 putJetBitWord RightShift16 = putPositive 27 . putPositive 4
 putJetBitWord RightShift32 = putPositive 27 . putPositive 5
 putJetBitWord RightShift64 = putPositive 27 . putPositive 6
+putJetBitWord LeftRotate8  = putPositive 28 . putPositive 3
+putJetBitWord LeftRotate16 = putPositive 28 . putPositive 4
+putJetBitWord LeftRotate32 = putPositive 28 . putPositive 5
+putJetBitWord LeftRotate64 = putPositive 28 . putPositive 6
+putJetBitWord RightRotate8  = putPositive 29 . putPositive 3
+putJetBitWord RightRotate16 = putPositive 29 . putPositive 4
+putJetBitWord RightRotate32 = putPositive 29 . putPositive 5
+putJetBitWord RightRotate64 = putPositive 29 . putPositive 6
 
 putJetBitArith :: ArithJet a b -> DList Bool
 putJetBitArith One8   = putPositive 1 . putPositive 3
@@ -2797,6 +2848,14 @@ jetCostWord RightShift8 = Benchmarks.cost "RightShift8"
 jetCostWord RightShift16 = Benchmarks.cost "RightShift16"
 jetCostWord RightShift32 = Benchmarks.cost "RightShift32"
 jetCostWord RightShift64 = Benchmarks.cost "RightShift64"
+jetCostWord LeftRotate8 = Benchmarks.cost "LeftRotate8"
+jetCostWord LeftRotate16 = Benchmarks.cost "LeftRotate16"
+jetCostWord LeftRotate32 = Benchmarks.cost "LeftRotate32"
+jetCostWord LeftRotate64 = Benchmarks.cost "LeftRotate64"
+jetCostWord RightRotate8 = Benchmarks.cost "RightRotate8"
+jetCostWord RightRotate16 = Benchmarks.cost "RightRotate16"
+jetCostWord RightRotate32 = Benchmarks.cost "RightRotate32"
+jetCostWord RightRotate64 = Benchmarks.cost "RightRotate64"
 
 jetCostArith :: ArithJet a b -> Weight
 jetCostArith One8 = Benchmarks.cost "One8"

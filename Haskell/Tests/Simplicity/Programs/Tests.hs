@@ -260,6 +260,14 @@ tests = testGroup "Programs"
         , testProperty "right_shift_16"  prop_right_shift_16
         , testProperty "right_shift_32"  prop_right_shift_32
         , testProperty "right_shift_64"  prop_right_shift_64
+        , testProperty "left_rotate_8"  prop_left_rotate_8
+        , testProperty "left_rotate_16"  prop_left_rotate_16
+        , testProperty "left_rotate_32"  prop_left_rotate_32
+        , testProperty "left_rotate_64"  prop_left_rotate_64
+        , testProperty "right_rotate_8"  prop_right_rotate_8
+        , testProperty "right_rotate_16"  prop_right_rotate_16
+        , testProperty "right_rotate_32"  prop_right_rotate_32
+        , testProperty "right_rotate_64"  prop_right_rotate_64
         , testProperty "shift_const_by false word8" prop_shift_const_by_false8
         , testProperty "rotate_const word8" prop_rotate_const8
         , testProperty "transpose zv2 zv8" prop_transpose_2x8
@@ -2038,6 +2046,70 @@ prop_right_shift_64 = \x y -> let input = (toW8 x, toW64 y)
   toW8 = toWord8 . fromIntegral
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (WordJet RightShift64))
+
+prop_left_rotate_8 :: W.Word8 -> W.Word8 -> Bool
+prop_left_rotate_8 = \x y -> let input = (toW4 x, toW8 y)
+                             in fastF input == implementation (WordJet LeftRotate8) input
+ where
+  toW4 = toWord4 . fromIntegral
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftRotate8))
+
+prop_left_rotate_16 :: W.Word8 -> W.Word16 -> Bool
+prop_left_rotate_16 = \x y -> let input = (toW4 x, toW16 y)
+                              in fastF input == implementation (WordJet LeftRotate16) input
+ where
+  toW4 = toWord4 . fromIntegral
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftRotate16))
+
+prop_left_rotate_32 :: W.Word8 -> W.Word32 -> Bool
+prop_left_rotate_32 = \x y -> let input = (toW8 x, toW32 y)
+                              in fastF input == implementation (WordJet LeftRotate32) input
+ where
+  toW8 = toWord8 . fromIntegral
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftRotate32))
+
+prop_left_rotate_64 :: W.Word8 -> W.Word64 -> Bool
+prop_left_rotate_64 = \x y -> let input = (toW8 x, toW64 y)
+                              in fastF input == implementation (WordJet LeftRotate64) input
+ where
+  toW8 = toWord8 . fromIntegral
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet LeftRotate64))
+
+prop_right_rotate_8 :: W.Word8 -> W.Word8 -> Bool
+prop_right_rotate_8 = \x y -> let input = (toW4 x, toW8 y)
+                             in fastF input == implementation (WordJet RightRotate8) input
+ where
+  toW4 = toWord4 . fromIntegral
+  toW8 = toWord8 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightRotate8))
+
+prop_right_rotate_16 :: W.Word8 -> W.Word16 -> Bool
+prop_right_rotate_16 = \x y -> let input = (toW4 x, toW16 y)
+                              in fastF input == implementation (WordJet RightRotate16) input
+ where
+  toW4 = toWord4 . fromIntegral
+  toW16 = toWord16 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightRotate16))
+
+prop_right_rotate_32 :: W.Word8 -> W.Word32 -> Bool
+prop_right_rotate_32 = \x y -> let input = (toW8 x, toW32 y)
+                              in fastF input == implementation (WordJet RightRotate32) input
+ where
+  toW8 = toWord8 . fromIntegral
+  toW32 = toWord32 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightRotate32))
+
+prop_right_rotate_64 :: W.Word8 -> W.Word64 -> Bool
+prop_right_rotate_64 = \x y -> let input = (toW8 x, toW64 y)
+                              in fastF input == implementation (WordJet RightRotate64) input
+ where
+  toW8 = toWord8 . fromIntegral
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (WordJet RightRotate64))
 
 assert_one_8 :: Assertion
 assert_one_8 = fastF () @=? implementation (ArithJet One8) ()
