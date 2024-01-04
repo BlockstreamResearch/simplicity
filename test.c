@@ -216,16 +216,14 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       failures++;
       printf("Unexpected failure of fillWitnessData.\n");
     } else {
-      {
+      if (expectedAMR) {
         analyses analysis[len];
         computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)len);
-        if (expectedAMR) {
-          if (0 == memcmp(expectedAMR, analysis[len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]))) {
-            successes++;
-          } else {
-            failures++;
-            printf("Unexpected AMR.\n");
-          }
+        if (0 == memcmp(expectedAMR, analysis[len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]))) {
+          successes++;
+        } else {
+          failures++;
+          printf("Unexpected AMR.\n");
         }
       }
       {
