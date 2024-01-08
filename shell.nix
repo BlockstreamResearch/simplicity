@@ -5,9 +5,11 @@
 , ghc ? "ghc94"
 , coqPackages ? "coqPackages_8_16"
 , env ? "stdenv"
+, withCoverage ? true
+, withProfiler ? true
 }:
 let
-  simplicity      = import ./. {inherit nixpkgs ghc coqPackages env;};
+  simplicity      = import ./. {inherit nixpkgs ghc coqPackages env withCoverage withProfiler;};
   optional        = nixpkgs.lib.optional;
   haskellDevTools = pkgs: with pkgs; [cabal-install hlint hasktags];
   haskellPkgs     = pkgs: simplicity.haskell.buildInputs ++ simplicity.haskell.propagatedBuildInputs ++ haskellDevTools pkgs;
