@@ -6,6 +6,7 @@
 #include <string.h>
 #include "primitive.h"
 #include "ops.h"
+#include "../../rsort.h"
 #include "../../sha256.h"
 #include "../../simplicity_assert.h"
 
@@ -289,7 +290,7 @@ static void parseNullData(parsedNullData* result, opcode** allocation, size_t* a
   *allocationLen -= result->len;
 }
 
-/* Initialize a 'sigOutput' from a 'rawOuput', copying or hashing the data as needed.
+/* Initialize a 'sigOutput' from a 'rawOutput', copying or hashing the data as needed.
  *
  * '*allocation' is incremented by 'countNullDataCodes(&output->scriptPubKey)'
  * '*allocationLen' is decremented by 'countNullDataCodes(&output->scriptPubKey)'.
@@ -313,7 +314,7 @@ static void copyOutput(sigOutput* result, opcode** allocation, size_t* allocatio
   hashBuffer(&result->rangeProofHash, is_confidential(result->amt.prefix) ? &output->rangeProof : &(rawBuffer){0});
 }
 
-/* Allocate and initialize a 'transaction' from a 'rawOuput', copying or hashing the data as needed.
+/* Allocate and initialize a 'transaction' from a 'rawOutput', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
  * Precondition: NULL != rawTx
@@ -502,10 +503,20 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
     sha256_context ctx_outputSurjectionProofsHash = sha256_init(tx->outputSurjectionProofsHash.s);
     sha256_context ctx_outputsHash = sha256_init(tx->outputsHash.s);
     uint_fast32_t ix_fee = 0;
+
+    /* perm is a temporary array the same length (numFees) and size as feeOutputs.
+     * perm is used to initalize feeOutputs and is not used afterward.
+     * This makes it safe for perm to use the same memory allocation as feeOutputs.
+     */
+    static_assert(sizeof(const sha256_midstate*) == sizeof(sigOutput*), "Pointers (to structures) ought to have the same size.");
+    static_assert(alignof(const sha256_midstate*) == alignof(sigOutput*), "Pointers (to structures) ought to have the same alignment.");
+    const sha256_midstate** const perm = (const sha256_midstate**)(void*)feeOutputs;
+
     for (uint_fast32_t i = 0; i < tx->numOutputs; ++i) {
       copyOutput(&output[i], &ops, &opsLen, &rawTx->output[i]);
       if (isFee(&rawTx->output[i])) {
-        feeOutputs[ix_fee] = &output[i];
+        simplicity_assert(ix_fee < numFees);
+        perm[ix_fee] = &output[i].asset.data;
         ++ix_fee;
       }
       sha256_confAsset(&ctx_outputAssetAmountsHash, &output[i].asset);
@@ -515,7 +526,29 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
       sha256_hash(&ctx_outputRangeProofsHash, &output[i].rangeProofHash);
       sha256_hash(&ctx_outputSurjectionProofsHash, &output[i].surjectionProofHash);
     }
+
     simplicity_assert(numFees == ix_fee);
+    if (!rsort(perm, numFees)) {
+      free(tx);
+      return NULL;
+    }
+
+    /* Initialize the feeOutputs array from the perm array.
+     * Because the perm array entries are the same size as the feeOutputs array entries, it is safe to initialize one by one.
+     *
+     * In practical C implementations, the feeOutputs array entires are initalized to the same value as the perm array entries.
+     * In practical C implementations, this is a no-op, and generally compiliers are able to see this fact and eliminate this loop.
+     *
+     * We keep the loop in the code just to be pedantic.
+     */
+    for (size_t i = 0; i < numFees; ++i) {
+      static_assert(0 == offsetof(sigOutput, asset.data), "asset ID is not first field of sigOutput.");
+      /* The uintptr_t cast is to suppress warning about both casting away const and a change in pointer alignment.
+       * Each pointer in perm is pointing the the first field of some (non-const) sigOutput*, so this cast is safe.
+       */
+      feeOutputs[i] = (sigOutput*)(uintptr_t)(perm[i]);
+    }
+
     sha256_finalize(&ctx_outputAssetAmountsHash);
     sha256_finalize(&ctx_outputNoncesHash);
     sha256_finalize(&ctx_outputScriptsHash);
