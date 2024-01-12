@@ -41,7 +41,7 @@ void computeTypeAnalyses(type* type_dag, const size_t len) {
       type_dag[i].bitSize = 0;
       break;
      case SUM:
-      type_dag[i].bitSize = max(type_dag[type_dag[i].typeArg[0]].bitSize, type_dag[type_dag[i].typeArg[1]].bitSize);
+      type_dag[i].bitSize = bounded_max(type_dag[type_dag[i].typeArg[0]].bitSize, type_dag[type_dag[i].typeArg[1]].bitSize);
       bounded_inc(&type_dag[i].bitSize);
       break;
      case PRODUCT:

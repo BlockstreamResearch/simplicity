@@ -7,7 +7,7 @@
 typedef uint_least32_t ubounded;
 #define UBOUNDED_MAX UINT32_MAX
 
-static inline ubounded max(ubounded x, ubounded y) {
+static inline ubounded bounded_max(ubounded x, ubounded y) {
   return x <= y ? y : x;
 }
 
@@ -27,8 +27,8 @@ static inline void bounded_inc(ubounded* x) {
  * 'pad( true, a, b)' computes the PADR(a, b) function.
  */
 static inline ubounded pad(bool right, ubounded a, ubounded b) {
-  return max(a, b) - (right ? b : a);
+  return bounded_max(a, b) - (right ? b : a);
 }
 
-static const ubounded overhead = 100 /* milli weight units */;
+enum { overhead = 100 }; /* milli weight units */
 #endif

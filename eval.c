@@ -607,21 +607,21 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
      case ASSERTL:
      case ASSERTR:
      case CASE:
-      bound[i].extraCellsBound[0] = max( bound[dag[i].child[0]].extraCellsBound[0]
+      bound[i].extraCellsBound[0] = bounded_max( bound[dag[i].child[0]].extraCellsBound[0]
                                        , bound[dag[i].child[1]].extraCellsBound[0] );
-      bound[i].extraCellsBound[1] = max( bound[dag[i].child[0]].extraCellsBound[1]
+      bound[i].extraCellsBound[1] = bounded_max( bound[dag[i].child[0]].extraCellsBound[1]
                                        , bound[dag[i].child[1]].extraCellsBound[1] );
 
-      bound[i].extraUWORDBound[0] = max( bound[dag[i].child[0]].extraUWORDBound[0]
+      bound[i].extraUWORDBound[0] = bounded_max( bound[dag[i].child[0]].extraUWORDBound[0]
                                        , bound[dag[i].child[1]].extraUWORDBound[0] );
-      bound[i].extraUWORDBound[1] = max( bound[dag[i].child[0]].extraUWORDBound[1]
+      bound[i].extraUWORDBound[1] = bounded_max( bound[dag[i].child[0]].extraUWORDBound[1]
                                        , bound[dag[i].child[1]].extraUWORDBound[1] );
 
-      bound[i].extraFrameBound[0] = max( bound[dag[i].child[0]].extraFrameBound[0]
+      bound[i].extraFrameBound[0] = bounded_max( bound[dag[i].child[0]].extraFrameBound[0]
                                        , bound[dag[i].child[1]].extraFrameBound[0] );
-      bound[i].extraFrameBound[1] = max( bound[dag[i].child[0]].extraFrameBound[1]
+      bound[i].extraFrameBound[1] = bounded_max( bound[dag[i].child[0]].extraFrameBound[1]
                                        , bound[dag[i].child[1]].extraFrameBound[1] );
-      bound[i].cost = bounded_add(overhead, max( bound[dag[i].child[0]].cost
+      bound[i].cost = bounded_add(overhead, bounded_max( bound[dag[i].child[0]].cost
                                                , bound[dag[i].child[1]].cost ));
       break;
      case DISCONNECT:
@@ -632,20 +632,20 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
         bound[i].extraCellsBound[1] = UBOUNDED_MAX;
       } else {
         bound[i].extraCellsBound[1] = type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize;
-        bound[i].extraCellsBound[0] = max(
+        bound[i].extraCellsBound[0] = bounded_max(
           bounded_add( type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize
-                     , max( bounded_add(bound[i].extraCellsBound[1], bound[dag[i].child[0]].extraCellsBound[1])
-                          , max(bound[dag[i].child[0]].extraCellsBound[0], bound[dag[i].child[1]].extraCellsBound[1]))),
+                     , bounded_max( bounded_add(bound[i].extraCellsBound[1], bound[dag[i].child[0]].extraCellsBound[1])
+                          , bounded_max(bound[dag[i].child[0]].extraCellsBound[0], bound[dag[i].child[1]].extraCellsBound[1]))),
           bound[dag[i].child[1]].extraCellsBound[0]);
       }
       bound[i].extraUWORDBound[1] = (ubounded)ROUND_UWORD(type_dag[DISCONNECT_W256A(dag, type_dag, i)].bitSize);
-      bound[i].extraUWORDBound[0] = max(
+      bound[i].extraUWORDBound[0] = bounded_max(
           (ubounded)ROUND_UWORD(type_dag[DISCONNECT_BC(dag, type_dag, i)].bitSize) +
-          max( bound[i].extraUWORDBound[1] + bound[dag[i].child[0]].extraUWORDBound[1]
-             , max(bound[dag[i].child[0]].extraUWORDBound[0], bound[dag[i].child[1]].extraUWORDBound[1])),
+          bounded_max( bound[i].extraUWORDBound[1] + bound[dag[i].child[0]].extraUWORDBound[1]
+             , bounded_max(bound[dag[i].child[0]].extraUWORDBound[0], bound[dag[i].child[1]].extraUWORDBound[1])),
         bound[dag[i].child[1]].extraUWORDBound[0]);
 
-      bound[i].extraFrameBound[1] = max( bound[dag[i].child[0]].extraFrameBound[1] + 1
+      bound[i].extraFrameBound[1] = bounded_max( bound[dag[i].child[0]].extraFrameBound[1] + 1
                                        , bound[dag[i].child[1]].extraFrameBound[1]);
       bound[i].extraFrameBound[0] = bound[i].extraFrameBound[1] + 1;
       bound[i].cost = bounded_add(overhead
@@ -661,24 +661,24 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
         bound[i].extraCellsBound[0] = UBOUNDED_MAX;
         bound[i].extraCellsBound[1] = UBOUNDED_MAX;
       } else {
-        bound[i].extraCellsBound[0] = max( bounded_add( type_dag[COMP_B(dag, type_dag, i)].bitSize
-                                                      , max( bound[dag[i].child[0]].extraCellsBound[0]
+        bound[i].extraCellsBound[0] = bounded_max( bounded_add( type_dag[COMP_B(dag, type_dag, i)].bitSize
+                                                      , bounded_max( bound[dag[i].child[0]].extraCellsBound[0]
                                                            , bound[dag[i].child[1]].extraCellsBound[1] ))
                                          , bound[dag[i].child[1]].extraCellsBound[0] );
         bound[i].extraCellsBound[1] = bounded_add( type_dag[COMP_B(dag, type_dag, i)].bitSize
                                                  , bound[dag[i].child[0]].extraCellsBound[1] );
       }
-      bound[i].extraUWORDBound[0] = max( (ubounded)ROUND_UWORD(type_dag[COMP_B(dag, type_dag, i)].bitSize) +
-                                         max( bound[dag[i].child[0]].extraUWORDBound[0]
+      bound[i].extraUWORDBound[0] = bounded_max( (ubounded)ROUND_UWORD(type_dag[COMP_B(dag, type_dag, i)].bitSize) +
+                                         bounded_max( bound[dag[i].child[0]].extraUWORDBound[0]
                                             , bound[dag[i].child[1]].extraUWORDBound[1] )
                                        , bound[dag[i].child[1]].extraUWORDBound[0] );
       bound[i].extraUWORDBound[1] = (ubounded)ROUND_UWORD(type_dag[COMP_B(dag, type_dag, i)].bitSize)
                                   + bound[dag[i].child[0]].extraUWORDBound[1];
 
-      bound[i].extraFrameBound[0] = max( bound[dag[i].child[0]].extraFrameBound[0]
+      bound[i].extraFrameBound[0] = bounded_max( bound[dag[i].child[0]].extraFrameBound[0]
                                        , bound[dag[i].child[1]].extraFrameBound[1] )
                                   + 1;
-      bound[i].extraFrameBound[1] = max( bound[dag[i].child[0]].extraFrameBound[1] + 1
+      bound[i].extraFrameBound[1] = bounded_max( bound[dag[i].child[0]].extraFrameBound[1] + 1
                                        , bound[dag[i].child[1]].extraFrameBound[1] );
       bound[i].cost = bounded_add(overhead
                     , bounded_add(type_dag[COMP_B(dag, type_dag, i)].bitSize
@@ -686,18 +686,18 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
       break;
      case PAIR:
       bound[i].extraCellsBound[0] = bound[dag[i].child[1]].extraCellsBound[0];
-      bound[i].extraCellsBound[1] = max( bound[dag[i].child[0]].extraCellsBound[0]
-                                       , max( bound[dag[i].child[0]].extraCellsBound[1]
+      bound[i].extraCellsBound[1] = bounded_max( bound[dag[i].child[0]].extraCellsBound[0]
+                                       , bounded_max( bound[dag[i].child[0]].extraCellsBound[1]
                                             , bound[dag[i].child[1]].extraCellsBound[1] ));
 
       bound[i].extraUWORDBound[0] = bound[dag[i].child[1]].extraUWORDBound[0];
-      bound[i].extraUWORDBound[1] = max( bound[dag[i].child[0]].extraUWORDBound[0]
-                                       , max( bound[dag[i].child[0]].extraUWORDBound[1]
+      bound[i].extraUWORDBound[1] = bounded_max( bound[dag[i].child[0]].extraUWORDBound[0]
+                                       , bounded_max( bound[dag[i].child[0]].extraUWORDBound[1]
                                             , bound[dag[i].child[1]].extraUWORDBound[1] ));
 
-      bound[i].extraFrameBound[0] = max( bound[dag[i].child[0]].extraFrameBound[0]
+      bound[i].extraFrameBound[0] = bounded_max( bound[dag[i].child[0]].extraFrameBound[0]
                                        , bound[dag[i].child[1]].extraFrameBound[0] );
-      bound[i].extraFrameBound[1] = max( bound[dag[i].child[0]].extraFrameBound[0]
+      bound[i].extraFrameBound[1] = bounded_max( bound[dag[i].child[0]].extraFrameBound[0]
                                        , bound[dag[i].child[1]].extraFrameBound[1] );
       bound[i].cost = bounded_add(overhead, bounded_add( bound[dag[i].child[0]].cost
                                                        , bound[dag[i].child[1]].cost ));
@@ -737,10 +737,10 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
     const ubounded inputSize = type_dag[dag[len-1].sourceType].bitSize;
     const ubounded outputSize = type_dag[dag[len-1].targetType].bitSize;
     *cellsBound = bounded_add( bounded_add(inputSize, outputSize)
-                             , max(bound[len-1].extraCellsBound[0], bound[len-1].extraCellsBound[1])
+                             , bounded_max(bound[len-1].extraCellsBound[0], bound[len-1].extraCellsBound[1])
                              );
     *UWORDBound = (ubounded)ROUND_UWORD(inputSize) + (ubounded)ROUND_UWORD(outputSize)
-                + max(bound[len-1].extraUWORDBound[0], bound[len-1].extraUWORDBound[1]);
+                + bounded_max(bound[len-1].extraUWORDBound[0], bound[len-1].extraUWORDBound[1]);
     *frameBound = bound[len-1].extraFrameBound[0] + 2; /* add the initial input and output frames to the count. */
     *costBound = bound[len-1].cost;
   }
