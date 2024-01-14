@@ -14,8 +14,8 @@ extra-source-files:  README.md
 tested-with:         GHC ==8.6.4
 
 library Simplicity-Core
-  C-sources:           C/sha256.c, C/frame.c, C/jets.c, C/jets-secp256k1.c
-                       Haskell/cbits/frame.c, Haskell/cbits/coreJets.c
+  C-sources:           C/sha256.c, C/frame.c, C/jets.c, C/jets-secp256k1.c, C/wrappedJets/coreJets.c
+                       Haskell/cbits/frame.c
   Include-dirs:        C
   Includes:            sha256.h, frame.h, jets.h
   exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
@@ -124,7 +124,7 @@ library Simplicity-Indef
 
 library
   C-sources:           C/primitive/elements/jets.c C/primitive/elements/ops.c C/primitive/elements/env.c
-                       Haskell/cbits/elements/jets.c Haskell/cbits/elements/env.c
+                       C/wrappedJets/elements/jets.c Haskell/cbits/elements/env.c
   Include-dirs:        C C/include
   Includes:            primitive/elements/jets.h primitive/elements/primitive.h simplicity/elements/env.h
   exposed-modules:     Simplicity.Bitcoin.Programs.Transaction, Simplicity.Bitcoin.Programs.Transaction.Lib,

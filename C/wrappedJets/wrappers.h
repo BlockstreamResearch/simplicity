@@ -1,5 +1,5 @@
-#ifndef WRAPPERS_H
-#define WRAPPERS_H
+#ifndef WRAPPEDJETS_WRAPPERS_H
+#define WRAPPEDJETS_WRAPPERS_H
 
 #define COREWRAP_(jet)                                                                                                        \
 bool c_##jet(frameItem* dst, const frameItem* src) {                                                                          \

@@ -1,4 +1,4 @@
-#include "jets.h"
+#include "../jets.h"
 #include "wrappers.h"
 
 COREWRAP_(verify)
