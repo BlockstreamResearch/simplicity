@@ -13,7 +13,7 @@
  * Precondition: NULL != a
  *               i < sizeof(a->s);
  */
-static unsigned char readIndex(const sha256_midstate* a, size_t i) {
+static unsigned char readIndex(const sha256_midstate* a, unsigned int i) {
   return ((const unsigned char*)(a->s))[i];
 }
 
@@ -23,12 +23,12 @@ static unsigned char readIndex(const sha256_midstate* a, size_t i) {
  *
  * The time complexity of 'freq' is O('len').
  *
- * Precondition: size_t result[CHAR_COUNT];
- *               const sha256_midstate * const a[len];
+ * Precondition: uint32_t result[CHAR_COUNT];
+ *               for all 0 <= i < len, NULL != a[i];
  *               j < sizeof((*a)->s)
  */
-static bool freq(size_t* result, const sha256_midstate * const * a, size_t len, size_t j) {
-  memset(result, 0, CHAR_COUNT * sizeof(size_t));
+static bool freq(uint32_t* result, const sha256_midstate * const * a, uint_fast32_t len, unsigned int j) {
+  memset(result, 0, CHAR_COUNT * sizeof(uint32_t));
 
   if (0 == len) return true;
 
@@ -40,28 +40,18 @@ static bool freq(size_t* result, const sha256_midstate * const * a, size_t len, 
   return len == ++result[readIndex(a[len-1],j)];
 }
 
-/* Given an array of bucket sizes, return an array of their cumulative sizes.
+/* Given an array of bucket sizes, and an initial value 'bucketEdge[0]',
+ * add subsequent bucket edges of the given bucket sizes.
  *
- * Precondition: size_t result[CHAR_COUNT];
- *               const size_t sizes[CHAR_COUNT];
+ * Precondition: uint32_t bucketEdge[CHAR_COUNT];
+ *               const uint32_t sizes[CHAR_COUNT];
  */
-static void cumulative(size_t* restrict result, const size_t* restrict sizes) {
-  size_t accumulator = 0;
-
-  for (size_t i = 0; i < CHAR_COUNT; ++i) {
+static void cumulative(uint32_t* restrict bucketEdge, const uint32_t* restrict sizes) {
+  uint32_t accumulator = bucketEdge[0] + sizes[0];
+  for (unsigned int i = 1; i < CHAR_COUNT; ++i) {
+    bucketEdge[i] = accumulator;
     accumulator += sizes[i];
-    result[i] = accumulator;
   }
-}
-
-/* Given an array of bucket end indices (i.e. the result of 'cumulative'),
- * Return the starting position of the 'i'th bucket.
- *
- * Precondition: size_t ends[CHAR_COUNT];
- *               i < CHAR_COUNT;
- */
-static size_t bucketStart(const size_t* ends, size_t i) {
-  return i ? ends[i-1] : 0;
 }
 
 /* Exchange two pointers.
@@ -76,61 +66,158 @@ static void swap(const sha256_midstate** a, const sha256_midstate** b) {
   *b = tmp;
 }
 
+/* Sort the subarray a[begin:end) by their ix-th character,
+ * where begin = bucketEdge[0] and end = bucketEdge[UMAX_CHAR] + bucketSize[UMAX_CHAR].
+ *
+ * We expect that the ix-length prefix of every entry in a[being:end) to be identical
+ * so that the result is that the a[begin:end) subarray ends up sorted by their first 'ix + 1' characters.
+ *
+ * Precondition: For all begin <= i < end, NULL != a[i];
+ *               for all i < CHAR_COUNT, bucketSize[i] is the number of of entries in the subentries in a[begin:end) whose ix-th character is 'i'.
+ *               for all i < UMAX_CHAR, bucketEdge[i] + bucketSize[i] = bucketEdge[i+1];
+ *               ix < sizeof((*a)->s);
+ * Postcondition: The contents of bucketSize is not preserved!
+ */
+static void sort_buckets(const sha256_midstate** a, uint32_t* restrict bucketSize, const uint32_t* restrict bucketEdge, unsigned int ix) {
+  /* The implementation works by finding the first non-empty bucket and then swapping the first element of that bucket into its position
+     at the far end of the bucket where it belongs.
+
+     After moving the element into that position the size of the target bucket is decreased by one,
+     and thus the next element that will be swapped into that bucket will be placed behind it.
+
+     This process continues until the first element of the first non-empty bucket gets swapped with itself
+     and its own bucket is decremented from size 1 to size 0.
+
+     At that point we search again for the next non-empty bucket and repeat this process until there are no more non-empty buckets.
+   */
+  for (unsigned int i = 0; i < CHAR_COUNT; ++i) {
+    size_t start = bucketEdge[i];
+    while (bucketSize[i]) {
+      /* Each time through this while loop some bucketSize is decremented.
+         Therefore this body is executed 'sum(i < CHAR_COUNT, bucketSize[i]) = end - begin' many times.
+       */
+      size_t bucket = readIndex(a[start], ix);
+      simplicity_assert(bucketSize[bucket]);
+      bucketSize[bucket]--;
+      swap(a + start, a + bucketEdge[bucket] + bucketSize[bucket]);
+    }
+  }
+}
+
 /* Attempts to (partially) sort an array of pointers to 'sha256_midstate's in place in memcmp order.
  * If duplicate entries are found, the sorting is aborted and one of pointers to a duplicate entry is returned.
  * Otherwise if no duplicate entries are found 'NULL' is returned.
  *
- * The maximum recursion depth is 'sizeof((*a)->s)'.  With some effort 'rsort' could be rewritten to be non-recursive.
  * The time complexity of rsort is O('len').
  *
- * Precondition: size_t scratch[(sizeof((*a)->s) - ix + 1)*CHAR_COUNT];
- *               For all 0 <= i < len, NULL != a[i];
- *               ix <= sizeof((*a)->s);
+ * Precondition: For all 0 <= i < len, NULL != a[i];
+ *               uint32_t stack[(CHAR_COUNT - 1)*(sizeof(*a)->s) + 1];
  */
-const sha256_midstate* rsort(size_t* scratch, const sha256_midstate** a, size_t len, size_t ix) {
-  /* An array of length 0 or 1 is sorted and without duplicates. */
-  if (len < 2) return NULL;
+const sha256_midstate* rsort(const sha256_midstate** a, uint_fast32_t len, uint32_t* stack) {
+  unsigned int depth = 0;
+  size_t bucketCount[sizeof((*a)->s) + 1];
+  size_t totalBucketCount = 1;
 
-  /* An array of empty strings of length 2 or more has duplicates. */
-  if (sizeof((*a)->s) <= ix) return a[0];
+  static_assert(sizeof((*a)->s) <= UINT_MAX, "UINT_MAX too small to hold depth.");
+  stack[0]=0;
+  bucketCount[depth] = 1;
 
-  size_t* bucketEnds = scratch;
+  /* This implementation contains a 'stack' of 'totalBucketCount' many subarrays (called buckets)
+     that have been partially sorted up to various prefix length.
 
-  {
-    size_t* bucketSize = scratch + CHAR_COUNT;
+     The buckets are disjoint and cover the entire array from 0 up to len.
+     As sorting proceeds, the end of the array will be sorted first.
+     We will decrease len as we go as we find out that items at the end of the array are in their proper, sorted position.
 
-    /* The time complexity of 'freq' is O('len'). */
-    while (freq(bucketSize, a, len, ix)) {
-      /* If there is only one non-empty bucket, then we can proceed directly to the next index. */
-      ix++;
-      if (sizeof((*a)->s) <= ix) return a[0];
-    };
+     The 'i'th bucket is the subarray a[stack[i]:stack[i+1]),
+     excecpt for the last bucket which is the subarray a[stack[totalBucketCount-1]:len).
 
-    cumulative(bucketEnds, bucketSize);
-    simplicity_assert(len == bucketEnds[UCHAR_MAX]);
+     The depth to which various buckets are sorted increases the further down the stack you go.
+     The 'bucketCount' stores how many buckets are sorted to various depths.
 
-    for (size_t i = 0; i < CHAR_COUNT; ++i) {
-      size_t start = bucketStart(bucketEnds, i);
-      while (bucketSize[i]) {
-        /* Each time through this loop some bucketSize is decremented.
-         * Therefore this body is executed 'len' many times per call to rsort.
+     * for all i <= depth, the subarray a[sum(j < i, bucketCount[i]):end) have their first i characters sorted.
+     * for all i <= depth, the (sum(j < i, bucketCount[i]))th and later buckets have all the first i characters of their entries identical.
+
+     So all buckets are sorted up to a prefix length of 0 many characters.
+     Then, if 1 <= depth, all bucket except for the first bucketCount[0]-many buckets are sorted by their 1 character prefix
+     And then, if 2 <= depth, all bucket except for the first (bucketCount[0] + bucket[1])-many buckets are sorted by their 2 character prefix
+     And so on.
+
+     It is always the case that 'totalBucketCount = sum(i <= depth, bucketCount[i])',
+     and thus the last bucket in the stack is located at stack[totalBucketCount-1].
+     'totalBucketCount' and 'bucketCount' items are always increased and decreased in tandum.
+
+     The loop is initialized with a 'totalBucketCount' of 1 and this one bucket contains the whole array a[0:len).
+     'depth' is initialized to 0, and all the entries are trivialy sorted by the first 0-many characters.
+
+     As we go through the loop, the last bucket is "popped" off the stack and processed, which can go one of two ways.
+
+     If the last bucket is size 2 or greater, we proceed to sort it by its 'depth' character and partition the bucket into 256 sub-buckets
+     which are then pushed onto the stack (notice this causes a net increase of the stack size by 255 items, because one was popped off).
+
+     If ever the depth is beyond the size of the data being sorted,
+     we can immediately halt as we have found 2 or more item that are identical.
+
+     Note: there is an added optimization where by if there is only one non-empty bucket found when attempting to sort,
+     i.e. it happens that every bucket item already has identical 'depth' characters,
+     we skip the subdivision and move onto the next depth immediately.
+     (This is equivalent to pushing the one non-empty bucket onto the stack and immediately poping it back off.)
+
+     If the last bucket is of size 0 or 1, it must be already be sorted.
+     Since this bucket is at the end of the array we decrease 'len'.
+   */
+  while(totalBucketCount) {
+    /* Find the correct "depth" of the last bucket. */
+    while(0 == bucketCount[depth]) {
+      simplicity_assert(depth);
+      depth--;
+    }
+
+    /* "pop" last bucket off the stack. */
+    bucketCount[depth]--; totalBucketCount--;
+
+    if (2 <= len - stack[totalBucketCount]) {
+      uint32_t bucketSize[CHAR_COUNT];
+      uint32_t* bucketEdge = stack + totalBucketCount;
+      uint32_t begin = bucketEdge[0];
+
+      /* Set bucketSize[i] to the count of the number of items in the array whose 'depth' character is 'i'.
+         The time complexity of 'freq' is O('len - begin').
+         WARNING: the 'freq' function modifies the contents of 'bucketSize' but is only executed when depth < sizeof((*a)->s).
+       */
+      while (depth < sizeof((*a)->s) && freq(bucketSize, a + begin, len - begin, depth)) {
+        /* Optimize the case where there is only one bucket. i.e. when the 'depth' character of the interval [begin, len) are all identical. */
+        depth++;
+        bucketCount[depth] = 0;
+      };
+
+      if (depth < sizeof((*a)->s)) {
+        /* Using bucketSize, compute all then next set of bucket edges based on
+           where items will end up when they are sorted by their 'depth' character.
          */
-        size_t bucket = readIndex(a[start], ix);
-        simplicity_assert(bucketSize[bucket]);
-        bucketSize[bucket]--;
-        swap(a + start, a + bucketStart(bucketEnds, bucket) + bucketSize[bucket]);
+        cumulative(bucketEdge, bucketSize);
+        simplicity_assert(len == bucketEdge[UCHAR_MAX] + bucketSize[UCHAR_MAX]);
+
+        /* Sort this bucket by their depth character, placing them into their proper buckets based on their bucketEdges. */
+        sort_buckets(a, bucketSize, bucketEdge, depth);
+
+        depth++; bucketCount[depth] = CHAR_COUNT; totalBucketCount += CHAR_COUNT;
+      } else {
+        /* Early return when we are searching for duplicates and have found a bucket of size 2 or more
+           whose "prefix" agree up to then entire length of the hash value, and hence are all identical.
+         */
+        return a[begin];
       }
+    } else {
+      /* len - stack[totalBucketCount] < 2 */
+
+      /* When the last bucket size is 0 or 1 there is no sorting to do within the bucket.
+         It is already sorted, and since it is at the end we can decrease len.
+       */
+      len = stack[totalBucketCount];
     }
   }
-
-  for (size_t i = 0; i < CHAR_COUNT; ++i) {
-    size_t start = bucketStart(bucketEnds, i);
-    /* By induction this rsort call takes O('bucketEnds'['i'] - 'start') time.
-     * There is one call per bucket, so the total cost of these recursive calls is O('len').
-     */
-    const sha256_midstate* rec = rsort(scratch + CHAR_COUNT, a + start, bucketEnds[i] - start, ix + 1);
-    if (rec) return rec;
-  }
+  simplicity_assert(0 == len);
 
   return NULL;
 }
