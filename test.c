@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <getopt.h>
 #include <simplicity/elements/exec.h>
 #include "ctx8Pruned.h"
 #include "ctx8Unpruned.h"
@@ -21,6 +22,12 @@ _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
 static const double secondsPerWU = 0.5 / 1000. / 1000.;
 static int successes = 0;
 static int failures = 0;
+
+#ifdef TIMING_FLAG
+static int timing_flag = 1;
+#else
+static int timing_flag = 0;
+#endif
 
 static void fprint_cmr(FILE* stream, const uint32_t* cmr) {
   fprintf(stream, "0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x",
@@ -539,11 +546,13 @@ static void regression_tests(void) {
     diff = (double)(end - start) / CLOCKS_PER_SEC;
     bound = (double)(sizeof_regression3) * secondsPerWU;
     printf("cpu_time_used by regression3: %f s.  (Should be less than %f s.)\n", diff, bound);
-    if (diff <= bound) {
-      successes++;
-    } else {
-      failures++;
-      printf("regression3 took too long.\n");
+    if (timing_flag) {
+      if (diff <= bound) {
+        successes++;
+      } else {
+        failures++;
+        printf("regression3 took too long.\n");
+      }
     }
     free(regression3);
   }
@@ -562,15 +571,29 @@ static void iden8mebi_test(void) {
   bound = (double)expectedCost / 1000. * secondsPerWU;
 
   printf("cpu_time_used by iden8mebi: %f s.  (Should be less than %f s.)\n", diff, bound);
-  if (diff <= bound) {
-    successes++;
-  } else {
-    failures++;
-    printf("iden8mebi took too long.\n");
+  if (timing_flag) {
+    if (diff <= bound) {
+      successes++;
+    } else {
+      failures++;
+      printf("iden8mebi took too long.\n");
+    }
   }
 }
 
-int main(void) {
+int main(int argc, char **argv) {
+  while (true) {
+    static struct option long_options[] = {
+        /* These options set a flag. */
+        {"timing", no_argument, &timing_flag, 1},
+        {"no-timing", no_argument, &timing_flag, 0},
+        {0, 0, 0, 0}
+      };
+    int opt_result = getopt_long(argc, argv, "", long_options, NULL);
+    if (-1 == opt_result) break;
+    if (0 == opt_result) continue;
+    exit(EXIT_FAILURE);
+  }
   test_decodeUptoMaxInt();
   test_hashBlock();
   test_occursCheck();
