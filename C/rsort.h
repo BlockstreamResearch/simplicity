@@ -43,7 +43,7 @@ static inline int hasDuplicates(const sha256_midstate* a, size_t len) {
       perm[i] = a + i;
     }
 
-    result = NULL != rsort(scratch, perm, len, sizeof(a->s));
+    result = NULL != rsort(scratch, perm, len, 0);
   }
 
   free(perm);
