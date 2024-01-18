@@ -109,15 +109,17 @@ static void sort_buckets(const sha256_midstate** a, uint32_t* restrict bucketSiz
 }
 
 /* Attempts to (partially) sort an array of pointers to 'sha256_midstate's in place in memcmp order.
- * If duplicate entries are found, the sorting is aborted and one of pointers to a duplicate entry is returned.
- * Otherwise if no duplicate entries are found 'NULL' is returned.
+ * If NULL == hasDuplicates then sorting is always run to completion.
+ * Otherwise, if NULL != hasDuplicates and if duplicate entries are found, the sorting is aborted and
+ * *hasDuplicates is set to one of pointers of a duplicate entry.
+ * If NULL != hasDuplicates and no duplicate entries are found, then *hasDuplicates is set to NULL.
  *
  * The time complexity of rsort is O('len').
  *
  * Precondition: For all 0 <= i < len, NULL != a[i];
  *               uint32_t stack[(CHAR_COUNT - 1)*(sizeof(*a)->s) + 1];
  */
-static const sha256_midstate* rsort(const sha256_midstate** a, uint_fast32_t len, uint32_t* stack) {
+static void rsort_ex(const sha256_midstate** a, uint_fast32_t len, const sha256_midstate** hasDuplicates, uint32_t* stack) {
   unsigned int depth = 0;
   size_t bucketCount[sizeof((*a)->s) + 1];
   size_t totalBucketCount = 1;
@@ -206,24 +208,48 @@ static const sha256_midstate* rsort(const sha256_midstate** a, uint_fast32_t len
         sort_buckets(a, bucketSize, bucketEdge, depth);
 
         depth++; bucketCount[depth] = CHAR_COUNT; totalBucketCount += CHAR_COUNT;
-      } else {
-        /* Early return when we are searching for duplicates and have found a bucket of size 2 or more
+        continue;
+      }
+      if (hasDuplicates) {
+        /* Early return if we are searching for duplicates and have found a bucket of size 2 or more
            whose "prefix" agree up to then entire length of the hash value, and hence are all identical.
          */
-        return a[begin];
+        *hasDuplicates = a[begin];
+        return;
       }
-    } else {
-      /* len - stack[totalBucketCount] < 2 */
-
-      /* When the last bucket size is 0 or 1 there is no sorting to do within the bucket.
-         It is already sorted, and since it is at the end we can decrease len.
-       */
-      len = stack[totalBucketCount];
     }
+    /* len - stack[totalBucketCount] < 2 || sizeof((*a)->s) == depth */
+
+    /* When the last bucket size is 0 or 1, or when the depth exceeds sizeof((*a)->s), there is no sorting to do within the bucket.
+       It is already sorted, and since it is at the end we can decrease len.
+    */
+    len = stack[totalBucketCount];
   }
   simplicity_assert(0 == len);
 
-  return NULL;
+  if (hasDuplicates) *hasDuplicates = NULL;
+}
+
+/* Sorts an array of pointers to 'sha256_midstate's in place in memcmp order.
+ * If malloc fails, returns false.
+ * Otherwise, returns true.
+ *
+ * The time complexity of rsort is O('len').
+ *
+ * We are sorting in memcmp order, which is the lexicographical order of the object representation, i.e. the order that one
+ * gets when casting 'sha256_midstate' to a 'unsigned char[]'. This representation is implementation defined, and will differ
+ * on big endian and little endian architectures.
+ *
+ * It is critical that the details of this order remain unobservable from the consensus rules.
+ *
+ * Precondition: For all 0 <= i < len, NULL != a[i];
+ */
+bool rsort(const sha256_midstate** a, uint_fast32_t len) {
+  uint32_t *stack = malloc(((CHAR_COUNT - 1)*(sizeof((*a)->s)) + 1) * sizeof(uint32_t));
+  if (!stack) return false;
+  rsort_ex(a, len, NULL, stack);
+  free(stack);
+  return true;
 }
 
 /* Searches for duplicates in an array of 'sha256_midstate's.
@@ -249,7 +275,9 @@ int hasDuplicates(const sha256_midstate* a, uint_fast32_t len) {
       perm[i] = a + i;
     }
 
-    result = NULL != rsort(perm, len, stack);
+    const sha256_midstate *duplicate;
+    rsort_ex(perm, len, &duplicate, stack);
+    result = NULL != duplicate;
   }
 
   free(perm);
