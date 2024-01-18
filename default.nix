@@ -6,6 +6,7 @@
 , wideMultiply ? null
 , withCoverage ? false
 , withProfiler ? false
+, withTiming ? true
 , doCheck ? true
 , env ? "stdenv"
 }:
@@ -33,7 +34,7 @@ let hp = nixpkgs.haskell.packages.${ghc};
   };
 
   c = nixpkgs.callPackage ./Simplicity.C.nix {
-    inherit doCheck production wideMultiply withCoverage withProfiler;
+    inherit doCheck production wideMultiply withCoverage withProfiler withTiming;
     stdenv = nixpkgs.${env};
   };
 

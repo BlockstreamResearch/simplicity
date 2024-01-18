@@ -1,5 +1,6 @@
 { lib, stdenv, gcovr ? null, wideMultiply ? null, withCoverage ? false
 , withProfiler ? false, gperftools ? null, graphviz ? null, perl ? null, librsvg ? null
+, withTiming ? true
 , production ? false
 , gcov-executable ? if stdenv.cc.isGNU then "gcov -r" else
                     if stdenv.cc.isClang then "${stdenv.cc.cc.libllvm}/bin/llvm-cov gcov"
@@ -18,6 +19,7 @@ stdenv.mkDerivation {
   enableParallelBuilding = true;
   CPPFLAGS = lib.optional (builtins.isString wideMultiply) "-DUSE_FORCE_WIDEMUL_${lib.toUpper wideMultiply}=1";
   CFLAGS = lib.optional withCoverage "--coverage"
+        ++ lib.optional withTiming "-DTIMING_FLAG"
         ++ lib.optional production "-DPRODUCTION";
   LDFLAGS = lib.optional withCoverage "--coverage"
          ++ lib.optional withProfiler "-lprofiler";
