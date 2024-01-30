@@ -363,9 +363,8 @@ rustJetDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
 
 rustFFIImports :: Doc a
 rustFFIImports = vsep (map (<> semi)
-  [ "use std::ffi::c_void"
-  , "use super::c_env::CElementsTxEnv"
-  , "use super::frame_ffi::CFrameItem"
+  [ "use crate::ffi::c_void"
+  , "use crate::{CElementsTxEnv, CFrameItem}"
   ])
 
 rustFFISigs :: Module -> Doc a
@@ -395,8 +394,8 @@ rustFFIDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
 
 rustWrapperImports :: Doc a
 rustWrapperImports = vsep (map (<> semi)
-  [ "use crate::CElementsTxEnv"
-  , "use super::{frame_ffi::CFrameItem, elements_ffi}"
+  [ "use crate::{CElementsTxEnv, CFrameItem}"
+  , "use super::elements_ffi"
   ])
 
 rustWrappers :: Module -> Doc a
