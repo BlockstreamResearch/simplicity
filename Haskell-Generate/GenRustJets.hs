@@ -417,21 +417,12 @@ rustWrapperDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
   , rustWrappers mod
   ])
 
-rustCoreJetDoc :: SimpleDocStream a
-rustCoreJetDoc = rustJetDoc coreModule
-
-rustElementsJetDoc :: SimpleDocStream a
-rustElementsJetDoc = rustJetDoc elementsModule
-
-rustBitcoinJetDoc :: SimpleDocStream a
-rustBitcoinJetDoc = rustJetDoc bitcoinModule
-
 renderFile name doc = withFile name WriteMode (\h -> renderIO h doc)
 
 main = do
-  renderFile "core.rs" rustCoreJetDoc
-  renderFile "elements.rs" rustElementsJetDoc
-  renderFile "bitcoin.rs" rustBitcoinJetDoc
+  renderFile "core.rs" (rustJetDoc coreModule)
+  renderFile "elements.rs" (rustJetDoc elementsModule)
+  renderFile "bitcoin.rs" (rustJetDoc bitcoinModule)
   renderFile "jets_ffi.rs" (rustFFIDoc elementsModule)
   renderFile "jets_wrapper.rs" (rustWrapperDoc elementsModule)
 
