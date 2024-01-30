@@ -370,12 +370,19 @@ rustFFIImports = vsep (map (<> semi)
 
 rustFFISigs :: Module -> Doc a
 rustFFISigs mod = vsep
-  [ nest 4 (vsep ("extern \"C\" {": ((<> semi) . pretty . sig <$> moduleJets mod)))
+  [ nest 4 $ vsep $
+    "extern \"C\" {" :
+    (declaration <$> moduleJets mod)
   , "}"
   ]
  where
-  sig (SomeArrow jet) = "pub fn "++cJetName jet++"(dst: *mut CFrameItem, src: CFrameItem, env: *const "++envType++") -> bool"
+  declaration (SomeArrow jet) = (<> semi) . vsep $ pretty <$>
+    [ linkName
+    , signature
+    ]
    where
+    linkName = "#[link_name = \"c_"++cJetName jet++"\"]"
+    signature = "pub fn "++cJetName jet++"(dst: *mut CFrameItem, src: *const CFrameItem, env: *const "++envType++") -> bool"
     envType | CoreModule <- jetModule jet = "c_void"
             | ElementsModule <- jetModule jet = "CElementsTxEnv"
 
@@ -398,7 +405,7 @@ rustWrappers mod = vsep ((<> line) . wrapper <$> moduleJets mod)
   wrapper (SomeArrow jet) = vsep
    [ nest 4 $ vsep
      [ pretty $ "pub fn "++cJetName jet++templateParam++"(dst: &mut CFrameItem, src: CFrameItem, "++envParam++") -> bool {"
-     , pretty $ "unsafe { "++lowerRustModuleName mod++"_ffi::"++cJetName jet++"(dst, src, "++envArg++") }"
+     , pretty $ "unsafe { "++lowerRustModuleName mod++"_ffi::"++cJetName jet++"(dst, &src, "++envArg++") }"
      ]
    , "}"
    ]
