@@ -424,6 +424,25 @@ rustWrapperDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
   , rustWrappers mod
   ])
 
+cWrapperImports :: Doc a
+cWrapperImports = vsep
+  [ "#include \"simplicity/primitive/elements/jets.h\""
+  , "#include \"simplicity/simplicity_assert.h\""
+  , "#include \"wrapper.h\""
+  ]
+
+cWrappers :: Module -> Doc a
+cWrappers mod = vsep (map wrapper $ moduleJets mod)
+ where
+  wrapper (SomeArrow jet) = pretty $ "WRAP_("++cJetName jet++")"
+
+cWrapperDoc :: Module -> SimpleDocStream a
+cWrapperDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
+  [ rustHeader -- also works for C
+  , cWrapperImports
+  , cWrappers mod
+  ])
+
 renderFile name doc = withFile name WriteMode (\h -> renderIO h doc)
 
 main = do
@@ -432,5 +451,6 @@ main = do
   renderFile "bitcoin.rs" (rustJetDoc bitcoinModule)
   renderFile "jets_ffi.rs" (rustFFIDoc elementsModule)
   renderFile "jets_wrapper.rs" (rustWrapperDoc elementsModule)
+  renderFile "jets_wrapper.c" (cWrapperDoc elementsModule)
 
 layoutOptions = LayoutOptions { layoutPageWidth = AvailablePerLine 100 1 }
