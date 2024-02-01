@@ -1,7 +1,33 @@
+# Tech report
 Simplicity-TR.pdf
-Haskell/*.pdf
 *.eps
+# Haskell
+/Haskell/*.pdf
+dist-newstyle
+cabal.project.local
+# Nix
+result
 result-doc
+# Coq
+/Coq/*CoqMakefile*
 .lia.cache
 *.vok
 *.vos
+*.glob
+*.aux
+*.vo
+*.crashcoqide
+alectryon-doc
+# C
+/C/test
+*.o
+*.out
+*.a
+# Coverage
+*.gcda
+*.gcno
+*.gcov
+*.info
+# GenRustJets
+/*.rs
+/*.c
