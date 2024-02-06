@@ -34,7 +34,7 @@ import Simplicity.Bitcoin
 import Simplicity.BitMachine.StaticAnalysis.Cost
 import Simplicity.Digest
 import Simplicity.FFI.Jets as FFI
-import Simplicity.LibSecp256k1.Spec as Spec
+import Simplicity.LibSecp256k1.Spec as LibSecp256k1
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import qualified Simplicity.Programs.Bit as Prog
@@ -440,6 +440,8 @@ data Secp256k1Jet a b where
   LinearVerify1 :: Secp256k1Jet (((Secp256k1.Scalar,Secp256k1.GE),Secp256k1.Scalar),Secp256k1.GE) ()
   PointVerify1 :: Secp256k1Jet (((Secp256k1.Scalar,Secp256k1.Point),Secp256k1.Scalar),Secp256k1.Point) ()
   Decompress :: Secp256k1Jet Secp256k1.Point (Either () Secp256k1.GE)
+  Swu :: Secp256k1Jet Secp256k1.FE Secp256k1.GE
+  HashToCurve :: Secp256k1Jet Word256 Secp256k1.GE
 deriving instance Eq (Secp256k1Jet a b)
 deriving instance Show (Secp256k1Jet a b)
 
@@ -832,6 +834,8 @@ specificationSecp256k1 LinearCombination1 = Secp256k1.linear_combination_1
 specificationSecp256k1 LinearVerify1 = Secp256k1.linear_verify_1
 specificationSecp256k1 PointVerify1 = Secp256k1.point_verify_1
 specificationSecp256k1 Decompress = Secp256k1.decompress
+specificationSecp256k1 Swu = Secp256k1.swu
+specificationSecp256k1 HashToCurve = Secp256k1.hash_to_curve
 
 specificationSignature :: Assert term => SignatureJet a b -> term a b
 specificationSignature CheckSigVerify = CheckSig.checkSigVerify
@@ -1472,8 +1476,8 @@ implementationSecp256k1 GejGeAddEx = FFI.gej_ge_add_ex
 implementationSecp256k1 GejGeAdd = FFI.gej_ge_add
 implementationSecp256k1 GejRescale = FFI.gej_rescale
 implementationSecp256k1 GejIsInfinity = FFI.gej_is_infinity
-implementationSecp256k1 GejEquiv = \(a,b) -> return . toBit $ Spec.gej_equiv (fromGEJ a) (fromGEJ b)
-implementationSecp256k1 GejGeEquiv = \(a,b) -> return . toBit $ Spec.gej_ge_equiv (fromGEJ a) (fromGE b)
+implementationSecp256k1 GejEquiv = \(a,b) -> return . toBit $ LibSecp256k1.gej_equiv (fromGEJ a) (fromGEJ b)
+implementationSecp256k1 GejGeEquiv = \(a,b) -> return . toBit $ LibSecp256k1.gej_ge_equiv (fromGEJ a) (fromGE b)
 implementationSecp256k1 GejXEquiv = FFI.gej_x_equiv
 implementationSecp256k1 GejYIsOdd = FFI.gej_y_is_odd
 implementationSecp256k1 GejIsOnCurve = FFI.gej_is_on_curve
@@ -1484,6 +1488,14 @@ implementationSecp256k1 LinearCombination1 = FFI.linear_combination_1
 implementationSecp256k1 LinearVerify1 = FFI.linear_verify_1
 implementationSecp256k1 PointVerify1 = FFI.point_verify_1
 implementationSecp256k1 Decompress = FFI.decompress
+implementationSecp256k1 Swu = Just . toGE . LibSecp256k1.shallueVanDeWoestijne . fromFE
+ where
+  toGE (LibSecp256k1.GE x y) = (toWord256 (LibSecp256k1.fe_repr x), toWord256 (LibSecp256k1.fe_repr y))
+  fromFE = LibSecp256k1.fe . fromWord256
+implementationSecp256k1 HashToCurve = fmap toGE . LibSecp256k1.hash_to_curve . fromW256
+ where
+  toGE (LibSecp256k1.GE x y) = (toWord256 (LibSecp256k1.fe_repr x), toWord256 (LibSecp256k1.fe_repr y))
+  fromW256 = fromInteger . fromWord256
 
 implementationSignature :: SignatureJet a b -> a -> Maybe b
 implementationSignature CheckSigVerify ((pk, (ir, h)), sig) = FFI.bip_0340_verify ((pk, msg), sig)
@@ -2255,6 +2267,9 @@ secp256k1Book = Shelf
   , Item $ SomeArrow FeSquareRoot
   , Item $ SomeArrow FeIsZero
   , Item $ SomeArrow FeIsOdd
+  , Missing
+  , Item $ SomeArrow HashToCurve
+  , Item $ SomeArrow Swu
   ]
 signatureBook = book
   [ SomeArrow CheckSigVerify
@@ -2642,6 +2657,8 @@ putJetBitSecp256k1 LinearCombination1 = putPositive 4 . putPositive 1
 putJetBitSecp256k1 LinearVerify1 = putPositive 3 . putPositive 1
 putJetBitSecp256k1 PointVerify1 = putPositive 1 . putPositive 1
 putJetBitSecp256k1 Decompress = putPositive 2
+putJetBitSecp256k1 HashToCurve = putPositive 46
+putJetBitSecp256k1 Swu = putPositive 47
 
 putJetBitSignature :: SignatureJet a b -> DList Bool
 putJetBitSignature CheckSigVerify = putPositive 1
@@ -3036,6 +3053,8 @@ jetCostSecp256k1 LinearCombination1 = Benchmarks.cost "LinearCombination1"
 jetCostSecp256k1 LinearVerify1 = Benchmarks.cost "LinearVerify1"
 jetCostSecp256k1 PointVerify1 = Benchmarks.cost "PointVerify1"
 jetCostSecp256k1 Decompress = Benchmarks.cost "Decompress"
+jetCostSecp256k1 Swu = Benchmarks.cost "Swu"
+jetCostSecp256k1 HashToCurve = Benchmarks.cost "HashToCurve"
 
 jetCostSignature :: SignatureJet a b -> Weight
 jetCostSignature CheckSigVerify = Benchmarks.cost "CheckSigVerify"

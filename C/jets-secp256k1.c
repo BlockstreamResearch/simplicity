@@ -640,3 +640,27 @@ bool check_sig_verify(frameItem* dst, frameItem src, const txEnv* env) {
   read8s(sig, 64, &src);
   return secp256k1_schnorrsig_verify(sig, buf, sizeof(buf), &pubkey);
 }
+
+/* swu : FE |- GE */
+bool swu(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+  secp256k1_fe t;
+  secp256k1_ge ge;
+  read_fe(&t, &src);
+  shallue_van_de_woestijne(&ge, &t);
+  write_ge(dst, &ge);
+  return true;
+}
+
+/* hash_to_curve : TWO^256 |- GE */
+bool hash_to_curve(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+  unsigned char key[32];
+  secp256k1_generator gen;
+  secp256k1_ge ge;
+  read8s(key, 32, &src);
+  if(!secp256k1_generator_generate(&gen, key)) return false;
+  secp256k1_generator_load(&ge, &gen);
+  write_ge(dst, &ge);
+  return true;
+}

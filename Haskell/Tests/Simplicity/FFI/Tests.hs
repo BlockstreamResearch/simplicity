@@ -508,6 +508,10 @@ tests = testGroup "C / SPEC"
         [ testProperty "check_sig_verify" prop_check_sig_verify
         , testProperty "check_sig_verify_true" prop_check_sig_verify_true
         ]
+      , testGroup "generator"
+        [ testProperty "swu" prop_swu
+        , testProperty "hash_to_curve" prop_hash_to_curve
+        ]
       ]
 assert_verify :: Assertion
 assert_verify =
@@ -3562,3 +3566,12 @@ prop_check_sig_verify_true = \m1 m2 ->
   toW256 = toWord256 . fromIntegral
   fast_check_sig_verify = testCoreEval (specification (SignatureJet CheckSigVerify))
 
+prop_swu :: FieldElement -> Bool
+prop_swu = \a -> let input = feAsTy a in fastF input == C.swu input
+ where
+  fastF = testCoreEval (specification (Secp256k1Jet Swu))
+
+prop_hash_to_curve :: HashElement -> Bool
+prop_hash_to_curve = \a -> let input = heAsTy a in fastF input == C.hash_to_curve input
+ where
+  fastF = testCoreEval (specification (Secp256k1Jet HashToCurve))

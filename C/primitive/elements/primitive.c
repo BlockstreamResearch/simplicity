@@ -1013,6 +1013,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
        case 42: *result = FE_SQUARE_ROOT; return SIMPLICITY_NO_ERROR;
        case 43: *result = FE_IS_ZERO; return SIMPLICITY_NO_ERROR;
        case 44: *result = FE_IS_ODD; return SIMPLICITY_NO_ERROR;
+
+       case 46: *result = HASH_TO_CURVE; return SIMPLICITY_NO_ERROR;
+       case 47: *result = SWU; return SIMPLICITY_NO_ERROR;
       }
       break;
      case 5: /* Signature jets chapter */

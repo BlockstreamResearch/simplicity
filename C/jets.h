@@ -385,6 +385,8 @@ bool linear_combination_1(frameItem* dst, frameItem src, const txEnv* env);
 bool linear_verify_1(frameItem* dst, frameItem src, const txEnv* env);
 bool decompress(frameItem* dst, frameItem src, const txEnv* env);
 bool point_verify_1(frameItem* dst, frameItem src, const txEnv* env);
+bool swu(frameItem* dst, frameItem src, const txEnv* env);
+bool hash_to_curve(frameItem* dst, frameItem src, const txEnv* env);
 
 bool check_sig_verify(frameItem* dst, frameItem src, const txEnv* env);
 bool bip_0340_verify(frameItem* dst, frameItem src, const txEnv* env);
