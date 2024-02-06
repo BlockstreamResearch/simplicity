@@ -122,7 +122,7 @@
 ,[BIP_0340_VERIFY] =
 { .tag = JET
 , .jet = bip_0340_verify
-, .cmr = {{0xba22117fu, 0xcd13815bu, 0xf3e3c88au, 0x46551a6eu, 0x31f0331bu, 0x00d134acu, 0xab7949d5u, 0x9e322194u}}
+, .cmr = {{0x3a196ec1u, 0x9d8f3fccu, 0x67b0ad8fu, 0x611e762du, 0xc1189a72u, 0x2faa745bu, 0x694d292cu, 0x47373f53u}}
 , .sourceIx = ty_w1Ki
 , .targetIx = ty_u
 , .cost = 49671 /* milli weight units */
@@ -250,7 +250,7 @@
 ,[CHECK_SIG_VERIFY] =
 { .tag = JET
 , .jet = check_sig_verify
-, .cmr = {{0xe8feb534u, 0x34e2bdb5u, 0xcfe6a91fu, 0xa8f9e177u, 0xf941a67cu, 0xc6ced869u, 0x746f1a8eu, 0xb6506f76u}}
+, .cmr = {{0xa516dd5cu, 0x9cabd041u, 0x120ea368u, 0xab4ccd92u, 0x31255ef5u, 0x79968558u, 0xc1aa6a21u, 0x2f168329u}}
 , .sourceIx = ty_ppw256w512w512
 , .targetIx = ty_u
 , .cost = 50000 /* milli weight units */
@@ -426,7 +426,7 @@
 ,[DECOMPRESS] =
 { .tag = JET
 , .jet = decompress
-, .cmr = {{0x99cac8f0u, 0x6fac4051u, 0x423749c0u, 0xb0994520u, 0xf914d196u, 0x6f9f0297u, 0x78c4e745u, 0x6890b7d6u}}
+, .cmr = {{0xa43c3926u, 0x7facd1e2u, 0xb6d42c76u, 0x15ad3f28u, 0x68637572u, 0xf46e1879u, 0x4e3475b9u, 0xb2eaef84u}}
 , .sourceIx = ty_pbw256
 , .targetIx = ty_mw512
 , .cost = 10956 /* milli weight units */
@@ -1286,6 +1286,14 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 395 /* milli weight units */
+}
+,[HASH_TO_CURVE] =
+{ .tag = JET
+, .jet = hash_to_curve
+, .cmr = {{0x4dc3eb6au, 0x6fbe374bu, 0xa7696472u, 0x63a695a4u, 0x5d092113u, 0x8a17f003u, 0xc4abb758u, 0xd838b133u}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w512
+, .cost = 10956 /* milli weight units */
 }
 ,[HIGH_1] =
 { .tag = JET
@@ -2746,7 +2754,7 @@
 ,[POINT_VERIFY_1] =
 { .tag = JET
 , .jet = point_verify_1
-, .cmr = {{0x02b89a1cu, 0xa7d24f82u, 0x353e9732u, 0xfa39ce65u, 0x509b39aeu, 0xaf43d2e5u, 0xf80ca903u, 0xfc81c846u}}
+, .cmr = {{0xb6009cecu, 0x8be8b14au, 0x1d313299u, 0xd66761d6u, 0x59adfff8u, 0x232899abu, 0x7db4097fu, 0x52c7d0beu}}
 , .sourceIx = ty_pppw256pbw256w256pbw256
 , .targetIx = ty_u
 , .cost = 50604 /* milli weight units */
@@ -3494,6 +3502,14 @@
 , .sourceIx = ty_w16
 , .targetIx = ty_pbw8
 , .cost = 149 /* milli weight units */
+}
+,[SWU] =
+{ .tag = JET
+, .jet = swu
+, .cmr = {{0x69459b6du, 0xd10a63dfu, 0x37dedf18u, 0x6cb4d208u, 0xd8c03961u, 0x1cecdd09u, 0xcfe07ac9u, 0x1d01422fu}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w512
+, .cost = 10956 /* milli weight units */
 }
 ,[TAP_ENV_HASH] =
 { .tag = JET

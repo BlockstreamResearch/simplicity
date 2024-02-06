@@ -65,5 +65,6 @@ static void secp256k1_pubkey_save(secp256k1_pubkey* pubkey, secp256k1_ge* ge) {
 
 #include "extrakeys_impl.h"
 #include "schnorrsig_impl.h"
+#include "generator_impl.h"
 
 #endif
