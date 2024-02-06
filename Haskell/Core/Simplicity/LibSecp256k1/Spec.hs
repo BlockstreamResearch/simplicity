@@ -11,10 +11,12 @@ module Simplicity.LibSecp256k1.Spec
  , gej_x_equiv, gej_y_is_odd
  , gej_is_on_curve
  , GE(..)
+ , ge_to_gej
  , gej_normalize, gej_rescale
  , gej_ge_add_ex, gej_ge_add_zinv
  , ge_negate, ge_scale_lambda
  , ge_is_on_curve
+ , shallueVanDeWoestijne, hash_to_curve
    -- * Scalar operations
  , Scalar, scalar, scalar_repr, scalar_pack
  , scalar_zero, scalar_negate, scalar_add, scalar_square, scalar_multiply, scalar_invert, scalar_split_lambda, scalar_split_128
@@ -38,6 +40,7 @@ module Simplicity.LibSecp256k1.Spec
  ) where
 
 
+import Control.Applicative ((<|>))
 import Control.Monad (guard)
 import Control.Monad.Trans.RWS hiding (put)
 import Control.Monad.Trans.State (state, evalState)
@@ -48,7 +51,7 @@ import qualified Data.ByteString.Char8 as BSC
 import Data.Ix (inRange)
 import Data.List (foldl', mapAccumL, mapAccumR, unfoldr)
 import Data.Maybe (isJust)
-import Data.Serialize (put)
+import Data.Serialize (encode, put)
 import Data.Serialize.Put (putShortByteString, runPut)
 import qualified Data.Vector as V
 import Lens.Family2 ((^.), (^..), (&), (+~), (*~), (%~), allOf, over, review, under, zipWithOf)
@@ -316,6 +319,9 @@ gej_is_on_curve (GEJ x y z) = fe_is_zero $ x.^.3 .+. fe_seven.*.z.^.6 .-. y.^.2
 data GE = GE !FE !FE -- Infinity not included.
         deriving Show
 
+-- | Convert an uncompressed point to Jacobian coordinates
+ge_to_gej (GE x y) = GEJ x y fe_one
+
 -- | Compute the point addition formula for a 'GEJ' and a 'GE'.
 -- This also returns the ratio between z-component of 'a' and z-component of the result.
 --
@@ -368,6 +374,42 @@ ge_scale_lambda (GE x y) = GE (x .*. fe_beta) y
 -- | Validates the secp256k1 curve equation: y^2 = x^3 + 7
 ge_is_on_curve :: GE -> Bool
 ge_is_on_curve (GE x y) = gej_is_on_curve (GEJ x y fe_one)
+
+-- | Algebraically distribute a field element to upto three candidate points on the secp256k1 curve.
+-- At least one point is guaranteed to be on curve.
+-- While the algebraic properties only hold for non-zero t, the code does return a valid point when t = 0.
+shallueVanDeWoestijne_internal :: FE -> (Maybe GE, Maybe GE, Maybe GE)
+shallueVanDeWoestijne_internal t =
+  (GE x1 <$> y1, GE x2 <$> y2, GE x3 <$> y3)
+ where
+  Just c = fe_square_root (fe (-3))
+  d = fe_halve (c .-. fe_one)
+  wn = c .*. t
+  wd = (fe_one .+. fe_seven) .+. (t.^.2)
+  invwd = fe_invert wd
+  x1n = d .*. wd .-. t .*. wn
+  x1 = x1n .*. invwd
+  y1 = sign <$> fe_square_root (x1 .^. 3 .+. fe_seven)
+  x2n = fe_negate (x1n .+. wd)
+  x2 = x2n .*. invwd
+  y2 = sign <$> fe_square_root (x2 .^. 3 .+. fe_seven)
+  x3n = (wd.^.2) .+. c.^.2 .*. t.^.2
+  x3 = x3n .*. fe_invert (wn.^.2)
+  y3 = sign <$> fe_square_root (x3 .^. 3 .+. fe_seven)
+  sign | fe_is_odd t = fe_negate
+       | otherwise = id
+
+-- | Algebraically distribute a field element over the secp256k1 curve as defined in
+-- "Indifferentiable Hashing to Barreto-Naehrig Curves" by Pierre-Alain Fouque, Mehdi Tibouchi
+-- <https://inria.hal.science/hal-01094321/file/FT12.pdf>
+--
+-- While this by iteslf is not a cryptographic hash function, it can be used as a subrotuine
+-- in a 'hash_to_curve' function.  However the distribution only apporaches uniform when it is called twice.
+shallueVanDeWoestijne :: FE -> GE
+shallueVanDeWoestijne t = result
+ where
+  (p1, p2, p3) = shallueVanDeWoestijne_internal t
+  Just result = p1 <|> p2 <|> p3
 
 -- | An element of secp256k1's scalar field is represented as a normalized value.
 newtype Scalar = Scalar { scalar_pack :: Word256 -- ^ Return the normalized represenative of a scalar element as a 'Word256'.
@@ -689,6 +731,18 @@ bip_0340_check pk m sg = isJust $ do
   let r = Point False rx
   guard $ point_check [(e, negp)] s r
 
+-- | A cryptograph hash function that results in a point on the secp256k1 curve.
+--
+-- It is cryptographically impossible for 'Nothing' to be returned.
+hash_to_curve :: Word256 -> Maybe GE
+hash_to_curve key = do
+  p1 <- swu_limit hash1
+  p2 <- swu_limit hash2
+  gej_normalize . snd $ gej_ge_add_ex (ge_to_gej p1) p2
+ where
+  hash1 = integerHash256 $ bsHash (BSC.pack "1st generation: " <> encode key)
+  hash2 = integerHash256 $ bsHash (BSC.pack "2nd generation: " <> encode key)
+  swu_limit x = shallueVanDeWoestijne <$> fe_unpack (fromInteger x)
 
 -- | Point of order 3 * 199 * 18979 * 5128356331187950431517 * 1992751017769525324118900703535975744264170999967
 ge_115792089237316195423570985008687907853508896131558604026424249738214906721757 :: GE

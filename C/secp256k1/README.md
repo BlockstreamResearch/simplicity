@@ -9,6 +9,8 @@ There are some exceptions however:
 * `extrakeys_impl.h` should be compared with `src/modules/extrakeys/main_impl.h`.
 * `schnorrsig.h` should be compared with `include/secp256k1_schnorrsig.h`.
 * `schnorrsig_impl.h` should be compared with `src/modules/schnorrsig/main_impl.h`.
+* `generator.h` should be compared with `include/secp256k1_generator.h` from <https://github.com/BlockstreamResearch/secp256k1-zkp/tree/d47e4d40ca487bb573e895723bd4b0659ae8eee5>.
+* `generator_impl.h` should be compared with `src/modules/generator/main_impl.h` from <https://github.com/BlockstreamResearch/secp256k1-zkp/tree/d47e4d40ca487bb573e895723bd4b0659ae8eee5>; however see `shallue_van_de_woestijne` below.
 
 Our use of libsecp256k1 for various jets requires access to the internal functions that are not exposed by their API, so we cannot use libsecp256k1's normal interface.
 Furthermore, because Simplicity has no abstract data types, the specific details of the representation of field and group elements computed by jetted functions ends up being consensus critical.
@@ -29,6 +31,7 @@ In some cases we have made minor code changes:
 * `ARG_CHECK` doesn't call the callback.
 * Callbacks have been removed.
 * `secp256k1_context` has been removed.
+* `shallue_van_de_woestijne`'s implementation is taken from https://github.com/BlockstreamResearch/secp256k1-zkp/blob/03aecafe4c45f51736ce05b339d2e8bcc2e5da55/src/modules/generator/main_impl.h>, which fixes <https://github.com/BlockstreamResearch/secp256k1-zkp/issues/279>.
 
 Additionally, some changes have been made to ensure that the `infinity` flag of `secp256k1_gej` always corresponds to whether or not the z-coordinate is zero or not.
 Adjustments have been made in the following functions:

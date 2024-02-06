@@ -492,6 +492,8 @@ tests = testGroup "Programs"
         , testProperty "linear_combination_1_inf" prop_linear_combination_1_inf
         , testProperty "linear_check_1" prop_linear_check_1
         , testProperty "point_check_1" prop_point_check_1
+        , testProperty "swu" prop_swu
+        , testProperty "hash_to_curve" prop_hash_to_curve
         ]
       , testGroup "bip0340"
         [ testProperty "pubkey_unpack" prop_pubkey_unpack
@@ -3408,6 +3410,17 @@ prop_point_check_1 = \na a ng r -> fast_point_check_1 (((scalarAsTy na, pointAsT
              == Just (toBit (Spec.point_check [(scalarAsSpec na, pointAsSpec a)] (scalarAsSpec ng) (pointAsSpec r)))
  where
   fast_point_check_1 = testCoreEval point_check_1
+
+prop_swu :: FieldElement -> Bool
+prop_swu = \a -> let input = feAsTy a in fastF input == implementation (Secp256k1Jet Swu) input
+ where
+  fastF = testCoreEval (specification (Secp256k1Jet Swu))
+
+prop_hash_to_curve :: W.Word256 -> Bool
+prop_hash_to_curve = \a -> let input = toW256 a in fastF input == implementation (Secp256k1Jet HashToCurve) input
+ where
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (Secp256k1Jet HashToCurve))
 
 prop_pubkey_unpack :: FieldElement -> Bool
 prop_pubkey_unpack a@(FieldElement w) = fast_pubkey_unpack (feAsTy a)

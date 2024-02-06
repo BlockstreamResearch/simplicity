@@ -103,6 +103,7 @@ module Simplicity.FFI.Jets
  , decompress, point_verify_1
  , check_sig_verify
  , bip_0340_verify
+ , swu, hash_to_curve
  , parse_lock, parse_sequence
  ) where
 
@@ -478,6 +479,8 @@ foreign import ccall unsafe "" c_decompress :: Ptr FrameItem -> Ptr FrameItem ->
 foreign import ccall unsafe "" c_point_verify_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_check_sig_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_bip_0340_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_swu :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_hash_to_curve :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_parse_lock :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_parse_sequence :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
@@ -1560,6 +1563,12 @@ check_sig_verify = unsafeLocalCoreJet c_check_sig_verify
 
 bip_0340_verify :: ((PubKey, Word256), Sig) -> Maybe ()
 bip_0340_verify = unsafeLocalCoreJet c_bip_0340_verify
+
+swu :: FE -> Maybe GE
+swu = unsafeLocalCoreJet c_swu
+
+hash_to_curve :: Word256 -> Maybe GE
+hash_to_curve = unsafeLocalCoreJet c_hash_to_curve
 
 parse_lock :: Word32 -> Maybe (Either Word32 Word32)
 parse_lock = unsafeLocalCoreJet c_parse_lock

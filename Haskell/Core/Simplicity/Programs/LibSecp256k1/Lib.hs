@@ -32,6 +32,7 @@ module Simplicity.Programs.LibSecp256k1.Lib
   , LibSecp256k1.PubKey, pubkey_unpack, pubkey_unpack_neg
   , LibSecp256k1.Sig, signature_unpack
   , bip_0340_check, bip_0340_verify
+  , swu, hash_to_curve
   ) where
 
 import qualified Simplicity.Programs.LibSecp256k1 as LibSecp256k1
@@ -93,3 +94,5 @@ pubkey_unpack_neg = LibSecp256k1.pubkey_unpack_neg LibSecp256k1.lib
 signature_unpack = LibSecp256k1.signature_unpack LibSecp256k1.lib
 bip_0340_check = LibSecp256k1.bip_0340_check LibSecp256k1.lib
 bip_0340_verify = LibSecp256k1.bip_0340_verify LibSecp256k1.lib
+swu = LibSecp256k1.swu LibSecp256k1.lib
+hash_to_curve = LibSecp256k1.hash_to_curve LibSecp256k1.lib
