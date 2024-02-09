@@ -18,6 +18,7 @@ library Simplicity-Core
                        Haskell/cbits/frame.c
   Include-dirs:        C
   Includes:            sha256.h, frame.h, jets.h
+  cc-options:         -DJET_FRAME_TESTING
   exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
                        Simplicity.Term.Core,
                        Simplicity.CoreJets,
@@ -127,6 +128,7 @@ library
                        C/wrappedJets/elements/jets.c Haskell/cbits/elements/env.c
   Include-dirs:        C C/include
   Includes:            primitive/elements/jets.h primitive/elements/primitive.h simplicity/elements/env.h
+  cc-options:         -DJET_FRAME_TESTING
   exposed-modules:     Simplicity.Bitcoin.Programs.Transaction, Simplicity.Bitcoin.Programs.Transaction.Lib,
                        Simplicity.Bitcoin.Programs.TimeLock, Simplicity.Elements.Programs.TimeLock,
                        Simplicity.Elements.Programs.Issuance, Simplicity.Elements.Programs.Issuance.Lib,
