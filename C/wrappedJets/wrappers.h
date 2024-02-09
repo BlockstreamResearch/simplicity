@@ -1,7 +1,7 @@
 #ifndef WRAPPEDJETS_WRAPPERS_H
 #define WRAPPEDJETS_WRAPPERS_H
 
-#include "simplicity_assert.h"
+#include "../simplicity_assert.h"
 
 /* In test suites, like the Haskell testsuite, we use test jets via these wrappers.
  * During that testing we allocate a correctly sized frame for each jet,
