@@ -312,8 +312,56 @@ static void copyOutput(sigOutput* result, opcode** allocation, size_t* allocatio
   result->isNullData = NULL != result->pnd.op;
   hashBuffer(&result->surjectionProofHash, is_confidential(result->asset.prefix) ? &output->surjectionProof : &(rawBuffer){0});
   hashBuffer(&result->rangeProofHash, is_confidential(result->amt.prefix) ? &output->rangeProof : &(rawBuffer){0});
+  result->assetFee = 0;
 }
 
+/* Tally a sorted list of feeOutputs
+ *
+ * Given a sorted array of feeOutput pointers, tally all the (explict) amounts of the entries with the same asset id,
+ * which are all necessarily next to each other, into the assetFee field of the first entry of the bunch.
+ *
+ * Discard all entries other than the first one of each bunch.
+ * Return 'ret_value', the number of remaning entries in the array after these discards.
+ *
+ * Note: the array is not re-allocated, so there will be "junk" values in the array past the end of 'ret_value'.
+ *
+ * Precondition: feeOutputs is sorted by it asset.data.s field, which is to say
+ *               for all 0 <= i <= j < numFees,
+ *                 0 <= memcmp(feeOutputs[j]->asset.data.s, feeOutputs[i]->asset.data.s, sizeof(feeOutputs[i]->asset.data.s));
+ *               for all 0 <= i < numFees,
+ *                feeOutputs[i]->assetFee = 0 and
+ *                feeOutputs[i]->amt.explicit is the active union member.
+ * Postcondition: feeOutputs is uniquely sorted by it asset.data.s field, which is to say
+ *                for all 0 <= i < j < ret_value,
+ *                  0 < memcmp(feeOutputs[j]->asset.data.s, feeOutputs[i]->asset.data.s, sizeof(feeOutputs[i]->asset.data.s));
+ *                for all ret_value <= i < numFees,
+ *                  feeOutputs[i] remains allocated.
+ */
+static uint_fast32_t sumFees(sigOutput** feeOutputs, uint_fast32_t numFees) {
+  uint_fast32_t result = 0;
+
+  if (numFees < 1) return result;
+
+  for(uint_fast32_t i = 0; i < numFees; ++i) {
+    int cmp = memcmp(feeOutputs[i]->asset.data.s, feeOutputs[result]->asset.data.s, sizeof(feeOutputs[i]->asset.data.s));
+    simplicity_assert(0 <= cmp);
+    if (0 < cmp) {
+      result++;
+      feeOutputs[result] = feeOutputs[i];
+    }
+
+    static_assert(0 == offsetof(sigOutput, asset.data), "asset ID is not first field of sigOutput.");
+    /* In Elements consensus rules, the total about of fees is not allowed to exceed MoneyRange:
+     * https://github.com/ElementsProject/elements/blob/de942511a67c3a3fcbdf002a8ee7e9ba49679b78/src/confidential_validation.cpp#L36-L38
+     *
+     * In case of invalid transaction environments, we end up taking the result modulo the size of uint_fast64_t,
+     * which in turn is compatible with our jet specification which returns the tally modulo 2^64.
+     */
+    feeOutputs[result]->assetFee += feeOutputs[i]->amt.explicit;
+  }
+
+  return result + 1;
+}
 /* Allocate and initialize a 'transaction' from a 'rawOutput', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
@@ -392,7 +440,6 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
                      , .feeOutputs = (sigOutput const * const *)feeOutputs
                      , .numInputs = rawTx->numInputs
                      , .numOutputs = rawTx->numOutputs
-                     , .numFees = numFees
                      , .version = rawTx->version
                      , .lockTime = rawTx->lockTime
                      , .isFinal = true
@@ -548,6 +595,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
        */
       feeOutputs[i] = (sigOutput*)(uintptr_t)(perm[i]);
     }
+    tx->numFees = sumFees(feeOutputs, numFees);
 
     sha256_finalize(&ctx_outputAssetAmountsHash);
     sha256_finalize(&ctx_outputNoncesHash);
