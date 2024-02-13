@@ -1,10 +1,11 @@
 -- This module tests the Simplicity programs on arbitrary inputs.
 module Simplicity.Elements.Arbitrary
- ( arbitraryLock
+ ( arbitraryHash256, arbitraryLock
  , genPrimEnv, forallPrimEnv, forallInPrimEnv, forallOutPrimEnv
  ) where
 
 import Data.Bits ((.&.))
+import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
 import Data.Serialize.Put (runPutLazy, putWord8, putWord16le, putWord32le, putLazyByteString)
 import Data.Vector (fromList)
@@ -21,7 +22,7 @@ import Simplicity.Word
 
 import Test.Tasty.QuickCheck ( Arbitrary(..), Discard(Discard), Gen, Property, Testable
                              , arbitraryBoundedIntegral, arbitrarySizedBoundedIntegral
-                             , choose, frequency, oneof, listOf, listOf1, suchThat
+                             , choose, elements, frequency, oneof, listOf, listOf1, suchThat
                              , forAll, property
                              )
 
@@ -86,11 +87,20 @@ arbitraryAmount = Amount <$> arbitraryConfidential (return ()) arbitrarySizedBou
 arbitraryAmountWithWitness :: Gen AmountWithWitness
 arbitraryAmountWithWitness = Amount <$> arbitraryConfidential arbitraryBS arbitrarySizedBoundedIntegral
 
+arbitraryFee :: Gen TxOutput
+arbitraryFee = TxOutput <$> (Asset . Explicit <$> arbitraryExplicitAsset) <*> (Amount . Explicit <$> arbitrarySizedBoundedIntegral) <*> pure Nothing <*> pure BSL.empty
+ where
+  arbitraryExplicitAsset = bsHash . BSC.pack <$> elements
+    ["Simplicity.Elements.Arbitrary.arbitraryFee.test0", "Simplicity.Elements.Arbitrary.arbitraryFee.test1"]
+
+arbitraryGenericOutput :: Gen TxOutput
+arbitraryGenericOutput = TxOutput <$> arbitraryAssetWithWitness <*> arbitraryAmountWithWitness <*> arbitrary <*> oneof [pure BSL.empty, arbitraryBS, arbitraryNullData, arbitraryNonNullData]
+
 instance Arbitrary Nonce where
   arbitrary = Nonce <$> oneof [Left <$> ((,) <$> arbitrary <*> (fromInteger <$> arbitrary)),  Right <$> arbitraryHash256]
 
 instance Arbitrary TxOutput where
-  arbitrary = TxOutput <$> arbitraryAssetWithWitness <*> arbitraryAmountWithWitness <*> arbitrary <*> oneof [pure BSL.empty, arbitraryBS, arbitraryNullData, arbitraryNonNullData]
+  arbitrary = oneof [arbitraryFee, arbitraryGenericOutput]
 
 instance Arbitrary UTXO where
   arbitrary = UTXO <$> arbitraryAsset <*> arbitraryAmount <*> arbitraryBS

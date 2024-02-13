@@ -465,6 +465,7 @@ rawBenchmark "RightRotate8" = rawBenchmark "Add8"
 rawBenchmark "RightRotate16" = rawBenchmark "Add8"
 rawBenchmark "RightRotate32" = rawBenchmark "Add8"
 rawBenchmark "RightRotate64" = rawBenchmark "Add8"
+rawBenchmark "TotalFee" = rawBenchmark "OutputRangeProofsHash"
 
 -- benchmark adjusts the raw benchmark by giving a discount to batch verifiable jets.
 benchmark :: String -> Double

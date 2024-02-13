@@ -1,10 +1,12 @@
 module Simplicity.Elements.FFI.Tests (tests) where
 
 import Control.Arrow ((***), (+++))
-import Data.Maybe (isJust)
+import qualified Data.Map as Map
+import Data.Maybe (fromMaybe, isJust)
 import Data.Vector ((!?))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.QuickCheck (NonNegative(..), Property, classify, forAll, testProperty)
+import Lens.Family2 (under, view)
 
 import Simplicity.Arbitrary
 import Simplicity.Digest
@@ -94,6 +96,7 @@ tests = testGroup "Elements"
           , testProperty "output_is_fee" prop_output_is_fee
           , testProperty "output_surjection_proof" prop_output_surjection_proof
           , testProperty "output_range_proof" prop_output_range_proof
+          , testProperty "total_fee" prop_total_fee
           , testProperty "current_pegin" prop_current_pegin
           , testProperty "current_prev_outpoint" prop_current_prev_outpoint
           , testProperty "current_asset" prop_current_asset
@@ -458,6 +461,19 @@ prop_output_range_proof :: Property
 prop_output_range_proof = forallOutPrimEnv $ \env i -> fast_output_range_proof env (toW32 i) == output_range_proof env (toW32 i)
  where
   fast_output_range_proof = testEval (specification (ElementsJet (TransactionJet OutputRangeProof)))
+
+prop_total_fee :: Property
+prop_total_fee = forallOutPrimEnv $ \env i -> forAll arbitraryHash256
+               $ \hash -> let input = fromMaybe hash (getAssetId (Prim.sigTxOut (Prim.envTx env)) (fromIntegral i))
+                              fee = Map.findWithDefault 0 input (Prim.totalFee (Prim.envTx env))
+                          in classify (0 /= fee) "non-zero fee"
+               $ fast_total_fee env (fromHash input) == total_fee env (fromHash input)
+ where
+  fast_total_fee = testEval (specification (ElementsJet (TransactionJet TotalFee)))
+  getAssetId outputs ix = (outputs !? ix) >>= explicitId . view (under Prim.asset) . Prim.txoAsset
+  explicitId (Prim.Explicit a) = Just a
+  explicitId (Prim.Confidential _ _) = Nothing
+  fromHash = toWord256 . integerHash256
 
 prop_current_pegin :: Property
 prop_current_pegin = forallPrimEnv $ \env -> fast_current_pegin env () == current_pegin env ()

@@ -31,21 +31,24 @@ module Simplicity.Elements.DataTypes
   , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuancesHash, issuanceBlindingEntropyHash
   , txHash
   , tapleafHash, tappathHash, tapEnvHash
-  , outputFee
+  , outputFee, totalFee
   , module Simplicity.Bitcoin
   ) where
 
 import Control.Monad (guard, mzero)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
+import Data.Foldable (toList)
+import qualified Data.Map as Map
+import Data.Maybe (catMaybes)
 import Data.Semigroup (Max(Max,getMax))
-import Data.Word (Word64, Word32, Word16, Word8)
 import Data.Serialize ( Serialize, encode
                       , Get, get, runGetLazy, lookAhead, getWord8, getWord16le, getWord32le, getLazyByteString, isEmpty
                       , Putter, put, putWord8, putWord64be, putWord32be, putWord32le, putLazyByteString, runPutLazy
                       )
 import Data.String (fromString)
 import Data.Vector (Vector)
+import Data.Word (Word64, Word32, Word16, Word8)
 import Lens.Family2 ((&), (.~), (^.), over, review, to, under, view)
 import Lens.Family2.Stock (some_)
 import Lens.Family2.Unchecked (Adapter, adapter, Traversal)
@@ -569,3 +572,7 @@ outputFee txo = do
   Explicit assetId <- Just . view (under asset) $ txoAsset txo
   Explicit value <- Just . view (under amount) $ txoAmount txo
   return (assetId, value)
+
+-- | Adds up all 'outputFee's to build a map from (explicit) assetId to total value.
+totalFee :: SigTx -> Map.Map Hash256 Value
+totalFee tx = Map.fromListWith (+) . catMaybes . map outputFee . toList $ sigTxOut tx

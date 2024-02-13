@@ -165,6 +165,28 @@ static bool isFee(const sigOutput* output) {
   return output->emptyScript && EXPLICIT == output->asset.prefix && EXPLICIT == output->amt.prefix;
 }
 
+/* Lookup the assetFee from a sorted array of feeOutputs by the given assetid, returning 0 if no entry is found.
+ *
+ * Precondition: NULL != assetid;
+ *               feeOutputs is uniquely sorted by it asset.data.s field, which is to say
+ *               for all 0 <= i < j < len,
+ *                 0 < memcmp(feeOutputs[j]->asset.data.s, feeOutputs[i]->asset.data.s, sizeof(feeOutputs[i]->asset.data.s));
+ */
+static uint_fast64_t lookup_fee(const sha256_midstate* assetid, const sigOutput* const * feeOutputs, uint_fast32_t len) {
+  /* This loop runs in O(log(len)) time. */
+  while(len) {
+    int cmp = memcmp(assetid->s, feeOutputs[len/2]->asset.data.s, sizeof(assetid->s));
+    if (0 == cmp) return feeOutputs[len/2]->assetFee;
+    if (0 < cmp) {
+      feeOutputs += len/2 + 1;
+      len -= len/2 + 1;
+    } else {
+      len /= 2;
+    }
+  }
+  return 0;
+}
+
 /* version : ONE |- TWO^32 */
 bool version(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
@@ -481,6 +503,14 @@ bool output_range_proof(frameItem* dst, frameItem src, const txEnv* env) {
   } else {
     skipBits(dst, 256);
   }
+  return true;
+}
+
+/* total_fee : TWO^256 |- TWO^64 */
+bool total_fee(frameItem* dst, frameItem src, const txEnv* env) {
+  sha256_midstate assetid;
+  readHash(&assetid, &src);
+  write64(dst, lookup_fee(&assetid, env->tx->feeOutputs, env->tx->numFees));
   return true;
 }
 

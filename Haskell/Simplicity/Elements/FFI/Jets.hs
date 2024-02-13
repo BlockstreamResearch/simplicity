@@ -26,6 +26,7 @@ module Simplicity.Elements.FFI.Jets
  , output_is_fee
  , output_surjection_proof
  , output_range_proof
+ , total_fee
  , genesis_block_hash
  , script_cmr
  , current_index
@@ -138,6 +139,7 @@ foreign import ccall unsafe "" c_output_null_datum :: Ptr FrameItem -> Ptr Frame
 foreign import ccall unsafe "" c_output_is_fee :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_surjection_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_range_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_total_fee :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_genesis_block_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_script_cmr :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_index :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -347,7 +349,8 @@ output_surjection_proof = unsafeLocalJet c_output_surjection_proof
 output_range_proof :: PrimEnv -> Word32 -> Maybe (S Word256)
 output_range_proof = unsafeLocalJet c_output_range_proof
 
--- fee :: PrimEnv -> Word256 -> Maybe Word64
+total_fee :: PrimEnv -> Word256 -> Maybe Word64
+total_fee = unsafeLocalJet c_total_fee
 
 genesis_block_hash :: PrimEnv -> () -> Maybe Word256
 genesis_block_hash = unsafeLocalJet c_genesis_block_hash

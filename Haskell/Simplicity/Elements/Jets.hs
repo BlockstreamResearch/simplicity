@@ -157,6 +157,7 @@ data TransactionJet a b where
   OutputIsFee :: TransactionJet Word32 (S Bit)
   OutputSurjectionProof :: TransactionJet Word32 (S Word256)
   OutputRangeProof :: TransactionJet Word32 (S Word256)
+  TotalFee :: TransactionJet Word256 Word64
   CurrentPegin :: TransactionJet () (S Word256)
   CurrentPrevOutpoint :: TransactionJet () (Word256,Word32)
   CurrentAsset :: TransactionJet () (Conf Word256)
@@ -268,6 +269,7 @@ specificationTransaction OutputNullDatum = primitive Prim.OutputNullDatum
 specificationTransaction OutputIsFee = Prog.outputIsFee
 specificationTransaction OutputSurjectionProof = primitive Prim.OutputSurjectionProof
 specificationTransaction OutputRangeProof = primitive Prim.OutputRangeProof
+specificationTransaction TotalFee = Prog.totalFee
 specificationTransaction CurrentPegin = Prog.currentPegin
 specificationTransaction CurrentPrevOutpoint = Prog.currentPrevOutpoint
 specificationTransaction CurrentAsset = Prog.currentAsset
@@ -460,6 +462,11 @@ implementationTransaction :: TransactionJet a b -> PrimEnv -> a -> Maybe b
 implementationTransaction OutputIsFee env i = Just . cast $ toBit . isJust . outputFee <$> sigTxOut (envTx env) !? (fromIntegral (fromWord32 i))
  where
   cast = maybe (Left ()) Right
+implementationTransaction TotalFee env x = Just . fromValue . Map.findWithDefault 0 assetId $ totalFee (envTx env)
+ where
+  fromValue = toWord64 . toInteger
+  fromW256 = fromIntegral . fromWord256
+  assetId = review (over be256) (fromW256 x)
 implementationTransaction x env i = Semantics.sem (specificationTransaction x) env i
 
 getJetBitElements :: (Monad m) => m Void -> m Bool -> m (SomeArrow ElementsJet)
@@ -540,7 +547,7 @@ transactionCatalogue = Shelf
  , Item $ SomeArrow OutputIsFee
  , Item $ SomeArrow OutputSurjectionProof
  , Item $ SomeArrow OutputRangeProof
- , Missing -- TODO: TotalFee
+ , Item $ SomeArrow TotalFee
  , Item $ SomeArrow CurrentPegin
  , Item $ SomeArrow CurrentPrevOutpoint
  , Item $ SomeArrow CurrentAsset
@@ -651,7 +658,7 @@ putJetBitTransaction OutputNullDatum            = putPositive 11
 putJetBitTransaction OutputIsFee                = putPositive 12
 putJetBitTransaction OutputSurjectionProof      = putPositive 13
 putJetBitTransaction OutputRangeProof           = putPositive 14
-
+putJetBitTransaction TotalFee                   = putPositive 15
 putJetBitTransaction CurrentPegin               = putPositive 16
 putJetBitTransaction CurrentPrevOutpoint        = putPositive 17
 putJetBitTransaction CurrentAsset               = putPositive 18
@@ -813,6 +820,7 @@ jetCostTransaction OutputNullDatum = Benchmarks.cost "OutputNullDatum"
 jetCostTransaction OutputIsFee = Benchmarks.cost "OutputIsFee"
 jetCostTransaction OutputSurjectionProof = Benchmarks.cost "OutputSurjectionProof"
 jetCostTransaction OutputRangeProof = Benchmarks.cost "OutputRangeProof"
+jetCostTransaction TotalFee = Benchmarks.cost "TotalFee"
 jetCostTransaction CurrentPegin = Benchmarks.cost "CurrentPegin"
 jetCostTransaction CurrentPrevOutpoint = Benchmarks.cost "CurrentPrevOutpoint"
 jetCostTransaction CurrentAsset = Benchmarks.cost "CurrentAsset"

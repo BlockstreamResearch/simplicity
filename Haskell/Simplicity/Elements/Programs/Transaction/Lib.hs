@@ -5,6 +5,7 @@ module Simplicity.Elements.Programs.Transaction.Lib
   , numOutputs
   , outputAmount
   , outputIsFee
+  , totalFee
   , inputAmount
   , currentPegin
   , currentPrevOutpoint
@@ -29,6 +30,7 @@ numInputs = Transaction.numInputs Transaction.lib
 numOutputs = Transaction.numOutputs Transaction.lib
 outputAmount = Transaction.outputAmount Transaction.lib
 outputIsFee = Transaction.outputIsFee Transaction.lib
+totalFee = Transaction.totalFee Transaction.lib
 inputAmount = Transaction.inputAmount Transaction.lib
 currentPegin = Transaction.currentPegin Transaction.lib
 currentPrevOutpoint = Transaction.currentPrevOutpoint Transaction.lib

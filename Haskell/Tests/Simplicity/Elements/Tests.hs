@@ -3,10 +3,11 @@ module Simplicity.Elements.Tests (tests) where
 import Control.Arrow ((***), (+++))
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
-import Data.Maybe (isJust)
+import qualified Data.Map as Map
+import Data.Maybe (fromMaybe, isJust)
 import Data.Serialize (encode, put, putWord8, putWord32be, runPutLazy)
 import Data.Vector ((!), (!?), fromList)
-import Lens.Family2 (review, over)
+import Lens.Family2 (review, over, under, view)
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, (@?=), assertBool, testCase)
@@ -109,6 +110,7 @@ tests = testGroup "Elements"
           , testProperty "output_is_fee" prop_output_is_fee
           , testProperty "output_surjection_proof" prop_output_surjection_proof
           , testProperty "output_range_proof" prop_output_range_proof
+          , testProperty "total_fee" prop_total_fee
           , testProperty "current_pegin" prop_current_pegin
           , testProperty "current_prev_outpoint" prop_current_prev_outpoint
           , testProperty "current_asset" prop_current_asset
@@ -454,6 +456,18 @@ prop_output_surjection_proof = checkJet (ElementsJet (TransactionJet OutputSurje
 prop_output_range_proof :: Property
 prop_output_range_proof = checkJet (ElementsJet (TransactionJet OutputRangeProof))
                         $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
+
+prop_total_fee :: Property
+prop_total_fee = checkJet (ElementsJet (TransactionJet TotalFee))
+               $ \check -> forallOutPrimEnv $ \env i -> forAll arbitraryHash256
+               $ \hash -> let input = fromMaybe hash (getAssetId (sigTxOut (envTx env)) (fromIntegral i))
+                              fee = Map.findWithDefault 0 input (totalFee (envTx env))
+                          in classify (0 /= fee) "non-zero fee" $ check env (fromHash input)
+ where
+  getAssetId outputs ix = (outputs !? ix) >>= explicitId . view (under asset) . txoAsset
+  explicitId (Explicit a) = Just a
+  explicitId (Confidential _ _) = Nothing
+  fromHash = toWord256 . integerHash256
 
 prop_current_pegin :: Property
 prop_current_pegin = checkJet (ElementsJet (TransactionJet CurrentPegin))

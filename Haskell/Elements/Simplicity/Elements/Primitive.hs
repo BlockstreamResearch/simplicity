@@ -64,7 +64,6 @@ data Prim a b where
   OutputNullDatum :: Prim (Word32, Word32) (S (S (Either (Word2, Word256) (Either Bit Word4))))
   OutputSurjectionProof :: Prim Word32 (S Word256)
   OutputRangeProof :: Prim Word32 (S Word256)
-  Fee :: Prim Word256 Word64
   GenesisBlockHash :: Prim () Word256
   ScriptCMR :: Prim () Word256
 
@@ -97,7 +96,6 @@ instance Eq (Prim a b) where
   OutputNullDatum == OutputNullDatum = True
   OutputSurjectionProof == OutputSurjectionProof = True
   OutputRangeProof == OutputRangeProof = True
-  Fee == Fee = True
   GenesisBlockHash == GenesisBlockHash = True
   ScriptCMR == ScriptCMR = True
   _ == _ = False
@@ -135,7 +133,6 @@ primName OutputScriptHash = "outputScriptHash"
 primName OutputNullDatum = "outputNullDatum"
 primName OutputSurjectionProof = "outputSurjectionProof"
 primName OutputRangeProof = "outputRangeProof"
-primName Fee = "fee"
 primName GenesisBlockHash = "genesisBlockHash"
 primName ScriptCMR = "scriptCMR"
 
@@ -264,11 +261,5 @@ primSem p a env = interpret p a
     return . cast . fmap (encodeNullDatum . fmap bslHash) . listToMaybe $ List.drop (fromInteger (fromWord32 j)) nullData
   interpret OutputSurjectionProof = return . (atOutput $ encodeHash . bslHash . view (to txoAsset.under asset.prf_))
   interpret OutputRangeProof = return . (atOutput $ encodeHash . bslHash . view (to txoAmount.under amount.prf_))
-  interpret Fee = \assetId -> return . toWord64 . toInteger . Monoid.getSum $ foldMap (getValue assetId) (sigTxOut tx)
-   where
-    getValue assetId txo = fromMaybe (Monoid.Sum 0) $ do
-      (a, v) <- outputFee txo
-      guard $ assetId == encodeHash a
-      return (Monoid.Sum v)
   interpret GenesisBlockHash = element . return . encodeHash $ envGenesisBlock env
   interpret ScriptCMR = element . return . encodeHash . tapScriptCMR $ envTap env

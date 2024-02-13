@@ -6,6 +6,7 @@ module Simplicity.Elements.Programs.Transaction
  , numOutputs
  , outputAmount
  , outputIsFee
+ , totalFee
  , inputAmount
  , currentPegin
  , currentPrevOutpoint
@@ -30,6 +31,7 @@ import Simplicity.Digest
 import Simplicity.Elements.Primitive
 import Simplicity.Elements.Term hiding (one)
 import Simplicity.Functor
+import Simplicity.Programs.Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Word
@@ -48,6 +50,9 @@ data Lib term =
     -- | An output is a fee when its script is empty and the asset and amounts are explicit.
     -- Returns Nothing of the index is out of range.
   , outputIsFee :: term Word32 (S Bit)
+    -- | Compute the total amount of fees paid to a given assetID.
+    -- Returns 0 for any asset without fees.
+  , totalFee :: term Word256 Word64
     -- | Returns a pair of asset and amounts for the given input index.
     -- Returns Nothing of the index is out of range.
   , inputAmount :: term Word32 (S (Conf Word256, Conf Word64))
@@ -91,6 +96,7 @@ instance SimplicityFunctor Lib where
     , numOutputs = m numOutputs
     , outputAmount = m outputAmount
     , outputIsFee = m outputIsFee
+    , totalFee = m totalFee
     , inputAmount = m inputAmount
     , currentPegin = m currentPegin
     , currentPrevOutpoint = m currentPrevOutpoint
@@ -124,6 +130,17 @@ lib = l
   , outputIsFee = outputAmount &&& (primitive OutputScriptHash &&& scribe (Right emptyHash) >>> eq)
               >>> match (injl unit) (injr (oih &&& (ooh &&& ih)
                >>> match false (drop (match false ih))))
+  , totalFee = let
+      body = take (drop outputIsFee) &&& (take (drop outputAmount) &&& (ooh &&& ih))
+         >>> match (injl iiih) -- reached last output
+             (injr (match iiih -- not a fee.
+              (drop (match iih -- reached last output (technically not possible at this point)
+               ((ooh &&& (injr ioh) >>> eq) &&& (oih &&& iih)
+            >>> (match iih -- assetid does not match
+                 (drop (match ih -- value is confidential (technically not possible at this point)
+                              (add word64 >>> ih) -- drop the carry bit
+              ))))))))
+     in (iden &&& (unit >>> zero word64)) >>> forWhile word32 body >>> copair iden iden
 
   , inputAmount = primitive InputAmount &&& primitive InputAsset
               >>> match (injl unit) (ih &&& oh >>> match (injl unit) (injr iden))
