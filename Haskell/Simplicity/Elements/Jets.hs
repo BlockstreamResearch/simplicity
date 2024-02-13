@@ -23,6 +23,7 @@ import Control.Arrow ((***), (+++))
 import Control.Monad (guard)
 import qualified Data.ByteString as BS
 import Data.Either (isRight)
+import Data.Foldable (toList)
 import qualified Data.Map as Map
 import Data.Maybe (isJust)
 import Data.Proxy (Proxy(Proxy))
@@ -463,117 +464,118 @@ implementationTransaction x env i = Semantics.sem (specificationTransaction x) e
 
 getJetBitElements :: (Monad m) => m Void -> m Bool -> m (SomeArrow ElementsJet)
 getJetBitElements = getCatalogue elementsCatalogue
- where
-  elementsCatalogue = Shelf
-   [ someArrowMap SigHashJet <$> sigHashCatalogue
-   , someArrowMap TimeLockJet <$> timeLockCatalogue
-   , someArrowMap IssuanceJet <$> issuanceCatalogue
-   , someArrowMap TransactionJet <$> transactionCatalogue
-   ]
-  sigHashCatalogue = book
-   [ SomeArrow SigAllHash
-   , SomeArrow TxHash
-   , SomeArrow TapEnvHash
-   , SomeArrow InputsHash
-   , SomeArrow OutputsHash
-   , SomeArrow IssuancesHash
-   , SomeArrow InputUtxosHash
-   , SomeArrow OutputAmountsHash
-   , SomeArrow OutputScriptsHash
-   , SomeArrow OutputNoncesHash
-   , SomeArrow OutputRangeProofsHash
-   , SomeArrow OutputSurjectionProofsHash
-   , SomeArrow InputOutpointsHash
-   , SomeArrow InputSequencesHash
-   , SomeArrow InputAnnexesHash
-   , SomeArrow InputScriptSigsHash
-   , SomeArrow IssuanceAssetAmountsHash
-   , SomeArrow IssuanceTokenAmountsHash
-   , SomeArrow IssuanceRangeProofsHash
-   , SomeArrow IssuanceBlindingEntropyHash
-   , SomeArrow InputAmountsHash
-   , SomeArrow InputScriptsHash
-   , SomeArrow TapleafHash
-   , SomeArrow TappathHash
-   , SomeArrow OutpointHash
-   , SomeArrow AssetAmountHash
-   , SomeArrow NonceHash
-   , SomeArrow AnnexHash
-   , SomeArrow BuildTapleafSimplicity
-   , SomeArrow BuildTapbranch
-   ]
-  timeLockCatalogue = book
-   [ SomeArrow CheckLockHeight
-   , SomeArrow CheckLockTime
-   , SomeArrow CheckLockDistance
-   , SomeArrow CheckLockDuration
-   , SomeArrow TxLockHeight
-   , SomeArrow TxLockTime
-   , SomeArrow TxLockDistance
-   , SomeArrow TxLockDuration
-   , SomeArrow TxIsFinal
-   ]
-  issuanceCatalogue = book
-   [ SomeArrow Issuance
-   , SomeArrow IssuanceAsset
-   , SomeArrow IssuanceToken
-   , SomeArrow IssuanceEntropy
-   , SomeArrow CalculateIssuanceEntropy
-   , SomeArrow CalculateAsset
-   , SomeArrow CalculateExplicitToken
-   , SomeArrow CalculateConfidentialToken
-   ]
-  transactionCatalogue = Shelf
-   [ Item $ SomeArrow ScriptCMR
-   , Item $ SomeArrow InternalKey
-   , Item $ SomeArrow CurrentIndex
-   , Item $ SomeArrow NumInputs
-   , Item $ SomeArrow NumOutputs
-   , Item $ SomeArrow LockTime
-   , Item $ SomeArrow OutputAsset
-   , Item $ SomeArrow OutputAmount
-   , Item $ SomeArrow OutputNonce
-   , Item $ SomeArrow OutputScriptHash
-   , Item $ SomeArrow OutputNullDatum
-   , Item $ SomeArrow OutputIsFee
-   , Item $ SomeArrow OutputSurjectionProof
-   , Item $ SomeArrow OutputRangeProof
-   , Missing -- TODO: TotalFee
-   , Item $ SomeArrow CurrentPegin
-   , Item $ SomeArrow CurrentPrevOutpoint
-   , Item $ SomeArrow CurrentAsset
-   , Item $ SomeArrow CurrentAmount
-   , Item $ SomeArrow CurrentScriptHash
-   , Item $ SomeArrow CurrentSequence
-   , Item $ SomeArrow CurrentAnnexHash
-   , Item $ SomeArrow CurrentScriptSigHash
-   , Item $ SomeArrow CurrentReissuanceBlinding
-   , Item $ SomeArrow CurrentNewIssuanceContract
-   , Item $ SomeArrow CurrentReissuanceEntropy
-   , Item $ SomeArrow CurrentIssuanceAssetAmount
-   , Item $ SomeArrow CurrentIssuanceTokenAmount
-   , Item $ SomeArrow CurrentIssuanceAssetProof
-   , Item $ SomeArrow CurrentIssuanceTokenProof
-   , Item $ SomeArrow InputPegin
-   , Item $ SomeArrow InputPrevOutpoint
-   , Item $ SomeArrow InputAsset
-   , Item $ SomeArrow InputAmount
-   , Item $ SomeArrow InputScriptHash
-   , Item $ SomeArrow InputSequence
-   , Item $ SomeArrow InputAnnexHash
-   , Item $ SomeArrow InputScriptSigHash
-   , Item $ SomeArrow ReissuanceBlinding
-   , Item $ SomeArrow NewIssuanceContract
-   , Item $ SomeArrow ReissuanceEntropy
-   , Item $ SomeArrow IssuanceAssetAmount
-   , Item $ SomeArrow IssuanceTokenAmount
-   , Item $ SomeArrow IssuanceAssetProof
-   , Item $ SomeArrow IssuanceTokenProof
-   , Item $ SomeArrow TapleafVersion
-   , Item $ SomeArrow Tappath
-   , Item $ SomeArrow Version
-   , Item $ SomeArrow GenesisBlockHash
-   ]
+
+elementsCatalogue :: Catalogue (SomeArrow ElementsJet)
+elementsCatalogue = Shelf
+ [ someArrowMap SigHashJet <$> sigHashCatalogue
+ , someArrowMap TimeLockJet <$> timeLockCatalogue
+ , someArrowMap IssuanceJet <$> issuanceCatalogue
+ , someArrowMap TransactionJet <$> transactionCatalogue
+ ]
+sigHashCatalogue = book
+ [ SomeArrow SigAllHash
+ , SomeArrow TxHash
+ , SomeArrow TapEnvHash
+ , SomeArrow InputsHash
+ , SomeArrow OutputsHash
+ , SomeArrow IssuancesHash
+ , SomeArrow InputUtxosHash
+ , SomeArrow OutputAmountsHash
+ , SomeArrow OutputScriptsHash
+ , SomeArrow OutputNoncesHash
+ , SomeArrow OutputRangeProofsHash
+ , SomeArrow OutputSurjectionProofsHash
+ , SomeArrow InputOutpointsHash
+ , SomeArrow InputSequencesHash
+ , SomeArrow InputAnnexesHash
+ , SomeArrow InputScriptSigsHash
+ , SomeArrow IssuanceAssetAmountsHash
+ , SomeArrow IssuanceTokenAmountsHash
+ , SomeArrow IssuanceRangeProofsHash
+ , SomeArrow IssuanceBlindingEntropyHash
+ , SomeArrow InputAmountsHash
+ , SomeArrow InputScriptsHash
+ , SomeArrow TapleafHash
+ , SomeArrow TappathHash
+ , SomeArrow OutpointHash
+ , SomeArrow AssetAmountHash
+ , SomeArrow NonceHash
+ , SomeArrow AnnexHash
+ , SomeArrow BuildTapleafSimplicity
+ , SomeArrow BuildTapbranch
+ ]
+timeLockCatalogue = book
+ [ SomeArrow CheckLockHeight
+ , SomeArrow CheckLockTime
+ , SomeArrow CheckLockDistance
+ , SomeArrow CheckLockDuration
+ , SomeArrow TxLockHeight
+ , SomeArrow TxLockTime
+ , SomeArrow TxLockDistance
+ , SomeArrow TxLockDuration
+ , SomeArrow TxIsFinal
+ ]
+issuanceCatalogue = book
+ [ SomeArrow Issuance
+ , SomeArrow IssuanceAsset
+ , SomeArrow IssuanceToken
+ , SomeArrow IssuanceEntropy
+ , SomeArrow CalculateIssuanceEntropy
+ , SomeArrow CalculateAsset
+ , SomeArrow CalculateExplicitToken
+ , SomeArrow CalculateConfidentialToken
+ ]
+transactionCatalogue = Shelf
+ [ Item $ SomeArrow ScriptCMR
+ , Item $ SomeArrow InternalKey
+ , Item $ SomeArrow CurrentIndex
+ , Item $ SomeArrow NumInputs
+ , Item $ SomeArrow NumOutputs
+ , Item $ SomeArrow LockTime
+ , Item $ SomeArrow OutputAsset
+ , Item $ SomeArrow OutputAmount
+ , Item $ SomeArrow OutputNonce
+ , Item $ SomeArrow OutputScriptHash
+ , Item $ SomeArrow OutputNullDatum
+ , Item $ SomeArrow OutputIsFee
+ , Item $ SomeArrow OutputSurjectionProof
+ , Item $ SomeArrow OutputRangeProof
+ , Missing -- TODO: TotalFee
+ , Item $ SomeArrow CurrentPegin
+ , Item $ SomeArrow CurrentPrevOutpoint
+ , Item $ SomeArrow CurrentAsset
+ , Item $ SomeArrow CurrentAmount
+ , Item $ SomeArrow CurrentScriptHash
+ , Item $ SomeArrow CurrentSequence
+ , Item $ SomeArrow CurrentAnnexHash
+ , Item $ SomeArrow CurrentScriptSigHash
+ , Item $ SomeArrow CurrentReissuanceBlinding
+ , Item $ SomeArrow CurrentNewIssuanceContract
+ , Item $ SomeArrow CurrentReissuanceEntropy
+ , Item $ SomeArrow CurrentIssuanceAssetAmount
+ , Item $ SomeArrow CurrentIssuanceTokenAmount
+ , Item $ SomeArrow CurrentIssuanceAssetProof
+ , Item $ SomeArrow CurrentIssuanceTokenProof
+ , Item $ SomeArrow InputPegin
+ , Item $ SomeArrow InputPrevOutpoint
+ , Item $ SomeArrow InputAsset
+ , Item $ SomeArrow InputAmount
+ , Item $ SomeArrow InputScriptHash
+ , Item $ SomeArrow InputSequence
+ , Item $ SomeArrow InputAnnexHash
+ , Item $ SomeArrow InputScriptSigHash
+ , Item $ SomeArrow ReissuanceBlinding
+ , Item $ SomeArrow NewIssuanceContract
+ , Item $ SomeArrow ReissuanceEntropy
+ , Item $ SomeArrow IssuanceAssetAmount
+ , Item $ SomeArrow IssuanceTokenAmount
+ , Item $ SomeArrow IssuanceAssetProof
+ , Item $ SomeArrow IssuanceTokenProof
+ , Item $ SomeArrow TapleafVersion
+ , Item $ SomeArrow Tappath
+ , Item $ SomeArrow Version
+ , Item $ SomeArrow GenesisBlockHash
+ ]
 
 putJetBitElements :: ElementsJet a b -> DList Bool
 putJetBitElements (SigHashJet x)     = putPositive 1 . putJetBitSigHash x
@@ -686,110 +688,10 @@ putJetBitTransaction Version                    = putPositive 48
 putJetBitTransaction GenesisBlockHash           = putPositive 49
 
 elementsJetMap :: Map.Map Hash256 (SomeArrow ElementsJet)
-elementsJetMap = Map.fromList
-  [ -- SigHashJet
-    mkAssoc (SigHashJet SigAllHash)
-  , mkAssoc (SigHashJet TxHash)
-  , mkAssoc (SigHashJet TapEnvHash)
-  , mkAssoc (SigHashJet OutputsHash)
-  , mkAssoc (SigHashJet InputsHash)
-  , mkAssoc (SigHashJet IssuancesHash)
-  , mkAssoc (SigHashJet InputUtxosHash)
-  , mkAssoc (SigHashJet OutputAmountsHash)
-  , mkAssoc (SigHashJet OutputScriptsHash)
-  , mkAssoc (SigHashJet OutputNoncesHash)
-  , mkAssoc (SigHashJet OutputRangeProofsHash)
-  , mkAssoc (SigHashJet OutputSurjectionProofsHash)
-  , mkAssoc (SigHashJet InputOutpointsHash)
-  , mkAssoc (SigHashJet InputSequencesHash)
-  , mkAssoc (SigHashJet InputAnnexesHash)
-  , mkAssoc (SigHashJet InputScriptSigsHash)
-  , mkAssoc (SigHashJet IssuanceAssetAmountsHash)
-  , mkAssoc (SigHashJet IssuanceTokenAmountsHash)
-  , mkAssoc (SigHashJet IssuanceRangeProofsHash)
-  , mkAssoc (SigHashJet IssuanceBlindingEntropyHash)
-  , mkAssoc (SigHashJet InputAmountsHash)
-  , mkAssoc (SigHashJet InputScriptsHash)
-  , mkAssoc (SigHashJet TapleafHash)
-  , mkAssoc (SigHashJet TappathHash)
-  , mkAssoc (SigHashJet OutpointHash)
-  , mkAssoc (SigHashJet AssetAmountHash)
-  , mkAssoc (SigHashJet NonceHash)
-  , mkAssoc (SigHashJet AnnexHash)
-  , mkAssoc (SigHashJet BuildTapleafSimplicity)
-  , mkAssoc (SigHashJet BuildTapbranch)
-    -- TimeLockJet
-  , mkAssoc (TimeLockJet CheckLockHeight)
-  , mkAssoc (TimeLockJet CheckLockTime)
-  , mkAssoc (TimeLockJet CheckLockDistance)
-  , mkAssoc (TimeLockJet CheckLockDuration)
-  , mkAssoc (TimeLockJet TxLockHeight)
-  , mkAssoc (TimeLockJet TxLockTime)
-  , mkAssoc (TimeLockJet TxLockDistance)
-  , mkAssoc (TimeLockJet TxLockDuration)
-  , mkAssoc (TimeLockJet TxIsFinal)
-    -- IssuanceJet
-  , mkAssoc (IssuanceJet Issuance)
-  , mkAssoc (IssuanceJet IssuanceAsset)
-  , mkAssoc (IssuanceJet IssuanceToken)
-  , mkAssoc (IssuanceJet IssuanceEntropy)
-  , mkAssoc (IssuanceJet CalculateIssuanceEntropy)
-  , mkAssoc (IssuanceJet CalculateAsset)
-  , mkAssoc (IssuanceJet CalculateExplicitToken)
-  , mkAssoc (IssuanceJet CalculateConfidentialToken)
-    -- TransactionJet
-  , mkAssoc (TransactionJet ScriptCMR)
-  , mkAssoc (TransactionJet InternalKey)
-  , mkAssoc (TransactionJet CurrentIndex)
-  , mkAssoc (TransactionJet NumInputs)
-  , mkAssoc (TransactionJet NumOutputs)
-  , mkAssoc (TransactionJet LockTime)
-  , mkAssoc (TransactionJet OutputAsset)
-  , mkAssoc (TransactionJet OutputAmount)
-  , mkAssoc (TransactionJet OutputNonce)
-  , mkAssoc (TransactionJet OutputScriptHash)
-  , mkAssoc (TransactionJet OutputNullDatum)
-  , mkAssoc (TransactionJet OutputIsFee)
-  , mkAssoc (TransactionJet OutputSurjectionProof)
-  , mkAssoc (TransactionJet OutputRangeProof)
-  , mkAssoc (TransactionJet CurrentPegin)
-  , mkAssoc (TransactionJet CurrentPrevOutpoint)
-  , mkAssoc (TransactionJet CurrentAsset)
-  , mkAssoc (TransactionJet CurrentAmount)
-  , mkAssoc (TransactionJet CurrentScriptHash)
-  , mkAssoc (TransactionJet CurrentSequence)
-  , mkAssoc (TransactionJet CurrentAnnexHash)
-  , mkAssoc (TransactionJet CurrentScriptSigHash)
-  , mkAssoc (TransactionJet CurrentReissuanceBlinding)
-  , mkAssoc (TransactionJet CurrentNewIssuanceContract)
-  , mkAssoc (TransactionJet CurrentReissuanceEntropy)
-  , mkAssoc (TransactionJet CurrentIssuanceAssetAmount)
-  , mkAssoc (TransactionJet CurrentIssuanceTokenAmount)
-  , mkAssoc (TransactionJet CurrentIssuanceAssetProof)
-  , mkAssoc (TransactionJet CurrentIssuanceTokenProof)
-  , mkAssoc (TransactionJet InputPegin)
-  , mkAssoc (TransactionJet InputPrevOutpoint)
-  , mkAssoc (TransactionJet InputAsset)
-  , mkAssoc (TransactionJet InputAmount)
-  , mkAssoc (TransactionJet InputScriptHash)
-  , mkAssoc (TransactionJet InputSequence)
-  , mkAssoc (TransactionJet InputAnnexHash)
-  , mkAssoc (TransactionJet InputScriptSigHash)
-  , mkAssoc (TransactionJet ReissuanceBlinding)
-  , mkAssoc (TransactionJet NewIssuanceContract)
-  , mkAssoc (TransactionJet ReissuanceEntropy)
-  , mkAssoc (TransactionJet IssuanceAssetAmount)
-  , mkAssoc (TransactionJet IssuanceTokenAmount)
-  , mkAssoc (TransactionJet IssuanceAssetProof)
-  , mkAssoc (TransactionJet IssuanceTokenProof)
-  , mkAssoc (TransactionJet TapleafVersion)
-  , mkAssoc (TransactionJet Tappath)
-  , mkAssoc (TransactionJet Version)
-  , mkAssoc (TransactionJet GenesisBlockHash)
-  ]
+elementsJetMap = Map.fromList . fmap mkAssoc $ toList elementsCatalogue
  where
-  mkAssoc :: (TyC a, TyC b) => ElementsJet a b -> (Hash256, (SomeArrow ElementsJet))
-  mkAssoc jt = (identityRoot (specificationElements jt), SomeArrow jt)
+  mkAssoc :: SomeArrow ElementsJet -> (Hash256, (SomeArrow ElementsJet))
+  mkAssoc wrapped@(SomeArrow jt) = (identityRoot (specificationElements jt), wrapped)
 
 data MatcherInfo a b = MatcherInfo (Product ConstWord IdentityRoot a b)
 
