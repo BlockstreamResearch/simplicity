@@ -5,7 +5,7 @@
 
 #include "../../jets.h"
 
-/* Primitives for the Elements application of Simplicity. */
+/* Jets for the Elements application of Simplicity. */
 bool version(frameItem* dst, frameItem src, const txEnv* env);
 bool lock_time(frameItem* dst, frameItem src, const txEnv* env);
 bool input_pegin(frameItem* dst, frameItem src, const txEnv* env);
@@ -31,6 +31,7 @@ bool output_null_datum(frameItem* dst, frameItem src, const txEnv* env);
 bool output_is_fee(frameItem* dst, frameItem src, const txEnv* env);
 bool output_surjection_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool output_range_proof(frameItem* dst, frameItem src, const txEnv* env);
+bool total_fee(frameItem* dst, frameItem src, const txEnv* env);
 bool genesis_block_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool script_cmr(frameItem* dst, frameItem src, const txEnv* env);
 bool current_index(frameItem* dst, frameItem src, const txEnv* env);
@@ -54,8 +55,6 @@ bool tappath(frameItem* dst, frameItem src, const txEnv* env);
 bool internal_key(frameItem* dst, frameItem src, const txEnv* env);
 bool num_inputs(frameItem* dst, frameItem src, const txEnv* env);
 bool num_outputs(frameItem* dst, frameItem src, const txEnv* env);
-
-/* Jets for the Elements application of Simplicity. */
 bool tx_is_final(frameItem* dst, frameItem src, const txEnv* env);
 bool tx_lock_height(frameItem* dst, frameItem src, const txEnv* env);
 bool tx_lock_time(frameItem* dst, frameItem src, const txEnv* env);

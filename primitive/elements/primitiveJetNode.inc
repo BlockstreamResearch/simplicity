@@ -3511,6 +3511,14 @@
 , .targetIx = ty_w256
 , .cost = 282 /* milli weight units */
 }
+,[TOTAL_FEE] =
+{ .tag = JET
+, .jet = total_fee
+, .cmr = {{0xcc69d24cu, 0x5dd852cdu, 0xefcaa74du, 0x3140467fu, 0xbe8d08a7u, 0x709422eeu, 0xc28ed632u, 0xb28aba63u}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w64
+, .cost = 397 /* milli weight units */
+}
 ,[TX_HASH] =
 { .tag = JET
 , .jet = tx_hash
