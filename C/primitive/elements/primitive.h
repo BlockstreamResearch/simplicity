@@ -122,6 +122,7 @@ typedef struct sigOutput {
   confAmount amt;
   confidential nonce;
   sha256_midstate scriptPubKey;
+  uint_fast64_t assetFee;
   parsedNullData pnd;
   bool isNullData;
   bool emptyScript;
