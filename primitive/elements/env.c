@@ -1,7 +1,8 @@
 #include <simplicity/elements/env.h>
 
-#include <stdlib.h>
 #include <stdalign.h>
+#include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 #include "primitive.h"
 #include "ops.h"
@@ -156,6 +157,21 @@ static void copyInput(sigInput* result, const rawInput* input) {
     result->issuance.assetId = calculateAsset(&result->issuance.entropy);
     result->issuance.tokenId = calculateToken(&result->issuance.entropy, result->issuance.assetAmt.prefix);
   }
+}
+
+/* As specified in https://github.com/ElementsProject/elements/blob/de942511a67c3a3fcbdf002a8ee7e9ba49679b78/src/primitives/transaction.h#L304-L307. */
+static bool isFee(const rawOutput* output) {
+  return 0 == output->scriptPubKey.len &&                 /* Empty scriptPubKey */
+    NULL != output->asset && 0x01 == output->asset[0] &&  /* Explicit asset */
+    NULL != output->value && 0x01 == output->value[0];    /* Explicit amount */
+}
+
+static uint_fast32_t countFeeOutputs(const rawTransaction* rawTx) {
+  uint_fast32_t result = 0;
+  for (uint_fast32_t i = 0; i < rawTx->numOutputs; ++i) {
+    result += isFee(&rawTx->output[i]);
+  }
+  return result;
 }
 
 /* If the 'scriptPubKey' is a TX_NULL_DATA, return a count of the number of "push only" operations (this excludes the OP_RETURN).
@@ -325,9 +341,19 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
   if (SIZE_MAX - allocationSize < rawTx->numOutputs * sizeof(sigOutput)) return NULL;
   allocationSize += rawTx->numOutputs * sizeof(sigOutput);
 
-  const size_t pad3 = PADDING(opcode, allocationSize);
+  const size_t pad3 = PADDING(sigOutput*, allocationSize);
   if (SIZE_MAX - allocationSize < pad3) return NULL;
   allocationSize += pad3;
+
+  const uint_fast32_t numFees = countFeeOutputs(rawTx);
+  /* Multiply by (size_t)1 to disable type-limits warning. */
+  if (SIZE_MAX / sizeof(sigOutput*) < (size_t)1 * numFees) return NULL;
+  if (SIZE_MAX - allocationSize < numFees * sizeof(sigOutput*)) return NULL;
+  allocationSize += numFees * sizeof(sigOutput*);
+
+  const size_t pad4 = PADDING(opcode, allocationSize);
+  if (SIZE_MAX - allocationSize < pad4) return NULL;
+  allocationSize += pad4;
 
   const uint_fast64_t totalNullDataCodes = countTotalNullDataCodes(rawTx);
   /* Multiply by (size_t)1 to disable type-limits warning. */
@@ -350,13 +376,22 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
   sigOutput* const output = (sigOutput*)(void*)allocation;
   allocation += rawTx->numOutputs * sizeof(sigOutput) + pad3;
 
+  sigOutput** const feeOutputs = (sigOutput**)(void*)allocation;
+  allocation += numFees * sizeof(sigOutput*) + pad4;
+
   opcode* ops = (opcode*)(void*)allocation;
   size_t opsLen = (size_t)totalNullDataCodes;
 
+  /* In C++ an assignment from (sigOutput**) to (const sigOutput * const *) is allowed,
+     but C forgoes the complicated specification of C++.  Therefore we must make an explicit cast of feeOutputs in C.
+     See <https://c-faq.com/ansi/constmismatch.html> for details.
+  */
   *tx = (transaction){ .input = input
                      , .output = output
+                     , .feeOutputs = (sigOutput const * const *)feeOutputs
                      , .numInputs = rawTx->numInputs
                      , .numOutputs = rawTx->numOutputs
+                     , .numFees = numFees
                      , .version = rawTx->version
                      , .lockTime = rawTx->lockTime
                      , .isFinal = true
@@ -466,8 +501,13 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
     sha256_context ctx_outputRangeProofsHash = sha256_init(tx->outputRangeProofsHash.s);
     sha256_context ctx_outputSurjectionProofsHash = sha256_init(tx->outputSurjectionProofsHash.s);
     sha256_context ctx_outputsHash = sha256_init(tx->outputsHash.s);
+    uint_fast32_t ix_fee = 0;
     for (uint_fast32_t i = 0; i < tx->numOutputs; ++i) {
       copyOutput(&output[i], &ops, &opsLen, &rawTx->output[i]);
+      if (isFee(&rawTx->output[i])) {
+        feeOutputs[ix_fee] = &output[i];
+        ++ix_fee;
+      }
       sha256_confAsset(&ctx_outputAssetAmountsHash, &output[i].asset);
       sha256_confAmt(&ctx_outputAssetAmountsHash, &output[i].amt);
       sha256_confNonce(&ctx_outputNoncesHash, &output[i].nonce);
@@ -475,6 +515,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
       sha256_hash(&ctx_outputRangeProofsHash, &output[i].rangeProofHash);
       sha256_hash(&ctx_outputSurjectionProofsHash, &output[i].surjectionProofHash);
     }
+    simplicity_assert(numFees == ix_fee);
     sha256_finalize(&ctx_outputAssetAmountsHash);
     sha256_finalize(&ctx_outputNoncesHash);
     sha256_finalize(&ctx_outputScriptsHash);
