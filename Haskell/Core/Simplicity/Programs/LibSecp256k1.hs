@@ -49,41 +49,14 @@ import Simplicity.Programs.Word
 import qualified Simplicity.Programs.Sha256 as Sha256
 import Simplicity.Programs.Sha256 hiding (Lib(Lib), lib)
 import Simplicity.Ty
+import Simplicity.Ty.LibSecp256k1
 import Simplicity.Term.Core
-
--- | Simplicity's representation of field elements.
-type FE = Word256
-
--- | A point in compressed coordinates.
--- The point at infinity isn't representable.
-type Point = (Bit, FE)
-
--- | A point in affine coordinates.
--- Usually expected to be on the elliptic curve.
--- The point at infinity isn't representable.
-type GE = (FE, FE)
-
--- | A point in Jacobian coordinates.
--- Usually expected to be on the elliptic curve.
--- The point at infinity's representatives are of the form @((a^2, a^3), 0)@, with @((0, 0), 0)@ being the canonical representative.
-type GEJ = (GE, FE)
-
--- | Scalar values, those less than the order of secp256's elliptic curve, are represented by a 256-bit word type.
-type Scalar = Word256
 
 -- | 129 entry vector of values.
 type Vector129 x = (x, Vector128 x)
 
 -- | 129-bit signed word that is returned by 'scalar_split_lambda' and 'scalar_split_128'.
 type Word129 = Vector129 Bit
-
--- | A format for (Schnorr) elliptic curve x-only public keys.
--- The y-coordinate is implicity the one on the curve that has an even y coordinate.
--- The point at infinity isn't representable (nor is it a valid public key to begin with).
-type PubKey = Word256
-
--- | A format for Schnorr signatures.
-type Sig = (Word256, Word256)
 
 -- | A collection of core Simplicity expressions for LibSecp256k1.
 -- Use 'mkLib' to construct an instance of this library.

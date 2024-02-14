@@ -18,7 +18,7 @@ library Simplicity-Core
                        Haskell/cbits/frame.c, Haskell/cbits/coreJets.c
   Include-dirs:        C
   Includes:            sha256.h, frame.h, jets.h
-  exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
+  exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.LibSecp256k1,
                        Simplicity.Term.Core,
                        Simplicity.CoreJets,
                        Simplicity.Functor, Simplicity.Tensor,
@@ -135,7 +135,7 @@ library
                        Simplicity.Elements.Programs.Transaction, Simplicity.Elements.Programs.Transaction.Lib,
                        Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets,
                        Simplicity.Elements.FFI.Env, Simplicity.Elements.FFI.Jets
-  reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word,
+  reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.LibSecp256k1,
                        Simplicity.Term.Core,
                        Simplicity.CoreJets,
                        Simplicity.Functor, Simplicity.Tensor,

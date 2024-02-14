@@ -19,6 +19,7 @@ import Simplicity.Digest
 import Simplicity.LibSecp256k1.Spec ((.+.), (.*.), (.^.))
 import qualified Simplicity.LibSecp256k1.Spec as Spec
 import Simplicity.Programs.LibSecp256k1.Lib
+import Simplicity.Ty.LibSecp256k1
 import Simplicity.Ty.Word
 import qualified Simplicity.Word as W
 
@@ -71,9 +72,6 @@ instance Arbitrary FieldElement where
 feAsTy (FieldElement w) = toWord256 (toInteger w)
 feAsSpec (FieldElement w) = Spec.fe (toInteger w)
 
-toFE :: Spec.FE -> FE
-toFE = toWord256 . toInteger . Spec.fe_pack
-
 data GroupElement = GroupElement FieldElement FieldElement deriving Show
 
 lowOrderGE :: Gen GroupElement
@@ -87,9 +85,6 @@ instance Arbitrary GroupElement where
 
 geAsTy (GroupElement x y) = (feAsTy x, feAsTy y)
 geAsSpec (GroupElement x y) = Spec.GE (feAsSpec x) (feAsSpec y)
-
-toGE :: Spec.GE -> GE
-toGE (Spec.GE x y) = (toFE x, toFE y)
 
 data PointElement = PointElement Bool FieldElement deriving Show
 
@@ -118,9 +113,6 @@ instance Arbitrary GroupElementJacobian where
 
 gejAsTy (GroupElementJacobian x y z) = ((feAsTy x, feAsTy y), feAsTy z)
 gejAsSpec (GroupElementJacobian x y z) = Spec.GEJ (feAsSpec x) (feAsSpec y) (feAsSpec z)
-
-toGEJ :: Spec.GEJ -> GEJ
-toGEJ (Spec.GEJ x y z) = ((toFE x, toFE y), toFE z)
 
 gen_inf :: Gen GroupElementJacobian
 gen_inf = GroupElementJacobian <$> arbitrary <*> arbitrary <*> pure (FieldElement 0)
