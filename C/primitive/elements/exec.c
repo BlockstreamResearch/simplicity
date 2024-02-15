@@ -1,12 +1,12 @@
 #include <simplicity/elements/exec.h>
 
-#include <stdlib.h>
 #include <stdalign.h>
 #include <string.h>
 #include "primitive.h"
 #include "../../deserialize.h"
 #include "../../eval.h"
 #include "../../limitations.h"
+#include "../../simplicity_alloc.h"
 #include "../../simplicity_assert.h"
 #include "../../typeInference.h"
 
@@ -98,7 +98,7 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
       static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(analyses), "analysis array too large.");
       static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
       static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "analysis array index does nto fit in uint32_t.");
-      analyses *analysis = malloc((size_t)dag_len * sizeof(analyses));
+      analyses *analysis = simplicity_malloc((size_t)dag_len * sizeof(analyses));
       if (analysis) {
         computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)dag_len);
         if (0 != memcmp(amr_hash.s, analysis[dag_len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]))) {
@@ -108,16 +108,16 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
         /* malloc failed which counts as a transient error. */
         *error = SIMPLICITY_ERR_MALLOC;
       }
-      free(analysis);
+      simplicity_free(analysis);
     }
     if (IS_OK(*error)) {
       txEnv env = build_txEnv(tx, taproot, &genesis_hash, ix);
       static_assert(BUDGET_MAX <= UBOUNDED_MAX, "BUDGET_MAX doesn't fit in ubounded.");
       *error = evalTCOProgram(dag, type_dag, (size_t)dag_len, &(ubounded){budget <= BUDGET_MAX ? (ubounded)budget : BUDGET_MAX}, &env);
     }
-    free(type_dag);
+    simplicity_free(type_dag);
   }
 
-  free(dag);
+  simplicity_free(dag);
   return IS_PERMANENT(*error);
 }

@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include "simplicity_alloc.h"
 #include "simplicity/elements/env.h"
 #include "primitive/elements/primitive.h"
 
@@ -68,9 +68,9 @@ void c_set_txEnv(txEnv* result, const transaction* tx, const tapEnv* taproot, co
 }
 
 void c_free_tapEnv(tapEnv* env) {
-  free(env);
+  simplicity_free(env);
 }
 
 void c_free_transaction(transaction* tx) {
-  free(tx);
+  simplicity_free(tx);
 }

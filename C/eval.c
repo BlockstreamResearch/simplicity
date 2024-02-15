@@ -1,9 +1,9 @@
 #include "eval.h"
 
 #include <string.h>
-#include <stdlib.h>
 #include "bounded.h"
 #include "limitations.h"
+#include "simplicity_alloc.h"
 #include "simplicity_assert.h"
 
 /* We choose an unusual representation for frames of the Bit Machine.
@@ -589,7 +589,7 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
   static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "bound array index does not fit in uint32_t.");
   simplicity_assert(1 <= len);
   simplicity_assert(len <= DAG_LEN_MAX);
-  boundsAnalysis* bound = malloc(len * sizeof(boundsAnalysis));
+  boundsAnalysis* bound = simplicity_malloc(len * sizeof(boundsAnalysis));
   if (!bound) return SIMPLICITY_ERR_MALLOC;
 
   /* Sum up the total costs.
@@ -744,7 +744,7 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
     *frameBound = bound[len-1].extraFrameBound[0] + 2; /* add the initial input and output frames to the count. */
     *costBound = bound[len-1].cost;
   }
-  free(bound);
+  simplicity_free(bound);
   /* Note that the cellsBound and costBound computations have been clipped at UBOUNDED_MAX.
    * Therefore setting maxCells or maxCost to UBOUNDED_MAX will disable the corresponding error check.
    */
@@ -802,12 +802,12 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, con
 
   /* We use calloc for 'cells' because the frame data must be initialized before we can perform bitwise operations. */
   static_assert(CELLS_MAX - 1 <= UINT32_MAX, "cells array index does not fit in uint32_t.");
-  UWORD* cells = calloc(UWORDBound ? UWORDBound : 1, sizeof(UWORD));
+  UWORD* cells = simplicity_calloc(UWORDBound ? UWORDBound : 1, sizeof(UWORD));
   static_assert(2*DAG_LEN_MAX <= SIZE_MAX / sizeof(frameItem), "frames array does not fit in size_t.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
   static_assert(2*DAG_LEN_MAX - 1 <= UINT32_MAX, "frames array index does not fit in uint32_t.");
-  frameItem* frames = malloc(frameBound * sizeof(frameItem));
-  call* stack = calloc(len, sizeof(call));
+  frameItem* frames = simplicity_malloc(frameBound * sizeof(frameItem));
+  call* stack = simplicity_calloc(len, sizeof(call));
 
   result = cells && frames && stack ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_MALLOC;
   if (IS_OK(result)) {
@@ -833,8 +833,8 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, con
     }
   }
 
-  free(stack);
-  free(frames);
-  free(cells);
+  simplicity_free(stack);
+  simplicity_free(frames);
+  simplicity_free(cells);
   return result;
 }

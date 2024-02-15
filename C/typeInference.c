@@ -1,10 +1,10 @@
 #include "typeInference.h"
 
 #include <stdbool.h>
-#include <stdlib.h>
 #include "bounded.h"
 #include "limitations.h"
 #include "primitive.h"
+#include "simplicity_alloc.h"
 #include "simplicity_assert.h"
 
 static_assert(DAG_LEN_MAX <= (SIZE_MAX - NUMBER_OF_TYPENAMES_MAX) / 4, "TYPE_DAG_LEN_MAX doesn't fit in size_t.");
@@ -566,7 +566,7 @@ simplicity_err mallocTypeInference(type** type_dag, dag_node* dag, const size_t 
   static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "arrow array index does not fit in uint32_t.");
   simplicity_assert(1 <= len);
   simplicity_assert(len <= DAG_LEN_MAX);
-  unification_arrow* arrow = malloc(len * sizeof(unification_arrow));
+  unification_arrow* arrow = simplicity_malloc(len * sizeof(unification_arrow));
   unification_var* bound_var = NULL;
   size_t word256_ix, extra_var_start;
   const size_t orig_bindings_used = mallocBoundVars(&bound_var, &word256_ix, &extra_var_start, max_extra_vars(census));
@@ -586,18 +586,18 @@ simplicity_err mallocTypeInference(type** type_dag, dag_node* dag, const size_t 
     static_assert(TYPE_DAG_LEN_MAX - 1 <= UINT32_MAX, "type_dag array index does not fit in uint32_t.");
     /* 'bindings_used' is at most 4*len plus the initial value of 'bindings_used' set by 'mallocBoundVars'. */
     simplicity_assert(bindings_used <= orig_bindings_used + 4*len);
-    *type_dag = malloc((1 + bindings_used) * sizeof(type));
+    *type_dag = simplicity_malloc((1 + bindings_used) * sizeof(type));
     result = *type_dag ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_MALLOC;
     if (IS_OK(result)) {
       result = freezeTypes(*type_dag, dag, arrow, len);
     }
     if (!IS_OK(result)) {
-      free(*type_dag);
+      simplicity_free(*type_dag);
       *type_dag = NULL;
     }
   }
 
-  free(arrow);
-  free(bound_var);
+  simplicity_free(arrow);
+  simplicity_free(bound_var);
   return result;
 }

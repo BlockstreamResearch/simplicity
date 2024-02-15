@@ -1,7 +1,6 @@
 #include "bitstream.h"
 
 #include <limits.h>
-#include <stdlib.h>
 #include "simplicity_assert.h"
 
 /* Closes a bitstream by consuming all remaining bits.

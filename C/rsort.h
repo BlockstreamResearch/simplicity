@@ -4,7 +4,6 @@
 #include <limits.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 #include "limitations.h"
 #include "sha256.h"
