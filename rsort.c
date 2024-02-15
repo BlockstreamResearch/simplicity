@@ -1,7 +1,9 @@
 #include "rsort.h"
 
 #include <string.h>
+
 #include "simplicity_assert.h"
+#include "simplicity_alloc.h"
 
 static_assert(UCHAR_MAX < SIZE_MAX, "UCHAR_MAX >= SIZE_MAX");
 #define CHAR_COUNT ((size_t)1 << CHAR_BIT)
@@ -245,10 +247,10 @@ static void rsort_ex(const sha256_midstate** a, uint_fast32_t len, const sha256_
  * Precondition: For all 0 <= i < len, NULL != a[i];
  */
 bool rsort(const sha256_midstate** a, uint_fast32_t len) {
-  uint32_t *stack = malloc(((CHAR_COUNT - 1)*(sizeof((*a)->s)) + 1) * sizeof(uint32_t));
+  uint32_t *stack = simplicity_malloc(((CHAR_COUNT - 1)*(sizeof((*a)->s)) + 1) * sizeof(uint32_t));
   if (!stack) return false;
   rsort_ex(a, len, NULL, stack);
-  free(stack);
+  simplicity_free(stack);
   return true;
 }
 
@@ -266,8 +268,8 @@ int hasDuplicates(const sha256_midstate* a, uint_fast32_t len) {
   static_assert(DAG_LEN_MAX <= UINT32_MAX, "DAG_LEN_MAX does not fit in uint32_t.");
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(const sha256_midstate*), "perm array too large.");
   simplicity_assert(len <= SIZE_MAX / sizeof(const sha256_midstate*));
-  const sha256_midstate **perm = malloc(len * sizeof(const sha256_midstate*));
-  uint32_t *stack = malloc(((CHAR_COUNT - 1)*(sizeof((*perm)->s)) + 1) * sizeof(uint32_t));
+  const sha256_midstate **perm = simplicity_malloc(len * sizeof(const sha256_midstate*));
+  uint32_t *stack = simplicity_malloc(((CHAR_COUNT - 1)*(sizeof((*perm)->s)) + 1) * sizeof(uint32_t));
   int result = perm && stack ? 0 : -1;
 
   if (0 <= result) {
@@ -280,7 +282,7 @@ int hasDuplicates(const sha256_midstate* a, uint_fast32_t len) {
     result = NULL != duplicate;
   }
 
-  free(perm);
-  free(stack);
+  simplicity_free(perm);
+  simplicity_free(stack);
   return result;
 }

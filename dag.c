@@ -6,6 +6,7 @@
 #include "prefix.h"
 #include "rsort.h"
 #include "sha256.h"
+#include "simplicity_alloc.h"
 #include "uword.h"
 
 /* Given a tag for a node, return the SHA-256 hash of its associated CMR tag.
@@ -573,7 +574,7 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
  */
 simplicity_err verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t dag_len) {
   simplicity_assert(0 < dag_len);
-  sha256_midstate* imr_buf = malloc((size_t)dag_len * sizeof(sha256_midstate));
+  sha256_midstate* imr_buf = simplicity_malloc((size_t)dag_len * sizeof(sha256_midstate));
   if (!imr_buf) return SIMPLICITY_ERR_MALLOC;
 
   computeIdentityMerkleRoot(imr_buf, dag, type_dag, dag_len);
@@ -582,7 +583,7 @@ simplicity_err verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_no
 
   int result = hasDuplicates(imr_buf, dag_len);
 
-  free(imr_buf);
+  simplicity_free(imr_buf);
 
   switch (result) {
   case -1: return SIMPLICITY_ERR_MALLOC;

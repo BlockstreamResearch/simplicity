@@ -1,9 +1,9 @@
 #include "deserialize.h"
 
 #include <limits.h>
-#include <stdlib.h>
 #include "limitations.h"
 #include "primitive.h"
+#include "simplicity_alloc.h"
 #include "simplicity_assert.h"
 
 /* Fetches 'len' 'uint32_t's from 'stream' into 'result'.
@@ -195,7 +195,7 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(dag_node), "dag array too large.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
   static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "dag array index does not fit in uint32_t.");
-  *dag = malloc((size_t)dagLen * sizeof(dag_node));
+  *dag = simplicity_malloc((size_t)dagLen * sizeof(dag_node));
   if (!*dag) return SIMPLICITY_ERR_MALLOC;
 
   if (census) *census = (combinator_counters){0};
@@ -210,7 +210,7 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
   if (IS_OK(error)) {
     return dagLen;
   } else {
-    free(*dag);
+    simplicity_free(*dag);
     *dag = NULL;
     return (int32_t)error;
   }

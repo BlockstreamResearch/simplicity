@@ -14,6 +14,7 @@
 #include "sha256.h"
 #include "schnorr0.h"
 #include "schnorr6.h"
+#include "simplicity_alloc.h"
 #include "typeInference.h"
 #include "primitive/elements/checkSigHashAllTx1.h"
 
@@ -164,9 +165,9 @@ static void test_hashBlock(void) {
         printf("Unexpected failure of hashblock evaluation: %d\n", err);
       }
     }
-    free(type_dag);
+    simplicity_free(type_dag);
   }
-  free(dag);
+  simplicity_free(dag);
 }
 
 static void test_program(char* name, const unsigned char* program, size_t program_len, simplicity_err expectedResult, const uint32_t* expectedCMR,
@@ -286,9 +287,9 @@ static void test_program(char* name, const unsigned char* program, size_t progra
         printf("Expected %d from evaluation, but got %d instead.\n", expectedResult, actualResult);
       }
     }
-    free(type_dag);
+    simplicity_free(type_dag);
   }
-  free(dag);
+  simplicity_free(dag);
 }
 
 static void test_occursCheck(void) {
@@ -313,9 +314,9 @@ static void test_occursCheck(void) {
       printf("Unexpected occurs check success\n");
       failures++;
     }
-    free(type_dag);
+    simplicity_free(type_dag);
   }
-  free(dag);
+  simplicity_free(dag);
 }
 
 static void test_elements(void) {
@@ -409,7 +410,7 @@ static void test_elements(void) {
       printf("mallocTransaction(&rawTx1) failed\n");
       failures++;
     }
-    free(tx1);
+    simplicity_free(tx1);
   }
   /* test a modified transaction with the same signature. */
   {
@@ -457,9 +458,9 @@ static void test_elements(void) {
       printf("mallocTransaction(&testTx2) failed\n");
       failures++;
     }
-    free(tx2);
+    simplicity_free(tx2);
   }
-  free(taproot);
+  simplicity_free(taproot);
 }
 
 static sha256_midstate hashint(uint_fast32_t n) {
@@ -531,7 +532,7 @@ static void regression_tests(void) {
   {
     /* word("2^23 zero bits") ; unit */
     size_t sizeof_regression3 = ((size_t)1 << 20) + 4;
-    unsigned char *regression3 = calloc(sizeof_regression3, 1);
+    unsigned char *regression3 = simplicity_calloc(sizeof_regression3, 1);
     clock_t start, end;
     double diff, bound;
     const uint32_t cmr[] = {
@@ -554,7 +555,7 @@ static void regression_tests(void) {
         printf("regression3 took too long.\n");
       }
     }
-    free(regression3);
+    simplicity_free(regression3);
   }
 }
 
