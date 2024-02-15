@@ -16,7 +16,7 @@ module Simplicity.Programs.LibSecp256k1
   , gej_rescale, gej_normalize, gej_negate, gej_scale_lambda
   , gej_double, gej_add_ex, gej_add, gej_ge_add_ex, gej_ge_add
   , ge_is_on_curve, ge_negate, ge_scale_lambda
-  , {-gej_equiv,-} gej_x_equiv, gej_y_is_odd
+  , gej_equiv, gej_ge_equiv, gej_x_equiv, gej_y_is_odd
   , decompress
   -- * Scalar operations
   , Scalar, Word129
@@ -153,8 +153,11 @@ data Lib term =
     -- Returns the point (0, 0) when given the point at infinity.
   , gej_normalize :: term GEJ (Either () GE)
 
---    -- | Tests if two points in jacobian coordinates represent the same point.
---  , gej_equiv :: term (GEJ, GEJ) Bit
+    -- | Tests if two points in jacobian coordinates represent the same point.
+  , gej_equiv :: term (GEJ, GEJ) Bit
+
+    -- | Tests if a jacobian point and an affine point represent the same point.
+  , gej_ge_equiv :: term (GEJ, GE) Bit
 
     -- | Given a field element and a point in Jacobian coordiantes, test if the point represents one whose affine x-coordinate is equal to the given field element.
   , gej_x_equiv :: term (FE, GEJ) Bit
@@ -276,7 +279,8 @@ instance SimplicityFunctor Lib where
     , ge_scale_lambda = m ge_scale_lambda
     , gej_rescale = m gej_rescale
     , gej_normalize = m gej_normalize
---    , gej_equiv = m gej_equiv
+    , gej_equiv = m gej_equiv
+    , gej_ge_equiv = m gej_ge_equiv
     , gej_x_equiv = m gej_x_equiv
     , gej_y_is_odd = m gej_y_is_odd
     , gej_is_on_curve = m gej_is_on_curve
@@ -529,7 +533,9 @@ mkLib Sha256.Lib{..} = lib
   , gej_normalize = drop fe_is_zero &&& iden
                 >>> cond (injl unit) (injr gej_norm)
 
---  , gej_equiv = :TODO:
+  , gej_equiv = take (gej_negate) &&& ih >>> gej_add >>> gej_is_infinity
+
+  , gej_ge_equiv = take (gej_negate) &&& ih >>> gej_ge_add >>> gej_is_infinity
 
   , gej_x_equiv = and (not (drop gej_is_infinity))
                      (drop (take (take fe_negate)) &&& (drop (drop fe_square) &&& oh >>> fe_multiply)

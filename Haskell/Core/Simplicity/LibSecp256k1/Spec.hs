@@ -7,6 +7,8 @@ module Simplicity.LibSecp256k1.Spec
  , (.+.), (.-.), (.*.), (.^.)
    -- * Group operations.
  , GEJ(..), _gej, gej, _x, _y, _z, g
+ , gej_equiv
+ , gej_negate
  , gej_double, gej_add_ex
  , gej_x_equiv, gej_y_is_odd
  , gej_is_on_curve
@@ -15,6 +17,7 @@ module Simplicity.LibSecp256k1.Spec
  , gej_ge_add_ex, gej_ge_add_zinv
  , ge_negate, ge_scale_lambda
  , ge_is_on_curve
+ , gej_ge_equiv
    -- * Scalar operations
  , Scalar, scalar, scalar_repr, scalar_pack
  , scalar_zero, scalar_negate, scalar_add, scalar_square, scalar_multiply, scalar_invert, scalar_split_lambda, scalar_split_128
@@ -249,6 +252,10 @@ gej_is_infinity a = fe_is_zero (a^._z)
 gej_rescale :: GEJ -> FE -> GEJ
 gej_rescale (GEJ x y z) c = GEJ (x .*. c .^. 2) (y .*. c .^. 3) (z .*. c)
 
+-- | Negates a 'GEJ'.
+gej_negate :: GEJ -> GEJ
+gej_negate (GEJ x y z) = GEJ x (fe_negate y) z
+
 -- | Compute the point doubling formula for a 'GEJ'.
 gej_double :: GEJ -> GEJ
 gej_double a@(GEJ x y z) | gej_is_infinity a = mempty
@@ -295,6 +302,10 @@ instance Semigroup GEJ where
 
 instance Monoid GEJ where
   mempty = GEJ fe_zero fe_zero fe_zero
+
+-- | Check if two points in jacobian coordinates are equivalent.
+gej_equiv :: GEJ -> GEJ -> Bool
+gej_equiv a b = gej_is_infinity $ gej_negate a <> b
 
 -- | Check if the x-coordinate of the point represented by a 'GEJ' has a given value.
 gej_x_equiv :: FE -> GEJ -> Bool
@@ -368,6 +379,10 @@ ge_scale_lambda (GE x y) = GE (x .*. fe_beta) y
 -- | Validates the secp256k1 curve equation: y^2 = x^3 + 7
 ge_is_on_curve :: GE -> Bool
 ge_is_on_curve (GE x y) = gej_is_on_curve (GEJ x y fe_one)
+
+-- | Check if a point in jacobian coordinates is equivalent to one given in affine coordinates.
+gej_ge_equiv :: GEJ -> GE -> Bool
+gej_ge_equiv x y = gej_is_infinity . snd $ gej_ge_add_ex (gej_negate x) y
 
 -- | An element of secp256k1's scalar field is represented as a normalized value.
 newtype Scalar = Scalar { scalar_pack :: Word256 -- ^ Return the normalized represenative of a scalar element as a 'Word256'.

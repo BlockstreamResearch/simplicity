@@ -98,7 +98,7 @@ module Simplicity.FFI.Jets
  , sha_256_ctx_8_finalize
  , fe_normalize, fe_negate, fe_add, fe_square, fe_multiply, fe_multiply_beta, fe_invert, fe_square_root, fe_is_zero, fe_is_odd
  , scalar_normalize, scalar_negate, scalar_add, scalar_square, scalar_multiply, scalar_multiply_lambda, scalar_invert, scalar_is_zero
- , gej_infinity, gej_rescale, gej_normalize, gej_negate, ge_negate, gej_double, gej_add, gej_ge_add_ex, gej_ge_add, gej_is_infinity, gej_x_equiv, gej_y_is_odd, gej_is_on_curve, ge_is_on_curve
+ , gej_infinity, gej_rescale, gej_normalize, gej_negate, ge_negate, gej_double, gej_add, gej_ge_add_ex, gej_ge_add, gej_is_infinity, gej_equiv, gej_ge_equiv, gej_x_equiv, gej_y_is_odd, gej_is_on_curve, ge_is_on_curve
  , scale, generate, linear_combination_1, linear_verify_1
  , decompress, point_verify_1
  , check_sig_verify
@@ -466,6 +466,8 @@ foreign import ccall unsafe "" c_gej_add :: Ptr FrameItem -> Ptr FrameItem -> IO
 foreign import ccall unsafe "" c_gej_ge_add_ex :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_gej_ge_add :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_gej_is_infinity :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_equiv :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_gej_ge_equiv :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_gej_x_equiv :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_gej_y_is_odd :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_gej_is_on_curve :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -1524,6 +1526,12 @@ gej_ge_add = unsafeLocalCoreJet c_gej_ge_add
 
 gej_is_infinity :: GEJ -> Maybe Bit
 gej_is_infinity = unsafeLocalCoreJet c_gej_is_infinity
+
+gej_equiv :: (GEJ, GEJ) -> Maybe Bit
+gej_equiv = unsafeLocalCoreJet c_gej_equiv
+
+gej_ge_equiv :: (GEJ, GE) -> Maybe Bit
+gej_ge_equiv = unsafeLocalCoreJet c_gej_ge_equiv
 
 gej_x_equiv :: (FE, GEJ) -> Maybe Bit
 gej_x_equiv = unsafeLocalCoreJet c_gej_x_equiv

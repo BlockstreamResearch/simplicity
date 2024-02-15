@@ -1167,6 +1167,14 @@
 , .targetIx = ty_pw512w256
 , .cost = 2103 /* milli weight units */
 }
+,[GEJ_EQUIV] =
+{ .tag = JET
+, .jet = gej_equiv
+, .cmr = {{0xe87f98d9u, 0x1d9ebdecu, 0x167aba00u, 0xf8e8fc6du, 0xab8079c7u, 0x6b4d9c3du, 0x88f1f84cu, 0x8e6cd274u}}
+, .sourceIx = ty_ppw512w256pw512w256
+, .targetIx = ty_b
+, .cost = 1270 /* milli weight units */
+}
 ,[GEJ_GE_ADD] =
 { .tag = JET
 , .jet = gej_ge_add
@@ -1182,6 +1190,14 @@
 , .sourceIx = ty_ppw512w256w512
 , .targetIx = ty_pw256pw512w256
 , .cost = 3114 /* milli weight units */
+}
+,[GEJ_GE_EQUIV] =
+{ .tag = JET
+, .jet = gej_ge_equiv
+, .cmr = {{0x3b51dacdu, 0x29ff5cd3u, 0xc320455fu, 0xc3fa1ae9u, 0x612129aau, 0x8c8e2374u, 0x60c3ca2au, 0xd54e8f58u}}
+, .sourceIx = ty_ppw512w256w512
+, .targetIx = ty_b
+, .cost = 1270 /* milli weight units */
 }
 ,[GEJ_INFINITY] =
 { .tag = JET

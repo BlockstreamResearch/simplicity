@@ -15,7 +15,7 @@ module Simplicity.Programs.LibSecp256k1.Lib
   , gej_rescale, gej_normalize, gej_negate, gej_scale_lambda
   , gej_double, gej_add_ex, gej_add, gej_ge_add_ex, gej_ge_add
   , ge_is_on_curve, ge_negate, ge_scale_lambda
-  , {-gej_equiv,-} gej_x_equiv, gej_y_is_odd
+  , gej_equiv, gej_ge_equiv, gej_x_equiv, gej_y_is_odd
   , decompress
   -- * Scalar operations
   , LibSecp256k1.Scalar, LibSecp256k1.Word129
@@ -66,6 +66,8 @@ gej_ge_add = LibSecp256k1.gej_ge_add LibSecp256k1.lib
 ge_is_on_curve = LibSecp256k1.ge_is_on_curve LibSecp256k1.lib
 ge_negate = LibSecp256k1.ge_negate LibSecp256k1.lib
 ge_scale_lambda = LibSecp256k1.ge_scale_lambda LibSecp256k1.lib
+gej_equiv = LibSecp256k1.gej_equiv LibSecp256k1.lib
+gej_ge_equiv = LibSecp256k1.gej_ge_equiv LibSecp256k1.lib
 gej_x_equiv = LibSecp256k1.gej_x_equiv LibSecp256k1.lib
 gej_y_is_odd = LibSecp256k1.gej_y_is_odd LibSecp256k1.lib
 scalar_normalize = LibSecp256k1.scalar_normalize LibSecp256k1.lib

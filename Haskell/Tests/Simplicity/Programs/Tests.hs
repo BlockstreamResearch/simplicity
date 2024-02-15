@@ -33,8 +33,9 @@ import qualified Simplicity.Word as W
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit ((@=?), Assertion, testCase)
-import Test.Tasty.QuickCheck (Arbitrary(..), Gen, Property
+import Test.Tasty.QuickCheck (Arbitrary(..), Discard(Discard), Gen, Property
                              , arbitraryBoundedIntegral, choose, elements, forAll, resize, sized, vectorOf
+                             , property
                              , testProperty, withMaxSuccess
                              )
 
@@ -467,6 +468,14 @@ tests = testGroup "Programs"
         , testProperty "gej_ge_add_ex_double" prop_gej_ge_add_ex_double
         , testProperty "gej_ge_add_ex_opp" prop_gej_ge_add_ex_opp
         , testProperty "gej_ge_add_ex_inf" prop_gej_ge_add_ex_inf
+        , testProperty "gej_equiv" prop_gej_equiv
+        , testProperty "gej_equiv_infl" prop_gej_equiv_infl
+        , testProperty "gej_equiv_infr" prop_gej_equiv_infr
+        , testProperty "gej_equiv_inf" prop_gej_equiv_inf
+        , testProperty "gej_equiv_true" prop_gej_equiv_true
+        , testProperty "gej_ge_equiv" prop_gej_ge_equiv
+        , testProperty "gej_ge_equiv_inf" prop_gej_ge_equiv_inf
+        , testProperty "gej_ge_equiv_true" prop_gej_ge_equiv_true
         , testProperty "gej_x_equiv" prop_gej_x_equiv
         , testProperty "gej_x_equiv_inf" prop_gej_x_equiv_inf
         , testProperty "gej_x_equiv_true" prop_gej_x_equiv_true
@@ -3300,6 +3309,25 @@ prop_gej_ge_add_ex_opp z b@(GroupElement bx by) = prop_gej_ge_add_ex a b
 
 prop_gej_ge_add_ex_inf b = forAll gen_inf $ \a -> prop_gej_ge_add_ex a b
 
+prop_gej_equiv :: GroupElementJacobian -> GroupElementJacobian -> Bool
+prop_gej_equiv = \a b -> fast_gej_equiv (gejAsTy a, gejAsTy b) == Just (toBit (Spec.gej_equiv (gejAsSpec a) (gejAsSpec b)))
+ where
+  fast_gej_equiv = testCoreEval gej_equiv
+
+prop_gej_equiv_infl b = forAll gen_inf $ \a -> prop_gej_equiv a b
+prop_gej_equiv_infr a = forAll gen_inf $ \b -> prop_gej_equiv a b
+prop_gej_equiv_inf = forAll gen_inf $ \a -> forAll gen_inf $ \b -> prop_gej_equiv a b
+prop_gej_equiv_true = \a c ->
+   let b = Spec.gej_rescale (gejAsSpec a) (feAsSpec c)
+   in fast_gej_equiv (gejAsTy a, toGEJ b) == Just (toBit (Spec.gej_equiv (gejAsSpec a) b))
+ where
+  fast_gej_equiv = testCoreEval gej_equiv
+
+prop_gej_ge_equiv :: GroupElementJacobian -> GroupElement -> Bool
+prop_gej_ge_equiv = \a b -> fast_gej_ge_equiv (gejAsTy a, geAsTy b) == Just (toBit (Spec.gej_ge_equiv (gejAsSpec a) (geAsSpec b)))
+ where
+  fast_gej_ge_equiv = testCoreEval gej_ge_equiv
+
 prop_gej_x_equiv :: FieldElement -> GroupElementJacobian -> Bool -- gej_x_equiv will essentially always be false on random inputs.
 prop_gej_x_equiv = \x0 a -> fast_gej_x_equiv (feAsTy x0, gejAsTy a) == Just (toBit (Spec.gej_x_equiv (feAsSpec x0) (gejAsSpec a) ))
  where
@@ -3311,6 +3339,14 @@ prop_gej_x_equiv_true y z x0 = prop_gej_x_equiv x0 a
    z' = feAsSpec z
    x0' = feAsSpec x0
    a = GroupElementJacobian (FieldElement . Spec.fe_pack $ x0' .*. z' .^. 2) y z
+
+prop_gej_ge_equiv_inf b = forAll gen_inf $ \a -> prop_gej_ge_equiv a b
+prop_gej_ge_equiv_true = \a ->
+   maybe (property Discard)
+   (\b -> property $ fast_gej_ge_equiv (gejAsTy a, toGE b) == Just (toBit (Spec.gej_ge_equiv (gejAsSpec a) b)))
+   (Spec.gej_normalize (gejAsSpec a))
+ where
+  fast_gej_ge_equiv = testCoreEval gej_ge_equiv
 
 prop_gej_x_equiv_inf_zero = prop_gej_x_equiv_inf (FieldElement 0)
 

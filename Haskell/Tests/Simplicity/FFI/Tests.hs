@@ -21,6 +21,7 @@ import Simplicity.LibSecp256k1.Spec as Spec
 import Simplicity.MerkleRoot
 import Simplicity.TestCoreEval
 import Simplicity.Ty.Arbitrary
+import Simplicity.Ty.LibSecp256k1
 import Simplicity.Ty.Word
 import Simplicity.Bip0340
 import Simplicity.Word as W
@@ -456,6 +457,14 @@ tests = testGroup "C / SPEC"
         , testProperty "gej_ge_add_ex_inf"        prop_gej_ge_add_ex_inf
         , testProperty "gej_ge_add"               prop_gej_ge_add
         , testProperty "gej_is_infinity"          prop_gej_is_infinity
+        , testProperty "gej_equiv"                prop_gej_equiv
+        , testProperty "gej_equiv_infl"           prop_gej_equiv_infl
+        , testProperty "gej_equiv_infr"           prop_gej_equiv_infr
+        , testProperty "gej_equiv_inf"            prop_gej_equiv_inf
+        , testProperty "gej_equiv_true"           prop_gej_equiv_true
+        , testProperty "gej_ge_equiv"             prop_gej_ge_equiv
+        , testProperty "gej_ge_equiv_inf"         prop_gej_ge_equiv_inf
+        , testProperty "gej_ge_equiv_true"        prop_gej_ge_equiv_true
         , testProperty "gej_x_equiv"              prop_gej_x_equiv
         , testProperty "gej_x_equiv_inf"          prop_gej_x_equiv_inf
         , testProperty "gej_x_equiv_true"         prop_gej_x_equiv_true
@@ -3335,6 +3344,33 @@ prop_gej_is_infinity :: GroupElementJacobian -> Bool
 prop_gej_is_infinity = \a -> fast_gej_is_infinity (gejAsTy a) == C.gej_is_infinity (gejAsTy a)
  where
   fast_gej_is_infinity = testCoreEval Prog.gej_is_infinity
+
+prop_gej_equiv :: GroupElementJacobian -> GroupElementJacobian -> Bool
+prop_gej_equiv = \a b -> fast_gej_equiv (gejAsTy a, gejAsTy b) == C.gej_equiv (gejAsTy a, gejAsTy b)
+ where
+  fast_gej_equiv = testCoreEval Prog.gej_equiv
+
+prop_gej_equiv_infl b = forAll gen_inf $ \a -> prop_gej_equiv a b
+prop_gej_equiv_infr a = forAll gen_inf $ \b -> prop_gej_equiv a b
+prop_gej_equiv_inf = forAll gen_inf $ \a -> forAll gen_inf $ \b -> prop_gej_equiv a b
+prop_gej_equiv_true = \a c ->
+   let b = toGEJ $ Spec.gej_rescale (gejAsSpec a) (feAsSpec c)
+   in fast_gej_equiv (gejAsTy a, b) == C.gej_equiv (gejAsTy a, b)
+ where
+  fast_gej_equiv = testCoreEval Prog.gej_equiv
+
+prop_gej_ge_equiv :: GroupElementJacobian -> GroupElement -> Bool
+prop_gej_ge_equiv = \a b -> fast_gej_ge_equiv (gejAsTy a, geAsTy b) == C.gej_ge_equiv (gejAsTy a, geAsTy b)
+ where
+  fast_gej_ge_equiv = testCoreEval Prog.gej_ge_equiv
+
+prop_gej_ge_equiv_inf b = forAll gen_inf $ \a -> prop_gej_ge_equiv a b
+prop_gej_ge_equiv_true = \a ->
+   maybe (property Discard)
+   (\b -> property $ fast_gej_ge_equiv (gejAsTy a, b) == C.gej_ge_equiv (gejAsTy a, b))
+   (toGE <$> Spec.gej_normalize (gejAsSpec a))
+ where
+  fast_gej_ge_equiv = testCoreEval Prog.gej_ge_equiv
 
 prop_gej_x_equiv :: FieldElement -> GroupElementJacobian -> Bool
 prop_gej_x_equiv = \a b -> fast_gej_x_equiv (feAsTy a, gejAsTy b) == C.gej_x_equiv (feAsTy a, gejAsTy b)

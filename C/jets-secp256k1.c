@@ -415,6 +415,27 @@ bool gej_is_infinity(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
+bool gej_equiv(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+
+  secp256k1_gej a, b;
+  read_gej(&a, &src);
+  read_gej(&b, &src);
+  writeBit(dst, secp256k1_gej_eq_var(&a, &b));
+  return true;
+}
+
+bool gej_ge_equiv(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+
+  secp256k1_gej a;
+  secp256k1_ge b;
+  read_gej(&a, &src);
+  read_ge(&b, &src);
+  writeBit(dst, secp256k1_gej_eq_ge_var(&a, &b));
+  return true;
+}
+
 bool gej_x_equiv(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
 

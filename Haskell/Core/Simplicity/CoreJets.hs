@@ -34,6 +34,7 @@ import Simplicity.Bitcoin
 import Simplicity.BitMachine.StaticAnalysis.Cost
 import Simplicity.Digest
 import Simplicity.FFI.Jets as FFI
+import Simplicity.LibSecp256k1.Spec as Spec
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import qualified Simplicity.Programs.Bit as Prog
@@ -46,6 +47,7 @@ import qualified Simplicity.Programs.Sha256.Lib as Sha256
 import qualified Simplicity.Programs.Word as Prog
 import Simplicity.Term.Core
 import Simplicity.Tree
+import Simplicity.Ty.LibSecp256k1
 import Simplicity.Ty.Word
 import Simplicity.Weight
 import qualified Simplicity.Word as W
@@ -425,6 +427,8 @@ data Secp256k1Jet a b where
   GejGeAdd :: Secp256k1Jet (Secp256k1.GEJ,Secp256k1.GE) Secp256k1.GEJ
   GejRescale :: Secp256k1Jet (Secp256k1.GEJ,Secp256k1.FE) Secp256k1.GEJ
   GejIsInfinity :: Secp256k1Jet Secp256k1.GEJ Bit
+  GejEquiv :: Secp256k1Jet (Secp256k1.GEJ, Secp256k1.GEJ) Bit
+  GejGeEquiv :: Secp256k1Jet (Secp256k1.GEJ, Secp256k1.GE) Bit
   GejXEquiv :: Secp256k1Jet (Secp256k1.FE, Secp256k1.GEJ) Bit
   GejYIsOdd :: Secp256k1Jet Secp256k1.GEJ Bit
   GejIsOnCurve :: Secp256k1Jet Secp256k1.GEJ Bit
@@ -814,6 +818,8 @@ specificationSecp256k1 GejGeAddEx = Secp256k1.gej_ge_add_ex
 specificationSecp256k1 GejGeAdd = Secp256k1.gej_ge_add
 specificationSecp256k1 GejRescale = Secp256k1.gej_rescale
 specificationSecp256k1 GejIsInfinity = Secp256k1.gej_is_infinity
+specificationSecp256k1 GejEquiv = Secp256k1.gej_equiv
+specificationSecp256k1 GejGeEquiv = Secp256k1.gej_ge_equiv
 specificationSecp256k1 GejXEquiv = Secp256k1.gej_x_equiv
 specificationSecp256k1 GejYIsOdd = Secp256k1.gej_y_is_odd
 specificationSecp256k1 GejIsOnCurve = Secp256k1.gej_is_on_curve
@@ -1459,6 +1465,8 @@ implementationSecp256k1 GejGeAddEx = FFI.gej_ge_add_ex
 implementationSecp256k1 GejGeAdd = FFI.gej_ge_add
 implementationSecp256k1 GejRescale = FFI.gej_rescale
 implementationSecp256k1 GejIsInfinity = FFI.gej_is_infinity
+implementationSecp256k1 GejEquiv = \(a,b) -> return . toBit $ Spec.gej_equiv (fromGEJ a) (fromGEJ b)
+implementationSecp256k1 GejGeEquiv = \(a,b) -> return . toBit $ Spec.gej_ge_equiv (fromGEJ a) (fromGE b)
 implementationSecp256k1 GejXEquiv = FFI.gej_x_equiv
 implementationSecp256k1 GejYIsOdd = FFI.gej_y_is_odd
 implementationSecp256k1 GejIsOnCurve = FFI.gej_is_on_curve
@@ -2204,8 +2212,8 @@ secp256k1Book = Shelf
   , Item $ SomeArrow GejGeAdd
   , Item $ SomeArrow GejRescale
   , Item $ SomeArrow GejIsInfinity
-  , Missing
-  , Missing
+  , Item $ SomeArrow GejEquiv
+  , Item $ SomeArrow GejGeEquiv
   , Item $ SomeArrow GejXEquiv
   , Item $ SomeArrow GejYIsOdd
   , Item $ SomeArrow GejIsOnCurve
@@ -2606,6 +2614,8 @@ putJetBitSecp256k1 GejGeAddEx = putPositive 13
 putJetBitSecp256k1 GejGeAdd = putPositive 14
 putJetBitSecp256k1 GejRescale = putPositive 15
 putJetBitSecp256k1 GejIsInfinity = putPositive 16
+putJetBitSecp256k1 GejEquiv = putPositive 17
+putJetBitSecp256k1 GejGeEquiv = putPositive 18
 putJetBitSecp256k1 GejXEquiv = putPositive 19
 putJetBitSecp256k1 GejYIsOdd = putPositive 20
 putJetBitSecp256k1 GejIsOnCurve = putPositive 21
@@ -2997,6 +3007,8 @@ jetCostSecp256k1 GejGeAddEx = Benchmarks.cost "GejGeAddEx"
 jetCostSecp256k1 GejGeAdd = Benchmarks.cost "GejGeAdd"
 jetCostSecp256k1 GejRescale = Benchmarks.cost "GejRescale"
 jetCostSecp256k1 GejIsInfinity = Benchmarks.cost "GejIsInfinity"
+jetCostSecp256k1 GejEquiv = Benchmarks.cost "GejEquiv"
+jetCostSecp256k1 GejGeEquiv = Benchmarks.cost "GejGeEquiv"
 jetCostSecp256k1 GejXEquiv = Benchmarks.cost "GejXEquiv"
 jetCostSecp256k1 GejYIsOdd = Benchmarks.cost "GejYIsOdd"
 jetCostSecp256k1 GejIsOnCurve = Benchmarks.cost "GejIsOnCurve"

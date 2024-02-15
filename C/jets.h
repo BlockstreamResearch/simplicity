@@ -372,6 +372,8 @@ bool gej_add(frameItem* dst, frameItem src, const txEnv* env);
 bool gej_ge_add_ex(frameItem* dst, frameItem src, const txEnv* env);
 bool gej_ge_add(frameItem* dst, frameItem src, const txEnv* env);
 bool gej_is_infinity(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_equiv(frameItem* dst, frameItem src, const txEnv* env);
+bool gej_ge_equiv(frameItem* dst, frameItem src, const txEnv* env);
 bool gej_x_equiv(frameItem* dst, frameItem src, const txEnv* env);
 bool gej_y_is_odd(frameItem* dst, frameItem src, const txEnv* env);
 bool gej_is_on_curve(frameItem* dst, frameItem src, const txEnv* env);
