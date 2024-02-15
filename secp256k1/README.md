@@ -24,6 +24,7 @@ Because we will not be able to easily migrate to newer versions of libsecp256k1 
 In some cases we have made minor code changes:
 
 * `secp256k1_fe_sqrt` has been modified to call `secp256k1_fe_equal_var` (as `secp256k1_fe_equal` has been removed).  The function has been renamed to `secp256k1_fe_sqrt_var` and similar for other indirect callers.
+* The implementation of `secp256k1_gej_eq_ge_var` is taken from <https://github.com/bitcoin-core/secp256k1/tree/a47cd97d51e37c38ecf036d04e48518f6b0063f7>.
 * The use of secp256k1's `hash.h` for Schnorr signatures has been replaced with calls to Simplicity's internal `sha256.h` implementation.  This removes the duplication of functionality ~~and replaces the non-portable use of the `WORDS_BIGENDIAN` flag in `hash_impl.h` with our portable implementation~~.
 * `checked_malloc` and `checked_realloc` have been removed along with any functions that called them.
 * `ARG_CHECK` doesn't call the callback.

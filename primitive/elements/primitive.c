@@ -981,7 +981,8 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
        case 14: *result = GEJ_GE_ADD; return SIMPLICITY_NO_ERROR;
        case 15: *result = GEJ_RESCALE; return SIMPLICITY_NO_ERROR;
        case 16: *result = GEJ_IS_INFINITY; return SIMPLICITY_NO_ERROR;
-
+       case 17: *result = GEJ_EQUIV; return SIMPLICITY_NO_ERROR;
+       case 18: *result = GEJ_GE_EQUIV; return SIMPLICITY_NO_ERROR;
        case 19: *result = GEJ_X_EQUIV; return SIMPLICITY_NO_ERROR;
        case 20: *result = GEJ_Y_IS_ODD; return SIMPLICITY_NO_ERROR;
        case 21: *result = GEJ_IS_ON_CURVE; return SIMPLICITY_NO_ERROR;
