@@ -25,10 +25,10 @@ module Simplicity.Elements.DataTypes
   , txIsFinal, txLockDistance, txLockDuration
   , calculateIssuanceEntropy, calculateAsset, calculateToken
   , outputAmountsHash, outputNoncesHash, outputScriptsHash
-  , outputRangeProofsHash, outputSurjectionProofsHash, outputsHash
-  , inputOutpointsHash, inputAmountsHash, inputScriptsHash, inputUtxosHash
-  , inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash
-  , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuancesHash, issuanceBlindingEntropyHash
+  , outputRangeProofsHash, outputSurjectionProofsHash, outputsHash, outputHash
+  , inputOutpointsHash, inputAmountsHash, inputScriptsHash, inputUtxosHash, inputUtxoHash
+  , inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash, inputHash
+  , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuancesHash, issuanceHash, issuanceBlindingEntropyHash
   , txHash
   , tapleafHash, tappathHash, tapEnvHash
   , outputFee, totalFee
@@ -404,14 +404,33 @@ outputsHash tx = bslHash . runPutLazy $ do
                    put $ outputRangeProofsHash tx
                    -- outputSurjectionProofsHash omitted
 
--- | A hash of all 'sigTxiPegin's and 'sigTxiPreviousOutpoint's.
-inputOutpointsHash :: SigTx -> Hash256
-inputOutpointsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
+-- | A hash of one output's
+--
+-- * asset and amount
+-- * nonce
+-- * hash of its script
+-- * hash of its rangeproof.
+--
+-- Note that surjection proof is excluded.
+outputHash :: TxOutput -> Hash256
+outputHash txo = bslHash . runPutLazy $ do
+                   putAsset . clearAssetPrf $ txoAsset txo
+                   putAmount . clearAmountPrf $ txoAmount txo
+                   putNonce $ txoNonce txo
+                   put . bslHash $ txoScript txo
+                   put . bslHash $ view (to txoAmount.under amount.prf_) txo
+                   -- outputSurjectionProof omitted
+
+-- | Serialize an input's previous output including whether the previous input is from an pegin or not, and which parent chain if it is a pegin.
+putOutpoint :: Putter SigTxInput
+putOutpoint txi = maybePut put (sigTxiPegin txi) >> putOutpointBE (sigTxiPreviousOutpoint txi)
  where
   maybePut _ Nothing = putWord8 0x00
   maybePut putter (Just x) = putWord8 0x01 >> putter x
-  go txi = maybePut put (sigTxiPegin txi)
-        >> putOutpointBE (sigTxiPreviousOutpoint txi)
+
+-- | A hash of all 'sigTxiPegin's and 'sigTxiPreviousOutpoint's.
+inputOutpointsHash :: SigTx -> Hash256
+inputOutpointsHash tx = bslHash . runPutLazy $ mapM_ putOutpoint (sigTxIn tx)
 
 -- | A hash of all 'utxoAsset's and 'utxoAmount's.
 inputAmountsHash :: SigTx -> Hash256
@@ -433,16 +452,27 @@ inputUtxosHash tx = bslHash . runPutLazy $ do
                       put $ inputAmountsHash tx
                       put $ inputScriptsHash tx
 
+-- | A hash of one utxo's
+--
+-- * asset and amount
+-- * hash of its script
+inputUtxoHash :: UTXO -> Hash256
+inputUtxoHash utxo = bslHash . runPutLazy $ do
+                   putAsset . clearAssetPrf $ utxoAsset utxo
+                   putAmount . clearAmountPrf $ utxoAmount utxo
+                   put . bslHash $ utxoScript utxo
+
 -- | A hash of all 'sigTxiSequence's.
 inputSequencesHash :: SigTx -> Hash256
 inputSequencesHash tx = bslHash . runPutLazy $ mapM_ (putWord32be . sigTxiSequence) (sigTxIn tx)
 
+putAnnex :: Putter (Maybe BSL.ByteString)
+putAnnex Nothing = putWord8 0x00
+putAnnex (Just annex) = putWord8 0x01 >> put (bslHash annex)
+
 -- | A hash of all 'sigTxiAnnex' hashs.
 inputAnnexesHash :: SigTx -> Hash256
-inputAnnexesHash tx = bslHash . runPutLazy $ mapM_ (go . sigTxiAnnex) (sigTxIn tx)
- where
-  go Nothing = putWord8 0x00
-  go (Just annex) = putWord8 0x01 >> put (bslHash annex)
+inputAnnexesHash tx = bslHash . runPutLazy $ mapM_ (putAnnex . sigTxiAnnex) (sigTxIn tx)
 
 -- | A hash of all 'sigTxiScriptSig' hashs.
 inputScriptSigsHash :: SigTx -> Hash256
@@ -461,18 +491,39 @@ inputsHash tx = bslHash . runPutLazy $ do
                   put $ inputSequencesHash tx
                   put $ inputAnnexesHash tx
 
+-- | A hash of
+--
+-- * The inputs's outpoint (including if and where the pegin came from)
+-- * The inputs's sequence number
+-- * Whether or not the input has an annex and the hash of that annex.
+inputHash :: SigTxInput -> Hash256
+inputHash txi = bslHash . runPutLazy $ do
+                  putOutpoint txi
+                  putWord32be $ sigTxiSequence txi
+                  putAnnex $ sigTxiAnnex txi
+
+putIssuanceAssetAmount :: Putter SigTxInput
+putIssuanceAssetAmount txi = maybeConfPut putAsset (Asset . Explicit <$> sigTxiIssuanceAsset txi)
+                          >> maybeConfPut putAmount (clearAmountPrf . either newIssuanceAmount reissuanceAmount <$> sigTxiIssuance txi)
+ where
+  maybeConfPut _ Nothing = putWord8 0x00
+  maybeConfPut putter (Just x) = putter x
+
 -- | A hash of 'sigTxiIssuanceAsset' and either 'newIssuanceAmount' or 'reissuanceAmount' pairs as an asset-amount hash.
 --
 -- Note that "null" amount is hashed as if it were an explicit zero.
 --
 -- When an input has no issuance, a pair of zero bytes, @0x00 0x00@ are hashed.
 issuanceAssetAmountsHash :: SigTx -> Hash256
-issuanceAssetAmountsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
+issuanceAssetAmountsHash tx = bslHash . runPutLazy $ mapM_ putIssuanceAssetAmount (sigTxIn tx)
+
+
+putIssuanceTokenAmount :: Putter SigTxInput
+putIssuanceTokenAmount txi = maybeConfPut putAsset (Asset . Explicit <$> sigTxiIssuanceToken txi)
+                          >> maybeConfPut putAmount (clearAmountPrf . either newIssuanceTokenAmount (const (Amount (Explicit 0))) <$> sigTxiIssuance txi)
  where
   maybeConfPut _ Nothing = putWord8 0x00
   maybeConfPut putter (Just x) = putter x
-  go txi = maybeConfPut putAsset (Asset . Explicit <$> sigTxiIssuanceAsset txi)
-        >> maybeConfPut putAmount (clearAmountPrf . either newIssuanceAmount reissuanceAmount <$> sigTxiIssuance txi)
 
 -- | A hash of 'sigTxiIssuanceToken' and 'newIssuanceTokenAmount' pairs as an asset-amount hash.
 --
@@ -480,28 +531,25 @@ issuanceAssetAmountsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
 --
 -- When an input has no issuance, a pair of zero bytes, @0x00 0x00@ are hashed.
 issuanceTokenAmountsHash :: SigTx -> Hash256
-issuanceTokenAmountsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
- where
-  maybeConfPut _ Nothing = putWord8 0x00
-  maybeConfPut putter (Just x) = putter x
-  go txi = maybeConfPut putAsset (Asset . Explicit <$> sigTxiIssuanceToken txi)
-        >> maybeConfPut putAmount (clearAmountPrf . either newIssuanceTokenAmount (const (Amount (Explicit 0))) <$> sigTxiIssuance txi)
+issuanceTokenAmountsHash tx = bslHash . runPutLazy $ mapM_ putIssuanceTokenAmount (sigTxIn tx)
+
+putIssuanceRangeProof :: Putter (Maybe Issuance)
+putIssuanceRangeProof issuance = put (bslHash . view (just_.under amount.prf_) $ either newIssuanceAmount reissuanceAmount <$> issuance)
+                             >> put (bslHash . view (just_.under amount.prf_) $ either newIssuanceTokenAmount (const (Amount (Explicit 0))) <$> issuance)
 
 -- | A hash of all issuance range proof hashes.
 issuanceRangeProofsHash :: SigTx -> Hash256
-issuanceRangeProofsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
- where
-  go txi = put (bslHash . view (just_.under amount.prf_) $ either newIssuanceAmount reissuanceAmount <$> sigTxiIssuance txi)
-        >> put (bslHash . view (just_.under amount.prf_) $ either newIssuanceTokenAmount (const (Amount (Explicit 0))) <$> sigTxiIssuance txi)
+issuanceRangeProofsHash tx = bslHash . runPutLazy $ mapM_ (putIssuanceRangeProof . sigTxiIssuance) (sigTxIn tx)
+
+putIssuanceBlindingEntropy :: Putter (Maybe Issuance)
+putIssuanceBlindingEntropy Nothing = putWord8 0x00
+putIssuanceBlindingEntropy (Just issuance) = do putWord8 0x01
+                                                put (either (const $ review (over be256) 0) reissuanceBlindingNonce $ issuance)
+                                                put (either newIssuanceContractHash reissuanceEntropy $ issuance)
 
 -- | A hash of all 'reissuanceBlindingNonce' and either 'newIssuanceContractHash' or 'reissuanceEntropy' values.
 issuanceBlindingEntropyHash :: SigTx -> Hash256
-issuanceBlindingEntropyHash tx = bslHash . runPutLazy $ mapM_ (go . sigTxiIssuance) (sigTxIn tx)
- where
-  go Nothing = putWord8 0x00
-  go (Just issuance) = do putWord8 0x01
-                          put (either (const $ review (over be256) 0) reissuanceBlindingNonce $ issuance)
-                          put (either newIssuanceContractHash reissuanceEntropy $ issuance)
+issuanceBlindingEntropyHash tx = bslHash . runPutLazy $ mapM_ (putIssuanceBlindingEntropy . sigTxiIssuance) (sigTxIn tx)
 
 -- | A hash of
 --
@@ -515,6 +563,19 @@ issuancesHash tx = bslHash . runPutLazy $ do
                      put $ issuanceTokenAmountsHash tx
                      put $ issuanceRangeProofsHash tx
                      put $ issuanceBlindingEntropyHash tx
+
+-- | A hash of
+--
+-- * If there is an issuance, the issued asset id and amount
+-- * If there is an issuance, the issued token id and amount
+-- * A hash of each of the rangeproofs
+-- * If there is an issuance, the contract hash and blinding/entropy fields
+issuanceHash :: SigTxInput -> Hash256
+issuanceHash txi = bslHash . runPutLazy $ do
+                     putIssuanceAssetAmount txi
+                     putIssuanceTokenAmount txi
+                     putIssuanceRangeProof (sigTxiIssuance txi)
+                     putIssuanceBlindingEntropy (sigTxiIssuance txi)
 
 -- | A hash of
 --
