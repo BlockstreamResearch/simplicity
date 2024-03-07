@@ -6,6 +6,38 @@
 #include "../../sha256.h"
 #include "primitive.h"
 
+/* Add an 'confidential' value to be consumed by an ongoing SHA-256 evaluation.
+ * If the 'confidential' value is blinded, then the 'evenPrefix' used if the y coordinate is even,
+ * and the 'oddPrefix' is used if the y coordinate is odd.
+ * If the 'confidential' value is explicit, then '0x01' is used as the prefix.
+ * If the 'confidential' value is "NULL" then only '0x00' added.
+ *
+ * Precondition: NULL != ctx;
+ *               NULL != conf;
+ */
+void sha256_confidential(unsigned char evenPrefix, unsigned char oddPrefix, sha256_context* ctx, const confidential* conf);
+
+/* Add an 'confidential' asset to be consumed by an ongoing SHA-256 evaluation.
+ *
+ * Precondition: NULL != ctx;
+ *               NULL != asset;
+ */
+void sha256_confAsset(sha256_context* ctx, const confidential* asset);
+
+/* Add an 'confidential' nonce to be consumed by an ongoing SHA-256 evaluation.
+ *
+ * Precondition: NULL != ctx;
+ *               NULL != nonce;
+ */
+void sha256_confNonce(sha256_context* ctx, const confidential* nonce);
+
+/* Add an 'confidential' amount to be consumed by an ongoing SHA-256 evaluation.
+ *
+ * Precondition: NULL != ctx;
+ *               NULL != amt;
+ */
+void sha256_confAmt(sha256_context* ctx, const confAmount* amt);
+
 /* Compute an Element's entropy value from a prevoutpoint and a contract hash.
  * A reimplementation of GenerateAssetEntropy from Element's 'issuance.cpp'.
  *

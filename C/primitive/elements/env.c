@@ -10,63 +10,6 @@
 
 #define PADDING(alignType, allocated) ((alignof(alignType) - (allocated) % alignof(alignType)) % alignof(alignType))
 
-/* Add an 'confidential' value to be consumed by an ongoing SHA-256 evaluation.
- * If the 'confidential' value is blinded, then the 'evenPrefix' used if the y coordinate is even,
- * and the 'oddPrefix' is used if the y coordinate is odd.
- * If the 'confidential' value is explicit, then '0x01' is used as the prefix.
- * If the 'confidential' value is "NULL" then only '0x00' added.
- *
- * Precondition: NULL != ctx;
- *               NULL != conf;
- */
-static void sha256_confidential(unsigned char evenPrefix, unsigned char oddPrefix, sha256_context* ctx, const confidential* conf) {
-  switch (conf->prefix) {
-   case NONE: sha256_uchar(ctx, 0x00); return;
-   case EXPLICIT: sha256_uchar(ctx, 0x01); break;
-   case EVEN_Y: sha256_uchar(ctx, evenPrefix); break;
-   case ODD_Y: sha256_uchar(ctx, oddPrefix); break;
-  }
-  sha256_hash(ctx, &conf->data);
-}
-
-/* Add an 'confidential' asset to be consumed by an ongoing SHA-256 evaluation.
- *
- * Precondition: NULL != ctx;
- *               NULL != asset;
- */
-static void sha256_confAsset(sha256_context* ctx, const confidential* asset) {
-  sha256_confidential(0x0a, 0x0b, ctx, asset);
-}
-
-/* Add an 'confidential' nonce to be consumed by an ongoing SHA-256 evaluation.
- *
- * Precondition: NULL != ctx;
- *               NULL != nonce;
- */
-static void sha256_confNonce(sha256_context* ctx, const confidential* nonce) {
-  sha256_confidential(0x02, 0x03, ctx, nonce);
-}
-
-/* Add an 'confidential' amount to be consumed by an ongoing SHA-256 evaluation.
- *
- * Precondition: NULL != ctx;
- *               NULL != amt;
- */
-static void sha256_confAmt(sha256_context* ctx, const confAmount* amt) {
-  switch (amt->prefix) {
-   case NONE: SIMPLICITY_UNREACHABLE;
-   case EXPLICIT:
-    sha256_uchar(ctx, 0x01);
-    sha256_u64be(ctx, amt->explicit);
-    return;
-   case EVEN_Y:
-   case ODD_Y:
-    sha256_uchar(ctx, EVEN_Y == amt->prefix ? 0x08 : 0x09);
-    sha256_hash(ctx, &amt->confidential);
-    return;
-  }
-}
-
 /* Compute the SHA-256 hash of a scriptPubKey and write it into 'result'.
  *
  * Precondition: NULL != result;
