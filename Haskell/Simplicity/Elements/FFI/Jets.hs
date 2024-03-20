@@ -78,19 +78,23 @@ module Simplicity.Elements.FFI.Jets
  , output_range_proofs_hash
  , output_surjection_proofs_hash
  , outputs_hash
+ , output_hash
  , input_outpoints_hash
  , input_amounts_hash
  , input_scripts_hash
  , input_utxos_hash
+ , input_utxo_hash
  , input_sequences_hash
  , input_annexes_hash
  , input_script_sigs_hash
  , inputs_hash
+ , input_hash
  , issuance_asset_amounts_hash
  , issuance_token_amounts_hash
  , issuance_range_proofs_hash
  , issuance_blinding_entropy_hash
  , issuances_hash
+ , issuance_hash
  , tx_hash
  , tapleaf_hash
  , tappath_hash
@@ -190,19 +194,23 @@ foreign import ccall unsafe "" c_output_scripts_hash :: Ptr FrameItem -> Ptr Fra
 foreign import ccall unsafe "" c_output_range_proofs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_surjection_proofs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_outputs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_output_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_outpoints_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_amounts_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_scripts_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_utxos_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_utxo_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_sequences_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_annexes_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_script_sigs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_inputs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuance_asset_amounts_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuance_token_amounts_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuance_range_proofs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuance_blinding_entropy_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuances_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_issuance_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tx_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tapleaf_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tappath_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -442,6 +450,9 @@ output_surjection_proofs_hash = unsafeLocalJet c_output_surjection_proofs_hash
 outputs_hash :: PrimEnv -> () -> Maybe Word256
 outputs_hash = unsafeLocalJet c_outputs_hash
 
+output_hash :: PrimEnv -> Word32 -> Maybe (S Word256)
+output_hash = unsafeLocalJet c_output_hash
+
 input_outpoints_hash :: PrimEnv -> () -> Maybe Word256
 input_outpoints_hash = unsafeLocalJet c_input_outpoints_hash
 
@@ -454,6 +465,9 @@ input_scripts_hash = unsafeLocalJet c_input_scripts_hash
 input_utxos_hash :: PrimEnv -> () -> Maybe Word256
 input_utxos_hash = unsafeLocalJet c_input_utxos_hash
 
+input_utxo_hash :: PrimEnv -> Word32 -> Maybe (S Word256)
+input_utxo_hash = unsafeLocalJet c_input_utxo_hash
+
 input_sequences_hash :: PrimEnv -> () -> Maybe Word256
 input_sequences_hash = unsafeLocalJet c_input_sequences_hash
 
@@ -465,6 +479,9 @@ input_script_sigs_hash = unsafeLocalJet c_input_script_sigs_hash
 
 inputs_hash :: PrimEnv -> () -> Maybe Word256
 inputs_hash = unsafeLocalJet c_inputs_hash
+
+input_hash :: PrimEnv -> Word32 -> Maybe (S Word256)
+input_hash = unsafeLocalJet c_input_hash
 
 issuance_asset_amounts_hash :: PrimEnv -> () -> Maybe Word256
 issuance_asset_amounts_hash = unsafeLocalJet c_issuance_asset_amounts_hash
@@ -480,6 +497,9 @@ issuance_blinding_entropy_hash = unsafeLocalJet c_issuance_blinding_entropy_hash
 
 issuances_hash :: PrimEnv -> () -> Maybe Word256
 issuances_hash = unsafeLocalJet c_issuances_hash
+
+issuance_hash :: PrimEnv -> Word32 -> Maybe (S Word256)
+issuance_hash = unsafeLocalJet c_issuance_hash
 
 tx_hash :: PrimEnv -> () -> Maybe Word256
 tx_hash = unsafeLocalJet c_tx_hash

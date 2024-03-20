@@ -1383,6 +1383,14 @@
 , .targetIx = ty_mspbw256w256
 , .cost = 220 /* milli weight units */
 }
+,[INPUT_HASH] =
+{ .tag = JET
+, .jet = input_hash
+, .cmr = {{0xb5d0d777u, 0x851e89d1u, 0x41d3cda1u, 0xb0f251e9u, 0xc31011d1u, 0xb01c2939u, 0x77119662u, 0xc349959eu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 289 /* milli weight units */
+}
 ,[INPUT_OUTPOINTS_HASH] =
 { .tag = JET
 , .jet = input_outpoints_hash
@@ -1454,6 +1462,14 @@
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 292 /* milli weight units */
+}
+,[INPUT_UTXO_HASH] =
+{ .tag = JET
+, .jet = input_utxo_hash
+, .cmr = {{0xd6453aeeu, 0xb2b18b4cu, 0x1bb02b33u, 0x51ce5135u, 0x45cb7f10u, 0x62f2a3fau, 0xc680d0bbu, 0xcac63e86u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 409 /* milli weight units */
 }
 ,[INPUT_UTXOS_HASH] =
 { .tag = JET
@@ -1570,7 +1586,7 @@
 ,[ISSUANCE_ASSET_AMOUNTS_HASH] =
 { .tag = JET
 , .jet = issuance_asset_amounts_hash
-, .cmr = {{0x55975fb4u, 0x0019934au, 0x06a15ff6u, 0xb51c6453u, 0xfa435ac6u, 0x7f210d22u, 0xdf552d43u, 0x9355a5a0u}}
+, .cmr = {{0x8c090d1au, 0x32b32b27u, 0x1fa376a3u, 0xba303616u, 0x8c0f62f9u, 0xa446ace2u, 0x9b3545c9u, 0xe51f3e47u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 276 /* milli weight units */
@@ -1586,7 +1602,7 @@
 ,[ISSUANCE_BLINDING_ENTROPY_HASH] =
 { .tag = JET
 , .jet = issuance_blinding_entropy_hash
-, .cmr = {{0x02549ac6u, 0x66e09b7bu, 0x218356d0u, 0x3d6ca68cu, 0xb8e2546bu, 0xb303e166u, 0x313f6842u, 0xb44fbb60u}}
+, .cmr = {{0x3c429fa6u, 0x28e12ccfu, 0x9f167a07u, 0xe26f70afu, 0x36cb3459u, 0x964dbc14u, 0x2b524d40u, 0x9db1699bu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 278 /* milli weight units */
@@ -1598,6 +1614,14 @@
 , .sourceIx = ty_w32
 , .targetIx = ty_mmw256
 , .cost = 437 /* milli weight units */
+}
+,[ISSUANCE_HASH] =
+{ .tag = JET
+, .jet = issuance_hash
+, .cmr = {{0x3a7c8ea2u, 0xde579879u, 0x275bf1beu, 0xa7be5279u, 0xe703a36du, 0xc5f4e488u, 0x53a3af9bu, 0x0c501b66u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 281 /* milli weight units */
 }
 ,[ISSUANCE_RANGE_PROOFS_HASH] =
 { .tag = JET
@@ -1626,7 +1650,7 @@
 ,[ISSUANCE_TOKEN_AMOUNTS_HASH] =
 { .tag = JET
 , .jet = issuance_token_amounts_hash
-, .cmr = {{0x1fdd418eu, 0x37c80ceeu, 0x29ed9b4fu, 0x0dcb49ffu, 0x59f247d4u, 0x3f85fbf9u, 0x6982d159u, 0x8ec68365u}}
+, .cmr = {{0x195e7666u, 0x1a78bc69u, 0x1ef0139eu, 0x1f366a96u, 0x6f75584au, 0xb7768dc7u, 0x8fffabdeu, 0x155601f6u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 289 /* milli weight units */
@@ -1642,7 +1666,7 @@
 ,[ISSUANCES_HASH] =
 { .tag = JET
 , .jet = issuances_hash
-, .cmr = {{0x56c22096u, 0x5e499455u, 0x5e174dfdu, 0x7ea1c464u, 0xaa338adau, 0x9b799bc1u, 0x056f1affu, 0xa70353f1u}}
+, .cmr = {{0x9ab9fd03u, 0xff1c6958u, 0x6174bc26u, 0xa88764f0u, 0xdf9cc7ddu, 0x6e61f3dcu, 0x3e426660u, 0xf0912230u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 281 /* milli weight units */
@@ -2623,6 +2647,14 @@
 , .targetIx = ty_mspbw256w256
 , .cost = 621 /* milli weight units */
 }
+,[OUTPUT_HASH] =
+{ .tag = JET
+, .jet = output_hash
+, .cmr = {{0x7875cc33u, 0x2cf1b49cu, 0xdcf11e70u, 0x18dc8119u, 0x3ee4b19eu, 0xa142fc0au, 0xe7dbddb3u, 0x36e2fbfau}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 296 /* milli weight units */
+}
 ,[OUTPUT_IS_FEE] =
 { .tag = JET
 , .jet = output_is_fee
@@ -3402,7 +3434,7 @@
 ,[SIG_ALL_HASH] =
 { .tag = JET
 , .jet = sig_all_hash
-, .cmr = {{0xaaa39d05u, 0x09ccd97fu, 0xb4aefdd2u, 0x0bdd60a5u, 0x788cfe12u, 0x72864eb7u, 0xa69da7e9u, 0xa9f1cde7u}}
+, .cmr = {{0x0dc3f10bu, 0xbbbf9aa4u, 0x91bb8814u, 0x631d3b6du, 0x4195f82cu, 0x9773bbcbu, 0x2da3ef0cu, 0xf0cd94d2u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 265 /* milli weight units */
@@ -3530,7 +3562,7 @@
 ,[TX_HASH] =
 { .tag = JET
 , .jet = tx_hash
-, .cmr = {{0xc6a64eaau, 0x2b9986c0u, 0x18abfa70u, 0xd4d04981u, 0x19a58790u, 0x27cc0bcfu, 0x55021c49u, 0x30b8f875u}}
+, .cmr = {{0xb7e0a2dcu, 0x5ca11ce5u, 0x82a7aa29u, 0x9a51b23eu, 0x66efe623u, 0x602a7b7du, 0x434eec51u, 0xaf245a07u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
 , .cost = 290 /* milli weight units */
