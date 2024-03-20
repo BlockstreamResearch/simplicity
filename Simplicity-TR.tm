@@ -1302,675 +1302,687 @@
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-331><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|bip-0340-challenge-midstate>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-signature-unpack>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-332><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-signature-unpack>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-pubkey-unpack>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-333><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-pubkey-unpack>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-pubkey-unpack-neg>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-334><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-pubkey-unpack-neg>
+    <with|par-left|4tab|<with|font-family|ss|secp256k1-ecdsa>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-335><vspace|0.15fn>>
 
-    <with|par-left|4tab|<with|font-family|ss|secp256k1-ecdsa>
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-336><vspace|0.15fn>>
-
     <with|par-left|1tab|B.1.6<space|2spc><with|font-family|tt|language|verbatim|110110010...:
     >Jets for Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-337>>
+    <no-break><pageref|auto-336>>
 
     <with|par-left|2tab|B.1.6.1<space|2spc><with|font-family|tt|language|verbatim|11011000100...:
     >Jets for tagged hash IVs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-338>>
+    <no-break><pageref|auto-337>>
 
     <with|par-left|4tab|<with|font-family|ss|iden-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-339><vspace|0.15fn>>
+    <no-break><pageref|auto-338><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|comp-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-340><vspace|0.15fn>>
+    <no-break><pageref|auto-339><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|unit-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-341><vspace|0.15fn>>
+    <no-break><pageref|auto-340><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|injl-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-342><vspace|0.15fn>>
+    <no-break><pageref|auto-341><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|injr-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-343><vspace|0.15fn>>
+    <no-break><pageref|auto-342><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|case-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-344><vspace|0.15fn>>
+    <no-break><pageref|auto-343><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|pair-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-345><vspace|0.15fn>>
+    <no-break><pageref|auto-344><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|take-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-346><vspace|0.15fn>>
+    <no-break><pageref|auto-345><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|drop-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-347><vspace|0.15fn>>
+    <no-break><pageref|auto-346><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|witness-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-348><vspace|0.15fn>>
+    <no-break><pageref|auto-347><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|disconnect-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-349><vspace|0.15fn>>
+    <no-break><pageref|auto-348><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|fail-commitment-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-350><vspace|0.15fn>>
+    <no-break><pageref|auto-349><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|signtaure-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-351><vspace|0.15fn>>
+    <no-break><pageref|auto-350><vspace|0.15fn>>
 
     <with|par-left|4tab|<with|font-family|ss|sighash-tag>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-352><vspace|0.15fn>>
+    <no-break><pageref|auto-351><vspace|0.15fn>>
 
     <with|par-left|1tab|B.1.7<space|2spc><with|font-family|tt|language|verbatim|110110011...:
     >Jets for Bitcoin (without primitives)
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-353>>
+    <no-break><pageref|auto-352>>
 
     <with|par-left|2tab|B.1.7.1<space|2spc><with|font-family|ss|parse-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-354>>
+    <no-break><pageref|auto-353>>
 
     <with|par-left|2tab|B.1.7.2<space|2spc><with|font-family|ss|parse-sequence>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-355>>
+    <no-break><pageref|auto-354>>
 
     B.2<space|2spc><with|font-family|tt|language|verbatim|111...: >Bitcoin
     Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-356>
+    <no-break><pageref|auto-355>
 
     <with|par-left|1tab|B.2.1<space|2spc>Signature Hash Modes
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-357>>
+    <no-break><pageref|auto-356>>
 
     <with|par-left|1tab|B.2.2<space|2spc>Time Locks
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-358>>
+    <no-break><pageref|auto-357>>
 
     <with|par-left|2tab|B.2.2.1<space|2spc><with|font-family|ss|check-lock-height>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-359>>
+    <no-break><pageref|auto-358>>
 
     <with|par-left|2tab|B.2.2.2<space|2spc><with|font-family|ss|check-lock-time>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-360>>
+    <no-break><pageref|auto-359>>
 
     <with|par-left|2tab|B.2.2.3<space|2spc><with|font-family|ss|check-lock-distance>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-361>>
+    <no-break><pageref|auto-360>>
 
     <with|par-left|2tab|B.2.2.4<space|2spc><with|font-family|ss|check-lock-duration>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-362>>
+    <no-break><pageref|auto-361>>
 
     <with|par-left|2tab|B.2.2.5<space|2spc><with|font-family|ss|tx-height-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-363>>
+    <no-break><pageref|auto-362>>
 
     <with|par-left|2tab|B.2.2.6<space|2spc><with|font-family|ss|tx-time-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-364>>
+    <no-break><pageref|auto-363>>
 
     <with|par-left|2tab|B.2.2.7<space|2spc><with|font-family|ss|tx-distance-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-365>>
+    <no-break><pageref|auto-364>>
 
     <with|par-left|2tab|B.2.2.8<space|2spc><with|font-family|ss|tx-duration-lock>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-366>>
+    <no-break><pageref|auto-365>>
 
     <with|par-left|2tab|B.2.2.9<space|2spc><with|font-family|ss|is-final>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-367>>
+    <no-break><pageref|auto-366>>
 
     <with|par-left|1tab|B.2.3<space|2spc>Transaction
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-368>>
+    <no-break><pageref|auto-367>>
 
     <with|par-left|2tab|B.2.3.1<space|2spc><with|font-family|ss|script-cmr>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-369>>
+    <no-break><pageref|auto-368>>
 
     <with|par-left|2tab|B.2.3.2<space|2spc><with|font-family|ss|internal-key>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-370>>
+    <no-break><pageref|auto-369>>
 
     <with|par-left|2tab|B.2.3.3<space|2spc><with|font-family|ss|current-index>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-371>>
+    <no-break><pageref|auto-370>>
 
     <with|par-left|2tab|B.2.3.4<space|2spc><with|font-family|ss|num-inputs>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-372>>
+    <no-break><pageref|auto-371>>
 
     <with|par-left|2tab|B.2.3.5<space|2spc><with|font-family|ss|num-outputs>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-373>>
+    <no-break><pageref|auto-372>>
 
     <with|par-left|2tab|B.2.3.6<space|2spc><with|font-family|ss|lock-time>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-374>>
+    <no-break><pageref|auto-373>>
 
     <with|par-left|2tab|B.2.3.7<space|2spc><with|font-family|ss|fee>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-375>>
+    <no-break><pageref|auto-374>>
 
     <with|par-left|2tab|B.2.3.8<space|2spc><with|font-family|ss|output-value>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-376>>
+    <no-break><pageref|auto-375>>
 
     <with|par-left|2tab|B.2.3.9<space|2spc><with|font-family|ss|output-script-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-377>>
+    <no-break><pageref|auto-376>>
 
     <with|par-left|2tab|B.2.3.10<space|2spc><with|font-family|ss|total-output-value>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-378>>
+    <no-break><pageref|auto-377>>
 
     <with|par-left|2tab|B.2.3.11<space|2spc><with|font-family|ss|current-prev-outpoint>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-379>>
+    <no-break><pageref|auto-378>>
 
     <with|par-left|2tab|B.2.3.12<space|2spc><with|font-family|ss|current-value>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-380>>
+    <no-break><pageref|auto-379>>
 
     <with|par-left|2tab|B.2.3.13<space|2spc><with|font-family|ss|current-script-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-381>>
+    <no-break><pageref|auto-380>>
 
     <with|par-left|2tab|B.2.3.14<space|2spc><with|font-family|ss|current-sequence>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-382>>
+    <no-break><pageref|auto-381>>
 
     <with|par-left|2tab|B.2.3.15<space|2spc><with|font-family|ss|current-annex-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-383>>
+    <no-break><pageref|auto-382>>
 
     <with|par-left|2tab|B.2.3.16<space|2spc><with|font-family|ss|current-script-sig-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-384>>
+    <no-break><pageref|auto-383>>
 
     <with|par-left|2tab|B.2.3.17<space|2spc><with|font-family|ss|input-prev-outpoint>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-385>>
+    <no-break><pageref|auto-384>>
 
     <with|par-left|2tab|B.2.3.18<space|2spc><with|font-family|ss|input-value>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-386>>
+    <no-break><pageref|auto-385>>
 
     <with|par-left|2tab|B.2.3.19<space|2spc><with|font-family|ss|input-script-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-387>>
+    <no-break><pageref|auto-386>>
 
     <with|par-left|2tab|B.2.3.20<space|2spc><with|font-family|ss|input-sequence>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-388>>
+    <no-break><pageref|auto-387>>
 
     <with|par-left|2tab|B.2.3.21<space|2spc><with|font-family|ss|input-annex-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-389>>
+    <no-break><pageref|auto-388>>
 
     <with|par-left|2tab|B.2.3.22<space|2spc><with|font-family|ss|input-script-sig-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-390>>
+    <no-break><pageref|auto-389>>
 
     <with|par-left|2tab|B.2.3.23<space|2spc><with|font-family|ss|total-input-value>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-391>>
+    <no-break><pageref|auto-390>>
 
     <with|par-left|2tab|B.2.3.24<space|2spc><with|font-family|ss|tapleaf-version>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-392>>
+    <no-break><pageref|auto-391>>
 
     <with|par-left|2tab|B.2.3.25<space|2spc><with|font-family|ss|tappath>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-393>>
+    <no-break><pageref|auto-392>>
 
     <with|par-left|2tab|B.2.3.26<space|2spc><with|font-family|ss|version>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-394>>
+    <no-break><pageref|auto-393>>
 
     B.3<space|2spc><with|font-family|tt|language|verbatim|111...: >Elements
     Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-395>
+    <no-break><pageref|auto-394>
 
     <with|par-left|1tab|B.3.1<space|2spc>Signature Hash Modes
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-396>>
+    <no-break><pageref|auto-395>>
 
     <with|par-left|2tab|B.3.1.1<space|2spc><with|font-family|ss|sig-all-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-397>>
+    <no-break><pageref|auto-399>>
 
     <with|par-left|2tab|B.3.1.2<space|2spc><with|font-family|ss|tx-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-398>>
+    <no-break><pageref|auto-400>>
 
     <with|par-left|2tab|B.3.1.3<space|2spc><with|font-family|ss|tap-env-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-399>>
-
-    <with|par-left|2tab|B.3.1.4<space|2spc><with|font-family|ss|inputs-hash>
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-400>>
-
-    <with|par-left|2tab|B.3.1.5<space|2spc><with|font-family|ss|outputs-hash>
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-401>>
 
-    <with|par-left|2tab|B.3.1.6<space|2spc><with|font-family|ss|issuances-hash>
+    <with|par-left|2tab|B.3.1.4<space|2spc><with|font-family|ss|outputs-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-402>>
 
-    <with|par-left|2tab|B.3.1.7<space|2spc><with|font-family|ss|input-utxos-hash>
+    <with|par-left|2tab|B.3.1.5<space|2spc><with|font-family|ss|inputs-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-403>>
 
-    <with|par-left|2tab|B.3.1.8<space|2spc><with|font-family|ss|output-amounts-hash>
+    <with|par-left|2tab|B.3.1.6<space|2spc><with|font-family|ss|issuances-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-404>>
 
-    <with|par-left|2tab|B.3.1.9<space|2spc><with|font-family|ss|output-scripts-hash>
+    <with|par-left|2tab|B.3.1.7<space|2spc><with|font-family|ss|input-utxos-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-405>>
 
-    <with|par-left|2tab|B.3.1.10<space|2spc><with|font-family|ss|output-nonces-hash>
+    <with|par-left|2tab|B.3.1.8<space|2spc><with|font-family|ss|output-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-406>>
 
-    <with|par-left|2tab|B.3.1.11<space|2spc><with|font-family|ss|output-range-proofs-hash>
+    <with|par-left|2tab|B.3.1.9<space|2spc><with|font-family|ss|output-amounts-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-407>>
 
-    <with|par-left|2tab|B.3.1.12<space|2spc><with|font-family|ss|output-surjection-proofs-hash>
+    <with|par-left|2tab|B.3.1.10<space|2spc><with|font-family|ss|output-scripts-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-408>>
 
-    <with|par-left|2tab|B.3.1.13<space|2spc><with|font-family|ss|input-outpoints-hash>
+    <with|par-left|2tab|B.3.1.11<space|2spc><with|font-family|ss|output-nonces-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-409>>
 
-    <with|par-left|2tab|B.3.1.14<space|2spc><with|font-family|ss|input-sequences-hash>
+    <with|par-left|2tab|B.3.1.12<space|2spc><with|font-family|ss|output-range-proofs-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-410>>
 
-    <with|par-left|2tab|B.3.1.15<space|2spc><with|font-family|ss|input-annexes-hash>
+    <with|par-left|2tab|B.3.1.13<space|2spc><with|font-family|ss|output-surjection-proofs-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-411>>
 
-    <with|par-left|2tab|B.3.1.16<space|2spc><with|font-family|ss|input-script-sigs-hash>
+    <with|par-left|2tab|B.3.1.14<space|2spc><with|font-family|ss|input-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-412>>
 
-    <with|par-left|2tab|B.3.1.17<space|2spc><with|font-family|ss|issuance-asset-amounts-hash>
+    <with|par-left|2tab|B.3.1.15<space|2spc><with|font-family|ss|input-outpoints-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-413>>
 
-    <with|par-left|2tab|B.3.1.18<space|2spc><with|font-family|ss|issuance-token-amounts-hash>
+    <with|par-left|2tab|B.3.1.16<space|2spc><with|font-family|ss|input-sequences-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-414>>
 
-    <with|par-left|2tab|B.3.1.19<space|2spc><with|font-family|ss|issuance-range-proofs-hash>
+    <with|par-left|2tab|B.3.1.17<space|2spc><with|font-family|ss|input-annexes-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-415>>
 
-    <with|par-left|2tab|B.3.1.20<space|2spc><with|font-family|ss|issuance-blinding-entropy-hash>
+    <with|par-left|2tab|B.3.1.18<space|2spc><with|font-family|ss|input-script-sigs-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-416>>
 
-    <with|par-left|2tab|B.3.1.21<space|2spc><with|font-family|ss|input-amounts-hash>
+    <with|par-left|2tab|B.3.1.19<space|2spc><with|font-family|ss|issuance-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-417>>
 
-    <with|par-left|2tab|B.3.1.22<space|2spc><with|font-family|ss|input-scripts-hash>
+    <with|par-left|2tab|B.3.1.20<space|2spc><with|font-family|ss|issuance-asset-amounts-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-418>>
 
-    <with|par-left|2tab|B.3.1.23<space|2spc><with|font-family|ss|tapleaf-hash>
+    <with|par-left|2tab|B.3.1.21<space|2spc><with|font-family|ss|issuance-token-amounts-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-419>>
 
-    <with|par-left|2tab|B.3.1.24<space|2spc><with|font-family|ss|tappath-hash>
+    <with|par-left|2tab|B.3.1.22<space|2spc><with|font-family|ss|issuance-range-proofs-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-420>>
 
-    <with|par-left|2tab|B.3.1.25<space|2spc><with|font-family|ss|outpoint-hash>
+    <with|par-left|2tab|B.3.1.23<space|2spc><with|font-family|ss|issuance-blinding-entropy-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-421>>
 
-    <with|par-left|2tab|B.3.1.26<space|2spc><with|font-family|ss|asset-amount-hash>
+    <with|par-left|2tab|B.3.1.24<space|2spc><with|font-family|ss|input-utxo-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-422>>
 
-    <with|par-left|2tab|B.3.1.27<space|2spc><with|font-family|ss|nonce-hash>
+    <with|par-left|2tab|B.3.1.25<space|2spc><with|font-family|ss|input-amounts-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-423>>
 
-    <with|par-left|2tab|B.3.1.28<space|2spc><with|font-family|ss|annex-hash>
+    <with|par-left|2tab|B.3.1.26<space|2spc><with|font-family|ss|input-scripts-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-424>>
 
-    <with|par-left|2tab|B.3.1.29<space|2spc><with|font-family|ss|build-tapleaf-simplicity>
+    <with|par-left|2tab|B.3.1.27<space|2spc><with|font-family|ss|tap-leaf-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-425>>
 
-    <with|par-left|2tab|B.3.1.30<space|2spc><with|font-family|ss|build-tapbranch>
+    <with|par-left|2tab|B.3.1.28<space|2spc><with|font-family|ss|tappath-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-426>>
 
-    <with|par-left|1tab|B.3.2<space|2spc>Time Locks
+    <with|par-left|2tab|B.3.1.29<space|2spc><with|font-family|ss|outpoint-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-427>>
 
-    <with|par-left|2tab|B.3.2.1<space|2spc><with|font-family|ss|check-lock-height>
+    <with|par-left|2tab|B.3.1.30<space|2spc><with|font-family|ss|asset-amount-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-428>>
 
-    <with|par-left|2tab|B.3.2.2<space|2spc><with|font-family|ss|check-lock-time>
+    <with|par-left|2tab|B.3.1.31<space|2spc><with|font-family|ss|nonce-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-429>>
 
-    <with|par-left|2tab|B.3.2.3<space|2spc><with|font-family|ss|check-lock-distance>
+    <with|par-left|2tab|B.3.1.32<space|2spc><with|font-family|ss|annex-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-430>>
 
-    <with|par-left|2tab|B.3.2.4<space|2spc><with|font-family|ss|check-lock-duration>
+    <with|par-left|2tab|B.3.1.33<space|2spc><with|font-family|ss|build-tapleaf-simplicity>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-431>>
 
-    <with|par-left|2tab|B.3.2.5<space|2spc><with|font-family|ss|tx-lock-height>
+    <with|par-left|2tab|B.3.1.34<space|2spc><with|font-family|ss|build-tapbranch>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-432>>
 
-    <with|par-left|2tab|B.3.2.6<space|2spc><with|font-family|ss|tx-lock-time>
+    <with|par-left|1tab|B.3.2<space|2spc>Time Locks
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-433>>
 
-    <with|par-left|2tab|B.3.2.7<space|2spc><with|font-family|ss|tx-lock-distance>
+    <with|par-left|2tab|B.3.2.1<space|2spc><with|font-family|ss|check-lock-height>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-434>>
 
-    <with|par-left|2tab|B.3.2.8<space|2spc><with|font-family|ss|tx-lock-duration>
+    <with|par-left|2tab|B.3.2.2<space|2spc><with|font-family|ss|check-lock-time>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-435>>
 
-    <with|par-left|2tab|B.3.2.9<space|2spc><with|font-family|ss|tx-is-final>
+    <with|par-left|2tab|B.3.2.3<space|2spc><with|font-family|ss|check-lock-distance>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-436>>
 
-    <with|par-left|1tab|B.3.3<space|2spc>Issuance
+    <with|par-left|2tab|B.3.2.4<space|2spc><with|font-family|ss|check-lock-duration>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-437>>
 
-    <with|par-left|2tab|B.3.3.1<space|2spc><with|font-family|ss|issuance>
+    <with|par-left|2tab|B.3.2.5<space|2spc><with|font-family|ss|tx-lock-height>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-438>>
 
-    <with|par-left|2tab|B.3.3.2<space|2spc><with|font-family|ss|issuance-asset>
+    <with|par-left|2tab|B.3.2.6<space|2spc><with|font-family|ss|tx-lock-time>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-439>>
 
-    <with|par-left|2tab|B.3.3.3<space|2spc><with|font-family|ss|issuance-token>
+    <with|par-left|2tab|B.3.2.7<space|2spc><with|font-family|ss|tx-lock-distance>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-440>>
 
-    <with|par-left|2tab|B.3.3.4<space|2spc><with|font-family|ss|issuance-entropy>
+    <with|par-left|2tab|B.3.2.8<space|2spc><with|font-family|ss|tx-lock-duration>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-441>>
 
-    <with|par-left|2tab|B.3.3.5<space|2spc><with|font-family|ss|calculate-issuance-entropy>
+    <with|par-left|2tab|B.3.2.9<space|2spc><with|font-family|ss|tx-is-final>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-442>>
 
-    <with|par-left|2tab|B.3.3.6<space|2spc><with|font-family|ss|calculate-asset>
+    <with|par-left|1tab|B.3.3<space|2spc>Issuance
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-443>>
 
-    <with|par-left|2tab|B.3.3.7<space|2spc><with|font-family|ss|calculate-explicit-token>
+    <with|par-left|2tab|B.3.3.1<space|2spc><with|font-family|ss|issuance>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-444>>
 
-    <with|par-left|2tab|B.3.3.8<space|2spc><with|font-family|ss|calculate-confidential-token>
+    <with|par-left|2tab|B.3.3.2<space|2spc><with|font-family|ss|issuance-asset>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-445>>
 
-    <with|par-left|1tab|B.3.4<space|2spc>Transaction
+    <with|par-left|2tab|B.3.3.3<space|2spc><with|font-family|ss|issuance-token>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-446>>
 
-    <with|par-left|2tab|B.3.4.1<space|2spc><with|font-family|ss|script-cmr>
+    <with|par-left|2tab|B.3.3.4<space|2spc><with|font-family|ss|issuance-entropy>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-447>>
 
-    <with|par-left|2tab|B.3.4.2<space|2spc><with|font-family|ss|internal-key>
+    <with|par-left|2tab|B.3.3.5<space|2spc><with|font-family|ss|calculate-issuance-entropy>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-448>>
 
-    <with|par-left|2tab|B.3.4.3<space|2spc><with|font-family|ss|current-index>
+    <with|par-left|2tab|B.3.3.6<space|2spc><with|font-family|ss|calculate-asset>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-449>>
 
-    <with|par-left|2tab|B.3.4.4<space|2spc><with|font-family|ss|num-inputs>
+    <with|par-left|2tab|B.3.3.7<space|2spc><with|font-family|ss|calculate-explicit-token>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-450>>
 
-    <with|par-left|2tab|B.3.4.5<space|2spc><with|font-family|ss|num-outputs>
+    <with|par-left|2tab|B.3.3.8<space|2spc><with|font-family|ss|calculate-confidential-token>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-451>>
 
-    <with|par-left|2tab|B.3.4.6<space|2spc><with|font-family|ss|lock-time>
+    <with|par-left|1tab|B.3.4<space|2spc>Transaction
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-452>>
 
-    <with|par-left|2tab|B.3.4.7<space|2spc><with|font-family|ss|output-asset>
+    <with|par-left|2tab|B.3.4.1<space|2spc><with|font-family|ss|script-cmr>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-453>>
 
-    <with|par-left|2tab|B.3.4.8<space|2spc><with|font-family|ss|output-amount>
+    <with|par-left|2tab|B.3.4.2<space|2spc><with|font-family|ss|internal-key>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-454>>
 
-    <with|par-left|2tab|B.3.4.9<space|2spc><with|font-family|ss|output-nonce>
+    <with|par-left|2tab|B.3.4.3<space|2spc><with|font-family|ss|current-index>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-455>>
 
-    <with|par-left|2tab|B.3.4.10<space|2spc><with|font-family|ss|output-script-hash>
+    <with|par-left|2tab|B.3.4.4<space|2spc><with|font-family|ss|num-inputs>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-456>>
 
-    <with|par-left|2tab|B.3.4.11<space|2spc><with|font-family|ss|output-null-datum>
+    <with|par-left|2tab|B.3.4.5<space|2spc><with|font-family|ss|num-outputs>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-457>>
 
-    <with|par-left|2tab|B.3.4.12<space|2spc><with|font-family|ss|output-is-fee>
+    <with|par-left|2tab|B.3.4.6<space|2spc><with|font-family|ss|lock-time>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-458>>
 
-    <with|par-left|2tab|B.3.4.13<space|2spc><with|font-family|ss|output-surjection-proof>
+    <with|par-left|2tab|B.3.4.7<space|2spc><with|font-family|ss|output-asset>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-459>>
 
-    <with|par-left|2tab|B.3.4.14<space|2spc><with|font-family|ss|output-range-proof>
+    <with|par-left|2tab|B.3.4.8<space|2spc><with|font-family|ss|output-amount>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-460>>
 
-    <with|par-left|2tab|B.3.4.15<space|2spc><with|font-family|ss|total-fee>
+    <with|par-left|2tab|B.3.4.9<space|2spc><with|font-family|ss|output-nonce>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-461>>
 
-    <with|par-left|2tab|B.3.4.16<space|2spc><with|font-family|ss|current-pegin>
+    <with|par-left|2tab|B.3.4.10<space|2spc><with|font-family|ss|output-script-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-462>>
 
-    <with|par-left|2tab|B.3.4.17<space|2spc><with|font-family|ss|current-prev-outpoint>
+    <with|par-left|2tab|B.3.4.11<space|2spc><with|font-family|ss|output-null-datum>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-463>>
 
-    <with|par-left|2tab|B.3.4.18<space|2spc><with|font-family|ss|current-asset>
+    <with|par-left|2tab|B.3.4.12<space|2spc><with|font-family|ss|output-is-fee>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-464>>
 
-    <with|par-left|2tab|B.3.4.19<space|2spc><with|font-family|ss|current-amount>
+    <with|par-left|2tab|B.3.4.13<space|2spc><with|font-family|ss|output-surjection-proof>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-465>>
 
-    <with|par-left|2tab|B.3.4.20<space|2spc><with|font-family|ss|current-script-hash>
+    <with|par-left|2tab|B.3.4.14<space|2spc><with|font-family|ss|output-range-proof>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-466>>
 
-    <with|par-left|2tab|B.3.4.21<space|2spc><with|font-family|ss|current-sequence>
+    <with|par-left|2tab|B.3.4.15<space|2spc><with|font-family|ss|total-fee>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-467>>
 
-    <with|par-left|2tab|B.3.4.22<space|2spc><with|font-family|ss|current-annex-hash>
+    <with|par-left|2tab|B.3.4.16<space|2spc><with|font-family|ss|current-pegin>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-468>>
 
-    <with|par-left|2tab|B.3.4.23<space|2spc><with|font-family|ss|current-script-sig-hash>
+    <with|par-left|2tab|B.3.4.17<space|2spc><with|font-family|ss|current-prev-outpoint>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-469>>
 
-    <with|par-left|2tab|B.3.4.24<space|2spc><with|font-family|ss|current-reissuance-blinding>
+    <with|par-left|2tab|B.3.4.18<space|2spc><with|font-family|ss|current-asset>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-470>>
 
-    <with|par-left|2tab|B.3.4.25<space|2spc><with|font-family|ss|current-new-issuance-contract>
+    <with|par-left|2tab|B.3.4.19<space|2spc><with|font-family|ss|current-amount>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-471>>
 
-    <with|par-left|2tab|B.3.4.26<space|2spc><with|font-family|ss|current-reissuance-entropy>
+    <with|par-left|2tab|B.3.4.20<space|2spc><with|font-family|ss|current-script-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-472>>
 
-    <with|par-left|2tab|B.3.4.27<space|2spc><with|font-family|ss|current-issuance-asset-amount>
+    <with|par-left|2tab|B.3.4.21<space|2spc><with|font-family|ss|current-sequence>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-473>>
 
-    <with|par-left|2tab|B.3.4.28<space|2spc><with|font-family|ss|current-issuance-token-amount>
+    <with|par-left|2tab|B.3.4.22<space|2spc><with|font-family|ss|current-annex-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-474>>
 
-    <with|par-left|2tab|B.3.4.29<space|2spc><with|font-family|ss|current-issuance-asset-proof>
+    <with|par-left|2tab|B.3.4.23<space|2spc><with|font-family|ss|current-script-sig-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-475>>
 
-    <with|par-left|2tab|B.3.4.30<space|2spc><with|font-family|ss|current-issuance-token-proof>
+    <with|par-left|2tab|B.3.4.24<space|2spc><with|font-family|ss|current-reissuance-blinding>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-476>>
 
-    <with|par-left|2tab|B.3.4.31<space|2spc><with|font-family|ss|input-pegin>
+    <with|par-left|2tab|B.3.4.25<space|2spc><with|font-family|ss|current-new-issuance-contract>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-477>>
 
-    <with|par-left|2tab|B.3.4.32<space|2spc><with|font-family|ss|input-prev-outpoint>
+    <with|par-left|2tab|B.3.4.26<space|2spc><with|font-family|ss|current-reissuance-entropy>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-478>>
 
-    <with|par-left|2tab|B.3.4.33<space|2spc><with|font-family|ss|input-asset>
+    <with|par-left|2tab|B.3.4.27<space|2spc><with|font-family|ss|current-issuance-asset-amount>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-479>>
 
-    <with|par-left|2tab|B.3.4.34<space|2spc><with|font-family|ss|input-amount>
+    <with|par-left|2tab|B.3.4.28<space|2spc><with|font-family|ss|current-issuance-token-amount>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-480>>
 
-    <with|par-left|2tab|B.3.4.35<space|2spc><with|font-family|ss|input-script-hash>
+    <with|par-left|2tab|B.3.4.29<space|2spc><with|font-family|ss|current-issuance-asset-proof>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-481>>
 
-    <with|par-left|2tab|B.3.4.36<space|2spc><with|font-family|ss|input-sequence>
+    <with|par-left|2tab|B.3.4.30<space|2spc><with|font-family|ss|current-issuance-token-proof>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-482>>
 
-    <with|par-left|2tab|B.3.4.37<space|2spc><with|font-family|ss|input-annex-hash>
+    <with|par-left|2tab|B.3.4.31<space|2spc><with|font-family|ss|input-pegin>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-483>>
 
-    <with|par-left|2tab|B.3.4.38<space|2spc><with|font-family|ss|input-script-sig-hash>
+    <with|par-left|2tab|B.3.4.32<space|2spc><with|font-family|ss|input-prev-outpoint>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-484>>
 
-    <with|par-left|2tab|B.3.4.39<space|2spc><with|font-family|ss|reissuance-blinding>
+    <with|par-left|2tab|B.3.4.33<space|2spc><with|font-family|ss|input-asset>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-485>>
 
-    <with|par-left|2tab|B.3.4.40<space|2spc><with|font-family|ss|new-issuance-contract>
+    <with|par-left|2tab|B.3.4.34<space|2spc><with|font-family|ss|input-amount>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-486>>
 
-    <with|par-left|2tab|B.3.4.41<space|2spc><with|font-family|ss|reissuance-entropy>
+    <with|par-left|2tab|B.3.4.35<space|2spc><with|font-family|ss|input-script-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-487>>
 
-    <with|par-left|2tab|B.3.4.42<space|2spc><with|font-family|ss|issuance-asset-amount>
+    <with|par-left|2tab|B.3.4.36<space|2spc><with|font-family|ss|input-sequence>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-488>>
 
-    <with|par-left|2tab|B.3.4.43<space|2spc><with|font-family|ss|issuance-token-amount>
+    <with|par-left|2tab|B.3.4.37<space|2spc><with|font-family|ss|input-annex-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-489>>
 
-    <with|par-left|2tab|B.3.4.44<space|2spc><with|font-family|ss|issuance-asset-proof>
+    <with|par-left|2tab|B.3.4.38<space|2spc><with|font-family|ss|input-script-sig-hash>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-490>>
 
-    <with|par-left|2tab|B.3.4.45<space|2spc><with|font-family|ss|issuance-token-proof>
+    <with|par-left|2tab|B.3.4.39<space|2spc><with|font-family|ss|reissuance-blinding>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-491>>
 
-    <with|par-left|2tab|B.3.4.46<space|2spc><with|font-family|ss|tapleaf-version>
+    <with|par-left|2tab|B.3.4.40<space|2spc><with|font-family|ss|new-issuance-contract>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-492>>
 
-    <with|par-left|2tab|B.3.4.47<space|2spc><with|font-family|ss|tappath>
+    <with|par-left|2tab|B.3.4.41<space|2spc><with|font-family|ss|reissuance-entropy>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-493>>
 
-    <with|par-left|2tab|B.3.4.48<space|2spc><with|font-family|ss|version>
+    <with|par-left|2tab|B.3.4.42<space|2spc><with|font-family|ss|issuance-asset-amount>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-494>>
 
-    <with|par-left|2tab|B.3.4.49<space|2spc><with|font-family|ss|genesis-block-hash>
+    <with|par-left|2tab|B.3.4.43<space|2spc><with|font-family|ss|issuance-token-amount>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-495>>
+
+    <with|par-left|2tab|B.3.4.44<space|2spc><with|font-family|ss|issuance-asset-proof>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-493>>
+
+    <with|par-left|2tab|B.3.4.45<space|2spc><with|font-family|ss|issuance-token-proof>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-494>>
+
+    <with|par-left|2tab|B.3.4.46<space|2spc><with|font-family|ss|tapleaf-version>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-495>>
+
+    <with|par-left|2tab|B.3.4.47<space|2spc><with|font-family|ss|tappath>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-496>>
+
+    <with|par-left|2tab|B.3.4.48<space|2spc><with|font-family|ss|version>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-497>>
+
+    <with|par-left|2tab|B.3.4.49<space|2spc><with|font-family|ss|genesis-block-hash>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-498>>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Appendix
     C<space|2spc>Alternative Serialization of Simplicity DAGs>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-496><vspace|0.5fn>
+    <no-break><pageref|auto-499><vspace|0.5fn>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Glossary>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-497><vspace|0.5fn>
+    <no-break><pageref|auto-500><vspace|0.5fn>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Bibliography>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-498><vspace|0.5fn>
+    <no-break><pageref|auto-501><vspace|0.5fn>
   </table-of-contents>
 
   <chapter|Introduction>
@@ -11719,26 +11731,6 @@
     <item>The result of <samp|internal-key> (32 bytes).
   </itemize-dot>
 
-  <subsubsection|<samp|inputs-hash>>
-
-  \;
-
-  <math|<rep|<text|<samp|'inputs-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
-
-  <math|<text|<samp|<samp|inputs-hash>>> :<1>\<vdash\><2><rsup|256>>
-
-  \;
-
-  Returns a SHA256 hash of the following:
-
-  <\itemize-dot>
-    <item>The result of <samp|input-outpoints-hash> (32 bytes).
-
-    <item>The result of <samp|input-sequences-hash> (32 bytes).
-
-    <item>The result of <samp|input-annexes-hash> (32 bytes).
-  </itemize-dot>
-
   <subsubsection|<samp|outputs-hash>>
 
   \;
@@ -11766,6 +11758,26 @@
   Note: the result of <samp|output-surjection-proofs-hash> is specifically
   excluded because surjection proofs are dependent on the inputs as well as
   the output. See also <samp|tx-hash>.
+
+  <subsubsection|<samp|inputs-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'inputs-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|<samp|inputs-hash>>> :<1>\<vdash\><2><rsup|256>>
+
+  \;
+
+  Returns a SHA256 hash of the following:
+
+  <\itemize-dot>
+    <item>The result of <samp|input-outpoints-hash> (32 bytes).
+
+    <item>The result of <samp|input-sequences-hash> (32 bytes).
+
+    <item>The result of <samp|input-annexes-hash> (32 bytes).
+  </itemize-dot>
 
   <subsubsection|<samp|issuances-hash>>
 
@@ -11806,6 +11818,40 @@
 
     <item>The result of <samp|input-scripts-hash> (32 bytes).
   </itemize-dot>
+
+  <subsubsection|<samp|output-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'output-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|<samp|output-hash>>> :<2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  \;
+
+  If the input value is a valid output index, then
+  <math|<text|<samp|<samp|output-hash>>> >returns
+  <math|\<eta\><rsup|<maybe>>> of the SHA256 hash of the following:
+
+  <\itemize-dot>
+    <item>The serialization of the output's asset and amount fields.
+
+    <item>The serialization of the output's nonce field.
+
+    <item>The SHA256 hash of the output's scriptPubKey.
+
+    <item>The SHA256 hash of the output's range proof..
+  </itemize-dot>
+
+  Otherwise if the input value is not a valid output index then
+  <math|<text|<samp|<samp|output-hash>>> >returns
+  <math|\<emptyset\><rsup|<maybe>>>.
+
+  \;
+
+  Note: the result of <samp|output-surjection-proof> is specifically excluded
+  because surjection proofs are dependent on the inputs as well as the
+  output.
 
   <subsubsection|<samp|output-amounts-hash>>
 
@@ -11889,7 +11935,43 @@
   Note that if the output's asset is explicit then the surjection proof is
   considered the empty string.
 
+  <subsubsection|<samp|input-hash>>
+
   \;
+
+  <math|<rep|<text|<samp|'input-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|<samp|input-hash>>> :<2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  \;
+
+  If the input value is a valid input index, then
+  <math|<text|<samp|<samp|input-hash>>> >returns <math|\<eta\><rsup|<maybe>>>
+  of the SHA256 hash of the following:
+
+  <\itemize-dot>
+    <item>If the input is not a pegin, then the byte <verbatim|0x00>.
+
+    <item>If the input is a pegin, then the byte <verbatim|0x01> followed by
+    the parent chain's genesis hash (32 bytes).
+
+    <item>The input's serialized previous transaction id (32 bytes).
+
+    <item>The input's previous transaction index in big endian format (4
+    bytes).
+
+    <item>The inputs sequence number in big endian format (4 bytes).
+
+    <item>If the input has no annex, or isn't a taproot spend, then the byte
+    <verbatim|0x00>.
+
+    <item>If the input has an annex, then the byte <verbatim|0x01> followed
+    by a SHA256 hash of the annex (32 bytes).
+  </itemize-dot>
+
+  Otherwise if the input value is not a valid input index then
+  <math|<text|<samp|<samp|input-hash>>> >returns
+  <math|\<emptyset\><rsup|<maybe>>>.
 
   <subsubsection|<samp|input-outpoints-hash>>
 
@@ -11983,6 +12065,86 @@
   Note that if an input's UTXO uses segwit, then it's scriptSig will
   necessarily be the empty string. \ In such cases we still use the SHA256
   hash of the empty string.
+
+  <subsubsection|<samp|issuance-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'issuance-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|<samp|issuance-hash>>>
+  :<2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  \;
+
+  If the input value is a valid input index, then <samp|<samp|issuance-hash>>
+  returns <math|\<eta\><rsup|<maybe>>> of the SHA256 hash of the following:
+
+  <\enumerate>
+    <item>The asset issuance:
+
+    <\itemize-dot>
+      <item>If the input has no issuance then two bytes <verbatim|0x00>
+      <verbatim|0x00>.
+
+      <item>If the input is has a new issuance then the byte <verbatim|0x01>
+      followed by a serialization of the calculated issued asset id (32
+      bytes) followed by the serialization of the (possibly confidential)
+      issued asset amount (9 bytes or 33 bytes).
+
+      <item>If the input is has a reissuance then the byte <verbatim|0x01>
+      followed by a serialization of the issued asset id (32 bytes), followed
+      by the serialization of the (possibly confidential) issued asset amount
+      (9 bytes or 33 bytes).
+    </itemize-dot>
+
+    <item>The token issuance:
+
+    <\itemize-dot>
+      <item>If the input has no issuance then another two bytes
+      <verbatim|0x00> <verbatim|0x00>.
+
+      <item>If the input is has a new issuance then the byte <verbatim|0x01>
+      followed by a serialization of the calculated issued token id (32
+      bytes) followed by the serialization of the (possibly confidential)
+      issued token amount (9 bytes or 33 bytes).
+
+      <item>If the input is has a reissuance then the byte <verbatim|0x01>
+      followed by a serialization of the issued token id (32 bytes), followed
+      by the serialization of the explicit 0 amount (i.e <verbatim|0x01 0x00
+      0x00 0x00 0x00 0x00 0x00 0x00 0x00>) \ (9 bytes).
+    </itemize-dot>
+
+    <item>The range proofs:
+
+    <\itemize-dot>
+      <item>The SHA256 hash of the range proof of the input's issuance asset
+      amount (32 bytes).
+
+      <item>The SHA256 hash of the range proof of the input's issuance token
+      amount (32 bytes).
+    </itemize-dot>
+
+    These will be the hashes of the empty proof in case there is no issuance.
+
+    <item>The blinding entropy:
+
+    <\itemize-dot>
+      <item>If the input has no issuance then another <verbatim|0x00> byte.
+
+      <item>If the input is has a new issuance then the byte <verbatim|0x01>
+      followed by 32 <verbatim|0x00> bytes and the new issuance's contract
+      hash field (32 bytes).
+
+      <item>If the input is has reissuance then the byte <verbatim|0x01>
+      followed by a serializaiton of the reissuance's blinding nonce field
+      (32 bytes) and the reissuance's entropy field (32 bytes).
+    </itemize-dot>
+  </enumerate>
+
+  Otherwise if the input value is not a valid input index then
+  <math|<text|<samp|<samp|issuance-hash>>>> returns
+  <math|\<emptyset\><rsup|<maybe>>>.
 
   <subsubsection|<samp|issuance-asset-amounts-hash>>
 
@@ -12123,6 +12285,31 @@
 
   Note that if the issuance is a new issuance then the blinding nonce field
   is 32 <verbatim|0x00> bytes and new issuance's contract hash
+
+  <subsubsection|<samp|input-utxo-hash>>
+
+  \;
+
+  <math|<rep|<text|<samp|'input-utxo-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|<samp|input-utxo-hash>>>
+  :<2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
+
+  \;
+
+  If the input value is a valid input index, then
+  <math|<text|<samp|<samp|input-utxo-hash>>> >returns
+  <math|\<eta\><rsup|<maybe>>> of the SHA256 hash of the following:
+
+  <\itemize-dot>
+    <item>The serialization of the input UTXO's asset and amount fields.
+
+    <item>The SHA256 hash of the input UTXO's scriptPubKey.
+  </itemize-dot>
+
+  Otherwise if the input value is not a valid input index then
+  <math|<text|<samp|<samp|input-utxo-hash>>> >returns
+  <math|\<emptyset\><rsup|<maybe>>>.
 
   <subsubsection|<samp|input-amounts-hash>>
 
@@ -13642,94 +13829,97 @@
     <associate|auto-418|<tuple|B.3.1.22|?>>
     <associate|auto-419|<tuple|B.3.1.23|?>>
     <associate|auto-42|<tuple|3.3.2|?>>
-    <associate|auto-420|<tuple|B.3.1.24|?>>
-    <associate|auto-421|<tuple|B.3.1.25|?>>
-    <associate|auto-422|<tuple|B.3.1.26|?>>
-    <associate|auto-423|<tuple|B.3.1.27|?>>
-    <associate|auto-424|<tuple|B.3.1.28|?>>
-    <associate|auto-425|<tuple|B.3.1.29|?>>
-    <associate|auto-426|<tuple|B.3.1.30|?>>
-    <associate|auto-427|<tuple|B.3.2|?>>
-    <associate|auto-428|<tuple|B.3.2.1|?>>
-    <associate|auto-429|<tuple|B.3.2.2|?>>
+    <associate|auto-420|<tuple|B.3.1.25|?>>
+    <associate|auto-421|<tuple|B.3.1.26|?>>
+    <associate|auto-422|<tuple|B.3.1.27|?>>
+    <associate|auto-423|<tuple|B.3.1.28|?>>
+    <associate|auto-424|<tuple|B.3.1.29|?>>
+    <associate|auto-425|<tuple|B.3.1.30|?>>
+    <associate|auto-426|<tuple|B.3.1.31|?>>
+    <associate|auto-427|<tuple|B.3.1.32|?>>
+    <associate|auto-428|<tuple|B.3.1.33|?>>
+    <associate|auto-429|<tuple|B.3.1.34|?>>
     <associate|auto-43|<tuple|3.3.3|?>>
-    <associate|auto-430|<tuple|B.3.2.3|?>>
-    <associate|auto-431|<tuple|B.3.2.4|?>>
-    <associate|auto-432|<tuple|B.3.2.5|?>>
-    <associate|auto-433|<tuple|B.3.2.6|?>>
-    <associate|auto-434|<tuple|B.3.2.7|?>>
-    <associate|auto-435|<tuple|B.3.2.8|?>>
-    <associate|auto-436|<tuple|B.3.2.9|?>>
-    <associate|auto-437|<tuple|B.3.3|?>>
-    <associate|auto-438|<tuple|B.3.3.1|?>>
-    <associate|auto-439|<tuple|B.3.3.2|?>>
+    <associate|auto-430|<tuple|B.3.2|?>>
+    <associate|auto-431|<tuple|B.3.2.1|?>>
+    <associate|auto-432|<tuple|B.3.2.2|?>>
+    <associate|auto-433|<tuple|B.3.2.3|?>>
+    <associate|auto-434|<tuple|B.3.2.4|?>>
+    <associate|auto-435|<tuple|B.3.2.5|?>>
+    <associate|auto-436|<tuple|B.3.2.6|?>>
+    <associate|auto-437|<tuple|B.3.2.7|?>>
+    <associate|auto-438|<tuple|B.3.2.8|?>>
+    <associate|auto-439|<tuple|B.3.2.9|?>>
     <associate|auto-44|<tuple|3.3.4|?>>
-    <associate|auto-440|<tuple|B.3.3.3|?>>
-    <associate|auto-441|<tuple|B.3.3.4|?>>
-    <associate|auto-442|<tuple|B.3.3.5|?>>
-    <associate|auto-443|<tuple|B.3.3.6|?>>
-    <associate|auto-444|<tuple|B.3.3.7|?>>
-    <associate|auto-445|<tuple|B.3.3.8|?>>
-    <associate|auto-446|<tuple|B.3.4|?>>
-    <associate|auto-447|<tuple|B.3.4.1|?>>
-    <associate|auto-448|<tuple|B.3.4.2|?>>
-    <associate|auto-449|<tuple|B.3.4.3|?>>
+    <associate|auto-440|<tuple|B.3.3|?>>
+    <associate|auto-441|<tuple|B.3.3.1|?>>
+    <associate|auto-442|<tuple|B.3.3.2|?>>
+    <associate|auto-443|<tuple|B.3.3.3|?>>
+    <associate|auto-444|<tuple|B.3.3.4|?>>
+    <associate|auto-445|<tuple|B.3.3.5|?>>
+    <associate|auto-446|<tuple|B.3.3.6|?>>
+    <associate|auto-447|<tuple|B.3.3.7|?>>
+    <associate|auto-448|<tuple|B.3.3.8|?>>
+    <associate|auto-449|<tuple|B.3.4|?>>
     <associate|auto-45|<tuple|3.3.5|?>>
-    <associate|auto-450|<tuple|B.3.4.4|?>>
-    <associate|auto-451|<tuple|B.3.4.5|?>>
-    <associate|auto-452|<tuple|B.3.4.6|?>>
-    <associate|auto-453|<tuple|B.3.4.7|?>>
-    <associate|auto-454|<tuple|B.3.4.8|?>>
-    <associate|auto-455|<tuple|B.3.4.9|?>>
-    <associate|auto-456|<tuple|B.3.4.10|?>>
-    <associate|auto-457|<tuple|B.3.4.11|?>>
-    <associate|auto-458|<tuple|B.3.4.12|?>>
-    <associate|auto-459|<tuple|B.3.4.13|?>>
+    <associate|auto-450|<tuple|B.3.4.1|?>>
+    <associate|auto-451|<tuple|B.3.4.2|?>>
+    <associate|auto-452|<tuple|B.3.4.3|?>>
+    <associate|auto-453|<tuple|B.3.4.4|?>>
+    <associate|auto-454|<tuple|B.3.4.5|?>>
+    <associate|auto-455|<tuple|B.3.4.6|?>>
+    <associate|auto-456|<tuple|B.3.4.7|?>>
+    <associate|auto-457|<tuple|B.3.4.8|?>>
+    <associate|auto-458|<tuple|B.3.4.9|?>>
+    <associate|auto-459|<tuple|B.3.4.10|?>>
     <associate|auto-46|<tuple|3.3.6|?>>
-    <associate|auto-460|<tuple|B.3.4.14|?>>
-    <associate|auto-461|<tuple|B.3.4.15|?>>
-    <associate|auto-462|<tuple|B.3.4.16|?>>
-    <associate|auto-463|<tuple|B.3.4.17|?>>
-    <associate|auto-464|<tuple|B.3.4.18|?>>
-    <associate|auto-465|<tuple|B.3.4.19|?>>
-    <associate|auto-466|<tuple|B.3.4.20|?>>
-    <associate|auto-467|<tuple|B.3.4.21|?>>
-    <associate|auto-468|<tuple|B.3.4.22|?>>
-    <associate|auto-469|<tuple|B.3.4.23|?>>
+    <associate|auto-460|<tuple|B.3.4.11|?>>
+    <associate|auto-461|<tuple|B.3.4.12|?>>
+    <associate|auto-462|<tuple|B.3.4.13|?>>
+    <associate|auto-463|<tuple|B.3.4.14|?>>
+    <associate|auto-464|<tuple|B.3.4.15|?>>
+    <associate|auto-465|<tuple|B.3.4.16|?>>
+    <associate|auto-466|<tuple|B.3.4.17|?>>
+    <associate|auto-467|<tuple|B.3.4.18|?>>
+    <associate|auto-468|<tuple|B.3.4.19|?>>
+    <associate|auto-469|<tuple|B.3.4.20|?>>
     <associate|auto-47|<tuple|3.3.6.1|?>>
-    <associate|auto-470|<tuple|B.3.4.24|?>>
-    <associate|auto-471|<tuple|B.3.4.25|?>>
-    <associate|auto-472|<tuple|B.3.4.26|?>>
-    <associate|auto-473|<tuple|B.3.4.27|?>>
-    <associate|auto-474|<tuple|B.3.4.28|?>>
-    <associate|auto-475|<tuple|B.3.4.29|?>>
-    <associate|auto-476|<tuple|B.3.4.30|?>>
-    <associate|auto-477|<tuple|B.3.4.31|?>>
-    <associate|auto-478|<tuple|B.3.4.32|?>>
-    <associate|auto-479|<tuple|B.3.4.33|?>>
+    <associate|auto-470|<tuple|B.3.4.21|?>>
+    <associate|auto-471|<tuple|B.3.4.22|?>>
+    <associate|auto-472|<tuple|B.3.4.23|?>>
+    <associate|auto-473|<tuple|B.3.4.24|?>>
+    <associate|auto-474|<tuple|B.3.4.25|?>>
+    <associate|auto-475|<tuple|B.3.4.26|?>>
+    <associate|auto-476|<tuple|B.3.4.27|?>>
+    <associate|auto-477|<tuple|B.3.4.28|?>>
+    <associate|auto-478|<tuple|B.3.4.29|?>>
+    <associate|auto-479|<tuple|B.3.4.30|?>>
     <associate|auto-48|<tuple|3.3.7|?>>
-    <associate|auto-480|<tuple|B.3.4.34|?>>
-    <associate|auto-481|<tuple|B.3.4.35|?>>
-    <associate|auto-482|<tuple|B.3.4.36|?>>
-    <associate|auto-483|<tuple|B.3.4.37|?>>
-    <associate|auto-484|<tuple|B.3.4.38|?>>
-    <associate|auto-485|<tuple|B.3.4.39|?>>
-    <associate|auto-486|<tuple|B.3.4.40|?>>
-    <associate|auto-487|<tuple|B.3.4.41|?>>
-    <associate|auto-488|<tuple|B.3.4.42|?>>
-    <associate|auto-489|<tuple|B.3.4.43|?>>
+    <associate|auto-480|<tuple|B.3.4.31|?>>
+    <associate|auto-481|<tuple|B.3.4.32|?>>
+    <associate|auto-482|<tuple|B.3.4.33|?>>
+    <associate|auto-483|<tuple|B.3.4.34|?>>
+    <associate|auto-484|<tuple|B.3.4.35|?>>
+    <associate|auto-485|<tuple|B.3.4.36|?>>
+    <associate|auto-486|<tuple|B.3.4.37|?>>
+    <associate|auto-487|<tuple|B.3.4.38|?>>
+    <associate|auto-488|<tuple|B.3.4.39|?>>
+    <associate|auto-489|<tuple|B.3.4.40|?>>
     <associate|auto-49|<tuple|3.3.7.1|?>>
-    <associate|auto-490|<tuple|B.3.4.44|?>>
-    <associate|auto-491|<tuple|B.3.4.45|?>>
-    <associate|auto-492|<tuple|B.3.4.46|?>>
-    <associate|auto-493|<tuple|B.3.4.47|?>>
-    <associate|auto-494|<tuple|B.3.4.48|?>>
-    <associate|auto-495|<tuple|B.3.4.49|?>>
-    <associate|auto-496|<tuple|C|?>>
-    <associate|auto-497|<tuple|C|?>>
-    <associate|auto-498|<tuple|C|?>>
+    <associate|auto-490|<tuple|B.3.4.41|?>>
+    <associate|auto-491|<tuple|B.3.4.42|?>>
+    <associate|auto-492|<tuple|B.3.4.43|?>>
+    <associate|auto-493|<tuple|B.3.4.44|?>>
+    <associate|auto-494|<tuple|B.3.4.45|?>>
+    <associate|auto-495|<tuple|B.3.4.46|?>>
+    <associate|auto-496|<tuple|B.3.4.47|?>>
+    <associate|auto-497|<tuple|B.3.4.48|?>>
+    <associate|auto-498|<tuple|B.3.4.49|?>>
+    <associate|auto-499|<tuple|C|?>>
     <associate|auto-5|<tuple|1.2.2|?>>
     <associate|auto-50|<tuple|3.3.7.2|?>>
+    <associate|auto-500|<tuple|C|?>>
+    <associate|auto-501|<tuple|C|?>>
     <associate|auto-51|<tuple|3.3.7.3|?>>
     <associate|auto-52|<tuple|3.4|?>>
     <associate|auto-53|<tuple|3.5|?>>
@@ -15201,675 +15391,687 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-331><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip-0340-challenge-midstate>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-signature-unpack>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-332><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-signature-unpack>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-333><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack-neg>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-334><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack-neg>
+      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-ecdsa>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-335><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-ecdsa>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-336><vspace|0.15fn>>
-
       <with|par-left|<quote|1tab>|B.1.6<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110110010...:
       >Jets for Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-337>>
+      <no-break><pageref|auto-336>>
 
       <with|par-left|<quote|2tab>|B.1.6.1<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|11011000100...:
       >Jets for tagged hash IVs <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-338>>
+      <no-break><pageref|auto-337>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|iden-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-339><vspace|0.15fn>>
+      <no-break><pageref|auto-338><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|comp-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-340><vspace|0.15fn>>
+      <no-break><pageref|auto-339><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|unit-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-341><vspace|0.15fn>>
+      <no-break><pageref|auto-340><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|injl-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-342><vspace|0.15fn>>
+      <no-break><pageref|auto-341><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|injr-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-343><vspace|0.15fn>>
+      <no-break><pageref|auto-342><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|case-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-344><vspace|0.15fn>>
+      <no-break><pageref|auto-343><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|pair-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-345><vspace|0.15fn>>
+      <no-break><pageref|auto-344><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|take-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-346><vspace|0.15fn>>
+      <no-break><pageref|auto-345><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|drop-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-347><vspace|0.15fn>>
+      <no-break><pageref|auto-346><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|witness-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-348><vspace|0.15fn>>
+      <no-break><pageref|auto-347><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|disconnect-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-349><vspace|0.15fn>>
+      <no-break><pageref|auto-348><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|fail-commitment-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-350><vspace|0.15fn>>
+      <no-break><pageref|auto-349><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|signtaure-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-351><vspace|0.15fn>>
+      <no-break><pageref|auto-350><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sighash-tag>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-352><vspace|0.15fn>>
+      <no-break><pageref|auto-351><vspace|0.15fn>>
 
       <with|par-left|<quote|1tab>|B.1.7<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110110011...:
       >Jets for Bitcoin (without primitives)
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-353>>
+      <no-break><pageref|auto-352>>
 
       <with|par-left|<quote|2tab>|B.1.7.1<space|2spc><with|font-family|<quote|ss>|parse-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-354>>
+      <no-break><pageref|auto-353>>
 
       <with|par-left|<quote|2tab>|B.1.7.2<space|2spc><with|font-family|<quote|ss>|parse-sequence>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-355>>
+      <no-break><pageref|auto-354>>
 
       B.2<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|111...:
       >Bitcoin Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-356>
+      <no-break><pageref|auto-355>
 
       <with|par-left|<quote|1tab>|B.2.1<space|2spc>Signature Hash Modes
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-357>>
+      <no-break><pageref|auto-356>>
 
       <with|par-left|<quote|1tab>|B.2.2<space|2spc>Time Locks
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-358>>
+      <no-break><pageref|auto-357>>
 
       <with|par-left|<quote|2tab>|B.2.2.1<space|2spc><with|font-family|<quote|ss>|check-lock-height>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-359>>
+      <no-break><pageref|auto-358>>
 
       <with|par-left|<quote|2tab>|B.2.2.2<space|2spc><with|font-family|<quote|ss>|check-lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-360>>
+      <no-break><pageref|auto-359>>
 
       <with|par-left|<quote|2tab>|B.2.2.3<space|2spc><with|font-family|<quote|ss>|check-lock-distance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-361>>
+      <no-break><pageref|auto-360>>
 
       <with|par-left|<quote|2tab>|B.2.2.4<space|2spc><with|font-family|<quote|ss>|check-lock-duration>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-362>>
+      <no-break><pageref|auto-361>>
 
       <with|par-left|<quote|2tab>|B.2.2.5<space|2spc><with|font-family|<quote|ss>|tx-height-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-363>>
+      <no-break><pageref|auto-362>>
 
       <with|par-left|<quote|2tab>|B.2.2.6<space|2spc><with|font-family|<quote|ss>|tx-time-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-364>>
+      <no-break><pageref|auto-363>>
 
       <with|par-left|<quote|2tab>|B.2.2.7<space|2spc><with|font-family|<quote|ss>|tx-distance-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-365>>
+      <no-break><pageref|auto-364>>
 
       <with|par-left|<quote|2tab>|B.2.2.8<space|2spc><with|font-family|<quote|ss>|tx-duration-lock>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-366>>
+      <no-break><pageref|auto-365>>
 
       <with|par-left|<quote|2tab>|B.2.2.9<space|2spc><with|font-family|<quote|ss>|is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-367>>
+      <no-break><pageref|auto-366>>
 
       <with|par-left|<quote|1tab>|B.2.3<space|2spc>Transaction
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-368>>
+      <no-break><pageref|auto-367>>
 
       <with|par-left|<quote|2tab>|B.2.3.1<space|2spc><with|font-family|<quote|ss>|script-cmr>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-369>>
+      <no-break><pageref|auto-368>>
 
       <with|par-left|<quote|2tab>|B.2.3.2<space|2spc><with|font-family|<quote|ss>|internal-key>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-370>>
+      <no-break><pageref|auto-369>>
 
       <with|par-left|<quote|2tab>|B.2.3.3<space|2spc><with|font-family|<quote|ss>|current-index>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-371>>
+      <no-break><pageref|auto-370>>
 
       <with|par-left|<quote|2tab>|B.2.3.4<space|2spc><with|font-family|<quote|ss>|num-inputs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-372>>
+      <no-break><pageref|auto-371>>
 
       <with|par-left|<quote|2tab>|B.2.3.5<space|2spc><with|font-family|<quote|ss>|num-outputs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-373>>
+      <no-break><pageref|auto-372>>
 
       <with|par-left|<quote|2tab>|B.2.3.6<space|2spc><with|font-family|<quote|ss>|lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-374>>
+      <no-break><pageref|auto-373>>
 
       <with|par-left|<quote|2tab>|B.2.3.7<space|2spc><with|font-family|<quote|ss>|fee>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-375>>
+      <no-break><pageref|auto-374>>
 
       <with|par-left|<quote|2tab>|B.2.3.8<space|2spc><with|font-family|<quote|ss>|output-value>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-376>>
+      <no-break><pageref|auto-375>>
 
       <with|par-left|<quote|2tab>|B.2.3.9<space|2spc><with|font-family|<quote|ss>|output-script-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-377>>
+      <no-break><pageref|auto-376>>
 
       <with|par-left|<quote|2tab>|B.2.3.10<space|2spc><with|font-family|<quote|ss>|total-output-value>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-378>>
+      <no-break><pageref|auto-377>>
 
       <with|par-left|<quote|2tab>|B.2.3.11<space|2spc><with|font-family|<quote|ss>|current-prev-outpoint>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-379>>
+      <no-break><pageref|auto-378>>
 
       <with|par-left|<quote|2tab>|B.2.3.12<space|2spc><with|font-family|<quote|ss>|current-value>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-380>>
+      <no-break><pageref|auto-379>>
 
       <with|par-left|<quote|2tab>|B.2.3.13<space|2spc><with|font-family|<quote|ss>|current-script-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-381>>
+      <no-break><pageref|auto-380>>
 
       <with|par-left|<quote|2tab>|B.2.3.14<space|2spc><with|font-family|<quote|ss>|current-sequence>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-382>>
+      <no-break><pageref|auto-381>>
 
       <with|par-left|<quote|2tab>|B.2.3.15<space|2spc><with|font-family|<quote|ss>|current-annex-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-383>>
+      <no-break><pageref|auto-382>>
 
       <with|par-left|<quote|2tab>|B.2.3.16<space|2spc><with|font-family|<quote|ss>|current-script-sig-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-384>>
+      <no-break><pageref|auto-383>>
 
       <with|par-left|<quote|2tab>|B.2.3.17<space|2spc><with|font-family|<quote|ss>|input-prev-outpoint>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-385>>
+      <no-break><pageref|auto-384>>
 
       <with|par-left|<quote|2tab>|B.2.3.18<space|2spc><with|font-family|<quote|ss>|input-value>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-386>>
+      <no-break><pageref|auto-385>>
 
       <with|par-left|<quote|2tab>|B.2.3.19<space|2spc><with|font-family|<quote|ss>|input-script-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-387>>
+      <no-break><pageref|auto-386>>
 
       <with|par-left|<quote|2tab>|B.2.3.20<space|2spc><with|font-family|<quote|ss>|input-sequence>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-388>>
+      <no-break><pageref|auto-387>>
 
       <with|par-left|<quote|2tab>|B.2.3.21<space|2spc><with|font-family|<quote|ss>|input-annex-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-389>>
+      <no-break><pageref|auto-388>>
 
       <with|par-left|<quote|2tab>|B.2.3.22<space|2spc><with|font-family|<quote|ss>|input-script-sig-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-390>>
+      <no-break><pageref|auto-389>>
 
       <with|par-left|<quote|2tab>|B.2.3.23<space|2spc><with|font-family|<quote|ss>|total-input-value>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-391>>
+      <no-break><pageref|auto-390>>
 
       <with|par-left|<quote|2tab>|B.2.3.24<space|2spc><with|font-family|<quote|ss>|tapleaf-version>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-392>>
+      <no-break><pageref|auto-391>>
 
       <with|par-left|<quote|2tab>|B.2.3.25<space|2spc><with|font-family|<quote|ss>|tappath>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-393>>
+      <no-break><pageref|auto-392>>
 
       <with|par-left|<quote|2tab>|B.2.3.26<space|2spc><with|font-family|<quote|ss>|version>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-394>>
+      <no-break><pageref|auto-393>>
 
       B.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|111...:
       >Elements Jets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-395>
+      <no-break><pageref|auto-394>
 
       <with|par-left|<quote|1tab>|B.3.1<space|2spc>Signature Hash Modes
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-396>>
+      <no-break><pageref|auto-395>>
 
       <with|par-left|<quote|2tab>|B.3.1.1<space|2spc><with|font-family|<quote|ss>|sig-all-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-397>>
+      <no-break><pageref|auto-399>>
 
       <with|par-left|<quote|2tab>|B.3.1.2<space|2spc><with|font-family|<quote|ss>|tx-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-398>>
+      <no-break><pageref|auto-400>>
 
       <with|par-left|<quote|2tab>|B.3.1.3<space|2spc><with|font-family|<quote|ss>|tap-env-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-399>>
-
-      <with|par-left|<quote|2tab>|B.3.1.4<space|2spc><with|font-family|<quote|ss>|inputs-hash>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-400>>
-
-      <with|par-left|<quote|2tab>|B.3.1.5<space|2spc><with|font-family|<quote|ss>|outputs-hash>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-401>>
 
-      <with|par-left|<quote|2tab>|B.3.1.6<space|2spc><with|font-family|<quote|ss>|issuances-hash>
+      <with|par-left|<quote|2tab>|B.3.1.4<space|2spc><with|font-family|<quote|ss>|outputs-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-402>>
 
-      <with|par-left|<quote|2tab>|B.3.1.7<space|2spc><with|font-family|<quote|ss>|input-utxos-hash>
+      <with|par-left|<quote|2tab>|B.3.1.5<space|2spc><with|font-family|<quote|ss>|inputs-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-403>>
 
-      <with|par-left|<quote|2tab>|B.3.1.8<space|2spc><with|font-family|<quote|ss>|output-amounts-hash>
+      <with|par-left|<quote|2tab>|B.3.1.6<space|2spc><with|font-family|<quote|ss>|issuances-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-404>>
 
-      <with|par-left|<quote|2tab>|B.3.1.9<space|2spc><with|font-family|<quote|ss>|output-scripts-hash>
+      <with|par-left|<quote|2tab>|B.3.1.7<space|2spc><with|font-family|<quote|ss>|input-utxos-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-405>>
 
-      <with|par-left|<quote|2tab>|B.3.1.10<space|2spc><with|font-family|<quote|ss>|output-nonces-hash>
+      <with|par-left|<quote|2tab>|B.3.1.8<space|2spc><with|font-family|<quote|ss>|output-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-406>>
 
-      <with|par-left|<quote|2tab>|B.3.1.11<space|2spc><with|font-family|<quote|ss>|output-range-proofs-hash>
+      <with|par-left|<quote|2tab>|B.3.1.9<space|2spc><with|font-family|<quote|ss>|output-amounts-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-407>>
 
-      <with|par-left|<quote|2tab>|B.3.1.12<space|2spc><with|font-family|<quote|ss>|output-surjection-proofs-hash>
+      <with|par-left|<quote|2tab>|B.3.1.10<space|2spc><with|font-family|<quote|ss>|output-scripts-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-408>>
 
-      <with|par-left|<quote|2tab>|B.3.1.13<space|2spc><with|font-family|<quote|ss>|input-outpoints-hash>
+      <with|par-left|<quote|2tab>|B.3.1.11<space|2spc><with|font-family|<quote|ss>|output-nonces-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-409>>
 
-      <with|par-left|<quote|2tab>|B.3.1.14<space|2spc><with|font-family|<quote|ss>|input-sequences-hash>
+      <with|par-left|<quote|2tab>|B.3.1.12<space|2spc><with|font-family|<quote|ss>|output-range-proofs-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-410>>
 
-      <with|par-left|<quote|2tab>|B.3.1.15<space|2spc><with|font-family|<quote|ss>|input-annexes-hash>
+      <with|par-left|<quote|2tab>|B.3.1.13<space|2spc><with|font-family|<quote|ss>|output-surjection-proofs-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-411>>
 
-      <with|par-left|<quote|2tab>|B.3.1.16<space|2spc><with|font-family|<quote|ss>|input-script-sigs-hash>
+      <with|par-left|<quote|2tab>|B.3.1.14<space|2spc><with|font-family|<quote|ss>|input-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-412>>
 
-      <with|par-left|<quote|2tab>|B.3.1.17<space|2spc><with|font-family|<quote|ss>|issuance-asset-amounts-hash>
+      <with|par-left|<quote|2tab>|B.3.1.15<space|2spc><with|font-family|<quote|ss>|input-outpoints-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-413>>
 
-      <with|par-left|<quote|2tab>|B.3.1.18<space|2spc><with|font-family|<quote|ss>|issuance-token-amounts-hash>
+      <with|par-left|<quote|2tab>|B.3.1.16<space|2spc><with|font-family|<quote|ss>|input-sequences-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-414>>
 
-      <with|par-left|<quote|2tab>|B.3.1.19<space|2spc><with|font-family|<quote|ss>|issuance-range-proofs-hash>
+      <with|par-left|<quote|2tab>|B.3.1.17<space|2spc><with|font-family|<quote|ss>|input-annexes-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-415>>
 
-      <with|par-left|<quote|2tab>|B.3.1.20<space|2spc><with|font-family|<quote|ss>|issuance-blinding-entropy-hash>
+      <with|par-left|<quote|2tab>|B.3.1.18<space|2spc><with|font-family|<quote|ss>|input-script-sigs-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-416>>
 
-      <with|par-left|<quote|2tab>|B.3.1.21<space|2spc><with|font-family|<quote|ss>|input-amounts-hash>
+      <with|par-left|<quote|2tab>|B.3.1.19<space|2spc><with|font-family|<quote|ss>|issuance-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-417>>
 
-      <with|par-left|<quote|2tab>|B.3.1.22<space|2spc><with|font-family|<quote|ss>|input-scripts-hash>
+      <with|par-left|<quote|2tab>|B.3.1.20<space|2spc><with|font-family|<quote|ss>|issuance-asset-amounts-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-418>>
 
-      <with|par-left|<quote|2tab>|B.3.1.23<space|2spc><with|font-family|<quote|ss>|tapleaf-hash>
+      <with|par-left|<quote|2tab>|B.3.1.21<space|2spc><with|font-family|<quote|ss>|issuance-token-amounts-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-419>>
 
-      <with|par-left|<quote|2tab>|B.3.1.24<space|2spc><with|font-family|<quote|ss>|tappath-hash>
+      <with|par-left|<quote|2tab>|B.3.1.22<space|2spc><with|font-family|<quote|ss>|issuance-range-proofs-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-420>>
 
-      <with|par-left|<quote|2tab>|B.3.1.25<space|2spc><with|font-family|<quote|ss>|outpoint-hash>
+      <with|par-left|<quote|2tab>|B.3.1.23<space|2spc><with|font-family|<quote|ss>|issuance-blinding-entropy-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-421>>
 
-      <with|par-left|<quote|2tab>|B.3.1.26<space|2spc><with|font-family|<quote|ss>|asset-amount-hash>
+      <with|par-left|<quote|2tab>|B.3.1.24<space|2spc><with|font-family|<quote|ss>|input-utxo-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-422>>
 
-      <with|par-left|<quote|2tab>|B.3.1.27<space|2spc><with|font-family|<quote|ss>|nonce-hash>
+      <with|par-left|<quote|2tab>|B.3.1.25<space|2spc><with|font-family|<quote|ss>|input-amounts-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-423>>
 
-      <with|par-left|<quote|2tab>|B.3.1.28<space|2spc><with|font-family|<quote|ss>|annex-hash>
+      <with|par-left|<quote|2tab>|B.3.1.26<space|2spc><with|font-family|<quote|ss>|input-scripts-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-424>>
 
-      <with|par-left|<quote|2tab>|B.3.1.29<space|2spc><with|font-family|<quote|ss>|build-tapleaf-simplicity>
+      <with|par-left|<quote|2tab>|B.3.1.27<space|2spc><with|font-family|<quote|ss>|tap-leaf-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-425>>
 
-      <with|par-left|<quote|2tab>|B.3.1.30<space|2spc><with|font-family|<quote|ss>|build-tapbranch>
+      <with|par-left|<quote|2tab>|B.3.1.28<space|2spc><with|font-family|<quote|ss>|tappath-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-426>>
 
-      <with|par-left|<quote|1tab>|B.3.2<space|2spc>Time Locks
+      <with|par-left|<quote|2tab>|B.3.1.29<space|2spc><with|font-family|<quote|ss>|outpoint-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-427>>
 
-      <with|par-left|<quote|2tab>|B.3.2.1<space|2spc><with|font-family|<quote|ss>|check-lock-height>
+      <with|par-left|<quote|2tab>|B.3.1.30<space|2spc><with|font-family|<quote|ss>|asset-amount-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-428>>
 
-      <with|par-left|<quote|2tab>|B.3.2.2<space|2spc><with|font-family|<quote|ss>|check-lock-time>
+      <with|par-left|<quote|2tab>|B.3.1.31<space|2spc><with|font-family|<quote|ss>|nonce-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-429>>
 
-      <with|par-left|<quote|2tab>|B.3.2.3<space|2spc><with|font-family|<quote|ss>|check-lock-distance>
+      <with|par-left|<quote|2tab>|B.3.1.32<space|2spc><with|font-family|<quote|ss>|annex-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-430>>
 
-      <with|par-left|<quote|2tab>|B.3.2.4<space|2spc><with|font-family|<quote|ss>|check-lock-duration>
+      <with|par-left|<quote|2tab>|B.3.1.33<space|2spc><with|font-family|<quote|ss>|build-tapleaf-simplicity>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-431>>
 
-      <with|par-left|<quote|2tab>|B.3.2.5<space|2spc><with|font-family|<quote|ss>|tx-lock-height>
+      <with|par-left|<quote|2tab>|B.3.1.34<space|2spc><with|font-family|<quote|ss>|build-tapbranch>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-432>>
 
-      <with|par-left|<quote|2tab>|B.3.2.6<space|2spc><with|font-family|<quote|ss>|tx-lock-time>
+      <with|par-left|<quote|1tab>|B.3.2<space|2spc>Time Locks
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-433>>
 
-      <with|par-left|<quote|2tab>|B.3.2.7<space|2spc><with|font-family|<quote|ss>|tx-lock-distance>
+      <with|par-left|<quote|2tab>|B.3.2.1<space|2spc><with|font-family|<quote|ss>|check-lock-height>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-434>>
 
-      <with|par-left|<quote|2tab>|B.3.2.8<space|2spc><with|font-family|<quote|ss>|tx-lock-duration>
+      <with|par-left|<quote|2tab>|B.3.2.2<space|2spc><with|font-family|<quote|ss>|check-lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-435>>
 
-      <with|par-left|<quote|2tab>|B.3.2.9<space|2spc><with|font-family|<quote|ss>|tx-is-final>
+      <with|par-left|<quote|2tab>|B.3.2.3<space|2spc><with|font-family|<quote|ss>|check-lock-distance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-436>>
 
-      <with|par-left|<quote|1tab>|B.3.3<space|2spc>Issuance
+      <with|par-left|<quote|2tab>|B.3.2.4<space|2spc><with|font-family|<quote|ss>|check-lock-duration>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-437>>
 
-      <with|par-left|<quote|2tab>|B.3.3.1<space|2spc><with|font-family|<quote|ss>|issuance>
+      <with|par-left|<quote|2tab>|B.3.2.5<space|2spc><with|font-family|<quote|ss>|tx-lock-height>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-438>>
 
-      <with|par-left|<quote|2tab>|B.3.3.2<space|2spc><with|font-family|<quote|ss>|issuance-asset>
+      <with|par-left|<quote|2tab>|B.3.2.6<space|2spc><with|font-family|<quote|ss>|tx-lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-439>>
 
-      <with|par-left|<quote|2tab>|B.3.3.3<space|2spc><with|font-family|<quote|ss>|issuance-token>
+      <with|par-left|<quote|2tab>|B.3.2.7<space|2spc><with|font-family|<quote|ss>|tx-lock-distance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-440>>
 
-      <with|par-left|<quote|2tab>|B.3.3.4<space|2spc><with|font-family|<quote|ss>|issuance-entropy>
+      <with|par-left|<quote|2tab>|B.3.2.8<space|2spc><with|font-family|<quote|ss>|tx-lock-duration>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-441>>
 
-      <with|par-left|<quote|2tab>|B.3.3.5<space|2spc><with|font-family|<quote|ss>|calculate-issuance-entropy>
+      <with|par-left|<quote|2tab>|B.3.2.9<space|2spc><with|font-family|<quote|ss>|tx-is-final>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-442>>
 
-      <with|par-left|<quote|2tab>|B.3.3.6<space|2spc><with|font-family|<quote|ss>|calculate-asset>
+      <with|par-left|<quote|1tab>|B.3.3<space|2spc>Issuance
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-443>>
 
-      <with|par-left|<quote|2tab>|B.3.3.7<space|2spc><with|font-family|<quote|ss>|calculate-explicit-token>
+      <with|par-left|<quote|2tab>|B.3.3.1<space|2spc><with|font-family|<quote|ss>|issuance>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-444>>
 
-      <with|par-left|<quote|2tab>|B.3.3.8<space|2spc><with|font-family|<quote|ss>|calculate-confidential-token>
+      <with|par-left|<quote|2tab>|B.3.3.2<space|2spc><with|font-family|<quote|ss>|issuance-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-445>>
 
-      <with|par-left|<quote|1tab>|B.3.4<space|2spc>Transaction
+      <with|par-left|<quote|2tab>|B.3.3.3<space|2spc><with|font-family|<quote|ss>|issuance-token>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-446>>
 
-      <with|par-left|<quote|2tab>|B.3.4.1<space|2spc><with|font-family|<quote|ss>|script-cmr>
+      <with|par-left|<quote|2tab>|B.3.3.4<space|2spc><with|font-family|<quote|ss>|issuance-entropy>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-447>>
 
-      <with|par-left|<quote|2tab>|B.3.4.2<space|2spc><with|font-family|<quote|ss>|internal-key>
+      <with|par-left|<quote|2tab>|B.3.3.5<space|2spc><with|font-family|<quote|ss>|calculate-issuance-entropy>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-448>>
 
-      <with|par-left|<quote|2tab>|B.3.4.3<space|2spc><with|font-family|<quote|ss>|current-index>
+      <with|par-left|<quote|2tab>|B.3.3.6<space|2spc><with|font-family|<quote|ss>|calculate-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-449>>
 
-      <with|par-left|<quote|2tab>|B.3.4.4<space|2spc><with|font-family|<quote|ss>|num-inputs>
+      <with|par-left|<quote|2tab>|B.3.3.7<space|2spc><with|font-family|<quote|ss>|calculate-explicit-token>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-450>>
 
-      <with|par-left|<quote|2tab>|B.3.4.5<space|2spc><with|font-family|<quote|ss>|num-outputs>
+      <with|par-left|<quote|2tab>|B.3.3.8<space|2spc><with|font-family|<quote|ss>|calculate-confidential-token>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-451>>
 
-      <with|par-left|<quote|2tab>|B.3.4.6<space|2spc><with|font-family|<quote|ss>|lock-time>
+      <with|par-left|<quote|1tab>|B.3.4<space|2spc>Transaction
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-452>>
 
-      <with|par-left|<quote|2tab>|B.3.4.7<space|2spc><with|font-family|<quote|ss>|output-asset>
+      <with|par-left|<quote|2tab>|B.3.4.1<space|2spc><with|font-family|<quote|ss>|script-cmr>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-453>>
 
-      <with|par-left|<quote|2tab>|B.3.4.8<space|2spc><with|font-family|<quote|ss>|output-amount>
+      <with|par-left|<quote|2tab>|B.3.4.2<space|2spc><with|font-family|<quote|ss>|internal-key>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-454>>
 
-      <with|par-left|<quote|2tab>|B.3.4.9<space|2spc><with|font-family|<quote|ss>|output-nonce>
+      <with|par-left|<quote|2tab>|B.3.4.3<space|2spc><with|font-family|<quote|ss>|current-index>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-455>>
 
-      <with|par-left|<quote|2tab>|B.3.4.10<space|2spc><with|font-family|<quote|ss>|output-script-hash>
+      <with|par-left|<quote|2tab>|B.3.4.4<space|2spc><with|font-family|<quote|ss>|num-inputs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-456>>
 
-      <with|par-left|<quote|2tab>|B.3.4.11<space|2spc><with|font-family|<quote|ss>|output-null-datum>
+      <with|par-left|<quote|2tab>|B.3.4.5<space|2spc><with|font-family|<quote|ss>|num-outputs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-457>>
 
-      <with|par-left|<quote|2tab>|B.3.4.12<space|2spc><with|font-family|<quote|ss>|output-is-fee>
+      <with|par-left|<quote|2tab>|B.3.4.6<space|2spc><with|font-family|<quote|ss>|lock-time>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-458>>
 
-      <with|par-left|<quote|2tab>|B.3.4.13<space|2spc><with|font-family|<quote|ss>|output-surjection-proof>
+      <with|par-left|<quote|2tab>|B.3.4.7<space|2spc><with|font-family|<quote|ss>|output-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-459>>
 
-      <with|par-left|<quote|2tab>|B.3.4.14<space|2spc><with|font-family|<quote|ss>|output-range-proof>
+      <with|par-left|<quote|2tab>|B.3.4.8<space|2spc><with|font-family|<quote|ss>|output-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-460>>
 
-      <with|par-left|<quote|2tab>|B.3.4.15<space|2spc><with|font-family|<quote|ss>|total-fee>
+      <with|par-left|<quote|2tab>|B.3.4.9<space|2spc><with|font-family|<quote|ss>|output-nonce>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-461>>
 
-      <with|par-left|<quote|2tab>|B.3.4.16<space|2spc><with|font-family|<quote|ss>|current-pegin>
+      <with|par-left|<quote|2tab>|B.3.4.10<space|2spc><with|font-family|<quote|ss>|output-script-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-462>>
 
-      <with|par-left|<quote|2tab>|B.3.4.17<space|2spc><with|font-family|<quote|ss>|current-prev-outpoint>
+      <with|par-left|<quote|2tab>|B.3.4.11<space|2spc><with|font-family|<quote|ss>|output-null-datum>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-463>>
 
-      <with|par-left|<quote|2tab>|B.3.4.18<space|2spc><with|font-family|<quote|ss>|current-asset>
+      <with|par-left|<quote|2tab>|B.3.4.12<space|2spc><with|font-family|<quote|ss>|output-is-fee>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-464>>
 
-      <with|par-left|<quote|2tab>|B.3.4.19<space|2spc><with|font-family|<quote|ss>|current-amount>
+      <with|par-left|<quote|2tab>|B.3.4.13<space|2spc><with|font-family|<quote|ss>|output-surjection-proof>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-465>>
 
-      <with|par-left|<quote|2tab>|B.3.4.20<space|2spc><with|font-family|<quote|ss>|current-script-hash>
+      <with|par-left|<quote|2tab>|B.3.4.14<space|2spc><with|font-family|<quote|ss>|output-range-proof>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-466>>
 
-      <with|par-left|<quote|2tab>|B.3.4.21<space|2spc><with|font-family|<quote|ss>|current-sequence>
+      <with|par-left|<quote|2tab>|B.3.4.15<space|2spc><with|font-family|<quote|ss>|total-fee>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-467>>
 
-      <with|par-left|<quote|2tab>|B.3.4.22<space|2spc><with|font-family|<quote|ss>|current-annex-hash>
+      <with|par-left|<quote|2tab>|B.3.4.16<space|2spc><with|font-family|<quote|ss>|current-pegin>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-468>>
 
-      <with|par-left|<quote|2tab>|B.3.4.23<space|2spc><with|font-family|<quote|ss>|current-script-sig-hash>
+      <with|par-left|<quote|2tab>|B.3.4.17<space|2spc><with|font-family|<quote|ss>|current-prev-outpoint>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-469>>
 
-      <with|par-left|<quote|2tab>|B.3.4.24<space|2spc><with|font-family|<quote|ss>|current-reissuance-blinding>
+      <with|par-left|<quote|2tab>|B.3.4.18<space|2spc><with|font-family|<quote|ss>|current-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-470>>
 
-      <with|par-left|<quote|2tab>|B.3.4.25<space|2spc><with|font-family|<quote|ss>|current-new-issuance-contract>
+      <with|par-left|<quote|2tab>|B.3.4.19<space|2spc><with|font-family|<quote|ss>|current-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-471>>
 
-      <with|par-left|<quote|2tab>|B.3.4.26<space|2spc><with|font-family|<quote|ss>|current-reissuance-entropy>
+      <with|par-left|<quote|2tab>|B.3.4.20<space|2spc><with|font-family|<quote|ss>|current-script-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-472>>
 
-      <with|par-left|<quote|2tab>|B.3.4.27<space|2spc><with|font-family|<quote|ss>|current-issuance-asset-amount>
+      <with|par-left|<quote|2tab>|B.3.4.21<space|2spc><with|font-family|<quote|ss>|current-sequence>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-473>>
 
-      <with|par-left|<quote|2tab>|B.3.4.28<space|2spc><with|font-family|<quote|ss>|current-issuance-token-amount>
+      <with|par-left|<quote|2tab>|B.3.4.22<space|2spc><with|font-family|<quote|ss>|current-annex-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-474>>
 
-      <with|par-left|<quote|2tab>|B.3.4.29<space|2spc><with|font-family|<quote|ss>|current-issuance-asset-proof>
+      <with|par-left|<quote|2tab>|B.3.4.23<space|2spc><with|font-family|<quote|ss>|current-script-sig-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-475>>
 
-      <with|par-left|<quote|2tab>|B.3.4.30<space|2spc><with|font-family|<quote|ss>|current-issuance-token-proof>
+      <with|par-left|<quote|2tab>|B.3.4.24<space|2spc><with|font-family|<quote|ss>|current-reissuance-blinding>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-476>>
 
-      <with|par-left|<quote|2tab>|B.3.4.31<space|2spc><with|font-family|<quote|ss>|input-pegin>
+      <with|par-left|<quote|2tab>|B.3.4.25<space|2spc><with|font-family|<quote|ss>|current-new-issuance-contract>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-477>>
 
-      <with|par-left|<quote|2tab>|B.3.4.32<space|2spc><with|font-family|<quote|ss>|input-prev-outpoint>
+      <with|par-left|<quote|2tab>|B.3.4.26<space|2spc><with|font-family|<quote|ss>|current-reissuance-entropy>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-478>>
 
-      <with|par-left|<quote|2tab>|B.3.4.33<space|2spc><with|font-family|<quote|ss>|input-asset>
+      <with|par-left|<quote|2tab>|B.3.4.27<space|2spc><with|font-family|<quote|ss>|current-issuance-asset-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-479>>
 
-      <with|par-left|<quote|2tab>|B.3.4.34<space|2spc><with|font-family|<quote|ss>|input-amount>
+      <with|par-left|<quote|2tab>|B.3.4.28<space|2spc><with|font-family|<quote|ss>|current-issuance-token-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-480>>
 
-      <with|par-left|<quote|2tab>|B.3.4.35<space|2spc><with|font-family|<quote|ss>|input-script-hash>
+      <with|par-left|<quote|2tab>|B.3.4.29<space|2spc><with|font-family|<quote|ss>|current-issuance-asset-proof>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-481>>
 
-      <with|par-left|<quote|2tab>|B.3.4.36<space|2spc><with|font-family|<quote|ss>|input-sequence>
+      <with|par-left|<quote|2tab>|B.3.4.30<space|2spc><with|font-family|<quote|ss>|current-issuance-token-proof>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-482>>
 
-      <with|par-left|<quote|2tab>|B.3.4.37<space|2spc><with|font-family|<quote|ss>|input-annex-hash>
+      <with|par-left|<quote|2tab>|B.3.4.31<space|2spc><with|font-family|<quote|ss>|input-pegin>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-483>>
 
-      <with|par-left|<quote|2tab>|B.3.4.38<space|2spc><with|font-family|<quote|ss>|input-script-sig-hash>
+      <with|par-left|<quote|2tab>|B.3.4.32<space|2spc><with|font-family|<quote|ss>|input-prev-outpoint>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-484>>
 
-      <with|par-left|<quote|2tab>|B.3.4.39<space|2spc><with|font-family|<quote|ss>|reissuance-blinding>
+      <with|par-left|<quote|2tab>|B.3.4.33<space|2spc><with|font-family|<quote|ss>|input-asset>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-485>>
 
-      <with|par-left|<quote|2tab>|B.3.4.40<space|2spc><with|font-family|<quote|ss>|new-issuance-contract>
+      <with|par-left|<quote|2tab>|B.3.4.34<space|2spc><with|font-family|<quote|ss>|input-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-486>>
 
-      <with|par-left|<quote|2tab>|B.3.4.41<space|2spc><with|font-family|<quote|ss>|reissuance-entropy>
+      <with|par-left|<quote|2tab>|B.3.4.35<space|2spc><with|font-family|<quote|ss>|input-script-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-487>>
 
-      <with|par-left|<quote|2tab>|B.3.4.42<space|2spc><with|font-family|<quote|ss>|issuance-asset-amount>
+      <with|par-left|<quote|2tab>|B.3.4.36<space|2spc><with|font-family|<quote|ss>|input-sequence>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-488>>
 
-      <with|par-left|<quote|2tab>|B.3.4.43<space|2spc><with|font-family|<quote|ss>|issuance-token-amount>
+      <with|par-left|<quote|2tab>|B.3.4.37<space|2spc><with|font-family|<quote|ss>|input-annex-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-489>>
 
-      <with|par-left|<quote|2tab>|B.3.4.44<space|2spc><with|font-family|<quote|ss>|issuance-asset-proof>
+      <with|par-left|<quote|2tab>|B.3.4.38<space|2spc><with|font-family|<quote|ss>|input-script-sig-hash>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-490>>
 
-      <with|par-left|<quote|2tab>|B.3.4.45<space|2spc><with|font-family|<quote|ss>|issuance-token-proof>
+      <with|par-left|<quote|2tab>|B.3.4.39<space|2spc><with|font-family|<quote|ss>|reissuance-blinding>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-491>>
 
-      <with|par-left|<quote|2tab>|B.3.4.46<space|2spc><with|font-family|<quote|ss>|tapleaf-version>
+      <with|par-left|<quote|2tab>|B.3.4.40<space|2spc><with|font-family|<quote|ss>|new-issuance-contract>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-492>>
 
-      <with|par-left|<quote|2tab>|B.3.4.47<space|2spc><with|font-family|<quote|ss>|tappath>
+      <with|par-left|<quote|2tab>|B.3.4.41<space|2spc><with|font-family|<quote|ss>|reissuance-entropy>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-493>>
 
-      <with|par-left|<quote|2tab>|B.3.4.48<space|2spc><with|font-family|<quote|ss>|version>
+      <with|par-left|<quote|2tab>|B.3.4.42<space|2spc><with|font-family|<quote|ss>|issuance-asset-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-494>>
 
-      <with|par-left|<quote|2tab>|B.3.4.49<space|2spc><with|font-family|<quote|ss>|genesis-block-hash>
+      <with|par-left|<quote|2tab>|B.3.4.43<space|2spc><with|font-family|<quote|ss>|issuance-token-amount>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-495>>
+
+      <with|par-left|<quote|2tab>|B.3.4.44<space|2spc><with|font-family|<quote|ss>|issuance-asset-proof>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-493>>
+
+      <with|par-left|<quote|2tab>|B.3.4.45<space|2spc><with|font-family|<quote|ss>|issuance-token-proof>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-494>>
+
+      <with|par-left|<quote|2tab>|B.3.4.46<space|2spc><with|font-family|<quote|ss>|tapleaf-version>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-495>>
+
+      <with|par-left|<quote|2tab>|B.3.4.47<space|2spc><with|font-family|<quote|ss>|tappath>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-496>>
+
+      <with|par-left|<quote|2tab>|B.3.4.48<space|2spc><with|font-family|<quote|ss>|version>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-497>>
+
+      <with|par-left|<quote|2tab>|B.3.4.49<space|2spc><with|font-family|<quote|ss>|genesis-block-hash>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-498>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       C<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-496><vspace|0.5fn>
+      <no-break><pageref|auto-499><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Glossary>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-497><vspace|0.5fn>
+      <no-break><pageref|auto-500><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-498><vspace|0.5fn>
+      <no-break><pageref|auto-501><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

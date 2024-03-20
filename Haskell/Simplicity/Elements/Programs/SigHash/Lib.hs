@@ -4,10 +4,10 @@
 -- This module is provided mostly for testing purposes.
 module Simplicity.Elements.Programs.SigHash.Lib
  ( outputAmountsHash, outputNoncesHash, outputScriptsHash
- , outputRangeProofsHash, outputSurjectionProofsHash, outputsHash
- , inputAmountsHash, inputScriptsHash, inputUtxosHash
- , inputOutpointsHash, inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash
- , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuanceBlindingEntropyHash, issuancesHash
+ , outputRangeProofsHash, outputSurjectionProofsHash, outputsHash, outputHash
+ , inputAmountsHash, inputScriptsHash, inputUtxosHash, inputUtxoHash
+ , inputOutpointsHash, inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash, inputHash
+ , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuanceBlindingEntropyHash, issuancesHash, issuanceHash
  , txHash
  , tapleafHash, tappathHash, tapEnvHash
  , sigAllHash
@@ -21,18 +21,22 @@ outputScriptsHash = SigHash.outputScriptsHash SigHash.lib
 outputRangeProofsHash = SigHash.outputRangeProofsHash SigHash.lib
 outputSurjectionProofsHash = SigHash.outputSurjectionProofsHash SigHash.lib
 outputsHash = SigHash.outputsHash SigHash.lib
+outputHash = SigHash.outputHash SigHash.lib
 inputAmountsHash = SigHash.inputAmountsHash SigHash.lib
 inputScriptsHash = SigHash.inputScriptsHash SigHash.lib
 inputUtxosHash = SigHash.inputUtxosHash SigHash.lib
+inputUtxoHash = SigHash.inputUtxoHash SigHash.lib
 inputOutpointsHash = SigHash.inputOutpointsHash SigHash.lib
 inputSequencesHash = SigHash.inputSequencesHash SigHash.lib
 inputAnnexesHash = SigHash.inputAnnexesHash SigHash.lib
 inputsHash = SigHash.inputsHash SigHash.lib
+inputHash = SigHash.inputHash SigHash.lib
 issuanceAssetAmountsHash = SigHash.issuanceAssetAmountsHash SigHash.lib
 issuanceTokenAmountsHash = SigHash.issuanceTokenAmountsHash SigHash.lib
 issuanceRangeProofsHash = SigHash.issuanceRangeProofsHash SigHash.lib
 issuanceBlindingEntropyHash = SigHash.issuanceBlindingEntropyHash SigHash.lib
 issuancesHash = SigHash.issuancesHash SigHash.lib
+issuanceHash = SigHash.issuanceHash SigHash.lib
 inputScriptSigsHash = SigHash.inputScriptSigsHash SigHash.lib
 txHash = SigHash.txHash SigHash.lib
 tapleafHash = SigHash.tapleafHash SigHash.lib

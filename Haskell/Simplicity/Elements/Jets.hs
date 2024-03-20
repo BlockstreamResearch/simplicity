@@ -91,19 +91,23 @@ data SigHashJet a b where
   InputsHash :: SigHashJet () Word256
   IssuancesHash :: SigHashJet () Word256
   InputUtxosHash :: SigHashJet () Word256
+  OutputHash :: SigHashJet Word32 (S Word256)
   OutputAmountsHash :: SigHashJet () Word256
   OutputScriptsHash :: SigHashJet () Word256
   OutputNoncesHash :: SigHashJet () Word256
   OutputRangeProofsHash :: SigHashJet () Word256
   OutputSurjectionProofsHash :: SigHashJet () Word256
+  InputHash :: SigHashJet Word32 (S Word256)
   InputOutpointsHash :: SigHashJet () Word256
   InputSequencesHash :: SigHashJet () Word256
   InputAnnexesHash :: SigHashJet () Word256
   InputScriptSigsHash :: SigHashJet () Word256
+  IssuanceHash :: SigHashJet Word32 (S Word256)
   IssuanceAssetAmountsHash :: SigHashJet () Word256
   IssuanceTokenAmountsHash :: SigHashJet () Word256
   IssuanceRangeProofsHash :: SigHashJet () Word256
   IssuanceBlindingEntropyHash :: SigHashJet () Word256
+  InputUtxoHash :: SigHashJet Word32 (S Word256)
   InputAmountsHash :: SigHashJet () Word256
   InputScriptsHash :: SigHashJet () Word256
   TapleafHash :: SigHashJet () Word256
@@ -209,19 +213,23 @@ specificationSigHash OutputsHash = SigHash.outputsHash
 specificationSigHash InputsHash = SigHash.inputsHash
 specificationSigHash IssuancesHash = SigHash.issuancesHash
 specificationSigHash InputUtxosHash = SigHash.inputUtxosHash
+specificationSigHash OutputHash = SigHash.outputHash
 specificationSigHash OutputAmountsHash = SigHash.outputAmountsHash
 specificationSigHash OutputScriptsHash = SigHash.outputScriptsHash
 specificationSigHash OutputNoncesHash = SigHash.outputNoncesHash
 specificationSigHash OutputRangeProofsHash = SigHash.outputRangeProofsHash
 specificationSigHash OutputSurjectionProofsHash = SigHash.outputSurjectionProofsHash
+specificationSigHash InputHash = SigHash.inputHash
 specificationSigHash InputOutpointsHash = SigHash.inputOutpointsHash
 specificationSigHash InputSequencesHash = SigHash.inputSequencesHash
 specificationSigHash InputAnnexesHash = SigHash.inputAnnexesHash
 specificationSigHash InputScriptSigsHash = SigHash.inputScriptSigsHash
+specificationSigHash IssuanceHash = SigHash.issuanceHash
 specificationSigHash IssuanceAssetAmountsHash = SigHash.issuanceAssetAmountsHash
 specificationSigHash IssuanceTokenAmountsHash = SigHash.issuanceTokenAmountsHash
 specificationSigHash IssuanceRangeProofsHash = SigHash.issuanceRangeProofsHash
 specificationSigHash IssuanceBlindingEntropyHash = SigHash.issuanceBlindingEntropyHash
+specificationSigHash InputUtxoHash = SigHash.inputUtxoHash
 specificationSigHash InputAmountsHash = SigHash.inputAmountsHash
 specificationSigHash InputScriptsHash = SigHash.inputScriptsHash
 specificationSigHash TapleafHash = SigHash.tapleafHash
@@ -319,19 +327,27 @@ implementationSigHash OutputsHash env _ = Just . toWord256 . integerHash256 $ ou
 implementationSigHash InputsHash env _ = Just . toWord256 . integerHash256 $ inputsHash (envTx env)
 implementationSigHash IssuancesHash env _ = Just . toWord256 . integerHash256 $ issuancesHash (envTx env)
 implementationSigHash InputUtxosHash env _ = Just . toWord256 . integerHash256 $ inputUtxosHash (envTx env)
+implementationSigHash OutputHash env i = Just . fmap (toWord256 . integerHash256 . outputHash) . maybe (Left ()) Right
+                                       $ sigTxOut (envTx env) !? (fromIntegral $ fromWord32 i)
 implementationSigHash OutputAmountsHash env _ = Just . toWord256 . integerHash256 $ outputAmountsHash (envTx env)
 implementationSigHash OutputScriptsHash env _ = Just . toWord256 . integerHash256 $ outputScriptsHash (envTx env)
 implementationSigHash OutputNoncesHash env _ = Just . toWord256 . integerHash256 $ outputNoncesHash (envTx env)
 implementationSigHash OutputRangeProofsHash env _ = Just . toWord256 . integerHash256 $ outputRangeProofsHash (envTx env)
 implementationSigHash OutputSurjectionProofsHash env _ = Just . toWord256 . integerHash256 $ outputSurjectionProofsHash (envTx env)
+implementationSigHash InputHash env i = Just . fmap (toWord256 . integerHash256 . inputHash) . maybe (Left ()) Right
+                                      $ sigTxIn (envTx env) !? (fromIntegral $ fromWord32 i)
 implementationSigHash InputOutpointsHash env _ = Just . toWord256 . integerHash256 $ inputOutpointsHash (envTx env)
 implementationSigHash InputSequencesHash env _ = Just . toWord256 . integerHash256 $ inputSequencesHash (envTx env)
 implementationSigHash InputAnnexesHash env _ = Just . toWord256 . integerHash256 $ inputAnnexesHash (envTx env)
 implementationSigHash InputScriptSigsHash env _ = Just . toWord256 . integerHash256 $ inputScriptSigsHash (envTx env)
+implementationSigHash IssuanceHash env i = Just . fmap (toWord256 . integerHash256 . issuanceHash) . maybe (Left ()) Right
+                                         $ sigTxIn (envTx env) !? (fromIntegral $ fromWord32 i)
 implementationSigHash IssuanceAssetAmountsHash env _ = Just . toWord256 . integerHash256 $ issuanceAssetAmountsHash (envTx env)
 implementationSigHash IssuanceTokenAmountsHash env _ = Just . toWord256 . integerHash256 $ issuanceTokenAmountsHash (envTx env)
 implementationSigHash IssuanceRangeProofsHash env _ = Just . toWord256 . integerHash256 $ issuanceRangeProofsHash (envTx env)
 implementationSigHash IssuanceBlindingEntropyHash env _ = Just . toWord256 . integerHash256 $ issuanceBlindingEntropyHash (envTx env)
+implementationSigHash InputUtxoHash env i = Just . fmap (toWord256 . integerHash256 . inputUtxoHash . sigTxiTxo) . maybe (Left ()) Right
+                                          $ sigTxIn (envTx env) !? (fromIntegral $ fromWord32 i)
 implementationSigHash InputAmountsHash env _ = Just . toWord256 . integerHash256 $ inputAmountsHash (envTx env)
 implementationSigHash InputScriptsHash env _ = Just . toWord256 . integerHash256 $ inputScriptsHash (envTx env)
 implementationSigHash TapleafHash env _ = Just . toWord256 . integerHash256 $ tapleafHash (envTap env)
@@ -483,23 +499,27 @@ sigHashCatalogue = book
  [ SomeArrow SigAllHash
  , SomeArrow TxHash
  , SomeArrow TapEnvHash
- , SomeArrow InputsHash
  , SomeArrow OutputsHash
+ , SomeArrow InputsHash
  , SomeArrow IssuancesHash
  , SomeArrow InputUtxosHash
+ , SomeArrow OutputHash
  , SomeArrow OutputAmountsHash
  , SomeArrow OutputScriptsHash
  , SomeArrow OutputNoncesHash
  , SomeArrow OutputRangeProofsHash
  , SomeArrow OutputSurjectionProofsHash
+ , SomeArrow InputHash
  , SomeArrow InputOutpointsHash
  , SomeArrow InputSequencesHash
  , SomeArrow InputAnnexesHash
  , SomeArrow InputScriptSigsHash
+ , SomeArrow IssuanceHash
  , SomeArrow IssuanceAssetAmountsHash
  , SomeArrow IssuanceTokenAmountsHash
  , SomeArrow IssuanceRangeProofsHash
  , SomeArrow IssuanceBlindingEntropyHash
+ , SomeArrow InputUtxoHash
  , SomeArrow InputAmountsHash
  , SomeArrow InputScriptsHash
  , SomeArrow TapleafHash
@@ -594,33 +614,37 @@ putJetBitSigHash :: SigHashJet a b -> DList Bool
 putJetBitSigHash SigAllHash                  = putPositive 1
 putJetBitSigHash TxHash                      = putPositive 2
 putJetBitSigHash TapEnvHash                  = putPositive 3
-putJetBitSigHash InputsHash                  = putPositive 4
-putJetBitSigHash OutputsHash                 = putPositive 5
+putJetBitSigHash OutputsHash                 = putPositive 4
+putJetBitSigHash InputsHash                  = putPositive 5
 putJetBitSigHash IssuancesHash               = putPositive 6
 putJetBitSigHash InputUtxosHash              = putPositive 7
-putJetBitSigHash OutputAmountsHash           = putPositive 8
-putJetBitSigHash OutputScriptsHash           = putPositive 9
-putJetBitSigHash OutputNoncesHash            = putPositive 10
-putJetBitSigHash OutputRangeProofsHash       = putPositive 11
-putJetBitSigHash OutputSurjectionProofsHash  = putPositive 12
-putJetBitSigHash InputOutpointsHash          = putPositive 13
-putJetBitSigHash InputSequencesHash          = putPositive 14
-putJetBitSigHash InputAnnexesHash            = putPositive 15
-putJetBitSigHash InputScriptSigsHash         = putPositive 16
-putJetBitSigHash IssuanceAssetAmountsHash    = putPositive 17
-putJetBitSigHash IssuanceTokenAmountsHash    = putPositive 18
-putJetBitSigHash IssuanceRangeProofsHash     = putPositive 19
-putJetBitSigHash IssuanceBlindingEntropyHash = putPositive 20
-putJetBitSigHash InputAmountsHash            = putPositive 21
-putJetBitSigHash InputScriptsHash            = putPositive 22
-putJetBitSigHash TapleafHash                 = putPositive 23
-putJetBitSigHash TappathHash                 = putPositive 24
-putJetBitSigHash OutpointHash                = putPositive 25
-putJetBitSigHash AssetAmountHash             = putPositive 26
-putJetBitSigHash NonceHash                   = putPositive 27
-putJetBitSigHash AnnexHash                   = putPositive 28
-putJetBitSigHash BuildTapleafSimplicity      = putPositive 29
-putJetBitSigHash BuildTapbranch              = putPositive 30
+putJetBitSigHash OutputHash                  = putPositive 8
+putJetBitSigHash OutputAmountsHash           = putPositive 9
+putJetBitSigHash OutputScriptsHash           = putPositive 10
+putJetBitSigHash OutputNoncesHash            = putPositive 11
+putJetBitSigHash OutputRangeProofsHash       = putPositive 12
+putJetBitSigHash OutputSurjectionProofsHash  = putPositive 13
+putJetBitSigHash InputHash                   = putPositive 14
+putJetBitSigHash InputOutpointsHash          = putPositive 15
+putJetBitSigHash InputSequencesHash          = putPositive 16
+putJetBitSigHash InputAnnexesHash            = putPositive 17
+putJetBitSigHash InputScriptSigsHash         = putPositive 18
+putJetBitSigHash IssuanceHash                = putPositive 19
+putJetBitSigHash IssuanceAssetAmountsHash    = putPositive 20
+putJetBitSigHash IssuanceTokenAmountsHash    = putPositive 21
+putJetBitSigHash IssuanceRangeProofsHash     = putPositive 22
+putJetBitSigHash IssuanceBlindingEntropyHash = putPositive 23
+putJetBitSigHash InputUtxoHash               = putPositive 24
+putJetBitSigHash InputAmountsHash            = putPositive 25
+putJetBitSigHash InputScriptsHash            = putPositive 26
+putJetBitSigHash TapleafHash                 = putPositive 27
+putJetBitSigHash TappathHash                 = putPositive 28
+putJetBitSigHash OutpointHash                = putPositive 29
+putJetBitSigHash AssetAmountHash             = putPositive 30
+putJetBitSigHash NonceHash                   = putPositive 31
+putJetBitSigHash AnnexHash                   = putPositive 32
+putJetBitSigHash BuildTapleafSimplicity      = putPositive 33
+putJetBitSigHash BuildTapbranch              = putPositive 34
 
 putJetBitTimeLock :: TimeLockJet a b -> DList Bool
 putJetBitTimeLock CheckLockHeight   = putPositive 1
@@ -760,19 +784,23 @@ jetCostSigHash OutputsHash = Benchmarks.cost "OutputsHash"
 jetCostSigHash InputsHash = Benchmarks.cost "InputsHash"
 jetCostSigHash IssuancesHash = Benchmarks.cost "IssuancesHash"
 jetCostSigHash InputUtxosHash = Benchmarks.cost "InputUtxosHash"
+jetCostSigHash OutputHash = Benchmarks.cost "OutputHash"
 jetCostSigHash OutputAmountsHash = Benchmarks.cost "OutputAmountsHash"
 jetCostSigHash OutputScriptsHash = Benchmarks.cost "OutputScriptsHash"
 jetCostSigHash OutputNoncesHash = Benchmarks.cost "OutputNoncesHash"
 jetCostSigHash OutputRangeProofsHash = Benchmarks.cost "OutputRangeProofsHash"
 jetCostSigHash OutputSurjectionProofsHash = Benchmarks.cost "OutputSurjectionProofsHash"
+jetCostSigHash InputHash = Benchmarks.cost "InputHash"
 jetCostSigHash InputOutpointsHash = Benchmarks.cost "InputOutpointsHash"
 jetCostSigHash InputSequencesHash = Benchmarks.cost "InputSequencesHash"
 jetCostSigHash InputAnnexesHash = Benchmarks.cost "InputAnnexesHash"
 jetCostSigHash InputScriptSigsHash = Benchmarks.cost "InputScriptSigsHash"
+jetCostSigHash IssuanceHash = Benchmarks.cost "IssuanceHash"
 jetCostSigHash IssuanceAssetAmountsHash = Benchmarks.cost "IssuanceAssetAmountsHash"
 jetCostSigHash IssuanceTokenAmountsHash = Benchmarks.cost "IssuanceTokenAmountsHash"
 jetCostSigHash IssuanceRangeProofsHash = Benchmarks.cost "IssuanceRangeProofsHash"
 jetCostSigHash IssuanceBlindingEntropyHash = Benchmarks.cost "IssuanceBlindingEntropyHash"
+jetCostSigHash InputUtxoHash = Benchmarks.cost "InputUtxoHash"
 jetCostSigHash InputAmountsHash = Benchmarks.cost "InputAmountsHash"
 jetCostSigHash InputScriptsHash = Benchmarks.cost "InputScriptsHash"
 jetCostSigHash TapleafHash = Benchmarks.cost "TapleafHash"
