@@ -50,7 +50,7 @@ foreign import ccall unsafe "" c_set_rawInput :: Ptr RawInput -> Ptr RawBuffer -
                                                               -> CUInt
                                                               -> Ptr CChar -> Ptr CChar -> Ptr CChar -> Ptr CChar
                                                               -> Ptr RawBuffer -> Ptr RawBuffer -> IO ()
-foreign import ccall unsafe "" c_set_rawTransaction :: Ptr RawTransaction -> CUInt
+foreign import ccall unsafe "" c_set_rawTransaction :: Ptr RawTransaction -> Ptr CChar -> CUInt
                                                                           -> Ptr RawInput -> CUInt
                                                                           -> Ptr RawOutput -> CUInt
                                                                           -> CUInt -> IO ()
@@ -169,7 +169,8 @@ withRawTransaction tx k =
   allocaBytes sizeof_rawTransaction $ \pRawTransaction ->
   withRawInputs (sigTxIn tx) $ \pInput ->
   withRawOutputs (sigTxOut tx) $ \pOutput -> do
-   c_set_rawTransaction pRawTransaction version pInput numInputs pOutput numOutputs lockTime
+  BS.useAsCString (encode $ txid tx) $ \pTxid -> do
+   c_set_rawTransaction pRawTransaction pTxid version pInput numInputs pOutput numOutputs lockTime
    k pRawTransaction
  where
   version = fromIntegral (sigTxVersion tx)
