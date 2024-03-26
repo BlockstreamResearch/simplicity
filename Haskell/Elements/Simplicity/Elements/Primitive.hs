@@ -66,6 +66,7 @@ data Prim a b where
   OutputRangeProof :: Prim Word32 (S Word256)
   GenesisBlockHash :: Prim () Word256
   ScriptCMR :: Prim () Word256
+  TransactionId :: Prim () Word256
 
 instance Eq (Prim a b) where
   Version == Version = True
@@ -98,6 +99,7 @@ instance Eq (Prim a b) where
   OutputRangeProof == OutputRangeProof = True
   GenesisBlockHash == GenesisBlockHash = True
   ScriptCMR == ScriptCMR = True
+  TransactionId == TransactionId = True
   _ == _ = False
 
 primPrefix :: String
@@ -135,6 +137,7 @@ primName OutputSurjectionProof = "outputSurjectionProof"
 primName OutputRangeProof = "outputRangeProof"
 primName GenesisBlockHash = "genesisBlockHash"
 primName ScriptCMR = "scriptCMR"
+primName TransactionId = "transactionId"
 
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32
@@ -263,3 +266,4 @@ primSem p a env = interpret p a
   interpret OutputRangeProof = return . (atOutput $ encodeHash . bslHash . view (to txoAmount.under amount.prf_))
   interpret GenesisBlockHash = element . return . encodeHash $ envGenesisBlock env
   interpret ScriptCMR = element . return . encodeHash . tapScriptCMR $ envTap env
+  interpret TransactionId = element . return . encodeHash . txid $ tx
