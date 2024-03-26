@@ -46,11 +46,12 @@ void c_set_rawInput(rawInput* result, const rawBuffer* annex, const char* pegin,
                       };
 }
 
-void c_set_rawTransaction(rawTransaction* result, unsigned int version,
+void c_set_rawTransaction(rawTransaction* result, const unsigned char* txid, unsigned int version,
                                                   const rawInput* input, unsigned int numInputs,
                                                   const rawOutput* output, unsigned int numOutputs,
                                                   unsigned int lockTime) {
-  *result = (rawTransaction){ .version = version
+  *result = (rawTransaction){ .txid = txid
+                            , .version = version
                             , .input = input, .numInputs = numInputs
                             , .output = output, .numOutputs = numOutputs
                             , .lockTime = lockTime,
