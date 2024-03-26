@@ -74,6 +74,7 @@ typedef struct rawInput {
  *            rawOutput output[numOutputs];
  */
 typedef struct rawTransaction {
+  const unsigned char* txid; /* While in theory we could recompute the txid ourselves, it is easier and safer for it to be provided. */
   const rawInput* input;
   const rawOutput* output;
   uint32_t numInputs;

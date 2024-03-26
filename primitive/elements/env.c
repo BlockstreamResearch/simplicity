@@ -388,6 +388,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
                      , .isFinal = true
                      };
 
+  sha256_toMidstate(tx->txid.s, rawTx->txid);
   {
     sha256_context ctx_inputOutpointsHash = sha256_init(tx->inputOutpointsHash.s);
     sha256_context ctx_inputAssetAmountsHash = sha256_init(tx->inputAssetAmountsHash.s);

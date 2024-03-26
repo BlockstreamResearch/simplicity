@@ -218,6 +218,7 @@ typedef struct transaction {
   sha256_midstate issuanceBlindingEntropyHash;
   sha256_midstate issuancesHash;
   sha256_midstate txHash;
+  sha256_midstate txid;
   uint_fast32_t numInputs;
   uint_fast32_t numOutputs;
   uint_fast32_t numFees;
