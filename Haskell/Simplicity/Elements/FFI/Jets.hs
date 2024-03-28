@@ -28,6 +28,7 @@ module Simplicity.Elements.FFI.Jets
  , output_range_proof
  , genesis_block_hash
  , script_cmr
+ , transaction_id
  , current_index
  , current_pegin
  , current_prev_outpoint
@@ -144,6 +145,7 @@ foreign import ccall unsafe "" c_output_surjection_proof :: Ptr FrameItem -> Ptr
 foreign import ccall unsafe "" c_output_range_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_genesis_block_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_script_cmr :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_transaction_id :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_index :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_pegin :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_prev_outpoint :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -362,6 +364,9 @@ genesis_block_hash = unsafeLocalJet c_genesis_block_hash
 
 script_cmr :: PrimEnv -> () -> Maybe Word256
 script_cmr = unsafeLocalJet c_script_cmr
+
+transaction_id :: PrimEnv -> () -> Maybe Word256
+transaction_id = unsafeLocalJet c_transaction_id
 
 tx_is_final :: PrimEnv -> () -> Maybe Bit
 tx_is_final = unsafeLocalJet c_tx_is_final

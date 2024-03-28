@@ -132,6 +132,7 @@ tests = testGroup "Elements"
           , testProperty "tappath" prop_tappath
           , testProperty "version" prop_version
           , testProperty "genesis_block_hash" prop_genesis_block_hash
+          , testProperty "transaction_id" prop_transaction_id
           ]
         ]
 
@@ -240,13 +241,13 @@ prop_build_tapleaf_simplicity = \w ->
   build_tapleaf_simplicity w == fast_build_tapleaf_simplicity w
  where
   fast_build_tapleaf_simplicity = testCoreEval Prog.buildTapleafSimplicity
-   
+
 prop_build_tapbranch :: Word256 -> Word256 -> Bool
 prop_build_tapbranch = \a b ->
   build_tapbranch (a, b) == fast_build_tapbranch (a, b)
  where
   fast_build_tapbranch = testCoreEval Prog.buildTapbranch
-   
+
 prop_issuance :: Property
 prop_issuance = forallInPrimEnv $ \env i ->
    fast_issuance env (toW32 i) == issuance env (toW32 i)
@@ -653,3 +654,8 @@ prop_genesis_block_hash :: Property
 prop_genesis_block_hash = forallPrimEnv $ \env -> fast_genesis_block_hash env () == genesis_block_hash env ()
  where
   fast_genesis_block_hash = testEval (specification (ElementsJet (TransactionJet GenesisBlockHash)))
+
+prop_transaction_id :: Property
+prop_transaction_id = forallPrimEnv $ \env -> fast_transaction_id env () == transaction_id env ()
+ where
+  fast_transaction_id = testEval (specification (ElementsJet (TransactionJet TransactionId)))
