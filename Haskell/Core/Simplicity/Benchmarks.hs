@@ -475,6 +475,7 @@ rawBenchmark "OutputHash" = rawBenchmark "OutputsHash"
 rawBenchmark "InputHash" = rawBenchmark "InputsHash"
 rawBenchmark "IssuanceHash" = rawBenchmark "IssuancesHash"
 rawBenchmark "InputUtxoHash" = rawBenchmark "InputUtxosHash"
+rawBenchmark "TransactionId" = rawBenchmark "ScriptCMR"
 
 -- benchmark adjusts the raw benchmark by giving a discount to batch verifiable jets.
 benchmark :: String -> Double

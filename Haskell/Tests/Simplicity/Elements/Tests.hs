@@ -149,6 +149,7 @@ tests = testGroup "Elements"
           , testProperty "tappath" prop_tappath
           , testProperty "version" prop_version
           , testProperty "genesis_block_hash" prop_genesis_block_hash
+          , testProperty "transaction_id" prop_transaction_id
           , testCase "issuance_entropy_1" assert_issuance_entropy_1
           , testCase "calculate_asset_1" assert_calculate_asset_1
           , testCase "calculcate_token_1" assert_calculcate_token_1
@@ -625,6 +626,10 @@ prop_version = checkJet (ElementsJet (TransactionJet Version))
 
 prop_genesis_block_hash :: Property
 prop_genesis_block_hash = checkJet (ElementsJet (TransactionJet GenesisBlockHash))
+                        $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_transaction_id :: Property
+prop_transaction_id = checkJet (ElementsJet (TransactionJet TransactionId))
                         $ \check -> forallPrimEnv $ \env -> check env ()
 
 -- example test data from Elements Core 0.17

@@ -196,6 +196,7 @@ data TransactionJet a b where
   Tappath :: TransactionJet Word8 (S Word256)
   Version :: TransactionJet () Word32
   GenesisBlockHash :: TransactionJet () Word256
+  TransactionId :: TransactionJet () Word256
 deriving instance Eq (TransactionJet a b)
 deriving instance Show (TransactionJet a b)
 
@@ -312,6 +313,7 @@ specificationTransaction TapleafVersion = primitive Prim.TapleafVersion
 specificationTransaction Tappath = primitive Prim.Tappath
 specificationTransaction Version = primitive Prim.Version
 specificationTransaction GenesisBlockHash = primitive Prim.GenesisBlockHash
+specificationTransaction TransactionId = primitive Prim.TransactionId
 
 implementationElements :: ElementsJet a b -> PrimEnv -> a -> Maybe b
 implementationElements (SigHashJet x) = implementationSigHash x
@@ -602,6 +604,7 @@ transactionCatalogue = book
  , SomeArrow Tappath
  , SomeArrow Version
  , SomeArrow GenesisBlockHash
+ , SomeArrow TransactionId
  ]
 
 putJetBitElements :: ElementsJet a b -> DList Bool
@@ -717,6 +720,7 @@ putJetBitTransaction TapleafVersion             = putPositive 46
 putJetBitTransaction Tappath                    = putPositive 47
 putJetBitTransaction Version                    = putPositive 48
 putJetBitTransaction GenesisBlockHash           = putPositive 49
+putJetBitTransaction TransactionId              = putPositive 50
 
 elementsJetMap :: Map.Map Hash256 (SomeArrow ElementsJet)
 elementsJetMap = Map.fromList . fmap mkAssoc $ toList elementsCatalogue
@@ -883,6 +887,7 @@ jetCostTransaction TapleafVersion = Benchmarks.cost "TapleafVersion"
 jetCostTransaction Tappath = Benchmarks.cost "Tappath"
 jetCostTransaction Version = Benchmarks.cost "Version"
 jetCostTransaction GenesisBlockHash = Benchmarks.cost "GenesisBlockHash"
+jetCostTransaction TransactionId = Benchmarks.cost "TransactionId"
 
 -- | Generate a 'Jet' using the 'Simplicity.Elements.JetType.jetCost' and 'Simplicity.Elements.JetType.specification' of a 'JetType'.
 asJet :: (Jet term, TyC a, TyC b) => JetType a b -> term a b
