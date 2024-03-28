@@ -1163,6 +1163,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
        case 47: *result = TAPPATH; return SIMPLICITY_NO_ERROR;
        case 48: *result = VERSION; return SIMPLICITY_NO_ERROR;
        case 49: *result = GENESIS_BLOCK_HASH; return SIMPLICITY_NO_ERROR;
+       case 50: *result = TRANSACTION_ID; return SIMPLICITY_NO_ERROR;
       }
       break;
     }

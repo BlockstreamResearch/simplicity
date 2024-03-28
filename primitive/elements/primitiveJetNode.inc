@@ -3591,6 +3591,14 @@
 , .targetIx = ty_w64
 , .cost = 397 /* milli weight units */
 }
+,[TRANSACTION_ID] =
+{ .tag = JET
+, .jet = transaction_id
+, .cmr = {{0xab4bf478u, 0x2d358cd3u, 0x1f22e066u, 0x64167078u, 0x457c76e3u, 0xfa8e421cu, 0x7929de11u, 0x310b07d9u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 281 /* milli weight units */
+}
 ,[TX_HASH] =
 { .tag = JET
 , .jet = tx_hash

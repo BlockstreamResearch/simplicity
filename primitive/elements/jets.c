@@ -528,6 +528,13 @@ bool script_cmr(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
+/* transaction_id : ONE |- TWO^256 */
+bool transaction_id(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  write32s(dst, env->tx->txid.s, 8);
+  return true;
+}
+
 /* current_index : ONE |- TWO^32 */
 bool current_index(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
