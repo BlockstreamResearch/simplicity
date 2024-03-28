@@ -33,6 +33,7 @@ bool output_surjection_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool output_range_proof(frameItem* dst, frameItem src, const txEnv* env);
 bool genesis_block_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool script_cmr(frameItem* dst, frameItem src, const txEnv* env);
+bool transaction_id(frameItem* dst, frameItem src, const txEnv* env);
 bool current_index(frameItem* dst, frameItem src, const txEnv* env);
 bool current_pegin(frameItem* dst, frameItem src, const txEnv* env);
 bool current_prev_outpoint(frameItem* dst, frameItem src, const txEnv* env);
