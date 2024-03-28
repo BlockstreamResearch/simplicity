@@ -13223,6 +13223,15 @@
   <math|<rep|<text|<samp|'genesis-block-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|genesis-block-hash>> \<of\>
+  <value|1>\<vdash\><2><rsup|256>>
+
+  <subsubsection|<samp|transaction-id>>
+
+  \;
+
+  <math|<rep|<text|<samp|'transaction-id'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|transaction-id>> \<of\>
   <value|1>\<vdash\><2><rsup|256>><appendix|Alternative Serialization of
   Simplicity DAGs><label|app:AltSerialization>
 
@@ -13911,11 +13920,12 @@
     <associate|auto-496|<tuple|B.3.4.47|?>>
     <associate|auto-497|<tuple|B.3.4.48|?>>
     <associate|auto-498|<tuple|B.3.4.49|?>>
-    <associate|auto-499|<tuple|C|?>>
+    <associate|auto-499|<tuple|B.3.4.50|?>>
     <associate|auto-5|<tuple|1.2.2|?>>
     <associate|auto-50|<tuple|3.3.7.2|?>>
     <associate|auto-500|<tuple|C|?>>
     <associate|auto-501|<tuple|C|?>>
+    <associate|auto-502|<tuple|C|?>>
     <associate|auto-51|<tuple|3.3.7.3|?>>
     <associate|auto-52|<tuple|3.4|?>>
     <associate|auto-53|<tuple|3.5|?>>
