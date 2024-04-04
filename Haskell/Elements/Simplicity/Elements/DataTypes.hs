@@ -21,6 +21,7 @@ module Simplicity.Elements.DataTypes
   , sigTxiIssuanceEntropy, sigTxiIssuanceAsset, sigTxiIssuanceToken
   , TxOutput(TxOutput), txoAsset, txoAmount, txoNonce, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock
+  , putNoWitnessTx, txid
   , TapEnv(..)
   , txIsFinal, txLockDistance, txLockDuration
   , calculateIssuanceEntropy, calculateAsset, calculateToken
@@ -36,16 +37,19 @@ module Simplicity.Elements.DataTypes
   ) where
 
 import Control.Monad (guard, mzero)
+import Data.Bits ((.|.))
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
+import Data.Maybe (isJust)
 import Data.Semigroup (Max(Max,getMax))
 import Data.Word (Word64, Word32, Word16, Word8)
 import Data.Serialize ( Serialize, encode
                       , Get, get, runGetLazy, lookAhead, getWord8, getWord16le, getWord32le, getLazyByteString, isEmpty
-                      , Putter, put, putWord8, putWord64be, putWord32be, putWord32le, putLazyByteString, runPutLazy
+                      , Putter, put, putWord8, putWord64be, putWord64le, putWord32be, putWord32le, putWord16le, putLazyByteString, runPutLazy
                       )
 import Data.String (fromString)
 import Data.Vector (Vector)
+import qualified Data.Vector as V
 import Lens.Family2 ((&), (.~), (^.), over, review, to, under, view)
 import Lens.Family2.Stock (some_)
 import Lens.Family2.Unchecked (Adapter, adapter, Traversal)
@@ -592,6 +596,61 @@ txHash tx = bslHash . runPutLazy $ do
               put $ issuancesHash tx
               put $ outputSurjectionProofsHash tx
               put $ inputUtxosHash tx
+
+-- | Serialize transaction data without witness data.
+-- Mainly suitable for computing a 'txid'.
+putNoWitnessTx :: Putter SigTx
+putNoWitnessTx tx = do
+  putWord32le $ sigTxVersion tx
+  putWord8 0
+  putVarInt (V.length (sigTxIn tx))
+  mapM_ putInput (sigTxIn tx)
+  putVarInt (V.length (sigTxOut tx))
+  mapM_ putOutput (sigTxOut tx)
+  putWord32le $ sigTxLock tx
+ where
+  putVarInt x | x < 0 = error "putVarInt: negative value"
+              | x <= 0xFC = putWord8 (fromIntegral x)
+              | x <= 0xFFFF = putWord8 0xFD >> putWord16le (fromIntegral x)
+              | x <= 0xFFFFFFFF = putWord8 0xFE >> putWord32le (fromIntegral x)
+              | x <= 0xFFFFFFFFFFFFFFFF = putWord8 0xFF >> putWord64le (fromIntegral x)
+  putInput txi = do
+    put (opHash (sigTxiPreviousOutpoint txi))
+    putWord32le (flags .|. opIndex (sigTxiPreviousOutpoint txi))
+    putVarInt (BSL.length (sigTxiScriptSig txi))
+    putLazyByteString (sigTxiScriptSig txi)
+    putWord32le (sigTxiSequence txi)
+    putIssuance (sigTxiIssuance txi)
+   where
+    issuanceFlag | isJust (sigTxiIssuance txi) = 0x80000000
+                 | otherwise = 0
+    peginFlag | isJust (sigTxiPegin txi) = 0x40000000
+              | otherwise = 0
+    flags = issuanceFlag .|. peginFlag
+    putIssuance Nothing = return ()
+    putIssuance (Just (Left new)) = do
+      put (0 :: Word256)
+      put (newIssuanceContractHash new)
+      putIssuanceAmount (clearAmountPrf (newIssuanceAmount new))
+      putIssuanceAmount (clearAmountPrf (newIssuanceTokenAmount new))
+    putIssuance (Just (Right re)) = do
+      put (reissuanceBlindingNonce re)
+      put (reissuanceEntropy re)
+      putIssuanceAmount (clearAmountPrf (reissuanceAmount re))
+      putWord8 0
+    putIssuanceAmount (Amount (Explicit 0)) = putWord8 0
+    putIssuanceAmount amt = putAmount amt
+
+  putOutput txo = do
+    putAsset (clearAssetPrf (txoAsset txo))
+    putAmount (clearAmountPrf (txoAmount txo))
+    putNonce (txoNonce txo)
+    putVarInt (BSL.length (txoScript txo))
+    putLazyByteString (txoScript txo)
+
+-- | Return the txid of the transaction.
+txid :: SigTx -> Hash256
+txid = bslDoubleHash . runPutLazy . putNoWitnessTx
 
 -- | A hash of
 --
