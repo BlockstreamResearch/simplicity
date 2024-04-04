@@ -4,7 +4,7 @@ module Simplicity.Digest
   ( Hash256, be256, be256_, le256, le256_
   , get256Bits, put256Bits
   , integerHash256, hash0
-  , IV, noTagIv, tagIv, ivHash, bslHash, bsHash, taggedHash, bitStringHash
+  , IV, noTagIv, tagIv, ivHash, bslHash, bsHash, bslDoubleHash, taggedHash, bitStringHash
   , Block512, compress, compressHalf
   , freeStart
   , Ctx(..), ctxInit, ctxBuild, ctxAdd, ctxFinalize
@@ -123,6 +123,10 @@ bslHash = ivHash . IV . pushChunks sha256Incremental . padSHA1
 -- | Computes a SHA-256 hash from a 'BS.ByteString'.
 bsHash :: BS.ByteString -> Hash256
 bsHash = bslHash . BSL.fromStrict
+
+-- | Computes a Bitcoin-style double SHA-256 hash from a lazy 'BSL.ByteString'.
+bslDoubleHash :: BSL.ByteString -> Hash256
+bslDoubleHash = bsHash . encode . bslHash
 
 -- | Computes a SHA-256 tagged hash.
 taggedHash :: String -- ^ tag
