@@ -12771,9 +12771,10 @@
 
   \;
 
-  <math|<rep|<text|<samp|'calculate-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'calculate-explict-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|calculate-token>> :<2><rsup|256>\<vdash\>ExplicitAsset>
+  <math|<text|<samp|calculate-explict-token>>
+  :<2><rsup|256>\<vdash\>ExplicitAsset>
 
   \;
 
@@ -12784,14 +12785,27 @@
 
   \;
 
-  <math|<rep|<text|<samp|'calculate-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'calculate-confidential-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|calculate-token>> :<2><rsup|256>\<vdash\>ExplicitAsset>
+  <math|<text|<samp|calculate-confidential-token>>
+  :<2><rsup|256>\<vdash\>ExplicitAsset>
 
   \;
 
   Calculate the reissuance token id from a given entropy value for assets
   with confidential issued amounts.
+
+  <subsubsection|<samp|lbtc-asset>>
+
+  \;
+
+  <math|<rep|<text|<samp|'lbtc-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+
+  <math|<text|<samp|lbtc-asset>> :<value|1>\<vdash\>ExplicitAsset>
+
+  \;
+
+  Returns the asset for liquid BTC.
 
   <subsection|Transaction>
 
@@ -13865,67 +13879,68 @@
     <associate|auto-446|<tuple|B.3.3.6|?>>
     <associate|auto-447|<tuple|B.3.3.7|?>>
     <associate|auto-448|<tuple|B.3.3.8|?>>
-    <associate|auto-449|<tuple|B.3.4|?>>
+    <associate|auto-449|<tuple|B.3.3.9|?>>
     <associate|auto-45|<tuple|3.3.5|?>>
-    <associate|auto-450|<tuple|B.3.4.1|?>>
-    <associate|auto-451|<tuple|B.3.4.2|?>>
-    <associate|auto-452|<tuple|B.3.4.3|?>>
-    <associate|auto-453|<tuple|B.3.4.4|?>>
-    <associate|auto-454|<tuple|B.3.4.5|?>>
-    <associate|auto-455|<tuple|B.3.4.6|?>>
-    <associate|auto-456|<tuple|B.3.4.7|?>>
-    <associate|auto-457|<tuple|B.3.4.8|?>>
-    <associate|auto-458|<tuple|B.3.4.9|?>>
-    <associate|auto-459|<tuple|B.3.4.10|?>>
+    <associate|auto-450|<tuple|B.3.4|?>>
+    <associate|auto-451|<tuple|B.3.4.1|?>>
+    <associate|auto-452|<tuple|B.3.4.2|?>>
+    <associate|auto-453|<tuple|B.3.4.3|?>>
+    <associate|auto-454|<tuple|B.3.4.4|?>>
+    <associate|auto-455|<tuple|B.3.4.5|?>>
+    <associate|auto-456|<tuple|B.3.4.6|?>>
+    <associate|auto-457|<tuple|B.3.4.7|?>>
+    <associate|auto-458|<tuple|B.3.4.8|?>>
+    <associate|auto-459|<tuple|B.3.4.9|?>>
     <associate|auto-46|<tuple|3.3.6|?>>
-    <associate|auto-460|<tuple|B.3.4.11|?>>
-    <associate|auto-461|<tuple|B.3.4.12|?>>
-    <associate|auto-462|<tuple|B.3.4.13|?>>
-    <associate|auto-463|<tuple|B.3.4.14|?>>
-    <associate|auto-464|<tuple|B.3.4.15|?>>
-    <associate|auto-465|<tuple|B.3.4.16|?>>
-    <associate|auto-466|<tuple|B.3.4.17|?>>
-    <associate|auto-467|<tuple|B.3.4.18|?>>
-    <associate|auto-468|<tuple|B.3.4.19|?>>
-    <associate|auto-469|<tuple|B.3.4.20|?>>
+    <associate|auto-460|<tuple|B.3.4.10|?>>
+    <associate|auto-461|<tuple|B.3.4.11|?>>
+    <associate|auto-462|<tuple|B.3.4.12|?>>
+    <associate|auto-463|<tuple|B.3.4.13|?>>
+    <associate|auto-464|<tuple|B.3.4.14|?>>
+    <associate|auto-465|<tuple|B.3.4.15|?>>
+    <associate|auto-466|<tuple|B.3.4.16|?>>
+    <associate|auto-467|<tuple|B.3.4.17|?>>
+    <associate|auto-468|<tuple|B.3.4.18|?>>
+    <associate|auto-469|<tuple|B.3.4.19|?>>
     <associate|auto-47|<tuple|3.3.6.1|?>>
-    <associate|auto-470|<tuple|B.3.4.21|?>>
-    <associate|auto-471|<tuple|B.3.4.22|?>>
-    <associate|auto-472|<tuple|B.3.4.23|?>>
-    <associate|auto-473|<tuple|B.3.4.24|?>>
-    <associate|auto-474|<tuple|B.3.4.25|?>>
-    <associate|auto-475|<tuple|B.3.4.26|?>>
-    <associate|auto-476|<tuple|B.3.4.27|?>>
-    <associate|auto-477|<tuple|B.3.4.28|?>>
-    <associate|auto-478|<tuple|B.3.4.29|?>>
-    <associate|auto-479|<tuple|B.3.4.30|?>>
+    <associate|auto-470|<tuple|B.3.4.20|?>>
+    <associate|auto-471|<tuple|B.3.4.21|?>>
+    <associate|auto-472|<tuple|B.3.4.22|?>>
+    <associate|auto-473|<tuple|B.3.4.23|?>>
+    <associate|auto-474|<tuple|B.3.4.24|?>>
+    <associate|auto-475|<tuple|B.3.4.25|?>>
+    <associate|auto-476|<tuple|B.3.4.26|?>>
+    <associate|auto-477|<tuple|B.3.4.27|?>>
+    <associate|auto-478|<tuple|B.3.4.28|?>>
+    <associate|auto-479|<tuple|B.3.4.29|?>>
     <associate|auto-48|<tuple|3.3.7|?>>
-    <associate|auto-480|<tuple|B.3.4.31|?>>
-    <associate|auto-481|<tuple|B.3.4.32|?>>
-    <associate|auto-482|<tuple|B.3.4.33|?>>
-    <associate|auto-483|<tuple|B.3.4.34|?>>
-    <associate|auto-484|<tuple|B.3.4.35|?>>
-    <associate|auto-485|<tuple|B.3.4.36|?>>
-    <associate|auto-486|<tuple|B.3.4.37|?>>
-    <associate|auto-487|<tuple|B.3.4.38|?>>
-    <associate|auto-488|<tuple|B.3.4.39|?>>
-    <associate|auto-489|<tuple|B.3.4.40|?>>
+    <associate|auto-480|<tuple|B.3.4.30|?>>
+    <associate|auto-481|<tuple|B.3.4.31|?>>
+    <associate|auto-482|<tuple|B.3.4.32|?>>
+    <associate|auto-483|<tuple|B.3.4.33|?>>
+    <associate|auto-484|<tuple|B.3.4.34|?>>
+    <associate|auto-485|<tuple|B.3.4.35|?>>
+    <associate|auto-486|<tuple|B.3.4.36|?>>
+    <associate|auto-487|<tuple|B.3.4.37|?>>
+    <associate|auto-488|<tuple|B.3.4.38|?>>
+    <associate|auto-489|<tuple|B.3.4.39|?>>
     <associate|auto-49|<tuple|3.3.7.1|?>>
-    <associate|auto-490|<tuple|B.3.4.41|?>>
-    <associate|auto-491|<tuple|B.3.4.42|?>>
-    <associate|auto-492|<tuple|B.3.4.43|?>>
-    <associate|auto-493|<tuple|B.3.4.44|?>>
-    <associate|auto-494|<tuple|B.3.4.45|?>>
-    <associate|auto-495|<tuple|B.3.4.46|?>>
-    <associate|auto-496|<tuple|B.3.4.47|?>>
-    <associate|auto-497|<tuple|B.3.4.48|?>>
-    <associate|auto-498|<tuple|B.3.4.49|?>>
-    <associate|auto-499|<tuple|B.3.4.50|?>>
+    <associate|auto-490|<tuple|B.3.4.40|?>>
+    <associate|auto-491|<tuple|B.3.4.41|?>>
+    <associate|auto-492|<tuple|B.3.4.42|?>>
+    <associate|auto-493|<tuple|B.3.4.43|?>>
+    <associate|auto-494|<tuple|B.3.4.44|?>>
+    <associate|auto-495|<tuple|B.3.4.45|?>>
+    <associate|auto-496|<tuple|B.3.4.46|?>>
+    <associate|auto-497|<tuple|B.3.4.47|?>>
+    <associate|auto-498|<tuple|B.3.4.48|?>>
+    <associate|auto-499|<tuple|B.3.4.49|?>>
     <associate|auto-5|<tuple|1.2.2|?>>
     <associate|auto-50|<tuple|3.3.7.2|?>>
-    <associate|auto-500|<tuple|C|?>>
+    <associate|auto-500|<tuple|B.3.4.50|?>>
     <associate|auto-501|<tuple|C|?>>
     <associate|auto-502|<tuple|C|?>>
+    <associate|auto-503|<tuple|C|?>>
     <associate|auto-51|<tuple|3.3.7.3|?>>
     <associate|auto-52|<tuple|3.4|?>>
     <associate|auto-53|<tuple|3.5|?>>
@@ -16066,18 +16081,22 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-498>>
 
+      <with|par-left|<quote|2tab>|B.3.4.50<space|2spc><with|font-family|<quote|ss>|transaction-id>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-499>>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Appendix
       C<space|2spc>Alternative Serialization of Simplicity DAGs>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-499><vspace|0.5fn>
+      <no-break><pageref|auto-500><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Glossary>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-500><vspace|0.5fn>
+      <no-break><pageref|auto-501><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-501><vspace|0.5fn>
+      <no-break><pageref|auto-502><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

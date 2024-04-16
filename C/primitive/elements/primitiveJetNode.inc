@@ -1671,6 +1671,14 @@
 , .targetIx = ty_w256
 , .cost = 281 /* milli weight units */
 }
+,[LBTC_ASSET] =
+{ .tag = JET
+, .jet = lbtc_asset
+, .cmr = {{0x495dd0a1u, 0xcb39ee84u, 0xff45e1dfu, 0x3db4b69du, 0xe27c37c3u, 0x6d69b312u, 0x976c43f5u, 0x0e5d941au}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 3065 /* milli weight units */
+}
 ,[LE_16] =
 { .tag = JET
 , .jet = le_16

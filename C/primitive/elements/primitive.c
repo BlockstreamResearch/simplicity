@@ -1100,6 +1100,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
        case 6: *result = CALCULATE_ASSET; return SIMPLICITY_NO_ERROR;
        case 7: *result = CALCULATE_EXPLICIT_TOKEN; return SIMPLICITY_NO_ERROR;
        case 8: *result = CALCULATE_CONFIDENTIAL_TOKEN; return SIMPLICITY_NO_ERROR;
+       case 9: *result = LBTC_ASSET; return SIMPLICITY_NO_ERROR;
       }
       break;
      case 4: /* Transaction jets chapter */

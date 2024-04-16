@@ -142,6 +142,7 @@ data IssuanceJet a b where
   CalculateAsset :: IssuanceJet Word256 Word256
   CalculateExplicitToken :: IssuanceJet Word256 Word256
   CalculateConfidentialToken :: IssuanceJet Word256 Word256
+  LbtcAsset :: IssuanceJet () Word256
 deriving instance Eq (IssuanceJet a b)
 deriving instance Show (IssuanceJet a b)
 
@@ -260,6 +261,7 @@ specificationIssuance CalculateIssuanceEntropy = Prog.calculateIssuanceEntropy
 specificationIssuance CalculateAsset = Prog.calculateAsset
 specificationIssuance CalculateExplicitToken = Prog.calculateExplicitToken
 specificationIssuance CalculateConfidentialToken = Prog.calculateConfidentialToken
+specificationIssuance LbtcAsset = Prog.lbtcAsset
 
 specificationTransaction :: (Assert term, Primitive term) => TransactionJet a b -> term a b
 specificationTransaction ScriptCMR = primitive Prim.ScriptCMR
@@ -473,6 +475,10 @@ implementationIssuance CalculateConfidentialToken _ x = Just (fromHash (calculat
   fromHash = toWord256 . integerHash256
   entropy = review (over be256) (fromW256 x)
 
+implementationIssuance LbtcAsset _ _ = Just (fromHash lBtcAsset)
+ where
+  fromHash = toWord256 . integerHash256
+
 implementationTransaction :: TransactionJet a b -> PrimEnv -> a -> Maybe b
 implementationTransaction OutputIsFee env i = Just . cast $ toBit . isJust . outputFee <$> sigTxOut (envTx env) !? (fromIntegral (fromWord32 i))
  where
@@ -544,6 +550,7 @@ getJetBitElements = getCatalogue elementsCatalogue
    , SomeArrow CalculateAsset
    , SomeArrow CalculateExplicitToken
    , SomeArrow CalculateConfidentialToken
+   , SomeArrow LbtcAsset
    ]
   transactionCatalogue = Shelf
    [ Item $ SomeArrow ScriptCMR
@@ -660,6 +667,7 @@ putJetBitIssuance CalculateIssuanceEntropy   = putPositive 5
 putJetBitIssuance CalculateAsset             = putPositive 6
 putJetBitIssuance CalculateExplicitToken     = putPositive 7
 putJetBitIssuance CalculateConfidentialToken = putPositive 8
+putJetBitIssuance LbtcAsset                  = putPositive 9
 
 putJetBitTransaction :: TransactionJet a b -> DList Bool
 putJetBitTransaction ScriptCMR                  = putPositive 1
@@ -769,6 +777,7 @@ elementsJetMap = Map.fromList
   , mkAssoc (IssuanceJet CalculateAsset)
   , mkAssoc (IssuanceJet CalculateExplicitToken)
   , mkAssoc (IssuanceJet CalculateConfidentialToken)
+  , mkAssoc (IssuanceJet LbtcAsset)
     -- TransactionJet
   , mkAssoc (TransactionJet ScriptCMR)
   , mkAssoc (TransactionJet InternalKey)
@@ -932,6 +941,7 @@ jetCostIssuance CalculateIssuanceEntropy = Benchmarks.cost "CalculateIssuanceEnt
 jetCostIssuance CalculateAsset = Benchmarks.cost "CalculateAsset"
 jetCostIssuance CalculateExplicitToken = Benchmarks.cost "CalculateExplicitToken"
 jetCostIssuance CalculateConfidentialToken = Benchmarks.cost "CalculateConfidentialToken"
+jetCostIssuance LbtcAsset = Benchmarks.cost "LbtcAsset"
 
 jetCostTransaction :: TransactionJet a b -> Weight
 jetCostTransaction ScriptCMR = Benchmarks.cost "ScriptCMR"

@@ -4,6 +4,7 @@ import Control.Arrow ((***), (+++))
 import Data.Maybe (isJust)
 import Data.Vector ((!?))
 import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.HUnit (Assertion, (@?=), testCase)
 import Test.Tasty.QuickCheck (NonNegative(..), Property, classify, forAll, testProperty)
 
 import Simplicity.Arbitrary
@@ -82,6 +83,7 @@ tests = testGroup "Elements"
           , testProperty "tappath_hash" prop_tappath_hash
           , testProperty "tap_env_hash" prop_tap_env_hash
           , testProperty "sig_all_hash" prop_sig_all_hash
+          , testCase "lbtc_asset" assert_lbtc_asset
           ]
         , testGroup "Transaction"
           [ testProperty "script_cmr" prop_script_cmr
@@ -411,6 +413,12 @@ prop_sig_all_hash :: Property
 prop_sig_all_hash = forallPrimEnv $ \env -> fast_sig_all_hash env () == sig_all_hash env ()
  where
   fast_sig_all_hash = testEval (specification (ElementsJet (SigHashJet SigAllHash)))
+
+assert_lbtc_asset :: Assertion
+assert_lbtc_asset =
+  lbtc_asset () @?= fast_lbtc_asset ()
+ where
+  fast_lbtc_asset = testCoreEval Prog.lbtcAsset
 
 prop_script_cmr :: Property
 prop_script_cmr = forallPrimEnv $ \env -> fast_script_cmr env () == script_cmr env ()

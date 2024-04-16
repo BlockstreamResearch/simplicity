@@ -63,6 +63,7 @@ module Simplicity.Elements.FFI.Jets
  , calculate_asset
  , calculate_explicit_token
  , calculate_confidential_token
+ , lbtc_asset
  , outpoint_hash
  , asset_amount_hash
  , nonce_hash
@@ -180,6 +181,7 @@ foreign import ccall unsafe "" c_calculate_issuance_entropy :: Ptr FrameItem -> 
 foreign import ccall unsafe "" c_calculate_asset :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_calculate_explicit_token :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_calculate_confidential_token :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_lbtc_asset :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_outpoint_hash :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_asset_amount_hash :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_nonce_hash :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -406,6 +408,9 @@ calculate_explicit_token = unsafeLocalCoreJet c_calculate_explicit_token
 
 calculate_confidential_token :: Word256 -> Maybe Word256
 calculate_confidential_token = unsafeLocalCoreJet c_calculate_confidential_token
+
+lbtc_asset :: () -> Maybe Word256
+lbtc_asset = unsafeLocalCoreJet c_lbtc_asset
 
 outpoint_hash :: (Ctx8, (S Word256, (Word256, Word32))) -> Maybe Ctx8
 outpoint_hash = unsafeLocalCoreJet c_outpoint_hash
