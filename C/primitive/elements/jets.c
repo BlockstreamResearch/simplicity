@@ -828,6 +828,18 @@ bool calculate_confidential_token(frameItem* dst, frameItem src, const txEnv* en
   return true;
 }
 
+/* lbtc_asset : ONE |- TWO^256 */
+bool lbtc_asset(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused.
+  (void) env; // env is unused.
+  const sha256_midstate lbtc_assetid = {{
+    0x6d521c38u, 0xec1ea157u, 0x34ae22b7u, 0xc4606441u, 0x2829c0d0u, 0x579f0a71u, 0x3d1c04edu, 0xe979026fu
+  }};
+
+  writeHash(dst, &lbtc_assetid);
+  return true;
+}
+
 /* build_tapleaf_simplicity : TWO^256 |- TWO^256 */
 bool build_tapleaf_simplicity(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused.

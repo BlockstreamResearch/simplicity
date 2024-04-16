@@ -6,6 +6,7 @@ module Simplicity.Programs.Elements.Lib
   ( Elements.Conf
   , calculateIssuanceEntropy, calculateAsset, calculateExplicitToken, calculateConfidentialToken
   , buildTapleafSimplicity, buildTapbranch
+  , lbtcAsset
   , outpointHash, assetAmountHash, nonceHash, annexHash
   , Elements.Hash, Elements.Ctx8
   ) where
@@ -19,6 +20,7 @@ calculateExplicitToken = Elements.calculateExplicitToken Elements.lib
 calculateConfidentialToken = Elements.calculateConfidentialToken Elements.lib
 buildTapleafSimplicity = Elements.buildTapleafSimplicity Elements.lib
 buildTapbranch = Elements.buildTapbranch Elements.lib
+lbtcAsset = Elements.lbtcAsset Elements.lib
 outpointHash = Elements.outpointHash Elements.libAssert
 assetAmountHash = Elements.assetAmountHash Elements.libAssert
 nonceHash = Elements.nonceHash Elements.libAssert
