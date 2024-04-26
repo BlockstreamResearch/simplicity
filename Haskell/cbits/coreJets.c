@@ -307,6 +307,7 @@ COREWRAP_(divides_8)
 COREWRAP_(divides_16)
 COREWRAP_(divides_32)
 COREWRAP_(divides_64)
+COREWRAP_(div_mod_128_64)
 
 COREWRAP_(sha_256_iv)
 COREWRAP_(sha_256_block)

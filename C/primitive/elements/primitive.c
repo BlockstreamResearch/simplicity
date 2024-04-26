@@ -868,6 +868,13 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
          case 6: *result = MEDIAN_64; return SIMPLICITY_NO_ERROR;
         }
         break;
+       case 21: /* Div2n1n */
+        code = decodeUptoMaxInt(stream);
+        if (code < 0) return (simplicity_err)code;
+        switch (code) {
+         case 6: *result = DIV_MOD_128_64; return SIMPLICITY_NO_ERROR;
+        }
+        break;
        case 22: /* DivMod */
         code = decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;

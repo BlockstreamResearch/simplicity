@@ -1,13 +1,16 @@
 module Simplicity.FFI.Tests
  ( tests
  , main
+ , prop_div_mod_128_64 
  ) where
 
 import Control.Arrow ((***))
+import Data.Bits ((.|.))
 import Lens.Family2 ((^.), (^..), over, allOf, review, zipWithOf)
 import Test.Tasty (TestTree, defaultMain, testGroup)
 import Test.Tasty.QuickCheck ( Arbitrary(..), Gen, Property, arbitraryBoundedIntegral, arbitrarySizedBoundedIntegral, shrinkIntegral
                              , choose, forAll, property, Discard(Discard), testProperty, vectorOf, withMaxSuccess
+                             , label
                              )
 import Test.Tasty.HUnit (Assertion, (@=?), assertBool, testCase)
 
@@ -391,6 +394,9 @@ tests = testGroup "C / SPEC"
         , testProperty "divides_zero_16"  prop_divides_zero_16
         , testProperty "divides_zero_32"  prop_divides_zero_32
         , testProperty "divides_zero_64"  prop_divides_zero_64
+        , testProperty "div_mod_128_64"   prop_div_mod_128_64
+        , testProperty "div_mod_128_64_low_y"   prop_div_mod_128_64_low_y
+        , testProperty "div_mod_128_64_high_x"   prop_div_mod_128_64_high_x
         ]
       , testGroup "sha256" $
         [ testCase     "sha_256_iv"                   assert_sha_256_iv
@@ -2980,6 +2986,44 @@ prop_divides_zero_64 = \x -> let input = (toW64 x, toW64 0)
  where
   toW64 = toWord64 . fromIntegral
   fastF = testCoreEval (specification (ArithJet Divides64))
+
+prop_div_mod_128_64 :: W.Word64 -> W.Word64 -> W.Word64 -> Property
+prop_div_mod_128_64 = \xh0 xl0 y0 ->
+  let y = y0 .|. 2^63
+      xh = y - 1 - xh0 `mod` y
+      xl = - xl0
+      input = ((toW64 xh, toW64 xl), toW64 y)
+      x = toInteger xh * 2^64 + toInteger xl
+      qh = (x `div` 2^32) `div` toInteger y
+      approxQh = toInteger xh `div` (toInteger y `div` 2^32)
+      annotate | 2^32 <= approxQh = label "high approxQh"
+               | otherwise = label ("deltaQh: " ++ show (approxQh -qh))
+   in annotate $ fastF input == C.div_mod_128_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod128_64))
+
+prop_div_mod_128_64_low_y :: W.Word64 -> W.Word64 -> W.Word64 -> Bool
+prop_div_mod_128_64_low_y = \xh0 xl0 y0 ->
+  let y = y0 `mod` 2^63
+      xh = y - xh0 `mod` (y + 1)
+      xl = - xl0
+      input = ((toW64 xh, toW64 xl), toW64 y)
+   in fastF input == C.div_mod_128_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod128_64))
+
+prop_div_mod_128_64_high_x :: W.Word64 -> W.Word64 -> W.Word64 -> Bool
+prop_div_mod_128_64_high_x = \xh0 xl0 y0 ->
+  let y = y0
+      xh = - xh0
+      xl = - xl0
+      input = ((toW64 xh, toW64 xl), toW64 y)
+   in fastF input == C.div_mod_128_64 input
+ where
+  toW64 = toWord64 . fromIntegral
+  fastF = testCoreEval (specification (ArithJet DivMod128_64))
 
 assert_sha_256_iv :: Assertion
 assert_sha_256_iv = fastF () @=? C.sha_256_iv ()

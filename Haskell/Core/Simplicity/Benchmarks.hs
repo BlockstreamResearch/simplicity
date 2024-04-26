@@ -468,6 +468,7 @@ rawBenchmark "RightRotate64" = rawBenchmark "Add8"
 rawBenchmark "TotalFee" = rawBenchmark "OutputRangeProofsHash"
 rawBenchmark "GejEquiv" = rawBenchmark "GejXEquiv"
 rawBenchmark "GejGeEquiv" = rawBenchmark "GejXEquiv"
+rawBenchmark "DivMod128_64" = rawBenchmark "DivMod64"
 
 -- benchmark adjusts the raw benchmark by giving a discount to batch verifiable jets.
 benchmark :: String -> Double

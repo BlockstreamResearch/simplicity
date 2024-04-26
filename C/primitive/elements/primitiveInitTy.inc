@@ -105,6 +105,7 @@
 (*bound_var)[ty_pw64w32] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_w64], &(*bound_var)[ty_w32] } }};
 (*bound_var)[ty_pw64w128] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_w64], &(*bound_var)[ty_w128] } }};
 (*bound_var)[ty_pw64w256] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_w64], &(*bound_var)[ty_w256] } }};
+(*bound_var)[ty_pw128w64] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_w128], &(*bound_var)[ty_w64] } }};
 (*bound_var)[ty_pw256w32] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_w256], &(*bound_var)[ty_w32] } }};
 (*bound_var)[ty_pw256w512] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_w256], &(*bound_var)[ty_w512] } }};
 (*bound_var)[ty_pw256pbw256] = (unification_var){ .isBound = true, .bound = { .kind = PRODUCT, .arg = { &(*bound_var)[ty_w256], &(*bound_var)[ty_pbw256] } }};

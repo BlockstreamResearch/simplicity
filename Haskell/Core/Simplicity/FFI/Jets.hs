@@ -82,6 +82,7 @@ module Simplicity.FFI.Jets
  , divide_8, divide_16, divide_32, divide_64
  , modulo_8, modulo_16, modulo_32, modulo_64
  , divides_8, divides_16, divides_32, divides_64
+ , div_mod_128_64
  , sha_256_iv, sha_256_block
  , sha_256_ctx_8_init
  , sha_256_ctx_8_add_1
@@ -421,6 +422,7 @@ foreign import ccall unsafe "" c_divides_8 :: Ptr FrameItem -> Ptr FrameItem -> 
 foreign import ccall unsafe "" c_divides_16 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_divides_32 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_divides_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_div_mod_128_64 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 foreign import ccall unsafe "" c_sha_256_iv :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_sha_256_block :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -1397,6 +1399,9 @@ divides_32 = unsafeLocalCoreJet c_divides_32
 
 divides_64 :: (Word64, Word64) -> Maybe Bit
 divides_64 = unsafeLocalCoreJet c_divides_64
+
+div_mod_128_64 :: (Word128, Word64) -> Maybe (Word64, Word64)
+div_mod_128_64 = unsafeLocalCoreJet c_div_mod_128_64
 
 sha_256_iv :: () -> Maybe Sha256.Hash
 sha_256_iv = unsafeLocalCoreJet c_sha_256_iv

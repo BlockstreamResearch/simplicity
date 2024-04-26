@@ -376,6 +376,7 @@ data ArithJet a b where
   Divides16 :: ArithJet (Word16, Word16) Bit
   Divides32 :: ArithJet (Word32, Word32) Bit
   Divides64 :: ArithJet (Word64, Word64) Bit
+  DivMod128_64 :: ArithJet (Word128, Word64) (Word64, Word64)
 deriving instance Eq (ArithJet a b)
 deriving instance Show (ArithJet a b)
 
@@ -771,6 +772,7 @@ specificationArith Divides8 = Prog.divides word8
 specificationArith Divides16 = Prog.divides word16
 specificationArith Divides32 = Prog.divides word32
 specificationArith Divides64 = Prog.divides word64
+specificationArith DivMod128_64 = Prog.div2n1n word64
 
 specificationHash :: Assert term => HashJet a b -> term a b
 specificationHash Sha256Block = Sha256.hashBlock
@@ -1405,6 +1407,11 @@ implementationArith Divides32 = \(x, y) -> do
 implementationArith Divides64 = \(x, y) -> do
   let z = Prelude.mod (fromWord64 y) (fromWord64 x)
   return (toBit (0 == if 0 == fromWord64 x then fromWord64 y else z))
+implementationArith DivMod128_64 = \(x0, y0) -> do
+  let x = fromWord128 x0
+      y = fromWord64 y0
+      (d,m) = Prelude.divMod x y
+  return (if 2^63 <= y && x < y * 2^64 then (toWord64 d, toWord64 m) else (toWord64 (-1), toWord64 (-1)))
 
 implementationHash :: HashJet a b -> a -> Maybe b
 implementationHash = go
@@ -1984,7 +1991,7 @@ arithBook = Shelf
   , minBook
   , maxBook
   , medianBook
-  , Missing
+  , div2n1nBook
   , divModBook
   , divideBook
   , moduloBook
@@ -2141,6 +2148,14 @@ medianBook = Shelf
   , Item $ SomeArrow Median16
   , Item $ SomeArrow Median32
   , Item $ SomeArrow Median64
+  ]
+div2n1nBook = Shelf
+  [ Missing
+  , Missing
+  , Missing
+  , Missing
+  , Missing
+  , Item $ SomeArrow DivMod128_64
   ]
 divModBook = Shelf
   [ Missing
@@ -2551,6 +2566,7 @@ putJetBitArith Median8   = putPositive 20 . putPositive 3
 putJetBitArith Median16  = putPositive 20 . putPositive 4
 putJetBitArith Median32  = putPositive 20 . putPositive 5
 putJetBitArith Median64  = putPositive 20 . putPositive 6
+putJetBitArith DivMod128_64 = putPositive 21 . putPositive 6
 putJetBitArith DivMod8   = putPositive 22 . putPositive 3
 putJetBitArith DivMod16  = putPositive 22 . putPositive 4
 putJetBitArith DivMod32  = putPositive 22 . putPositive 5
@@ -2944,6 +2960,7 @@ jetCostArith Median8 = Benchmarks.cost "Median8"
 jetCostArith Median16 = Benchmarks.cost "Median16"
 jetCostArith Median32 = Benchmarks.cost "Median32"
 jetCostArith Median64 = Benchmarks.cost "Median64"
+jetCostArith DivMod128_64 = Benchmarks.cost "DivMod128_64"
 jetCostArith DivMod8 = Benchmarks.cost "DivMod8"
 jetCostArith DivMod16 = Benchmarks.cost "DivMod16"
 jetCostArith DivMod32 = Benchmarks.cost "DivMod32"
