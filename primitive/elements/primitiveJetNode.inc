@@ -463,6 +463,14 @@
 , .targetIx = ty_pbw8
 , .cost = 195 /* milli weight units */
 }
+,[DIV_MOD_128_64] =
+{ .tag = JET
+, .jet = div_mod_128_64
+, .cmr = {{0x1ee3e60fu, 0x5c9e4f0du, 0x3ec9ebeau, 0x3698eca8u, 0xbd32ac16u, 0x7e69b296u, 0xab9c1836u, 0xb6101d04u}}
+, .sourceIx = ty_pw128w64
+, .targetIx = ty_w128
+, .cost = 220 /* milli weight units */
+}
 ,[DIV_MOD_16] =
 { .tag = JET
 , .jet = div_mod_16

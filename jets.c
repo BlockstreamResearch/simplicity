@@ -1043,6 +1043,165 @@ DIVIDES_(16)
 DIVIDES_(32)
 DIVIDES_(64)
 
+/* Implements the 3n/2n division algorithm for n=32 bits.
+ * For more details see "Fast Recursive Division" by Christoph Burnikel and Joachim Ziegler, MPI-I-98-1-022, Oct. 1998.
+ *
+ * Given a 96 bit (unsigned) value A and a 64 bit value B, set *q and *r to the quotent and remainder of A divided by B.
+ *
+ * ah is passed the high 64 bits of A, and al is passed the low 32 bits of A.
+ * We say that A = [ah;al] where [ah;al] denotes ah * 2^32 + al.
+ *
+ * The value of B is passed in as b.
+ *
+ * This algorithm requires certain preconditons:
+ * 1. A < [B;0]
+ * 2. 2^63 <= B.
+ *
+ * Preconditon 1 ensures that the quotient fits in 32-bits.
+ *
+ * We define the quotient Q and remainder R by the equation:
+ *   A == Q * B + R where 0 <= R < B.
+ *
+ * The algorithm works by estimating the value of Q by
+ *   estQ = (A >> 32) / (B >> 32).
+ *
+ * Preconditon 2 ensures that this estimate is close to the true value of Q.  In fact Q <= estQ <= Q + 2 (see proof below)
+ *
+ * There is a corresponding estR value satifying the equation estR = A - estQ * B.
+ * This estR is one of {R, R - B, R - 2B}.
+ * Therefore if estR is non-negative, then estR is equal to the true R value, and hence estQ is equal to the true Q value.
+ *
+ * If estR is negative we decrement our estimated value of Q and repeatedly try again until the computed remainder is non-negative.
+ *
+ * Lemma 1: Q <= estQ.
+ * A - estQ * B == [ah;al] - estQ * [bh;bl]
+ *              == [ah - estQ * bh; al - estQ * bl]
+ *              == [ah % bh; al] - estQ * bl
+ *              <= [ah % bh; al]
+ *              <  [(ah % bh) + 1; 0]
+ *              <= [bh; 0]
+ *              <= B
+ * Therefore A - (estQ + 1)*B < 0, and hence Q == A/B < estQ + 1.
+ *
+ * Lemma 2: estQ < [1;2] (== 2^32 + 2).
+ * First note that ah - [bh;0] < [1;0] because
+ * ah < B (by precondtion 1)
+ *    < [bh+1;0]
+ *    == [bh;0] + [1;0]
+ *
+ * ah - [1;2]*bh == ah - [bh;2*bh]
+ *               < [1;0] - [0;2*bh]
+ *               <= 0 (by precondition 2.)
+ * Therefore estQ == ah / bh < [1;2].
+ *
+ * Lemma 3: estQ - 2 <= Q.
+ * A - (estQ - 2)*B == 2*B + estR
+ *                  == 2*B + [ah % bh; al] - estQ * bl
+ *                  >= 2*B - estQ * bl
+ *                  == 2*[bh;bl] - estQ * bl
+ *                  == [2*bh;0] + 2*bl - estQ * bl
+ *                  == [2*bh;0] - (estQ - 2) * bl
+ *                  >  [2*bh;0] - [1;0] * bl (by lemma 2.)
+ *                  == [2*bh - bl;0]
+ *                  >= 0 (by precondition 2.)
+ * Therefore Q = A/B >= estQ - 2.
+ */
+static void div_mod_96_64(uint_fast32_t *q, uint_fast64_t *r,
+                          uint_fast64_t ah, uint_fast32_t al,
+                          uint_fast64_t b) {
+  simplicity_debug_assert(ah < b);
+  simplicity_debug_assert(0x8000000000000000u <= b);
+  uint_fast64_t bh = b >> 32;
+  uint_fast64_t bl = b & 0xffffffffu;
+  /* B == b == [bh;bl] */
+  uint_fast64_t estQ = ah / bh;
+
+  /* Precondition 1 guarentees Q is 32-bits, if estQ is greater than UINT32_MAX, then reduce our initial estimated quotient to UINT32_MAX. */
+  *q = estQ <= UINT32_MAX ? estQ : UINT32_MAX;
+
+  /* *q * bh <= estQ * bh <= ah */
+  uint_fast64_t rh = ah - 1u * *q * bh;
+  uint_fast64_t d = 1u * *q * bl;
+
+  /* Test if our estimated remainder, A - *q * B is negative.
+   * A - *q * B  == [ah;al] - *q * [bh;bl]
+   *             == [ah - *q * bh;al - *q * bl]
+   *             == [rh;al] - d
+   *
+   * This value is negative when [rh;al] < d.
+   * Note that d is 64 bit and thus if rh is greater than UINT32_MAX, then this value cannot be negative.
+   */
+  /* This loop is exectued at most twice. */
+  while (rh <= UINT32_MAX && 0x100000000u*rh + al < d) {
+    /* Our estimated remainder, A - *q * B is negative. */
+    /* 0 < d == *q * bl and hence 0 < *q, so this decrement does not underflow. */
+    (*q)--;
+    rh += bh;
+    /* rh == ah - *q * bh */
+    d -= bl;
+    /* d == *q * bl */;
+  }
+  /* *q is the correct quotient. */
+
+  /* Compute the remainder.
+   * The computation below is performed modulo 2^64.
+   * However since we know the remainder lies within [0,b) which is within [0,2^64),
+   * the computation must end up with the correct result even if overflow/underflow occurs.
+   */
+  *r = 0x100000000u*rh + al - d;
+}
+
+/* div_mod_128_64 : TWO^128 * TWO^64 |- TWO^64 * TWO^64 */
+bool div_mod_128_64(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  uint_fast32_t qh, ql;
+  uint_fast64_t r;
+  uint_fast64_t ah = read64(&src);
+  uint_fast32_t am = read32(&src);
+  uint_fast32_t al = read32(&src);
+  uint_fast64_t b = read64(&src);
+
+  /* div2n1n is only defined when 2^(n-1) <= b and when the quotient q < 2^n. */
+  if (0x8000000000000000 <= b && ah < b) {
+    /* We compute the division and remainder of A = [[ah;am];al] by B = b by long division with 32-bit "digits"
+     *
+     * 1.       Q
+     *      ______
+     *    BB) AAAA
+     *        XXX
+     *        ---
+     *         RR
+     *
+     * First divide the high 3 "digit"s (96-bits) of A by the two "digit"s (64-bits) of B,
+     * returning the first "digit" (high 32-bits) of the quotient, and an intermediate remainer consisiting of 2 "digit"s (64-bits).
+     */
+    div_mod_96_64(&qh, &r, ah, am, b);
+    simplicity_debug_assert(r < b);
+    /* 2.       QQ
+     *      ______
+     *    BB) AAA|
+     *        XXX|
+     *        ---|
+     *         RRA
+     *         XXX
+     *         ---
+     *          RR
+     *
+     * Then append the last "digit" of A to the intermidiate remainder and divide that value (96_bits) by the two "digit"s (64-bits) of B,
+     * returning the second "digit" (low 32-bits) of the quotient, and the final remainer consisiting of 2 "digit"s (64-bits).
+     */
+    div_mod_96_64(&ql, &r, r, al, b);
+    write32(dst, qh);
+    write32(dst, ql);
+    write64(dst, r);
+  } else {
+    /* Set all the bits in the output when the input is out of bounds. */
+    write64(dst, (uint64_t)(-1));
+    write64(dst, (uint64_t)(-1));
+  }
+  return true;
+}
+
 /* sha_256_iv : ONE |- TWO^256 */
 bool sha_256_iv(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
