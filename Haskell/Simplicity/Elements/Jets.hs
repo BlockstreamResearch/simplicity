@@ -532,56 +532,56 @@ issuanceCatalogue = book
  , SomeArrow CalculateExplicitToken
  , SomeArrow CalculateConfidentialToken
  ]
-transactionCatalogue = Shelf
- [ Item $ SomeArrow ScriptCMR
- , Item $ SomeArrow InternalKey
- , Item $ SomeArrow CurrentIndex
- , Item $ SomeArrow NumInputs
- , Item $ SomeArrow NumOutputs
- , Item $ SomeArrow LockTime
- , Item $ SomeArrow OutputAsset
- , Item $ SomeArrow OutputAmount
- , Item $ SomeArrow OutputNonce
- , Item $ SomeArrow OutputScriptHash
- , Item $ SomeArrow OutputNullDatum
- , Item $ SomeArrow OutputIsFee
- , Item $ SomeArrow OutputSurjectionProof
- , Item $ SomeArrow OutputRangeProof
- , Item $ SomeArrow TotalFee
- , Item $ SomeArrow CurrentPegin
- , Item $ SomeArrow CurrentPrevOutpoint
- , Item $ SomeArrow CurrentAsset
- , Item $ SomeArrow CurrentAmount
- , Item $ SomeArrow CurrentScriptHash
- , Item $ SomeArrow CurrentSequence
- , Item $ SomeArrow CurrentAnnexHash
- , Item $ SomeArrow CurrentScriptSigHash
- , Item $ SomeArrow CurrentReissuanceBlinding
- , Item $ SomeArrow CurrentNewIssuanceContract
- , Item $ SomeArrow CurrentReissuanceEntropy
- , Item $ SomeArrow CurrentIssuanceAssetAmount
- , Item $ SomeArrow CurrentIssuanceTokenAmount
- , Item $ SomeArrow CurrentIssuanceAssetProof
- , Item $ SomeArrow CurrentIssuanceTokenProof
- , Item $ SomeArrow InputPegin
- , Item $ SomeArrow InputPrevOutpoint
- , Item $ SomeArrow InputAsset
- , Item $ SomeArrow InputAmount
- , Item $ SomeArrow InputScriptHash
- , Item $ SomeArrow InputSequence
- , Item $ SomeArrow InputAnnexHash
- , Item $ SomeArrow InputScriptSigHash
- , Item $ SomeArrow ReissuanceBlinding
- , Item $ SomeArrow NewIssuanceContract
- , Item $ SomeArrow ReissuanceEntropy
- , Item $ SomeArrow IssuanceAssetAmount
- , Item $ SomeArrow IssuanceTokenAmount
- , Item $ SomeArrow IssuanceAssetProof
- , Item $ SomeArrow IssuanceTokenProof
- , Item $ SomeArrow TapleafVersion
- , Item $ SomeArrow Tappath
- , Item $ SomeArrow Version
- , Item $ SomeArrow GenesisBlockHash
+transactionCatalogue = book
+ [ SomeArrow ScriptCMR
+ , SomeArrow InternalKey
+ , SomeArrow CurrentIndex
+ , SomeArrow NumInputs
+ , SomeArrow NumOutputs
+ , SomeArrow LockTime
+ , SomeArrow OutputAsset
+ , SomeArrow OutputAmount
+ , SomeArrow OutputNonce
+ , SomeArrow OutputScriptHash
+ , SomeArrow OutputNullDatum
+ , SomeArrow OutputIsFee
+ , SomeArrow OutputSurjectionProof
+ , SomeArrow OutputRangeProof
+ , SomeArrow TotalFee
+ , SomeArrow CurrentPegin
+ , SomeArrow CurrentPrevOutpoint
+ , SomeArrow CurrentAsset
+ , SomeArrow CurrentAmount
+ , SomeArrow CurrentScriptHash
+ , SomeArrow CurrentSequence
+ , SomeArrow CurrentAnnexHash
+ , SomeArrow CurrentScriptSigHash
+ , SomeArrow CurrentReissuanceBlinding
+ , SomeArrow CurrentNewIssuanceContract
+ , SomeArrow CurrentReissuanceEntropy
+ , SomeArrow CurrentIssuanceAssetAmount
+ , SomeArrow CurrentIssuanceTokenAmount
+ , SomeArrow CurrentIssuanceAssetProof
+ , SomeArrow CurrentIssuanceTokenProof
+ , SomeArrow InputPegin
+ , SomeArrow InputPrevOutpoint
+ , SomeArrow InputAsset
+ , SomeArrow InputAmount
+ , SomeArrow InputScriptHash
+ , SomeArrow InputSequence
+ , SomeArrow InputAnnexHash
+ , SomeArrow InputScriptSigHash
+ , SomeArrow ReissuanceBlinding
+ , SomeArrow NewIssuanceContract
+ , SomeArrow ReissuanceEntropy
+ , SomeArrow IssuanceAssetAmount
+ , SomeArrow IssuanceTokenAmount
+ , SomeArrow IssuanceAssetProof
+ , SomeArrow IssuanceTokenProof
+ , SomeArrow TapleafVersion
+ , SomeArrow Tappath
+ , SomeArrow Version
+ , SomeArrow GenesisBlockHash
  ]
 
 putJetBitElements :: ElementsJet a b -> DList Bool
