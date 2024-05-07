@@ -97,6 +97,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
  *
  * Invariant: pathLen <= 128;
  *            unsigned char controlBlock[33+pathLen*32];
+ *            unsigned char scriptCMR[32];
  */
 typedef struct rawTapEnv {
   const unsigned char* controlBlock;
