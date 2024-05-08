@@ -85,7 +85,7 @@ typedef struct rawTransaction {
 /* A forward declaration for the structure containing a copy (and digest) of the rawTransaction data */
 typedef struct transaction transaction;
 
-/* Allocate and initialize a 'transaction' from a 'rawOuput', copying or hashing the data as needed.
+/* Allocate and initialize a 'transaction' from a 'rawOutput', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
  * Precondition: NULL != rawTx
