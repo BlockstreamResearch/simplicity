@@ -21,6 +21,22 @@ let hp = nixpkgs.haskell.packages.${ghc};
     overrides = self: super: {
       Simplicity = haskell;
 
+      # Temporary work around for https://github.com/wrengr/unification-fd/issues/70
+      "unification-fd" = self.callPackage
+        ({ mkDerivation, base, containers, logict, mtl }:
+        mkDerivation {
+          pname = "unification-fd";
+          version = "0.11.2";
+          sha256 = "1lyx3g10llkr7vl7c2j15ddlqrkz2r684d1laza7nvq97amrqnqv";
+          revision = "1";
+          editedCabalFile = "07xmrqmk99lnp3jyk0dqgnpprm3ghnyjdqva0y13ddh3nw8iiqdj";
+          libraryHaskellDepends = [ base containers logict mtl ];
+          description = "Simple generic unification algorithms";
+          license = nixpkgs.lib.licenses.bsd3;
+          hydraPlatforms = nixpkgs.lib.platforms.none;
+          patches = [ ./unification.patch ];
+        }) {};
+
       # Temporary work around for compiling hlint and hasktags in ghc94.
       microlens = self.microlens_0_4_13_1 or super.microlens;
       microlens-ghc = self.microlens-ghc_0_4_14_1 or super.microlens-ghc;
