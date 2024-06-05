@@ -4,6 +4,7 @@
 #include <time.h>
 #include <getopt.h>
 #include <simplicity/elements/exec.h>
+#include <simplicity/cmr.h>
 #include "ctx8Pruned.h"
 #include "ctx8Unpruned.h"
 #include "dag.h"
@@ -369,6 +370,20 @@ static void test_elements(void) {
     if (tx1) {
       successes++;
       simplicity_err execResult;
+      {
+        unsigned char cmrResult[32];
+        if (simplicity_computeCmr(&execResult, cmrResult, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && IS_OK(execResult)) {
+          if (0 == memcmp(cmrResult, cmr, sizeof(unsigned char[8]))) {
+            successes++;
+          } else {
+            failures++;
+            printf("Unexpected CMR of elementsCheckSigHashAllTx1\n");
+          }
+        } else {
+          failures++;
+          printf("simplicity_computeCmr of elementsCheckSigHashAllTx1 unexpectedly produced %d.\n", execResult);
+        }
+      }
       {
         unsigned char imrResult[32];
         if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, (elementsCheckSigHashAllTx1_cost + 999)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && IS_OK(execResult)) {
