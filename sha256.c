@@ -38,7 +38,7 @@ static inline void Round(uint32_t a, uint32_t b, uint32_t c, uint32_t* d, uint32
  * Precondition: uint32_t s[8];
  *               uint32_t chunk[16]
  */
-void sha256_compression(uint32_t* s, const uint32_t* chunk) {
+static void sha256_compression_portable(uint32_t* s, const uint32_t* chunk) {
     uint32_t a = s[0], b = s[1], c = s[2], d = s[3], e = s[4], f = s[5], g = s[6], h = s[7];
     uint32_t w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15;
 
@@ -119,6 +119,8 @@ void sha256_compression(uint32_t* s, const uint32_t* chunk) {
     s[6] = 1U * s[6] + g;
     s[7] = 1U * s[7] + h;
 }
+
+void (*sha256_compression)(uint32_t* midstate, const uint32_t* block) = sha256_compression_portable;
 
 /* Given a SHA-256 midstate, 'h', of 'len / 512' blocks, and
  * a 'block' with 'len % 512' bits set and with the remaining bits set to 0,
