@@ -30,6 +30,7 @@
  *               NULL != tx;
  *               NULL != taproot;
  *               unsigned char genesisBlockHash[32]
+ *               0 <= budget;
  *               NULL != amr implies unsigned char amr[32]
  *               unsigned char program[program_len]
  *               unsigned char witness[witness_len]
@@ -41,7 +42,11 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
                                               , const unsigned char* amr
                                               , const unsigned char* program, size_t program_len
                                               , const unsigned char* witness, size_t witness_len) {
-  if (!error || !tx || !taproot) return false;
+  simplicity_assert(NULL != error);
+  simplicity_assert(NULL != tx);
+  simplicity_assert(NULL != taproot);
+  simplicity_assert(NULL != genesisBlockHash);
+  simplicity_assert(0 <= budget);
   simplicity_assert(NULL != program || 0 == program_len);
   simplicity_assert(NULL != witness || 0 == witness_len);
 
