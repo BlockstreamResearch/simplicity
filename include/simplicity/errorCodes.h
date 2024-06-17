@@ -12,29 +12,30 @@
 typedef enum {
   SIMPLICITY_NO_ERROR = 0,
   SIMPLICITY_ERR_MALLOC = -1,
-  SIMPLICITY_ERR_BITSTREAM_EOF = -2,
   SIMPLICITY_ERR_NOT_YET_IMPLEMENTED = -3,
-  SIMPLICITY_ERR_DATA_OUT_OF_RANGE = -4,
-  SIMPLICITY_ERR_DATA_OUT_OF_ORDER = -6,
-  SIMPLICITY_ERR_FAIL_CODE = -8,
-  SIMPLICITY_ERR_STOP_CODE = -10,
-  SIMPLICITY_ERR_HIDDEN = -12,
+  SIMPLICITY_ERR_DATA_OUT_OF_RANGE = -2,
+  SIMPLICITY_ERR_DATA_OUT_OF_ORDER = -4,
+  SIMPLICITY_ERR_FAIL_CODE = -6,
+  SIMPLICITY_ERR_STOP_CODE = -8,
+  SIMPLICITY_ERR_HIDDEN = -10,
+  SIMPLICITY_ERR_BITSTREAM_EOF = -12,
   SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES = -14,
   SIMPLICITY_ERR_BITSTREAM_ILLEGAL_PADDING = -16,
   SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION = -18,
   SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK = -20,
   SIMPLICITY_ERR_TYPE_INFERENCE_NOT_PROGRAM = -22,
   SIMPLICITY_ERR_WITNESS_EOF = -24,
-  SIMPLICITY_ERR_WITNESS_TRAILING_BITS = -26,
-  SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION = -28,
-  SIMPLICITY_ERR_CMR = -30,
-  SIMPLICITY_ERR_AMR = -32,
+  SIMPLICITY_ERR_WITNESS_TRAILING_BYTES = -26,
+  SIMPLICITY_ERR_WITNESS_ILLEGAL_PADDING = -28,
+  SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION = -30,
+  SIMPLICITY_ERR_CMR = -32,
   SIMPLICITY_ERR_EXEC_BUDGET = -34,
   SIMPLICITY_ERR_EXEC_MEMORY = -36,
   SIMPLICITY_ERR_EXEC_JET = -38,
   SIMPLICITY_ERR_EXEC_ASSERT = -40,
   SIMPLICITY_ERR_ANTIDOS = -42,
   SIMPLICITY_ERR_HIDDEN_ROOT = -44,
+  SIMPLICITY_ERR_AMR = -46,
 } simplicity_err;
 
 /* Check if failure is permanent (or success which is always permanent). */
@@ -53,8 +54,6 @@ static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
     return "No error";
   case SIMPLICITY_ERR_MALLOC:
     return "Memory allocation failed";
-  case SIMPLICITY_ERR_BITSTREAM_EOF:
-    return "Unexpected end of bitstream";
   case SIMPLICITY_ERR_NOT_YET_IMPLEMENTED:
     return "Incomplete implementation (this should not occur)";
   case SIMPLICITY_ERR_DATA_OUT_OF_RANGE:
@@ -67,6 +66,8 @@ static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
     return "Program has STOP node";
   case SIMPLICITY_ERR_HIDDEN:
     return "Program has illegal HIDDEN child node";
+  case SIMPLICITY_ERR_BITSTREAM_EOF:
+    return "Unexpected end of bitstream";
   case SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES:
     return "Trailing bytes after final byte of program";
   case SIMPLICITY_ERR_BITSTREAM_ILLEGAL_PADDING:
@@ -79,14 +80,14 @@ static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
     return "Expression not unit to unit";
   case SIMPLICITY_ERR_WITNESS_EOF:
     return "Unexpected end of witness block";
-  case SIMPLICITY_ERR_WITNESS_TRAILING_BITS:
-    return "Trailing bits after final value of witness block";
+  case SIMPLICITY_ERR_WITNESS_TRAILING_BYTES:
+    return "Trailing bytes after final byte of witness";
+  case SIMPLICITY_ERR_WITNESS_ILLEGAL_PADDING:
+    return "Illegal padding in final byte of witness";
   case SIMPLICITY_ERR_UNSHARED_SUBEXPRESSION:
     return "Subexpression not properly shared";
   case SIMPLICITY_ERR_CMR:
     return "Program's CMR does not match";
-  case SIMPLICITY_ERR_AMR:
-    return "Program's AMR does not match";
   case SIMPLICITY_ERR_EXEC_BUDGET:
     return "Program's execution cost could exceed budget";
   case SIMPLICITY_ERR_EXEC_MEMORY:
@@ -99,6 +100,8 @@ static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
     return "Anti-DOS check failed";
   case SIMPLICITY_ERR_HIDDEN_ROOT:
     return "Program's root is HIDDEN";
+  case SIMPLICITY_ERR_AMR:
+    return "Program's AMR does not match";
   default:
     return "Unknown error code";
   }

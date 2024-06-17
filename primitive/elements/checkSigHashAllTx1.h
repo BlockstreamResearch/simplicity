@@ -14,6 +14,8 @@
  */
 extern const unsigned char elementsCheckSigHashAllTx1[];
 extern const size_t sizeof_elementsCheckSigHashAllTx1;
+extern const unsigned char elementsCheckSigHashAllTx1_witness[];
+extern const size_t sizeof_elementsCheckSigHashAllTx1_witness;
 
 /* The commitment Merkle root of the above elementsCheckSigHashAllTx1 Simplicity expression. */
 extern const uint32_t elementsCheckSigHashAllTx1_cmr[];

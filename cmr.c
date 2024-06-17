@@ -33,7 +33,7 @@ bool simplicity_computeCmr( simplicity_err* error, unsigned char* cmr
   } else {
     simplicity_assert(NULL != dag);
     simplicity_assert((size_t)dag_len <= DAG_LEN_MAX);
-    *error = SIMPLICITY_NO_ERROR;
+    *error = closeBitstream(&stream);
     sha256_fromMidstate(cmr, dag[dag_len-1].cmr.s);
   }
 
