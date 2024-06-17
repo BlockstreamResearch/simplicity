@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <simplicity/errorCodes.h>
+#include "bitstream.h"
 #include "bitstring.h"
 #include "bounded.h"
 #include "jets.h"
@@ -364,17 +365,17 @@ simplicity_err verifyCanonicalOrder(dag_node* dag, const size_t len);
 /* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
  * to construct a compact representation of a witness value of type B.
- * This function only returns 'SIMPLICITY_NO_ERROR' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
- * If extra bits remain, then 'SIMPLICITY_ERR_WITNESS_TRAILING_BITS' is returned.
  * If there are not enough bits, then 'SIMPLICITY_ERR_WITNESS_EOF' is returned.
+ * If a witness node would end up with more than CELLS_MAX bits, then 'SIMPLICITY_ERR_EXEC_MEMORY' is returned.
+ * Otherwise, returns 'SIMPLICITY_NO_ERROR'.
  *
  * Precondition: dag_node dag[len] and 'dag' without witness data and is well-typed with 'type_dag';
- *               witness is a valid bitstring;
+ *               witness is a valid bitstream;
  *
  * Postcondition: dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'
  *                  when the result is 'SIMPLICITY_NO_ERROR';
  */
-simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring witness);
+simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstream *witness);
 
 /* Verifies that identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses are all unique,
  * including that each hidden root hash for every 'HIDDEN' node is unique.

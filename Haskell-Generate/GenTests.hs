@@ -90,7 +90,8 @@ fileC :: forall jt a b. (Simplicity.Elements.JetType.JetType jt, TyC a, TyC b) =
 fileC example = "#include \""++example^.name++".h\"\n"
         ++ "\n"
         ++ showComment (example^.withJets) (example^.text)
-        ++ showBinary (example^.fullname) binary
+        ++ showBinary (example^.fullname) binP
+        ++ showBinary (example^.fullname++"_witness") binW
         ++ "\n"
         ++ "/* The commitment Merkle root of the above "++example^.fullname++" Simplicity expression. */\n"
         ++ showHash (example^.fullname++"_cmr") cmr
@@ -104,8 +105,9 @@ fileC example = "#include \""++example^.name++".h\"\n"
         ++ "/* The cost of the above "++example^.fullname++" Simplicity expression in milli weight units. */\n"
         ++ "const ubounded "++example^.fullname++"_cost = "++ (if cost < 2^32 then show cost else "UBOUNDED_MAX") ++";\n"
  where
-  binary = BS.unpack . runPut . putBitStream . putTermLengthCode
-         $ (unwrap (example^.prog) :: Simplicity.Elements.Dag.JetDag jt a b)
+  (program,witness) = putTermLengthCode (unwrap (example^.prog) :: Simplicity.Elements.Dag.JetDag jt a b)
+  binP = BS.unpack . runPut $ putBitStream program
+  binW = BS.unpack . runPut $ putBitStream witness
   cmr = commitmentRoot . unwrap $ example^.prog
   imr = identityRoot . unwrap $ example^.prog
   amr = annotatedRoot . unwrap $ example^.prog
@@ -121,6 +123,8 @@ fileH example = "#ifndef "++headerDef++"\n"
              ++ showComment (example^.withJets) (example^.text)
              ++ "extern const unsigned char "++example^.fullname++"[];\n"
              ++ "extern const size_t sizeof_"++example^.fullname++";\n"
+             ++ "extern const unsigned char "++example^.fullname++"_witness[];\n"
+             ++ "extern const size_t sizeof_"++example^.fullname++"_witness;\n"
              ++ "\n"
              ++ "/* The commitment Merkle root of the above "++example^.fullname++" Simplicity expression. */\n"
              ++ "extern const uint32_t "++example^.fullname++"_cmr[];\n"

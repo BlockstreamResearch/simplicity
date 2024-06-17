@@ -376,11 +376,11 @@ getTermLengthCode :: (Monad m, Simplicity term, TyC a, TyC b) => m Void -> m Boo
 getTermLengthCode = BitString.getTermLengthCode (Proxy :: Proxy (SomeArrow JetType))
 
 -- | This is an instance of 'BitString.putTermStopCode' that specifically encodes the canonical 'JetType' set of known jets.
-putTermStopCode :: (TyC a, TyC b) => JetDag JetType a b -> [Bool]
+putTermStopCode :: (TyC a, TyC b) => JetDag JetType a b -> ([Bool],[Bool])
 putTermStopCode = BitString.putTermStopCode
 
 -- | This is an instance of 'BitString.putTermLengthCode' that specifically encodes the canonical 'JetType' set of known jets.
-putTermLengthCode :: (TyC a, TyC b) => JetDag JetType a b -> [Bool]
+putTermLengthCode :: (TyC a, TyC b) => JetDag JetType a b -> ([Bool],[Bool])
 putTermLengthCode = BitString.putTermLengthCode
 
 -- | 'fastEval' optimizes Simplicity evaluation using Bitcoin jets.

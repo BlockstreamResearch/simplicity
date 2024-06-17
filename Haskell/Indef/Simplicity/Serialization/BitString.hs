@@ -4,8 +4,9 @@ module Simplicity.Serialization.BitString
   ( getDagNoWitnessStopCode, getDagNoWitnessLengthCode
   , getWitnessData
   , getTermStopCode, getTermLengthCode
-  , putDagStopCode, putTermStopCode
-  , putDagLengthCode, putTermLengthCode
+  , putDagNoWitnessStopCode, putDagNoWitnessLengthCode
+  , putWitnessData
+  , putTermStopCode , putTermLengthCode
   ) where
 
 import qualified Data.Vector as V
@@ -86,14 +87,10 @@ getDagNoWitnessLengthCode abort next = do
 -- In other words, @'getWitnessData' dag@ has the type of a binary branching tree with leaves either containing 'SimplicityDag' values or no value.
 -- See "Simplicity.Serialization" for functions to execute this free monad.
 getWitnessData :: (Traversable f, Monad m) => SimplicityDag f Ty jt w
-               -> m Void -- ^ @abort@
                -> m Bool -- ^ @next@
                -> m (SimplicityDag f Ty jt UntypedValue)
-getWitnessData dag abort next = do
-{- Consider replacing @UV.Vector Bool@ with @Vector Bit@ from https://github.com/mokus0/bitvec when issues are resolved.
-   see https://github.com/mokus0/bitvec/issues/3 & https://github.com/mokus0/bitvec/issues/4. -}
-  witnessBlob <- UV.fromList <$> getBitString next
-  maybe (vacuous abort) return $ evalExactVector (\next -> traverse (witnessData (witnessDecoder next)) dag) witnessBlob
+getWitnessData dag next = do
+  traverse (witnessData (witnessDecoder next)) dag
  where
   witnessDecoder next ty _ = case reflect ty of
                               (SomeTy b) -> untypedValue <$> getValueR b next
@@ -121,7 +118,7 @@ getTermStopCode :: forall proxy jt m term a b. (JetType jt, Monad m, Simplicity 
 getTermStopCode _ abort next = do
   dag <- getDagNoWitnessStopCode abort next :: m (SimplicityDag V.Vector () (SomeArrow jt) ())
   tyDag <- either (\err -> vacuous abort) return $ typeInference proxy dag
-  wTyDag <- getWitnessData tyDag abort next
+  wTyDag <- getWitnessData tyDag next
   either (\err -> vacuous abort) return $ typeCheck wTyDag
  where
   proxy :: term a b
@@ -150,7 +147,7 @@ getTermLengthCode :: forall proxy jt m term a b. (JetType jt, Monad m, Simplicit
 getTermLengthCode _ abort next = do
   dag <- getDagNoWitnessLengthCode abort next :: m (SimplicityDag V.Vector () (SomeArrow jt) ())
   tyDag <- either (\err -> vacuous abort) return $ typeInference proxy dag
-  wTyDag <- getWitnessData tyDag abort next
+  wTyDag <- getWitnessData tyDag next
   either (\err -> vacuous abort) return $ typeCheck wTyDag
  where
   proxy :: term a b
@@ -181,43 +178,46 @@ putNode = go
 --
 -- Encoding of witness data requires that its type annotation be the value's principle type.
 -- This function may return 'Nothing' if witness data cannot be encoded using the witnesses' type annoation.
-putDagStopCode :: (Foldable f, JetType jt) => SimplicityDag f Ty (SomeArrow jt) UntypedValue -> Maybe [Bool]
-putDagStopCode v = do
-  wd <- foldr (\x y -> encodeWitnessDatum x <*> y) (Just []) v
-  return $ foldr putNode ([o,i,o,i,i] ++ putBitString wd []) v
+putDagNoWitnessStopCode :: (Foldable f, JetType jt) => SimplicityDag f Ty (SomeArrow jt) UntypedValue -> [Bool]
+putDagNoWitnessStopCode v = foldr putNode [o,i,o,i,i] v
  where
   (o,i) = (False,True)
-
-encodeWitnessDatum (Witness _ b w) = case reflect b of
-                                       SomeTy rb -> ((++) . putValueR rb) <$> castUntypedValue w
-encodeWitnessDatum _ = Just id
 
 -- Caution: Maybe [Bool] is a type that might cause space leaks.  Investiagte alternatives.
 -- | Encodes an 'SimplicityDag' as a self-delimiting, length-code based bit-stream encoding, including witness data.
 --
 -- Encoding of witness data requires that its type annotation be the value's principle type.
 -- This function may return 'Nothing' if witness data cannot be encoded using the witnesses' type annoation.
-putDagLengthCode :: (Foldable f, JetType jt) => SimplicityDag f Ty (SomeArrow jt) UntypedValue -> Maybe [Bool]
-putDagLengthCode v = do
-  wd <- foldr (\x y -> encodeWitnessDatum x <*> y) (Just []) v
-  return . putPositive len $ foldr putNode (putBitString wd []) v
+putDagNoWitnessLengthCode :: (Foldable f, JetType jt) => SimplicityDag f Ty (SomeArrow jt) UntypedValue -> [Bool]
+putDagNoWitnessLengthCode v = putPositive len $ foldr putNode [] v
  where
   len = toInteger $ length v
+
+putWitnessData :: (Foldable f, JetType jt) => SimplicityDag f Ty (SomeArrow jt) UntypedValue -> Maybe [Bool]
+putWitnessData v = foldr (\x y -> encodeWitnessDatum x <*> y) (Just []) v
+ where
+  encodeWitnessDatum (Witness _ b w) = case reflect b of
+                                         SomeTy rb -> ((++) . putValueR rb) <$> castUntypedValue w
+  encodeWitnessDatum _ = Just id
 
 -- | Encodes a Simplicity expression as a self-delimiting, stop-code based, bit-stream encoding.
 --
 -- Subexpressions matching @'JetType' jt@ are replaced and encoded as jets.
-putTermStopCode :: (JetType jt, TyC a, TyC b) => JetDag jt a b -> [Bool]
-putTermStopCode dag = result
+putTermStopCode :: (JetType jt, TyC a, TyC b) => JetDag jt a b -> ([Bool],[Bool])
+putTermStopCode dag = (prog, witness)
  where
+  jd = jetDag dag
+  prog = putDagNoWitnessStopCode jd
   {- jetDag ought not to ever produce a value where putDag fails. -}
-  Just result = putDagStopCode (jetDag dag)
+  Just witness = putWitnessData jd
 
 -- | Encodes a Simplicity expression as a self-delimiting, length-code based, bit-stream encoding.
 --
 -- Subexpressions matching @'JetType' jt@ are replaced and encoded as jets.
-putTermLengthCode :: (JetType jt, TyC a, TyC b) => JetDag jt a b -> [Bool]
-putTermLengthCode dag = result
+putTermLengthCode :: (JetType jt, TyC a, TyC b) => JetDag jt a b -> ([Bool],[Bool])
+putTermLengthCode dag = (prog, witness)
  where
+  jd = jetDag dag
+  prog = putDagNoWitnessLengthCode jd
   {- jetDag ought not to ever produce a value where putDag fails. -}
-  Just result = putDagLengthCode (jetDag dag)
+  Just witness = putWitnessData jd

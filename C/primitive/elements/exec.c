@@ -10,13 +10,13 @@
 #include "../../simplicity_assert.h"
 #include "../../typeInference.h"
 
-/* Deserialize a Simplicity 'program' and execute it in the environment of the 'ix'th input of 'tx' with `taproot`.
+/* Deserialize a Simplicity 'program' with its 'witness' data and execute it in the environment of the 'ix'th input of 'tx' with `taproot`.
  *
  * If at any time malloc fails then '*error' is set to 'SIMPLICITY_ERR_MALLOC' and 'false' is returned,
  * meaning we were unable to determine the result of the simplicity program.
  * Otherwise, 'true' is returned indicating that the result was successfully computed and returned in the '*error' value.
  *
- * If deserialization, analysis, or execution fails, then '*error' is set to some SIMPLICITY_ERR.
+ * If deserialization, analysis, or execution fails, then '*error' is set to some simplicity_err.
  *
  * If 'amr != NULL' and the annotated Merkle root of the decoded expression doesn't match 'amr' then '*error' is set to 'SIMPLICITY_ERR_AMR'.
  *
@@ -32,19 +32,21 @@
  *               unsigned char genesisBlockHash[32]
  *               NULL != amr implies unsigned char amr[32]
  *               unsigned char program[program_len]
+ *               unsigned char witness[witness_len]
  */
 extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned char* imr
                                               , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
                                               , const unsigned char* genesisBlockHash
                                               , int64_t budget
                                               , const unsigned char* amr
-                                              , const unsigned char* program, size_t program_len) {
+                                              , const unsigned char* program, size_t program_len
+                                              , const unsigned char* witness, size_t witness_len) {
   if (!error || !tx || !taproot) return false;
   simplicity_assert(NULL != program || 0 == program_len);
+  simplicity_assert(NULL != witness || 0 == witness_len);
 
   combinator_counters census;
   dag_node* dag = NULL;
-  bitstring witness;
   int32_t dag_len;
   sha256_midstate amr_hash, genesis_hash;
 
@@ -61,11 +63,7 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
     }
     simplicity_assert(NULL != dag);
     simplicity_assert((size_t)dag_len <= DAG_LEN_MAX);
-
-    *error = decodeWitnessData(&witness, &stream);
-    if (IS_OK(*error)) {
-      *error = closeBitstream(&stream);
-    }
+    *error = closeBitstream(&stream);
   }
 
   if (IS_OK(*error)) {
@@ -84,9 +82,15 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
       }
     }
     if (IS_OK(*error)) {
-      *error = fillWitnessData(dag, type_dag, (size_t)dag_len, witness);
-    }
+      bitstream witness_stream = initializeBitstream(witness, witness_len);
+      *error = fillWitnessData(dag, type_dag, (size_t)dag_len, &witness_stream);
       if (IS_OK(*error)) {
+        *error = closeBitstream(&witness_stream);
+        if (SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES == *error) *error = SIMPLICITY_ERR_WITNESS_TRAILING_BYTES;
+        if (SIMPLICITY_ERR_BITSTREAM_ILLEGAL_PADDING == *error) *error = SIMPLICITY_ERR_WITNESS_ILLEGAL_PADDING;
+      }
+    }
+    if (IS_OK(*error)) {
       sha256_midstate imr_buf;
       static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(sha256_midstate), "imr_buf array too large.");
       static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");

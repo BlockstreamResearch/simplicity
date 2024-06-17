@@ -124,11 +124,13 @@ prop_getPutBitStringDag stopCode = forallSimplicityDag prop
                        | not (compareDag compareWitness v (toList wdag)) -> failed { reason = "Bitstring.getWitnessData returend bad value" }
                        | otherwise -> succeeded
    where
-    Just bs = (if stopCode then BitString.putDagStopCode else BitString.putDagLengthCode) v -- generation is designed to create terms that always succeed at serializaiton.
-    eval = flip evalStreamWithError bs $ \abort next -> do
-     pdag <- (if stopCode then BitString.getDagNoWitnessStopCode else BitString.getDagNoWitnessLengthCode) abort next
-     wdag <- BitString.getWitnessData vStripped abort next
-     return (pdag, wdag)
+    pbs = (if stopCode then BitString.putDagNoWitnessStopCode else BitString.putDagNoWitnessLengthCode) v
+    Just wbs = BitString.putWitnessData v -- generation is designed to create terms that always succeed at serializaiton.
+    evalPDag = flip evalStreamWithError pbs $ \abort next -> do
+     (if stopCode then BitString.getDagNoWitnessStopCode else BitString.getDagNoWitnessLengthCode) abort next
+    evalWDag = flip evalStreamWithError wbs $ \abort next -> do
+     BitString.getWitnessData vStripped next
+    eval = (,) <$> evalPDag <*> evalWDag
     vStripped = v & traverse . witness_ .~ ()
      where
       witness_ :: Traversal (TermF ty j w0 a) (TermF ty j w1 a) w0 w1

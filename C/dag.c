@@ -472,31 +472,31 @@ simplicity_err verifyCanonicalOrder(dag_node* dag, const size_t len) {
 /* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
  * to construct a compact representation of a witness value of type B.
- * This function only returns 'SIMPLICITY_NO_ERROR' when exactly 'witness.len' bits are consumed by all the 'dag's witness values.
- * If extra bits remain, then 'SIMPLICITY_ERR_WITNESS_TRAILING_BITS' is returned.
  * If there are not enough bits, then 'SIMPLICITY_ERR_WITNESS_EOF' is returned.
- *
- * Note: the 'witness' value is passed by copy because the implementation manipulates a local copy of the structure.
+ * If a witness node would end up with more than CELLS_MAX bits, then 'SIMPLICITY_ERR_EXEC_MEMORY' is returned.
+ * Otherwise, returns 'SIMPLICITY_NO_ERROR'.
  *
  * Precondition: dag_node dag[len] and 'dag' without witness data and is well-typed with 'type_dag';
- *               witness is a valid bitstring;
+ *               witness is a valid bitstream;
  *
  * Postcondition: dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'
  *                  when the result is 'SIMPLICITY_NO_ERROR';
  */
-simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstring witness) {
+simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstream *witness) {
+  static_assert(CELLS_MAX <= 0x80000000, "CELLS_MAX is too large.");
   for (size_t i = 0; i < len; ++i) {
     if (WITNESS == dag[i].tag) {
-      if (witness.len <= 0) {
-        /* There is no more data left in witness. */
+      if (CELLS_MAX < type_dag[WITNESS_B(dag, type_dag, i)].bitSize) return SIMPLICITY_ERR_EXEC_MEMORY;
+      if (witness->len <= 0) {
+        /* There is no data in the witness. */
         dag[i].compactValue = (bitstring){0};
         /* This is fine as long as the witness type is trivial */
         if (type_dag[WITNESS_B(dag, type_dag, i)].bitSize) return SIMPLICITY_ERR_WITNESS_EOF;
       } else {
         dag[i].compactValue = (bitstring)
-          { .arr = &witness.arr[witness.offset/CHAR_BIT]
-          , .offset = witness.offset % CHAR_BIT
-          , .len = witness.len /* The value of .len will be finalized after the while loop. */
+          { .arr = witness->arr
+          , .offset = witness->offset
+          , .len = 0 /* The value of .len will computed within the while loop. */
           };
 
         /* Traverse the witness type to parse the witness's compact representation as a bit string. */
@@ -507,9 +507,9 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
           if (SUM == type_dag[cur].kind) {
             /* Parse one bit and traverse the left type or the right type depending on the value of the bit parsed. */
             simplicity_assert(calling);
-            if (witness.len <= 0) return SIMPLICITY_ERR_WITNESS_EOF;
-            bool bit = 1 & (witness.arr[witness.offset/CHAR_BIT] >> (CHAR_BIT - 1 - witness.offset % CHAR_BIT));
-            witness.offset++; witness.len--;
+            int32_t bit = read1Bit(witness);
+            if (bit < 0) return SIMPLICITY_ERR_WITNESS_EOF;
+            dag[i].compactValue.len++;
             size_t next = typeSkip(type_dag[cur].typeArg[bit], type_dag);
             if (next) {
               type_dag[next].back = type_dag[cur].back;
@@ -542,10 +542,6 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
             }
           }
         }
-        /* The length of this 'WITNESS' node's witness value is
-         * the difference between the remaining witness length from before and after parsing.
-         */
-        dag[i].compactValue.len -= witness.len;
 
         /* Note: Above we use 'typeSkip' to skip over long chains of products against trivial types
          * This avoids a potential DOS vulnerability where a DAG of deeply nested products of unit types with sharing is traversed,
@@ -558,7 +554,7 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
       }
     }
   }
-  return 0 == witness.len ? SIMPLICITY_NO_ERROR : SIMPLICITY_ERR_WITNESS_TRAILING_BITS;
+  return SIMPLICITY_NO_ERROR;
 }
 
 /* Verifies that identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses are all unique,

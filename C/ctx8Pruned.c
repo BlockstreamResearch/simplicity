@@ -260,6 +260,11 @@ const unsigned char ctx8Pruned[] = {
 };
 
 const size_t sizeof_ctx8Pruned = sizeof(ctx8Pruned);
+const unsigned char ctx8Pruned_witness[] = {
+
+};
+
+const size_t sizeof_ctx8Pruned_witness = sizeof(ctx8Pruned_witness);
 
 /* The commitment Merkle root of the above ctx8Pruned Simplicity expression. */
 const uint32_t ctx8Pruned_cmr[] = {
