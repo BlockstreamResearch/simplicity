@@ -5,6 +5,25 @@
 #include "sha256.h"
 #include "secp256k1/secp256k1_impl.h"
 
+/* Tests to see if a secp256k1 jacobian point is on curve.
+ *
+ * This function doesn't occur in the libsecp256k1 library, so we implement it here.
+ * We test if the point satisfies the jacobian equation y^2 = x^3 + 7*z^6.
+ *
+ * Warning, the degenerate point (0, 0, 0) is accepted by this definition even though arguably it isn't on curve.
+ * However libsecp256k1 sets the point to (0, 0, 0) when the infinity flag is set See 'secp256k1_gej_set_infinity',
+ * and we end up using it as a canonical representative of infinity.
+ */
+static bool simplicity_gej_is_valid_var(const secp256k1_gej *a) {
+  secp256k1_fe x3, y2, z6;
+  secp256k1_fe_sqr(&y2, &a->y);
+  secp256k1_fe_sqr(&x3, &a->x); secp256k1_fe_mul(&x3, &x3, &a->x);
+  secp256k1_fe_sqr(&z6, &a->z); secp256k1_fe_mul(&z6, &z6, &a->z); secp256k1_fe_sqr(&z6, &z6);
+  secp256k1_fe_mul_int(&z6, 7);
+  secp256k1_fe_add(&x3, &z6);
+  return secp256k1_fe_equal_var(&y2, &x3);
+}
+
 /* Read a secp256k1 field element value from the 'src' frame, advancing the cursor 256 cells.
  *
  * Precondition: '*src' is a valid read frame for 256 more cells;
@@ -467,14 +486,8 @@ bool gej_is_on_curve(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
 
   secp256k1_gej a;
-  secp256k1_fe x3, y2, z6;
   read_gej(&a, &src);
-  secp256k1_fe_sqr(&y2, &a.y);
-  secp256k1_fe_sqr(&x3, &a.x); secp256k1_fe_mul(&x3, &x3, &a.x);
-  secp256k1_fe_sqr(&z6, &a.z); secp256k1_fe_mul(&z6, &z6, &a.z); secp256k1_fe_sqr(&z6, &z6);
-  secp256k1_fe_mul_int(&z6, 7);
-  secp256k1_fe_add(&x3, &z6);
-  writeBit(dst, secp256k1_fe_equal_var(&y2, &x3));
+  writeBit(dst, simplicity_gej_is_valid_var(&a));
   return true;
 }
 
@@ -499,6 +512,24 @@ bool scale(frameItem* dst, frameItem src, const txEnv* env) {
   secp256k1_ecmult(&r, &a, &na, &ng);
   write_gej(dst, &r);
   return true;
+}
+
+bool safe_scale(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+
+  secp256k1_gej r, a;
+  secp256k1_scalar na;
+  static const secp256k1_scalar ng = SECP256K1_SCALAR_CONST(0, 0, 0, 0, 0, 0, 0, 0);
+
+  read_scalar(&na, &src);
+  read_gej(&a, &src);
+  if (simplicity_gej_is_valid_var(&a)) {
+    secp256k1_ecmult(&r, &a, &na, &ng);
+    write_gej(dst, &r);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 bool generate(frameItem* dst, frameItem src, const txEnv* env) {
@@ -527,6 +558,24 @@ bool linear_combination_1(frameItem* dst, frameItem src, const txEnv* env) {
   secp256k1_ecmult(&r, &a, &na, &ng);
   write_gej(dst, &r);
   return true;
+}
+
+bool safe_linear_combination_1(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused;
+
+  secp256k1_gej r, a;
+  secp256k1_scalar na, ng;
+
+  read_scalar(&na, &src);
+  read_gej(&a, &src);
+  read_scalar(&ng, &src);
+  if (simplicity_gej_is_valid_var(&a)) {
+    secp256k1_ecmult(&r, &a, &na, &ng);
+    write_gej(dst, &r);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 bool linear_verify_1(frameItem* dst, frameItem src, const txEnv* env) {
