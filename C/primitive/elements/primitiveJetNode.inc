@@ -2218,7 +2218,7 @@
 ,[LINEAR_COMBINATION_1] =
 { .tag = JET
 , .jet = linear_combination_1
-, .cmr = {{0xd88320f4u, 0x71f3beeeu, 0xa1313d55u, 0x1e419be0u, 0x5727ae5fu, 0x4de6a2f2u, 0xf26f3cb5u, 0xe8dddd3fu}}
+, .cmr = {{0x00bef144u, 0xda3f5163u, 0x318c01ebu, 0x66cc681fu, 0x29ccb987u, 0xea2a88d0u, 0x83345a1cu, 0xaa082ce3u}}
 , .sourceIx = ty_ppw256pw512w256w256
 , .targetIx = ty_pw512w256
 , .cost = 86722 /* milli weight units */
@@ -3330,7 +3330,7 @@
 ,[SCALE] =
 { .tag = JET
 , .jet = scale
-, .cmr = {{0xb8a80c64u, 0x954912e5u, 0x43d42c1au, 0xf315321bu, 0xcffb6668u, 0x0050fc09u, 0xa5afd756u, 0x011b8284u}}
+, .cmr = {{0x574ce760u, 0x24a5f011u, 0xa2d0bcebu, 0xb0f81a15u, 0xe0f9d06bu, 0x34f20994u, 0x33cb114fu, 0x53468d4fu}}
 , .sourceIx = ty_pw256pw512w256
 , .targetIx = ty_pw512w256
 , .cost = 75377 /* milli weight units */
