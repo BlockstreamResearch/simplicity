@@ -29,6 +29,7 @@ module Simplicity.Programs.LibSecp256k1
   , generate, scale
   , linear_combination_1, linear_check_1, linear_verify_1
   , point_check_1, point_verify_1
+  , safe_scale, safe_linear_combination_1
   -- * Schnorr signature operations
   , PubKey, pubkey_unpack, pubkey_unpack_neg
   , Sig, signature_unpack
@@ -45,6 +46,7 @@ import Data.List (foldl')
 import Simplicity.Digest
 import Simplicity.Functor
 import qualified Simplicity.LibSecp256k1.Spec as LibSecp256k1
+import Simplicity.MerkleRoot
 import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
@@ -809,6 +811,14 @@ mkLib Sha256.Lib{..} = lib
     generate128Small = generate128Signed word16 >>> gej_norm
 
     pubkey_check = (iden &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256) &&& iden
+
+-- | Same as 'linear_combination_1' execept it fails when the given point is off-curve.
+safe_linear_combination_1 :: Assert term => Lib term -> term ((Scalar, GEJ), Scalar) GEJ
+safe_linear_combination_1 m = take (drop (gej_is_on_curve m)) &&& (linear_combination_1 m) >>> assertr cmrFail0 ih
+
+-- | Same as 'scale' execept it fails when the given point is off-curve.
+safe_scale :: Assert term => Lib term -> term (Scalar, GEJ) GEJ
+safe_scale m = drop (gej_is_on_curve m) &&& (scale m) >>> assertr cmrFail0 ih
 
 linear_verify_1 :: Assert term => Lib term -> term (((Scalar, GE), Scalar), GE) ()
 linear_verify_1 m = assert (linear_check_1 m)

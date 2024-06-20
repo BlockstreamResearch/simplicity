@@ -23,7 +23,7 @@ module Simplicity.LibSecp256k1.Spec
    -- * Scalar operations
  , Scalar, scalar, scalar_repr, scalar_pack
  , scalar_zero, scalar_negate, scalar_add, scalar_square, scalar_multiply, scalar_invert, scalar_split_lambda, scalar_split_128
- , wnaf, scale, linear_combination, linear_combination_1
+ , wnaf, scale, safe_scale, linear_combination, linear_combination_1, safe_linear_combination_1
  , linear_check, linear_check_1
    -- * Point operations
  , Point(..), decompress, point_check
@@ -492,6 +492,13 @@ scalar_invert a = a `scalar_power` (groupOrder - 2)
 scale :: Scalar -> GEJ -> GEJ
 scale na a = linear_combination_1 na a scalar_zero
 
+-- | Safe scale of a 'GEJ' by a scalar element.
+--
+-- Returns 'Nothing' when the point @a@ is not 'gej_is_on_curve'.
+-- Otherwise, returns 'Just' the result of 'scale'.
+safe_scale :: Scalar -> GEJ -> Maybe GEJ
+safe_scale na a = safe_linear_combination_1 na a scalar_zero
+
 -- | Decompose a scalar value in short components.
 --
 -- @
@@ -585,6 +592,15 @@ linear_combination l ng = foldr f mempty zips & _z %~ (.*. globalZ)
 -- @
 linear_combination_1 :: Scalar -> GEJ -> Scalar -> GEJ
 linear_combination_1 na a = linear_combination [(na, a)]
+
+-- | Safe computation of a linear combination of the secp256k1 curve generator and another point.
+--
+-- Returns 'Nothing' when the point @a@ is not 'gej_is_on_curve'.
+-- Otherwise, returns 'Just' the result of 'linear_combination_1'.
+safe_linear_combination_1 :: Scalar -> GEJ -> Scalar -> Maybe GEJ
+safe_linear_combination_1 na a ng = do
+  guard $ gej_is_on_curve a
+  return $ linear_combination_1 na a ng
 
 -- | Decompose an integer in windowed non-adjacent form
 wnafInteger :: Int -> Integer -> [Int]

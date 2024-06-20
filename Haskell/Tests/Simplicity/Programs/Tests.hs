@@ -500,9 +500,24 @@ tests = testGroup "Programs"
         , testProperty "wnaf5" prop_wnaf5
         , testProperty "wnaf15" prop_wnaf15
         , testProperty "decompress" prop_decompress
+        , testProperty "scale" prop_scale
+        , testProperty "scale_0" prop_scale_0
+        , testProperty "scale_inf" prop_scale_inf
+        , testProperty "safe_scale" prop_safe_scale
+        , testProperty "safe_scale_0" prop_safe_scale_0
+        , testProperty "safe_scale_inf" prop_safe_scale_inf
+        , testProperty "safe_scale_half" prop_safe_scale_half
+        , testProperty "safe_scale_half_0" prop_safe_scale_half_0
+        , testProperty "safe_scale_half_inf" prop_safe_scale_half_inf
         , testProperty "linear_combination_1" prop_linear_combination_1
         , testProperty "linear_combination_1_0" prop_linear_combination_1_0
         , testProperty "linear_combination_1_inf" prop_linear_combination_1_inf
+        , testProperty "safe_linear_combination_1" prop_safe_linear_combination_1
+        , testProperty "safe_linear_combination_1_0" prop_safe_linear_combination_1_0
+        , testProperty "safe_linear_combination_1_inf" prop_safe_linear_combination_1_inf
+        , testProperty "safe_linear_combination_1_half" prop_safe_linear_combination_1_half
+        , testProperty "safe_linear_combination_1_half_0" prop_safe_linear_combination_1_half_0
+        , testProperty "safe_linear_combination_1_half_inf" prop_safe_linear_combination_1_half_inf
         , testProperty "linear_check_1" prop_linear_check_1
         , testProperty "point_check_1" prop_point_check_1
         , testProperty "swu" prop_swu
@@ -3457,6 +3472,45 @@ prop_wnaf15 n = L.and $ zipWith (==) lhs (fmap (maybeToTy . fmap (unsign . toInt
   unsign x | x < 0 = 2^16 + 2*x+1
            | otherwise = 2*x+1
 
+prop_scale :: ScalarElement -> GroupElementJacobian -> Bool
+prop_scale = \na a -> fast_scale (scalarAsTy na, gejAsTy a)
+             == Just (toGEJ (Spec.scale (scalarAsSpec na) (gejAsSpec a)))
+ where
+  fast_scale = testCoreEval scale
+
+prop_scale_0 :: GroupElementJacobian -> Bool
+prop_scale_0 a = prop_scale na a
+ where
+  na = ScalarElement 0
+
+prop_scale_inf :: ScalarElement -> Property
+prop_scale_inf na = forAll gen_inf $ \a -> prop_scale na a
+
+prop_safe_scale :: ScalarElement -> GroupElementJacobian -> Bool
+prop_safe_scale = \na a -> fast_safe_scale (scalarAsTy na, gejAsTy a)
+             == (toGEJ <$> Spec.safe_scale (scalarAsSpec na) (gejAsSpec a))
+ where
+  fast_safe_scale = testCoreEval safe_scale
+
+prop_safe_scale_0 :: GroupElementJacobian -> Bool
+prop_safe_scale_0 a = prop_safe_scale na a
+ where
+  na = ScalarElement 0
+
+prop_safe_scale_inf :: ScalarElement -> Property
+prop_safe_scale_inf na = forAll gen_inf $ \a -> prop_safe_scale na a
+
+prop_safe_scale_half :: ScalarElement -> Property
+prop_safe_scale_half na = forAll gen_half_curve_jacobian $ \a -> prop_safe_scale na a
+
+prop_safe_scale_half_inf :: ScalarElement -> Property
+prop_safe_scale_half_inf na = forAll gen_half_curve_inf $ \a -> prop_safe_scale na a
+
+prop_safe_scale_half_0 :: Property
+prop_safe_scale_half_0 = forAll gen_half_curve_inf $ \a -> prop_safe_scale na a
+ where
+  na = ScalarElement 0
+
 prop_linear_combination_1 :: ScalarElement -> GroupElementJacobian -> ScalarElement -> Bool
 prop_linear_combination_1 = \na a ng -> fast_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
              == Just (toGEJ (Spec.linear_combination_1 (scalarAsSpec na) (gejAsSpec a) (scalarAsSpec ng)))
@@ -3470,6 +3524,31 @@ prop_linear_combination_1_0 a ng = prop_linear_combination_1 na a ng
 
 prop_linear_combination_1_inf :: ScalarElement -> ScalarElement -> Property
 prop_linear_combination_1_inf na ng = forAll gen_inf $ \a -> prop_linear_combination_1 na a ng
+
+prop_safe_linear_combination_1 :: ScalarElement -> GroupElementJacobian -> ScalarElement -> Bool
+prop_safe_linear_combination_1 = \na a ng -> fast_safe_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
+             == (toGEJ <$> Spec.safe_linear_combination_1 (scalarAsSpec na) (gejAsSpec a) (scalarAsSpec ng))
+ where
+  fast_safe_linear_combination_1 = testCoreEval safe_linear_combination_1
+
+prop_safe_linear_combination_1_0 :: GroupElementJacobian -> ScalarElement -> Bool
+prop_safe_linear_combination_1_0 a ng = prop_safe_linear_combination_1 na a ng
+ where
+  na = ScalarElement 0
+
+prop_safe_linear_combination_1_inf :: ScalarElement -> ScalarElement -> Property
+prop_safe_linear_combination_1_inf na ng = forAll gen_inf $ \a -> prop_safe_linear_combination_1 na a ng
+
+prop_safe_linear_combination_1_half :: ScalarElement -> ScalarElement -> Property
+prop_safe_linear_combination_1_half na ng = forAll gen_half_curve_jacobian $ \a -> prop_safe_linear_combination_1 na a ng
+
+prop_safe_linear_combination_1_half_inf :: ScalarElement -> ScalarElement -> Property
+prop_safe_linear_combination_1_half_inf na ng = forAll gen_half_curve_inf $ \a -> prop_safe_linear_combination_1 na a ng
+
+prop_safe_linear_combination_1_half_0 :: ScalarElement -> Property
+prop_safe_linear_combination_1_half_0 ng = forAll gen_half_curve_inf $ \a -> prop_safe_linear_combination_1 na a ng
+ where
+  na = ScalarElement 0
 
 prop_linear_check_1 :: ScalarElement -> GroupElement -> ScalarElement -> GroupElement -> Bool
 prop_linear_check_1 = \na a ng r -> fast_linear_check_1 (((scalarAsTy na, geAsTy a), scalarAsTy ng), geAsTy r)
