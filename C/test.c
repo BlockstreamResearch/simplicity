@@ -21,7 +21,13 @@
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
 
-static const double secondsPerWU = 0.5 / 1000. / 1000.;
+/* Bitcoin's (old-school) sigop limit is 80,000.  Ecdsa signature verification takes approximately 50 microseconds,
+ * meaning a block for of sigops would take 4 seconds to verify.
+ * Post-taproot, there is a block size limit of 4,000,000 WU.
+ * To verify the worst case block full of simplicity programs, in the same 4 second limit
+ * we need to limit Simplicity programs so they take no more than 1 microsecond per WU to run.
+ */
+static const double secondsPerWU = 1 / 1000. / 1000.;
 static int successes = 0;
 static int failures = 0;
 
