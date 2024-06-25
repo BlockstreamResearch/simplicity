@@ -122,6 +122,14 @@ static void sha256_compression_portable(uint32_t* s, const uint32_t* chunk) {
 
 void (*sha256_compression)(uint32_t* midstate, const uint32_t* block) = sha256_compression_portable;
 
+/* For information purposes only.
+ * Returns true if the sha256_compression implemenation has been optimized for the CPU.
+ * Otherwise returns false.
+ */
+bool sha256_compression_is_optimized(void) {
+  return sha256_compression_portable != sha256_compression;
+};
+
 /* Given a SHA-256 midstate, 'h', of 'len / 512' blocks, and
  * a 'block' with 'len % 512' bits set and with the remaining bits set to 0,
  * finalize the SHA-256 computation by adding SHA-256 padding and set 'h' to the resulting SHA-256 hash.
