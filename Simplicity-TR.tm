@@ -10792,7 +10792,7 @@
     <rep|<text|<samp|'secp256k1-ge-is-on-curve'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
   </math>
 
-  <math|<text|<samp|secp256k1-ge-is-on-curve>>:GEJ\<vdash\><2>>
+  <math|<text|<samp|secp256k1-ge-is-on-curve>>:GE\<vdash\><2>>
 
   \;
 
