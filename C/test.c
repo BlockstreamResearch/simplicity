@@ -5,6 +5,7 @@
 #include <getopt.h>
 #include <simplicity/elements/exec.h>
 #include <simplicity/cmr.h>
+#include <simplicity/cpu.h>
 #include "ctx8Pruned.h"
 #include "ctx8Unpruned.h"
 #include "dag.h"
@@ -35,6 +36,12 @@ static int failures = 0;
 static int timing_flag = 1;
 #else
 static int timing_flag = 0;
+#endif
+
+#ifdef NO_SHA_NI_FLAG
+static int sha_ni_flag = 0;
+#else
+static int sha_ni_flag = 1;
 #endif
 
 static void fprint_cmr(FILE* stream, const uint32_t* cmr) {
@@ -605,12 +612,18 @@ int main(int argc, char **argv) {
         /* These options set a flag. */
         {"timing", no_argument, &timing_flag, 1},
         {"no-timing", no_argument, &timing_flag, 0},
+        {"sha_ni", no_argument, &sha_ni_flag, 1},
+        {"no-sha_ni", no_argument, &sha_ni_flag, 0},
         {0, 0, 0, 0}
       };
     int opt_result = getopt_long(argc, argv, "", long_options, NULL);
     if (-1 == opt_result) break;
     if (0 == opt_result) continue;
     exit(EXIT_FAILURE);
+  }
+  if (sha_ni_flag) {
+    uint32_t result = simplicity_cpu_optimize_not_thread_safe();
+    if (result & SIMPLICITY_HAS_SHA_NI_FLAG) printf("sha_ni enabled.\n");
   }
   test_decodeUptoMaxInt();
   test_hashBlock();
