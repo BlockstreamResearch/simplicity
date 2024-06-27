@@ -12,6 +12,6 @@ static const uint32_t SIMPLICITY_HAS_SHA_NI_FLAG = 1;
  *
  * If the CPU supports Intel sha_ni operations, the result value has the SIMPLICITY_HAS_SHA_NI_FLAG bit set.
  */
-uint32_t simplicity_cpu_optimize_not_thread_safe(void);
+void simplicity_cpu_optimize_not_thread_safe(void);
 
 #endif

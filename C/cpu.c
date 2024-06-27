@@ -179,7 +179,7 @@ static void sha256_compression_x86_sha_ni(uint32_t* midstate, const uint32_t* bl
  *
  * If the CPU supports Intel sha_ni operations, the result value has the SIMPLICITY_HAS_SHA_NI_FLAG bit set.
  */
-uint32_t simplicity_cpu_optimize_not_thread_safe(void) {
+void simplicity_cpu_optimize_not_thread_safe(void) {
   uint32_t result = 0;
 #ifdef SHA_NI
   if (cpu_has_sha_ni()) {
@@ -187,5 +187,4 @@ uint32_t simplicity_cpu_optimize_not_thread_safe(void) {
     sha256_compression = sha256_compression_x86_sha_ni;
   }
 #endif
-  return result;
 }

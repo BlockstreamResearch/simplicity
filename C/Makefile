@@ -18,7 +18,7 @@ primitive/elements/jets.o: primitive/elements/jets.c
 	$(CC) -c $(CFLAGS) $(CWARN) -Wno-switch-enum -Wswitch $(CPPFLAGS) -o $@ $<
 
 cpu.o: cpu.c
-	$(CC) -c $(CFLAGS) -msha -msse4 $(CWARN) -Wno-cast-align -Wno-sign-conversion $(CPPFLAGS) -o $@ $<
+	$(CC) -zinitarray=simplicity_cpu_optimize_not_thread_safe -c $(CFLAGS) -msha -msse4 $(CWARN) -Wno-cast-align -Wno-sign-conversion $(CPPFLAGS) -o $@ $<
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<

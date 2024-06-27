@@ -640,7 +640,7 @@ int main(int argc, char **argv) {
     if (0 == opt_result) continue;
     exit(EXIT_FAILURE);
   }
-  sha_ni_flag = sha_ni_flag && (simplicity_cpu_optimize_not_thread_safe() & SIMPLICITY_HAS_SHA_NI_FLAG);
+  //  sha_ni_flag = sha_ni_flag && (simplicity_cpu_optimize_not_thread_safe() & SIMPLICITY_HAS_SHA_NI_FLAG);
   if (sha_ni_flag) {
     printf("Sha_ni enabled.\n");
     if (timing_flag) {
