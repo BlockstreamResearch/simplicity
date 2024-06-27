@@ -11247,7 +11247,7 @@
 
   <math|<rep|<text|<samp|'parse-lock'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|parse-lock>> :<2><rsup|32>\<vdash\><2><rsup|32>+<2><rsup|32>>
+  <math|<text|<samp|parse-lock>> :<2><rsup|32>\<vdash\>Height+Time>
 
   <subsubsection|<samp|parse-sequence>>
 
@@ -11255,7 +11255,7 @@
 
   <math|<rep|<text|<samp|'parse-sequence'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|parse-sequence>> :<2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|16>+<2><rsup|16>|)>>
+  <math|<text|<samp|parse-sequence>> :<2><rsup|32>\<vdash\><maybe><around*|(|Distance+Duration|)>>
 
   <section|<verbatim|111...: >Bitcoin Jets>
 

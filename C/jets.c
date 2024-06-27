@@ -1382,7 +1382,7 @@ bool sha_256_ctx_8_finalize(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* parse_sequence : TWO^32 |- TWO^32 + TWO^32 */
+/* parse_sequence : TWO^32 |- Height + Time */
 bool parse_lock(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   uint_fast32_t nLockTime = read32(&src);
@@ -1391,7 +1391,7 @@ bool parse_lock(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-/* parse_sequence : TWO^32 |- S (TWO^16 + TWO^16) */
+/* parse_sequence : TWO^32 |- S (Distance + Duration) */
 bool parse_sequence(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   uint_fast32_t nSequence = read32(&src);
