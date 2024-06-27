@@ -127,7 +127,13 @@ static inline void sha256_iv(uint32_t* iv) {
  * Precondition: uint32_t midstate[8];
  *               uint32_t block[16]
  */
-void sha256_compression(uint32_t* midstate, const uint32_t* block);
+extern void (*sha256_compression)(uint32_t* midstate, const uint32_t* block);
+
+/* For information purposes only.
+ * Returns true if the sha256_compression implemenation has been optimized for the CPU.
+ * Otherwise returns false.
+ */
+bool sha256_compression_is_optimized(void);
 
 /* Compute the SHA-256 hash, 'h', of the bitstring represented by 's'.
  *

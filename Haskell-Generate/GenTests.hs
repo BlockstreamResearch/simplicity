@@ -12,12 +12,15 @@ import Data.Serialize (encode, runPut)
 import Data.Vector (fromList)
 import Numeric (showHex)
 import System.IO (hPutStrLn, stderr)
-import Lens.Family2 ((^.), over, review, to, Getter')
+import Lens.Family2 ((^.), (&), (.~), over, review, to, Getter')
+import Lens.Family2.Stock (mapped)
 
 import Simplicity.Digest
 import qualified Simplicity.Elements.JetType
 import qualified Simplicity.Elements.Dag
 import Simplicity.Elements.DataTypes
+import Simplicity.Elements.Dag (SimplicityDag)
+import Simplicity.Elements.Inference
 import Simplicity.Elements.Primitive
 import Simplicity.Elements.Jets (JetType, WrappedSimplicity, fastEval, jetSubst, pruneSubst, unwrap)
 import Simplicity.Elements.Serialization.BitString
@@ -34,6 +37,7 @@ import Simplicity.Programs.Sha256.Lib
 import qualified Simplicity.Programs.LibSecp256k1.Lib
 import qualified Simplicity.Programs.CheckSig.Lib
 import Simplicity.Serialization
+import Simplicity.Ty
 import Simplicity.Word
 
 data Example (jt :: * -> * -> *)
@@ -154,6 +158,7 @@ main = do
   writeFiles schnorr0
   writeFiles schnorr6
   writeFiles checkSigHashAllTx1
+  writeRegression4
 
 noJetSubst :: (TyC a, TyC b) => Simplicity.Elements.Dag.NoJetDag a b -> WrappedSimplicity a b
 noJetSubst = Simplicity.Elements.Dag.jetSubst
@@ -315,3 +320,47 @@ insecureSig msg = fromInteger ((toInteger k * (1 + e)) `mod` order)
   px = 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
   e = integerHash256 . bsHash $ schnorrTag <> schnorrTag <> encode px <> encode px <> encode msg
   schnorrTag = encode . bsHash $ BSC.pack "BIP0340/challenge"
+
+writeRegression4 = do
+  hPutStrLn stderr $ "Writing regression4"
+  writeFile "regression4.h" regression4H
+  writeFile "regression4.c" regression4C
+ where
+  regression4Bin = BS.unpack . runPut . Simplicity.Serialization.putBitStream . putDagNoWitnessLengthCode $ code
+   where
+    -- We bypass the requirement for type annotations since they are expensive to compute and are not actually need for serialization.
+    -- I promise the term we are generating is in fact well typed (with very large types that GHC doesn't particularly like to process).
+    code :: SimplicityDag [] Ty (SomeArrow Simplicity.Elements.JetType.NoJets) UntypedValue
+    code = (uWitness OneV : f 15 ++ [uComp (3*2^16) 1]) & (mapped.tyAnnotation) .~ bypassTyping
+     where
+      f 0 = [uIden, uTake 1, uIden, uDrop 1, uComp 3 1]
+      f n = rec ++ rec ++ [uComp (3*2^n) 1]
+       where
+        rec = f (n-1)
+    bypassTyping = undefined
+  regression4Src = [
+   "uWitness OneV : f 15 ++ [uComp (3*2^16) 1]",
+   " where",
+   "  f 0 = [uIden, uTake 1, uIden, uDrop 1, uComp 3 1]",
+   "  f n = rec ++ rec ++ [uComp (3*2^n) 1]",
+   "   where",
+   "    rec = f (n-1)"]
+  regression4C =
+           "#include \"regression4.h\"\n"
+        ++ "\n"
+        ++ showComment False regression4Src
+        ++ showBinary "regression4" regression4Bin
+  regression4H = "#ifndef "++headerDef++"\n"
+              ++ "#define "++headerDef++"\n"
+              ++ "\n"
+              ++ "#include <stddef.h>\n"
+              ++ "#include <stdint.h>\n"
+              ++ "#include \"bounded.h\"\n"
+              ++ "\n"
+              ++ showComment False regression4Src
+              ++ "extern const unsigned char "++"regression4"++"[];\n"
+              ++ "extern const size_t sizeof_"++"regression4"++";\n"
+              ++ "\n"
+              ++ "#endif\n"
+    where
+     headerDef = "SIMPLICITY_" ++ (toUpper <$> "regression4") ++ "_H"
