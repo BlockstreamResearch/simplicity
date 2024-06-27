@@ -17,16 +17,22 @@ jets-secp256k1.o: jets-secp256k1.c
 primitive/elements/jets.o: primitive/elements/jets.c
 	$(CC) -c $(CFLAGS) $(CWARN) -Wno-switch-enum -Wswitch $(CPPFLAGS) -o $@ $<
 
+cpu.o: cpu.c
+	$(CC) -c $(CFLAGS) -msha -msse4 $(CWARN) -Wno-cast-align -Wno-sign-conversion $(CPPFLAGS) -o $@ $<
+
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<
 
 libElementsSimplicity.a: $(OBJS)
 	ar rcs $@ $^
 
-test: $(TEST_OBJS) libElementsSimplicity.a
+# cpu.o contains initalization code and is linked seprately from libElementsSimplicity.
+# Linked object files include the entire object file including functions that are not necessarily referenced,
+# such as our initialization code.
+test: $(TEST_OBJS) libElementsSimplicity.a cpu.o
 	$(CC) $^ -o $@ $(LDFLAGS)
 
-install: libElementsSimplicity.a
+install: libElementsSimplicity.a cpu.o
 	mkdir -p $(out)/lib
 	cp $^ $(out)/lib/
 	cp -R include $(out)/include
