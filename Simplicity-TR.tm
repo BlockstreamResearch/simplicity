@@ -11685,7 +11685,7 @@
     <item>The result of <samp|version> (Note: this is in big endian format)
     (4 bytes).
 
-    <item>The result of <samp|lock> (Note: this is in big endian format) (4
+    <item>The result of <samp|tx-lock-time> (Note: this is in big endian format) (4
     bytes).
 
     <item>The result of <samp|inputs-hash> (32 bytes).
