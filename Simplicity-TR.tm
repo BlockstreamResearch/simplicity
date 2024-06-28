@@ -11702,7 +11702,7 @@
     <item>The result of <samp|version> (Note: this is in big endian format)
     (4 bytes).
 
-    <item>The result of <samp|lock> (Note: this is in big endian format) (4
+    <item>The result of <samp|tx-lock-time> (Note: this is in big endian format) (4
     bytes).
 
     <item>The result of <samp|inputs-hash> (32 bytes).
@@ -12602,7 +12602,7 @@
 
   \;
 
-  Returns <math|x> when <samp|is-final> returns <math|<math-tt|0><rsub|<2>>>
+  Returns <math|x> when <samp|tx-is-final> returns <math|<math-tt|0><rsub|<2>>>
   and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
   returns <math|<injl|<around*|(|x|)>>>.
 
@@ -12618,7 +12618,7 @@
 
   \;
 
-  Returns <math|x> when <samp|is-final> returns <math|<math-tt|0><rsub|<2>>>
+  Returns <math|x> when <samp|tx-is-final> returns <math|<math-tt|0><rsub|<2>>>
   and <math|<around*|\<llbracket\>|<text|<samp|parse-lock>>|\<rrbracket\>>\<circ\><around*|\<llbracket\>|<text|<samp|lockTime>>|\<rrbracket\>>>
   returns <math|<injr|<around*|(|x|)>>>.
 
