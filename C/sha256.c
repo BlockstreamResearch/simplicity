@@ -195,3 +195,7 @@ void sha256_bitstring(uint32_t* h, const bitstring* s) {
   simplicity_assert(count == s->len);
   sha256_end(h, block, s->len);
 }
+
+#ifndef NO_SHA_NI_FLAG
+#include "sha256_x86.inc"
+#endif
