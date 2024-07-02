@@ -17,6 +17,9 @@ jets-secp256k1.o: jets-secp256k1.c
 primitive/elements/jets.o: primitive/elements/jets.c
 	$(CC) -c $(CFLAGS) $(CWARN) -Wno-switch-enum -Wswitch $(CPPFLAGS) -o $@ $<
 
+sha256.o: sha256.c
+	$(CC) -c $(CFLAGS) -msha -msse4 $(CWARN) -Wno-cast-align -Wno-sign-conversion $(CPPFLAGS) -o $@ $<
+
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(CWARN) $(CPPFLAGS) -o $@ $<
 
