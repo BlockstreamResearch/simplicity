@@ -502,7 +502,7 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
         /* Traverse the witness type to parse the witness's compact representation as a bit string. */
         size_t cur = typeSkip(WITNESS_B(dag, type_dag, i), type_dag);
         bool calling = true;
-        type_dag[cur].back = 0;
+        setTypeBack(cur, type_dag, 0);
         while (cur) {
           if (SUM == type_dag[cur].kind) {
             /* Parse one bit and traverse the left type or the right type depending on the value of the bit parsed. */
@@ -512,7 +512,7 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
             dag[i].compactValue.len++;
             size_t next = typeSkip(type_dag[cur].typeArg[bit], type_dag);
             if (next) {
-              type_dag[next].back = type_dag[cur].back;
+              setTypeBack(next, type_dag, type_dag[cur].back);
               cur = next;
             } else {
               cur = type_dag[cur].back;
@@ -527,7 +527,7 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
                  then it is a product of two non-trival types.  This implies that 'next' cannot actually be 0. */
               if (next) {
                 /* Traverse the first element of the product type, if it has any data. */
-                type_dag[next].back = cur;
+                setTypeBack(next, type_dag, cur);
                 cur = next;
                 continue;
               }
@@ -537,7 +537,7 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
                then it is a product of two non-trival types.  This implies that 'next' cannot actually be 0. */
             if (next) {
               /* Traverse the second element of the product type, if it has any data. */
-              type_dag[next].back = type_dag[cur].back;
+              setTypeBack(next, type_dag, type_dag[cur].back);
               cur = next;
               calling = true;
             } else {

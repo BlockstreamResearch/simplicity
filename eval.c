@@ -158,7 +158,7 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
   size_t cur = typeSkip(typeIx, type_dag);
   size_t offset = 0;
   bool calling = true;
-  type_dag[cur].back = 0;
+  setTypeBack(cur, type_dag, 0);
   while (cur) {
     if (SUM == type_dag[cur].kind) {
       simplicity_debug_assert(calling);
@@ -171,7 +171,7 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
 
       size_t next = typeSkip(type_dag[cur].typeArg[bit], type_dag);
       if (next) {
-        type_dag[next].back = type_dag[cur].back;
+        setTypeBack(next, type_dag, type_dag[cur].back);
         cur = next;
       } else {
         cur = type_dag[cur].back;
@@ -186,7 +186,7 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
            then it is a product of two non-trival types.  This implies that 'next' cannot actually be 0. */
         if (next) {
           /* Traverse the first element of the product type, if it has any data. */
-          type_dag[next].back = cur;
+          setTypeBack(next, type_dag, cur);
           cur = next;
           continue;
         }
@@ -196,7 +196,7 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
          then it is a product of two non-trival types.  This implies that 'next' cannot actually be 0. */
       if (next) {
         /* Traverse the second element of the product type, if it has any data. */
-        type_dag[next].back = type_dag[cur].back;
+        setTypeBack(next, type_dag, type_dag[cur].back);
         cur = next;
         calling = true;
       } else {
