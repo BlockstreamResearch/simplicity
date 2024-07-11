@@ -16,6 +16,7 @@
 #include "schnorr0.h"
 #include "schnorr6.h"
 #include "regression4.h"
+#include "typeSkipTest.h"
 #include "simplicity_alloc.h"
 #include "typeInference.h"
 #include "primitive/elements/checkSigHashAllTx1.h"
@@ -666,6 +667,7 @@ int main(int argc, char **argv) {
   }
   test_program("schnorr0", schnorr0, sizeof_schnorr0, schnorr0_witness, sizeof_schnorr0_witness, SIMPLICITY_NO_ERROR, schnorr0_cmr, schnorr0_imr, schnorr0_amr, &schnorr0_cost);
   test_program("schnorr6", schnorr6, sizeof_schnorr6, schnorr6_witness, sizeof_schnorr6_witness, SIMPLICITY_ERR_EXEC_JET, schnorr6_cmr, schnorr6_imr, schnorr6_amr, &schnorr0_cost);
+  test_program("typeSkipTest", typeSkipTest, sizeof_typeSkipTest, typeSkipTest_witness, sizeof_typeSkipTest_witness, SIMPLICITY_NO_ERROR, NULL, NULL, NULL, NULL);
   test_elements();
   regression_tests();
   iden8mebi_test();

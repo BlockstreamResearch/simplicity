@@ -1,5 +1,5 @@
 OBJS := bitstream.o cmr.o dag.o deserialize.o eval.o frame.o jets.o jets-secp256k1.o rsort.o sha256.o type.o typeInference.o primitive/elements/env.o primitive/elements/exec.o primitive/elements/ops.o primitive/elements/jets.o primitive/elements/primitive.o
-TEST_OBJS := test.o ctx8Pruned.o ctx8Unpruned.o hashBlock.o regression4.o schnorr0.o schnorr6.o primitive/elements/checkSigHashAllTx1.o
+TEST_OBJS := test.o ctx8Pruned.o ctx8Unpruned.o hashBlock.o regression4.o schnorr0.o schnorr6.o typeSkipTest.o primitive/elements/checkSigHashAllTx1.o
 
 # From https://fastcompression.blogspot.com/2019/01/compiler-warnings.html
 CWARN := -Werror -Wall -Wextra -Wcast-qual -Wcast-align -Wstrict-aliasing -Wpointer-arith -Winit-self -Wshadow -Wswitch-enum -Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls -Wfloat-equal -Wundef -Wconversion

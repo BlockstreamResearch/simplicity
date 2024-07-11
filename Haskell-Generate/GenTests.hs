@@ -1,10 +1,13 @@
 {-# LANGUAGE KindSignatures, ScopedTypeVariables #-}
 module GenTests where
 
+import Prelude hiding (drop, take)
+
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
 import Data.Char (toUpper)
+import Data.Functor.Identity (runIdentity)
 import Data.Maybe (fromJust)
 import Data.List (intercalate)
 import Data.List.Split (chunksOf)
@@ -159,6 +162,7 @@ main = do
   writeFiles schnorr6
   writeFiles checkSigHashAllTx1
   writeRegression4
+  writeFiles typeSkipTest
 
 noJetSubst :: (TyC a, TyC b) => Simplicity.Elements.Dag.NoJetDag a b -> WrappedSimplicity a b
 noJetSubst = Simplicity.Elements.Dag.jetSubst
@@ -364,3 +368,60 @@ writeRegression4 = do
               ++ "#endif\n"
     where
      headerDef = "SIMPLICITY_" ++ (toUpper <$> "regression4") ++ "_H"
+
+typeSkipTest :: ExampleNoJets () ()
+typeSkipTest = Example
+  { _name = "typeSkipTest"
+  , _path = []
+  , _text = [ "witness (runIdentity (getValue (return True))) >>> mn >>> unit"
+            , " where"
+            , "  l1 = take l0 &&& drop l0"
+            , "  l2 = take l1 &&& drop l1"
+            , "  l3 = take l2 &&& drop l2"
+            , "  ltop = l3"
+            , "  m1 = copair l3 l3"
+            , "  m2 = take l1 &&& drop m1"
+            , "  m3 = take m2 &&& drop l2"
+            , "  m4 = take l3 &&& drop m3"
+            , "  m5 = copair (injl m4) (injr ltop)"
+            , "  m6 = take l1 &&& drop m5"
+            , "  m7 = take m6 &&& drop l2"
+            , "  m8 = take l3 &&& drop m7"
+            , "  n1 = copair l3 l3"
+            , "  n2 = take n1 &&& drop l1"
+            , "  n3 = take l2 &&& drop n2"
+            , "  n4 = take n3 &&& drop l3"
+            , "  n5 = copair (injl ltop) (injr n4)"
+            , "  n6 = take n5 &&& drop l0"
+            , "  n7 = take l1 &&& drop n6"
+            , "  n8 = take n7 &&& drop l2"
+            , "  mn = copair (injl m8) (injr n8)"
+            ]
+  , _withJets = False
+  , _prog = prog
+  }
+ where
+  l0 = iden :: (Core term) => term () ()
+  l1 = take l0 &&& drop l0
+  l2 = take l1 &&& drop l1
+  l3 = take l2 &&& drop l2
+  ltop = l3
+  m1 = copair l3 l3
+  m2 = take l1 &&& drop m1
+  m3 = take m2 &&& drop l2
+  m4 = take l3 &&& drop m3
+  m5 = copair (injl m4) (injr ltop)
+  m6 = take m5 &&& drop l0
+  m7 = take l1 &&& drop m6
+  m8 = take m7 &&& drop l2
+  n1 = copair l3 l3
+  n2 = take n1 &&& drop l1
+  n3 = take l2 &&& drop n2
+  n4 = take n3 &&& drop l3
+  n5 = copair (injl ltop) (injr n4)
+  n6 = take l0 &&& drop n5
+  n7 = take n6 &&& drop l1
+  n8 = take l2 &&& drop n7
+  mn = copair (injl m8) (injr n8)
+  Just prog = noJetPrune undefined ()
+            $ witness (runIdentity (getValue (return True))) >>> mn >>> unit
