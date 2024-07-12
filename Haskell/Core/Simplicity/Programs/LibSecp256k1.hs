@@ -29,7 +29,7 @@ module Simplicity.Programs.LibSecp256k1
   , generate, scale
   , linear_combination_1, linear_check_1, linear_verify_1
   , point_check_1, point_verify_1
-  , safe_scale, safe_linear_combination_1
+  , off_curve_scale, off_curve_linear_combination_1
   -- * Schnorr signature operations
   , PubKey, pubkey_unpack, pubkey_unpack_neg
   , Sig, signature_unpack
@@ -216,11 +216,11 @@ data Lib term =
   , generate :: term Scalar GEJ
 
     -- | Multiply a point by a scalar element.
-  , scale :: term (Scalar, GEJ) GEJ
+  , off_curve_scale :: term (Scalar, GEJ) GEJ
 
     -- | Given an elliptic curve point, @a@, and two scalar values @na@ and @ng@, return @na * a + ng * g@ where @g@ is secp256k1's generator.
     -- If the result is the point at infinity, it is returned in canonical form.
-  , linear_combination_1 :: term ((Scalar, GEJ), Scalar) GEJ
+  , off_curve_linear_combination_1 :: term ((Scalar, GEJ), Scalar) GEJ
 
     -- | Verifies that all points are on the secp256k1 curve and checks if @na * a + ng * g == r@ on the input @(((na, a), ng), r)@ where @g@ is secp256k1's generator.
   , linear_check_1 :: term (((Scalar, GE), Scalar), GE) Bit
@@ -317,8 +317,8 @@ instance SimplicityFunctor Lib where
     , wnaf5 = m wnaf5
     , wnaf15 = m wnaf15
     , generate = m generate
-    , scale = m scale
-    , linear_combination_1 = m linear_combination_1
+    , off_curve_scale = m off_curve_scale
+    , off_curve_linear_combination_1 = m off_curve_linear_combination_1
     , linear_check_1 = m linear_check_1
     , decompress = m decompress
     , point_check_1 = m point_check_1
@@ -625,7 +625,7 @@ mkLib Sha256.Lib{..} = lib
      in
       (unit >>> gej_infinity) &&& split128 >>> step129
 
-  , linear_combination_1 =
+  , off_curve_linear_combination_1 =
      let
       splitLambda = scalar_split_lambda >>> take wnaf5 &&& drop wnaf5
       body = (unit >>> gej_infinity) &&& (oih >>> scalarTable5) &&& (ooh >>> splitLambda) &&& (ih >>> split128)
@@ -666,10 +666,10 @@ mkLib Sha256.Lib{..} = lib
 
   , linear_check_1 = and (drop ge_is_on_curve)
                     (and (take (take (drop ge_is_on_curve)))
-                         ((take (take (oh &&& (ih &&& (unit >>> fe_one))) &&& ih >>> linear_combination_1))
+                         ((take (take (oh &&& (ih &&& (unit >>> fe_one))) &&& ih >>> off_curve_linear_combination_1))
                       &&& drop ge_negate >>> gej_ge_add >>> gej_is_infinity))
 
-  , scale = iden &&& (unit >>> zero256) >>> linear_combination_1
+  , off_curve_scale = iden &&& (unit >>> zero256) >>> off_curve_linear_combination_1
 
   , decompress =
      let
@@ -812,13 +812,13 @@ mkLib Sha256.Lib{..} = lib
 
     pubkey_check = (iden &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256) &&& iden
 
--- | Same as 'linear_combination_1' execept it fails when the given point is off-curve.
-safe_linear_combination_1 :: Assert term => Lib term -> term ((Scalar, GEJ), Scalar) GEJ
-safe_linear_combination_1 m = take (drop (gej_is_on_curve m)) &&& (linear_combination_1 m) >>> assertr cmrFail0 ih
+-- | Same as 'off_curve_linear_combination_1' execept it fails when the given point is off-curve.
+linear_combination_1 :: Assert term => Lib term -> term ((Scalar, GEJ), Scalar) GEJ
+linear_combination_1 m = take (drop (gej_is_on_curve m)) &&& (off_curve_linear_combination_1 m) >>> assertr cmrFail0 ih
 
--- | Same as 'scale' execept it fails when the given point is off-curve.
-safe_scale :: Assert term => Lib term -> term (Scalar, GEJ) GEJ
-safe_scale m = drop (gej_is_on_curve m) &&& (scale m) >>> assertr cmrFail0 ih
+-- | Same as 'off_curve_scale' execept it fails when the given point is off-curve.
+scale :: Assert term => Lib term -> term (Scalar, GEJ) GEJ
+scale m = drop (gej_is_on_curve m) &&& (off_curve_scale m) >>> assertr cmrFail0 ih
 
 linear_verify_1 :: Assert term => Lib term -> term (((Scalar, GE), Scalar), GE) ()
 linear_verify_1 m = assert (linear_check_1 m)

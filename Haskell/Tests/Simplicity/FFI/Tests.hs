@@ -484,29 +484,29 @@ tests = testGroup "C / SPEC"
         , testProperty "ge_is_on_curve_half"      prop_ge_is_on_curve_half
         ]
       , testGroup "ecMult"
-        [ testCase     "linear_combination_1_order_6"       assert_linear_combination_1_order_6
-        , testProperty "linear_combination_1_inf"           prop_linear_combination_1_inf
-        , testProperty "linear_combination_1_0"             prop_linear_combination_1_0
-        , testProperty "linear_combination_1"               prop_linear_combination_1
-        , testProperty "safe_linear_combination_1_half"     prop_safe_linear_combination_1_half
-        , testProperty "safe_linear_combination_1_half_inf" prop_safe_linear_combination_1_half_inf
-        , testProperty "safe_linear_combination_1_half_0"   prop_safe_linear_combination_1_half_0
-        , testProperty "safe_linear_combination_1_inf"      prop_safe_linear_combination_1_inf
-        , testProperty "safe_linear_combination_1_0"        prop_safe_linear_combination_1_0
-        , testProperty "safe_linear_combination_1"          prop_safe_linear_combination_1
-        , testProperty "generate"                           prop_generate
-        , testProperty "scale"                              prop_scale
-        , testProperty "scale_0"                            prop_scale_0
-        , testProperty "scale_inf"                          prop_scale_inf
-        , testProperty "safe_scale_half"                    prop_safe_scale_half
-        , testProperty "safe_scale_half_inf"                prop_safe_scale_half_inf
-        , testProperty "safe_scale_half_0"                  prop_safe_scale_half_0
-        , testProperty "safe_scale_inf"                     prop_safe_scale_inf
-        , testProperty "safe_scale_0"                       prop_safe_scale_0
-        , testProperty "safe_scale"                         prop_safe_scale
-        , testProperty "linear_verify_1_true_half"          prop_linear_verify_1_true_half
-        , testProperty "linear_verify_1_0"                  prop_linear_verify_1_0
-        , testProperty "linear_verify_1"                    prop_linear_verify_1
+        [ testCase      "off_curve_linear_combination_1_order_6"  assert_off_curve_linear_combination_1_order_6
+        , testProperty  "off_curve_linear_combination_1_inf"      prop_off_curve_linear_combination_1_inf
+        , testProperty  "off_curve_linear_combination_1_0"        prop_off_curve_linear_combination_1_0
+        , testProperty  "off_curve_linear_combination_1"          prop_off_curve_linear_combination_1
+        , testProperty  "linear_combination_1_half"               prop_linear_combination_1_half
+        , testProperty  "linear_combination_1_half_inf"           prop_linear_combination_1_half_inf
+        , testProperty  "linear_combination_1_half_0"             prop_linear_combination_1_half_0
+        , testProperty  "linear_combination_1_inf"                prop_linear_combination_1_inf
+        , testProperty  "linear_combination_1_0"                  prop_linear_combination_1_0
+        , testProperty  "linear_combination_1"                    prop_linear_combination_1
+        , testProperty  "generate"                                prop_generate
+        , testProperty  "off_curve_scale"                         prop_off_curve_scale
+        , testProperty  "off_curve_scale_0"                       prop_off_curve_scale_0
+        , testProperty  "off_curve_scale_inf"                     prop_off_curve_scale_inf
+        , testProperty  "scale_half"                              prop_scale_half
+        , testProperty  "scale_half_inf"                          prop_scale_half_inf
+        , testProperty  "scale_half_0"                            prop_scale_half_0
+        , testProperty  "scale_inf"                               prop_scale_inf
+        , testProperty  "scale_0"                                 prop_scale_0
+        , testProperty  "scale"                                   prop_scale
+        , testProperty  "linear_verify_1_true_half"               prop_linear_verify_1_true_half
+        , testProperty  "linear_verify_1_0"                       prop_linear_verify_1_0
+        , testProperty  "linear_verify_1"                         prop_linear_verify_1
         ]
       , testGroup "point"
         [ testProperty "point_verify_1"      prop_point_verify_1
@@ -3473,50 +3473,50 @@ prop_generate = \ng -> fast_generate (scalarAsTy ng)
  where
   fast_generate = testCoreEval Prog.generate
 
-prop_scale = \na a -> fast_scale (scalarAsTy na, gejAsTy a)
-                   == C.scale (scalarAsTy na, gejAsTy a)
+prop_off_curve_scale = \na a -> fast_off_curve_scale (scalarAsTy na, gejAsTy a)
+                   == C.off_curve_scale (scalarAsTy na, gejAsTy a)
  where
-  fast_scale = testCoreEval Prog.scale
+  fast_off_curve_scale = testCoreEval Prog.off_curve_scale
+prop_off_curve_scale_0 a = prop_off_curve_scale na a
+ where
+  na = ScalarElement 0
+prop_off_curve_scale_inf na = forAll gen_inf $ \a -> prop_off_curve_scale na a
+
+prop_scale :: ScalarElement -> GroupElementJacobian -> Bool
+prop_scale = \na a -> safe_fast_scale (scalarAsTy na, gejAsTy a)
+                        == C.scale (scalarAsTy na, gejAsTy a)
+ where
+  safe_fast_scale = testCoreEval Prog.scale
 prop_scale_0 a = prop_scale na a
  where
   na = ScalarElement 0
+
 prop_scale_inf na = forAll gen_inf $ \a -> prop_scale na a
 
-prop_safe_scale :: ScalarElement -> GroupElementJacobian -> Bool
-prop_safe_scale = \na a -> safe_fast_scale (scalarAsTy na, gejAsTy a)
-                        == C.safe_scale (scalarAsTy na, gejAsTy a)
- where
-  safe_fast_scale = testCoreEval Prog.safe_scale
-prop_safe_scale_0 a = prop_safe_scale na a
- where
-  na = ScalarElement 0
+prop_scale_half na = forAll gen_half_curve_jacobian $ \a -> prop_scale na a
 
-prop_safe_scale_inf na = forAll gen_inf $ \a -> prop_safe_scale na a
+prop_scale_half_inf na = forAll gen_half_curve_inf $ \a -> prop_scale na a
 
-prop_safe_scale_half na = forAll gen_half_curve_jacobian $ \a -> prop_safe_scale na a
-
-prop_safe_scale_half_inf na = forAll gen_half_curve_inf $ \a -> prop_safe_scale na a
-
-prop_safe_scale_half_0 = forAll gen_half_curve_inf $ \a -> prop_safe_scale na a
+prop_scale_half_0 = forAll gen_half_curve_inf $ \a -> prop_scale na a
  where
   na = ScalarElement 0
 
-prop_linear_combination_1 :: ScalarElement -> GroupElementJacobian -> ScalarElement -> Bool
-prop_linear_combination_1 = \na a ng -> fast_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
-                                     == C.linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
+prop_off_curve_linear_combination_1 :: ScalarElement -> GroupElementJacobian -> ScalarElement -> Bool
+prop_off_curve_linear_combination_1 = \na a ng -> fast_off_curve_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
+                                     == C.off_curve_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
  where
-  fast_linear_combination_1 = testCoreEval Prog.linear_combination_1
-prop_linear_combination_1_0 a ng = prop_linear_combination_1 na a ng
+  fast_off_curve_linear_combination_1 = testCoreEval Prog.off_curve_linear_combination_1
+prop_off_curve_linear_combination_1_0 a ng = prop_off_curve_linear_combination_1 na a ng
  where
   na = ScalarElement 0
 
-prop_linear_combination_1_inf na ng = forAll gen_inf $ \a -> prop_linear_combination_1 na a ng
+prop_off_curve_linear_combination_1_inf na ng = forAll gen_inf $ \a -> prop_off_curve_linear_combination_1 na a ng
 
 -- :TODO: expand test coverage on low-order (off-curve) points.
 -- This particular test case will fail if the gej_double_var function in the C implementation isn't "fixed" to handle
 -- setting the infinity flag for off-curve points of order 2.
-assert_linear_combination_1_order_6 :: Assertion
-assert_linear_combination_1_order_6 = True @=? prop_linear_combination_1 na a ng
+assert_off_curve_linear_combination_1_order_6 :: Assertion
+assert_off_curve_linear_combination_1_order_6 = True @=? prop_off_curve_linear_combination_1 na a ng
  where
   na = ScalarElement 6
   a = GroupElementJacobian (FieldElement 106586213356003376052770626926523423124273824193112332847656463919061591657353)
@@ -3524,22 +3524,22 @@ assert_linear_combination_1_order_6 = True @=? prop_linear_combination_1 na a ng
                            (FieldElement 1)
   ng = ScalarElement 1
 
-prop_safe_linear_combination_1 :: ScalarElement -> GroupElementJacobian -> ScalarElement -> Bool
-prop_safe_linear_combination_1 = \na a ng -> safe_fast_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
-                                     == C.safe_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
+prop_linear_combination_1 :: ScalarElement -> GroupElementJacobian -> ScalarElement -> Bool
+prop_linear_combination_1 = \na a ng -> safe_fast_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
+                                     == C.linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
  where
-  safe_fast_linear_combination_1 = testCoreEval Prog.safe_linear_combination_1
-prop_safe_linear_combination_1_0 a ng = prop_safe_linear_combination_1 na a ng
+  safe_fast_linear_combination_1 = testCoreEval Prog.linear_combination_1
+prop_linear_combination_1_0 a ng = prop_linear_combination_1 na a ng
  where
   na = ScalarElement 0
 
-prop_safe_linear_combination_1_inf na ng = forAll gen_inf $ \a -> prop_safe_linear_combination_1 na a ng
+prop_linear_combination_1_inf na ng = forAll gen_inf $ \a -> prop_linear_combination_1 na a ng
 
-prop_safe_linear_combination_1_half na ng = forAll gen_half_curve_jacobian $ \a -> prop_safe_linear_combination_1 na a ng
+prop_linear_combination_1_half na ng = forAll gen_half_curve_jacobian $ \a -> prop_linear_combination_1 na a ng
 
-prop_safe_linear_combination_1_half_inf na ng = forAll gen_half_curve_inf $ \a -> prop_safe_linear_combination_1 na a ng
+prop_linear_combination_1_half_inf na ng = forAll gen_half_curve_inf $ \a -> prop_linear_combination_1 na a ng
 
-prop_safe_linear_combination_1_half_0 ng = forAll gen_half_curve_inf $ \a -> prop_safe_linear_combination_1 na a ng
+prop_linear_combination_1_half_0 ng = forAll gen_half_curve_inf $ \a -> prop_linear_combination_1 na a ng
  where
   na = ScalarElement 0
 
@@ -3561,7 +3561,7 @@ prop_linear_verify_1_true_half na ng = forAll gen_half_curve $ \a -> prop_linear
     a' = geAsSpec a
     ng' = scalarAsSpec ng
     toGEJ (GE x y) = (GEJ x y Spec.fe_one)
-    r' = Spec.gej_normalize $ Spec.linear_combination [(na', toGEJ a')] ng'
+    r' = Spec.gej_normalize $ Spec.off_curve_linear_combination [(na', toGEJ a')] ng'
     mkGE rx' ry' = GroupElement (FieldElement (Spec.fe_pack rx')) (FieldElement (Spec.fe_pack ry'))
 
 prop_point_verify_1 = \na a ng r -> fast_point_verify_1 (((scalarAsTy na, pointAsTy a), scalarAsTy ng), pointAsTy r)
@@ -3578,7 +3578,7 @@ prop_point_verify_1_true na p ng | Just a' <- Spec.decompress p' = property $ pr
   prop a' = prop_point_verify_1 na p ng r
    where
     toGEJ (GE x y) = (GEJ x y Spec.fe_one)
-    Just (GE rx' ry') = Spec.gej_normalize $ Spec.linear_combination [(na', toGEJ a')] ng'
+    Just (GE rx' ry') = Spec.gej_normalize $ Spec.off_curve_linear_combination [(na', toGEJ a')] ng'
     r = PointElement (Spec.fe_is_odd ry') (FieldElement (Spec.fe_pack rx'))
 
 prop_decompress = \a -> fast_decompress (pointAsTy a)

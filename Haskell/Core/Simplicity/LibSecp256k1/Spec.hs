@@ -23,7 +23,7 @@ module Simplicity.LibSecp256k1.Spec
    -- * Scalar operations
  , Scalar, scalar, scalar_repr, scalar_pack
  , scalar_zero, scalar_negate, scalar_add, scalar_square, scalar_multiply, scalar_invert, scalar_split_lambda, scalar_split_128
- , wnaf, scale, safe_scale, linear_combination, linear_combination_1, safe_linear_combination_1
+ , wnaf, scale, off_curve_scale, off_curve_linear_combination, linear_combination_1, off_curve_linear_combination_1
  , linear_check, linear_check_1
    -- * Point operations
  , Point(..), decompress, point_check
@@ -489,15 +489,15 @@ scalar_invert a = a `scalar_power` (groupOrder - 2)
            | odd n = scalar_multiply x (go (scalar_square x) (n `div` 2))
 
 -- | Scale a 'GEJ' by a scalar element.
-scale :: Scalar -> GEJ -> GEJ
-scale na a = linear_combination_1 na a scalar_zero
+off_curve_scale :: Scalar -> GEJ -> GEJ
+off_curve_scale na a = off_curve_linear_combination_1 na a scalar_zero
 
 -- | Safe scale of a 'GEJ' by a scalar element.
 --
 -- Returns 'Nothing' when the point @a@ is not 'gej_is_on_curve'.
 -- Otherwise, returns 'Just' the result of 'scale'.
-safe_scale :: Scalar -> GEJ -> Maybe GEJ
-safe_scale na a = safe_linear_combination_1 na a scalar_zero
+scale :: Scalar -> GEJ -> Maybe GEJ
+scale na a = linear_combination_1 na a scalar_zero
 
 -- | Decompose a scalar value in short components.
 --
@@ -547,14 +547,14 @@ scalar_split_128 k0 = (k1, k2)
 -- | Fast computation of a linear combination of the secp256k1 curve generator and other points.
 --
 -- @
---    'gej_is_infinity' $ 'linear_combination' [] ng <> 'gej_negate' ('scalar_multiply' ng 'g')
+--    'gej_is_infinity' $ 'off_curve_linear_combination' [] ng <> 'gej_negate' ('scalar_multiply' ng 'g')
 -- @
 --
 -- @
---    'gej_is_infinity' $ 'linear_combination' ((na, a):tl) ng <> 'gej_negate' ('scalar_multiply' ng 'g' <> 'linear_combination' tl ng)
+--    'gej_is_infinity' $ 'off_curve_linear_combination' ((na, a):tl) ng <> 'gej_negate' ('scalar_multiply' ng 'g' <> 'linear_combination' tl ng)
 -- @
-linear_combination :: [(Scalar, GEJ)] -> Scalar -> GEJ
-linear_combination l ng = foldr f mempty zips & _z %~ (.*. globalZ)
+off_curve_linear_combination :: [(Scalar, GEJ)] -> Scalar -> GEJ
+off_curve_linear_combination l ng = foldr f mempty zips & _z %~ (.*. globalZ)
  where
   wa = 5
   (l', globalZ) = runTableM . sequence $
@@ -588,19 +588,19 @@ linear_combination l ng = foldr f mempty zips & _z %~ (.*. globalZ)
 -- | Fast computation of a linear combination of the secp256k1 curve generator and another point.
 --
 -- @
---    'gej_is_infinity' $ 'linear_combination_1' na a ng <> 'gej_negate' ('scalar_multiply' na 'a' <> 'scalar_multiply' ng 'g')
+--    'gej_is_infinity' $ 'off_curve_linear_combination_1' na a ng <> 'gej_negate' ('scalar_multiply' na 'a' <> 'scalar_multiply' ng 'g')
 -- @
-linear_combination_1 :: Scalar -> GEJ -> Scalar -> GEJ
-linear_combination_1 na a = linear_combination [(na, a)]
+off_curve_linear_combination_1 :: Scalar -> GEJ -> Scalar -> GEJ
+off_curve_linear_combination_1 na a = off_curve_linear_combination [(na, a)]
 
 -- | Safe computation of a linear combination of the secp256k1 curve generator and another point.
 --
 -- Returns 'Nothing' when the point @a@ is not 'gej_is_on_curve'.
--- Otherwise, returns 'Just' the result of 'linear_combination_1'.
-safe_linear_combination_1 :: Scalar -> GEJ -> Scalar -> Maybe GEJ
-safe_linear_combination_1 na a ng = do
+-- Otherwise, returns 'Just' the result of 'off_curve_linear_combination_1'.
+linear_combination_1 :: Scalar -> GEJ -> Scalar -> Maybe GEJ
+linear_combination_1 na a ng = do
   guard $ gej_is_on_curve a
-  return $ linear_combination_1 na a ng
+  return $ off_curve_linear_combination_1 na a ng
 
 -- | Decompose an integer in windowed non-adjacent form
 wnafInteger :: Int -> Integer -> [Int]
@@ -704,7 +704,7 @@ linear_check :: [(Scalar, GE)] -> Scalar -> GE -> Bool
 linear_check l ng r = isJust $ do
   guard $ ge_is_on_curve r
   guard $ allOf (traverse._2) ge_is_on_curve l
-  guard $ gej_is_infinity (linear_combination l' ng <> negR)
+  guard $ gej_is_infinity (off_curve_linear_combination l' ng <> negR)
  where
   negR = toGEJ (ge_negate r)
   l' = l & (traverse._2) %~ toGEJ

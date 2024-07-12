@@ -28,7 +28,7 @@ module Simplicity.Programs.LibSecp256k1.Lib
   , generate, scale
   , linear_combination_1, linear_check_1, linear_verify_1
   , point_check_1, point_verify_1
-  , safe_scale, safe_linear_combination_1
+  , off_curve_scale, off_curve_linear_combination_1
   -- * Schnorr signature operations
   , LibSecp256k1.PubKey, pubkey_unpack, pubkey_unpack_neg
   , LibSecp256k1.Sig, signature_unpack
@@ -86,9 +86,9 @@ wnaf5 = LibSecp256k1.wnaf5 LibSecp256k1.lib
 wnaf15 = LibSecp256k1.wnaf15 LibSecp256k1.lib
 generate = LibSecp256k1.generate LibSecp256k1.lib
 scale = LibSecp256k1.scale LibSecp256k1.lib
-safe_scale = LibSecp256k1.safe_scale LibSecp256k1.lib
+off_curve_scale = LibSecp256k1.off_curve_scale LibSecp256k1.lib
 linear_combination_1 = LibSecp256k1.linear_combination_1 LibSecp256k1.lib
-safe_linear_combination_1 = LibSecp256k1.safe_linear_combination_1 LibSecp256k1.lib
+off_curve_linear_combination_1 = LibSecp256k1.off_curve_linear_combination_1 LibSecp256k1.lib
 linear_check_1 = LibSecp256k1.linear_check_1 LibSecp256k1.lib
 linear_verify_1 = LibSecp256k1.linear_verify_1 LibSecp256k1.lib
 decompress = LibSecp256k1.decompress LibSecp256k1.lib
