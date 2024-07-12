@@ -500,7 +500,7 @@ bool ge_is_on_curve(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-bool scale(frameItem* dst, frameItem src, const txEnv* env) {
+bool off_curve_scale(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
 
   secp256k1_gej r, a;
@@ -514,7 +514,7 @@ bool scale(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-bool safe_scale(frameItem* dst, frameItem src, const txEnv* env) {
+bool scale(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
 
   secp256k1_gej r, a;
@@ -546,7 +546,7 @@ bool generate(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-bool linear_combination_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool off_curve_linear_combination_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
 
   secp256k1_gej r, a;
@@ -560,7 +560,7 @@ bool linear_combination_1(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-bool safe_linear_combination_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool linear_combination_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; // env is unused;
 
   secp256k1_gej r, a;
