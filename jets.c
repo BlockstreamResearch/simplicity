@@ -15,27 +15,27 @@ static void write128(frameItem* frame, const secp256k1_uint128* x) {
 }
 
 /* verify : TWO |- ONE */
-bool verify(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_verify(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   (void) dst; /* dst is unused. */
   return readBit(&src);
 }
 
 /* low_1 : ONE |- TWO */
-bool low_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_low_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   (void) src; /* src is unused. */
   writeBit(dst, 0);
   return true;
 }
 
-#define LOW_(bits)                                                 \
-/* low_n : ONE |- TWO^n */                                         \
-bool low_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                 \
-  (void) src; /* src is unused. */                                 \
-  write##bits(dst, 0);                                             \
-  return true;                                                     \
+#define LOW_(bits)                                                            \
+/* low_n : ONE |- TWO^n */                                                    \
+bool simplicity_low_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  (void) src; /* src is unused. */                                            \
+  write##bits(dst, 0);                                                        \
+  return true;                                                                \
 }
 LOW_(8)
 LOW_(16)
@@ -43,20 +43,20 @@ LOW_(32)
 LOW_(64)
 
 /* high_1 : ONE |- TWO */
-bool high_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_high_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   (void) src; /* src is unused. */
   writeBit(dst, 1);
   return true;
 }
 
-#define HIGH_(bits)                                                 \
-/* high_n : ONE |- TWO^n */                                         \
-bool high_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                  \
-  (void) src; /* src is unused. */                                  \
-  write##bits(dst, UINT##bits##_MAX);                               \
-  return true;                                                      \
+#define HIGH_(bits)                                                            \
+/* high_n : ONE |- TWO^n */                                                    \
+bool simplicity_high_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                             \
+  (void) src; /* src is unused. */                                             \
+  write##bits(dst, UINT##bits##_MAX);                                          \
+  return true;                                                                 \
 }
 HIGH_(8)
 HIGH_(16)
@@ -64,20 +64,20 @@ HIGH_(32)
 HIGH_(64)
 
 /* complement_1 : TWO |- TWO */
-bool complement_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_complement_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   bool x = readBit(&src);
   writeBit(dst, !x);
   return true;
 }
 
-#define COMPLEMENT_(bits)                                                 \
-/* complement_n : TWO^n |- TWO^n */                                       \
-bool complement_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                        \
-  uint_fast##bits##_t x = read##bits(&src);                               \
-  write##bits(dst, ~(1U*x));                                              \
-  return true;                                                            \
+#define COMPLEMENT_(bits)                                                            \
+/* complement_n : TWO^n |- TWO^n */                                                  \
+bool simplicity_complement_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                   \
+  uint_fast##bits##_t x = read##bits(&src);                                          \
+  write##bits(dst, ~(1U*x));                                                         \
+  return true;                                                                       \
 }
 COMPLEMENT_(8)
 COMPLEMENT_(16)
@@ -85,7 +85,7 @@ COMPLEMENT_(32)
 COMPLEMENT_(64)
 
 /* and_1 : TWO * TWO |- TWO */
-bool and_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_and_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   bool x = readBit(&src);
   bool y = readBit(&src);
@@ -93,14 +93,14 @@ bool and_1(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-#define AND_(bits)                                                 \
-/* and_n : TWO^n * TWO^n |- TWO^n */                               \
-bool and_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                 \
-  uint_fast##bits##_t x = read##bits(&src);                        \
-  uint_fast##bits##_t y = read##bits(&src);                        \
-  write##bits(dst, x & y);                                         \
-  return true;                                                     \
+#define AND_(bits)                                                            \
+/* and_n : TWO^n * TWO^n |- TWO^n */                                          \
+bool simplicity_and_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  uint_fast##bits##_t x = read##bits(&src);                                   \
+  uint_fast##bits##_t y = read##bits(&src);                                   \
+  write##bits(dst, x & y);                                                    \
+  return true;                                                                \
 }
 AND_(8)
 AND_(16)
@@ -108,7 +108,7 @@ AND_(32)
 AND_(64)
 
 /* or_1 : TWO * TWO |- TWO */
-bool or_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_or_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   bool x = readBit(&src);
   bool y = readBit(&src);
@@ -116,14 +116,14 @@ bool or_1(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-#define OR_(bits)                                                 \
-/* or_n : TWO^n * TWO^n |- TWO^n */                               \
-bool or_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                \
-  uint_fast##bits##_t x = read##bits(&src);                       \
-  uint_fast##bits##_t y = read##bits(&src);                       \
-  write##bits(dst, x | y);                                        \
-  return true;                                                    \
+#define OR_(bits)                                                            \
+/* or_n : TWO^n * TWO^n |- TWO^n */                                          \
+bool simplicity_or_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                           \
+  uint_fast##bits##_t x = read##bits(&src);                                  \
+  uint_fast##bits##_t y = read##bits(&src);                                  \
+  write##bits(dst, x | y);                                                   \
+  return true;                                                               \
 }
 OR_(8)
 OR_(16)
@@ -131,7 +131,7 @@ OR_(32)
 OR_(64)
 
 /* xor_1 : TWO * TWO |- TWO */
-bool xor_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_xor_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   bool x = readBit(&src);
   bool y = readBit(&src);
@@ -139,14 +139,14 @@ bool xor_1(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-#define XOR_(bits)                                                 \
-/* xor_n : TWO^n * TWO^n |- TWO^n */                               \
-bool xor_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                 \
-  uint_fast##bits##_t x = read##bits(&src);                        \
-  uint_fast##bits##_t y = read##bits(&src);                        \
-  write##bits(dst, x ^ y);                                         \
-  return true;                                                     \
+#define XOR_(bits)                                                            \
+/* xor_n : TWO^n * TWO^n |- TWO^n */                                          \
+bool simplicity_xor_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  uint_fast##bits##_t x = read##bits(&src);                                   \
+  uint_fast##bits##_t y = read##bits(&src);                                   \
+  write##bits(dst, x ^ y);                                                    \
+  return true;                                                                \
 }
 XOR_(8)
 XOR_(16)
@@ -154,7 +154,7 @@ XOR_(32)
 XOR_(64)
 
 /* maj_1 : TWO * TWO * TWO |- TWO */
-bool maj_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_maj_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   bool x = readBit(&src);
   bool y = readBit(&src);
@@ -163,15 +163,15 @@ bool maj_1(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-#define MAJ_(bits)                                                 \
-/* maj_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \
-bool maj_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                 \
-  uint_fast##bits##_t x = read##bits(&src);                        \
-  uint_fast##bits##_t y = read##bits(&src);                        \
-  uint_fast##bits##_t z = read##bits(&src);                        \
-  write##bits(dst, (x&y) | (y&z) | (z&x));                         \
-  return true;                                                     \
+#define MAJ_(bits)                                                            \
+/* maj_n : TWO^n * TWO^n * TWO^n |- TWO^n */                                  \
+bool simplicity_maj_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  uint_fast##bits##_t x = read##bits(&src);                                   \
+  uint_fast##bits##_t y = read##bits(&src);                                   \
+  uint_fast##bits##_t z = read##bits(&src);                                   \
+  write##bits(dst, (x&y) | (y&z) | (z&x));                                    \
+  return true;                                                                \
 }
 MAJ_(8)
 MAJ_(16)
@@ -179,7 +179,7 @@ MAJ_(32)
 MAJ_(64)
 
 /* xor_xor_1 : TWO * TWO * TWO |- TWO */
-bool xor_xor_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_xor_xor_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   bool x = readBit(&src);
   bool y = readBit(&src);
@@ -188,15 +188,15 @@ bool xor_xor_1(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-#define XOR_XOR_(bits)                                                 \
-/* xor_xor_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \
-bool xor_xor_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                     \
-  uint_fast##bits##_t x = read##bits(&src);                            \
-  uint_fast##bits##_t y = read##bits(&src);                            \
-  uint_fast##bits##_t z = read##bits(&src);                            \
-  write##bits(dst, x ^ y ^ z);                                         \
-  return true;                                                         \
+#define XOR_XOR_(bits)                                                            \
+/* xor_xor_n : TWO^n * TWO^n * TWO^n |- TWO^n */                                  \
+bool simplicity_xor_xor_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                \
+  uint_fast##bits##_t x = read##bits(&src);                                       \
+  uint_fast##bits##_t y = read##bits(&src);                                       \
+  uint_fast##bits##_t z = read##bits(&src);                                       \
+  write##bits(dst, x ^ y ^ z);                                                    \
+  return true;                                                                    \
 }
 XOR_XOR_(8)
 XOR_XOR_(16)
@@ -204,7 +204,7 @@ XOR_XOR_(32)
 XOR_XOR_(64)
 
 /* ch_1 : TWO * TWO * TWO |- TWO */
-bool ch_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_ch_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   bool x = readBit(&src);
   bool y = readBit(&src);
@@ -213,15 +213,15 @@ bool ch_1(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-#define CH_(bits)                                                 \
-/* ch_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \
-bool ch_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                \
-  uint_fast##bits##_t x = read##bits(&src);                       \
-  uint_fast##bits##_t y = read##bits(&src);                       \
-  uint_fast##bits##_t z = read##bits(&src);                       \
-  write##bits(dst, ((x&y) | ((~(1U*x))&z)));                      \
-  return true;                                                    \
+#define CH_(bits)                                                            \
+/* ch_n : TWO^n * TWO^n * TWO^n |- TWO^n */                                  \
+bool simplicity_ch_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                           \
+  uint_fast##bits##_t x = read##bits(&src);                                  \
+  uint_fast##bits##_t y = read##bits(&src);                                  \
+  uint_fast##bits##_t z = read##bits(&src);                                  \
+  write##bits(dst, ((x&y) | ((~(1U*x))&z)));                                 \
+  return true;                                                               \
 }
 CH_(8)
 CH_(16)
@@ -229,33 +229,33 @@ CH_(32)
 CH_(64)
 
 /* some_1 : TWO |- TWO */
-bool some_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_some_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   bool x = readBit(&src);
   writeBit(dst, x);
   return true;
 }
 
-#define SOME_(bits)                                                 \
-/* some_n : TWO^n |- TWO */                                         \
-bool some_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                  \
-  uint_fast##bits##_t x = read##bits(&src);                         \
-  writeBit(dst, x != 0);                                            \
-  return true;                                                      \
+#define SOME_(bits)                                                            \
+/* some_n : TWO^n |- TWO */                                                    \
+bool simplicity_some_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                             \
+  uint_fast##bits##_t x = read##bits(&src);                                    \
+  writeBit(dst, x != 0);                                                       \
+  return true;                                                                 \
 }
 SOME_(8)
 SOME_(16)
 SOME_(32)
 SOME_(64)
 
-#define ALL_(bits)                                                 \
-/* all_n : TWO^n |- TWO */                                         \
-bool all_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                 \
-  uint_fast##bits##_t x = read##bits(&src);                        \
-  writeBit(dst, x == UINT##bits##_MAX);                            \
-  return true;                                                     \
+#define ALL_(bits)                                                            \
+/* all_n : TWO^n |- TWO */                                                    \
+bool simplicity_all_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  uint_fast##bits##_t x = read##bits(&src);                                   \
+  writeBit(dst, x == UINT##bits##_MAX);                                       \
+  return true;                                                                \
 }
 ALL_(8)
 ALL_(16)
@@ -263,7 +263,7 @@ ALL_(32)
 ALL_(64)
 
 /* eq_1 : TWO * TWO |- TWO */
-bool eq_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_eq_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   bool x = readBit(&src);
   bool y = readBit(&src);
@@ -271,14 +271,14 @@ bool eq_1(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-#define EQ_(bits)                                                 \
-/* eq_n : TWO^n * TWO^n |- TWO */                                 \
-bool eq_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                \
-  uint_fast##bits##_t x = read##bits(&src);                       \
-  uint_fast##bits##_t y = read##bits(&src);                       \
-  writeBit(dst, x == y);                                          \
-  return true;                                                    \
+#define EQ_(bits)                                                            \
+/* eq_n : TWO^n * TWO^n |- TWO */                                            \
+bool simplicity_eq_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                           \
+  uint_fast##bits##_t x = read##bits(&src);                                  \
+  uint_fast##bits##_t y = read##bits(&src);                                  \
+  writeBit(dst, x == y);                                                     \
+  return true;                                                               \
 }
 EQ_(8)
 EQ_(16)
@@ -286,7 +286,7 @@ EQ_(32)
 EQ_(64)
 
 /* eq_256 : TWO^256 * TWO^256 |- TWO */
-bool eq_256(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_eq_256(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   uint32_t arr[16];
   read32s(arr, 16, &src);
@@ -302,7 +302,7 @@ bool eq_256(frameItem* dst, frameItem src, const txEnv* env) {
 
 #define FULL_LEFT_SHIFT_(bitsN, bitsM)                                                                    \
 /* full_left_shift_n_m : TWO^n * TWO^m |- TWO^m * TWO^n */                                                \
-bool full_left_shift_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {                 \
+bool simplicity_full_left_shift_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {      \
   (void) env; /* env is unused. */                                                                        \
   static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
   copyBits(dst, &src, (bitsN) + (bitsM));                                                                 \
@@ -329,7 +329,7 @@ FULL_LEFT_SHIFT_(64,32)
 
 #define FULL_RIGHT_SHIFT_(bitsN, bitsM)                                                                   \
 /* full_right_shift_n_m : TWO^m * TWO^n |- TWO^n * TWO^m */                                               \
-bool full_right_shift_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {                \
+bool simplicity_full_right_shift_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {     \
   (void) env; /* env is unused. */                                                                        \
   static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
   copyBits(dst, &src, (bitsN) + (bitsM));                                                                 \
@@ -356,7 +356,7 @@ FULL_RIGHT_SHIFT_(64,32)
 
 #define LEFTMOST_(bitsN, bitsM)                                                                           \
 /* leftmost_n_m : TWO^n |- TWO^m */                                                                       \
-bool leftmost_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {                        \
+bool simplicity_leftmost_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {             \
   (void) env; /* env is unused. */                                                                        \
   static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
   copyBits(dst, &src, (bitsM));                                                                           \
@@ -383,7 +383,7 @@ LEFTMOST_(64,32)
 
 #define RIGHTMOST_(bitsN, bitsM)                                                                          \
 /* rightmost_n_m : TWO^n |- TWO^m */                                                                      \
-bool rightmost_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {                       \
+bool simplicity_rightmost_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {            \
   (void) env; /* env is unused. */                                                                        \
   static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
   forwardBits(&src, (bitsN) - (bitsM));                                                                   \
@@ -409,29 +409,29 @@ RIGHTMOST_(64,8)
 RIGHTMOST_(64,16)
 RIGHTMOST_(64,32)
 
-#define LEFT_PAD_LOW_1_(bitsM)                                                 \
-/* left_pad_low_1_m : TWO |- TWO^m */                                          \
-bool left_pad_low_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                             \
-  bool bit = readBit(&src);                                                    \
-  write##bitsM(dst, bit);                                                      \
-  return true;                                                                 \
+#define LEFT_PAD_LOW_1_(bitsM)                                                            \
+/* left_pad_low_1_m : TWO |- TWO^m */                                                     \
+bool simplicity_left_pad_low_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                        \
+  bool bit = readBit(&src);                                                               \
+  write##bitsM(dst, bit);                                                                 \
+  return true;                                                                            \
 }
 LEFT_PAD_LOW_1_(8)
 LEFT_PAD_LOW_1_(16)
 LEFT_PAD_LOW_1_(32)
 LEFT_PAD_LOW_1_(64)
 
-#define LEFT_PAD_LOW_(bitsN, bitsM)                                                    \
-/* left_pad_low_n_m : TWO^n |- TWO^m */                                                \
-bool left_pad_low_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                                     \
-  static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                \
-  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                \
-  static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");           \
-  for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, 0); }               \
-  copyBits(dst, &src, (bitsN));                                                        \
-  return true;                                                                         \
+#define LEFT_PAD_LOW_(bitsN, bitsM)                                                               \
+/* left_pad_low_n_m : TWO^n |- TWO^m */                                                           \
+bool simplicity_left_pad_low_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                                \
+  static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                           \
+  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                           \
+  static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");                      \
+  for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, 0); }                          \
+  copyBits(dst, &src, (bitsN));                                                                   \
+  return true;                                                                                    \
 }
 LEFT_PAD_LOW_(8,16)
 LEFT_PAD_LOW_(8,32)
@@ -440,30 +440,30 @@ LEFT_PAD_LOW_(16,32)
 LEFT_PAD_LOW_(16,64)
 LEFT_PAD_LOW_(32,64)
 
-#define LEFT_PAD_HIGH_1_(bitsM)                                                 \
-/* left_pad_high_1_m : TWO |- TWO^m */                                          \
-bool left_pad_high_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                              \
-  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");         \
-  for(int i = 0; i < (bitsM) - 1; ++i) { writeBit(dst, true); }                 \
-  copyBits(dst, &src, 1);                                                       \
-  return true;                                                                  \
+#define LEFT_PAD_HIGH_1_(bitsM)                                                            \
+/* left_pad_high_1_m : TWO |- TWO^m */                                                     \
+bool simplicity_left_pad_high_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                         \
+  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                    \
+  for(int i = 0; i < (bitsM) - 1; ++i) { writeBit(dst, true); }                            \
+  copyBits(dst, &src, 1);                                                                  \
+  return true;                                                                             \
 }
 LEFT_PAD_HIGH_1_(8)
 LEFT_PAD_HIGH_1_(16)
 LEFT_PAD_HIGH_1_(32)
 LEFT_PAD_HIGH_1_(64)
 
-#define LEFT_PAD_HIGH_(bitsN, bitsM)                                                     \
-/* left_pad_high_n_m : TWO^n |- TWO^m */                                                 \
-bool left_pad_high_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {  \
-  (void) env; /* env is unused. */                                                       \
-  static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                  \
-  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                  \
-  static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");             \
-  for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, UINT##bitsN##_MAX); } \
-  copyBits(dst, &src, (bitsN));                                                          \
-  return true;                                                                           \
+#define LEFT_PAD_HIGH_(bitsN, bitsM)                                                               \
+/* left_pad_high_n_m : TWO^n |- TWO^m */                                                           \
+bool simplicity_left_pad_high_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                                 \
+  static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                            \
+  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                            \
+  static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");                       \
+  for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, UINT##bitsN##_MAX); }           \
+  copyBits(dst, &src, (bitsN));                                                                    \
+  return true;                                                                                     \
 }
 LEFT_PAD_HIGH_(8,16)
 LEFT_PAD_HIGH_(8,32)
@@ -472,13 +472,13 @@ LEFT_PAD_HIGH_(16,32)
 LEFT_PAD_HIGH_(16,64)
 LEFT_PAD_HIGH_(32,64)
 
-#define LEFT_EXTEND_1_(bitsM)                                                 \
-/* left_extend_1_m : TWO |- TWO^m */                                          \
-bool left_extend_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                            \
-  bool bit = readBit(&src);                                                   \
-  write##bitsM(dst, bit ? UINT##bitsM##_MAX : 0);                             \
-  return true;                                                                \
+#define LEFT_EXTEND_1_(bitsM)                                                            \
+/* left_extend_1_m : TWO |- TWO^m */                                                     \
+bool simplicity_left_extend_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                       \
+  bool bit = readBit(&src);                                                              \
+  write##bitsM(dst, bit ? UINT##bitsM##_MAX : 0);                                        \
+  return true;                                                                           \
 }
 LEFT_EXTEND_1_(8)
 LEFT_EXTEND_1_(16)
@@ -487,7 +487,7 @@ LEFT_EXTEND_1_(64)
 
 #define LEFT_EXTEND_(bitsN, bitsM)                                                                 \
 /* left_extend_n_m : TWO^n |- TWO^m */                                                             \
-bool left_extend_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {              \
+bool simplicity_left_extend_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {   \
   (void) env; /* env is unused. */                                                                 \
   static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                            \
   static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                            \
@@ -505,30 +505,30 @@ LEFT_EXTEND_(16,32)
 LEFT_EXTEND_(16,64)
 LEFT_EXTEND_(32,64)
 
-#define RIGHT_PAD_LOW_1_(bitsM)                                                          \
-/* right_pad_low_1_m : TWO |- TWO^m */                                                   \
-bool right_pad_low_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {          \
-  (void) env; /* env is unused. */                                                       \
-  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                  \
-  bool bit = readBit(&src);                                                              \
-  write##bitsM(dst, (uint_fast##bitsM##_t)((uint_fast##bitsM##_t)bit << ((bitsM) - 1))); \
-  return true;                                                                           \
+#define RIGHT_PAD_LOW_1_(bitsM)                                                            \
+/* right_pad_low_1_m : TWO |- TWO^m */                                                     \
+bool simplicity_right_pad_low_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                         \
+  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                    \
+  bool bit = readBit(&src);                                                                \
+  write##bitsM(dst, (uint_fast##bitsM##_t)((uint_fast##bitsM##_t)bit << ((bitsM) - 1)));   \
+  return true;                                                                             \
 }
 RIGHT_PAD_LOW_1_(8)
 RIGHT_PAD_LOW_1_(16)
 RIGHT_PAD_LOW_1_(32)
 RIGHT_PAD_LOW_1_(64)
 
-#define RIGHT_PAD_LOW_(bitsN, bitsM)                                                    \
-/* right_pad_low_n_m : TWO^n |- TWO^m */                                                \
-bool right_pad_low_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                                      \
-  static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                 \
-  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                 \
-  static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");            \
-  copyBits(dst, &src, (bitsN));                                                         \
-  for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, 0); }                \
-  return true;                                                                          \
+#define RIGHT_PAD_LOW_(bitsN, bitsM)                                                               \
+/* right_pad_low_n_m : TWO^n |- TWO^m */                                                           \
+bool simplicity_right_pad_low_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                                 \
+  static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                            \
+  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                            \
+  static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");                       \
+  copyBits(dst, &src, (bitsN));                                                                    \
+  for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, 0); }                           \
+  return true;                                                                                     \
 }
 RIGHT_PAD_LOW_(8,16)
 RIGHT_PAD_LOW_(8,32)
@@ -537,30 +537,30 @@ RIGHT_PAD_LOW_(16,32)
 RIGHT_PAD_LOW_(16,64)
 RIGHT_PAD_LOW_(32,64)
 
-#define RIGHT_PAD_HIGH_1_(bitsM)                                                 \
-/* right_pad_high_1_m : TWO |- TWO^m */                                          \
-bool right_pad_high_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                               \
-  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");          \
-  copyBits(dst, &src, 1);                                                        \
-  for(int i = 0; i < (bitsM) - 1; ++i) { writeBit(dst, true); }                  \
-  return true;                                                                   \
+#define RIGHT_PAD_HIGH_1_(bitsM)                                                            \
+/* right_pad_high_1_m : TWO |- TWO^m */                                                     \
+bool simplicity_right_pad_high_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                          \
+  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                     \
+  copyBits(dst, &src, 1);                                                                   \
+  for(int i = 0; i < (bitsM) - 1; ++i) { writeBit(dst, true); }                             \
+  return true;                                                                              \
 }
 RIGHT_PAD_HIGH_1_(8)
 RIGHT_PAD_HIGH_1_(16)
 RIGHT_PAD_HIGH_1_(32)
 RIGHT_PAD_HIGH_1_(64)
 
-#define RIGHT_PAD_HIGH_(bitsN, bitsM)                                                    \
-/* right_pad_high_n_m : TWO^n |- TWO^m */                                                \
-bool right_pad_high_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                                       \
-  static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                  \
-  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                  \
-  static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");             \
-  copyBits(dst, &src, (bitsN));                                                          \
-  for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, UINT##bitsN##_MAX); } \
-  return true;                                                                           \
+#define RIGHT_PAD_HIGH_(bitsN, bitsM)                                                               \
+/* right_pad_high_n_m : TWO^n |- TWO^m */                                                           \
+bool simplicity_right_pad_high_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                                  \
+  static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                             \
+  static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                             \
+  static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");                        \
+  copyBits(dst, &src, (bitsN));                                                                     \
+  for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, UINT##bitsN##_MAX); }            \
+  return true;                                                                                      \
 }
 RIGHT_PAD_HIGH_(8,16)
 RIGHT_PAD_HIGH_(8,32)
@@ -571,7 +571,7 @@ RIGHT_PAD_HIGH_(32,64)
 
 #define RIGHT_EXTEND_(bitsN, bitsM)                                                                \
 /* right_extend_n_m : TWO^n |- TWO^m */                                                            \
-bool right_extend_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {             \
+bool simplicity_right_extend_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {  \
   (void) env; /* env is unused. */                                                                 \
   static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                            \
   static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                            \
@@ -589,48 +589,14 @@ RIGHT_EXTEND_(16,32)
 RIGHT_EXTEND_(16,64)
 RIGHT_EXTEND_(32,64)
 
-#define LEFT_SHIFT_(log, bits)                                                           \
-static inline void left_shift_helper_##bits(bool with, frameItem* dst, frameItem *src) { \
-  static_assert(log <= 8, "Only log parameter upto 8 is supported.");                    \
-  uint_fast8_t amt = read##log(src);                                                     \
-  uint_fast##bits##_t output = read##bits(src);                                          \
-  if (with) output = UINT##bits##_MAX ^ output;                                          \
-  if (amt < bits) {                                                                      \
-    output = (uint_fast##bits##_t)((1U * output) << amt);                                \
-  } else {                                                                               \
-    output = 0;                                                                          \
-  }                                                                                      \
-  if (with) output = UINT##bits##_MAX ^ output;                                          \
-  write##bits(dst, output);                                                              \
-}                                                                                        \
-                                                                                         \
-/* left_shift_with_n : TWO * TWO^l * TWO^n |- TWO^n */                                   \
-bool left_shift_with_##bits(frameItem* dst, frameItem src, const txEnv* env) {           \
-  (void) env; /* env is unused. */                                                       \
-  bool with = readBit(&src);                                                             \
-  left_shift_helper_##bits(with, dst, &src);                                             \
-  return true;                                                                           \
-}                                                                                        \
-                                                                                         \
-/* left_shift_n : TWO^l * TWO^n |- TWO^n */                                              \
-bool left_shift_##bits(frameItem* dst, frameItem src, const txEnv* env) {                \
-  (void) env; /* env is unused. */                                                       \
-  left_shift_helper_##bits(0, dst, &src);                                                \
-  return true;                                                                           \
-}
-LEFT_SHIFT_(4,8)
-LEFT_SHIFT_(4,16)
-LEFT_SHIFT_(8,32)
-LEFT_SHIFT_(8,64)
-
-#define RIGHT_SHIFT_(log, bits)                                                           \
-static inline void right_shift_helper_##bits(bool with, frameItem* dst, frameItem *src) { \
+#define LEFT_SHIFT_(log, bits)                                                            \
+static inline void left_shift_helper_##bits(bool with, frameItem* dst, frameItem *src) {  \
   static_assert(log <= 8, "Only log parameter upto 8 is supported.");                     \
   uint_fast8_t amt = read##log(src);                                                      \
   uint_fast##bits##_t output = read##bits(src);                                           \
   if (with) output = UINT##bits##_MAX ^ output;                                           \
   if (amt < bits) {                                                                       \
-    output = (uint_fast##bits##_t)(output >> amt);                                        \
+    output = (uint_fast##bits##_t)((1U * output) << amt);                                 \
   } else {                                                                                \
     output = 0;                                                                           \
   }                                                                                       \
@@ -638,19 +604,53 @@ static inline void right_shift_helper_##bits(bool with, frameItem* dst, frameIte
   write##bits(dst, output);                                                               \
 }                                                                                         \
                                                                                           \
-/* right_shift_with_n : TWO * TWO^l * TWO^n |- TWO^n */                                   \
-bool right_shift_with_##bits(frameItem* dst, frameItem src, const txEnv* env) {           \
+/* left_shift_with_n : TWO * TWO^l * TWO^n |- TWO^n */                                    \
+bool simplicity_left_shift_with_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
   (void) env; /* env is unused. */                                                        \
   bool with = readBit(&src);                                                              \
-  right_shift_helper_##bits(with, dst, &src);                                             \
+  left_shift_helper_##bits(with, dst, &src);                                              \
   return true;                                                                            \
 }                                                                                         \
                                                                                           \
-/* right_shift_n : TWO^l * TWO^n |- TWO^n */                                              \
-bool right_shift_##bits(frameItem* dst, frameItem src, const txEnv* env) {                \
+/* left_shift_n : TWO^l * TWO^n |- TWO^n */                                               \
+bool simplicity_left_shift_##bits(frameItem* dst, frameItem src, const txEnv* env) {      \
   (void) env; /* env is unused. */                                                        \
-  right_shift_helper_##bits(0, dst, &src);                                                \
+  left_shift_helper_##bits(0, dst, &src);                                                 \
   return true;                                                                            \
+}
+LEFT_SHIFT_(4,8)
+LEFT_SHIFT_(4,16)
+LEFT_SHIFT_(8,32)
+LEFT_SHIFT_(8,64)
+
+#define RIGHT_SHIFT_(log, bits)                                                            \
+static inline void right_shift_helper_##bits(bool with, frameItem* dst, frameItem *src) {  \
+  static_assert(log <= 8, "Only log parameter upto 8 is supported.");                      \
+  uint_fast8_t amt = read##log(src);                                                       \
+  uint_fast##bits##_t output = read##bits(src);                                            \
+  if (with) output = UINT##bits##_MAX ^ output;                                            \
+  if (amt < bits) {                                                                        \
+    output = (uint_fast##bits##_t)(output >> amt);                                         \
+  } else {                                                                                 \
+    output = 0;                                                                            \
+  }                                                                                        \
+  if (with) output = UINT##bits##_MAX ^ output;                                            \
+  write##bits(dst, output);                                                                \
+}                                                                                          \
+                                                                                           \
+/* right_shift_with_n : TWO * TWO^l * TWO^n |- TWO^n */                                    \
+bool simplicity_right_shift_with_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                         \
+  bool with = readBit(&src);                                                               \
+  right_shift_helper_##bits(with, dst, &src);                                              \
+  return true;                                                                             \
+}                                                                                          \
+                                                                                           \
+/* right_shift_n : TWO^l * TWO^n |- TWO^n */                                               \
+bool simplicity_right_shift_##bits(frameItem* dst, frameItem src, const txEnv* env) {      \
+  (void) env; /* env is unused. */                                                         \
+  right_shift_helper_##bits(0, dst, &src);                                                 \
+  return true;                                                                             \
 }
 RIGHT_SHIFT_(4,8)
 RIGHT_SHIFT_(4,16)
@@ -668,7 +668,7 @@ static inline uint_fast##bits##_t rotate_##bits(uint_fast##bits##_t value, uint_
 }                                                                                              \
                                                                                                \
 /* left_rotate_n : TWO^l * TWO^n |- TWO^n */                                                   \
-bool left_rotate_##bits(frameItem* dst, frameItem src, const txEnv* env) {                     \
+bool simplicity_left_rotate_##bits(frameItem* dst, frameItem src, const txEnv* env) {          \
   (void) env; /* env is unused. */                                                             \
   uint_fast8_t amt = read##log(&src) % bits;                                                   \
   uint_fast##bits##_t input = read##bits(&src);                                                \
@@ -677,7 +677,7 @@ bool left_rotate_##bits(frameItem* dst, frameItem src, const txEnv* env) {      
 }                                                                                              \
                                                                                                \
 /* right_rotate_n : TWO^l * TWO^n |- TWO^n */                                                  \
-bool right_rotate_##bits(frameItem* dst, frameItem src, const txEnv* env) {                    \
+bool simplicity_right_rotate_##bits(frameItem* dst, frameItem src, const txEnv* env) {         \
   static_assert(bits <= UINT8_MAX, "'bits' is too large.");                                    \
   (void) env; /* env is unused. */                                                             \
   uint_fast8_t amt = read##log(&src) % bits;                                                   \
@@ -690,28 +690,28 @@ ROTATE_(4,16)
 ROTATE_(8,32)
 ROTATE_(8,64)
 
-#define ONE_(bits)                                                 \
-/* one_n : ONE |- TWO^n */                                         \
-bool one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                 \
-  (void) src; /* src is unused. */                                 \
-  write##bits(dst, 1);                                             \
-  return true;                                                     \
+#define ONE_(bits)                                                            \
+/* one_n : ONE |- TWO^n */                                                    \
+bool simplicity_one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  (void) src; /* src is unused. */                                            \
+  write##bits(dst, 1);                                                        \
+  return true;                                                                \
 }
 ONE_(8)
 ONE_(16)
 ONE_(32)
 ONE_(64)
 
-#define ADD_(bits)                                                 \
-/* add_n : TWO^n * TWO^n |- TWO * TWO^n */                         \
-bool add_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                 \
-  uint_fast##bits##_t x = read##bits(&src);                        \
-  uint_fast##bits##_t y = read##bits(&src);                        \
-  writeBit(dst, 1U * UINT##bits##_MAX - y < x);                    \
-  write##bits(dst, (uint_fast##bits##_t)(1U * x + y));             \
-  return true;                                                     \
+#define ADD_(bits)                                                            \
+/* add_n : TWO^n * TWO^n |- TWO * TWO^n */                                    \
+bool simplicity_add_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  uint_fast##bits##_t x = read##bits(&src);                                   \
+  uint_fast##bits##_t y = read##bits(&src);                                   \
+  writeBit(dst, 1U * UINT##bits##_MAX - y < x);                               \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x + y));                        \
+  return true;                                                                \
 }
 ADD_(8)
 ADD_(16)
@@ -720,7 +720,7 @@ ADD_(64)
 
 #define FULL_ADD_(bits)                                                                   \
 /* full_add_n : TWO * TWO^n * TWO^n |- TWO * TWO^n */                                     \
-bool full_add_##bits(frameItem* dst, frameItem src, const txEnv* env) {                   \
+bool simplicity_full_add_##bits(frameItem* dst, frameItem src, const txEnv* env) {        \
   (void) env; /* env is unused. */                                                        \
   bool z = readBit(&src);                                                                 \
   uint_fast##bits##_t x = read##bits(&src);                                               \
@@ -734,122 +734,122 @@ FULL_ADD_(16)
 FULL_ADD_(32)
 FULL_ADD_(64)
 
-#define FULL_INCREMENT_(bits)                                                 \
-/* full_increment_n : TWO * TWO^n |- TWO * TWO^n */                           \
-bool full_increment_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                            \
-  bool z = readBit(&src);                                                     \
-  uint_fast##bits##_t x = read##bits(&src);                                   \
-  writeBit(dst, 1U * UINT##bits##_MAX - z < x);                               \
-  write##bits(dst, (uint_fast##bits##_t)(1U * x + z));                        \
-  return true;                                                                \
+#define FULL_INCREMENT_(bits)                                                            \
+/* full_increment_n : TWO * TWO^n |- TWO * TWO^n */                                      \
+bool simplicity_full_increment_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                       \
+  bool z = readBit(&src);                                                                \
+  uint_fast##bits##_t x = read##bits(&src);                                              \
+  writeBit(dst, 1U * UINT##bits##_MAX - z < x);                                          \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x + z));                                   \
+  return true;                                                                           \
 }
 FULL_INCREMENT_(8)
 FULL_INCREMENT_(16)
 FULL_INCREMENT_(32)
 FULL_INCREMENT_(64)
 
-#define INCREMENT_(bits)                                                 \
-/* increment_n : TWO^n |- TWO * TWO^n */                                 \
-bool increment_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                       \
-  uint_fast##bits##_t x = read##bits(&src);                              \
-  writeBit(dst, 1U * UINT##bits##_MAX - 1 < x);                          \
-  write##bits(dst, (uint_fast##bits##_t)(1U * x + 1));                   \
-  return true;                                                           \
+#define INCREMENT_(bits)                                                            \
+/* increment_n : TWO^n |- TWO * TWO^n */                                            \
+bool simplicity_increment_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                  \
+  uint_fast##bits##_t x = read##bits(&src);                                         \
+  writeBit(dst, 1U * UINT##bits##_MAX - 1 < x);                                     \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x + 1));                              \
+  return true;                                                                      \
 }
 INCREMENT_(8)
 INCREMENT_(16)
 INCREMENT_(32)
 INCREMENT_(64)
 
-#define SUBTRACT_(bits)                                                 \
-/* subtract_n : TWO^n * TWO^n |- TWO * TWO^n */                         \
-bool subtract_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                      \
-  uint_fast##bits##_t x = read##bits(&src);                             \
-  uint_fast##bits##_t y = read##bits(&src);                             \
-  writeBit(dst, x < y);                                                 \
-  write##bits(dst, (uint_fast##bits##_t)(1U * x - y));                  \
-  return true;                                                          \
+#define SUBTRACT_(bits)                                                            \
+/* subtract_n : TWO^n * TWO^n |- TWO * TWO^n */                                    \
+bool simplicity_subtract_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                 \
+  uint_fast##bits##_t x = read##bits(&src);                                        \
+  uint_fast##bits##_t y = read##bits(&src);                                        \
+  writeBit(dst, x < y);                                                            \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x - y));                             \
+  return true;                                                                     \
 }
 SUBTRACT_(8)
 SUBTRACT_(16)
 SUBTRACT_(32)
 SUBTRACT_(64)
 
-#define NEGATE_(bits)                                                 \
-/* negate_n : TWO^n |- TWO * TWO^n */                                 \
-bool negate_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                    \
-  uint_fast##bits##_t x = read##bits(&src);                           \
-  writeBit(dst, x != 0);                                              \
-  write##bits(dst, (uint_fast##bits##_t)(- (1U * x)));                \
-  return true;                                                        \
+#define NEGATE_(bits)                                                            \
+/* negate_n : TWO^n |- TWO * TWO^n */                                            \
+bool simplicity_negate_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                               \
+  uint_fast##bits##_t x = read##bits(&src);                                      \
+  writeBit(dst, x != 0);                                                         \
+  write##bits(dst, (uint_fast##bits##_t)(- (1U * x)));                           \
+  return true;                                                                   \
 }
 NEGATE_(8)
 NEGATE_(16)
 NEGATE_(32)
 NEGATE_(64)
 
-#define FULL_DECREMENT_(bits)                                                 \
-/* full_decrement_n : TWO * TWO^n |- TWO * TWO^n */                           \
-bool full_decrement_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                            \
-  bool z = readBit(&src);                                                     \
-  uint_fast##bits##_t x = read##bits(&src);                                   \
-  writeBit(dst, x < z);                                                       \
-  write##bits(dst, (uint_fast##bits##_t)(1U * x - z));                        \
-  return true;                                                                \
+#define FULL_DECREMENT_(bits)                                                            \
+/* full_decrement_n : TWO * TWO^n |- TWO * TWO^n */                                      \
+bool simplicity_full_decrement_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                       \
+  bool z = readBit(&src);                                                                \
+  uint_fast##bits##_t x = read##bits(&src);                                              \
+  writeBit(dst, x < z);                                                                  \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x - z));                                   \
+  return true;                                                                           \
 }
 FULL_DECREMENT_(8)
 FULL_DECREMENT_(16)
 FULL_DECREMENT_(32)
 FULL_DECREMENT_(64)
 
-#define DECREMENT_(bits)                                                 \
-/* decrement_n : TWO^n |- TWO * TWO^n */                                 \
-bool decrement_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                       \
-  uint_fast##bits##_t x = read##bits(&src);                              \
-  writeBit(dst, x < 1);                                                  \
-  write##bits(dst, (uint_fast##bits##_t)(1U * x - 1));                   \
-  return true;                                                           \
+#define DECREMENT_(bits)                                                            \
+/* decrement_n : TWO^n |- TWO * TWO^n */                                            \
+bool simplicity_decrement_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                  \
+  uint_fast##bits##_t x = read##bits(&src);                                         \
+  writeBit(dst, x < 1);                                                             \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x - 1));                              \
+  return true;                                                                      \
 }
 DECREMENT_(8)
 DECREMENT_(16)
 DECREMENT_(32)
 DECREMENT_(64)
 
-#define FULL_SUBTRACT_(bits)                                                 \
-/* full_subtract_n : TWO * TWO^n * TWO^n |- TWO * TWO^n */                   \
-bool full_subtract_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                           \
-  bool z = readBit(&src);                                                    \
-  uint_fast##bits##_t x = read##bits(&src);                                  \
-  uint_fast##bits##_t y = read##bits(&src);                                  \
-  writeBit(dst, x < y || 1U * x - y < z);                                    \
-  write##bits(dst, (uint_fast##bits##_t)(1U * x - y - z));                   \
-  return true;                                                               \
+#define FULL_SUBTRACT_(bits)                                                            \
+/* full_subtract_n : TWO * TWO^n * TWO^n |- TWO * TWO^n */                              \
+bool simplicity_full_subtract_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                      \
+  bool z = readBit(&src);                                                               \
+  uint_fast##bits##_t x = read##bits(&src);                                             \
+  uint_fast##bits##_t y = read##bits(&src);                                             \
+  writeBit(dst, x < y || 1U * x - y < z);                                               \
+  write##bits(dst, (uint_fast##bits##_t)(1U * x - y - z));                              \
+  return true;                                                                          \
 }
 FULL_SUBTRACT_(8)
 FULL_SUBTRACT_(16)
 FULL_SUBTRACT_(32)
 FULL_SUBTRACT_(64)
 
-#define MULTIPLY_(bits,bitsx2)                                          \
-bool multiply_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                      \
-  uint_fast##bitsx2##_t x = read##bits(&src);                           \
-  uint_fast##bitsx2##_t y = read##bits(&src);                           \
-  write##bitsx2(dst, x * y);                                            \
-  return true;                                                          \
+#define MULTIPLY_(bits,bitsx2)                                                     \
+bool simplicity_multiply_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                 \
+  uint_fast##bitsx2##_t x = read##bits(&src);                                      \
+  uint_fast##bitsx2##_t y = read##bits(&src);                                      \
+  write##bitsx2(dst, x * y);                                                       \
+  return true;                                                                     \
 }
 MULTIPLY_(8, 16)
 MULTIPLY_(16, 32)
 MULTIPLY_(32, 64)
 
-bool multiply_64(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_multiply_64(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   uint_fast64_t x = read64(&src);
   uint_fast64_t y = read64(&src);
@@ -859,21 +859,21 @@ bool multiply_64(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-#define FULL_MULTIPLY_(bits,bitsx2)                                          \
-bool full_multiply_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                           \
-  uint_fast##bitsx2##_t x = read##bits(&src);                                \
-  uint_fast##bitsx2##_t y = read##bits(&src);                                \
-  uint_fast##bitsx2##_t z = read##bits(&src);                                \
-  uint_fast##bitsx2##_t w = read##bits(&src);                                \
-  write##bitsx2(dst, x * y + z + w);                                         \
-  return true;                                                               \
+#define FULL_MULTIPLY_(bits,bitsx2)                                                     \
+bool simplicity_full_multiply_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                      \
+  uint_fast##bitsx2##_t x = read##bits(&src);                                           \
+  uint_fast##bitsx2##_t y = read##bits(&src);                                           \
+  uint_fast##bitsx2##_t z = read##bits(&src);                                           \
+  uint_fast##bitsx2##_t w = read##bits(&src);                                           \
+  write##bitsx2(dst, x * y + z + w);                                                    \
+  return true;                                                                          \
 }
 FULL_MULTIPLY_(8, 16)
 FULL_MULTIPLY_(16, 32)
 FULL_MULTIPLY_(32, 64)
 
-bool full_multiply_64(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_full_multiply_64(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   uint_fast64_t x = read64(&src);
   uint_fast64_t y = read64(&src);
@@ -887,156 +887,156 @@ bool full_multiply_64(frameItem* dst, frameItem src, const txEnv* env) {
   return true;
 }
 
-#define IS_ZERO_(bits)                                                 \
-/* is_zero_n : TWO^n |- TWO */                                         \
-bool is_zero_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                     \
-  uint_fast##bits##_t x = read##bits(&src);                            \
-  writeBit(dst, x == 0);                                               \
-  return true;                                                         \
+#define IS_ZERO_(bits)                                                            \
+/* is_zero_n : TWO^n |- TWO */                                                    \
+bool simplicity_is_zero_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                \
+  uint_fast##bits##_t x = read##bits(&src);                                       \
+  writeBit(dst, x == 0);                                                          \
+  return true;                                                                    \
 }
 IS_ZERO_(8)
 IS_ZERO_(16)
 IS_ZERO_(32)
 IS_ZERO_(64)
 
-#define IS_ONE_(bits)                                                 \
-/* is_one_n : TWO^n |- TWO */                                         \
-bool is_one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                    \
-  uint_fast##bits##_t x = read##bits(&src);                           \
-  writeBit(dst, x == 1);                                              \
-  return true;                                                        \
+#define IS_ONE_(bits)                                                            \
+/* is_one_n : TWO^n |- TWO */                                                    \
+bool simplicity_is_one_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                               \
+  uint_fast##bits##_t x = read##bits(&src);                                      \
+  writeBit(dst, x == 1);                                                         \
+  return true;                                                                   \
 }
 IS_ONE_(8)
 IS_ONE_(16)
 IS_ONE_(32)
 IS_ONE_(64)
 
-#define LE_(bits)                                                 \
-/* le_n : TWO^n * TWO^n |- TWO */                                 \
-bool le_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                \
-  uint_fast##bits##_t x = read##bits(&src);                       \
-  uint_fast##bits##_t y = read##bits(&src);                       \
-  writeBit(dst, x <= y);                                          \
-  return true;                                                    \
+#define LE_(bits)                                                            \
+/* le_n : TWO^n * TWO^n |- TWO */                                            \
+bool simplicity_le_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                           \
+  uint_fast##bits##_t x = read##bits(&src);                                  \
+  uint_fast##bits##_t y = read##bits(&src);                                  \
+  writeBit(dst, x <= y);                                                     \
+  return true;                                                               \
 }
 LE_(8)
 LE_(16)
 LE_(32)
 LE_(64)
 
-#define LT_(bits)                                                     \
-/* lt_n : TWO^n * TWO^n |- TWO */                                     \
-bool lt_##bits(frameItem* dst, frameItem src, const txEnv* env) {     \
-  (void) env; /* env is unused. */                                    \
-  uint_fast##bits##_t x = read##bits(&src);                           \
-  uint_fast##bits##_t y = read##bits(&src);                           \
-  writeBit(dst, x < y);                                               \
-  return true;                                                        \
+#define LT_(bits)                                                            \
+/* lt_n : TWO^n * TWO^n |- TWO */                                            \
+bool simplicity_lt_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                           \
+  uint_fast##bits##_t x = read##bits(&src);                                  \
+  uint_fast##bits##_t y = read##bits(&src);                                  \
+  writeBit(dst, x < y);                                                      \
+  return true;                                                               \
 }
 LT_(8)
 LT_(16)
 LT_(32)
 LT_(64)
 
-#define MIN_(bits)                                                    \
-/* min_n : TWO^n * TWO^n |- TWO^n */                                  \
-bool min_##bits(frameItem* dst, frameItem src, const txEnv* env) {    \
-  (void) env; /* env is unused. */                                    \
-  uint_fast##bits##_t x = read##bits(&src);                           \
-  uint_fast##bits##_t y = read##bits(&src);                           \
-  write##bits(dst, x < y ? x : y);                                    \
-  return true;                                                        \
+#define MIN_(bits)                                                            \
+/* min_n : TWO^n * TWO^n |- TWO^n */                                          \
+bool simplicity_min_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  uint_fast##bits##_t x = read##bits(&src);                                   \
+  uint_fast##bits##_t y = read##bits(&src);                                   \
+  write##bits(dst, x < y ? x : y);                                            \
+  return true;                                                                \
 }
 MIN_(8)
 MIN_(16)
 MIN_(32)
 MIN_(64)
 
-#define MAX_(bits)                                                    \
-/* max_n : TWO^n * TWO^n |- TWO^n */                                  \
-bool max_##bits(frameItem* dst, frameItem src, const txEnv* env) {    \
-  (void) env; /* env is unused. */                                    \
-  uint_fast##bits##_t x = read##bits(&src);                           \
-  uint_fast##bits##_t y = read##bits(&src);                           \
-  write##bits(dst, x < y ? y : x);                                    \
-  return true;                                                        \
+#define MAX_(bits)                                                            \
+/* max_n : TWO^n * TWO^n |- TWO^n */                                          \
+bool simplicity_max_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                            \
+  uint_fast##bits##_t x = read##bits(&src);                                   \
+  uint_fast##bits##_t y = read##bits(&src);                                   \
+  write##bits(dst, x < y ? y : x);                                            \
+  return true;                                                                \
 }
 MAX_(8)
 MAX_(16)
 MAX_(32)
 MAX_(64)
 
-#define MEDIAN_(bits)                                                 \
-/* median_n : TWO^n * TWO^n * TWO^n |- TWO^n */                       \
-bool median_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                    \
-  uint_fast##bits##_t x = read##bits(&src);                           \
-  uint_fast##bits##_t y = read##bits(&src);                           \
-  uint_fast##bits##_t z = read##bits(&src);                           \
-  write##bits(dst, x < y                                              \
-                 ? (y < z ? y : (z < x ? x : z))                      \
-                 : (x < z ? x : (z < y ? y : z)));                    \
-  return true;                                                        \
+#define MEDIAN_(bits)                                                            \
+/* median_n : TWO^n * TWO^n * TWO^n |- TWO^n */                                  \
+bool simplicity_median_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                               \
+  uint_fast##bits##_t x = read##bits(&src);                                      \
+  uint_fast##bits##_t y = read##bits(&src);                                      \
+  uint_fast##bits##_t z = read##bits(&src);                                      \
+  write##bits(dst, x < y                                                         \
+                 ? (y < z ? y : (z < x ? x : z))                                 \
+                 : (x < z ? x : (z < y ? y : z)));                               \
+  return true;                                                                   \
 }
 MEDIAN_(8)
 MEDIAN_(16)
 MEDIAN_(32)
 MEDIAN_(64)
 
-#define DIV_MOD_(bits)                                                 \
-/* div_mod_n : TWO^n * TWO^n |- TWO^n * TWO^n */                       \
-bool div_mod_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                     \
-  uint_fast##bits##_t x = read##bits(&src);                            \
-  uint_fast##bits##_t y = read##bits(&src);                            \
-  write##bits(dst, 0 == y ? 0 : x / y);                                \
-  write##bits(dst, 0 == y ? x : x % y);                                \
-  return true;                                                         \
+#define DIV_MOD_(bits)                                                            \
+/* div_mod_n : TWO^n * TWO^n |- TWO^n * TWO^n */                                  \
+bool simplicity_div_mod_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                \
+  uint_fast##bits##_t x = read##bits(&src);                                       \
+  uint_fast##bits##_t y = read##bits(&src);                                       \
+  write##bits(dst, 0 == y ? 0 : x / y);                                           \
+  write##bits(dst, 0 == y ? x : x % y);                                           \
+  return true;                                                                    \
 }
 DIV_MOD_(8)
 DIV_MOD_(16)
 DIV_MOD_(32)
 DIV_MOD_(64)
 
-#define DIVIDE_(bits)                                                 \
-/* divide_n : TWO^n * TWO^n |- TWO^n */                               \
-bool divide_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                    \
-  uint_fast##bits##_t x = read##bits(&src);                           \
-  uint_fast##bits##_t y = read##bits(&src);                           \
-  write##bits(dst, 0 == y ? 0 : x / y);                               \
-  return true;                                                        \
+#define DIVIDE_(bits)                                                            \
+/* divide_n : TWO^n * TWO^n |- TWO^n */                                          \
+bool simplicity_divide_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                               \
+  uint_fast##bits##_t x = read##bits(&src);                                      \
+  uint_fast##bits##_t y = read##bits(&src);                                      \
+  write##bits(dst, 0 == y ? 0 : x / y);                                          \
+  return true;                                                                   \
 }
 DIVIDE_(8)
 DIVIDE_(16)
 DIVIDE_(32)
 DIVIDE_(64)
 
-#define MODULO_(bits)                                                 \
-/* modulo_n : TWO^n * TWO^n |- TWO^n */                               \
-bool modulo_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                    \
-  uint_fast##bits##_t x = read##bits(&src);                           \
-  uint_fast##bits##_t y = read##bits(&src);                           \
-  write##bits(dst, 0 == y ? x : x % y);                               \
-  return true;                                                        \
+#define MODULO_(bits)                                                            \
+/* modulo_n : TWO^n * TWO^n |- TWO^n */                                          \
+bool simplicity_modulo_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                               \
+  uint_fast##bits##_t x = read##bits(&src);                                      \
+  uint_fast##bits##_t y = read##bits(&src);                                      \
+  write##bits(dst, 0 == y ? x : x % y);                                          \
+  return true;                                                                   \
 }
 MODULO_(8)
 MODULO_(16)
 MODULO_(32)
 MODULO_(64)
 
-#define DIVIDES_(bits)                                                 \
-/* divides_n : TWO^n * TWO^n |- TWO */                                 \
-bool divides_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
-  (void) env; /* env is unused. */                                     \
-  uint_fast##bits##_t x = read##bits(&src);                            \
-  uint_fast##bits##_t y = read##bits(&src);                            \
-  writeBit(dst, 0 == (0 == x ? y : y % x));                            \
-  return true;                                                         \
+#define DIVIDES_(bits)                                                            \
+/* divides_n : TWO^n * TWO^n |- TWO */                                            \
+bool simplicity_divides_##bits(frameItem* dst, frameItem src, const txEnv* env) { \
+  (void) env; /* env is unused. */                                                \
+  uint_fast##bits##_t x = read##bits(&src);                                       \
+  uint_fast##bits##_t y = read##bits(&src);                                       \
+  writeBit(dst, 0 == (0 == x ? y : y % x));                                       \
+  return true;                                                                    \
 }
 DIVIDES_(8)
 DIVIDES_(16)
@@ -1152,7 +1152,7 @@ static void div_mod_96_64(uint_fast32_t *q, uint_fast64_t *r,
 }
 
 /* div_mod_128_64 : TWO^128 * TWO^64 |- TWO^64 * TWO^64 */
-bool div_mod_128_64(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_div_mod_128_64(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   uint_fast32_t qh, ql;
   uint_fast64_t r;
@@ -1203,7 +1203,7 @@ bool div_mod_128_64(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 /* sha_256_iv : ONE |- TWO^256 */
-bool sha_256_iv(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_iv(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   (void) src; /* env is unused. */
 
@@ -1215,7 +1215,7 @@ bool sha_256_iv(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 /* sha_256_block : TWO^256 * TWO^512 |- TWO^256 */
-bool sha_256_block(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_block(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   uint32_t h[8];
   uint32_t block[16];
@@ -1230,7 +1230,7 @@ bool sha_256_block(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_init(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_init(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   (void) src; /* env is unused. */
 
@@ -1262,7 +1262,7 @@ static bool sha_256_ctx_8_add_n(frameItem* dst, frameItem *src, size_t n) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_1(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_1(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   return sha_256_ctx_8_add_n(dst, &src, 1);
 }
@@ -1271,7 +1271,7 @@ bool sha_256_ctx_8_add_1(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_2(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_2(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   return sha_256_ctx_8_add_n(dst, &src, 2);
 }
@@ -1280,7 +1280,7 @@ bool sha_256_ctx_8_add_2(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_4(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_4(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   return sha_256_ctx_8_add_n(dst, &src, 4);
 }
@@ -1289,7 +1289,7 @@ bool sha_256_ctx_8_add_4(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_8(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_8(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   return sha_256_ctx_8_add_n(dst, &src, 8);
 }
@@ -1298,7 +1298,7 @@ bool sha_256_ctx_8_add_8(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_16(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_16(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   return sha_256_ctx_8_add_n(dst, &src, 16);
 }
@@ -1307,7 +1307,7 @@ bool sha_256_ctx_8_add_16(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_32(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_32(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   return sha_256_ctx_8_add_n(dst, &src, 32);
 }
@@ -1316,7 +1316,7 @@ bool sha_256_ctx_8_add_32(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_64(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_64(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   return sha_256_ctx_8_add_n(dst, &src, 64);
 }
@@ -1325,7 +1325,7 @@ bool sha_256_ctx_8_add_64(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_128(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_128(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   return sha_256_ctx_8_add_n(dst, &src, 128);
 }
@@ -1334,7 +1334,7 @@ bool sha_256_ctx_8_add_128(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_256(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_256(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   return sha_256_ctx_8_add_n(dst, &src, 256);
 }
@@ -1343,7 +1343,7 @@ bool sha_256_ctx_8_add_256(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_512(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_512(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   return sha_256_ctx_8_add_n(dst, &src, 512);
 }
@@ -1352,7 +1352,7 @@ bool sha_256_ctx_8_add_512(frameItem* dst, frameItem src, const txEnv* env) {
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_add_buffer_511(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_add_buffer_511(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   sha256_midstate midstate;
   unsigned char buf[511];
@@ -1370,7 +1370,7 @@ bool sha_256_ctx_8_add_buffer_511(frameItem* dst, frameItem src, const txEnv* en
  * where
  * CTX8 = (TWO^8)^<64 * TWO^64 * TWO^256
  */
-bool sha_256_ctx_8_finalize(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_sha_256_ctx_8_finalize(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   sha256_midstate midstate;
   sha256_context ctx = {.output = midstate.s};
@@ -1383,7 +1383,7 @@ bool sha_256_ctx_8_finalize(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 /* parse_sequence : TWO^32 |- TWO^32 + TWO^32 */
-bool parse_lock(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_parse_lock(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   uint_fast32_t nLockTime = read32(&src);
   writeBit(dst, 500000000U <= nLockTime);
@@ -1392,7 +1392,7 @@ bool parse_lock(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 /* parse_sequence : TWO^32 |- S (TWO^16 + TWO^16) */
-bool parse_sequence(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_parse_sequence(frameItem* dst, frameItem src, const txEnv* env) {
   (void) env; /* env is unused. */
   uint_fast32_t nSequence = read32(&src);
   if (writeBit(dst, nSequence < ((uint_fast32_t)1 << 31))) {
