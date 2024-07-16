@@ -86,7 +86,7 @@ sha256_midstate simplicity_generateIssuanceEntropy(const outpoint* op, const sha
 
   memcpy(&block[8], contract->s, sizeof(contract->s));
   sha256_iv(result.s);
-  sha256_compression(result.s, block);
+  simplicity_sha256_compression(result.s, block);
 
   return result;
 }
@@ -102,7 +102,7 @@ sha256_midstate simplicity_calculateAsset(const sha256_midstate* entropy) {
 
   memcpy(&block[0], entropy->s, sizeof(entropy->s));
   sha256_iv(result.s);
-  sha256_compression(result.s, block);
+  simplicity_sha256_compression(result.s, block);
 
   return result;
 }
@@ -119,7 +119,7 @@ sha256_midstate simplicity_calculateToken(const sha256_midstate* entropy, confPr
   memcpy(&block[0], entropy->s, sizeof(entropy->s));
   block[8] = is_confidential(prefix) ? 0x02000000 : 0x01000000;
   sha256_iv(result.s);
-  sha256_compression(result.s, block);
+  simplicity_sha256_compression(result.s, block);
 
   return result;
 }

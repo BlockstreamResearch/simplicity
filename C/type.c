@@ -62,7 +62,7 @@ void simplicity_computeTypeAnalyses(type* type_dag, const size_t len) {
      case PRODUCT:
       memcpy(block, type_dag[type_dag[i].typeArg[0]].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[type_dag[i].typeArg[1]].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(type_dag[i].typeMerkleRoot.s, block);
+      simplicity_sha256_compression(type_dag[i].typeMerkleRoot.s, block);
     }
   }
 }

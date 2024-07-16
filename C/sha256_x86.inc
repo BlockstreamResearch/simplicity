@@ -168,7 +168,7 @@ static void sha256_compression_x86_sha_ni(uint32_t* midstate, const uint32_t* bl
 extern void simplicity_sha256_cpu_optimize_not_thread_safe(void) __attribute__((constructor));
 extern void simplicity_sha256_cpu_optimize_not_thread_safe(void) {
   if (cpu_has_sha_ni()) {
-    sha256_compression = sha256_compression_x86_sha_ni;
+    simplicity_sha256_compression = sha256_compression_x86_sha_ni;
   }
 }
 

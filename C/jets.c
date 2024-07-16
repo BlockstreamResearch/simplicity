@@ -1221,7 +1221,7 @@ bool simplicity_sha_256_block(frameItem* dst, frameItem src, const txEnv* env) {
   uint32_t block[16];
   read32s(h, 8, &src);
   read32s(block, 16, &src);
-  sha256_compression(h, block);
+  simplicity_sha256_compression(h, block);
   write32s(dst, h, 8);
   return true;
 }

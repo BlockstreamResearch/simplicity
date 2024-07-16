@@ -88,7 +88,7 @@ static sha256_midstate mkJetCMR(uint32_t *imr, uint_fast64_t weight) {
   block[6] = (uint32_t)(weight >> 32);
   block[7] = (uint32_t)weight;
   memcpy(&block[8], imr, sizeof(uint32_t[8]));
-  sha256_compression(result.s, block);
+  simplicity_sha256_compression(result.s, block);
 
   return result;
 }
@@ -128,7 +128,7 @@ sha256_midstate simplicity_computeWordCMR(const bitstring* value, size_t n) {
       for (size_t j = i; j & 1; j = j >> 1) {
         sha256_midstate pair = cmrIV(PAIR);
         stack_ptr -= 8;
-        sha256_compression(pair.s, stack_ptr);
+        simplicity_sha256_compression(pair.s, stack_ptr);
         memcpy(stack_ptr, pair.s, sizeof(uint32_t[8]));
       }
     }
@@ -137,10 +137,10 @@ sha256_midstate simplicity_computeWordCMR(const bitstring* value, size_t n) {
   simplicity_assert(stack_ptr == stack + 8);
 
   /* Pass 2: Compute the IMR for the expression by adding the type roots of ONE and TWO^(2^n) to the CMR. */
-  sha256_compression(imr.s, stack);
+  simplicity_sha256_compression(imr.s, stack);
   memcpy(&stack[0], word_type_root[0].s, sizeof(uint32_t[8]));
   memcpy(&stack[8], word_type_root[n+1].s, sizeof(uint32_t[8]));
-  sha256_compression(imr.s, stack);
+  simplicity_sha256_compression(imr.s, stack);
 
   /* Pass 3: Compute the jet's CMR from the specificion's IMR. */
   return mkJetCMR(imr.s, ((uint_fast64_t)1 << n));
@@ -182,7 +182,7 @@ void simplicity_computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
    case TAKE:
    case DROP:
     memcpy(block + j, dag[dag[i].child[0]].cmr.s, sizeof(uint32_t[8]));
-    sha256_compression(dag[i].cmr.s, block);
+    simplicity_sha256_compression(dag[i].cmr.s, block);
    case IDEN:
    case UNIT:
    case WITNESS:
@@ -215,7 +215,7 @@ static void computeIdentityMerkleRoot(sha256_midstate* imr, const dag_node* dag,
      case WITNESS:
       simplicity_sha256_bitstring(block, &dag[i].compactValue);
       memcpy(block + 8, type_dag[WITNESS_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(imr[i].s, block);
+      simplicity_sha256_compression(imr[i].s, block);
       break;
      case COMP:
      case ASSERTL:
@@ -231,7 +231,7 @@ static void computeIdentityMerkleRoot(sha256_midstate* imr, const dag_node* dag,
      case TAKE:
      case DROP:
       memcpy(block + j, imr[dag[i].child[0]].s, sizeof(uint32_t[8]));
-      sha256_compression(imr[i].s, block);
+      simplicity_sha256_compression(imr[i].s, block);
      case IDEN:
      case UNIT:
      case HIDDEN:
@@ -248,14 +248,14 @@ static void computeIdentityMerkleRoot(sha256_midstate* imr, const dag_node* dag,
     if (HIDDEN == dag[i].tag) {
       memcpy(block + 8, imr[i].s, sizeof(uint32_t[8]));
       imr[i] = hiddenIV;
-      sha256_compression(imr[i].s, block);
+      simplicity_sha256_compression(imr[i].s, block);
     } else {
       memcpy(block + 8, imr[i].s, sizeof(uint32_t[8]));
       imr[i] = identityIV;
-      sha256_compression(imr[i].s, block);
+      simplicity_sha256_compression(imr[i].s, block);
       memcpy(block, type_dag[dag[i].sourceType].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[dag[i].targetType].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(imr[i].s, block);
+      simplicity_sha256_compression(imr[i].s, block);
     }
   }
 }
@@ -287,77 +287,77 @@ void simplicity_computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* d
       memcpy(block, type_dag[CASE_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8,
              type_dag[CASE_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[CASE_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[CASE_D(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, analysis[dag[i].child[1]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case DISCONNECT:
       memcpy(block, type_dag[DISCONNECT_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[DISCONNECT_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[DISCONNECT_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[DISCONNECT_D(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, analysis[dag[i].child[1]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case COMP:
       memcpy(block + 8, type_dag[COMP_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[COMP_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[COMP_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, analysis[dag[i].child[1]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case PAIR:
       memcpy(block + 8, type_dag[PAIR_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[PAIR_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[PAIR_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, analysis[dag[i].child[1]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case INJL:
      case INJR:
       memcpy(block, type_dag[INJ_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[INJ_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[INJ_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case TAKE:
      case DROP:
       memcpy(block, type_dag[PROJ_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, type_dag[PROJ_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[PROJ_C(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       memcpy(block + 8, analysis[dag[i].child[0]].annotatedMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case IDEN:
       memcpy(block + 8, type_dag[IDEN_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case UNIT:
       memcpy(block + 8, type_dag[UNIT_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case WITNESS:
       memcpy(block + 8, type_dag[WITNESS_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[WITNESS_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       simplicity_sha256_bitstring(block + 8, &dag[i].compactValue);
-      sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
+      simplicity_sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case HIDDEN:
      case JET:
