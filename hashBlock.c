@@ -170,11 +170,10 @@ const unsigned char hashBlock[] = {
 };
 
 const size_t sizeof_hashBlock = sizeof(hashBlock);
-const unsigned char hashBlock_witness[] = {
+const unsigned char hashBlock_witness[] = "";
 
-};
 
-const size_t sizeof_hashBlock_witness = sizeof(hashBlock_witness);
+const size_t sizeof_hashBlock_witness = 0;
 
 /* The commitment Merkle root of the above hashBlock Simplicity expression. */
 const uint32_t hashBlock_cmr[] = {
