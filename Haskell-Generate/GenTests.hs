@@ -75,8 +75,14 @@ showComment wj txt = unlines $ ["/* A length-prefixed encoding of the following 
 
 showBinary name bin = unlines $ start ++ [intercalate ",\n" chunks] ++ finish
  where
-  start = ["const unsigned char "++name++"[] = {"]
-  finish = ["};", "", "const size_t sizeof_"++name++" = sizeof("++name++");"]
+  start = ["const unsigned char "++name++"[] = " ++ open]
+  open | null bin = "\"\";"
+       | otherwise = "{"
+  finish = close ++ ["", "const size_t sizeof_"++name++" = "++sizeof++";"]
+  close | null bin = []
+        | otherwise = ["};"]
+  sizeof | null bin = "0"
+         | otherwise = "sizeof("++name++")"
   chunks = ("  "++) . intercalate ", " <$> chunksOf 20 (showByte <$> bin)
   showByte b = "0x" ++ padding ++ t
    where
