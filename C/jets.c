@@ -305,7 +305,7 @@ bool simplicity_eq_256(frameItem* dst, frameItem src, const txEnv* env) {
 bool simplicity_full_left_shift_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {      \
   (void) env; /* env is unused. */                                                                        \
   static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
-  copyBits(dst, &src, (bitsN) + (bitsM));                                                                 \
+  simplicity_copyBits(dst, &src, (bitsN) + (bitsM));                                                      \
   return true;                                                                                            \
 }
 FULL_LEFT_SHIFT_(8,1)
@@ -332,7 +332,7 @@ FULL_LEFT_SHIFT_(64,32)
 bool simplicity_full_right_shift_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {     \
   (void) env; /* env is unused. */                                                                        \
   static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
-  copyBits(dst, &src, (bitsN) + (bitsM));                                                                 \
+  simplicity_copyBits(dst, &src, (bitsN) + (bitsM));                                                      \
   return true;                                                                                            \
 }
 FULL_RIGHT_SHIFT_(8,1)
@@ -359,7 +359,7 @@ FULL_RIGHT_SHIFT_(64,32)
 bool simplicity_leftmost_##bitsN##_##bitsM(frameItem* dst, frameItem src, const txEnv* env) {             \
   (void) env; /* env is unused. */                                                                        \
   static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
-  copyBits(dst, &src, (bitsM));                                                                           \
+  simplicity_copyBits(dst, &src, (bitsM));                                                                \
   return true;                                                                                            \
 }
 LEFTMOST_(8,1)
@@ -387,7 +387,7 @@ bool simplicity_rightmost_##bitsN##_##bitsM(frameItem* dst, frameItem src, const
   (void) env; /* env is unused. */                                                                        \
   static_assert(0 <= (bitsM) && (bitsM) <= (bitsN) && (bitsN) <= 64, "Bad arguments for bitsN or bitsM"); \
   forwardBits(&src, (bitsN) - (bitsM));                                                                   \
-  copyBits(dst, &src, (bitsM));                                                                           \
+  simplicity_copyBits(dst, &src, (bitsM));                                                                \
   return true;                                                                                            \
 }
 RIGHTMOST_(8,1)
@@ -430,7 +430,7 @@ bool simplicity_left_pad_low_##bitsN##_##bitsM(frameItem* dst, frameItem src, co
   static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                           \
   static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");                      \
   for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, 0); }                          \
-  copyBits(dst, &src, (bitsN));                                                                   \
+  simplicity_copyBits(dst, &src, (bitsN));                                                        \
   return true;                                                                                    \
 }
 LEFT_PAD_LOW_(8,16)
@@ -446,7 +446,7 @@ bool simplicity_left_pad_high_1_##bitsM(frameItem* dst, frameItem src, const txE
   (void) env; /* env is unused. */                                                         \
   static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                    \
   for(int i = 0; i < (bitsM) - 1; ++i) { writeBit(dst, true); }                            \
-  copyBits(dst, &src, 1);                                                                  \
+  simplicity_copyBits(dst, &src, 1);                                                       \
   return true;                                                                             \
 }
 LEFT_PAD_HIGH_1_(8)
@@ -462,7 +462,7 @@ bool simplicity_left_pad_high_##bitsN##_##bitsM(frameItem* dst, frameItem src, c
   static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                            \
   static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");                       \
   for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, UINT##bitsN##_MAX); }           \
-  copyBits(dst, &src, (bitsN));                                                                    \
+  simplicity_copyBits(dst, &src, (bitsN));                                                         \
   return true;                                                                                     \
 }
 LEFT_PAD_HIGH_(8,16)
@@ -526,7 +526,7 @@ bool simplicity_right_pad_low_##bitsN##_##bitsM(frameItem* dst, frameItem src, c
   static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                            \
   static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                            \
   static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");                       \
-  copyBits(dst, &src, (bitsN));                                                                    \
+  simplicity_copyBits(dst, &src, (bitsN));                                                         \
   for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, 0); }                           \
   return true;                                                                                     \
 }
@@ -542,7 +542,7 @@ RIGHT_PAD_LOW_(32,64)
 bool simplicity_right_pad_high_1_##bitsM(frameItem* dst, frameItem src, const txEnv* env) { \
   (void) env; /* env is unused. */                                                          \
   static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                     \
-  copyBits(dst, &src, 1);                                                                   \
+  simplicity_copyBits(dst, &src, 1);                                                        \
   for(int i = 0; i < (bitsM) - 1; ++i) { writeBit(dst, true); }                             \
   return true;                                                                              \
 }
@@ -558,7 +558,7 @@ bool simplicity_right_pad_high_##bitsN##_##bitsM(frameItem* dst, frameItem src, 
   static_assert(0 < (bitsN) && (bitsN) <= 64, "bitsN is out of range");                             \
   static_assert(0 < (bitsM) && (bitsM) <= 64, "bitsM is out of range");                             \
   static_assert(0 == (bitsM) % (bitsN), "bitsM is not a multiple of bitsN");                        \
-  copyBits(dst, &src, (bitsN));                                                                     \
+  simplicity_copyBits(dst, &src, (bitsN));                                                          \
   for(int i = 0; i < (bitsM)/(bitsN) - 1; ++i) { write##bitsN(dst, UINT##bitsN##_MAX); }            \
   return true;                                                                                      \
 }
@@ -1237,7 +1237,7 @@ bool simplicity_sha_256_ctx_8_init(frameItem* dst, frameItem src, const txEnv* e
   uint32_t iv[8];
   sha256_context ctx = sha256_init(iv);
 
-  return write_sha256_context(dst, &ctx);
+  return simplicity_write_sha256_context(dst, &ctx);
 }
 
 /* sha_256_ctx_8_add_n : CTX8 * (TWO^8)^n |- CTX8
@@ -1252,10 +1252,10 @@ static bool sha_256_ctx_8_add_n(frameItem* dst, frameItem *src, size_t n) {
   unsigned char buf[512];
   sha256_context ctx = {.output = midstate.s};
 
-  if (!read_sha256_context(&ctx, src)) return false;
+  if (!simplicity_read_sha256_context(&ctx, src)) return false;
   read8s(buf, n, src);
   sha256_uchars(&ctx, buf, n);
-  return write_sha256_context(dst, &ctx);
+  return simplicity_write_sha256_context(dst, &ctx);
 }
 
 /* sha_256_ctx_8_add_1 : CTX8 * TWO^8 |- CTX8
@@ -1359,11 +1359,11 @@ bool simplicity_sha_256_ctx_8_add_buffer_511(frameItem* dst, frameItem src, cons
   size_t buf_len;
   sha256_context ctx = {.output = midstate.s};
 
-  if (!read_sha256_context(&ctx, &src)) return false;
+  if (!simplicity_read_sha256_context(&ctx, &src)) return false;
 
-  read_buffer8(buf, &buf_len, &src, 8);
+  simplicity_read_buffer8(buf, &buf_len, &src, 8);
   sha256_uchars(&ctx, buf, buf_len);
-  return write_sha256_context(dst, &ctx);
+  return simplicity_write_sha256_context(dst, &ctx);
 }
 
 /* sha_256_ctx_8_finalize : CTX8 |- TWO^256
@@ -1375,7 +1375,7 @@ bool simplicity_sha_256_ctx_8_finalize(frameItem* dst, frameItem src, const txEn
   sha256_midstate midstate;
   sha256_context ctx = {.output = midstate.s};
 
-  if (!read_sha256_context(&ctx, &src)) return false;
+  if (!simplicity_read_sha256_context(&ctx, &src)) return false;
 
   sha256_finalize(&ctx);
   write32s(dst, midstate.s, 8);

@@ -31,7 +31,7 @@ typedef unsigned char flags_type;
  *                 and if maxCells < UBOUNDED_MAX then '*UWORDBound' bounds the number of UWORDs needed for the frames during evaluation of 'dag'
  *                 and if maxCells < UBOUNDED_MAX then '*frameBound' bounds the number of stack frames needed during execution of 'dag'.
  */
-simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubounded *frameBound, ubounded *costBound
+simplicity_err simplicity_analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubounded *frameBound, ubounded *costBound
                             , ubounded maxCells, ubounded maxCost, const dag_node* dag, const type* type_dag, const size_t len);
 
 /* Run the Bit Machine on the well-typed Simplicity expression 'dag[len]' of type A |- B.
@@ -56,7 +56,7 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
  *               if NULL != budget then *budget <= BUDGET_MAX
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
-simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, const UWORD* input
+simplicity_err simplicity_evalTCOExpression( flags_type anti_dos_checks, UWORD* output, const UWORD* input
                                 , const dag_node* dag, type* type_dag, size_t len, const ubounded* budget, const txEnv* env
                                 );
 
@@ -77,6 +77,6 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, con
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
 static inline simplicity_err evalTCOProgram(const dag_node* dag, type* type_dag, size_t len, const ubounded* budget, const txEnv* env) {
-  return evalTCOExpression(CHECK_ALL, NULL, NULL, dag, type_dag, len, budget, env);
+  return simplicity_evalTCOExpression(CHECK_ALL, NULL, NULL, dag, type_dag, len, budget, env);
 }
 #endif

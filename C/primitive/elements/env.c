@@ -90,7 +90,7 @@ static void copyInput(sigInput* result, const rawInput* input) {
         0 == result->issuance.blindingNonce.s[4] && 0 == result->issuance.blindingNonce.s[5] &&
         0 == result->issuance.blindingNonce.s[6] && 0 == result->issuance.blindingNonce.s[7]) {
       sha256_toMidstate(result->issuance.contractHash.s, input->issuance.assetEntropy);
-      result->issuance.entropy = generateIssuanceEntropy(&result->prevOutpoint, &result->issuance.contractHash);
+      result->issuance.entropy = simplicity_generateIssuanceEntropy(&result->prevOutpoint, &result->issuance.contractHash);
       copyRawAmt(&result->issuance.tokenAmt, input->issuance.inflationKeys);
       if (is_confidential(result->issuance.tokenAmt.prefix)) hashBuffer(&result->issuance.tokenRangeProofHash, &input->issuance.inflationKeysRangePrf);
       result->issuance.type = NEW_ISSUANCE;
@@ -98,8 +98,8 @@ static void copyInput(sigInput* result, const rawInput* input) {
       sha256_toMidstate(result->issuance.entropy.s, input->issuance.assetEntropy);
       result->issuance.type = REISSUANCE;
     }
-    result->issuance.assetId = calculateAsset(&result->issuance.entropy);
-    result->issuance.tokenId = calculateToken(&result->issuance.entropy, result->issuance.assetAmt.prefix);
+    result->issuance.assetId = simplicity_calculateAsset(&result->issuance.entropy);
+    result->issuance.tokenId = simplicity_calculateToken(&result->issuance.entropy, result->issuance.assetAmt.prefix);
   }
 }
 
@@ -422,8 +422,8 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
       }
       sha256_hash(&ctx_inputOutpointsHash, &input[i].prevOutpoint.txid);
       sha256_u32be(&ctx_inputOutpointsHash, input[i].prevOutpoint.ix);
-      sha256_confAsset(&ctx_inputAssetAmountsHash, &input[i].txo.asset);
-      sha256_confAmt(&ctx_inputAssetAmountsHash, &input[i].txo.amt);
+      simplicity_sha256_confAsset(&ctx_inputAssetAmountsHash, &input[i].txo.asset);
+      simplicity_sha256_confAmt(&ctx_inputAssetAmountsHash, &input[i].txo.amt);
       sha256_hash(&ctx_inputScriptsHash, &input[i].txo.scriptPubKey);
       sha256_u32be(&ctx_inputSequencesHash, input[i].sequence);
       if (input[i].hasAnnex) {
@@ -440,10 +440,10 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
         sha256_uchar(&ctx_issuanceTokenAmountsHash, 0);
         sha256_uchar(&ctx_issuanceBlindingEntropyHash, 0);
       } else {
-        sha256_confAsset(&ctx_issuanceAssetAmountsHash, &(confidential){ .prefix = EXPLICIT, .data = input[i].issuance.assetId});
-        sha256_confAsset(&ctx_issuanceTokenAmountsHash, &(confidential){ .prefix = EXPLICIT, .data = input[i].issuance.tokenId});
-        sha256_confAmt(&ctx_issuanceAssetAmountsHash, &input[i].issuance.assetAmt);
-        sha256_confAmt(&ctx_issuanceTokenAmountsHash, NEW_ISSUANCE == input[i].issuance.type
+        simplicity_sha256_confAsset(&ctx_issuanceAssetAmountsHash, &(confidential){ .prefix = EXPLICIT, .data = input[i].issuance.assetId});
+        simplicity_sha256_confAsset(&ctx_issuanceTokenAmountsHash, &(confidential){ .prefix = EXPLICIT, .data = input[i].issuance.tokenId});
+        simplicity_sha256_confAmt(&ctx_issuanceAssetAmountsHash, &input[i].issuance.assetAmt);
+        simplicity_sha256_confAmt(&ctx_issuanceTokenAmountsHash, NEW_ISSUANCE == input[i].issuance.type
                                                     ? &input[i].issuance.tokenAmt
                                                     : &(confAmount){ .prefix = EXPLICIT, .explicit = 0});
         sha256_uchar(&ctx_issuanceBlindingEntropyHash, 1);
@@ -510,16 +510,16 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
         perm[ix_fee] = &output[i].asset.data;
         ++ix_fee;
       }
-      sha256_confAsset(&ctx_outputAssetAmountsHash, &output[i].asset);
-      sha256_confAmt(&ctx_outputAssetAmountsHash, &output[i].amt);
-      sha256_confNonce(&ctx_outputNoncesHash, &output[i].nonce);
+      simplicity_sha256_confAsset(&ctx_outputAssetAmountsHash, &output[i].asset);
+      simplicity_sha256_confAmt(&ctx_outputAssetAmountsHash, &output[i].amt);
+      simplicity_sha256_confNonce(&ctx_outputNoncesHash, &output[i].nonce);
       sha256_hash(&ctx_outputScriptsHash, &output[i].scriptPubKey);
       sha256_hash(&ctx_outputRangeProofsHash, &output[i].rangeProofHash);
       sha256_hash(&ctx_outputSurjectionProofsHash, &output[i].surjectionProofHash);
     }
 
     simplicity_assert(numFees == ix_fee);
-    if (!rsort(perm, numFees)) {
+    if (!simplicity_rsort(perm, numFees)) {
       simplicity_free(tx);
       return NULL;
     }
@@ -627,7 +627,7 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
     sha256_finalize(&ctx);
   }
 
-  env->tapLeafHash = make_tapleaf(env->leafVersion, &env->scriptCMR);
+  env->tapLeafHash = simplicity_make_tapleaf(env->leafVersion, &env->scriptCMR);
 
   {
     sha256_context ctx = sha256_init(env->tapEnvHash.s);
@@ -647,7 +647,7 @@ extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
  *               NULL != genesisHash
  *               ix < tx->numInputs
  */
-txEnv build_txEnv(const transaction* tx, const tapEnv* taproot, const sha256_midstate* genesisHash, uint_fast32_t ix) {
+txEnv simplicity_build_txEnv(const transaction* tx, const tapEnv* taproot, const sha256_midstate* genesisHash, uint_fast32_t ix) {
   txEnv result = { .tx = tx
                  , .taproot = taproot
                  , .genesisHash = *genesisHash

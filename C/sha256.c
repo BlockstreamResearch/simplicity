@@ -126,7 +126,7 @@ void (*sha256_compression)(uint32_t* midstate, const uint32_t* block) = sha256_c
  * Returns true if the sha256_compression implemenation has been optimized for the CPU.
  * Otherwise returns false.
  */
-bool sha256_compression_is_optimized(void) {
+bool simplicity_sha256_compression_is_optimized(void) {
   return sha256_compression_portable != sha256_compression;
 };
 
@@ -154,7 +154,7 @@ static void sha256_end(uint32_t* h, uint32_t* block, const uint_fast64_t len) {
  *               '*s' is a valid bitstring;
  *               's->len < 2^64;
  */
-void sha256_bitstring(uint32_t* h, const bitstring* s) {
+void simplicity_sha256_bitstring(uint32_t* h, const bitstring* s) {
   /* This static assert should never fail if uint32_t exists.
    * But for more certainty, we note that the correctness of this implementation depends on CHAR_BIT being no more than 32.
    */

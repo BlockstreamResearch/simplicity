@@ -20,12 +20,12 @@ decodeError (-2) = Left BitstreamEof
 decodeError (-4) = Left DataOutOfRange
 decodeError err = error $ "Simplicity.Elements.FFI.Primitive.decodeError: Unexpected error code " ++ show err
 
-foreign import ccall unsafe "" decodeJet :: Ptr DagNode -> Ptr Bitstream -> IO CInt
+foreign import ccall unsafe "" simplicity_decodeJet :: Ptr DagNode -> Ptr Bitstream -> IO CInt
 
 decodeJetNode :: Ptr Bitstream -> (Either ErrorCode (Ptr DagNode) -> IO a) -> IO a
 decodeJetNode pstream k =
   withDagNode $ \pnode -> do
-  error <- decodeJet pnode pstream
+  error <- simplicity_decodeJet pnode pstream
   k (decodeError error >> return pnode)
 
 decodeJetCMR :: [Bool] -> Either ErrorCode Hash256

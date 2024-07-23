@@ -63,7 +63,7 @@ typedef struct type {
  *
  * Precondition: type type_dag[len] and 'type_dag' is well-formed.
  */
-void computeTypeAnalyses(type* type_dag, size_t len);
+void simplicity_computeTypeAnalyses(type* type_dag, size_t len);
 
 /* Return the index of the largest subexpression of 'type_dag[i]' (possibly 'i' itself) that is either
  * (1) a 'SUM' type;

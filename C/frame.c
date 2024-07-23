@@ -101,7 +101,7 @@ WRITE_(64)
  *               '*src' is a valid read frame for 8*(2^(n+1)-1)+n+1 more cells;
  *               0 <= n < 16
  */
-void read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n) {
+void simplicity_read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n) {
   simplicity_debug_assert(0 <= n && n < 16);
   *len = 0;
 
@@ -126,7 +126,7 @@ void read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n) {
  *               len < 2^(n+1);
  *               0 <= n < 16;
  */
-void write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n) {
+void simplicity_write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n) {
   simplicity_debug_assert(0 <= n && n < 16);
   simplicity_debug_assert(len < ((size_t)1<<(n+1)));
   for (size_t i = (size_t)1 << n; 0 < i; i /= 2) {
@@ -149,11 +149,11 @@ void write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n) 
  * Precondition: NULL != ctx->output;
  *               '*src' is a valid read frame for 838 more cells;
  */
-bool read_sha256_context(sha256_context* ctx, frameItem* src) {
+bool simplicity_read_sha256_context(sha256_context* ctx, frameItem* src) {
   size_t len;
   uint_fast64_t compressionCount;
 
-  read_buffer8(ctx->block, &len, src, 5);
+  simplicity_read_buffer8(ctx->block, &len, src, 5);
   compressionCount = read64(src);
   ctx->counter = ((compressionCount*1U) << 6) + len;
   read32s(ctx->output, 8, src);
@@ -172,8 +172,8 @@ bool read_sha256_context(sha256_context* ctx, frameItem* src) {
  *               NULL != ctx->output;
  *               ctx->counter < 2^61;
  */
-bool write_sha256_context(frameItem* dst, const sha256_context* ctx) {
-  write_buffer8(dst, ctx->block, ctx->counter % 64, 5);
+bool simplicity_write_sha256_context(frameItem* dst, const sha256_context* ctx) {
+  simplicity_write_buffer8(dst, ctx->block, ctx->counter % 64, 5);
   write64(dst, ctx->counter >> 6);
   write32s(dst, ctx->output, 8);
   return !ctx->overflow;
@@ -260,7 +260,7 @@ static void copyBitsHelper(const frameItem* dst, const frameItem *src, size_t n)
  * Precondition: '*dst' is a valid write frame for 'n' more cells;
  *               '*src' is a valid read frame for 'n' more cells;
  */
-void copyBits(frameItem* dst, const frameItem* src, size_t n) {
+void simplicity_copyBits(frameItem* dst, const frameItem* src, size_t n) {
   if (0 == n) return;
   copyBitsHelper(dst, src, n);
   dst->offset -= n;

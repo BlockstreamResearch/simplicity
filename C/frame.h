@@ -158,7 +158,7 @@ static inline void write32s(frameItem* frame, const uint32_t* x, size_t n) {
  *               '*src' is a valid read frame for 8*(2^(n+1)-1)+n+1 more cells;
  *               0 <= n < 16
  */
-void read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n);
+void simplicity_read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n);
 
 /* Write 'len' bytes to a Simplicity buffer of type (TWO^8)^<2^(n+1) from 'buf'.
  * Advance the 'dst' frame to the end of the buffer type.
@@ -171,7 +171,7 @@ void read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n);
  *               len < 2^(n+1);
  *               0 <= n < 16;
  */
-void write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n);
+void simplicity_write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n);
 
 /* Read data from a Simplicity CTX8 type (TWO^8)^<2^64 * TWO^64 * TWO^256 and fill in a sha256_context value.
  * Advance the 'src' frame to the end of the CTX8 type.
@@ -183,7 +183,7 @@ void write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n);
  * Precondition: NULL != ctx->output;
  *               '*src' is a valid read frame for 838 more cells;
  */
-bool read_sha256_context(sha256_context* ctx, frameItem* src);
+bool simplicity_read_sha256_context(sha256_context* ctx, frameItem* src);
 
 /* Write data to a Simplicity CTX8 type (TWO^8)^<2^64 * TWO^64 * TWO^256 from a sha256_context value.
  * Advance the 'dst' frame to the end of the CTX8 type.
@@ -196,7 +196,7 @@ bool read_sha256_context(sha256_context* ctx, frameItem* src);
  *               NULL != ctx->output;
  *               ctx->counter < 2^61;
  */
-bool write_sha256_context(frameItem* dst, const sha256_context* ctx);
+bool simplicity_write_sha256_context(frameItem* dst, const sha256_context* ctx);
 
 /* Given a write frame and a read frame, copy 'n' cells from after the read frame's cursor to after the write frame's cursor,
  * and then advance the write frame's cursor by 'n'.
@@ -205,5 +205,5 @@ bool write_sha256_context(frameItem* dst, const sha256_context* ctx);
  * Precondition: '*dst' is a valid write frame for 'n' more cells;
  *               '*src' is a valid read frame for 'n' more cells;
  */
-void copyBits(frameItem* dst, const frameItem* src, size_t n);
+void simplicity_copyBits(frameItem* dst, const frameItem* src, size_t n);
 #endif

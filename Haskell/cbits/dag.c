@@ -7,9 +7,9 @@ const size_t c_sizeof_dag_node = sizeof(dag_node);
 void c_compute_word_cmr(unsigned char *cmr, bitstream* stream, size_t offset, size_t n) {
   sha256_midstate result;
   bitstring value;
-  readBitstring(&value, offset, stream); /* skip offset many bits. */
-  readBitstring(&value, (size_t)1 << n, stream);
-  result = computeWordCMR(&value, n);
+  simplicity_readBitstring(&value, offset, stream); /* skip offset many bits. */
+  simplicity_readBitstring(&value, (size_t)1 << n, stream);
+  result = simplicity_computeWordCMR(&value, n);
   sha256_fromMidstate(cmr, result.s);
 }
 

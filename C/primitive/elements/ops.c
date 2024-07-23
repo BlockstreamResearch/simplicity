@@ -9,7 +9,7 @@
  * Precondition: NULL != ctx;
  *               NULL != conf;
  */
-void sha256_confidential(unsigned char evenPrefix, unsigned char oddPrefix, sha256_context* ctx, const confidential* conf) {
+void simplicity_sha256_confidential(unsigned char evenPrefix, unsigned char oddPrefix, sha256_context* ctx, const confidential* conf) {
   switch (conf->prefix) {
    case NONE: sha256_uchar(ctx, 0x00); return;
    case EXPLICIT: sha256_uchar(ctx, 0x01); break;
@@ -24,8 +24,8 @@ void sha256_confidential(unsigned char evenPrefix, unsigned char oddPrefix, sha2
  * Precondition: NULL != ctx;
  *               NULL != asset;
  */
-void sha256_confAsset(sha256_context* ctx, const confidential* asset) {
-  sha256_confidential(0x0a, 0x0b, ctx, asset);
+void simplicity_sha256_confAsset(sha256_context* ctx, const confidential* asset) {
+  simplicity_sha256_confidential(0x0a, 0x0b, ctx, asset);
 }
 
 /* Add an 'confidential' nonce to be consumed by an ongoing SHA-256 evaluation.
@@ -33,8 +33,8 @@ void sha256_confAsset(sha256_context* ctx, const confidential* asset) {
  * Precondition: NULL != ctx;
  *               NULL != nonce;
  */
-void sha256_confNonce(sha256_context* ctx, const confidential* nonce) {
-  sha256_confidential(0x02, 0x03, ctx, nonce);
+void simplicity_sha256_confNonce(sha256_context* ctx, const confidential* nonce) {
+  simplicity_sha256_confidential(0x02, 0x03, ctx, nonce);
 }
 
 /* Add an 'confidential' amount to be consumed by an ongoing SHA-256 evaluation.
@@ -42,7 +42,7 @@ void sha256_confNonce(sha256_context* ctx, const confidential* nonce) {
  * Precondition: NULL != ctx;
  *               NULL != amt;
  */
-void sha256_confAmt(sha256_context* ctx, const confAmount* amt) {
+void simplicity_sha256_confAmt(sha256_context* ctx, const confAmount* amt) {
   switch (amt->prefix) {
    case NONE: SIMPLICITY_UNREACHABLE;
    case EXPLICIT:
@@ -63,7 +63,7 @@ void sha256_confAmt(sha256_context* ctx, const confAmount* amt) {
  * Precondition: NULL != op;
  *               NULL != contract;
  */
-sha256_midstate generateIssuanceEntropy(const outpoint* op, const sha256_midstate* contract) {
+sha256_midstate simplicity_generateIssuanceEntropy(const outpoint* op, const sha256_midstate* contract) {
   uint32_t block[16];
   unsigned char buf[32];
   sha256_midstate result;
@@ -96,7 +96,7 @@ sha256_midstate generateIssuanceEntropy(const outpoint* op, const sha256_midstat
  *
  * Precondition: NULL != entropy;
  */
-sha256_midstate calculateAsset(const sha256_midstate* entropy) {
+sha256_midstate simplicity_calculateAsset(const sha256_midstate* entropy) {
   uint32_t block[16] = {0};
   sha256_midstate result;
 
@@ -112,7 +112,7 @@ sha256_midstate calculateAsset(const sha256_midstate* entropy) {
  *
  * Precondition: NULL != entropy;
  */
-sha256_midstate calculateToken(const sha256_midstate* entropy, confPrefix prefix) {
+sha256_midstate simplicity_calculateToken(const sha256_midstate* entropy, confPrefix prefix) {
   uint32_t block[16] = {0};
   sha256_midstate result;
 
@@ -130,7 +130,7 @@ sha256_midstate calculateToken(const sha256_midstate* entropy, confPrefix prefix
  *
  * Precondition: NULL != cmr;
  */
-sha256_midstate make_tapleaf(unsigned char version, const sha256_midstate* cmr) {
+sha256_midstate simplicity_make_tapleaf(unsigned char version, const sha256_midstate* cmr) {
   sha256_midstate result;
   sha256_midstate tapleafTag;
   {
@@ -155,7 +155,7 @@ sha256_midstate make_tapleaf(unsigned char version, const sha256_midstate* cmr) 
  * Precondition: NULL != a;
  *               NULL != b;
  */
-sha256_midstate make_tapbranch(const sha256_midstate* a, const sha256_midstate* b) {
+sha256_midstate simplicity_make_tapbranch(const sha256_midstate* a, const sha256_midstate* b) {
   sha256_midstate result;
   sha256_midstate tapbranchTag;
   {

@@ -271,6 +271,6 @@ typedef struct txEnv {
  *               NULL != genesisHash
  *               ix < tx->numInputs
  */
-txEnv build_txEnv(const transaction* tx, const tapEnv* taproot, const sha256_midstate* genesisHash, uint_fast32_t ix);
+txEnv simplicity_build_txEnv(const transaction* tx, const tapEnv* taproot, const sha256_midstate* genesisHash, uint_fast32_t ix);
 
 #endif

@@ -97,7 +97,7 @@ static inline size_t numChildren(tag_t tag) {
  *
  * Precondition: 2^n == value->len
  */
-sha256_midstate computeWordCMR(const bitstring* value, size_t n);
+sha256_midstate simplicity_computeWordCMR(const bitstring* value, size_t n);
 
 /* A node the the DAG of a Simplicity expression.
  * It consists of a 'tag' indicating the kind of expression the node represents.
@@ -334,7 +334,7 @@ typedef struct analyses {
  * Precondition: dag_node dag[i + 1] and 'dag' is well-formed.
  *               dag[i].'tag' \notin {HIDDEN, JET, WORD}
  */
-void computeCommitmentMerkleRoot(dag_node* dag, size_t i);
+void simplicity_computeCommitmentMerkleRoot(dag_node* dag, size_t i);
 
 /* Given a well-typed dag representing a Simplicity expression, compute the annotated Merkle roots of all subexpressions.
  * For all 'i', 0 <= 'i' < 'len', 'analysis[i].annotatedMerkleRoot' will be the AMR of the subexpression denoted by the slice
@@ -347,7 +347,7 @@ void computeCommitmentMerkleRoot(dag_node* dag, size_t i);
  *               dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'.
  * Postconditon: analyses analysis[len] contains the annotated Merkle roots of each subexpressions of 'dag'.
  */
-void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
+void simplicity_computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, size_t len);
 
 /* Verifies that the 'dag' is in canonical order, meaning that nodes under the left branches have lower indices than nodes under
  * right branches, with the exception that nodes under right braches may (cross-)reference identical nodes that already occur under
@@ -360,7 +360,7 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
  *
  * Precondition: dag_node dag[len] and 'dag' is well-formed.
  */
-simplicity_err verifyCanonicalOrder(dag_node* dag, const size_t len);
+simplicity_err simplicity_verifyCanonicalOrder(dag_node* dag, const size_t len);
 
 /* This function fills in the 'WITNESS' nodes of a 'dag' with the data from 'witness'.
  * For each 'WITNESS' : A |- B expression in 'dag', the bits from the 'witness' bitstring are decoded in turn
@@ -375,7 +375,7 @@ simplicity_err verifyCanonicalOrder(dag_node* dag, const size_t len);
  * Postcondition: dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'
  *                  when the result is 'SIMPLICITY_NO_ERROR';
  */
-simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstream *witness);
+simplicity_err simplicity_fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstream *witness);
 
 /* Verifies that identity Merkle roots of every subexpression in a well-typed 'dag' with witnesses are all unique,
  * including that each hidden root hash for every 'HIDDEN' node is unique.
@@ -388,6 +388,6 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
  *
  * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' and contains witnesses.
  */
-simplicity_err verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t dag_len);
+simplicity_err simplicity_verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t dag_len);
 
 #endif
