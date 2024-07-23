@@ -60,7 +60,7 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
 
   {
     bitstream stream = initializeBitstream(program, program_len);
-    dag_len = decodeMallocDag(&dag, &census, &stream);
+    dag_len = simplicity_decodeMallocDag(&dag, &census, &stream);
     if (dag_len <= 0) {
       simplicity_assert(dag_len < 0);
       *error = dag_len;
@@ -68,7 +68,7 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
     }
     simplicity_assert(NULL != dag);
     simplicity_assert((size_t)dag_len <= DAG_LEN_MAX);
-    *error = closeBitstream(&stream);
+    *error = simplicity_closeBitstream(&stream);
   }
 
   if (IS_OK(*error)) {
@@ -79,7 +79,7 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
 
   if (IS_OK(*error)) {
     type* type_dag = NULL;
-    *error = mallocTypeInference(&type_dag, dag, (size_t)dag_len, &census);
+    *error = simplicity_mallocTypeInference(&type_dag, dag, (size_t)dag_len, &census);
     if (IS_OK(*error)) {
       simplicity_assert(NULL != type_dag);
       if (0 != dag[dag_len-1].sourceType || 0 != dag[dag_len-1].targetType) {
@@ -88,9 +88,9 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
     }
     if (IS_OK(*error)) {
       bitstream witness_stream = initializeBitstream(witness, witness_len);
-      *error = fillWitnessData(dag, type_dag, (size_t)dag_len, &witness_stream);
+      *error = simplicity_fillWitnessData(dag, type_dag, (size_t)dag_len, &witness_stream);
       if (IS_OK(*error)) {
-        *error = closeBitstream(&witness_stream);
+        *error = simplicity_closeBitstream(&witness_stream);
         if (SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES == *error) *error = SIMPLICITY_ERR_WITNESS_TRAILING_BYTES;
         if (SIMPLICITY_ERR_BITSTREAM_ILLEGAL_PADDING == *error) *error = SIMPLICITY_ERR_WITNESS_ILLEGAL_PADDING;
       }
@@ -100,7 +100,7 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
       static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(sha256_midstate), "imr_buf array too large.");
       static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
       static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "imr_buf array index does nto fit in uint32_t.");
-      *error = verifyNoDuplicateIdentityRoots(&imr_buf, dag, type_dag, (size_t)dag_len);
+      *error = simplicity_verifyNoDuplicateIdentityRoots(&imr_buf, dag, type_dag, (size_t)dag_len);
       if (IS_OK(*error) && imr) sha256_fromMidstate(imr, imr_buf.s);
     }
     if (IS_OK(*error) && amr) {
@@ -109,7 +109,7 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
       static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "analysis array index does nto fit in uint32_t.");
       analyses *analysis = simplicity_malloc((size_t)dag_len * sizeof(analyses));
       if (analysis) {
-        computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)dag_len);
+        simplicity_computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)dag_len);
         if (0 != memcmp(amr_hash.s, analysis[dag_len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]))) {
           *error = SIMPLICITY_ERR_AMR;
         }
@@ -120,7 +120,7 @@ extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned 
       simplicity_free(analysis);
     }
     if (IS_OK(*error)) {
-      txEnv env = build_txEnv(tx, taproot, &genesis_hash, ix);
+      txEnv env = simplicity_build_txEnv(tx, taproot, &genesis_hash, ix);
       static_assert(BUDGET_MAX <= UBOUNDED_MAX, "BUDGET_MAX doesn't fit in ubounded.");
       *error = evalTCOProgram(dag, type_dag, (size_t)dag_len, &(ubounded){budget <= BUDGET_MAX ? (ubounded)budget : BUDGET_MAX}, &env);
     }

@@ -97,7 +97,7 @@ static sha256_midstate mkJetCMR(uint32_t *imr, uint_fast64_t weight) {
  *
  * Precondition: 2^n == value->len
  */
-sha256_midstate computeWordCMR(const bitstring* value, size_t n) {
+sha256_midstate simplicity_computeWordCMR(const bitstring* value, size_t n) {
   /* 'stack' is an array of 30 hashes consisting of 8 'uint32_t's each. */
   uint32_t stack[8*30] = {0};
   uint32_t *stack_ptr = stack;
@@ -156,7 +156,7 @@ sha256_midstate computeWordCMR(const bitstring* value, size_t n) {
  * Precondition: dag_node dag[i + 1] and 'dag' is well-formed.
  *               dag[i].'tag' \notin {HIDDEN, JET, WORD}
  */
-void computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
+void simplicity_computeCommitmentMerkleRoot(dag_node* dag, const size_t i) {
   uint32_t block[16] = {0};
   size_t j = 8;
 
@@ -213,7 +213,7 @@ static void computeIdentityMerkleRoot(sha256_midstate* imr, const dag_node* dag,
            : imrIV(dag[i].tag);
     switch (dag[i].tag) {
      case WITNESS:
-      sha256_bitstring(block, &dag[i].compactValue);
+      simplicity_sha256_bitstring(block, &dag[i].compactValue);
       memcpy(block + 8, type_dag[WITNESS_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(imr[i].s, block);
       break;
@@ -271,7 +271,7 @@ static void computeIdentityMerkleRoot(sha256_midstate* imr, const dag_node* dag,
  *               dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'.
  * Postconditon: analyses analysis[len] contains the annotated Merkle roots of each subexpressions of 'dag'.
  */
-void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, const size_t len) {
+void simplicity_computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const type* type_dag, const size_t len) {
   for (size_t i = 0; i < len; ++i) {
     uint32_t block[16] = {0};
 
@@ -356,7 +356,7 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
       memcpy(block + 8, type_dag[WITNESS_A(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       memcpy(block, type_dag[WITNESS_B(dag, type_dag, i)].typeMerkleRoot.s, sizeof(uint32_t[8]));
-      sha256_bitstring(block + 8, &dag[i].compactValue);
+      simplicity_sha256_bitstring(block + 8, &dag[i].compactValue);
       sha256_compression(analysis[i].annotatedMerkleRoot.s, block);
       break;
      case HIDDEN:
@@ -378,7 +378,7 @@ void computeAnnotatedMerkleRoot(analyses* analysis, const dag_node* dag, const t
  *
  * Precondition: dag_node dag[len] and 'dag' is well-formed.
  */
-simplicity_err verifyCanonicalOrder(dag_node* dag, const size_t len) {
+simplicity_err simplicity_verifyCanonicalOrder(dag_node* dag, const size_t len) {
   size_t bottom = 0;
   size_t top = len-1; /* Underflow is checked below. */
 
@@ -482,7 +482,7 @@ simplicity_err verifyCanonicalOrder(dag_node* dag, const size_t len) {
  * Postcondition: dag_node dag[len] and 'dag' has witness data and is well-typed with 'type_dag'
  *                  when the result is 'SIMPLICITY_NO_ERROR';
  */
-simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstream *witness) {
+simplicity_err simplicity_fillWitnessData(dag_node* dag, type* type_dag, const size_t len, bitstream *witness) {
   static_assert(CELLS_MAX <= 0x80000000, "CELLS_MAX is too large.");
   for (size_t i = 0; i < len; ++i) {
     if (WITNESS == dag[i].tag) {
@@ -571,7 +571,7 @@ simplicity_err fillWitnessData(dag_node* dag, type* type_dag, const size_t len, 
  *
  * Precondition: dag_node dag[len] and 'dag' is well-typed with 'type_dag' and contains witnesses.
  */
-simplicity_err verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t dag_len) {
+simplicity_err simplicity_verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_node* dag, const type* type_dag, const size_t dag_len) {
   simplicity_assert(0 < dag_len);
   sha256_midstate* imr_buf = simplicity_malloc((size_t)dag_len * sizeof(sha256_midstate));
   if (!imr_buf) return SIMPLICITY_ERR_MALLOC;
@@ -580,7 +580,7 @@ simplicity_err verifyNoDuplicateIdentityRoots(sha256_midstate* imr, const dag_no
 
   if (imr) *imr = imr_buf[dag_len-1];
 
-  int result = hasDuplicates(imr_buf, dag_len);
+  int result = simplicity_hasDuplicates(imr_buf, dag_len);
 
   simplicity_free(imr_buf);
 

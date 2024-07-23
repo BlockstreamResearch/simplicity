@@ -784,7 +784,7 @@ bool simplicity_calculate_issuance_entropy(frameItem* dst, frameItem src, const 
   op.ix = read32(&src);
   read32s(contract.s, 8, &src);
 
-  result = generateIssuanceEntropy(&op, &contract);
+  result = simplicity_generateIssuanceEntropy(&op, &contract);
   writeHash(dst, &result);
   return true;
 }
@@ -796,7 +796,7 @@ bool simplicity_calculate_asset(frameItem* dst, frameItem src, const txEnv* env)
   sha256_midstate result;
 
   read32s(entropy.s, 8, &src);
-  result = calculateAsset(&entropy);
+  result = simplicity_calculateAsset(&entropy);
 
   writeHash(dst, &result);
   return true;
@@ -809,7 +809,7 @@ bool simplicity_calculate_explicit_token(frameItem* dst, frameItem src, const tx
   sha256_midstate result;
 
   read32s(entropy.s, 8, &src);
-  result = calculateToken(&entropy, EXPLICIT);
+  result = simplicity_calculateToken(&entropy, EXPLICIT);
 
   writeHash(dst, &result);
   return true;
@@ -822,7 +822,7 @@ bool simplicity_calculate_confidential_token(frameItem* dst, frameItem src, cons
   sha256_midstate result;
 
   read32s(entropy.s, 8, &src);
-  result = calculateToken(&entropy, EVEN_Y /* ODD_Y would also work. */);
+  result = simplicity_calculateToken(&entropy, EVEN_Y /* ODD_Y would also work. */);
 
   writeHash(dst, &result);
   return true;
@@ -845,7 +845,7 @@ bool simplicity_build_tapleaf_simplicity(frameItem* dst, frameItem src, const tx
   (void) env; // env is unused.
   sha256_midstate cmr;
   readHash(&cmr, &src);
-  sha256_midstate result = make_tapleaf(0xbe, &cmr);
+  sha256_midstate result = simplicity_make_tapleaf(0xbe, &cmr);
   writeHash(dst, &result);
   return true;
 }
@@ -857,7 +857,7 @@ bool simplicity_build_tapbranch(frameItem* dst, frameItem src, const txEnv* env)
   readHash(&a, &src);
   readHash(&b, &src);
 
-  sha256_midstate result = make_tapbranch(&a, &b);
+  sha256_midstate result = simplicity_make_tapbranch(&a, &b);
   writeHash(dst, &result);
   return true;
 }
@@ -870,7 +870,7 @@ bool simplicity_outpoint_hash(frameItem* dst, frameItem src, const txEnv* env) {
   sha256_context ctx = {.output = midstate.s};
 
   /* Read a SHA-256 context. */
-  if (!read_sha256_context(&ctx, &src)) return false;
+  if (!simplicity_read_sha256_context(&ctx, &src)) return false;
 
   /* Read an optional pegin parent chain hash. */
   if (readBit(&src)) {
@@ -888,7 +888,7 @@ bool simplicity_outpoint_hash(frameItem* dst, frameItem src, const txEnv* env) {
   read8s(buf, 36, &src);
   sha256_uchars(&ctx, buf, 36);
 
-  return write_sha256_context(dst, &ctx);
+  return simplicity_write_sha256_context(dst, &ctx);
 }
 
 /* asset_amount_hash : CTX8 * Conf TWO^256 * Conf TWO^64 |- CTX8 */
@@ -899,7 +899,7 @@ bool simplicity_asset_amount_hash(frameItem* dst, frameItem src, const txEnv* en
   sha256_context ctx = {.output = midstate.s};
 
   /* Read a SHA-256 context. */
-  if (!read_sha256_context(&ctx, &src)) return false;
+  if (!simplicity_read_sha256_context(&ctx, &src)) return false;
 
   /* Read an asset id prefix. (2 bits) */
   if (readBit(&src)) {
@@ -936,7 +936,7 @@ bool simplicity_asset_amount_hash(frameItem* dst, frameItem src, const txEnv* en
     sha256_uchars(&ctx, buf, 32);
   }
 
-  return write_sha256_context(dst, &ctx);
+  return simplicity_write_sha256_context(dst, &ctx);
 }
 
 /* nonce_hash : CTX8 * S (Conf TWO^256) |- CTX8 */
@@ -947,7 +947,7 @@ bool simplicity_nonce_hash(frameItem* dst, frameItem src, const txEnv* env) {
   sha256_context ctx = {.output = midstate.s};
 
   /* Read a SHA-256 context. */
-  if (!read_sha256_context(&ctx, &src)) return false;
+  if (!simplicity_read_sha256_context(&ctx, &src)) return false;
 
   /* Read an optional nonce. (259 bits) */
   if (readBit(&src)) {
@@ -971,7 +971,7 @@ bool simplicity_nonce_hash(frameItem* dst, frameItem src, const txEnv* env) {
     sha256_uchar(&ctx, 0x00);
   }
 
-  return write_sha256_context(dst, &ctx);
+  return simplicity_write_sha256_context(dst, &ctx);
 }
 
 /* annex_hash : CTX8 * S TWO^256 |- CTX8 */
@@ -982,7 +982,7 @@ bool simplicity_annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
   sha256_context ctx = {.output = midstate.s};
 
   /* Read a SHA-256 context. */
-  if (!read_sha256_context(&ctx, &src)) return false;
+  if (!simplicity_read_sha256_context(&ctx, &src)) return false;
 
   /* Read an optional hash. (257 bits) */
   if (readBit(&src)) {
@@ -995,7 +995,7 @@ bool simplicity_annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
     sha256_uchar(&ctx, 0x00);
   }
 
-  return write_sha256_context(dst, &ctx);
+  return simplicity_write_sha256_context(dst, &ctx);
 }
 
 /* issuance : TWO^256 |- S (S TWO) */
@@ -1111,9 +1111,9 @@ bool simplicity_output_hash(frameItem* dst, frameItem src, const txEnv* env) {
     const sigOutput* output = &env->tx->output[i];
     sha256_midstate midstate;
     sha256_context ctx = sha256_init(midstate.s);
-    sha256_confAsset(&ctx, &output->asset);
-    sha256_confAmt(&ctx, &output->amt);
-    sha256_confNonce(&ctx, &output->nonce);
+    simplicity_sha256_confAsset(&ctx, &output->asset);
+    simplicity_sha256_confAmt(&ctx, &output->amt);
+    simplicity_sha256_confNonce(&ctx, &output->nonce);
     sha256_hash(&ctx, &output->scriptPubKey);
     sha256_hash(&ctx, &output->rangeProofHash);
     sha256_finalize(&ctx);
@@ -1159,8 +1159,8 @@ bool simplicity_input_utxo_hash(frameItem* dst, frameItem src, const txEnv* env)
     const utxo* txo = &env->tx->input[i].txo;
     sha256_midstate midstate;
     sha256_context ctx = sha256_init(midstate.s);
-    sha256_confAsset(&ctx, &txo->asset);
-    sha256_confAmt(&ctx, &txo->amt);
+    simplicity_sha256_confAsset(&ctx, &txo->asset);
+    simplicity_sha256_confAmt(&ctx, &txo->amt);
     sha256_hash(&ctx, &txo->scriptPubKey);
     sha256_finalize(&ctx);
     writeHash(dst, &midstate);
@@ -1279,10 +1279,10 @@ bool simplicity_issuance_hash(frameItem* dst, frameItem src, const txEnv* env) {
       sha256_hash(&ctx, &issuance->tokenRangeProofHash);
       sha256_uchar(&ctx, 0);
     } else {
-      sha256_confAsset(&ctx, &(confidential){ .prefix = EXPLICIT, .data = issuance->assetId});
-      sha256_confAmt(&ctx, &issuance->assetAmt);
-      sha256_confAsset(&ctx, &(confidential){ .prefix = EXPLICIT, .data = issuance->tokenId});
-      sha256_confAmt(&ctx, NEW_ISSUANCE == issuance->type
+      simplicity_sha256_confAsset(&ctx, &(confidential){ .prefix = EXPLICIT, .data = issuance->assetId});
+      simplicity_sha256_confAmt(&ctx, &issuance->assetAmt);
+      simplicity_sha256_confAsset(&ctx, &(confidential){ .prefix = EXPLICIT, .data = issuance->tokenId});
+      simplicity_sha256_confAmt(&ctx, NEW_ISSUANCE == issuance->type
                                          ? &issuance->tokenAmt
                                          : &(confAmount){ .prefix = EXPLICIT, .explicit = 0});
       sha256_hash(&ctx, &issuance->assetRangeProofHash);

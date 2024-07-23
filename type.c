@@ -33,7 +33,7 @@ static sha256_midstate tmrIV(typeName kind) {
  *
  * Precondition: type type_dag[len] and 'type_dag' is well-formed.
  */
-void computeTypeAnalyses(type* type_dag, const size_t len) {
+void simplicity_computeTypeAnalyses(type* type_dag, const size_t len) {
   for (size_t i = 0; i < len; ++i) {
     type_dag[i].skip = i;
     switch (type_dag[i].kind) {
