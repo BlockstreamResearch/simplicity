@@ -112,11 +112,11 @@ static inline void skipBits(frameItem* frame, size_t n) {
  *
  * Precondition: '*frame' is a valid read frame for 'N' more cells.
  */
-uint_fast8_t read4(frameItem* frame);
-uint_fast8_t read8(frameItem* frame);
-uint_fast16_t read16(frameItem* frame);
-uint_fast32_t read32(frameItem* frame);
-uint_fast64_t read64(frameItem* frame);
+uint_fast8_t simplicity_read4(frameItem* frame);
+uint_fast8_t simplicity_read8(frameItem* frame);
+uint_fast16_t simplicity_read16(frameItem* frame);
+uint_fast32_t simplicity_read32(frameItem* frame);
+uint_fast64_t simplicity_read64(frameItem* frame);
 
 /* Given a write frame, the 'writeN' function sets the value of the 'N' cells after the cursor and
  * advances the frame's cursor by 'N'.
@@ -125,25 +125,25 @@ uint_fast64_t read64(frameItem* frame);
  *
  * Precondition: '*frame' is a valid write frame for 'N' more cells.
  */
-void write8(frameItem* frame, uint_fast8_t x);
-void write16(frameItem* frame, uint_fast16_t x);
-void write32(frameItem* frame, uint_fast32_t x);
-void write64(frameItem* frame, uint_fast64_t x);
+void simplicity_write8(frameItem* frame, uint_fast8_t x);
+void simplicity_write16(frameItem* frame, uint_fast16_t x);
+void simplicity_write32(frameItem* frame, uint_fast32_t x);
+void simplicity_write64(frameItem* frame, uint_fast64_t x);
 
 static inline void read8s(unsigned char* x, size_t n, frameItem* frame) {
-  for(; n; --n) *(x++) = (unsigned char)read8(frame);
+  for(; n; --n) *(x++) = (unsigned char)simplicity_read8(frame);
 }
 
 static inline void write8s(frameItem* frame, const unsigned char* x, size_t n) {
-  for(; n; --n) write8(frame, *(x++));
+  for(; n; --n) simplicity_write8(frame, *(x++));
 }
 
 static inline void read32s(uint32_t* x, size_t n, frameItem* frame) {
-  for(; n; --n) *(x++) = (uint32_t)read32(frame);
+  for(; n; --n) *(x++) = (uint32_t)simplicity_read32(frame);
 }
 
 static inline void write32s(frameItem* frame, const uint32_t* x, size_t n) {
-  for(; n; --n) write32(frame, *(x++));
+  for(; n; --n) simplicity_write32(frame, *(x++));
 }
 
 /* Read bytes from a Simplicity buffer of type (TWO^8)^<2^(n+1) into 'buf'.

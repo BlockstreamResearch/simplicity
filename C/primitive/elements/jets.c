@@ -29,7 +29,7 @@ static void writeHash(frameItem* dst, const sha256_midstate* h) {
  */
 static void prevOutpoint(frameItem* dst, const outpoint* op) {
   writeHash(dst, &op->txid);
-  write32(dst, op->ix);
+  simplicity_write32(dst, op->ix);
 }
 
 /* Write an confidential asset to the 'dst' frame, advancing the cursor 258 cells.
@@ -54,7 +54,7 @@ static void asset(frameItem* dst, const confidential* asset) {
 static void amt(frameItem* dst, const confAmount* amt) {
   if (writeBit(dst, EXPLICIT == amt->prefix)) {
     skipBits(dst, 1 + 256 - 64);
-    write64(dst, amt->explicit);
+    simplicity_write64(dst, amt->explicit);
   } else {
     writeBit(dst, ODD_Y == amt->prefix);
     writeHash(dst, &amt->confidential);
@@ -190,20 +190,20 @@ static uint_fast64_t lookup_fee(const sha256_midstate* assetid, const sigOutput*
 /* version : ONE |- TWO^32 */
 bool simplicity_version(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write32(dst, env->tx->version);
+  simplicity_write32(dst, env->tx->version);
   return true;
 }
 
 /* lock_time : ONE |- TWO^32 */
 bool simplicity_lock_time(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write32(dst, env->tx->lockTime);
+  simplicity_write32(dst, env->tx->lockTime);
   return true;
 }
 
 /* input_pegin : TWO^32 |- S (S TWO^256) */
 bool simplicity_input_pegin(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     if (writeBit(dst, env->tx->input[i].isPegin)) {
       writeHash(dst, &env->tx->input[i].pegin);
@@ -218,7 +218,7 @@ bool simplicity_input_pegin(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* input_prev_outpoint : TWO^32 |- S (TWO^256 * TWO^32) */
 bool simplicity_input_prev_outpoint(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     prevOutpoint(dst, &env->tx->input[i].prevOutpoint);
   } else {
@@ -229,7 +229,7 @@ bool simplicity_input_prev_outpoint(frameItem* dst, frameItem src, const txEnv* 
 
 /* input_asset : TWO^32 |- S (Conf TWO^256) */
 bool simplicity_input_asset(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     asset(dst, &env->tx->input[i].txo.asset);
   } else {
@@ -240,7 +240,7 @@ bool simplicity_input_asset(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* input_amount : TWO^32 |- S (Conf TWO^256, Conf TWO^64) */
 bool simplicity_input_amount(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     asset(dst, &env->tx->input[i].txo.asset);
     amt(dst, &env->tx->input[i].txo.amt);
@@ -252,7 +252,7 @@ bool simplicity_input_amount(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* input_script_hash : TWO^32 |- S TWO^256 */
 bool simplicity_input_script_hash(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     writeHash(dst, &env->tx->input[i].txo.scriptPubKey);
   } else {
@@ -263,9 +263,9 @@ bool simplicity_input_script_hash(frameItem* dst, frameItem src, const txEnv* en
 
 /* input_sequence : TWO^32 |- S TWO^32 */
 bool simplicity_input_sequence(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
-    write32(dst, env->tx->input[i].sequence);
+    simplicity_write32(dst, env->tx->input[i].sequence);
   } else {
     skipBits(dst, 32);
   }
@@ -274,7 +274,7 @@ bool simplicity_input_sequence(frameItem* dst, frameItem src, const txEnv* env) 
 
 /* reissuance_blinding : TWO^32 |- S (S TWO^256) */
 bool simplicity_reissuance_blinding(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     reissuanceBlinding(dst, &env->tx->input[i].issuance);
   } else {
@@ -285,7 +285,7 @@ bool simplicity_reissuance_blinding(frameItem* dst, frameItem src, const txEnv* 
 
 /* new_issuance_contract : TWO^32 |- S (S TWO^256) */
 bool simplicity_new_issuance_contract(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     newIssuanceContract(dst, &env->tx->input[i].issuance);
   } else {
@@ -296,7 +296,7 @@ bool simplicity_new_issuance_contract(frameItem* dst, frameItem src, const txEnv
 
 /* reissuance_entropy : TWO^32 |- S (S TWO^256) */
 bool simplicity_reissuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     reissuanceEntropy(dst, &env->tx->input[i].issuance);
   } else {
@@ -307,7 +307,7 @@ bool simplicity_reissuance_entropy(frameItem* dst, frameItem src, const txEnv* e
 
 /* issuance_asset_amount : TWO^32 |- S (S (Conf TWO^64)) */
 bool simplicity_issuance_asset_amount(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     issuanceAssetAmt(dst, &env->tx->input[i].issuance);
   } else {
@@ -318,7 +318,7 @@ bool simplicity_issuance_asset_amount(frameItem* dst, frameItem src, const txEnv
 
 /* issuance_token_amount : TWO^32 |- S (S (Conf TWO^64)) */
 bool simplicity_issuance_token_amount(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     issuanceTokenAmt(dst, &env->tx->input[i].issuance);
   } else {
@@ -329,7 +329,7 @@ bool simplicity_issuance_token_amount(frameItem* dst, frameItem src, const txEnv
 
 /* issuance_asset_proof : TWO^32 |- S TWO^256 */
 bool simplicity_issuance_asset_proof(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     writeHash(dst, &env->tx->input[i].issuance.assetRangeProofHash);
   } else {
@@ -340,7 +340,7 @@ bool simplicity_issuance_asset_proof(frameItem* dst, frameItem src, const txEnv*
 
 /* issuance_token_proof : TWO^32 |- S TWO^256 */
 bool simplicity_issuance_token_proof(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     writeHash(dst, &env->tx->input[i].issuance.tokenRangeProofHash);
   } else {
@@ -351,7 +351,7 @@ bool simplicity_issuance_token_proof(frameItem* dst, frameItem src, const txEnv*
 
 /* input_annex_hash : TWO^32 |- S (S (TWO^256)) */
 bool simplicity_input_annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     if (writeBit(dst, env->tx->input[i].hasAnnex)) {
       writeHash(dst, &env->tx->input[i].annexHash);
@@ -366,7 +366,7 @@ bool simplicity_input_annex_hash(frameItem* dst, frameItem src, const txEnv* env
 
 /* input_script_sig_hash : TWO^32 |- (S (TWO^256) */
 bool simplicity_input_script_sig_hash(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     writeHash(dst, &env->tx->input[i].scriptSigHash);
   } else {
@@ -377,7 +377,7 @@ bool simplicity_input_script_sig_hash(frameItem* dst, frameItem src, const txEnv
 
 /* output_asset : TWO^32 |- S (Conf TWO^256) */
 bool simplicity_output_asset(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     asset(dst, &env->tx->output[i].asset);
   } else {
@@ -388,7 +388,7 @@ bool simplicity_output_asset(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* output_amount : TWO^32 |- S (Conf TWO^256, Conf TWO^64) */
 bool simplicity_output_amount(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     asset(dst, &env->tx->output[i].asset);
     amt(dst, &env->tx->output[i].amt);
@@ -400,7 +400,7 @@ bool simplicity_output_amount(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* output_nonce : TWO^32 |- S (S (Conf TWO^256)) */
 bool simplicity_output_nonce(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     nonce(dst, &env->tx->output[i].nonce);
   } else {
@@ -411,7 +411,7 @@ bool simplicity_output_nonce(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* output_script_hash : TWO^32 |- S TWO^256 */
 bool simplicity_output_script_hash(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     writeHash(dst, &env->tx->output[i].scriptPubKey);
   } else {
@@ -422,9 +422,9 @@ bool simplicity_output_script_hash(frameItem* dst, frameItem src, const txEnv* e
 
 /* output_null_datum : TWO^32 * TWO^32 |- S (S (TWO^2 * TWO^256 + (TWO + TWO^4)))  */
 bool simplicity_output_null_datum(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs && env->tx->output[i].isNullData)) {
-    uint_fast32_t j = read32(&src);
+    uint_fast32_t j = simplicity_read32(&src);
     if (writeBit(dst, j < env->tx->output[i].pnd.len)) {
       if (writeBit(dst, OP_PUSHDATA4 < env->tx->output[i].pnd.op[j].code)) {
         skipBits(dst, 2 + 256 - 5);
@@ -475,7 +475,7 @@ bool simplicity_output_null_datum(frameItem* dst, frameItem src, const txEnv* en
 
 /* output_is_fee : TWO^32 |- S TWO */
 bool simplicity_output_is_fee(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     writeBit(dst, isFee(&env->tx->output[i]));
   } else {
@@ -486,7 +486,7 @@ bool simplicity_output_is_fee(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* output_surjection_proof : TWO^32 |- S TWO^256 */
 bool simplicity_output_surjection_proof(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     writeHash(dst, &env->tx->output[i].surjectionProofHash);
   } else {
@@ -497,7 +497,7 @@ bool simplicity_output_surjection_proof(frameItem* dst, frameItem src, const txE
 
 /* output_range_proof : TWO^32 |- S TWO^256 */
 bool simplicity_output_range_proof(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     writeHash(dst, &env->tx->output[i].rangeProofHash);
   } else {
@@ -510,7 +510,7 @@ bool simplicity_output_range_proof(frameItem* dst, frameItem src, const txEnv* e
 bool simplicity_total_fee(frameItem* dst, frameItem src, const txEnv* env) {
   sha256_midstate assetid;
   readHash(&assetid, &src);
-  write64(dst, lookup_fee(&assetid, env->tx->feeOutputs, env->tx->numFees));
+  simplicity_write64(dst, lookup_fee(&assetid, env->tx->feeOutputs, env->tx->numFees));
   return true;
 }
 
@@ -538,7 +538,7 @@ bool simplicity_transaction_id(frameItem* dst, frameItem src, const txEnv* env) 
 /* current_index : ONE |- TWO^32 */
 bool simplicity_current_index(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write32(dst, env->ix);
+  simplicity_write32(dst, env->ix);
   return true;
 }
 
@@ -591,7 +591,7 @@ bool simplicity_current_script_hash(frameItem* dst, frameItem src, const txEnv* 
 bool simplicity_current_sequence(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   if (env->tx->numInputs <= env->ix) return false;
-  write32(dst, env->tx->input[env->ix].sequence);
+  simplicity_write32(dst, env->tx->input[env->ix].sequence);
   return true;
 }
 
@@ -674,13 +674,13 @@ bool simplicity_current_annex_hash(frameItem* dst, frameItem src, const txEnv* e
 /* tapleaf_version : ONE |- TWO^8 */
 bool simplicity_tapleaf_version(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write8(dst, env->taproot->leafVersion);
+  simplicity_write8(dst, env->taproot->leafVersion);
   return true;
 }
 
 /* tappath : TWO^8 |- S (TWO^256) */
 bool simplicity_tappath(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast8_t i = read8(&src);
+  uint_fast8_t i = simplicity_read8(&src);
   if (writeBit(dst, i < env->taproot->pathLen)) {
     writeHash(dst, &env->taproot->path[i]);
   } else {
@@ -699,14 +699,14 @@ bool simplicity_internal_key(frameItem* dst, frameItem src, const txEnv* env) {
 /* num_inputs : ONE |- TWO^32 */
 bool simplicity_num_inputs(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write32(dst, env->tx->numInputs);
+  simplicity_write32(dst, env->tx->numInputs);
   return true;
 }
 
 /* num_outputs : ONE |- TWO^32 */
 bool simplicity_num_outputs(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write32(dst, env->tx->numOutputs);
+  simplicity_write32(dst, env->tx->numOutputs);
   return true;
 }
 
@@ -720,56 +720,56 @@ bool simplicity_tx_is_final(frameItem* dst, frameItem src, const txEnv* env) {
 /* tx_lock_height : ONE |- TWO^32 */
 bool simplicity_tx_lock_height(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write32(dst, lockHeight(env->tx));
+  simplicity_write32(dst, lockHeight(env->tx));
   return true;
 }
 
 /* tx_lock_time : ONE |- TWO^32 */
 bool simplicity_tx_lock_time(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write32(dst, lockTime(env->tx));
+  simplicity_write32(dst, lockTime(env->tx));
   return true;
 }
 
 /* tx_lock_distance : ONE |- TWO^16 */
 bool simplicity_tx_lock_distance(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write16(dst, lockDistance(env->tx));
+  simplicity_write16(dst, lockDistance(env->tx));
   return true;
 }
 
 /* tx_lock_duration : ONE |- TWO^16 */
 bool simplicity_tx_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  write16(dst, lockDuration(env->tx));
+  simplicity_write16(dst, lockDuration(env->tx));
   return true;
 }
 
 /* check_lock_height : TWO^32 |- ONE */
 bool simplicity_check_lock_height(frameItem* dst, frameItem src, const txEnv* env) {
   (void) dst; // dst is unused;
-  uint_fast32_t x = read32(&src);
+  uint_fast32_t x = simplicity_read32(&src);
   return x <= lockHeight(env->tx);
 }
 
 /* check_lock_time : TWO^32 |- ONE */
 bool simplicity_check_lock_time(frameItem* dst, frameItem src, const txEnv* env) {
   (void) dst; // dst is unused;
-  uint_fast32_t x = read32(&src);
+  uint_fast32_t x = simplicity_read32(&src);
   return x <= lockTime(env->tx);
 }
 
 /* check_lock_distance : TWO^16 |- ONE */
 bool simplicity_check_lock_distance(frameItem* dst, frameItem src, const txEnv* env) {
   (void) dst; // dst is unused;
-  uint_fast16_t x = read16(&src);
+  uint_fast16_t x = simplicity_read16(&src);
   return x <= lockDistance(env->tx);
 }
 
 /* check_lock_duration : TWO^16 |- ONE */
 bool simplicity_check_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
   (void) dst; // dst is unused;
-  uint_fast16_t x = read16(&src);
+  uint_fast16_t x = simplicity_read16(&src);
   return x <= lockDuration(env->tx);
 }
 
@@ -781,7 +781,7 @@ bool simplicity_calculate_issuance_entropy(frameItem* dst, frameItem src, const 
   sha256_midstate result;
 
   read32s(op.txid.s, 8, &src);
-  op.ix = read32(&src);
+  op.ix = simplicity_read32(&src);
   read32s(contract.s, 8, &src);
 
   result = simplicity_generateIssuanceEntropy(&op, &contract);
@@ -1000,7 +1000,7 @@ bool simplicity_annex_hash(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* issuance : TWO^256 |- S (S TWO) */
 bool simplicity_issuance(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const sigInput* input = &env->tx->input[i];
     if (writeBit(dst, NO_ISSUANCE != input->issuance.type)) {
@@ -1016,7 +1016,7 @@ bool simplicity_issuance(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* issuance_entropy : TWO^256 |- S (S TWO^256) */
 bool simplicity_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const sigInput* input = &env->tx->input[i];
     if (writeBit(dst, NO_ISSUANCE != input->issuance.type)) {
@@ -1032,7 +1032,7 @@ bool simplicity_issuance_entropy(frameItem* dst, frameItem src, const txEnv* env
 
 /* issuance_asset : TWO^256 |- S (S TWO^256) */
 bool simplicity_issuance_asset(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const sigInput* input = &env->tx->input[i];
     if (writeBit(dst, NO_ISSUANCE != input->issuance.type)) {
@@ -1048,7 +1048,7 @@ bool simplicity_issuance_asset(frameItem* dst, frameItem src, const txEnv* env) 
 
 /* issuance_token : TWO^256 |- S (S TWO^256) */
 bool simplicity_issuance_token(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const sigInput* input = &env->tx->input[i];
     if (writeBit(dst, NO_ISSUANCE != input->issuance.type)) {
@@ -1106,7 +1106,7 @@ bool simplicity_outputs_hash(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* output_hash : TWO^32 |- S TWO^256 */
 bool simplicity_output_hash(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numOutputs)) {
     const sigOutput* output = &env->tx->output[i];
     sha256_midstate midstate;
@@ -1154,7 +1154,7 @@ bool simplicity_input_utxos_hash(frameItem* dst, frameItem src, const txEnv* env
 
 /* input_utxo_hash : TWO^32 |- S TWO^256 */
 bool simplicity_input_utxo_hash(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const utxo* txo = &env->tx->input[i].txo;
     sha256_midstate midstate;
@@ -1200,7 +1200,7 @@ bool simplicity_inputs_hash(frameItem* dst, frameItem src, const txEnv* env) {
 
 /* input_hash : TWO^32 |- S TWO^256 */
 bool simplicity_input_hash(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const sigInput* input = &env->tx->input[i];
     sha256_midstate midstate;
@@ -1265,7 +1265,7 @@ bool simplicity_issuances_hash(frameItem* dst, frameItem src, const txEnv* env) 
 
 /* issuance_hash : TWO^32 |- S TWO^256 */
 bool simplicity_issuance_hash(frameItem* dst, frameItem src, const txEnv* env) {
-  uint_fast32_t i = read32(&src);
+  uint_fast32_t i = simplicity_read32(&src);
   if (writeBit(dst, i < env->tx->numInputs)) {
     const assetIssuance* issuance = &env->tx->input[i].issuance;
     sha256_midstate midstate;

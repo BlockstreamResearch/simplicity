@@ -6,7 +6,7 @@
  *                                                                                                                            \
  * Precondition: '*frame' is a valid read frame for bits more cells.                                                          \
  */                                                                                                                           \
-uint_fast##size##_t read##bits(frameItem* frame) {                                                                            \
+uint_fast##size##_t simplicity_read##bits(frameItem* frame) {                                                                 \
   static_assert(bits <= size, "Return type too small to hold the requested number of bits.");                                 \
   uint_fast##size##_t result = 0;                                                                                             \
   /* Pointers to the UWORD of the read frame that contains the frame's cursor (or is immediately after the cursor). */        \
@@ -53,7 +53,7 @@ READ_(64,64)
  *                                                                                                                            \
  * Precondition: '*frame' is a valid write frame for bits more cells.                                                         \
  */                                                                                                                           \
-void write##bits(frameItem* frame, uint_fast##bits##_t x) {                                                                   \
+void simplicity_write##bits(frameItem* frame, uint_fast##bits##_t x) {                                                        \
   /* Pointers to the UWORD of the write frame that contains the frame's cursor (or is immediately after the cursor). */       \
   UWORD* frame_ptr = frame->edge + (frame->offset - 1) / UWORD_BIT;                                                           \
   /* The specific bit within the above UWORD that is immediately in front of the cursor.                                      \
@@ -154,7 +154,7 @@ bool simplicity_read_sha256_context(sha256_context* ctx, frameItem* src) {
   uint_fast64_t compressionCount;
 
   simplicity_read_buffer8(ctx->block, &len, src, 5);
-  compressionCount = read64(src);
+  compressionCount = simplicity_read64(src);
   ctx->counter = ((compressionCount*1U) << 6) + len;
   read32s(ctx->output, 8, src);
   ctx->overflow = (sha256_max_counter >> 6) <= compressionCount;
@@ -174,7 +174,7 @@ bool simplicity_read_sha256_context(sha256_context* ctx, frameItem* src) {
  */
 bool simplicity_write_sha256_context(frameItem* dst, const sha256_context* ctx) {
   simplicity_write_buffer8(dst, ctx->block, ctx->counter % 64, 5);
-  write64(dst, ctx->counter >> 6);
+  simplicity_write64(dst, ctx->counter >> 6);
   write32s(dst, ctx->output, 8);
   return !ctx->overflow;
 }
