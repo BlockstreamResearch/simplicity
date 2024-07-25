@@ -1117,7 +1117,7 @@ static void div_mod_96_64(uint_fast32_t *q, uint_fast64_t *r,
   uint_fast64_t estQ = ah / bh;
 
   /* Precondition 1 guarentees Q is 32-bits, if estQ is greater than UINT32_MAX, then reduce our initial estimated quotient to UINT32_MAX. */
-  *q = estQ <= UINT32_MAX ? estQ : UINT32_MAX;
+  *q = estQ <= UINT32_MAX ? (uint_fast32_t)estQ : UINT32_MAX;
 
   /* *q * bh <= estQ * bh <= ah */
   uint_fast64_t rh = ah - 1u * *q * bh;
