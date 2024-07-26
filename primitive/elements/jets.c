@@ -157,7 +157,7 @@ static uint_fast16_t lockDistance(const transaction* tx) {
 }
 
 static uint_fast16_t lockDuration(const transaction* tx) {
-  return 2 <= tx->version ? (uint_fast32_t)tx->lockDuration : 0;
+  return 2 <= tx->version ? tx->lockDuration : 0;
 }
 
 static bool isFee(const sigOutput* output) {
