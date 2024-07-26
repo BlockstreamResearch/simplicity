@@ -170,7 +170,7 @@ static SECP256K1_INLINE int secp256k1_ctz64_var(uint64_t x) {
 #if (__has_builtin(__builtin_ctzl) || SECP256K1_GNUC_PREREQ(3,4))
     /* If the unsigned long type is sufficient to represent the largest uint64_t, consider __builtin_ctzl. */
     if (((unsigned long)UINT64_MAX) == UINT64_MAX) {
-        return __builtin_ctzl(x);
+        return __builtin_ctzl((unsigned long)x);
     }
 #endif
 #if (__has_builtin(__builtin_ctzll) || SECP256K1_GNUC_PREREQ(3,4))

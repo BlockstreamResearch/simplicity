@@ -351,7 +351,7 @@ extern transaction* simplicity_elements_mallocTransaction(const rawTransaction* 
   /* Multiply by (size_t)1 to disable type-limits warning. */
   if (SIZE_MAX / sizeof(opcode) < (size_t)1 * totalNullDataCodes) return NULL;
   if (SIZE_MAX - allocationSize < totalNullDataCodes * sizeof(opcode)) return NULL;
-  allocationSize += totalNullDataCodes * sizeof(opcode);
+  allocationSize += (size_t)totalNullDataCodes * sizeof(opcode);
 
   char *allocation = simplicity_malloc(allocationSize);
   if (!allocation) return NULL;
