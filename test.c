@@ -501,34 +501,34 @@ static sha256_midstate hashint(uint_fast32_t n) {
   return result;
 }
 
-static sha256_midstate rsort_no_duplicates(size_t i) {
+static sha256_midstate rsort_no_duplicates(uint_fast32_t i) {
   return hashint(i);
 }
 
-static sha256_midstate rsort_all_duplicates(size_t i) {
+static sha256_midstate rsort_all_duplicates(uint_fast32_t i) {
   (void)i;
   return hashint(0);
 }
 
-static sha256_midstate rsort_one_duplicate(size_t i) {
+static sha256_midstate rsort_one_duplicate(uint_fast32_t i) {
   return hashint(i ? i : 1);
 }
 
 /* Tests a worst-case conditions for stack usage in rsort. */
-static sha256_midstate rsort_diagonal(size_t i) {
+static sha256_midstate rsort_diagonal(uint_fast32_t i) {
   sha256_midstate result = {0};
   unsigned char *alias = (unsigned char *)(result.s);
-  for (size_t j = 0; j < sizeof(result.s); ++j) {
+  for (uint_fast32_t j = 0; j < sizeof(result.s); ++j) {
     alias[j] = j == i ? 0 : 0xff;
   }
   return result;
 }
 
-static void test_hasDuplicates(const char* name, int expected, sha256_midstate (*f)(size_t), size_t n) {
+static void test_hasDuplicates(const char* name, int expected, sha256_midstate (*f)(uint_fast32_t), uint_fast32_t n) {
   sha256_midstate hashes[n];
 
   printf("Test %s\n", name);
-  for(size_t i = 0; i < n; ++i) {
+  for(uint_fast32_t i = 0; i < n; ++i) {
     hashes[i] = f(i);
   }
 
