@@ -31,7 +31,7 @@
  *               unsigned char program[program_len]
  *               unsigned char witness[witness_len]
  */
-extern bool elements_simplicity_execSimplicity( simplicity_err* error, unsigned char* imr
+extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned char* imr
                                               , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
                                               , const unsigned char* genesisBlockHash
                                               , int64_t budget

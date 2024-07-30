@@ -60,8 +60,8 @@ foreign import ccall unsafe "" c_set_txEnv :: Ptr CTxEnv -> Ptr CTransaction -> 
 foreign import ccall unsafe "&" c_free_transaction :: FunPtr (Ptr CTransaction -> IO ())
 foreign import ccall unsafe "&" c_free_tapEnv :: FunPtr (Ptr CTapEnv -> IO ())
 
-foreign import ccall unsafe "" elements_simplicity_mallocTransaction :: Ptr RawTransaction -> IO (Ptr CTransaction)
-foreign import ccall unsafe "" elements_simplicity_mallocTapEnv :: Ptr RawTapEnv -> IO (Ptr CTapEnv)
+foreign import ccall unsafe "" simplicity_elements_mallocTransaction :: Ptr RawTransaction -> IO (Ptr CTransaction)
+foreign import ccall unsafe "" simplicity_elements_mallocTapEnv :: Ptr RawTapEnv -> IO (Ptr CTapEnv)
 
 sizeof_rawBuffer :: Int
 sizeof_rawBuffer = fromIntegral . unsafeLocalState $ peek c_sizeof_rawBuffer
@@ -190,11 +190,11 @@ withRawTapEnv tapEnv k | length (tappath tapEnv) <= 128 =
 
 marshallTransaction :: SigTx -> IO (ForeignPtr CTransaction)
 marshallTransaction tx = withRawTransaction tx
-                       $ \pRawTransaction -> elements_simplicity_mallocTransaction pRawTransaction >>= newForeignPtr c_free_transaction
+                       $ \pRawTransaction -> simplicity_elements_mallocTransaction pRawTransaction >>= newForeignPtr c_free_transaction
 
 marshallTapEnv :: TapEnv -> IO (ForeignPtr CTapEnv)
 marshallTapEnv env = withRawTapEnv env
-                   $ \pRawTapEnv -> elements_simplicity_mallocTapEnv pRawTapEnv >>= newForeignPtr c_free_tapEnv
+                   $ \pRawTapEnv -> simplicity_elements_mallocTapEnv pRawTapEnv >>= newForeignPtr c_free_tapEnv
 
 withEnv :: ForeignPtr CTransaction -> Word32 -> ForeignPtr CTapEnv -> Hash256 -> (Ptr CTxEnv -> IO b) -> IO b
 withEnv cTransaction ix cTapEnv genesisHash k =
