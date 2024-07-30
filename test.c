@@ -343,7 +343,7 @@ static void test_elements(void) {
     , .pathLen = 0
     , .scriptCMR = cmr
     };
-  tapEnv* taproot = elements_simplicity_mallocTapEnv(&rawTaproot);
+  tapEnv* taproot = simplicity_elements_mallocTapEnv(&rawTaproot);
 
   printf("Test elements\n");
   {
@@ -378,7 +378,7 @@ static void test_elements(void) {
       , .version = 0x00000002
       , .lockTime = 0x00000000
       };
-    transaction* tx1 = elements_simplicity_mallocTransaction(&testTx1);
+    transaction* tx1 = simplicity_elements_mallocTransaction(&testTx1);
     if (tx1) {
       successes++;
       simplicity_err execResult;
@@ -398,7 +398,7 @@ static void test_elements(void) {
       }
       {
         unsigned char imrResult[32];
-        if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, (elementsCheckSigHashAllTx1_cost + 999)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && IS_OK(execResult)) {
+        if (simplicity_elements_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, (elementsCheckSigHashAllTx1_cost + 999)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && IS_OK(execResult)) {
           sha256_midstate imr;
           sha256_toMidstate(imr.s, imrResult);
           if (0 == memcmp(imr.s, elementsCheckSigHashAllTx1_imr, sizeof(uint32_t[8]))) {
@@ -414,7 +414,7 @@ static void test_elements(void) {
         if (elementsCheckSigHashAllTx1_cost){
           /* test the same transaction without adequate budget. */
           simplicity_assert(elementsCheckSigHashAllTx1_cost);
-          if (elements_simplicity_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, (elementsCheckSigHashAllTx1_cost - 1)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_BUDGET == execResult) {
+          if (simplicity_elements_execSimplicity(&execResult, imrResult, tx1, 0, taproot, genesisHash, (elementsCheckSigHashAllTx1_cost - 1)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_BUDGET == execResult) {
             successes++;
           } else {
             failures++;
@@ -427,7 +427,7 @@ static void test_elements(void) {
         unsigned char brokenSig[sizeof_elementsCheckSigHashAllTx1_witness];
         memcpy(brokenSig, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness);
         brokenSig[sizeof_elementsCheckSigHashAllTx1_witness - 1] ^= 0x80;
-        if (elements_simplicity_execSimplicity(&execResult, NULL, tx1, 0, taproot, genesisHash, BUDGET_MAX, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, brokenSig, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_JET == execResult) {
+        if (simplicity_elements_execSimplicity(&execResult, NULL, tx1, 0, taproot, genesisHash, BUDGET_MAX, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, brokenSig, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_JET == execResult) {
           successes++;
         } else {
           failures++;
@@ -471,12 +471,12 @@ static void test_elements(void) {
       , .version = 0x00000002
       , .lockTime = 0x00000000
       };
-    transaction* tx2 = elements_simplicity_mallocTransaction(&testTx2);
+    transaction* tx2 = simplicity_elements_mallocTransaction(&testTx2);
     if (tx2) {
       successes++;
       simplicity_err execResult;
       {
-        if (elements_simplicity_execSimplicity(&execResult, NULL, tx2, 0, taproot, genesisHash, BUDGET_MAX, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_JET == execResult) {
+        if (simplicity_elements_execSimplicity(&execResult, NULL, tx2, 0, taproot, genesisHash, BUDGET_MAX, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_JET == execResult) {
           successes++;
         } else {
           failures++;

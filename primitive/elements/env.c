@@ -310,7 +310,7 @@ static uint_fast32_t sumFees(sigOutput** feeOutputs, uint_fast32_t numFees) {
  *
  * Precondition: NULL != rawTx
  */
-extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* rawTx) {
+extern transaction* simplicity_elements_mallocTransaction(const rawTransaction* rawTx) {
   if (!rawTx) return NULL;
 
   size_t allocationSize = sizeof(transaction);
@@ -573,7 +573,7 @@ extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* 
  *
  * Precondition: *rawEnv is well-formed (i.e. rawEnv->pathLen <= 128.)
  */
-extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv) {
+extern tapEnv* simplicity_elements_mallocTapEnv(const rawTapEnv* rawEnv) {
   if (!rawEnv) return NULL;
   if (128 < rawEnv->pathLen) return NULL;
 
