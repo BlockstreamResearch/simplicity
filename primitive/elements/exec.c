@@ -52,7 +52,7 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
 
   combinator_counters census;
   dag_node* dag = NULL;
-  int32_t dag_len;
+  int_fast32_t dag_len;
   sha256_midstate amr_hash, genesis_hash;
 
   if (amr) sha256_toMidstate(amr_hash.s, amr);
@@ -63,11 +63,11 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
     dag_len = simplicity_decodeMallocDag(&dag, &census, &stream);
     if (dag_len <= 0) {
       simplicity_assert(dag_len < 0);
-      *error = dag_len;
+      *error = (simplicity_err)dag_len;
       return IS_PERMANENT(*error);
     }
     simplicity_assert(NULL != dag);
-    simplicity_assert((size_t)dag_len <= DAG_LEN_MAX);
+    simplicity_assert((uint_fast32_t)dag_len <= DAG_LEN_MAX);
     *error = simplicity_closeBitstream(&stream);
   }
 
@@ -79,7 +79,7 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
 
   if (IS_OK(*error)) {
     type* type_dag = NULL;
-    *error = simplicity_mallocTypeInference(&type_dag, dag, (size_t)dag_len, &census);
+    *error = simplicity_mallocTypeInference(&type_dag, dag, (uint_fast32_t)dag_len, &census);
     if (IS_OK(*error)) {
       simplicity_assert(NULL != type_dag);
       if (0 != dag[dag_len-1].sourceType || 0 != dag[dag_len-1].targetType) {
@@ -88,7 +88,7 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
     }
     if (IS_OK(*error)) {
       bitstream witness_stream = initializeBitstream(witness, witness_len);
-      *error = simplicity_fillWitnessData(dag, type_dag, (size_t)dag_len, &witness_stream);
+      *error = simplicity_fillWitnessData(dag, type_dag, (uint_fast32_t)dag_len, &witness_stream);
       if (IS_OK(*error)) {
         *error = simplicity_closeBitstream(&witness_stream);
         if (SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES == *error) *error = SIMPLICITY_ERR_WITNESS_TRAILING_BYTES;
@@ -100,7 +100,7 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
       static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(sha256_midstate), "imr_buf array too large.");
       static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
       static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "imr_buf array index does nto fit in uint32_t.");
-      *error = simplicity_verifyNoDuplicateIdentityRoots(&imr_buf, dag, type_dag, (size_t)dag_len);
+      *error = simplicity_verifyNoDuplicateIdentityRoots(&imr_buf, dag, type_dag, (uint_fast32_t)dag_len);
       if (IS_OK(*error) && imr) sha256_fromMidstate(imr, imr_buf.s);
     }
     if (IS_OK(*error) && amr) {
@@ -109,7 +109,7 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
       static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "analysis array index does nto fit in uint32_t.");
       analyses *analysis = simplicity_malloc((size_t)dag_len * sizeof(analyses));
       if (analysis) {
-        simplicity_computeAnnotatedMerkleRoot(analysis, dag, type_dag, (size_t)dag_len);
+        simplicity_computeAnnotatedMerkleRoot(analysis, dag, type_dag, (uint_fast32_t)dag_len);
         if (0 != memcmp(amr_hash.s, analysis[dag_len-1].annotatedMerkleRoot.s, sizeof(uint32_t[8]))) {
           *error = SIMPLICITY_ERR_AMR;
         }

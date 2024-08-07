@@ -55,7 +55,7 @@ static simplicity_err getHash(sha256_midstate* result, bitstream* stream) {
  *               i < 2^31 - 1
  *               NULL != stream
  */
-static simplicity_err decodeNode(dag_node* dag, size_t i, bitstream* stream) {
+static simplicity_err decodeNode(dag_node* dag, uint_fast32_t i, bitstream* stream) {
   int32_t bit = read1Bit(stream);
   if (bit < 0) return (simplicity_err)bit;
   dag[i] = (dag_node){0};
@@ -85,8 +85,8 @@ static simplicity_err decodeNode(dag_node* dag, size_t i, bitstream* stream) {
     for (int32_t j = 0; j < 2 - code; ++j) {
       int32_t ix = simplicity_decodeUptoMaxInt(stream);
       if (ix < 0) return (simplicity_err)ix;
-      if (i < (uint32_t)ix) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
-      dag[i].child[j] = i - (uint32_t)ix;
+      if (i < (uint_fast32_t)ix) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+      dag[i].child[j] = i - (uint_fast32_t)ix;
     }
     switch (code) {
      case 0:
@@ -153,8 +153,8 @@ static simplicity_err decodeNode(dag_node* dag, size_t i, bitstream* stream) {
  *               len < 2^31
  *               NULL != stream
  */
-static simplicity_err decodeDag(dag_node* dag, const size_t len, combinator_counters* census, bitstream* stream) {
-  for (size_t i = 0; i < len; ++i) {
+static simplicity_err decodeDag(dag_node* dag, const uint_fast32_t len, combinator_counters* census, bitstream* stream) {
+  for (uint_fast32_t i = 0; i < len; ++i) {
     simplicity_err error = decodeNode(dag, i, stream);
     if (!IS_OK(error)) return error;
 
@@ -186,7 +186,7 @@ static simplicity_err decodeDag(dag_node* dag, const size_t len, combinator_coun
  *                          of the function is positive and when NULL != census;
  *                NULL == *dag when the return value is negative.
  */
-int32_t simplicity_decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* stream) {
+int_fast32_t simplicity_decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* stream) {
   *dag = NULL;
   int32_t dagLen = simplicity_decodeUptoMaxInt(stream);
   if (dagLen <= 0) return dagLen;
@@ -199,12 +199,12 @@ int32_t simplicity_decodeMallocDag(dag_node** dag, combinator_counters* census, 
   if (!*dag) return SIMPLICITY_ERR_MALLOC;
 
   if (census) *census = (combinator_counters){0};
-  simplicity_err error = decodeDag(*dag, (size_t)dagLen, census, stream);
+  simplicity_err error = decodeDag(*dag, (uint_fast32_t)dagLen, census, stream);
 
   if (IS_OK(error)) {
     error = HIDDEN == (*dag)[dagLen - 1].tag
           ? SIMPLICITY_ERR_HIDDEN_ROOT
-          : simplicity_verifyCanonicalOrder(*dag, (size_t)(dagLen));
+          : simplicity_verifyCanonicalOrder(*dag, (uint_fast32_t)(dagLen));
   }
 
   if (IS_OK(error)) {
@@ -212,6 +212,6 @@ int32_t simplicity_decodeMallocDag(dag_node** dag, combinator_counters* census, 
   } else {
     simplicity_free(*dag);
     *dag = NULL;
-    return (int32_t)error;
+    return (int_fast32_t)error;
   }
 }
