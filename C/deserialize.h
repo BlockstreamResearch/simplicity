@@ -28,20 +28,6 @@
  *                          of the function is positive and when NULL != census;
  *                NULL == *dag when the return value is negative.
  */
-int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* stream);
-
-/* Decode a string of up to 2^31 - 1 bits from 'stream'.
- * This is the format in which the data for 'WITNESS' nodes are encoded.
- * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the encoded string of bits exceeds this decoder's limits.
- * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
- * If successful, '*witness' is set to the decoded bitstring,
- *                and 'SIMPLICITY_NO_ERR' is returned.
- *
- * If an error is returned '*witness' might be modified.
- *
- * Precondition: NULL != witness;
- *               NULL != stream;
- */
-simplicity_err decodeWitnessData(bitstring* witness, bitstream* stream);
+int_fast32_t simplicity_decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* stream);
 
 #endif

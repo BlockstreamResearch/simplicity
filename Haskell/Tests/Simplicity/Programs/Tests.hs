@@ -500,11 +500,28 @@ tests = testGroup "Programs"
         , testProperty "wnaf5" prop_wnaf5
         , testProperty "wnaf15" prop_wnaf15
         , testProperty "decompress" prop_decompress
+        , testProperty "off_curve_scale" prop_off_curve_scale
+        , testProperty "off_curve_scale_0" prop_off_curve_scale_0
+        , testProperty "off_curve_scale_inf" prop_off_curve_scale_inf
+        , testProperty "scale" prop_scale
+        , testProperty "scale_0" prop_scale_0
+        , testProperty "scale_inf" prop_scale_inf
+        , testProperty "scale_half" prop_scale_half
+        , testProperty "scale_half_0" prop_scale_half_0
+        , testProperty "scale_half_inf" prop_scale_half_inf
+        , testProperty "off_curve_linear_combination_1" prop_off_curve_linear_combination_1
+        , testProperty "off_curve_linear_combination_1_0" prop_off_curve_linear_combination_1_0
+        , testProperty "off_curve_linear_combination_1_inf" prop_off_curve_linear_combination_1_inf
         , testProperty "linear_combination_1" prop_linear_combination_1
         , testProperty "linear_combination_1_0" prop_linear_combination_1_0
         , testProperty "linear_combination_1_inf" prop_linear_combination_1_inf
+        , testProperty "linear_combination_1_half" prop_linear_combination_1_half
+        , testProperty "linear_combination_1_half_0" prop_linear_combination_1_half_0
+        , testProperty "linear_combination_1_half_inf" prop_linear_combination_1_half_inf
         , testProperty "linear_check_1" prop_linear_check_1
         , testProperty "point_check_1" prop_point_check_1
+        , testProperty "swu" prop_swu
+        , testProperty "hash_to_curve" prop_hash_to_curve
         ]
       , testGroup "bip0340"
         [ testProperty "pubkey_unpack" prop_pubkey_unpack
@@ -3455,9 +3472,62 @@ prop_wnaf15 n = L.and $ zipWith (==) lhs (fmap (maybeToTy . fmap (unsign . toInt
   unsign x | x < 0 = 2^16 + 2*x+1
            | otherwise = 2*x+1
 
+prop_off_curve_scale :: ScalarElement -> GroupElementJacobian -> Bool
+prop_off_curve_scale = \na a -> fast_off_curve_scale (scalarAsTy na, gejAsTy a)
+             == Just (toGEJ (Spec.off_curve_scale (scalarAsSpec na) (gejAsSpec a)))
+ where
+  fast_off_curve_scale = testCoreEval off_curve_scale
+
+prop_off_curve_scale_0 :: GroupElementJacobian -> Bool
+prop_off_curve_scale_0 a = prop_off_curve_scale na a
+ where
+  na = ScalarElement 0
+
+prop_off_curve_scale_inf :: ScalarElement -> Property
+prop_off_curve_scale_inf na = forAll gen_inf $ \a -> prop_off_curve_scale na a
+
+prop_scale :: ScalarElement -> GroupElementJacobian -> Bool
+prop_scale = \na a -> fast_scale (scalarAsTy na, gejAsTy a)
+             == (toGEJ <$> Spec.scale (scalarAsSpec na) (gejAsSpec a))
+ where
+  fast_scale = testCoreEval scale
+
+prop_scale_0 :: GroupElementJacobian -> Bool
+prop_scale_0 a = prop_scale na a
+ where
+  na = ScalarElement 0
+
+prop_scale_inf :: ScalarElement -> Property
+prop_scale_inf na = forAll gen_inf $ \a -> prop_scale na a
+
+prop_scale_half :: ScalarElement -> Property
+prop_scale_half na = forAll gen_half_curve_jacobian $ \a -> prop_scale na a
+
+prop_scale_half_inf :: ScalarElement -> Property
+prop_scale_half_inf na = forAll gen_half_curve_inf $ \a -> prop_scale na a
+
+prop_scale_half_0 :: Property
+prop_scale_half_0 = forAll gen_half_curve_inf $ \a -> prop_scale na a
+ where
+  na = ScalarElement 0
+
+prop_off_curve_linear_combination_1 :: ScalarElement -> GroupElementJacobian -> ScalarElement -> Bool
+prop_off_curve_linear_combination_1 = \na a ng -> fast_off_curve_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
+             == Just (toGEJ (Spec.off_curve_linear_combination_1 (scalarAsSpec na) (gejAsSpec a) (scalarAsSpec ng)))
+ where
+  fast_off_curve_linear_combination_1 = testCoreEval off_curve_linear_combination_1
+
+prop_off_curve_linear_combination_1_0 :: GroupElementJacobian -> ScalarElement -> Bool
+prop_off_curve_linear_combination_1_0 a ng = prop_off_curve_linear_combination_1 na a ng
+ where
+  na = ScalarElement 0
+
+prop_off_curve_linear_combination_1_inf :: ScalarElement -> ScalarElement -> Property
+prop_off_curve_linear_combination_1_inf na ng = forAll gen_inf $ \a -> prop_off_curve_linear_combination_1 na a ng
+
 prop_linear_combination_1 :: ScalarElement -> GroupElementJacobian -> ScalarElement -> Bool
 prop_linear_combination_1 = \na a ng -> fast_linear_combination_1 ((scalarAsTy na, gejAsTy a), scalarAsTy ng)
-             == Just (toGEJ (Spec.linear_combination_1 (scalarAsSpec na) (gejAsSpec a) (scalarAsSpec ng)))
+             == (toGEJ <$> Spec.linear_combination_1 (scalarAsSpec na) (gejAsSpec a) (scalarAsSpec ng))
  where
   fast_linear_combination_1 = testCoreEval linear_combination_1
 
@@ -3468,6 +3538,17 @@ prop_linear_combination_1_0 a ng = prop_linear_combination_1 na a ng
 
 prop_linear_combination_1_inf :: ScalarElement -> ScalarElement -> Property
 prop_linear_combination_1_inf na ng = forAll gen_inf $ \a -> prop_linear_combination_1 na a ng
+
+prop_linear_combination_1_half :: ScalarElement -> ScalarElement -> Property
+prop_linear_combination_1_half na ng = forAll gen_half_curve_jacobian $ \a -> prop_linear_combination_1 na a ng
+
+prop_linear_combination_1_half_inf :: ScalarElement -> ScalarElement -> Property
+prop_linear_combination_1_half_inf na ng = forAll gen_half_curve_inf $ \a -> prop_linear_combination_1 na a ng
+
+prop_linear_combination_1_half_0 :: ScalarElement -> Property
+prop_linear_combination_1_half_0 ng = forAll gen_half_curve_inf $ \a -> prop_linear_combination_1 na a ng
+ where
+  na = ScalarElement 0
 
 prop_linear_check_1 :: ScalarElement -> GroupElement -> ScalarElement -> GroupElement -> Bool
 prop_linear_check_1 = \na a ng r -> fast_linear_check_1 (((scalarAsTy na, geAsTy a), scalarAsTy ng), geAsTy r)
@@ -3486,6 +3567,17 @@ prop_point_check_1 = \na a ng r -> fast_point_check_1 (((scalarAsTy na, pointAsT
              == Just (toBit (Spec.point_check [(scalarAsSpec na, pointAsSpec a)] (scalarAsSpec ng) (pointAsSpec r)))
  where
   fast_point_check_1 = testCoreEval point_check_1
+
+prop_swu :: FieldElement -> Bool
+prop_swu = \a -> let input = feAsTy a in fastF input == implementation (Secp256k1Jet Swu) input
+ where
+  fastF = testCoreEval (specification (Secp256k1Jet Swu))
+
+prop_hash_to_curve :: W.Word256 -> Bool
+prop_hash_to_curve = \a -> let input = toW256 a in fastF input == implementation (Secp256k1Jet HashToCurve) input
+ where
+  toW256 = toWord256 . fromIntegral
+  fastF = testCoreEval (specification (Secp256k1Jet HashToCurve))
 
 prop_pubkey_unpack :: FieldElement -> Bool
 prop_pubkey_unpack a@(FieldElement w) = fast_pubkey_unpack (feAsTy a)

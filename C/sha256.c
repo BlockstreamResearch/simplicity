@@ -38,7 +38,7 @@ static inline void Round(uint32_t a, uint32_t b, uint32_t c, uint32_t* d, uint32
  * Precondition: uint32_t s[8];
  *               uint32_t chunk[16]
  */
-void sha256_compression(uint32_t* s, const uint32_t* chunk) {
+static void sha256_compression_portable(uint32_t* s, const uint32_t* chunk) {
     uint32_t a = s[0], b = s[1], c = s[2], d = s[3], e = s[4], f = s[5], g = s[6], h = s[7];
     uint32_t w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15;
 
@@ -120,6 +120,16 @@ void sha256_compression(uint32_t* s, const uint32_t* chunk) {
     s[7] = 1U * s[7] + h;
 }
 
+void (*simplicity_sha256_compression)(uint32_t* midstate, const uint32_t* block) = sha256_compression_portable;
+
+/* For information purposes only.
+ * Returns true if the sha256_compression implemenation has been optimized for the CPU.
+ * Otherwise returns false.
+ */
+bool simplicity_sha256_compression_is_optimized(void) {
+  return sha256_compression_portable != simplicity_sha256_compression;
+};
+
 /* Given a SHA-256 midstate, 'h', of 'len / 512' blocks, and
  * a 'block' with 'len % 512' bits set and with the remaining bits set to 0,
  * finalize the SHA-256 computation by adding SHA-256 padding and set 'h' to the resulting SHA-256 hash.
@@ -130,12 +140,12 @@ void sha256_compression(uint32_t* s, const uint32_t* chunk) {
 static void sha256_end(uint32_t* h, uint32_t* block, const uint_fast64_t len) {
   block[len / 32 % 16] |= (uint32_t)1 << (31 - len % 32);
   if (448 <= len % 512) {
-    sha256_compression(h, block);
+    simplicity_sha256_compression(h, block);
     memset(block, 0, sizeof(uint32_t[14]));
   }
   block[14] = (uint32_t)(len >> 32);
   block[15] = (uint32_t)len;
-  sha256_compression(h, block);
+  simplicity_sha256_compression(h, block);
 }
 
 /* Compute the SHA-256 hash, 'h', of the bitstring represented by 's'.
@@ -144,7 +154,7 @@ static void sha256_end(uint32_t* h, uint32_t* block, const uint_fast64_t len) {
  *               '*s' is a valid bitstring;
  *               's->len < 2^64;
  */
-void sha256_bitstring(uint32_t* h, const bitstring* s) {
+void simplicity_sha256_bitstring(uint32_t* h, const bitstring* s) {
   /* This static assert should never fail if uint32_t exists.
    * But for more certainty, we note that the correctness of this implementation depends on CHAR_BIT being no more than 32.
    */
@@ -180,7 +190,7 @@ void sha256_bitstring(uint32_t* h, const bitstring* s) {
         /* The next character from s->arr straddles (or almost straddles) the boundary of two elements of the block array. */
         block[count / 32 % 16] |= (uint32_t)((uint_fast32_t)ch >> (count + CHAR_BIT) % 32);
         if (count / 512 != (count + delta) / 512) {
-          sha256_compression(h, block);
+          simplicity_sha256_compression(h, block);
           memset(block, 0, sizeof(uint32_t[16]));
         }
       }
@@ -193,3 +203,7 @@ void sha256_bitstring(uint32_t* h, const bitstring* s) {
   simplicity_assert(count == s->len);
   sha256_end(h, block, s->len);
 }
+
+#ifndef NO_SHA_NI_FLAG
+#include "sha256_x86.inc"
+#endif

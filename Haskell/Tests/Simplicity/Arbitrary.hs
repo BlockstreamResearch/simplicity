@@ -22,8 +22,8 @@ genSignature :: Hash256 -> Gen (PubKey, Sig)
 genSignature msg = do
   priv <- scalar <$> chooseInteger (1, scalar_repr maxBound)
   k <- scalar <$> chooseInteger (1, scalar_repr maxBound)
-  let Just (GE px py) = gej_normalize $ linear_combination [] priv
-  let Just (GE rx ry) = gej_normalize $ linear_combination [] k
+  let Just (GE px py) = gej_normalize $ off_curve_linear_combination [] priv
+  let Just (GE rx ry) = gej_normalize $ off_curve_linear_combination [] k
   let pub = PubKey (fe_pack px)
   let msgBody = encode (fe_pack rx) <> encode pub <> encode msg
   let e = scalar . integerHash256 $ taggedHash "BIP0340/challenge" msgBody

@@ -78,19 +78,23 @@ tests = testGroup "Elements"
           , testProperty "output_range_proofs_hash" prop_output_range_proofs_hash
           , testProperty "output_surjection_proofs_hash" prop_output_surjection_proofs_hash
           , testProperty "outputs_hash" prop_outputs_hash
+          , testProperty "output_hash" prop_output_hash
           , testProperty "input_outpoints_hash" prop_input_outpoints_hash
           , testProperty "input_amounts_hash" prop_input_amounts_hash
           , testProperty "input_scripts_hash" prop_input_scripts_hash
           , testProperty "input_utxos_hash" prop_input_utxos_hash
+          , testProperty "input_utxo_hash" prop_input_utxo_hash
           , testProperty "input_sequences_hash" prop_input_sequences_hash
           , testProperty "input_annexes_hash" prop_input_annexes_hash
           , testProperty "input_script_sigs_hash" prop_input_script_sigs_hash
           , testProperty "inputs_hash" prop_inputs_hash
+          , testProperty "input_hash" prop_input_hash
           , testProperty "issuance_asset_amounts_hash" prop_issuance_asset_amounts_hash
           , testProperty "issuance_token_amounts_hash" prop_issuance_token_amounts_hash
           , testProperty "issuance_range_proofs_hash" prop_issuance_range_proofs_hash
           , testProperty "issuance_blinding_entropy_hash" prop_issuance_blinding_entropy_hash
           , testProperty "issuances_hash" prop_issuances_hash
+          , testProperty "issuance_hash" prop_issuance_hash
           , testProperty "tx_hash" prop_tx_hash
           , testProperty "tap_env_hash" prop_tap_env_hash
           , testProperty "tappath_hash" prop_tappath_hash
@@ -145,6 +149,8 @@ tests = testGroup "Elements"
           , testProperty "tappath" prop_tappath
           , testProperty "version" prop_version
           , testProperty "genesis_block_hash" prop_genesis_block_hash
+          , testProperty "transaction_id" prop_transaction_id
+          , testCase "lbtc_asset" assert_lbtc_asset
           , testCase "issuance_entropy_1" assert_issuance_entropy_1
           , testCase "calculate_asset_1" assert_calculate_asset_1
           , testCase "calculcate_token_1" assert_calculcate_token_1
@@ -328,6 +334,10 @@ prop_outputs_hash :: Property
 prop_outputs_hash = checkJet (ElementsJet (SigHashJet OutputsHash))
                   $ \check -> forallPrimEnv $ \env -> check env ()
 
+prop_output_hash :: Property
+prop_output_hash = checkJet (ElementsJet (SigHashJet OutputHash))
+                  $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
+
 prop_input_outpoints_hash :: Property
 prop_input_outpoints_hash = checkJet (ElementsJet (SigHashJet InputOutpointsHash))
                           $ \check -> forallPrimEnv $ \env -> check env ()
@@ -344,6 +354,10 @@ prop_input_utxos_hash :: Property
 prop_input_utxos_hash = checkJet (ElementsJet (SigHashJet InputUtxosHash))
                       $ \check -> forallPrimEnv $ \env -> check env ()
 
+prop_input_utxo_hash :: Property
+prop_input_utxo_hash = checkJet (ElementsJet (SigHashJet InputUtxoHash))
+                     $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
 prop_input_sequences_hash :: Property
 prop_input_sequences_hash = checkJet (ElementsJet (SigHashJet InputSequencesHash))
                           $ \check -> forallPrimEnv $ \env -> check env ()
@@ -359,6 +373,10 @@ prop_input_script_sigs_hash = checkJet (ElementsJet (SigHashJet InputScriptSigsH
 prop_inputs_hash :: Property
 prop_inputs_hash = checkJet (ElementsJet (SigHashJet InputsHash))
                  $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_input_hash :: Property
+prop_input_hash = checkJet (ElementsJet (SigHashJet InputHash))
+                 $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 prop_issuance_asset_amounts_hash :: Property
 prop_issuance_asset_amounts_hash = checkJet (ElementsJet (SigHashJet IssuanceAssetAmountsHash))
@@ -379,6 +397,10 @@ prop_issuance_blinding_entropy_hash = checkJet (ElementsJet (SigHashJet Issuance
 prop_issuances_hash :: Property
 prop_issuances_hash = checkJet (ElementsJet (SigHashJet IssuancesHash))
                     $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_issuance_hash :: Property
+prop_issuance_hash = checkJet (ElementsJet (SigHashJet IssuanceHash))
+                   $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
 
 prop_tx_hash :: Property
 prop_tx_hash = checkJet (ElementsJet (SigHashJet TxHash))
@@ -606,6 +628,16 @@ prop_version = checkJet (ElementsJet (TransactionJet Version))
 prop_genesis_block_hash :: Property
 prop_genesis_block_hash = checkJet (ElementsJet (TransactionJet GenesisBlockHash))
                         $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_transaction_id :: Property
+prop_transaction_id = checkJet (ElementsJet (TransactionJet TransactionId))
+                        $ \check -> forallPrimEnv $ \env -> check env ()
+
+assert_lbtc_asset :: Assertion
+assert_lbtc_asset = testEval (specification jet) env () @?= implementation jet env ()
+ where
+  jet = ElementsJet (IssuanceJet LbtcAsset)
+  env = undefined
 
 -- example test data from Elements Core 0.17
 (assert_issuance_entropy_1, assert_calculate_asset_1, assert_calculcate_token_1) =

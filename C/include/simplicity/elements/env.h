@@ -74,6 +74,7 @@ typedef struct rawInput {
  *            rawOutput output[numOutputs];
  */
 typedef struct rawTransaction {
+  const unsigned char* txid; /* While in theory we could recompute the txid ourselves, it is easier and safer for it to be provided. */
   const rawInput* input;
   const rawOutput* output;
   uint32_t numInputs;
@@ -90,12 +91,13 @@ typedef struct transaction transaction;
  *
  * Precondition: NULL != rawTx
  */
-extern transaction* elements_simplicity_mallocTransaction(const rawTransaction* rawTx);
+extern transaction* simplicity_elements_mallocTransaction(const rawTransaction* rawTx);
 
 /* A structure representing taproot spending data for an Elements transaction.
  *
  * Invariant: pathLen <= 128;
  *            unsigned char controlBlock[33+pathLen*32];
+ *            unsigned char scriptCMR[32];
  */
 typedef struct rawTapEnv {
   const unsigned char* controlBlock;
@@ -111,5 +113,5 @@ typedef struct tapEnv tapEnv;
  *
  * Precondition: *rawEnv is well-formed (i.e. rawEnv->pathLen <= 128.)
  */
-extern tapEnv* elements_simplicity_mallocTapEnv(const rawTapEnv* rawEnv);
+extern tapEnv* simplicity_elements_mallocTapEnv(const rawTapEnv* rawEnv);
 #endif

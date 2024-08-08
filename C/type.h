@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include "bounded.h"
 #include "sha256.h"
+#include "simplicity_assert.h"
 
 typedef enum typeName
   { ONE, SUM, PRODUCT }
@@ -62,7 +63,7 @@ typedef struct type {
  *
  * Precondition: type type_dag[len] and 'type_dag' is well-formed.
  */
-void computeTypeAnalyses(type* type_dag, size_t len);
+void simplicity_computeTypeAnalyses(type* type_dag, size_t len);
 
 /* Return the index of the largest subexpression of 'type_dag[i]' (possibly 'i' itself) that is either
  * (1) a 'SUM' type;
@@ -83,4 +84,18 @@ static inline size_t typeSkip(size_t i, const type* type_dag) {
   return i;
 }
 
+/* Precondition: type type_dag[i] and 'type_dag' is well-formed.
+ *               if type_dag[i] is a non-trival 'PRODUCT', then both of its two type arguements are non-trival.
+ * Postconditon: value == type_dag[i]
+ */
+static inline void setTypeBack(size_t i, type* type_dag, size_t value) {
+  /* .back cannot be used if .skip is in use.
+     Specifically it cannot be a non-trivial 'PRODUCT' type where one of its two type arguements is a trivial type.
+   */
+  simplicity_assert((PRODUCT != type_dag[i].kind ||
+                     0 == type_dag[i].bitSize ||
+                     (0 != type_dag[type_dag[i].typeArg[0]].bitSize &&
+                      0 != type_dag[type_dag[i].typeArg[1]].bitSize)));
+  type_dag[i].back = value;
+}
 #endif

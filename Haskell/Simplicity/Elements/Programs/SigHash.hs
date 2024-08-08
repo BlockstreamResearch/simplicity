@@ -3,10 +3,10 @@
 module Simplicity.Elements.Programs.SigHash
  ( Lib(Lib), mkLib
  , outputAmountsHash, outputNoncesHash, outputScriptsHash
- , outputRangeProofsHash, outputSurjectionProofsHash, outputsHash
- , inputAmountsHash, inputScriptsHash, inputUtxosHash
- , inputOutpointsHash, inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash
- , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuanceBlindingEntropyHash, issuancesHash
+ , outputRangeProofsHash, outputSurjectionProofsHash, outputsHash, outputHash
+ , inputAmountsHash, inputScriptsHash, inputUtxosHash, inputUtxoHash
+ , inputOutpointsHash, inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash, inputHash
+ , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuanceBlindingEntropyHash, issuancesHash, issuanceHash
  , txHash
  , tapleafHash, tappathHash, tapEnvHash
  , sigAllHash
@@ -52,6 +52,15 @@ data Lib term =
     --
     -- Note that 'outputSurjectionProofsHash' is excluded.
   , outputsHash :: term () Word256
+    -- | If the given output index exists, returns a hash of
+    --
+    -- * The serialization of the output's asset and amount fields.
+    -- * The serialization of the output's nonce field.
+    -- * A hash of the output's scriptPubKey.
+    -- * A hash of the output's range proof.
+    --
+    -- Note that output's surjection proof is excluded.
+  , outputHash :: term Word32 (S Word256)
     -- | A hash of all 'Transaction.inputAmount's.
   , inputAmountsHash :: term () Word256
     -- | A hash of all 'InputScriptHash's.
@@ -61,6 +70,11 @@ data Lib term =
     -- * 'inputAmountsHash'
     -- * 'inputScriptsHash'
   , inputUtxosHash :: term () Word256
+    -- | If the given input index exists, returns a hash of
+    --
+    -- * The serialization of the input UTXO's asset and amount fields.
+    -- * A hash of the input UTXO's scriptPubKey.
+  , inputUtxoHash :: term Word32 (S Word256)
     -- | A hash of all 'InputPegin' and 'InputPrevOutpoint' pairs.
   , inputOutpointsHash :: term () Word256
     -- | A hash of all 'InputSequence's.
@@ -77,6 +91,16 @@ data Lib term =
     --
     -- Note that 'InputScriptSigHash' is excluded.
   , inputsHash :: term () Word256
+    -- | If the given input index exists, returns a hash of
+    --
+    -- * If the input is not a pegin, then the byte 0x00.
+    -- * If the input is a pegin, then the byte 0x01 followed by the parent chain's genesis hash.
+    -- * The input's serialized previous transaction id.
+    -- * The input's previous transaction index in big endian format.
+    -- * The input's sequence number in big endian format.
+    -- * If the input has no annex, or isn't a taproot spend, then the byte 0x00.
+    -- * If the input has an annex, then the byte 0x01 followed by a SHA256 hash of the annex.
+  , inputHash :: term Word32 (S Word256)
     -- | A hash of 'issuanceAsset' and 'IssuanceAssetAmount' pairs as an asset-amount hash.
     --
     -- Note that "null" amount is hashed as if it were an explicit zero.
@@ -100,6 +124,37 @@ data Lib term =
     -- * 'issuanceRangeProofsHash'
     -- * 'issuanceBlindingEntropyHash'
   , issuancesHash :: term () Word256
+    -- | If the given input index exists, returns a hash of
+    --
+    -- 1. The asset issuance:
+    --
+    --     * If the input has no issuance then the two bytes 0x00 0x00.
+    --     * If the input has a new issuance then the byte 0x01 followed by a serialization of the calculated issued asset id,
+    --       followed by the serialization of the (possibly confidential) issued asset amount.
+    --     * If the input has a reissuance then the byte 0x01 followed by a serialization of the issued asset id,
+    --       followed by the serialization of the (possibly confidential) issued asset amount.
+    --
+    -- 2. The token issuance:
+    --
+    --     * If the input has no issuance then another two bytes 0x00 0x00.
+    --     * If the input has a new issuance then the byte 0x01 followed by a serialization of the calculated issued token id,
+    --       followed by the serialization of the (possibly confidential) issued token amount.
+    --     * If the input has a re-issuance then the byte 0x01 followed by a serialization of the issued token id,
+    --       followed by the serialization of the explicit 0 amount (i.e. 0x01 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 )
+    --
+    -- 3. The range proofs:
+    --
+    --     * A hash of the range proof of the input's issuance asset amount.
+    --     * A hash of the range proof of the input's issuance token amount.
+    --
+    --    (Note: in the case of no issuese these will both be a hash of the empty proof)
+    --
+    -- 4. The blinding entropy:
+    --
+    --     * If the input has no issuance then another 0x00 byte.
+    --     * If the input is a new issuance then the 0x01 byte followed by 32 0x00 bytes followed by the new issuance's contract hash field.
+    --     * If the input is a reissuance then the 0x01 byte followed by the reissuance's blinding nonce field followed by the reissuance's entropy field.
+  , issuanceHash :: term Word32 (S Word256)
     -- | A hash of
     --
     -- * 'Version'
@@ -134,25 +189,28 @@ data Lib term =
 instance SimplicityFunctor Lib where
   sfmap m Lib{..} =
    Lib
-    {
-      outputAmountsHash = m outputAmountsHash
+    { outputAmountsHash = m outputAmountsHash
     , outputNoncesHash = m outputNoncesHash
     , outputScriptsHash = m outputScriptsHash
     , outputRangeProofsHash = m outputRangeProofsHash
     , outputSurjectionProofsHash = m outputSurjectionProofsHash
     , outputsHash = m outputsHash
+    , outputHash = m outputHash
     , inputAmountsHash = m inputAmountsHash
     , inputScriptsHash = m inputScriptsHash
     , inputUtxosHash = m inputUtxosHash
+    , inputUtxoHash = m inputUtxoHash
     , inputOutpointsHash = m inputOutpointsHash
     , inputSequencesHash = m inputSequencesHash
     , inputAnnexesHash = m inputAnnexesHash
     , inputsHash = m inputsHash
+    , inputHash = m inputHash
     , issuanceAssetAmountsHash = m issuanceAssetAmountsHash
     , issuanceTokenAmountsHash = m issuanceTokenAmountsHash
     , issuanceRangeProofsHash = m issuanceRangeProofsHash
     , issuanceBlindingEntropyHash = m issuanceBlindingEntropyHash
     , issuancesHash = m issuancesHash
+    , issuanceHash = m issuanceHash
     , inputScriptSigsHash = m inputScriptSigsHash
     , txHash = m txHash
     , tapleafHash = m tapleafHash
@@ -193,6 +251,13 @@ mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
   , outputsHash = ctx8Init &&& ((outputAmountsHash &&& outputNoncesHash) &&& (outputScriptsHash &&& outputRangeProofsHash))
               >>> ctx8Addn vector128 >>> ctx8Finalize
 
+  , outputHash = (outputAmount &&& (primitive OutputNonce &&& primitive OutputScriptHash &&& primitive OutputRangeProof))
+             >>> match (injl unit)
+                       (injr (((((unit >>> ctx8Init) &&& oh >>> assetAmountHash)
+                     &&& (drop . take . assert $ iden) >>> nonceHash)
+                     &&& (drop . drop . take . assert $ iden) >>> ctx8Add32)
+                     &&& (drop . drop . drop . assert $ iden) >>> ctx8Add32 >>> ctx8Finalize))
+
   , inputAmountsHash =
      let
       finalize = ctx8Finalize
@@ -204,6 +269,11 @@ mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
   , inputScriptsHash = hashWord256s32 (drop (primitive InputScriptHash))
 
   , inputUtxosHash = ctx8Init &&& (inputAmountsHash &&& inputScriptsHash) >>> ctx8Addn vector64 >>> ctx8Finalize
+
+  , inputUtxoHash = (inputAmount &&& primitive InputScriptHash)
+             >>> match (injl unit)
+                       (injr (((unit >>> ctx8Init) &&& oh >>> assetAmountHash)
+                         &&& (drop . assert $ iden) >>> ctx8Add32 >>> ctx8Finalize))
 
   , inputOutpointsHash =
      let
@@ -229,23 +299,25 @@ mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
   , inputsHash = (ctx8Init &&& (inputOutpointsHash &&& inputSequencesHash) >>> ctx8Addn vector64)
              &&& inputAnnexesHash >>> ctx8Addn vector32 >>> ctx8Finalize
 
+  , inputHash = (primitive InputPegin &&& (primitive InputPrevOutpoint &&& primitive InputSequence &&& primitive InputAnnexHash))
+            >>> match (injl unit)
+                      (injr ((((unit >>> ctx8Init)
+                    &&& (oh &&& (drop . take . assert $ iden)) >>> outpointHash)
+                    &&& (drop . drop . take . assert $ iden) >>> ctx8Add4)
+                    &&& (drop . drop . drop . assert $ iden) >>> annexHash >>> ctx8Finalize))
     -- Note a "null" amount is serialized as an explicit value of 0.  The asset id is still serialized in this case.
     -- Only when there is no issuance are two "null" values (i.e. 0x00 0x00) are serialized.
   , issuanceAssetAmountsHash =
      let
       finalize = ctx8Finalize
-      body = take (drop issuanceAsset) &&& (take (drop (primitive IssuanceAssetAmount)) &&& ih)
-         >>> match (injl iih) (match (injr (iih &&& (unit >>> zero word16) >>> ctx8Addn vector2)) (ioh &&& (oh &&& iih)
-         >>> match (injl iih) (match (injl iih) (injr (iih &&& (injr ioh &&& oh) >>> assetAmountHash)))))
+      body = take (drop issuanceAssetAmount) &&& ih >>> match (injl ih) (injr (ih &&& oh >>> issuanceAssetAmountHash))
      in
       unit &&& ctx8Init >>> forWhile word32 body >>> copair finalize finalize
 
   , issuanceTokenAmountsHash =
      let
       finalize = ctx8Finalize
-      body = take (drop issuanceToken) &&& (take (drop (primitive IssuanceTokenAmount)) &&& ih)
-         >>> match (injl iih) (match (injr (iih &&& (unit >>> zero word16) >>> ctx8Addn vector2)) (ioh &&& (oh &&& iih)
-         >>> match (injl iih) (match (injl iih) (injr (iih &&& (injr ioh &&& oh) >>> assetAmountHash)))))
+      body = take (drop issuanceTokenAmount) &&& ih >>> match (injl ih) (injr (ih &&& oh >>> issuanceAssetAmountHash))
      in
       unit &&& ctx8Init >>> forWhile word32 body >>> copair finalize finalize
 
@@ -261,14 +333,20 @@ mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
   , issuanceBlindingEntropyHash =
      let
       finalize = ctx8Finalize
-      body = take (drop (primitive NewIssuanceContract)) &&& (take (drop (primitive ReissuanceBlinding)) &&& (take (drop (primitive ReissuanceEntropy)) &&& ih))
-         >>> match (injl iiih) (match (drop body2) (injr ((iiih &&& (unit >>> one word8) >>> ctx8Add1) &&& ((unit >>> zero word256) &&& oh) >>> ctx8Addn vector64)))
-      body2 = match (injl iih) (match (injr (iih &&& (unit >>> zero word8) >>> ctx8Add1)) (ioh &&& (oh &&& iih)
-          >>> match (injl iih) (injr (match (iih &&& (unit >>> zero word8) >>> ctx8Add1) ((iih &&& (unit >>> one word8) >>> ctx8Add1) &&& (ioh &&& oh) >>> ctx8Add64)))))
+      body = take (drop issuanceBlindingEntropy) &&& ih
+         >>> match (injl ih) (injr (ih &&& oh >>> blindingEntropyHash))
      in
       unit &&& ctx8Init >>> forWhile word32 body >>> copair finalize finalize
 
   , issuancesHash = (ctx8Init &&& ((issuanceAssetAmountsHash &&& issuanceTokenAmountsHash) &&& (issuanceRangeProofsHash &&& issuanceBlindingEntropyHash)) >>> ctx8Addn vector128) >>> ctx8Finalize
+
+  , issuanceHash = issuanceAssetAmount &&& issuanceTokenAmount &&& (primitive IssuanceAssetProof &&& primitive IssuanceTokenProof) &&& issuanceBlindingEntropy
+             >>> match (injl unit)
+                       (injr ((((((unit >>> ctx8Init) &&& oh >>> issuanceAssetAmountHash)
+                         &&& (drop . take . assert $ iden) >>> issuanceAssetAmountHash)
+                         &&& (drop . drop . take . take . assert $ iden) >>> ctx8Add32)
+                         &&& (drop . drop . take . drop . assert $ iden) >>> ctx8Add32)
+                         &&& (drop . drop . drop . assert $ iden) >>> blindingEntropyHash >>> ctx8Finalize))
 
   , txHash = ((ctx8Init &&& (primitive Version &&& primitive LockTime) >>> ctx8Addn vector8)
          &&& ((inputsHash &&& outputsHash) &&& (issuancesHash &&& outputSurjectionProofsHash)) >>> ctx8Addn vector128)
@@ -293,7 +371,26 @@ mkLib Sha256.Lib{..} Sha256.LibAssert{..} Transaction.Lib{..} = lib
   hashWord256s32 = hashWord256s word32
   hashWord256s8 = hashWord256s word8
   hashWord32s array = iden &&& (unit >>> ctx8Init) >>> Sha256.hashLoop vector4 word32 array >>> ctx8Finalize
+  ctx8Add4 = ctx8Addn vector4
+  ctx8Add32 = ctx8Addn vector32
   ctx8Add64 = ctx8Addn vector64
+  issuanceAssetAmount = issuanceAsset &&& primitive IssuanceAssetAmount
+                    >>> match (injl unit) (match (injr (injl unit)) (ih &&& oh
+                    >>> match (injl unit) (match (injl unit) (injr (injr (ih &&& oh))))))
+  issuanceTokenAmount = issuanceToken &&& primitive IssuanceTokenAmount
+                    >>> match (injl unit) (match (injr (injl unit)) (ih &&& oh
+                    >>> match (injl unit) (match (injl unit) (injr (injr (ih &&& oh))))))
+  issuanceAssetAmountHash = ih &&& oh
+         >>> match (ih &&& (unit >>> zero word16) >>> ctx8Addn vector2)
+                   (ih &&& (injr ooh &&& oih) >>> assetAmountHash)
+  issuanceBlindingEntropy =
+    let issuanceEntropyBody = match (injl unit) (match (injr (injl unit)) ((ih &&& oh)
+                            >>> match (injl unit) (injr (match (injl unit) (injr (ih &&& oh))))))
+    in primitive NewIssuanceContract &&& primitive ReissuanceBlinding &&& primitive ReissuanceEntropy
+   >>> match (injl unit) (match (drop issuanceEntropyBody) (injr (injr ((unit >>> zero word256) &&& oh))))
+  blindingEntropyHash = ih &&& oh
+                    >>> match (drop (iden &&& (unit >>> zero word8) >>> ctx8Add1))
+                              (drop (iden &&& (unit >>> one word8) >>> ctx8Add1) &&& oh >>> ctx8Add64)
 
 -- | An instance of the SigHash 'Lib' library.
 -- This instance does not share its dependencies.

@@ -29,19 +29,24 @@ module Simplicity.Programs.LibSecp256k1
   , generate, scale
   , linear_combination_1, linear_check_1, linear_verify_1
   , point_check_1, point_verify_1
+  , off_curve_scale, off_curve_linear_combination_1
   -- * Schnorr signature operations
   , PubKey, pubkey_unpack, pubkey_unpack_neg
   , Sig, signature_unpack
   , bip_0340_check, bip_0340_verify
+  -- * Hash to curve
+  , swu, hash_to_curve
   -- * Example instances
   , lib
   ) where
 
 import Prelude hiding (drop, take, and, or, not, Word)
+import Data.List (foldl')
 
 import Simplicity.Digest
 import Simplicity.Functor
 import qualified Simplicity.LibSecp256k1.Spec as LibSecp256k1
+import Simplicity.MerkleRoot
 import qualified Simplicity.Programs.Arith as Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
@@ -211,11 +216,11 @@ data Lib term =
   , generate :: term Scalar GEJ
 
     -- | Multiply a point by a scalar element.
-  , scale :: term (Scalar, GEJ) GEJ
+  , off_curve_scale :: term (Scalar, GEJ) GEJ
 
     -- | Given an elliptic curve point, @a@, and two scalar values @na@ and @ng@, return @na * a + ng * g@ where @g@ is secp256k1's generator.
     -- If the result is the point at infinity, it is returned in canonical form.
-  , linear_combination_1 :: term ((Scalar, GEJ), Scalar) GEJ
+  , off_curve_linear_combination_1 :: term ((Scalar, GEJ), Scalar) GEJ
 
     -- | Verifies that all points are on the secp256k1 curve and checks if @na * a + ng * g == r@ on the input @(((na, a), ng), r)@ where @g@ is secp256k1's generator.
   , linear_check_1 :: term (((Scalar, GE), Scalar), GE) Bit
@@ -247,6 +252,20 @@ data Lib term =
 
     -- | This function is given a public key, a 256-bit message, and a signature, and checks if the signature is valid for the given message and public key.
   , bip_0340_check :: term ((PubKey, Word256), Sig) Bit
+    -- | Algebraically distribute a field element over the secp256k1 curve as defined in
+    -- "Indifferentiable Hashing to Barreto-Naehrig Curves" by Pierre-Alain Fouque, Mehdi Tibouchi
+    -- <https://inria.hal.science/hal-01094321/file/FT12.pdf>
+    --
+    -- While this by iteslf is not a cryptographic hash function, it can be used as a subrotuine
+    -- in a 'hash_to_curve' function.  However the distribution only apporaches uniform when it is called twice.
+  , swu :: term FE GE
+    -- | A cryptograph hash function that results in a point on the secp256k1 curve.
+    --
+    -- This matches the hash function used to map asset IDs to asset commitments.
+    --
+    -- This version explicitly fails the the cryptographically impossible cases where sha-256 produces a value larger than the field size.
+    -- See 'hash_to_curve' for the version that 'asserts' in this failure case.
+  , hash_to_curve_core :: term Word256 (Either () GE)
   }
 
 instance SimplicityFunctor Lib where
@@ -298,8 +317,8 @@ instance SimplicityFunctor Lib where
     , wnaf5 = m wnaf5
     , wnaf15 = m wnaf15
     , generate = m generate
-    , scale = m scale
-    , linear_combination_1 = m linear_combination_1
+    , off_curve_scale = m off_curve_scale
+    , off_curve_linear_combination_1 = m off_curve_linear_combination_1
     , linear_check_1 = m linear_check_1
     , decompress = m decompress
     , point_check_1 = m point_check_1
@@ -307,6 +326,8 @@ instance SimplicityFunctor Lib where
     , pubkey_unpack_neg = m pubkey_unpack_neg
     , signature_unpack = m signature_unpack
     , bip_0340_check = m bip_0340_check
+    , swu = m swu
+    , hash_to_curve_core = m hash_to_curve_core
     }
 
 -- | Build the LibSecp256k1 'Lib' library from its dependencies.
@@ -604,7 +625,7 @@ mkLib Sha256.Lib{..} = lib
      in
       (unit >>> gej_infinity) &&& split128 >>> step129
 
-  , linear_combination_1 =
+  , off_curve_linear_combination_1 =
      let
       splitLambda = scalar_split_lambda >>> take wnaf5 &&& drop wnaf5
       body = (unit >>> gej_infinity) &&& (oih >>> scalarTable5) &&& (ooh >>> splitLambda) &&& (ih >>> split128)
@@ -645,17 +666,16 @@ mkLib Sha256.Lib{..} = lib
 
   , linear_check_1 = and (drop ge_is_on_curve)
                     (and (take (take (drop ge_is_on_curve)))
-                         ((take (take (oh &&& (ih &&& (unit >>> fe_one))) &&& ih >>> linear_combination_1))
+                         ((take (take (oh &&& (ih &&& (unit >>> fe_one))) &&& ih >>> off_curve_linear_combination_1))
                       &&& drop ge_negate >>> gej_ge_add >>> gej_is_infinity))
 
-  , scale = iden &&& (unit >>> zero256) >>> linear_combination_1
+  , off_curve_scale = iden &&& (unit >>> zero256) >>> off_curve_linear_combination_1
 
   , decompress =
      let
       k = drop (drop fe_normalize) &&& (xor (take fe_is_odd) ioh &&& oh >>> cond fe_negate iden)
      in
-      (scribe256 7 &&& drop fe_cube >>> fe_add >>> fe_square_root) &&& iden
-       >>> match (injl unit) (injr k)
+      drop y_from_x &&& iden >>> match (injl unit) (injr k)
 
   , point_check_1 =
      let
@@ -685,8 +705,44 @@ mkLib Sha256.Lib{..} = lib
       m = (ioh &&& ooh) &&& (oih &&& (scribe (toWord256 0x8000000000000000000000000000000000000000000000000000000000000500)))
      in
       take (take pubkey_unpack_neg) &&& (e &&& drop signature_unpack) >>> match false k1
+
+   , swu =
+      let Just c = LibSecp256k1.fe_square_root (LibSecp256k1.fe (-3))
+          d = LibSecp256k1.fe_halve (c LibSecp256k1..-. LibSecp256k1.fe_one)
+      in
+      fe_is_odd &&&
+      (fe_square >>>
+       (iden &&& scribe256 (LibSecp256k1.fe_repr (LibSecp256k1.fe_negate c)) >>> fe_multiply) &&&
+       (iden &&& scribe256 8 >>> fe_add) &&& (iden &&& scribe256 3 >>> fe_multiply) >>>                             -- (-c*t^2, 8+t^2, -c^2*t^2)
+       (iden &&& (drop fe_multiply >>> fe_invert)) >>>                                                        -- ((-c*t^2, 8+t^2, -c^2*t^2), -1/j)
+       ((ooh &&& (oiih &&& ih >>> fe_multiply) >>> fe_multiply) &&& scribe256 (LibSecp256k1.fe_repr d) >>> fe_add) &&& -- x1
+       (((take (drop (take fe_cube))) &&& (drop fe_negate) >>> fe_multiply) &&& (unit >>> fe_one) >>> fe_add) >>>      -- x3
+       (take y_from_x &&& iden) >>>
+       flip match (ioh &&& oh)
+       (drop ((oh &&& (unit >>> fe_one) >>> fe_add >>> fe_negate) &&& ih) >>> -- (x2, x3)
+        (take y_from_x &&& iden) >>>
+        flip match (ioh &&& oh)
+        (drop (drop (y_from_x &&& iden) >>>
+         flip match (ih &&& oh) (unit >>> fe_zero &&& fe_zero)
+      )))) >>>
+      cond ge_negate iden
+   , hash_to_curve_core = let
+       lt256 = Arith.lt word256
+       prefix1 = asW256 "1st generation: "
+       prefix2 = asW256 "2nd generation: "
+       asW256 str | 16 == length str = toWord128 $ foldl' (\n c -> n * 256 + toInteger (fromEnum c)) 0 str
+       postfix = scribe . toWord128 $ 2^127 + 128 + 256
+     in
+      ((unit >>> iv) &&& ((scribe prefix1 &&& oh) &&& (ih &&& postfix)) >>> hashBlock) &&&
+      ((unit >>> iv) &&& ((scribe prefix2 &&& oh) &&& (ih &&& postfix)) >>> hashBlock) >>>
+      (((oh &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256) `and`
+        (ih &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256))
+        &&& iden) >>>
+      cond ((take swu &&& (unit >>> fe_one)) &&& drop swu >>> gej_ge_add >>> gej_normalize)
+           (injl unit)
   }
    where
+    y_from_x = (unit >>> scribe256 7) &&& fe_cube >>> fe_add >>> fe_square_root
     fe_cube = iden &&& fe_square >>> fe_multiply
 
     fe_multiplyInt i = scribe256 (i `mod` LibSecp256k1.fieldOrder) &&& iden >>> fe_multiply
@@ -756,6 +812,14 @@ mkLib Sha256.Lib{..} = lib
 
     pubkey_check = (iden &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256) &&& iden
 
+-- | Same as 'off_curve_linear_combination_1' execept it fails when the given point is off-curve.
+linear_combination_1 :: Assert term => Lib term -> term ((Scalar, GEJ), Scalar) GEJ
+linear_combination_1 m = take (drop (gej_is_on_curve m)) &&& (off_curve_linear_combination_1 m) >>> assertr cmrFail0 ih
+
+-- | Same as 'off_curve_scale' execept it fails when the given point is off-curve.
+scale :: Assert term => Lib term -> term (Scalar, GEJ) GEJ
+scale m = drop (gej_is_on_curve m) &&& (off_curve_scale m) >>> assertr cmrFail0 ih
+
 linear_verify_1 :: Assert term => Lib term -> term (((Scalar, GE), Scalar), GE) ()
 linear_verify_1 m = assert (linear_check_1 m)
 
@@ -765,6 +829,12 @@ point_verify_1 m = assert (point_check_1 m)
 -- | This function is given a public key, a 256-bit message, and a signature, and asserts that the signature is valid for the given message and public key.
 bip_0340_verify :: Assert term => Lib term -> term ((PubKey, Word256), Sig) ()
 bip_0340_verify m = assert (bip_0340_check m)
+
+-- | A cryptograph hash function that results in a point on the secp256k1 curve.
+--
+-- This matches the hash function used to map asset IDs to asset commitments.
+hash_to_curve :: Assert term => Lib term -> term Word256 GE
+hash_to_curve m = assert (hash_to_curve_core m)
 
 -- | An instance of the Sha256 'Lib' library.
 -- This instance does not share its dependencies.

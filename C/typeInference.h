@@ -91,6 +91,6 @@ struct unification_var {
  *                     or 'dag' is well-typed with '*type_dag' and without witness values
  *                if the return value is not 'SIMPLICITY_NO_ERROR' then 'NULL == *type_dag'
  */
-simplicity_err mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census);
+simplicity_err simplicity_mallocTypeInference(type** type_dag, dag_node* dag, const uint_fast32_t len, const combinator_counters* census);
 
 #endif

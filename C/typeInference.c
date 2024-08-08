@@ -265,10 +265,10 @@ static size_t max_extra_vars(const combinator_counters* census) {
  *                    that are accessible from the 'arrow' array and 'bound_var' array.
  *                  and 'arrow' is a graph of bindings that satisfies the typing constraints of imposed by 'dag'.
  */
-static simplicity_err typeInference( unification_arrow* arrow, const dag_node* dag, const size_t len,
+static simplicity_err typeInference( unification_arrow* arrow, const dag_node* dag, const uint_fast32_t len,
                                      unification_var* extra_var, unification_var* bound_var, size_t word256_ix, size_t* bindings_used
                                    ) {
-  for (size_t i = 0; i < len; ++i) {
+  for (uint_fast32_t i = 0; i < len; ++i) {
     switch (dag[i].tag) {
       #define UNIFY(a, b) { if (!unify((a), (b), bindings_used)) return SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION; }
       #define APPLY_BINDING(a, b) { if (!applyBinding((a), (b), bindings_used)) return SIMPLICITY_ERR_TYPE_INFERENCE_UNIFICATION; }
@@ -534,7 +534,7 @@ static simplicity_err freezeTypes(type* type_dag, dag_node* dag, unification_arr
     }
   }
 
-  computeTypeAnalyses(type_dag, type_dag_used);
+  simplicity_computeTypeAnalyses(type_dag, type_dag_used);
 
   return SIMPLICITY_NO_ERROR;
 }
@@ -559,7 +559,7 @@ static simplicity_err freezeTypes(type* type_dag, dag_node* dag, unification_arr
  *                     or 'dag' is well-typed with '*type_dag' and without witness values
  *                if the return value is not 'SIMPLICITY_NO_ERROR' then 'NULL == *type_dag'
  */
-simplicity_err mallocTypeInference(type** type_dag, dag_node* dag, const size_t len, const combinator_counters* census) {
+simplicity_err simplicity_mallocTypeInference(type** type_dag, dag_node* dag, const uint_fast32_t len, const combinator_counters* census) {
   *type_dag = NULL;
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(unification_arrow), "arrow array too large.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
@@ -569,7 +569,7 @@ simplicity_err mallocTypeInference(type** type_dag, dag_node* dag, const size_t 
   unification_arrow* arrow = simplicity_malloc(len * sizeof(unification_arrow));
   unification_var* bound_var = NULL;
   size_t word256_ix, extra_var_start;
-  const size_t orig_bindings_used = mallocBoundVars(&bound_var, &word256_ix, &extra_var_start, max_extra_vars(census));
+  const size_t orig_bindings_used = simplicity_mallocBoundVars(&bound_var, &word256_ix, &extra_var_start, max_extra_vars(census));
   size_t bindings_used = orig_bindings_used;
 
   static_assert(1 <= NUMBER_OF_TYPENAMES_MAX, "NUMBER_OF_TYPENAMES_MAX is zero.");

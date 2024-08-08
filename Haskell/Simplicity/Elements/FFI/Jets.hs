@@ -29,6 +29,7 @@ module Simplicity.Elements.FFI.Jets
  , total_fee
  , genesis_block_hash
  , script_cmr
+ , transaction_id
  , current_index
  , current_pegin
  , current_prev_outpoint
@@ -63,6 +64,7 @@ module Simplicity.Elements.FFI.Jets
  , calculate_asset
  , calculate_explicit_token
  , calculate_confidential_token
+ , lbtc_asset
  , outpoint_hash
  , asset_amount_hash
  , nonce_hash
@@ -79,19 +81,23 @@ module Simplicity.Elements.FFI.Jets
  , output_range_proofs_hash
  , output_surjection_proofs_hash
  , outputs_hash
+ , output_hash
  , input_outpoints_hash
  , input_amounts_hash
  , input_scripts_hash
  , input_utxos_hash
+ , input_utxo_hash
  , input_sequences_hash
  , input_annexes_hash
  , input_script_sigs_hash
  , inputs_hash
+ , input_hash
  , issuance_asset_amounts_hash
  , issuance_token_amounts_hash
  , issuance_range_proofs_hash
  , issuance_blinding_entropy_hash
  , issuances_hash
+ , issuance_hash
  , tx_hash
  , tapleaf_hash
  , tappath_hash
@@ -142,6 +148,7 @@ foreign import ccall unsafe "" c_output_range_proof :: Ptr FrameItem -> Ptr Fram
 foreign import ccall unsafe "" c_total_fee :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_genesis_block_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_script_cmr :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_transaction_id :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_index :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_pegin :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_current_prev_outpoint :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -176,6 +183,7 @@ foreign import ccall unsafe "" c_calculate_issuance_entropy :: Ptr FrameItem -> 
 foreign import ccall unsafe "" c_calculate_asset :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_calculate_explicit_token :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_calculate_confidential_token :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_lbtc_asset :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_outpoint_hash :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_asset_amount_hash :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_nonce_hash :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -192,19 +200,23 @@ foreign import ccall unsafe "" c_output_scripts_hash :: Ptr FrameItem -> Ptr Fra
 foreign import ccall unsafe "" c_output_range_proofs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_surjection_proofs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_outputs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_output_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_outpoints_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_amounts_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_scripts_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_utxos_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_utxo_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_sequences_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_annexes_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_input_script_sigs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_inputs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_input_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuance_asset_amounts_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuance_token_amounts_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuance_range_proofs_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuance_blinding_entropy_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuances_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_issuance_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tx_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tapleaf_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tappath_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -358,6 +370,9 @@ genesis_block_hash = unsafeLocalJet c_genesis_block_hash
 script_cmr :: PrimEnv -> () -> Maybe Word256
 script_cmr = unsafeLocalJet c_script_cmr
 
+transaction_id :: PrimEnv -> () -> Maybe Word256
+transaction_id = unsafeLocalJet c_transaction_id
+
 tx_is_final :: PrimEnv -> () -> Maybe Bit
 tx_is_final = unsafeLocalJet c_tx_is_final
 
@@ -396,6 +411,9 @@ calculate_explicit_token = unsafeLocalCoreJet c_calculate_explicit_token
 
 calculate_confidential_token :: Word256 -> Maybe Word256
 calculate_confidential_token = unsafeLocalCoreJet c_calculate_confidential_token
+
+lbtc_asset :: () -> Maybe Word256
+lbtc_asset = unsafeLocalCoreJet c_lbtc_asset
 
 outpoint_hash :: (Ctx8, (S Word256, (Word256, Word32))) -> Maybe Ctx8
 outpoint_hash = unsafeLocalCoreJet c_outpoint_hash
@@ -445,6 +463,9 @@ output_surjection_proofs_hash = unsafeLocalJet c_output_surjection_proofs_hash
 outputs_hash :: PrimEnv -> () -> Maybe Word256
 outputs_hash = unsafeLocalJet c_outputs_hash
 
+output_hash :: PrimEnv -> Word32 -> Maybe (S Word256)
+output_hash = unsafeLocalJet c_output_hash
+
 input_outpoints_hash :: PrimEnv -> () -> Maybe Word256
 input_outpoints_hash = unsafeLocalJet c_input_outpoints_hash
 
@@ -457,6 +478,9 @@ input_scripts_hash = unsafeLocalJet c_input_scripts_hash
 input_utxos_hash :: PrimEnv -> () -> Maybe Word256
 input_utxos_hash = unsafeLocalJet c_input_utxos_hash
 
+input_utxo_hash :: PrimEnv -> Word32 -> Maybe (S Word256)
+input_utxo_hash = unsafeLocalJet c_input_utxo_hash
+
 input_sequences_hash :: PrimEnv -> () -> Maybe Word256
 input_sequences_hash = unsafeLocalJet c_input_sequences_hash
 
@@ -468,6 +492,9 @@ input_script_sigs_hash = unsafeLocalJet c_input_script_sigs_hash
 
 inputs_hash :: PrimEnv -> () -> Maybe Word256
 inputs_hash = unsafeLocalJet c_inputs_hash
+
+input_hash :: PrimEnv -> Word32 -> Maybe (S Word256)
+input_hash = unsafeLocalJet c_input_hash
 
 issuance_asset_amounts_hash :: PrimEnv -> () -> Maybe Word256
 issuance_asset_amounts_hash = unsafeLocalJet c_issuance_asset_amounts_hash
@@ -483,6 +510,9 @@ issuance_blinding_entropy_hash = unsafeLocalJet c_issuance_blinding_entropy_hash
 
 issuances_hash :: PrimEnv -> () -> Maybe Word256
 issuances_hash = unsafeLocalJet c_issuances_hash
+
+issuance_hash :: PrimEnv -> Word32 -> Maybe (S Word256)
+issuance_hash = unsafeLocalJet c_issuance_hash
 
 tx_hash :: PrimEnv -> () -> Maybe Word256
 tx_hash = unsafeLocalJet c_tx_hash

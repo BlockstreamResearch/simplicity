@@ -33,7 +33,7 @@ enum TypeNamesForJets {
  *                      '(*bound_var)[i]' is bound to 'A' and '(*bound_var)[j]' is bound to 'B'
  *                   and, '*word256_ix < *extra_var_start' and '(*bound_var)[*word256_ix]' is bound the type 'TWO^256'
  */
-size_t mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* extra_var_start, size_t extra_var_len) {
+size_t simplicity_mallocBoundVars(unification_var** bound_var, size_t* word256_ix, size_t* extra_var_start, size_t extra_var_len) {
   static_assert(1 <= NumberOfTypeNames, "Missing TypeNamesForJets.");
   static_assert(NumberOfTypeNames <= NUMBER_OF_TYPENAMES_MAX, "Too many TypeNamesForJets.");
   static_assert(DAG_LEN_MAX <= (SIZE_MAX - NumberOfTypeNames) / 6, "NumberOfTypeNames + 6*DAG_LEN_MAX doesn't fit in size_t");
@@ -72,19 +72,19 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
   if (bit < 0) return (simplicity_err)bit;
   if (!bit) {
     /* Core jets */
-    int32_t code = decodeUptoMaxInt(stream);
+    int32_t code = simplicity_decodeUptoMaxInt(stream);
     int32_t code2;
     if (code < 0) return (simplicity_err)code;
 
     switch (code) {
      case 1: /* Word jets chapter */
-      code = decodeUptoMaxInt(stream);
+      code = simplicity_decodeUptoMaxInt(stream);
       if (code < 0) return (simplicity_err)code;
       switch (code) {
        case 1: /* Verify */
         *result = VERIFY; return SIMPLICITY_NO_ERROR;
        case 2: /* Low */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = LOW_1; return SIMPLICITY_NO_ERROR;
@@ -95,7 +95,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 3: /* High */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = HIGH_1; return SIMPLICITY_NO_ERROR;
@@ -106,7 +106,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 4: /* Complement */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = COMPLEMENT_1; return SIMPLICITY_NO_ERROR;
@@ -117,7 +117,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 5: /* And */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = AND_1; return SIMPLICITY_NO_ERROR;
@@ -128,7 +128,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 6: /* Or */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = OR_1; return SIMPLICITY_NO_ERROR;
@@ -139,7 +139,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 7: /* Xor */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = XOR_1; return SIMPLICITY_NO_ERROR;
@@ -150,7 +150,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 8: /* Maj */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = MAJ_1; return SIMPLICITY_NO_ERROR;
@@ -161,7 +161,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 9: /* Xor_Xor */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = XOR_XOR_1; return SIMPLICITY_NO_ERROR;
@@ -172,7 +172,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 10: /* Ch */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = CH_1; return SIMPLICITY_NO_ERROR;
@@ -183,7 +183,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 11: /* Some */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = SOME_1; return SIMPLICITY_NO_ERROR;
@@ -194,7 +194,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 12: /* All */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = ALL_8; return SIMPLICITY_NO_ERROR;
@@ -204,7 +204,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 13: /* Eq */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = EQ_1; return SIMPLICITY_NO_ERROR;
@@ -216,9 +216,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 14: /* FullLeftShift */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
-        code2 = decodeUptoMaxInt(stream);
+        code2 = simplicity_decodeUptoMaxInt(stream);
         if (code2 < 0) return (simplicity_err)code2;
         switch (code) {
          case 1:
@@ -266,9 +266,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 15: /* FullRightShift */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
-        code2 = decodeUptoMaxInt(stream);
+        code2 = simplicity_decodeUptoMaxInt(stream);
         if (code2 < 0) return (simplicity_err)code2;
         switch (code) {
          case 1:
@@ -316,9 +316,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 16: /* Leftmost */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
-        code2 = decodeUptoMaxInt(stream);
+        code2 = simplicity_decodeUptoMaxInt(stream);
         if (code2 < 0) return (simplicity_err)code2;
         switch (code) {
          case 1:
@@ -366,9 +366,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 17: /* Rightmost */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
-        code2 = decodeUptoMaxInt(stream);
+        code2 = simplicity_decodeUptoMaxInt(stream);
         if (code2 < 0) return (simplicity_err)code2;
         switch (code) {
          case 1:
@@ -416,9 +416,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 18: /* LeftPadLow */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
-        code2 = decodeUptoMaxInt(stream);
+        code2 = simplicity_decodeUptoMaxInt(stream);
         if (code2 < 0) return (simplicity_err)code2;
         switch (code) {
          case 1:
@@ -450,9 +450,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 19: /* LeftPadHigh */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
-        code2 = decodeUptoMaxInt(stream);
+        code2 = simplicity_decodeUptoMaxInt(stream);
         if (code2 < 0) return (simplicity_err)code2;
         switch (code) {
          case 1:
@@ -484,9 +484,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 20: /* LeftExtend */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
-        code2 = decodeUptoMaxInt(stream);
+        code2 = simplicity_decodeUptoMaxInt(stream);
         if (code2 < 0) return (simplicity_err)code2;
         switch (code) {
          case 1:
@@ -518,9 +518,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 21: /* RightPadLow */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
-        code2 = decodeUptoMaxInt(stream);
+        code2 = simplicity_decodeUptoMaxInt(stream);
         if (code2 < 0) return (simplicity_err)code2;
         switch (code) {
          case 1:
@@ -552,9 +552,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 22: /* RightPadHigh */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
-        code2 = decodeUptoMaxInt(stream);
+        code2 = simplicity_decodeUptoMaxInt(stream);
         if (code2 < 0) return (simplicity_err)code2;
         switch (code) {
          case 1:
@@ -586,9 +586,9 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 23: /* RightExtend */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
-        code2 = decodeUptoMaxInt(stream);
+        code2 = simplicity_decodeUptoMaxInt(stream);
         if (code2 < 0) return (simplicity_err)code2;
         switch (code) {
          case 4:
@@ -612,7 +612,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 24: /* LeftShiftWith */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
         case 3: *result = LEFT_SHIFT_WITH_8; return SIMPLICITY_NO_ERROR;
@@ -622,7 +622,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 25: /* RightShiftWith */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = RIGHT_SHIFT_WITH_8; return SIMPLICITY_NO_ERROR;
@@ -632,7 +632,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 26: /* LeftShift */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
         case 3: *result = LEFT_SHIFT_8; return SIMPLICITY_NO_ERROR;
@@ -642,7 +642,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 27: /* RightShift */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = RIGHT_SHIFT_8; return SIMPLICITY_NO_ERROR;
@@ -652,7 +652,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 28: /* LeftRotate */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = LEFT_ROTATE_8; return SIMPLICITY_NO_ERROR;
@@ -662,7 +662,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 29: /* RightRotate */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = RIGHT_ROTATE_8; return SIMPLICITY_NO_ERROR;
@@ -674,12 +674,12 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
       }
       break;
      case 2: /* Arith jets chapter */
-      code = decodeUptoMaxInt(stream);
+      code = simplicity_decodeUptoMaxInt(stream);
       if (code < 0) return (simplicity_err)code;
 
       switch (code) {
        case 1: /* One */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = ONE_8; return SIMPLICITY_NO_ERROR;
@@ -689,7 +689,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 2: /* FullAdd */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = FULL_ADD_8; return SIMPLICITY_NO_ERROR;
@@ -699,7 +699,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 3: /* Add */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = ADD_8; return SIMPLICITY_NO_ERROR;
@@ -709,7 +709,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 4: /* FullIncrement */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = FULL_INCREMENT_8; return SIMPLICITY_NO_ERROR;
@@ -719,7 +719,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 5: /* Increment */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = INCREMENT_8; return SIMPLICITY_NO_ERROR;
@@ -729,7 +729,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 7: /* FullSubtract */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = FULL_SUBTRACT_8; return SIMPLICITY_NO_ERROR;
@@ -739,7 +739,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 8: /* Subtract */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = SUBTRACT_8; return SIMPLICITY_NO_ERROR;
@@ -749,7 +749,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 9: /* Negate */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = NEGATE_8; return SIMPLICITY_NO_ERROR;
@@ -759,7 +759,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 10: /* FullDecrement */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = FULL_DECREMENT_8; return SIMPLICITY_NO_ERROR;
@@ -769,7 +769,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 11: /* Decrement */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = DECREMENT_8; return SIMPLICITY_NO_ERROR;
@@ -779,7 +779,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 12: /* FullMultiply */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = FULL_MULTIPLY_8; return SIMPLICITY_NO_ERROR;
@@ -789,7 +789,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 13: /* Multiply */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = MULTIPLY_8; return SIMPLICITY_NO_ERROR;
@@ -799,7 +799,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 14: /* IsZero */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = IS_ZERO_8; return SIMPLICITY_NO_ERROR;
@@ -809,7 +809,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 15: /* IsOne */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = IS_ONE_8; return SIMPLICITY_NO_ERROR;
@@ -819,7 +819,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 16: /* Le */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = LE_8; return SIMPLICITY_NO_ERROR;
@@ -829,7 +829,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 17: /* Lt */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = LT_8; return SIMPLICITY_NO_ERROR;
@@ -839,7 +839,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 18: /* Min */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = MIN_8; return SIMPLICITY_NO_ERROR;
@@ -849,7 +849,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 19: /* Max */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = MAX_8; return SIMPLICITY_NO_ERROR;
@@ -859,7 +859,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 20: /* Median */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = MEDIAN_8; return SIMPLICITY_NO_ERROR;
@@ -869,14 +869,14 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 21: /* Div2n1n */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 6: *result = DIV_MOD_128_64; return SIMPLICITY_NO_ERROR;
         }
         break;
        case 22: /* DivMod */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = DIV_MOD_8; return SIMPLICITY_NO_ERROR;
@@ -886,7 +886,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 23: /* Divide */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = DIVIDE_8; return SIMPLICITY_NO_ERROR;
@@ -896,7 +896,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 24: /* Modulo */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = MODULO_8; return SIMPLICITY_NO_ERROR;
@@ -906,7 +906,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         }
         break;
        case 25: /* Divides */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 3: *result = DIVIDES_8; return SIMPLICITY_NO_ERROR;
@@ -918,17 +918,17 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
       }
       break;
      case 3: /* Hash jets chapter */
-      code = decodeUptoMaxInt(stream);
+      code = simplicity_decodeUptoMaxInt(stream);
       if (code < 0) return (simplicity_err)code;
       switch (code) {
        case 1: /* SHA-256 section */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = SHA_256_BLOCK; return SIMPLICITY_NO_ERROR;
          case 2: *result = SHA_256_IV; return SIMPLICITY_NO_ERROR;
          case 3: /* SHA-256-CTX-8-ADD-n subsection */
-           code = decodeUptoMaxInt(stream);
+           code = simplicity_decodeUptoMaxInt(stream);
            if (code < 0) return (simplicity_err)code;
            switch (code) {
              case 1: *result = SHA_256_CTX_8_ADD_1; return SIMPLICITY_NO_ERROR;
@@ -951,11 +951,11 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
       }
       break;
      case 4: /* Secp256k1 jets chapter */
-      code = decodeUptoMaxInt(stream);
+      code = simplicity_decodeUptoMaxInt(stream);
       if (code < 0) return (simplicity_err)code;
       switch (code) {
        case 1: /* point-verify */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = POINT_VERIFY_1; return SIMPLICITY_NO_ERROR;
@@ -963,14 +963,14 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
         break;
        case 2: *result = DECOMPRESS; return SIMPLICITY_NO_ERROR;
        case 3: /* linear-verify */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = LINEAR_VERIFY_1; return SIMPLICITY_NO_ERROR;
         }
         break;
        case 4: /* linear-combination */
-        code = decodeUptoMaxInt(stream);
+        code = simplicity_decodeUptoMaxInt(stream);
         if (code < 0) return (simplicity_err)code;
         switch (code) {
          case 1: *result = LINEAR_COMBINATION_1; return SIMPLICITY_NO_ERROR;
@@ -1013,10 +1013,13 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
        case 42: *result = FE_SQUARE_ROOT; return SIMPLICITY_NO_ERROR;
        case 43: *result = FE_IS_ZERO; return SIMPLICITY_NO_ERROR;
        case 44: *result = FE_IS_ODD; return SIMPLICITY_NO_ERROR;
+
+       case 46: *result = HASH_TO_CURVE; return SIMPLICITY_NO_ERROR;
+       case 47: *result = SWU; return SIMPLICITY_NO_ERROR;
       }
       break;
      case 5: /* Signature jets chapter */
-      code = decodeUptoMaxInt(stream);
+      code = simplicity_decodeUptoMaxInt(stream);
       if (code < 0) return (simplicity_err)code;
       switch (code) {
        case 1: *result = CHECK_SIG_VERIFY; return SIMPLICITY_NO_ERROR;
@@ -1024,7 +1027,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
       }
       break;
      case 7: /* Bitcoin jets chapter */
-      code = decodeUptoMaxInt(stream);
+      code = simplicity_decodeUptoMaxInt(stream);
       if (code < 0) return (simplicity_err)code;
       switch (code) {
        case 1: *result = PARSE_LOCK; return SIMPLICITY_NO_ERROR;
@@ -1035,47 +1038,51 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
     return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
   } else {
     /* Elements jets */
-    int32_t code = decodeUptoMaxInt(stream);
+    int32_t code = simplicity_decodeUptoMaxInt(stream);
     if (code < 0) return (simplicity_err)code;
     switch (code) {
      case 1: /* SigHash jets chapter */
-      code = decodeUptoMaxInt(stream);
+      code = simplicity_decodeUptoMaxInt(stream);
       if (code < 0) return (simplicity_err)code;
       switch (code) {
        case 1: *result = SIG_ALL_HASH; return SIMPLICITY_NO_ERROR;
        case 2: *result = TX_HASH; return SIMPLICITY_NO_ERROR;
        case 3: *result = TAP_ENV_HASH; return SIMPLICITY_NO_ERROR;
-       case 4: *result = INPUTS_HASH; return SIMPLICITY_NO_ERROR;
-       case 5: *result = OUTPUTS_HASH; return SIMPLICITY_NO_ERROR;
+       case 4: *result = OUTPUTS_HASH; return SIMPLICITY_NO_ERROR;
+       case 5: *result = INPUTS_HASH; return SIMPLICITY_NO_ERROR;
        case 6: *result = ISSUANCES_HASH; return SIMPLICITY_NO_ERROR;
        case 7: *result = INPUT_UTXOS_HASH; return SIMPLICITY_NO_ERROR;
-       case 8: *result = OUTPUT_AMOUNTS_HASH; return SIMPLICITY_NO_ERROR;
-       case 9: *result = OUTPUT_SCRIPTS_HASH; return SIMPLICITY_NO_ERROR;
-       case 10: *result = OUTPUT_NONCES_HASH; return SIMPLICITY_NO_ERROR;
-       case 11: *result = OUTPUT_RANGE_PROOFS_HASH; return SIMPLICITY_NO_ERROR;
-       case 12: *result = OUTPUT_SURJECTION_PROOFS_HASH; return SIMPLICITY_NO_ERROR;
-       case 13: *result = INPUT_OUTPOINTS_HASH; return SIMPLICITY_NO_ERROR;
-       case 14: *result = INPUT_SEQUENCES_HASH; return SIMPLICITY_NO_ERROR;
-       case 15: *result = INPUT_ANNEXES_HASH; return SIMPLICITY_NO_ERROR;
-       case 16: *result = INPUT_SCRIPT_SIGS_HASH; return SIMPLICITY_NO_ERROR;
-       case 17: *result = ISSUANCE_ASSET_AMOUNTS_HASH; return SIMPLICITY_NO_ERROR;
-       case 18: *result = ISSUANCE_TOKEN_AMOUNTS_HASH; return SIMPLICITY_NO_ERROR;
-       case 19: *result = ISSUANCE_RANGE_PROOFS_HASH; return SIMPLICITY_NO_ERROR;
-       case 20: *result = ISSUANCE_BLINDING_ENTROPY_HASH; return SIMPLICITY_NO_ERROR;
-       case 21: *result = INPUT_AMOUNTS_HASH; return SIMPLICITY_NO_ERROR;
-       case 22: *result = INPUT_SCRIPTS_HASH; return SIMPLICITY_NO_ERROR;
-       case 23: *result = TAPLEAF_HASH; return SIMPLICITY_NO_ERROR;
-       case 24: *result = TAPPATH_HASH; return SIMPLICITY_NO_ERROR;
-       case 25: *result = OUTPOINT_HASH; return SIMPLICITY_NO_ERROR;
-       case 26: *result = ASSET_AMOUNT_HASH; return SIMPLICITY_NO_ERROR;
-       case 27: *result = NONCE_HASH; return SIMPLICITY_NO_ERROR;
-       case 28: *result = ANNEX_HASH; return SIMPLICITY_NO_ERROR;
-       case 29: *result = BUILD_TAPLEAF_SIMPLICITY; return SIMPLICITY_NO_ERROR;
-       case 30: *result = BUILD_TAPBRANCH; return SIMPLICITY_NO_ERROR;
+       case 8: *result = OUTPUT_HASH; return SIMPLICITY_NO_ERROR;
+       case 9: *result = OUTPUT_AMOUNTS_HASH; return SIMPLICITY_NO_ERROR;
+       case 10: *result = OUTPUT_SCRIPTS_HASH; return SIMPLICITY_NO_ERROR;
+       case 11: *result = OUTPUT_NONCES_HASH; return SIMPLICITY_NO_ERROR;
+       case 12: *result = OUTPUT_RANGE_PROOFS_HASH; return SIMPLICITY_NO_ERROR;
+       case 13: *result = OUTPUT_SURJECTION_PROOFS_HASH; return SIMPLICITY_NO_ERROR;
+       case 14: *result = INPUT_HASH; return SIMPLICITY_NO_ERROR;
+       case 15: *result = INPUT_OUTPOINTS_HASH; return SIMPLICITY_NO_ERROR;
+       case 16: *result = INPUT_SEQUENCES_HASH; return SIMPLICITY_NO_ERROR;
+       case 17: *result = INPUT_ANNEXES_HASH; return SIMPLICITY_NO_ERROR;
+       case 18: *result = INPUT_SCRIPT_SIGS_HASH; return SIMPLICITY_NO_ERROR;
+       case 19: *result = ISSUANCE_HASH; return SIMPLICITY_NO_ERROR;
+       case 20: *result = ISSUANCE_ASSET_AMOUNTS_HASH; return SIMPLICITY_NO_ERROR;
+       case 21: *result = ISSUANCE_TOKEN_AMOUNTS_HASH; return SIMPLICITY_NO_ERROR;
+       case 22: *result = ISSUANCE_RANGE_PROOFS_HASH; return SIMPLICITY_NO_ERROR;
+       case 23: *result = ISSUANCE_BLINDING_ENTROPY_HASH; return SIMPLICITY_NO_ERROR;
+       case 24: *result = INPUT_UTXO_HASH; return SIMPLICITY_NO_ERROR;
+       case 25: *result = INPUT_AMOUNTS_HASH; return SIMPLICITY_NO_ERROR;
+       case 26: *result = INPUT_SCRIPTS_HASH; return SIMPLICITY_NO_ERROR;
+       case 27: *result = TAPLEAF_HASH; return SIMPLICITY_NO_ERROR;
+       case 28: *result = TAPPATH_HASH; return SIMPLICITY_NO_ERROR;
+       case 29: *result = OUTPOINT_HASH; return SIMPLICITY_NO_ERROR;
+       case 30: *result = ASSET_AMOUNT_HASH; return SIMPLICITY_NO_ERROR;
+       case 31: *result = NONCE_HASH; return SIMPLICITY_NO_ERROR;
+       case 32: *result = ANNEX_HASH; return SIMPLICITY_NO_ERROR;
+       case 33: *result = BUILD_TAPLEAF_SIMPLICITY; return SIMPLICITY_NO_ERROR;
+       case 34: *result = BUILD_TAPBRANCH; return SIMPLICITY_NO_ERROR;
       }
       break;
      case 2: /* Timelock jets chapter */
-      code = decodeUptoMaxInt(stream);
+      code = simplicity_decodeUptoMaxInt(stream);
       if (code < 0) return (simplicity_err)code;
       switch (code) {
        case 1: *result = CHECK_LOCK_HEIGHT; return SIMPLICITY_NO_ERROR;
@@ -1090,7 +1097,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
       }
       break;
      case 3: /* Issuance jets chapter */
-      code = decodeUptoMaxInt(stream);
+      code = simplicity_decodeUptoMaxInt(stream);
       if (code < 0) return (simplicity_err)code;
       switch (code) {
        case 1: *result = ISSUANCE; return SIMPLICITY_NO_ERROR;
@@ -1101,10 +1108,11 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
        case 6: *result = CALCULATE_ASSET; return SIMPLICITY_NO_ERROR;
        case 7: *result = CALCULATE_EXPLICIT_TOKEN; return SIMPLICITY_NO_ERROR;
        case 8: *result = CALCULATE_CONFIDENTIAL_TOKEN; return SIMPLICITY_NO_ERROR;
+       case 9: *result = LBTC_ASSET; return SIMPLICITY_NO_ERROR;
       }
       break;
      case 4: /* Transaction jets chapter */
-      code = decodeUptoMaxInt(stream);
+      code = simplicity_decodeUptoMaxInt(stream);
       if (code < 0) return (simplicity_err)code;
       switch (code) {
        case 1: *result = SCRIPT_CMR; return SIMPLICITY_NO_ERROR;
@@ -1156,6 +1164,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
        case 47: *result = TAPPATH; return SIMPLICITY_NO_ERROR;
        case 48: *result = VERSION; return SIMPLICITY_NO_ERROR;
        case 49: *result = GENESIS_BLOCK_HASH; return SIMPLICITY_NO_ERROR;
+       case 50: *result = TRANSACTION_ID; return SIMPLICITY_NO_ERROR;
       }
       break;
     }
@@ -1182,7 +1191,7 @@ static dag_node jetNode(jetName name) {
  * Precondition: NULL != node
  *               NULL != stream
  */
-simplicity_err decodeJet(dag_node* node, bitstream* stream) {
+simplicity_err simplicity_decodeJet(dag_node* node, bitstream* stream) {
   jetName name;
   simplicity_err error = decodePrimitive(&name, stream);
   if (!IS_OK(error)) return error;

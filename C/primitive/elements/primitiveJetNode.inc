@@ -1,3689 +1,3753 @@
 /* This file has been automatically generated. */
 [ADD_16] =
 { .tag = JET
-, .jet = add_16
-, .cmr = {{0x90e5c302u, 0xc2a102f7u, 0x6cc20bcdu, 0xddc0622bu, 0xf3b8a544u, 0x6ab68d1bu, 0x2a03395eu, 0x6fae9250u}}
+, .jet = simplicity_add_16
+, .cmr = {{0xc4dd8c30u, 0x97f95bf9u, 0x229af0c3u, 0x48317032u, 0x3aa270afu, 0x428a7257u, 0x18143bb5u, 0xfc80811cu}}
 , .sourceIx = ty_w32
 , .targetIx = ty_pbw16
-, .cost = 226 /* milli weight units */
+, .cost = 108 /* milli weight units */
 }
 ,[ADD_32] =
 { .tag = JET
-, .jet = add_32
-, .cmr = {{0x6d7830d6u, 0x5e69f27du, 0x551c4bb3u, 0x718da935u, 0x222faec4u, 0xaf7f49e9u, 0x5e9833edu, 0x2f84c106u}}
+, .jet = simplicity_add_32
+, .cmr = {{0xd98c0f69u, 0xf6b1d435u, 0x294d9783u, 0x5eac9401u, 0x77a2feafu, 0x0a6e9e47u, 0x34c91204u, 0x8e9eee42u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_pbw32
-, .cost = 183 /* milli weight units */
+, .cost = 117 /* milli weight units */
 }
 ,[ADD_64] =
 { .tag = JET
-, .jet = add_64
-, .cmr = {{0x9eeebea8u, 0x47388e14u, 0xc7c9e7cau, 0x147c7071u, 0x4de144ebu, 0xab398a53u, 0xf4f58a34u, 0x930cc45cu}}
+, .jet = simplicity_add_64
+, .cmr = {{0xe613eb03u, 0x10a44c22u, 0xa694ee55u, 0x490da4eau, 0xe38811bfu, 0xf84aa021u, 0x31d98f49u, 0x9d261e71u}}
 , .sourceIx = ty_w128
 , .targetIx = ty_pbw64
-, .cost = 221 /* milli weight units */
+, .cost = 109 /* milli weight units */
 }
 ,[ADD_8] =
 { .tag = JET
-, .jet = add_8
-, .cmr = {{0x3759b040u, 0x6aa2c4e1u, 0x152621e0u, 0x11e4efdbu, 0x555c6ab6u, 0xd91ae9ebu, 0xf1d6315bu, 0x4382a6c4u}}
+, .jet = simplicity_add_8
+, .cmr = {{0x4a1f509eu, 0x5de5c398u, 0x5f76a0dbu, 0x65b04e06u, 0x03bd0c1du, 0x9c5bbcb9u, 0xa3ec8e53u, 0xa0ba3297u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_pbw8
-, .cost = 150 /* milli weight units */
+, .cost = 112 /* milli weight units */
 }
 ,[ALL_16] =
 { .tag = JET
-, .jet = all_16
-, .cmr = {{0x3e7e953du, 0x28a6dc5eu, 0xd7dfbd4cu, 0x63f2e080u, 0x47c71bb9u, 0xc437e8c7u, 0x1ee0147au, 0x60f78beeu}}
+, .jet = simplicity_all_16
+, .cmr = {{0x13f6ebb8u, 0xda740db8u, 0x25920468u, 0x802c4cf4u, 0x1245016bu, 0xdf2fa054u, 0x8c86f415u, 0x83866c73u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_b
-, .cost = 110 /* milli weight units */
+, .cost = 62 /* milli weight units */
 }
 ,[ALL_32] =
 { .tag = JET
-, .jet = all_32
-, .cmr = {{0x5dd08516u, 0x26036cb6u, 0xa42aa952u, 0x93dbb8f3u, 0x6efe5e0eu, 0xa57a3108u, 0x27fa6d79u, 0x2f46e0c1u}}
+, .jet = simplicity_all_32
+, .cmr = {{0xbb515d4au, 0x22f3245eu, 0xcf575035u, 0xed187a03u, 0x8614524bu, 0x35aed644u, 0x824689deu, 0x38a4a1e0u}}
 , .sourceIx = ty_w32
 , .targetIx = ty_b
-, .cost = 136 /* milli weight units */
+, .cost = 65 /* milli weight units */
 }
 ,[ALL_64] =
 { .tag = JET
-, .jet = all_64
-, .cmr = {{0xbad02fd1u, 0x58908a1bu, 0xe068725eu, 0xb05276deu, 0xfa411207u, 0xd0c8a91bu, 0xbe6fa57du, 0x2cda29dfu}}
+, .jet = simplicity_all_64
+, .cmr = {{0xcd151de9u, 0x17575655u, 0xa7a0f35du, 0xa9cdaf6eu, 0x2bbf8a8du, 0x4fceac68u, 0xcee4b008u, 0xe665bfc3u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_b
-, .cost = 165 /* milli weight units */
+, .cost = 79 /* milli weight units */
 }
 ,[ALL_8] =
 { .tag = JET
-, .jet = all_8
-, .cmr = {{0xdc098854u, 0xdd06ae1eu, 0x6e3e73a4u, 0xae94d0b2u, 0xacce5cb3u, 0xecc12e8cu, 0xb8167f7bu, 0x6eaa4069u}}
+, .jet = simplicity_all_8
+, .cmr = {{0x0d3cbfc2u, 0xcc2a9a06u, 0x28a2ff8au, 0xfc0a5f93u, 0x173ede4cu, 0x234c5721u, 0x4c5d74afu, 0x6b873ce9u}}
 , .sourceIx = ty_w8
 , .targetIx = ty_b
-, .cost = 113 /* milli weight units */
+, .cost = 76 /* milli weight units */
 }
 ,[AND_1] =
 { .tag = JET
-, .jet = and_1
-, .cmr = {{0x2dc2dbccu, 0x69c12c78u, 0x30df1170u, 0xd9e93a35u, 0xd8284cc8u, 0x15916aebu, 0x3b1b95efu, 0xdaa92c26u}}
+, .jet = simplicity_and_1
+, .cmr = {{0x56d1d4d6u, 0xc1e11f60u, 0xd29660b1u, 0x81a1335au, 0x4f511d3bu, 0x9c04a333u, 0xe9e01418u, 0xb0d1818fu}}
 , .sourceIx = ty_w2
 , .targetIx = ty_b
-, .cost = 159 /* milli weight units */
+, .cost = 79 /* milli weight units */
 }
 ,[AND_16] =
 { .tag = JET
-, .jet = and_16
-, .cmr = {{0x4f42c688u, 0xcc3ceb76u, 0x1f662a0bu, 0x8e77b196u, 0x42dab540u, 0x7d9a873cu, 0xd9c18609u, 0x977ebd91u}}
+, .jet = simplicity_and_16
+, .cmr = {{0xd77a1144u, 0xc52ed2b7u, 0x6988df9bu, 0x29cd5397u, 0x8c44c6d5u, 0x40f4bc54u, 0x56d0b3b5u, 0x3cd400e5u}}
 , .sourceIx = ty_w32
 , .targetIx = ty_w16
-, .cost = 195 /* milli weight units */
+, .cost = 88 /* milli weight units */
 }
 ,[AND_32] =
 { .tag = JET
-, .jet = and_32
-, .cmr = {{0x1680cfd2u, 0x643ad389u, 0x6bfb45e9u, 0x6fc62dc2u, 0xbb0cc0acu, 0x486fa833u, 0x30a8890cu, 0x09ee969bu}}
+, .jet = simplicity_and_32
+, .cmr = {{0x4382f934u, 0x3379d442u, 0x2e2a0151u, 0x04cf55dcu, 0x54a8f71eu, 0xefb06229u, 0x26d64b6cu, 0xe22bea11u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_w32
-, .cost = 175 /* milli weight units */
+, .cost = 94 /* milli weight units */
 }
 ,[AND_64] =
 { .tag = JET
-, .jet = and_64
-, .cmr = {{0xa2dd3d49u, 0xf12cd442u, 0xcea7c832u, 0x3868be3cu, 0xe6e9af67u, 0x6f725110u, 0xf3ce494eu, 0xdd6a5a4au}}
+, .jet = simplicity_and_64
+, .cmr = {{0x3eb8b42du, 0x815f0fc3u, 0x9a3499b0u, 0x354efd05u, 0xa603f5efu, 0x5e511766u, 0xc0112cc1u, 0x48e21155u}}
 , .sourceIx = ty_w128
 , .targetIx = ty_w64
-, .cost = 221 /* milli weight units */
+, .cost = 93 /* milli weight units */
 }
 ,[AND_8] =
 { .tag = JET
-, .jet = and_8
-, .cmr = {{0x27554178u, 0x198658f5u, 0xbfb5b041u, 0x30898742u, 0xbf82db60u, 0x39dcbb17u, 0x266dfe03u, 0x0cc12075u}}
+, .jet = simplicity_and_8
+, .cmr = {{0x0e0ee07cu, 0x749a3fa7u, 0x1296b9d4u, 0x59b06a0au, 0x4bffb7f5u, 0xbb99a925u, 0x4a7d13a8u, 0xce444cd7u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_w8
-, .cost = 159 /* milli weight units */
+, .cost = 91 /* milli weight units */
 }
 ,[ANNEX_HASH] =
 { .tag = JET
-, .jet = annex_hash
-, .cmr = {{0xca1beda0u, 0x4f1fe8cbu, 0xb08cd69fu, 0x3959d442u, 0xfe5ab015u, 0xc6923e17u, 0x1d8d0686u, 0xef31488fu}}
+, .jet = simplicity_annex_hash
+, .cmr = {{0x07eebc33u, 0xfde1ad63u, 0xef136901u, 0xbaaea6fdu, 0xe7228d7cu, 0x60d179b9u, 0x47bd5de5u, 0xe07ab785u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256mw256
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 3065 /* milli weight units */
+, .cost = 241 /* milli weight units */
 }
 ,[ASSET_AMOUNT_HASH] =
 { .tag = JET
-, .jet = asset_amount_hash
-, .cmr = {{0x4ff7e73cu, 0xe7fbbfa1u, 0xc577e6feu, 0x1dab70b8u, 0xf10bb4dfu, 0x319c0f6du, 0x67994f6fu, 0xdb224258u}}
+, .jet = simplicity_asset_amount_hash
+, .cmr = {{0x1baadad6u, 0x9de62137u, 0x77046cc1u, 0xb353a703u, 0x50a95801u, 0x52876c8eu, 0xf712d474u, 0x4c4f4e30u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pspbw256w256spbw256w64
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 3177 /* milli weight units */
+, .cost = 308 /* milli weight units */
 }
 ,[BIP_0340_VERIFY] =
 { .tag = JET
-, .jet = bip_0340_verify
-, .cmr = {{0xba22117fu, 0xcd13815bu, 0xf3e3c88au, 0x46551a6eu, 0x31f0331bu, 0x00d134acu, 0xab7949d5u, 0x9e322194u}}
+, .jet = simplicity_bip_0340_verify
+, .cmr = {{0x0873c4d7u, 0xb8998b2bu, 0x6b8e43eeu, 0x4ac0c2c7u, 0xad25b360u, 0x0e342b20u, 0x1d46001bu, 0x76c0567fu}}
 , .sourceIx = ty_w1Ki
 , .targetIx = ty_u
-, .cost = 49671 /* milli weight units */
+, .cost = 49087 /* milli weight units */
 }
 ,[BUILD_TAPBRANCH] =
 { .tag = JET
-, .jet = build_tapbranch
-, .cmr = {{0xd4b31312u, 0x786cb33bu, 0x43b062d4u, 0x8e0be039u, 0xc7de2b8du, 0x67ce9eeau, 0x5f5225f1u, 0x97ef7774u}}
+, .jet = simplicity_build_tapbranch
+, .cmr = {{0x773dc3b7u, 0xcf6a2592u, 0xa35d5319u, 0x53094915u, 0xe857037au, 0xb5b7cdd2u, 0xa734e289u, 0xc95e2a3eu}}
 , .sourceIx = ty_w512
 , .targetIx = ty_w256
-, .cost = 4804 /* milli weight units */
+, .cost = 2563 /* milli weight units */
 }
 ,[BUILD_TAPLEAF_SIMPLICITY] =
 { .tag = JET
-, .jet = build_tapleaf_simplicity
-, .cmr = {{0x136f16e4u, 0x4ae55b7eu, 0x6330d656u, 0xa282cbe5u, 0xaf966e74u, 0x1f576c9du, 0x0acd7749u, 0x467fd505u}}
+, .jet = simplicity_build_tapleaf_simplicity
+, .cmr = {{0x2b90ae75u, 0xbb76de68u, 0xde10d1e0u, 0xaeea6407u, 0x1a06f13au, 0x9776efa6u, 0xec8ee3e3u, 0xbc86289au}}
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
-, .cost = 3670 /* milli weight units */
+, .cost = 1843 /* milli weight units */
 }
 ,[CALCULATE_ASSET] =
 { .tag = JET
-, .jet = calculate_asset
-, .cmr = {{0x2eaae24du, 0xccce3c94u, 0x4beb8e38u, 0xac6a52eau, 0x434420fbu, 0x56a9a9b4u, 0xfb841583u, 0x48087421u}}
+, .jet = simplicity_calculate_asset
+, .cmr = {{0xe971896bu, 0x77fffbe0u, 0xe1036547u, 0xcdc6ddffu, 0x38e8bd75u, 0x427abb7cu, 0x76183028u, 0xfbcf9882u}}
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
-, .cost = 1516 /* milli weight units */
+, .cost = 807 /* milli weight units */
 }
 ,[CALCULATE_CONFIDENTIAL_TOKEN] =
 { .tag = JET
-, .jet = calculate_confidential_token
-, .cmr = {{0x3c5bf08au, 0xba5aa33eu, 0xba87efb0u, 0x99bdf1c4u, 0x64e7722au, 0xece1a221u, 0x3dc8eb25u, 0x54f0b56bu}}
+, .jet = simplicity_calculate_confidential_token
+, .cmr = {{0x02683208u, 0xa9db6770u, 0x807689cau, 0x4e2bdcafu, 0x00b75e1cu, 0x5d7e3aecu, 0xa75019e9u, 0xfb70a4cdu}}
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
-, .cost = 1727 /* milli weight units */
+, .cost = 707 /* milli weight units */
 }
 ,[CALCULATE_EXPLICIT_TOKEN] =
 { .tag = JET
-, .jet = calculate_explicit_token
-, .cmr = {{0xbef44e2eu, 0x52ccbfbau, 0xc88fd4d0u, 0xbdad51a4u, 0x69b484c7u, 0x585b7825u, 0x8ad4a79bu, 0xc9e4803bu}}
+, .jet = simplicity_calculate_explicit_token
+, .cmr = {{0x620d8d03u, 0xf042dd95u, 0xdc49b8aeu, 0x35a881f4u, 0xdbd62199u, 0x662eeaecu, 0x13e5713eu, 0x34d296ddu}}
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
-, .cost = 1610 /* milli weight units */
+, .cost = 771 /* milli weight units */
 }
 ,[CALCULATE_ISSUANCE_ENTROPY] =
 { .tag = JET
-, .jet = calculate_issuance_entropy
-, .cmr = {{0xca162c8au, 0xab8f94ddu, 0xe208dd87u, 0x1306b4ccu, 0x917ef2d8u, 0x1b8df75fu, 0xb23a916eu, 0xb3be197eu}}
+, .jet = simplicity_calculate_issuance_entropy
+, .cmr = {{0xf6595190u, 0xd4008c66u, 0x5b694aacu, 0xb8d96a76u, 0x26e06ac6u, 0x2b28d009u, 0xd75192bcu, 0x9cae5156u}}
 , .sourceIx = ty_ppw256w32w256
 , .targetIx = ty_w256
-, .cost = 3453 /* milli weight units */
+, .cost = 2095 /* milli weight units */
 }
 ,[CH_1] =
 { .tag = JET
-, .jet = ch_1
-, .cmr = {{0xc2323612u, 0x4da01f3du, 0x8eb742c2u, 0xed47953fu, 0x66c8b084u, 0xd95a10c6u, 0x0cae69bau, 0x9842ae96u}}
+, .jet = simplicity_ch_1
+, .cmr = {{0x297c251au, 0xfe741b19u, 0x22a212e3u, 0x93d3d3b1u, 0xc32e6b33u, 0xee2cfd5eu, 0xfae3fb1au, 0xbe595113u}}
 , .sourceIx = ty_pbw2
 , .targetIx = ty_b
-, .cost = 240 /* milli weight units */
+, .cost = 78 /* milli weight units */
 }
 ,[CH_16] =
 { .tag = JET
-, .jet = ch_16
-, .cmr = {{0xdccde6a9u, 0x545875c5u, 0xcb46e72cu, 0x7b04ceebu, 0x920c203du, 0x1c042aecu, 0x91241dbeu, 0xca23f435u}}
+, .jet = simplicity_ch_16
+, .cmr = {{0x81d33886u, 0xb525e7f2u, 0x8019d444u, 0xd4d4b422u, 0x76d33fa9u, 0x7b917adbu, 0xef4a8811u, 0x3ea6711eu}}
 , .sourceIx = ty_pw16w32
 , .targetIx = ty_w16
-, .cost = 245 /* milli weight units */
+, .cost = 94 /* milli weight units */
 }
 ,[CH_32] =
 { .tag = JET
-, .jet = ch_32
-, .cmr = {{0x8c0a87eeu, 0x8e1dfca3u, 0x4bdff421u, 0x2ba1af75u, 0x44d2de6fu, 0x4acb7618u, 0x08231a5fu, 0x57788e62u}}
+, .jet = simplicity_ch_32
+, .cmr = {{0x77002200u, 0xecac62e7u, 0x65c055b5u, 0x0bd225a8u, 0x54cda318u, 0x071b2e70u, 0xea30de9du, 0x1e3219aau}}
 , .sourceIx = ty_pw32w64
 , .targetIx = ty_w32
-, .cost = 238 /* milli weight units */
+, .cost = 91 /* milli weight units */
 }
 ,[CH_64] =
 { .tag = JET
-, .jet = ch_64
-, .cmr = {{0x5d5ae57du, 0x7647f01eu, 0xc3fd797eu, 0xd89d62beu, 0x5fe585fbu, 0xb9fdb6c3u, 0x208b2c08u, 0x579b9e2cu}}
+, .jet = simplicity_ch_64
+, .cmr = {{0xe97cdd2au, 0x47acf40bu, 0xe6872a57u, 0x4bbadb5du, 0xb51bac1au, 0xd9cf63e7u, 0xd84c3b2fu, 0xb9ab6ddbu}}
 , .sourceIx = ty_pw64w128
 , .targetIx = ty_w64
-, .cost = 274 /* milli weight units */
+, .cost = 91 /* milli weight units */
 }
 ,[CH_8] =
 { .tag = JET
-, .jet = ch_8
-, .cmr = {{0xdfc578f2u, 0x5cb31402u, 0xe22a810eu, 0x98950ae1u, 0x7b190896u, 0x364cdee8u, 0xeea300cfu, 0x79d87801u}}
+, .jet = simplicity_ch_8
+, .cmr = {{0x5bc67708u, 0x751e9679u, 0x13fb75fcu, 0x2576a080u, 0x700c67f1u, 0x2c363ba0u, 0x1917513eu, 0x6c781457u}}
 , .sourceIx = ty_pw8w16
 , .targetIx = ty_w8
-, .cost = 240 /* milli weight units */
+, .cost = 77 /* milli weight units */
 }
 ,[CHECK_LOCK_DISTANCE] =
 { .tag = JET
-, .jet = check_lock_distance
-, .cmr = {{0xc510cd9au, 0xf3ead171u, 0xe189f9e1u, 0x0c95463du, 0x331b1673u, 0x941de384u, 0xe846ab71u, 0x57538ee6u}}
+, .jet = simplicity_check_lock_distance
+, .cmr = {{0x4461194au, 0x7b0a7905u, 0x16913c70u, 0xf7fdd61eu, 0x2aac4317u, 0xbc4f7ee2u, 0x7bcf55feu, 0xe9b1c2f1u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_u
-, .cost = 198 /* milli weight units */
+, .cost = 105 /* milli weight units */
 }
 ,[CHECK_LOCK_DURATION] =
 { .tag = JET
-, .jet = check_lock_duration
-, .cmr = {{0x4a64700cu, 0x730c6351u, 0x94cced20u, 0x471b0a69u, 0xc6dea271u, 0xb04a41aau, 0x8c76437bu, 0x74628ddbu}}
+, .jet = simplicity_check_lock_duration
+, .cmr = {{0x3ce5aff9u, 0x1a7e352du, 0x0369015fu, 0xd4e2d9f1u, 0xe000c39au, 0xd1b7d760u, 0xb8503588u, 0x120bb8b3u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_u
-, .cost = 201 /* milli weight units */
+, .cost = 102 /* milli weight units */
 }
 ,[CHECK_LOCK_HEIGHT] =
 { .tag = JET
-, .jet = check_lock_height
-, .cmr = {{0x00dd5316u, 0x8f951773u, 0x818c1ea6u, 0x9797ed00u, 0xcccd3762u, 0xd2edb6d9u, 0x5feb7670u, 0x9805d49fu}}
+, .jet = simplicity_check_lock_height
+, .cmr = {{0xdf3a0f07u, 0x680433aeu, 0x5ee855ddu, 0x774c2ae4u, 0x1194ac8fu, 0xa118b506u, 0xa09eb6d3u, 0xa52e167au}}
 , .sourceIx = ty_w32
 , .targetIx = ty_u
-, .cost = 239 /* milli weight units */
+, .cost = 77 /* milli weight units */
 }
 ,[CHECK_LOCK_TIME] =
 { .tag = JET
-, .jet = check_lock_time
-, .cmr = {{0xdea6df2au, 0x1980028fu, 0x423b6a49u, 0x042e1ee5u, 0x361760e9u, 0x42f0ea68u, 0xf9bf9dcau, 0xab57de53u}}
+, .jet = simplicity_check_lock_time
+, .cmr = {{0x667ece1fu, 0xfd807b61u, 0x357c9150u, 0x630af013u, 0x9e9f1fcdu, 0xf987dfa7u, 0xce20a1e2u, 0x16ed75e3u}}
 , .sourceIx = ty_w32
 , .targetIx = ty_u
-, .cost = 232 /* milli weight units */
+, .cost = 93 /* milli weight units */
 }
 ,[CHECK_SIG_VERIFY] =
 { .tag = JET
-, .jet = check_sig_verify
-, .cmr = {{0xe8feb534u, 0x34e2bdb5u, 0xcfe6a91fu, 0xa8f9e177u, 0xf941a67cu, 0xc6ced869u, 0x746f1a8eu, 0xb6506f76u}}
+, .jet = simplicity_check_sig_verify
+, .cmr = {{0xa516dd5cu, 0x9cabd041u, 0x120ea368u, 0xab4ccd92u, 0x31255ef5u, 0x79968558u, 0xc1aa6a21u, 0x2f168329u}}
 , .sourceIx = ty_ppw256w512w512
 , .targetIx = ty_u
 , .cost = 50000 /* milli weight units */
 }
 ,[COMPLEMENT_1] =
 { .tag = JET
-, .jet = complement_1
-, .cmr = {{0x7e714813u, 0x2e289282u, 0x3fcf2a26u, 0xc6220beeu, 0x039ff6c5u, 0xd7c1b4e4u, 0xca213ad8u, 0x37ab4774u}}
+, .jet = simplicity_complement_1
+, .cmr = {{0x9ea1ebfbu, 0xbf073bf0u, 0xc3126603u, 0x749c6c1fu, 0x1505039eu, 0xab4f2664u, 0x3f0330d4u, 0x8bd68494u}}
 , .sourceIx = ty_b
 , .targetIx = ty_b
-, .cost = 139 /* milli weight units */
+, .cost = 79 /* milli weight units */
 }
 ,[COMPLEMENT_16] =
 { .tag = JET
-, .jet = complement_16
-, .cmr = {{0x7f16d124u, 0x15998768u, 0x347f43a9u, 0xb91c8987u, 0x591dfec1u, 0xcf7850b4u, 0x23fea33au, 0x3726f463u}}
+, .jet = simplicity_complement_16
+, .cmr = {{0x7da0cc5eu, 0x1f55036cu, 0x08646dbbu, 0x37557ad9u, 0x03386305u, 0x9dfbf34au, 0x19f228e8u, 0x96d64c0fu}}
 , .sourceIx = ty_w16
 , .targetIx = ty_w16
-, .cost = 146 /* milli weight units */
+, .cost = 75 /* milli weight units */
 }
 ,[COMPLEMENT_32] =
 { .tag = JET
-, .jet = complement_32
-, .cmr = {{0xe65a4f75u, 0x5411b480u, 0xb80585fdu, 0xc02ee24cu, 0xbbd9502au, 0x48a7347au, 0x710294e7u, 0x82acffbau}}
+, .jet = simplicity_complement_32
+, .cmr = {{0x5418c464u, 0xe4949721u, 0x63a3353bu, 0x8117e6e7u, 0x67491348u, 0xc0763f96u, 0x22744a83u, 0x082ef841u}}
 , .sourceIx = ty_w32
 , .targetIx = ty_w32
-, .cost = 161 /* milli weight units */
+, .cost = 93 /* milli weight units */
 }
 ,[COMPLEMENT_64] =
 { .tag = JET
-, .jet = complement_64
-, .cmr = {{0xd5c65713u, 0x8a6cf553u, 0x22c36e6fu, 0x3c4a0f9fu, 0xb63988a1u, 0x120d6eebu, 0x03fc427cu, 0xad971869u}}
+, .jet = simplicity_complement_64
+, .cmr = {{0x004eb9edu, 0x9c10a4a5u, 0xa897948eu, 0x541d36dcu, 0x1fb650c8u, 0xda726f8du, 0xd197ce8cu, 0x7441f708u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_w64
-, .cost = 174 /* milli weight units */
+, .cost = 88 /* milli weight units */
 }
 ,[COMPLEMENT_8] =
 { .tag = JET
-, .jet = complement_8
-, .cmr = {{0x1f5c6ab4u, 0x1d406badu, 0xfc9d5a2cu, 0x76bef7e3u, 0x287aabeeu, 0x19d0850fu, 0x09389846u, 0xeabf458eu}}
+, .jet = simplicity_complement_8
+, .cmr = {{0x9476d51du, 0x6b1be44du, 0xcff21947u, 0xd5bf540au, 0x66616ff7u, 0xb9328a67u, 0xf5b83a2fu, 0x6f06f02cu}}
 , .sourceIx = ty_w8
 , .targetIx = ty_w8
-, .cost = 139 /* milli weight units */
+, .cost = 80 /* milli weight units */
 }
 ,[CURRENT_AMOUNT] =
 { .tag = JET
-, .jet = current_amount
-, .cmr = {{0x7631944bu, 0x936d0b7fu, 0xa92a868du, 0xd76e4d47u, 0x2936cf42u, 0x5cd86e5bu, 0x90936fbdu, 0x8d54e202u}}
+, .jet = simplicity_current_amount
+, .cmr = {{0xb8e324c6u, 0x45dce60eu, 0x15d0af7au, 0x67cbba87u, 0xc3c934bbu, 0xcb7c1cbau, 0x8468cf1eu, 0x4134dc21u}}
 , .sourceIx = ty_u
 , .targetIx = ty_pspbw256w256spbw256w64
-, .cost = 400 /* milli weight units */
+, .cost = 225 /* milli weight units */
 }
 ,[CURRENT_ANNEX_HASH] =
 { .tag = JET
-, .jet = current_annex_hash
-, .cmr = {{0x45ca8294u, 0xef4d6120u, 0xe9ef59ebu, 0xeb8c51d2u, 0xc4e816f5u, 0x2d148f64u, 0x250eb8a3u, 0xaa050e18u}}
+, .jet = simplicity_current_annex_hash
+, .cmr = {{0x1257df7bu, 0xa03db3d8u, 0xb33d439bu, 0xb1c837cdu, 0xeb34807eu, 0x2199a150u, 0x328edd88u, 0xea3b7e54u}}
 , .sourceIx = ty_u
 , .targetIx = ty_mw256
-, .cost = 137 /* milli weight units */
+, .cost = 79 /* milli weight units */
 }
 ,[CURRENT_ASSET] =
 { .tag = JET
-, .jet = current_asset
-, .cmr = {{0x38f14f83u, 0xc6a0474cu, 0x3bc22cabu, 0x540faf66u, 0xbb06d67eu, 0xa12c0048u, 0xf475980du, 0x5c2b7c5eu}}
+, .jet = simplicity_current_asset
+, .cmr = {{0x35e6662cu, 0x1241ad10u, 0xf05b8012u, 0xd6dcb25cu, 0x0eaf8c4au, 0x49837927u, 0x129a84ddu, 0x0b5edcf8u}}
 , .sourceIx = ty_u
 , .targetIx = ty_spbw256w256
-, .cost = 320 /* milli weight units */
+, .cost = 171 /* milli weight units */
 }
 ,[CURRENT_INDEX] =
 { .tag = JET
-, .jet = current_index
-, .cmr = {{0x755022edu, 0xc3fab4bcu, 0x656eedc4u, 0x617ea37du, 0x132b2c46u, 0x1740a62du, 0xcad472eau, 0x23de629eu}}
+, .jet = simplicity_current_index
+, .cmr = {{0x42f307e8u, 0x7117dbcdu, 0x9efd101fu, 0x994c297cu, 0xc6c39b4fu, 0x494c6259u, 0x31ead7b6u, 0x98712e3fu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w32
-, .cost = 137 /* milli weight units */
+, .cost = 88 /* milli weight units */
 }
 ,[CURRENT_ISSUANCE_ASSET_AMOUNT] =
 { .tag = JET
-, .jet = current_issuance_asset_amount
-, .cmr = {{0xeac74d4cu, 0x7de43514u, 0x164fe5aeu, 0x76016045u, 0xa68358cfu, 0x1c74241bu, 0x152ed063u, 0xac9f5e29u}}
+, .jet = simplicity_current_issuance_asset_amount
+, .cmr = {{0x97f69fdeu, 0xe36e7a5au, 0xea9a1648u, 0x764658afu, 0x050691a7u, 0x599db6feu, 0x8fc7d31eu, 0x003c07bcu}}
 , .sourceIx = ty_u
 , .targetIx = ty_mspbw256w64
-, .cost = 317 /* milli weight units */
+, .cost = 165 /* milli weight units */
 }
 ,[CURRENT_ISSUANCE_ASSET_PROOF] =
 { .tag = JET
-, .jet = current_issuance_asset_proof
-, .cmr = {{0x362dfa80u, 0xda8410c5u, 0xf5066647u, 0xab642f0du, 0x6b7286acu, 0x2608b954u, 0xc3a15cdfu, 0x0f55555eu}}
+, .jet = simplicity_current_issuance_asset_proof
+, .cmr = {{0xb1f6334cu, 0xf068aee9u, 0xba39e0e9u, 0xce91c30bu, 0xdbb97d8cu, 0x3eb43f84u, 0xf0f484d4u, 0xde5aacfcu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 301 /* milli weight units */
+, .cost = 140 /* milli weight units */
 }
 ,[CURRENT_ISSUANCE_TOKEN_AMOUNT] =
 { .tag = JET
-, .jet = current_issuance_token_amount
-, .cmr = {{0x859241c0u, 0x4b8f0dc7u, 0x3072aed7u, 0x838067fau, 0x70a4ca52u, 0x16f39713u, 0xf12f5fc5u, 0xa4aead7du}}
+, .jet = simplicity_current_issuance_token_amount
+, .cmr = {{0x9894c429u, 0x55f03d83u, 0x17649b6au, 0xfd7057d7u, 0xb3c4bcefu, 0x152ac9a0u, 0x084d0d21u, 0x6afb11feu}}
 , .sourceIx = ty_u
 , .targetIx = ty_mspbw256w64
-, .cost = 326 /* milli weight units */
+, .cost = 188 /* milli weight units */
 }
 ,[CURRENT_ISSUANCE_TOKEN_PROOF] =
 { .tag = JET
-, .jet = current_issuance_token_proof
-, .cmr = {{0x1b7ea16fu, 0x032f37dcu, 0x2ae103e6u, 0x962c5a90u, 0x42af295bu, 0x4a703a3cu, 0x842e6295u, 0x15ad24cbu}}
+, .jet = simplicity_current_issuance_token_proof
+, .cmr = {{0x3f54b3cfu, 0xb89278b0u, 0xea7780ccu, 0x32d6e386u, 0x2ed463d4u, 0x5162ad96u, 0xce5709fau, 0x6fc16fb6u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 288 /* milli weight units */
+, .cost = 144 /* milli weight units */
 }
 ,[CURRENT_NEW_ISSUANCE_CONTRACT] =
 { .tag = JET
-, .jet = current_new_issuance_contract
-, .cmr = {{0x0baa8735u, 0xa3029084u, 0x857cc974u, 0x9bbc7f19u, 0x851bc78fu, 0xbecdce1fu, 0x0dd6757bu, 0x7b8f3f30u}}
+, .jet = simplicity_current_new_issuance_contract
+, .cmr = {{0xc5f159dcu, 0xdb5a40b9u, 0x4d068d35u, 0x97af82afu, 0x53d17175u, 0x83f75cebu, 0x1051875du, 0x08cd262fu}}
 , .sourceIx = ty_u
 , .targetIx = ty_mw256
-, .cost = 293 /* milli weight units */
+, .cost = 145 /* milli weight units */
 }
 ,[CURRENT_PEGIN] =
 { .tag = JET
-, .jet = current_pegin
-, .cmr = {{0x9807ac5eu, 0xb07ba24fu, 0xb021b74au, 0xe6874f3bu, 0xc9b393c6u, 0x6c4f5d22u, 0xf05546e2u, 0xea08d760u}}
+, .jet = simplicity_current_pegin
+, .cmr = {{0xfb2bec4fu, 0x68964d0au, 0x3f5f6934u, 0x7ca56f20u, 0x4090c8abu, 0x33ad7af4u, 0xf405890du, 0x4b9fdd12u}}
 , .sourceIx = ty_u
 , .targetIx = ty_mw256
-, .cost = 303 /* milli weight units */
+, .cost = 147 /* milli weight units */
 }
 ,[CURRENT_PREV_OUTPOINT] =
 { .tag = JET
-, .jet = current_prev_outpoint
-, .cmr = {{0x0877b36fu, 0x656c2489u, 0x13254415u, 0x92df56e2u, 0xbbecf24du, 0x0acd0b78u, 0xfc9438b7u, 0x773a9eb4u}}
+, .jet = simplicity_current_prev_outpoint
+, .cmr = {{0x53f48945u, 0x6a6b161cu, 0xd903ba19u, 0x6ea154d8u, 0x3cb26568u, 0x9c815f61u, 0x030e72fdu, 0x6c26dc55u}}
 , .sourceIx = ty_u
 , .targetIx = ty_pw256w32
-, .cost = 312 /* milli weight units */
+, .cost = 156 /* milli weight units */
 }
 ,[CURRENT_REISSUANCE_BLINDING] =
 { .tag = JET
-, .jet = current_reissuance_blinding
-, .cmr = {{0xc8d3e808u, 0x87505aa7u, 0xf583ac6bu, 0xe47182ecu, 0xbc685cc3u, 0xc4a6acaau, 0x8e2c1329u, 0xe35d2930u}}
+, .jet = simplicity_current_reissuance_blinding
+, .cmr = {{0x07ee51b2u, 0x4b56e0e2u, 0x58d7e730u, 0x407d65edu, 0xf99dcaddu, 0x9d7c5af0u, 0x2ded9249u, 0x9a06feabu}}
 , .sourceIx = ty_u
 , .targetIx = ty_mw256
-, .cost = 148 /* milli weight units */
+, .cost = 94 /* milli weight units */
 }
 ,[CURRENT_REISSUANCE_ENTROPY] =
 { .tag = JET
-, .jet = current_reissuance_entropy
-, .cmr = {{0x4f241095u, 0x401ceea8u, 0x312d2f42u, 0xbeae8d88u, 0x0acfe189u, 0x33630d7bu, 0x8216c537u, 0x623e2af7u}}
+, .jet = simplicity_current_reissuance_entropy
+, .cmr = {{0x5038969eu, 0x77862fbdu, 0x4d493919u, 0x159fc102u, 0xd3e282dbu, 0x64057248u, 0x466d7cdcu, 0x3f0ca9b5u}}
 , .sourceIx = ty_u
 , .targetIx = ty_mw256
-, .cost = 139 /* milli weight units */
+, .cost = 85 /* milli weight units */
 }
 ,[CURRENT_SCRIPT_HASH] =
 { .tag = JET
-, .jet = current_script_hash
-, .cmr = {{0xcd5ea7fbu, 0x0910f76eu, 0x76c6ea68u, 0xd0e2cad1u, 0x34cbb642u, 0x823bc43cu, 0x0423852fu, 0x37b7e25au}}
+, .jet = simplicity_current_script_hash
+, .cmr = {{0xf5e8d2a3u, 0x2839259du, 0x1c3d0946u, 0x51bd4fe6u, 0xdc80ee89u, 0x3b72bb68u, 0x3a8540feu, 0x7630cbe9u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 305 /* milli weight units */
+, .cost = 134 /* milli weight units */
 }
 ,[CURRENT_SCRIPT_SIG_HASH] =
 { .tag = JET
-, .jet = current_script_sig_hash
-, .cmr = {{0x17ad01cau, 0xe293427bu, 0xe2505af2u, 0xfe4c3e65u, 0x125fc3ddu, 0xe27a1143u, 0x788fa136u, 0x0f1c3751u}}
+, .jet = simplicity_current_script_sig_hash
+, .cmr = {{0x6aa9bb64u, 0x101ee0b9u, 0xb9dc454cu, 0xf1ee1aa8u, 0x326d6411u, 0x95e5a0aau, 0x6c811b3du, 0xbfe3ef2bu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 298 /* milli weight units */
+, .cost = 139 /* milli weight units */
 }
 ,[CURRENT_SEQUENCE] =
 { .tag = JET
-, .jet = current_sequence
-, .cmr = {{0x79ce41eeu, 0x05c97335u, 0xdc73515cu, 0x2934c91cu, 0x2e2dca6eu, 0x73c335eau, 0x4f43e0fau, 0x88de00f6u}}
+, .jet = simplicity_current_sequence
+, .cmr = {{0x99c0da7eu, 0xb25783abu, 0x3a24a54cu, 0xda8f8a87u, 0x5ac5a994u, 0x5f24e3fcu, 0x01960c26u, 0x64c5b78du}}
 , .sourceIx = ty_u
 , .targetIx = ty_w32
-, .cost = 138 /* milli weight units */
+, .cost = 89 /* milli weight units */
 }
 ,[DECOMPRESS] =
 { .tag = JET
-, .jet = decompress
-, .cmr = {{0x99cac8f0u, 0x6fac4051u, 0x423749c0u, 0xb0994520u, 0xf914d196u, 0x6f9f0297u, 0x78c4e745u, 0x6890b7d6u}}
+, .jet = simplicity_decompress
+, .cmr = {{0xcabe595cu, 0xb7bbb3a1u, 0x39a7796eu, 0x433ad0b6u, 0xc74d073fu, 0x001e8c08u, 0x0c800a78u, 0x2c7e7904u}}
 , .sourceIx = ty_pbw256
 , .targetIx = ty_mw512
-, .cost = 10956 /* milli weight units */
+, .cost = 10861 /* milli weight units */
 }
 ,[DECREMENT_16] =
 { .tag = JET
-, .jet = decrement_16
-, .cmr = {{0x196b2dc6u, 0x32e6c5d0u, 0x94ff9d34u, 0xa2092b80u, 0x5e4b94d0u, 0x36ba4826u, 0xacefed60u, 0x3a489dc7u}}
+, .jet = simplicity_decrement_16
+, .cmr = {{0x2504101bu, 0x7da5ce31u, 0x1743cf5bu, 0x3a7a6bb9u, 0xd57c24aeu, 0xbbb67662u, 0xd53cda2cu, 0x9ac2700cu}}
 , .sourceIx = ty_w16
 , .targetIx = ty_pbw16
-, .cost = 116 /* milli weight units */
+, .cost = 85 /* milli weight units */
 }
 ,[DECREMENT_32] =
 { .tag = JET
-, .jet = decrement_32
-, .cmr = {{0x29b31592u, 0x66e9f608u, 0x80884f6eu, 0xb2816f19u, 0xa207291cu, 0x829fd139u, 0xfb0d78a3u, 0x9e08d0c5u}}
+, .jet = simplicity_decrement_32
+, .cmr = {{0x4aec4105u, 0x531f2457u, 0x10acb3c3u, 0x30ad25fbu, 0x2901b354u, 0x83efbdcau, 0x52e19179u, 0xa4262c5bu}}
 , .sourceIx = ty_w32
 , .targetIx = ty_pbw32
-, .cost = 159 /* milli weight units */
+, .cost = 91 /* milli weight units */
 }
 ,[DECREMENT_64] =
 { .tag = JET
-, .jet = decrement_64
-, .cmr = {{0x67175a67u, 0x6dc1780au, 0x20faf5e5u, 0xaad582ecu, 0x797baea5u, 0x5f2905ecu, 0xad2aaa1au, 0xe76be943u}}
+, .jet = simplicity_decrement_64
+, .cmr = {{0x983acb90u, 0x6de7bbf8u, 0x31dea562u, 0x75f085fdu, 0x5acddc51u, 0x9b648f3eu, 0x10e3212du, 0x0d6dcd74u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_pbw64
-, .cost = 160 /* milli weight units */
+, .cost = 89 /* milli weight units */
 }
 ,[DECREMENT_8] =
 { .tag = JET
-, .jet = decrement_8
-, .cmr = {{0x2b5911e6u, 0x67e696f9u, 0xcd03e9dfu, 0x7d400a55u, 0x45e7e974u, 0x4afbf92eu, 0x0ba87f6cu, 0x7cc44287u}}
+, .jet = simplicity_decrement_8
+, .cmr = {{0xa75b1c5du, 0x93fe91e2u, 0xc9efd324u, 0x240c84feu, 0xe47332d1u, 0x214239c8u, 0x7f5afbcbu, 0x69128c31u}}
 , .sourceIx = ty_w8
 , .targetIx = ty_pbw8
-, .cost = 195 /* milli weight units */
+, .cost = 79 /* milli weight units */
 }
 ,[DIV_MOD_128_64] =
 { .tag = JET
-, .jet = div_mod_128_64
-, .cmr = {{0x1ee3e60fu, 0x5c9e4f0du, 0x3ec9ebeau, 0x3698eca8u, 0xbd32ac16u, 0x7e69b296u, 0xab9c1836u, 0xb6101d04u}}
+, .jet = simplicity_div_mod_128_64
+, .cmr = {{0xe1fb881fu, 0x23bdc57fu, 0x8423c61cu, 0xfe622391u, 0x5c76eb2fu, 0x525c41e2u, 0xa2221c78u, 0xb7ffafb7u}}
 , .sourceIx = ty_pw128w64
 , .targetIx = ty_w128
-, .cost = 220 /* milli weight units */
+, .cost = 208 /* milli weight units */
 }
 ,[DIV_MOD_16] =
 { .tag = JET
-, .jet = div_mod_16
-, .cmr = {{0x1585d1bfu, 0xe952f71bu, 0x1cfebbefu, 0x292ced56u, 0x60915723u, 0x05182720u, 0x625a1ac0u, 0x0881a489u}}
+, .jet = simplicity_div_mod_16
+, .cmr = {{0x6e04ad32u, 0x8fba2d24u, 0xefad2cb4u, 0x0bcad824u, 0x42ce35b1u, 0x2fcf6f80u, 0x022f52fau, 0x7718a0fau}}
 , .sourceIx = ty_w32
 , .targetIx = ty_w32
-, .cost = 223 /* milli weight units */
+, .cost = 118 /* milli weight units */
 }
 ,[DIV_MOD_32] =
 { .tag = JET
-, .jet = div_mod_32
-, .cmr = {{0xbab7bc9au, 0x9f644edcu, 0xba73e330u, 0xc1a50543u, 0x67f5fb86u, 0x78c1236au, 0xb6e7f4d7u, 0x1860e002u}}
+, .jet = simplicity_div_mod_32
+, .cmr = {{0x5a5cc94fu, 0x74b313c2u, 0x60a10e2au, 0x28db2ea0u, 0xf8c34156u, 0x23dac212u, 0xdfe0ef9du, 0x195f9d05u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_w64
-, .cost = 198 /* milli weight units */
+, .cost = 115 /* milli weight units */
 }
 ,[DIV_MOD_64] =
 { .tag = JET
-, .jet = div_mod_64
-, .cmr = {{0x8db4664du, 0x99e8c878u, 0xef31ebf1u, 0xaca6a876u, 0x4b58495du, 0xa0ecc032u, 0xb3c9b489u, 0xaaa0ff90u}}
+, .jet = simplicity_div_mod_64
+, .cmr = {{0xefb5af40u, 0x154a2d63u, 0xda285f2au, 0x2b5ad085u, 0xd9a2fa63u, 0x3f2a7362u, 0x83404854u, 0x306cef50u}}
 , .sourceIx = ty_w128
 , .targetIx = ty_w128
-, .cost = 220 /* milli weight units */
+, .cost = 86 /* milli weight units */
 }
 ,[DIV_MOD_8] =
 { .tag = JET
-, .jet = div_mod_8
-, .cmr = {{0x25f3694bu, 0x752e4df1u, 0xb0cc8c51u, 0xbf9917efu, 0x6e11c52eu, 0xa777353eu, 0x9507e819u, 0xa8066295u}}
+, .jet = simplicity_div_mod_8
+, .cmr = {{0xaffb7ab0u, 0x1d9adf1au, 0xf45c9a0eu, 0x598d54a5u, 0xeb29a6d6u, 0x3f0594dcu, 0x624f8e44u, 0x6f42a45du}}
 , .sourceIx = ty_w16
 , .targetIx = ty_w16
-, .cost = 141 /* milli weight units */
+, .cost = 128 /* milli weight units */
 }
 ,[DIVIDE_16] =
 { .tag = JET
-, .jet = divide_16
-, .cmr = {{0x2dc3e9a9u, 0xc61dc88du, 0xd744f16bu, 0xe1aed4b7u, 0x2ab47949u, 0x0e414226u, 0x58b97219u, 0xdf49957cu}}
+, .jet = simplicity_divide_16
+, .cmr = {{0x98f1f926u, 0x0df1d9e9u, 0x729d037du, 0x8f30537eu, 0xde609c5au, 0xb9463270u, 0x70892cc4u, 0x0d420aaau}}
 , .sourceIx = ty_w32
 , .targetIx = ty_w16
-, .cost = 188 /* milli weight units */
+, .cost = 98 /* milli weight units */
 }
 ,[DIVIDE_32] =
 { .tag = JET
-, .jet = divide_32
-, .cmr = {{0xf6dcf4bdu, 0x8d9b5effu, 0x751e9b01u, 0x47a98e0fu, 0xc4c8872cu, 0x1ab782d1u, 0xebec6383u, 0xa09b780au}}
+, .jet = simplicity_divide_32
+, .cmr = {{0x20180303u, 0x0cc9877du, 0x3496e9e1u, 0xbfd5ae32u, 0x8a5062e3u, 0xc0237003u, 0x1ae1addfu, 0xef938155u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_w32
-, .cost = 225 /* milli weight units */
+, .cost = 100 /* milli weight units */
 }
 ,[DIVIDE_64] =
 { .tag = JET
-, .jet = divide_64
-, .cmr = {{0x8a94518bu, 0x9b76179au, 0x9d5c1e31u, 0x6e690062u, 0x7f5b6e3eu, 0xcc668fe2u, 0xd0c5d562u, 0x38e33ea3u}}
+, .jet = simplicity_divide_64
+, .cmr = {{0x02bf0b2au, 0x31796c47u, 0x5af1fd0fu, 0xb8edafedu, 0x4f4e7ae1u, 0xecf8cec9u, 0xf422964eu, 0x0903036fu}}
 , .sourceIx = ty_w128
 , .targetIx = ty_w64
-, .cost = 202 /* milli weight units */
+, .cost = 101 /* milli weight units */
 }
 ,[DIVIDE_8] =
 { .tag = JET
-, .jet = divide_8
-, .cmr = {{0xd716000cu, 0xe7e57278u, 0x84a6d797u, 0x6a32c0f6u, 0xbdb881d0u, 0x0fe8dbb2u, 0x8dea3701u, 0x03769e2du}}
+, .jet = simplicity_divide_8
+, .cmr = {{0xc02ec480u, 0xbf0b5958u, 0x6e394adbu, 0x2c91cadau, 0x14ed79a7u, 0x9e0e3919u, 0xe7667492u, 0xcbf24738u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_w8
-, .cost = 125 /* milli weight units */
+, .cost = 108 /* milli weight units */
 }
 ,[DIVIDES_16] =
 { .tag = JET
-, .jet = divides_16
-, .cmr = {{0x8f4184a5u, 0x82674e00u, 0x3b37401bu, 0x13c9b8c3u, 0x7c683b88u, 0xdf633a22u, 0x719a23e1u, 0x94bda6f3u}}
+, .jet = simplicity_divides_16
+, .cmr = {{0xde9a8e43u, 0x53a40d70u, 0x78119647u, 0x05906273u, 0x0cf836f5u, 0x47a0952du, 0x070a2748u, 0x0c7439b1u}}
 , .sourceIx = ty_w32
 , .targetIx = ty_b
-, .cost = 173 /* milli weight units */
+, .cost = 93 /* milli weight units */
 }
 ,[DIVIDES_32] =
 { .tag = JET
-, .jet = divides_32
-, .cmr = {{0xe89ecdc3u, 0x7cd10466u, 0xb00f0137u, 0xe20b09b9u, 0xc5948d07u, 0x312d053fu, 0xed63c491u, 0xbb5c4c6au}}
+, .jet = simplicity_divides_32
+, .cmr = {{0x72c7148bu, 0xc0014a1bu, 0xbf0e2b7du, 0xc9aba4d0u, 0x62041738u, 0x36718813u, 0x203e55a0u, 0x7f4ca37du}}
 , .sourceIx = ty_w64
 , .targetIx = ty_b
-, .cost = 175 /* milli weight units */
+, .cost = 87 /* milli weight units */
 }
 ,[DIVIDES_64] =
 { .tag = JET
-, .jet = divides_64
-, .cmr = {{0xb43198d5u, 0x74419057u, 0xe76bc069u, 0xd7d3e2cbu, 0x04f7072bu, 0x80696d3du, 0xb92c8a72u, 0xc78a5cfcu}}
+, .jet = simplicity_divides_64
+, .cmr = {{0xdb1c8cb5u, 0x3ac1ea8cu, 0xcf646d03u, 0xe3d59bdeu, 0x2775f58du, 0x95bfe71au, 0x870d678du, 0xd8dbc931u}}
 , .sourceIx = ty_w128
 , .targetIx = ty_b
-, .cost = 246 /* milli weight units */
+, .cost = 91 /* milli weight units */
 }
 ,[DIVIDES_8] =
 { .tag = JET
-, .jet = divides_8
-, .cmr = {{0x3fc3b9b4u, 0x968e1674u, 0xda9ec457u, 0xb1ca8a66u, 0x29a37b4bu, 0xefdcd7ccu, 0x55886080u, 0xaef68af8u}}
+, .jet = simplicity_divides_8
+, .cmr = {{0xc54a5bf8u, 0x33afaba3u, 0x1a3489bdu, 0x8de8ff81u, 0xe7dc11fcu, 0xbde82a0du, 0x28e10922u, 0x4294b837u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_b
-, .cost = 142 /* milli weight units */
+, .cost = 98 /* milli weight units */
 }
 ,[EQ_1] =
 { .tag = JET
-, .jet = eq_1
-, .cmr = {{0x4249c5bdu, 0xec540a06u, 0x957dcdabu, 0x045a445eu, 0xb91891c0u, 0x6c3f8f96u, 0xc888e9ddu, 0xd2fbaa28u}}
+, .jet = simplicity_eq_1
+, .cmr = {{0x8ce146afu, 0xbc2b64cbu, 0x549b160cu, 0x2cf7c949u, 0x64ab931au, 0xd9c39276u, 0xc7f204eeu, 0x34a51e65u}}
 , .sourceIx = ty_w2
 , .targetIx = ty_b
-, .cost = 120 /* milli weight units */
+, .cost = 74 /* milli weight units */
 }
 ,[EQ_16] =
 { .tag = JET
-, .jet = eq_16
-, .cmr = {{0xab31a797u, 0x4acbf72au, 0xb2f21bf5u, 0x3fec346au, 0x28e6e65eu, 0x4c05e3e7u, 0x843e1473u, 0xb1fd3ff9u}}
+, .jet = simplicity_eq_16
+, .cmr = {{0x24f1acb6u, 0xd16b3be5u, 0xde47fe83u, 0x4328fb51u, 0x0495fbbau, 0x72cd1dc8u, 0x9a33983fu, 0x8c8733edu}}
 , .sourceIx = ty_w32
 , .targetIx = ty_b
-, .cost = 174 /* milli weight units */
+, .cost = 84 /* milli weight units */
 }
 ,[EQ_256] =
 { .tag = JET
-, .jet = eq_256
-, .cmr = {{0xf7df29edu, 0x2d007822u, 0x7e719b7du, 0x1337dbeau, 0x3a710f58u, 0x4a4b07f0u, 0xf2654a44u, 0x6554f2beu}}
+, .jet = simplicity_eq_256
+, .cmr = {{0xf32e9b6cu, 0x912c50ddu, 0x9a2410c8u, 0x024b4548u, 0x0707d9b3u, 0x714b5249u, 0xc5f301f2u, 0x1db3e62bu}}
 , .sourceIx = ty_w512
 , .targetIx = ty_b
-, .cost = 431 /* milli weight units */
+, .cost = 225 /* milli weight units */
 }
 ,[EQ_32] =
 { .tag = JET
-, .jet = eq_32
-, .cmr = {{0x76791f0du, 0xddab9dc7u, 0x7a14a68cu, 0xc67787c9u, 0x84493faeu, 0xbbdbb6d6u, 0xd493352eu, 0x114720d5u}}
+, .jet = simplicity_eq_32
+, .cmr = {{0x03435756u, 0xec244c99u, 0xff733221u, 0x57c26c36u, 0x6bf52efbu, 0x314dce0cu, 0x2361dd53u, 0x491aa4beu}}
 , .sourceIx = ty_w64
 , .targetIx = ty_b
-, .cost = 233 /* milli weight units */
+, .cost = 88 /* milli weight units */
 }
 ,[EQ_64] =
 { .tag = JET
-, .jet = eq_64
-, .cmr = {{0x011b5f4cu, 0xb31f34bau, 0x158a6822u, 0x3b34445eu, 0x93f3dc18u, 0x91b53390u, 0x04923dcfu, 0xabe034c1u}}
+, .jet = simplicity_eq_64
+, .cmr = {{0x7da46758u, 0x80609366u, 0xd74d530cu, 0xa164a0e0u, 0x9ac9ce76u, 0xf4f9e943u, 0x22063cb3u, 0x26fef6bbu}}
 , .sourceIx = ty_w128
 , .targetIx = ty_b
-, .cost = 202 /* milli weight units */
+, .cost = 100 /* milli weight units */
 }
 ,[EQ_8] =
 { .tag = JET
-, .jet = eq_8
-, .cmr = {{0x0f8b1fdeu, 0x1949bebdu, 0x47d2554au, 0x4807fd8du, 0xcaef8730u, 0x1838d60eu, 0x84c73814u, 0x42da7eceu}}
+, .jet = simplicity_eq_8
+, .cmr = {{0x9b50fe9du, 0x35b10a3du, 0xb866311cu, 0x537135d0u, 0x80e46143u, 0x68db2884u, 0x33d8bc64u, 0x9b9f8662u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_b
-, .cost = 120 /* milli weight units */
+, .cost = 95 /* milli weight units */
 }
 ,[FE_ADD] =
 { .tag = JET
-, .jet = fe_add
-, .cmr = {{0xa5e921d4u, 0xd2959af7u, 0x833df930u, 0x83689857u, 0x32ab0f33u, 0xbad8aa34u, 0x5b39f303u, 0x032be7aeu}}
+, .jet = simplicity_fe_add
+, .cmr = {{0xacadfcf4u, 0x805626e3u, 0x74590f33u, 0xcad7a983u, 0xa7320ac8u, 0x1ced3d02u, 0x54dc97e3u, 0xa2535a82u}}
 , .sourceIx = ty_w512
 , .targetIx = ty_w256
-, .cost = 908 /* milli weight units */
+, .cost = 755 /* milli weight units */
 }
 ,[FE_INVERT] =
 { .tag = JET
-, .jet = fe_invert
-, .cmr = {{0x21f42956u, 0x9d78e09fu, 0xb29013efu, 0x8a16c755u, 0x0edc4e19u, 0x0525715au, 0xbfb0c19bu, 0x21cfd9c2u}}
+, .jet = simplicity_fe_invert
+, .cmr = {{0x2ea76f67u, 0x975fcea3u, 0xbd46fbb1u, 0x4de81f49u, 0xfd08efcbu, 0xc0875ab2u, 0x1dc98976u, 0xa5309322u}}
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
-, .cost = 3375 /* milli weight units */
+, .cost = 3175 /* milli weight units */
 }
 ,[FE_IS_ODD] =
 { .tag = JET
-, .jet = fe_is_odd
-, .cmr = {{0x21d35d0au, 0x657f5defu, 0xacde6da3u, 0xfdb48d67u, 0x56f30690u, 0xb40270f0u, 0x1017e7e3u, 0x48d7585du}}
+, .jet = simplicity_fe_is_odd
+, .cmr = {{0x7edef020u, 0x5d4b8041u, 0x82369c31u, 0xc2190246u, 0x9b0f7a5bu, 0x29b5df90u, 0xc33f4bdau, 0xa05d7c03u}}
 , .sourceIx = ty_w256
 , .targetIx = ty_b
-, .cost = 544 /* milli weight units */
+, .cost = 290 /* milli weight units */
 }
 ,[FE_IS_ZERO] =
 { .tag = JET
-, .jet = fe_is_zero
-, .cmr = {{0xf5716282u, 0xba0d26bdu, 0x0671cdfeu, 0x1f118f45u, 0xbae79d10u, 0x9a6d9f39u, 0x7a4c4554u, 0x6f62af00u}}
+, .jet = simplicity_fe_is_zero
+, .cmr = {{0xa9430364u, 0x2e1a0f47u, 0x7915a2d2u, 0x51f8455cu, 0x56877ecau, 0x79ba40adu, 0xc382268cu, 0xab2d63b7u}}
 , .sourceIx = ty_w256
 , .targetIx = ty_b
-, .cost = 521 /* milli weight units */
+, .cost = 268 /* milli weight units */
 }
 ,[FE_MULTIPLY] =
 { .tag = JET
-, .jet = fe_multiply
-, .cmr = {{0xc176969cu, 0x337fbc6bu, 0x5ac8ed3eu, 0xa28ab3fdu, 0x94782064u, 0x3195d73bu, 0x862018f7u, 0x08487d23u}}
+, .jet = simplicity_fe_multiply
+, .cmr = {{0xac64d534u, 0x72aba489u, 0xa8acf3acu, 0x8ac79e8bu, 0x1182433eu, 0x5350c4c3u, 0x782d45adu, 0xf1c56dcbu}}
 , .sourceIx = ty_w512
-, .targetIx = ty_w256
-, .cost = 975 /* milli weight units */
-}
-,[FE_MULTIPLY_BETA] =
-{ .tag = JET
-, .jet = fe_multiply_beta
-, .cmr = {{0xc0fc7666u, 0x8d99d407u, 0x3f399344u, 0x3a68980bu, 0xa96e9760u, 0x1ed1a919u, 0xc4a23305u, 0x7b66fe23u}}
-, .sourceIx = ty_w256
-, .targetIx = ty_w256
-, .cost = 824 /* milli weight units */
-}
-,[FE_NEGATE] =
-{ .tag = JET
-, .jet = fe_negate
-, .cmr = {{0xd6ef8fc2u, 0x275ddf70u, 0x58b5e499u, 0xf10dd284u, 0x66f57b72u, 0x53a54407u, 0x798a4772u, 0x592184b9u}}
-, .sourceIx = ty_w256
-, .targetIx = ty_w256
-, .cost = 846 /* milli weight units */
-}
-,[FE_NORMALIZE] =
-{ .tag = JET
-, .jet = fe_normalize
-, .cmr = {{0xf498bcdfu, 0xf3506788u, 0x1bd96ee1u, 0xc91f4367u, 0x1e79186eu, 0x700ec4dau, 0x2dc0296au, 0x2dea91c7u}}
-, .sourceIx = ty_w256
-, .targetIx = ty_w256
-, .cost = 813 /* milli weight units */
-}
-,[FE_SQUARE] =
-{ .tag = JET
-, .jet = fe_square
-, .cmr = {{0x168a11b1u, 0x9c0fb97fu, 0x1099f863u, 0xa4c8e2f8u, 0x12425fbdu, 0x3d01bdedu, 0x3f460cb3u, 0x59bfdd89u}}
-, .sourceIx = ty_w256
-, .targetIx = ty_w256
-, .cost = 829 /* milli weight units */
-}
-,[FE_SQUARE_ROOT] =
-{ .tag = JET
-, .jet = fe_square_root
-, .cmr = {{0x3b46cde3u, 0x0674b777u, 0x16f2c8f6u, 0x14adbd16u, 0x61985d82u, 0xc55304d5u, 0x6e53ef5cu, 0x74c83e83u}}
-, .sourceIx = ty_w256
-, .targetIx = ty_mw256
-, .cost = 10698 /* milli weight units */
-}
-,[FULL_ADD_16] =
-{ .tag = JET
-, .jet = full_add_16
-, .cmr = {{0xf454a632u, 0xfd1928cdu, 0x6f070df6u, 0x8014288eu, 0x97b3e582u, 0xe7f03e98u, 0xed3234b6u, 0x282d0294u}}
-, .sourceIx = ty_pbw32
-, .targetIx = ty_pbw16
-, .cost = 193 /* milli weight units */
-}
-,[FULL_ADD_32] =
-{ .tag = JET
-, .jet = full_add_32
-, .cmr = {{0x9606b9e6u, 0x541e0356u, 0xed7608d5u, 0xbc6f9d4eu, 0xf68e0a3du, 0x235168d9u, 0xe75cae66u, 0x52dd0634u}}
-, .sourceIx = ty_pbw64
-, .targetIx = ty_pbw32
-, .cost = 197 /* milli weight units */
-}
-,[FULL_ADD_64] =
-{ .tag = JET
-, .jet = full_add_64
-, .cmr = {{0xf0f79532u, 0x001c02afu, 0xac650a62u, 0x801932afu, 0xc2c1b286u, 0xa31fef7au, 0xe08a47eau, 0x1e71387du}}
-, .sourceIx = ty_pbw128
-, .targetIx = ty_pbw64
-, .cost = 225 /* milli weight units */
-}
-,[FULL_ADD_8] =
-{ .tag = JET
-, .jet = full_add_8
-, .cmr = {{0xcdd080fdu, 0x8612e7d1u, 0x4ada3491u, 0x64a6d5afu, 0x6054d673u, 0x77e17665u, 0xc4722040u, 0x28bc2125u}}
-, .sourceIx = ty_pbw16
-, .targetIx = ty_pbw8
-, .cost = 190 /* milli weight units */
-}
-,[FULL_DECREMENT_16] =
-{ .tag = JET
-, .jet = full_decrement_16
-, .cmr = {{0xa7d1b9a6u, 0x09dcd367u, 0x66a167a3u, 0x7aa0e649u, 0xfbdd75f6u, 0x4691a9fbu, 0x6bf1663du, 0x329282a8u}}
-, .sourceIx = ty_pbw16
-, .targetIx = ty_pbw16
-, .cost = 107 /* milli weight units */
-}
-,[FULL_DECREMENT_32] =
-{ .tag = JET
-, .jet = full_decrement_32
-, .cmr = {{0xcbcfd7cau, 0x7372b2b1u, 0x80008e51u, 0x589880d3u, 0xb5399bd9u, 0xa8ddb9bcu, 0xda6132c2u, 0x2c777e0fu}}
-, .sourceIx = ty_pbw32
-, .targetIx = ty_pbw32
-, .cost = 153 /* milli weight units */
-}
-,[FULL_DECREMENT_64] =
-{ .tag = JET
-, .jet = full_decrement_64
-, .cmr = {{0x42df92d2u, 0xe7f42e57u, 0x9bd4c430u, 0x8cd2db6eu, 0x76774695u, 0xd6a56950u, 0xc5cf9203u, 0x002d41aau}}
-, .sourceIx = ty_pbw64
-, .targetIx = ty_pbw64
-, .cost = 151 /* milli weight units */
-}
-,[FULL_DECREMENT_8] =
-{ .tag = JET
-, .jet = full_decrement_8
-, .cmr = {{0xff58dd01u, 0x62bce9fbu, 0x73ed015bu, 0x7e5d3d1du, 0xc11b505cu, 0x932d490cu, 0xaadc1b5du, 0x893d1fadu}}
-, .sourceIx = ty_pbw8
-, .targetIx = ty_pbw8
-, .cost = 218 /* milli weight units */
-}
-,[FULL_INCREMENT_16] =
-{ .tag = JET
-, .jet = full_increment_16
-, .cmr = {{0x5453608eu, 0xeff967afu, 0xef4ae583u, 0x1aa7a9fcu, 0x75c2ba57u, 0xe1ac412au, 0xb5464d4du, 0xe93af4f9u}}
-, .sourceIx = ty_pbw16
-, .targetIx = ty_pbw16
-, .cost = 108 /* milli weight units */
-}
-,[FULL_INCREMENT_32] =
-{ .tag = JET
-, .jet = full_increment_32
-, .cmr = {{0x36323321u, 0x58f90ba4u, 0xdf623f08u, 0x6808d1d3u, 0x39f36d9au, 0x6f922723u, 0x3416f234u, 0xcdd25d98u}}
-, .sourceIx = ty_pbw32
-, .targetIx = ty_pbw32
-, .cost = 171 /* milli weight units */
-}
-,[FULL_INCREMENT_64] =
-{ .tag = JET
-, .jet = full_increment_64
-, .cmr = {{0x0637fcc5u, 0x52f62a8au, 0x08c6d070u, 0x667ed80eu, 0x47ba707cu, 0x120c4d65u, 0x6604a343u, 0x3bfc40a6u}}
-, .sourceIx = ty_pbw64
-, .targetIx = ty_pbw64
-, .cost = 161 /* milli weight units */
-}
-,[FULL_INCREMENT_8] =
-{ .tag = JET
-, .jet = full_increment_8
-, .cmr = {{0x291524e1u, 0x70d523fdu, 0x35c2577bu, 0x8ea3f447u, 0x8ec63206u, 0xc98fb5ccu, 0xcf77c209u, 0xbebd29efu}}
-, .sourceIx = ty_pbw8
-, .targetIx = ty_pbw8
-, .cost = 204 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_16_1] =
-{ .tag = JET
-, .jet = full_left_shift_16_1
-, .cmr = {{0x740e2381u, 0x1b3e62d4u, 0x91510fc9u, 0xedc4cb0au, 0x0eecfadfu, 0xd21bb27fu, 0x33e220b1u, 0xd87d14d7u}}
-, .sourceIx = ty_pw16b
-, .targetIx = ty_pbw16
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_16_2] =
-{ .tag = JET
-, .jet = full_left_shift_16_2
-, .cmr = {{0xc26e8ac3u, 0xff9cc518u, 0x719d4d7fu, 0xd149d802u, 0xf23f0b02u, 0x4999ed5du, 0xaf369210u, 0xacbe3345u}}
-, .sourceIx = ty_pw16w2
-, .targetIx = ty_pw2w16
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_16_4] =
-{ .tag = JET
-, .jet = full_left_shift_16_4
-, .cmr = {{0x5e570cbeu, 0x4c7ca94bu, 0xe0fc7b3eu, 0xe579bdd7u, 0x8426f0b7u, 0x67f48517u, 0x17bbfeaeu, 0xde91fe30u}}
-, .sourceIx = ty_pw16w4
-, .targetIx = ty_pw4w16
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_16_8] =
-{ .tag = JET
-, .jet = full_left_shift_16_8
-, .cmr = {{0x65adc553u, 0x48383b28u, 0xe8797f81u, 0xa9282d91u, 0x1b3f8fa6u, 0x13927251u, 0xd88e0c38u, 0xb029b705u}}
-, .sourceIx = ty_pw16w8
-, .targetIx = ty_pw8w16
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_32_1] =
-{ .tag = JET
-, .jet = full_left_shift_32_1
-, .cmr = {{0x72e0104eu, 0xfaf1dee4u, 0x1198ec3bu, 0x790373f6u, 0x48f13f5eu, 0xe06552fbu, 0x020bafb5u, 0x8497c25cu}}
-, .sourceIx = ty_pw32b
-, .targetIx = ty_pbw32
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_32_16] =
-{ .tag = JET
-, .jet = full_left_shift_32_16
-, .cmr = {{0xb9fb2169u, 0x908d9144u, 0xcc73e68fu, 0x753536f4u, 0x3cb2b74cu, 0xb62c6408u, 0x810670deu, 0x84ab09bdu}}
-, .sourceIx = ty_pw32w16
-, .targetIx = ty_pw16w32
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_32_2] =
-{ .tag = JET
-, .jet = full_left_shift_32_2
-, .cmr = {{0x11efdb81u, 0xb0c4dedau, 0x4d4f9847u, 0x5d7878efu, 0xa338694fu, 0xa0fd613eu, 0x1293225au, 0x4f462f7cu}}
-, .sourceIx = ty_pw32w2
-, .targetIx = ty_pw2w32
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_32_4] =
-{ .tag = JET
-, .jet = full_left_shift_32_4
-, .cmr = {{0x77e399d7u, 0xd83f7d11u, 0x44991dafu, 0xa3cc9811u, 0xc1632c29u, 0xe493a8afu, 0x98e98fbcu, 0x1d635fb4u}}
-, .sourceIx = ty_pw32w4
-, .targetIx = ty_pw4w32
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_32_8] =
-{ .tag = JET
-, .jet = full_left_shift_32_8
-, .cmr = {{0xba664cb1u, 0xc42eda17u, 0x9191ebc2u, 0xa110396du, 0xae58f906u, 0xa64106b3u, 0x0667790au, 0xc2f2382du}}
-, .sourceIx = ty_pw32w8
-, .targetIx = ty_pw8w32
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_64_1] =
-{ .tag = JET
-, .jet = full_left_shift_64_1
-, .cmr = {{0x79d38fe0u, 0x75839b22u, 0x7cffd92au, 0x8cdb5c8cu, 0x3522bcb4u, 0xd1e03beeu, 0xb6db6ab6u, 0x4ed4721fu}}
-, .sourceIx = ty_pw64b
-, .targetIx = ty_pbw64
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_64_16] =
-{ .tag = JET
-, .jet = full_left_shift_64_16
-, .cmr = {{0x21435662u, 0x45f5a1b9u, 0xdfeb0c75u, 0x878e21dbu, 0xe13804c2u, 0x6935ee47u, 0xcac9ad82u, 0x2d6dedb2u}}
-, .sourceIx = ty_pw64w16
-, .targetIx = ty_pw16w64
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_64_2] =
-{ .tag = JET
-, .jet = full_left_shift_64_2
-, .cmr = {{0x9c921649u, 0x15af0b15u, 0x4e1df564u, 0xd4dc9be9u, 0x80b39883u, 0x5c9988bbu, 0xb108d0cdu, 0x8145b330u}}
-, .sourceIx = ty_pw64w2
-, .targetIx = ty_pw2w64
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_64_32] =
-{ .tag = JET
-, .jet = full_left_shift_64_32
-, .cmr = {{0xd0d016e9u, 0xc78cd112u, 0xb4dd91a8u, 0x359f805cu, 0x68415b85u, 0x7a799b00u, 0x394954dcu, 0xd290acbcu}}
-, .sourceIx = ty_pw64w32
-, .targetIx = ty_pw32w64
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_64_4] =
-{ .tag = JET
-, .jet = full_left_shift_64_4
-, .cmr = {{0x0f1f7d37u, 0x4e82868du, 0x71e7e7c0u, 0x3221b150u, 0x594b6304u, 0x45b1b163u, 0x56cf3545u, 0xbd939263u}}
-, .sourceIx = ty_pw64w4
-, .targetIx = ty_pw4w64
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_64_8] =
-{ .tag = JET
-, .jet = full_left_shift_64_8
-, .cmr = {{0xad7b4438u, 0xb73f6f9eu, 0x42f64c70u, 0x530475eeu, 0x08936e47u, 0x63e5b73eu, 0xa4bc8383u, 0xa2b963d5u}}
-, .sourceIx = ty_pw64w8
-, .targetIx = ty_pw8w64
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_8_1] =
-{ .tag = JET
-, .jet = full_left_shift_8_1
-, .cmr = {{0x2113681au, 0x11624e60u, 0x6030c470u, 0xd68f6061u, 0x232f71cfu, 0xabc50571u, 0x92c6c8bdu, 0x1d73b7e1u}}
-, .sourceIx = ty_pw8b
-, .targetIx = ty_pbw8
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_8_2] =
-{ .tag = JET
-, .jet = full_left_shift_8_2
-, .cmr = {{0x368368c9u, 0x4b040e81u, 0xb948d737u, 0xc193c042u, 0x83ec80a2u, 0x8fd3a021u, 0xb0b8c1abu, 0xcf5edcd3u}}
-, .sourceIx = ty_pw8w2
-, .targetIx = ty_pw2w8
-, .cost = 150 /* milli weight units */
-}
-,[FULL_LEFT_SHIFT_8_4] =
-{ .tag = JET
-, .jet = full_left_shift_8_4
-, .cmr = {{0x8f854d58u, 0xf968b4beu, 0x3b2021fbu, 0x22142dd3u, 0xe68aa819u, 0x7b5475b7u, 0x050b02e1u, 0xe5caee47u}}
-, .sourceIx = ty_pw8w4
-, .targetIx = ty_pw4w8
-, .cost = 150 /* milli weight units */
-}
-,[FULL_MULTIPLY_16] =
-{ .tag = JET
-, .jet = full_multiply_16
-, .cmr = {{0x32cf7f50u, 0x894ea2c4u, 0x61a05466u, 0xbbfa1e4eu, 0x1b049957u, 0x523f6493u, 0x7a8b5427u, 0x3dd31b37u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w32
-, .cost = 208 /* milli weight units */
-}
-,[FULL_MULTIPLY_32] =
-{ .tag = JET
-, .jet = full_multiply_32
-, .cmr = {{0xdea1afc6u, 0xfd546c75u, 0xe0b2d8e4u, 0x18f26179u, 0xd6dbe905u, 0x8b079aa9u, 0xab80eaa6u, 0xc05f39cbu}}
-, .sourceIx = ty_w128
-, .targetIx = ty_w64
-, .cost = 213 /* milli weight units */
-}
-,[FULL_MULTIPLY_64] =
-{ .tag = JET
-, .jet = full_multiply_64
-, .cmr = {{0x813d74d6u, 0xc3064cf7u, 0xc5db2ddau, 0x964ed0e2u, 0xd5a2491bu, 0x89432921u, 0x9237cb1au, 0x91ee0934u}}
-, .sourceIx = ty_w256
-, .targetIx = ty_w128
-, .cost = 209 /* milli weight units */
-}
-,[FULL_MULTIPLY_8] =
-{ .tag = JET
-, .jet = full_multiply_8
-, .cmr = {{0xf7f39d95u, 0xdab57308u, 0x52e9cc7eu, 0x74c0743bu, 0x8fb3f754u, 0x87120ba3u, 0x26ff600au, 0xd8b1f3e6u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w16
-, .cost = 190 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_16_1] =
-{ .tag = JET
-, .jet = full_right_shift_16_1
-, .cmr = {{0xb8074423u, 0xe6748a6au, 0xa54ec574u, 0x1feef25au, 0x262fdecbu, 0xfce39124u, 0xe610238au, 0x3b0a23fcu}}
-, .sourceIx = ty_pbw16
-, .targetIx = ty_pw16b
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_16_2] =
-{ .tag = JET
-, .jet = full_right_shift_16_2
-, .cmr = {{0x3fcf985eu, 0xe0c72ca4u, 0x1ddf6c89u, 0xd0f0f69du, 0x5065876eu, 0x3b6020ecu, 0xc9bf059eu, 0x8f9719c6u}}
-, .sourceIx = ty_pw2w16
-, .targetIx = ty_pw16w2
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_16_4] =
-{ .tag = JET
-, .jet = full_right_shift_16_4
-, .cmr = {{0xa30c7c29u, 0xd0eeac29u, 0x5258b2b6u, 0x1d0b5413u, 0x46f407c0u, 0x848d448eu, 0x13e9774cu, 0x1c969679u}}
-, .sourceIx = ty_pw4w16
-, .targetIx = ty_pw16w4
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_16_8] =
-{ .tag = JET
-, .jet = full_right_shift_16_8
-, .cmr = {{0x5b8808cau, 0xda5587b3u, 0x6d1a6fadu, 0x66ae4da0u, 0x8d412364u, 0x4c0bdd59u, 0x772a70aau, 0x7432e715u}}
-, .sourceIx = ty_pw8w16
-, .targetIx = ty_pw16w8
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_32_1] =
-{ .tag = JET
-, .jet = full_right_shift_32_1
-, .cmr = {{0x32afd0efu, 0x94df51b7u, 0xd35c00e5u, 0x61a8390cu, 0x5cf50f93u, 0x0b30d786u, 0x8804b580u, 0x49375840u}}
-, .sourceIx = ty_pbw32
-, .targetIx = ty_pw32b
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_32_16] =
-{ .tag = JET
-, .jet = full_right_shift_32_16
-, .cmr = {{0x44d179a8u, 0x90f7812fu, 0x151331b5u, 0x5fc07eb4u, 0xe4d7814eu, 0xb683da28u, 0x8f8fe7cdu, 0x55b43906u}}
-, .sourceIx = ty_pw16w32
-, .targetIx = ty_pw32w16
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_32_2] =
-{ .tag = JET
-, .jet = full_right_shift_32_2
-, .cmr = {{0x33c661dfu, 0x3a32cae5u, 0x5b52a5f2u, 0x632154ccu, 0x85b65913u, 0x87bc2b34u, 0x8330c870u, 0xa6f6706fu}}
-, .sourceIx = ty_pw2w32
-, .targetIx = ty_pw32w2
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_32_4] =
-{ .tag = JET
-, .jet = full_right_shift_32_4
-, .cmr = {{0xe4bebf16u, 0x935f67beu, 0x7d8c86bcu, 0x588adbcfu, 0x8e597539u, 0x257fddabu, 0x9fb04372u, 0xc77012d3u}}
-, .sourceIx = ty_pw4w32
-, .targetIx = ty_pw32w4
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_32_8] =
-{ .tag = JET
-, .jet = full_right_shift_32_8
-, .cmr = {{0xabcffb08u, 0x4a239642u, 0x16d56273u, 0x305c0c8bu, 0x03bdabdau, 0xd69ff7e9u, 0x42f0d2cfu, 0x080febccu}}
-, .sourceIx = ty_pw8w32
-, .targetIx = ty_pw32w8
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_64_1] =
-{ .tag = JET
-, .jet = full_right_shift_64_1
-, .cmr = {{0x37688260u, 0xc53af06bu, 0x856d9022u, 0xca5d87f8u, 0xa687ee53u, 0xfaca1866u, 0xec842a7cu, 0x890a4b70u}}
-, .sourceIx = ty_pbw64
-, .targetIx = ty_pw64b
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_64_16] =
-{ .tag = JET
-, .jet = full_right_shift_64_16
-, .cmr = {{0x417bfb71u, 0x5a20b10du, 0x4881f5c3u, 0x496c63efu, 0xee4ab500u, 0x3dfd0a16u, 0xb85f94f8u, 0xe5b0667cu}}
-, .sourceIx = ty_pw16w64
-, .targetIx = ty_pw64w16
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_64_2] =
-{ .tag = JET
-, .jet = full_right_shift_64_2
-, .cmr = {{0xceca2567u, 0xb91a63e9u, 0xca44035eu, 0xb59e2f22u, 0xd81e37e1u, 0x96595a74u, 0x8cea4a46u, 0x84a215b0u}}
-, .sourceIx = ty_pw2w64
-, .targetIx = ty_pw64w2
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_64_32] =
-{ .tag = JET
-, .jet = full_right_shift_64_32
-, .cmr = {{0x03969937u, 0x84023d47u, 0xe8514b45u, 0x9298198du, 0x33bd71e6u, 0xf756d08eu, 0xdf462a8fu, 0x62a21b80u}}
-, .sourceIx = ty_pw32w64
-, .targetIx = ty_pw64w32
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_64_4] =
-{ .tag = JET
-, .jet = full_right_shift_64_4
-, .cmr = {{0xdee4dad6u, 0x7a5ddcc3u, 0x5da1a790u, 0x63ca975fu, 0x8134c8eau, 0xc56a9f55u, 0x5d2b0e13u, 0xda10994du}}
-, .sourceIx = ty_pw4w64
-, .targetIx = ty_pw64w4
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_64_8] =
-{ .tag = JET
-, .jet = full_right_shift_64_8
-, .cmr = {{0x9cd77803u, 0xfc389c94u, 0xfff286dau, 0x0b374b89u, 0xfeeb3daau, 0x38ce67cau, 0xb0220dabu, 0xeefe23a2u}}
-, .sourceIx = ty_pw8w64
-, .targetIx = ty_pw64w8
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_8_1] =
-{ .tag = JET
-, .jet = full_right_shift_8_1
-, .cmr = {{0xee23fff0u, 0x7de53cc3u, 0x7109a47fu, 0x9fde3c74u, 0x447ae831u, 0xcee9ac4du, 0xb790cde8u, 0xb15323b2u}}
-, .sourceIx = ty_pbw8
-, .targetIx = ty_pw8b
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_8_2] =
-{ .tag = JET
-, .jet = full_right_shift_8_2
-, .cmr = {{0x25e1dea1u, 0x08c5f89cu, 0xce5b3d5bu, 0x0e0792beu, 0x37901a5au, 0x65def904u, 0xdd51710au, 0x355ab55fu}}
-, .sourceIx = ty_pw2w8
-, .targetIx = ty_pw8w2
-, .cost = 150 /* milli weight units */
-}
-,[FULL_RIGHT_SHIFT_8_4] =
-{ .tag = JET
-, .jet = full_right_shift_8_4
-, .cmr = {{0xd7f0a83cu, 0x4104543eu, 0xc75b5ee7u, 0x5bf5f791u, 0x5d65fa50u, 0xc2095de2u, 0xa35670a5u, 0x05be129au}}
-, .sourceIx = ty_pw4w8
-, .targetIx = ty_pw8w4
-, .cost = 150 /* milli weight units */
-}
-,[FULL_SUBTRACT_16] =
-{ .tag = JET
-, .jet = full_subtract_16
-, .cmr = {{0x95ea5e54u, 0xc5603f2fu, 0x78acf6b8u, 0xa87a63b3u, 0xacc7b65fu, 0x2b87b690u, 0x4b9830fau, 0x91212c8cu}}
-, .sourceIx = ty_pbw32
-, .targetIx = ty_pbw16
-, .cost = 201 /* milli weight units */
-}
-,[FULL_SUBTRACT_32] =
-{ .tag = JET
-, .jet = full_subtract_32
-, .cmr = {{0x32963526u, 0xfc6089f5u, 0xec7da584u, 0xfbee3237u, 0x631c9b12u, 0x81f6f446u, 0xd99c9b50u, 0xc80c76dbu}}
-, .sourceIx = ty_pbw64
-, .targetIx = ty_pbw32
-, .cost = 170 /* milli weight units */
-}
-,[FULL_SUBTRACT_64] =
-{ .tag = JET
-, .jet = full_subtract_64
-, .cmr = {{0x15d48a43u, 0x2479b451u, 0xa6e2c18fu, 0x43fb0dfcu, 0x9aeb6fceu, 0x04035027u, 0xb033aa99u, 0xfb143447u}}
-, .sourceIx = ty_pbw128
-, .targetIx = ty_pbw64
-, .cost = 231 /* milli weight units */
-}
-,[FULL_SUBTRACT_8] =
-{ .tag = JET
-, .jet = full_subtract_8
-, .cmr = {{0x2bd4f0b3u, 0xa0a758acu, 0x39f1581bu, 0x2c34d7f4u, 0x14db4d8eu, 0x1bc119d7u, 0xf8929135u, 0x480e9affu}}
-, .sourceIx = ty_pbw16
-, .targetIx = ty_pbw8
-, .cost = 141 /* milli weight units */
-}
-,[GE_IS_ON_CURVE] =
-{ .tag = JET
-, .jet = ge_is_on_curve
-, .cmr = {{0x0572aef3u, 0x6300508cu, 0x96eda4a4u, 0xfec8579du, 0x8d8a43bdu, 0x540cb6ddu, 0xecc82a49u, 0xe668f7deu}}
-, .sourceIx = ty_w512
-, .targetIx = ty_b
-, .cost = 763 /* milli weight units */
-}
-,[GE_NEGATE] =
-{ .tag = JET
-, .jet = ge_negate
-, .cmr = {{0x90f33d91u, 0x0f858f9bu, 0x3b840ddbu, 0xc03d8a39u, 0xaf810214u, 0x853bad3cu, 0x905f1829u, 0x6fdfcb58u}}
-, .sourceIx = ty_w512
-, .targetIx = ty_w512
-, .cost = 1278 /* milli weight units */
-}
-,[GEJ_ADD] =
-{ .tag = JET
-, .jet = gej_add
-, .cmr = {{0x00871c07u, 0x66286a50u, 0x0acea05fu, 0x7a1fd98cu, 0x3e5246c1u, 0x946771e4u, 0x738e7582u, 0x091cca0du}}
-, .sourceIx = ty_ppw512w256pw512w256
-, .targetIx = ty_pw512w256
-, .cost = 3292 /* milli weight units */
-}
-,[GEJ_DOUBLE] =
-{ .tag = JET
-, .jet = gej_double
-, .cmr = {{0x5fc480c5u, 0x05b67dddu, 0xb9ce84b0u, 0xa8ee5a7eu, 0x4ef0e936u, 0x59d44521u, 0xe6a664acu, 0x5d6556f8u}}
-, .sourceIx = ty_pw512w256
-, .targetIx = ty_pw512w256
-, .cost = 2103 /* milli weight units */
-}
-,[GEJ_EQUIV] =
-{ .tag = JET
-, .jet = gej_equiv
-, .cmr = {{0xe87f98d9u, 0x1d9ebdecu, 0x167aba00u, 0xf8e8fc6du, 0xab8079c7u, 0x6b4d9c3du, 0x88f1f84cu, 0x8e6cd274u}}
-, .sourceIx = ty_ppw512w256pw512w256
-, .targetIx = ty_b
-, .cost = 1270 /* milli weight units */
-}
-,[GEJ_GE_ADD] =
-{ .tag = JET
-, .jet = gej_ge_add
-, .cmr = {{0xa24d049fu, 0xf1e4cf37u, 0x84c1b7d6u, 0xd1ba09fdu, 0x17fecfebu, 0x5580eab5u, 0xf11e8f8eu, 0xb9d9adefu}}
-, .sourceIx = ty_ppw512w256w512
-, .targetIx = ty_pw512w256
-, .cost = 2890 /* milli weight units */
-}
-,[GEJ_GE_ADD_EX] =
-{ .tag = JET
-, .jet = gej_ge_add_ex
-, .cmr = {{0x1e0e26d0u, 0xb29ae63du, 0x41e6767eu, 0x016e7e24u, 0x86e4f5d8u, 0xdc2cf665u, 0x02220316u, 0x40f1733au}}
-, .sourceIx = ty_ppw512w256w512
-, .targetIx = ty_pw256pw512w256
-, .cost = 3114 /* milli weight units */
-}
-,[GEJ_GE_EQUIV] =
-{ .tag = JET
-, .jet = gej_ge_equiv
-, .cmr = {{0x3b51dacdu, 0x29ff5cd3u, 0xc320455fu, 0xc3fa1ae9u, 0x612129aau, 0x8c8e2374u, 0x60c3ca2au, 0xd54e8f58u}}
-, .sourceIx = ty_ppw512w256w512
-, .targetIx = ty_b
-, .cost = 1270 /* milli weight units */
-}
-,[GEJ_INFINITY] =
-{ .tag = JET
-, .jet = gej_infinity
-, .cmr = {{0x88d4642cu, 0xfc2b52d0u, 0x90ce6e89u, 0x5c20da2eu, 0xfb0df6feu, 0x84f22722u, 0xbc46111cu, 0xc6be5cdau}}
-, .sourceIx = ty_u
-, .targetIx = ty_pw512w256
-, .cost = 971 /* milli weight units */
-}
-,[GEJ_IS_INFINITY] =
-{ .tag = JET
-, .jet = gej_is_infinity
-, .cmr = {{0x80f528e5u, 0xd85672dcu, 0x8d9c264fu, 0x67c7b727u, 0x00faad89u, 0x972a7e1du, 0x27d049c9u, 0x474b6cd9u}}
-, .sourceIx = ty_pw512w256
-, .targetIx = ty_b
-, .cost = 923 /* milli weight units */
-}
-,[GEJ_IS_ON_CURVE] =
-{ .tag = JET
-, .jet = gej_is_on_curve
-, .cmr = {{0x70ce4ffcu, 0xe2497cc6u, 0x2f170c57u, 0x14ff2cfeu, 0xce90b4cbu, 0x89a6a22fu, 0xac26b1b5u, 0xc66faa10u}}
-, .sourceIx = ty_pw512w256
-, .targetIx = ty_b
-, .cost = 1106 /* milli weight units */
-}
-,[GEJ_NEGATE] =
-{ .tag = JET
-, .jet = gej_negate
-, .cmr = {{0xad53f179u, 0x3fe07b8du, 0x672d9f7bu, 0x0741e9edu, 0x61557effu, 0x5b7296c5u, 0x68e09b3du, 0x19cf7124u}}
-, .sourceIx = ty_pw512w256
-, .targetIx = ty_pw512w256
-, .cost = 1823 /* milli weight units */
-}
-,[GEJ_NORMALIZE] =
-{ .tag = JET
-, .jet = gej_normalize
-, .cmr = {{0x0333df98u, 0xa8060c93u, 0x15c5fdb8u, 0x3ebffe34u, 0x07bf9c33u, 0x6bf4bb92u, 0x2df58588u, 0x7e1acdc7u}}
-, .sourceIx = ty_pw512w256
-, .targetIx = ty_mw512
-, .cost = 4337 /* milli weight units */
-}
-,[GEJ_RESCALE] =
-{ .tag = JET
-, .jet = gej_rescale
-, .cmr = {{0xf00ad18fu, 0xb4928cfau, 0xd02c5b9du, 0x8b6fd4b0u, 0x5d7cb549u, 0xee65984du, 0x022a6df9u, 0x8712b6d9u}}
-, .sourceIx = ty_ppw512w256w256
-, .targetIx = ty_pw512w256
-, .cost = 2315 /* milli weight units */
-}
-,[GEJ_X_EQUIV] =
-{ .tag = JET
-, .jet = gej_x_equiv
-, .cmr = {{0xe31c0f2cu, 0x5d08139bu, 0x4feb0985u, 0x2c06b6aau, 0x00b1d13eu, 0x62babd99u, 0x828212dcu, 0xff82217cu}}
-, .sourceIx = ty_pw256pw512w256
-, .targetIx = ty_b
-, .cost = 1270 /* milli weight units */
-}
-,[GEJ_Y_IS_ODD] =
-{ .tag = JET
-, .jet = gej_y_is_odd
-, .cmr = {{0xe34c867du, 0xe16b2f65u, 0x6109a738u, 0x72b0b5bau, 0x55ca3c2du, 0xbea9c2c6u, 0xe4cb19adu, 0x18c06f56u}}
-, .sourceIx = ty_pw512w256
-, .targetIx = ty_b
-, .cost = 3665 /* milli weight units */
-}
-,[GENERATE] =
-{ .tag = JET
-, .jet = generate
-, .cmr = {{0xa3c55befu, 0x32a350d9u, 0x0d5c3dacu, 0x24767a03u, 0x867faf7au, 0x73277703u, 0x895a27cbu, 0x6b44252du}}
-, .sourceIx = ty_w256
-, .targetIx = ty_pw512w256
-, .cost = 51706 /* milli weight units */
-}
-,[GENESIS_BLOCK_HASH] =
-{ .tag = JET
-, .jet = genesis_block_hash
-, .cmr = {{0x336ff73du, 0x002f3754u, 0x9c481fd4u, 0xaaf15a58u, 0x60779df2u, 0x83344871u, 0x41f409b4u, 0xb29efb65u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 395 /* milli weight units */
-}
-,[HIGH_1] =
-{ .tag = JET
-, .jet = high_1
-, .cmr = {{0x97a143f0u, 0x4cb603f6u, 0x5f84a80du, 0x31c3364fu, 0x8fda2297u, 0x3a9ae695u, 0xa58189c3u, 0x1463a8bfu}}
-, .sourceIx = ty_u
-, .targetIx = ty_b
-, .cost = 169 /* milli weight units */
-}
-,[HIGH_16] =
-{ .tag = JET
-, .jet = high_16
-, .cmr = {{0x6210ac71u, 0x36586c73u, 0xa09c9421u, 0xa40e308cu, 0x4491eaceu, 0x9b5b3695u, 0xd61f4c81u, 0x96a69dc8u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w16
-, .cost = 159 /* milli weight units */
-}
-,[HIGH_32] =
-{ .tag = JET
-, .jet = high_32
-, .cmr = {{0x719424b1u, 0xacd35b13u, 0x73580690u, 0xa7ec0b8fu, 0xb486145cu, 0x9cde728du, 0xa7984693u, 0xe95fc7c0u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w32
-, .cost = 121 /* milli weight units */
-}
-,[HIGH_64] =
-{ .tag = JET
-, .jet = high_64
-, .cmr = {{0x8c5d4409u, 0x34dfdcf2u, 0x75a21cf0u, 0x87ac127du, 0xa75715b5u, 0xdac9c693u, 0xc2afd7c7u, 0x18dc0ffbu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w64
-, .cost = 110 /* milli weight units */
-}
-,[HIGH_8] =
-{ .tag = JET
-, .jet = high_8
-, .cmr = {{0x3a5ce00eu, 0x15e31808u, 0x51c20021u, 0x1f1c82dau, 0xa33ec876u, 0x38248a4bu, 0xf113407cu, 0x6b16ac4fu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w8
-, .cost = 169 /* milli weight units */
-}
-,[INCREMENT_16] =
-{ .tag = JET
-, .jet = increment_16
-, .cmr = {{0x80f6cbbcu, 0x09b78ceau, 0x76c81390u, 0xd3ed989bu, 0x70e43916u, 0x1effaf9au, 0x62c64b1bu, 0x959cd030u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_pbw16
-, .cost = 129 /* milli weight units */
-}
-,[INCREMENT_32] =
-{ .tag = JET
-, .jet = increment_32
-, .cmr = {{0x5a963ca4u, 0xada6619au, 0x805346e8u, 0x099503e4u, 0x7825be5cu, 0xf3c9a89bu, 0xfdbe2f19u, 0x1c32a2e0u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_pbw32
-, .cost = 195 /* milli weight units */
-}
-,[INCREMENT_64] =
-{ .tag = JET
-, .jet = increment_64
-, .cmr = {{0x86575236u, 0x83c2a05cu, 0x0e0998cdu, 0xa7b94e8bu, 0x0365ee83u, 0x22a14c5au, 0x3722b515u, 0xbb681f74u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_pbw64
-, .cost = 187 /* milli weight units */
-}
-,[INCREMENT_8] =
-{ .tag = JET
-, .jet = increment_8
-, .cmr = {{0xd1db8a9eu, 0xced17e21u, 0x996526bcu, 0x73be8e57u, 0x98688da3u, 0xc2ef8b8du, 0x5ba255d1u, 0x1ed8183eu}}
-, .sourceIx = ty_w8
-, .targetIx = ty_pbw8
-, .cost = 155 /* milli weight units */
-}
-,[INPUT_AMOUNT] =
-{ .tag = JET
-, .jet = input_amount
-, .cmr = {{0xbe740f91u, 0xe4d7b4b7u, 0xe62cd14au, 0x61cc00a2u, 0x4c3a1fb7u, 0x6c62f77bu, 0x9c1f92a2u, 0x77f55ff0u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mpspbw256w256spbw256w64
-, .cost = 359 /* milli weight units */
-}
-,[INPUT_AMOUNTS_HASH] =
-{ .tag = JET
-, .jet = input_amounts_hash
-, .cmr = {{0x5a06d0b9u, 0xf11a19fdu, 0x32e83e9du, 0x28111bd2u, 0x5f46528bu, 0x65404504u, 0xc4c6e68eu, 0x645bb04eu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 280 /* milli weight units */
-}
-,[INPUT_ANNEX_HASH] =
-{ .tag = JET
-, .jet = input_annex_hash
-, .cmr = {{0x21769e4fu, 0x92825d7au, 0x82155e10u, 0x2e10605au, 0x8285530fu, 0xfdf75baau, 0x2a8cded3u, 0x628db316u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
-, .cost = 122 /* milli weight units */
-}
-,[INPUT_ANNEXES_HASH] =
-{ .tag = JET
-, .jet = input_annexes_hash
-, .cmr = {{0x260dc71du, 0x414eb859u, 0xc4a2cb33u, 0xca7406cfu, 0x067bc3c2u, 0x1c339903u, 0x5febafd4u, 0x0e9029c9u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 290 /* milli weight units */
-}
-,[INPUT_ASSET] =
-{ .tag = JET
-, .jet = input_asset
-, .cmr = {{0x6072d81bu, 0x12015ab2u, 0x97efa1e8u, 0xa7713804u, 0x26ef0a12u, 0xf90d61e1u, 0xd419d082u, 0xe67b7565u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mspbw256w256
-, .cost = 220 /* milli weight units */
-}
-,[INPUT_OUTPOINTS_HASH] =
-{ .tag = JET
-, .jet = input_outpoints_hash
-, .cmr = {{0xdad26093u, 0x0c5f4d23u, 0x8d83565au, 0x6757e147u, 0x0030cb29u, 0xe0fd1e18u, 0xfc46edf3u, 0x1e650557u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 408 /* milli weight units */
-}
-,[INPUT_PEGIN] =
-{ .tag = JET
-, .jet = input_pegin
-, .cmr = {{0x98f0575au, 0x0a978d26u, 0x626b79c8u, 0x424b4a5du, 0x16d94244u, 0xca606c8au, 0x63bee7e4u, 0xb0509122u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
-, .cost = 235 /* milli weight units */
-}
-,[INPUT_PREV_OUTPOINT] =
-{ .tag = JET
-, .jet = input_prev_outpoint
-, .cmr = {{0x7ad26d34u, 0x37c5aebau, 0x3b3d6b54u, 0x128d4d5eu, 0x9b99e9edu, 0x50fe7e07u, 0x674cc734u, 0x8055d895u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mpw256w32
-, .cost = 326 /* milli weight units */
-}
-,[INPUT_SCRIPT_HASH] =
-{ .tag = JET
-, .jet = input_script_hash
-, .cmr = {{0xa004c23cu, 0x28e3c938u, 0x9c2a7de1u, 0xf5091364u, 0x3a7ec259u, 0x77a31bd9u, 0x12e148d6u, 0x7b82b6dau}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mw256
-, .cost = 285 /* milli weight units */
-}
-,[INPUT_SCRIPT_SIG_HASH] =
-{ .tag = JET
-, .jet = input_script_sig_hash
-, .cmr = {{0x25a59e2au, 0xed6be14cu, 0xc0b08f91u, 0xf81ce371u, 0xe396fe38u, 0xd719c33du, 0x38502866u, 0x8ae2eb87u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mw256
-, .cost = 231 /* milli weight units */
-}
-,[INPUT_SCRIPT_SIGS_HASH] =
-{ .tag = JET
-, .jet = input_script_sigs_hash
-, .cmr = {{0xc47dc33eu, 0x1f780263u, 0x4928f1f5u, 0xd638558bu, 0x8f417eb2u, 0xbff69f54u, 0x2e8ceb98u, 0xbe1f02cdu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 283 /* milli weight units */
-}
-,[INPUT_SCRIPTS_HASH] =
-{ .tag = JET
-, .jet = input_scripts_hash
-, .cmr = {{0xcfa056e1u, 0x249e8eb1u, 0xcdb7fee1u, 0x2383efa6u, 0x62028e7au, 0xdfcefa4fu, 0x8aa519f6u, 0x51cab9beu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 280 /* milli weight units */
-}
-,[INPUT_SEQUENCE] =
-{ .tag = JET
-, .jet = input_sequence
-, .cmr = {{0x9f7a6694u, 0xe5991343u, 0x57c5ee0bu, 0x1ee6d0aeu, 0x5f954d5cu, 0xd1b10e09u, 0x20197a33u, 0xec877a4cu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mw32
-, .cost = 144 /* milli weight units */
-}
-,[INPUT_SEQUENCES_HASH] =
-{ .tag = JET
-, .jet = input_sequences_hash
-, .cmr = {{0x4b8b17e2u, 0x5e918156u, 0xd5625586u, 0x019aa0f7u, 0x6b79a53au, 0x24495de3u, 0xe39c48bbu, 0x03722edau}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 292 /* milli weight units */
-}
-,[INPUT_UTXOS_HASH] =
-{ .tag = JET
-, .jet = input_utxos_hash
-, .cmr = {{0xde24825fu, 0xdb9d56dau, 0x3638bd48u, 0x0005c3dbu, 0x574fdf11u, 0xc15303b2u, 0x42e29bdbu, 0xc51df389u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 409 /* milli weight units */
-}
-,[INPUTS_HASH] =
-{ .tag = JET
-, .jet = inputs_hash
-, .cmr = {{0x5678275eu, 0xde8721f1u, 0xabda5cb4u, 0x60b30238u, 0x11d23e47u, 0xcc1f11c1u, 0xf4458035u, 0xcdc3d7ecu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 289 /* milli weight units */
-}
-,[INTERNAL_KEY] =
-{ .tag = JET
-, .jet = internal_key
-, .cmr = {{0x6e048732u, 0x5df1ac05u, 0xd2d7decbu, 0xee3fc1f5u, 0xd63df047u, 0xf69c22b4u, 0xd93bc47cu, 0xbab44941u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 272 /* milli weight units */
-}
-,[IS_ONE_16] =
-{ .tag = JET
-, .jet = is_one_16
-, .cmr = {{0x877cd001u, 0xd5e7b74eu, 0xdd1a4a5cu, 0x965641d4u, 0xfb53682du, 0x7fefae50u, 0xb5141218u, 0xc04be5afu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_b
-, .cost = 117 /* milli weight units */
-}
-,[IS_ONE_32] =
-{ .tag = JET
-, .jet = is_one_32
-, .cmr = {{0x83354e97u, 0xd614600au, 0x49894ec2u, 0xc9d1980fu, 0x9c4c928cu, 0x1561eecau, 0xc99c1681u, 0x9c2b0791u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_b
-, .cost = 136 /* milli weight units */
-}
-,[IS_ONE_64] =
-{ .tag = JET
-, .jet = is_one_64
-, .cmr = {{0xb355f602u, 0xec76c4c4u, 0xce707720u, 0xfd543432u, 0x22a7c8cfu, 0xca439451u, 0xf23f9854u, 0x395078bau}}
-, .sourceIx = ty_w64
-, .targetIx = ty_b
-, .cost = 163 /* milli weight units */
-}
-,[IS_ONE_8] =
-{ .tag = JET
-, .jet = is_one_8
-, .cmr = {{0xf2459cf3u, 0x5b972029u, 0xfbb22e82u, 0x191ace11u, 0x732b1e08u, 0x346e21cfu, 0x0d305b41u, 0xfae87990u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_b
-, .cost = 160 /* milli weight units */
-}
-,[IS_ZERO_16] =
-{ .tag = JET
-, .jet = is_zero_16
-, .cmr = {{0x6ed03325u, 0x6fe645b5u, 0xec3f5950u, 0x8c60192au, 0xc8763008u, 0x915c8115u, 0xe929330cu, 0x0fcd4838u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_b
-, .cost = 143 /* milli weight units */
-}
-,[IS_ZERO_32] =
-{ .tag = JET
-, .jet = is_zero_32
-, .cmr = {{0x1af358a0u, 0x6be93ac6u, 0xf37cbb7du, 0x254d7bf9u, 0xd7187738u, 0xbaf1f25du, 0x0b67c9ffu, 0xe00f6a62u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_b
-, .cost = 135 /* milli weight units */
-}
-,[IS_ZERO_64] =
-{ .tag = JET
-, .jet = is_zero_64
-, .cmr = {{0xc1100cfcu, 0x16203ca4u, 0x44f16082u, 0x645b724du, 0x3ecd23dfu, 0x5d0ccf91u, 0xf35c5d9bu, 0x5a02a2f2u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_b
-, .cost = 136 /* milli weight units */
-}
-,[IS_ZERO_8] =
-{ .tag = JET
-, .jet = is_zero_8
-, .cmr = {{0x4d58680du, 0x8e1e8618u, 0xc43ce525u, 0xf78661a3u, 0x01486758u, 0x61a612d1u, 0xbfcfe3bbu, 0x5fa4ca95u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_b
-, .cost = 163 /* milli weight units */
-}
-,[ISSUANCE] =
-{ .tag = JET
-, .jet = issuance
-, .cmr = {{0x1dd033d3u, 0x2cd8e890u, 0x2f5ecb18u, 0x3385ec2bu, 0x0c27da38u, 0xae8e7b59u, 0x3f68f9b1u, 0xa4e62051u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmb
-, .cost = 116 /* milli weight units */
-}
-,[ISSUANCE_ASSET] =
-{ .tag = JET
-, .jet = issuance_asset
-, .cmr = {{0x7a3699d0u, 0x71030b58u, 0xd9f41ae1u, 0x1c637bacu, 0x977849f6u, 0x9a0487b1u, 0x9d2336d1u, 0xa7c6b705u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
-, .cost = 241 /* milli weight units */
-}
-,[ISSUANCE_ASSET_AMOUNT] =
-{ .tag = JET
-, .jet = issuance_asset_amount
-, .cmr = {{0x75bd9955u, 0x9c022dbfu, 0x5d5cf951u, 0xcb33ea37u, 0x05058bf8u, 0x1fbc74d5u, 0x9bbfba9eu, 0x37a1be0du}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmspbw256w64
-, .cost = 261 /* milli weight units */
-}
-,[ISSUANCE_ASSET_AMOUNTS_HASH] =
-{ .tag = JET
-, .jet = issuance_asset_amounts_hash
-, .cmr = {{0x55975fb4u, 0x0019934au, 0x06a15ff6u, 0xb51c6453u, 0xfa435ac6u, 0x7f210d22u, 0xdf552d43u, 0x9355a5a0u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 276 /* milli weight units */
-}
-,[ISSUANCE_ASSET_PROOF] =
-{ .tag = JET
-, .jet = issuance_asset_proof
-, .cmr = {{0xc0482071u, 0x1dc25ab0u, 0x61da6de8u, 0x32788d6du, 0xbfb54cfeu, 0xeafddb7eu, 0x1eae6085u, 0x0a766ee9u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mw256
-, .cost = 229 /* milli weight units */
-}
-,[ISSUANCE_BLINDING_ENTROPY_HASH] =
-{ .tag = JET
-, .jet = issuance_blinding_entropy_hash
-, .cmr = {{0x02549ac6u, 0x66e09b7bu, 0x218356d0u, 0x3d6ca68cu, 0xb8e2546bu, 0xb303e166u, 0x313f6842u, 0xb44fbb60u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 278 /* milli weight units */
-}
-,[ISSUANCE_ENTROPY] =
-{ .tag = JET
-, .jet = issuance_entropy
-, .cmr = {{0x61f31455u, 0xd9982801u, 0x25df98e5u, 0x983d72f5u, 0xfbfdd65cu, 0x6369a0e7u, 0x8d07702fu, 0x28e2ff5eu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
-, .cost = 437 /* milli weight units */
-}
-,[ISSUANCE_RANGE_PROOFS_HASH] =
-{ .tag = JET
-, .jet = issuance_range_proofs_hash
-, .cmr = {{0xe05a29d1u, 0x7161105eu, 0x3b5221f4u, 0xebae702bu, 0x0c4c72b6u, 0xcb70dfdeu, 0xe2dc607bu, 0xa8a8cf72u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 280 /* milli weight units */
-}
-,[ISSUANCE_TOKEN] =
-{ .tag = JET
-, .jet = issuance_token
-, .cmr = {{0x0c7e9b99u, 0xf9ec40f6u, 0x7020f83eu, 0x7367db45u, 0x88038ecdu, 0x1b3124b9u, 0x5be98267u, 0xd5f348c8u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
-, .cost = 253 /* milli weight units */
-}
-,[ISSUANCE_TOKEN_AMOUNT] =
-{ .tag = JET
-, .jet = issuance_token_amount
-, .cmr = {{0x9554ccd2u, 0x417ed6b3u, 0x75b17883u, 0xf7e98557u, 0xe448d804u, 0xccec8dc6u, 0xa3a38c60u, 0xf2f4097au}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmspbw256w64
-, .cost = 240 /* milli weight units */
-}
-,[ISSUANCE_TOKEN_AMOUNTS_HASH] =
-{ .tag = JET
-, .jet = issuance_token_amounts_hash
-, .cmr = {{0x1fdd418eu, 0x37c80ceeu, 0x29ed9b4fu, 0x0dcb49ffu, 0x59f247d4u, 0x3f85fbf9u, 0x6982d159u, 0x8ec68365u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 289 /* milli weight units */
-}
-,[ISSUANCE_TOKEN_PROOF] =
-{ .tag = JET
-, .jet = issuance_token_proof
-, .cmr = {{0x9bd45c77u, 0x4d41d208u, 0x968d9adeu, 0x7d280debu, 0x05c2699au, 0xb2b870ebu, 0xe6f44ac3u, 0xb52ec8feu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mw256
-, .cost = 233 /* milli weight units */
-}
-,[ISSUANCES_HASH] =
-{ .tag = JET
-, .jet = issuances_hash
-, .cmr = {{0x56c22096u, 0x5e499455u, 0x5e174dfdu, 0x7ea1c464u, 0xaa338adau, 0x9b799bc1u, 0x056f1affu, 0xa70353f1u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 281 /* milli weight units */
-}
-,[LE_16] =
-{ .tag = JET
-, .jet = le_16
-, .cmr = {{0xd617feeau, 0xfd6ffc23u, 0xfeffbe70u, 0x12ce3a03u, 0x02d4d111u, 0x665822b3u, 0x04b79adbu, 0xcc9a16d7u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_b
-, .cost = 166 /* milli weight units */
-}
-,[LE_32] =
-{ .tag = JET
-, .jet = le_32
-, .cmr = {{0x45745c5bu, 0xc7f8978fu, 0x85b1b14du, 0x494af21au, 0x8a51ccd8u, 0x7f3fede9u, 0x59749591u, 0x32aef9ceu}}
-, .sourceIx = ty_w64
-, .targetIx = ty_b
-, .cost = 216 /* milli weight units */
-}
-,[LE_64] =
-{ .tag = JET
-, .jet = le_64
-, .cmr = {{0x3a8f0870u, 0x900af71du, 0x4242fe26u, 0xad4dfbedu, 0x92f30bb7u, 0x9b72737du, 0xbcab9ac5u, 0xc070abe5u}}
-, .sourceIx = ty_w128
-, .targetIx = ty_b
-, .cost = 173 /* milli weight units */
-}
-,[LE_8] =
-{ .tag = JET
-, .jet = le_8
-, .cmr = {{0x5ecc9b33u, 0x25446749u, 0xafa40965u, 0xea21e011u, 0x18fb8c1au, 0xdcdc1121u, 0x9793cb2au, 0xfc4a7e8cu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_b
-, .cost = 143 /* milli weight units */
-}
-,[LEFT_EXTEND_16_32] =
-{ .tag = JET
-, .jet = left_extend_16_32
-, .cmr = {{0x8c990435u, 0xb135de74u, 0x57c2690du, 0x2dc8744au, 0x506641b8u, 0x81f41e5cu, 0x17027765u, 0xc352ddcbu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_EXTEND_16_64] =
-{ .tag = JET
-, .jet = left_extend_16_64
-, .cmr = {{0x9b9ff9ccu, 0x27139319u, 0xb224b7b2u, 0xb816c913u, 0xa568bfd0u, 0x0be1f383u, 0xc026bcffu, 0xe9bfe712u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_EXTEND_1_16] =
-{ .tag = JET
-, .jet = left_extend_1_16
-, .cmr = {{0xb8ff8dc1u, 0xa04ca716u, 0x4917f4c4u, 0x50688c83u, 0xdd416cefu, 0x7b0fabddu, 0x1692fae6u, 0xbff7b4a6u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_EXTEND_1_32] =
-{ .tag = JET
-, .jet = left_extend_1_32
-, .cmr = {{0x2253a452u, 0xb99902abu, 0xcf15496du, 0xf19d3112u, 0xa1cef59bu, 0x9adcee20u, 0x6c0d8dceu, 0xa628d073u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_EXTEND_1_64] =
-{ .tag = JET
-, .jet = left_extend_1_64
-, .cmr = {{0xc8599c85u, 0x75edb7c2u, 0x60402ef2u, 0xf26dd491u, 0xcb5e4d38u, 0x18ff2e95u, 0x85c8d3e7u, 0x812db5aau}}
-, .sourceIx = ty_b
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_EXTEND_1_8] =
-{ .tag = JET
-, .jet = left_extend_1_8
-, .cmr = {{0xcfe02200u, 0x5f6bad4bu, 0x25b51e9eu, 0xbe929424u, 0x373ff197u, 0xceca62b9u, 0xe069ab08u, 0xda9f38f2u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_EXTEND_32_64] =
-{ .tag = JET
-, .jet = left_extend_32_64
-, .cmr = {{0x3f668404u, 0x7edafb76u, 0xf11fbf59u, 0x5499c5abu, 0xa9c4ba55u, 0xcab587cdu, 0xfebad457u, 0xb55bf5bbu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_EXTEND_8_16] =
-{ .tag = JET
-, .jet = left_extend_8_16
-, .cmr = {{0xdbd55f41u, 0x70153853u, 0xbad0e084u, 0xf9e1a7e7u, 0x5a7a0dc9u, 0xd8920775u, 0x575b0d48u, 0xe507af2fu}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_EXTEND_8_32] =
-{ .tag = JET
-, .jet = left_extend_8_32
-, .cmr = {{0x5b5b4567u, 0x6a7503eeu, 0xd0855738u, 0x69dbc580u, 0x0b35029du, 0x140290acu, 0x20891489u, 0xbd2aa7d5u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_EXTEND_8_64] =
-{ .tag = JET
-, .jet = left_extend_8_64
-, .cmr = {{0x7b9ea148u, 0xa30f2af4u, 0xd4001d4fu, 0x25b0bf4fu, 0xdd67c7d0u, 0xf134d7efu, 0x3f678f72u, 0x19002bcfu}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_HIGH_16_32] =
-{ .tag = JET
-, .jet = left_pad_high_16_32
-, .cmr = {{0xe8c2d85au, 0x7b7b2a8eu, 0xbb5b0f21u, 0x2fc8450du, 0xc1d3a468u, 0x22fb21e8u, 0x6e3fee02u, 0x0af9738fu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_HIGH_16_64] =
-{ .tag = JET
-, .jet = left_pad_high_16_64
-, .cmr = {{0x613b85d2u, 0xa751b3e5u, 0x1fbc59a1u, 0xdedd1fc7u, 0x93365e40u, 0x71dc1e01u, 0x4108d892u, 0x0d41d470u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_HIGH_1_16] =
-{ .tag = JET
-, .jet = left_pad_high_1_16
-, .cmr = {{0xe82b00efu, 0xd7dcc34eu, 0x96e8f3e5u, 0x1ead12d3u, 0x845f6c77u, 0x85e4438bu, 0x05457d95u, 0x326e59e3u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_HIGH_1_32] =
-{ .tag = JET
-, .jet = left_pad_high_1_32
-, .cmr = {{0x88585b8cu, 0x4592d5d0u, 0x83dff68eu, 0xb5c230d0u, 0x6c37995au, 0x6fede22cu, 0x26e661a7u, 0x516e5bf4u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_HIGH_1_64] =
-{ .tag = JET
-, .jet = left_pad_high_1_64
-, .cmr = {{0xc27e3d02u, 0x94922058u, 0x890d5c8bu, 0x676c1daeu, 0xfdde6531u, 0xe8ae6d79u, 0x37539272u, 0x3ead9c03u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_HIGH_1_8] =
-{ .tag = JET
-, .jet = left_pad_high_1_8
-, .cmr = {{0x143e1239u, 0x2b8f2e73u, 0x5371fed0u, 0xb4b6d623u, 0xffa4f660u, 0xe5390c00u, 0xe567cf21u, 0xa1c92078u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_HIGH_32_64] =
-{ .tag = JET
-, .jet = left_pad_high_32_64
-, .cmr = {{0xf4847c67u, 0x5667b3c6u, 0xa890fd5au, 0x6adb0927u, 0x557ee80cu, 0xd6e65af9u, 0xb1b47295u, 0x72cd8661u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_HIGH_8_16] =
-{ .tag = JET
-, .jet = left_pad_high_8_16
-, .cmr = {{0x7618058au, 0x4e08eb52u, 0x43dad205u, 0xcc7e8d25u, 0x47380da0u, 0x5ec5411eu, 0xfc372baau, 0x2bb12da6u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_HIGH_8_32] =
-{ .tag = JET
-, .jet = left_pad_high_8_32
-, .cmr = {{0x3dfed5c0u, 0xa9b26b8fu, 0x4a8eabd6u, 0xfbed87beu, 0x450de795u, 0xf541953eu, 0xec16a6d5u, 0xaa825a56u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_HIGH_8_64] =
-{ .tag = JET
-, .jet = left_pad_high_8_64
-, .cmr = {{0xce7c407eu, 0x4b561721u, 0xd66c1bb0u, 0xd17ee841u, 0xb4d504b4u, 0xc4c07200u, 0x2237140bu, 0x8909769fu}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_LOW_16_32] =
-{ .tag = JET
-, .jet = left_pad_low_16_32
-, .cmr = {{0xa28c7924u, 0xa47b46ecu, 0x73bcff6eu, 0x1328d439u, 0xaa903acfu, 0x103e9aa8u, 0x0b65ba76u, 0xd2a08e75u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_LOW_16_64] =
-{ .tag = JET
-, .jet = left_pad_low_16_64
-, .cmr = {{0xb6258acdu, 0xa2110ed9u, 0x8c17bca8u, 0x2712e3eau, 0x60866f7du, 0x4004c83eu, 0x8ae524b7u, 0xba44008bu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_LOW_1_16] =
-{ .tag = JET
-, .jet = left_pad_low_1_16
-, .cmr = {{0x1e1f6cc4u, 0x24648375u, 0x49b97d30u, 0x7e28a9c2u, 0x3680914cu, 0xd86d65c3u, 0x04679312u, 0x7b54fe82u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_LOW_1_32] =
-{ .tag = JET
-, .jet = left_pad_low_1_32
-, .cmr = {{0xc338a195u, 0x5e99820du, 0x0ed31a5au, 0xfedd1358u, 0xc1744402u, 0x3e3f2b47u, 0x33d9f68cu, 0xb7b40cd9u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_LOW_1_64] =
-{ .tag = JET
-, .jet = left_pad_low_1_64
-, .cmr = {{0x689ed569u, 0xc201521eu, 0xc1954f0du, 0xc7d2128eu, 0x465a5204u, 0x99190549u, 0x858de9edu, 0x231a5d69u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_LOW_1_8] =
-{ .tag = JET
-, .jet = left_pad_low_1_8
-, .cmr = {{0x5b519053u, 0xfd2bb758u, 0x473af8e3u, 0x910baef3u, 0x3cc801c0u, 0xb1420aafu, 0x814a7e72u, 0x54ea78f0u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_LOW_32_64] =
-{ .tag = JET
-, .jet = left_pad_low_32_64
-, .cmr = {{0xac00a34fu, 0xb6a58e57u, 0xad223950u, 0x0e657137u, 0x5dfda0ceu, 0xa1175fe9u, 0x9d875cd8u, 0x718105e9u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_LOW_8_16] =
-{ .tag = JET
-, .jet = left_pad_low_8_16
-, .cmr = {{0xb6f6334cu, 0xc660e306u, 0x9f7e1437u, 0xa1943f61u, 0x0fc5a5abu, 0x8aa5105bu, 0xfcecd3dau, 0x0c59633cu}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_LOW_8_32] =
-{ .tag = JET
-, .jet = left_pad_low_8_32
-, .cmr = {{0x8aee9f42u, 0xda9b842eu, 0x41189596u, 0x594756bau, 0xd9bab295u, 0x3deae668u, 0x56b9cb60u, 0x1d7ac548u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_PAD_LOW_8_64] =
-{ .tag = JET
-, .jet = left_pad_low_8_64
-, .cmr = {{0x611d64ceu, 0x94f882fdu, 0xa24c97adu, 0xd1905421u, 0x2f46b3b9u, 0x8ef2ae22u, 0x79364539u, 0xb93e2b8bu}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_ROTATE_16] =
-{ .tag = JET
-, .jet = left_rotate_16
-, .cmr = {{0x25e2d4ecu, 0xc03f8765u, 0x5e965b35u, 0x7d6fd0c2u, 0xea36d112u, 0x068c9633u, 0x39de467eu, 0x5c8e7d8eu}}
-, .sourceIx = ty_pw4w16
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_ROTATE_32] =
-{ .tag = JET
-, .jet = left_rotate_32
-, .cmr = {{0x2d4189b3u, 0x12e8cedau, 0xaa3853a4u, 0x5a12986eu, 0xe262fb60u, 0x5f0d592du, 0xcbb9618fu, 0xe67a250bu}}
-, .sourceIx = ty_pw8w32
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_ROTATE_64] =
-{ .tag = JET
-, .jet = left_rotate_64
-, .cmr = {{0xb8e68e0au, 0xd682b967u, 0xf24c0984u, 0xf7d5f809u, 0xa28597a0u, 0x434618c8u, 0x949fa808u, 0xe3be7614u}}
-, .sourceIx = ty_pw8w64
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_ROTATE_8] =
-{ .tag = JET
-, .jet = left_rotate_8
-, .cmr = {{0x956a653au, 0xe0b8f8c3u, 0xf29fd8f3u, 0x3119168fu, 0xcbe64f5du, 0x765fa9ffu, 0x6b8e3b0du, 0x961a1629u}}
-, .sourceIx = ty_pw4w8
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_SHIFT_16] =
-{ .tag = JET
-, .jet = left_shift_16
-, .cmr = {{0x9bbce29eu, 0x695be2e4u, 0x830c7a93u, 0xa0d2151bu, 0x664fc272u, 0x06eed7e5u, 0x0fcef602u, 0xd345ce0du}}
-, .sourceIx = ty_pw4w16
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_SHIFT_32] =
-{ .tag = JET
-, .jet = left_shift_32
-, .cmr = {{0xf9c4bf07u, 0xd3e72e85u, 0xb1d455f7u, 0x34cf1b11u, 0xbea58e25u, 0x3b854a1au, 0x097bab1eu, 0xc2c62e1fu}}
-, .sourceIx = ty_pw8w32
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_SHIFT_64] =
-{ .tag = JET
-, .jet = left_shift_64
-, .cmr = {{0x8cfa741au, 0xa41d828au, 0x41083bb7u, 0xcbdd1f4eu, 0xda5dccacu, 0x529b247du, 0x188495b4u, 0x9bb38c2bu}}
-, .sourceIx = ty_pw8w64
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_SHIFT_8] =
-{ .tag = JET
-, .jet = left_shift_8
-, .cmr = {{0x95663e07u, 0x7cadca31u, 0xb9596b09u, 0x706cdb4fu, 0xa703870fu, 0x792a4635u, 0x852b5e24u, 0x69e6fdbau}}
-, .sourceIx = ty_pw4w8
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_SHIFT_WITH_16] =
-{ .tag = JET
-, .jet = left_shift_with_16
-, .cmr = {{0x6214c456u, 0x25d704ceu, 0xc987b796u, 0x676f1566u, 0x1a6bf5dcu, 0x0f6a51cbu, 0x865a0e71u, 0xd66fbf95u}}
-, .sourceIx = ty_pbpw4w16
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_SHIFT_WITH_32] =
-{ .tag = JET
-, .jet = left_shift_with_32
-, .cmr = {{0x1b452fc7u, 0xab5c7147u, 0x454af4d5u, 0x595481ffu, 0xac42dea1u, 0x06032b3bu, 0x9f375bedu, 0xcda6f4d6u}}
-, .sourceIx = ty_pbpw8w32
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_SHIFT_WITH_64] =
-{ .tag = JET
-, .jet = left_shift_with_64
-, .cmr = {{0xc38b02abu, 0xcff514d9u, 0x6191a7feu, 0xfba1ac16u, 0xe9c150a1u, 0x8ce1c5bcu, 0xf09d6755u, 0xe0369905u}}
-, .sourceIx = ty_pbpw8w64
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[LEFT_SHIFT_WITH_8] =
-{ .tag = JET
-, .jet = left_shift_with_8
-, .cmr = {{0x217ad6dcu, 0x1292aa42u, 0xdbd84dbdu, 0x971c118fu, 0x02a9740au, 0x7cb5661eu, 0x90d42dd5u, 0xca8ca4d9u}}
-, .sourceIx = ty_pbpw4w8
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_16_1] =
-{ .tag = JET
-, .jet = leftmost_16_1
-, .cmr = {{0x3ea89e43u, 0x2077940du, 0x0bbf9ed2u, 0xcf16ba63u, 0x1110e7abu, 0x9f19eef3u, 0xea925a69u, 0x9f60c60cu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_b
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_16_2] =
-{ .tag = JET
-, .jet = leftmost_16_2
-, .cmr = {{0x5ce2bd7au, 0xc35a7c33u, 0x73c3dd60u, 0x7f48e5d4u, 0xc7aaa6c6u, 0x9fc4930eu, 0xca14049fu, 0x5d39ffabu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w2
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_16_4] =
-{ .tag = JET
-, .jet = leftmost_16_4
-, .cmr = {{0x1012a139u, 0x3ed0f91du, 0x75ad5912u, 0x2853893au, 0x7f25cd35u, 0xc8036c7fu, 0xa195682cu, 0xa1458c4au}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w4
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_16_8] =
-{ .tag = JET
-, .jet = leftmost_16_8
-, .cmr = {{0xccd31e9eu, 0xb1a1bbdeu, 0x555c0f73u, 0x1af2d3d4u, 0xff5388fau, 0x1461826au, 0xa9c89342u, 0x42ac753fu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_32_1] =
-{ .tag = JET
-, .jet = leftmost_32_1
-, .cmr = {{0xb714ad74u, 0xae045af7u, 0x5680778au, 0x032761a4u, 0xc726d7b6u, 0xd977bc93u, 0xa4125654u, 0x3cae8d3du}}
-, .sourceIx = ty_w32
-, .targetIx = ty_b
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_32_16] =
-{ .tag = JET
-, .jet = leftmost_32_16
-, .cmr = {{0x1b20634fu, 0xb43eb83au, 0x968c3c81u, 0xc0087c63u, 0xd5d4f8cau, 0xcdbd3e0eu, 0x9f9a3d75u, 0x91c3ef62u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_32_2] =
-{ .tag = JET
-, .jet = leftmost_32_2
-, .cmr = {{0x752dda08u, 0xe40faea0u, 0xf6c4ee3du, 0x344b7c4eu, 0xa11b971du, 0xcec55592u, 0xb822ee56u, 0x271ca5dfu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w2
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_32_4] =
-{ .tag = JET
-, .jet = leftmost_32_4
-, .cmr = {{0x44e9f779u, 0xa029ecfcu, 0x9762b8b6u, 0xcbaf0922u, 0xd935fea5u, 0x150a546au, 0x5fc1fdb8u, 0xb9534134u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w4
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_32_8] =
-{ .tag = JET
-, .jet = leftmost_32_8
-, .cmr = {{0x54801eb5u, 0xe778cf6cu, 0xda95ccf5u, 0x70286d81u, 0x6d3a1ff1u, 0xdd39db5au, 0xb6136f0eu, 0xc3b72dc6u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_64_1] =
-{ .tag = JET
-, .jet = leftmost_64_1
-, .cmr = {{0xb316af24u, 0xc86b3961u, 0x3d4fd1b3u, 0x926a8413u, 0x0eb7ab12u, 0xfdef6233u, 0x17ab48f7u, 0x7cb62145u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_b
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_64_16] =
-{ .tag = JET
-, .jet = leftmost_64_16
-, .cmr = {{0x8cf85481u, 0xe0f00838u, 0xb5239bbfu, 0xad1382f0u, 0x7bd03c12u, 0x1d5d8aafu, 0xa6d98341u, 0x6de45c32u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_64_2] =
-{ .tag = JET
-, .jet = leftmost_64_2
-, .cmr = {{0xda40c89bu, 0x15c9e86bu, 0x028ce9ecu, 0x07b7f699u, 0x5a5ddda4u, 0x850a91afu, 0x8c60e02bu, 0xf991fb0cu}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w2
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_64_32] =
-{ .tag = JET
-, .jet = leftmost_64_32
-, .cmr = {{0x95f46db9u, 0xd906f050u, 0x53455e95u, 0x34eb9b08u, 0xb09e38bcu, 0x0fc698a1u, 0x6f4b2a62u, 0x710759d1u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_64_4] =
-{ .tag = JET
-, .jet = leftmost_64_4
-, .cmr = {{0xf501f905u, 0xfb8baba1u, 0xa7e8a6bfu, 0x68d3ae6au, 0x0add9195u, 0x1b56629du, 0x59f42873u, 0x9e7e41a2u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w4
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_64_8] =
-{ .tag = JET
-, .jet = leftmost_64_8
-, .cmr = {{0xb37f0ba2u, 0xfcbd4ae3u, 0x316a4fe4u, 0xf58aa1a5u, 0x41740cdeu, 0x60ed87f3u, 0x3862a2ffu, 0xecad442fu}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_8_1] =
-{ .tag = JET
-, .jet = leftmost_8_1
-, .cmr = {{0x5fdcfa9bu, 0x9a4b65c7u, 0x207471e5u, 0x33928d6au, 0x24f4b6ffu, 0x9b345ef7u, 0x61b1480au, 0x8a05e3d7u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_b
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_8_2] =
-{ .tag = JET
-, .jet = leftmost_8_2
-, .cmr = {{0x624221e9u, 0xf8a91691u, 0x26c73347u, 0x9648c73bu, 0x68c6b8ebu, 0xbb60c72au, 0xf1e6fc65u, 0xe7d30723u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w2
-, .cost = 150 /* milli weight units */
-}
-,[LEFTMOST_8_4] =
-{ .tag = JET
-, .jet = leftmost_8_4
-, .cmr = {{0x1a4843c4u, 0x08e1d46cu, 0x9c938946u, 0x34495f8au, 0xd6a680e3u, 0x2dd6f25bu, 0xa19dbc60u, 0xa60d1897u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w4
-, .cost = 150 /* milli weight units */
-}
-,[LINEAR_COMBINATION_1] =
-{ .tag = JET
-, .jet = linear_combination_1
-, .cmr = {{0xd88320f4u, 0x71f3beeeu, 0xa1313d55u, 0x1e419be0u, 0x5727ae5fu, 0x4de6a2f2u, 0xf26f3cb5u, 0xe8dddd3fu}}
-, .sourceIx = ty_ppw256pw512w256w256
-, .targetIx = ty_pw512w256
-, .cost = 86722 /* milli weight units */
-}
-,[LINEAR_VERIFY_1] =
-{ .tag = JET
-, .jet = linear_verify_1
-, .cmr = {{0x0c9fae64u, 0xa64cd63cu, 0xa85beba7u, 0x5c9f2c6eu, 0x85343b74u, 0xf28634eau, 0x85f70fc3u, 0x41ccaff3u}}
-, .sourceIx = ty_pppw256w512w256w512
-, .targetIx = ty_u
-, .cost = 43063 /* milli weight units */
-}
-,[LOCK_TIME] =
-{ .tag = JET
-, .jet = lock_time
-, .cmr = {{0xee87a025u, 0xd7338a3cu, 0x8f251be4u, 0x19efb7eeu, 0x7177cb73u, 0x8f42e8c0u, 0x03fc4658u, 0xcc0e5b8bu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w32
-, .cost = 132 /* milli weight units */
-}
-,[LOW_1] =
-{ .tag = JET
-, .jet = low_1
-, .cmr = {{0xdb4a424au, 0x20aeefa4u, 0xe742d51du, 0x84929218u, 0xcbf73472u, 0x6176dc4fu, 0xf9f8bf13u, 0xde10ca2bu}}
-, .sourceIx = ty_u
-, .targetIx = ty_b
-, .cost = 173 /* milli weight units */
-}
-,[LOW_16] =
-{ .tag = JET
-, .jet = low_16
-, .cmr = {{0xa114e958u, 0x0de07d8bu, 0x077eb889u, 0x98755a0au, 0x62bfe085u, 0xfb23404cu, 0xd1e87868u, 0xcd56d5bdu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w16
-, .cost = 172 /* milli weight units */
-}
-,[LOW_32] =
-{ .tag = JET
-, .jet = low_32
-, .cmr = {{0xa717610eu, 0x8c577125u, 0x5140d620u, 0x7fff3bddu, 0x3464acffu, 0x5998e129u, 0xaf8b9f4cu, 0x0e21b23du}}
-, .sourceIx = ty_u
-, .targetIx = ty_w32
-, .cost = 170 /* milli weight units */
-}
-,[LOW_64] =
-{ .tag = JET
-, .jet = low_64
-, .cmr = {{0x9a6f4a0au, 0xd2fb72c5u, 0x79424c72u, 0xe17daae6u, 0x2b366695u, 0xcd1a2685u, 0xfb0ab02eu, 0x4c2cc0f5u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w64
-, .cost = 162 /* milli weight units */
-}
-,[LOW_8] =
-{ .tag = JET
-, .jet = low_8
-, .cmr = {{0x69c9b9cau, 0xb9f44cffu, 0xaedf1c84u, 0x3146bcc0u, 0xb03b0f0cu, 0x134866afu, 0xd23a614fu, 0x01a70a24u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w8
-, .cost = 173 /* milli weight units */
-}
-,[LT_16] =
-{ .tag = JET
-, .jet = lt_16
-, .cmr = {{0x4f465a49u, 0xa963acceu, 0x93f6b6f8u, 0x23eb9472u, 0xb4cc21f6u, 0xe58b7657u, 0x0508babdu, 0xf44a8c97u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_b
-, .cost = 188 /* milli weight units */
-}
-,[LT_32] =
-{ .tag = JET
-, .jet = lt_32
-, .cmr = {{0xd3421dfcu, 0x84671cd7u, 0x445082a9u, 0x86df1628u, 0xedcacbf4u, 0x29a3c809u, 0xd2365497u, 0xe1170bfdu}}
-, .sourceIx = ty_w64
-, .targetIx = ty_b
-, .cost = 215 /* milli weight units */
-}
-,[LT_64] =
-{ .tag = JET
-, .jet = lt_64
-, .cmr = {{0x7c67aa89u, 0x93fcda59u, 0x30f79db2u, 0x008aa6d7u, 0xbe5f3bedu, 0x5aca5e03u, 0x2dcccf0bu, 0xe84f62d1u}}
-, .sourceIx = ty_w128
-, .targetIx = ty_b
-, .cost = 195 /* milli weight units */
-}
-,[LT_8] =
-{ .tag = JET
-, .jet = lt_8
-, .cmr = {{0x98763f78u, 0x21690954u, 0xcf508102u, 0x09df6e15u, 0x570316bbu, 0xa89ffa9au, 0xe556a915u, 0xf37b640bu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_b
-, .cost = 130 /* milli weight units */
-}
-,[MAJ_1] =
-{ .tag = JET
-, .jet = maj_1
-, .cmr = {{0xae8b912eu, 0x3ad47f68u, 0x8bbb46c8u, 0xcb6d5333u, 0x69f5109au, 0x2730471eu, 0xab6efe98u, 0xe9ea5e78u}}
-, .sourceIx = ty_pbw2
-, .targetIx = ty_b
-, .cost = 241 /* milli weight units */
-}
-,[MAJ_16] =
-{ .tag = JET
-, .jet = maj_16
-, .cmr = {{0xf5a41da0u, 0x377fe688u, 0xac2fcdf3u, 0x5b6b7a47u, 0x2e78ea69u, 0xfd2b17f7u, 0x56342baau, 0x1f8b9fddu}}
-, .sourceIx = ty_pw16w32
-, .targetIx = ty_w16
-, .cost = 273 /* milli weight units */
-}
-,[MAJ_32] =
-{ .tag = JET
-, .jet = maj_32
-, .cmr = {{0xf1d93b04u, 0x6b0285f6u, 0xe520467fu, 0x265f6a6au, 0xe3491f16u, 0x78c8a826u, 0xa0099b9cu, 0xd41599d4u}}
-, .sourceIx = ty_pw32w64
-, .targetIx = ty_w32
-, .cost = 289 /* milli weight units */
-}
-,[MAJ_64] =
-{ .tag = JET
-, .jet = maj_64
-, .cmr = {{0x5e996c51u, 0x51d7aceeu, 0x4a7d9e22u, 0x95ef8f2cu, 0x75548884u, 0x4bfde25du, 0x5acdfea2u, 0x9844435au}}
-, .sourceIx = ty_pw64w128
-, .targetIx = ty_w64
-, .cost = 293 /* milli weight units */
-}
-,[MAJ_8] =
-{ .tag = JET
-, .jet = maj_8
-, .cmr = {{0xab6c4c41u, 0xab67ebf7u, 0xea60870cu, 0x9b2d9310u, 0x01742961u, 0x8d2ab902u, 0x68b5c5c2u, 0xb5377f3bu}}
-, .sourceIx = ty_pw8w16
-, .targetIx = ty_w8
-, .cost = 241 /* milli weight units */
-}
-,[MAX_16] =
-{ .tag = JET
-, .jet = max_16
-, .cmr = {{0xcddd8169u, 0x5522971bu, 0x529eb0bbu, 0x53818fe2u, 0x2858ac6bu, 0x037c3810u, 0xec268b53u, 0xb817a38du}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w16
-, .cost = 164 /* milli weight units */
-}
-,[MAX_32] =
-{ .tag = JET
-, .jet = max_32
-, .cmr = {{0xd916f34bu, 0xd785b938u, 0x08b67c62u, 0x284f94aau, 0x5df47919u, 0x59b49b85u, 0x82b0582bu, 0x82853883u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w32
-, .cost = 162 /* milli weight units */
-}
-,[MAX_64] =
-{ .tag = JET
-, .jet = max_64
-, .cmr = {{0x99ef5abfu, 0xf78700bdu, 0x93d1c977u, 0xfd686f31u, 0x210fd1ceu, 0x1d094d23u, 0x048c026cu, 0x19fc984au}}
-, .sourceIx = ty_w128
-, .targetIx = ty_w64
-, .cost = 193 /* milli weight units */
-}
-,[MAX_8] =
-{ .tag = JET
-, .jet = max_8
-, .cmr = {{0x3acbf773u, 0x3fd8ef4fu, 0x51967aa2u, 0x45558b28u, 0x374d54c6u, 0x32a9f46au, 0xab6b2b1eu, 0xc2d5139au}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w8
-, .cost = 142 /* milli weight units */
-}
-,[MEDIAN_16] =
-{ .tag = JET
-, .jet = median_16
-, .cmr = {{0xd6463e89u, 0xdfe2c334u, 0xb01f9097u, 0xb01a75c4u, 0x75fb0f0fu, 0x167cb6b7u, 0x4976f197u, 0xbd4c76e1u}}
-, .sourceIx = ty_pw16w32
-, .targetIx = ty_w16
-, .cost = 270 /* milli weight units */
-}
-,[MEDIAN_32] =
-{ .tag = JET
-, .jet = median_32
-, .cmr = {{0x01dca1edu, 0xe5b29d88u, 0x480bc4dcu, 0x43be4e04u, 0xf2d209eeu, 0x32f6cf3eu, 0xc7050da1u, 0x07359063u}}
-, .sourceIx = ty_pw32w64
-, .targetIx = ty_w32
-, .cost = 256 /* milli weight units */
-}
-,[MEDIAN_64] =
-{ .tag = JET
-, .jet = median_64
-, .cmr = {{0x707a6fa8u, 0xc15495a2u, 0xc4822263u, 0xddcea5e0u, 0xf0e850a9u, 0x4b1cf4ecu, 0xc0652fafu, 0xeef130e9u}}
-, .sourceIx = ty_pw64w128
-, .targetIx = ty_w64
-, .cost = 336 /* milli weight units */
-}
-,[MEDIAN_8] =
-{ .tag = JET
-, .jet = median_8
-, .cmr = {{0x26bfcb7bu, 0xabcf26c9u, 0x7a841675u, 0x45746276u, 0x59279af8u, 0x09554882u, 0x400ef874u, 0xdf1c1a31u}}
-, .sourceIx = ty_pw8w16
-, .targetIx = ty_w8
-, .cost = 256 /* milli weight units */
-}
-,[MIN_16] =
-{ .tag = JET
-, .jet = min_16
-, .cmr = {{0x63bbc0e5u, 0xdb1ce080u, 0x97d3f5bcu, 0xc5be1d72u, 0x090bab4au, 0x87c10c80u, 0x0549ca84u, 0xefbfe5e3u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w16
-, .cost = 164 /* milli weight units */
-}
-,[MIN_32] =
-{ .tag = JET
-, .jet = min_32
-, .cmr = {{0xaf4d6184u, 0x2f479032u, 0x5c614556u, 0xc7776eeau, 0x457513cau, 0x422f305bu, 0x463f8f7du, 0x8bda0c3cu}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w32
-, .cost = 181 /* milli weight units */
-}
-,[MIN_64] =
-{ .tag = JET
-, .jet = min_64
-, .cmr = {{0xf0a3170fu, 0xb3065090u, 0x71b21432u, 0x309c0086u, 0x5d8fb675u, 0x2de6ec41u, 0x0abb6ce3u, 0x5b4ffa9cu}}
-, .sourceIx = ty_w128
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[MIN_8] =
-{ .tag = JET
-, .jet = min_8
-, .cmr = {{0x8aa71d09u, 0x3e838ad3u, 0x6aa6fe16u, 0xfd1dde9fu, 0xb5772ac4u, 0x5d6bb8e4u, 0x2c8883a2u, 0xa9f100e2u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w8
-, .cost = 135 /* milli weight units */
-}
-,[MODULO_16] =
-{ .tag = JET
-, .jet = modulo_16
-, .cmr = {{0x0ea89859u, 0x79209d31u, 0x94c55912u, 0xf21a6577u, 0xda30c517u, 0xe008f851u, 0xc352085bu, 0xb067a0f1u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w16
-, .cost = 188 /* milli weight units */
-}
-,[MODULO_32] =
-{ .tag = JET
-, .jet = modulo_32
-, .cmr = {{0x223fb583u, 0x2b9559cau, 0x8651726au, 0xb7956e58u, 0xe53a402du, 0xf9603486u, 0x181807a2u, 0xfcaed487u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w32
-, .cost = 207 /* milli weight units */
-}
-,[MODULO_64] =
-{ .tag = JET
-, .jet = modulo_64
-, .cmr = {{0x8259a2e3u, 0xb0789c9du, 0x31eabc49u, 0x39d31bc5u, 0x254c5665u, 0xc412052cu, 0x12d72ecdu, 0xfbed5225u}}
-, .sourceIx = ty_w128
-, .targetIx = ty_w64
-, .cost = 191 /* milli weight units */
-}
-,[MODULO_8] =
-{ .tag = JET
-, .jet = modulo_8
-, .cmr = {{0xf8fd7c21u, 0xc15ebc5au, 0x04b3d3bcu, 0x0ad647e2u, 0x1d89f800u, 0x8ddddffeu, 0xbb003e35u, 0x52bdb570u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w8
-, .cost = 158 /* milli weight units */
-}
-,[MULTIPLY_16] =
-{ .tag = JET
-, .jet = multiply_16
-, .cmr = {{0xd66b0ad2u, 0x1cdbe601u, 0x4f2619f4u, 0x40d935f6u, 0x42e97c59u, 0x4e3b441fu, 0x01980eeau, 0x08c48591u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w32
-, .cost = 154 /* milli weight units */
-}
-,[MULTIPLY_32] =
-{ .tag = JET
-, .jet = multiply_32
-, .cmr = {{0xc67f65afu, 0xae79108cu, 0xe5f724f4u, 0x01817aa1u, 0xb4a7608au, 0x4e18ee74u, 0x826b37f7u, 0x949c77d6u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w64
-, .cost = 165 /* milli weight units */
-}
-,[MULTIPLY_64] =
-{ .tag = JET
-, .jet = multiply_64
-, .cmr = {{0x16ac08feu, 0xc9d96652u, 0x7f80c39cu, 0x64a4fc10u, 0x82b150bdu, 0xbb05f7f6u, 0xc4b9a00eu, 0xbd894dbau}}
-, .sourceIx = ty_w128
-, .targetIx = ty_w128
-, .cost = 185 /* milli weight units */
-}
-,[MULTIPLY_8] =
-{ .tag = JET
-, .jet = multiply_8
-, .cmr = {{0xcec3d5c3u, 0x2dee352eu, 0x754f141cu, 0x02ef2b60u, 0xf86e27d2u, 0xcbe27326u, 0x060dec9eu, 0x7bcc206bu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w16
-, .cost = 126 /* milli weight units */
-}
-,[NEGATE_16] =
-{ .tag = JET
-, .jet = negate_16
-, .cmr = {{0x81f3ef08u, 0x2b199d2eu, 0x474535fbu, 0x84282f21u, 0x111c1a04u, 0x97a91695u, 0xe72c4d51u, 0xaf1cb057u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_pbw16
-, .cost = 121 /* milli weight units */
-}
-,[NEGATE_32] =
-{ .tag = JET
-, .jet = negate_32
-, .cmr = {{0xba173bdeu, 0xf24e637fu, 0x4a5a0c6fu, 0xed4bbc22u, 0xc7d08bccu, 0x20fdca61u, 0x70363d25u, 0x26955836u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_pbw32
-, .cost = 185 /* milli weight units */
-}
-,[NEGATE_64] =
-{ .tag = JET
-, .jet = negate_64
-, .cmr = {{0xe713272du, 0x6d9a6d69u, 0x6c46889du, 0xfb270475u, 0xe9238d17u, 0x72abf916u, 0x5b093c79u, 0x98ee8070u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_pbw64
-, .cost = 162 /* milli weight units */
-}
-,[NEGATE_8] =
-{ .tag = JET
-, .jet = negate_8
-, .cmr = {{0x8be87139u, 0x3e18c063u, 0x69161fb1u, 0xc0ad2b92u, 0x0622974eu, 0x3fdfca90u, 0x567e6da4u, 0x29fd9842u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_pbw8
-, .cost = 152 /* milli weight units */
-}
-,[NEW_ISSUANCE_CONTRACT] =
-{ .tag = JET
-, .jet = new_issuance_contract
-, .cmr = {{0x59e2a74cu, 0x997a07aau, 0xfd5c280eu, 0x4649e7afu, 0x2b3cc4dcu, 0x9b72a81cu, 0x722548ffu, 0x8c1313bfu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
-, .cost = 214 /* milli weight units */
-}
-,[NONCE_HASH] =
-{ .tag = JET
-, .jet = nonce_hash
-, .cmr = {{0xca4a66d7u, 0xf8e982a9u, 0xee042504u, 0x0d2b0d1du, 0x3dc6207fu, 0x93856458u, 0xe24e7a26u, 0xe95c56f8u}}
-, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256mspbw256w256
-, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 2727 /* milli weight units */
-}
-,[NUM_INPUTS] =
-{ .tag = JET
-, .jet = num_inputs
-, .cmr = {{0xd7b46628u, 0x7ef4e59cu, 0x02be3389u, 0xeafb4347u, 0xb7d1a2a1u, 0x5c144918u, 0xb7ad3443u, 0xb14fae03u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w32
-, .cost = 139 /* milli weight units */
-}
-,[NUM_OUTPUTS] =
-{ .tag = JET
-, .jet = num_outputs
-, .cmr = {{0x67df4debu, 0x3ff0c26au, 0xe3123047u, 0xcc734ae3u, 0xb61ffcefu, 0x511fcf42u, 0x813c3f48u, 0x1920ee48u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w32
-, .cost = 134 /* milli weight units */
-}
-,[ONE_16] =
-{ .tag = JET
-, .jet = one_16
-, .cmr = {{0x7629792bu, 0xa1a44114u, 0xe59e64b5u, 0x1d187af6u, 0xd965d966u, 0x20dca262u, 0x7507b7d3u, 0x88d9353cu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w16
-, .cost = 126 /* milli weight units */
-}
-,[ONE_32] =
-{ .tag = JET
-, .jet = one_32
-, .cmr = {{0x0ba004ceu, 0xa250fe95u, 0x3ac74e6eu, 0xcd3620e8u, 0x02841fdau, 0x795208deu, 0xc66d626eu, 0x06aa29b2u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w32
-, .cost = 122 /* milli weight units */
-}
-,[ONE_64] =
-{ .tag = JET
-, .jet = one_64
-, .cmr = {{0xba3478c1u, 0x08740a83u, 0xf0ca0eaeu, 0x86c31b4au, 0xfac830dfu, 0x093467ccu, 0x08ea1c04u, 0x15efef6du}}
-, .sourceIx = ty_u
-, .targetIx = ty_w64
-, .cost = 123 /* milli weight units */
-}
-,[ONE_8] =
-{ .tag = JET
-, .jet = one_8
-, .cmr = {{0x15ca77a4u, 0xb7022568u, 0x37f90ff7u, 0x8ca7740au, 0x40fece71u, 0x91301d00u, 0xe517d8d3u, 0x4f46c250u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w8
-, .cost = 127 /* milli weight units */
-}
-,[OR_1] =
-{ .tag = JET
-, .jet = or_1
-, .cmr = {{0x93522230u, 0x1700987du, 0xe12cb426u, 0x17218153u, 0xfd7ccd63u, 0x174a1749u, 0xfc880c39u, 0xe3e7239cu}}
-, .sourceIx = ty_w2
-, .targetIx = ty_b
-, .cost = 147 /* milli weight units */
-}
-,[OR_16] =
-{ .tag = JET
-, .jet = or_16
-, .cmr = {{0xdfead0bau, 0x93e49155u, 0xc40cb372u, 0xca5ef617u, 0x9741c61fu, 0x2b3cc279u, 0x7ef162c8u, 0xd2fc1f9au}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w16
-, .cost = 204 /* milli weight units */
-}
-,[OR_32] =
-{ .tag = JET
-, .jet = or_32
-, .cmr = {{0x67ac6945u, 0xcdc006d2u, 0x5e5bbe6cu, 0x4fe81ca1u, 0x6741ffabu, 0x3d23960eu, 0xeb49850fu, 0x92732cbbu}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w32
-, .cost = 197 /* milli weight units */
-}
-,[OR_64] =
-{ .tag = JET
-, .jet = or_64
-, .cmr = {{0x1eb952e4u, 0x6116e271u, 0xdc489e67u, 0x22a90185u, 0xebf5fb77u, 0x5b778160u, 0x6dbf5e89u, 0xccd7c250u}}
-, .sourceIx = ty_w128
-, .targetIx = ty_w64
-, .cost = 214 /* milli weight units */
-}
-,[OR_8] =
-{ .tag = JET
-, .jet = or_8
-, .cmr = {{0x378f7abeu, 0x8b081fafu, 0x5b3a2578u, 0xef1979feu, 0x80bccb07u, 0x91156a49u, 0x3f8a3f6eu, 0x0bb2fc84u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w8
-, .cost = 147 /* milli weight units */
-}
-,[OUTPOINT_HASH] =
-{ .tag = JET
-, .jet = outpoint_hash
-, .cmr = {{0xe31d339du, 0x86e6d76bu, 0xadc3d6d6u, 0xcf1be706u, 0x53e03442u, 0x73449cecu, 0xf521d366u, 0x2bd8fc2bu}}
-, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw256pw256w32
-, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 5256 /* milli weight units */
-}
-,[OUTPUT_AMOUNT] =
-{ .tag = JET
-, .jet = output_amount
-, .cmr = {{0x52db68c6u, 0xc7be32bfu, 0xaa426970u, 0xeb4197ceu, 0x1ce3f453u, 0x0e1a2cffu, 0x8e17db47u, 0x229207b3u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mpspbw256w256spbw256w64
-, .cost = 709 /* milli weight units */
-}
-,[OUTPUT_AMOUNTS_HASH] =
-{ .tag = JET
-, .jet = output_amounts_hash
-, .cmr = {{0xbccbee78u, 0x1ee297fau, 0xbfbe38c0u, 0x079ad374u, 0x258c0b1eu, 0xbe223457u, 0x099a284au, 0x1b4338a2u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 404 /* milli weight units */
-}
-,[OUTPUT_ASSET] =
-{ .tag = JET
-, .jet = output_asset
-, .cmr = {{0xca89b5c4u, 0x5a9a247du, 0x39086cdfu, 0xbe2ba1dfu, 0x025e37dbu, 0x9b6a2abbu, 0x74d97066u, 0xa69bf3a0u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mspbw256w256
-, .cost = 621 /* milli weight units */
-}
-,[OUTPUT_IS_FEE] =
-{ .tag = JET
-, .jet = output_is_fee
-, .cmr = {{0xf70eb068u, 0xd200b7bcu, 0x5aaaaba1u, 0x2928e819u, 0x2b2948cdu, 0xe7e8f314u, 0x1c6b4311u, 0x38e5de3cu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mb
-, .cost = 270 /* milli weight units */
-}
-,[OUTPUT_NONCE] =
-{ .tag = JET
-, .jet = output_nonce
-, .cmr = {{0xedab1241u, 0xd297f274u, 0x7ad378a8u, 0x1a56143du, 0x741bc4eeu, 0x4c30b32fu, 0x8bc1aeb5u, 0x2cc4814cu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmspbw256w256
-, .cost = 396 /* milli weight units */
-}
-,[OUTPUT_NONCES_HASH] =
-{ .tag = JET
-, .jet = output_nonces_hash
-, .cmr = {{0xf07fe7e9u, 0x7396865du, 0x50c1ac94u, 0x77ad9f95u, 0x062f11edu, 0x01c97de7u, 0xfa4affa0u, 0x8cd10531u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 387 /* milli weight units */
-}
-,[OUTPUT_NULL_DATUM] =
-{ .tag = JET
-, .jet = output_null_datum
-, .cmr = {{0x964c4deeu, 0x8fe4a866u, 0xcc3ea494u, 0x7884814cu, 0xccd60269u, 0x2e378ba0u, 0xe935fa03u, 0xf95e3de1u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_mmspw2w256sbw4
-, .cost = 249 /* milli weight units */
-}
-,[OUTPUT_RANGE_PROOF] =
-{ .tag = JET
-, .jet = output_range_proof
-, .cmr = {{0xa00418e4u, 0xabc4bed5u, 0x373fc222u, 0xce1f960bu, 0x6435eaa8u, 0xf14fe66cu, 0xa42c52ddu, 0x9ae226b8u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mw256
-, .cost = 452 /* milli weight units */
-}
-,[OUTPUT_RANGE_PROOFS_HASH] =
-{ .tag = JET
-, .jet = output_range_proofs_hash
-, .cmr = {{0xebe626e2u, 0x854e7000u, 0x75eadeeeu, 0xad5fe0bdu, 0xd69c1b0fu, 0xadf108d3u, 0x68c1293fu, 0x86585fb1u}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 397 /* milli weight units */
-}
-,[OUTPUT_SCRIPT_HASH] =
-{ .tag = JET
-, .jet = output_script_hash
-, .cmr = {{0xecf673e5u, 0xfcaf7b7eu, 0x6e37b628u, 0x095e5a9eu, 0xf981e6c4u, 0xc339ebdfu, 0x3eb1e6bfu, 0x4505f534u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mw256
-, .cost = 437 /* milli weight units */
-}
-,[OUTPUT_SCRIPTS_HASH] =
-{ .tag = JET
-, .jet = output_scripts_hash
-, .cmr = {{0xc0489e87u, 0x8cd89ca5u, 0x109a5316u, 0x7a61a845u, 0x4ed6dc2au, 0xcef9191au, 0xd53bbfb3u, 0xb0ea72dfu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 416 /* milli weight units */
-}
-,[OUTPUT_SURJECTION_PROOF] =
-{ .tag = JET
-, .jet = output_surjection_proof
-, .cmr = {{0x1de8addbu, 0xf8b697c2u, 0xb3d192bdu, 0xe2c2c55fu, 0x5e6709c5u, 0xbd8631e3u, 0x8d8378ddu, 0x3dce49ccu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mw256
-, .cost = 453 /* milli weight units */
-}
-,[OUTPUT_SURJECTION_PROOFS_HASH] =
-{ .tag = JET
-, .jet = output_surjection_proofs_hash
-, .cmr = {{0x743eb2d9u, 0x8e2c69c4u, 0x03aba3c3u, 0x3dcb8351u, 0xde8224c9u, 0xe04da507u, 0x1c8dfd7au, 0x935070acu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 419 /* milli weight units */
-}
-,[OUTPUTS_HASH] =
-{ .tag = JET
-, .jet = outputs_hash
-, .cmr = {{0x12af1e5cu, 0x32da7512u, 0xfcd43259u, 0xd1bc8472u, 0xa915ce21u, 0xc6d306e4u, 0x85f1dbbcu, 0x07a1cfdbu}}
-, .sourceIx = ty_u
-, .targetIx = ty_w256
-, .cost = 296 /* milli weight units */
-}
-,[PARSE_LOCK] =
-{ .tag = JET
-, .jet = parse_lock
-, .cmr = {{0x4571ca04u, 0x52577cfau, 0xf8a85f5eu, 0x329d602cu, 0x8dcad127u, 0x6a974e2cu, 0x75d2ec04u, 0x657bc425u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_sw32w32
-, .cost = 177 /* milli weight units */
-}
-,[PARSE_SEQUENCE] =
-{ .tag = JET
-, .jet = parse_sequence
-, .cmr = {{0x55c90366u, 0x0c8c92b1u, 0x429f63e2u, 0x7471acd5u, 0x9c3a26aau, 0x7a59221du, 0x7a6d52b6u, 0x2ebaf94au}}
-, .sourceIx = ty_w32
-, .targetIx = ty_msw16w16
-, .cost = 261 /* milli weight units */
-}
-,[POINT_VERIFY_1] =
-{ .tag = JET
-, .jet = point_verify_1
-, .cmr = {{0x02b89a1cu, 0xa7d24f82u, 0x353e9732u, 0xfa39ce65u, 0x509b39aeu, 0xaf43d2e5u, 0xf80ca903u, 0xfc81c846u}}
-, .sourceIx = ty_pppw256pbw256w256pbw256
-, .targetIx = ty_u
-, .cost = 50604 /* milli weight units */
-}
-,[REISSUANCE_BLINDING] =
-{ .tag = JET
-, .jet = reissuance_blinding
-, .cmr = {{0x0b9a0aafu, 0xedb102a1u, 0x64061419u, 0xa789ea84u, 0x326cd589u, 0xf17c0ea0u, 0x192dd637u, 0x2ecb5ebfu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
-, .cost = 153 /* milli weight units */
-}
-,[REISSUANCE_ENTROPY] =
-{ .tag = JET
-, .jet = reissuance_entropy
-, .cmr = {{0xce84f983u, 0xa3bd3394u, 0x3d4dcb44u, 0x861c4a69u, 0xa2a5e8a5u, 0x22b5d5ebu, 0xf2515f51u, 0x1ac6a9b2u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_mmw256
-, .cost = 126 /* milli weight units */
-}
-,[RIGHT_EXTEND_16_32] =
-{ .tag = JET
-, .jet = right_extend_16_32
-, .cmr = {{0x36423c16u, 0xd48d6c7cu, 0x91ed4416u, 0x11be3072u, 0xdfa5dd38u, 0xe4d27da8u, 0xdaed2978u, 0x8fc95208u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_EXTEND_16_64] =
-{ .tag = JET
-, .jet = right_extend_16_64
-, .cmr = {{0x4b8a47b9u, 0x067073a1u, 0xfb68300fu, 0xacd6c506u, 0x9890abdbu, 0x7eaacb62u, 0x2ad7309au, 0x87f4d34du}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_EXTEND_32_64] =
-{ .tag = JET
-, .jet = right_extend_32_64
-, .cmr = {{0xdd6af1c8u, 0x01d26c0bu, 0x2edf83ceu, 0x67b172dfu, 0x6757d07fu, 0xb7c85468u, 0x6f42e576u, 0x8adcc9e7u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_EXTEND_8_16] =
-{ .tag = JET
-, .jet = right_extend_8_16
-, .cmr = {{0x1de201a8u, 0x6470a02bu, 0x2dfe48c6u, 0x6afe0673u, 0x5b475e88u, 0xd325cbf1u, 0x6042a910u, 0x24d2bed9u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_EXTEND_8_32] =
-{ .tag = JET
-, .jet = right_extend_8_32
-, .cmr = {{0x7e9c5cb3u, 0x5419ab06u, 0xe1220023u, 0x102be46au, 0xb6d96995u, 0xc423c6b1u, 0x4b9a6602u, 0x8aec5d75u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_EXTEND_8_64] =
-{ .tag = JET
-, .jet = right_extend_8_64
-, .cmr = {{0x49d246c2u, 0xa61cd39du, 0x7820dcd7u, 0x5eee847bu, 0xf057c01au, 0x63a3acbcu, 0xc9463e44u, 0xbc1e0b6cu}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_HIGH_16_32] =
-{ .tag = JET
-, .jet = right_pad_high_16_32
-, .cmr = {{0xfe901fb4u, 0xf6ebdc4eu, 0xa2961998u, 0x9922b80fu, 0xa9ce2412u, 0x87fa5408u, 0x64362cccu, 0xe9f54b3bu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_HIGH_16_64] =
-{ .tag = JET
-, .jet = right_pad_high_16_64
-, .cmr = {{0xda90add3u, 0x1067ccfdu, 0xbee4cbfbu, 0x21de8e6au, 0xa4f93e00u, 0x2200711fu, 0x9984af6fu, 0xc01e2700u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_HIGH_1_16] =
-{ .tag = JET
-, .jet = right_pad_high_1_16
-, .cmr = {{0xe4cf116cu, 0x0880f73fu, 0x9952f700u, 0x81788498u, 0xe5084cbbu, 0x72cf841bu, 0xcd9167a6u, 0xeea264dcu}}
-, .sourceIx = ty_b
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_HIGH_1_32] =
-{ .tag = JET
-, .jet = right_pad_high_1_32
-, .cmr = {{0x1276036bu, 0xb94cfd92u, 0x0ab73164u, 0x3b76b119u, 0x72dd2654u, 0x3853444eu, 0x18d7f63fu, 0xcac091a3u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_HIGH_1_64] =
-{ .tag = JET
-, .jet = right_pad_high_1_64
-, .cmr = {{0x38c99980u, 0xb1a99810u, 0x5111c56bu, 0xf8246509u, 0x65a509c4u, 0x7e1c76d9u, 0x00750a1fu, 0xee45c964u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_HIGH_1_8] =
-{ .tag = JET
-, .jet = right_pad_high_1_8
-, .cmr = {{0xca72ceedu, 0x2d98dccdu, 0x81aa21f0u, 0xba21d1a0u, 0x87b6f252u, 0x07c24a58u, 0x0ada7e60u, 0x5f7982dfu}}
-, .sourceIx = ty_b
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_HIGH_32_64] =
-{ .tag = JET
-, .jet = right_pad_high_32_64
-, .cmr = {{0x17eb5911u, 0xf8549576u, 0x68eef463u, 0xb0cbae72u, 0x08529134u, 0xef5e56cdu, 0x33fbbc29u, 0xc28bbe92u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_HIGH_8_16] =
-{ .tag = JET
-, .jet = right_pad_high_8_16
-, .cmr = {{0xd26f0cc5u, 0xb261eb83u, 0x0e02df12u, 0xcc574425u, 0x9b4a43d9u, 0x75bd2e3du, 0x7c782811u, 0x761ff1d1u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_HIGH_8_32] =
-{ .tag = JET
-, .jet = right_pad_high_8_32
-, .cmr = {{0xbd2e5c92u, 0x60bf6f32u, 0x4d2b1f40u, 0xcbb12240u, 0x2f30d52fu, 0x6434e39fu, 0x8a09b839u, 0x7bc32e94u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_HIGH_8_64] =
-{ .tag = JET
-, .jet = right_pad_high_8_64
-, .cmr = {{0x941bf442u, 0xdbcf4f20u, 0x04a4b18bu, 0xeeb2adacu, 0x9f209feau, 0x4c4bd48cu, 0xede8dafau, 0xcf8843b7u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_LOW_16_32] =
-{ .tag = JET
-, .jet = right_pad_low_16_32
-, .cmr = {{0xbb387c29u, 0x2d59d713u, 0xad76f6ceu, 0xd5b596cfu, 0xd8385892u, 0x4f725f7du, 0x116b2807u, 0x5821925au}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_LOW_16_64] =
-{ .tag = JET
-, .jet = right_pad_low_16_64
-, .cmr = {{0x0232326eu, 0xe1b206adu, 0x26349b55u, 0x3d7f2462u, 0x287320d6u, 0x30e42932u, 0x0740cbd3u, 0xeb4ef9beu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_LOW_1_16] =
-{ .tag = JET
-, .jet = right_pad_low_1_16
-, .cmr = {{0xd913f602u, 0xb35958d5u, 0x2abb20b0u, 0x2ce68961u, 0x6ffa66e0u, 0x2d73867du, 0x29181e11u, 0x93c9d243u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_LOW_1_32] =
-{ .tag = JET
-, .jet = right_pad_low_1_32
-, .cmr = {{0x6b4033d9u, 0xfc6c876bu, 0x2e75d582u, 0xbb9b3c04u, 0xfa29dfb2u, 0x2c9e1a48u, 0x8e837c2fu, 0x39aa6160u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_LOW_1_64] =
-{ .tag = JET
-, .jet = right_pad_low_1_64
-, .cmr = {{0x4e2b20ddu, 0x9d91857au, 0x49c820d0u, 0x6f435dd3u, 0xca791f17u, 0x7eeaf34au, 0xec36c454u, 0x19d16965u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_LOW_1_8] =
-{ .tag = JET
-, .jet = right_pad_low_1_8
-, .cmr = {{0x24eee451u, 0xb26ba39du, 0x6bcc588bu, 0x720faf22u, 0x32767912u, 0xf67db329u, 0x060d90b7u, 0x1417b6c3u}}
-, .sourceIx = ty_b
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_LOW_32_64] =
-{ .tag = JET
-, .jet = right_pad_low_32_64
-, .cmr = {{0x52fb8bbcu, 0xef903231u, 0xa5b76791u, 0xe4652b38u, 0xbed8977fu, 0x5dab1795u, 0x55998db2u, 0x4d1d7c98u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_LOW_8_16] =
-{ .tag = JET
-, .jet = right_pad_low_8_16
-, .cmr = {{0x1719b279u, 0x74e84380u, 0x50882530u, 0xa1a42ed7u, 0xab3ca28du, 0x254adc37u, 0xfe5666fdu, 0x2f70b4e4u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_LOW_8_32] =
-{ .tag = JET
-, .jet = right_pad_low_8_32
-, .cmr = {{0xee2a8230u, 0xf283dc08u, 0x3b8e1944u, 0x8ba32497u, 0xe9318b4eu, 0x9e1bd4ebu, 0xe1bec524u, 0x476ab86du}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_PAD_LOW_8_64] =
-{ .tag = JET
-, .jet = right_pad_low_8_64
-, .cmr = {{0x97da90d8u, 0x428e6b94u, 0xe6c13514u, 0x60dc0112u, 0x3e479c4au, 0xafbbd14cu, 0x78ad2fadu, 0x0a895ef3u}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_ROTATE_16] =
-{ .tag = JET
-, .jet = right_rotate_16
-, .cmr = {{0xee7d1c1fu, 0x3d82da56u, 0x81dd8b50u, 0x69d537d8u, 0x9f2293aau, 0x605332ceu, 0x10c1c422u, 0x4a53ceeau}}
-, .sourceIx = ty_pw4w16
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_ROTATE_32] =
-{ .tag = JET
-, .jet = right_rotate_32
-, .cmr = {{0x892a28dbu, 0x324cd93cu, 0xf7f69c30u, 0x72a7b222u, 0xb88c818eu, 0xe0e5a1b8u, 0x97e50c58u, 0x1f2a2962u}}
-, .sourceIx = ty_pw8w32
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_ROTATE_64] =
-{ .tag = JET
-, .jet = right_rotate_64
-, .cmr = {{0x64314ff1u, 0x9040a376u, 0xf9fcf02eu, 0x7574149cu, 0x123f99c3u, 0x9071cd37u, 0x851f8f8cu, 0xdf0eed42u}}
-, .sourceIx = ty_pw8w64
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_ROTATE_8] =
-{ .tag = JET
-, .jet = right_rotate_8
-, .cmr = {{0x1581e0cau, 0x09f13684u, 0xfe3135c1u, 0xc6b6f9c4u, 0x89d7dd1eu, 0xf0a5f770u, 0x83bb0ed0u, 0x0b4df28fu}}
-, .sourceIx = ty_pw4w8
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_SHIFT_16] =
-{ .tag = JET
-, .jet = right_shift_16
-, .cmr = {{0x5b4ec462u, 0xd4e2ed89u, 0xffe3fd40u, 0x5932c797u, 0x80286120u, 0x3ecb61d5u, 0xb59a73b0u, 0xfbfc4e84u}}
-, .sourceIx = ty_pw4w16
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_SHIFT_32] =
-{ .tag = JET
-, .jet = right_shift_32
-, .cmr = {{0xb2861a48u, 0xb2054176u, 0x91b6347fu, 0xe75ebea5u, 0x4560cf81u, 0x3814ac31u, 0x639170dbu, 0x92b947d6u}}
-, .sourceIx = ty_pw8w32
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_SHIFT_64] =
-{ .tag = JET
-, .jet = right_shift_64
-, .cmr = {{0xd33942bfu, 0x18618a10u, 0x4a570754u, 0x7f78ab72u, 0x941f4ee8u, 0x13216c0cu, 0xe520f356u, 0x60fdbf81u}}
-, .sourceIx = ty_pw8w64
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_SHIFT_8] =
-{ .tag = JET
-, .jet = right_shift_8
-, .cmr = {{0x737912aeu, 0x323250c0u, 0x4e516e39u, 0x66ce947eu, 0x65326f47u, 0x468ac931u, 0xc163c3b0u, 0x2de41245u}}
-, .sourceIx = ty_pw4w8
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_SHIFT_WITH_16] =
-{ .tag = JET
-, .jet = right_shift_with_16
-, .cmr = {{0x1e181c33u, 0x1693594cu, 0x6e0e8fdeu, 0xb40a81a3u, 0xaf8f56b7u, 0xa560de64u, 0x41303f65u, 0xf4fc937cu}}
-, .sourceIx = ty_pbpw4w16
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_SHIFT_WITH_32] =
-{ .tag = JET
-, .jet = right_shift_with_32
-, .cmr = {{0x69dbe190u, 0xd72d77d0u, 0xd0dcf325u, 0xde965922u, 0x14581f11u, 0xe9edca93u, 0xe2f92848u, 0x2b5e77a7u}}
-, .sourceIx = ty_pbpw8w32
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_SHIFT_WITH_64] =
-{ .tag = JET
-, .jet = right_shift_with_64
-, .cmr = {{0x2d0ab883u, 0x0469280eu, 0x2a28993cu, 0x5a05f56bu, 0x91a8aeb0u, 0x34ccebe0u, 0x9c50f13eu, 0xa78ddafcu}}
-, .sourceIx = ty_pbpw8w64
-, .targetIx = ty_w64
-, .cost = 150 /* milli weight units */
-}
-,[RIGHT_SHIFT_WITH_8] =
-{ .tag = JET
-, .jet = right_shift_with_8
-, .cmr = {{0x1bdbdc8du, 0x8b749ba3u, 0xda757558u, 0x7d999300u, 0x72603f27u, 0x5f7bd2f3u, 0x24a34951u, 0xd4461b21u}}
-, .sourceIx = ty_pbpw4w8
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_16_1] =
-{ .tag = JET
-, .jet = rightmost_16_1
-, .cmr = {{0xe129a8aeu, 0x880f51cau, 0x2a94db44u, 0xedeca1c3u, 0xa766b73eu, 0x98970b11u, 0x98ade216u, 0xae69cd2du}}
-, .sourceIx = ty_w16
-, .targetIx = ty_b
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_16_2] =
-{ .tag = JET
-, .jet = rightmost_16_2
-, .cmr = {{0x8d0f68dau, 0xdf546c5eu, 0xd36f3470u, 0x5802b0ceu, 0x839a63e5u, 0x74497785u, 0x243008abu, 0x427e456bu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w2
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_16_4] =
-{ .tag = JET
-, .jet = rightmost_16_4
-, .cmr = {{0xb0d41395u, 0x41ecab2cu, 0x16fc1a87u, 0x989bdd04u, 0x5322efb1u, 0xe70bc1f7u, 0xb04d43b2u, 0x8bb349ffu}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w4
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_16_8] =
-{ .tag = JET
-, .jet = rightmost_16_8
-, .cmr = {{0x0f03fa0fu, 0xa6ceb55du, 0xf99b20d9u, 0xefcf3710u, 0xa708a284u, 0xa95c334cu, 0x1da3cbfeu, 0x02fb9467u}}
-, .sourceIx = ty_w16
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_32_1] =
-{ .tag = JET
-, .jet = rightmost_32_1
-, .cmr = {{0x8f5e5263u, 0xbb8ef800u, 0xc99d0c23u, 0xfcbaa319u, 0x8a6abdf0u, 0x08581e8cu, 0x891052b4u, 0x0ca7f7a4u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_b
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_32_16] =
-{ .tag = JET
-, .jet = rightmost_32_16
-, .cmr = {{0xb9a23e1bu, 0xf7c68143u, 0x513074c9u, 0x39bd73c9u, 0xbf8eb5aau, 0xce8415ffu, 0x01022fcau, 0x65b3a342u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_32_2] =
-{ .tag = JET
-, .jet = rightmost_32_2
-, .cmr = {{0xabf3238du, 0x3cbf0bf3u, 0x5a83961fu, 0xb9f904b5u, 0x6d3a9e0eu, 0x35c89df8u, 0x72c9c938u, 0xd344a54au}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w2
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_32_4] =
-{ .tag = JET
-, .jet = rightmost_32_4
-, .cmr = {{0xf7eed2ecu, 0x805906feu, 0xb3ac27f2u, 0xdee53b58u, 0xc3b13e40u, 0xe2bc3e8bu, 0x10632ed9u, 0xc0e7ca5fu}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w4
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_32_8] =
-{ .tag = JET
-, .jet = rightmost_32_8
-, .cmr = {{0xf3e439edu, 0x9883c6a6u, 0xb9072053u, 0x2eb4e043u, 0xe89a35f0u, 0xb5295fd5u, 0x02a0b0b2u, 0x436bd213u}}
-, .sourceIx = ty_w32
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_64_1] =
-{ .tag = JET
-, .jet = rightmost_64_1
-, .cmr = {{0xc96be3e3u, 0x3548258eu, 0x30717b30u, 0x817e440fu, 0x0af4b189u, 0x0edfcf7fu, 0xdcb39cb9u, 0xefff471du}}
-, .sourceIx = ty_w64
-, .targetIx = ty_b
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_64_16] =
-{ .tag = JET
-, .jet = rightmost_64_16
-, .cmr = {{0x5d555f83u, 0xe48087dbu, 0x0c415dadu, 0x17f081d4u, 0xf6b760e9u, 0x95f272bbu, 0xb6e4cb42u, 0xd0f50325u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w16
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_64_2] =
-{ .tag = JET
-, .jet = rightmost_64_2
-, .cmr = {{0xa9cb1343u, 0xdbd522b9u, 0x1b6482e4u, 0xbae62b0eu, 0x5f829868u, 0x7e642333u, 0x5c6df506u, 0xdc425b90u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w2
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_64_32] =
-{ .tag = JET
-, .jet = rightmost_64_32
-, .cmr = {{0x4733b192u, 0x59800964u, 0x99b7877cu, 0x04e001bau, 0xd3325b2eu, 0xcab348e5u, 0xadd720d0u, 0x7b1b4a3au}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w32
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_64_4] =
-{ .tag = JET
-, .jet = rightmost_64_4
-, .cmr = {{0x89daf7beu, 0x2cde58f0u, 0x4e8dee58u, 0xa4391091u, 0x2c096e95u, 0xe146c19bu, 0x00f54fe8u, 0x74700740u}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w4
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_64_8] =
-{ .tag = JET
-, .jet = rightmost_64_8
-, .cmr = {{0x1dfb2befu, 0x4cae4507u, 0x922708e5u, 0xa5709949u, 0x3fbe2115u, 0x98eec0bfu, 0xe0e77b3du, 0x41ec89abu}}
-, .sourceIx = ty_w64
-, .targetIx = ty_w8
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_8_1] =
-{ .tag = JET
-, .jet = rightmost_8_1
-, .cmr = {{0xceabd5cau, 0x9fd9162fu, 0x995e3735u, 0x77047aa4u, 0xba71f807u, 0xc711f60bu, 0x08eb6a1cu, 0xfc381c9cu}}
-, .sourceIx = ty_w8
-, .targetIx = ty_b
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_8_2] =
-{ .tag = JET
-, .jet = rightmost_8_2
-, .cmr = {{0x39b2f037u, 0xb6a08186u, 0x115065f3u, 0x85057af3u, 0xde3b9f0au, 0x9bda6833u, 0x71462259u, 0x413028ecu}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w2
-, .cost = 150 /* milli weight units */
-}
-,[RIGHTMOST_8_4] =
-{ .tag = JET
-, .jet = rightmost_8_4
-, .cmr = {{0xa7a94949u, 0x0d1a00deu, 0xfe5f6151u, 0x2923850fu, 0x51e347c0u, 0x6a8d76a0u, 0xcdab87eeu, 0xe29a5defu}}
-, .sourceIx = ty_w8
-, .targetIx = ty_w4
-, .cost = 150 /* milli weight units */
-}
-,[SCALAR_ADD] =
-{ .tag = JET
-, .jet = scalar_add
-, .cmr = {{0x4ee9a96cu, 0xef496cf4u, 0xa8fc4e8au, 0x8bc0d159u, 0xca5ffb87u, 0x53643a8au, 0xdf638ae8u, 0x9bbbb345u}}
-, .sourceIx = ty_w512
-, .targetIx = ty_w256
-, .cost = 962 /* milli weight units */
-}
-,[SCALAR_INVERT] =
-{ .tag = JET
-, .jet = scalar_invert
-, .cmr = {{0x12b855e5u, 0xebaa7f8bu, 0xb44fee26u, 0x16a051adu, 0x00499f9du, 0xf2a2adf7u, 0x9973e9dbu, 0x8185759cu}}
-, .sourceIx = ty_w256
-, .targetIx = ty_w256
-, .cost = 4025 /* milli weight units */
-}
-,[SCALAR_IS_ZERO] =
-{ .tag = JET
-, .jet = scalar_is_zero
-, .cmr = {{0x4d252803u, 0x457b83b8u, 0x5b987f04u, 0x8733fbeeu, 0xdeaa8d25u, 0x9d320507u, 0x450019c6u, 0x22034f26u}}
-, .sourceIx = ty_w256
-, .targetIx = ty_b
-, .cost = 569 /* milli weight units */
-}
-,[SCALAR_MULTIPLY] =
-{ .tag = JET
-, .jet = scalar_multiply
-, .cmr = {{0x8756f2dcu, 0x310cdeb6u, 0x4045c44cu, 0x2366e14bu, 0xc1fafa17u, 0x159f2d7bu, 0x489bd945u, 0x3ee37ea0u}}
-, .sourceIx = ty_w512
-, .targetIx = ty_w256
-, .cost = 1230 /* milli weight units */
-}
-,[SCALAR_MULTIPLY_LAMBDA] =
-{ .tag = JET
-, .jet = scalar_multiply_lambda
-, .cmr = {{0x2b31d39eu, 0xc4ff3723u, 0x1a1b3ebeu, 0x759d41e0u, 0xf5ce3449u, 0x2d4bd3c2u, 0x0988c3f2u, 0xf7c53edcu}}
-, .sourceIx = ty_w256
-, .targetIx = ty_w256
-, .cost = 984 /* milli weight units */
-}
-,[SCALAR_NEGATE] =
-{ .tag = JET
-, .jet = scalar_negate
-, .cmr = {{0xfc2ed187u, 0x50a22181u, 0xaf5b8141u, 0x969273cau, 0xaf72cc11u, 0x31e1082cu, 0xf008f5cau, 0x0909c216u}}
-, .sourceIx = ty_w256
-, .targetIx = ty_w256
-, .cost = 851 /* milli weight units */
-}
-,[SCALAR_NORMALIZE] =
-{ .tag = JET
-, .jet = scalar_normalize
-, .cmr = {{0x797cffa8u, 0x0859cab7u, 0xcdbf3b9du, 0xe6e0a8b7u, 0x91484eaau, 0xbacbdfbau, 0xeb01e238u, 0x95e96199u}}
-, .sourceIx = ty_w256
 , .targetIx = ty_w256
 , .cost = 808 /* milli weight units */
 }
-,[SCALAR_SQUARE] =
+,[FE_MULTIPLY_BETA] =
 { .tag = JET
-, .jet = scalar_square
-, .cmr = {{0x77b43c60u, 0x38ad80b4u, 0x6d3a76e2u, 0x12b3a8c0u, 0xd2f06307u, 0xbc456e40u, 0xb5d6f4a3u, 0xa50e264du}}
+, .jet = simplicity_fe_multiply_beta
+, .cmr = {{0xca2ea797u, 0xbe89e41du, 0xb51586eau, 0xdde33638u, 0x11d01d5du, 0x4c6142f5u, 0x7e1b99f2u, 0xae03061cu}}
 , .sourceIx = ty_w256
 , .targetIx = ty_w256
-, .cost = 947 /* milli weight units */
+, .cost = 579 /* milli weight units */
+}
+,[FE_NEGATE] =
+{ .tag = JET
+, .jet = simplicity_fe_negate
+, .cmr = {{0x0142ba1au, 0x10131357u, 0x813b09f9u, 0xce18c06bu, 0x4bab742cu, 0xb485d179u, 0x8b4a313au, 0x9293fa7eu}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+, .cost = 531 /* milli weight units */
+}
+,[FE_NORMALIZE] =
+{ .tag = JET
+, .jet = simplicity_fe_normalize
+, .cmr = {{0x70e55707u, 0x9639411du, 0xab31b3e4u, 0xf4b5605au, 0x4b15593au, 0x1af79bbdu, 0xd9f9a110u, 0xa85b2581u}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+, .cost = 521 /* milli weight units */
+}
+,[FE_SQUARE] =
+{ .tag = JET
+, .jet = simplicity_fe_square
+, .cmr = {{0xcfa02a6au, 0x95091b14u, 0x970007b9u, 0x1a01ba12u, 0x57fe3b84u, 0x9563cf42u, 0xd06494c3u, 0xb8d04f9du}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+, .cost = 556 /* milli weight units */
+}
+,[FE_SQUARE_ROOT] =
+{ .tag = JET
+, .jet = simplicity_fe_square_root
+, .cmr = {{0xf51d5ed2u, 0x19bc8941u, 0xb2412957u, 0x2e84baf8u, 0x1a8cd2feu, 0x0e4ef238u, 0x869cb2dau, 0x296b0fa8u}}
+, .sourceIx = ty_w256
+, .targetIx = ty_mw256
+, .cost = 10275 /* milli weight units */
+}
+,[FULL_ADD_16] =
+{ .tag = JET
+, .jet = simplicity_full_add_16
+, .cmr = {{0xd3992e38u, 0xab1ef2c3u, 0x83813041u, 0xdb1369ddu, 0xd5c3aa81u, 0xae9024c5u, 0xea266119u, 0x6bd11f01u}}
+, .sourceIx = ty_pbw32
+, .targetIx = ty_pbw16
+, .cost = 121 /* milli weight units */
+}
+,[FULL_ADD_32] =
+{ .tag = JET
+, .jet = simplicity_full_add_32
+, .cmr = {{0x462b9c3bu, 0xa6576c11u, 0x14553377u, 0x5bdf955bu, 0x60482e6eu, 0x3080a819u, 0xf5cc73a5u, 0xca6830c1u}}
+, .sourceIx = ty_pbw64
+, .targetIx = ty_pbw32
+, .cost = 119 /* milli weight units */
+}
+,[FULL_ADD_64] =
+{ .tag = JET
+, .jet = simplicity_full_add_64
+, .cmr = {{0xc0fc7999u, 0xd91ca6f7u, 0xb5f872eeu, 0x6a8e08eau, 0x2a11af7bu, 0x92e7de60u, 0x251719d7u, 0x85b5f3e2u}}
+, .sourceIx = ty_pbw128
+, .targetIx = ty_pbw64
+, .cost = 121 /* milli weight units */
+}
+,[FULL_ADD_8] =
+{ .tag = JET
+, .jet = simplicity_full_add_8
+, .cmr = {{0x2714ecbbu, 0x324fb9fbu, 0x719e0971u, 0x6bdbdfb5u, 0x6466cb4fu, 0x41f901b1u, 0x6678b002u, 0x161741afu}}
+, .sourceIx = ty_pbw16
+, .targetIx = ty_pbw8
+, .cost = 127 /* milli weight units */
+}
+,[FULL_DECREMENT_16] =
+{ .tag = JET
+, .jet = simplicity_full_decrement_16
+, .cmr = {{0xbd0dd691u, 0xf8554447u, 0x04d9bbc2u, 0xeaf029c6u, 0xca5b45cfu, 0x92441f7fu, 0x68b478b6u, 0x11b59728u}}
+, .sourceIx = ty_pbw16
+, .targetIx = ty_pbw16
+, .cost = 92 /* milli weight units */
+}
+,[FULL_DECREMENT_32] =
+{ .tag = JET
+, .jet = simplicity_full_decrement_32
+, .cmr = {{0x2788c3a0u, 0x1735a64cu, 0x0c361903u, 0xd71e21ceu, 0x1005ce35u, 0x74e69a2au, 0x680b873eu, 0x5f73766au}}
+, .sourceIx = ty_pbw32
+, .targetIx = ty_pbw32
+, .cost = 107 /* milli weight units */
+}
+,[FULL_DECREMENT_64] =
+{ .tag = JET
+, .jet = simplicity_full_decrement_64
+, .cmr = {{0x144bf9feu, 0x04ba8c93u, 0xa7835b16u, 0x36ae8f7du, 0x505c0508u, 0x92ddbcc8u, 0xf9725f6bu, 0x09c3e47cu}}
+, .sourceIx = ty_pbw64
+, .targetIx = ty_pbw64
+, .cost = 81 /* milli weight units */
+}
+,[FULL_DECREMENT_8] =
+{ .tag = JET
+, .jet = simplicity_full_decrement_8
+, .cmr = {{0x3b0d4c9au, 0x02bdd903u, 0xb12f49b8u, 0xcad0e3f0u, 0x6cb9bcb6u, 0xc8b19895u, 0x6dffce48u, 0x908a63f1u}}
+, .sourceIx = ty_pbw8
+, .targetIx = ty_pbw8
+, .cost = 91 /* milli weight units */
+}
+,[FULL_INCREMENT_16] =
+{ .tag = JET
+, .jet = simplicity_full_increment_16
+, .cmr = {{0x91818a49u, 0xe95e228cu, 0x3b51c730u, 0x9b3dc685u, 0xccc2bda1u, 0xfb3cddc0u, 0xcf24a5c5u, 0x9d77e7eau}}
+, .sourceIx = ty_pbw16
+, .targetIx = ty_pbw16
+, .cost = 89 /* milli weight units */
+}
+,[FULL_INCREMENT_32] =
+{ .tag = JET
+, .jet = simplicity_full_increment_32
+, .cmr = {{0x704704c6u, 0xd7f757eeu, 0xe9f88b2bu, 0x327bc117u, 0x43cbd9a7u, 0x5deca2e9u, 0x6d628d53u, 0x13e61630u}}
+, .sourceIx = ty_pbw32
+, .targetIx = ty_pbw32
+, .cost = 104 /* milli weight units */
+}
+,[FULL_INCREMENT_64] =
+{ .tag = JET
+, .jet = simplicity_full_increment_64
+, .cmr = {{0x999cadeau, 0x9cf0bddau, 0xab12a398u, 0xcf52d18eu, 0x08fb5c18u, 0x5dca00f3u, 0x5ede6327u, 0x7e9bac4eu}}
+, .sourceIx = ty_pbw64
+, .targetIx = ty_pbw64
+, .cost = 99 /* milli weight units */
+}
+,[FULL_INCREMENT_8] =
+{ .tag = JET
+, .jet = simplicity_full_increment_8
+, .cmr = {{0x2d645cb4u, 0x778da17au, 0x0dad326fu, 0xfedc2b04u, 0xf62d027du, 0x7b40560du, 0x16cd649fu, 0xd5a4d72au}}
+, .sourceIx = ty_pbw8
+, .targetIx = ty_pbw8
+, .cost = 72 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_16_1] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_16_1
+, .cmr = {{0x32d06f29u, 0x4652b364u, 0x9058a466u, 0x673f04f0u, 0x8880aaa1u, 0x926f908au, 0x9256a99eu, 0x1e2e0bdcu}}
+, .sourceIx = ty_pw16b
+, .targetIx = ty_pbw16
+, .cost = 83 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_16_2] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_16_2
+, .cmr = {{0xd1a5fb91u, 0xaa70445du, 0x29fdb169u, 0x4037a95du, 0x84e6571bu, 0x3e7773fcu, 0x16f56eb8u, 0x8b676439u}}
+, .sourceIx = ty_pw16w2
+, .targetIx = ty_pw2w16
+, .cost = 83 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_16_4] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_16_4
+, .cmr = {{0x9452a9b6u, 0x7549178fu, 0x93c7bb34u, 0x36be0631u, 0x4b4adae5u, 0xde0e3153u, 0xcbd32d55u, 0x9df6f428u}}
+, .sourceIx = ty_pw16w4
+, .targetIx = ty_pw4w16
+, .cost = 89 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_16_8] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_16_8
+, .cmr = {{0xcdb88c96u, 0x01732a76u, 0x665ac928u, 0x21683bafu, 0xf1844b67u, 0x0bff6639u, 0x17c8913bu, 0xa51c0f08u}}
+, .sourceIx = ty_pw16w8
+, .targetIx = ty_pw8w16
+, .cost = 65 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_32_1] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_32_1
+, .cmr = {{0xef4706cau, 0x44a8c55fu, 0x465fa9b3u, 0x9c3c69c8u, 0x12efe3d9u, 0xdfb6c9a5u, 0xc05092b5u, 0x7fc3c153u}}
+, .sourceIx = ty_pw32b
+, .targetIx = ty_pbw32
+, .cost = 84 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_32_16] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_32_16
+, .cmr = {{0x130405b9u, 0x90dfa181u, 0xa76bb296u, 0x5f6b706du, 0xe5b04647u, 0x438a5cabu, 0x6ec3dfb6u, 0xae21fa8au}}
+, .sourceIx = ty_pw32w16
+, .targetIx = ty_pw16w32
+, .cost = 81 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_32_2] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_32_2
+, .cmr = {{0xcc4b9498u, 0xee412385u, 0xc23bff77u, 0xdf137ad2u, 0x96a5b830u, 0x31c1518du, 0xbf4fdf6au, 0xbb567c2au}}
+, .sourceIx = ty_pw32w2
+, .targetIx = ty_pw2w32
+, .cost = 67 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_32_4] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_32_4
+, .cmr = {{0xbfadc953u, 0x410047d9u, 0xef398bd3u, 0x3a02aad0u, 0xd48cbd7bu, 0x6ae2de8du, 0xc1f76b0cu, 0xe44f80ecu}}
+, .sourceIx = ty_pw32w4
+, .targetIx = ty_pw4w32
+, .cost = 84 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_32_8] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_32_8
+, .cmr = {{0xac934c70u, 0xaab810f0u, 0xae527bc0u, 0x749e96ceu, 0x0068e237u, 0xcee2a866u, 0x483ddfaau, 0x2116d931u}}
+, .sourceIx = ty_pw32w8
+, .targetIx = ty_pw8w32
+, .cost = 91 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_64_1] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_64_1
+, .cmr = {{0xbf32d9dbu, 0xb239e988u, 0x014920ccu, 0x4df2e435u, 0xc712017bu, 0x6a940e77u, 0xc203713du, 0xbfb0fe53u}}
+, .sourceIx = ty_pw64b
+, .targetIx = ty_pbw64
+, .cost = 99 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_64_16] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_64_16
+, .cmr = {{0x13de9678u, 0x5bd97f6fu, 0x78ec2a37u, 0xf552d4d7u, 0xdae5768eu, 0x39b4bebdu, 0xf3bc7cebu, 0x723c5947u}}
+, .sourceIx = ty_pw64w16
+, .targetIx = ty_pw16w64
+, .cost = 90 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_64_2] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_64_2
+, .cmr = {{0x19d3b141u, 0xcb156cceu, 0x2ac5937au, 0x27a28436u, 0xdc325dd7u, 0xce42476eu, 0xe2cab35fu, 0xb40110e0u}}
+, .sourceIx = ty_pw64w2
+, .targetIx = ty_pw2w64
+, .cost = 94 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_64_32] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_64_32
+, .cmr = {{0x6a207615u, 0xbc669d3fu, 0xc17413a4u, 0x2b13a04au, 0x404bb5d4u, 0x036de37fu, 0xe0a56b33u, 0x6a5ff5a6u}}
+, .sourceIx = ty_pw64w32
+, .targetIx = ty_pw32w64
+, .cost = 86 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_64_4] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_64_4
+, .cmr = {{0x57f596cfu, 0xe67af58au, 0xe6bc27a1u, 0x2cafe53au, 0x1d5e6aceu, 0x4e54051au, 0x3ae41c1eu, 0xb325f53bu}}
+, .sourceIx = ty_pw64w4
+, .targetIx = ty_pw4w64
+, .cost = 94 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_64_8] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_64_8
+, .cmr = {{0x05857a00u, 0x9d2031beu, 0x6df1d87eu, 0x26e11118u, 0xabd06b0fu, 0xf0c878c3u, 0x36f9a076u, 0x11daa8d4u}}
+, .sourceIx = ty_pw64w8
+, .targetIx = ty_pw8w64
+, .cost = 86 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_8_1] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_8_1
+, .cmr = {{0x4fdc522au, 0x239f2584u, 0x8c28d45bu, 0x39246391u, 0xbe6a2814u, 0xb893cf19u, 0x79ce31b6u, 0x07cf174eu}}
+, .sourceIx = ty_pw8b
+, .targetIx = ty_pbw8
+, .cost = 96 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_8_2] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_8_2
+, .cmr = {{0xdcf6333du, 0x5e28bfaau, 0xfee6f20au, 0x855cefb0u, 0x05f0ef32u, 0x8bdccea6u, 0x4a8f2446u, 0xf966a6f2u}}
+, .sourceIx = ty_pw8w2
+, .targetIx = ty_pw2w8
+, .cost = 96 /* milli weight units */
+}
+,[FULL_LEFT_SHIFT_8_4] =
+{ .tag = JET
+, .jet = simplicity_full_left_shift_8_4
+, .cmr = {{0xf7ed36ebu, 0xd7b4ee3eu, 0x7782d074u, 0x4c47ba1eu, 0xf8fa56dbu, 0x7060e226u, 0xe4e92629u, 0x926f436cu}}
+, .sourceIx = ty_pw8w4
+, .targetIx = ty_pw4w8
+, .cost = 85 /* milli weight units */
+}
+,[FULL_MULTIPLY_16] =
+{ .tag = JET
+, .jet = simplicity_full_multiply_16
+, .cmr = {{0xc0d736cau, 0x684f8272u, 0xdcfbe38du, 0xcc5429b3u, 0x03a68232u, 0xe5fcd285u, 0x14e22c0bu, 0xe1f470f6u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w32
+, .cost = 112 /* milli weight units */
+}
+,[FULL_MULTIPLY_32] =
+{ .tag = JET
+, .jet = simplicity_full_multiply_32
+, .cmr = {{0xe7205897u, 0x97f6ca4au, 0xd74771f8u, 0xf6c7b6aau, 0xd78bce91u, 0x9fd76d69u, 0xfff599a4u, 0x02e35240u}}
+, .sourceIx = ty_w128
+, .targetIx = ty_w64
+, .cost = 96 /* milli weight units */
+}
+,[FULL_MULTIPLY_64] =
+{ .tag = JET
+, .jet = simplicity_full_multiply_64
+, .cmr = {{0xd9669186u, 0x214487fbu, 0xaabc0852u, 0x15eb01c6u, 0x2b3a28deu, 0x411919bcu, 0x4f37fe43u, 0xc2d00521u}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w128
+, .cost = 127 /* milli weight units */
+}
+,[FULL_MULTIPLY_8] =
+{ .tag = JET
+, .jet = simplicity_full_multiply_8
+, .cmr = {{0x728ac8aau, 0xdb37a0f2u, 0x23eef98cu, 0xf278483du, 0xf194869bu, 0x2e3773f1u, 0x27329eeau, 0xb54c62cau}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w16
+, .cost = 109 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_16_1] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_16_1
+, .cmr = {{0x28437c34u, 0x7a0f316eu, 0x99f3444fu, 0x32d949c6u, 0xd1a570d6u, 0xe1f9e47fu, 0x7ea2c498u, 0x7fecb0b4u}}
+, .sourceIx = ty_pbw16
+, .targetIx = ty_pw16b
+, .cost = 80 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_16_2] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_16_2
+, .cmr = {{0x7b2d0dd3u, 0xecf79ecfu, 0xc0bf923au, 0x92a43ac6u, 0x514bbfc2u, 0x9f6773d7u, 0xb363c3acu, 0xf6f672c4u}}
+, .sourceIx = ty_pw2w16
+, .targetIx = ty_pw16w2
+, .cost = 79 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_16_4] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_16_4
+, .cmr = {{0xec59de5cu, 0x9c887775u, 0xe4bc556bu, 0x9cf1a772u, 0x3bbeb614u, 0x75d5a5a4u, 0xedf10b61u, 0x2bf9a680u}}
+, .sourceIx = ty_pw4w16
+, .targetIx = ty_pw16w4
+, .cost = 88 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_16_8] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_16_8
+, .cmr = {{0x264f2a31u, 0xf07bcc54u, 0x7427faffu, 0x0d09c266u, 0x5b30ed30u, 0xf9f8a6c5u, 0x65018400u, 0x144a4d6au}}
+, .sourceIx = ty_pw8w16
+, .targetIx = ty_pw16w8
+, .cost = 57 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_32_1] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_32_1
+, .cmr = {{0x19d78cceu, 0x30f71eacu, 0xf59a8cf0u, 0xf6028b28u, 0x4d4aa964u, 0xc0c16ad4u, 0xafc7ea47u, 0x5165cba0u}}
+, .sourceIx = ty_pbw32
+, .targetIx = ty_pw32b
+, .cost = 74 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_32_16] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_32_16
+, .cmr = {{0x88767415u, 0x79924af6u, 0xd46fbd79u, 0x534a0907u, 0x7bf0ecbcu, 0x971008c7u, 0xdec65d4cu, 0x96e5d831u}}
+, .sourceIx = ty_pw16w32
+, .targetIx = ty_pw32w16
+, .cost = 64 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_32_2] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_32_2
+, .cmr = {{0x5d3e119du, 0x40e624c5u, 0xc56a7bbdu, 0xf8bb86fbu, 0x6889dc01u, 0x72487c35u, 0x8a531af2u, 0xfcc51dc7u}}
+, .sourceIx = ty_pw2w32
+, .targetIx = ty_pw32w2
+, .cost = 63 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_32_4] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_32_4
+, .cmr = {{0x583ac698u, 0x39d235d9u, 0xc06139f5u, 0xb798d2d5u, 0xa349edc2u, 0x0bbd62bau, 0xd1d81285u, 0xd6ad22e3u}}
+, .sourceIx = ty_pw4w32
+, .targetIx = ty_pw32w4
+, .cost = 71 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_32_8] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_32_8
+, .cmr = {{0x0d9cc09bu, 0xbc80e4cdu, 0x764f13bbu, 0x2f7fb9c5u, 0x92120f92u, 0x18d60cacu, 0x8eeac599u, 0x25dbf75du}}
+, .sourceIx = ty_pw8w32
+, .targetIx = ty_pw32w8
+, .cost = 84 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_64_1] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_64_1
+, .cmr = {{0x2ebc1c95u, 0x5d265648u, 0xa8b91b6fu, 0x5ece5f23u, 0xfa9c2c6cu, 0x88de7cbeu, 0x3f7cc838u, 0x5b219117u}}
+, .sourceIx = ty_pbw64
+, .targetIx = ty_pw64b
+, .cost = 99 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_64_16] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_64_16
+, .cmr = {{0x4658dd0cu, 0x37f3ec6bu, 0xe5224173u, 0xd2ff9b7cu, 0x9101742fu, 0x690f15a7u, 0x2e666c87u, 0x0e1d9055u}}
+, .sourceIx = ty_pw16w64
+, .targetIx = ty_pw64w16
+, .cost = 86 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_64_2] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_64_2
+, .cmr = {{0x889f8b7bu, 0xc11e9b74u, 0xea93374fu, 0xfed11464u, 0xe7837deeu, 0x181981cbu, 0xe4786f57u, 0xa265c34fu}}
+, .sourceIx = ty_pw2w64
+, .targetIx = ty_pw64w2
+, .cost = 86 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_64_32] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_64_32
+, .cmr = {{0x062467cdu, 0x194bb4feu, 0x1dd5ede5u, 0x7bc65180u, 0x948ebac9u, 0x878b2c04u, 0x2be356f2u, 0xf422c2ecu}}
+, .sourceIx = ty_pw32w64
+, .targetIx = ty_pw64w32
+, .cost = 73 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_64_4] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_64_4
+, .cmr = {{0x99457213u, 0x88483743u, 0x7e8ab636u, 0xd7f3513au, 0x24d94e74u, 0xe5990c2cu, 0x24e8dfe1u, 0x4cf9986fu}}
+, .sourceIx = ty_pw4w64
+, .targetIx = ty_pw64w4
+, .cost = 93 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_64_8] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_64_8
+, .cmr = {{0x008d5b6au, 0x26a0e13fu, 0x17a924a9u, 0xe00f5b07u, 0xc8123b59u, 0x7e63cdf9u, 0x481dd16fu, 0x4332e6dfu}}
+, .sourceIx = ty_pw8w64
+, .targetIx = ty_pw64w8
+, .cost = 99 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_8_1] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_8_1
+, .cmr = {{0x591adee6u, 0xd4a3ddf3u, 0x947b4861u, 0x5b7f6ecdu, 0xf1165736u, 0x4c3aeecfu, 0xad43f28eu, 0x11a75e56u}}
+, .sourceIx = ty_pbw8
+, .targetIx = ty_pw8b
+, .cost = 88 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_8_2] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_8_2
+, .cmr = {{0xbf18af96u, 0x4c49b62eu, 0xe79921fdu, 0xe0eb3252u, 0xf4163867u, 0x77173ca6u, 0xf6ead689u, 0xb190fb2fu}}
+, .sourceIx = ty_pw2w8
+, .targetIx = ty_pw8w2
+, .cost = 86 /* milli weight units */
+}
+,[FULL_RIGHT_SHIFT_8_4] =
+{ .tag = JET
+, .jet = simplicity_full_right_shift_8_4
+, .cmr = {{0x8d05a281u, 0xbe220a8cu, 0xa3ebd9a8u, 0x626708f9u, 0x1f286da4u, 0x2222c7a5u, 0x518e179cu, 0x09e5a02fu}}
+, .sourceIx = ty_pw4w8
+, .targetIx = ty_pw8w4
+, .cost = 89 /* milli weight units */
+}
+,[FULL_SUBTRACT_16] =
+{ .tag = JET
+, .jet = simplicity_full_subtract_16
+, .cmr = {{0x7955126eu, 0x2c3d862cu, 0x1e449ef6u, 0xe435df3eu, 0xd5a64c20u, 0x1143578eu, 0xcfd3f51bu, 0xaf2be235u}}
+, .sourceIx = ty_pbw32
+, .targetIx = ty_pbw16
+, .cost = 121 /* milli weight units */
+}
+,[FULL_SUBTRACT_32] =
+{ .tag = JET
+, .jet = simplicity_full_subtract_32
+, .cmr = {{0x2618a411u, 0x47c79f69u, 0x09a651b4u, 0x92b54ed3u, 0xc4057a2eu, 0xc039f91cu, 0x20105454u, 0xac610379u}}
+, .sourceIx = ty_pbw64
+, .targetIx = ty_pbw32
+, .cost = 116 /* milli weight units */
+}
+,[FULL_SUBTRACT_64] =
+{ .tag = JET
+, .jet = simplicity_full_subtract_64
+, .cmr = {{0x5e05b10au, 0xcf51c2f2u, 0xb7f8726du, 0x3f414aeau, 0x2fb6311fu, 0x6dd67245u, 0xbd4a35b1u, 0x6953af13u}}
+, .sourceIx = ty_pbw128
+, .targetIx = ty_pbw64
+, .cost = 98 /* milli weight units */
+}
+,[FULL_SUBTRACT_8] =
+{ .tag = JET
+, .jet = simplicity_full_subtract_8
+, .cmr = {{0x68d279e1u, 0x6fe84ba5u, 0xe744cdbau, 0x86eff3a3u, 0xe0da0554u, 0x7efa9817u, 0xdfb99fdeu, 0x702146acu}}
+, .sourceIx = ty_pbw16
+, .targetIx = ty_pbw8
+, .cost = 126 /* milli weight units */
+}
+,[GE_IS_ON_CURVE] =
+{ .tag = JET
+, .jet = simplicity_ge_is_on_curve
+, .cmr = {{0xf513c594u, 0x615a9f2fu, 0xcf356055u, 0xe2f77488u, 0x16a3d4bau, 0x5415bf12u, 0xca17a5cau, 0xe9ac725au}}
+, .sourceIx = ty_w512
+, .targetIx = ty_b
+, .cost = 642 /* milli weight units */
+}
+,[GE_NEGATE] =
+{ .tag = JET
+, .jet = simplicity_ge_negate
+, .cmr = {{0xc43f47b1u, 0x1cdbc9cau, 0x85b68805u, 0xa4a70b82u, 0xbf938c1cu, 0x0b2c1b27u, 0x71a86bfdu, 0x993734a7u}}
+, .sourceIx = ty_w512
+, .targetIx = ty_w512
+, .cost = 945 /* milli weight units */
+}
+,[GEJ_ADD] =
+{ .tag = JET
+, .jet = simplicity_gej_add
+, .cmr = {{0xf56435e4u, 0xad5aa956u, 0x27aaa2f5u, 0xf2bad4e4u, 0x5ef62e4au, 0x8a83c08eu, 0x31e81009u, 0x5ce343b2u}}
+, .sourceIx = ty_ppw512w256pw512w256
+, .targetIx = ty_pw512w256
+, .cost = 2897 /* milli weight units */
+}
+,[GEJ_DOUBLE] =
+{ .tag = JET
+, .jet = simplicity_gej_double
+, .cmr = {{0xa08ea39eu, 0xeb490b60u, 0x49c72ab9u, 0x215d6105u, 0x8ed1ee33u, 0x77942184u, 0x0d3e3d43u, 0xe63719fcu}}
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_pw512w256
+, .cost = 1764 /* milli weight units */
+}
+,[GEJ_EQUIV] =
+{ .tag = JET
+, .jet = simplicity_gej_equiv
+, .cmr = {{0x9ca3676bu, 0xccc544edu, 0x7aa3f751u, 0x75e9f23eu, 0x030cd64fu, 0xb6a5898du, 0x90d23e0du, 0xc2aeedd1u}}
+, .sourceIx = ty_ppw512w256pw512w256
+, .targetIx = ty_b
+, .cost = 2220 /* milli weight units */
+}
+,[GEJ_GE_ADD] =
+{ .tag = JET
+, .jet = simplicity_gej_ge_add
+, .cmr = {{0xc8f3d86du, 0x131e35eau, 0x67b250a0u, 0x8edbf58cu, 0x6f05439cu, 0x41fcbd32u, 0x908dc86au, 0xe8ce5df7u}}
+, .sourceIx = ty_ppw512w256w512
+, .targetIx = ty_pw512w256
+, .cost = 2477 /* milli weight units */
+}
+,[GEJ_GE_ADD_EX] =
+{ .tag = JET
+, .jet = simplicity_gej_ge_add_ex
+, .cmr = {{0x8bcf3ccbu, 0x4bf69197u, 0x4989fc4eu, 0x86996c66u, 0xbaf1b0abu, 0xa8c96465u, 0x862a8184u, 0xa129a0aeu}}
+, .sourceIx = ty_ppw512w256w512
+, .targetIx = ty_pw256pw512w256
+, .cost = 2719 /* milli weight units */
+}
+,[GEJ_GE_EQUIV] =
+{ .tag = JET
+, .jet = simplicity_gej_ge_equiv
+, .cmr = {{0x67b28f43u, 0xbf1eb5c0u, 0x4f245659u, 0x7eab776eu, 0x48d498fdu, 0x8ae5284du, 0xb352a73du, 0x1bdd285bu}}
+, .sourceIx = ty_ppw512w256w512
+, .targetIx = ty_b
+, .cost = 1765 /* milli weight units */
+}
+,[GEJ_INFINITY] =
+{ .tag = JET
+, .jet = simplicity_gej_infinity
+, .cmr = {{0xc9ccee79u, 0xe6fd3271u, 0xfbb38456u, 0x88742495u, 0x3b254b9eu, 0x90b7b779u, 0xfd578968u, 0x45410c66u}}
+, .sourceIx = ty_u
+, .targetIx = ty_pw512w256
+, .cost = 716 /* milli weight units */
+}
+,[GEJ_IS_INFINITY] =
+{ .tag = JET
+, .jet = simplicity_gej_is_infinity
+, .cmr = {{0x99d398d5u, 0xf238c055u, 0xee32a975u, 0xdd445fbcu, 0x5ece599fu, 0x74a3190au, 0x636ddd5du, 0xd111f587u}}
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_b
+, .cost = 666 /* milli weight units */
+}
+,[GEJ_IS_ON_CURVE] =
+{ .tag = JET
+, .jet = simplicity_gej_is_on_curve
+, .cmr = {{0x6c73c219u, 0xa7e9228fu, 0x6f482c11u, 0x1743311cu, 0x498bacd0u, 0xc1fc00acu, 0x3ce41f49u, 0x735ba2ffu}}
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_b
+, .cost = 1016 /* milli weight units */
+}
+,[GEJ_NEGATE] =
+{ .tag = JET
+, .jet = simplicity_gej_negate
+, .cmr = {{0xb1ec2b7bu, 0x3a34294du, 0xf8991291u, 0x1d351fe0u, 0xef233fdcu, 0x60115876u, 0xbdcf611du, 0x590b08d6u}}
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_pw512w256
+, .cost = 1381 /* milli weight units */
+}
+,[GEJ_NORMALIZE] =
+{ .tag = JET
+, .jet = simplicity_gej_normalize
+, .cmr = {{0x3cc6cf4cu, 0xed323ea6u, 0xdcf41844u, 0xdb4953aau, 0x3db29d08u, 0xfffc186fu, 0x538a387au, 0x6cbf7227u}}
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_mw512
+, .cost = 4099 /* milli weight units */
+}
+,[GEJ_RESCALE] =
+{ .tag = JET
+, .jet = simplicity_gej_rescale
+, .cmr = {{0xd1a88777u, 0xd2201bf8u, 0x4c94e585u, 0xc612cd18u, 0xe1aa4a18u, 0x624cca5du, 0xe5fbe441u, 0xc368b190u}}
+, .sourceIx = ty_ppw512w256w256
+, .targetIx = ty_pw512w256
+, .cost = 1908 /* milli weight units */
+}
+,[GEJ_X_EQUIV] =
+{ .tag = JET
+, .jet = simplicity_gej_x_equiv
+, .cmr = {{0xb9fe21a5u, 0xed60694du, 0x042ba21cu, 0xadfcd944u, 0x3c6ff728u, 0xf68e51d7u, 0xd55e05a9u, 0xbb7a1d1bu}}
+, .sourceIx = ty_pw256pw512w256
+, .targetIx = ty_b
+, .cost = 1047 /* milli weight units */
+}
+,[GEJ_Y_IS_ODD] =
+{ .tag = JET
+, .jet = simplicity_gej_y_is_odd
+, .cmr = {{0xaf252524u, 0xfb38c44fu, 0xa7ca6f0du, 0x693ee343u, 0x06a31ed9u, 0x21f9311cu, 0x91726389u, 0xb1f68376u}}
+, .sourceIx = ty_pw512w256
+, .targetIx = ty_b
+, .cost = 3651 /* milli weight units */
+}
+,[GENERATE] =
+{ .tag = JET
+, .jet = simplicity_generate
+, .cmr = {{0xe5872bc9u, 0xf0c1f855u, 0x4de01784u, 0x38a9f649u, 0x9476cac8u, 0xc580f3d0u, 0xb60d8548u, 0x85184cb6u}}
+, .sourceIx = ty_w256
+, .targetIx = ty_pw512w256
+, .cost = 50071 /* milli weight units */
+}
+,[GENESIS_BLOCK_HASH] =
+{ .tag = JET
+, .jet = simplicity_genesis_block_hash
+, .cmr = {{0xa29f2444u, 0x62fb280eu, 0x83b2ec41u, 0x94694a6du, 0x0d728955u, 0xb225ac02u, 0xdeff4740u, 0xe5014a99u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 148 /* milli weight units */
+}
+,[HASH_TO_CURVE] =
+{ .tag = JET
+, .jet = simplicity_hash_to_curve
+, .cmr = {{0xa17b59e3u, 0xf014b158u, 0xad47b5bbu, 0x4290f17bu, 0x5bb70bc6u, 0x471d3be6u, 0xd38698e5u, 0x234ab6f2u}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w512
+, .cost = 68094 /* milli weight units */
+}
+,[HIGH_1] =
+{ .tag = JET
+, .jet = simplicity_high_1
+, .cmr = {{0x72188756u, 0xe064fef6u, 0x073d8253u, 0x0e95ee3au, 0x04889c6bu, 0xf9e44e05u, 0x9622404eu, 0xa17c694au}}
+, .sourceIx = ty_u
+, .targetIx = ty_b
+, .cost = 57 /* milli weight units */
+}
+,[HIGH_16] =
+{ .tag = JET
+, .jet = simplicity_high_16
+, .cmr = {{0x0e414a0cu, 0xe6814785u, 0xe019f14du, 0x47714076u, 0xe87b123eu, 0x9a2122b1u, 0x643cc066u, 0x8c6ece09u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w16
+, .cost = 66 /* milli weight units */
+}
+,[HIGH_32] =
+{ .tag = JET
+, .jet = simplicity_high_32
+, .cmr = {{0x0803297au, 0xc5fbea98u, 0x5ef619a0u, 0x38bed068u, 0xf860b230u, 0x95260e92u, 0x6af7d89du, 0xd0cc9321u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w32
+, .cost = 58 /* milli weight units */
+}
+,[HIGH_64] =
+{ .tag = JET
+, .jet = simplicity_high_64
+, .cmr = {{0x471ce7d2u, 0xd1bccbccu, 0xb18abde3u, 0xe5347953u, 0xbc7e63c8u, 0xb43f1a7cu, 0xee955338u, 0x2c6b8d21u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w64
+, .cost = 68 /* milli weight units */
+}
+,[HIGH_8] =
+{ .tag = JET
+, .jet = simplicity_high_8
+, .cmr = {{0x60c669bbu, 0x56aca88du, 0xa13e0930u, 0x11a7bbedu, 0x55079ea9u, 0xbcdb8438u, 0xf3dc53e1u, 0x2c20409du}}
+, .sourceIx = ty_u
+, .targetIx = ty_w8
+, .cost = 59 /* milli weight units */
+}
+,[INCREMENT_16] =
+{ .tag = JET
+, .jet = simplicity_increment_16
+, .cmr = {{0x49c629dbu, 0x7265d6a8u, 0xd26e83f6u, 0x5d62e738u, 0x54b9ddb2u, 0x1d2aa9c1u, 0xbd946e4du, 0xa0b27932u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_pbw16
+, .cost = 69 /* milli weight units */
+}
+,[INCREMENT_32] =
+{ .tag = JET
+, .jet = simplicity_increment_32
+, .cmr = {{0x957edec0u, 0xdc98cf13u, 0xfda5b219u, 0x31f087e3u, 0x648ef2d7u, 0xc6bec8c5u, 0x16e3244fu, 0x1bbc359du}}
+, .sourceIx = ty_w32
+, .targetIx = ty_pbw32
+, .cost = 92 /* milli weight units */
+}
+,[INCREMENT_64] =
+{ .tag = JET
+, .jet = simplicity_increment_64
+, .cmr = {{0x48b1927cu, 0x68404ab0u, 0x1be89fdau, 0xccb164ebu, 0xee4d6944u, 0xca8ef039u, 0x99b27629u, 0x75d22ff8u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_pbw64
+, .cost = 87 /* milli weight units */
+}
+,[INCREMENT_8] =
+{ .tag = JET
+, .jet = simplicity_increment_8
+, .cmr = {{0xe0796c02u, 0x7bf4b079u, 0x47ff991bu, 0x278207d3u, 0x26bae074u, 0xa4583b56u, 0x42df0443u, 0x297c901au}}
+, .sourceIx = ty_w8
+, .targetIx = ty_pbw8
+, .cost = 85 /* milli weight units */
+}
+,[INPUT_AMOUNT] =
+{ .tag = JET
+, .jet = simplicity_input_amount
+, .cmr = {{0x8ac2a67eu, 0x160c73d5u, 0x3dc2ec44u, 0x252ff7bbu, 0x6da89546u, 0xb4d1a97au, 0xefae1b94u, 0x4dac27c6u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mpspbw256w256spbw256w64
+, .cost = 285 /* milli weight units */
+}
+,[INPUT_AMOUNTS_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_amounts_hash
+, .cmr = {{0x91d3b0a3u, 0x0219e0b3u, 0x0d26ce2bu, 0x064b3e1au, 0x5ad480ceu, 0xb22f50e6u, 0xd9647093u, 0x97571029u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 140 /* milli weight units */
+}
+,[INPUT_ANNEX_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_annex_hash
+, .cmr = {{0xeedb9670u, 0x6949b732u, 0x2d5e8045u, 0x7c03d640u, 0x69ae099du, 0x004baaa2u, 0x232a9153u, 0x61485624u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+, .cost = 90 /* milli weight units */
+}
+,[INPUT_ANNEXES_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_annexes_hash
+, .cmr = {{0xe3595ea7u, 0x7e4810f9u, 0x447d1aa7u, 0x3d5f5336u, 0x0e3e8dc2u, 0x09e2c6d1u, 0xcda4728fu, 0x1b0dbbffu}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 155 /* milli weight units */
+}
+,[INPUT_ASSET] =
+{ .tag = JET
+, .jet = simplicity_input_asset
+, .cmr = {{0xa44a2991u, 0x1cb8d65au, 0x91328796u, 0x245eb915u, 0x507937b7u, 0xa7f3be76u, 0x60a8c380u, 0x47ad1ecbu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mspbw256w256
+, .cost = 162 /* milli weight units */
+}
+,[INPUT_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_hash
+, .cmr = {{0xba63cae3u, 0xee4a22e2u, 0x5fdd56bbu, 0x843cde5du, 0xe94e774bu, 0xb0db1113u, 0x0cd53997u, 0xd611452au}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 965 /* milli weight units */
+}
+,[INPUT_OUTPOINTS_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_outpoints_hash
+, .cmr = {{0x7ff3b3d4u, 0x38864135u, 0xb9a0bb49u, 0xa3001a0eu, 0x4bd38c21u, 0xd2c6a7adu, 0x761bd6a5u, 0x846d44acu}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 142 /* milli weight units */
+}
+,[INPUT_PEGIN] =
+{ .tag = JET
+, .jet = simplicity_input_pegin
+, .cmr = {{0x0f2275ecu, 0x2404a92au, 0x0054a214u, 0xf1edafd5u, 0x92a41419u, 0xabacc5b4u, 0x6ae14b92u, 0xf75ea6fau}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+, .cost = 151 /* milli weight units */
+}
+,[INPUT_PREV_OUTPOINT] =
+{ .tag = JET
+, .jet = simplicity_input_prev_outpoint
+, .cmr = {{0xa5199407u, 0x251c98f7u, 0xcfcdf5b6u, 0x709c2d4bu, 0xa5692a42u, 0x3c280c2bu, 0x63be2ae1u, 0x37b1b900u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mpw256w32
+, .cost = 160 /* milli weight units */
+}
+,[INPUT_SCRIPT_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_script_hash
+, .cmr = {{0xdc68bd41u, 0x6caf5f7au, 0x77add202u, 0xb2bd4d91u, 0x5b2dcbcbu, 0xb79471f9u, 0xe14b7ca6u, 0xb8502064u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 147 /* milli weight units */
+}
+,[INPUT_SCRIPT_SIG_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_script_sig_hash
+, .cmr = {{0xabdf166au, 0x06df3209u, 0x807bbeadu, 0x533cfa8bu, 0x1790afc1u, 0x603310e4u, 0xd010a49fu, 0xaa4131d8u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 153 /* milli weight units */
+}
+,[INPUT_SCRIPT_SIGS_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_script_sigs_hash
+, .cmr = {{0x5e8746c0u, 0xcc04e8f2u, 0x6116b386u, 0x23bfe3b6u, 0x843e3fc0u, 0x93dda409u, 0xd86e4db7u, 0x5c90aa61u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 138 /* milli weight units */
+}
+,[INPUT_SCRIPTS_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_scripts_hash
+, .cmr = {{0x9d5fa7e0u, 0xd8f77460u, 0x8ebcfffcu, 0x3f3c6b70u, 0xf023629bu, 0xc3492d11u, 0xec72598eu, 0x8688dbd4u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 137 /* milli weight units */
+}
+,[INPUT_SEQUENCE] =
+{ .tag = JET
+, .jet = simplicity_input_sequence
+, .cmr = {{0xdb04ac58u, 0x0435cacdu, 0xd2e4ab32u, 0x4ec70187u, 0xb26a6686u, 0xd8618bcbu, 0xb25d1d4eu, 0xcaa932ceu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw32
+, .cost = 99 /* milli weight units */
+}
+,[INPUT_SEQUENCES_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_sequences_hash
+, .cmr = {{0xd2538ef1u, 0x5f5cf602u, 0x49f92c2cu, 0x02f25507u, 0x2c1b4e4fu, 0x1ba2861eu, 0x5daa500du, 0x5e78e3a5u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 142 /* milli weight units */
+}
+,[INPUT_UTXO_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_utxo_hash
+, .cmr = {{0x364c4df7u, 0x765f7d30u, 0x4234a1f3u, 0xb62b3870u, 0xa7a050f4u, 0x824ad8c9u, 0x71c8fdc4u, 0x0c98155du}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 1996 /* milli weight units */
+}
+,[INPUT_UTXOS_HASH] =
+{ .tag = JET
+, .jet = simplicity_input_utxos_hash
+, .cmr = {{0xd2c1ff7fu, 0xd1623044u, 0xcea58920u, 0x8bb26e18u, 0xe67d6f75u, 0x851c26beu, 0x5b2bafc0u, 0x40ceff83u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 140 /* milli weight units */
+}
+,[INPUTS_HASH] =
+{ .tag = JET
+, .jet = simplicity_inputs_hash
+, .cmr = {{0xb46c91acu, 0x9cfa6b9fu, 0x086c3833u, 0x591be31au, 0xa85e951bu, 0x2ce21af1u, 0x179d2859u, 0xf71142b9u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 154 /* milli weight units */
+}
+,[INTERNAL_KEY] =
+{ .tag = JET
+, .jet = simplicity_internal_key
+, .cmr = {{0xd74def82u, 0x874fe2fdu, 0x21aa3998u, 0xf65aa1afu, 0x33f72a5bu, 0x1b3f47b7u, 0x3adc39ebu, 0xfb3a4e9bu}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 152 /* milli weight units */
+}
+,[IS_ONE_16] =
+{ .tag = JET
+, .jet = simplicity_is_one_16
+, .cmr = {{0xa686b25cu, 0x80a21f78u, 0xfb3074c0u, 0xf976dc0bu, 0x8fe106c1u, 0x3dca01cbu, 0xd6b4aef6u, 0xd04f2643u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_b
+, .cost = 82 /* milli weight units */
+}
+,[IS_ONE_32] =
+{ .tag = JET
+, .jet = simplicity_is_one_32
+, .cmr = {{0xfcfadf11u, 0xd7b1bb23u, 0x9f29d1cau, 0x9fdcf35bu, 0x728a1a62u, 0x2376071du, 0x3c4d88a1u, 0x3b122684u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_b
+, .cost = 65 /* milli weight units */
+}
+,[IS_ONE_64] =
+{ .tag = JET
+, .jet = simplicity_is_one_64
+, .cmr = {{0xcf691072u, 0x3754ba79u, 0x4395da5du, 0x58d61c19u, 0x003e45eeu, 0xcfbfc90du, 0x49fe657fu, 0x607c451cu}}
+, .sourceIx = ty_w64
+, .targetIx = ty_b
+, .cost = 83 /* milli weight units */
+}
+,[IS_ONE_8] =
+{ .tag = JET
+, .jet = simplicity_is_one_8
+, .cmr = {{0x56a22d0eu, 0xcb2086d4u, 0x3d52fd1du, 0x46698ad4u, 0x426f9235u, 0x6a14ce06u, 0x50941e52u, 0x072c96a8u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_b
+, .cost = 91 /* milli weight units */
+}
+,[IS_ZERO_16] =
+{ .tag = JET
+, .jet = simplicity_is_zero_16
+, .cmr = {{0xf49abdbdu, 0x6a3f17c8u, 0x7dbabd40u, 0xe6611c47u, 0x7d431771u, 0x905645efu, 0xd3b22d37u, 0x91abe6bdu}}
+, .sourceIx = ty_w16
+, .targetIx = ty_b
+, .cost = 75 /* milli weight units */
+}
+,[IS_ZERO_32] =
+{ .tag = JET
+, .jet = simplicity_is_zero_32
+, .cmr = {{0x935d13dau, 0x64190a36u, 0x04735af8u, 0x4021bc12u, 0x503497eeu, 0x4b0ff4b7u, 0x38fc847eu, 0x9d341921u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_b
+, .cost = 85 /* milli weight units */
+}
+,[IS_ZERO_64] =
+{ .tag = JET
+, .jet = simplicity_is_zero_64
+, .cmr = {{0xe9b57475u, 0x1330f9feu, 0xaea52ae4u, 0xcdd3a2e4u, 0x6a999c4fu, 0x41c8b524u, 0x002c6805u, 0x66584621u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_b
+, .cost = 80 /* milli weight units */
+}
+,[IS_ZERO_8] =
+{ .tag = JET
+, .jet = simplicity_is_zero_8
+, .cmr = {{0xfd7fc505u, 0xc224e8bcu, 0x02087f9eu, 0xebc485e9u, 0x97ca1537u, 0x48c78112u, 0x2e1b9ac0u, 0xfd94b932u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_b
+, .cost = 77 /* milli weight units */
+}
+,[ISSUANCE] =
+{ .tag = JET
+, .jet = simplicity_issuance
+, .cmr = {{0x911e8739u, 0x8f08b9acu, 0x8351c8efu, 0x62c1a114u, 0x8ca6ffc7u, 0x7a4bc378u, 0x3b8e0739u, 0xebb6194eu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmb
+, .cost = 91 /* milli weight units */
+}
+,[ISSUANCE_ASSET] =
+{ .tag = JET
+, .jet = simplicity_issuance_asset
+, .cmr = {{0xc3d642dau, 0x7092da2au, 0x37a2d5b6u, 0x397f6b04u, 0x7702e354u, 0x6e898738u, 0x46587912u, 0xd709ddbcu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+, .cost = 151 /* milli weight units */
+}
+,[ISSUANCE_ASSET_AMOUNT] =
+{ .tag = JET
+, .jet = simplicity_issuance_asset_amount
+, .cmr = {{0x25c572dbu, 0x81b0ac54u, 0x58804ac3u, 0x3a57c00du, 0x11c72a10u, 0x4c0d9cf7u, 0x4226e444u, 0x049bcc83u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmspbw256w64
+, .cost = 162 /* milli weight units */
+}
+,[ISSUANCE_ASSET_AMOUNTS_HASH] =
+{ .tag = JET
+, .jet = simplicity_issuance_asset_amounts_hash
+, .cmr = {{0x379a9f69u, 0x9aed347au, 0xc13699cfu, 0x8c13e497u, 0x8a0e0525u, 0xfa09ab3cu, 0x46d54c3bu, 0xb848913cu}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 139 /* milli weight units */
+}
+,[ISSUANCE_ASSET_PROOF] =
+{ .tag = JET
+, .jet = simplicity_issuance_asset_proof
+, .cmr = {{0xe2ac38bcu, 0x9445fadcu, 0x55c9841eu, 0xc6f84282u, 0x3066f647u, 0x776eaa03u, 0xbff58d14u, 0x3171117cu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 150 /* milli weight units */
+}
+,[ISSUANCE_BLINDING_ENTROPY_HASH] =
+{ .tag = JET
+, .jet = simplicity_issuance_blinding_entropy_hash
+, .cmr = {{0x53321092u, 0xa0251a3bu, 0x57c58ac4u, 0x479191e3u, 0x1dbb1239u, 0x247b3c1eu, 0xb5761b48u, 0x22b3bb57u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 129 /* milli weight units */
+}
+,[ISSUANCE_ENTROPY] =
+{ .tag = JET
+, .jet = simplicity_issuance_entropy
+, .cmr = {{0xbc88dc73u, 0xc27d9395u, 0xd3b44c2eu, 0x389fa1c5u, 0x46a8fe78u, 0x22607e26u, 0xa6c4c5c8u, 0xbfcad628u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+, .cost = 153 /* milli weight units */
+}
+,[ISSUANCE_HASH] =
+{ .tag = JET
+, .jet = simplicity_issuance_hash
+, .cmr = {{0xb0f1f85au, 0x33eb4065u, 0xb41b5e14u, 0xa817a21du, 0xea01230cu, 0x534c634du, 0x0f6f62b2u, 0x79374692u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 3738 /* milli weight units */
+}
+,[ISSUANCE_RANGE_PROOFS_HASH] =
+{ .tag = JET
+, .jet = simplicity_issuance_range_proofs_hash
+, .cmr = {{0x46c80e30u, 0x1a3d76d4u, 0xd36ab017u, 0xbd0eca7eu, 0x4b5ff244u, 0x706e73a1u, 0xd415c958u, 0x578cd9d1u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 129 /* milli weight units */
+}
+,[ISSUANCE_TOKEN] =
+{ .tag = JET
+, .jet = simplicity_issuance_token
+, .cmr = {{0x356e77c8u, 0x952740aeu, 0xfa9315a2u, 0xc4e08799u, 0x129f9a43u, 0xf976e0feu, 0xaf7a60c3u, 0x9d9807ccu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+, .cost = 149 /* milli weight units */
+}
+,[ISSUANCE_TOKEN_AMOUNT] =
+{ .tag = JET
+, .jet = simplicity_issuance_token_amount
+, .cmr = {{0x826f0c44u, 0x4827f604u, 0x2fac0c3eu, 0xd34ff623u, 0x6da3a525u, 0xf68d5f2cu, 0xd1be55f4u, 0xa2d59531u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmspbw256w64
+, .cost = 196 /* milli weight units */
+}
+,[ISSUANCE_TOKEN_AMOUNTS_HASH] =
+{ .tag = JET
+, .jet = simplicity_issuance_token_amounts_hash
+, .cmr = {{0x144dfd45u, 0xfba32109u, 0xf5deae01u, 0x8b61cd66u, 0x3782d9bcu, 0xe6b38258u, 0xa405d204u, 0x9c5d4af9u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 138 /* milli weight units */
+}
+,[ISSUANCE_TOKEN_PROOF] =
+{ .tag = JET
+, .jet = simplicity_issuance_token_proof
+, .cmr = {{0x8a254d11u, 0x89f12df8u, 0x4f15fed9u, 0x5ac294d5u, 0xd956268eu, 0x80bbdfbbu, 0x4ca2d598u, 0xa15349a4u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 150 /* milli weight units */
+}
+,[ISSUANCES_HASH] =
+{ .tag = JET
+, .jet = simplicity_issuances_hash
+, .cmr = {{0xeebbeb65u, 0xb70c6110u, 0xc8a22b4du, 0x3197b6d2u, 0x110d2376u, 0x9a084923u, 0x8abc65d4u, 0x10cf04f0u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 141 /* milli weight units */
+}
+,[LBTC_ASSET] =
+{ .tag = JET
+, .jet = simplicity_lbtc_asset
+, .cmr = {{0xdf9bcd3fu, 0x9de3d246u, 0x4658db84u, 0x9038692eu, 0x3389bf22u, 0x86de8e17u, 0xa567ea11u, 0xc02e9aacu}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 145 /* milli weight units */
+}
+,[LE_16] =
+{ .tag = JET
+, .jet = simplicity_le_16
+, .cmr = {{0x98af70d8u, 0x94f3d439u, 0xbe0601e2u, 0x4a33f065u, 0x0d2365bcu, 0xf0230288u, 0x62ebfda4u, 0xd50a2dcau}}
+, .sourceIx = ty_w32
+, .targetIx = ty_b
+, .cost = 112 /* milli weight units */
+}
+,[LE_32] =
+{ .tag = JET
+, .jet = simplicity_le_32
+, .cmr = {{0x04a8351au, 0x4c97d3b5u, 0xde4f91b2u, 0xe9739d9bu, 0x3cc6ad49u, 0xca07109cu, 0x2cc4918fu, 0xafac66b5u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_b
+, .cost = 93 /* milli weight units */
+}
+,[LE_64] =
+{ .tag = JET
+, .jet = simplicity_le_64
+, .cmr = {{0x194c01d8u, 0xaa689517u, 0x11e61514u, 0x0e2b5aceu, 0x426dacd1u, 0xfd6d86c7u, 0xa72f3aaau, 0x089c2467u}}
+, .sourceIx = ty_w128
+, .targetIx = ty_b
+, .cost = 93 /* milli weight units */
+}
+,[LE_8] =
+{ .tag = JET
+, .jet = simplicity_le_8
+, .cmr = {{0xb133ad2du, 0x1a6178b1u, 0x9894c9dcu, 0xe5924c19u, 0x9a045fabu, 0x4e388f16u, 0x9ae1d869u, 0x81149a8bu}}
+, .sourceIx = ty_w16
+, .targetIx = ty_b
+, .cost = 109 /* milli weight units */
+}
+,[LEFT_EXTEND_16_32] =
+{ .tag = JET
+, .jet = simplicity_left_extend_16_32
+, .cmr = {{0x9dbb9d79u, 0x97c1b1fau, 0x59131e79u, 0xaad16b9fu, 0xca81c468u, 0x322d56ccu, 0x0e71fa05u, 0xdd80c96cu}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w32
+, .cost = 86 /* milli weight units */
+}
+,[LEFT_EXTEND_16_64] =
+{ .tag = JET
+, .jet = simplicity_left_extend_16_64
+, .cmr = {{0x5d3329d2u, 0xc29be104u, 0xde74ddafu, 0xc9b22ff6u, 0x5d268ba2u, 0xccdda677u, 0xe8fbfc65u, 0x0130a371u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w64
+, .cost = 89 /* milli weight units */
+}
+,[LEFT_EXTEND_1_16] =
+{ .tag = JET
+, .jet = simplicity_left_extend_1_16
+, .cmr = {{0x74ee5a71u, 0x889e97c0u, 0x3d9b904cu, 0x679ff7f2u, 0xe8c7410eu, 0x6dc748e0u, 0xb548ebfdu, 0x9603d1adu}}
+, .sourceIx = ty_b
+, .targetIx = ty_w16
+, .cost = 67 /* milli weight units */
+}
+,[LEFT_EXTEND_1_32] =
+{ .tag = JET
+, .jet = simplicity_left_extend_1_32
+, .cmr = {{0x97ac6403u, 0xdf61c784u, 0x1396c93eu, 0x141fafc2u, 0xa0966e3eu, 0x4974877bu, 0x9e942be5u, 0x9c78c800u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w32
+, .cost = 60 /* milli weight units */
+}
+,[LEFT_EXTEND_1_64] =
+{ .tag = JET
+, .jet = simplicity_left_extend_1_64
+, .cmr = {{0x548aeb2bu, 0x27b9ef2au, 0x0bec50b6u, 0x3852fe24u, 0x549e60a7u, 0x43b9789eu, 0xc98ad4f8u, 0x737713edu}}
+, .sourceIx = ty_b
+, .targetIx = ty_w64
+, .cost = 76 /* milli weight units */
+}
+,[LEFT_EXTEND_1_8] =
+{ .tag = JET
+, .jet = simplicity_left_extend_1_8
+, .cmr = {{0x7488da61u, 0x1cfcdfa4u, 0xff3d63f8u, 0xc36d5a62u, 0x9c587e92u, 0x20bd989bu, 0xda720678u, 0xa9c97bf7u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w8
+, .cost = 65 /* milli weight units */
+}
+,[LEFT_EXTEND_32_64] =
+{ .tag = JET
+, .jet = simplicity_left_extend_32_64
+, .cmr = {{0x3433509au, 0x5de5695du, 0x92cab925u, 0x5143d606u, 0x670568c1u, 0x47f474d1u, 0x3593f539u, 0x5b9ad2c1u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w64
+, .cost = 63 /* milli weight units */
+}
+,[LEFT_EXTEND_8_16] =
+{ .tag = JET
+, .jet = simplicity_left_extend_8_16
+, .cmr = {{0x420d0a56u, 0x99b8875au, 0xcc2d18fdu, 0xa90c8a72u, 0x746d3e5eu, 0x0cd8c181u, 0x897a814cu, 0x4c433969u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w16
+, .cost = 88 /* milli weight units */
+}
+,[LEFT_EXTEND_8_32] =
+{ .tag = JET
+, .jet = simplicity_left_extend_8_32
+, .cmr = {{0xc30e475du, 0x4650abe4u, 0xae15c327u, 0x4ae8838du, 0xd51588d1u, 0x5bd0c6dcu, 0xacf982aau, 0x467bea62u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w32
+, .cost = 90 /* milli weight units */
+}
+,[LEFT_EXTEND_8_64] =
+{ .tag = JET
+, .jet = simplicity_left_extend_8_64
+, .cmr = {{0xa63a6e66u, 0x72e1b6c7u, 0x56549a3eu, 0xee01948eu, 0x711994feu, 0x18d7caedu, 0xf10915c1u, 0x60d7a80du}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w64
+, .cost = 107 /* milli weight units */
+}
+,[LEFT_PAD_HIGH_16_32] =
+{ .tag = JET
+, .jet = simplicity_left_pad_high_16_32
+, .cmr = {{0x72eca5c1u, 0x13743ef0u, 0xb60255ceu, 0x56787772u, 0xc7e75eecu, 0xb0e3b91eu, 0x1a847d75u, 0xf4851487u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w32
+, .cost = 91 /* milli weight units */
+}
+,[LEFT_PAD_HIGH_16_64] =
+{ .tag = JET
+, .jet = simplicity_left_pad_high_16_64
+, .cmr = {{0xf6af32bfu, 0xe6697611u, 0x57ceb1e8u, 0x30277d61u, 0x0e124f15u, 0xd508685eu, 0x4037f8fbu, 0x388fbda9u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w64
+, .cost = 110 /* milli weight units */
+}
+,[LEFT_PAD_HIGH_1_16] =
+{ .tag = JET
+, .jet = simplicity_left_pad_high_1_16
+, .cmr = {{0xa7ef7fc5u, 0x2d9a0321u, 0xf92214c5u, 0x87689c12u, 0x696e4c46u, 0x02bf5395u, 0x81afaaebu, 0xd77945d6u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w16
+, .cost = 141 /* milli weight units */
+}
+,[LEFT_PAD_HIGH_1_32] =
+{ .tag = JET
+, .jet = simplicity_left_pad_high_1_32
+, .cmr = {{0xb5482636u, 0xc7af61f6u, 0x88f12b4du, 0xce209fcbu, 0x1a732c49u, 0x0abb236eu, 0x73968a01u, 0xd4d9351eu}}
+, .sourceIx = ty_b
+, .targetIx = ty_w32
+, .cost = 263 /* milli weight units */
+}
+,[LEFT_PAD_HIGH_1_64] =
+{ .tag = JET
+, .jet = simplicity_left_pad_high_1_64
+, .cmr = {{0x6a9f2a1fu, 0xf5d46c8eu, 0x6b7c3b81u, 0x01afa073u, 0x55c4f653u, 0xc1467e45u, 0xcd25cc09u, 0x2e3a11fau}}
+, .sourceIx = ty_b
+, .targetIx = ty_w64
+, .cost = 422 /* milli weight units */
+}
+,[LEFT_PAD_HIGH_1_8] =
+{ .tag = JET
+, .jet = simplicity_left_pad_high_1_8
+, .cmr = {{0xd775a88au, 0x248004bdu, 0x821fa080u, 0x18521fe8u, 0x8171e842u, 0x84e0daffu, 0x4bc9e6cau, 0x1d8f8de4u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w8
+, .cost = 99 /* milli weight units */
+}
+,[LEFT_PAD_HIGH_32_64] =
+{ .tag = JET
+, .jet = simplicity_left_pad_high_32_64
+, .cmr = {{0x0bf4894bu, 0xa0e54360u, 0x18f7ddd1u, 0xe1a12ca7u, 0xcd73096fu, 0xef066ad4u, 0xb778cc24u, 0x1957fafcu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w64
+, .cost = 93 /* milli weight units */
+}
+,[LEFT_PAD_HIGH_8_16] =
+{ .tag = JET
+, .jet = simplicity_left_pad_high_8_16
+, .cmr = {{0x06daf4f8u, 0xd5944f1fu, 0x86dfbc37u, 0x0587b44du, 0x8871612bu, 0x7a96b054u, 0x756192dbu, 0x8fac19b7u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w16
+, .cost = 88 /* milli weight units */
+}
+,[LEFT_PAD_HIGH_8_32] =
+{ .tag = JET
+, .jet = simplicity_left_pad_high_8_32
+, .cmr = {{0xbc207c1eu, 0x1eae88cdu, 0x1bb4f94cu, 0x61dbd850u, 0xbbfa64a6u, 0x20ebc04fu, 0x0c86928eu, 0xad2c3212u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w32
+, .cost = 103 /* milli weight units */
+}
+,[LEFT_PAD_HIGH_8_64] =
+{ .tag = JET
+, .jet = simplicity_left_pad_high_8_64
+, .cmr = {{0xfa0c41c8u, 0xce560964u, 0x4c74fa32u, 0x8d64c1dcu, 0xa28050d5u, 0x3dfea6a1u, 0xe6dfb420u, 0xd9b47467u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w64
+, .cost = 136 /* milli weight units */
+}
+,[LEFT_PAD_LOW_16_32] =
+{ .tag = JET
+, .jet = simplicity_left_pad_low_16_32
+, .cmr = {{0x23f74796u, 0xb83020ebu, 0xbf5aa5b6u, 0x9aa1f3d7u, 0x3df9b1c2u, 0x67e0124cu, 0x5ffe182au, 0x63cd2022u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w32
+, .cost = 69 /* milli weight units */
+}
+,[LEFT_PAD_LOW_16_64] =
+{ .tag = JET
+, .jet = simplicity_left_pad_low_16_64
+, .cmr = {{0xe5d6461au, 0xf1331cebu, 0xa45585e5u, 0x6ae6e128u, 0xdc7daa0eu, 0x070861cau, 0x6d19d854u, 0x33883dc4u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w64
+, .cost = 106 /* milli weight units */
+}
+,[LEFT_PAD_LOW_1_16] =
+{ .tag = JET
+, .jet = simplicity_left_pad_low_1_16
+, .cmr = {{0x09dbcc20u, 0x32828855u, 0x2aa9e942u, 0x6c5cee24u, 0xdfceba87u, 0x2274aed5u, 0x5a832046u, 0x0a1791b2u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w16
+, .cost = 65 /* milli weight units */
+}
+,[LEFT_PAD_LOW_1_32] =
+{ .tag = JET
+, .jet = simplicity_left_pad_low_1_32
+, .cmr = {{0x1d2763f2u, 0x60d47289u, 0x6c881c72u, 0xfb22b9a1u, 0x19258e12u, 0x996109d9u, 0xc949ca61u, 0xf937da0cu}}
+, .sourceIx = ty_b
+, .targetIx = ty_w32
+, .cost = 63 /* milli weight units */
+}
+,[LEFT_PAD_LOW_1_64] =
+{ .tag = JET
+, .jet = simplicity_left_pad_low_1_64
+, .cmr = {{0xa376878du, 0xfe352047u, 0x29f91cdfu, 0x5be658abu, 0xc5e7025au, 0xd96284c7u, 0xf6310e9fu, 0x9b1a5a3eu}}
+, .sourceIx = ty_b
+, .targetIx = ty_w64
+, .cost = 61 /* milli weight units */
+}
+,[LEFT_PAD_LOW_1_8] =
+{ .tag = JET
+, .jet = simplicity_left_pad_low_1_8
+, .cmr = {{0x74c2061bu, 0x87f5190fu, 0xe74322eau, 0xc2422b38u, 0xe37e9fccu, 0x4d6097ebu, 0x5ca4e30bu, 0x129b7a12u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w8
+, .cost = 56 /* milli weight units */
+}
+,[LEFT_PAD_LOW_32_64] =
+{ .tag = JET
+, .jet = simplicity_left_pad_low_32_64
+, .cmr = {{0xf31ae284u, 0x313fdf37u, 0x73e3ee43u, 0x967dc8c6u, 0x7b73b780u, 0x06696671u, 0xd90dd259u, 0xd9a80613u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w64
+, .cost = 91 /* milli weight units */
+}
+,[LEFT_PAD_LOW_8_16] =
+{ .tag = JET
+, .jet = simplicity_left_pad_low_8_16
+, .cmr = {{0x190499a4u, 0x9f873732u, 0xbfeb6d24u, 0x3afb3b66u, 0xdb07dce3u, 0x3ffe7173u, 0x28416708u, 0x701700d4u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w16
+, .cost = 66 /* milli weight units */
+}
+,[LEFT_PAD_LOW_8_32] =
+{ .tag = JET
+, .jet = simplicity_left_pad_low_8_32
+, .cmr = {{0xb2cd3ff0u, 0xb4de890eu, 0x28b42796u, 0x41652fa0u, 0x8f2a8987u, 0x94f6ee6bu, 0x1282a798u, 0x26448d4au}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w32
+, .cost = 61 /* milli weight units */
+}
+,[LEFT_PAD_LOW_8_64] =
+{ .tag = JET
+, .jet = simplicity_left_pad_low_8_64
+, .cmr = {{0x6e728908u, 0x254e09f4u, 0xd1a62caeu, 0x8d8a5996u, 0xe02bd728u, 0x0d496744u, 0x402ff322u, 0xcd12028fu}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w64
+, .cost = 112 /* milli weight units */
+}
+,[LEFT_ROTATE_16] =
+{ .tag = JET
+, .jet = simplicity_left_rotate_16
+, .cmr = {{0x2ce267c9u, 0xf8e44e32u, 0x65b0299eu, 0x55742976u, 0xcceceb3au, 0x9c410617u, 0x6fbf17e6u, 0x3d48d06cu}}
+, .sourceIx = ty_pw4w16
+, .targetIx = ty_w16
+, .cost = 77 /* milli weight units */
+}
+,[LEFT_ROTATE_32] =
+{ .tag = JET
+, .jet = simplicity_left_rotate_32
+, .cmr = {{0x0bef6b5fu, 0x771ecc6eu, 0x6f5c26f6u, 0x622de862u, 0x4e443497u, 0x599514f5u, 0xbc68f687u, 0x4880e07au}}
+, .sourceIx = ty_pw8w32
+, .targetIx = ty_w32
+, .cost = 106 /* milli weight units */
+}
+,[LEFT_ROTATE_64] =
+{ .tag = JET
+, .jet = simplicity_left_rotate_64
+, .cmr = {{0xcc914219u, 0xd14fe5d2u, 0x20e2aa9bu, 0x64f24b47u, 0x5d80f2cau, 0xfb7531d4u, 0x2640967cu, 0x085f9ca4u}}
+, .sourceIx = ty_pw8w64
+, .targetIx = ty_w64
+, .cost = 98 /* milli weight units */
+}
+,[LEFT_ROTATE_8] =
+{ .tag = JET
+, .jet = simplicity_left_rotate_8
+, .cmr = {{0xbd7119ceu, 0xb23e56a0u, 0x759cdaadu, 0x8fd66517u, 0x46f2969cu, 0x5ea7c570u, 0x6c492ee0u, 0xcda652c2u}}
+, .sourceIx = ty_pw4w8
+, .targetIx = ty_w8
+, .cost = 88 /* milli weight units */
+}
+,[LEFT_SHIFT_16] =
+{ .tag = JET
+, .jet = simplicity_left_shift_16
+, .cmr = {{0xfd9b6d05u, 0xadbdb99bu, 0xc74aab73u, 0x3384724eu, 0x3072d2a2u, 0xc2dfeb34u, 0x5e24b507u, 0x4b527859u}}
+, .sourceIx = ty_pw4w16
+, .targetIx = ty_w16
+, .cost = 72 /* milli weight units */
+}
+,[LEFT_SHIFT_32] =
+{ .tag = JET
+, .jet = simplicity_left_shift_32
+, .cmr = {{0xa4b3b3fcu, 0x7345d38fu, 0xce543f40u, 0x1ae6bd07u, 0xba2742c3u, 0x3d9afab3u, 0xb3cca3a0u, 0x25973c98u}}
+, .sourceIx = ty_pw8w32
+, .targetIx = ty_w32
+, .cost = 78 /* milli weight units */
+}
+,[LEFT_SHIFT_64] =
+{ .tag = JET
+, .jet = simplicity_left_shift_64
+, .cmr = {{0x62b711e8u, 0x4b67648du, 0x3472ace1u, 0x86291eb6u, 0xd773ddc0u, 0xb8a3fbc2u, 0x08a275e9u, 0xdb91ddddu}}
+, .sourceIx = ty_pw8w64
+, .targetIx = ty_w64
+, .cost = 82 /* milli weight units */
+}
+,[LEFT_SHIFT_8] =
+{ .tag = JET
+, .jet = simplicity_left_shift_8
+, .cmr = {{0x187bba8eu, 0x4163bdd0u, 0xddb548ffu, 0x6efa6b7eu, 0x2f3d0982u, 0x97d2533eu, 0x77e8a76bu, 0x6f2dd324u}}
+, .sourceIx = ty_pw4w8
+, .targetIx = ty_w8
+, .cost = 91 /* milli weight units */
+}
+,[LEFT_SHIFT_WITH_16] =
+{ .tag = JET
+, .jet = simplicity_left_shift_with_16
+, .cmr = {{0x2dd41ac4u, 0xf1d6d968u, 0x70ff4966u, 0x31d40a4fu, 0xf7edeb13u, 0x7d63dafeu, 0xe002fa2du, 0xda29a757u}}
+, .sourceIx = ty_pbpw4w16
+, .targetIx = ty_w16
+, .cost = 83 /* milli weight units */
+}
+,[LEFT_SHIFT_WITH_32] =
+{ .tag = JET
+, .jet = simplicity_left_shift_with_32
+, .cmr = {{0x9bfb2490u, 0xbba1eb3bu, 0x7e256a26u, 0x0966dc90u, 0x9e73fd12u, 0x591ee140u, 0x673718f9u, 0xf10fc49fu}}
+, .sourceIx = ty_pbpw8w32
+, .targetIx = ty_w32
+, .cost = 95 /* milli weight units */
+}
+,[LEFT_SHIFT_WITH_64] =
+{ .tag = JET
+, .jet = simplicity_left_shift_with_64
+, .cmr = {{0x85774693u, 0x7de2c4c5u, 0xa55a90f3u, 0x160eb991u, 0xddbb6074u, 0xf8a7c7c5u, 0x8e8b2e38u, 0x2218a9fau}}
+, .sourceIx = ty_pbpw8w64
+, .targetIx = ty_w64
+, .cost = 103 /* milli weight units */
+}
+,[LEFT_SHIFT_WITH_8] =
+{ .tag = JET
+, .jet = simplicity_left_shift_with_8
+, .cmr = {{0xf6f5bc6fu, 0x43f661e2u, 0x727c9ec8u, 0x196388bcu, 0xc42b2036u, 0x06a778d5u, 0x53a4ea35u, 0x3ffc4be6u}}
+, .sourceIx = ty_pbpw4w8
+, .targetIx = ty_w8
+, .cost = 107 /* milli weight units */
+}
+,[LEFTMOST_16_1] =
+{ .tag = JET
+, .jet = simplicity_leftmost_16_1
+, .cmr = {{0x7faf549eu, 0xf620d0d8u, 0xf90b6d08u, 0x420cf5e9u, 0x8e9384eau, 0x716b82d7u, 0xd8e197a8u, 0xc46e33ceu}}
+, .sourceIx = ty_w16
+, .targetIx = ty_b
+, .cost = 93 /* milli weight units */
+}
+,[LEFTMOST_16_2] =
+{ .tag = JET
+, .jet = simplicity_leftmost_16_2
+, .cmr = {{0xf2ac7c05u, 0x964a699cu, 0xe595fb21u, 0xeec161e8u, 0x7a11b651u, 0x630d9a28u, 0x93094ea3u, 0xf3317243u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w2
+, .cost = 90 /* milli weight units */
+}
+,[LEFTMOST_16_4] =
+{ .tag = JET
+, .jet = simplicity_leftmost_16_4
+, .cmr = {{0x5a5ec503u, 0x9aa3aa0eu, 0x58f7ce64u, 0xefd03ac2u, 0x97410f2cu, 0xf45817afu, 0x54efa6a0u, 0x076b6f70u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w4
+, .cost = 75 /* milli weight units */
+}
+,[LEFTMOST_16_8] =
+{ .tag = JET
+, .jet = simplicity_leftmost_16_8
+, .cmr = {{0xe22543f8u, 0xfe861dbau, 0xee744b0bu, 0x8f58b47bu, 0x9d13fb35u, 0xa950863au, 0x59097cf4u, 0xd42724b9u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w8
+, .cost = 71 /* milli weight units */
+}
+,[LEFTMOST_32_1] =
+{ .tag = JET
+, .jet = simplicity_leftmost_32_1
+, .cmr = {{0xb36db059u, 0xdd42d707u, 0xbfa839f8u, 0x3bc2ed1du, 0xb501b23au, 0xf9af713fu, 0x41ff755fu, 0xe2b3e989u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_b
+, .cost = 77 /* milli weight units */
+}
+,[LEFTMOST_32_16] =
+{ .tag = JET
+, .jet = simplicity_leftmost_32_16
+, .cmr = {{0xf13ee37bu, 0xe612e9dfu, 0xf4907ec3u, 0xf1dde86cu, 0x58fed4b1u, 0x1a93b3bbu, 0x2c795800u, 0x4997922eu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w16
+, .cost = 102 /* milli weight units */
+}
+,[LEFTMOST_32_2] =
+{ .tag = JET
+, .jet = simplicity_leftmost_32_2
+, .cmr = {{0x57d0251au, 0xb566a3d2u, 0x48ec6e7cu, 0xd1e3e9c7u, 0x1b1dde0cu, 0xf2844a8cu, 0x8ae748bdu, 0x18d3735cu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w2
+, .cost = 66 /* milli weight units */
+}
+,[LEFTMOST_32_4] =
+{ .tag = JET
+, .jet = simplicity_leftmost_32_4
+, .cmr = {{0x66689bd5u, 0xeb6a6dd5u, 0xfc6b52feu, 0x90c174efu, 0x0fa8b517u, 0x993085c9u, 0x01c5702bu, 0xbd1face7u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w4
+, .cost = 52 /* milli weight units */
+}
+,[LEFTMOST_32_8] =
+{ .tag = JET
+, .jet = simplicity_leftmost_32_8
+, .cmr = {{0xc8851ff6u, 0x2206e865u, 0xc3b26641u, 0x981d0ae1u, 0x60d3d443u, 0x7a980062u, 0x79dbb3a2u, 0x5776698eu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w8
+, .cost = 103 /* milli weight units */
+}
+,[LEFTMOST_64_1] =
+{ .tag = JET
+, .jet = simplicity_leftmost_64_1
+, .cmr = {{0xe05ea19du, 0x39ee235du, 0xde58e31eu, 0x4b9534b6u, 0xcb399b1fu, 0x2fa18148u, 0x8cedc203u, 0xcd95962au}}
+, .sourceIx = ty_w64
+, .targetIx = ty_b
+, .cost = 78 /* milli weight units */
+}
+,[LEFTMOST_64_16] =
+{ .tag = JET
+, .jet = simplicity_leftmost_64_16
+, .cmr = {{0xc3ddb079u, 0xc112925du, 0x423bbd30u, 0xd902261eu, 0x68a41c3du, 0xe4381166u, 0xe1400502u, 0x8ba84b98u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w16
+, .cost = 88 /* milli weight units */
+}
+,[LEFTMOST_64_2] =
+{ .tag = JET
+, .jet = simplicity_leftmost_64_2
+, .cmr = {{0x264db123u, 0x78dfadc1u, 0xad6ff8d5u, 0x78ec4da1u, 0x8532a1e6u, 0xbdab7c17u, 0x569fdd7bu, 0xf406fb20u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w2
+, .cost = 71 /* milli weight units */
+}
+,[LEFTMOST_64_32] =
+{ .tag = JET
+, .jet = simplicity_leftmost_64_32
+, .cmr = {{0x19a5d53fu, 0xe6b30be0u, 0x2b91bafcu, 0x63cbe550u, 0x5598c142u, 0x55d89e33u, 0x4856db5bu, 0x5ba20dedu}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w32
+, .cost = 90 /* milli weight units */
+}
+,[LEFTMOST_64_4] =
+{ .tag = JET
+, .jet = simplicity_leftmost_64_4
+, .cmr = {{0x4c6fc8a0u, 0x65468e47u, 0x51844aefu, 0xb6cc4957u, 0x5864f567u, 0xc5628665u, 0x4c43b3f8u, 0x33303231u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w4
+, .cost = 79 /* milli weight units */
+}
+,[LEFTMOST_64_8] =
+{ .tag = JET
+, .jet = simplicity_leftmost_64_8
+, .cmr = {{0x98b5e016u, 0xbd414577u, 0x8dfc6317u, 0xdc65d6c7u, 0x5fef2857u, 0x96b59deau, 0xf14aa031u, 0x99f94896u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w8
+, .cost = 86 /* milli weight units */
+}
+,[LEFTMOST_8_1] =
+{ .tag = JET
+, .jet = simplicity_leftmost_8_1
+, .cmr = {{0x38e3985fu, 0x1f99eab1u, 0xa787e720u, 0x0c30cd9bu, 0x95631f95u, 0xb419fd76u, 0xece19967u, 0xd1b03069u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_b
+, .cost = 90 /* milli weight units */
+}
+,[LEFTMOST_8_2] =
+{ .tag = JET
+, .jet = simplicity_leftmost_8_2
+, .cmr = {{0x51dbcaebu, 0xc3ac1643u, 0xe5b08ca2u, 0x5529f0e2u, 0xb0bd9bdfu, 0xa041fd4du, 0xb77029d0u, 0xc5ff15b9u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w2
+, .cost = 90 /* milli weight units */
+}
+,[LEFTMOST_8_4] =
+{ .tag = JET
+, .jet = simplicity_leftmost_8_4
+, .cmr = {{0xb394209cu, 0x9b34284du, 0xde65ea97u, 0x35e4eb0cu, 0xdf01ce87u, 0x10e58c5eu, 0xd20e8b94u, 0x6bf3f6eau}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w4
+, .cost = 87 /* milli weight units */
+}
+,[LINEAR_COMBINATION_1] =
+{ .tag = JET
+, .jet = simplicity_linear_combination_1
+, .cmr = {{0xfdd47ca5u, 0xc3b8bed9u, 0xf5f82732u, 0x9af7c08bu, 0x88d35421u, 0xd3d02f3du, 0x6cae3e5bu, 0x49dcbea3u}}
+, .sourceIx = ty_ppw256pw512w256w256
+, .targetIx = ty_pw512w256
+, .cost = 84674 /* milli weight units */
+}
+,[LINEAR_VERIFY_1] =
+{ .tag = JET
+, .jet = simplicity_linear_verify_1
+, .cmr = {{0x7be5d046u, 0x728464b8u, 0x301d89d9u, 0xd0de8e19u, 0x675df4d9u, 0x10047b25u, 0xb372d2c4u, 0x166b3a0du}}
+, .sourceIx = ty_pppw256w512w256w512
+, .targetIx = ty_u
+, .cost = 43364 /* milli weight units */
+}
+,[LOCK_TIME] =
+{ .tag = JET
+, .jet = simplicity_lock_time
+, .cmr = {{0x7bdc8194u, 0x1f8c9c7fu, 0xa94061a5u, 0x9fbdfc03u, 0xa3f5c267u, 0xdcde1b23u, 0xd3be3a90u, 0xf0e9a7f5u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w32
+, .cost = 85 /* milli weight units */
+}
+,[LOW_1] =
+{ .tag = JET
+, .jet = simplicity_low_1
+, .cmr = {{0xf3d10b07u, 0x49332cddu, 0xae0a49ccu, 0x02657b02u, 0x58e0a5a7u, 0x05958100u, 0x22c5a64eu, 0x904088b0u}}
+, .sourceIx = ty_u
+, .targetIx = ty_b
+, .cost = 38 /* milli weight units */
+}
+,[LOW_16] =
+{ .tag = JET
+, .jet = simplicity_low_16
+, .cmr = {{0x670d1cf0u, 0x8d655f40u, 0xfda2277au, 0xa9155414u, 0xa3b4d80eu, 0x97f6b867u, 0xd4e562e3u, 0xa05b4645u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w16
+, .cost = 69 /* milli weight units */
+}
+,[LOW_32] =
+{ .tag = JET
+, .jet = simplicity_low_32
+, .cmr = {{0xd9bf78c4u, 0x9f8d6b7au, 0xe4b4b084u, 0xf0d364f7u, 0x2b0462ffu, 0x39c321c0u, 0x2d92b542u, 0x6086d0b5u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w32
+, .cost = 62 /* milli weight units */
+}
+,[LOW_64] =
+{ .tag = JET
+, .jet = simplicity_low_64
+, .cmr = {{0x364da086u, 0xebe3011bu, 0x1b585f5cu, 0xb9abc87eu, 0xe57b5637u, 0xcb95ecf3u, 0x12938df2u, 0x8630fda4u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w64
+, .cost = 47 /* milli weight units */
+}
+,[LOW_8] =
+{ .tag = JET
+, .jet = simplicity_low_8
+, .cmr = {{0xd4244f7cu, 0x17b04904u, 0x8ac58b4du, 0xa578169du, 0x0ed65149u, 0x408ea9b0u, 0x33b3d8b7u, 0x7d76c687u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w8
+, .cost = 47 /* milli weight units */
+}
+,[LT_16] =
+{ .tag = JET
+, .jet = simplicity_lt_16
+, .cmr = {{0x32602844u, 0xfb68eb7au, 0xf6f7f1bdu, 0xa350e229u, 0x2c3fc287u, 0xf81eca17u, 0xf068f4fau, 0x942d402au}}
+, .sourceIx = ty_w32
+, .targetIx = ty_b
+, .cost = 123 /* milli weight units */
+}
+,[LT_32] =
+{ .tag = JET
+, .jet = simplicity_lt_32
+, .cmr = {{0xb703d35du, 0xeed96ce3u, 0x9df8ad21u, 0x4f74898au, 0x1765aa14u, 0x06bce4bfu, 0x9afc5c63u, 0xa8382d9eu}}
+, .sourceIx = ty_w64
+, .targetIx = ty_b
+, .cost = 107 /* milli weight units */
+}
+,[LT_64] =
+{ .tag = JET
+, .jet = simplicity_lt_64
+, .cmr = {{0x94f1e48du, 0x7c87c180u, 0x83841ec1u, 0x2467942bu, 0x76a893fau, 0x08e94123u, 0xb4fe8020u, 0xd5f1d9afu}}
+, .sourceIx = ty_w128
+, .targetIx = ty_b
+, .cost = 76 /* milli weight units */
+}
+,[LT_8] =
+{ .tag = JET
+, .jet = simplicity_lt_8
+, .cmr = {{0xf40a8cfau, 0x7839939cu, 0xa4dd3d01u, 0x22d4b56cu, 0xc3c654e3u, 0x5e2af2d3u, 0x511fc944u, 0x6cf0f8afu}}
+, .sourceIx = ty_w16
+, .targetIx = ty_b
+, .cost = 107 /* milli weight units */
+}
+,[MAJ_1] =
+{ .tag = JET
+, .jet = simplicity_maj_1
+, .cmr = {{0x79d185f5u, 0x3d2e2fabu, 0x8754c1b9u, 0x58a5a1b5u, 0xb9dfa50du, 0x900ce43au, 0xd73561b4u, 0x4a887822u}}
+, .sourceIx = ty_pbw2
+, .targetIx = ty_b
+, .cost = 62 /* milli weight units */
+}
+,[MAJ_16] =
+{ .tag = JET
+, .jet = simplicity_maj_16
+, .cmr = {{0xa17f14f2u, 0x9ce64cc0u, 0xa3410706u, 0x747a4832u, 0x190af23cu, 0x03cac164u, 0xa47fc127u, 0xb48f3428u}}
+, .sourceIx = ty_pw16w32
+, .targetIx = ty_w16
+, .cost = 80 /* milli weight units */
+}
+,[MAJ_32] =
+{ .tag = JET
+, .jet = simplicity_maj_32
+, .cmr = {{0xe19fadfau, 0xc6c785b8u, 0x9829a91eu, 0xc0215935u, 0xc49fbc9du, 0x20c6be78u, 0xde9a6355u, 0xe8181356u}}
+, .sourceIx = ty_pw32w64
+, .targetIx = ty_w32
+, .cost = 96 /* milli weight units */
+}
+,[MAJ_64] =
+{ .tag = JET
+, .jet = simplicity_maj_64
+, .cmr = {{0xf119b2f2u, 0x383b9fe6u, 0xdd768e5eu, 0xe27db4f5u, 0x783868cfu, 0x9b9e1385u, 0x41003990u, 0x1d17c230u}}
+, .sourceIx = ty_pw64w128
+, .targetIx = ty_w64
+, .cost = 93 /* milli weight units */
+}
+,[MAJ_8] =
+{ .tag = JET
+, .jet = simplicity_maj_8
+, .cmr = {{0x415621cbu, 0x9e428f72u, 0xeb2956e4u, 0x696f7065u, 0xdee6a8dau, 0x5eedde32u, 0x362b8124u, 0xa195dd50u}}
+, .sourceIx = ty_pw8w16
+, .targetIx = ty_w8
+, .cost = 94 /* milli weight units */
+}
+,[MAX_16] =
+{ .tag = JET
+, .jet = simplicity_max_16
+, .cmr = {{0xceb71d05u, 0xf95518d3u, 0xd40925e7u, 0x3ca29b7cu, 0x3ec62b92u, 0xaf478804u, 0x8f7be806u, 0x52f6ba2bu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w16
+, .cost = 114 /* milli weight units */
+}
+,[MAX_32] =
+{ .tag = JET
+, .jet = simplicity_max_32
+, .cmr = {{0x679f51ceu, 0xca3e7bfcu, 0x4b8b8c14u, 0x5fbe0647u, 0x3f653b21u, 0xfb8f5838u, 0x39fc9f9eu, 0x221a99e7u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w32
+, .cost = 92 /* milli weight units */
+}
+,[MAX_64] =
+{ .tag = JET
+, .jet = simplicity_max_64
+, .cmr = {{0x6aeb602cu, 0x1f2de20eu, 0x6aee7e23u, 0x3b29db2eu, 0xe533a0c1u, 0x1e3363fcu, 0x67b30d6cu, 0x78338352u}}
+, .sourceIx = ty_w128
+, .targetIx = ty_w64
+, .cost = 104 /* milli weight units */
+}
+,[MAX_8] =
+{ .tag = JET
+, .jet = simplicity_max_8
+, .cmr = {{0x5c1f369au, 0xfaac6b74u, 0xb57edf3cu, 0xecfb61f2u, 0x07e05939u, 0xb1c6fc73u, 0x5b07836fu, 0x3973d904u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w8
+, .cost = 96 /* milli weight units */
+}
+,[MEDIAN_16] =
+{ .tag = JET
+, .jet = simplicity_median_16
+, .cmr = {{0xc09a300bu, 0x6d023ca4u, 0x09279e42u, 0x27470dd8u, 0xbd52f168u, 0xf1f8bfa9u, 0x38779f03u, 0xc86ef152u}}
+, .sourceIx = ty_pw16w32
+, .targetIx = ty_w16
+, .cost = 123 /* milli weight units */
+}
+,[MEDIAN_32] =
+{ .tag = JET
+, .jet = simplicity_median_32
+, .cmr = {{0x84810059u, 0x86f42948u, 0x051a364au, 0xd418702eu, 0xbc76fa36u, 0x5344aa2eu, 0xa1a63005u, 0xe61fe8bbu}}
+, .sourceIx = ty_pw32w64
+, .targetIx = ty_w32
+, .cost = 101 /* milli weight units */
+}
+,[MEDIAN_64] =
+{ .tag = JET
+, .jet = simplicity_median_64
+, .cmr = {{0xccbaa900u, 0x0f3c0c9eu, 0xc71bc0dbu, 0x5da85283u, 0x6fa91228u, 0xb373f56bu, 0xcef0b225u, 0x85d470ffu}}
+, .sourceIx = ty_pw64w128
+, .targetIx = ty_w64
+, .cost = 109 /* milli weight units */
+}
+,[MEDIAN_8] =
+{ .tag = JET
+, .jet = simplicity_median_8
+, .cmr = {{0xc5b2c001u, 0xdc504ff4u, 0xc2e05286u, 0x56d4dabfu, 0x33fb4142u, 0xd026ab61u, 0x374c2389u, 0x0bda1f18u}}
+, .sourceIx = ty_pw8w16
+, .targetIx = ty_w8
+, .cost = 122 /* milli weight units */
+}
+,[MIN_16] =
+{ .tag = JET
+, .jet = simplicity_min_16
+, .cmr = {{0xb2265869u, 0xea190bbau, 0x730cd7d7u, 0xcd0524d1u, 0x3ebf767eu, 0x1b125c44u, 0x1b1bab0eu, 0x3dbeef26u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w16
+, .cost = 97 /* milli weight units */
+}
+,[MIN_32] =
+{ .tag = JET
+, .jet = simplicity_min_32
+, .cmr = {{0x6d921bfbu, 0xaf935063u, 0xbd4b4e48u, 0xd6d13664u, 0xbd5d0ac2u, 0x5f5ee30eu, 0xbe518e79u, 0x1151750au}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w32
+, .cost = 113 /* milli weight units */
+}
+,[MIN_64] =
+{ .tag = JET
+, .jet = simplicity_min_64
+, .cmr = {{0x05d9c0a2u, 0xa71f887du, 0x7646e415u, 0x827230cfu, 0xbecc0d82u, 0x36c562f2u, 0xdfda3dcdu, 0xe13b2f03u}}
+, .sourceIx = ty_w128
+, .targetIx = ty_w64
+, .cost = 102 /* milli weight units */
+}
+,[MIN_8] =
+{ .tag = JET
+, .jet = simplicity_min_8
+, .cmr = {{0x57ba257du, 0xc70a975eu, 0xfb22d7e0u, 0xa998aea9u, 0xd57f208au, 0x74565a68u, 0xf2ac8b50u, 0x1e220dc0u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w8
+, .cost = 99 /* milli weight units */
+}
+,[MODULO_16] =
+{ .tag = JET
+, .jet = simplicity_modulo_16
+, .cmr = {{0x7abde1dcu, 0xab9d23eau, 0xe1d0a0a6u, 0xb384fb39u, 0xdf21c383u, 0x16c0bbccu, 0x6c706d7bu, 0x5f3d68bbu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w16
+, .cost = 103 /* milli weight units */
+}
+,[MODULO_32] =
+{ .tag = JET
+, .jet = simplicity_modulo_32
+, .cmr = {{0x7d127866u, 0xceb003ecu, 0x84a2702au, 0xff4059a7u, 0xc6fb00a5u, 0xa5bace90u, 0xb9d9c020u, 0xb5dc0297u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w32
+, .cost = 102 /* milli weight units */
+}
+,[MODULO_64] =
+{ .tag = JET
+, .jet = simplicity_modulo_64
+, .cmr = {{0xaafed9e3u, 0x7b3d3ed4u, 0x1db17116u, 0x7b0fa23cu, 0x8b823addu, 0x9a48addeu, 0x24ba20f9u, 0x194b079cu}}
+, .sourceIx = ty_w128
+, .targetIx = ty_w64
+, .cost = 85 /* milli weight units */
+}
+,[MODULO_8] =
+{ .tag = JET
+, .jet = simplicity_modulo_8
+, .cmr = {{0x90f3acebu, 0x58477139u, 0x06d2f8efu, 0x7cb4b66bu, 0x0892810eu, 0xa801bfa9u, 0xd746da1au, 0xd6d98009u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w8
+, .cost = 102 /* milli weight units */
+}
+,[MULTIPLY_16] =
+{ .tag = JET
+, .jet = simplicity_multiply_16
+, .cmr = {{0x6868a85du, 0x9f76c958u, 0xffda8478u, 0x05f5ebc0u, 0x9f43bddbu, 0xc140952au, 0xbb2a4cc0u, 0x1927ebddu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w32
+, .cost = 90 /* milli weight units */
+}
+,[MULTIPLY_32] =
+{ .tag = JET
+, .jet = simplicity_multiply_32
+, .cmr = {{0x69f91b99u, 0x4d8340e4u, 0x8c0f1124u, 0x990de03bu, 0x512adcecu, 0xd7bdeb29u, 0xe409a351u, 0x19f11facu}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w64
+, .cost = 90 /* milli weight units */
+}
+,[MULTIPLY_64] =
+{ .tag = JET
+, .jet = simplicity_multiply_64
+, .cmr = {{0xd1f148f2u, 0xd450e803u, 0x474343e5u, 0x9d2e0c4du, 0xa7d6b097u, 0x2cfa251cu, 0x9a822ab4u, 0x4263e162u}}
+, .sourceIx = ty_w128
+, .targetIx = ty_w128
+, .cost = 85 /* milli weight units */
+}
+,[MULTIPLY_8] =
+{ .tag = JET
+, .jet = simplicity_multiply_8
+, .cmr = {{0x2a8c0363u, 0x2ecc5e61u, 0xe3f1203au, 0x912b1a77u, 0x3eb6bf63u, 0x4b6bdf56u, 0x63b8431du, 0xb6f55be3u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w16
+, .cost = 93 /* milli weight units */
+}
+,[NEGATE_16] =
+{ .tag = JET
+, .jet = simplicity_negate_16
+, .cmr = {{0xf1a22428u, 0x06aadfc4u, 0xdc11de65u, 0xe877b0d8u, 0x73b5d565u, 0xeee3f848u, 0xa7442831u, 0xe52c630au}}
+, .sourceIx = ty_w16
+, .targetIx = ty_pbw16
+, .cost = 70 /* milli weight units */
+}
+,[NEGATE_32] =
+{ .tag = JET
+, .jet = simplicity_negate_32
+, .cmr = {{0xdb75ba2cu, 0x60952e76u, 0x5d7a5ce4u, 0xaaa31264u, 0x990fccacu, 0x750a80adu, 0xc678787fu, 0x5f72bfddu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_pbw32
+, .cost = 85 /* milli weight units */
+}
+,[NEGATE_64] =
+{ .tag = JET
+, .jet = simplicity_negate_64
+, .cmr = {{0xc91bcdb7u, 0x1d196a3bu, 0xf65ca83fu, 0x225a5e1bu, 0xbb73bd2eu, 0x3575cf16u, 0x5e5a4717u, 0xe94737ebu}}
+, .sourceIx = ty_w64
+, .targetIx = ty_pbw64
+, .cost = 94 /* milli weight units */
+}
+,[NEGATE_8] =
+{ .tag = JET
+, .jet = simplicity_negate_8
+, .cmr = {{0x8afffab3u, 0x6bbca0e9u, 0x3fff2c67u, 0x2724e4b7u, 0xbc24f638u, 0xe4048912u, 0x664788f0u, 0x38c995cfu}}
+, .sourceIx = ty_w8
+, .targetIx = ty_pbw8
+, .cost = 91 /* milli weight units */
+}
+,[NEW_ISSUANCE_CONTRACT] =
+{ .tag = JET
+, .jet = simplicity_new_issuance_contract
+, .cmr = {{0x4d86ad92u, 0x93951343u, 0xc9d70310u, 0x48127b20u, 0x74566afau, 0xd660a930u, 0x2346e6cau, 0x9626857bu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+, .cost = 157 /* milli weight units */
+}
+,[NONCE_HASH] =
+{ .tag = JET
+, .jet = simplicity_nonce_hash
+, .cmr = {{0xee34738bu, 0x801ec5f2u, 0x6cf24436u, 0x7e2af0a0u, 0x5a2dc618u, 0x430a4a36u, 0x2e275003u, 0xcf05c8adu}}
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256mspbw256w256
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+, .cost = 317 /* milli weight units */
+}
+,[NUM_INPUTS] =
+{ .tag = JET
+, .jet = simplicity_num_inputs
+, .cmr = {{0x3bca34d7u, 0xde3555e1u, 0x2d085d92u, 0xbae6e52cu, 0x6adc7186u, 0xde52f0acu, 0x351c96e6u, 0x64d9e31fu}}
+, .sourceIx = ty_u
+, .targetIx = ty_w32
+, .cost = 86 /* milli weight units */
+}
+,[NUM_OUTPUTS] =
+{ .tag = JET
+, .jet = simplicity_num_outputs
+, .cmr = {{0x29dc3190u, 0xd3bbafb5u, 0xe30b1c6eu, 0x6c5af030u, 0x7a9d35d3u, 0x117fd1c2u, 0xbdcc14d8u, 0xc4fade70u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w32
+, .cost = 79 /* milli weight units */
+}
+,[ONE_16] =
+{ .tag = JET
+, .jet = simplicity_one_16
+, .cmr = {{0xebe53162u, 0x8242d117u, 0x7fa94ecfu, 0x469221beu, 0x15905e07u, 0xf3c8fa15u, 0xd3d9d4aau, 0x6a815c8du}}
+, .sourceIx = ty_u
+, .targetIx = ty_w16
+, .cost = 60 /* milli weight units */
+}
+,[ONE_32] =
+{ .tag = JET
+, .jet = simplicity_one_32
+, .cmr = {{0x991f9e3au, 0xcb6ff78fu, 0x03f57803u, 0x541096beu, 0x7944c918u, 0xc2af3d68u, 0xa3210d0bu, 0x9f990ec2u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w32
+, .cost = 59 /* milli weight units */
+}
+,[ONE_64] =
+{ .tag = JET
+, .jet = simplicity_one_64
+, .cmr = {{0xfe308d3fu, 0x6897cdceu, 0xedc02cedu, 0x1630e55eu, 0x87bdcfecu, 0xd4aec3ceu, 0x54948f57u, 0xdfe18e27u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w64
+, .cost = 59 /* milli weight units */
+}
+,[ONE_8] =
+{ .tag = JET
+, .jet = simplicity_one_8
+, .cmr = {{0x68248261u, 0x8bee00bbu, 0x85db83e3u, 0x9dc40c28u, 0x51f64c00u, 0x6953440fu, 0x43b973afu, 0x7a7232c9u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w8
+, .cost = 62 /* milli weight units */
+}
+,[OR_1] =
+{ .tag = JET
+, .jet = simplicity_or_1
+, .cmr = {{0xa9a6a736u, 0x9f3fd77eu, 0xfd36b8a4u, 0x1dadd70cu, 0x1a4ede70u, 0x623b140au, 0x8d50dec7u, 0x4dd4912du}}
+, .sourceIx = ty_w2
+, .targetIx = ty_b
+, .cost = 77 /* milli weight units */
+}
+,[OR_16] =
+{ .tag = JET
+, .jet = simplicity_or_16
+, .cmr = {{0xda96d833u, 0x2155c363u, 0x8cf2a620u, 0x40b224c1u, 0x3c1baeeeu, 0x91321853u, 0x3defed9eu, 0x166a6483u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w16
+, .cost = 94 /* milli weight units */
+}
+,[OR_32] =
+{ .tag = JET
+, .jet = simplicity_or_32
+, .cmr = {{0xb672b0f7u, 0xc9297497u, 0xa0c9cc84u, 0xd7f7dde2u, 0x6d6de5e4u, 0xbec14b20u, 0xe010cee1u, 0xccc08f09u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w32
+, .cost = 105 /* milli weight units */
+}
+,[OR_64] =
+{ .tag = JET
+, .jet = simplicity_or_64
+, .cmr = {{0x133d505cu, 0xe503fbebu, 0x1329580fu, 0x5b96a0d9u, 0x7f3a5abau, 0x79d71bbdu, 0x85884a12u, 0x8139c008u}}
+, .sourceIx = ty_w128
+, .targetIx = ty_w64
+, .cost = 99 /* milli weight units */
+}
+,[OR_8] =
+{ .tag = JET
+, .jet = simplicity_or_8
+, .cmr = {{0x8ef1c6a1u, 0xcae07403u, 0xdacd8c13u, 0x2e8899c1u, 0x858745c8u, 0x6d1fdd4cu, 0x9fda6362u, 0x510048b3u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w8
+, .cost = 93 /* milli weight units */
+}
+,[OUTPOINT_HASH] =
+{ .tag = JET
+, .jet = simplicity_outpoint_hash
+, .cmr = {{0x89f8dc9bu, 0xd0e90591u, 0xd9c12224u, 0xb3614293u, 0xda1a2384u, 0xf5559be1u, 0xcf3ebd1eu, 0x7a326da3u}}
+, .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw256pw256w32
+, .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
+, .cost = 319 /* milli weight units */
+}
+,[OUTPUT_AMOUNT] =
+{ .tag = JET
+, .jet = simplicity_output_amount
+, .cmr = {{0x1ef0e908u, 0x6491c7b8u, 0xf25a0545u, 0x5dee8ff3u, 0x0b850885u, 0x65094b47u, 0x520b5944u, 0x72f8cc14u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mpspbw256w256spbw256w64
+, .cost = 298 /* milli weight units */
+}
+,[OUTPUT_AMOUNTS_HASH] =
+{ .tag = JET
+, .jet = simplicity_output_amounts_hash
+, .cmr = {{0x25fde639u, 0xb3e13ecau, 0x04de5e8fu, 0x1a1b0c84u, 0x8c67bef3u, 0x3966ecbau, 0x975420b4u, 0x7be7229du}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 140 /* milli weight units */
+}
+,[OUTPUT_ASSET] =
+{ .tag = JET
+, .jet = simplicity_output_asset
+, .cmr = {{0x2b6fbd7cu, 0x07617b9eu, 0x71c91207u, 0xd240add8u, 0x3157650cu, 0x89ea8049u, 0x961fa8b3u, 0x42dfd6d1u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mspbw256w256
+, .cost = 170 /* milli weight units */
+}
+,[OUTPUT_HASH] =
+{ .tag = JET
+, .jet = simplicity_output_hash
+, .cmr = {{0xbec30efeu, 0x4443aa3au, 0x1beba611u, 0x51217cc6u, 0x73ba7201u, 0xc51ff23au, 0x2c2f6d43u, 0xfa50441au}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 2849 /* milli weight units */
+}
+,[OUTPUT_IS_FEE] =
+{ .tag = JET
+, .jet = simplicity_output_is_fee
+, .cmr = {{0x068dbed8u, 0x41d55f6cu, 0xd424c9f2u, 0xe07f0c18u, 0x38fb6de8u, 0xe5853fb3u, 0x22e299e0u, 0x17dd92e3u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mb
+, .cost = 92 /* milli weight units */
+}
+,[OUTPUT_NONCE] =
+{ .tag = JET
+, .jet = simplicity_output_nonce
+, .cmr = {{0x8ec54108u, 0xee02aefeu, 0x5300917eu, 0xf6a25f84u, 0xb41b5a1au, 0x101a6b72u, 0xf3c18ae1u, 0xce291239u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmspbw256w256
+, .cost = 196 /* milli weight units */
+}
+,[OUTPUT_NONCES_HASH] =
+{ .tag = JET
+, .jet = simplicity_output_nonces_hash
+, .cmr = {{0x10c40dbcu, 0xf70335d6u, 0x552eff11u, 0xc1e2d543u, 0x630f108fu, 0x7234402au, 0x1b0b3d6eu, 0x5fdae03fu}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 151 /* milli weight units */
+}
+,[OUTPUT_NULL_DATUM] =
+{ .tag = JET
+, .jet = simplicity_output_null_datum
+, .cmr = {{0x24afc595u, 0x7e521ea7u, 0x32b29ca3u, 0x28bc8c07u, 0x276ae4dau, 0xf9d864a3u, 0xa5149f89u, 0x31aee6f5u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_mmspw2w256sbw4
+, .cost = 87 /* milli weight units */
+}
+,[OUTPUT_RANGE_PROOF] =
+{ .tag = JET
+, .jet = simplicity_output_range_proof
+, .cmr = {{0x33d1163fu, 0x6709e659u, 0x49c391f0u, 0xa73e1051u, 0x9c1997cfu, 0xcd13cabcu, 0x93001ed6u, 0xa23a2ca3u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 154 /* milli weight units */
+}
+,[OUTPUT_RANGE_PROOFS_HASH] =
+{ .tag = JET
+, .jet = simplicity_output_range_proofs_hash
+, .cmr = {{0xfa892470u, 0xd9a171c6u, 0xd5a2a125u, 0xe9814652u, 0x57a5681cu, 0xecb2b529u, 0x7408d7f1u, 0x5c93d2eeu}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 136 /* milli weight units */
+}
+,[OUTPUT_SCRIPT_HASH] =
+{ .tag = JET
+, .jet = simplicity_output_script_hash
+, .cmr = {{0x8437730bu, 0x2702e4e6u, 0x3aee3af0u, 0x84519107u, 0x7ffd18d0u, 0x10af4a73u, 0xa7d5f0c0u, 0xfbc06483u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 151 /* milli weight units */
+}
+,[OUTPUT_SCRIPTS_HASH] =
+{ .tag = JET
+, .jet = simplicity_output_scripts_hash
+, .cmr = {{0x868dec36u, 0x5ba04627u, 0xdd90d56eu, 0x28553b57u, 0xf2d193c4u, 0x64cccd76u, 0xb1663efbu, 0xc3873889u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 142 /* milli weight units */
+}
+,[OUTPUT_SURJECTION_PROOF] =
+{ .tag = JET
+, .jet = simplicity_output_surjection_proof
+, .cmr = {{0x9b6c4e8du, 0x5652e2abu, 0xd6c49f02u, 0xde6de6c3u, 0x3096d17cu, 0x38e8626au, 0x4f83b19bu, 0x04409d48u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mw256
+, .cost = 151 /* milli weight units */
+}
+,[OUTPUT_SURJECTION_PROOFS_HASH] =
+{ .tag = JET
+, .jet = simplicity_output_surjection_proofs_hash
+, .cmr = {{0xa92e384eu, 0xf30fbac8u, 0xf52455c0u, 0x959e42a1u, 0xf7b5866eu, 0x368305b0u, 0xb2d420dau, 0xe0d191d5u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 138 /* milli weight units */
+}
+,[OUTPUTS_HASH] =
+{ .tag = JET
+, .jet = simplicity_outputs_hash
+, .cmr = {{0x1fa311d6u, 0x359b3d97u, 0xf64d0dbdu, 0x7e23f517u, 0x1d200cd4u, 0x9bc81d99u, 0xccbf1b27u, 0xeff79ad5u}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 135 /* milli weight units */
+}
+,[PARSE_LOCK] =
+{ .tag = JET
+, .jet = simplicity_parse_lock
+, .cmr = {{0xce03e195u, 0xff841f93u, 0x09ee277du, 0xc854f9c3u, 0xd4cb6554u, 0x20e92113u, 0x59e1f204u, 0x641a23a6u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_sw32w32
+, .cost = 97 /* milli weight units */
+}
+,[PARSE_SEQUENCE] =
+{ .tag = JET
+, .jet = simplicity_parse_sequence
+, .cmr = {{0xc8a1cb4eu, 0xadf2a8dau, 0x312c0d27u, 0x35cf97deu, 0xe0dbae4du, 0x731109cau, 0x0194521eu, 0x707d445bu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_msw16w16
+, .cost = 116 /* milli weight units */
+}
+,[POINT_VERIFY_1] =
+{ .tag = JET
+, .jet = simplicity_point_verify_1
+, .cmr = {{0xd63ff0e5u, 0xa5008594u, 0xd555a615u, 0xe81fd2a6u, 0x9a481b4fu, 0x457f42f4u, 0x8283de2bu, 0x522384e0u}}
+, .sourceIx = ty_pppw256pbw256w256pbw256
+, .targetIx = ty_u
+, .cost = 41494 /* milli weight units */
+}
+,[REISSUANCE_BLINDING] =
+{ .tag = JET
+, .jet = simplicity_reissuance_blinding
+, .cmr = {{0x808bf451u, 0xa2c8047bu, 0x307e21adu, 0x20213caeu, 0x55e102bau, 0x7283b8fdu, 0xec21db78u, 0x8c787fedu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+, .cost = 91 /* milli weight units */
+}
+,[REISSUANCE_ENTROPY] =
+{ .tag = JET
+, .jet = simplicity_reissuance_entropy
+, .cmr = {{0x242f5c4fu, 0x19655a51u, 0x7134dcdbu, 0x07490582u, 0xad880134u, 0x9456714eu, 0x4b2ebe1au, 0x40d53676u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_mmw256
+, .cost = 93 /* milli weight units */
+}
+,[RIGHT_EXTEND_16_32] =
+{ .tag = JET
+, .jet = simplicity_right_extend_16_32
+, .cmr = {{0x1fe05d19u, 0x7ee6f15eu, 0xfb175452u, 0x36efeb38u, 0xc16e7a5au, 0xdc828b9au, 0xa04a3f6eu, 0x4678b5bau}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w32
+, .cost = 74 /* milli weight units */
+}
+,[RIGHT_EXTEND_16_64] =
+{ .tag = JET
+, .jet = simplicity_right_extend_16_64
+, .cmr = {{0x7cb9cc78u, 0x655285a1u, 0x62ffd80cu, 0x6d59f828u, 0xecdb75cbu, 0x64b08274u, 0xf89d2010u, 0x7c2be443u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w64
+, .cost = 82 /* milli weight units */
+}
+,[RIGHT_EXTEND_32_64] =
+{ .tag = JET
+, .jet = simplicity_right_extend_32_64
+, .cmr = {{0x325d1dffu, 0x737383f4u, 0x313dcb23u, 0xadf91e2au, 0xa4423038u, 0x8462832fu, 0xa15fe433u, 0x3633d930u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w64
+, .cost = 94 /* milli weight units */
+}
+,[RIGHT_EXTEND_8_16] =
+{ .tag = JET
+, .jet = simplicity_right_extend_8_16
+, .cmr = {{0x5346f15du, 0x349bfebfu, 0x2b5b4b45u, 0xf9c0fc39u, 0x392067dcu, 0x6f979751u, 0xa15966b5u, 0xd17efb9fu}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w16
+, .cost = 76 /* milli weight units */
+}
+,[RIGHT_EXTEND_8_32] =
+{ .tag = JET
+, .jet = simplicity_right_extend_8_32
+, .cmr = {{0xd5aee510u, 0xdfd50acau, 0xbd8ac329u, 0xd29748a6u, 0xf59408c2u, 0x6863ab62u, 0x4befc244u, 0x7ec26a44u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w32
+, .cost = 106 /* milli weight units */
+}
+,[RIGHT_EXTEND_8_64] =
+{ .tag = JET
+, .jet = simplicity_right_extend_8_64
+, .cmr = {{0xa843a315u, 0xf6dcd9bcu, 0xff586859u, 0xed6c31d8u, 0xcb986907u, 0x1b45b679u, 0x57ed15aeu, 0xd2e0ae5du}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w64
+, .cost = 124 /* milli weight units */
+}
+,[RIGHT_PAD_HIGH_16_32] =
+{ .tag = JET
+, .jet = simplicity_right_pad_high_16_32
+, .cmr = {{0x75bec300u, 0x6c04ce01u, 0x8f4a6110u, 0xaab3c55cu, 0xad453248u, 0xc1e7eb04u, 0x2c8257e6u, 0xb99ccd05u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w32
+, .cost = 70 /* milli weight units */
+}
+,[RIGHT_PAD_HIGH_16_64] =
+{ .tag = JET
+, .jet = simplicity_right_pad_high_16_64
+, .cmr = {{0x93605928u, 0xb849b0f8u, 0xdfbc62a1u, 0x2590bb1au, 0x920ba59du, 0x5bdc49dfu, 0x0faab6a3u, 0x351a9661u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w64
+, .cost = 88 /* milli weight units */
+}
+,[RIGHT_PAD_HIGH_1_16] =
+{ .tag = JET
+, .jet = simplicity_right_pad_high_1_16
+, .cmr = {{0x34c108aeu, 0x8a54e2c6u, 0x499bfec5u, 0xd6932815u, 0xf887149cu, 0x1149b789u, 0x94603f40u, 0xf1ffd2e7u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w16
+, .cost = 143 /* milli weight units */
+}
+,[RIGHT_PAD_HIGH_1_32] =
+{ .tag = JET
+, .jet = simplicity_right_pad_high_1_32
+, .cmr = {{0x5b4a76edu, 0x0a50ace5u, 0x2b791ab9u, 0xa5c5ebcbu, 0x3cbba0dau, 0x3a95ac40u, 0x51eba9abu, 0x150fd0dcu}}
+, .sourceIx = ty_b
+, .targetIx = ty_w32
+, .cost = 223 /* milli weight units */
+}
+,[RIGHT_PAD_HIGH_1_64] =
+{ .tag = JET
+, .jet = simplicity_right_pad_high_1_64
+, .cmr = {{0xd499b4bcu, 0xf5df6a71u, 0xc8664f96u, 0xb7b964aeu, 0x2bbbda55u, 0x219797ecu, 0x6b9d2df4u, 0xa5a5e8bau}}
+, .sourceIx = ty_b
+, .targetIx = ty_w64
+, .cost = 476 /* milli weight units */
+}
+,[RIGHT_PAD_HIGH_1_8] =
+{ .tag = JET
+, .jet = simplicity_right_pad_high_1_8
+, .cmr = {{0x5ee6a838u, 0x2f9bbdc0u, 0xc581036eu, 0x51f1d927u, 0x6996722au, 0x182413a1u, 0x03cb98e9u, 0xa898f91eu}}
+, .sourceIx = ty_b
+, .targetIx = ty_w8
+, .cost = 107 /* milli weight units */
+}
+,[RIGHT_PAD_HIGH_32_64] =
+{ .tag = JET
+, .jet = simplicity_right_pad_high_32_64
+, .cmr = {{0x062e02f4u, 0x8797787bu, 0xef0eab59u, 0x67580511u, 0xdcbcd744u, 0xbe65c4f6u, 0xc31b89e5u, 0x47e2e1d5u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w64
+, .cost = 94 /* milli weight units */
+}
+,[RIGHT_PAD_HIGH_8_16] =
+{ .tag = JET
+, .jet = simplicity_right_pad_high_8_16
+, .cmr = {{0xa5c985e8u, 0xaea842fau, 0xdf9a748bu, 0x964ca515u, 0x04e9ebb4u, 0xac494552u, 0x648f3a67u, 0xa160c4c5u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w16
+, .cost = 89 /* milli weight units */
+}
+,[RIGHT_PAD_HIGH_8_32] =
+{ .tag = JET
+, .jet = simplicity_right_pad_high_8_32
+, .cmr = {{0xbf92f39fu, 0xdcdee4c4u, 0x96121870u, 0x7530cb10u, 0x08adf755u, 0x89d250cau, 0xffb370b3u, 0x3ebae238u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w32
+, .cost = 110 /* milli weight units */
+}
+,[RIGHT_PAD_HIGH_8_64] =
+{ .tag = JET
+, .jet = simplicity_right_pad_high_8_64
+, .cmr = {{0xce7e8a0eu, 0x4a9b0401u, 0x5cc24f26u, 0x990f68dcu, 0x93b67b3fu, 0x676fbfeau, 0xa17fd74cu, 0xd60357c1u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w64
+, .cost = 107 /* milli weight units */
+}
+,[RIGHT_PAD_LOW_16_32] =
+{ .tag = JET
+, .jet = simplicity_right_pad_low_16_32
+, .cmr = {{0xb0f7151du, 0x0a79de08u, 0xf233806du, 0x4f7e1f88u, 0xc329b964u, 0x625e8e02u, 0xf0a0a62cu, 0x31d0e600u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w32
+, .cost = 71 /* milli weight units */
+}
+,[RIGHT_PAD_LOW_16_64] =
+{ .tag = JET
+, .jet = simplicity_right_pad_low_16_64
+, .cmr = {{0x6d141cd9u, 0xc8dcfcefu, 0xb1cf853bu, 0xf37278edu, 0xe8ef3c55u, 0x8f39edebu, 0xbcafe44bu, 0x54007150u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w64
+, .cost = 96 /* milli weight units */
+}
+,[RIGHT_PAD_LOW_1_16] =
+{ .tag = JET
+, .jet = simplicity_right_pad_low_1_16
+, .cmr = {{0x33101e54u, 0x87dd66c2u, 0x45e8754du, 0xfa166a06u, 0xce53c5b5u, 0x4fc6d810u, 0x0e2aec6cu, 0xfe939bc9u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w16
+, .cost = 81 /* milli weight units */
+}
+,[RIGHT_PAD_LOW_1_32] =
+{ .tag = JET
+, .jet = simplicity_right_pad_low_1_32
+, .cmr = {{0x5fa498c3u, 0xb7c6d348u, 0xa422b8cau, 0x4f47d069u, 0x552adbe2u, 0xbc6559dfu, 0x18684343u, 0x874843d3u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w32
+, .cost = 75 /* milli weight units */
+}
+,[RIGHT_PAD_LOW_1_64] =
+{ .tag = JET
+, .jet = simplicity_right_pad_low_1_64
+, .cmr = {{0x07bb6d70u, 0xc5354f44u, 0x51fb061bu, 0x37e9efdau, 0x7e836efdu, 0x45061405u, 0xa5ea1a2fu, 0xf3158306u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w64
+, .cost = 73 /* milli weight units */
+}
+,[RIGHT_PAD_LOW_1_8] =
+{ .tag = JET
+, .jet = simplicity_right_pad_low_1_8
+, .cmr = {{0xcd7215d3u, 0x9b80b18bu, 0x6e78ec56u, 0x8b488258u, 0x9f827104u, 0xd685b0d4u, 0xec689d10u, 0x59757122u}}
+, .sourceIx = ty_b
+, .targetIx = ty_w8
+, .cost = 68 /* milli weight units */
+}
+,[RIGHT_PAD_LOW_32_64] =
+{ .tag = JET
+, .jet = simplicity_right_pad_low_32_64
+, .cmr = {{0x0078a07cu, 0x1a2ba848u, 0x6f1605d7u, 0xfa54b377u, 0xe84cb6ddu, 0xc5e4c03du, 0xaf98fba9u, 0x0fd2f662u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w64
+, .cost = 80 /* milli weight units */
+}
+,[RIGHT_PAD_LOW_8_16] =
+{ .tag = JET
+, .jet = simplicity_right_pad_low_8_16
+, .cmr = {{0xc9048e29u, 0xacd72674u, 0x0300c9a6u, 0xcff117c0u, 0xec77090du, 0xa5aeedf9u, 0x703f9affu, 0xc91d9ab7u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w16
+, .cost = 75 /* milli weight units */
+}
+,[RIGHT_PAD_LOW_8_32] =
+{ .tag = JET
+, .jet = simplicity_right_pad_low_8_32
+, .cmr = {{0x51e7f934u, 0xf06ec1c9u, 0x499186bau, 0xa5180a9du, 0xed566d58u, 0xb42ab2f7u, 0x0ff36a4eu, 0x88ba0978u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w32
+, .cost = 77 /* milli weight units */
+}
+,[RIGHT_PAD_LOW_8_64] =
+{ .tag = JET
+, .jet = simplicity_right_pad_low_8_64
+, .cmr = {{0x48cd20c3u, 0x8c1ea9a0u, 0xab74d51du, 0xf485ef63u, 0x904b8f9au, 0x09effd98u, 0xfebacd17u, 0x17f18ad8u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w64
+, .cost = 82 /* milli weight units */
+}
+,[RIGHT_ROTATE_16] =
+{ .tag = JET
+, .jet = simplicity_right_rotate_16
+, .cmr = {{0x65ad755eu, 0xe809c727u, 0x6bc09de1u, 0x9b67d196u, 0x9de32c53u, 0xb3a10121u, 0xaf905656u, 0x6a3ce8efu}}
+, .sourceIx = ty_pw4w16
+, .targetIx = ty_w16
+, .cost = 99 /* milli weight units */
+}
+,[RIGHT_ROTATE_32] =
+{ .tag = JET
+, .jet = simplicity_right_rotate_32
+, .cmr = {{0xd813637cu, 0xba61094eu, 0xb5dc58f9u, 0x3259ac3bu, 0xda0af29cu, 0x3dcb0551u, 0xe145203eu, 0x0b8dfe20u}}
+, .sourceIx = ty_pw8w32
+, .targetIx = ty_w32
+, .cost = 92 /* milli weight units */
+}
+,[RIGHT_ROTATE_64] =
+{ .tag = JET
+, .jet = simplicity_right_rotate_64
+, .cmr = {{0x7b8df8b8u, 0x857ecfb4u, 0xacc183a3u, 0x55d3630au, 0x9c645f9du, 0xc405e887u, 0x066193cbu, 0xcda44a2eu}}
+, .sourceIx = ty_pw8w64
+, .targetIx = ty_w64
+, .cost = 93 /* milli weight units */
+}
+,[RIGHT_ROTATE_8] =
+{ .tag = JET
+, .jet = simplicity_right_rotate_8
+, .cmr = {{0x89282b3eu, 0x430bbad5u, 0xae7b1ad7u, 0x4d10614cu, 0xedfdc801u, 0xbfa3ce17u, 0x5f9e08bfu, 0x4031dd8eu}}
+, .sourceIx = ty_pw4w8
+, .targetIx = ty_w8
+, .cost = 75 /* milli weight units */
+}
+,[RIGHT_SHIFT_16] =
+{ .tag = JET
+, .jet = simplicity_right_shift_16
+, .cmr = {{0x86040b4bu, 0xdf11807fu, 0xb10dc7cau, 0x98f83e53u, 0x02c584c9u, 0x2671d9a8u, 0xcaddf778u, 0x0bd6085fu}}
+, .sourceIx = ty_pw4w16
+, .targetIx = ty_w16
+, .cost = 84 /* milli weight units */
+}
+,[RIGHT_SHIFT_32] =
+{ .tag = JET
+, .jet = simplicity_right_shift_32
+, .cmr = {{0xd1d0ccdbu, 0xcc11a0e0u, 0x0af93e7au, 0xe5bbe27fu, 0x9d7fa7f2u, 0xc251f603u, 0x35245fa0u, 0x0c5ab9fcu}}
+, .sourceIx = ty_pw8w32
+, .targetIx = ty_w32
+, .cost = 88 /* milli weight units */
+}
+,[RIGHT_SHIFT_64] =
+{ .tag = JET
+, .jet = simplicity_right_shift_64
+, .cmr = {{0x517ba7ccu, 0xb3ab802cu, 0x83d7068cu, 0x3c871c17u, 0xe204ff0eu, 0xea02ab42u, 0x0181733cu, 0x79a42bb6u}}
+, .sourceIx = ty_pw8w64
+, .targetIx = ty_w64
+, .cost = 91 /* milli weight units */
+}
+,[RIGHT_SHIFT_8] =
+{ .tag = JET
+, .jet = simplicity_right_shift_8
+, .cmr = {{0x0f298a1au, 0x90d1f384u, 0xc245af0bu, 0xf172642cu, 0x51f51d47u, 0x5a4147dcu, 0xe8c72168u, 0xe77f0cb2u}}
+, .sourceIx = ty_pw4w8
+, .targetIx = ty_w8
+, .cost = 88 /* milli weight units */
+}
+,[RIGHT_SHIFT_WITH_16] =
+{ .tag = JET
+, .jet = simplicity_right_shift_with_16
+, .cmr = {{0xcf05f842u, 0x110f9819u, 0xa5345c23u, 0x2beb472bu, 0x9c976984u, 0xa41470beu, 0xfc0b025du, 0x46d04271u}}
+, .sourceIx = ty_pbpw4w16
+, .targetIx = ty_w16
+, .cost = 105 /* milli weight units */
+}
+,[RIGHT_SHIFT_WITH_32] =
+{ .tag = JET
+, .jet = simplicity_right_shift_with_32
+, .cmr = {{0x04044195u, 0x69d57fe3u, 0x893230dbu, 0x5fa0d8f9u, 0x473023a4u, 0x2e01c204u, 0x931cd734u, 0xfb44a9f8u}}
+, .sourceIx = ty_pbpw8w32
+, .targetIx = ty_w32
+, .cost = 92 /* milli weight units */
+}
+,[RIGHT_SHIFT_WITH_64] =
+{ .tag = JET
+, .jet = simplicity_right_shift_with_64
+, .cmr = {{0x77267b05u, 0x1e5a1039u, 0x1185903bu, 0x1a98de32u, 0xfcf24e6au, 0xe6871c6fu, 0x15b68652u, 0xb24a66c4u}}
+, .sourceIx = ty_pbpw8w64
+, .targetIx = ty_w64
+, .cost = 97 /* milli weight units */
+}
+,[RIGHT_SHIFT_WITH_8] =
+{ .tag = JET
+, .jet = simplicity_right_shift_with_8
+, .cmr = {{0xa9cb6614u, 0xef326a66u, 0x4774d6dcu, 0xe653e1d6u, 0xc0895834u, 0x43ae917fu, 0x0fb4c5c2u, 0x2b9ab444u}}
+, .sourceIx = ty_pbpw4w8
+, .targetIx = ty_w8
+, .cost = 103 /* milli weight units */
+}
+,[RIGHTMOST_16_1] =
+{ .tag = JET
+, .jet = simplicity_rightmost_16_1
+, .cmr = {{0x648b9a0fu, 0x903228bau, 0x27d95941u, 0xfd54e92eu, 0xa7b35feeu, 0xb28a7986u, 0xb62da92du, 0x7d512470u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_b
+, .cost = 70 /* milli weight units */
+}
+,[RIGHTMOST_16_2] =
+{ .tag = JET
+, .jet = simplicity_rightmost_16_2
+, .cmr = {{0x27622f1cu, 0x01736231u, 0x09f920f8u, 0xcd8766bbu, 0xf60d306au, 0xd1983fdbu, 0xc1461d23u, 0xa41fa944u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w2
+, .cost = 82 /* milli weight units */
+}
+,[RIGHTMOST_16_4] =
+{ .tag = JET
+, .jet = simplicity_rightmost_16_4
+, .cmr = {{0x7987868fu, 0xf3fe7f44u, 0x68a3150eu, 0x3a42cd0fu, 0x325d4892u, 0x8189a485u, 0xaa62c013u, 0x94c4e834u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w4
+, .cost = 76 /* milli weight units */
+}
+,[RIGHTMOST_16_8] =
+{ .tag = JET
+, .jet = simplicity_rightmost_16_8
+, .cmr = {{0xef85cf36u, 0xb79d9cfau, 0xed2c633du, 0x751e2e38u, 0xeaae5ac0u, 0x21050b13u, 0x4729b9dbu, 0x51bd55a3u}}
+, .sourceIx = ty_w16
+, .targetIx = ty_w8
+, .cost = 69 /* milli weight units */
+}
+,[RIGHTMOST_32_1] =
+{ .tag = JET
+, .jet = simplicity_rightmost_32_1
+, .cmr = {{0x0738e69eu, 0xbfcf85d8u, 0xe0db9066u, 0xc20afc0au, 0x0a62d54du, 0xb8ec357au, 0xce45ba4du, 0x4155d049u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_b
+, .cost = 90 /* milli weight units */
+}
+,[RIGHTMOST_32_16] =
+{ .tag = JET
+, .jet = simplicity_rightmost_32_16
+, .cmr = {{0x08c12ff6u, 0x30906cdcu, 0x05d31716u, 0x045d962au, 0x6cb3952cu, 0x89aeb6c7u, 0x1e47fba6u, 0x845a4d8au}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w16
+, .cost = 64 /* milli weight units */
+}
+,[RIGHTMOST_32_2] =
+{ .tag = JET
+, .jet = simplicity_rightmost_32_2
+, .cmr = {{0xf755df38u, 0x9722ae31u, 0x23884d9fu, 0x03f260f1u, 0x2ab22a35u, 0x3203d3cdu, 0xfe198308u, 0x2181034bu}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w2
+, .cost = 74 /* milli weight units */
+}
+,[RIGHTMOST_32_4] =
+{ .tag = JET
+, .jet = simplicity_rightmost_32_4
+, .cmr = {{0x396004e0u, 0xf72cc247u, 0x585a6bf9u, 0x17f7781au, 0xaeb1b62au, 0x87762058u, 0x72267e4fu, 0x18f0a775u}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w4
+, .cost = 92 /* milli weight units */
+}
+,[RIGHTMOST_32_8] =
+{ .tag = JET
+, .jet = simplicity_rightmost_32_8
+, .cmr = {{0x41936ea9u, 0x769de1f7u, 0x866cd5d0u, 0x68ac6c2eu, 0xa7470a39u, 0x39c2f17du, 0x34fe91afu, 0xc68b1f3au}}
+, .sourceIx = ty_w32
+, .targetIx = ty_w8
+, .cost = 78 /* milli weight units */
+}
+,[RIGHTMOST_64_1] =
+{ .tag = JET
+, .jet = simplicity_rightmost_64_1
+, .cmr = {{0x4506f204u, 0xb3d8c9a6u, 0x25fa9e8fu, 0xe6cc14bau, 0xe71d61a2u, 0x3cc46ad5u, 0xca25c67au, 0x019d9d4bu}}
+, .sourceIx = ty_w64
+, .targetIx = ty_b
+, .cost = 77 /* milli weight units */
+}
+,[RIGHTMOST_64_16] =
+{ .tag = JET
+, .jet = simplicity_rightmost_64_16
+, .cmr = {{0x8af70d2bu, 0x92a7d004u, 0xdb8d796eu, 0xc12b75e4u, 0xe44d9262u, 0x823257cau, 0xb3cb45fbu, 0x722a9b9bu}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w16
+, .cost = 86 /* milli weight units */
+}
+,[RIGHTMOST_64_2] =
+{ .tag = JET
+, .jet = simplicity_rightmost_64_2
+, .cmr = {{0xb6cbcad7u, 0x76fca4f7u, 0x7d5a7cf0u, 0x8500ceb2u, 0xcafcdce1u, 0xe33fae08u, 0x7529f5a1u, 0x5541bd98u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w2
+, .cost = 74 /* milli weight units */
+}
+,[RIGHTMOST_64_32] =
+{ .tag = JET
+, .jet = simplicity_rightmost_64_32
+, .cmr = {{0x7fb08518u, 0xd5cc0c38u, 0x0ea455bfu, 0xb2f45f2bu, 0x55f53468u, 0x109c365eu, 0xacff1f09u, 0x522c6d51u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w32
+, .cost = 76 /* milli weight units */
+}
+,[RIGHTMOST_64_4] =
+{ .tag = JET
+, .jet = simplicity_rightmost_64_4
+, .cmr = {{0xdb61fde7u, 0xa41cbc68u, 0x77d2e64eu, 0x5c5f86e2u, 0x67ce843cu, 0xc2ab52f9u, 0x1a4a6d4cu, 0x64c6f4bfu}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w4
+, .cost = 70 /* milli weight units */
+}
+,[RIGHTMOST_64_8] =
+{ .tag = JET
+, .jet = simplicity_rightmost_64_8
+, .cmr = {{0x056665d9u, 0x3fbe67e7u, 0x137d40e7u, 0x5000828du, 0xe254757du, 0x47e754c5u, 0x7e2e2927u, 0x46b3d6e3u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_w8
+, .cost = 69 /* milli weight units */
+}
+,[RIGHTMOST_8_1] =
+{ .tag = JET
+, .jet = simplicity_rightmost_8_1
+, .cmr = {{0x3d31ef3du, 0x18b6af64u, 0x1046d0dfu, 0xe458b6dau, 0x9213ab54u, 0xaad8ab1fu, 0x480233e9u, 0x30cc774bu}}
+, .sourceIx = ty_w8
+, .targetIx = ty_b
+, .cost = 79 /* milli weight units */
+}
+,[RIGHTMOST_8_2] =
+{ .tag = JET
+, .jet = simplicity_rightmost_8_2
+, .cmr = {{0x25c2a1beu, 0xbc03aa9du, 0x1e26610eu, 0x5877ad7au, 0xb2f7a4a2u, 0x4be7686cu, 0x4978e5bdu, 0x2197e8bdu}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w2
+, .cost = 98 /* milli weight units */
+}
+,[RIGHTMOST_8_4] =
+{ .tag = JET
+, .jet = simplicity_rightmost_8_4
+, .cmr = {{0x43cc17f6u, 0xad5d4220u, 0x53f3519eu, 0x0aa226eeu, 0x06c57cedu, 0x8d0531ecu, 0x8394af29u, 0x05c144a0u}}
+, .sourceIx = ty_w8
+, .targetIx = ty_w4
+, .cost = 98 /* milli weight units */
+}
+,[SCALAR_ADD] =
+{ .tag = JET
+, .jet = simplicity_scalar_add
+, .cmr = {{0x21d03b80u, 0x630a825au, 0x2acc133du, 0x2408fdc7u, 0x718e4252u, 0x13a92f95u, 0xff9762b8u, 0xc5e93f64u}}
+, .sourceIx = ty_w512
+, .targetIx = ty_w256
+, .cost = 739 /* milli weight units */
+}
+,[SCALAR_INVERT] =
+{ .tag = JET
+, .jet = simplicity_scalar_invert
+, .cmr = {{0x32774c56u, 0x7a8aefeeu, 0xd0efa74cu, 0xbbb6af27u, 0x34a2b11bu, 0x146abe92u, 0x067c9fabu, 0xa690b685u}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+, .cost = 3193 /* milli weight units */
+}
+,[SCALAR_IS_ZERO] =
+{ .tag = JET
+, .jet = simplicity_scalar_is_zero
+, .cmr = {{0x7b9be766u, 0x49089091u, 0x68e3ea60u, 0xbd1061ecu, 0x9a31e9a1u, 0xd47688bau, 0x127a39c1u, 0xc58de4fbu}}
+, .sourceIx = ty_w256
+, .targetIx = ty_b
+, .cost = 271 /* milli weight units */
+}
+,[SCALAR_MULTIPLY] =
+{ .tag = JET
+, .jet = simplicity_scalar_multiply
+, .cmr = {{0x25efe640u, 0x186bc5eau, 0x9f0e5dc8u, 0x02d6d2feu, 0x1c77750fu, 0xaa024e07u, 0x1bd832dbu, 0xe679024bu}}
+, .sourceIx = ty_w512
+, .targetIx = ty_w256
+, .cost = 774 /* milli weight units */
+}
+,[SCALAR_MULTIPLY_LAMBDA] =
+{ .tag = JET
+, .jet = simplicity_scalar_multiply_lambda
+, .cmr = {{0x232b9fcfu, 0x9d85c1a5u, 0x1162a3eau, 0x55081631u, 0x5c8e77e4u, 0x6403acffu, 0xa7fe6dbbu, 0x1f25011au}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+, .cost = 557 /* milli weight units */
+}
+,[SCALAR_NEGATE] =
+{ .tag = JET
+, .jet = simplicity_scalar_negate
+, .cmr = {{0x3a63329du, 0x6645a7c0u, 0x4e7f99d9u, 0xca76292cu, 0xb57bea2fu, 0x9f9084f3u, 0x05e0583eu, 0x455b82eeu}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+, .cost = 490 /* milli weight units */
+}
+,[SCALAR_NORMALIZE] =
+{ .tag = JET
+, .jet = simplicity_scalar_normalize
+, .cmr = {{0x27ef9f9cu, 0x0a5ed2fcu, 0xd7a284d1u, 0x4c5116afu, 0xab70e489u, 0x0f381cc2u, 0xda88a5f3u, 0xb50e43c9u}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+, .cost = 472 /* milli weight units */
+}
+,[SCALAR_SQUARE] =
+{ .tag = JET
+, .jet = simplicity_scalar_square
+, .cmr = {{0xd9de1919u, 0xcd12d211u, 0x703fbbd0u, 0x4e2001d5u, 0x0d293606u, 0x786412a8u, 0xd6df36dcu, 0x1f97e3beu}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w256
+, .cost = 575 /* milli weight units */
 }
 ,[SCALE] =
 { .tag = JET
-, .jet = scale
-, .cmr = {{0xb8a80c64u, 0x954912e5u, 0x43d42c1au, 0xf315321bu, 0xcffb6668u, 0x0050fc09u, 0xa5afd756u, 0x011b8284u}}
+, .jet = simplicity_scale
+, .cmr = {{0xbd695be1u, 0x8ef775f1u, 0x2d6ee8e8u, 0xe08bbb6bu, 0xa9fbffc8u, 0x75247072u, 0x5e8b0611u, 0x0d8c5a56u}}
 , .sourceIx = ty_pw256pw512w256
 , .targetIx = ty_pw512w256
-, .cost = 75377 /* milli weight units */
+, .cost = 72675 /* milli weight units */
 }
 ,[SCRIPT_CMR] =
 { .tag = JET
-, .jet = script_cmr
-, .cmr = {{0xb8ad3723u, 0x7699301fu, 0xb33e6928u, 0xa4101f93u, 0x169ad1f4u, 0x128b9e1eu, 0x86bdbb6cu, 0xdc274c38u}}
+, .jet = simplicity_script_cmr
+, .cmr = {{0x62dd2b74u, 0xa4190ac3u, 0xc4ef4ebdu, 0xb2b85475u, 0xc884f42du, 0x46a1533bu, 0x26ad878fu, 0x4ef80512u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 281 /* milli weight units */
+, .cost = 136 /* milli weight units */
 }
 ,[SHA_256_BLOCK] =
 { .tag = JET
-, .jet = sha_256_block
-, .cmr = {{0x94a36a40u, 0x83309e0bu, 0x86de77d0u, 0xfb48d9d3u, 0x31e2d2f1u, 0x67740b60u, 0x6e60574au, 0xf438cd86u}}
+, .jet = simplicity_sha_256_block
+, .cmr = {{0x97bb59b7u, 0x93ae9ce4u, 0x9dc07813u, 0x4b6a9e85u, 0x5acc6d50u, 0xc0e5bd3fu, 0xa671cebeu, 0xeab07ae2u}}
 , .sourceIx = ty_pw256w512
 , .targetIx = ty_w256
-, .cost = 986 /* milli weight units */
+, .cost = 771 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_1] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_1
-, .cmr = {{0x8a1d2570u, 0x87b32ccdu, 0xc3320037u, 0x4e6e95c8u, 0x75a05e54u, 0x8122323fu, 0x6b7ab9c0u, 0x7eb9b6eeu}}
+, .jet = simplicity_sha_256_ctx_8_add_1
+, .cmr = {{0x027b6eecu, 0xd2b38229u, 0x2c5ea465u, 0x29408b01u, 0xb2d4c739u, 0xd911601du, 0x02c6bf3au, 0x186bb7dfu}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w8
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 1600 /* milli weight units */
+, .cost = 642 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_128] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_128
-, .cmr = {{0xe7772cb9u, 0xc0ec421au, 0xb8a789d4u, 0x5cd64661u, 0xf433dd7du, 0x3d2c94dcu, 0x1f1c4f3au, 0xf8c780abu}}
+, .jet = simplicity_sha_256_ctx_8_add_128
+, .cmr = {{0xe7e5e3b3u, 0x944a311bu, 0xd41a060du, 0x55e17b08u, 0xb5ff7502u, 0x0852e66bu, 0xda62b6dfu, 0x943bb8d4u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w1Ki
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 3921 /* milli weight units */
+, .cost = 1779 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_16] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_16
-, .cmr = {{0xf0f4cf99u, 0xad58a038u, 0x5e16b87du, 0xbf3271c4u, 0x7524defdu, 0x78f11bbcu, 0x7471fe4du, 0xa94aebadu}}
+, .jet = simplicity_sha_256_ctx_8_add_16
+, .cmr = {{0x77872234u, 0x3b78cfb7u, 0x7fd5e7d5u, 0xb19e9312u, 0xe997bba3u, 0x52eecb39u, 0xa3c332ffu, 0x4809aa14u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w128
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 2275 /* milli weight units */
+, .cost = 747 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_2] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_2
-, .cmr = {{0x7998c7c2u, 0xbd814b0cu, 0x0f403f58u, 0xc576ea56u, 0x407d25eeu, 0x229fae62u, 0x5bcab0c6u, 0x20a2a29cu}}
+, .jet = simplicity_sha_256_ctx_8_add_2
+, .cmr = {{0x72aa6de3u, 0x4c2072e6u, 0x923b2280u, 0xb7cf521eu, 0x1e057d6bu, 0xecdda775u, 0x9a79ac18u, 0x8a262e32u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w16
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 3772 /* milli weight units */
+, .cost = 661 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_256] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_256
-, .cmr = {{0xa8749961u, 0xb31afe2fu, 0xb553b70bu, 0x4cea787du, 0xca472584u, 0x54d583dcu, 0x45a0780du, 0x5e2a2a50u}}
+, .jet = simplicity_sha_256_ctx_8_add_256
+, .cmr = {{0xa488eb1eu, 0x7585cd02u, 0x27adbbc8u, 0x549c9febu, 0x6587f78bu, 0x43922b57u, 0x44015f1bu, 0xb621daa0u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w2Ki
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 6211 /* milli weight units */
+, .cost = 2912 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_32] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_32
-, .cmr = {{0xf22068b7u, 0x76a3787fu, 0x9d52ec2au, 0x9591951fu, 0x8a73f009u, 0x60091235u, 0x8a2a1e15u, 0x864e80b2u}}
+, .jet = simplicity_sha_256_ctx_8_add_32
+, .cmr = {{0x5038335eu, 0xd76956f3u, 0x451e6878u, 0x1002e963u, 0xa84dd655u, 0xcbf2b841u, 0x63269114u, 0x77ae3ca2u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w256
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 4599 /* milli weight units */
+, .cost = 896 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_4] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_4
-, .cmr = {{0x40e66decu, 0xa132f5aeu, 0x0c54937bu, 0x95ccaca1u, 0x1267a4adu, 0xca702887u, 0xb6e408edu, 0x761530bcu}}
+, .jet = simplicity_sha_256_ctx_8_add_4
+, .cmr = {{0x23b69b90u, 0xe69ee50fu, 0x9167046eu, 0x8999e3b9u, 0x10c654a7u, 0x9791d3bdu, 0x0e0e7f81u, 0x542b9d36u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w32
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 3515 /* milli weight units */
+, .cost = 645 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_512] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_512
-, .cmr = {{0x5a96ee66u, 0x8b52f63fu, 0x7bdbaae3u, 0xcc38e393u, 0xef24b3a9u, 0x67856f2cu, 0xd89d83bau, 0x4ccbda8du}}
+, .jet = simplicity_sha_256_ctx_8_add_512
+, .cmr = {{0xf757d69au, 0x8db2c4bau, 0x7446f96au, 0x814d7461u, 0xf4b3d087u, 0xc0e42546u, 0x8d723d14u, 0x85bc851bu}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w4Ki
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 10936 /* milli weight units */
+, .cost = 5299 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_64] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_64
-, .cmr = {{0x36ede6b6u, 0x8ab6e4dbu, 0x31efc7a7u, 0xeae7ec3fu, 0x7ceead93u, 0x91103b8du, 0xcb406091u, 0x57fb8702u}}
+, .jet = simplicity_sha_256_ctx_8_add_64
+, .cmr = {{0x9a179bbdu, 0x8a032937u, 0xe590ffbdu, 0xb31a2847u, 0xa6f69f9bu, 0xb4ddcd2eu, 0x606edd45u, 0x4ad84031u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w512
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 3111 /* milli weight units */
+, .cost = 1187 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_8] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_8
-, .cmr = {{0xac1ff0fbu, 0x0cf71d71u, 0x13db42aau, 0x1ddb8955u, 0x96e645d7u, 0x63b8df5eu, 0x8725f514u, 0x4c399588u}}
+, .jet = simplicity_sha_256_ctx_8_add_8
+, .cmr = {{0x77b2eb5eu, 0x6fa03aacu, 0x098607c8u, 0x3d106176u, 0xbdf33c8cu, 0xbba7b92du, 0x27e0352au, 0x2f1ed3beu}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256w64
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 1625 /* milli weight units */
+, .cost = 674 /* milli weight units */
 }
 ,[SHA_256_CTX_8_ADD_BUFFER_511] =
 { .tag = JET
-, .jet = sha_256_ctx_8_add_buffer_511
-, .cmr = {{0x6901ac0eu, 0x30fd59ceu, 0xc879d169u, 0x3b267959u, 0x35690784u, 0x4b577edcu, 0x3ce0e3f7u, 0x14a8ef31u}}
+, .jet = simplicity_sha_256_ctx_8_add_buffer_511
+, .cmr = {{0xd47bb1cbu, 0x4caaff17u, 0x412a730du, 0xd912dbb3u, 0x7dccc90bu, 0x27d395c4u, 0xf8459008u, 0xa5f244c7u}}
 , .sourceIx = ty_pppmw256pmw128pmw64pmw32pmw16mw8pw64w256pmw2Kipmw1Kipmw512pmw256pmw128pmw64pmw32pmw16mw8
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 14290 /* milli weight units */
+, .cost = 5060 /* milli weight units */
 }
 ,[SHA_256_CTX_8_FINALIZE] =
 { .tag = JET
-, .jet = sha_256_ctx_8_finalize
-, .cmr = {{0x84615954u, 0x007ed823u, 0xd60546d7u, 0x5b04b909u, 0xbc909206u, 0x371473dau, 0xc70e1268u, 0x047708cbu}}
+, .jet = simplicity_sha_256_ctx_8_finalize
+, .cmr = {{0x716580c1u, 0xe00d6a66u, 0x1fd9be6bu, 0x61de5befu, 0x63a84a4eu, 0x675beb0bu, 0x0a471973u, 0x5ea3a285u}}
 , .sourceIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
 , .targetIx = ty_w256
-, .cost = 2111 /* milli weight units */
+, .cost = 835 /* milli weight units */
 }
 ,[SHA_256_CTX_8_INIT] =
 { .tag = JET
-, .jet = sha_256_ctx_8_init
-, .cmr = {{0x6adda7d7u, 0x339f7dceu, 0x4d62ff82u, 0x2816da8du, 0xf56af624u, 0x3fa073a2u, 0x5c4c7cb5u, 0x7e0112b3u}}
+, .jet = simplicity_sha_256_ctx_8_init
+, .cmr = {{0x82bb12feu, 0x688d2ae3u, 0x7e301893u, 0xa3f0d307u, 0x5cbf9934u, 0xd075f73cu, 0x2b364af3u, 0xd112102au}}
 , .sourceIx = ty_u
 , .targetIx = ty_ppmw256pmw128pmw64pmw32pmw16mw8pw64w256
-, .cost = 184 /* milli weight units */
+, .cost = 118 /* milli weight units */
 }
 ,[SHA_256_IV] =
 { .tag = JET
-, .jet = sha_256_iv
-, .cmr = {{0x6a18e6e7u, 0x64af800du, 0xc6faeb07u, 0x54bf0b17u, 0x329f9828u, 0x1d13f515u, 0x7700fa6au, 0x1d6d5d42u}}
+, .jet = simplicity_sha_256_iv
+, .cmr = {{0xd2bb5720u, 0x0dadd3a6u, 0x7378db79u, 0x6610f59cu, 0x33d9a40du, 0x2dfcc99fu, 0x03b08b71u, 0x55fbbbeau}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 129 /* milli weight units */
+, .cost = 93 /* milli weight units */
 }
 ,[SIG_ALL_HASH] =
 { .tag = JET
-, .jet = sig_all_hash
-, .cmr = {{0xaaa39d05u, 0x09ccd97fu, 0xb4aefdd2u, 0x0bdd60a5u, 0x788cfe12u, 0x72864eb7u, 0xa69da7e9u, 0xa9f1cde7u}}
+, .jet = simplicity_sig_all_hash
+, .cmr = {{0x6cff2c4eu, 0x87f14debu, 0x06af893au, 0x74af6a1cu, 0x5c06db52u, 0x645b1f67u, 0xee0fdf7eu, 0xa776d55cu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 265 /* milli weight units */
+, .cost = 133 /* milli weight units */
 }
 ,[SOME_1] =
 { .tag = JET
-, .jet = some_1
-, .cmr = {{0x0b9cb7b4u, 0x7deb4f9du, 0x95d5c020u, 0x001fd009u, 0xa2f10ce5u, 0xd918d818u, 0x1e259315u, 0xfe8eac53u}}
+, .jet = simplicity_some_1
+, .cmr = {{0x151bcb76u, 0xc231ab25u, 0xe3710928u, 0xd9b3b7a2u, 0xe17f84d7u, 0xcf8da884u, 0x5cf87a40u, 0x816f3168u}}
 , .sourceIx = ty_b
 , .targetIx = ty_b
-, .cost = 104 /* milli weight units */
+, .cost = 70 /* milli weight units */
 }
 ,[SOME_16] =
 { .tag = JET
-, .jet = some_16
-, .cmr = {{0x30d814ffu, 0xb49278b4u, 0x25007b9du, 0xe279f76fu, 0x4a6da4c0u, 0x34634abbu, 0x87110ecbu, 0xea2ce429u}}
+, .jet = simplicity_some_16
+, .cmr = {{0x87295e8au, 0x0f0299f3u, 0xa7cb738du, 0xd5f8ddecu, 0xc3e48d18u, 0x74a55a0cu, 0xcf7c2d30u, 0xaad07987u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_b
-, .cost = 129 /* milli weight units */
+, .cost = 63 /* milli weight units */
 }
 ,[SOME_32] =
 { .tag = JET
-, .jet = some_32
-, .cmr = {{0x69279190u, 0x3be7d9e4u, 0xc54772bau, 0x88a48615u, 0x46361218u, 0xdd8a26ceu, 0xed699bcfu, 0x77c09909u}}
+, .jet = simplicity_some_32
+, .cmr = {{0x852f5e22u, 0x246677c4u, 0x9a6c68ecu, 0x3973cb53u, 0x008265cfu, 0x17d46f60u, 0x005941bau, 0x57d4947eu}}
 , .sourceIx = ty_w32
 , .targetIx = ty_b
-, .cost = 183 /* milli weight units */
+, .cost = 64 /* milli weight units */
 }
 ,[SOME_64] =
 { .tag = JET
-, .jet = some_64
-, .cmr = {{0xfa9b0160u, 0xc72715ffu, 0xfd1d94dau, 0x19978828u, 0x09b462bbu, 0x144acecbu, 0x43054468u, 0xe63786b5u}}
+, .jet = simplicity_some_64
+, .cmr = {{0xfe9b3a25u, 0xc9571749u, 0xe2a563f4u, 0x10a5650fu, 0x41174e23u, 0x2691072bu, 0x2d5474f9u, 0x3c7a22c0u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_b
-, .cost = 139 /* milli weight units */
+, .cost = 93 /* milli weight units */
 }
 ,[SOME_8] =
 { .tag = JET
-, .jet = some_8
-, .cmr = {{0x0bd7ab43u, 0x80c8f45au, 0xca7cac97u, 0x2886ceefu, 0x23ba8421u, 0x0c5c4d96u, 0x9b1f59b1u, 0x832c1d36u}}
+, .jet = simplicity_some_8
+, .cmr = {{0x49dc2420u, 0x4c5644eau, 0x98b0d8a8u, 0xa1f15f20u, 0x8b4afad5u, 0x9d8995abu, 0x96c4498du, 0x1cd410a0u}}
 , .sourceIx = ty_w8
 , .targetIx = ty_b
-, .cost = 104 /* milli weight units */
+, .cost = 75 /* milli weight units */
 }
 ,[SUBTRACT_16] =
 { .tag = JET
-, .jet = subtract_16
-, .cmr = {{0x0cd3ab73u, 0xe5ce2a44u, 0xf2d1c332u, 0xa1ed5aefu, 0x5bcb604fu, 0x721b15b8u, 0x010dd54fu, 0x40c6aca7u}}
+, .jet = simplicity_subtract_16
+, .cmr = {{0x512b7c68u, 0x81bf8d8fu, 0xa5d935e5u, 0x2564e286u, 0x751f77e6u, 0x3375637du, 0xf2d72275u, 0x68c6947fu}}
 , .sourceIx = ty_w32
 , .targetIx = ty_pbw16
-, .cost = 237 /* milli weight units */
+, .cost = 113 /* milli weight units */
 }
 ,[SUBTRACT_32] =
 { .tag = JET
-, .jet = subtract_32
-, .cmr = {{0xe0de6876u, 0x259d5a00u, 0x4b3016d3u, 0x5815db41u, 0xbcecdbfau, 0x18d37d99u, 0x204e4957u, 0xad2c4d0eu}}
+, .jet = simplicity_subtract_32
+, .cmr = {{0xf53f3e87u, 0x1a7da3f0u, 0x9e562697u, 0x835e1ce1u, 0x0df8ee14u, 0x1163ad93u, 0xb57c8e6du, 0x74382bbcu}}
 , .sourceIx = ty_w64
 , .targetIx = ty_pbw32
-, .cost = 186 /* milli weight units */
+, .cost = 118 /* milli weight units */
 }
 ,[SUBTRACT_64] =
 { .tag = JET
-, .jet = subtract_64
-, .cmr = {{0xffe673eeu, 0x8edc729au, 0x47eced3au, 0x677f85b1u, 0xdae714a5u, 0x100c4949u, 0x73abcb32u, 0x59a3c756u}}
+, .jet = simplicity_subtract_64
+, .cmr = {{0x5f08f740u, 0x53b2f019u, 0xb62a1bb8u, 0x28b799e0u, 0x91e8217eu, 0xc889dd4du, 0x376e012cu, 0x9579b981u}}
 , .sourceIx = ty_w128
 , .targetIx = ty_pbw64
-, .cost = 315 /* milli weight units */
+, .cost = 115 /* milli weight units */
 }
 ,[SUBTRACT_8] =
 { .tag = JET
-, .jet = subtract_8
-, .cmr = {{0xbda59813u, 0x96478eb3u, 0x6f8592a7u, 0x509fa487u, 0x7c50b2bfu, 0x9165e5b7u, 0x9635bf8bu, 0xcb84d442u}}
+, .jet = simplicity_subtract_8
+, .cmr = {{0x778649f8u, 0x3935cd3fu, 0xfc04f6c6u, 0x620a3396u, 0x5d0ef1ddu, 0x17e7b50fu, 0xa41076d8u, 0xad876b1du}}
 , .sourceIx = ty_w16
 , .targetIx = ty_pbw8
-, .cost = 149 /* milli weight units */
+, .cost = 109 /* milli weight units */
+}
+,[SWU] =
+{ .tag = JET
+, .jet = simplicity_swu
+, .cmr = {{0x2049d46cu, 0x4c4d6f85u, 0x6e04f7aeu, 0x20287336u, 0xc2f2a6b8u, 0xc1e29d7eu, 0xbba3af2fu, 0xd3a8809bu}}
+, .sourceIx = ty_w256
+, .targetIx = ty_w512
+, .cost = 32120 /* milli weight units */
 }
 ,[TAP_ENV_HASH] =
 { .tag = JET
-, .jet = tap_env_hash
-, .cmr = {{0x59e04eeeu, 0x36883dd5u, 0xe7c2695du, 0x7c9938c0u, 0x6d983fbau, 0x88dc2a04u, 0x843ab80bu, 0x68f199ecu}}
+, .jet = simplicity_tap_env_hash
+, .cmr = {{0x92474a50u, 0x308214d3u, 0x2240c4ecu, 0x2829e688u, 0xb73382ceu, 0x0c37c796u, 0x28b7394cu, 0xa61ee7f5u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 301 /* milli weight units */
+, .cost = 162 /* milli weight units */
 }
 ,[TAPLEAF_HASH] =
 { .tag = JET
-, .jet = tapleaf_hash
-, .cmr = {{0xea815658u, 0xff9a2716u, 0x420d4591u, 0x5d66070bu, 0xe4116c1cu, 0x707e2694u, 0xd3665845u, 0x20c22469u}}
+, .jet = simplicity_tapleaf_hash
+, .cmr = {{0x59fd2996u, 0xcc5e2b5eu, 0x19707467u, 0x267645e8u, 0x1865d147u, 0x4a0b28c2u, 0xcff4edf1u, 0xbdead91bu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 279 /* milli weight units */
+, .cost = 136 /* milli weight units */
 }
 ,[TAPLEAF_VERSION] =
 { .tag = JET
-, .jet = tapleaf_version
-, .cmr = {{0x303ef4deu, 0x618e7f08u, 0x67794828u, 0x2dd42d57u, 0xd644c41cu, 0x18c11c13u, 0x0a1be5a6u, 0xe254e3e9u}}
+, .jet = simplicity_tapleaf_version
+, .cmr = {{0x43b82c3au, 0x31402dafu, 0x42707b88u, 0x70e4dba4u, 0xb6831943u, 0x0f2b5d11u, 0x4ea58c5du, 0x89973d8fu}}
 , .sourceIx = ty_u
 , .targetIx = ty_w8
-, .cost = 141 /* milli weight units */
+, .cost = 105 /* milli weight units */
 }
 ,[TAPPATH] =
 { .tag = JET
-, .jet = tappath
-, .cmr = {{0x5fd71c6fu, 0xf67ba426u, 0x3c8256feu, 0xcee1e2ecu, 0x1dcf45a8u, 0xb3845062u, 0x70151780u, 0xaacf1c32u}}
+, .jet = simplicity_tappath
+, .cmr = {{0x2b61ba3cu, 0xcae82063u, 0xb7122746u, 0xbbf180b7u, 0x1146b752u, 0x11242533u, 0x53fe5f7du, 0x9659b918u}}
 , .sourceIx = ty_w8
 , .targetIx = ty_mw256
-, .cost = 143 /* milli weight units */
+, .cost = 83 /* milli weight units */
 }
 ,[TAPPATH_HASH] =
 { .tag = JET
-, .jet = tappath_hash
-, .cmr = {{0x62af75f4u, 0xf37c0ff2u, 0x7537e054u, 0x3a134802u, 0x66a5ad12u, 0xce53df1fu, 0xbac111eau, 0xa93d277cu}}
+, .jet = simplicity_tappath_hash
+, .cmr = {{0x82598604u, 0x31f7fcd6u, 0xe8c9845bu, 0x7152bbdau, 0xb69281f6u, 0x5b642c63u, 0x4efaa3fdu, 0x2d7353a5u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 282 /* milli weight units */
+, .cost = 143 /* milli weight units */
 }
 ,[TOTAL_FEE] =
 { .tag = JET
-, .jet = total_fee
-, .cmr = {{0xcc69d24cu, 0x5dd852cdu, 0xefcaa74du, 0x3140467fu, 0xbe8d08a7u, 0x709422eeu, 0xc28ed632u, 0xb28aba63u}}
+, .jet = simplicity_total_fee
+, .cmr = {{0xffa37956u, 0x8b4a88f1u, 0x71391524u, 0x10ecf140u, 0x72ac4c95u, 0xc0b682ebu, 0xd91a9e02u, 0xd330c3ceu}}
 , .sourceIx = ty_w256
 , .targetIx = ty_w64
-, .cost = 397 /* milli weight units */
+, .cost = 230 /* milli weight units */
+}
+,[TRANSACTION_ID] =
+{ .tag = JET
+, .jet = simplicity_transaction_id
+, .cmr = {{0x9c9feb81u, 0x0e753cd5u, 0xb88e0fefu, 0xa283b374u, 0x30cd16eeu, 0xecbc5670u, 0xdd70c312u, 0x84a9db2cu}}
+, .sourceIx = ty_u
+, .targetIx = ty_w256
+, .cost = 139 /* milli weight units */
 }
 ,[TX_HASH] =
 { .tag = JET
-, .jet = tx_hash
-, .cmr = {{0xc6a64eaau, 0x2b9986c0u, 0x18abfa70u, 0xd4d04981u, 0x19a58790u, 0x27cc0bcfu, 0x55021c49u, 0x30b8f875u}}
+, .jet = simplicity_tx_hash
+, .cmr = {{0xa113b12eu, 0x50218701u, 0x3faf7fabu, 0x0e78a93eu, 0x85fe88fcu, 0xfcfbd129u, 0x4698c7b7u, 0x65d8d28du}}
 , .sourceIx = ty_u
 , .targetIx = ty_w256
-, .cost = 290 /* milli weight units */
+, .cost = 143 /* milli weight units */
 }
 ,[TX_IS_FINAL] =
 { .tag = JET
-, .jet = tx_is_final
-, .cmr = {{0xeb8e83d1u, 0xe02c3ce7u, 0xaf2d28f0u, 0xcec04314u, 0x80dc2f38u, 0x85c9913au, 0x50727e43u, 0xd0bdaf88u}}
+, .jet = simplicity_tx_is_final
+, .cmr = {{0xe818210bu, 0x1de9661du, 0xc8ff4a48u, 0x63a7d89bu, 0x4cd9d2e7u, 0xc6a6e50au, 0x813cffd5u, 0x63174fdcu}}
 , .sourceIx = ty_u
 , .targetIx = ty_b
-, .cost = 128 /* milli weight units */
+, .cost = 71 /* milli weight units */
 }
 ,[TX_LOCK_DISTANCE] =
 { .tag = JET
-, .jet = tx_lock_distance
-, .cmr = {{0xa37893c9u, 0x7c9b950eu, 0x0f7f1045u, 0xc8d8473au, 0xc8336aaeu, 0xe9ea1fadu, 0x6b2a4061u, 0x729149c6u}}
+, .jet = simplicity_tx_lock_distance
+, .cmr = {{0x530fd789u, 0x32240720u, 0xf88de846u, 0x883992f8u, 0x12a5bf3eu, 0xea6809a4u, 0xa94c9076u, 0xca190979u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w16
-, .cost = 133 /* milli weight units */
+, .cost = 91 /* milli weight units */
 }
 ,[TX_LOCK_DURATION] =
 { .tag = JET
-, .jet = tx_lock_duration
-, .cmr = {{0x4d6987ddu, 0x45f78d5eu, 0x43f93851u, 0x64a0bd08u, 0x80752ab8u, 0x11b38bd2u, 0x97da0016u, 0x1526a9cau}}
+, .jet = simplicity_tx_lock_duration
+, .cmr = {{0xc07bcf03u, 0xef8293fcu, 0x40eca57cu, 0x8606a4eeu, 0x207fa44du, 0x22e41c98u, 0x041dfdd0u, 0xd5444940u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w16
-, .cost = 146 /* milli weight units */
+, .cost = 84 /* milli weight units */
 }
 ,[TX_LOCK_HEIGHT] =
 { .tag = JET
-, .jet = tx_lock_height
-, .cmr = {{0x16ab830fu, 0xace51fe4u, 0xe18089ecu, 0xa1b55234u, 0x36aa45efu, 0x84132182u, 0xc7cc6583u, 0x6fd1342cu}}
+, .jet = simplicity_tx_lock_height
+, .cmr = {{0x4c045acau, 0x0061e36au, 0x8c5925e7u, 0xf9cb395bu, 0x8a7021e4u, 0xde019132u, 0x31c4d763u, 0x50f843a4u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w32
-, .cost = 132 /* milli weight units */
+, .cost = 80 /* milli weight units */
 }
 ,[TX_LOCK_TIME] =
 { .tag = JET
-, .jet = tx_lock_time
-, .cmr = {{0xaf112fc8u, 0xeed3c33bu, 0xc7b5ea04u, 0xccab8699u, 0x1953f2a2u, 0xaaf3d87du, 0x6c2c4314u, 0x3d426f56u}}
+, .jet = simplicity_tx_lock_time
+, .cmr = {{0x48408cd0u, 0x63e24be7u, 0x36623232u, 0x07590cccu, 0x083a8f44u, 0x98978847u, 0x430757e2u, 0xf55521a5u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w32
-, .cost = 136 /* milli weight units */
+, .cost = 80 /* milli weight units */
 }
 ,[VERIFY] =
 { .tag = JET
-, .jet = verify
-, .cmr = {{0xf11c9481u, 0xe71863a2u, 0x4453c3e2u, 0x13046499u, 0xa03a9a0fu, 0x993be3c4u, 0x8e9d1f40u, 0x5d97947cu}}
+, .jet = simplicity_verify
+, .cmr = {{0x22c0e362u, 0x34190af6u, 0xc8161e41u, 0xf9e00013u, 0xb243c896u, 0x77691a62u, 0xe79872fau, 0x03bfa677u}}
 , .sourceIx = ty_b
 , .targetIx = ty_u
-, .cost = 144 /* milli weight units */
+, .cost = 57 /* milli weight units */
 }
 ,[VERSION] =
 { .tag = JET
-, .jet = version
-, .cmr = {{0x22215300u, 0x9f0863dau, 0x5cec8ffau, 0xa4a017d8u, 0xe4ff2566u, 0xfa9c03e7u, 0x431a0902u, 0xd56a24dcu}}
+, .jet = simplicity_version
+, .cmr = {{0x56713842u, 0x24333dc7u, 0x841d63c3u, 0x176a1590u, 0xaded820eu, 0x29e461c3u, 0x4adafa9cu, 0x5efd4201u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w32
-, .cost = 188 /* milli weight units */
+, .cost = 93 /* milli weight units */
 }
 ,[XOR_1] =
 { .tag = JET
-, .jet = xor_1
-, .cmr = {{0x77b714e6u, 0x89c9d6a4u, 0x8fd1add8u, 0x6522823du, 0xebc70df6u, 0xa7fe4bf2u, 0xb85de549u, 0xe0cd0a05u}}
+, .jet = simplicity_xor_1
+, .cmr = {{0x7b760ee0u, 0xc7896ab7u, 0x38cc50efu, 0x7d63f6d2u, 0xbf5961a9u, 0x286447ceu, 0x064ec18du, 0x5ede6f6cu}}
 , .sourceIx = ty_w2
 , .targetIx = ty_b
-, .cost = 135 /* milli weight units */
+, .cost = 67 /* milli weight units */
 }
 ,[XOR_16] =
 { .tag = JET
-, .jet = xor_16
-, .cmr = {{0xca363551u, 0x35a86a11u, 0x686c01aau, 0x35f25b97u, 0xfaeedabfu, 0xdec8df08u, 0xd2c0f665u, 0x0833f93fu}}
+, .jet = simplicity_xor_16
+, .cmr = {{0xef2d8a0fu, 0x669d20aau, 0xfe11a6c3u, 0x39063692u, 0x3ad37614u, 0x0d3ea694u, 0xd0872fa4u, 0xd54b90efu}}
 , .sourceIx = ty_w32
 , .targetIx = ty_w16
-, .cost = 188 /* milli weight units */
+, .cost = 83 /* milli weight units */
 }
 ,[XOR_32] =
 { .tag = JET
-, .jet = xor_32
-, .cmr = {{0xffe2c8eeu, 0x96d55797u, 0x81c43662u, 0x88d95071u, 0x85e461ccu, 0xc40a45bbu, 0xcc559489u, 0xd3c69612u}}
+, .jet = simplicity_xor_32
+, .cmr = {{0x219b1dd6u, 0xe72b7775u, 0x1951916eu, 0xe4ddfd56u, 0xacf0ce7au, 0x30a4cd73u, 0x9c51bd99u, 0x42a2eb07u}}
 , .sourceIx = ty_w64
 , .targetIx = ty_w32
-, .cost = 204 /* milli weight units */
+, .cost = 92 /* milli weight units */
 }
 ,[XOR_64] =
 { .tag = JET
-, .jet = xor_64
-, .cmr = {{0x5b3bb7b1u, 0x8c7098f4u, 0xe5cd1497u, 0x22ac7309u, 0xce66a3e2u, 0x19c61b33u, 0x3f313358u, 0x3a7b572du}}
+, .jet = simplicity_xor_64
+, .cmr = {{0x0bbb850au, 0xd03f9c96u, 0xa5d467c4u, 0x6112f104u, 0x6a7a9227u, 0x3f2bb01du, 0x20ca4db6u, 0xba753e79u}}
 , .sourceIx = ty_w128
 , .targetIx = ty_w64
-, .cost = 207 /* milli weight units */
+, .cost = 95 /* milli weight units */
 }
 ,[XOR_8] =
 { .tag = JET
-, .jet = xor_8
-, .cmr = {{0xff3e5262u, 0x02ff89cfu, 0xf7bbe70fu, 0xdbf9f97du, 0x23c12f6eu, 0x2bb8bbe8u, 0x304ac70fu, 0x61c1cf2cu}}
+, .jet = simplicity_xor_8
+, .cmr = {{0x950b6531u, 0x6236e83eu, 0xd14bd171u, 0xe34d55afu, 0x0a3f637cu, 0xc47dc717u, 0xf77fdb4bu, 0x30df0157u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_w8
-, .cost = 135 /* milli weight units */
+, .cost = 85 /* milli weight units */
 }
 ,[XOR_XOR_1] =
 { .tag = JET
-, .jet = xor_xor_1
-, .cmr = {{0x2252a986u, 0x08d20bd4u, 0x11317a20u, 0x15c15698u, 0x70a62c95u, 0x3a6165fbu, 0xe977b40du, 0x6ccea495u}}
+, .jet = simplicity_xor_xor_1
+, .cmr = {{0x3f30f959u, 0x870de1d1u, 0x33374e14u, 0x09fdc34du, 0xe4929170u, 0x6830b83du, 0xac9d4e67u, 0xc4eb6048u}}
 , .sourceIx = ty_pbw2
 , .targetIx = ty_b
-, .cost = 258 /* milli weight units */
+, .cost = 72 /* milli weight units */
 }
 ,[XOR_XOR_16] =
 { .tag = JET
-, .jet = xor_xor_16
-, .cmr = {{0xa1f2d633u, 0xbf9889a0u, 0x8a42512au, 0x7893a679u, 0x9dc47aa8u, 0x29ff8f57u, 0x7c5bc975u, 0x66c4d3feu}}
+, .jet = simplicity_xor_xor_16
+, .cmr = {{0x2e1a09e3u, 0xcba27566u, 0x02e87b86u, 0xf2b07f2du, 0x237bfcacu, 0x5b1b8ab7u, 0xb529af42u, 0xd3110294u}}
 , .sourceIx = ty_pw16w32
 , .targetIx = ty_w16
-, .cost = 235 /* milli weight units */
+, .cost = 79 /* milli weight units */
 }
 ,[XOR_XOR_32] =
 { .tag = JET
-, .jet = xor_xor_32
-, .cmr = {{0x0d5ff581u, 0x23ba0daeu, 0x3b3240a6u, 0x31052af2u, 0xe87b52b6u, 0x37a2cbd3u, 0x37d22593u, 0x70628741u}}
+, .jet = simplicity_xor_xor_32
+, .cmr = {{0x85a379a1u, 0xe5db4572u, 0x37df27f4u, 0xcfcdc875u, 0x60ffd373u, 0x8ebec825u, 0x52e73bceu, 0x89bc0b37u}}
 , .sourceIx = ty_pw32w64
 , .targetIx = ty_w32
-, .cost = 251 /* milli weight units */
+, .cost = 96 /* milli weight units */
 }
 ,[XOR_XOR_64] =
 { .tag = JET
-, .jet = xor_xor_64
-, .cmr = {{0x783f49a1u, 0x9d4f4aaeu, 0x4d3c1d6cu, 0xcf83156du, 0xc55d0b5cu, 0x08cf5923u, 0x36584cb1u, 0x3167c6cau}}
+, .jet = simplicity_xor_xor_64
+, .cmr = {{0x4c1268c5u, 0x75425089u, 0xbe42472eu, 0x972b2ae0u, 0x0ede5834u, 0xc984d96du, 0xcd59a0c2u, 0x21152f93u}}
 , .sourceIx = ty_pw64w128
 , .targetIx = ty_w64
-, .cost = 285 /* milli weight units */
+, .cost = 93 /* milli weight units */
 }
 ,[XOR_XOR_8] =
 { .tag = JET
-, .jet = xor_xor_8
-, .cmr = {{0x83a980ccu, 0x61068524u, 0x88105d3cu, 0xee10f351u, 0x13b8c9f7u, 0x4664e7ceu, 0x6d4ec091u, 0x2bc29bc7u}}
+, .jet = simplicity_xor_xor_8
+, .cmr = {{0x61f2747fu, 0x8d83b6a5u, 0xadaa42f5u, 0xc0408c9bu, 0xd4e99e92u, 0x70a75871u, 0x406cec44u, 0x89a5fbe7u}}
 , .sourceIx = ty_pw8w16
 , .targetIx = ty_w8
-, .cost = 258 /* milli weight units */
+, .cost = 98 /* milli weight units */
 }

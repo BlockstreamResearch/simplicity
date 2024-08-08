@@ -66,7 +66,7 @@ library Simplicity-Core
                        mtl >=2.2 && <2.3,
                        MemoTrie >=0.6 && <0.7,
                        split >=0.2.3 && <0.3,
-                       tardis >=0.4.1 && <0.5,
+                       tardis >=0.4.1 && <0.6,
                        transformers >=0.5 && <0.6,
                        unification-fd >=0.10 && <0.12,
                        vector >=0.12 && <0.14

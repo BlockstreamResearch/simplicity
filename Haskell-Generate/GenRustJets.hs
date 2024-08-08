@@ -268,7 +268,7 @@ rustJetImpl mod = vsep $
     [ pretty $ "type Environment = "++env++";"
     , pretty $ "type CJetEnvironment = "++cEnv++";"
     , ""
-    , pretty $ "fn c_jet_env<'env>(&self, "++envArg++": &'env Self::Environment) -> &'env Self::CJetEnvironment {"
+    , pretty $ "fn c_jet_env("++envArg++": &Self::Environment) -> &Self::CJetEnvironment {"
     , pretty $ "    "++envBody
     , "}"
     ]

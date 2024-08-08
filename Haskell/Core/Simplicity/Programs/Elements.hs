@@ -5,6 +5,7 @@ module Simplicity.Programs.Elements
   , Conf
   , calculateIssuanceEntropy, calculateAsset, calculateExplicitToken, calculateConfidentialToken
   , buildTapleafSimplicity, buildTapbranch
+  , lbtcAsset
   , LibAssert(LibAssert), mkLibAssert
   , outpointHash, assetAmountHash, nonceHash, annexHash
   -- * Example instances
@@ -15,6 +16,7 @@ module Simplicity.Programs.Elements
 
 import Prelude hiding (Word, drop, not, subtract, take)
 import Data.String (fromString)
+import Lens.Family2 (over, review)
 
 import Simplicity.Digest
 import Simplicity.Functor
@@ -52,6 +54,9 @@ data Lib term =
 
     -- | Compute a tapbranch hash from two branches.
   , buildTapbranch :: term (Hash, Hash) Hash
+
+    -- | Return Liquid's (explicit) asset id for l-btc.
+  , lbtcAsset :: term () Hash
   }
 
 -- | A collection of Simplicity with Assertions expressions for Elements calculations.
@@ -77,6 +82,7 @@ instance SimplicityFunctor Lib where
     , calculateConfidentialToken = m calculateConfidentialToken
     , buildTapleafSimplicity = m buildTapleafSimplicity
     , buildTapbranch = m buildTapbranch
+    , lbtcAsset = m lbtcAsset
     }
 
 instance SimplicityFunctor LibAssert where
@@ -109,6 +115,7 @@ mkLib Sha256.Lib{..} = lib
                  &&& (lt word256 &&& iden >>> cond iden (ih &&& oh))
                  >>> hashBlock)
                  &&& (unit >>> scribe (toWord512 $ 2^511 + 1024)) >>> hashBlock
+  , lbtcAsset = scribe (toWord256 (integerHash256 (review (over le256) 0x6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d)))
   } where
     tapleafPrefix = scribe . toWord256 . integerHash256 . ivHash . tagIv $ fromString "TapLeaf/elements"
     tapbranchPrefix = scribe . toWord256 . integerHash256 . ivHash . tagIv $ fromString "TapBranch/elements"

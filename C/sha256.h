@@ -127,14 +127,20 @@ static inline void sha256_iv(uint32_t* iv) {
  * Precondition: uint32_t midstate[8];
  *               uint32_t block[16]
  */
-void sha256_compression(uint32_t* midstate, const uint32_t* block);
+extern void (*simplicity_sha256_compression)(uint32_t* midstate, const uint32_t* block);
+
+/* For information purposes only.
+ * Returns true if the sha256_compression implemenation has been optimized for the CPU.
+ * Otherwise returns false.
+ */
+bool simplicity_sha256_compression_is_optimized(void);
 
 /* Compute the SHA-256 hash, 'h', of the bitstring represented by 's'.
  *
  * Precondition: uint32_t h[8];
  *               '*s' is a valid bitstring;
  */
-void sha256_bitstring(uint32_t* h, const bitstring* s);
+void simplicity_sha256_bitstring(uint32_t* h, const bitstring* s);
 
 /* Given a 256-bit 's' and a 512-bit 'chunk', then 's' becomes the value of the SHA-256 compression function ("added" to the original 's' value).
  *
@@ -142,7 +148,7 @@ void sha256_bitstring(uint32_t* h, const bitstring* s);
  *               unsigned char chunk[64]
  */
 static void sha256_compression_uchar(uint32_t* s, const unsigned char* chunk) {
-  sha256_compression(s, (const uint32_t[16])
+  simplicity_sha256_compression(s, (const uint32_t[16])
     { ReadBE32(chunk + 4*0)
     , ReadBE32(chunk + 4*1)
     , ReadBE32(chunk + 4*2)

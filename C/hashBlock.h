@@ -10,6 +10,8 @@
  */
 extern const unsigned char hashBlock[];
 extern const size_t sizeof_hashBlock;
+extern const unsigned char hashBlock_witness[];
+extern const size_t sizeof_hashBlock_witness;
 
 /* The commitment Merkle root of the above hashBlock Simplicity expression. */
 extern const uint32_t hashBlock_cmr[];

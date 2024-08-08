@@ -17,10 +17,10 @@
 static simplicity_err getWord32Array(uint32_t* result, const size_t len, bitstream* stream) {
   for (size_t i = 0; i < len; ++i) {
     /* Due to error codes, readNBits cannot fetch 32 bits at once. Instead we fetch two groups of 16 bits. */
-    int32_t bits16 = readNBits(16, stream);
+    int32_t bits16 = simplicity_readNBits(16, stream);
     if (bits16 < 0) return (simplicity_err)bits16;
     result[i] = (uint32_t)bits16 << 16;
-    bits16 = readNBits(16, stream);
+    bits16 = simplicity_readNBits(16, stream);
     if (bits16 < 0) return (simplicity_err)bits16;
     result[i] |= (uint32_t)bits16;
   }
@@ -55,7 +55,7 @@ static simplicity_err getHash(sha256_midstate* result, bitstream* stream) {
  *               i < 2^31 - 1
  *               NULL != stream
  */
-static simplicity_err decodeNode(dag_node* dag, size_t i, bitstream* stream) {
+static simplicity_err decodeNode(dag_node* dag, uint_fast32_t i, bitstream* stream) {
   int32_t bit = read1Bit(stream);
   if (bit < 0) return (simplicity_err)bit;
   dag[i] = (dag_node){0};
@@ -63,30 +63,30 @@ static simplicity_err decodeNode(dag_node* dag, size_t i, bitstream* stream) {
     bit = read1Bit(stream);
     if (bit < 0) return (simplicity_err)bit;
     if (bit) {
-      return decodeJet(&dag[i], stream);
+      return simplicity_decodeJet(&dag[i], stream);
     } else {
       /* Decode WORD. */
-      int32_t depth = decodeUptoMaxInt(stream);
+      int32_t depth = simplicity_decodeUptoMaxInt(stream);
       if (depth < 0) return (simplicity_err)depth;
       if (32 < depth) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
       {
-        simplicity_err error = readBitstring(&dag[i].compactValue, (size_t)1 << (depth - 1), stream);
+        simplicity_err error = simplicity_readBitstring(&dag[i].compactValue, (size_t)1 << (depth - 1), stream);
         if (!IS_OK(error)) return error;
       }
       dag[i].tag = WORD;
       dag[i].targetIx = (size_t)depth;
-      dag[i].cmr = computeWordCMR(&dag[i].compactValue, (size_t)(depth - 1));
+      dag[i].cmr = simplicity_computeWordCMR(&dag[i].compactValue, (size_t)(depth - 1));
     }
   } else {
-    int32_t code = readNBits(2, stream);
+    int32_t code = simplicity_readNBits(2, stream);
     if (code < 0) return (simplicity_err)code;
-    int32_t subcode = readNBits(code < 3 ? 2 : 1, stream);
+    int32_t subcode = simplicity_readNBits(code < 3 ? 2 : 1, stream);
     if (subcode < 0) return (simplicity_err)subcode;
     for (int32_t j = 0; j < 2 - code; ++j) {
-      int32_t ix = decodeUptoMaxInt(stream);
+      int32_t ix = simplicity_decodeUptoMaxInt(stream);
       if (ix < 0) return (simplicity_err)ix;
-      if (i < (uint32_t)ix) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
-      dag[i].child[j] = i - (uint32_t)ix;
+      if (i < (uint_fast32_t)ix) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+      dag[i].child[j] = i - (uint_fast32_t)ix;
     }
     switch (code) {
      case 0:
@@ -134,7 +134,7 @@ static simplicity_err decodeNode(dag_node* dag, size_t i, bitstream* stream) {
        if (HIDDEN == dag[dag[i].child[j]].tag && dag[i].tag != (j ? ASSERTL : ASSERTR)) return SIMPLICITY_ERR_HIDDEN;
     }
 
-    computeCommitmentMerkleRoot(dag, i);
+    simplicity_computeCommitmentMerkleRoot(dag, i);
   }
   return SIMPLICITY_NO_ERROR;
 }
@@ -153,8 +153,8 @@ static simplicity_err decodeNode(dag_node* dag, size_t i, bitstream* stream) {
  *               len < 2^31
  *               NULL != stream
  */
-static simplicity_err decodeDag(dag_node* dag, const size_t len, combinator_counters* census, bitstream* stream) {
-  for (size_t i = 0; i < len; ++i) {
+static simplicity_err decodeDag(dag_node* dag, const uint_fast32_t len, combinator_counters* census, bitstream* stream) {
+  for (uint_fast32_t i = 0; i < len; ++i) {
     simplicity_err error = decodeNode(dag, i, stream);
     if (!IS_OK(error)) return error;
 
@@ -186,9 +186,9 @@ static simplicity_err decodeDag(dag_node* dag, const size_t len, combinator_coun
  *                          of the function is positive and when NULL != census;
  *                NULL == *dag when the return value is negative.
  */
-int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* stream) {
+int_fast32_t simplicity_decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* stream) {
   *dag = NULL;
-  int32_t dagLen = decodeUptoMaxInt(stream);
+  int32_t dagLen = simplicity_decodeUptoMaxInt(stream);
   if (dagLen <= 0) return dagLen;
   static_assert(DAG_LEN_MAX <= (uint32_t)INT32_MAX, "DAG_LEN_MAX exceeds supported parsing range.");
   if (DAG_LEN_MAX < (uint32_t)dagLen) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
@@ -199,12 +199,12 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
   if (!*dag) return SIMPLICITY_ERR_MALLOC;
 
   if (census) *census = (combinator_counters){0};
-  simplicity_err error = decodeDag(*dag, (size_t)dagLen, census, stream);
+  simplicity_err error = decodeDag(*dag, (uint_fast32_t)dagLen, census, stream);
 
   if (IS_OK(error)) {
     error = HIDDEN == (*dag)[dagLen - 1].tag
           ? SIMPLICITY_ERR_HIDDEN_ROOT
-          : verifyCanonicalOrder(*dag, (size_t)(dagLen));
+          : simplicity_verifyCanonicalOrder(*dag, (uint_fast32_t)(dagLen));
   }
 
   if (IS_OK(error)) {
@@ -212,27 +212,6 @@ int32_t decodeMallocDag(dag_node** dag, combinator_counters* census, bitstream* 
   } else {
     simplicity_free(*dag);
     *dag = NULL;
-    return (int32_t)error;
+    return (int_fast32_t)error;
   }
-}
-
-/* Decode a string of up to 2^31 - 1 bits from 'stream'.
- * This is the format in which the data for 'WITNESS' nodes are encoded.
- * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the encoded string of bits exceeds this decoder's limits.
- * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
- * If successful, '*witness' is set to the decoded bitstring,
- *                and 'SIMPLICITY_NO_ERROR' is returned.
- *
- * If an error is returned '*witness' might be modified.
- *
- * Precondition: NULL != witness;
- *               NULL != stream;
- */
-simplicity_err decodeWitnessData(bitstring* witness, bitstream* stream) {
-  int32_t witnessLen = read1Bit(stream);
-  if (witnessLen < 0) return (simplicity_err)witnessLen;
-  if (0 < witnessLen) witnessLen = decodeUptoMaxInt(stream);
-  if (witnessLen < 0) return (simplicity_err)witnessLen;
-
-  return readBitstring(witness, (size_t)witnessLen, stream);
 }

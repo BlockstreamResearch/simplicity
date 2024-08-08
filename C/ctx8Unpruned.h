@@ -12,6 +12,8 @@
  */
 extern const unsigned char ctx8Unpruned[];
 extern const size_t sizeof_ctx8Unpruned;
+extern const unsigned char ctx8Unpruned_witness[];
+extern const size_t sizeof_ctx8Unpruned_witness;
 
 /* The commitment Merkle root of the above ctx8Unpruned Simplicity expression. */
 extern const uint32_t ctx8Unpruned_cmr[];

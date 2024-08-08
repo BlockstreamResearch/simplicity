@@ -100,10 +100,11 @@ module Simplicity.FFI.Jets
  , fe_normalize, fe_negate, fe_add, fe_square, fe_multiply, fe_multiply_beta, fe_invert, fe_square_root, fe_is_zero, fe_is_odd
  , scalar_normalize, scalar_negate, scalar_add, scalar_square, scalar_multiply, scalar_multiply_lambda, scalar_invert, scalar_is_zero
  , gej_infinity, gej_rescale, gej_normalize, gej_negate, ge_negate, gej_double, gej_add, gej_ge_add_ex, gej_ge_add, gej_is_infinity, gej_equiv, gej_ge_equiv, gej_x_equiv, gej_y_is_odd, gej_is_on_curve, ge_is_on_curve
- , scale, generate, linear_combination_1, linear_verify_1
+ , scale, off_curve_scale, generate, linear_combination_1, linear_verify_1, off_curve_linear_combination_1
  , decompress, point_verify_1
  , check_sig_verify
  , bip_0340_verify
+ , swu, hash_to_curve
  , parse_lock, parse_sequence
  ) where
 
@@ -475,13 +476,17 @@ foreign import ccall unsafe "" c_gej_y_is_odd :: Ptr FrameItem -> Ptr FrameItem 
 foreign import ccall unsafe "" c_gej_is_on_curve :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_ge_is_on_curve :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_scale :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_off_curve_scale :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_generate :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_linear_combination_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_off_curve_linear_combination_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_linear_verify_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_decompress :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_point_verify_1 :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_check_sig_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_bip_0340_verify :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_swu :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_hash_to_curve :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_parse_lock :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_parse_sequence :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
@@ -1553,11 +1558,17 @@ ge_is_on_curve = unsafeLocalCoreJet c_ge_is_on_curve
 scale :: (Scalar, GEJ) -> Maybe GEJ
 scale = unsafeLocalCoreJet c_scale
 
+off_curve_scale :: (Scalar, GEJ) -> Maybe GEJ
+off_curve_scale = unsafeLocalCoreJet c_off_curve_scale
+
 generate :: Scalar -> Maybe GEJ
 generate = unsafeLocalCoreJet c_generate
 
 linear_combination_1 :: ((Scalar, GEJ), Scalar) -> Maybe GEJ
 linear_combination_1 = unsafeLocalCoreJet c_linear_combination_1
+
+off_curve_linear_combination_1 :: ((Scalar, GEJ), Scalar) -> Maybe GEJ
+off_curve_linear_combination_1 = unsafeLocalCoreJet c_off_curve_linear_combination_1
 
 linear_verify_1 :: (((Scalar, GE), Scalar), GE) -> Maybe ()
 linear_verify_1 = unsafeLocalCoreJet c_linear_verify_1
@@ -1573,6 +1584,12 @@ check_sig_verify = unsafeLocalCoreJet c_check_sig_verify
 
 bip_0340_verify :: ((PubKey, Word256), Sig) -> Maybe ()
 bip_0340_verify = unsafeLocalCoreJet c_bip_0340_verify
+
+swu :: FE -> Maybe GE
+swu = unsafeLocalCoreJet c_swu
+
+hash_to_curve :: Word256 -> Maybe GE
+hash_to_curve = unsafeLocalCoreJet c_hash_to_curve
 
 parse_lock :: Word32 -> Maybe (Either Word32 Word32)
 parse_lock = unsafeLocalCoreJet c_parse_lock

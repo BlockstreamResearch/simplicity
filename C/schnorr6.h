@@ -14,6 +14,8 @@
  */
 extern const unsigned char schnorr6[];
 extern const size_t sizeof_schnorr6;
+extern const unsigned char schnorr6_witness[];
+extern const size_t sizeof_schnorr6_witness;
 
 /* The commitment Merkle root of the above schnorr6 Simplicity expression. */
 extern const uint32_t schnorr6_cmr[];

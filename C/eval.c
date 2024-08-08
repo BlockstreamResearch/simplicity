@@ -158,7 +158,7 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
   size_t cur = typeSkip(typeIx, type_dag);
   size_t offset = 0;
   bool calling = true;
-  type_dag[cur].back = 0;
+  setTypeBack(cur, type_dag, 0);
   while (cur) {
     if (SUM == type_dag[cur].kind) {
       simplicity_debug_assert(calling);
@@ -171,7 +171,7 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
 
       size_t next = typeSkip(type_dag[cur].typeArg[bit], type_dag);
       if (next) {
-        type_dag[next].back = type_dag[cur].back;
+        setTypeBack(next, type_dag, type_dag[cur].back);
         cur = next;
       } else {
         cur = type_dag[cur].back;
@@ -182,17 +182,21 @@ static void writeValue(frameItem* dst, const bitstring* compactValue, size_t typ
       size_t next;
       if (calling) {
         next = typeSkip(type_dag[cur].typeArg[0], type_dag);
+        /* Note: Because we are using 'typeSkip' we have an invarant on 'cur' such that whenever type_dag[cur].kind == PRODUCT,
+           then it is a product of two non-trival types.  This implies that 'next' cannot actually be 0. */
         if (next) {
           /* Traverse the first element of the product type, if it has any data. */
-          type_dag[next].back = cur;
+          setTypeBack(next, type_dag, cur);
           cur = next;
           continue;
         }
       }
       next = typeSkip(type_dag[cur].typeArg[1], type_dag);
+      /* Note: Because we are using 'typeSkip' we have an invarant on 'cur' such that whenever type_dag[cur].kind == PRODUCT,
+         then it is a product of two non-trival types.  This implies that 'next' cannot actually be 0. */
       if (next) {
         /* Traverse the second element of the product type, if it has any data. */
-        type_dag[next].back = type_dag[cur].back;
+        setTypeBack(next, type_dag, type_dag[cur].back);
         cur = next;
         calling = true;
       } else {
@@ -401,7 +405,7 @@ static simplicity_err runTCO(evalState state, call* stack, const dag_node* dag, 
         write32s(state.activeWriteFrame, dag[dag[pc].child[1]].cmr.s, 8);
 
         /* COPY(BITSIZE(A)) */
-        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[DISCONNECT_A(dag, type_dag, pc)].bitSize);
+        simplicity_copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[DISCONNECT_A(dag, type_dag, pc)].bitSize);
 
         if (get_tco_flag(&stack[pc])) {
           /* DROP_FRAME */
@@ -437,7 +441,7 @@ static simplicity_err runTCO(evalState state, call* stack, const dag_node* dag, 
         state.activeWriteFrame++; state.activeReadFrame++;
 
         /* COPY(BITSIZE(B)) */
-        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[DISCONNECT_B(dag, type_dag, pc)].bitSize);
+        simplicity_copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[DISCONNECT_B(dag, type_dag, pc)].bitSize);
 
         /* FWD(BITSIZE(B)) */
         forward(state.activeReadFrame, type_dag[DISCONNECT_B(dag, type_dag, pc)].bitSize);
@@ -488,7 +492,7 @@ static simplicity_err runTCO(evalState state, call* stack, const dag_node* dag, 
      case WITNESS:
       if (IDEN == tag) {
         /* COPY(BITSIZE(A)) */
-        copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[IDEN_A(dag, type_dag, pc)].bitSize);
+        simplicity_copyBits(state.activeWriteFrame, state.activeReadFrame, type_dag[IDEN_A(dag, type_dag, pc)].bitSize);
       } else {
         writeValue(state.activeWriteFrame, &dag[pc].compactValue, dag[pc].targetType, type_dag);
       }
@@ -582,7 +586,7 @@ typedef struct boundsAnalysis {
  *
  * :TODO: The cost calculations below are estimated and need to be replaced by experimental data.
  */
-simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubounded *frameBound, ubounded *costBound
+simplicity_err simplicity_analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubounded *frameBound, ubounded *costBound
                             , ubounded maxCells, ubounded maxCost, const dag_node* dag, const type* type_dag, const size_t len) {
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(boundsAnalysis), "bound array too large.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
@@ -775,7 +779,7 @@ simplicity_err analyseBounds( ubounded *cellsBound, ubounded *UWORDBound, ubound
  *               if NULL != budget then *budget <= BUDGET_MAX
  *               if 'dag[len]' represents a Simplicity expression with primitives then 'NULL != env';
  */
-simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, const UWORD* input
+simplicity_err simplicity_evalTCOExpression( flags_type anti_dos_checks, UWORD* output, const UWORD* input
                                 , const dag_node* dag, type* type_dag, size_t len, const ubounded* budget, const txEnv* env
                                 ) {
   simplicity_assert(1 <= len);
@@ -785,7 +789,7 @@ simplicity_err evalTCOExpression( flags_type anti_dos_checks, UWORD* output, con
   static_assert(BUDGET_MAX <= (UBOUNDED_MAX - 1) / 1000, "BUDGET_MAX is too large.");
   static_assert(CELLS_MAX < UBOUNDED_MAX, "CELLS_MAX is too large.");
   ubounded cellsBound, UWORDBound, frameBound, costBound;
-  simplicity_err result = analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, CELLS_MAX, budget ? *budget*1000 : UBOUNDED_MAX, dag, type_dag, len);
+  simplicity_err result = simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, CELLS_MAX, budget ? *budget*1000 : UBOUNDED_MAX, dag, type_dag, len);
   if (!IS_OK(result)) return result;
 
   /* frameBound is at most 2*len. */

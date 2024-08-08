@@ -112,11 +112,11 @@ static inline void skipBits(frameItem* frame, size_t n) {
  *
  * Precondition: '*frame' is a valid read frame for 'N' more cells.
  */
-uint_fast8_t read4(frameItem* frame);
-uint_fast8_t read8(frameItem* frame);
-uint_fast16_t read16(frameItem* frame);
-uint_fast32_t read32(frameItem* frame);
-uint_fast64_t read64(frameItem* frame);
+uint_fast8_t simplicity_read4(frameItem* frame);
+uint_fast8_t simplicity_read8(frameItem* frame);
+uint_fast16_t simplicity_read16(frameItem* frame);
+uint_fast32_t simplicity_read32(frameItem* frame);
+uint_fast64_t simplicity_read64(frameItem* frame);
 
 /* Given a write frame, the 'writeN' function sets the value of the 'N' cells after the cursor and
  * advances the frame's cursor by 'N'.
@@ -125,25 +125,25 @@ uint_fast64_t read64(frameItem* frame);
  *
  * Precondition: '*frame' is a valid write frame for 'N' more cells.
  */
-void write8(frameItem* frame, uint_fast8_t x);
-void write16(frameItem* frame, uint_fast16_t x);
-void write32(frameItem* frame, uint_fast32_t x);
-void write64(frameItem* frame, uint_fast64_t x);
+void simplicity_write8(frameItem* frame, uint_fast8_t x);
+void simplicity_write16(frameItem* frame, uint_fast16_t x);
+void simplicity_write32(frameItem* frame, uint_fast32_t x);
+void simplicity_write64(frameItem* frame, uint_fast64_t x);
 
 static inline void read8s(unsigned char* x, size_t n, frameItem* frame) {
-  for(; n; --n) *(x++) = (unsigned char)read8(frame);
+  for(; n; --n) *(x++) = (unsigned char)simplicity_read8(frame);
 }
 
 static inline void write8s(frameItem* frame, const unsigned char* x, size_t n) {
-  for(; n; --n) write8(frame, *(x++));
+  for(; n; --n) simplicity_write8(frame, *(x++));
 }
 
 static inline void read32s(uint32_t* x, size_t n, frameItem* frame) {
-  for(; n; --n) *(x++) = (uint32_t)read32(frame);
+  for(; n; --n) *(x++) = (uint32_t)simplicity_read32(frame);
 }
 
 static inline void write32s(frameItem* frame, const uint32_t* x, size_t n) {
-  for(; n; --n) write32(frame, *(x++));
+  for(; n; --n) simplicity_write32(frame, *(x++));
 }
 
 /* Read bytes from a Simplicity buffer of type (TWO^8)^<2^(n+1) into 'buf'.
@@ -158,7 +158,7 @@ static inline void write32s(frameItem* frame, const uint32_t* x, size_t n) {
  *               '*src' is a valid read frame for 8*(2^(n+1)-1)+n+1 more cells;
  *               0 <= n < 16
  */
-void read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n);
+void simplicity_read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n);
 
 /* Write 'len' bytes to a Simplicity buffer of type (TWO^8)^<2^(n+1) from 'buf'.
  * Advance the 'dst' frame to the end of the buffer type.
@@ -171,7 +171,7 @@ void read_buffer8(unsigned char* buf, size_t* len, frameItem* src, int n);
  *               len < 2^(n+1);
  *               0 <= n < 16;
  */
-void write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n);
+void simplicity_write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n);
 
 /* Read data from a Simplicity CTX8 type (TWO^8)^<2^64 * TWO^64 * TWO^256 and fill in a sha256_context value.
  * Advance the 'src' frame to the end of the CTX8 type.
@@ -183,7 +183,7 @@ void write_buffer8(frameItem* dst, const unsigned char* buf, size_t len, int n);
  * Precondition: NULL != ctx->output;
  *               '*src' is a valid read frame for 838 more cells;
  */
-bool read_sha256_context(sha256_context* ctx, frameItem* src);
+bool simplicity_read_sha256_context(sha256_context* ctx, frameItem* src);
 
 /* Write data to a Simplicity CTX8 type (TWO^8)^<2^64 * TWO^64 * TWO^256 from a sha256_context value.
  * Advance the 'dst' frame to the end of the CTX8 type.
@@ -196,7 +196,7 @@ bool read_sha256_context(sha256_context* ctx, frameItem* src);
  *               NULL != ctx->output;
  *               ctx->counter < 2^61;
  */
-bool write_sha256_context(frameItem* dst, const sha256_context* ctx);
+bool simplicity_write_sha256_context(frameItem* dst, const sha256_context* ctx);
 
 /* Given a write frame and a read frame, copy 'n' cells from after the read frame's cursor to after the write frame's cursor,
  * and then advance the write frame's cursor by 'n'.
@@ -205,5 +205,5 @@ bool write_sha256_context(frameItem* dst, const sha256_context* ctx);
  * Precondition: '*dst' is a valid write frame for 'n' more cells;
  *               '*src' is a valid read frame for 'n' more cells;
  */
-void copyBits(frameItem* dst, const frameItem* src, size_t n);
+void simplicity_copyBits(frameItem* dst, const frameItem* src, size_t n);
 #endif

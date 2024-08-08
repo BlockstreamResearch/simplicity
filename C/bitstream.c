@@ -10,7 +10,7 @@
  *
  * Precondition: NULL != stream
  */
-simplicity_err closeBitstream(bitstream* stream) {
+simplicity_err simplicity_closeBitstream(bitstream* stream) {
   if (1 < stream->len) return SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES;        /* If there is more than one byte remaining. */
   if (1 == stream->len) {
     if (0 == stream->offset) return SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES;  /* If there is one byte remaining */
@@ -30,7 +30,7 @@ simplicity_err closeBitstream(bitstream* stream) {
  * Precondition: 0 <= n < 32
  *               NULL != stream
  */
-int32_t readNBits(int n, bitstream* stream) {
+int32_t simplicity_readNBits(int n, bitstream* stream) {
   simplicity_assert(0 <= n && n < 32);
 
   uint32_t result = 0;
@@ -109,7 +109,7 @@ static int32_t decodeUpto3Bits(int32_t* result, bitstream* stream) {
   } else {
     int32_t n = decodeUpto3(stream);
     if (0 <= n) {
-      *result = readNBits(n, stream);
+      *result = simplicity_readNBits(n, stream);
       if (*result < 0) return *result;
     }
     return n;
@@ -153,7 +153,7 @@ static int32_t decodeUpto15Bits(int32_t* result, bitstream* stream) {
   } else {
     int32_t n = decodeUpto15(stream);
     if (0 <= n) {
-      *result = readNBits(n, stream);
+      *result = simplicity_readNBits(n, stream);
       if (*result < 0) return *result;
     }
     return n;
@@ -184,7 +184,7 @@ static int32_t decodeUpto65535(bitstream* stream) {
  *
  * Precondition: NULL != stream
  */
-int32_t decodeUptoMaxInt(bitstream* stream) {
+int32_t simplicity_decodeUptoMaxInt(bitstream* stream) {
   int32_t bit = read1Bit(stream);
   if (bit < 0) return bit;
   if (0 == bit) {
@@ -194,7 +194,7 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
     if (n < 0) return n;
     if (30 < n) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
     {
-      int32_t result = readNBits(n, stream);
+      int32_t result = simplicity_readNBits(n, stream);
       if (result < 0) return result;
       return ((1 << n) | result);
     }
@@ -211,7 +211,7 @@ int32_t decodeUptoMaxInt(bitstream* stream) {
  *               n <= 2^31
  *               NULL != stream
  */
-simplicity_err readBitstring(bitstring* result, size_t n, bitstream* stream) {
+simplicity_err simplicity_readBitstring(bitstring* result, size_t n, bitstream* stream) {
   static_assert(0x80000000u + 2*(CHAR_BIT - 1) <= SIZE_MAX, "size_t needs to be at least 32-bits");
   simplicity_assert(n <= 0x80000000u);
   size_t total_offset = n + stream->offset;

@@ -250,6 +250,10 @@ const unsigned char ctx8Unpruned[] = {
 };
 
 const size_t sizeof_ctx8Unpruned = sizeof(ctx8Unpruned);
+const unsigned char ctx8Unpruned_witness[] = "";
+
+
+const size_t sizeof_ctx8Unpruned_witness = 0;
 
 /* The commitment Merkle root of the above ctx8Unpruned Simplicity expression. */
 const uint32_t ctx8Unpruned_cmr[] = {

@@ -46,11 +46,12 @@ void c_set_rawInput(rawInput* result, const rawBuffer* annex, const char* pegin,
                       };
 }
 
-void c_set_rawTransaction(rawTransaction* result, unsigned int version,
+void c_set_rawTransaction(rawTransaction* result, const unsigned char* txid, unsigned int version,
                                                   const rawInput* input, unsigned int numInputs,
                                                   const rawOutput* output, unsigned int numOutputs,
                                                   unsigned int lockTime) {
-  *result = (rawTransaction){ .version = version
+  *result = (rawTransaction){ .txid = txid
+                            , .version = version
                             , .input = input, .numInputs = numInputs
                             , .output = output, .numOutputs = numOutputs
                             , .lockTime = lockTime,
@@ -64,7 +65,7 @@ void c_set_rawTapEnv(rawTapEnv* result, const char* controlBlock, unsigned char 
 void c_set_txEnv(txEnv* result, const transaction* tx, const tapEnv* taproot, const char* genesisHash, unsigned int ix) {
   sha256_midstate genesis;
   sha256_toMidstate(genesis.s, genesisHash);
-  *result = build_txEnv(tx, taproot, &genesis, ix);
+  *result = simplicity_build_txEnv(tx, taproot, &genesis, ix);
 }
 
 void c_free_tapEnv(tapEnv* env) {
