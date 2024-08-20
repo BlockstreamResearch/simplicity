@@ -9,6 +9,7 @@ mkDerivation (rec {
   src = lib.sourceFilesBySuffices
       (lib.sourceByRegex ./. ["^LICENSE$" "^Simplicity\.cabal$" "^Setup.hs$" "^Tests.hs$" "^Haskell$" "^Haskell/.*"
                               "^Haskell-Generate$" "^Haskell-Generate/.*"
+                              "^Haskell-Examples$" "^Haskell-Examples/.*"
                               "^C$" "^C/.*"])
     ["LICENSE" ".cabal" ".hs" ".hsig" ".h" ".c" ".inc"];
   libraryHaskellDepends = [ base binary cereal lens-family MemoTrie mtl split tardis unification-fd vector ];
