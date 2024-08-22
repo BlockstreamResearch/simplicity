@@ -286,10 +286,21 @@ rustJetImpl mod = vsep $
 
 rustJetEnum :: Module -> Doc a
 rustJetEnum mod = vsep
- [ pretty $ "/// " ++ rustModuleName mod ++ " jet family"
+ [ "/// The" <+> pretty (rustModuleName mod) <+> "jet family."
  , "#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, Hash)]"
- , nest 4 (vsep (pretty ("pub enum " ++ rustModuleName mod ++ " {")
-   : [pretty (jetName jet) <> comma | (SomeArrow jet) <- moduleJets mod]))
+ , nest 4 $ vsep $
+   ("pub enum" <+> pretty (rustModuleName mod) <+> "{") :
+   [ pretty (jetName jet) <> comma | (SomeArrow jet) <- moduleJets mod ]
+ , "}"
+ , ""
+ , nest 4 $ vsep $
+   ("impl" <+> pretty (rustModuleName mod) <+> "{") :
+   ("/// Array of all" <+> pretty (rustModuleName mod) <+> "jets.") :
+   [ nest 4 $ vsep $
+       ("pub const ALL: [Self;" <+> pretty (length $ moduleJets mod) <> "] = [") :
+       [ "Self::" <> (pretty $ jetName jet) <> comma | (SomeArrow jet) <- moduleJets mod ]
+     , "];"
+   ]
  , "}"
  ]
 
