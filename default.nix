@@ -15,7 +15,7 @@ let hp = nixpkgs.haskell.packages.${ghc};
     cp = nixpkgs.${coqPackages};
  in rec
 {
-  haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix {};
+  haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix { cabal-install = nixpkgs.cabal-install; };
 
   haskellPackages = hp.override {
     overrides = self: super: {

@@ -12,7 +12,7 @@
 let
   simplicity      = import ./. {inherit nixpkgs ghc coqPackages env withCoverage withProfiler withValgrind;};
   optional        = nixpkgs.lib.optional;
-  haskellDevTools = pkgs: with pkgs; [cabal-install hlint hasktags];
+  haskellDevTools = pkgs: with pkgs; [ nixpkgs.cabal-install hlint hasktags];
   haskellPkgs     = pkgs: simplicity.haskell.buildInputs ++ simplicity.haskell.propagatedBuildInputs ++ haskellDevTools pkgs;
   haskellDevEnv   = simplicity.haskellPackages.ghcWithPackages haskellPkgs;
   coqDevEnv       = [ nixpkgs.python3Packages.alectryon
