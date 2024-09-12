@@ -53,6 +53,7 @@ tests = testGroup "Elements"
           , testProperty "annex_hash" prop_annex_hash
           , testProperty "build_tapleaf_simplicity" prop_build_tapleaf_simplicity
           , testProperty "build_tapbranch" prop_build_tapbranch
+          , testProperty "build_taptweak" prop_build_taptweak
           , testProperty "issuance" prop_issuance
           , testProperty "issuance_asset" prop_issuance_asset
           , testProperty "issuance_token" prop_issuance_token
@@ -252,6 +253,13 @@ prop_build_tapbranch = \a b ->
   build_tapbranch (a, b) == fast_build_tapbranch (a, b)
  where
   fast_build_tapbranch = testCoreEval Prog.buildTapbranch
+
+prop_build_taptweak :: FieldElement -> Word256 -> Bool
+prop_build_taptweak = \a b ->
+  let input = (feAsTy a, b) in
+  build_taptweak input == fast_build_taptweak input
+ where
+  fast_build_taptweak = testCoreEval Prog.buildTaptweak
 
 prop_issuance :: Property
 prop_issuance = forallInPrimEnv $ \env i ->

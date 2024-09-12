@@ -71,6 +71,7 @@ module Simplicity.Elements.FFI.Jets
  , annex_hash
  , build_tapleaf_simplicity
  , build_tapbranch
+ , build_taptweak
  , issuance
  , issuance_entropy
  , issuance_asset
@@ -190,6 +191,7 @@ foreign import ccall unsafe "" c_nonce_hash :: Ptr FrameItem -> Ptr FrameItem ->
 foreign import ccall unsafe "" c_annex_hash :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_build_tapleaf_simplicity :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_build_tapbranch :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_build_taptweak :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_issuance :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_issuance_asset :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -432,6 +434,9 @@ build_tapleaf_simplicity = unsafeLocalCoreJet c_build_tapleaf_simplicity
 
 build_tapbranch :: (Word256, Word256) -> Maybe Word256
 build_tapbranch = unsafeLocalCoreJet c_build_tapbranch
+
+build_taptweak :: (Word256, Word256) -> Maybe Word256
+build_taptweak = unsafeLocalCoreJet c_build_taptweak
 
 issuance :: PrimEnv -> Word32 -> Maybe (S (S Bit))
 issuance = unsafeLocalJet c_issuance

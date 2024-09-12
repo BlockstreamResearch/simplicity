@@ -32,6 +32,7 @@ module Simplicity.Elements.DataTypes
   , issuanceAssetAmountsHash, issuanceTokenAmountsHash, issuanceRangeProofsHash, issuancesHash, issuanceHash, issuanceBlindingEntropyHash
   , txHash
   , tapleafHash, tappathHash, tapEnvHash
+  , taptweak
   , outputFee, totalFee
   , lBtcAsset
   , module Simplicity.Bitcoin
@@ -683,6 +684,24 @@ tapEnvHash tapEnv = bslHash . runPutLazy $ do
               put $ tapleafHash tapEnv
               put $ tappathHash tapEnv
               put $ tapInternalKey tapEnv
+
+-- | Implementation of BIP-0341's taptweak function.
+taptweak :: PubKey -> Hash256 -> Maybe PubKey
+taptweak (PubKey internalKey) h = do
+  guard $ toInteger internalKey < fieldOrder
+  guard $ h0 < groupOrder
+  a <- scale (scalar h0) g
+  b <- decompress (Point False xkey)
+  GE x y <- gej_normalize . snd $ gej_ge_add_ex a b
+  return $ PubKey (fe_pack x)
+ where
+  xkey = fe (toInteger internalKey)
+  h0 = integerHash256 . bslHash . runPutLazy $ do
+    put tag
+    put tag
+    put (fe_pack xkey)
+    put h
+  tag = bsHash (fromString "TapTweak/elements")
 
 -- | Decides if an output is a fee output.
 -- If so, the (explicit) assetId and (explicit) value is returned.

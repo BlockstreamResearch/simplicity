@@ -8,6 +8,7 @@ module Simplicity.Programs.Elements.Lib
   , buildTapleafSimplicity, buildTapbranch
   , lbtcAsset
   , outpointHash, assetAmountHash, nonceHash, annexHash
+  , buildTaptweak
   , Elements.Hash, Elements.Ctx8
   ) where
 
@@ -25,3 +26,4 @@ outpointHash = Elements.outpointHash Elements.libAssert
 assetAmountHash = Elements.assetAmountHash Elements.libAssert
 nonceHash = Elements.nonceHash Elements.libAssert
 annexHash = Elements.annexHash Elements.libAssert
+buildTaptweak = Elements.buildTaptweak Elements.libAssert

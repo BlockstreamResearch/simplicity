@@ -68,6 +68,7 @@ tests = testGroup "Elements"
           , testProperty "annex_hash" prop_annex_hash
           , testProperty "build_tapleaf_simplicity" prop_build_tapleaf_simplicity
           , testProperty "build_tapbranch" prop_build_tapbranch
+          , testProperty "build_taptweak" prop_build_taptweak
           , testProperty "input_issuance" prop_input_issuance
           , testProperty "input_issuance_asset" prop_input_issuance_asset
           , testProperty "input_issuance_token" prop_input_issuance_token
@@ -262,6 +263,14 @@ prop_build_tapbranch = \a b ->
     implementation (ElementsJet (SigHashJet BuildTapbranch)) undefined input
  where
   fast_build_tapbranch = testCoreEval Prog.buildTapbranch
+
+prop_build_taptweak :: FieldElement -> HashElement -> Bool
+prop_build_taptweak = \a b ->
+  let input = (feAsTy a, heAsTy b) in
+  fast_build_taptweak input ==
+    implementation (ElementsJet (SigHashJet BuildTaptweak)) undefined input
+ where
+  fast_build_taptweak = testCoreEval Prog.buildTaptweak
 
 prop_outpoint_hash :: Sha256CtxElement -> Maybe HashElement -> (HashElement, Word.Word32) -> Bool
 prop_outpoint_hash = \ctx pegin op ->

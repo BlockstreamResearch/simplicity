@@ -2,6 +2,7 @@
 
 #include "ops.h"
 #include "primitive.h"
+#include "../../taptweak.h"
 #include "../../simplicity_assert.h"
 
 /* Read a 256-bit hash value from the 'src' frame, advancing the cursor 256 cells.
@@ -860,6 +861,13 @@ bool simplicity_build_tapbranch(frameItem* dst, frameItem src, const txEnv* env)
   sha256_midstate result = simplicity_make_tapbranch(&a, &b);
   writeHash(dst, &result);
   return true;
+}
+
+/* build_taptweak : PUBKEY * TWO^256 |- PUBKEY */
+bool simplicity_build_taptweak(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; // env is unused.
+  static unsigned char taptweak[] = "TapTweak/elements";
+  return simplicity_generic_taptweak(dst, &src, taptweak, sizeof(taptweak)-1);
 }
 
 /* outpoint_hash : CTX8 * S TWO^256 * TWO^256 * TWO^32 |- CTX8 */

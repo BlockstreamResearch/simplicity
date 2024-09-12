@@ -23,6 +23,7 @@ rawBenchmark "AssetAmountHash" = 171.26
 rawBenchmark "Bip0340Verify" = 54541.00304991227
 rawBenchmark "BuildTapbranch" = 1424.2525
 rawBenchmark "BuildTapleafSimplicity" = 1024.204285714286
+rawBenchmark "BuildTaptweak" = 51562.63
 rawBenchmark "CalculateAsset" = 448.8285714285716
 rawBenchmark "CalculateConfidentialToken" = 392.9185714285713
 rawBenchmark "CalculateExplicitToken" = 428.43571428571437

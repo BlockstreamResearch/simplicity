@@ -8,6 +8,7 @@ module Simplicity.Programs.Elements
   , lbtcAsset
   , LibAssert(LibAssert), mkLibAssert
   , outpointHash, assetAmountHash, nonceHash, annexHash
+  , buildTaptweak
   -- * Example instances
   , lib, libAssert
   -- * Reexports
@@ -20,11 +21,13 @@ import Lens.Family2 (over, review)
 
 import Simplicity.Digest
 import Simplicity.Functor
+import Simplicity.LibSecp256k1.Spec (fieldOrder, groupOrder)
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
 import Simplicity.Programs.Arith
 import Simplicity.Programs.Word
 import Simplicity.Term.Core hiding (one)
+import qualified Simplicity.Programs.LibSecp256k1 as LibSecp256k1
 import Simplicity.Programs.LibSecp256k1 hiding (Lib(Lib), mkLib, lib)
 import qualified Simplicity.Programs.Sha256 as Sha256
 import Simplicity.Programs.Sha256 hiding ( Lib(Lib), lib
@@ -71,6 +74,8 @@ data LibAssert term =
   , nonceHash :: term (Ctx8, S (Conf Word256)) Ctx8
     -- | A hash of an optional hash.
   , annexHash :: term (Ctx8, S Word256) Ctx8
+    -- | Compute a taptweak hash from a pubkey and a hash.
+  , buildTaptweak :: term (PubKey, Hash) PubKey
   }
 
 instance SimplicityFunctor Lib where
@@ -92,6 +97,7 @@ instance SimplicityFunctor LibAssert where
     , assetAmountHash = m assetAmountHash
     , nonceHash = m nonceHash
     , annexHash = m annexHash
+    , buildTaptweak = m buildTaptweak
     }
 
 -- | Build the Elements 'Lib' library from its dependencies.
@@ -133,9 +139,11 @@ lib :: Core term => Lib term
 lib = mkLib Sha256.lib
 
 -- | Build the Elements 'LibAssert' library.
-mkLibAssert :: forall term. Assert term => Sha256.LibAssert term -- ^ "Simplicity.Programs.Sha256"
+mkLibAssert :: forall term. Assert term => Sha256.Lib term -- ^ "Simplicity.Programs.Sha256"
+                                        -> Sha256.LibAssert term -- ^ "Simplicity.Programs.Sha256"
+                                        -> LibSecp256k1.Lib term -- ^ "Simplicity.Programs.Libsecp256k1"
                                         -> LibAssert term
-mkLibAssert Sha256.LibAssert{..} = libAssert
+mkLibAssert Sha256.Lib{..} Sha256.LibAssert{..} LibSecp256k1.Lib{..} = libAssert
  where
   libAssert@LibAssert{..} = LibAssert {
     outpointHash = ((oh &&& ioh >>> annexHash) &&& iioh >>> ctx8Add32) &&& iiih >>> ctx8Add4
@@ -147,7 +155,14 @@ mkLibAssert Sha256.LibAssert{..} = libAssert
   , annexHash = ih &&& oh
             >>> match (ih &&& take (zero word8) >>> ctx8Add1)
                       ((ih &&& (unit >>> scribe (toWord8 0x01)) >>> ctx8Add1) &&& oh >>> ctx8Add32)
+  , buildTaptweak = assert (
+                  (((assert (oh &&& (unit >>> scribe (toWord256 fieldOrder)) >>> lt256) >>> taptweakPrefix) &&& iden >>> hashBlock)
+                &&& (unit >>> scribe (toWord512 $ 2^511 + 1024)) >>> hashBlock >>>
+                   (assert (iden &&& (unit >>> scribe (toWord256 groupOrder)) >>> lt256) &&& iden) >>> drop generate)
+                &&& assert ((unit >>> false) &&& oh >>> decompress)
+                >>> gej_ge_add >>> gej_normalize) >>> oh
   } where
+    lt256 = lt word256
     ctx8Add32 = ctx8Addn vector32
     ctx8Add8 = ctx8Addn vector8
     ctx8Add4 = ctx8Addn vector4
@@ -156,10 +171,11 @@ mkLibAssert Sha256.LibAssert{..} = libAssert
     amountHash = ih &&& oh
              >>> match ((ih &&& take (take (copair (scribe (toWord8 0x08)) (scribe (toWord8 0x09)))) >>> ctx8Add1) &&& oih >>> ctx8Add32)
                        ((ih &&& (unit >>> scribe (toWord8 0x01)) >>> ctx8Add1) &&& oh >>> ctx8Add8)
+    taptweakPrefix = scribe . toWord256 . integerHash256 . ivHash . tagIv $ fromString "TapTweak/elements"
 
 -- | An instance of the Elements 'LibAssert' library.
 -- This instance does not share its dependencies.
 -- Users should prefer to use 'mkLibAssert' in order to share library dependencies.
 -- This instance is provided mostly for testing purposes.
 libAssert :: Assert term => LibAssert term
-libAssert = mkLibAssert Sha256.libAssert
+libAssert = mkLibAssert Sha256.lib Sha256.libAssert LibSecp256k1.lib

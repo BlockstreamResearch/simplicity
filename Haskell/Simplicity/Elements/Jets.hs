@@ -52,6 +52,7 @@ import qualified Simplicity.Elements.Programs.Issuance.Lib as Issuance
 import qualified Simplicity.Elements.Programs.TimeLock as TimeLock
 import qualified Simplicity.Elements.Programs.Transaction.Lib as Prog
 import Simplicity.LibSecp256k1.Spec (fe)
+import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
 import Simplicity.MerkleRoot
 import Simplicity.Programs.Elements.Lib (Ctx8)
 import qualified Simplicity.Programs.Elements.Lib as Prog
@@ -118,6 +119,7 @@ data SigHashJet a b where
   AnnexHash :: SigHashJet (Ctx8, S Word256) Ctx8
   BuildTapleafSimplicity :: SigHashJet Word256 Word256
   BuildTapbranch :: SigHashJet (Word256, Word256) Word256
+  BuildTaptweak :: SigHashJet (PubKey, Word256) PubKey
 deriving instance Eq (SigHashJet a b)
 deriving instance Show (SigHashJet a b)
 
@@ -242,6 +244,7 @@ specificationSigHash NonceHash = Prog.nonceHash
 specificationSigHash AnnexHash = Prog.annexHash
 specificationSigHash BuildTapleafSimplicity = Prog.buildTapleafSimplicity
 specificationSigHash BuildTapbranch = Prog.buildTapbranch
+specificationSigHash BuildTaptweak = Prog.buildTaptweak
 
 specificationTimeLock :: (Assert term, Primitive term) => TimeLockJet a b -> term a b
 specificationTimeLock CheckLockHeight = TimeLock.checkLockHeight
@@ -398,6 +401,13 @@ implementationSigHash BuildTapbranch _env (wa,wb) = Just . toWord256 . integerHa
   tag = bsHash (fromString "TapBranch/elements")
   fromW256 :: Word256 -> W.Word256
   fromW256 = fromIntegral . fromWord256
+implementationSigHash BuildTaptweak _env (key,h) = cast <$> taptweak pk h0
+ where
+  pk = Schnorr.PubKey (fromW256 key)
+  h0 = review (over be256) (fromW256 h)
+  cast (Schnorr.PubKey k) = toWord256 . toInteger $ k
+  fromW256 :: Word256 -> W.Word256
+  fromW256 = fromIntegral . fromWord256
 
 implementationTimeLock :: TimeLockJet a b -> PrimEnv -> a -> Maybe b
 implementationTimeLock CheckLockHeight env x | txIsFinal (envTx env) = guard $ fromWord32 x <= 0
@@ -538,6 +548,7 @@ sigHashCatalogue = book
  , SomeArrow AnnexHash
  , SomeArrow BuildTapleafSimplicity
  , SomeArrow BuildTapbranch
+ , SomeArrow BuildTaptweak
  ]
 timeLockCatalogue = book
  [ SomeArrow CheckLockHeight
@@ -655,6 +666,7 @@ putJetBitSigHash NonceHash                   = putPositive 31
 putJetBitSigHash AnnexHash                   = putPositive 32
 putJetBitSigHash BuildTapleafSimplicity      = putPositive 33
 putJetBitSigHash BuildTapbranch              = putPositive 34
+putJetBitSigHash BuildTaptweak               = putPositive 35
 
 putJetBitTimeLock :: TimeLockJet a b -> DList Bool
 putJetBitTimeLock CheckLockHeight   = putPositive 1
@@ -823,6 +835,7 @@ jetCostSigHash NonceHash = Benchmarks.cost "NonceHash"
 jetCostSigHash AnnexHash = Benchmarks.cost "AnnexHash"
 jetCostSigHash BuildTapleafSimplicity = Benchmarks.cost "BuildTapleafSimplicity"
 jetCostSigHash BuildTapbranch = Benchmarks.cost "BuildTapbranch"
+jetCostSigHash BuildTaptweak = Benchmarks.cost "BuildTaptweak"
 
 jetCostTimeLock :: TimeLockJet a b -> Weight
 jetCostTimeLock CheckLockHeight = Benchmarks.cost "CheckLockHeight"

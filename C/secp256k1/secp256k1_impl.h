@@ -18,6 +18,7 @@
 #include "scalar_impl.h"
 #include "group_impl.h"
 #include "ecmult_impl.h"
+#include "eckey_impl.h"
 #include "int128_impl.h"
 
 #ifdef SECP256K1_NO_BUILD
@@ -61,6 +62,13 @@ static void secp256k1_pubkey_save(secp256k1_pubkey* pubkey, secp256k1_ge* ge) {
         secp256k1_fe_get_b32(pubkey->data, &ge->x);
         secp256k1_fe_get_b32(pubkey->data + 32, &ge->y);
     }
+}
+
+static int secp256k1_ec_pubkey_tweak_add_helper(secp256k1_ge *p, const unsigned char *tweak32) {
+    secp256k1_scalar term;
+    int overflow = 0;
+    secp256k1_scalar_set_b32(&term, tweak32, &overflow);
+    return !overflow && secp256k1_eckey_pubkey_tweak_add(p, &term);
 }
 
 #include "extrakeys_impl.h"
