@@ -1,4 +1,5 @@
 #include "jets.h"
+#include "taptweak.h"
 
 #include "precomputed.h"
 #include "prefix.h"
@@ -711,5 +712,41 @@ bool simplicity_hash_to_curve(frameItem* dst, frameItem src, const txEnv* env) {
   if(!secp256k1_generator_generate(&gen, key)) return false;
   secp256k1_generator_load(&ge, &gen);
   write_ge(dst, &ge);
+  return true;
+}
+
+/* THIS IS NOT A JET.  It doesn't have the type signatue of a jet
+ * This is a generic taptweak jet implementation parameterized by the tag used in the hash.
+ * It is designed to be specialized to implement slightly different taptweak operations for Bitcoin and Elements.
+ *
+ * PUBKEY * TWO^256 |- PUBKEY
+ *
+ * Precondition: unsigned char[tagLen] tag
+ */
+bool simplicity_generic_taptweak(frameItem* dst, frameItem *src, const unsigned char *tagName, size_t tagLen) {
+  unsigned char buf[32];
+  secp256k1_xonly_pubkey input_pubkey, output_pubkey;
+  secp256k1_pubkey pubkey;
+  sha256_midstate taptweakTag, input_hash, output_hash;
+  {
+    sha256_context ctx = sha256_init(taptweakTag.s);
+    sha256_uchars(&ctx, tagName, tagLen);
+    sha256_finalize(&ctx);
+  }
+  sha256_context ctx = sha256_init(output_hash.s);
+  sha256_hash(&ctx, &taptweakTag);
+  sha256_hash(&ctx, &taptweakTag);
+
+  read8s(buf, 32, src);
+  sha256_uchars(&ctx, buf, 32);
+  if (!secp256k1_xonly_pubkey_parse(&input_pubkey, buf)) return false;
+  read32s(input_hash.s, 8, src);
+  sha256_hash(&ctx, &input_hash);
+  sha256_finalize(&ctx);
+  sha256_fromMidstate(buf, output_hash.s);
+  if (!secp256k1_xonly_pubkey_tweak_add(&pubkey, &input_pubkey, buf)) return false;
+  if (!secp256k1_xonly_pubkey_from_pubkey(&output_pubkey, NULL, &pubkey)) return false;
+  if (!secp256k1_xonly_pubkey_serialize(buf,&output_pubkey)) return false;
+  write8s(dst, buf, 32);
   return true;
 }

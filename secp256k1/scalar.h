@@ -39,10 +39,10 @@ static void secp256k1_scalar_set_b32(secp256k1_scalar *r, const unsigned char *b
 /** Set a scalar from a big endian byte array and returns 1 if it is a valid
  *  seckey and 0 otherwise. */
 static int secp256k1_scalar_set_b32_seckey(secp256k1_scalar *r, const unsigned char *bin);
+#endif
 
 /** Set a scalar to an unsigned integer. */
 static void secp256k1_scalar_set_int(secp256k1_scalar *r, unsigned int v);
-#endif
 
 /** Convert a scalar to a byte array. */
 static void secp256k1_scalar_get_b32(unsigned char *bin, const secp256k1_scalar* a);

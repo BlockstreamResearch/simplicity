@@ -143,6 +143,14 @@
 , .targetIx = ty_w256
 , .cost = 1843 /* milli weight units */
 }
+,[BUILD_TAPTWEAK] =
+{ .tag = JET
+, .jet = simplicity_build_taptweak
+, .cmr = {{0xa3234771u, 0xe7acebbfu, 0x7005eb3fu, 0xab4cb27au, 0x8ac253aau, 0x08918e75u, 0x1ec74c2eu, 0xf2a4354fu}}
+, .sourceIx = ty_w512
+, .targetIx = ty_w256
+, .cost = 92813 /* milli weight units */
+}
 ,[CALCULATE_ASSET] =
 { .tag = JET
 , .jet = simplicity_calculate_asset

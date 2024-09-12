@@ -72,6 +72,7 @@ bool simplicity_calculate_confidential_token(frameItem* dst, frameItem src, cons
 bool simplicity_lbtc_asset(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_build_tapleaf_simplicity(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_build_tapbranch(frameItem* dst, frameItem src, const txEnv* env);
+bool simplicity_build_taptweak(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_outpoint_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_asset_amount_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_nonce_hash(frameItem* dst, frameItem src, const txEnv* env);
