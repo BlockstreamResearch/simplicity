@@ -46,7 +46,10 @@ instance Arbitrary W.Word256 where
 data HashElement = HashElement W.Word256 deriving Show
 
 instance Arbitrary HashElement where
-  arbitrary = HashElement <$> arbitraryBoundedIntegral
+  arbitrary = do
+    b <- arbitrary
+    i <- arbitrarySizedBoundedIntegral
+    return . HashElement $ if b then i else -i
   shrink (HashElement h) = HashElement <$> takeWhile (<h) [0, 1, 2^248, 2^255, 2^256-1]
 
 heAsTy (HashElement h) = toWord256 (toInteger h)
