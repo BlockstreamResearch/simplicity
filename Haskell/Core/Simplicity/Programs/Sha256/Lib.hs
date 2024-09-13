@@ -8,6 +8,7 @@ module Simplicity.Programs.Sha256.Lib
    Sha256.Block, Sha256.Hash, Sha256.Ctx8
  , iv, hashBlock
  , ctx8Init
+ , tapdataInit
  , ctx8Add1
  , ctx8Addn
  , ctx8AddBuffer
@@ -32,6 +33,7 @@ import Simplicity.Ty.Word
 iv = Sha256.iv Sha256.lib
 hashBlock = Sha256.hashBlock Sha256.lib
 ctx8Init = Sha256.ctx8Init Sha256.lib
+tapdataInit = Sha256.tapdataInit Sha256.lib
 ctx8Add1 = Sha256.ctx8Add1 Sha256.libAssert
 ctx8Addn = Sha256.ctx8Addn Sha256.libAssert
 ctx8AddBuffer = Sha256.ctx8AddBuffer Sha256.libAssert

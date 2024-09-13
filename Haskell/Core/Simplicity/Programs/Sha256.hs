@@ -14,11 +14,13 @@ module Simplicity.Programs.Sha256
  , ctx8Finalize
  , hashLoop
  , ctx8InitTag
+ , tapdataInit
  -- * Example instances
  , libAssert
  ) where
 
 import Prelude hiding (Word, drop, not, take)
+import Data.String (fromString)
 
 import Simplicity.Digest
 import Simplicity.Functor
@@ -50,6 +52,8 @@ data Lib term =
   , hashBlock :: term (Hash, Block) Hash
     -- | Initialize an empty 'Ctx8'.
   , ctx8Init :: term () Ctx8
+    -- | Initialize a tapdata tagged sha256 context.
+  , tapdataInit :: term () Ctx8
   }
 
 data LibAssert term =
@@ -78,6 +82,7 @@ instance SimplicityFunctor Lib where
     { iv = m iv
     , hashBlock = m hashBlock
     , ctx8Init = m ctx8Init
+    , tapdataInit = m tapdataInit
     }
 
 instance SimplicityFunctor LibAssert where
@@ -101,6 +106,7 @@ lib = l
              &&& ((collate iooh &&& collate ioih)
              &&&  (collate iioh &&& collate iiih))
    , ctx8Init = buffer63Empty &&& (zero word64 &&& iv)
+   , tapdataInit = buffer63Empty &&& (one word64 &&& tapdataPrefix)
    }
    where
     collate x = take x &&& drop x >>> add32
@@ -147,6 +153,7 @@ lib = l
     rotateW32 = rotate_const word32
     shiftW32 = shift_const_by false word32
     buffer63Empty = bufferEmpty buffer63
+    tapdataPrefix = scribe . toWord256 . integerHash256 . ivHash . tagIv $ fromString "TapData"
 
 -- | Given an "array", which is a term that maps an index @w@ to a vector of bytes @v@, returning nothing if the index is out of bounds,
 -- hash all the bytes of the "array" in seqeuenced until the end of the array (i.e. upto the first index where the "array" term returns nothing).

@@ -451,6 +451,7 @@ rawBenchmark "Subtract64" = 63.92384623761226
 rawBenchmark "Subtract8" = 61.06034896812143
 rawBenchmark "Swu" = 17844.670780310975
 rawBenchmark "TapEnvHash" = 90.34785898924261
+rawBenchmark "TapdataInit" = 654.8088901361084
 rawBenchmark "TapleafHash" = 75.83151089538666
 rawBenchmark "TapleafVersion" = 58.57378301922501
 rawBenchmark "Tappath" = 46.60476841280421

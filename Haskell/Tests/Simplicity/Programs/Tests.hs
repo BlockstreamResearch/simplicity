@@ -531,9 +531,10 @@ tests = testGroup "Programs"
         , testProperty "check_sig_verify_true" prop_check_sig_verify_true
         ]
       , group_bip_0340_check
-      , testGroup "timelock"
+      , testGroup "bitcoin"
         [ testProperty "parse_lock" prop_parse_lock
         , testProperty "parse_sequence" prop_parse_sequence
+        , testCase "tapdata_init" assert_tapdata_init
         ]
       ]
 
@@ -3636,3 +3637,8 @@ prop_parse_lock = forAll arbitraryLock
 prop_parse_sequence a = fastF (toW32 a) == implementation (BitcoinJet ParseSequence) (toW32 a)
  where
   fastF = testCoreEval (specification (BitcoinJet ParseSequence))
+
+assert_tapdata_init :: Assertion
+assert_tapdata_init = fastF () @=? implementation (BitcoinJet TapdataInit) ()
+ where
+  fastF = testCoreEval (specification (BitcoinJet TapdataInit))

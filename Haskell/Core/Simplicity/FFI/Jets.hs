@@ -106,6 +106,7 @@ module Simplicity.FFI.Jets
  , bip_0340_verify
  , swu, hash_to_curve
  , parse_lock, parse_sequence
+ , tapdata_init
  ) where
 
 import Foreign.Ptr (Ptr)
@@ -489,6 +490,7 @@ foreign import ccall unsafe "" c_swu :: Ptr FrameItem -> Ptr FrameItem -> IO CBo
 foreign import ccall unsafe "" c_hash_to_curve :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_parse_lock :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_parse_sequence :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
+foreign import ccall unsafe "" c_tapdata_init :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 
 verify :: Bit -> Maybe ()
 verify = unsafeLocalCoreJet c_verify
@@ -1596,3 +1598,6 @@ parse_lock = unsafeLocalCoreJet c_parse_lock
 
 parse_sequence :: Word32 -> Maybe (Either () (Either Word16 Word16))
 parse_sequence = unsafeLocalCoreJet c_parse_sequence
+
+tapdata_init :: () -> Maybe Sha256.Ctx8
+tapdata_init = unsafeLocalCoreJet c_tapdata_init

@@ -21,6 +21,7 @@ import Prelude hiding (fail, drop, take, negate, subtract, min, max, Word)
 import Control.Arrow ((+++), Kleisli(Kleisli), runKleisli)
 import Data.Bits ((.&.), (.|.), complement, rotate, shift, xor)
 import qualified Data.ByteString as BS
+import qualified Data.ByteString.Char8 as BSC
 import Data.Foldable (toList)
 import qualified Data.List as List
 import qualified Data.Map as Map
@@ -454,6 +455,7 @@ deriving instance Show (SignatureJet a b)
 data BitcoinJet a b where
   ParseLock :: BitcoinJet Word32 (Either Word32 Word32)
   ParseSequence :: BitcoinJet Word32 (Either () (Either Word16 Word16))
+  TapdataInit :: BitcoinJet () Sha256.Ctx8
 deriving instance Eq (BitcoinJet a b)
 deriving instance Show (BitcoinJet a b)
 
@@ -844,6 +846,7 @@ specificationSignature Bip0340Verify = Secp256k1.bip_0340_verify
 specificationBitcoin :: Assert term => BitcoinJet a b -> term a b
 specificationBitcoin ParseLock = TimeLock.parseLock
 specificationBitcoin ParseSequence = TimeLock.parseSequence
+specificationBitcoin TapdataInit = Sha256.tapdataInit
 
 -- | A jetted implementaiton for "core" jets.
 --
@@ -1513,6 +1516,14 @@ implementationBitcoin ParseSequence v = Just . maybe (Left ()) (Right . (toW16 +
   where
    toW16 = toWord16 . fromIntegral
    fromW32 = fromInteger . fromWord32
+implementationBitcoin TapdataInit v = toCtx <$> ctxAdd ctxInit (tag<>tag)
+ where
+  tag = encode . bsHash . BSC.pack $ "TapData"
+  toCtx ctx = (buffer, (count, midstate))
+   where
+    buffer = fst $ bufferFill buffer63 (toWord8 . fromIntegral <$> BS.unpack (ctxBuffer ctx))
+    count = toWord64 . fromIntegral $ ctxCounter ctx
+    midstate = toWord256 . integerHash256 . ivHash $ ctxIV ctx
 
 -- | A canonical deserialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.getJetBit' method.
 getJetBit :: (Monad m) => m Void -> m Bool -> m (SomeArrow CoreJet)
@@ -2278,6 +2289,7 @@ signatureBook = book
 bitcoinBook = book
   [ SomeArrow ParseLock
   , SomeArrow ParseSequence
+  , SomeArrow TapdataInit
   ]
 
 -- | A canonical serialization operation for "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.putJetBit' method.
@@ -2667,6 +2679,7 @@ putJetBitSignature Bip0340Verify = putPositive 2
 putJetBitBitcoin :: BitcoinJet a b -> DList Bool
 putJetBitBitcoin ParseLock  = putPositive 1
 putJetBitBitcoin ParseSequence  = putPositive 2
+putJetBitBitcoin TapdataInit  = putPositive 3
 
 -- | A 'Map.Map' from the identity roots of the "core" jet specification to their corresponding token.
 -- This can be used to help instantiate the 'Simplicity.JetType.matcher' method.
@@ -3063,6 +3076,7 @@ jetCostSignature Bip0340Verify = Benchmarks.cost "Bip0340Verify"
 jetCostBitcoin :: BitcoinJet a b -> Weight
 jetCostBitcoin ParseLock = Benchmarks.cost "ParseLock"
 jetCostBitcoin ParseSequence = Benchmarks.cost "ParseSequence"
+jetCostBitcoin TapdataInit = Benchmarks.cost "TapdataInit"
 
 -- | Performs a lookup from `coreJetMap` from an `IdentityRoot`.
 -- This operation preserves the Simplicity types.

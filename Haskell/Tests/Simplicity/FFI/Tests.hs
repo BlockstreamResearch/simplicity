@@ -415,9 +415,10 @@ tests = testGroup "C / SPEC"
         , testProperty "sha_256_ctx_8_add_buffer_511" prop_sha_256_ctx_8_add_buffer_511
         , testProperty "sha_256_ctx_8_finalize"       prop_sha_256_ctx_8_finalize
         ]
-      , testGroup "locktime" $
+      , testGroup "bitcoin" $
         [ testProperty "parse_lock"     prop_parse_lock
         , testProperty "parse_sequence" prop_parse_sequence
+        , testCase     "tapdata_init"   assert_tapdata_init
         ]
       , testGroup "field"
         [ testProperty "fe_normlaize"     prop_fe_normalize
@@ -3220,6 +3221,11 @@ prop_parse_lock = forAll arbitraryLock $ \a -> fastF (toWord32 (fromIntegral a))
 prop_parse_sequence = forAll arbitraryLock $ \a -> fastF (toWord32 (fromIntegral a)) == C.parse_sequence (toWord32 (fromIntegral a))
  where
   fastF = testCoreEval (specification (BitcoinJet ParseSequence))
+
+assert_tapdata_init :: Assertion
+assert_tapdata_init = fastF () @=? C.tapdata_init ()
+ where
+  fastF = testCoreEval (specification (BitcoinJet TapdataInit))
 
 fe_unary_prop f g = \a -> fastF (feAsTy a) == g (feAsTy a)
  where
