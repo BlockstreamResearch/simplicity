@@ -1403,3 +1403,23 @@ bool simplicity_parse_sequence(frameItem* dst, frameItem src, const txEnv* env) 
   }
   return true;
 }
+
+/* simplicity_tapdata_init : ONE |- CTX8 */
+bool simplicity_tapdata_init(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) env; /* env is unused. */
+  (void) src; /* env is unused. */
+
+  sha256_midstate tapleafTag;
+  {
+    static const unsigned char tagName[] = "TapData";
+    sha256_context ctx = sha256_init(tapleafTag.s);
+    sha256_uchars(&ctx, tagName, sizeof(tagName) - 1);
+    sha256_finalize(&ctx);
+  }
+  uint32_t iv[8];
+  sha256_context ctx = sha256_init(iv);
+  sha256_hash(&ctx, &tapleafTag);
+  sha256_hash(&ctx, &tapleafTag);
+
+  return simplicity_write_sha256_context(dst, &ctx);
+}

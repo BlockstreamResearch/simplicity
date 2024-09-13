@@ -395,5 +395,6 @@ bool simplicity_bip_0340_verify(frameItem* dst, frameItem src, const txEnv* env)
 
 bool simplicity_parse_lock(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_parse_sequence(frameItem* dst, frameItem src, const txEnv* env);
+bool simplicity_tapdata_init(frameItem* dst, frameItem src, const txEnv* env);
 
 #endif

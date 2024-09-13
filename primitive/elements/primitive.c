@@ -1032,6 +1032,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
       switch (code) {
        case 1: *result = PARSE_LOCK; return SIMPLICITY_NO_ERROR;
        case 2: *result = PARSE_SEQUENCE; return SIMPLICITY_NO_ERROR;
+       case 3: *result = TAPDATA_INIT; return SIMPLICITY_NO_ERROR;
       }
       break;
     }
