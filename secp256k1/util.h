@@ -96,7 +96,7 @@ static SECP256K1_INLINE int secp256k1_memcmp_var(const void *s1, const void *s2,
 # define SECP256K1_INT128_NATIVE 1
 #elif defined(USE_FORCE_WIDEMUL_INT64)
 /* If USE_FORCE_WIDEMUL_INT64 is set, use int64. */
-# define SECP256K1_WIDEMUL_INT64 1
+# error WIDEMUL_INT64 not suported in Simplicity.
 #elif defined(UINT128_MAX) || defined(__SIZEOF_INT128__)
 /* If a native 128-bit integer type exists, use int128. */
 # define SECP256K1_WIDEMUL_INT128 1
@@ -113,25 +113,15 @@ static SECP256K1_INLINE int secp256k1_memcmp_var(const void *s1, const void *s2,
 # define SECP256K1_WIDEMUL_INT128 1
 # define SECP256K1_INT128_STRUCT 1
 #else
-/* Lastly, fall back to int64 based arithmetic. */
-# define SECP256K1_WIDEMUL_INT64 1
+/* Lastly, fall back to int128 structure based arithmetic. */
+# define SECP256K1_WIDEMUL_INT128 1
+# define SECP256K1_INT128_STRUCT 1
+/* Even though these 3 last branches all have the same body, we keep it this way so that it is easy to compare Simplicity's libsecp256k1 with the original libsepc256k1. */
 #endif
 
 #ifndef __has_builtin
 #define __has_builtin(x) 0
 #endif
-
-/* Determine the number of trailing zero bits in a (non-zero) 32-bit x.
- * This function is only intended to be used as fallback for
- * secp256k1_ctz32_var, but permits it to be tested separately. */
-static SECP256K1_INLINE int secp256k1_ctz32_var_debruijn(uint32_t x) {
-    static const uint8_t debruijn[32] = {
-        0x00, 0x01, 0x02, 0x18, 0x03, 0x13, 0x06, 0x19, 0x16, 0x04, 0x14, 0x0A,
-        0x10, 0x07, 0x0C, 0x1A, 0x1F, 0x17, 0x12, 0x05, 0x15, 0x09, 0x0F, 0x0B,
-        0x1E, 0x11, 0x08, 0x0E, 0x1D, 0x0D, 0x1C, 0x1B
-    };
-    return debruijn[(uint32_t)((x & -x) * 0x04D7651FU) >> 27];
-}
 
 /* Determine the number of trailing zero bits in a (non-zero) 64-bit x.
  * This function is only intended to be used as fallback for
@@ -144,24 +134,6 @@ static SECP256K1_INLINE int secp256k1_ctz64_var_debruijn(uint64_t x) {
         51, 25, 36, 32, 60, 20, 57, 16, 50, 31, 19, 15, 30, 14, 13, 12
     };
     return debruijn[(uint64_t)((x & -x) * 0x022FDD63CC95386DU) >> 58];
-}
-
-/* Determine the number of trailing zero bits in a (non-zero) 32-bit x. */
-static SECP256K1_INLINE int secp256k1_ctz32_var(uint32_t x) {
-    VERIFY_CHECK(x != 0);
-#if (__has_builtin(__builtin_ctz) || SECP256K1_GNUC_PREREQ(3,4))
-    /* If the unsigned type is sufficient to represent the largest uint32_t, consider __builtin_ctz. */
-    if (((unsigned)UINT32_MAX) == UINT32_MAX) {
-        return __builtin_ctz(x);
-    }
-#endif
-#if (__has_builtin(__builtin_ctzl) || SECP256K1_GNUC_PREREQ(3,4))
-    /* Otherwise consider __builtin_ctzl (the unsigned long type is always at least 32 bits). */
-    return __builtin_ctzl(x);
-#else
-    /* If no suitable CTZ builtin is available, use a (variable time) software emulation. */
-    return secp256k1_ctz32_var_debruijn(x);
-#endif
 }
 
 /* Determine the number of trailing zero bits in a (non-zero) 64-bit x. */
