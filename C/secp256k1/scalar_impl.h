@@ -16,8 +16,6 @@
 
 #if defined(SECP256K1_WIDEMUL_INT128)
 #include "scalar_4x64_impl.h"
-#elif defined(SECP256K1_WIDEMUL_INT64)
-#include "scalar_8x32_impl.h"
 #else
 #error "Please select wide multiplication implementation"
 #endif
