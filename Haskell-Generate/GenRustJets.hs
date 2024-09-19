@@ -436,7 +436,7 @@ rustWrapperDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
 
 cWrapperImports :: Doc a
 cWrapperImports = vsep
-  [ "#include \"simplicity/primitive/elements/jets.h\""
+  [ "#include \"simplicity/primitive/elements/elementsJets.h\""
   , "#include \"simplicity/simplicity_assert.h\""
   , "#include \"wrapper.h\""
   ]

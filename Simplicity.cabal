@@ -124,10 +124,10 @@ library Simplicity-Indef
                        vector >=0.12 && <0.14
 
 library
-  C-sources:           C/rsort.c C/primitive/elements/jets.c C/primitive/elements/ops.c C/primitive/elements/env.c
-                       Haskell/cbits/elements/jets.c Haskell/cbits/elements/env.c
+  C-sources:           C/rsort.c C/primitive/elements/elementsJets.c C/primitive/elements/ops.c C/primitive/elements/env.c
+                       Haskell/cbits/elements/elementsJets.c Haskell/cbits/elements/env.c
   Include-dirs:        C C/include
-  Includes:            primitive/elements/jets.h primitive/elements/primitive.h simplicity/elements/env.h
+  Includes:            primitive/elements/elementsJets.h primitive/elements/primitive.h simplicity/elements/env.h
   exposed-modules:     Simplicity.Bitcoin.Programs.Transaction, Simplicity.Bitcoin.Programs.Transaction.Lib,
                        Simplicity.Bitcoin.Programs.TimeLock, Simplicity.Elements.Programs.TimeLock,
                        Simplicity.Elements.Programs.Issuance, Simplicity.Elements.Programs.Issuance.Lib,
