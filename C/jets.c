@@ -798,7 +798,7 @@ bool simplicity_full_decrement_##bits(frameItem* dst, frameItem src, const txEnv
   (void) env; /* env is unused. */                                                       \
   bool z = readBit(&src);                                                                \
   uint_fast##bits##_t x = simplicity_read##bits(&src);                                   \
-  writeBit(dst, x < z);                                                                  \
+  writeBit(dst, 1U * x < 1U * z);                                                        \
   simplicity_write##bits(dst, (uint_fast##bits##_t)(1U * x - z));                        \
   return true;                                                                           \
 }
@@ -828,7 +828,7 @@ bool simplicity_full_subtract_##bits(frameItem* dst, frameItem src, const txEnv*
   bool z = readBit(&src);                                                               \
   uint_fast##bits##_t x = simplicity_read##bits(&src);                                  \
   uint_fast##bits##_t y = simplicity_read##bits(&src);                                  \
-  writeBit(dst, x < y || 1U * x - y < z);                                               \
+  writeBit(dst, 1U * x < 1U * y || 1U * x - y < 1U * z);                                \
   simplicity_write##bits(dst, (uint_fast##bits##_t)(1U * x - y - z));                   \
   return true;                                                                          \
 }
