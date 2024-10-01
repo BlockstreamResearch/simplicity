@@ -15,7 +15,7 @@ Definition tag (ws : list string) :=
  let tagDigest := normalizeHash (stringHash str) in
   normalizeHash (compress sha256_iv tagDigest tagDigest).
 
-Definition prefix := ["Simplicity-Draft"%string].
+Definition prefix := ["Simplicity"%string].
 Definition typePrefix := prefix ++ ["Type"%string].
 Definition commitmentPrefix := prefix ++ ["Commitment"%string].
 Definition identityPrefix := prefix ++ ["Identity"%string].

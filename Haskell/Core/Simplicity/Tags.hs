@@ -17,7 +17,7 @@ import Simplicity.Digest
 tag :: [String] -> IV
 tag = tagIv . intercalate "\US"
 
-prefix = ["Simplicity-Draft"]
+prefix = ["Simplicity"]
 typePrefix = prefix ++ ["Type"]
 commitmentPrefix = prefix ++ ["Commitment"]
 identityPrefix = prefix ++ ["Identity"]

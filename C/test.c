@@ -562,7 +562,7 @@ static void regression_tests(void) {
     clock_t start, end;
     double diff, bound;
     const uint32_t cmr[] = {
-      0x7f81c076u, 0xf0df9505u, 0xbfce61f0u, 0x41197bd9u, 0x2aaaa4f1u, 0x7015d1ecu, 0xb248ddffu, 0xe9d9da07u
+      0x872d12eeu, 0x631ae2e7u, 0xffb8b06au, 0xc54ef77fu, 0x693adbffu, 0xb229e760u, 0x111b8fd9u, 0x13d88b7au
     };
     simplicity_assert(regression3);
     regression3[0] = 0xb7; regression3[1] = 0x08;

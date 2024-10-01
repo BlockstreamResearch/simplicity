@@ -177,17 +177,17 @@ const size_t sizeof_hashBlock_witness = 0;
 
 /* The commitment Merkle root of the above hashBlock Simplicity expression. */
 const uint32_t hashBlock_cmr[] = {
-  0xd68b529au, 0x567b0ab3u, 0xf9768ce0u, 0xfeea1e90u, 0x9c34815au, 0x691a215au, 0x75a00e51u, 0x0c35213cu
+  0xa07dd7d8u, 0x22aed1adu, 0x40576a7au, 0x69fa1082u, 0x52d3dd89u, 0x539b1e4eu, 0x1f567851u, 0x9abf54e5u
 };
 
 /* The identity Merkle root of the above hashBlock Simplicity expression. */
 const uint32_t hashBlock_imr[] = {
-  0xdfc927d3u, 0x9bf7147au, 0x8b0a7f43u, 0x79466870u, 0x824db102u, 0x090a0036u, 0x2923a377u, 0xa91af681u
+  0x609cc145u, 0x9375db72u, 0x8f2172c9u, 0x62807e31u, 0x61df4cceu, 0xd6592d2cu, 0x4e594a77u, 0x79ab3175u
 };
 
 /* The annotated Merkle root of the above hashBlock Simplicity expression. */
 const uint32_t hashBlock_amr[] = {
-  0x23c7a58cu, 0x03a95c10u, 0xa933da89u, 0x5fe28dbbu, 0x3d12652bu, 0x3d3d1e7du, 0x5805683fu, 0xbca2c63bu
+  0xc0b19e09u, 0x2443349au, 0x09b8b92fu, 0x369c1cd1u, 0x66d58d87u, 0x3e9d10cbu, 0x8d8ec427u, 0x707874fcu
 };
 
 /* The cost of the above hashBlock Simplicity expression in milli weight units. */

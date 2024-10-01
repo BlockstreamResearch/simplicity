@@ -752,7 +752,7 @@ hunit_sigHashAll = Just (integerHash256 sigHashAll_spec) == (fromWord256 <$> (se
   genesis = review (over be256) 0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206
   txo = sigTxiTxo (sigTxIn tx1 ! (fromIntegral ix))
   Just txEnv = primEnv tx1 ix tapEnv genesis
-  signatureTag = bsHash $ BSC.pack "Simplicity-Draft\USSignature"
+  signatureTag = bsHash $ BSC.pack "Simplicity\USSignature"
   sigHashAll_spec = bslHash . runPutLazy
                   $ put signatureTag >> put signatureTag
                  >> put (commitmentRoot Prog.sigAllHash)
