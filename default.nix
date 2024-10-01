@@ -1,5 +1,5 @@
 { nixpkgs ? import <nixpkgs> {}
-, ghc ? "ghc94"
+, ghc ? "ghc98"
 , coqPackages ? "coqPackages_8_16"
 , production ? false
 , secp256k1git ? null
@@ -15,7 +15,7 @@ let hp = nixpkgs.haskell.packages.${ghc};
     cp = nixpkgs.${coqPackages};
  in rec
 {
-  haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix { cabal-install = nixpkgs.cabal-install; };
+  haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix {};
 
   haskellPackages = hp.override {
     overrides = self: super: {

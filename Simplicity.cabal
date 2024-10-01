@@ -57,17 +57,17 @@ library Simplicity-Core
   hs-source-dirs:      Haskell/Core
   default-language:    Haskell2010
   ghc-options:         -O2
-  build-depends:       base >=4.9 && <4.18,
+  build-depends:       base >=4.9 && <4.20,
                        binary >=0.7 && <0.9,
-                       bytestring >=0.10 && <0.12,
+                       bytestring >=0.10 && <0.13,
                        containers >=0.5.10 && <0.7,
                        cereal >=0.5 && <0.6,
                        lens-family >=2.0 && <2.2,
-                       mtl >=2.2 && <2.3,
+                       mtl >=2.2 && <2.4,
                        MemoTrie >=0.6 && <0.7,
                        split >=0.2.3 && <0.3,
                        tardis >=0.4.1 && <0.6,
-                       transformers >=0.5 && <0.6,
+                       transformers >=0.5 && <0.7,
                        unification-fd >=0.10 && <0.12,
                        vector >=0.12 && <0.14
 
@@ -78,8 +78,8 @@ library Simplicity-Bitcoin
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core,
-                       base >=4.9 && <4.18,
-                       bytestring >=0.10 && <0.12,
+                       base >=4.9 && <4.20,
+                       bytestring >=0.10 && <0.13,
                        cereal >=0.5 && <0.6,
                        vector >=0.12 && <0.14
 
@@ -90,8 +90,8 @@ library Simplicity-Elements
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core,
-                       base >=4.9 && <4.18,
-                       bytestring >=0.10 && <0.12,
+                       base >=4.9 && <4.20,
+                       bytestring >=0.10 && <0.13,
                        cereal >=0.5 && <0.6,
                        containers >=0.5.10 && <0.7,
                        lens-family >=2.0 && <2.2,
@@ -113,13 +113,13 @@ library Simplicity-Indef
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core,
-                       base >=4.9 && <4.18,
-                       bytestring >=0.10 && <0.12,
+                       base >=4.9 && <4.20,
+                       bytestring >=0.10 && <0.13,
                        cereal >=0.5 && <0.6,
                        containers >=0.5.10 && <0.7,
                        lens-family >=2.0 && <2.2,
-                       mtl >=2.2 && <2.3,
-                       transformers >=0.5 && <0.6,
+                       mtl >=2.2 && <2.4,
+                       transformers >=0.5 && <0.7,
                        unification-fd >=0.10 && <0.12,
                        vector >=0.12 && <0.14
 
@@ -206,8 +206,8 @@ library
   default-language:    Haskell2010
   ghc-options:         -O2
   build-depends:       Simplicity-Core, Simplicity-Bitcoin, Simplicity-Elements, Simplicity-Indef,
-                       base >=4.9 && <4.18,
-                       bytestring >=0.10 && <0.12,
+                       base >=4.9 && <4.20,
+                       bytestring >=0.10 && <0.13,
                        cereal >=0.5 && <0.6,
                        containers >=0.5.10 && <0.7,
                        lens-family >=2.0 && <2.2,
@@ -239,17 +239,17 @@ Test-Suite testsuite
   C-sources:           C/rsort.c, C/dag.c, C/primitive/elements/primitive.c, C/bitstream.c
                        Haskell/cbits/bitstream.c, Haskell/cbits/dag.c
   build-depends:       Simplicity,
-                       base >=4.9 && <4.18,
-                       bytestring >=0.10 && <0.12,
+                       base >=4.9 && <4.20,
+                       bytestring >=0.10 && <0.13,
                        cereal >=0.5 && <0.6,
                        containers >=0.5.10 && <0.7,
                        lens-family >=2.0 && <2.2,
                        QuickCheck >=2.10 && <2.15,
-                       mtl >=2.2 && <2.3,
+                       mtl >=2.2 && <2.4,
                        tasty >=0.11 && <1.5,
                        tasty-hunit >=0.9 && <0.11,
                        tasty-quickcheck >=0.8 && <0.11,
-                       transformers >=0.5 && <0.6,
+                       transformers >=0.5 && <0.7,
                        vector >=0.12 && <0.14
 
 executable GenPrecomputed
@@ -264,7 +264,7 @@ executable GenPrecomputed
     hs-source-dirs:   Haskell-Generate
     default-language: Haskell2010
     build-depends:    Simplicity,
-                      base >=4.9 && <4.18,
+                      base >=4.9 && <4.20,
                       prettyprinter >=1.7 && <1.8,
                       split >=0.2.3 && <0.3,
 
@@ -281,9 +281,9 @@ executable GenPrimitive
     default-language: Haskell2010
     other-modules:    NameWrangler
     build-depends:    Simplicity,
-                      base >=4.9 && <4.18,
+                      base >=4.9 && <4.20,
                       containers >=0.5.10 && <0.7,
-                      mtl >=2.2 && <2.3,
+                      mtl >=2.2 && <2.4,
                       split >=0.2.3 && <0.3,
                       unification-fd >=0.10 && <0.12,
 
@@ -299,8 +299,8 @@ executable GenTests
     hs-source-dirs:   Haskell-Generate
     default-language: Haskell2010
     build-depends:    Simplicity,
-                      base >=4.9 && <4.18,
-                      bytestring >=0.10 && <0.12,
+                      base >=4.9 && <4.20,
+                      bytestring >=0.10 && <0.13,
                       cereal >=0.5 && <0.6,
                       lens-family >=2.0 && <2.2,
                       split >=0.2.3 && <0.3,
@@ -319,9 +319,9 @@ executable GenRustJets
     other-modules:    NameWrangler
     other-extensions: OverloadedStrings
     build-depends:    Simplicity,
-                      base >=4.9 && <4.18,
+                      base >=4.9 && <4.20,
                       containers >=0.5.10 && <0.7,
                       prettyprinter >=1.7 && <1.8,
                       split >=0.2.3 && <0.3,
-                      transformers >=0.5 && <0.6,
+                      transformers >=0.5 && <0.7,
                       unification-fd >=0.10 && <0.12,
