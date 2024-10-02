@@ -3,7 +3,6 @@
 #include <stdbool.h>
 
 #include "precomputed.h"
-#include "prefix.h"
 #include "simplicity_assert.h"
 
 /* Given a the 'kind' of a Simplicity type, return the SHA-256 hash of its associated TMR tag.
