@@ -127,7 +127,7 @@ cEnumTyFile = unlines . fmap item $ tyList
   item ty@CTyOne = compactCName ty " = 0,"
   item ty@(CTyWord n) = compactCName ty " = " ++ show (1 + ln n) ++ ","
   item ty = compactCName ty ","
-  ln n = length . tail . takeWhile (0 <) $ iterate (`div` 2) n
+  ln n = length . Prelude.drop 1 . takeWhile (0 <) $ iterate (`div` 2) n
 
 cInitializeTyFile :: String
 cInitializeTyFile = unlines $ cInitializeTy <$> tyList

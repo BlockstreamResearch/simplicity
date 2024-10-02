@@ -9,6 +9,7 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Char (toUpper)
 import Data.Functor.Identity (runIdentity)
 import Data.Maybe (fromJust)
+import Data.Kind (Type)
 import Data.List (intercalate)
 import Data.List.Split (chunksOf)
 import Data.Serialize (encode, runPut)
@@ -43,7 +44,7 @@ import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Word
 
-data Example (jt :: * -> * -> *)
+data Example (jt :: Type -> Type -> Type)
              a b = Example { _name :: String
                            , _path :: [String]
                            , _text :: [String]

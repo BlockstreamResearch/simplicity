@@ -10,6 +10,7 @@ module Simplicity.JetType
 
 import Control.Arrow (runKleisli)
 import Control.Monad.Trans.Reader (runReaderT)
+import Data.Kind (Type)
 import Data.Void (Void, vacuous)
 
 import Simplicity.Primitive
@@ -63,7 +64,7 @@ import Simplicity.Weight
 --     'putJetBit' j === (l ++)
 -- @
 class (Assert (MatcherInfo jt), Primitive (MatcherInfo jt)) => JetType jt where
-  type MatcherInfo jt :: * -> * -> *
+  type MatcherInfo jt :: Type -> Type -> Type
   specification :: (TyC a, TyC b, Assert term, Primitive term) => jt a b -> term a b
   implementation :: (TyC a, TyC b) => jt a b -> PrimEnv -> a -> Maybe b
   implementation jt = flip $ runReaderT . runKleisli (specification jt)
