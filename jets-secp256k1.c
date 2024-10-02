@@ -2,7 +2,6 @@
 #include "taptweak.h"
 
 #include "precomputed.h"
-#include "prefix.h"
 #include "sha256.h"
 #include "secp256k1/secp256k1_impl.h"
 

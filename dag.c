@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include "bounded.h"
 #include "precomputed.h"
-#include "prefix.h"
 #include "rsort.h"
 #include "sha256.h"
 #include "simplicity_alloc.h"
