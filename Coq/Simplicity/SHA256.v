@@ -85,10 +85,10 @@ Definition majWord32 {term : Core.Algebra} : term (Word32 * (Word32 * Word32)) W
   bitwiseTri maj.
 
 Definition shift32 z {term : Core.Algebra} : term Word32 Word32 := 
-  shift z.
+  shift_const z.
 
 Definition rotate32 z {term : Core.Algebra} : term Word32 Word32 := 
-  rotate z.
+  rotate_const z.
 
 Definition hashBlock {term : Core.Algebra} : term (Word256 * Word512) Word256 :=
 let a32 := add32 in
@@ -98,14 +98,14 @@ let odiag := O diag in
 let idiag := I diag in
 let bigDiag := O I I H &&& I O O H in
 let part1Schedule := odiag &&& bigDiag in
-let smallSigma0 := rotate32 7 &&& rotate32 18 &&& shift32 3 >>> x32 in
-let smallSigma1 := rotate32 17 &&& rotate32 19 &&& shift32 10 >>> x32 in
+let smallSigma0 := rotate32 (-7) &&& rotate32 (-18) &&& shift32 (-3) >>> x32 in
+let smallSigma1 := rotate32 (-17) &&& rotate32 (-19) &&& shift32 (-10) >>> x32 in
 let smallSigma := (O O O (O H &&& (I H >>> smallSigma0)) >>> a32)
              &&& (I (O O I H &&& (I I O H >>> smallSigma1)) >>> a32) >>> a32 in
 let schedule := (O part1Schedule &&& (O idiag &&& (O I I I H &&& I (O O O H))))
            &&& (I part1Schedule &&& (I idiag &&& (I I I I H &&& smallSigma))) in
-let bigSigma0 := rotate32 2 &&& rotate32 13 &&& rotate32 22 >>> x32 in
-let bigSigma1 := rotate32 6 &&& rotate32 11 &&& rotate32 25 >>> x32 in
+let bigSigma0 := rotate32 (-2) &&& rotate32 (-13) &&& rotate32 (-22) >>> x32 in
+let bigSigma1 := rotate32 (-6) &&& rotate32 (-11) &&& rotate32 (-25) >>> x32 in
 let t1 := (O H &&& I I O O O O H >>> a32) &&& I O (I (I I H &&& ((O O H >>> bigSigma1) &&& (O O H &&& diag >>> chWord32) >>> a32)) >>> a32) >>> a32 in
 let t12 := O ((O I H &&& I H >>> majWord32) &&& (O (O H &&& (I H >>> bigSigma0)) >>> a32)) >>> a32 in
 let t1d := O O O H &&& I O O H >>> a32 in
@@ -194,15 +194,16 @@ apply (bitwiseTri_correct f);[|intros [[] | []] [[] | []] [[] | []]];
 reflexivity.
 Qed.
 
-Lemma shift32_correct z (Hz : (0 <= z <= Int.max_unsigned)%Z) (x : Word32) :
-  Int.repr (toZ (|[shift32 z]| x)) = general_lemmas.Shr z (Int.repr (toZ x)).
+Lemma shift32_correct z (Hz : (0 <= (-z) <= Int.max_unsigned)%Z) (x : Word32) :
+  Int.repr (toZ (|[shift32 z]| x)) = general_lemmas.Shr (-z) (Int.repr (toZ x)).
 Proof.
 unfold general_lemmas.Shr.
 apply Int.same_bits_eq; intros i Hi.
 rewrite Int.testbit_repr by assumption.
 rewrite Int.bits_shru by assumption.
 unfold shift32.
-rewrite shift_correct by assumption.
+rewrite <-(Z.opp_involutive z) at 1.
+rewrite shift_const_correct by assumption.
 rewrite Int.unsigned_repr by assumption.
 destruct (Coqlib.zlt _ _) as [Hiz|Hiz].
  rewrite Int.testbit_repr by lia.
@@ -215,7 +216,7 @@ lia.
 Qed.
 
 Lemma rotate32_correct z (x : Word32) :
-  Int.repr (toZ (|[rotate32 z]| x)) = SHA256.Rotr z (Int.repr (toZ x)).
+  Int.repr (toZ (|[rotate32 z]| x)) = SHA256.Rotr (-z) (Int.repr (toZ x)).
 Proof.
 unfold SHA256.Rotr.
 apply Int.same_bits_eq; intros i Hi.
@@ -223,8 +224,9 @@ rewrite Int.bits_ror by assumption.
 rewrite Int.testbit_repr by assumption.
 rewrite Int.testbit_repr by (apply Z_mod_lt; constructor).
 unfold rotate32.
-rewrite rotate_correct by assumption.
-rewrite Int.unsigned_repr_eq, <- (Zplus_mod_idemp_r (z mod Int.modulus))%Z, <- Znumtheory.Zmod_div_mod; try constructor.
+rewrite <-(Z.opp_involutive z) at 1.
+rewrite rotate_const_correct_word by assumption.
+rewrite Int.unsigned_repr_eq, <- (Zplus_mod_idemp_r ((-z) mod Int.modulus))%Z, <- Znumtheory.Zmod_div_mod; try constructor.
  rewrite Zplus_mod_idemp_r.
  reflexivity.
 apply Znumtheory.Zmod_divide; auto with zarith.
@@ -260,11 +262,12 @@ replace (|[compression]| (h,b)) with
  simpl fold_right at 1.
  set (fr0 := fold_right comp _ _);fold (Word256) in fr0.
  set (fr1 := fold_right _ _ _).
- unfold comp; simpl.
+ unfold comp; simpl; fold Word32.
  match goal with
-  |- _ = fr1 ?p => generalize p
- end;
- intros p;change (tySem (Word32*(Word256*Word512))) in p;revert p.
+  |- _ = fr1 ?p => set (p0:=p)
+ end.
+ change (step _) with (step p0).
+ generalize p0; clear p0.
  clear h b.
  induction ks;[reflexivity|].
  intros p.
@@ -401,6 +404,7 @@ Lemma xor3Word32_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Re
   R _ _ xor3Word32 xor3Word32.
 Proof.
 unfold xor3Word32.
+repeat apply buildBitwiseTri_Parametric.
 auto with parametricity.
 Qed.
 Hint Immediate xor3Word32_Parametric : parametricity.
@@ -409,6 +413,7 @@ Lemma chWord32_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel 
   R _ _ chWord32 chWord32.
 Proof.
 unfold chWord32.
+repeat apply buildBitwiseTri_Parametric.
 auto with parametricity.
 Qed.
 Hint Immediate chWord32_Parametric : parametricity.
@@ -417,6 +422,7 @@ Lemma majWord32_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel
   R _ _ majWord32 majWord32.
 Proof.
 unfold majWord32.
+repeat apply buildBitwiseTri_Parametric.
 auto with parametricity.
 Qed.
 Hint Immediate majWord32_Parametric : parametricity.
@@ -457,7 +463,7 @@ Hint Immediate hashBlock_Parametric : parametricity.
 Require Import Simplicity.MerkleRoot.
 
 Fact identityRoot_hashBlock : map Byte.unsigned (hash256_to_bytelist (identityRoot hashBlock)) =
-  map Byte.unsigned (sha.functional_prog.hexstring_to_bytelist "c03041ed97dcadae702ee60060641d7a1040a4ccefb92f0535d02b754649e4f4").
+  map Byte.unsigned (sha.functional_prog.hexstring_to_bytelist "609cc1459375db728f2172c962807e3161df4cced6592d2c4e594a7779ab3175").
 Proof.
 vm_compute.
 reflexivity.
