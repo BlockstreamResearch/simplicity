@@ -15,7 +15,9 @@ let hp = nixpkgs.haskell.packages.${ghc};
     cp = nixpkgs.${coqPackages};
  in rec
 {
-  haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix {};
+  haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix {
+    inherit doCheck;
+  };
 
   haskellPackages = hp.override {
     overrides = self: super: {

@@ -1,4 +1,6 @@
-{ mkDerivation, base, binary, cereal, lens-family, lib, MemoTrie, mtl, prettyprinter, QuickCheck, stdenv, split, tasty, tasty-hunit, tasty-quickcheck, tardis, unification-fd, vector }:
+{ mkDerivation, base, binary, cereal, lens-family, lib, MemoTrie, mtl, prettyprinter, QuickCheck, stdenv, split, tasty, tasty-hunit, tasty-quickcheck, tardis, unification-fd, vector,
+ doCheck ? true
+}:
 mkDerivation (rec {
   pname = "Simplicity";
   version = "0.0.0";
@@ -11,6 +13,7 @@ mkDerivation (rec {
   executableHaskellDepends = [ prettyprinter ];
   testHaskellDepends = libraryHaskellDepends ++ [ QuickCheck tasty tasty-hunit tasty-quickcheck ];
   enableParallelBuilding = true;
+  inherit doCheck;
   preCheck = ''
     export GHCRTS=-N$NIX_BUILD_CORES
   '';
