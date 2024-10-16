@@ -16,7 +16,7 @@ let hp = nixpkgs.haskell.packages.${ghc};
  in rec
 {
   haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix {
-    inherit doCheck;
+    inherit doCheck withValgrind;
   };
 
   haskellPackages = hp.override {

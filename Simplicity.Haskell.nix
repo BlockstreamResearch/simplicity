@@ -1,6 +1,8 @@
-{ mkDerivation, base, binary, cereal, lens-family, lib, MemoTrie, mtl, prettyprinter, QuickCheck, stdenv, split, tasty, tasty-hunit, tasty-quickcheck, tardis, unification-fd, vector,
- doCheck ? true
+{ mkDerivation, base, binary, cereal, lens-family, lib, MemoTrie, mtl, prettyprinter, QuickCheck, stdenv, split, tasty, tasty-hunit, tasty-quickcheck, tardis, unification-fd, vector
+, doCheck ? true
+, withValgrind ? false, valgrind ? null
 }:
+assert withValgrind -> valgrind != null;
 mkDerivation (rec {
   pname = "Simplicity";
   version = "0.0.0";
@@ -11,11 +13,13 @@ mkDerivation (rec {
     ["LICENSE" ".cabal" ".hs" ".hsig" ".h" ".c" ".inc"];
   libraryHaskellDepends = [ base binary cereal lens-family MemoTrie mtl split tardis unification-fd vector ];
   executableHaskellDepends = [ prettyprinter ];
-  testHaskellDepends = libraryHaskellDepends ++ [ QuickCheck tasty tasty-hunit tasty-quickcheck ];
+  testHaskellDepends = libraryHaskellDepends ++ [ QuickCheck tasty tasty-hunit tasty-quickcheck ] ++ lib.optionals withValgrind [ valgrind ];
   enableParallelBuilding = true;
   inherit doCheck;
-  preCheck = ''
+  preCheck = [ ''
     export GHCRTS=-N$NIX_BUILD_CORES
+  '' ] ++ lib.optional withValgrind ''
+    valgrind --leak-check=yes dist/build/testsuite/testsuite -p '$2=="C / SPEC"'
   '';
   postCheck = ''
     unset GHCRTS
