@@ -14,15 +14,17 @@ import Data.Word (Word8)
 
 import Data.List (intercalate)
 import Data.String (fromString)
-import Data.Serialize (encode, runPut)
+import Data.Serialize (decode, encode, runPut)
 import Data.Vector (fromList)
 import Numeric (readHex, showHex)
-import Lens.Family2 (review, over)
+import Lens.Family2 ((^.), review, over)
 import System.IO (BufferMode(NoBuffering), hSetBuffering, stdin, stdout)
+import System.Entropy (getEntropy)
 import Simplicity.Digest (Hash256, le256, be256, bsHash, integerHash256)
 import Simplicity.LibSecp256k1.Spec ( PubKey(PubKey), GE(GE), Point(Point), Sig(Sig)
                                     , g, gej_normalize, gej_ge_add_ex, scale, scalar
                                     , pubkey_unpack, decompress, groupOrder, fe_pack, fe_is_odd
+                                    , linear_combination_1, ge_to_gej
                                     )
 import Simplicity.Word (Word256)
 import Simplicity.MerkleRoot (CommitmentRoot, commitmentRoot)
@@ -308,7 +310,10 @@ getStrLine prompt def = do
   return $ if null str then def else str
 
 -- This is an standard unspendable public key with no known private key as defined in BIP-0341.
-unspendablePubKey = PubKey 0x50929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0
+unspendablePubKey tweak = PubKey (fe_pack x)
+ where
+  Just unspendable = pubkey_unpack (PubKey 0x50929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0) >>= decompress
+  Just (GE x _) = linear_combination_1 (scalar 1) (ge_to_gej unspendable) tweak >>= gej_normalize
 
 -- This is an example Pubkey.  It has a well know private key.  DO NOT USE for anything but testing.
 insecurePubKey = PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63
@@ -332,6 +337,13 @@ main :: IO ()
 main = do
   hSetBuffering stdin NoBuffering
   hSetBuffering stdout NoBuffering
+
+  -- Randomize the taproot internal key for privacy.
+  Right randomTweak <- decode <$> getEntropy 32
+  tweak <- scalar <$> getHexLine "Random privacy tweak" 64 (Just (toInteger (randomTweak :: Word256)))
+  let internalKey = unspendablePubKey tweak
+  putStr "Internal " >> print internalKey
+
   -- A generic checksig program written in Simplicty, optimized with jets.
   -- Works on an arbitrary sighash function.  Requires a public key and a signature.
   -- This program is the standard single key Simpliciy program.
@@ -347,12 +359,12 @@ main = do
   let path = review (over be256) <$> [{-path goes here-}]
   -- Compute a taproot for this standard program.
   -- 0xbe is the tapleaf version we have choosen for Simplicity.
-  let standardTR pubkey = tapPath 0xbe (encode (standardCMR pubkey)) path unspendablePubKey
+  let standardTR pubkey = tapPath 0xbe (encode (standardCMR pubkey)) path internalKey
 
   -- In our example we will be using "insecurePubKey" as our public key.
   let p = insecurePubKey
 
-  putStr "Using " >> print p
+  putStr "Simplicity " >> print p
 
   -- Compute the CMR of the standard program for our choosen key.
   let cmrP = standardCMR p
@@ -429,7 +441,7 @@ main = do
   -- Define our taproot environment.
   let tapEnv = TapEnv
          { tapleafVersion = 0xbe
-         , tapInternalKey = unspendablePubKey
+         , tapInternalKey = internalKey
          , tappath = path
          , tapScriptCMR = cmrP
          }

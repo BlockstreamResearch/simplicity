@@ -1,4 +1,4 @@
-{ mkDerivation, base, binary, cereal, lens-family, lib, MemoTrie, mtl, prettyprinter, QuickCheck, stdenv, split, tasty, tasty-hunit, tasty-quickcheck, tardis, unification-fd, vector
+{ mkDerivation, base, binary, cereal, lens-family, lib, MemoTrie, mtl, prettyprinter, QuickCheck, stdenv, split, tasty, tasty-hunit, tasty-quickcheck, tardis, unification-fd, vector, entropy
 , doCheck ? true
 , withValgrind ? false, valgrind ? null
 }:
@@ -13,7 +13,7 @@ mkDerivation (rec {
                               "^C$" "^C/.*"])
     ["LICENSE" ".cabal" ".hs" ".hsig" ".h" ".c" ".inc"];
   libraryHaskellDepends = [ base binary cereal lens-family MemoTrie mtl split tardis unification-fd vector ];
-  executableHaskellDepends = [ prettyprinter ];
+  executableHaskellDepends = [ prettyprinter entropy ];
   testHaskellDepends = libraryHaskellDepends ++ [ QuickCheck tasty tasty-hunit tasty-quickcheck ] ++ lib.optionals withValgrind [ valgrind ];
   enableParallelBuilding = true;
   inherit doCheck;
