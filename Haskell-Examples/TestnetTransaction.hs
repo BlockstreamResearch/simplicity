@@ -1,3 +1,5 @@
+-- | A little program that can be used to make a test network transactions on liquid testnet or other regtest networks.
+-- See <https://asciinema.org/a/684459> for a walkthrogh on how to use it.
 module TestnetTransaction where
 
 import Control.Monad (guard)
