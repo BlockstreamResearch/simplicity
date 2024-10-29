@@ -1,13 +1,13 @@
 {lib, stdenv, fetchFromGitHub, coq, compcert,
- ignoreCompcertVersion ? false
+ ignoreCompcertVersion ? compcert.version=="3.14" # Temporarily allow compcert 3.14
 } :
 stdenv.mkDerivation {
-  name = "vst-sha256-2.13";
+  name = "vst-sha256-2.14";
   src = fetchFromGitHub {
     owner = "PrincetonUniversity";
     repo = "VST";
-    rev ="v2.13";
-    hash = "sha256-i6rvP3cpayBln5KHZOpeNfraYU5h0O9uciBQ4jRH4XA=";
+    rev ="v2.14";
+    hash = "sha256-NHc1ZQ2VmXZy4lK2+mtyeNz1Qr9Nhj2QLxkPhhQB7Iw";
   };
 
   buildInputs = [ coq ];

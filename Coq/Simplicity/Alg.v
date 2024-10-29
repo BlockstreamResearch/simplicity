@@ -212,15 +212,15 @@ cbn; auto.
 Qed.
 
 Create HintDb parametricity discriminated.
-Hint Immediate iden_Parametric : parametricity.
-Hint Resolve comp_Parametric : parametricity.
-Hint Immediate unit_Parametric : parametricity.
-Hint Resolve injl_Parametric : parametricity.
-Hint Resolve injr_Parametric : parametricity.
-Hint Resolve case_Parametric : parametricity.
-Hint Resolve pair_Parametric : parametricity.
-Hint Resolve take_Parametric : parametricity.
-Hint Resolve drop_Parametric : parametricity.
+#[export] Hint Immediate iden_Parametric : parametricity.
+#[export] Hint Resolve comp_Parametric : parametricity.
+#[export] Hint Immediate unit_Parametric : parametricity.
+#[export] Hint Resolve injl_Parametric : parametricity.
+#[export] Hint Resolve injr_Parametric : parametricity.
+#[export] Hint Resolve case_Parametric : parametricity.
+#[export] Hint Resolve pair_Parametric : parametricity.
+#[export] Hint Resolve take_Parametric : parametricity.
+#[export] Hint Resolve drop_Parametric : parametricity.
 
 Lemma elimS_Parametric {alg1 alg2 : Core.Algebra} (R : Core.Parametric.Rel alg1 alg2)
   {A B C D} r1 r2 s1 s2 t1 t2 : R A (B + C) r1 r2 -> R B D s1 s2 -> R C D t1 t2
@@ -229,7 +229,7 @@ Proof.
 unfold elimS.
 auto with parametricity.
 Qed.
-Hint Resolve elimS_Parametric : parametricity.
+#[export] Hint Resolve elimS_Parametric : parametricity.
 
 Lemma copair_Parametric {alg1 alg2 : Core.Algebra} (R : Core.Parametric.Rel alg1 alg2)
   {A B C} s1 s2 t1 t2 : R A C s1 s2 -> R B C t1 t2
@@ -238,7 +238,7 @@ Proof.
 unfold copair.
 auto with parametricity.
 Qed.
-Hint Resolve copair_Parametric : parametricity.
+#[export] Hint Resolve copair_Parametric : parametricity.
 
 Lemma swapS_Parametric {alg1 alg2 : Core.Algebra} (R : Core.Parametric.Rel alg1 alg2)
   {A B} : R (A + B) (B + A) swapS swapS.
@@ -246,7 +246,7 @@ Proof.
 unfold swapS.
 auto with parametricity.
 Qed.
-Hint Resolve swapS_Parametric : parametricity.
+#[export] Hint Resolve swapS_Parametric : parametricity.
 
 Lemma swapP_Parametric {alg1 alg2 : Core.Algebra} (R : Core.Parametric.Rel alg1 alg2)
   {A B} : R (A * B) (B * A) swapP swapP.
@@ -254,7 +254,7 @@ Proof.
 unfold swapP.
 auto with parametricity.
 Qed.
-Hint Resolve swapP_Parametric : parametricity.
+#[export] Hint Resolve swapP_Parametric : parametricity.
 
 Section CoreSem.
 
@@ -356,7 +356,7 @@ Proof.
 induction B;[|destruct b as [b|b] |]; cbn;
 auto with parametricity.
 Qed.
-Hint Immediate scribe_Parametric : parametricity.
+#[export] Hint Immediate scribe_Parametric : parametricity.
 
 
 Module Assertion.
@@ -452,9 +452,9 @@ destruct R as [R [Rb []]].
 cbn; auto.
 Qed.
 
-Hint Resolve assertl_Parametric : parametricity.
-Hint Resolve assertr_Parametric : parametricity.
-Hint Immediate fail_Parametric : parametricity.
+#[export] Hint Resolve assertl_Parametric : parametricity.
+#[export] Hint Resolve assertr_Parametric : parametricity.
+#[export] Hint Immediate fail_Parametric : parametricity.
 
 Section AssertionSem.
 
@@ -575,7 +575,7 @@ Proof.
 destruct R as [R [Rb []]].
 cbn; auto.
 Qed.
-Hint Immediate witness_Parametric : parametricity.
+#[export] Hint Immediate witness_Parametric : parametricity.
 
 Section WitnessSem.
 

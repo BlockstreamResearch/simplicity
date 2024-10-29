@@ -3,7 +3,7 @@
 , c       ? true
 , nixpkgs ? import <nixpkgs> {}
 , ghc ? "ghc98"
-, coqPackages ? "coqPackages_8_16"
+, coqPackages ? "coqPackages_8_17"
 , env ? "stdenv"
 , withCoverage ? true
 , withProfiler ? true

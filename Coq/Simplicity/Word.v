@@ -1943,21 +1943,21 @@ Lemma zero_Parametric {n} {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel 
 Proof.
 induction n; cbn; auto with parametricity.
 Qed.
-Hint Immediate zero_Parametric : parametricity.
+#[export] Hint Immediate zero_Parametric : parametricity.
 
 Lemma adderBit_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) : R _ _ adderBit adderBit.
 Proof.
 unfold adderBit.
 auto with parametricity.
 Qed.
-Hint Immediate adderBit_Parametric : parametricity.
+#[export] Hint Immediate adderBit_Parametric : parametricity.
 
 Lemma fullAdderBit_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) : R _ _ fullAdderBit fullAdderBit.
 Proof.
 unfold fullAdderBit.
 auto 10 with parametricity.
 Qed.
-Hint Immediate fullAdderBit_Parametric : parametricity.
+#[export] Hint Immediate fullAdderBit_Parametric : parametricity.
 
 Lemma buildFullAdder_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {W} t1 t2 : R _ (Bit * W) t1 t2 -> R _ _ (buildFullAdder t1) (buildFullAdder t2).
@@ -1965,28 +1965,28 @@ Proof.
 unfold buildFullAdder.
 auto 10 with parametricity.
 Qed.
-Hint Resolve buildFullAdder_Parametric : parametricity.
+#[export] Hint Resolve buildFullAdder_Parametric : parametricity.
 
 Lemma fullAdder_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {n} : R _ _ fullAdder (@fullAdder n _).
 Proof.
 induction n; cbn; auto with parametricity.
 Qed.
-Hint Immediate fullAdder_Parametric : parametricity.
+#[export] Hint Immediate fullAdder_Parametric : parametricity.
 
 Lemma adder_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {n} : R _ _ adder (@adder n _).
 Proof.
 induction n; cbn; auto with parametricity.
 Qed.
-Hint Immediate adder_Parametric : parametricity.
+#[export] Hint Immediate adder_Parametric : parametricity.
 
 Lemma fullMultiplierBit_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) : R _ _ fullMultiplierBit fullMultiplierBit.
 Proof.
 unfold fullMultiplierBit.
 auto with parametricity.
 Qed.
-Hint Immediate fullMultiplierBit_Parametric : parametricity.
+#[export] Hint Immediate fullMultiplierBit_Parametric : parametricity.
 
 Lemma buildFullMultiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {W} t1 t2 : R _ (W * W) t1 t2 -> R _ _ (buildFullMultiplier t1) (buildFullMultiplier t2).
@@ -1994,14 +1994,14 @@ Proof.
 unfold buildFullMultiplier.
 auto 15 with parametricity.
 Qed.
-Hint Resolve buildFullMultiplier_Parametric : parametricity.
+#[export] Hint Resolve buildFullMultiplier_Parametric : parametricity.
 
 Lemma fullMultiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {n} : R _ (Word n * Word n) fullMultiplier (@fullMultiplier n _).
 Proof.
 induction n; cbn; auto with parametricity.
 Qed.
-Hint Immediate fullMultiplier_Parametric : parametricity.
+#[export] Hint Immediate fullMultiplier_Parametric : parametricity.
 
 Lemma multiplier_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {n} : R _ _ multiplier (@multiplier n _).
@@ -2009,7 +2009,7 @@ Proof.
 unfold multiplier.
 cbn; auto with parametricity.
 Qed.
-Hint Immediate multiplier_Parametric : parametricity.
+#[export] Hint Immediate multiplier_Parametric : parametricity.
 
 Lemma build_fill_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {C X} t1 t2 : R C X t1 t2 -> R _ _ (build_fill t1) (build_fill t2).
@@ -2017,14 +2017,14 @@ Proof.
 unfold build_fill.
 auto 10 with parametricity.
 Qed.
-Hint Resolve build_fill_Parametric : parametricity.
+#[export] Hint Resolve build_fill_Parametric : parametricity.
 
 Lemma fill_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {C X n} op1 op2 : R _ _ op1 op2 -> R _ _ (fill op1) (@fill C X n _ op2).
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
-Hint Resolve fill_Parametric : parametricity.
+#[export] Hint Resolve fill_Parametric : parametricity.
 
 Lemma buildBitwiseTri_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {W} t1 t2 : R _ W t1 t2 -> R _ _ (buildBitwiseTri t1) (buildBitwiseTri t2).
@@ -2032,14 +2032,14 @@ Proof.
 unfold buildBitwiseTri.
 auto 10 with parametricity.
 Qed.
-Hint Resolve buildBitwiseTri_Parametric : parametricity.
+#[export] Hint Resolve buildBitwiseTri_Parametric : parametricity.
 
 Lemma bitwiseTri_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} op1 op2 : R _ _ op1 op2 -> R _ _ (bitwiseTri op1) (@bitwiseTri X n _ op2).
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
-Hint Resolve bitwiseTri_Parametric : parametricity.
+#[export] Hint Resolve bitwiseTri_Parametric : parametricity.
 
 Lemma build_leftmost_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {V X} t1 t2 : R V X t1 t2 -> R _ _ (build_leftmost t1) (build_leftmost t2).
@@ -2047,14 +2047,14 @@ Proof.
 unfold build_leftmost.
 auto 10 with parametricity.
 Qed.
-Hint Resolve build_leftmost_Parametric : parametricity.
+#[export] Hint Resolve build_leftmost_Parametric : parametricity.
 
 Lemma leftmost_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} : R _ _ leftmost (@leftmost X n term2).
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
-Hint Resolve leftmost_Parametric : parametricity.
+#[export] Hint Resolve leftmost_Parametric : parametricity.
 
 Lemma build_rightmost_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {V X} t1 t2 : R V X t1 t2 -> R _ _ (build_rightmost t1) (build_rightmost t2).
@@ -2062,14 +2062,14 @@ Proof.
 unfold build_rightmost.
 auto 10 with parametricity.
 Qed.
-Hint Resolve build_rightmost_Parametric : parametricity.
+#[export] Hint Resolve build_rightmost_Parametric : parametricity.
 
 Lemma rightmost_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} : R _ _ rightmost (@rightmost X n term2).
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
-Hint Resolve rightmost_Parametric : parametricity.
+#[export] Hint Resolve rightmost_Parametric : parametricity.
 
 Lemma build_full_left_shift1_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X W} t1 t2 : R (W * X) (X * W) t1 t2 -> R _ _ (build_full_left_shift1 t1) (build_full_left_shift1 t2).
@@ -2077,14 +2077,14 @@ Proof.
 unfold build_full_left_shift1.
 auto 10 with parametricity.
 Qed.
-Hint Resolve build_full_left_shift1_Parametric : parametricity.
+#[export] Hint Resolve build_full_left_shift1_Parametric : parametricity.
 
 Lemma full_left_shift1_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} : R _ _ full_left_shift1 (@full_left_shift1 X n term2).
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
-Hint Resolve full_left_shift1_Parametric : parametricity.
+#[export] Hint Resolve full_left_shift1_Parametric : parametricity.
 
 Lemma build_full_right_shift1_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X W} t1 t2 : R (W * X) (X * W) t1 t2 -> R _ _ (build_full_right_shift1 t1) (build_full_right_shift1 t2).
@@ -2092,14 +2092,14 @@ Proof.
 unfold build_full_right_shift1.
 auto 10 with parametricity.
 Qed.
-Hint Resolve build_full_right_shift1_Parametric : parametricity.
+#[export] Hint Resolve build_full_right_shift1_Parametric : parametricity.
 
 Lemma full_right_shift1_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} : R _ _ full_right_shift1 (@full_right_shift1 X n term2).
 Proof.
 induction n; simpl; auto with parametricity.
 Qed.
-Hint Resolve full_right_shift1_Parametric : parametricity.
+#[export] Hint Resolve full_right_shift1_Parametric : parametricity.
 
 Lemma left_shift1_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} t1 t2 : R _ _ t1 t2 -> R _ _ (left_shift1 t1) (@left_shift1 X n term2 t2).
@@ -2107,7 +2107,7 @@ Proof.
 unfold left_shift1.
 auto 10 with parametricity.
 Qed.
-Hint Resolve left_shift1_Parametric : parametricity.
+#[export] Hint Resolve left_shift1_Parametric : parametricity.
 
 Lemma left_shift_const_by_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} t1 t2 p : R _ _ t1 t2 -> R _ _ (left_shift_const_by t1 p) (@left_shift_const_by X n term2 t2 p).
@@ -2120,7 +2120,7 @@ try apply comp_Parametric;auto 10 with parametricity;
 destruct (@eq_sym Ty (Vector X (S n)) (Vector (X * X) n) (@VectorPromote X n));
 apply IHn;auto 10 with parametricity.
 Qed.
-Hint Resolve left_shift_const_by_Parametric : parametricity.
+#[export] Hint Resolve left_shift_const_by_Parametric : parametricity.
 
 Lemma right_shift1_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} t1 t2 : R _ _ t1 t2 -> R _ _ (right_shift1 t1) (@right_shift1 X n term2 t2).
@@ -2128,7 +2128,7 @@ Proof.
 unfold right_shift1.
 auto 10 with parametricity.
 Qed.
-Hint Resolve right_shift1_Parametric : parametricity.
+#[export] Hint Resolve right_shift1_Parametric : parametricity.
 
 Lemma right_shift_const_by_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} t1 t2 p : R _ _ t1 t2 -> R _ _ (right_shift_const_by t1 p) (@right_shift_const_by X n term2 t2 p).
@@ -2141,14 +2141,14 @@ try apply comp_Parametric;auto 10 with parametricity;
 destruct (@eq_sym Ty (Vector X (S n)) (Vector (X * X) n) (@VectorPromote X n));
 apply IHn;auto 10 with parametricity.
 Qed.
-Hint Resolve right_shift_const_by_Parametric : parametricity.
+#[export] Hint Resolve right_shift_const_by_Parametric : parametricity.
 
 Lemma shift_const_by_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} t1 t2 z : R _ _ t1 t2 -> R _ _ (shift_const_by t1 z) (@shift_const_by X n term2 t2 z).
 Proof.
 destruct z;simpl;auto 10 with parametricity.
 Qed.
-Hint Resolve shift_const_by_Parametric : parametricity.
+#[export] Hint Resolve shift_const_by_Parametric : parametricity.
 
 Lemma shift_const_Parametric {n} z {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) :
   R (Word n) (Word n) (shift_const z) (shift_const z).
@@ -2157,7 +2157,7 @@ unfold shift_const.
 apply shift_const_by_Parametric.
 auto 10 with parametricity.
 Qed.
-Hint Immediate shift_const_Parametric : parametricity.
+#[export] Hint Immediate shift_const_Parametric : parametricity.
 
 Lemma left_rotate1_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} : R _ _ left_rotate1 (@left_rotate1 X n term2).
@@ -2165,7 +2165,7 @@ Proof.
 unfold left_rotate1.
 auto 10 with parametricity.
 Qed.
-Hint Resolve left_rotate1_Parametric : parametricity.
+#[export] Hint Resolve left_rotate1_Parametric : parametricity.
 
 Lemma right_rotate1_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {X n} : R _ _ right_rotate1 (@right_rotate1 X n term2).
@@ -2173,7 +2173,7 @@ Proof.
 unfold right_rotate1.
 auto 10 with parametricity.
 Qed.
-Hint Resolve right_rotate1_Parametric : parametricity.
+#[export] Hint Resolve right_rotate1_Parametric : parametricity.
 
 Lemma rotate_const_list_length {term1 term2 : Core.Algebra}
   {X n} z : length (@rotate_const_list X n term1 z) = length (@rotate_const_list X n term2 z).
@@ -2222,4 +2222,4 @@ apply foldr_comp_Parametric.
 - apply rotate_const_list_length.
 - apply rotate_const_list_Parametric.
 Qed.
-Hint Immediate rotate_const_Parametric : parametricity.
+#[export] Hint Immediate rotate_const_Parametric : parametricity.

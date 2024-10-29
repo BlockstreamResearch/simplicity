@@ -85,7 +85,7 @@ Proof.
 destruct R as [R [Rb []]].
 cbn; auto.
 Qed.
-Hint Resolve disconnect_Parametric : parametricity.
+#[export] Hint Resolve disconnect_Parametric : parametricity.
 
 Module AssertionDelegation.
 

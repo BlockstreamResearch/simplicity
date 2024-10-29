@@ -139,7 +139,7 @@ eval $(opam env)
 Install the [Coq theorem prover](https://coq.inria.fr/).
 
 ```bash
-opam pin -j$(nproc) add coq 8.16.1
+opam pin -j$(nproc) add coq 8.17.1
 ```
 
 Install the [CompCert certified C compiler](https://compcert.org/).

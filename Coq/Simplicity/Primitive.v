@@ -109,7 +109,7 @@ Proof.
 destruct R as [R [Rb []]].
 cbn; auto.
 Qed.
-Hint Immediate prim_Parametric : parametricity.
+#[export] Hint Immediate prim_Parametric : parametricity.
 
 Definition primSem M A B := Kleisli (ReaderT Prim.env M) A B.
 
@@ -242,7 +242,7 @@ Proof.
 destruct R as [R [Rb []]].
 cbn; auto.
 Qed.
-Hint Resolve jet_Parametric : parametricity.
+#[export] Hint Resolve jet_Parametric : parametricity.
 
 Definition PrimSem_jet_mixin (M : CIMonadZero) : mixin (primSem M) :=
   {| Jet.jet A B t p := t (PrimitivePrimSem M) |}.

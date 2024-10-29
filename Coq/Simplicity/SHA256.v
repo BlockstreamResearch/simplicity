@@ -390,7 +390,7 @@ Proof.
 unfold scribe32.
 auto with parametricity.
 Qed.
-Hint Immediate scribe32_Parametric : parametricity.
+#[export] Hint Immediate scribe32_Parametric : parametricity.
 
 Lemma add32_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) :
   R _ _ add32 add32.
@@ -398,7 +398,7 @@ Proof.
 unfold add32.
 auto with parametricity.
 Qed.
-Hint Immediate add32_Parametric : parametricity.
+#[export] Hint Immediate add32_Parametric : parametricity.
 
 Lemma xor3Word32_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) :
   R _ _ xor3Word32 xor3Word32.
@@ -407,7 +407,7 @@ unfold xor3Word32.
 repeat apply buildBitwiseTri_Parametric.
 auto with parametricity.
 Qed.
-Hint Immediate xor3Word32_Parametric : parametricity.
+#[export] Hint Immediate xor3Word32_Parametric : parametricity.
 
 Lemma chWord32_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) :
   R _ _ chWord32 chWord32.
@@ -416,7 +416,7 @@ unfold chWord32.
 repeat apply buildBitwiseTri_Parametric.
 auto with parametricity.
 Qed.
-Hint Immediate chWord32_Parametric : parametricity.
+#[export] Hint Immediate chWord32_Parametric : parametricity.
 
 Lemma majWord32_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) :
   R _ _ majWord32 majWord32.
@@ -425,7 +425,7 @@ unfold majWord32.
 repeat apply buildBitwiseTri_Parametric.
 auto with parametricity.
 Qed.
-Hint Immediate majWord32_Parametric : parametricity.
+#[export] Hint Immediate majWord32_Parametric : parametricity.
 
 Lemma shift32_Parametric z {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) :
   R _ _ (shift32 z) (shift32 z).
@@ -433,7 +433,7 @@ Proof.
 unfold shift32.
 auto with parametricity.
 Qed.
-Hint Immediate shift32_Parametric : parametricity.
+#[export] Hint Immediate shift32_Parametric : parametricity.
 
 Lemma rotate32_Parametric z {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) :
   R _ _ (rotate32 z) (rotate32 z).
@@ -441,7 +441,7 @@ Proof.
 unfold rotate32.
 auto with parametricity.
 Qed.
-Hint Immediate rotate32_Parametric : parametricity.
+#[export] Hint Immediate rotate32_Parametric : parametricity.
 
 Lemma hashBlock_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2) :
   R _ _ hashBlock hashBlock.
@@ -458,7 +458,7 @@ assert (Hfold : forall l e0 e1, R _ _ e0 e1 ->
 solve [auto 30 with parametricity].
 Qed.
 
-Hint Immediate hashBlock_Parametric : parametricity.
+#[export] Hint Immediate hashBlock_Parametric : parametricity.
 
 Require Import Simplicity.MerkleRoot.
 

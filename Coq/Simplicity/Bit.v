@@ -52,7 +52,7 @@ Proof.
 unfold false.
 auto with parametricity.
 Qed.
-Hint Immediate false_Parametric : parametricity.
+#[export] Hint Immediate false_Parametric : parametricity.
 
 Lemma true_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {A} : R A Bit true true.
@@ -60,7 +60,7 @@ Proof.
 unfold true.
 auto with parametricity.
 Qed.
-Hint Immediate true_Parametric : parametricity.
+#[export] Hint Immediate true_Parametric : parametricity.
 
 Lemma cond_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {A B} s1 s2 t1 t2 : R A B s1 s2 -> R A B t1 t2 -> R (Bit * A) B (cond s1 t1) (cond s2 t2).
@@ -68,7 +68,7 @@ Proof.
 unfold cond.
 auto with parametricity.
 Qed.
-Hint Resolve cond_Parametric : parametricity.
+#[export] Hint Resolve cond_Parametric : parametricity.
 
 Lemma ch_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {A} : R _ A ch ch.
@@ -76,7 +76,7 @@ Proof.
 unfold ch.
 auto with parametricity.
 Qed.
-Hint Immediate ch_Parametric : parametricity.
+#[export] Hint Immediate ch_Parametric : parametricity.
 
 Lemma not_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {A} t1 t2 : R A Bit t1 t2 -> R A Bit (not t1) (not t2).
@@ -84,7 +84,7 @@ Proof.
 unfold not.
 auto with parametricity.
 Qed.
-Hint Resolve not_Parametric : parametricity.
+#[export] Hint Resolve not_Parametric : parametricity.
 
 Lemma and_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {A} s1 s2 t1 t2 : R A Bit s1 s2 -> R A Bit t1 t2 -> R A Bit (and s1 t1) (and s2 t2).
@@ -92,7 +92,7 @@ Proof.
 unfold and.
 auto with parametricity.
 Qed.
-Hint Resolve and_Parametric : parametricity.
+#[export] Hint Resolve and_Parametric : parametricity.
 
 Lemma or_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   {A} s1 s2 t1 t2 : R A Bit s1 s2 -> R A Bit t1 t2 -> R A Bit (or s1 t1) (or s2 t2).
@@ -100,7 +100,7 @@ Proof.
 unfold or.
 auto with parametricity.
 Qed.
-Hint Resolve or_Parametric : parametricity.
+#[export] Hint Resolve or_Parametric : parametricity.
 
 Lemma xor3_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   : R _ _ xor3 xor3.
@@ -108,7 +108,7 @@ Proof.
 unfold xor3.
 auto with parametricity.
 Qed.
-Hint Immediate xor3_Parametric : parametricity.
+#[export] Hint Immediate xor3_Parametric : parametricity.
 
 Lemma maj_Parametric {term1 term2 : Core.Algebra} (R : Core.Parametric.Rel term1 term2)
   : R _ _ maj maj.
@@ -116,4 +116,4 @@ Proof.
 unfold maj.
 auto with parametricity.
 Qed.
-Hint Immediate maj_Parametric : parametricity.
+#[export] Hint Immediate maj_Parametric : parametricity.
