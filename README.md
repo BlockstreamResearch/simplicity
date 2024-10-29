@@ -146,7 +146,7 @@ Install the [CompCert certified C compiler](https://compcert.org/).
 
 ```bash
 opam repo add coq-released https://coq.inria.fr/opam/released
-opam install -j$(nproc) coq-compcert.3.12
+opam install -j$(nproc) coq-compcert.3.13.1
 ```
 
 Install a custom version of the [Verified Software Toolchain](https://vst.cs.princeton.edu/).
@@ -154,8 +154,8 @@ Install a custom version of the [Verified Software Toolchain](https://vst.cs.pri
 **You cannot use opam for this step!**
 
 ```
-wget -O - https://github.com/PrincetonUniversity/VST/archive/v2.12.tar.gz | tar -xvzf -
-cd VST-2.12
+wget -O - https://github.com/PrincetonUniversity/VST/archive/v2.13.tar.gz | tar -xvzf -
+cd VST-2.13
 make -j$(nproc) default_target sha
 make install
 install -d $(coqc -where)/user-contrib/sha
