@@ -2,7 +2,7 @@
 stdenv.mkDerivation {
   name = "Simplicity-coq-0.0.0";
   src = lib.sourceFilesBySuffices
-      (lib.sourceByRegex ./Coq ["_CoqProject" "Simplicity" "Simplicity/.*" "Util" "Util/.*"])
+      (lib.sourceByRegex ./Coq ["_CoqProject" "C" "C/.*" "Simplicity" "Simplicity/.*" "Util" "Util/.*"])
     ["_CoqProject" ".v"];
   postConfigure = ''
     coq_makefile -f _CoqProject -o CoqMakefile

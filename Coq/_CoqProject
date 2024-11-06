@@ -1,4 +1,5 @@
 -Q Simplicity Simplicity
+-R C C
 Simplicity/StaticAnalysis.v
 Simplicity/MerkleRoot.v
 Simplicity/Core.v
@@ -20,3 +21,4 @@ Simplicity/Util/Option.v
 Simplicity/Util/Arith.v
 Simplicity/Util/Monad/Reader.v
 Simplicity/Util/PackedClass.v
+C/jets_secp256k1.v
