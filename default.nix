@@ -4,6 +4,7 @@
 , production ? false
 , secp256k1git ? null
 , wideMultiply ? null
+, withAlectryon ? true
 , withCoverage ? false
 , withProfiler ? false
 , withTiming ? true
@@ -13,6 +14,7 @@
 }:
 let hp = nixpkgs.haskell.packages.${ghc};
     cp = nixpkgs.${coqPackages};
+    pp = nixpkgs.python3Packages;
  in rec
 {
   haskell = haskellPackages.callPackage ./Simplicity.Haskell.nix {
@@ -48,7 +50,8 @@ let hp = nixpkgs.haskell.packages.${ghc};
   };
 
   coq = nixpkgs.callPackage ./Simplicity.Coq.nix {
-    inherit (cp) coq;
+    alectryon = if withAlectryon then pp.alectryon else null;
+    inherit (cp) coq serapi;
     inherit vst;
   };
 

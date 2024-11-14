@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="alectryon-standalone"><head><title>spec_int128.v</title><meta charset="utf-8"><meta content="Alectryon" name="generator"><meta name="viewport" content="width=device-width, initial-scale=1"><link href="alectryon.css" rel="stylesheet"><link href="pygments.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/IBM-type/0.5.4/css/ibm-type.min.css" integrity="sha512-sky5cf9Ts6FY1kstGOBHSybfKqdHR41M0Ldb0BjNiv3ifltoQIsg0zIaQ+wwdwgQ0w9vKFW7Js50lxH9vqNSSw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/5.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" /><script src="alectryon.js"></script></head><body><article class="alectryon-root alectryon-windowed"><div class="alectryon-banner">Built with <a href="https://github.com/cpitclaudel/alectryon/">Alectryon</a>, running Coq+SerAPI v8.17.0+0.17.3. Bubbles (<span class="alectryon-bubble"></span>) indicate interactive fragments: hover for details, tap to reveal contents. Use <kbd>Ctrl+↑</kbd> <kbd>Ctrl+↓</kbd> to navigate, <kbd>Ctrl+🖱️</kbd> to focus. On Mac, use <kbd>⌘</kbd> instead of <kbd>Ctrl</kbd>.</div><pre class="alectryon-io highlight"><!-- Generator: Alectryon --><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Require Import</span> VST.floyd.proofauto.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Require Import</span> VST.msl.iter_sepcon.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Require Import</span> jets_secp256k1.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><input class="alectryon-toggle" id="spec-int128-v-chk0" style="display: none" type="checkbox"><label class="alectryon-input" for="spec-int128-v-chk0">#[export] <span class="kn">Instance</span> <span class="nf">CompSpecs</span> : compspecs.</label><small class="alectryon-output"><div><div class="alectryon-goals"><blockquote class="alectryon-goal"><span class="goal-separator"><hr></span><div class="goal-conclusion">compspecs</div></blockquote></div></div></small><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input">make_compspecs prog.</span><span class="alectryon-wsp"> </span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Defined</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">Int128_modulus</span> : Z := <span class="mi">2</span>^<span class="mi">128</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">Int128_max_unsigned</span> : Z := Int128_modulus - <span class="mi">1</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">Int128_max_signed</span> : Z := <span class="mi">2</span>^<span class="mi">127</span> - <span class="mi">1</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">Int128_min_signed</span> : Z := -<span class="mi">2</span>^<span class="mi">127</span>.</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">t_secp256k1_uint128</span> := Tstruct _secp256k1_uint128 noattr.</span><span class="alectryon-wsp">  
+</span></span><span class="alectryon-wsp"><span class="c">(* (secp256k1_uint128_at sh x p) says that the structure pointed to by p</span>
+<span class="c"> * is equivalent to x modulo 2^128.</span>
+<span class="c"> *)</span>
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_uint128_at</span> <span class="nv">sh</span> <span class="nv">x</span> :=
+   data_at sh
+     t_secp256k1_uint128 (Vlong (Int64.repr x), Vlong (Int64.repr (Z.shiftr x <span class="mi">64</span>))).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+<span class="c">(*/</span>
+<span class="c">Definition secp256k1_u128_load_spec : ident * funspec :=</span>
+<span class="c">DECLARE _secp256k1_u128_load</span>
+<span class="c">  WITH r : val, sh : share, hi : Z, lo : Z</span>
+<span class="c">  PRE [ tptr t_secp256k1_uint128, tulong, tulong ]</span>
+<span class="c">    PROP(writable_share sh;</span>
+<span class="c">         0 &lt;= lo &lt; Int64.modulus)</span>
+<span class="c">    PARAMS(r; Vlong (Int64.repr hi); Vlong (Int64.repr lo))</span>
+<span class="c">  SEP(data_at_ sh t_secp256k1_uint128 r)</span>
+<span class="c">POST [ tvoid ]</span>
+<span class="c">  PROP()</span>
+<span class="c">  RETURN()</span>
+<span class="c">  SEP(secp256k1_uint128_at sh (Z.shiftl hi 64 + lo) r).</span>
+<span class="c">*)</span>
+
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_u128_mul_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_u128_mul
+  WITH r : val, sh : share, a : Z, b : Z
+  PRE [ tptr t_secp256k1_uint128, tulong, tulong ]
+    PROP(writable_share sh;
+         <span class="mi">0</span> &lt;= a &lt; Int64.modulus;
+         <span class="mi">0</span> &lt;= b &lt; Int64.modulus)
+    PARAMS(r; Vlong (Int64.repr a); Vlong (Int64.repr b))
+  SEP(data_at_ sh t_secp256k1_uint128 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh (a * b) r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_u128_accum_mul_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_u128_accum_mul
+  WITH r : val, sh : share, r0 : Z, a : Z, b : Z
+  PRE [ tptr t_secp256k1_uint128, tulong, tulong ]
+    PROP(writable_share sh;
+         <span class="mi">0</span> &lt;= a &lt; Int64.modulus;
+         <span class="mi">0</span> &lt;= b &lt; Int64.modulus)
+    PARAMS(r; Vlong (Int64.repr a); Vlong (Int64.repr b))
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh (r0 + a * b) r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_u128_accum_u64_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_u128_accum_u64
+  WITH r : val, sh : share, r0 : Z, a : Z
+  PRE [ tptr t_secp256k1_uint128, tulong ]
+    PROP(writable_share sh;
+         <span class="mi">0</span> &lt;= a &lt; Int64.modulus)
+    PARAMS(r; Vlong (Int64.repr a))
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh (r0 + a) r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_u128_rshift_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_u128_rshift
+  WITH r : val, sh : share, r0 : Z, n : Z
+  PRE [ tptr t_secp256k1_uint128, tuint ]
+    PROP(writable_share sh;
+         <span class="mi">0</span> &lt;= r0 &lt; Int128_modulus;
+         <span class="mi">0</span> &lt;= n &lt; <span class="mi">128</span>)
+    PARAMS(r; Vint (Int.repr n))
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh (Z.shiftr r0 n) r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_u128_to_u64_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_u128_to_u64
+  WITH r : val, sh : share, r0 : Z
+  PRE [ tptr t_secp256k1_uint128 ]
+    PROP(readable_share sh)
+    PARAMS(r)
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tulong ]
+  PROP()
+  RETURN(Vlong (Int64.repr r0))
+  SEP(secp256k1_uint128_at sh r0 r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_u128_hi_u64_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_u128_hi_u64
+  WITH r : val, sh : share, r0 : Z
+  PRE [ tptr t_secp256k1_uint128 ]
+    PROP(readable_share sh)
+    PARAMS(r)
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tulong ]
+  PROP()
+  RETURN(Vlong (Int64.repr (Z.shiftr r0 <span class="mi">64</span>)))
+  SEP(secp256k1_uint128_at sh r0 r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_u128_from_u64_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_u128_from_u64
+  WITH r : val, sh : share, a : Z
+  PRE [ tptr t_secp256k1_uint128, tulong ]
+    PROP(writable_share sh;
+         <span class="mi">0</span> &lt;= a &lt; Int64.modulus)
+    PARAMS(r; Vlong (Int64.repr a))
+  SEP(data_at_ sh t_secp256k1_uint128 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh a r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_u128_check_bits_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_u128_check_bits
+  WITH r : val, sh : share, r0 : Z, n : Z
+  PRE [ tptr t_secp256k1_uint128, tuint ]
+    PROP(readable_share sh;
+         <span class="mi">0</span> &lt;= r0 &lt; <span class="mi">2</span>^<span class="mi">128</span>;
+         <span class="mi">0</span> &lt;= n &lt; <span class="mi">128</span>)
+    PARAMS(r; Vint (Int.repr n))
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tint ]
+  PROP()
+  RETURN(Vint (Int.repr (<span class="kr">if</span> r0 &lt;? <span class="mi">2</span>^n <span class="kr">then</span> <span class="mi">1</span> <span class="kr">else</span> <span class="mi">0</span>)))
+  SEP(secp256k1_uint128_at sh r0 r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+<span class="c">(*</span>
+<span class="c">Definition secp256k1_i128_load_spec : ident * funspec :=</span>
+<span class="c">DECLARE _secp256k1_i128_load</span>
+<span class="c">  WITH r : val, sh : share, hi : Z, lo : Z</span>
+<span class="c">  PRE [ tptr t_secp256k1_uint128, tlong, tulong ]</span>
+<span class="c">    PROP(writable_share sh;</span>
+<span class="c">         Int64.min_signed &lt;= hi &lt;= Int64.max_signed;</span>
+<span class="c">         0 &lt;= lo &lt; Int64.modulus)</span>
+<span class="c">    PARAMS(r; Vlong (Int64.repr hi); Vlong (Int64.repr lo))</span>
+<span class="c">  SEP(data_at_ sh t_secp256k1_uint128 r)</span>
+<span class="c">POST [ tvoid ]</span>
+<span class="c">  PROP()</span>
+<span class="c">  RETURN()</span>
+<span class="c">  SEP(secp256k1_uint128_at sh (Z.shiftl hi 64 + lo) r).</span>
+<span class="c">*)</span>
+
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_mul_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_mul
+  WITH r : val, sh : share, a : Z, b : Z
+  PRE [ tptr t_secp256k1_uint128, tlong, tlong ]
+    PROP(writable_share sh;
+         Int64.min_signed &lt;= a &lt;= Int64.max_signed;
+         Int64.min_signed &lt;= b &lt;= Int64.max_signed)
+    PARAMS(r; Vlong (Int64.repr a); Vlong (Int64.repr b))
+  SEP(data_at_ sh t_secp256k1_uint128 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh (a * b) r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_accum_mul_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_accum_mul
+  WITH r : val, sh : share, r0 : Z, a : Z, b : Z
+  PRE [ tptr t_secp256k1_uint128, tlong, tlong ]
+    PROP(writable_share sh;
+         Int64.min_signed &lt;= a &lt;= Int64.max_signed;
+         Int64.min_signed &lt;= b &lt;= Int64.max_signed;
+         Int128_min_signed &lt;= r0 &lt;= Int128_max_signed;
+         Int128_min_signed &lt;= r0 + a * b &lt;= Int128_max_signed)
+    PARAMS(r; Vlong (Int64.repr a); Vlong (Int64.repr b))
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh (r0 + a * b) r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_dissip_mul_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_dissip_mul
+  WITH r : val, sh : share, r0 : Z, a : Z, b : Z
+  PRE [ tptr t_secp256k1_uint128, tlong, tlong ]
+    PROP(writable_share sh;
+         Int64.min_signed &lt;= a &lt;= Int64.max_signed;
+         Int64.min_signed &lt;= b &lt;= Int64.max_signed;
+         Int128_min_signed &lt;= r0 &lt;= Int128_max_signed;
+         Int128_min_signed &lt;= r0 - a * b &lt;= Int128_max_signed)
+   PARAMS(r; Vlong (Int64.repr a); Vlong (Int64.repr b))
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh (r0 - a * b) r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_det_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_det
+  WITH r : val, sh : share, a : Z, b : Z, c : Z, d : Z
+  PRE [ tptr t_secp256k1_uint128, tlong, tlong, tlong, tlong ]
+    PROP(writable_share sh;
+         Int64.min_signed &lt;= a &lt;= Int64.max_signed;
+         Int64.min_signed &lt;= b &lt;= Int64.max_signed;
+         Int64.min_signed &lt;= c &lt;= Int64.max_signed;
+         Int64.min_signed &lt;= d &lt;= Int64.max_signed)
+    PARAMS(r; Vlong (Int64.repr a); Vlong (Int64.repr b);
+              Vlong (Int64.repr c); Vlong (Int64.repr d))
+  SEP(data_at_ sh t_secp256k1_uint128 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh (a * d - b * c) r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_rshift_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_rshift
+  WITH r : val, sh : share, r0 : Z, n : Z
+  PRE [ tptr t_secp256k1_uint128, tuint ]
+    PROP(writable_share sh;
+         Int128_min_signed &lt;= r0 &lt;= Int128_max_signed;
+         <span class="mi">0</span> &lt;= n &lt; <span class="mi">128</span>)
+    PARAMS(r; Vint (Int.repr n))
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh (Z.shiftr r0 n) r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_to_u64_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_to_u64
+  WITH r : val, sh : share, r0 : Z
+  PRE [ tptr t_secp256k1_uint128 ]
+    PROP(readable_share sh)
+    PARAMS(r)
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tulong ]
+  PROP()
+  RETURN(Vlong (Int64.repr r0))
+  SEP(secp256k1_uint128_at sh r0 r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_to_i64_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_to_i64
+  WITH r : val, sh : share, r0 : Z
+  PRE [ tptr t_secp256k1_uint128 ]
+    PROP(readable_share sh;
+         Int64.min_signed &lt;= r0 &lt;= Int64.max_signed)
+    PARAMS(r)
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tlong ]
+  PROP()
+  RETURN(Vlong (Int64.repr r0))
+  SEP(secp256k1_uint128_at sh r0 r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_from_i64_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_from_i64
+  WITH r : val, sh : share, a : Z
+  PRE [ tptr t_secp256k1_uint128, tlong ]
+    PROP(writable_share sh;
+         Int64.min_signed &lt;= a &lt;= Int64.max_signed)
+    PARAMS(r; Vlong (Int64.repr a))
+  SEP(data_at_ sh t_secp256k1_uint128 r)
+POST [ tvoid ]
+  PROP()
+  RETURN()
+  SEP(secp256k1_uint128_at sh a r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_eq_var_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_eq_var
+  WITH r : val, shr : share, r0 : Z,
+       s : val, shs : share, s0 : Z
+  PRE [ tptr t_secp256k1_uint128, tptr t_secp256k1_uint128 ]
+    PROP(readable_share shr;
+         readable_share shs)
+    PARAMS(r; s)
+  SEP(secp256k1_uint128_at shr r0 r;
+      secp256k1_uint128_at shs s0 s)
+POST [ tint ]
+  PROP()
+  RETURN(Vint (Int.repr (<span class="kr">if</span> r0 mod <span class="mi">2</span>^<span class="mi">128</span> =? s0 mod <span class="mi">2</span>^<span class="mi">128</span> <span class="kr">then</span> <span class="mi">1</span> <span class="kr">else</span> <span class="mi">0</span>)))
+  SEP(secp256k1_uint128_at shr r0 r
+     ;secp256k1_uint128_at shs s0 s).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_eq_var_spec_alias</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_eq_var
+  WITH r : val, shr : share, r0 : Z
+  PRE [ tptr t_secp256k1_uint128, tptr t_secp256k1_uint128 ]
+    PROP(readable_share shr)
+    PARAMS(r; r)
+  SEP(secp256k1_uint128_at shr r0 r)
+POST [ tint ]
+  PROP()
+  RETURN(Vint (Int.repr <span class="mi">1</span>))
+  SEP(secp256k1_uint128_at shr r0 r).</span><span class="alectryon-wsp">
+</span></span><span class="alectryon-wsp">
+</span><span class="alectryon-sentence"><span class="alectryon-input"><span class="kn">Definition</span> <span class="nf">secp256k1_i128_check_pow2_spec</span> : <span class="kn">ident</span> * funspec :=
+DECLARE _secp256k1_i128_check_pow2
+  WITH r : val, sh : share, r0 : Z, n : Z, sign : Z
+  PRE [ tptr t_secp256k1_uint128, tuint, tint ]
+    PROP(readable_share sh;
+         Int128_min_signed &lt;= r0 &lt;= Int128_max_signed;
+         <span class="mi">0</span> &lt;= n &lt; <span class="mi">127</span>;
+         sign = -<span class="mi">1</span> \/ sign = <span class="mi">1</span>)
+    PARAMS(r; Vint (Int.repr n); Vint (Int.repr sign))
+  SEP(secp256k1_uint128_at sh r0 r)
+POST [ tint ]
+  PROP()
+  RETURN(Vint (Int.repr (Z.b2z (r0 =? sign*<span class="mi">2</span>^n))))
+  SEP(secp256k1_uint128_at sh r0 r).</span><span class="alectryon-wsp">
+</span></span></pre></article></body></html>
