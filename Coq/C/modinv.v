@@ -180,7 +180,7 @@ destruct a; try apply Bezout_0b; destruct b; try apply Bezout_a0.
 * apply Bezout_neg_a; apply Bezout_neg_b; apply Pos_Bezout.
 Defined.
 
-Definition modInv a b := Zmod (uBezout (Bezout_gcd (Zmod a b) b)) b.
+Definition modInv a b := Z.modulo (uBezout (Bezout_gcd (Z.modulo a b) b)) b.
 
 Lemma modInv_zero b : modInv 0 b = 0.
 Proof.

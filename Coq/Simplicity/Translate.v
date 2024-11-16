@@ -165,7 +165,7 @@ repeat eapply seq_correct.
   apply skip_correct.
 - rewrite context_action.
   unfold appendLocalState; cbn.
-  rewrite <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize B)).
+  rewrite <- (app_nil_r (encode a)), <- (Nat.add_0_r (bitSize B)).
   pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some false :: repeat None (padL B C))|}).
   change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))) at 1.
   unfold LocalStateEnd, fullWriteFrame; cbn.
@@ -196,7 +196,7 @@ repeat eapply seq_correct.
   apply skip_correct.
 - rewrite context_action.
   unfold appendLocalState; cbn.
-  rewrite <- (app_nil_r (encode a)), <- (Plus.plus_0_r (bitSize C)).
+  rewrite <- (app_nil_r (encode a)), <- (Nat.add_0_r (bitSize C)).
   pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (Some true :: repeat None (padR B C))|}).
   change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))) at 1.
   unfold LocalStateEnd, fullWriteFrame; cbn.
@@ -275,7 +275,7 @@ eapply seq_correct.
   apply Hs.
 - rewrite context_action.
   unfold appendLocalState, fullWriteFrame; cbn.
-  rewrite (app_nil_r (rev _)), <- (Plus.plus_0_r (bitSize C)), rev_app_distr.
+  rewrite (app_nil_r (rev _)), <- (Nat.add_0_r (bitSize C)), rev_app_distr.
   rewrite <- (app_nil_r (encode a)) at 2.
   pose (ls1 := {| readLocalState := nil; writeLocalState := fullWriteFrame (encode (s a)) |}).
   change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))) at 1.
@@ -290,7 +290,7 @@ Lemma take_spec {A B C : Ty} (t : Arrow A C) pt :
 Proof.
 intros Ht [a b] ctx.
 unfold LocalStateBegin, LocalStateEnd, fullWriteFrame; cbn.
-rewrite <- (Plus.plus_0_r (bitSize C)), <- (app_nil_r (rev _)).
+rewrite <- (Nat.add_0_r (bitSize C)), <- (app_nil_r (rev _)).
 pose (ls1 := {| readLocalState := encode b; writeLocalState := newWriteFrame 0 |}).
 change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateBegin t a))) at 1.
 change (fillContext _ _) with (fillContext ctx (appendLocalState ls1 (LocalStateEnd t a))) at 2.

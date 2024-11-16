@@ -127,7 +127,7 @@ revert a i.
 induction n;[lia|].
 intros a [|i];[simpl; rewrite Z.pow_0_r, Zmod_1_r; reflexivity|].
 intros Hi.
-apply lt_S_n in Hi.
+apply Nat.succ_lt_mono in Hi.
 destruct n;[lia|].
 rewrite Nat2Z.inj_succ, Z.mul_succ_r, Z.pow_add_r by lia.
 simpl.

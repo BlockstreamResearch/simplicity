@@ -35,15 +35,9 @@ Defined.
 
 Lemma Zmod_div (x y : Z) : (x mod y / y = 0)%Z.
 Proof.
-destruct y as [|y|y].
+destruct (Z.eq_dec y 0) as [->|Hy].
 - apply Zdiv_0_r.
-- apply Zdiv_small.
-  apply Zmod_pos_bound.
-  reflexivity.
-- rewrite <- Zdiv_opp_opp.
-  apply Zdiv_small.
-  rewrite Z.opp_nonneg_nonpos, <- Z.opp_lt_mono.
-  destruct (Zmod_neg_bound x (Z.neg y));[reflexivity|auto].
+- auto using Z.mod_div.
 Qed.
 
 Lemma two_power_nat_le n m : n <= m -> (two_power_nat n <= two_power_nat m)%Z.

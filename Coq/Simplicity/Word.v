@@ -43,7 +43,7 @@ Record class T := Class
   ; toZ : T -> Z
   ; fromZ : Z -> T
   ; from_toZ : forall (v : T), fromZ (toZ v) = v
-  ; to_fromZ : forall (z : Z), toZ (fromZ z) = Zmod z (two_power_nat bitSize)
+  ; to_fromZ : forall (z : Z), toZ (fromZ z) = Z.modulo z (two_power_nat bitSize)
   }.
 
 Structure type := Pack { obj :> Ty; class_of : class obj }.
@@ -65,13 +65,13 @@ unfold fromZ, toZ.
 destruct (class_of T); auto.
 Qed.
 
-Lemma to_fromZ (z : Z) : toZ (fromZ z : T) = Zmod z (two_power_nat bitSize).
+Lemma to_fromZ (z : Z) : toZ (fromZ z : T) = Z.modulo z (two_power_nat bitSize).
 Proof.
 unfold fromZ, toZ, bitSize.
 destruct (class_of T); auto.
 Qed.
 
-Lemma toZ_mod (v : T) : toZ v = Zmod (toZ v) (two_power_nat bitSize).
+Lemma toZ_mod (v : T) : toZ v = Z.modulo (toZ v) (two_power_nat bitSize).
 Proof.
 rewrite <- from_toZ at 1.
 apply to_fromZ.
@@ -117,7 +117,7 @@ Proof.
 destruct v as [[] | []]; reflexivity.
 Qed.
 
-Lemma Bit_to_fromZ (z : Z) : BitToZ (BitFromZ z) = Zmod z (two_power_nat 1).
+Lemma Bit_to_fromZ (z : Z) : BitToZ (BitFromZ z) = Z.modulo z (two_power_nat 1).
 Proof.
 unfold BitFromZ.
 rewrite (Zmod_odd z).
@@ -161,7 +161,7 @@ f_equal.
   apply from_toZ.
 Qed.
 
-Lemma Pair_to_fromZ (z : Z) : PairToZ (PairFromZ z) = Zmod z (two_power_nat PairBitSize).
+Lemma Pair_to_fromZ (z : Z) : PairToZ (PairFromZ z) = Z.modulo z (two_power_nat PairBitSize).
 Proof.
 assert (H2 : forall n, (0 < Zpower_nat 2 n)%Z).
  intros n.
@@ -1166,7 +1166,7 @@ induction n;intros X t p v i ix1 ix2.
   assert (ix_half : Nat.div2 i < 2^n).
   1:{
     rewrite Nat.div2_div.
-    apply Nat.div_lt_upper_bound;[lia|].
+    apply Nat.Div0.div_lt_upper_bound.
     rewrite <- Nat.pow_succ_r'.
     assumption.
   }
@@ -1183,7 +1183,7 @@ induction n;intros X t p v i ix1 ix2.
       2:{
         rewrite (Pos2Nat.inj_xI p) at 1.
         intros Hpi.
-        assert (Hpi0 : S (2 * Pos.to_nat p) / 2 <= i / 2) by (apply Nat.div_le_mono;lia).
+        assert (Hpi0 : S (2 * Pos.to_nat p) / 2 <= i / 2) by (apply Nat.Div0.div_le_mono;lia).
         rewrite <- (Nat.div_unique _ _ (Pos.to_nat p) 1) in Hpi0; lia.
       }
       intros _.
@@ -1203,7 +1203,7 @@ induction n;intros X t p v i ix1 ix2.
         1:{
           apply Nat.le_antisymm;[lia|].
           apply (Nat.mul_le_mono_l _ _ 2) in Hpi.
-          assert (Hle := Nat.mul_div_le i 2).
+          assert (Hle := Nat.Div0.mul_div_le i 2).
           lia.
         }
         replace (Nat.even i) with (Nat.even (2 * Pos.to_nat p)%nat) by congruence.
@@ -1260,7 +1260,7 @@ induction n;intros X t p v i ix1 ix2.
       2:{
         rewrite (Pos2Nat.inj_xO p) at 1.
         intros Hpi.
-        assert (Hpi0 : (2 * Pos.to_nat p) / 2 <= i / 2) by (apply Nat.div_le_mono;lia).
+        assert (Hpi0 : (2 * Pos.to_nat p) / 2 <= i / 2) by (apply Nat.Div0.div_le_mono;lia).
         rewrite <- (Nat.div_unique _ _ (Pos.to_nat p) 0) in Hpi0; lia.
       }
       intros _.
@@ -1269,7 +1269,7 @@ induction n;intros X t p v i ix1 ix2.
       elim Nat.ltb_spec.
       1:{ 
         rewrite (Pos2Nat.inj_xO p) at 1.
-        assert (Hle := Nat.mul_div_le i 2).
+        assert (Hle := Nat.Div0.mul_div_le i 2).
         lia.
       }
       assert (ix_half2a : 2*(Nat.div2 i - Pos.to_nat p) < 2 ^ (S n)) by (rewrite Nat.pow_succ_r';lia).
@@ -1381,7 +1381,7 @@ induction n;intros X t p v i ix1.
   assert (ix_half : Nat.div2 i < 2^n).
   1:{
     rewrite Nat.div2_div.
-    apply Nat.div_lt_upper_bound;[lia|].
+    apply Nat.Div0.div_lt_upper_bound.
     rewrite <- Nat.pow_succ_r'.
     assumption.
   }
@@ -1400,7 +1400,7 @@ induction n;intros X t p v i ix1.
         exfalso.
         rewrite (Pos2Nat.inj_xI p) in Hpi.
         rewrite <- Nat.le_succ_l in Hpi.
-        assert (Hpi0 : (i + (S (Pos.to_nat p)) * 2) / 2 <= 2 ^ (S n) / 2) by (apply Nat.div_le_mono;lia).
+        assert (Hpi0 : (i + (S (Pos.to_nat p)) * 2) / 2 <= 2 ^ (S n) / 2) by (apply Nat.Div0.div_le_mono;lia).
         rewrite Nat.div_add in Hpi0 by lia.
         change (2^(S n)) with (2*(2^n))%nat in Hpi0.
         rewrite Nat.mul_comm, Nat.div_mul in Hpi0 by lia.
@@ -1495,9 +1495,9 @@ induction n;intros X t p v i ix1.
         elim Hip.
         rewrite (Pos2Nat.inj_xO p) in Hpi.
         change (2^(S n)) with (2*(2^n))%nat in Hpi.
-        assert (Hle := Nat.mul_div_le i 2).
+        assert (Hle := Nat.Div0.mul_div_le i 2).
         cut (i/2 <= 2^n - (Pos.to_nat p + 1));[lia|].
-        apply Nat.div_le_upper_bound;lia.
+        apply Nat.Div0.div_le_upper_bound;lia.
       }
       intros _.
       destruct (Nat.even i);reflexivity.
@@ -1509,7 +1509,7 @@ induction n;intros X t p v i ix1.
         intros Hip.
         apply Nat.nlt_ge in Hip.
         rewrite (Pos2Nat.inj_xO p) in Hip.
-        apply (Nat.div_le_mono _ _ 2) in Hip;[|lia].
+        apply (Nat.Div0.div_le_mono _ _ 2) in Hip.
         change (2^(S n)) with (2*(2^n))%nat in Hip.
         rewrite Nat.mul_comm, Nat.div_mul in Hip by lia.
         rewrite Nat.mul_comm, Nat.div_add in Hip by lia.
@@ -1698,7 +1698,7 @@ assert (Hcast : forall (l : list (Arrow (Vector (X*X) n) (Vector (X*X) n))) w,
 assert (ix_half : Nat.div2 i < 2^n).
 1:{
   rewrite Nat.div2_div.
-  apply Nat.div_lt_upper_bound;[lia|].
+  apply Nat.Div0.div_lt_upper_bound.
   rewrite <- Nat.pow_succ_r'.
   assumption.
 }
@@ -1900,7 +1900,7 @@ case_eq (Z.even z);[|case_eq (Z.even (z/2))].
 Qed.
 
 Lemma rotate_const_correct_word n z (x : Word n) i (Hi : (0 <= i < two_power_nat n)%Z) :
-  Z.testbit (toZ (|[rotate_const (-z)]| x : tySem (Word n))) i = Z.testbit (toZ x) (Zmod (i + z) (two_power_nat n))%Z.
+  Z.testbit (toZ (|[rotate_const (-z)]| x : tySem (Word n))) i = Z.testbit (toZ x) (Z.modulo (i + z) (two_power_nat n))%Z.
 Proof.
 assert (Htwo : forall n, two_power_nat n = Z.of_nat (2 ^ n)).
 1:{

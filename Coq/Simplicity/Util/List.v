@@ -22,7 +22,7 @@ Qed.
 Lemma firstn_app_3 {A} (l1 l2 : list A) :
   firstn (length l1) (l1 ++ l2) = l1.
 Proof.
-rewrite <- (Plus.plus_0_r (length l1)), firstn_app_2; cbn.
+rewrite <- (Nat.add_0_r (length l1)), firstn_app_2; cbn.
 apply app_nil_r.
 Qed.
 
@@ -53,7 +53,7 @@ Lemma skipn_app_2 {A} (n : nat) : forall (l1 l2 : list A),
        skipn (length l1 + n) (l1 ++ l2) = skipn n l2.
 Proof.
 intros l1 l2.
-rewrite skipn_app, Minus.minus_plus, skipn_all2; auto with arith.
+rewrite skipn_app, Nat.add_comm, Nat.add_sub, skipn_all2; auto with arith.
 Qed.
 
 Lemma skipn_app_3 {A} (l1 l2 : list A) :

@@ -375,7 +375,7 @@ assert (HIH : forall i, i < 16 -> SHA256.W (SHA256.nthi (repr_Block b)) (Z.of_na
  intros i Hi.
  rewrite (map_nth (fun n => SHA256.W (SHA256.nthi (repr_Block b)) (Z.of_nat n))).
  rewrite seq_nth by auto.
- rewrite plus_comm, Nat2Z.inj_add, Z2Nat.id by lia.
+ rewrite Nat.add_comm, Nat2Z.inj_add, Z2Nat.id by lia.
  reflexivity.
 rewrite <- IH1 in HIH.
 rewrite !HIH by lia.

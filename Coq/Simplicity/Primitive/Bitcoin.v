@@ -97,7 +97,7 @@ Inductive prim : Ty -> Ty -> Set :=
 | TotalOutputValue : prim Unit Word64
 | OutputValue : prim Word32 (Sum Unit Word64)
 | OutputScriptHash : prim Word32 (Sum Unit Word256)
-| ScirptCMR : prim Unit Word256.
+| ScriptCMR : prim Unit Word256.
 Definition t := prim.
 
 Definition primName : string := "Bitcoin".

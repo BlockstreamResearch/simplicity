@@ -213,7 +213,7 @@ Proof.
 unfold fillContext.
 cbn.
 repeat rewrite app_assoc.
-rewrite Plus.plus_assoc.
+rewrite Nat.add_assoc.
 reflexivity.
 Qed.
 
@@ -384,13 +384,13 @@ destruct (n <=? we)%nat;intros H.
  exists (fillContext ctx {| readLocalState := nil
                           ; writeLocalState := fullWriteFrame (repeat None n)
                           |}).
- elim (Minus.le_plus_minus_r n we).
+ replace we with (n + (we - n))%nat.
   exact (op _ ctx).
- abstract (inversion_clear H; assumption).
+ abstract (rewrite Nat.add_comm; apply Nat.sub_add; inversion_clear H; assumption).
 left.
 abstract(
  inversion 1;
- apply (Lt.lt_not_le we n);
+ apply (Nat.lt_nge we n);
  [inversion_clear H; assumption
  |replace <- we;auto with arith
  ]).
@@ -427,21 +427,21 @@ destruct (n <=? we)%nat;intros Hwe.
                            ; writeLocalState := fullWriteFrame l
                            |}).
   elim (firstn_skipn n rn).
-  elim (Minus.le_plus_minus_r n we).
+  replace we with (n + (we - n))%nat.
    refine (op l ctx _).
    abstract (apply (firstn_length_le _); inversion_clear Hrn; assumption).
-  abstract (inversion_clear Hwe; assumption).
+  abstract (rewrite Nat.add_comm; apply Nat.sub_add; inversion_clear Hwe; assumption).
  left.
  abstract (
   inversion 1;
-  apply (Lt.lt_not_le (length rn) n);
+  apply (Nat.lt_nge (length rn) n);
   [inversion_clear Hrn; assumption
   |replace <- rn; replace <- n; rewrite app_length; auto with arith
   ]).
 left.
 abstract(
  inversion 1;
- apply (Lt.lt_not_le we n);
+ apply (Nat.lt_nge we n);
  [inversion_clear Hwe; assumption
  |replace <- we;auto with arith
  ]).
@@ -482,7 +482,7 @@ destruct (n <=? length rn)%nat;intros Hrn.
 left.
 abstract (
  inversion 1;
- apply (Lt.lt_not_le (length rn) n);
+ apply (Nat.lt_nge (length rn) n);
  [inversion_clear Hrn; assumption
  |replace <- rn; replace <- n; rewrite app_length; auto with arith
  ]).
@@ -523,7 +523,7 @@ destruct (n <=? length rp)%nat;intros Hrp.
 left.
 abstract(
  inversion 1;
- apply (Lt.lt_not_le (length rp) n);
+ apply (Nat.lt_nge (length rp) n);
  [inversion_clear Hrp; assumption
  |replace <- rp; replace <- n; rewrite app_length, rev_length; auto with arith
  ]).
@@ -798,11 +798,12 @@ generalize H; clear H.
 rewrite (Compare_dec.leb_correct n (n + writeEmpty (activeWriteFrame ctx))%nat)
   by auto with arith.
 intros H.
-set (e := Minus.le_plus_minus_r _ _ _).
+set (e := MachineCode.Skip.chk_subproof _).
 generalize e; clear e.
-rewrite Minus.minus_plus.
-apply (K_dec_set Nat.eq_dec).
-reflexivity.
+replace (n + writeEmpty (activeWriteFrame ctx) - n)%nat
+ with (writeEmpty (activeWriteFrame ctx)).
+  apply (K_dec_set Nat.eq_dec); reflexivity.
+rewrite Nat.add_comm, Nat.add_sub; reflexivity.
 Qed.
 
 Definition skip_complete {n s0 s1} (tr : s0 >>- (skip n) ->> s1)
@@ -829,9 +830,11 @@ generalize H1; clear H1.
 rewrite (Compare_dec.leb_correct (length l) (length (l ++ nextData (activeReadFrame ctx))))
   by (rewrite app_length;auto with arith).
 intros H1.
-set (e := Minus.le_plus_minus_r _ _ _).
+set (e := MachineCode.Copy.chk_subproof0 _).
 generalize e; clear e.
-rewrite Minus.minus_plus.
+replace (length l + writeEmpty (activeWriteFrame ctx) - length l)%nat
+ with (writeEmpty (activeWriteFrame ctx)) by
+ (rewrite Nat.add_comm, Nat.add_sub; reflexivity).
 apply (K_dec_set Nat.eq_dec).
 set (e := firstn_skipn _ _).
 generalize e; clear e.
