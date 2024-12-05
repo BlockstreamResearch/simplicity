@@ -11438,7 +11438,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'script-cmr'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'script-cmr'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|script-cmr>> \<of\> <value|1>\<vdash\><2><rsup|256>>
 
@@ -11446,7 +11446,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'internal-key'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'internal-key'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|internal-key>> \<of\> <value|1>\<vdash\>PubKey>
 
@@ -11454,7 +11454,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-index'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-index'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-index>> \<of\> <value|1>\<vdash\><2><rsup|32>>
 
@@ -11462,7 +11462,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'num-inputs'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'num-inputs'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|num-inputs>> \<of\> <value|1>\<vdash\><2><rsup|32>>
 
@@ -11470,7 +11470,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'num-outputs'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'num-outputs'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|num-outputs>> \<of\> <value|1>\<vdash\><2><rsup|32>>
 
@@ -11478,7 +11478,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'lock-time'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'lock-time'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|lock-time>> \<of\> <value|1>\<vdash\>Lock>
 
@@ -11486,7 +11486,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'fee'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'fee'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|fee>> \<of\> <value|1>\<vdash\><2><rsup|64>>
 
@@ -11494,7 +11494,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'output-value'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'output-value'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-value>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|64>|)>>
@@ -11503,7 +11503,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'output-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'output-script-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-script-hash>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -11512,7 +11512,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'total-output-value'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'total-output-value'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|total-output-value>> \<of\>
   <value|1>\<vdash\><2><rsup|64>>
@@ -11521,7 +11521,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-prev-outpoint>> \<of\>
   <value|1>\<vdash\>Outpoint>
@@ -11530,7 +11530,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-value'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-value'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-value>> \<of\> <value|1>\<vdash\><2><rsup|64>>
 
@@ -11538,7 +11538,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-script-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-script-hash>> \<of\>
   <value|1>\<vdash\><2><rsup|256>>
@@ -11547,7 +11547,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-sequence'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-sequence'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-sequence>> \<of\> <value|1>\<vdash\><2><rsup|32>>
 
@@ -11555,7 +11555,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-annex-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-annex-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-annex-hash>> \<of\>
   <value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -11564,7 +11564,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-script-sig-hash>> \<of\>
   <value|1>\<vdash\><2><rsup|256>>
@@ -11573,7 +11573,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-prev-outpoint>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|Outpoint|)>>
@@ -11582,7 +11582,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-value'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-value'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-value>> \<of\> <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|64>|)>>
 
@@ -11590,7 +11590,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-script-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-script-hash>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -11599,7 +11599,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-sequence'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-sequence'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-sequence>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|32>|)>>
@@ -11608,7 +11608,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-annex-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-annex-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-annex-hash>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
@@ -11617,7 +11617,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-script-sig-hash>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -11626,7 +11626,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'total-input-value'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'total-input-value'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|total-input-value>> \<of\>
   <value|1>\<vdash\><2><rsup|64>>
@@ -11635,7 +11635,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'tapleaf-version'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'tapleaf-version'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|tapleaf-version>> \<of\> <value|1>\<vdash\><2><rsup|8>>
 
@@ -11643,7 +11643,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'tappath'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'tappath'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|tappath>> \<of\> <2><rsup|8>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
 
@@ -11651,7 +11651,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'version'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'version'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|version>> \<of\> <value|1>\<vdash\><2><rsup|32>>
 
@@ -12712,7 +12712,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'issuance'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'issuance'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|issuance>> :Index\<vdash\><maybe><around*|(|<maybe><around*|(|<2>|)>|)>>
 
@@ -12732,7 +12732,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'issuance-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'issuance-asset'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|issuance-asset>> :Index\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitAsset|)>|)>>
 
@@ -12750,7 +12750,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'issuance-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'issuance-token'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|issuance-token>> :Index\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitAsset|)>|)>>
 
@@ -12768,7 +12768,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'issuance-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'issuance-token'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|issuance-token>> :Index\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
 
@@ -12787,7 +12787,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'calculate-issuance-entropy'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'calculate-issuance-entropy'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|calculate-issuance-entropy>>
   :Outpoint\<times\><2><rsup|256>\<vdash\><2><rsup|256>>
@@ -12801,7 +12801,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'calculate-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'calculate-asset'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|calculate-asset>> :<2><rsup|256>\<vdash\>ExplicitAsset>
 
@@ -12813,7 +12813,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'calculate-explict-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'calculate-explict-token'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|calculate-explict-token>>
   :<2><rsup|256>\<vdash\>ExplicitAsset>
@@ -12827,7 +12827,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'calculate-confidential-token'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'calculate-confidential-token'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|calculate-confidential-token>>
   :<2><rsup|256>\<vdash\>ExplicitAsset>
@@ -12841,7 +12841,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'lbtc-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'lbtc-asset'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|lbtc-asset>> :<value|1>\<vdash\>ExplicitAsset>
 
@@ -12855,7 +12855,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'script-cmr'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'script-cmr'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|script-cmr>> \<of\> <value|1>\<vdash\><2><rsup|256>>
 
@@ -12863,7 +12863,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'internal-key'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'internal-key'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|internal-key>> \<of\> <value|1>\<vdash\>PubKey>
 
@@ -12871,7 +12871,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-index'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-index'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-index>> \<of\> <value|1>\<vdash\><2><rsup|32>>
 
@@ -12879,7 +12879,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'num-inputs'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'num-inputs'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|num-inputs>> \<of\> <value|1>\<vdash\><2><rsup|32>>
 
@@ -12887,7 +12887,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'num-outputs'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'num-outputs'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|num-outputs>> \<of\> <value|1>\<vdash\><2><rsup|32>>
 
@@ -12895,7 +12895,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'lock-time'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'lock-time'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|lock-time>> \<of\> <value|1>\<vdash\>Lock>
 
@@ -12903,7 +12903,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'output-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'output-asset'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-asset>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|Asset|)>>
@@ -12912,7 +12912,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'output-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'output-amount'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-amount>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|Asset\<times\>Amount|)>>
@@ -12921,7 +12921,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'output-nonce'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'output-nonce'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-nonce>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|Nonce|)>|)>>
@@ -12930,7 +12930,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'output-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'output-script-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-script-hash>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -12939,7 +12939,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'output-null-datum'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'output-null-datum'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-null-datum>> \<of\>
   <2><rsup|32>\<times\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|2>\<times\><2><rsup|256>+<around*|(|<2>+<2><rsup|4>|)>|)>|)>>
@@ -12948,7 +12948,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'output-is-fee'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'output-is-fee'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-is-fee>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2>|)>>
@@ -12957,7 +12957,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'output-surjection-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'output-surjection-proof'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-surjection-proof>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -12966,7 +12966,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'output-range-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'output-range-proof'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-range-proof>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -12975,7 +12975,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'total-fee'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'total-fee'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|total-fee>> \<of\> ExplicitAsset\<vdash\>ExplicitAmount>
 
@@ -12983,7 +12983,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-pegin'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-pegin'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-pegin>> \<of\>
   <value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -12992,7 +12992,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-prev-outpoint>> \<of\>
   <value|1>\<vdash\>Outpoint>
@@ -13001,7 +13001,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-asset'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-asset>> \<of\> <value|1>\<vdash\>Asset>
 
@@ -13009,7 +13009,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-amount'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-amount>> \<of\>
   <value|1>\<vdash\>Asset\<times\>Amount>
@@ -13018,7 +13018,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-script-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-script-hash>> \<of\>
   <value|1>\<vdash\><2><rsup|256>>
@@ -13027,7 +13027,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-sequence'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-sequence'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-sequence>> \<of\> <value|1>\<vdash\><2><rsup|32>>
 
@@ -13035,7 +13035,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-annex-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-annex-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-annex-hash>> \<of\>
   <value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -13044,7 +13044,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-script-sig-hash>> \<of\>
   <value|1>\<vdash\><2><rsup|256>>
@@ -13053,7 +13053,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-reissuance-blinding'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-reissuance-blinding'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-reissuance-blinding>> \<of\>
   <value|1>\<vdash\><maybe><around*|(|ExplicitNonce|)>>
@@ -13062,7 +13062,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-new-issuance-contract'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-new-issuance-contract'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-new-issuance-contract>> \<of\>
   <value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -13071,7 +13071,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-reissuance-entropy'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-reissuance-entropy'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-reissuance-entropy>> \<of\>
   <value|1>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -13080,7 +13080,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-issuance-asset-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-issuance-asset-amount'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-issuance-asset-amount>> \<of\>
   <value|1>\<vdash\><maybe><around*|(|Amount|)>>
@@ -13089,7 +13089,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-issuance-token-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-issuance-token-amount'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-issuance-token-amount>> \<of\>
   <value|1>\<vdash\><maybe><around*|(|Amount|)>>
@@ -13098,7 +13098,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-issuance-asset-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-issuance-asset-proof'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-issuance-asset-proof>> \<of\>
   <value|1>\<vdash\><2><rsup|256>>
@@ -13107,7 +13107,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'current-issuance-token-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'current-issuance-token-proof'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-issuance-token-proof>> \<of\>
   <value|1>\<vdash\><2><rsup|256>>
@@ -13116,7 +13116,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-pegin'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-pegin'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-pegin>> \<of\> <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
 
@@ -13124,7 +13124,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-prev-outpoint'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-prev-outpoint>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|Outpoint|)>>
@@ -13133,7 +13133,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-asset'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-asset>> \<of\> <2><rsup|32>\<vdash\><maybe><around*|(|Asset|)>>
 
@@ -13141,7 +13141,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-amount'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-amount>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|Asset\<times\>Amount|)>>
@@ -13150,7 +13150,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-script-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-script-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-script-hash>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -13159,7 +13159,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-sequence'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-sequence'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-sequence>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|32>|)>>
@@ -13168,7 +13168,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-annex-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-annex-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-annex-hash>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
@@ -13177,7 +13177,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'input-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'input-script-sig-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-script-sig-hash>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -13186,7 +13186,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'reissuance-blinding'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'reissuance-blinding'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|reissuance-blinding>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|ExplicitNonce|)>|)>>
@@ -13195,7 +13195,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'new-issuance-contract'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'new-issuance-contract'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|new-issuance-contract>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
@@ -13204,7 +13204,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'reissuance-entropy'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'reissuance-entropy'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|reissuance-entropy>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|<2><rsup|256>|)>|)>>
@@ -13213,7 +13213,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'issuance-asset-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'issuance-asset-amount'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|issuance-asset-amount>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|Amount|)>|)>>
@@ -13222,7 +13222,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'issuance-token-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'issuance-token-amount'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|issuance-token-amount>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|TokenAmount|)>|)>>
@@ -13231,7 +13231,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'issuance-asset-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'issuance-asset-proof'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|issuance-asset-proof>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -13240,7 +13240,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'issuance-token-proof'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'issuance-token-proof'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|issuance-token-proof>> \<of\>
   <2><rsup|32>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
@@ -13251,7 +13251,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'tapleaf-version'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'tapleaf-version'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|tapleaf-version>> \<of\> <value|1>\<vdash\><2><rsup|8>>
 
@@ -13259,7 +13259,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'tappath'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'tappath'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|tappath>> \<of\> <2><rsup|8>\<vdash\><maybe><around*|(|<2><rsup|256>|)>>
 
@@ -13267,7 +13267,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'version'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'version'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|version>> \<of\> <value|1>\<vdash\><2><rsup|32>>
 
@@ -13275,7 +13275,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'genesis-block-hash'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'genesis-block-hash'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|genesis-block-hash>> \<of\>
   <value|1>\<vdash\><2><rsup|256>>
@@ -13284,7 +13284,7 @@
 
   \;
 
-  <math|<rep|<text|<samp|'transaction-id'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
+  <math|<rep|<text|<samp|'transaction-id'>>|>\<assign\><verbatim|<around*|[|111|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|transaction-id>> \<of\>
   <value|1>\<vdash\><2><rsup|256>><appendix|Alternative Serialization of
