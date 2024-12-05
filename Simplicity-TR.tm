@@ -8643,23 +8643,17 @@
   <\eqnarray*>
     <tformat|<table|<row|<cell|Lock>|<cell|\<assign\>>|<cell|<2><rsup|32>>>|<row|<cell|Outpoint>|<cell|\<assign\>>|<cell|<2><rsup|256>\<times\><2><rsup|32>>>|<row|<cell|Confidential<around*|(|X|)>>|<cell|\<assign\>
     >|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|pt\<of\>Point>>|<row|<cell|prf\<of\>
-    X>>>>>|}>>>|<row|<cell|ExplicitAsset>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Asset<around*|(|X|)>>|<cell|\<assign\>>|<cell|Confidential<around*|(|X|)>+ExplicitAsset>>|<row|<cell|ExplicitAmount>|<cell|\<assign\>>|<cell|<2><rsup|64>>>|<row|<cell|Amount<around*|(|X|)>>|<cell|\<assign\>>|<cell|Confidential
-    <around*|(|X|)>+ ExplicitAmount>>|<row|<cell|ExplicitNonce>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Nonce>|<cell|\<assign\>>|<cell|Confidential
-    <around*|(|<1>|)>+ ExplicitNonce>>|<row|<cell|RangeProof>|<cell|\<assign\>>|<cell|<around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>|<row|<cell|SurjectionProof>|<cell|\<assign\>>|<cell|<around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>|<row|<cell|TokenAmount<around*|(|X|)>>|<cell|\<assign\>>|<cell|Amount<around*|(|X|)>>>|<row|<cell|NewIssuance>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|contractHash\<of\><2><rsup|256>>>|<row|<cell|amount\<of\>
-    Amount<around*|(|RangeProof|)>>>|<row|<cell|tokenAmount:
-    TokenAmount<around*|(|RangeRpoof|)>>>>>>|}>>>|<row|<cell|Reissuance>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|blindingNonce\<of\>ExplicitNonce>>|<row|<cell|entropy\<of\><2><rsup|256>>>|<row|<cell|amount\<of\>
-    Amount<around*|(|RangeProof|)>>>>>>|}>>>|<row|<cell|Issuance>|<cell|\<assign\>>|<cell|NewIssuance+Reissuance>>|<row|<cell|ElementsSigOutput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|asset\<of\>Asset<around*|(|SurjectionProof|)>>>|<row|<cell|amount\<of\>Amount<around*|(|RangeProof|)>>>|<row|<cell|scriptPubKey\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>|<row|<cell|nonce\<of\><maybe><around*|(|Nonce|)>>>>>>|}>>>|<row|<cell|ElementsUTXO>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|asset\<of\>Asset<around*|(|<1>|)>>>|<row|<cell|amount\<of\>Amount<around*|(|<1>|)>>>|<row|<cell|scriptPubKey\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|ElementsSigInput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|peginChain\<of\><maybe><around*|(|<2><rsup|256>|)>>>|<row|<cell|prevOutpoint\<of\>Outpoint>>|<row|<cell|txo\<of\>ElementsUTXO
+    X>>>>>|}>>>|<row|<cell|ExplicitAsset>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Asset>|<cell|\<assign\>>|<cell|Point+ExplicitAsset>>|<row|<cell|AssetWith<around*|(|X|)>>|<cell|\<assign\>>|<cell|Confidential<around*|(|X|)>+ExplicitAsset>>|<row|<cell|ExplicitAmount>|<cell|\<assign\>>|<cell|<2><rsup|64>>>|<row|<cell|Amount>|<cell|\<assign\>>|<cell|Point+
+    ExplicitAmount>>|<row|<cell|AmountWith<around*|(|X|)>>|<cell|\<assign\>>|<cell|Confidential
+    <around*|(|X|)>+ ExplicitAmount>>|<row|<cell|ExplicitNonce>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Nonce>|<cell|\<assign\>>|<cell|Point+
+    ExplicitNonce>>|<row|<cell|RangeProof>|<cell|\<assign\>>|<cell|<around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>|<row|<cell|SurjectionProof>|<cell|\<assign\>>|<cell|<around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>|<row|<cell|NewIssuance>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|contractHash\<of\><2><rsup|256>>>|<row|<cell|amount\<of\>
+    AmountWith<around*|(|RangeProof|)>>>|<row|<cell|tokenAmount:
+    AmountWith<around*|(|RangeRpoof|)>>>>>>|}>>>|<row|<cell|Reissuance>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|blindingNonce\<of\>ExplicitNonce>>|<row|<cell|entropy\<of\><2><rsup|256>>>|<row|<cell|amount\<of\>
+    ConfidentialAmount<around*|(|RangeProof|)>>>>>>|}>>>|<row|<cell|Issuance>|<cell|\<assign\>>|<cell|NewIssuance+Reissuance>>|<row|<cell|ElementsSigOutput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|asset\<of\>AssetWith<around*|(|SurjectionProof|)>>>|<row|<cell|amount\<of\>AmountWith<around*|(|RangeProof|)>>>|<row|<cell|scriptPubKey\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>|<row|<cell|nonce\<of\><maybe><around*|(|Nonce|)>>>>>>|}>>>|<row|<cell|ElementsUTXO>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|asset\<of\>Asset>>|<row|<cell|amount\<of\>Amount>>|<row|<cell|scriptPubKey\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|ElementsSigInput>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|peginChain\<of\><maybe><around*|(|<2><rsup|256>|)>>>|<row|<cell|prevOutpoint\<of\>Outpoint>>|<row|<cell|txo\<of\>ElementsUTXO
     <with|color|red|scriptPubKey is claim_script when
     isPegin>>>|<row|<cell|sequence\<of\><2><rsup|32>>>|<row|<cell|issuance:<maybe><around*|(|Issuance|)>>>|<row|<cell|annex\<of\><maybe><around*|(|<around*|(|<2><rsup|8>|)><rsup|\<ast\>>|)>
     <text|<around*|(|excludes the <math|<math-tt|50><rsub|<2><rsup|8>>>
     prefix|)>>>>|<row|<cell|scriptSig\<of\><around*|(|<2><rsup|8>|)><rsup|\<ast\>>>>>>>|}>>>|<row|<cell|ElementsSigTx>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|version\<of\><2><rsup|32>>>|<row|<cell|inputs\<of\>ElementsSigInput<rsup|+>>>|<row|<cell|outputs\<of\>ElementsSigOutput<rsup|+>>>|<row|<cell|lockTime\<of\>Lock>>>>>|}>>>|<row|<cell|ELEnv>|<cell|\<assign\>>|<cell|<around*|{|<tabular|<tformat|<table|<row|<cell|tx\<of\>ElementsSigTx>>|<row|<cell|ix\<of\><2><rsup|32>>>|<row|<cell|tapEnv\<of\>TapEnv>>|<row|<cell|genesisBlockHash\<of\><2><rsup|256>>>|<row|<cell|scriptCMR\<of\><2><rsup|256>>>>>>|}>>>>>
-  </eqnarray*>
-
-  The parameterized types of <math|Confidential>, <math|Asset>, and
-  <math|Amount> are functors in their natural way.
-
-  <\eqnarray*>
-    <tformat|<table|<row|<cell|<around*|(|Confidential<around*|(|f|)><around*|(|a|)>|)><around*|[|pt|]>>|<cell|\<assign\>>|<cell|a<around*|[|pt|]>>>|<row|<cell|<around*|(|Confidential<around*|(|f|)><around*|(|a|)>|)><around*|[|prf|]>>|<cell|\<assign\>>|<cell|f<around*|(|a<around*|[|prf|]>|)>>>|<row|<cell|Asset<around*|(|f|)><around*|(|<injl|<around*|(|a|)>>|)>>|<cell|\<assign\>>|<cell|<injl|<around*|(|Confidential<around*|(|f|)><around*|(|a|)>|)>>>>|<row|<cell|Asset<around*|(|f|)><around*|(|<injr|<around*|(|a|)>>|)>>|<cell|\<assign\>>|<cell|<injr|<around*|(|a|)>>>>|<row|<cell|Amount<around*|(|f|)><around*|(|<injl|<around*|(|a|)>>|)>>|<cell|\<assign\>>|<cell|<injl|<around*|(|Confidential<around*|(|f|)><around*|(|a|)>|)>>>>|<row|<cell|Amount<around*|(|f|)><around*|(|<injr|<around*|(|a|)>>|)>>|<cell|\<assign\>>|<cell|<injr|<around*|(|a|)>>>>>>
   </eqnarray*>
 
   \;
@@ -8724,13 +8718,13 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputAsset>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Asset<around*|(|<1>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputAsset>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Asset|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputAmount>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Amount<around*|(|<1>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|inputAmount>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Amount|)>>>>>>>
   </with>
 
   \;
@@ -8778,13 +8772,13 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|issuanceAssetAmount>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|Amount<around*|(|<1>|)>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|issuanceAssetAmount>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|Amount|)>|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|issuanceTokenAmount>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|TokenAmount<around*|(|<1>|)>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|issuanceTokenAmount>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|TokenAmount|)>|)>>>>>>>
   </with>
 
   \;
@@ -8808,13 +8802,13 @@
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputAsset>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Asset<around*|(|<1>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputAsset>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Asset|)>>>>>>>
   </with>
 
   \;
 
   <\with|par-mode|center>
-    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputAmount>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Amount<around*|(|<1>|)>|)>>>>>>>
+    <tabular*|<tformat|<cwith|1|1|1|1|cell-tborder|1pt>|<table|<row|<cell|<math|<samp|outputAmount>\<of\><2><rsup|32>\<vdash\><maybe><around*|(|Amount|)>>>>>>>
   </with>
 
   \;
@@ -8894,7 +8888,7 @@
   where
 
   <\eqnarray*>
-    <tformat|<table|<row|<cell|PrfHash<around*|(|<injl|<around*|(|a|)>>|)>>|<cell|\<assign\>>|<cell|SHA256<around*|(|a<around*|[|prf|]>|)>>>|<row|<cell|PrfHash<around*|(|<injr|<around*|(|a|)>>|)>>|<cell|\<assign\>>|SHA256<around*|(|\<epsilon\>|)>>|<row|<cell|OptionPrfHash<around*|(|\<eta\><rsup|S><around*|(|a|)>|)>>|<cell|\<assign\>>|<cell|PrfHash<around*|(|a|)>>>|<row|<cell|OptionPrfHash<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|SHA256<around*|(|\<epsilon\>|)>>>|<row|<cell|ClearAsset<around*|(|a|)>>|<cell|\<assign\>>|<cell|Asset<around*|(|<math-ss|unit>|)><around*|(|a|)>>>|<row|<cell|ClearAmount<around*|(|a|)>>|<cell|\<assign\>>|<cell|Amount<around*|(|<math-ss|unit>|)><around*|(|a|)>>>|<row|<cell|isNewIssuance<around*|(|\<eta\><rsup|S><around*|(|<injl|<around*|(|l|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|S><around*|(|l|)>>>|<row|<cell|isNewIssuance<around*|(|\<eta\><rsup|S><around*|(|<injr|<around*|(|r|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|isNewIssuance<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|isReissuance<around*|(|\<eta\><rsup|S><around*|(|<injl|<around*|(|l|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|isReissuance<around*|(|\<eta\><rsup|S><around*|(|<injr|<around*|(|r|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|S><around*|(|r|)>>>|<row|<cell|isReissuance<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|newIssuance<around*|(|l|)>>|<cell|\<assign\>>|<cell|isNewIssuance<around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|reissuance<around*|(|l|)>>|<cell|\<assign\>>|<cell|isReissuance<around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|getIssuanceAssetAmt<around*|(|<injl|<around*|(|l|)>>|)>>|<cell|\<assign\>>|<cell|l<around*|[|amount|]>>>|<row|<cell|getIssuanceAssetAmt<around*|(|<injr|<around*|(|r|)>>|)>>|<cell|\<assign\>>|<cell|r<around*|[|amount|]>>>|<row|<cell|getIssuanceTokenAmt<around*|(|<injl|<around*|(|l|)>>|)>>|<cell|\<assign\>>|<cell|l<around*|[|tokenAmount|]>>>|<row|<cell|getIssuanceTokenAmt<around*|(|<injr|<around*|(|r|)>>|)>>|<cell|\<assign\>>|<cell|<injr|<around*|\<lfloor\>|0|\<rfloor\>><rsub|64>>>>|<row|<cell|issuanceAssetAmt<around*|(|l|)>>|<cell|\<assign\>>|<cell|<maybe><around*|(|getIssuanceAssetAmt|)><around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|issuanceTokenAmt<around*|(|l|)>>|<cell|\<assign\>>|<cell|<maybe><around*|(|getIssuanceTokenAmt|)><around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|fee<around*|\<langle\>|\<epsilon\>,a|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|\<lfloor\>|0|\<rfloor\>><rsub|64>>>|<row|<cell|fee<around*|\<langle\>|o\<blacktriangleleft\>l,a|\<rangle\>>>|<cell|\<assign\>>|<cell|fee<around*|\<langle\>|l,a|\<rangle\>><op|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>>
+    <tformat|<table|<row|<cell|PrfHash<around*|(|<injl|<around*|(|a|)>>|)>>|<cell|\<assign\>>|<cell|SHA256<around*|(|a<around*|[|prf|]>|)>>>|<row|<cell|PrfHash<around*|(|<injr|<around*|(|b|)>>|)>>|<cell|\<assign\>>|SHA256<around*|(|\<epsilon\>|)>>|<row|<cell|OptionPrfHash<around*|(|\<eta\><rsup|S><around*|(|a|)>|)>>|<cell|\<assign\>>|<cell|PrfHash<around*|(|a|)>>>|<row|<cell|OptionPrfHash<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|SHA256<around*|(|\<epsilon\>|)>>>|<row|<cell|ClearAsset<around*|(|<injl|<around*|(|a|)>>|)>>|<cell|\<assign\>>|<cell|<injl|<around*|(|a<around*|[|pt|]>|)>>>>|<row|<cell|ClearAsset<around*|(|<injr|<around*|(|b|)>>|)>>|<cell|\<assign\>>|<cell|<injr|<around*|(|b|)>>>>|<row|<cell|ClearAmount<around*|(|<injl|<around*|(|a|)>>|)>>|<cell|\<assign\>>|<cell|<injl|<around*|(|a<around*|[|pt|]>|)>>>>|<row|<cell|ClearAmount<around*|(|<injr|<around*|(|b|)>>|)>>|<cell|\<assign\>>|<cell|<injr|<around*|(|b|)>>>>|<row|<cell|isNewIssuance<around*|(|\<eta\><rsup|S><around*|(|<injl|<around*|(|l|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|S><around*|(|l|)>>>|<row|<cell|isNewIssuance<around*|(|\<eta\><rsup|S><around*|(|<injr|<around*|(|r|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|isNewIssuance<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|isReissuance<around*|(|\<eta\><rsup|S><around*|(|<injl|<around*|(|l|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|isReissuance<around*|(|\<eta\><rsup|S><around*|(|<injr|<around*|(|r|)>>|)>|)>>|<cell|\<assign\>>|<cell|\<eta\><rsup|S><around*|(|r|)>>>|<row|<cell|isReissuance<around*|(|\<emptyset\><rsup|<maybe>>|)>>|<cell|\<assign\>>|<cell|\<emptyset\><rsup|<maybe>>>>|<row|<cell|newIssuance<around*|(|l|)>>|<cell|\<assign\>>|<cell|isNewIssuance<around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|reissuance<around*|(|l|)>>|<cell|\<assign\>>|<cell|isReissuance<around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|getIssuanceAssetAmt<around*|(|<injl|<around*|(|l|)>>|)>>|<cell|\<assign\>>|<cell|l<around*|[|amount|]>>>|<row|<cell|getIssuanceAssetAmt<around*|(|<injr|<around*|(|r|)>>|)>>|<cell|\<assign\>>|<cell|r<around*|[|amount|]>>>|<row|<cell|getIssuanceTokenAmt<around*|(|<injl|<around*|(|l|)>>|)>>|<cell|\<assign\>>|<cell|l<around*|[|tokenAmount|]>>>|<row|<cell|getIssuanceTokenAmt<around*|(|<injr|<around*|(|r|)>>|)>>|<cell|\<assign\>>|<cell|<injr|<around*|\<lfloor\>|0|\<rfloor\>><rsub|64>>>>|<row|<cell|issuanceAssetAmt<around*|(|l|)>>|<cell|\<assign\>>|<cell|<maybe><around*|(|getIssuanceAssetAmt|)><around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|issuanceTokenAmt<around*|(|l|)>>|<cell|\<assign\>>|<cell|<maybe><around*|(|getIssuanceTokenAmt|)><around*|(|l<around*|[|issuance|]>|)>>>|<row|<cell|fee<around*|\<langle\>|\<epsilon\>,a|\<rangle\>>>|<cell|\<assign\>>|<cell|<around*|\<lfloor\>|0|\<rfloor\>><rsub|64>>>|<row|<cell|fee<around*|\<langle\>|o\<blacktriangleleft\>l,a|\<rangle\>>>|<cell|\<assign\>>|<cell|fee<around*|\<langle\>|l,a|\<rangle\>><op|<around*|\<lfloor\>|+|\<rfloor\>><rsub|64>>
     v<htab|5mm>when o<around*|[|asset|]>=<injr|<around*|(|a|)>><next-line><htab|5mm>and
     o<around*|[|value|]>=<injr|<around*|(|v|)>><next-line><htab|5mm>and
     o<around*|[|scriptPubKey|]>=\<epsilon\>>>|<row|<cell|fee<around*|\<langle\>|o\<blacktriangleleft\>l,a|\<rangle\>>>|<cell|\<assign\>>|<cell|fee<around*|\<langle\>|l,a|\<rangle\>><htab|5mm>when
@@ -12434,7 +12428,7 @@
 
   <\math>
     <text|<samp|<samp|asset-amount-hash>>>
-    :Ctx8\<times\><around*|(|Asset<around*|(|<1>|)>\<times\>Amount<around*|(|<1>|)>|)>\<vdash\>Ctx8
+    :Ctx8\<times\><around*|(|Asset\<times\>Amount|)>\<vdash\>Ctx8
 
     \;
   </math>
@@ -12912,7 +12906,7 @@
   <math|<rep|<text|<samp|'output-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-asset>> \<of\>
-  <2><rsup|32>\<vdash\><maybe><around*|(|Asset<around*|(|<1>|)>|)>>
+  <2><rsup|32>\<vdash\><maybe><around*|(|Asset|)>>
 
   <subsubsection|<samp|output-amount>>
 
@@ -12921,7 +12915,7 @@
   <math|<rep|<text|<samp|'output-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|output-amount>> \<of\>
-  <2><rsup|32>\<vdash\><maybe><around*|(|Asset<around*|(|<1>|)>\<times\>Amount<around*|(|<1>|)>|)>>
+  <2><rsup|32>\<vdash\><maybe><around*|(|Asset\<times\>Amount|)>>
 
   <subsubsection|<samp|output-nonce>>
 
@@ -13009,8 +13003,7 @@
 
   <math|<rep|<text|<samp|'current-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|current-asset>> \<of\>
-  <value|1>\<vdash\>Asset<around*|(|<1>|)>>
+  <math|<text|<samp|current-asset>> \<of\> <value|1>\<vdash\>Asset>
 
   <subsubsection|<samp|current-amount>>
 
@@ -13019,7 +13012,7 @@
   <math|<rep|<text|<samp|'current-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-amount>> \<of\>
-  <value|1>\<vdash\>Asset<around*|(|<1>|)>\<times\>Amount<around*|(|<1>|)>>
+  <value|1>\<vdash\>Asset\<times\>Amount>
 
   <subsubsection|<samp|current-script-hash>>
 
@@ -13090,7 +13083,7 @@
   <math|<rep|<text|<samp|'current-issuance-asset-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-issuance-asset-amount>> \<of\>
-  <value|1>\<vdash\><maybe><around*|(|Amount<around*|(|<1>|)>|)>>
+  <value|1>\<vdash\><maybe><around*|(|Amount|)>>
 
   <subsubsection|<samp|current-issuance-token-amount>>
 
@@ -13099,7 +13092,7 @@
   <math|<rep|<text|<samp|'current-issuance-token-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|current-issuance-token-amount>> \<of\>
-  <value|1>\<vdash\><maybe><around*|(|TokenAmount<around*|(|<1>|)>|)>>
+  <value|1>\<vdash\><maybe><around*|(|Amount|)>>
 
   <subsubsection|<samp|current-issuance-asset-proof>>
 
@@ -13142,7 +13135,7 @@
 
   <math|<rep|<text|<samp|'input-asset'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
-  <math|<text|<samp|input-asset>> \<of\> <2><rsup|32>\<vdash\><maybe><around*|(|Asset<around*|(|<1>|)>|)>>
+  <math|<text|<samp|input-asset>> \<of\> <2><rsup|32>\<vdash\><maybe><around*|(|Asset|)>>
 
   <subsubsection|<samp|input-amount>>
 
@@ -13151,7 +13144,7 @@
   <math|<rep|<text|<samp|'input-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|input-amount>> \<of\>
-  <2><rsup|32>\<vdash\><maybe><around*|(|Asset<around*|(|<1>|)>\<times\>Amount<around*|(|<1>|)>|)>>
+  <2><rsup|32>\<vdash\><maybe><around*|(|Asset\<times\>Amount|)>>
 
   <subsubsection|<samp|input-script-hash>>
 
@@ -13223,7 +13216,7 @@
   <math|<rep|<text|<samp|'issuance-asset-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|issuance-asset-amount>> \<of\>
-  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|Amount<around*|(|<1>|)>|)>|)>>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|Amount|)>|)>>
 
   <subsubsection|<samp|issuance-token-amount>>
 
@@ -13232,7 +13225,7 @@
   <math|<rep|<text|<samp|'issuance-token-amount'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>>
 
   <math|<text|<samp|issuance-token-amount>> \<of\>
-  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|TokenAmount<around*|(|<1>|)>|)>|)>>
+  <2><rsup|32>\<vdash\><maybe><around*|(|<maybe><around*|(|TokenAmount|)>|)>>
 
   <subsubsection|<samp|issuance-asset-proof>>
 
