@@ -9625,75 +9625,77 @@
   <math|<math|<text|<samp|right-rotate>><rsub|1>> \<assign\>
   <text|<samp|drop>> \<of\> <1>\<times\><2>\<vdash\><2>>
 
-  <subsubsection|<samp|transpose>>
+  <\with|color|red>
+    <subsubsection|<samp|transpose> (NOT IMPLEMENTED)>
 
-  (CAUTION: Not defined when <math|n=0> or <math|m=0>.)
+    (CAUTION: Not defined when <math|n=0> or <math|m=0>.)
 
-  (Note: Support only recommened up to <math|2<rsup|n>\<cdot\>2<rsup|m>\<leq\>256>.)
+    (Note: Support only recommened up to <math|2<rsup|n>\<cdot\>2<rsup|m>\<leq\>256>.)
 
-  <\math>
-    <rep|<text|<samp|'transpose'>><rsub|2<rsup|n>,2<rsup|m>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>\<cdummy\><rep|m|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'transpose'>><rsub|2<rsup|n>,2<rsup|m>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>\<cdummy\><rep|m|>
+    </math>
 
-  <math|<text|<samp|transpose>><rsub|2<rsup|n>,2<rsup|m>>
-  :<2><rsup|2<rsup|n>\<cdummy\>2<rsup|m>>\<vdash\><2><rsup|2<rsup|m>\<cdummy\>2<rsup|n>>>
-  for <math|1\<leq\>n> and <math|1\<leq\>m>
+    <math|<text|<samp|transpose>><rsub|2<rsup|n>,2<rsup|m>>
+    :<2><rsup|2<rsup|n>\<cdummy\>2<rsup|m>>\<vdash\><2><rsup|2<rsup|m>\<cdummy\>2<rsup|n>>>
+    for <math|1\<leq\>n> and <math|1\<leq\>m>
 
-  \;
+    \;
 
-  Aliases:
+    Aliases:
 
-  <math|<text|<samp|transpose>><rsub|1,2<rsup|n>> \<assign\>
-  <text|<samp|iden>> :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n>>>
+    <math|<text|<samp|transpose>><rsub|1,2<rsup|n>> \<assign\>
+    <text|<samp|iden>> :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n>>>
 
-  <math|<text|<samp|transpose>><rsub|2<rsup|n>,1> \<assign\>
-  <text|<samp|iden>> :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n>>>
+    <math|<text|<samp|transpose>><rsub|2<rsup|n>,1> \<assign\>
+    <text|<samp|iden>> :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n>>>
 
-  <subsubsection|<samp|find-first-high>>
+    <subsubsection|<samp|find-first-high> (NOT IMPLEMENTED)>
 
-  (CAUTION: Not defined when <math|n=0>.)
+    (CAUTION: Not defined when <math|n=0>.)
 
-  <\math>
-    <rep|<text|<samp|'find-first-high'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'find-first-high'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>
+    </math>
 
-  <math|<text|<samp|find-first-high>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|<around*|\<lceil\>|lb<around*|(|n+1|)>|\<rceil\>>>>>
-  for <math|1\<leq\>n>
+    <math|<text|<samp|find-first-high>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|<around*|\<lceil\>|lb<around*|(|n+1|)>|\<rceil\>>>>>
+    for <math|1\<leq\>n>
 
-  <subsubsection|<samp|find-last-high>>
+    <subsubsection|<samp|find-last-high> (NOT IMPLEMENTED)>
 
-  (CAUTION: Not defined when <math|n=0>.)
+    (CAUTION: Not defined when <math|n=0>.)
 
-  <\math>
-    <rep|<text|<samp|'find-last-high'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'find-last-high'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>
+    </math>
 
-  <math|<text|<samp|find-last-high>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|<around*|\<lceil\>|lb<around*|(|n+1|)>|\<rceil\>>>>>
-  for <math|1\<leq\>n>
+    <math|<text|<samp|find-last-high>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|<around*|\<lceil\>|lb<around*|(|n+1|)>|\<rceil\>>>>>
+    for <math|1\<leq\>n>
 
-  <subsubsection|<samp|bit>>
+    <subsubsection|<samp|bit> (NOT IMPLEMENTED)>
 
-  (CAUTION: Not defined when <math|n\<leq\>1>.)
+    (CAUTION: Not defined when <math|n\<leq\>1>.)
 
-  <\math>
-    <rep|<text|<samp|'bit'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n-1|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'bit'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n-1|>
+    </math>
 
-  <math|<text|<samp|bit>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|<around*|\<lceil\>|lb<around*|(|n|)>|\<rceil\>>>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2>>
-  for <math|2\<leq\>n>
+    <math|<text|<samp|bit>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|<around*|\<lceil\>|lb<around*|(|n|)>|\<rceil\>>>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2>>
+    for <math|2\<leq\>n>
 
-  \;
+    \;
 
-  Aliases:
+    Aliases:
 
-  <math|<math|<text|<samp|bit>><rsub|1>> \<assign\> <text|<samp|drop>> \<of\>
-  <1>\<times\><2>\<vdash\><2>>
+    <math|<math|<text|<samp|bit>><rsub|1>> \<assign\> <text|<samp|drop>>
+    \<of\> <1>\<times\><2>\<vdash\><2>>
 
-  <math|<math|<text|<samp|bit>><rsub|2>> \<assign\> <text|<samp|ch>><rsub|1>
-  \<of\> <2>\<times\><2><rsup|2>\<vdash\><2>>
+    <math|<math|<text|<samp|bit>><rsub|2>> \<assign\>
+    <text|<samp|ch>><rsub|1> \<of\> <2>\<times\><2><rsup|2>\<vdash\><2>>
+  </with>
 
   <subsection|<verbatim|110100...: >Jets for arithmetic>
 
@@ -9796,33 +9798,35 @@
 
   <math|<around*|\<lceil\>|<around*|\<llbracket\>|<text|<samp|increment>><rsub|2<rsup|n>>|\<rrbracket\>><around*|(|x|)>|\<rceil\>><rsub|1,2<rsup|n>>=<around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|n>>+1>
 
-  <subsubsection|<samp|popcount>>
+  <\with|color|red>
+    <subsubsection|<samp|popcount> (NOT IMPLEMENTED)>
 
-  (CAUTION: Not defined when <math|n\<leq\>1>.)<glossary-dup|lb>
+    (CAUTION: Not defined when <math|n\<leq\>1>.)<glossary-dup|lb>
 
-  <\math>
-    <rep|<text|<samp|'popcount'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n-1|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'popcount'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n-1|>
+    </math>
 
-  <math|<text|<samp|popcount>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|<around*|\<lceil\>|lb<around*|(|n+1|)>|\<rceil\>>>>>
-  for <math|1\<leq\>n>
+    <math|<text|<samp|popcount>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|<around*|\<lceil\>|lb<around*|(|n+1|)>|\<rceil\>>>>>
+    for <math|1\<leq\>n>
 
-  \;
+    \;
 
-  Properties:
+    Properties:
 
-  <math|<around*|\<lceil\>|<around*|\<llbracket\>|<text|<samp|popcount>><rsub|2<rsup|n>>|\<rrbracket\>><around*|(|x|)>|\<rceil\>><rsub|2<rsup|<around*|\<lceil\>|lb<around*|(|n+1|)>|\<rceil\>>>>=<big|sum><rsub|i=0><rsup|2<rsup|n>-1><around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|x|)>|\<rceil\>><rsub|1>>
+    <math|<around*|\<lceil\>|<around*|\<llbracket\>|<text|<samp|popcount>><rsub|2<rsup|n>>|\<rrbracket\>><around*|(|x|)>|\<rceil\>><rsub|2<rsup|<around*|\<lceil\>|lb<around*|(|n+1|)>|\<rceil\>>>>=<big|sum><rsub|i=0><rsup|2<rsup|n>-1><around*|\<lceil\>|bit<rsub|2<rsup|n>,i><around*|(|x|)>|\<rceil\>><rsub|1>>
 
-  \;
+    \;
 
-  Aliases:
+    Aliases:
 
-  <math|<text|<samp|popcount>><rsub|1> \<assign\> <text|<samp|iden>>
-  :<2>\<vdash\><2>>
+    <math|<text|<samp|popcount>><rsub|1> \<assign\> <text|<samp|iden>>
+    :<2>\<vdash\><2>>
 
-  <math|<math|<text|<samp|popcount>><rsub|2>> \<assign\>
-  <text|<samp|add>><rsub|1> :<2><rsup|2>\<vdash\><2><rsup|2>>
+    <math|<math|<text|<samp|popcount>><rsub|2>> \<assign\>
+    <text|<samp|add>><rsub|1> :<2><rsup|2>\<vdash\><2><rsup|2>>
+  </with>
 
   <subsubsection|<samp|full-subtract>>
 
@@ -10167,158 +10171,166 @@
 
   <math|<around*|\<lceil\>|<around*|\<llbracket\>|<text|<samp|divides>><rsub|2<rsup|n>>|\<rrbracket\>><around*|\<langle\>|x,y|\<rangle\>>|\<rceil\>><rsub|1>=\<chi\><around*|(|<around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|n>>\|<around*|\<lceil\>|y|\<rceil\>><rsub|2<rsup|n>>|)>>
 
-  <subsubsection|<samp|eea> (unsigned)>
+  <\with|color|red>
+    <subsubsection|<samp|eea> (unsigned) (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <math|<rep|<text|<samp|'eea'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>>
+    <math|<rep|<text|<samp|'eea'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>>
 
-  <math|<text|<samp|eea>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><around*|(|<around*|(|<around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>+<around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>|)>\<times\><around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>|)>\<times\><2><rsup|2<rsup|n>>>
-  for <math|0\<leq\>n>
+    <math|<text|<samp|eea>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><around*|(|<around*|(|<around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>+<around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>|)>\<times\><around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>|)>\<times\><2><rsup|2<rsup|n>>>
+    for <math|0\<leq\>n>
 
-  \;
+    \;
 
-  Properties:
+    Properties:
 
-  Let <math|<around*|\<langle\>|<around*|\<langle\>|b,<around*|\<langle\>|c<rsub|y>,c<rsub|x>|\<rangle\>>|\<rangle\>>,d|\<rangle\>>\<assign\><around*|\<llbracket\>|<text|<samp|eea>><rsub|2<rsup|n>>|\<rrbracket\>><around*|\<langle\>|x,y|\<rangle\>>>
+    Let <math|<around*|\<langle\>|<around*|\<langle\>|b,<around*|\<langle\>|c<rsub|y>,c<rsub|x>|\<rangle\>>|\<rangle\>>,d|\<rangle\>>\<assign\><around*|\<llbracket\>|<text|<samp|eea>><rsub|2<rsup|n>>|\<rrbracket\>><around*|\<langle\>|x,y|\<rangle\>>>
 
-  \;
+    \;
 
-  <math|<around*|\<lceil\>|c<rsub|x>|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|d|\<rceil\>><rsub|2<rsup|n>>=<around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|n>>>
+    <math|<around*|\<lceil\>|c<rsub|x>|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|d|\<rceil\>><rsub|2<rsup|n>>=<around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|n>>>
 
-  <math|<around*|\<lceil\>|c<rsub|y>|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|d|\<rceil\>><rsub|2<rsup|n>>=<around*|\<lceil\>|y|\<rceil\>><rsub|2<rsup|n>>>
+    <math|<around*|\<lceil\>|c<rsub|y>|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|d|\<rceil\>><rsub|2<rsup|n>>=<around*|\<lceil\>|y|\<rceil\>><rsub|2<rsup|n>>>
 
-  \;
+    \;
 
-  If <math|<injl|<around*|\<langle\>|s,t|\<rangle\>>>=b> then
-  <math|<around*|\<lceil\>|s|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|n>>-<around*|\<lceil\>|t|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|y|\<rceil\>><rsub|2<rsup|n>>=<around*|\<lceil\>|d|\<rceil\>><rsub|2<rsup|n>>>
-  and either <math|<around*|\<lceil\>|s|\<rceil\>><rsub|2<rsup|n>>*\<less\><frac|<around*|\<lceil\>|c<rsub|y>|\<rceil\>><rsub|2<rsup|n>>|2>>
-  or <math|<around*|\<lceil\>|t|\<rceil\>><rsub|2<rsup|n>>*\<less\><frac|<around*|\<lceil\>|c<rsub|x>|\<rceil\>><rsub|2<rsup|n>>|2>>.
+    If <math|<injl|<around*|\<langle\>|s,t|\<rangle\>>>=b> then
+    <math|<around*|\<lceil\>|s|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|n>>-<around*|\<lceil\>|t|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|y|\<rceil\>><rsub|2<rsup|n>>=<around*|\<lceil\>|d|\<rceil\>><rsub|2<rsup|n>>>
+    and either <math|<around*|\<lceil\>|s|\<rceil\>><rsub|2<rsup|n>>*\<less\><frac|<around*|\<lceil\>|c<rsub|y>|\<rceil\>><rsub|2<rsup|n>>|2>>
+    or <math|<around*|\<lceil\>|t|\<rceil\>><rsub|2<rsup|n>>*\<less\><frac|<around*|\<lceil\>|c<rsub|x>|\<rceil\>><rsub|2<rsup|n>>|2>>.
 
-  If <math|<injr|<around*|\<langle\>|s,t|\<rangle\>>>=b> then
-  <math|<around*|\<lceil\>|s|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|n>>-<around*|\<lceil\>|t|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|y|\<rceil\>><rsub|2<rsup|n>>=-<around*|\<lceil\>|d|\<rceil\>><rsub|2<rsup|n>>>
-  and either <math|<around*|\<lceil\>|s|\<rceil\>><rsub|2<rsup|n>>*\<less\><frac|<around*|\<lceil\>|c<rsub|y>|\<rceil\>><rsub|2<rsup|n>>|2>>
-  or <math|<around*|\<lceil\>|t|\<rceil\>><rsub|2<rsup|n>>*\<less\><frac|<around*|\<lceil\>|c<rsub|x>|\<rceil\>><rsub|2<rsup|n>>|2>.>
+    If <math|<injr|<around*|\<langle\>|s,t|\<rangle\>>>=b> then
+    <math|<around*|\<lceil\>|s|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|n>>-<around*|\<lceil\>|t|\<rceil\>><rsub|2<rsup|n>>*<around*|\<lceil\>|y|\<rceil\>><rsub|2<rsup|n>>=-<around*|\<lceil\>|d|\<rceil\>><rsub|2<rsup|n>>>
+    and either <math|<around*|\<lceil\>|s|\<rceil\>><rsub|2<rsup|n>>*\<less\><frac|<around*|\<lceil\>|c<rsub|y>|\<rceil\>><rsub|2<rsup|n>>|2>>
+    or <math|<around*|\<lceil\>|t|\<rceil\>><rsub|2<rsup|n>>*\<less\><frac|<around*|\<lceil\>|c<rsub|x>|\<rceil\>><rsub|2<rsup|n>>|2>.>
 
-  \;
+    \;
 
-  <math|<around*|\<llbracket\>|<text|<samp|eea>><rsub|2<rsup|n>>|\<rrbracket\>><around*|\<langle\>|<around*|\<lfloor\>|x|\<rfloor\>>,<around*|\<lfloor\>|x|\<rfloor\>>|\<rangle\>>=<around*|\<langle\>|<around*|\<langle\>|<injl|<around*|\<langle\>|<around*|\<lfloor\>|1|\<rfloor\>>,<around*|\<lfloor\>|0|\<rfloor\>>|\<rangle\>>>,<around*|\<langle\>|<around*|\<lfloor\>|1|\<rfloor\>>,<around*|\<lfloor\>|1|\<rfloor\>>|\<rangle\>>|\<rangle\>>,<around*|\<lfloor\>|x|\<rfloor\>>|\<rangle\>>>.
+    <math|<around*|\<llbracket\>|<text|<samp|eea>><rsub|2<rsup|n>>|\<rrbracket\>><around*|\<langle\>|<around*|\<lfloor\>|x|\<rfloor\>>,<around*|\<lfloor\>|x|\<rfloor\>>|\<rangle\>>=<around*|\<langle\>|<around*|\<langle\>|<injl|<around*|\<langle\>|<around*|\<lfloor\>|1|\<rfloor\>>,<around*|\<lfloor\>|0|\<rfloor\>>|\<rangle\>>>,<around*|\<langle\>|<around*|\<lfloor\>|1|\<rfloor\>>,<around*|\<lfloor\>|1|\<rfloor\>>|\<rangle\>>|\<rangle\>>,<around*|\<lfloor\>|x|\<rfloor\>>|\<rangle\>>>.
 
-  <subsubsection|<samp|bezout> (unsigned)>
+    <subsubsection|<samp|bezout> (unsigned) (NOT IMPLEMENTED)>
 
-  (CAUTION: Not defined when <math|n\<leq\>1>.)
+    (CAUTION: Not defined when <math|n\<leq\>1>.)
 
-  <math|<rep|<text|<samp|'bezout'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>>
+    <math|<rep|<text|<samp|'bezout'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>>
 
-  <math|<text|<samp|bezout>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>+<around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>>
-  for <math|1\<leq\>n>
+    <math|<text|<samp|bezout>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>+<around*|(|<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>|)>>
+    for <math|1\<leq\>n>
 
-  <subsubsection|<samp|gcd> (unsigned)>
+    <subsubsection|<samp|gcd> (unsigned) (NOT IMPLEMENTED)>
 
-  (CAUTION: Not defined when <math|n\<leq\>1>.)
+    (CAUTION: Not defined when <math|n\<leq\>1>.)
 
-  <math|<rep|<text|<samp|'gcd'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>>
+    <math|<rep|<text|<samp|'gcd'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>>
 
-  <math|<text|<samp|gcd>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n>>>
-  for <math|1\<leq\>n>
+    <math|<text|<samp|gcd>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n>>>
+    for <math|1\<leq\>n>
 
-  <subsubsection|<samp|cofactors> (unsigned)>
+    <subsubsection|<samp|cofactors> (unsigned)<space|0.2spc>(NOT
+    IMPLEMENTED)>
 
-  (CAUTION: Not defined when <math|n\<leq\>1>.)
+    (CAUTION: Not defined when <math|n\<leq\>1>.)
 
-  <math|<rep|<text|<samp|'cofactors'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>>
+    <math|<rep|<text|<samp|'cofactors'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>>
 
-  <math|<text|<samp|cofactors>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>>
-  for <math|1\<leq\>n>
+    <math|<text|<samp|cofactors>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>>
+    for <math|1\<leq\>n>
 
-  <subsubsection|<samp|lcm> (unsigned)>
+    <subsubsection|<samp|lcm> (unsigned) (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <math|<rep|<text|<samp|'lcm'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>>
+    <math|<rep|<text|<samp|'lcm'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>>
 
-  <math|<text|<samp|lcm>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n+1>>>
-  for <math|0\<leq\>n>
+    <math|<text|<samp|lcm>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n+1>>>
+    for <math|0\<leq\>n>
 
-  <subsubsection|<samp|jacobi> (unsigned)>
+    <subsubsection|<samp|jacobi> (unsigned) (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <math|<rep|<text|<samp|'jacobi'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>>
+    <math|<rep|<text|<samp|'jacobi'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>>
 
-  <math|<text|<samp|jacobi>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2><rsup|2>> for
-  <math|0\<leq\>n>
+    <math|<text|<samp|jacobi>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2><rsup|2>> for
+    <math|0\<leq\>n>
 
-  <subsubsection|<samp|absolute-value> (signed input/unsigned output)>
+    <subsubsection|<samp|absolute-value> (signed input/unsigned output) (NOT
+    IMPLEMENTED)>
 
-  \;
+    \;
 
-  <math|<rep|<text|<samp|'absolute-value'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>>
+    <math|<rep|<text|<samp|'absolute-value'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>>
 
-  <math|<text|<samp|absolute-value>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n>>> for <math|0\<leq\>n>
+    <math|<text|<samp|absolute-value>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|n>>> for <math|0\<leq\>n>
 
-  <subsubsection|<verbatim|><samp|sign>>
+    <subsubsection|<verbatim|><samp|sign> (NOT IMPLEMENTED)>
 
-  (CAUTION: Not defined when <math|n=0>. See Aliases.)
+    (CAUTION: Not defined when <math|n=0>. See Aliases.)
 
-  <\math>
-    <rep|<text|<samp|'sign'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'sign'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>
+    </math>
 
-  <math|<text|<samp|sign>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2>> for <math|1\<leq\>n>
+    <math|<text|<samp|sign>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2>> for <math|1\<leq\>n>
 
-  \;
+    \;
 
-  Properties:
+    Properties:
 
-  <math|<around*|\<llbracket\>|<text|<samp|sign>><rsub|2<rsup|n>>|\<rrbracket\>><around*|(|x|)>=<around*|\<langle\>|<around*|\<llbracket\>|<text|<samp|leftmost>><rsub|2<rsup|n>>|\<rrbracket\>><around*|(|x|)>,<around*|\<llbracket\>|<text|<samp|some>><rsub|2<rsup|n>>|\<rrbracket\>><around*|(|x|)>|\<rangle\>>>
+    <math|<around*|\<llbracket\>|<text|<samp|sign>><rsub|2<rsup|n>>|\<rrbracket\>><around*|(|x|)>=<around*|\<langle\>|<around*|\<llbracket\>|<text|<samp|leftmost>><rsub|2<rsup|n>>|\<rrbracket\>><around*|(|x|)>,<around*|\<llbracket\>|<text|<samp|some>><rsub|2<rsup|n>>|\<rrbracket\>><around*|(|x|)>|\<rangle\>>>
 
-  <subsubsection|<samp|signed-le>>
+    <subsubsection|<samp|signed-le> (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <math|<rep|<text|<samp|'signed-le'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>>
+    <math|<rep|<text|<samp|'signed-le'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>>
 
-  <math|<text|<samp|signed-le>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2>> for
-  <math|0\<leq\>n>
+    <math|<text|<samp|signed-le>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2>> for
+    <math|0\<leq\>n>
 
-  <subsubsection|<samp|signed-lt>>
+    <subsubsection|<samp|signed-lt> (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <math|<rep|<text|<samp|'signed-lt'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>>
+    <math|<rep|<text|<samp|'signed-lt'>><rsub|2<rsup|n>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n+1|>>
 
-  <math|<text|<samp|signed-lt>><rsub|2<rsup|n>>
-  :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2>> for
-  <math|0\<leq\>n>
+    <math|<text|<samp|signed-lt>><rsub|2<rsup|n>>
+    :<2><rsup|2<rsup|n>>\<times\><2><rsup|2<rsup|n>>\<vdash\><2>> for
+    <math|0\<leq\>n>
 
-  <subsubsection|<samp|signed-min>>
+    <subsubsection|<samp|signed-min> (NOT IMPLEMENTED)>
 
-  <subsubsection|<samp|signed-max>>
+    <subsubsection|<samp|signed-max> (NOT IMPLEMENTED)>
 
-  <subsubsection|<samp|signed-median>>
+    <subsubsection|<samp|signed-median> (NOT IMPLEMENTED)>
 
-  <subsubsection|<samp|signed-right-shift>>
+    <subsubsection|<samp|signed-right-shift> (NOT IMPLEMENTED)>
 
-  Right shift by a signed amount with sign extension. Negative values are a
-  left shift.
+    Right shift by a signed amount with sign extension. Negative values are a
+    left shift.
 
-  <subsubsection|<samp|signed-divmod> (unsigned denominator)>
+    <subsubsection|<samp|signed-divmod> (unsigned denominator) (NOT
+    IMPLEMENTED)>
 
-  <subsubsection|<samp|signed-div> (unsigned denominator)>
+    <subsubsection|<samp|signed-div> (unsigned denominator) (NOT
+    IMPLEMENTED)>
 
-  <subsubsection|<samp|signed-signed-divmod> (signed denominator)>
+    <subsubsection|<samp|signed-signed-divmod> (signed denominator) (NOT
+    IMPLEMENTED)>
 
-  <subsubsection|<samp|signed-signed-div> (signed denominator)>
+    <subsubsection|<samp|signed-signed-div> (signed denominator) (NOT
+    IMPLEMENTED)>
+  </with>
 
   \;
 
@@ -10410,87 +10422,91 @@
     <text|<samp|sha-256-ctx-8-init>> :<1>\<vdash\>Ctx8
   </math>
 
-  <subsubsection|<verbatim|110101100...: >Jets for SHA-3>
+  <\with|color|red>
+    <subsubsection|<verbatim|110101100...: >Jets for SHA-3 (NOT IMPLEMENTED)>
 
-  In this section we define <math|X<rsup|5>\<assign\>X\<times\>X<rsup|4>> and
-  <math|X<rsup|1600>\<assign\><around*|(|<around*|(|X<rsup|64>|)><rsup|5>|)><rsup|5>>.
+    In this section we define <math|X<rsup|5>\<assign\>X\<times\>X<rsup|4>>
+    and <math|X<rsup|1600>\<assign\><around*|(|<around*|(|X<rsup|64>|)><rsup|5>|)><rsup|5>>.
 
-  \;
+    \;
 
-  <paragraph|<samp|sha3-zero>>
+    <paragraph|<samp|sha3-zero>>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'sha3-zero'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'sha3-zero'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|sha3-zero>> :<1>\<vdash\><2><rsup|1600>>
+    <math|<text|<samp|sha3-zero>> :<1>\<vdash\><2><rsup|1600>>
 
-  \;
+    \;
 
-  <paragraph|<samp|sha3-absorb>>
+    <paragraph|<samp|sha3-absorb>>
 
-  (Note: we should proably byte-stwap the input before xoring it into place
+    (Note: we should proably byte-stwap the input before xoring it into place
 
-  <\math>
-    <rep|<text|<samp|'sha3-absorb'>><rsub|n,m>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>\<cdummy\><rep|n|>\<cdummy\><rep|m|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'sha3-absorb'>><rsub|n,m>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>\<cdummy\><rep|n|>\<cdummy\><rep|m|>
+    </math>
 
-  <math|<text|<samp|sha3-absorb>><rsub|n,m>:<2><rsup|64>\<times\><2><rsup|1600>\<vdash\><2><rsup|1600>>
-  for <math|1\<leq\>n,m\<leq\>5>
+    <math|<text|<samp|sha3-absorb>><rsub|n,m>:<2><rsup|64>\<times\><2><rsup|1600>\<vdash\><2><rsup|1600>>
+    for <math|1\<leq\>n,m\<leq\>5>
 
-  \;
+    \;
 
-  <paragraph|<samp|sha3-xor>>
+    <paragraph|<samp|sha3-xor>>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'sha3-xor'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'sha3-xor'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|sha3-xor>> :<2><rsup|1600>\<times\><2><rsup|1600>\<vdash\><2><rsup|1600>>
+    <math|<text|<samp|sha3-xor>> :<2><rsup|1600>\<times\><2><rsup|1600>\<vdash\><2><rsup|1600>>
 
-  \;
+    \;
 
-  <paragraph|<samp|sha3-permute>>
+    <paragraph|<samp|sha3-permute>>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'sha3-permute'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'sha3-permute'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|sha3-permute>>:<2><rsup|1600>\<vdash\><2><rsup|1600>>
+    <math|<text|<samp|sha3-permute>>:<2><rsup|1600>\<vdash\><2><rsup|1600>>
 
-  \;
+    \;
 
-  <paragraph|<samp|sha3-squeeze-256>>
+    <paragraph|<samp|sha3-squeeze-256>>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'sha3-squeeze-256'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'sha3-squeeze-256'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|sha3-squeeze-256>>:<2><rsup|1600>\<vdash\><2><rsup|256>>
+    <math|<text|<samp|sha3-squeeze-256>>:<2><rsup|1600>\<vdash\><2><rsup|256>>
 
-  \;
+    \;
 
-  <paragraph|<samp|sha3-squeeze-512>>
+    <paragraph|<samp|sha3-squeeze-512>>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'sha3-squeeze-512'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'sha3-squeeze-512'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|sha3-squeeze-512>>:<2><rsup|1600>\<vdash\><2><rsup|512>>
+    <math|<text|<samp|sha3-squeeze-512>>:<2><rsup|1600>\<vdash\><2><rsup|512>>
 
-  <subsubsection|<verbatim|110101101...: >Jets for RIPEMD>
+    <subsubsection|<verbatim|110101101...: >Jets for RIPEMD (NOT
+    IMPLEMENTED)>
 
-  <subsubsection|<verbatim|110101110000...: >Jets for SHA-1 (RESERVED)>
+    <subsubsection|<verbatim|110101110000...: >Jets for SHA-1 (RESERVED) (NOT
+    IMPLEMENTED)>
+  </with>
 
   <subsection|<verbatim|110110000...: >Jets for elliptic curve functions>
 
@@ -10885,60 +10901,60 @@
 
   \;
 
-  <paragraph|<samp|secp256k1-ge-scale-lambda>>
-
-  \;
-
-  <\math>
-    <rep|<text|<samp|'secp256k1-ge-scale-lambda'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
-
-  <math|<text|<samp|secp256k1-ge-scale-lambda>>:GE\<vdash\>GE>
-
-  \;
-
-  <paragraph|<samp|secp256k1-gej-scale-lambda> <with|color|red|Consider
-  removing>>
-
-  \;
-
-  <\math>
-    <rep|<text|<samp|'secp256k1-gej-scale-lambda'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
-
-  <math|<text|<samp|secp256k1-gej-scale-lambda>>:GEJ\<vdash\>GEJ>
-
-  \;
-
-  <paragraph|<samp|secp256k1-scalar-split-lambda>>
-
-  \;
-
-  <\math>
-    <rep|<text|<samp|'secp256k1-scalar-split-lambda'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
-
-  <math|<text|<samp|secp256k1-scalar-split-lambda>>:Scalar\<vdash\><2><rsup|129>\<times\><2><rsup|129>>
-
-  \;
-
   <\with|color|red>
+    <paragraph|<samp|secp256k1-ge-scale-lambda> (NOT IMPLEMENTED)>
+
+    \;
+
+    <\math>
+      <rep|<text|<samp|'secp256k1-ge-scale-lambda'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
+
+    <math|<text|<samp|secp256k1-ge-scale-lambda>>:GE\<vdash\>GE>
+
+    \;
+
+    <paragraph|<samp|secp256k1-gej-scale-lambda> <with|color|red|Consider
+    removing> (NOT IMPLEMENTED)>
+
+    \;
+
+    <\math>
+      <rep|<text|<samp|'secp256k1-gej-scale-lambda'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
+
+    <math|<text|<samp|secp256k1-gej-scale-lambda>>:GEJ\<vdash\>GEJ>
+
+    \;
+
+    <paragraph|<samp|secp256k1-scalar-split-lambda> (NOT IMPLEMENTED)>
+
+    \;
+
+    <\math>
+      <rep|<text|<samp|'secp256k1-scalar-split-lambda'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
+
+    <math|<text|<samp|secp256k1-scalar-split-lambda>>:Scalar\<vdash\><2><rsup|129>\<times\><2><rsup|129>>
+
+    \;
+
     TODO Properties:
 
     <math|\<lambda\>\<cdot\><around*|\<lceil\>|\<pi\><rsub|1><around*|(|<around*|\<llbracket\>|<text|<samp|'secp256k1-scalar-split'>>|\<rrbracket\>><around*|(|x|)>|)>|\<rceil\>><rsub|2<rsup|128>>+<around*|\<lceil\>|\<pi\><rsub|2><around*|(|<around*|\<llbracket\>|<text|<samp|'secp256k1-scalar-split'>>|\<rrbracket\>><around*|(|x|)>|)>|\<rceil\>><rsub|2<rsup|128>>\<equiv\><rsub|Scalar><around*|\<lceil\>|x|\<rceil\>><rsub|2<rsup|256>>>
+
+    \;
+
+    <paragraph|<samp|secp256k1-short-scalar> (NOT IMPLEMENTED)>
+
+    \;
+
+    <\math>
+      <rep|<text|<samp|'secp256k1-short-scalar'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
+
+    <math|<text|<samp|secp256k1-short-scalar>>:<2><rsup|129>\<vdash\>Scalar>
   </with>
-
-  \;
-
-  <paragraph|<samp|secp256k1-short-scalar>>
-
-  \;
-
-  <\math>
-    <rep|<text|<samp|'secp256k1-short-scalar'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
-
-  <math|<text|<samp|secp256k1-short-scalar>>:<2><rsup|129>\<vdash\>Scalar>
 
   \;
 
@@ -11062,15 +11078,17 @@
 
   \;
 
-  <paragraph|<samp|secp256k1-fe-is-quad>>
+  <\with|color|red>
+    <paragraph|<samp|secp256k1-fe-is-quad> (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'secp256k1-fe-is-quad'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'secp256k1-fe-is-quad'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|secp256k1-fe-is-quad>>:FE\<vdash\><2>>
+    <math|<text|<samp|secp256k1-fe-is-quad>>:FE\<vdash\><2>>
+  </with>
 
   \;
 
@@ -11132,120 +11150,125 @@
 
   \;
 
-  <paragraph|<samp|bip-0340-challenge-iv>>
+  <\with|color|red>
+    <paragraph|<samp|bip-0340-challenge-iv> (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'bip-0340-challenge-iv'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'bip-0340-challenge-iv'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|bip-0340-challenge-iv>>:<1>\<vdash\><2><rsup|256>>
+    <math|<text|<samp|bip-0340-challenge-iv>>:<1>\<vdash\><2><rsup|256>>
 
-  \;
+    \;
 
-  <paragraph|<samp|bip-0340-challenge-midstate>>
+    <paragraph|<samp|bip-0340-challenge-midstate> (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'bip-0340-challenge-midstate'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'bip-0340-challenge-midstate'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <\math>
-    <text|<samp|bip-0340-challenge-midstate>>:FE\<times\>Pubkey\<vdash\><2><rsup|256>
-  </math>
+    <\math>
+      <text|<samp|bip-0340-challenge-midstate>>:FE\<times\>Pubkey\<vdash\><2><rsup|256>
+    </math>
 
-  \;
+    \;
 
-  <paragraph|<samp|secp256k1-signature-unpack>>
+    <paragraph|<samp|secp256k1-signature-unpack> (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'secp256k1-signtaure-unpack'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'secp256k1-signtaure-unpack'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|secp256k1-signature-unpack>>:Signature\<vdash\><maybe><around*|(|FE\<times\>Scalar|)>>
+    <math|<text|<samp|secp256k1-signature-unpack>>:Signature\<vdash\><maybe><around*|(|FE\<times\>Scalar|)>>
 
-  \;
+    \;
 
-  <paragraph|<samp|secp256k1-pubkey-unpack>>
+    <paragraph|<samp|secp256k1-pubkey-unpack> (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'secp256k1-pubkey-unpack'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'secp256k1-pubkey-unpack'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|secp256k1-pubkey-unpack>>:Pubkey\<vdash\><maybe><around*|(|GE|)>>
+    <math|<text|<samp|secp256k1-pubkey-unpack>>:Pubkey\<vdash\><maybe><around*|(|GE|)>>
 
-  \;
+    \;
 
-  <paragraph|<samp|secp256k1-pubkey-unpack-neg>>
+    <paragraph|<samp|secp256k1-pubkey-unpack-neg> (NOT IMPLEMENTED)>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'secp256k1-pubkey-unpack-neg'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'secp256k1-pubkey-unpack-neg'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|secp256k1-pubkey-unpack-neg>>:Pubkey\<vdash\><maybe><around*|(|GE|)>>
+    <math|<text|<samp|secp256k1-pubkey-unpack-neg>>:Pubkey\<vdash\><maybe><around*|(|GE|)>>
 
-  \;
+    \;
 
-  <paragraph|<samp|secp256k1-ecdsa>>
+    <paragraph|<samp|secp256k1-ecdsa> (NOT IMPLEMENTED)>
 
-  \;
+    \;
+  </with>
 
-  <subsection|<verbatim|110110010...: >Jets for Simplicity>
+  <\with|color|red>
+    <subsection|<verbatim|110110010...: >Jets for Simplicity (NOT
+    IMPLEMENTED)>
 
-  Tagged hash IVs for basic simplicity combinators, signature hashes, etc.
-  The CMR of various expressions for constants.
+    Tagged hash IVs for basic simplicity combinators, signature hashes, etc.
+    The CMR of various expressions for constants.
 
-  \;
+    \;
 
-  These would be use for Simplicity covenants.
+    These would be use for Simplicity covenants.
 
-  <subsubsection|<verbatim|11011000100...: >Jets for tagged hash IVs>
+    <subsubsection|<verbatim|11011000100...: >Jets for tagged hash IVs>
 
-  <paragraph|<samp|iden-commitment-tag>>
+    <paragraph|<samp|iden-commitment-tag>>
 
-  <paragraph|<samp|comp-commitment-tag>>
+    <paragraph|<samp|comp-commitment-tag>>
 
-  <paragraph|<samp|unit-commitment-tag>>
+    <paragraph|<samp|unit-commitment-tag>>
 
-  <paragraph|<samp|injl-commitment-tag>>
+    <paragraph|<samp|injl-commitment-tag>>
 
-  <paragraph|<samp|injr-commitment-tag>>
+    <paragraph|<samp|injr-commitment-tag>>
 
-  <paragraph|<samp|case-commitment-tag>>
+    <paragraph|<samp|case-commitment-tag>>
 
-  <paragraph|<samp|pair-commitment-tag>>
+    <paragraph|<samp|pair-commitment-tag>>
 
-  <paragraph|<samp|take-commitment-tag>>
+    <paragraph|<samp|take-commitment-tag>>
 
-  <paragraph|<samp|drop-commitment-tag>>
+    <paragraph|<samp|drop-commitment-tag>>
 
-  <paragraph|<samp|witness-commitment-tag>>
+    <paragraph|<samp|witness-commitment-tag>>
 
-  <paragraph|<samp|disconnect-commitment-tag>>
+    <paragraph|<samp|disconnect-commitment-tag>>
 
-  <paragraph|<samp|fail-commitment-tag>>
+    <paragraph|<samp|fail-commitment-tag>>
 
-  <paragraph|<samp|signtaure-tag>>
+    <paragraph|<samp|signtaure-tag>>
 
-  \;
+    \;
 
-  <\math>
-    <rep|<text|<samp|'signature-tag'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
-  </math>
+    <\math>
+      <rep|<text|<samp|'signature-tag'>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>
+    </math>
 
-  <math|<text|<samp|signature-tag>>:<1>\<vdash\><2><rsup|256>>
+    <math|<text|<samp|signature-tag>>:<1>\<vdash\><2><rsup|256>>
 
-  \;
+    \;
 
-  <paragraph|<samp|sighash-tag>>
+    <paragraph|<samp|sighash-tag>>
+  </with>
 
   <subsection|<verbatim|110110011...: >Jets for Bitcoin (without primitives)>
 
@@ -13985,6 +14008,9 @@
     <associate|auto-504|<tuple|C|?>>
     <associate|auto-505|<tuple|C|?>>
     <associate|auto-506|<tuple|C|?>>
+    <associate|auto-507|<tuple|C|?>>
+    <associate|auto-508|<tuple|C|?>>
+    <associate|auto-509|<tuple|C|?>>
     <associate|auto-51|<tuple|3.3.7.3|?>>
     <associate|auto-52|<tuple|3.4|?>>
     <associate|auto-53|<tuple|3.5|?>>
