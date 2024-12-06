@@ -4,7 +4,6 @@ module Simplicity.Elements.Jets
   ( JetType(..), ElementsJet(..), SigHashJet(..), TimeLockJet(..), IssuanceJet(..), TransactionJet(..)
   , asJet
   , jetSubst, pruneSubst
-  , getTermStopCode, putTermStopCode
   , getTermLengthCode, putTermLengthCode
   , fastEval
   , jetMap
@@ -933,17 +932,9 @@ jetSubst = Dag.jetSubst
 pruneSubst :: JetDag JetType () () -> PrimEnv -> Maybe (WrappedSimplicity () ())
 pruneSubst prog env = Dag.pruneSubst prog env ()
 
--- | This is an instance of 'BitString.getTermStopCode' that specifically decodes the canonical 'JetType' set of known jets.
-getTermStopCode :: (Monad m, Simplicity term, TyC a, TyC b) => m Void -> m Bool -> m (term a b)
-getTermStopCode = BitString.getTermStopCode (Proxy :: Proxy (SomeArrow JetType))
-
 -- | This is an instance of 'BitString.getTermLengthCode' that specifically decodes the canonical 'JetType' set of known jets.
 getTermLengthCode :: (Monad m, Simplicity term, TyC a, TyC b) => m Void -> m Bool -> m (term a b)
 getTermLengthCode = BitString.getTermLengthCode (Proxy :: Proxy (SomeArrow JetType))
-
--- | This is an instance of 'BitString.putTermStopCode' that specifically encodes the canonical 'JetType' set of known jets.
-putTermStopCode :: (TyC a, TyC b) => JetDag JetType a b -> ([Bool],[Bool])
-putTermStopCode = BitString.putTermStopCode
 
 -- | This is an instance of 'BitString.putTermLengthCode' that specifically encodes the canonical 'JetType' set of known jets.
 putTermLengthCode :: (TyC a, TyC b) => JetDag JetType a b -> ([Bool],[Bool])

@@ -6765,17 +6765,15 @@
     witnessData<around*|(|l|)>\<assign\> \<mu\><rsup|\<ast\>><around*|(|witnessDatum<rsup|*\<ast\>><around*|(|\<eta\><rsup|S><around*|(|l|)>|)>|)>
   </equation*>
 
+  The code <math|<verbatim|<around*|[|01011|]>><rsub|<2>>>, is a reserved
+  code for wallet use where it represents a \Punary
+  <math|<text|<samp|`disconnect'>>>\Q node for reprsenting commitment time
+  Simplicity program where, of course, the disconnected Simplicity expression
+  wouldn't be available. The code is not used for consensus purposes, and
+  like <math|<text|<samp|`fail'>>>, it cannot legally appear on chain
+
   For serialization of DAGs, <math|l:DAG>, which is a non-empty list of
-  Nodes, we have a couple of serialization options.
-
-  <\equation*>
-    stopCode<around*|(|l|)>\<assign\>\<mu\><rsup|\<ast\>><around*|(|<around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<ast\>><around*|(|\<eta\><rsup|S><around*|(|l|)>|)>|)>\<cdummy\><verbatim|<around*|[|01011|]>><rsub|<2>>
-  </equation*>
-
-  The <math|stopCode> above serializes the list of nodes using the prefix
-  code for nodes and terminating the list with the code
-  <math|<verbatim|<around*|[|01011|]>><rsub|<2>>>, which has been reserved
-  for use as an end-of-stream marker.
+  Nodes, we have the following serialization format
 
   <\equation*>
     lengthCode<around*|(|l|)>\<assign\><rep|<around*|\||l|\|>|>\<cdummy\>\<mu\><rsup|\<ast\>><around*|(|<around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<ast\>><around*|(|\<eta\><rsup|S><around*|(|l|)>|)>|)>
@@ -6783,18 +6781,7 @@
 
   The <math|lengthCode> above prefixes the serialization of DAG with the
   number of nodes, followed by the list of nodes serialized with the prefix
-  code for nodes. Both <math|stopCode> and <math|lengthCode> are prefix
-  codes.
-
-  The last alternative is to directly use
-  <math|\<mu\><rsup|\<ast\>><around*|(|<around*|(|\<lambda\>x.<rep|x|>|)><rsup|\<ast\>><around*|(|\<eta\><rsup|S><around*|(|l|)>|)>|)>>.
-  This is suitable when, from the context of where the code is used, the
-  number of nodes or the length of the code in bits is already known. This
-  variant is not a prefix code.
-
-  Which serialization format is best depends on the context in which it is
-  being used. Users should choose the most suitable one for their
-  application.
+  code for nodes. Again, <math|lengthCode> is a prefix codes.
 
   Notice that the <math|witnessDatum> does not use a prefix code, and the
   witnessData simply concatenates values without separating them with
@@ -8489,13 +8476,10 @@
   <verbatim|putTermLengthCode> function executes <verbatim|jetDag> to perform
   sharing and substitution of jets, and the <verbatim|getTermLengthCode>
   executes deserialization, type inference and type checking all together.
-  The <verbatim|getTermStopCode> and <verbatim|putTermStopCode> functions
-  provide the same functionality using a serialization format with a stop
-  code instead of a length code prefix. The module also provides,
-  <verbatim|getDagNoWitness>, <verbatim|getWitnessData> and
-  <verbatim|putDag>, that are used by the <verbatim|getTerm*> and
-  <verbatim|putTerm*> functions to convert between Simplicity DAGs and their
-  serialized representation.
+  The module also provides, <verbatim|getDagNoWitness>,
+  <verbatim|getWitnessData> and <verbatim|putDag>, that are used by the
+  <verbatim|getTerm*> and <verbatim|putTerm*> functions to convert between
+  Simplicity DAGs and their serialized representation.
 
   The file <verbatim|Indef/Simplicity/Serialization/ByteString.hs> provides
   similar <verbatim|getDag> and <verbatim|putDag> functions for the
@@ -14008,9 +13992,6 @@
     <associate|auto-504|<tuple|C|?>>
     <associate|auto-505|<tuple|C|?>>
     <associate|auto-506|<tuple|C|?>>
-    <associate|auto-507|<tuple|C|?>>
-    <associate|auto-508|<tuple|C|?>>
-    <associate|auto-509|<tuple|C|?>>
     <associate|auto-51|<tuple|3.3.7.3|?>>
     <associate|auto-52|<tuple|3.4|?>>
     <associate|auto-53|<tuple|3.5|?>>
@@ -15003,19 +14984,19 @@
       <no-break><pageref|auto-211>>
 
       <with|par-left|<quote|2tab>|B.1.1.30<space|2spc><with|font-family|<quote|ss>|transpose>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-212>>
 
       <with|par-left|<quote|2tab>|B.1.1.31<space|2spc><with|font-family|<quote|ss>|find-first-high>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-213>>
 
       <with|par-left|<quote|2tab>|B.1.1.32<space|2spc><with|font-family|<quote|ss>|find-last-high>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-214>>
 
       <with|par-left|<quote|2tab>|B.1.1.33<space|2spc><with|font-family|<quote|ss>|bit>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-215>>
 
       <with|par-left|<quote|1tab>|B.1.2<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110100...:
@@ -15043,7 +15024,7 @@
       <no-break><pageref|auto-221>>
 
       <with|par-left|<quote|2tab>|B.1.2.6<space|2spc><with|font-family|<quote|ss>|popcount>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-222>>
 
       <with|par-left|<quote|2tab>|B.1.2.7<space|2spc><with|font-family|<quote|ss>|full-subtract>
@@ -15123,75 +15104,81 @@
       <no-break><pageref|auto-242>>
 
       <with|par-left|<quote|2tab>|B.1.2.26<space|2spc><with|font-family|<quote|ss>|eea>
-      (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (unsigned) (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-243>>
 
       <with|par-left|<quote|2tab>|B.1.2.27<space|2spc><with|font-family|<quote|ss>|bezout>
-      (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (unsigned) (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-244>>
 
       <with|par-left|<quote|2tab>|B.1.2.28<space|2spc><with|font-family|<quote|ss>|gcd>
-      (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (unsigned) (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-245>>
 
       <with|par-left|<quote|2tab>|B.1.2.29<space|2spc><with|font-family|<quote|ss>|cofactors>
-      (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (unsigned)<space|0.2spc>(NOT IMPLEMENTED)
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-246>>
 
       <with|par-left|<quote|2tab>|B.1.2.30<space|2spc><with|font-family|<quote|ss>|lcm>
-      (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (unsigned) (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-247>>
 
       <with|par-left|<quote|2tab>|B.1.2.31<space|2spc><with|font-family|<quote|ss>|jacobi>
-      (unsigned) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (unsigned) (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-248>>
 
       <with|par-left|<quote|2tab>|B.1.2.32<space|2spc><with|font-family|<quote|ss>|absolute-value>
-      (signed input/unsigned output) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (signed input/unsigned output) (NOT IMPLEMENTED)
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-249>>
 
       <with|par-left|<quote|2tab>|B.1.2.33<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|><with|font-family|<quote|ss>|sign>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-250>>
 
       <with|par-left|<quote|2tab>|B.1.2.34<space|2spc><with|font-family|<quote|ss>|signed-le>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-251>>
 
       <with|par-left|<quote|2tab>|B.1.2.35<space|2spc><with|font-family|<quote|ss>|signed-lt>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-252>>
 
       <with|par-left|<quote|2tab>|B.1.2.36<space|2spc><with|font-family|<quote|ss>|signed-min>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-253>>
 
       <with|par-left|<quote|2tab>|B.1.2.37<space|2spc><with|font-family|<quote|ss>|signed-max>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-254>>
 
       <with|par-left|<quote|2tab>|B.1.2.38<space|2spc><with|font-family|<quote|ss>|signed-median>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-255>>
 
       <with|par-left|<quote|2tab>|B.1.2.39<space|2spc><with|font-family|<quote|ss>|signed-right-shift>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-256>>
 
       <with|par-left|<quote|2tab>|B.1.2.40<space|2spc><with|font-family|<quote|ss>|signed-divmod>
-      (unsigned denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (unsigned denominator) (NOT IMPLEMENTED)
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-257>>
 
       <with|par-left|<quote|2tab>|B.1.2.41<space|2spc><with|font-family|<quote|ss>|signed-div>
-      (unsigned denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (unsigned denominator) (NOT IMPLEMENTED)
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-258>>
 
       <with|par-left|<quote|2tab>|B.1.2.42<space|2spc><with|font-family|<quote|ss>|signed-signed-divmod>
-      (signed denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (signed denominator) (NOT IMPLEMENTED)
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-259>>
 
       <with|par-left|<quote|2tab>|B.1.2.43<space|2spc><with|font-family|<quote|ss>|signed-signed-div>
-      (signed denominator) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (signed denominator) (NOT IMPLEMENTED)
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-260>>
 
       <with|par-left|<quote|1tab>|B.1.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110101...:
@@ -15227,7 +15214,7 @@
       <no-break><pageref|auto-268><vspace|0.15fn>>
 
       <with|par-left|<quote|2tab>|B.1.3.2<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110101100...:
-      >Jets for SHA-3 <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      >Jets for SHA-3 (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-269>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|sha3-zero>
@@ -15255,11 +15242,12 @@
       <no-break><pageref|auto-275><vspace|0.15fn>>
 
       <with|par-left|<quote|2tab>|B.1.3.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110101101...:
-      >Jets for RIPEMD <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      >Jets for RIPEMD (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-276>>
 
       <with|par-left|<quote|2tab>|B.1.3.4<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110101110000...:
-      >Jets for SHA-1 (RESERVED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      >Jets for SHA-1 (RESERVED) (NOT IMPLEMENTED)
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-277>>
 
       <with|par-left|<quote|1tab>|B.1.4<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110110000...:
@@ -15393,20 +15381,20 @@
       <no-break><pageref|auto-309><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-ge-scale-lambda>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-310><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-gej-scale-lambda>
-      <with|color|<quote|red>|Consider removing>
+      <with|color|<quote|red>|Consider removing> (NOT IMPLEMENTED)
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-311><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-scalar-split-lambda>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-312><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-short-scalar>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-313><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-normalize>
@@ -15450,7 +15438,7 @@
       <no-break><pageref|auto-323><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-fe-is-quad>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-324><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-hash-to-curve>
@@ -15479,31 +15467,32 @@
       <no-break><pageref|auto-330><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip-0340-challenge-iv>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-331><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|bip-0340-challenge-midstate>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-332><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-signature-unpack>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-333><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-334><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-pubkey-unpack-neg>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-335><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|<with|font-family|<quote|ss>|secp256k1-ecdsa>
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      (NOT IMPLEMENTED) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-336><vspace|0.15fn>>
 
       <with|par-left|<quote|1tab>|B.1.6<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|110110010...:
-      >Jets for Simplicity <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      >Jets for Simplicity (NOT IMPLEMENTED)
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-337>>
 
       <with|par-left|<quote|2tab>|B.1.6.1<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|11011000100...:

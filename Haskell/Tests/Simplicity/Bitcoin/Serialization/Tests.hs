@@ -113,8 +113,8 @@ compareDag compareWitness v1 v2 = (and $ zipWith compareNode v1 v2) && (length v
 -- Check that 'BitString.putDag's serialization of 'SimplicityDag's works can be deserialized by a combination of 'BitString.getDagNoWitness' and 'BitString.getWitnessData'.
 -- Note: Because we do not yet have a generator for arbitrary well-typed Simplicity expressions we cannot easily test 'BitString.putTerm' with 'BitString.getTerm'.
 -- Instead we perform an akward combinator of 'BitString.getDagNoWitness' and 'BitString.getWitnessData' on mostly untyped Simplicity DAGs for now.
-prop_getPutBitStringDag :: Bool -> Property
-prop_getPutBitStringDag stopCode = forallSimplicityDag prop
+prop_getPutBitStringDag :: Property
+prop_getPutBitStringDag = forallSimplicityDag prop
  where
   compareWitness _ w0 _ w1 = w0 == w1
   prop :: SimplicityDag [] Ty (SomeArrow NoJets) UntypedValue -> Result
@@ -124,10 +124,10 @@ prop_getPutBitStringDag stopCode = forallSimplicityDag prop
                        | not (compareDag compareWitness v (toList wdag)) -> failed { reason = "Bitstring.getWitnessData returend bad value" }
                        | otherwise -> succeeded
    where
-    pbs = (if stopCode then BitString.putDagNoWitnessStopCode else BitString.putDagNoWitnessLengthCode) v
+    pbs = BitString.putDagNoWitnessLengthCode v
     Just wbs = BitString.putWitnessData v -- generation is designed to create terms that always succeed at serializaiton.
     evalPDag = flip evalStreamWithError pbs $ \abort next -> do
-     (if stopCode then BitString.getDagNoWitnessStopCode else BitString.getDagNoWitnessLengthCode) abort next
+     BitString.getDagNoWitnessLengthCode abort next
     evalWDag = flip evalStreamWithError wbs $ \abort next -> do
      BitString.getWitnessData vStripped next
     eval = (,) <$> evalPDag <*> evalWDag
