@@ -97,9 +97,6 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
     }
     if (IS_OK(*error)) {
       sha256_midstate imr_buf;
-      static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(sha256_midstate), "imr_buf array too large.");
-      static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
-      static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "imr_buf array index does nto fit in uint32_t.");
       *error = simplicity_verifyNoDuplicateIdentityRoots(&imr_buf, dag, type_dag, (uint_fast32_t)dag_len);
       if (IS_OK(*error) && imr) sha256_fromMidstate(imr, imr_buf.s);
     }
