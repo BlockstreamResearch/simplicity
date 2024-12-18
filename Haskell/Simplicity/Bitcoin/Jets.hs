@@ -297,7 +297,7 @@ bitcoinJetMap = Map.fromList
   ]
  where
   mkAssoc :: (TyC a, TyC b) => BitcoinJet a b -> (Hash256, (SomeArrow BitcoinJet))
-  mkAssoc jt = (identityRoot (specificationBitcoin jt), SomeArrow jt)
+  mkAssoc jt = (identityHash (specificationBitcoin jt), SomeArrow jt)
 
 data MatcherInfo a b = MatcherInfo (Product ConstWord IdentityRoot a b)
 
@@ -312,7 +312,7 @@ instance Simplicity.Bitcoin.JetType.JetType JetType where
   implementation (BitcoinJet jt) env = implementationBitcoin jt env
 
   matcher (MatcherInfo (Product cw ir)) = (do
-    SomeArrow jt <- Map.lookup (identityRoot ir) jetMap
+    SomeArrow jt <- Map.lookup (identityHash ir) jetMap
     let (ira, irb) = reifyArrow ir
     let (jta, jtb) = reifyArrow jt
     -- If the error below is thrown it suggests there is some sort of type annotation mismatch in the map below

@@ -7845,21 +7845,21 @@
   The <verbatim|Core/Simplicity/MerkleRoot.hs> module reexports functionality
   defined in <verbatim|Core/Simplicity/MerkleRoot/Impl.hs>, which provides
   instances of Simplicity terms that compute the commitment, identity and
-  annotated Merkle roots. The <verbatim|commitmentRoot>,
-  <verbatim|identityRoot>, and <verbatim|annotatedRoot> return these Merkle
-  root values. The <verbatim|Simplicity/MerkleRoot.hs> module also provides a
-  memoized computation of the Merkle roots for Simplicity types.
+  annotated Merkle roots. The <verbatim|commitmentRoot> and
+  <verbatim|annotatedRoot> return these Merkle root values. The
+  <verbatim|Simplicity/MerkleRoot.hs> module also provides a memoized
+  computation of the Merkle roots for Simplicity types.
 
   The SHA-256 implementation is provided through an abstract interface found
   in <verbatim|Core/Simplicity/Digest.hs>, which in turn references an
   implementation of a 256-bit word type defined in
   <verbatim|Core/Simplicity/Word.hs>.
 
-  The <verbatim|identityRoot> computation differs from <math|<imr0|t>> in
+  The <verbatim|identityHash> computation differs from <math|<imr0|t>> in
   that it additionally hashes in the input and output types of an expression
   <math|t>. This is done so that ensuring the uniqueness of the
   <math|<imr0|t>> and the input and outputs type triples can be effectively
-  done by just comparing the single <verbatim|identityRoot> hash value.
+  done by just comparing the single <verbatim|identityHash> value.
 
   <subsection|Tensors>
 

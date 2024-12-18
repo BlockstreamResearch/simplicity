@@ -110,8 +110,8 @@ fileC example = "#include \""++example^.name++".h\"\n"
         ++ "/* The commitment Merkle root of the above "++example^.fullname++" Simplicity expression. */\n"
         ++ showHash (example^.fullname++"_cmr") cmr
         ++ "\n"
-        ++ "/* The identity Merkle root of the above "++example^.fullname++" Simplicity expression. */\n"
-        ++ showHash (example^.fullname++"_imr") imr
+        ++ "/* The identity hash of the root of the above "++example^.fullname++" Simplicity expression. */\n"
+        ++ showHash (example^.fullname++"_ihr") ihr
         ++ "\n"
         ++ "/* The annotated Merkle root of the above "++example^.fullname++" Simplicity expression. */\n"
         ++ showHash (example^.fullname++"_amr") amr
@@ -123,7 +123,7 @@ fileC example = "#include \""++example^.name++".h\"\n"
   binP = BS.unpack . runPut $ putBitStream program
   binW = BS.unpack . runPut $ putBitStream witness
   cmr = commitmentRoot . unwrap $ example^.prog
-  imr = identityRoot . unwrap $ example^.prog
+  ihr = identityHash . unwrap $ example^.prog
   amr = annotatedRoot . unwrap $ example^.prog
   cost = milliWeigh . unwrap $ example^.prog
 
@@ -143,8 +143,8 @@ fileH example = "#ifndef "++headerDef++"\n"
              ++ "/* The commitment Merkle root of the above "++example^.fullname++" Simplicity expression. */\n"
              ++ "extern const uint32_t "++example^.fullname++"_cmr[];\n"
              ++ "\n"
-             ++ "/* The identity Merkle root of the above "++example^.fullname++" Simplicity expression. */\n"
-             ++ "extern const uint32_t "++example^.fullname++"_imr[];\n"
+             ++ "/* The identity hash of the root of the above "++example^.fullname++" Simplicity expression. */\n"
+             ++ "extern const uint32_t "++example^.fullname++"_ihr[];\n"
              ++ "\n"
              ++ "/* The annotated Merkle root of the above "++example^.fullname++" Simplicity expression. */\n"
              ++ "extern const uint32_t "++example^.fullname++"_amr[];\n"

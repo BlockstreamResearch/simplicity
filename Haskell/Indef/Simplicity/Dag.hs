@@ -112,7 +112,7 @@ pruneMap t env a = Map.foldrWithKey f (dagMap t) . getMapSet <$> fastEvalLog (da
 -- Topologically sort the 'Dag' into a list.
 -- Any jets found are condensed into 'uJet' nodes.
 linearizeDag :: (JetType jt, TyC a, TyC b) => IdentityRoot a b -> Map.Map Hash256 (DagMapContents jt) -> SimplicityDag [] () (SomeArrow jt) UntypedValue
-linearizeDag dagRoot dagMap = execLinearM . go . identityRoot $ dagRoot
+linearizeDag dagRoot dagMap = execLinearM . go . identityHash $ dagRoot
  where
   someArrowMatcher (SomeArrow jm) = SomeArrow <$> matcher jm
   go h = do
@@ -179,7 +179,7 @@ pruneSubst t env a = wrapWellTypedCheck . pass2 <$> pruneMap pass1 env a
 -- After the discounted jets are replaced, the Simplicity expression is scanned for jets matching the 'JetType' @jt@, which will introduce a new set of jets.
 -- If a different set of jets are introduced, then the 'CommitmentRoot' of the result might also not match the 'CommitmentRoot' of the input.
 -- This function invokes type inference to ensure that the type annotations are principle types (with type variables instantiated at unit types)
--- in order to ensure maximum sharing of expressions with identical 'identityRoot's.
+-- in order to ensure maximum sharing of expressions with identical 'identityHash's.
 jetDag :: forall jt a b. (JetType jt, TyC a, TyC b) => JetDag jt a b -> SimplicityDag Seq Ty (SomeArrow jt) UntypedValue
 jetDag t = case typeInference t (linearizeDag (dagRoot pass1) (dagMap pass1)) of
              Right pass -> pass
@@ -191,12 +191,12 @@ jetDag t = case typeInference t (linearizeDag (dagRoot pass1) (dagMap pass1)) of
 
 -- Add an entry mapping the identity root of a case combinator to the commitment root of either the left or right branch of that case expression.
 logRoot :: (TyC x, TyC a, TyC b, TyC c, TyC d) => (IdentityRoot (Either a b, c) d) -> (Either (CommitmentRoot (a, c) d) (CommitmentRoot (b, c) d)) -> JetDag jt (x, c) d -> JetDag jt (x, c) d
-logRoot ir cr ~(Dag dr dm de) = Dag dr dm (fastEvalTell (singleton (identityRoot ir) (commitmentRoot +++ commitmentRoot $ cr)) de)
+logRoot ir cr ~(Dag dr dm de) = Dag dr dm (fastEvalTell (singleton (identityHash ir) (commitmentRoot +++ commitmentRoot $ cr)) de)
 
 -- These combinators are used in to assist making 'Dag' instances.
 mkLeaf idComb eComb uComb =
    Dag { dagRoot = root
-       , dagMap = Map.singleton (identityRoot root) (DMC uComb (SomeArrow <$> jm))
+       , dagMap = Map.singleton (identityHash root) (DMC uComb (SomeArrow <$> jm))
        , dagEval = eval
        }
   where
@@ -206,7 +206,7 @@ mkLeaf idComb eComb uComb =
 
 mkUnary idComb eComb uComb t =
    Dag { dagRoot = root
-       , dagMap = Map.insert (identityRoot root) (DMC (uComb (identityRoot (dagRoot t))) (SomeArrow <$> jm))
+       , dagMap = Map.insert (identityHash root) (DMC (uComb (identityHash (dagRoot t))) (SomeArrow <$> jm))
                 $ dagMap t
        , dagEval = eval
        }
@@ -217,7 +217,7 @@ mkUnary idComb eComb uComb t =
 
 mkBinary idComb eComb uComb s t =
    Dag { dagRoot = root
-       , dagMap = Map.insert (identityRoot root) (DMC (uComb (identityRoot (dagRoot s)) (identityRoot (dagRoot t))) (SomeArrow <$> jm))
+       , dagMap = Map.insert (identityHash root) (DMC (uComb (identityHash (dagRoot s)) (identityHash (dagRoot t))) (SomeArrow <$> jm))
                 $ union
        , dagEval = eval
        }
@@ -247,7 +247,7 @@ instance JetType jt => Core (JetDag jt) where
 
 instance JetType jt => Assert (JetDag jt) where
   assertl s h = Dag { dagRoot = root
-                    , dagMap = Map.insert (identityRoot root) (DMC (uCase (identityRoot (dagRoot s)) hRoot) (SomeArrow <$> jm))
+                    , dagMap = Map.insert (identityHash root) (DMC (uCase (identityHash (dagRoot s)) hRoot) (SomeArrow <$> jm))
                              . Map.insert hRoot (DMC (uHidden h) Nothing)
                              $ dagMap s
                     , dagEval = eval
@@ -258,7 +258,7 @@ instance JetType jt => Assert (JetDag jt) where
     eval = assertl (dagEval s) h
     jm = fastEvalMatcher eval
   assertr h t = Dag { dagRoot = root
-                    , dagMap = Map.insert (identityRoot root) (DMC (uCase hRoot (identityRoot (dagRoot t))) (SomeArrow <$> jm))
+                    , dagMap = Map.insert (identityHash root) (DMC (uCase hRoot (identityHash (dagRoot t))) (SomeArrow <$> jm))
                              . Map.insert hRoot (DMC (uHidden h) Nothing)
                              $ dagMap t
                     , dagEval = eval
@@ -282,9 +282,9 @@ instance JetType jt => Primitive (JetDag jt)  where
 -- Exisiting jets are discarded when coverting to a dag.  They are reconstructed using a jet matcher.
 instance JetType jt => Jet (JetDag jt) where
   jet w t = Dag { dagRoot = root
-                -- We make this identityRoot point to the same subexpression as the root of t.
+                -- We make this identityHash point to the same subexpression as the root of t.
                 -- This lets the jet matcher match on nodes marked as jets, but otherwise the JetDag ignores marked jets.
-                , dagMap = Map.insert (identityRoot root) (DMC (dmcTerm (map ! identityRoot (dagRoot dag))) (SomeArrow <$> jm))
+                , dagMap = Map.insert (identityHash root) (DMC (dmcTerm (map ! identityHash (dagRoot dag))) (SomeArrow <$> jm))
                          $ map
                 , dagEval = eval
                 }

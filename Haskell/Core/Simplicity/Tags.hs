@@ -1,7 +1,7 @@
 module Simplicity.Tags
   ( typeTag
   , commitmentTag
-  , identityRootTag, identityTag
+  , identityHashTag, identityTag
   , annotatedTag
   , primTag
   , jetTag
@@ -30,8 +30,8 @@ typeTag x = tag $ typePrefix ++ [x]
 commitmentTag :: String -> IV
 commitmentTag x = tag $ commitmentPrefix ++ [x]
 
-identityRootTag :: IV
-identityRootTag = tag identityPrefix
+identityHashTag :: IV
+identityHashTag = tag identityPrefix
 
 identityTag :: String -> IV
 identityTag x = tag $ identityPrefix ++ [x]
