@@ -66,7 +66,7 @@ declareMRIVs = vsep $ ["/* Initial values for all the tags for 'CMR's, 'AMR's an
             ++ (declCMR <$> names)
             ++ (declAMR <$> ["assertl", "assertr"] ++ names)
             ++ (declIMR <$> ["disconnect", "witness"])
-            ++ [declIV "identity" identityRootTag, declIV "hidden" hiddenTag, declIV "jet" jetTag]
+            ++ [declIV "identity" identityHashTag, declIV "hidden" hiddenTag, declIV "jet" jetTag]
  where
   declCMR name = declIV ("cmr_" ++ name) (commitmentTag name)
   declAMR name = declIV ("amr_" ++ name) (annotatedTag name)

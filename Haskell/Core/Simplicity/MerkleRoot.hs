@@ -3,7 +3,7 @@
 module Simplicity.MerkleRoot
   ( typeRoot, typeRootR
   , CommitmentRoot, commitmentRoot
-  , IdentityRoot, identityRoot
+  , IdentityRoot, identityHash
   , AnnotatedRoot, annotatedRoot
   , hiddenRoot
   , signatureTag, sigHash

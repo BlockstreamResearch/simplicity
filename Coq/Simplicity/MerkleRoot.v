@@ -94,14 +94,14 @@ Canonical Structure CommitmentRoot_Witness_alg : Witness.Algebra :=
 Canonical Structure CommitmentRoot_AssertionWitness_alg : AssertionWitness.Algebra :=
   AssertionWitness.Pack CommitmentRoot.
 
-Definition identityRootTag := tag identityPrefix.
+Definition identityHashTag := tag identityPrefix.
 
 Section IdentityRoot.
 
 Definition IdentityRoot (A B:Ty) := hash256.
 
-Definition identityRoot {A B} (x : IdentityRoot A B) : hash256 :=
-  compress (compress_half identityRootTag x) (typeRoot A) (typeRoot B).
+Definition identityHash {A B} (x : IdentityRoot A B) : hash256 :=
+  compress (compress_half identityHashTag x) (typeRoot A) (typeRoot B).
 
 Definition IdentityRoot_Core_mixin : Core.class IdentityRoot := CommitmentRoot_Core_mixin.
 

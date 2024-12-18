@@ -745,7 +745,7 @@ elementsJetMap :: Map.Map Hash256 (SomeArrow ElementsJet)
 elementsJetMap = Map.fromList . fmap mkAssoc $ toList elementsCatalogue
  where
   mkAssoc :: SomeArrow ElementsJet -> (Hash256, (SomeArrow ElementsJet))
-  mkAssoc wrapped@(SomeArrow jt) = (identityRoot (specificationElements jt), wrapped)
+  mkAssoc wrapped@(SomeArrow jt) = (identityHash (specificationElements jt), wrapped)
 
 data MatcherInfo a b = MatcherInfo (Product ConstWord IdentityRoot a b)
 
@@ -761,7 +761,7 @@ instance Simplicity.Elements.JetType.JetType JetType where
   implementation (ElementsJet jt) env = implementationElements jt env
 
   matcher (MatcherInfo (Product cw ir)) = (do
-    SomeArrow jt <- Map.lookup (identityRoot ir) jetMap
+    SomeArrow jt <- Map.lookup (identityHash ir) jetMap
     let (ira, irb) = reifyArrow ir
     let (jta, jtb) = reifyArrow jt
     -- If the error below is thrown it suggests there is some sort of type annotation mismatch in the map below

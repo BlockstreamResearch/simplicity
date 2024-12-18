@@ -462,7 +462,7 @@ Qed.
 
 Require Import Simplicity.MerkleRoot.
 
-Fact identityRoot_hashBlock : map Byte.unsigned (hash256_to_bytelist (identityRoot hashBlock)) =
+Fact identityHash_hashBlock : map Byte.unsigned (hash256_to_bytelist (identityHash hashBlock)) =
   map Byte.unsigned (sha.functional_prog.hexstring_to_bytelist "609cc1459375db728f2172c962807e3161df4cced6592d2c4e594a7779ab3175").
 Proof.
 vm_compute.

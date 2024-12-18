@@ -2681,13 +2681,13 @@ putJetBitBitcoin ParseLock  = putPositive 1
 putJetBitBitcoin ParseSequence  = putPositive 2
 putJetBitBitcoin TapdataInit  = putPositive 3
 
--- | A 'Map.Map' from the identity roots of the "core" jet specification to their corresponding token.
+-- | A 'Map.Map' from the identity hashes of the "core" jet specification to their corresponding token.
 -- This can be used to help instantiate the 'Simplicity.JetType.matcher' method.
 coreJetMap :: Map.Map Hash256 (SomeArrow CoreJet)
 coreJetMap = Map.fromList . fmap mkAssoc $ toList coreCatalogue
  where
   mkAssoc :: SomeArrow CoreJet -> (Hash256, (SomeArrow CoreJet))
-  mkAssoc wrapped@(SomeArrow jt) = (identityRoot (specification jt), wrapped)
+  mkAssoc wrapped@(SomeArrow jt) = (identityHash (specification jt), wrapped)
 
 -- | The costs of "core" jets.  This can be used to help instantiate the 'Simplicity.JetType.jetCost' method.
 jetCost :: CoreJet a b -> Weight
@@ -3082,7 +3082,7 @@ jetCostBitcoin TapdataInit = Benchmarks.cost "TapdataInit"
 -- This operation preserves the Simplicity types.
 coreJetLookup :: (TyC a, TyC b) => IdentityRoot a b -> Maybe (CoreJet a b)
 coreJetLookup ir = do
-  SomeArrow jt <- Map.lookup (identityRoot ir) coreJetMap
+  SomeArrow jt <- Map.lookup (identityHash ir) coreJetMap
   let (ira, irb) = reifyArrow ir
   let (jta, jtb) = reifyArrow jt
   case (equalTyReflect ira jta, equalTyReflect irb jtb) of

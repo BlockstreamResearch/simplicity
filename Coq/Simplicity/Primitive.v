@@ -251,14 +251,14 @@ Canonical Structure JetPrimSem (M : CIMonadZero) : Algebra :=
   Pack (primSem M) (PrimSem_jet_mixin M).
 
 Definition CommitmentRoot_Jet_mixin : mixin CommitmentRoot :=
- {| Jet.jet A B t p := compress_half jetTag (identityRoot (t _))
+ {| Jet.jet A B t p := compress_half jetTag (identityHash (t _))
   |}.
 
 Canonical Structure CommitmentRoot_Jet_alg : Algebra :=
   Pack CommitmentRoot CommitmentRoot_Jet_mixin.
 
 Definition IdentityRoot_Jet_mixin : mixin IdentityRoot :=
- {| Jet.jet A B t p := compress_half jetTag (identityRoot (t _))
+ {| Jet.jet A B t p := compress_half jetTag (identityHash (t _))
   |}.
 
 Canonical Structure IdentityRoot_Jet_alg : Algebra :=

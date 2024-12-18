@@ -5,7 +5,7 @@
 module Simplicity.MerkleRoot.Impl
   ( typeRoot, typeRootR
   , CommitmentRoot, commitmentRoot
-  , IdentityRoot, identityRoot
+  , IdentityRoot, identityHash
   , AnnotatedRoot, annotatedRoot
   , hiddenRoot
   , signatureTag, sigHash
@@ -30,7 +30,7 @@ import Simplicity.Ty.Word
 
 -- | This function hashes a hash such that it will not collide with any 'typeRoot' or 'identityRoot'.
 --
--- It is designed to be used as if it were a "identity root" for hidden nodes.
+-- It is designed to be used as if it were a "identity hash" for hidden nodes.
 hiddenRoot :: Hash256 -> Hash256
 hiddenRoot = ivHash . compressHalf hiddenTag
 
@@ -90,10 +90,10 @@ instance Delegate CommitmentRoot where
 
 newtype IdentityRoot a b = IdentityRoot Hash256
 
--- | A digest of a Simplicity expression that includes 'witness' values and 'disconnect'ed expressions.
--- This also includes the hash of the input and output types.
-identityRoot :: (TyC a, TyC b) => IdentityRoot a b -> Hash256
-identityRoot ir@(IdentityRoot t) = ivHash $ compress (compressHalf identityRootTag t) (typeRootR ra, typeRootR rb)
+-- | A hash of the identity Merkle root, which includes 'witness' values and 'disconnect'ed expressions,
+-- along with the type Merkle roots of the input and output types.
+identityHash :: (TyC a, TyC b) => IdentityRoot a b -> Hash256
+identityHash ir@(IdentityRoot t) = ivHash $ compress (compressHalf identityHashTag t) (typeRootR ra, typeRootR rb)
  where
   (ra, rb) = reifyArrow ir
 
@@ -237,13 +237,13 @@ instance Delegate AnnotatedRoot where
 
 primitiveCommitmentImpl primPrefix primName = commit . primTag primPrefix . primName
 
--- Jets commit to their types, so we use 'identityRoot' here.
-jetCommitmentImpl ir milliweight = commit $ compress jetTag (review (over be256) milliweight, identityRoot ir)
+-- Jets commit to their types, so we use 'identityHash' here.
+jetCommitmentImpl ir milliweight = commit $ compress jetTag (review (over be256) milliweight, identityHash ir)
 
 primitiveIdentityImpl primPrefix primName = identify . primTag primPrefix . primName
 
-jetIdentityImpl ir milliweight = identify $ compress jetTag (review (over be256) milliweight, identityRoot ir)
+jetIdentityImpl ir milliweight = identify $ compress jetTag (review (over be256) milliweight, identityHash ir)
 
 primitiveAnnotatedImpl primPrefix primName = observe . primTag primPrefix . primName
 
-jetAnnotatedImpl ir milliweight = observe $ compress jetTag (review (over be256) milliweight, identityRoot ir)
+jetAnnotatedImpl ir milliweight = observe $ compress jetTag (review (over be256) milliweight, identityHash ir)
