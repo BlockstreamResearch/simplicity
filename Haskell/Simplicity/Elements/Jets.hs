@@ -2,6 +2,7 @@
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Elements.Jets
   ( JetType(..), ElementsJet(..), SigHashJet(..), TimeLockJet(..), IssuanceJet(..), TransactionJet(..)
+  , elementsCatalogue
   , asJet
   , jetSubst, pruneSubst
   , getTermLengthCode, putTermLengthCode

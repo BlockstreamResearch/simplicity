@@ -5,6 +5,7 @@
 {-# LANGUAGE RankNTypes, GADTs, StandaloneDeriving, ScopedTypeVariables, TypeFamilies #-}
 module Simplicity.CoreJets
  ( CoreJet(..), WordJet(..), ArithJet(..), HashJet(..), Secp256k1Jet(..), SignatureJet(..), BitcoinJet(..)
+ , coreCatalogue
  , specification, coreJetMap, coreJetLookup
  , implementation
  , fastCoreEval
@@ -1529,6 +1530,7 @@ implementationBitcoin TapdataInit v = toCtx <$> ctxAdd ctxInit (tag<>tag)
 getJetBit :: (Monad m) => m Void -> m Bool -> m (SomeArrow CoreJet)
 getJetBit = getCatalogue coreCatalogue
 
+-- | A 'Catalogue' of the core jets.  The structure informs the canonical serialization format for the jets.
 coreCatalogue :: Catalogue (SomeArrow CoreJet)
 coreCatalogue = Shelf
   [ someArrowMap WordJet <$> wordBook
