@@ -43,7 +43,7 @@ static simplicity_err getHash(sha256_midstate* result, bitstream* stream) {
  * Returns 'SIMPLICITY_ERR_FAIL_CODE' if the encoding of a fail expression is encountered
  *   (all fail subexpressions ought to have been pruned prior to serialization).
  * Returns 'SIMPLICITY_ERR_RESERVED_CODE' if a reserved codeword is encountered.
- * Returns 'SIMPLICITY_ERR_HIDDEN' if the decoded node has illegal HIDDEN children.
+ * Returns 'SIMPLICITY_ERR_HIDDEN' if the decoded node has a HIDDEN child in a position where it is not allowed.
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_RANGE' if the node's child isn't a reference to one of the preceding nodes.
  *                                            or some encoding for a non-existent jet is encountered
  *                                            or the size of a WORD encoding is greater than 2^31 bits.
@@ -144,7 +144,7 @@ static simplicity_err decodeNode(dag_node* dag, uint_fast32_t i, bitstream* stre
  * Returns 'SIMPLICITY_ERR_FAIL_CODE' if the encoding of a fail expression is encountered
  *   (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'SIMPLICITY_ERR_RESERVED_CODE' if a reserved codeword is encountered.
- * Returns 'SIMPLICITY_ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
+ * Returns 'SIMPLICITY_ERR_HIDDEN' if the decoded node has a HIDDEN child in a position where it is not allowed.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * In the above error cases, 'dag' may be modified.
  * Returns 'SIMPLICITY_NO_ERROR' if successful.
@@ -169,7 +169,7 @@ static simplicity_err decodeDag(dag_node* dag, const uint_fast32_t len, combinat
  * Returns 'SIMPLICITY_ERR_FAIL_CODE' if the encoding of a fail expression is encountered
  *  (all fail subexpressions ought to have been pruned prior to deserialization).
  * Returns 'SIMPLICITY_ERR_RESERVED_CODE' if a reserved codeword is encountered.
- * Returns 'SIMPLICITY_ERR_HIDDEN' if there are illegal HIDDEN children in the DAG.
+ * Returns 'SIMPLICITY_ERR_HIDDEN' if the decoded node has a HIDDEN child in a position where it is not allowed.
  * Returns 'SIMPLICITY_ERR_HIDDEN_ROOT' if the root of the DAG is a HIDDEN node.
  * Returns 'SIMPLICITY_ERR_BITSTRING_EOF' if not enough bits are available in the 'stream'.
  * Returns 'SIMPLICITY_ERR_DATA_OUT_OF_ORDER' if nodes are not serialized in the canonical order.
