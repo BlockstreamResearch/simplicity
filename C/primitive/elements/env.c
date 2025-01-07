@@ -305,7 +305,8 @@ static uint_fast32_t sumFees(sigOutput** feeOutputs, uint_fast32_t numFees) {
 
   return result + 1;
 }
-/* Allocate and initialize a 'transaction' from a 'rawOutput', copying or hashing the data as needed.
+
+/* Allocate and initialize a 'transaction' from a 'rawTransaction', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
  * Precondition: NULL != rawTx
