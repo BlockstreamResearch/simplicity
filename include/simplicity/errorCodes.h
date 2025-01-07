@@ -65,7 +65,7 @@ static inline const char * SIMPLICITY_ERR_MSG(simplicity_err err) {
   case SIMPLICITY_ERR_RESERVED_CODE:
     return "Program has reserved codeword";
   case SIMPLICITY_ERR_HIDDEN:
-    return "Program has illegal HIDDEN child node";
+    return "Program has node with a HIDDEN child in a position where it is not allowed";
   case SIMPLICITY_ERR_BITSTREAM_EOF:
     return "Unexpected end of bitstream";
   case SIMPLICITY_ERR_BITSTREAM_TRAILING_BYTES:
