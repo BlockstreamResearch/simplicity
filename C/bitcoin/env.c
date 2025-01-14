@@ -112,6 +112,7 @@ extern bitcoinTransaction* simplicity_bitcoin_mallocTransaction(const rawBitcoin
     sha256_context ctx_inputsHash = sha256_init(tx->inputsHash.s);
     for (uint_fast32_t i = 0; i < tx->numInputs; ++i) {
       copyInput(&input[i], &rawTx->input[i]);
+      tx->totalInputValue += input[i].txo.value;
       if (input[i].sequence < 0xffffffff) { tx->isFinal = false; }
       if (input[i].sequence < 0x80000000) {
          const uint_fast16_t maskedSequence = input[i].sequence & 0xffff;
@@ -158,6 +159,7 @@ extern bitcoinTransaction* simplicity_bitcoin_mallocTransaction(const rawBitcoin
 
     for (uint_fast32_t i = 0; i < tx->numOutputs; ++i) {
       copyOutput(&output[i], &rawTx->output[i]);
+      tx->totalOutputValue += output[i].value;
       sha256_u64be(&ctx_outputValuesHash, output[i].value);
       sha256_hash(&ctx_outputScriptsHash, &output[i].scriptPubKey);
     }

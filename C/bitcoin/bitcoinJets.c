@@ -155,6 +155,27 @@ bool simplicity_bitcoin_output_script_hash(frameItem* dst, frameItem src, const 
   return true;
 }
 
+/* fee : ONE |- TWO^64 */
+bool simplicity_bitcoin_fee(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  simplicity_write64(dst, env->tx->totalInputValue - env->tx->totalOutputValue);
+  return true;
+}
+
+/* total_input_value : ONE |- TWO^64 */
+bool simplicity_bitcoin_total_input_value(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  simplicity_write64(dst, env->tx->totalInputValue);
+  return true;
+}
+
+/* total_output_value : ONE |- TWO^64 */
+bool simplicity_bitcoin_total_output_value(frameItem* dst, frameItem src, const txEnv* env) {
+  (void) src; // src is unused;
+  simplicity_write64(dst, env->tx->totalOutputValue);
+  return true;
+}
+
 /* script_cmr : ONE |- TWO^256 */
 bool simplicity_bitcoin_script_cmr(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
