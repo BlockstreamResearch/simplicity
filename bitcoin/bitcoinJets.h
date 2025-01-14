@@ -16,6 +16,9 @@ bool simplicity_bitcoin_input_annex_hash(frameItem* dst, frameItem src, const tx
 bool simplicity_bitcoin_input_script_sig_hash(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_bitcoin_output_value(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_bitcoin_output_script_hash(frameItem* dst, frameItem src, const txEnv* env);
+bool simplicity_bitcoin_fee(frameItem* dst, frameItem src, const txEnv* env);
+bool simplicity_bitcoin_total_input_value(frameItem* dst, frameItem src, const txEnv* env);
+bool simplicity_bitcoin_total_output_value(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_bitcoin_script_cmr(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_bitcoin_transaction_id(frameItem* dst, frameItem src, const txEnv* env);
 bool simplicity_bitcoin_current_index(frameItem* dst, frameItem src, const txEnv* env);

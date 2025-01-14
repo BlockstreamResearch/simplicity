@@ -54,6 +54,8 @@ typedef struct bitcoinTransaction {
   sha256_midstate inputsHash;
   sha256_midstate txHash;
   sha256_midstate txid;
+  uint_fast64_t totalInputValue;
+  uint_fast64_t totalOutputValue;
   uint_fast32_t numInputs;
   uint_fast32_t numOutputs;
   uint_fast32_t version;
