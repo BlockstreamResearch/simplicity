@@ -13,18 +13,18 @@ import Numeric (showHex)
 
 import NameWrangler
 import Simplicity.Digest
-import Simplicity.Elements.Jets
-import Simplicity.Elements.Term
+import qualified Simplicity.Elements.Jets as Elements
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Weight
 
-jetList :: [SomeArrow JetType]
-jetList = sortBy (compare `on` name) $ Map.elems jetMap
- where
-  name :: SomeArrow JetType -> String
-  name (SomeArrow j) = mkName j
+data JetInfo = JetInfo { name :: String
+                       , cmr :: Hash256
+                       , mw :: Integer
+                       , sourceType :: Ty
+                       , targetType :: Ty
+                       }
 
 data CompactTy = CTyOne
                | CTyWord Int
@@ -83,29 +83,25 @@ cInitializeTy ty = showString "(*bound_var)[" . compactCName ty
                          . showString "], &(*bound_var)[" . compactCName y
                          . showString "] } }"
 
-cJetNode :: (TyC x, TyC y) => String -> JetType x y -> String
-cJetNode name jt = unlines
-  [ "[" ++ upperSnakeCase name ++ "] ="
+cJetNode :: JetInfo -> String
+cJetNode ji = unlines
+  [ "[" ++ upperSnakeCase (name ji) ++ "] ="
   , "{ .tag = JET"
-  , ", .jet = simplicity_" ++ lowerSnakeCase name
-  , ", .cmr = {{" ++ showCHash (commitmentRoot (asJet jt)) ++ "}}"
-  , ", .sourceIx = " ++ compactCName (compactTy (unreflect tyx)) ""
-  , ", .targetIx = " ++ compactCName (compactTy (unreflect tyy)) ""
-  , ", .cost = " ++ show (milliWeight (jetCost jt)) ++ " /* milli weight units */"
+  , ", .jet = simplicity_" ++ lowerSnakeCase (name ji)
+  , ", .cmr = {{" ++ showCHash (cmr ji) ++ "}}"
+  , ", .sourceIx = " ++ compactCName (compactTy (sourceType ji)) ""
+  , ", .targetIx = " ++ compactCName (compactTy (targetType ji)) ""
+  , ", .cost = " ++ show (mw ji) ++ " /* milli weight units */"
   , "}"
   ]
- where
-  (tyx, tyy) = reifyArrow jt
 
-tyList :: [CompactTy]
-tyList = Map.keys . foldr combine wordMap $ (tys =<< jetList)
+mkTyList :: [JetInfo] -> [CompactTy]
+mkTyList jetList = Map.keys . foldr combine wordMap $ (tys =<< jetList)
  where
   wordMap = Map.fromList [(CTyWord n, ty) | (n, ty) <- Prelude.take 32 words]
    where
     words = (1, sum one one) : [(2*n, prod ty ty) | (n, ty) <- words]
-  tys (SomeArrow jet) = [unreflect x, unreflect y]
-   where
-    (x,y) = reifyArrow jet
+  tys ji = [sourceType ji, targetType ji]
   combine ty map | isJust (Map.lookup cTy map) = map
                  | otherwise = Map.insert cTy ty (foldr combine map (children ty))
    where
@@ -114,35 +110,51 @@ tyList = Map.keys . foldr combine wordMap $ (tys =<< jetList)
     children (Fix (Sum x y)) = [x,y]
     children (Fix (Prod x y)) = [x,y]
 
-cEnumTyFile :: String
-cEnumTyFile = unlines . fmap item $ tyList
+cEnumTyFile :: [CompactTy] -> String
+cEnumTyFile tyList = unlines . fmap item $ tyList
  where
   item ty@CTyOne = compactCName ty " = 0,"
   item ty@(CTyWord n) = compactCName ty " = " ++ show (1 + ln n) ++ ","
   item ty = compactCName ty ","
   ln n = length . Prelude.drop 1 . takeWhile (0 <) $ iterate (`div` 2) n
 
-cInitializeTyFile :: String
-cInitializeTyFile = unlines $ cInitializeTy <$> tyList
+cInitializeTyFile :: [CompactTy] -> String
+cInitializeTyFile tyList = unlines $ cInitializeTy <$> tyList
 
-cEnumJetFile :: String
-cEnumJetFile = unlines $ map f jetList
+cEnumJetFile :: [JetInfo] -> String
+cEnumJetFile jetList = unlines $ map f jetList
  where
-  f :: SomeArrow JetType -> String
-  f (SomeArrow jet) = (upperSnakeCase . mkName $ jet) ++ ","
+  f ji = (upperSnakeCase (name ji)) ++ ","
 
-cJetNodeFile :: String
-cJetNodeFile = intercalate "," $ map f jetList
- where
-  f (SomeArrow jet) = cJetNode (mkName jet) jet
+cJetNodeFile :: [JetInfo] -> String
+cJetNodeFile jetList = intercalate "," $ map cJetNode jetList
 
 writeIncludeFile :: FilePath -> String -> IO ()
 writeIncludeFile name content = writeFile name (header ++ content)
  where
   header = "/* This file has been automatically generated. */\n"
 
+mkJetList :: (a -> JetInfo) -> [a] -> [JetInfo]
+mkJetList f l = sortBy (compare `on` name) . map f $ l
+
+writeFiles list = do
+  writeIncludeFile ("primitiveEnumTy.inc") (cEnumTyFile tyList)
+  writeIncludeFile ("primitiveInitTy.inc") (cInitializeTyFile tyList)
+  writeIncludeFile ("primitiveEnumJet.inc") (cEnumJetFile list)
+  writeIncludeFile ("primitiveJetNode.inc") (cJetNodeFile list)
+ where
+  tyList = mkTyList list
+
 main = do
-  writeIncludeFile "primitiveEnumTy.inc" cEnumTyFile
-  writeIncludeFile "primitiveInitTy.inc" cInitializeTyFile
-  writeIncludeFile "primitiveEnumJet.inc" cEnumJetFile
-  writeIncludeFile "primitiveJetNode.inc" cJetNodeFile
+  writeFiles elementsJetList
+ where
+  elementsJetList = mkJetList fromElements $ Map.elems Elements.jetMap
+  fromElements :: SomeArrow Elements.JetType -> JetInfo
+  fromElements (SomeArrow jt) = JetInfo { name = mkName jt
+                                        , cmr = commitmentRoot (Elements.asJet jt)
+                                        , mw = milliWeight (Elements.jetCost jt)
+                                        , sourceType = unreflect tyx
+                                        , targetType = unreflect tyy
+                                        }
+   where
+    (tyx, tyy) = reifyArrow jt
