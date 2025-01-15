@@ -16,8 +16,8 @@ data ErrorCode = BitstreamEof | DataOutOfRange deriving (Eq, Show)
 
 decodeError :: CInt -> Either ErrorCode ()
 decodeError 0 = Right ()
-decodeError (-2) = Left BitstreamEof
-decodeError (-4) = Left DataOutOfRange
+decodeError (-2) = Left DataOutOfRange
+decodeError (-12) = Left BitstreamEof
 decodeError err = error $ "Simplicity.Elements.FFI.Primitive.decodeError: Unexpected error code " ++ show err
 
 foreign import ccall unsafe "" simplicity_decodeJet :: Ptr DagNode -> Ptr Bitstream -> IO CInt
