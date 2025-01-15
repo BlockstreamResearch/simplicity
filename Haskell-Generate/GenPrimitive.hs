@@ -20,13 +20,6 @@ import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Weight
 
--- :TODO: This tool should probably be moved to Simplicity.Serialization for general use.
-enumerate :: (Cont (DList a) void -> Cont (DList a) Bool -> Cont (DList a) a) -> [a]
-enumerate tree = runCont (tree end branch) (:) []
- where
-  end = cont $ \k -> id
-  branch = cont $ \k -> k False . k True
-
 jetList :: [SomeArrow JetType]
 jetList = sortBy (compare `on` name) $ Map.elems jetMap
  where
