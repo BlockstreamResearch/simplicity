@@ -2,7 +2,7 @@
 module Simplicity.Bitcoin.DataTypes
   ( Script, Lock, Value
   , Outpoint(Outpoint), opHash, opIndex
-  , SigTxInput(SigTxInput), sigTxiPreviousOutpoint, sigTxiValue, sigTxiSequence, sigTxiAnnex, sigTxiScriptSig
+  , SigTxInput(SigTxInput), sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiAnnex, sigTxiScriptSig, sigTxiValue
   , TxOutput(TxOutput), txoValue, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock
   , TapEnv(..)
@@ -87,11 +87,15 @@ instance Serialize Outpoint where
 -- | The data type for signed transaction inputs.
 -- Note that signed transaction inputs for BIP 143 include the value of the input, which doesn't appear in the serialized transaction input format.
 data SigTxInput = SigTxInput { sigTxiPreviousOutpoint :: Outpoint
-                             , sigTxiValue :: Value
+                             , sigTxiTxo :: TxOutput
                              , sigTxiSequence :: Word32
                              , sigTxiAnnex :: Maybe BSL.ByteString
                              , sigTxiScriptSig :: Script -- length must be strictly less than 2^32.
                              } deriving Show
+
+-- | The value of the input being spent.
+sigTxiValue :: SigTxInput -> Value
+sigTxiValue = txoValue . sigTxiTxo
 
 {-
 instance Serialize SigTxInput where
