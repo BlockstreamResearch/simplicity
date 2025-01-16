@@ -5,6 +5,7 @@ module Simplicity.Bitcoin.DataTypes
   , SigTxInput(SigTxInput), sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiAnnex, sigTxiScriptSig, sigTxiValue
   , TxOutput(TxOutput), txoValue, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock
+  , putNoWitnessTx, txid
   , TapEnv(..)
   , txIsFinal, txLockDistance, txLockDuration
   , module Simplicity.Bitcoin
@@ -17,9 +18,10 @@ import Data.Semigroup (Max(Max,getMax))
 import Data.Word (Word64, Word32, Word16, Word8)
 import Data.Serialize ( Serialize
                       , Get, get, getWord8, getWord16le, getWord32le, getWord64le, getLazyByteString
-                      , Put, put, putWord8, putWord16le, putWord32le, putWord64le, putLazyByteString, runPutLazy
+                      , Putter, put, putWord8, putWord16le, putWord32le, putWord64le, putLazyByteString, runPutLazy
                       )
 import Data.Vector (Vector)
+import qualified Data.Vector as V
 
 import Simplicity.Bitcoin
 import Simplicity.Digest
@@ -156,3 +158,35 @@ txLockDuration tx | sigTxVersion tx < 2 = 0
   duration sigin = case parseSequence (sigTxiSequence sigin) of
                      Just (Right x) -> Max x
                      _ -> mempty
+
+-- | Serialize transaction data without witness data.
+-- Mainly suitable for computing a 'txid'.
+putNoWitnessTx :: Putter SigTx
+putNoWitnessTx tx = do
+  putWord32le $ sigTxVersion tx
+  putVarInt (V.length (sigTxIn tx))
+  mapM_ putInput (sigTxIn tx)
+  putVarInt (V.length (sigTxOut tx))
+  mapM_ putOutput (sigTxOut tx)
+  putWord32le $ sigTxLock tx
+ where
+  putVarInt x | x < 0 = error "putVarInt: negative value"
+              | x <= 0xFC = putWord8 (fromIntegral x)
+              | x <= 0xFFFF = putWord8 0xFD >> putWord16le (fromIntegral x)
+              | x <= 0xFFFFFFFF = putWord8 0xFE >> putWord32le (fromIntegral x)
+              | x <= 0xFFFFFFFFFFFFFFFF = putWord8 0xFF >> putWord64le (fromIntegral x)
+  putInput txi = do
+    put (opHash (sigTxiPreviousOutpoint txi))
+    putWord32le (opIndex (sigTxiPreviousOutpoint txi))
+    putVarInt (BSL.length (sigTxiScriptSig txi))
+    putLazyByteString (sigTxiScriptSig txi)
+    putWord32le (sigTxiSequence txi)
+
+  putOutput txo = do
+    putWord64le (txoValue txo)
+    putVarInt (BSL.length (txoScript txo))
+    putLazyByteString (txoScript txo)
+
+-- | Return the txid of the transaction.
+txid :: SigTx -> Hash256
+txid = bslDoubleHash . runPutLazy . putNoWitnessTx
