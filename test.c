@@ -445,7 +445,7 @@ static void test_elements(void) {
       printf("mallocTransaction(&rawTx1) failed\n");
       failures++;
     }
-    simplicity_free(tx1);
+    simplicity_elements_freeTransaction(tx1);
   }
   /* test a modified transaction with the same signature. */
   {
@@ -494,9 +494,9 @@ static void test_elements(void) {
       printf("mallocTransaction(&testTx2) failed\n");
       failures++;
     }
-    simplicity_free(tx2);
+    simplicity_elements_freeTransaction(tx2);
   }
-  simplicity_free(taproot);
+  simplicity_elements_freeTapEnv(taproot);
 }
 
 static sha256_midstate hashint(uint_fast32_t n) {
