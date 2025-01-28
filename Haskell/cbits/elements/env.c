@@ -67,11 +67,3 @@ void c_set_txEnv(txEnv* result, const transaction* tx, const tapEnv* taproot, co
   sha256_toMidstate(genesis.s, genesisHash);
   *result = simplicity_build_txEnv(tx, taproot, &genesis, ix);
 }
-
-void c_free_tapEnv(tapEnv* env) {
-  simplicity_free(env);
-}
-
-void c_free_transaction(transaction* tx) {
-  simplicity_free(tx);
-}
