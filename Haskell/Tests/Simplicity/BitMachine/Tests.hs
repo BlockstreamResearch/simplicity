@@ -25,7 +25,7 @@ tests = testGroup "BitMachine"
       , testCompiler "TCO" TCO.translate
       ]
 
--- Given a translator and a Simplicity expression, test that execuing using the authentic Bit Machine is equivalent to denoational semantics of the Simplicity expression.
+-- Given a translator and a Simplicity expression, test that executing using the authentic Bit Machine is equivalent to denoational semantics of the Simplicity expression.
 testUsing :: (Delegate trans, Assert trans, TyC a, TyC b) => (trans a b -> MachineCode) -> (forall term. (Delegate term, Assert term) => term a b) -> a -> Bool
 testUsing translator program x = executeUsing (runMachine . translator) program x == (runDelegatorKleisli program x `asTypeOf` Nothing)
 

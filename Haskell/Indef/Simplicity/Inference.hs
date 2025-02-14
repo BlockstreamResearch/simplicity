@@ -163,7 +163,7 @@ tyAnnotation f = fmap unFocusTy . traverse f . FocusTy
 -- The 'witnessData' is to let you take @TermF Ty j (Vector Bool) a@ values and turn them into @TermF Ty j UntypedValue a@ values
 -- by parsing witness data stored as bit vector into Simplicity values after type inference.
 -- Alternatively, 'witnessData' can help build a @TermF Ty j () a -> m Bool -> m (TermF Ty j Untyped a)@ function that parses witness data
--- after type inference from a 'Bool' stream accessable via a monadic effect.
+-- after type inference from a 'Bool' stream accessible via a monadic effect.
 witnessData :: Applicative m => (ty -> w0 -> m w1) -> TermF ty j w0 a -> m (TermF ty j w1 a)
 witnessData f (Iden a) = pure $ Iden a
 witnessData f (Unit a) = pure $ Unit a
@@ -253,7 +253,7 @@ uJet = Jet
 uFail :: Block512 -> UntypedTermF j w a
 uFail = error "uFail: :TODO: NOT YET IMPLEMENTED"
 
--- Given a @'UTy' v@ annonated Simplicity 'TermF', return the implied input and output types given the annotations.
+-- Given a @'UTy' v@ annotated Simplicity 'TermF', return the implied input and output types given the annotations.
 termFArrow :: Monad m => TermF (UTy v) (SomeArrow j) w a -> ExceptT (InferenceError s) m (UTy v, UTy v)
 termFArrow (Iden a) = return (a, a)
 termFArrow (Unit a) = return (a, UTerm One)
@@ -274,8 +274,8 @@ termFArrow (Jet (SomeArrow j)) = return (unfreeze (unreflect ra), unfreeze (unre
 -- | Simplicity terms with explicit sharing of subexpressions to form a topologically sorted DAG (directed acyclic graph).
 --
 -- Every node in an Simplicity expression is an element of a finitary container with indices that reference the relative locations of their child subexpressions within that container.
--- This reference is the difference in positions between refering node's position and the referred node's position.
--- The number @1@ is a reference to the immediately preciding node. The number @0@ is not allowed as it would imply a node is refering to itself.
+-- This reference is the difference in positions between referring node's position and the referred node's position.
+-- The number @1@ is a reference to the immediately preceding node. The number @0@ is not allowed as it would imply a node is referring to itself.
 --
 -- The last element of the vector is the root of the Simplicity expression DAG.
 --
@@ -367,7 +367,7 @@ inference = foldM loop empty
 
 -- Given the output of 'inference', execute unification and return the container of type annotated Simplicity nodes.
 -- Any free type variables left over after unification are instantiated at the unit type.
--- Errors, such as unification errors or occurs errors are retuned as 'String's.
+-- Errors, such as unification errors or occurs errors are returned as 'String's.
 runUnification :: Traversable t => (forall s. ExceptT (InferenceError s) (STBinding s) (t (TermF (UTy (STVar s TyF)) j w i))) -> Either String (t (TermF Ty j w i))
 runUnification mv = runSTBinding $ left show <$> runExceptT (bindV mv)
  where
@@ -417,7 +417,7 @@ typeCheck s = result
  where
   resultProxy = let Right x = result in undefined `asTypeOf` x
   result = case viewr typeCheckedDag of
-    _ :> Right (SomeArrow t) -> maybe (error "Simplicity.Inference.typeCheck: unexpect mismatched type at end.") return $ do
+    _ :> Right (SomeArrow t) -> maybe (error "Simplicity.Inference.typeCheck: unexpected mismatched type at end.") return $ do
                                  let (ra, rb) = reifyArrow t
                                  let (a0, b0) = reifyArrow resultProxy
                                  Refl <- equalTyReflect ra a0

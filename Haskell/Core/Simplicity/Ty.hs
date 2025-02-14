@@ -68,11 +68,11 @@ data TyReflect a where
 reify :: TyC a => TyReflect a
 reify = reify_
 
--- | A helper function that use a proxy argument to help control the type infered for 'reify'.
+-- | A helper function that use a proxy argument to help control the type inferred for 'reify'.
 reifyProxy :: TyC a => proxy a -> TyReflect a
 reifyProxy _ = reify
 
--- | A helper function that use a proxy argument to help control the types infered for 'reify'.
+-- | A helper function that use a proxy argument to help control the types inferred for 'reify'.
 reifyArrow :: (TyC a, TyC b) => proxy a b -> (TyReflect a, TyReflect b)
 reifyArrow _ = (reify, reify)
 
@@ -183,7 +183,7 @@ sum a b = Fix $ Sum a b
 prod :: Ty -> Ty -> Ty
 prod a b = Fix $ Prod a b
 
--- | Covert a 'TyReflect' value the corresponding 'Ty' value.
+-- | Convert a 'TyReflect' value the corresponding 'Ty' value.
 unreflect :: TyReflect a -> Ty
 unreflect OneR = one
 unreflect (SumR a b) = sum (unreflect a) (unreflect b)

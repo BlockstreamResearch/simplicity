@@ -104,7 +104,7 @@ lambda :: Integer
 lambda = 0x5363ad4cc05c30e0a5261c028812645a122e22ea20816678df02967c1b23bd72
 
 -- | An element of secp256k1's field is represented as a normalized value.
-data FE = FE { fe_pack :: Word256 -- ^ Return the normalized represenative of a field element as a 'Word256'.
+data FE = FE { fe_pack :: Word256 -- ^ Return the normalized representative of a field element as a 'Word256'.
              }
   deriving (Eq, Show)
 
@@ -139,7 +139,7 @@ fe_unpack x0 = guard (x == fe_repr a) >> return a
   x = toInteger x0
   a = fe x
 
--- | Checks if the field element's represenative is odd.
+-- | Checks if the field element's representative is odd.
 fe_is_odd :: FE -> Bool
 fe_is_odd = odd . fe_repr
 
@@ -390,7 +390,7 @@ ge_is_on_curve (GE x y) = gej_is_on_curve (GEJ x y fe_one)
 gej_ge_equiv :: GEJ -> GE -> Bool
 gej_ge_equiv x y = gej_is_infinity . snd $ gej_ge_add_ex (gej_negate x) y
 
--- | Algebraically distribute a field element to upto three candidate points on the secp256k1 curve.
+-- | Algebraically distribute a field element to up to three candidate points on the secp256k1 curve.
 -- At least one point is guaranteed to be on curve.
 -- While the algebraic properties only hold for non-zero t, the code does return a valid point when t = 0.
 shallueVanDeWoestijne_internal :: FE -> (Maybe GE, Maybe GE, Maybe GE)
@@ -419,7 +419,7 @@ shallueVanDeWoestijne_internal t =
 -- <https://inria.hal.science/hal-01094321/file/FT12.pdf>
 --
 -- While this by iteslf is not a cryptographic hash function, it can be used as a subrotuine
--- in a 'hash_to_curve' function.  However the distribution only apporaches uniform when it is called twice.
+-- in a 'hash_to_curve' function.  However the distribution only approaches uniform when it is called twice.
 shallueVanDeWoestijne :: FE -> GE
 shallueVanDeWoestijne t = result
  where
@@ -427,7 +427,7 @@ shallueVanDeWoestijne t = result
   Just result = p1 <|> p2 <|> p3
 
 -- | An element of secp256k1's scalar field is represented as a normalized value.
-newtype Scalar = Scalar { scalar_pack :: Word256 -- ^ Return the normalized represenative of a scalar element as a 'Word256'.
+newtype Scalar = Scalar { scalar_pack :: Word256 -- ^ Return the normalized representative of a scalar element as a 'Word256'.
                         } deriving (Eq, Show)
 
 instance Bounded Scalar where
@@ -639,13 +639,13 @@ getTable = do
   return $ GE (a^._x .*. zf .^. 2) (a^._y .*. zf .^. 3)
 
 -- | Put a new table point into the 'TableM'.
--- Requres the (true) z-ratio between the new point and the previous point.
+-- Requires the (true) z-ratio between the new point and the previous point.
 putTable :: FE -> GEJ -> TableM ()
 putTable zr a = do
   modifyBackwards (.*. zr)
   sendFuture a
 
--- | Precompute small odd muliplies of a 'GEJ' and give them a common z-coordinate.
+-- | Precompute small odd multiplies of a 'GEJ' and give them a common z-coordinate.
 -- The point must not be at infinity.
 scalarTable :: Int -> GEJ -> TableM (V.Vector GE)
 scalarTable w a = do
@@ -741,7 +741,7 @@ pubkey_unpack_neg (PubKey px) = Point True <$> fe_unpack px
 signature_unpack :: Sig -> Maybe (FE, Scalar)
 signature_unpack (Sig r s) = (,) <$> fe_unpack r <*> scalar_unpack s
 
--- | Validates that all points are 'decompress'able and that the 'linear_check' of the decompressed points is satified.
+-- | Validates that all points are 'decompress'able and that the 'linear_check' of the decompressed points is satisfied.
 point_check :: [(Scalar, Point)] -> Scalar -> Point -> Bool
 point_check l ng r = isJust $ do
   l' <- l & (traverse._2) decompress

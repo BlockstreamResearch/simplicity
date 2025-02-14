@@ -1,5 +1,5 @@
 {-# LANGUAGE RankNTypes #-}
--- This module tests the static analysis of computation resources used by the Bit Machine by comparing it with the results of dyanmic execution by running the Bit Machine on arbitrary inputs.
+-- This module tests the static analysis of computation resources used by the Bit Machine by comparing it with the results of dynamic execution by running the Bit Machine on arbitrary inputs.
 module Simplicity.BitMachine.StaticAnalysis.Tests (tests) where
 
 import Control.Monad.Trans.Maybe (runMaybeT)
@@ -47,7 +47,7 @@ tests = testGroup "StaticAnalysis"
 
 -- For a given program we expect the static analysis of Cell use to bound the dynamic analysis of Cell use for both naive and TCO translation.
 -- We also expect TCO translation's static and dynamic analysis to be no greater than the same analysis of naive translation.
--- Together these two pairs of tests for a square of comparisions that we expect to hold.
+-- Together these two pairs of tests for a square of comparisons that we expect to hold.
 testSquareAdj :: (TyC a, TyC b) => (forall prop. Testable prop => prop -> Property) -> String -> (forall term. (Delegate term, Assert term) => term a b) -> Gen a -> TestTree
 testSquareAdj adj name program gen = testProperty name (adj (assertion <$> gen))
  where

@@ -72,7 +72,7 @@ type Interpreter m = [Cell] -> Int -> m [Cell]
 
 -- | Given a "compiler" that transforms any Simplicity program into a Bit Machine 'Interpreter', and a Simplicity program, execute it by encoding the input and decoding the output.
 --
--- This is largely a wrapper for handling encoding and decoding of values when executing Simplicity progams on an implementaiton of the Bit Machine.
+-- This is largely a wrapper for handling encoding and decoding of values when executing Simplicity programs on an implementation of the Bit Machine.
 --
 -- Typically this function is called as
 --
@@ -113,7 +113,7 @@ data MachineCodeF a = End
 -- The @p '.' q@ expression puts two 'MachineCodeK' values in sequence, and @p '|||' q@ is a 'MachineCodeK' value for a program that deterministically chooses between @p@ and @q@.
 type MachineCodeK = MachineCode -> MachineCode
 
--- |'end' instructs the Bit Machine execution to terminate yeilding success.
+-- |'end' instructs the Bit Machine execution to terminate yielding success.
 end :: MachineCode
 end = Fix End
 
@@ -145,7 +145,7 @@ bwd i k = Fix (Bwd i k)
 newFrame :: Int -> MachineCodeK
 newFrame i k = Fix (NewFrame i k)
 
--- | 'moveFrame' instructs the Bit Machine to pop a frame off the write frame stack and push it onto the read frame stack while reseting that frame's cursor to the beginning of the frame.
+-- | 'moveFrame' instructs the Bit Machine to pop a frame off the write frame stack and push it onto the read frame stack while resetting that frame's cursor to the beginning of the frame.
 moveFrame :: MachineCodeK
 moveFrame k = Fix (MoveFrame k)
 

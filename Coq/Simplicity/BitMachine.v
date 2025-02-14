@@ -120,7 +120,7 @@ Definition stateSize s := stateShapeSize (stateShape s).
  * consists of some fragment of data after the cursor in the read-only frame,
  * which contains the encoding of the input to some sub-expression in
  * Simplicity, and some fragment of data around the cursor in the write-only
- * frame, which contins the, partially written, output of some sub-expression.
+ * frame, which contains the, partially written, output of some sub-expression.
  *
  * This focused part of the state is captured by the LocalState type.
  * The remainder of the state is captured by the Context type, and happens to
@@ -599,7 +599,7 @@ dependent inversion tr.
 inversion t.
 Qed.
 
-(* A Bit Machine programs takes an inital state, x, and tries to produce a
+(* A Bit Machine programs takes an initial state, x, and tries to produce a
  * thrist of basic state transformations to some final state, y. However, a
  * program can potentially crash instead if it encounters an instruction that
  * cannot execute successfully from the given state.

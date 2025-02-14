@@ -30,7 +30,7 @@ type GEJ = (GE, FE)
 type Scalar = Word256
 
 -- | A format for (Schnorr) elliptic curve x-only public keys.
--- The y-coordinate is implicity the one on the curve that has an even y coordinate.
+-- The y-coordinate is implicitly the one on the curve that has an even y coordinate.
 -- The point at infinity isn't representable (nor is it a valid public key to begin with).
 type PubKey = Word256
 

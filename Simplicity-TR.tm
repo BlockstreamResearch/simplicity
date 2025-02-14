@@ -656,7 +656,7 @@
     <no-break><pageref|auto-168>>
 
     9.3<space|2spc><with|font-family|tt|language|verbatim|Simplicity-Bitcoin>
-    Libary <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    Library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-169>
 
     9.4<space|2spc><with|font-family|tt|language|verbatim|Simplicity> Library
@@ -2528,7 +2528,7 @@
   <subsection|Buffers>
 
   A buffer is defined as a bounded list. \ We recursively define a buffer
-  upto (but excluding) <math|2<rsup|n>> as
+  up to (but excluding) <math|2<rsup|n>> as
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|A<rsup|\<less\>2>>|<cell|\<assign\>>|<cell|<maybe>A>>|<row|<cell|A<rsup|\<less\>4>>|<cell|\<assign\>>|<cell|<maybe><around*|(|A<rsup|2>|)>\<times\>A<rsup|\<less\>2>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>|<row|<cell|A<rsup|\<less\>2<rsup|1+n>>>|<cell|\<assign\>>|<cell|<maybe><around*|(|A<rsup|2<rsup|n>>|)>\<times\>A<rsup|\<less\>2<rsup|n>>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>>>
@@ -3493,7 +3493,7 @@
     side of equation <reference|full-adder-spec> are equal, as required.
   </proof>
 
-  Computer verified versions of theses proofs can be found in the Coq library
+  Computer verified versions of these proofs can be found in the Coq library
   (see Section<nbsp><reference|ss:coqArith>).
 
   With a full adder we can recursively build full multipliers.
@@ -3558,7 +3558,7 @@
   The SHA-256 hash function is composed from two components, a padding
   function <math|SHA256<rsub|Pad>\<of\><2><rsup|\<ast\>>\<rightarrow\><around*|(|<2><rsup|512>|)><rsup|+>>,
   which appends padding and length data to produce a (non-empty) sequence of
-  blocks of 512 bits, and the Merkle\UDamgård construction
+  blocks of 512 bits, and the Merkle\UDamgÃ¥rd construction
   <math|SHA256<rsub|MD>\<of\><2><rsup|256>\<times\><around*|(|<2><rsup|512>|)><rsup|\<ast\>>\<rightarrow\><2><rsup|256>>.
 
   <\equation*>
@@ -3897,7 +3897,7 @@
     <tformat|<table|<row|<cell|PubKey>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Msg>|<cell|\<assign\>>|<cell|<2><rsup|256>>>|<row|<cell|Sig>|<cell|\<assign\>>|<cell|<2><rsup|512>>>>>
   </eqnarray*>
 
-  The <math|PubKey> type is an x-coordinate of a point whoes y-coordinate's
+  The <math|PubKey> type is an x-coordinate of a point whose y-coordinate's
   least significant bit is even. A <math|Msg> value <math|m> represents the
   byte-string <math|BE<rsub|256><around*|(|m|)>> for a Schnorr signature's
   message, and a <math|Sig> value <math|a> represents the byte-string
@@ -4695,7 +4695,7 @@
   <section|Type Merkle Root>
 
   <assign|tmr|<macro|x|<math|#<rsup|ty><around*|(|<arg|x>|)>>>>We also define
-  a Merkle root that follows the tree sturcture of types in the same way that
+  a Merkle root that follows the tree structure of types in the same way that
   we defined the commitment Merkle Root.
 
   <\eqnarray*>
@@ -5126,7 +5126,7 @@
   <math|<around*|\<lceil\>|e<around*|[|ix|]>|\<rceil\>>\<less\><around*|\||e<around*|[|tx|]><around*|[|inputs|]>|\|>>
   so that \Pcurrent\Q index being validated is, in fact, an input of the
   transaction. \ We also assume that the annex length, when it exists, is
-  strictly less than <math|2<rsup|25>> (becaues it excludes the 0x50 prefix),
+  strictly less than <math|2<rsup|25>> (because it excludes the 0x50 prefix),
   <math|<around*|\<lceil\>|e<around*|[|tapEnv|]><around*|[|leafVersion|]>|\<rceil\>>>
   is even, and <math|<around*|\||e<around*|[|tapEnv|]><around*|[|branch|]>|\|>\<leq\>128>
   in accordance with Taproot limitations.
@@ -5391,7 +5391,7 @@
   The <math-ss|witness> combinator ensures that the program's commitment
   Merkle root <math|<cmr|<math-ss|checkSigHashAll><around*|\<langle\>|p,s|\<rangle\>>>>
   is independent of the value of the signature <math|s>. This allows us to
-  commit to this program without commiting to the signature, and only
+  commit to this program without committing to the signature, and only
   providing the signature at redemption time. As with normal Bitcoin
   transactions, the signature is only valid in the context,
   <math|e\<of\>BCEnv>, of a particular input on a particular transaction
@@ -5559,7 +5559,7 @@
   discard the <math|skip<around*|(|0|)>> and <math|nop> operations from the
   definition of <math|write<rsub|<2><rsup|256>>>. <with|color|red|TODO:
   before doing Time Resource static analysis we may need to formally define
-  this optimized implemenation of <samp|disconnect>.>
+  this optimized implementation of <samp|disconnect>.>
 
   Because the Bit Machine instructions are directly derived from the
   semantics of <samp|disconnect> the correctness theorems for the Bit Machine
@@ -5618,7 +5618,7 @@
   Because the Bit Machine implementation of the <samp|disconnect> combinator
   is derived from its semantics in core Simplicity, we can derive the static
   analysis of the space resources used by the Bit Machine implementation of
-  the <samp|disconnect> combintor from its definining Simplicity expression.
+  the <samp|disconnect> combintor from its defining Simplicity expression.
 
   <\eqnarray*>
     <tformat|<cwith|1|-1|2|2|cell-halign|r>|<cwith|2|2|2|2|cell-halign|r>|<cwith|3|3|2|2|cell-halign|r>|<table|<row|<cell|extraCellsBound<around*|(|<math-ss|disconnect><rsub|A,B,C,D>
@@ -6156,15 +6156,15 @@
   program for a different public key and its own digest expression
   <math|t<rprime|'>>. \ The side-effect of the <math|<math-ss|schnorrAssert>>
   within this inner <samp|checkSigHash> expression essures that the whole
-  Simplicity expression is only successfull if the signature
+  Simplicity expression is only successful if the signature
   <math|s<rprime|'>> is valid for the public key <math|p<rprime|'>> and for
   the transaction digest <math|t<rprime|'>>. This process lets you delegate
-  control to another public key by creating a signature with the orginal
+  control to another public key by creating a signature with the original
   public key that covers such a delegaton mode for a specific public key,
   <math|p<rprime|'>>. \ Further conditions can be added as to such a
   delegation such as checks to limit the amount of funds being spent while
   ensuring the change is send back to a fixed address. \ Such delegation can
-  be recursively applied, but could also be restricted by delgating to
+  be recursively applied, but could also be restricted by delegating to
   <math|<around*|(|<samp|checkSigHashAll>|)><around*|\<langle\>|p<rprime|'>,s<rprime|'>|\<rangle\>>>
   or to some other fixed set of signature hash modes instead.
 
@@ -6509,7 +6509,7 @@
   meet the type constraints imposed by the application) and does not
   represent a well-typed Simplicity expression.
 
-  First-order unification can be preformed time linear in the size of the
+  First-order unification can be performed time linear in the size of the
   constraints<nbsp><cite|unification>, although in practice quasi-linear time
   algorithms using the union-find algorithm are simpler and may perform
   better on the size of problems one is likely to encounter. Our set of
@@ -6767,7 +6767,7 @@
 
   The code <math|<verbatim|<around*|[|01011|]>><rsub|<2>>>, is a reserved
   code for wallet use where it represents a \Punary
-  <math|<text|<samp|`disconnect'>>>\Q node for reprsenting commitment time
+  <math|<text|<samp|`disconnect'>>>\Q node for representing commitment time
   Simplicity program where, of course, the disconnected Simplicity expression
   wouldn't be available. The code is not used for consensus purposes, and
   like <math|<text|<samp|`fail'>>>, it cannot legally appear on chain
@@ -6826,9 +6826,9 @@
 
   The DAG encoding for Simplicity expressions allows for sharing of
   subexpressions, however nothing in the previous section mandates sharing of
-  subexpressions. \ Without manditory sharing would have a malleability
+  subexpressions. \ Without mandatory sharing would have a malleability
   vector where a third party could unshare every subexprssion, vastly
-  inflating the weight of a transaction. \ To enforce manditory sharing we
+  inflating the weight of a transaction. \ To enforce mandatory sharing we
   will introduce the notion of an identity Merkle root and require that every
   sub-DAG have a unique such identity.
 
@@ -7363,7 +7363,7 @@
   The <verbatim|Bitcoin.prim> type lists the typed primitive expressions
   defined in Section<nbsp><reference|ss:BitcoinTransactions>. The
   <verbatim|environment> type captures the read-only context for interpreting
-  these primitives and it includes a <verbatim|sigTx>, the index withing this
+  these primitives and it includes a <verbatim|sigTx>, the index within this
   transaction that is under consideration, and the commitment Merkle root of
   the script being evaluated.
 
@@ -7377,7 +7377,7 @@
   <subsection|Jets>
 
   The <verbatim|Jet> algebra, found in the <verbatim|PrimitiveModule> in
-  <verbatim|Simplicity/Primtive.v>, extends the <verbatim|Primitive> algebra
+  <verbatim|Simplicity/Primitive.v>, extends the <verbatim|Primitive> algebra
   with generic support for jets. The <verbatim|jet> combinator takes a term
   <verbatim|<em|t>> from the <verbatim|Primitive> algebra and the
   <verbatim|JetPrimSem> canonical structures defines the functional semantics
@@ -7396,7 +7396,7 @@
   <subsection|Full Simplicity>
 
   The <verbatim|FullSimplicity> algebra, found in the
-  <verbatim|PrimitiveModule> in <verbatim|Simplicity/Primtive.v>, is the meet
+  <verbatim|PrimitiveModule> in <verbatim|Simplicity/Primitive.v>, is the meet
   of the <verbatim|Jet> and the <verbatim|Witness> algebras (equiv. the meet
   of the <verbatim|Jet> and <verbatim|AssertionWitness> algebras) with no
   additional combinators. It defines the full Simplicity language. The
@@ -7427,7 +7427,7 @@
   Simplicity with assertions and witnesses. The <verbatim|CommitmentRoot> for
   delegation is found in <verbatim|Simplicity/Delegation.v> and the
   <verbatim|CommitmentRoot> for primitives, jets, Full Simplicity and Full
-  Simplicity with delegation is found in <verbatim|Simplicity/Primtive.v>.
+  Simplicity with delegation is found in <verbatim|Simplicity/Primitive.v>.
 
   These Merkle roots are computed using the SHA-256 compression function with
   unique tags providing the initial value for each language construct. These
@@ -7639,7 +7639,7 @@
   implement <math|bitSize<around*|(|A|)>> and <math|<rep|a|A>> respectively.
 
   The <verbatim|Naive.translate> structure provides a Simplicity algebra for
-  Bit Machine <verbatim|Progam>s that interprets Simplicity terms according
+  Bit Machine <verbatim|Program>s that interprets Simplicity terms according
   to the naive translation. The <verbatim|Naive.translate_correct> theorem
   proves that the <verbatim|Program> generated by <verbatim|Naive.translate>
   when started from a state that contains an encoding of Simplicity
@@ -7904,7 +7904,7 @@
   padding, truncating, shifting and rotating Simplicity expressions.
 
   The <verbatim|full_shift> function provides a generic shift operation that
-  allows shifting in and shifting out an arbitary word size of bits. The
+  allows shifting in and shifting out an arbitrary word size of bits. The
   <verbatim|shift_const_by> function can perform either left or right shifts,
   filling in new elements or bits with a provided value. The
   <verbatim|rotate_const> function can perform either left or right rotates
@@ -7926,12 +7926,12 @@
   expressions. It also provides implementations of <verbatim|lt>,
   <verbatim|le>, <verbatim|min>, <verbatim|max>, and <verbatim|median>.
 
-  The <verbatim|eea> expression implements the extended euclidian algorithm,
+  The <verbatim|eea> expression implements the extended euclidean algorithm,
   which in turn defines <verbatim|bezout>, <verbatim|cofactors>, and
   <verbatim|gcd> expressions.
 
   The <verbatim|absolute_value> and <verbatim|sign> expression operate on an
-  intepretation of Simplicity words as signed integers (with
+  interpretation of Simplicity words as signed integers (with
   <verbatim|absolute_value> returning an unsigned value).
 
   <subsubsection|Loop><label|ss:haskellLoop>
@@ -7946,7 +7946,7 @@
   <subsection|Libraries of Simplicity Expressions>
 
   The tagless-final style used for Simplicity expressions is designed to
-  perform efficently for some interpretations of Simplicity when
+  perform efficiently for some interpretations of Simplicity when
   subexpressions are shared. In particular the computation of Merkle roots
   and serialization (see <reference|ss:Haskell-DAG>) are much faster to
   compute when subexpressions are shared. However the polymorphism in the
@@ -7962,7 +7962,7 @@
   by <hlink|Gabriel Gonzalez|https://www.blogger.com/profile/01917800488530923694>.
   Generating several Simplicity expressions together allows us to share
   common subexpressions between the different library functions all within a
-  single intepretation.
+  single interpretation.
 
   Libraries typically come with some kind of <verbatim|mkLib> function that
   given a set library dependencies, constructs an instance of the library of
@@ -8022,12 +8022,12 @@
 
   The <verbatim|Core/Simplicity/Programs/CheckSigHash.hs>, while not
   technically a library, provides a <verbatim|checkSigHash> Simplicity
-  program that is similiar to the <samp|CHECKSIG> operation of Bitcoin script
+  program that is similar to the <samp|CHECKSIG> operation of Bitcoin script
   except with \PUniversal signature hash modes\Q (see
   Section<nbsp><reference|ss:UniversalSignatureHashModes>). \ The
   <verbatim|sigHash> combinator uses <samp|disconnect> to pair the commitment
   root of a given hash mode with its output and produces the message that
-  <verbatim|checkSigHash> checks its siganture against.
+  <verbatim|checkSigHash> checks its signature against.
 
   <subsection|The Bit Machine>
 
@@ -8148,7 +8148,7 @@
   Simplicity, type inference for full Simplicity expressions, and generic
   serialization and deserialization of Simplicity expressions.
 
-  Each different blockchain application needs to provide a module satifying
+  Each different blockchain application needs to provide a module satisfying
   the <verbatim|Simplicity.Primitive> signature. At the moment only the
   Bitcoin blockchain application is provided (see
   Section<nbsp><reference|ss:BitcoinPrimitives>).
@@ -8184,7 +8184,7 @@
   a Simplicity expression with assertions and primitives, but not witness nor
   delegation. <with|color|red|Later a discounted cost will be added as a
   parameter.> Be aware that universal quantifier in the <verbatim|jet>
-  argument means that subexpressions within this specificaiton cannot be
+  argument means that subexpressions within this specification cannot be
   shared outside of the specification itself.
 
   All the Simplicity extensions are gathered together in the
@@ -8239,7 +8239,7 @@
 
   The <verbatim|Indef/Simplicity/Semantics.hs> module also provides a
   <verbatim|fastEval> function that uses a <verbatim|JetType>'s optimized
-  <verbatim|implementation> to evalute subexpressions with known jets.
+  <verbatim|implementation> to evaluate subexpressions with known jets.
 
   <subsection|Type Inference>
 
@@ -8454,7 +8454,7 @@
   <subsubsection|Serialization of Simplicity DAGs><label|ss:Haskell-DAG>
 
   <with|font-series|bold|>The file <verbatim|Indef/Simplicity/Dag.hs>
-  provides a <verbatim|jetDag> that coverts Simplicity expressions into a
+  provides a <verbatim|jetDag> that converts Simplicity expressions into a
   topologically sorted DAG structure with explicit sharing that is suitable
   for encoding. This conversion
 
@@ -8503,10 +8503,10 @@
   <verbatim|WrappedSimplicity> lets us share much of the work of substitution
   in case we want to evaluate the resulting expression with multiple
   different interpretations. Without <verbatim|WrappedSimplicity> we would
-  end up needing to redo the entire subtitution for each different
-  intepretation of the resulting expression.
+  end up needing to redo the entire substitution for each different
+  interpretation of the resulting expression.
 
-  <section|<verbatim|Simplicity-Bitcoin> Libary><label|ss:BitcoinPrimitives>
+  <section|<verbatim|Simplicity-Bitcoin> Library><label|ss:BitcoinPrimitives>
 
   To instantiate the <verbatim|Simplicity-Indef> library, we need to provide
   a blockchain specific implementation of the <verbatim|Simplicity.Primitive>
@@ -8527,7 +8527,7 @@
 
   <section|<verbatim|Simplicity> Library>
 
-  The <verbatim|Simplicty> library assembles all of the previous libraries
+  The <verbatim|Simplicity> library assembles all of the previous libraries
   together. The <verbatim|Simplicity-Indef> library is instantiated at all
   available implementations of the <verbatim|Simplicity.Primitive> signature,
   which at the moment is only the <verbatim|Simplicity.Bitcoin.Primitive>
@@ -8964,14 +8964,14 @@
 
   \;
 
-  We develop a recommended set of jets and provide an interm encoding. \ An
+  We develop a recommended set of jets and provide an interim encoding. \ An
   encoding ought to be based on how frequenly jets are used, however we do
-  not currently have good estimates of that. \ As an interm measure we
-  develop a heirarchical encoding of jets by category.
+  not currently have good estimates of that. \ As an interim measure we
+  develop a hierarchical encoding of jets by category.
 
   The properties for jets listed below may not fully define the jet's
   semantics. All jets will be formally specified by a Simplicity program that
-  implements their complete semantics. \ Those formal specificaitons will be
+  implements their complete semantics. \ Those formal specifications will be
   found in the Coq library. Implementations MUST implement the COMPLETE
   specifications as defined in the Coq library.
 
@@ -8984,7 +8984,7 @@
 
   <subsection|<verbatim|1100...: >Jets for multi-bit logic>
 
-  It is recomended that jets be supported for multi-bit words up to
+  It is recommended that jets be supported for multi-bit words up to
   <math|<2><rsup|256>> in size.
 
   <with|color|red|TODO: define <math|bit<rsub|n,m> :
@@ -9500,7 +9500,7 @@
 
   <math|<text|<samp|right-extend>><rsub|2<rsup|n>,2<rsup|m>>
   :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|m>>> for
-  <math|1\<leq\>n\<less\>m>\ 
+  <math|1\<leq\>n\<less\>m>\
 
   \;
 
@@ -9614,7 +9614,7 @@
 
     (CAUTION: Not defined when <math|n=0> or <math|m=0>.)
 
-    (Note: Support only recommened up to <math|2<rsup|n>\<cdot\>2<rsup|m>\<leq\>256>.)
+    (Note: Support only recommended up to <math|2<rsup|n>\<cdot\>2<rsup|m>\<leq\>256>.)
 
     <\math>
       <rep|<text|<samp|'transpose'>><rsub|2<rsup|n>,2<rsup|m>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>\<cdummy\><rep|m|>
@@ -10428,7 +10428,7 @@
 
     <paragraph|<samp|sha3-absorb>>
 
-    (Note: we should proably byte-stwap the input before xoring it into place
+    (Note: we should probably byte-stwap the input before xoring it into place
 
     <\math>
       <rep|<text|<samp|'sha3-absorb'>><rsub|n,m>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>\<cdummy\><rep|n|>\<cdummy\><rep|m|>
@@ -10510,7 +10510,7 @@
 
   <paragraph|<samp|secp256k1-point-verify>>
 
-  (Note: Support only recommened up to <math|2<rsup|n>\<leq\><with|color|red|TODO
+  (Note: Support only recommended up to <math|2<rsup|n>\<leq\><with|color|red|TODO
   8?>>.)
 
   <\math>
@@ -10537,7 +10537,7 @@
 
   <paragraph|<samp|secp256k1-linear-verify>>
 
-  (Note: Support only recommened up to <math|2<rsup|n>\<leq\><with|color|red|TODO
+  (Note: Support only recommended up to <math|2<rsup|n>\<leq\><with|color|red|TODO
   8?>>.)
 
   <\math>
@@ -10551,7 +10551,7 @@
 
   <paragraph|<samp|secp256k1-linear-combination>>
 
-  (Note: Support only recommened up to <math|2<rsup|n>\<leq\><with|color|red|TODO
+  (Note: Support only recommended up to <math|2<rsup|n>\<leq\><with|color|red|TODO
   8?>>.)
 
   <\math>
@@ -10712,7 +10712,7 @@
 
   <with|color|red|Warning: this can be implemented by comparing coordinates
   (by cross multiplication) or by adding points and testing for infinity.
-  \ However these two implementations yeilds different results for off curve
+  \ However these two implementations yields different results for off curve
   points.>
 
   <\math>
@@ -10728,7 +10728,7 @@
 
   <with|color|red|Warning: this can be implemented by comparing coordinates
   (by cross multiplication) or by adding points and testing for infinity.
-  \ However these two implementations yeilds different results for off curve
+  \ However these two implementations yields different results for off curve
   points.>
 
   \;
@@ -11435,7 +11435,7 @@
   \;
 
   Returns <math|<math-tt|1><rsub|<2>>> when all the sequence numbers of the
-  tranaction inputs are at their maximum value.
+  transaction inputs are at their maximum value.
 
   Otherwise returns <math|<math-tt|0><rsub|<2>>>.
 
@@ -12709,7 +12709,7 @@
   \;
 
   Returns <math|<math-tt|1><rsub|<2>>> when all the sequence numbers of the
-  tranaction inputs are at their maximum value.
+  transaction inputs are at their maximum value.
 
   Otherwise returns <math|<math-tt|0><rsub|<2>>>.
 
@@ -13297,7 +13297,7 @@
   <value|1>\<vdash\><2><rsup|256>><appendix|Alternative Serialization of
   Simplicity DAGs><label|app:AltSerialization>
 
-  <with|color|red|DEPRICATED>
+  <with|color|red|DEPRECATED>
 
   This appendix presents an alternative, byte-oriented prefix code for
   Simplicity DAGs. This code is not as compact as the bit-oriented code
@@ -14816,7 +14816,7 @@
       <no-break><pageref|auto-168>>
 
       9.3<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity-Bitcoin>
-      Libary <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      Library <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-169>
 
       9.4<space|2spc><with|font-family|<quote|tt>|language|<quote|verbatim>|Simplicity>

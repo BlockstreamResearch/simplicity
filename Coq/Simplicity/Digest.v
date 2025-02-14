@@ -19,7 +19,7 @@ Record hash256 : Set := Hash256
 
 Definition hash256_to_bytelist (x : hash256) := intlist_to_bytelist (hash256_reg x).
 
-(* The normalizeInt and normalizeHash functions are extensionally the idenity
+(* The normalizeInt and normalizeHash functions are extensionally the identity
  * function.  Operationally they work by replacing the internal proof
  * obligations of their inputs with canonical versions of those proofs.  When
  * evaluated in the empty context, this has the effect of pruning away any

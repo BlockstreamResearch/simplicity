@@ -444,7 +444,7 @@ inputAmountsHash tx = bslHash . runPutLazy $ mapM_ go (sigTxIn tx)
   go txi = putAsset (clearAssetPrf . utxoAsset $ sigTxiTxo txi)
         >> putAmount (clearAmountPrf . utxoAmount $ sigTxiTxo txi)
 
--- | A hash of all 'utxoScript' hashs.
+-- | A hash of all 'utxoScript' hashes.
 inputScriptsHash :: SigTx -> Hash256
 inputScriptsHash tx = bslHash . runPutLazy $ mapM_ (put . bslHash . utxoScript . sigTxiTxo) (sigTxIn tx)
 
@@ -475,11 +475,11 @@ putAnnex :: Putter (Maybe BSL.ByteString)
 putAnnex Nothing = putWord8 0x00
 putAnnex (Just annex) = putWord8 0x01 >> put (bslHash annex)
 
--- | A hash of all 'sigTxiAnnex' hashs.
+-- | A hash of all 'sigTxiAnnex' hashes.
 inputAnnexesHash :: SigTx -> Hash256
 inputAnnexesHash tx = bslHash . runPutLazy $ mapM_ (putAnnex . sigTxiAnnex) (sigTxIn tx)
 
--- | A hash of all 'sigTxiScriptSig' hashs.
+-- | A hash of all 'sigTxiScriptSig' hashes.
 inputScriptSigsHash :: SigTx -> Hash256
 inputScriptSigsHash tx = bslHash . runPutLazy $ mapM_ (put . bslHash . sigTxiScriptSig) (sigTxIn tx)
 

@@ -62,7 +62,7 @@ commit = CommitmentRoot . ivHash
 
 -- | The commitment root of a @'fail' 'hash0' 'hash0'@ expression.
 --
--- This hash value can be used as a default value for assertions, but at the cost of not hidding the fact that it isn't a pruned alternative branch.
+-- This hash value can be used as a default value for assertions, but at the cost of not hiding the fact that it isn't a pruned alternative branch.
 cmrFail0 :: Hash256
 cmrFail0 = commitmentRoot (fail0 :: CommitmentRoot () ())
 

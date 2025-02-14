@@ -134,7 +134,7 @@ putNode bnd = go
 -- | Encodes a 'SimplicityDag' as a self-delimiting byte-stream code.
 --
 -- Encoding of witness values require that its type annotation be the value's principle type.
--- 'putDag' requires a type annotated 'SimplicityDag' in order to pursuade the user to run 'typeInference' first.
--- This function may return 'Nothing' if witness values cannot be encoded using the witnesses' type annoation.
+-- 'putDag' requires a type annotated 'SimplicityDag' in order to persuade the user to run 'typeInference' first.
+-- This function may return 'Nothing' if witness values cannot be encoded using the witnesses' type annotation.
 putDag :: Foldable f => SimplicityDag f Ty j UntypedValue -> Maybe Put
 putDag v = fmap sequence_ . sequence $ zipWith putNode [0..] (toList v) ++ [Just (putWord8 0x1f)]
