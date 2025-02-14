@@ -4,7 +4,7 @@ module Simplicity.Dag
   ( jetDag, jetSubst
   , JetDag, NoJetDag
   , pruneSubst
-  -- * Type annoated, open recursive Simplicity terms
+  -- * Type annotated, open recursive Simplicity terms
   , TermF(..), SimplicityDag
   -- * Wrapped Simplicity
   , WrappedSimplicity, unwrap
@@ -279,7 +279,7 @@ instance JetType jt => Delegate (JetDag jt) where
 instance JetType jt => Primitive (JetDag jt)  where
   primitive p = mkLeaf (primitive p) (primitive p) (error "Primitives cannot be directly serialized.  They can only be part of jet specifications.")
 
--- Exisiting jets are discarded when coverting to a dag.  They are reconstructed using a jet matcher.
+-- Existing jets are discarded when converting to a dag.  They are reconstructed using a jet matcher.
 instance JetType jt => Jet (JetDag jt) where
   jet w t = Dag { dagRoot = root
                 -- We make this identityHash point to the same subexpression as the root of t.

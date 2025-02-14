@@ -241,7 +241,7 @@ lsb w = rightmost w
 -- precondition
 -- * [a1,a2,a3] < [b1,b2,0]
 -- * 1000... <= [b1,b2]
--- postcondtion:
+-- postcondition:
 -- * div3n2n (((a1,a2),a3), (b1,b2)) = ([a1,a2,a3]/[b1,b2], [a1,a2,a3]%[b1,b2])
 div3n2n :: (Core term, TyC a) => Word a -> term (((a, a), a), (a, a)) (a, (a, a))
 div3n2n w = (ooh &&& ioh >>> approxDiv) &&& (oih &&& ih)
@@ -281,7 +281,7 @@ div2n1n (DoubleV w) = conditions &&& iden >>> cond body (unit >>> high (DoubleV 
   rec = div3n2n w
   conditions = and (drop (msb (DoubleV w))) (ooh &&& ih >>> lt (DoubleV w))
 
--- Given a two words x and y, with x twice as wide as y, peform a left shift of both words by equal amounts until the msb of y becomes set.
+-- Given a two words x and y, with x twice as wide as y, perform a left shift of both words by equal amounts until the msb of y becomes set.
 divPreShift :: (Core term, TyC a) => Word b -> Vector b a -> term ((a, a), a) ((a, a), a)
 divPreShift SingleV _ = iden
 divPreShift (DoubleV w) v = drop (leftmost v' >>> is_zero w) &&& iden >>> cond shift iden >>> divPreShift w v'
@@ -291,7 +291,7 @@ divPreShift (DoubleV w) v = drop (leftmost v' >>> is_zero w) &&& iden >>> cond s
       &&& (ih &&& zv >>> full_shift (vectorComp w v') w >>> ih)
   zv = unit >>> zero w
 
--- Given a two words x and y, peform a right shift of the first word and a left shift of the second word by the same abount until the msb of y becomes set.
+-- Given a two words x and y, perform a right shift of the first word and a left shift of the second word by the same about until the msb of y becomes set.
 divPostShift :: (Core term, TyC a) => Word b -> Vector b a -> term (a, a) (a, a)
 divPostShift SingleV _ = iden
 divPostShift (DoubleV w) v = drop (leftmost v' >>> is_zero w) &&& iden >>> cond shift iden >>> divPostShift w v'
@@ -356,7 +356,7 @@ modulo w = div_mod w >>> ih
 divides :: (Core term, TyC a) => Word a -> term (a, a) Bit
 divides w = ih &&& oh >>> modulo w >>> is_zero w
 
--- A single step of the extened eucliean algorithm.
+-- A single step of the extended Euclidean algorithm.
 -- Given a matrix
 --  [ a -b | c ]
 --  [ -d e | f ]

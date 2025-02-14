@@ -112,7 +112,7 @@ compareDag compareWitness v1 v2 = (and $ zipWith compareNode v1 v2) && (length v
 
 -- Check that 'BitString.putDag's serialization of 'SimplicityDag's works can be deserialized by a combination of 'BitString.getDagNoWitness' and 'BitString.getWitnessData'.
 -- Note: Because we do not yet have a generator for arbitrary well-typed Simplicity expressions we cannot easily test 'BitString.putTerm' with 'BitString.getTerm'.
--- Instead we perform an akward combinator of 'BitString.getDagNoWitness' and 'BitString.getWitnessData' on mostly untyped Simplicity DAGs for now.
+-- Instead we perform an awkward combinator of 'BitString.getDagNoWitness' and 'BitString.getWitnessData' on mostly untyped Simplicity DAGs for now.
 prop_getPutBitStringDag :: Property
 prop_getPutBitStringDag = forallSimplicityDag prop
  where
@@ -121,7 +121,7 @@ prop_getPutBitStringDag = forallSimplicityDag prop
   prop v = case eval of
     Left msg -> failed { reason = show msg }
     Right (pdag, wdag) | not (compareDag (\_ _ _ _ -> True) v (toList pdag)) -> failed { reason = "Bitstring.getDagNoWiness returned bad value" }
-                       | not (compareDag compareWitness v (toList wdag)) -> failed { reason = "Bitstring.getWitnessData returend bad value" }
+                       | not (compareDag compareWitness v (toList wdag)) -> failed { reason = "Bitstring.getWitnessData returned bad value" }
                        | otherwise -> succeeded
    where
     pbs = BitString.putDagNoWitnessLengthCode v
@@ -154,7 +154,7 @@ testInference name program = testGroup name [testProperty "CommitmentRoot" asser
  where
   dag :: NoJetDag a b
   dag = program
-  -- type inference on first pass is not necessarily equal to the orginal program because the Haskell type of internal nodes in the original program might not have the term's principle type.
+  -- type inference on first pass is not necessarily equal to the original program because the Haskell type of internal nodes in the original program might not have the term's principle type.
   pass1 :: forall term. Simplicity term => Either String (term a b)
   pass1 = typeCheck =<< typeInference dag (jetDag dag)
   -- Type inference on the second pass ought to always be equal to the first pass.

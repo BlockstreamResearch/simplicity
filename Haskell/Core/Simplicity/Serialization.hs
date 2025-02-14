@@ -28,10 +28,10 @@ import Data.Word (Word8)
 
 import Simplicity.Tree
 
--- | A type for difference lists: an efficent type for appending to lists.
+-- | A type for difference lists: an efficient type for appending to lists.
 --
 -- To convert a difference list, @l :: DList a@, to a list, apply it to the empty list, @l [] :: [a]@.
--- To convert a list, @l :: [a]@, to a difference list, partially apply it to the append funciton, @(l++) :: DList a@.
+-- To convert a list, @l :: [a]@, to a difference list, partially apply it to the append function, @(l++) :: DList a@.
 type DList a = [a] -> [a]
 
 -- | A self-delimiting encoding of variable length list of bits returned as a difference list.
@@ -110,7 +110,7 @@ getPositiveUpTo bound abort | 0 < bound = getUpTo (putPositive bound []) (\abort
       k b | b <= hd = return (b, if b == hd then tl else repeat True)
           | otherwise = vacuous abort
 
--- | Decodes the self-delimiting encoding of a positive integer that repesents an item in a list.
+-- | Decodes the self-delimiting encoding of a positive integer that represents an item in a list.
 --
 -- If the encoded value exceeds the length of the list, then nothing is returned.
 --
@@ -123,7 +123,7 @@ getItem items abort next = select <$> getPositiveUpTo (genericLength items) abor
  where
   select n = items !! fromInteger (n - 1)
 
--- | Decodes the self-delimiting encoding of a sequence of positive integers that repesents an item in a 'Catalogue'.
+-- | Decodes the self-delimiting encoding of a sequence of positive integers that represents an item in a 'Catalogue'.
 -- Guided by the 'Catalogue' the 'getItem' decods a positive integer to select an item from a 'Shelf'.
 -- If that item is another 'Catalogue', then it recursively decodes another positive integer, otherwise it returns the 'Item' from the 'Shelf'.
 --
@@ -204,7 +204,7 @@ evalStreamWithError prog = evalStateT (prog abort (get >>= f))
 
 -- | @getEvalBitStream :: (forall m. Monad m => m void -> m Bool -> m a) -> Get a@
 --
--- Interprets the free monad representaiton of a bit-stream transformer with failure in the 'Get' monad.
+-- Interprets the free monad representation of a bit-stream transformer with failure in the 'Get' monad.
 -- This consumes bits from a 'ByteString' in big-endian order.
 -- Any unconsumed bits from the last byte processed are discarded.
 -- If the provided bit-stream transformer fails, then 'Control.Monad.fail' is called for the 'Get' monad.
@@ -222,7 +222,7 @@ getEvalBitStream prog = evalStateT (prog (fail "Simplicity.Serialization.getEval
 -- Cont is a poor-man's Codensity Monad.
 -- | @treeEvalBitStream :: (forall m. Monad m => m void -> m Bool -> m a) -> BinTree a@
 --
--- Reifies the free monad represenation of a bit-stream transformer with failure as a 'BinTree'.
+-- Reifies the free monad representation of a bit-stream transformer with failure as a 'BinTree'.
 --
 -- Note that the type @forall m. Monad m => m void -> m Bool -> m a@ is isomorphic to the free monad over the @X^b + 1@ functor at @a@,
 -- which is the 'BinTree a' type.
@@ -233,7 +233,7 @@ treeEvalBitStream prog = runCont (prog abort next) Leaf
    next = cont $ \k -> branch (k False) (k True)
 
 -- | Packs and writes out a list of 'Bool's via the 'Data.Serialize.Put.Put' monad.
--- It writes starting from MSB (most sigificant bit) to LSB (least sigificant bit) within a byte.
+-- It writes starting from MSB (most significant bit) to LSB (least significant bit) within a byte.
 putBitStream :: Putter [Bool]
 putBitStream l = forM_ (chunksOf 8 l) putChunk
  where

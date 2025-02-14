@@ -67,14 +67,14 @@ swapP = pair (drop iden) (take iden)
 swapS :: (Core term, TyC a, TyC b) => term (Either a b) (Either b a)
 swapS = copair (injr iden) (injl iden)
 
--- same precidence as in Control.Category.
+-- same precedence as in Control.Category.
 infixr 1 >>>
 
 -- | @s '>>>' t = 'comp' s t@
 (>>>) :: (Core term, TyC a, TyC b, TyC c) => term a b -> term b c -> term a c
 (>>>) = comp
 
--- same precidence as in Control.Arrow.
+-- same precedence as in Control.Arrow.
 infixr 3 &&&
 
 -- | @s '&&&' t = 'pair' s t@

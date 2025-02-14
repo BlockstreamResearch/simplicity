@@ -120,7 +120,7 @@ leftmost (DoubleV v) = take (leftmost v)
 
 -- | Return the leftmost (a.k.a first) value from a vector.
 --
--- Will return the least signficant bit, LSB, of a word.
+-- Will return the least significant bit, LSB, of a word.
 rightmost :: (Core term, TyC a, TyC b) => Vector a b -> term b a
 rightmost SingleV = iden
 rightmost (DoubleV v) = drop (rightmost v)
@@ -219,7 +219,7 @@ right_shift_const_by t v n | vectorSize v <= n = unit >>> fill t v
     right_shift1 = (unit >>> t) &&& iden >>> full_right_shift1 v >>> oh
     rec = go (t &&& t) (vectorPromote v')
 
--- | Return a list of expessions that projects out each item in the vector from left to right.
+-- | Return a list of expressions that projects out each item in the vector from left to right.
 itemsOf :: (Core term) => Vector a b -> [term b a]
 itemsOf SingleV = [iden]
 itemsOf (DoubleV v) = (take <$> rec) ++ (drop <$> rec)

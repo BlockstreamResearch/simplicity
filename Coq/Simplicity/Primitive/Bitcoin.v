@@ -139,13 +139,13 @@ Definition tag {A B} (p : t A B) := Eval vm_compute in (tag_def p).
 
 End Tag.
 
-Record enviroment :=
+Record environment :=
 { envTx : sigTx
 ; envIx : nat
 ; envScriptCMR : hash256
 ; envIxBounded : envIx < length (sigTxIn envTx)
 }.
-Definition env := enviroment.
+Definition env := environment.
 
 Section primSem.
 

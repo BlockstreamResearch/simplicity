@@ -21,7 +21,7 @@ data TestEval jt a b = TestEval { testEvalSem :: Kleisli (ReaderT PrimEnv Maybe)
 
 -- | 'testEval' optimizes Simplicity with assertions evaluation using jets, similar to 'fastEval',
 -- but excludes the expression itself from being substituted.
--- This is used in for testing jets against their specificaitons under the assumption that jets for any subexpressions are correct.
+-- This is used in for testing jets against their specifications under the assumption that jets for any subexpressions are correct.
 -- Delegation, witnesses, and jets are not supported since they are not allowed within jet definitions.
 testEval :: TestEval Jets.JetType a b -> PrimEnv -> a -> Maybe b
 testEval = flip . (runReaderT .) . runKleisli . testEvalSem

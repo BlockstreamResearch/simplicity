@@ -2,7 +2,7 @@
 -- | This modules implements the Bit Machine according to its specification.
 --
 -- This @Authentic@ module properly tracks undefined values in the Bit Machine's cells and will properly crash when, for example, reading from undefined cells.
--- Other non-authentic implemenations of the Bit Machine might invoke undefined behavour when the Bit Machine crashes.
+-- Other non-authentic implementations of the Bit Machine might invoke undefined behaviour when the Bit Machine crashes.
 module Simplicity.BitMachine.Authentic
  ( runMachine
  , Stats(..)
@@ -57,7 +57,7 @@ fWrite v (Frame dt os) | os < V.length dt = return $ Frame dt' os'
   os' = os+1
 
 -- Write a vector of Cells to a frame starting at the frame's cursor and advance the frame's cursor by the length of the written data.
--- This function fails if there isn't sufficent room in the frame to write the data.
+-- This function fails if there isn't sufficient room in the frame to write the data.
 fFill v (Frame dt os) | os + n <= V.length dt = return $ Frame dt' os'
  where
   n = V.length v
@@ -144,7 +144,7 @@ runMachineF (Read k0 k1) = \st -> do
   b <- maybe (fail "runMachine Read: cell value undefined") return v
   if b then k1 st else k0 st
 
--- Create an inital state from the inital data for the read frame and the size of the write frame.
+-- Create an initial state from the initial data for the read frame and the size of the write frame.
 initialState :: [Cell] -> Int -> State
 initialState input outLength = State [] (Active (fInit input) (fNew outLength)) []
 
@@ -153,16 +153,16 @@ finalState :: MonadFail m => State -> m [Cell]
 finalState (State [] (Active _ output) []) = return $ V.toList (fData output)
 finalState _ = fail "finalState: invalid final state"
 
--- | The implemenation of the authentic Bit Machine.
+-- | The implementation of the authentic Bit Machine.
 --
 -- Given 'MachineCode', creates an 'Interpreter'.
--- The 'Interpreter' expects an inital state specified by the data for the initial read frame and the size of the initial write frame.
+-- The 'Interpreter' expects an initial state specified by the data for the initial read frame and the size of the initial write frame.
 -- The 'Interpreter' returns the final data on the write frame.
 runMachine :: MonadFail m => MachineCode -> Interpreter m
 runMachine code input outputSize = cata runMachineF code (initialState input outputSize)
                                >>= finalState
 
--- These functions are used to insturment the Bit Machine and calculate the computations resources used during execution.
+-- These functions are used to instrument the Bit Machine and calculate the computations resources used during execution.
 actReadFrameSize :: State -> Int
 actReadFrameSize st = fSize (st^.act.rf)
 
@@ -176,8 +176,8 @@ inactWriteFrameSizes :: State -> [Int]
 inactWriteFrameSizes st = fSize <$> inactiveWriteFrames st
 
 -- | A collection of statistics about computation resources used during execution of the Bit Machine.
-data Stats = Stats { memSize :: !Int   -- ^ Maximum total number of 'Cell's occuring during execution
-                   , stackSize :: !Int -- ^ Maximum total number of frames occuring during execution
+data Stats = Stats { memSize :: !Int   -- ^ Maximum total number of 'Cell's occurring during execution
+                   , stackSize :: !Int -- ^ Maximum total number of frames occurring during execution
                    } deriving Show
 
 instance Semigroup Stats where
@@ -201,7 +201,7 @@ profile st = Stats { memSize = sum readStackStats + sum writeStackStats + actRea
   readStackStats = inactReadFrameSizes st
   writeStackStats = inactWriteFrameSizes st
 
--- A state transformation that doesn't tranform the state but results in a side effect that emits the statistics of the current state.
+-- A state transformation that doesn't transform the state but results in a side effect that emits the statistics of the current state.
 instrument st = tell [profile st] >> return st
 
 -- | An instrumented version of the authentic Bit Machine.

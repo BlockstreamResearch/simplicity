@@ -36,7 +36,7 @@ instance (MonadReader PrimEnv m, Fail.MonadFail m) => Primitive (Kleisli m) wher
    maybe err return $ primSem p a env
 
 -- | This class creates expressions for discounted jets.
--- A jet's specification is a Simplicity expression that isn't allowed to contain witness data, delgations or other jets.
+-- A jet's specification is a Simplicity expression that isn't allowed to contain witness data, delegations or other jets.
 class Assert term => Jet term where
   jet :: (TyC a, TyC b) => Weight -> (forall term0. (Assert term0, Primitive term0) => term0 a b) -> term a b
 
@@ -79,10 +79,10 @@ instance Jet IdentityRoot where
   jet w t = jetIdentityImpl t (fromInteger $ milliWeight w)
   -- Idea for alternative IdentityRoot instance:
   --     jet t = t
-  -- Trasparent jet identites would mean we could define the jet class as
+  -- Transparent jet identities would mean we could define the jet class as
   --     jet :: (TyC a, TyC b) => (forall term0. (Assert term0, Primitive term0, Jet term0) => term0 a b) -> term a b
-  -- And then jets could contain jets such that their Sementics, IdentityRoots, and hence CommitmentRoots would all be transparent to jet sub-experssions.
-  -- Need to think carefully what this would mean for concensus, but I think it is okay.
+  -- And then jets could contain jets such that their Semantics, IdentityRoots, and hence CommitmentRoots would all be transparent to jet sub-experssions.
+  -- Need to think carefully what this would mean for consensus, but I think it is okay.
 
 instance Simplicity IdentityRoot where
 

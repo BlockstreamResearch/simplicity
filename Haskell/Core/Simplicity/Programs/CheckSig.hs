@@ -1,5 +1,5 @@
 {-# LANGUAGE RecordWildCards #-}
--- | The module builds a Simplicity expression that mimics the behavour of a @CHECKSIG@ operation for Bitcoin but with universal signature hash modes.
+-- | The module builds a Simplicity expression that mimics the behaviour of a @CHECKSIG@ operation for Bitcoin but with universal signature hash modes.
 -- This uses Schnorr signature verification specified in "Simplicity.Programs.LibSecp256k1".
 module Simplicity.Programs.CheckSig
   ( sigHash'

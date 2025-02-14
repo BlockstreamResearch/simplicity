@@ -307,7 +307,7 @@ word4096 = vector4096
 wordSize :: Word a -> Int
 wordSize = vectorSize
 
--- | Covert a value of a Simplicity word type as a unsigned Haskell integer.
+-- | Convert a value of a Simplicity word type as a unsigned Haskell integer.
 --
 -- @'toWord' w ('fromWord' w n) = n@
 fromWord :: Word a -> a -> Integer
@@ -318,7 +318,7 @@ fromWordRec i SingleV (Left ()) = 2 * i
 fromWordRec i SingleV (Right ()) = 2 * i + 1
 fromWordRec i (DoubleV w) (hi, lo) = fromWordRec (fromWordRec i w hi) w lo
 
--- | Covert a value of a Simplicity word type as a signed Haskell integer.
+-- | Convert a value of a Simplicity word type as a signed Haskell integer.
 --
 -- @'toWord' w ('fromInt' w n) = n@
 fromInt :: Word a -> a -> Integer
@@ -326,7 +326,7 @@ fromInt SingleV (Left ()) = 0
 fromInt SingleV (Right ()) = -1
 fromInt (DoubleV w) (hi, lo) = fromWordRec (fromInt w hi) w lo
 
--- | Covert a standard Haskell integer into a Simplicity word type.
+-- | Convert a standard Haskell integer into a Simplicity word type.
 -- The value is take modulo 2^@('wordSize' w)@ where @w :: 'Word' a@ is the first argument.
 --
 -- @'fromWord' w ('toWord' w n) = n \`mod\` 'wordSize' w@

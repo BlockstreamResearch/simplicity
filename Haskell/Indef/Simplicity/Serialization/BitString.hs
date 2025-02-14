@@ -39,7 +39,7 @@ getNode abort next = (getBody >>= traverse (\_ -> getPositive next))
 
 -- | Decodes a length-code based self-delimiting bit-stream encoding of 'SimplicityDag' without witness data.
 --
--- @abort@ is invoked at the point an invalid prefix is encounted, meaning that the stream is not a valid code for a 'SimplicityDag'.
+-- @abort@ is invoked at the point an invalid prefix is encountered, meaning that the stream is not a valid code for a 'SimplicityDag'.
 --
 -- Type annotations are not part of the encoding.  After deserialization you will want to run type inference from "Simplicity.Inference".
 -- Type Inference needs to be completed before the witness data, which appears after the 'SimplicityDag' in the bit-stream, can be added to the DAG.
@@ -125,7 +125,7 @@ putNode = go
 -- | Encodes an 'SimplicityDag' as a self-delimiting, length-code based bit-stream encoding, including witness data.
 --
 -- Encoding of witness data requires that its type annotation be the value's principle type.
--- This function may return 'Nothing' if witness data cannot be encoded using the witnesses' type annoation.
+-- This function may return 'Nothing' if witness data cannot be encoded using the witnesses' type annotation.
 putDagNoWitnessLengthCode :: (Foldable f, JetType jt) => SimplicityDag f Ty (SomeArrow jt) UntypedValue -> [Bool]
 putDagNoWitnessLengthCode v = putPositive len $ foldr putNode [] v
  where

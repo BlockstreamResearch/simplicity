@@ -34,7 +34,7 @@ import Simplicity.Term.Core hiding (one)
 -- | In SHA-256, each block of data passed to the compression function is a 512-bit 'Word'.
 type Block = Word512
 
--- | In SHA-256, the inital vector and hash value are 256-bit 'Word's.
+-- | In SHA-256, the initial vector and hash value are 256-bit 'Word's.
 type Hash = Word256
 
 -- | A SHA-256 context (for bytes) consists of a buffer of less than 94 bytes, a counter for the number of compression functions invoked, and a midstate.
@@ -156,7 +156,7 @@ lib = l
     tapdataPrefix = scribe . toWord256 . integerHash256 . ivHash . tagIv $ fromString "TapData"
 
 -- | Given an "array", which is a term that maps an index @w@ to a vector of bytes @v@, returning nothing if the index is out of bounds,
--- hash all the bytes of the "array" in seqeuenced until the end of the array (i.e. upto the first index where the "array" term returns nothing).
+-- hash all the bytes of the "array" in seqeuenced until the end of the array (i.e. up to the first index where the "array" term returns nothing).
 --
 -- A context value of type "c" is available to be pass into the "array" term.
 hashLoop :: (Assert term, TyC c, TyC w, TyC v) => Vector Word8 v -> Word w -> term (c, w) (S v) -> term (c, Ctx8) Ctx8

@@ -50,6 +50,6 @@ instance Delegate TermWeight where
 
 -- :TODO: This overhead is just estimated.  It needs to be replaced with a measured value.
 -- :TODO: Perhaps fold this into a generic 'mkTermWeight' or 'withOverhead' constructor that adds in the overhead.
--- | Helper value for creating 'TermWeight' instaces.
+-- | Helper value for creating 'TermWeight' instances.
 overhead :: Weight
 overhead = 0.1

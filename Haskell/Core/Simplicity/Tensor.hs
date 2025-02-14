@@ -1,4 +1,4 @@
--- | This module provides a product for computing multiple interpretations of Simplicity simutaneously.
+-- | This module provides a product for computing multiple interpretations of Simplicity simultaneously.
 -- Other tensors can be added when they are needed.
 module Simplicity.Tensor
   ( Product(..)

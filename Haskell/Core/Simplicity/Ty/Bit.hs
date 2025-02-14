@@ -8,7 +8,7 @@ module Simplicity.Ty.Bit
 -- Instead we create use this isomorphic type in Simplicity to represent bits.
 type Bit = Either () ()
 
--- | Canonically convert a Simplicty 'Bit' type to the Haskell 'Bool' type.
+-- | Canonically convert a Simplicity 'Bit' type to the Haskell 'Bool' type.
 fromBit :: Bit -> Bool
 fromBit (Left ()) = False
 fromBit (Right ()) = True

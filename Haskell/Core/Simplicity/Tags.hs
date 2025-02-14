@@ -52,7 +52,7 @@ hiddenTag = tag $ prefix ++ ["Hidden"]
 signatureTag :: IV
 signatureTag = tag $ prefix ++ ["Signature"]
 
--- | Create a "standard" Simplicity signed message from an 'CommitmentRoot' of a sighash expresson, and that expression's output.
+-- | Create a "standard" Simplicity signed message from an 'CommitmentRoot' of a sighash expression, and that expression's output.
 sigHash :: Hash256 -- ^ @'CommitmentRoot' () Word256@
         -> Hash256 -- ^ Output if sighash
         -> Hash256

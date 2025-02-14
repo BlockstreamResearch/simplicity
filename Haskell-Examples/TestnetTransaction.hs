@@ -244,7 +244,7 @@ texScriptPubKey segver prog | 2 <= len && len <= 40 = BSL.singleton encver <> BS
 
 -- # Taproot constructions
 
--- Constract a tapleaf hash for a given "script" for a given leaf version.
+-- Construct a tapleaf hash for a given "script" for a given leaf version.
 tapleafHash :: Word8 -> BS.ByteString -> Hash256
 tapleafHash leafver script | even leafver = bsHash
                                          $ encode tag <> encode tag
@@ -255,7 +255,7 @@ tapleafHash leafver script | even leafver = bsHash
    where
     size = BS.length str
 
--- TapPath contains the data relevent for a taproot address supporting a single tapleaf program.
+-- TapPath contains the data relevant for a taproot address supporting a single tapleaf program.
 -- It contains the taproot output key, the control block connecting to the leaf, and the script at that leaf
 data TapPath = TapPath { outputKey :: PubKey
                        , controlBlock :: BS.ByteString
@@ -346,7 +346,7 @@ main = do
   let internalKey = unspendablePubKey tweak
   putStr "Internal " >> print internalKey
 
-  -- A generic checksig program written in Simplicty, optimized with jets.
+  -- A generic checksig program written in Simplicity, optimized with jets.
   -- Works on an arbitrary sighash function.  Requires a public key and a signature.
   -- This program is the standard single key Simpliciy program.
   let optCheckSig sighash sig pubkey = jetSubst $ checkSigVerify' sighash pubkey sig
@@ -360,7 +360,7 @@ main = do
                             in commitmentRoot . unwrap $ optCheckSig dummySigHash dummySig pubkey
   let path = review (over be256) <$> [{-path goes here-}]
   -- Compute a taproot for this standard program.
-  -- 0xbe is the tapleaf version we have choosen for Simplicity.
+  -- 0xbe is the tapleaf version we have chosen for Simplicity.
   let standardTR pubkey = tapPath 0xbe (encode (standardCMR pubkey)) path internalKey
 
   -- In our example we will be using "insecurePubKey" as our public key.
@@ -368,13 +368,13 @@ main = do
 
   putStr "Simplicity " >> print p
 
-  -- Compute the CMR of the standard program for our choosen key.
+  -- Compute the CMR of the standard program for our chosen key.
   let cmrP = standardCMR p
 
-  -- Compute the taproot for the standard program for our choosen key.
+  -- Compute the taproot for the standard program for our chosen key.
   let Just trP = standardTR p
 
-  -- compute the address for our standard program for our choosen key.
+  -- compute the address for our standard program for our chosen key.
   let Just simplicityAddress = segwitEncode (fromString "tex") 0x01 (BS.unpack . encode $ outputKey trP)
 
   putStr "Example simplicity address: " >> BSC.putStrLn simplicityAddress
@@ -455,7 +455,7 @@ main = do
   -- Run our optimized sigAllHash function in this environment to compute the transaction hash we are going to be signing.
   let Just txSigAllHash = fromInteger . Simplicity.Ty.Word.fromWord256 <$> fastEval (unwrap optSigAllHash) env () :: Maybe Word256
 
-  -- Our message is a tagged hash that covers both the CMR of our choosen sighash algorithm, and the output of that algorithm.
+  -- Our message is a tagged hash that covers both the CMR of our chosen sighash algorithm, and the output of that algorithm.
   let msg = let tag = bsHash (fromString "Simplicity\USSignature")
              in bsHash $ encode tag <> encode tag
                       <> encode (commitmentRoot . unwrap $ optSigAllHash)
@@ -465,7 +465,7 @@ main = do
   -- This is for demonstration purposes only.  DO NOT USE!
   let sig = insecureSign msg
 
-  -- Create our optimized checkSig simplicity program with our choosen hash algorithm and the signature we computed.
+  -- Create our optimized checkSig simplicity program with our chosen hash algorithm and the signature we computed.
   -- Encode this program in Simplicity's binary format.
   let Just (bin,wit) = putTermLengthCode . unwrap <$> pruneSubst (checkSigVerify' (unwrap optSigAllHash) p sig) env
   let binary = runPut . putBitStream $ bin

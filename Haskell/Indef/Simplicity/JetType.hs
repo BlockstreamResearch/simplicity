@@ -19,11 +19,11 @@ import Simplicity.Tensor
 import Simplicity.Term
 import Simplicity.Weight
 
--- | A 'JetType' is a data structure that represets a set of known jets.
+-- | A 'JetType' is a data structure that represents a set of known jets.
 -- Every known jet has a 'specification' which is defined by some Simplicity expression (see 'Jet').
 --
 -- Each 'JetType' has an associated 'MatcherInfo' type that interprets Simplicity with jet expressions to
--- summerise a set of data needed to determine what jet, if any, a particular expression is.
+-- summarise a set of data needed to determine what jet, if any, a particular expression is.
 -- Typically the 'MatcherInfo' consists of a 'Simplicity.MerkleRoot.IdentityRoot' value.
 -- The 'matcher' function uses this interpretation to decide which known jet, a given Simplicity expression is, if any.
 --

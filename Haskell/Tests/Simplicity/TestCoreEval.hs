@@ -19,7 +19,7 @@ data TestCoreEval a b = TestCoreEval { testCoreEvalSem :: Kleisli Maybe a b
 
 -- | 'testCoreEval' optimizes Simplicity with assertions evaluation using jets, similar to 'fastCoreEval',
 -- but excludes the expression itself from being substituted.
--- This is used in for testing jets against their specificaitons under the assumption that jets for any subexpressions are correct.
+-- This is used in for testing jets against their specifications under the assumption that jets for any subexpressions are correct.
 testCoreEval = runKleisli . testCoreEvalSem
 
 testFastKleisli = Kleisli . fastCoreEval . testCoreEvalFast

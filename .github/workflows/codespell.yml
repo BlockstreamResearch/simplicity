@@ -1,0 +1,13 @@
+name: codespell
+
+on: [push, pull_request]
+
+jobs:
+  codespell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: codespell-project/actions-codespell@v2
+        with:
+            ignore_words_file: spelling.ignore.txt
+            skip: alectryon
