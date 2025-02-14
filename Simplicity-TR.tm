@@ -2527,8 +2527,8 @@
 
   <subsection|Buffers>
 
-  A buffer is defined as a bounded list. \ We recursively define a buffer
-  up to (but excluding) <math|2<rsup|n>> as
+  A buffer is defined as a bounded list. \ We recursively define a buffer up
+  to (but excluding) <math|2<rsup|n>> as
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|A<rsup|\<less\>2>>|<cell|\<assign\>>|<cell|<maybe>A>>|<row|<cell|A<rsup|\<less\>4>>|<cell|\<assign\>>|<cell|<maybe><around*|(|A<rsup|2>|)>\<times\>A<rsup|\<less\>2>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>|<row|<cell|A<rsup|\<less\>2<rsup|1+n>>>|<cell|\<assign\>>|<cell|<maybe><around*|(|A<rsup|2<rsup|n>>|)>\<times\>A<rsup|\<less\>2<rsup|n>>>>|<row|<cell|>|<cell|\<vdots\>>|<cell|>>>>
@@ -3558,7 +3558,7 @@
   The SHA-256 hash function is composed from two components, a padding
   function <math|SHA256<rsub|Pad>\<of\><2><rsup|\<ast\>>\<rightarrow\><around*|(|<2><rsup|512>|)><rsup|+>>,
   which appends padding and length data to produce a (non-empty) sequence of
-  blocks of 512 bits, and the Merkle\UDamgÃ¥rd construction
+  blocks of 512 bits, and the Merkle\UDamgård construction
   <math|SHA256<rsub|MD>\<of\><2><rsup|256>\<times\><around*|(|<2><rsup|512>|)><rsup|\<ast\>>\<rightarrow\><2><rsup|256>>.
 
   <\equation*>
@@ -7396,10 +7396,10 @@
   <subsection|Full Simplicity>
 
   The <verbatim|FullSimplicity> algebra, found in the
-  <verbatim|PrimitiveModule> in <verbatim|Simplicity/Primitive.v>, is the meet
-  of the <verbatim|Jet> and the <verbatim|Witness> algebras (equiv. the meet
-  of the <verbatim|Jet> and <verbatim|AssertionWitness> algebras) with no
-  additional combinators. It defines the full Simplicity language. The
+  <verbatim|PrimitiveModule> in <verbatim|Simplicity/Primitive.v>, is the
+  meet of the <verbatim|Jet> and the <verbatim|Witness> algebras (equiv. the
+  meet of the <verbatim|Jet> and <verbatim|AssertionWitness> algebras) with
+  no additional combinators. It defines the full Simplicity language. The
   <verbatim|SimplicityPrimSem> canonical structure provides the functional
   semantics of the full Simplicity language as the <verbatim|primSem M> type
   family when <verbatim|M> is a monad zero.
@@ -9500,9 +9500,7 @@
 
   <math|<text|<samp|right-extend>><rsub|2<rsup|n>,2<rsup|m>>
   :<2><rsup|2<rsup|n>>\<vdash\><2><rsup|2<rsup|m>>> for
-  <math|1\<leq\>n\<less\>m>\
-
-  \;
+  <math|1\<leq\>n\<less\>m>\ 
 
   Properties:
 
@@ -9614,7 +9612,8 @@
 
     (CAUTION: Not defined when <math|n=0> or <math|m=0>.)
 
-    (Note: Support only recommended up to <math|2<rsup|n>\<cdot\>2<rsup|m>\<leq\>256>.)
+    (Note: Support only recommended up to
+    <math|2<rsup|n>\<cdot\>2<rsup|m>\<leq\>256>.)
 
     <\math>
       <rep|<text|<samp|'transpose'>><rsub|2<rsup|n>,2<rsup|m>>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|n|>\<cdummy\><rep|m|>
@@ -10428,7 +10427,8 @@
 
     <paragraph|<samp|sha3-absorb>>
 
-    (Note: we should probably byte-stwap the input before xoring it into place
+    (Note: we should probably byte-stwap the input before xoring it into
+    place
 
     <\math>
       <rep|<text|<samp|'sha3-absorb'>><rsub|n,m>|>\<assign\><verbatim|<around*|[|110|]>><rsub|<2>>\<cdummy\><rep|<value|subsection-nr>|>\<cdummy\><rep|<value|subsubsection-nr>|>\<cdummy\><rep|<value|paragraph-nr>|>\<cdummy\><rep|n|>\<cdummy\><rep|m|>
