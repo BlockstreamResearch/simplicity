@@ -67,7 +67,7 @@ type Word129 = Vector129 Bit
 -- Use 'mkLib' to construct an instance of this library.
 data Lib term =
  Lib
-  { -- | Reduce the representation of a field element to its canonical represenative.
+  { -- | Reduce the representation of a field element to its canonical representative.
     fe_normalize :: term Word256 FE
 
     -- | The normalized reprsentative for the field element 0.
@@ -109,7 +109,7 @@ data Lib term =
     -- | Tests if the field element is a quadratic residue.
   , fe_is_quad :: term FE Bit
 
-    -- | Returns the canonical represenative of the point at infinity.
+    -- | Returns the canonical representative of the point at infinity.
   , gej_infinity :: term () GEJ
 
     -- | Computes the negation of a point.
@@ -151,10 +151,10 @@ data Lib term =
     -- | Multiply a point in affine coordinates by the canonical cube root of unity.
   , ge_scale_lambda :: term GE GE
 
-    -- | Changes represenative of a point in Jacobian coordintes by multiplying the z-coefficent by a given value.
+    -- | Changes representative of a point in Jacobian coordinates by multiplying the z-coefficent by a given value.
   , gej_rescale :: term (GEJ, FE) GEJ
 
-    -- | Converts a point in Jacobian coordintes to the same point in affine coordinates, and normalizes the field represenatives.
+    -- | Converts a point in Jacobian coordinates to the same point in affine coordinates, and normalizes the field representatives.
     -- Returns the point (0, 0) when given the point at infinity.
   , gej_normalize :: term GEJ (Either () GE)
 
@@ -164,19 +164,19 @@ data Lib term =
     -- | Tests if a jacobian point and an affine point represent the same point.
   , gej_ge_equiv :: term (GEJ, GE) Bit
 
-    -- | Given a field element and a point in Jacobian coordiantes, test if the point represents one whose affine x-coordinate is equal to the given field element.
+    -- | Given a field element and a point in Jacobian coordinates, test if the point represents one whose affine x-coordinate is equal to the given field element.
   , gej_x_equiv :: term (FE, GEJ) Bit
 
-    -- | Given a point in Jacobian coordiantes, test if the point represents one whose affine y-coordinate is odd.
+    -- | Given a point in Jacobian coordinates, test if the point represents one whose affine y-coordinate is odd.
   , gej_y_is_odd :: term GEJ Bit
 
-    -- | Check if a given point in Jacobian coordinate satifies the secp256k1 curve equation Y^2 = X^3 + 7Z^6.
+    -- | Check if a given point in Jacobian coordinate satisfies the secp256k1 curve equation Y^2 = X^3 + 7Z^6.
   , gej_is_on_curve :: term GEJ Bit
 
-    -- | Check if a given point in affine coordinate satifies the secp256k1 curve equation Y^2 = X^3 + 7.
+    -- | Check if a given point in affine coordinate satisfies the secp256k1 curve equation Y^2 = X^3 + 7.
   , ge_is_on_curve :: term GE Bit
 
-    -- | Reduce the representation of a scalar element to its canonical represenative.
+    -- | Reduce the representation of a scalar element to its canonical representative.
   , scalar_normalize :: term Word256 Scalar
 
     -- | Tests if the input value is a representative of the scalar element 0.
@@ -200,10 +200,10 @@ data Lib term =
     -- | Computes the modular inverse of a scalar element.
   , scalar_invert :: term Scalar Scalar
 
-    -- | Divide a scalar element into two short integers 'k1' and 'k2' such that @'k1' + 'k2' * 'Simplicity.LibSecp256k1.Spec.lambda'@ is the orginal scalar element.
+    -- | Divide a scalar element into two short integers 'k1' and 'k2' such that @'k1' + 'k2' * 'Simplicity.LibSecp256k1.Spec.lambda'@ is the original scalar element.
   , scalar_split_lambda :: term Scalar (Word129, Word129)
 
-    -- | Divide a scalar element into two short integers 'k1' and 'k2' such that @'k1' + 'k2' * 2^128@ is the orginal scalar element.
+    -- | Divide a scalar element into two short integers 'k1' and 'k2' such that @'k1' + 'k2' * 2^128@ is the original scalar element.
   , scalar_split_128 :: term Scalar (Word129, Word129)
 
     -- | Convert a scalar value to wnaf form, with a window of 5 bits.
@@ -234,13 +234,13 @@ data Lib term =
 
     -- | This function unpacks a 'PubKey' as a elliptic curve point in compressed coordinates.
     --
-    -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
+    -- If the x-coordinate isn't on the elliptice curve, the function returns @Left ()@.
     -- This does not check that the x-coordinate in on-curve.  That would have to be performed by `decompress`.
   , pubkey_unpack :: term PubKey (Either () Point)
 
     -- | This function unpacks the negation of a 'PubKey' as a elliptic curve point in compressed coordinates.
     --
-    -- If the x-coordinate isn't on the elliptice curve, the funtion returns @Left ()@.
+    -- If the x-coordinate isn't on the elliptice curve, the function returns @Left ()@.
     -- This does not check that the x-coordinate in on-curve.  That would have to be performed by `decompress`.
   , pubkey_unpack_neg :: term PubKey (Either () Point)
 
@@ -257,7 +257,7 @@ data Lib term =
     -- <https://inria.hal.science/hal-01094321/file/FT12.pdf>
     --
     -- While this by iteslf is not a cryptographic hash function, it can be used as a subrotuine
-    -- in a 'hash_to_curve' function.  However the distribution only apporaches uniform when it is called twice.
+    -- in a 'hash_to_curve' function.  However the distribution only approaches uniform when it is called twice.
   , swu :: term FE GE
     -- | A cryptograph hash function that results in a point on the secp256k1 curve.
     --
@@ -812,11 +812,11 @@ mkLib Sha256.Lib{..} = lib
 
     pubkey_check = (iden &&& scribe (toWord256 LibSecp256k1.fieldOrder) >>> lt256) &&& iden
 
--- | Same as 'off_curve_linear_combination_1' execept it fails when the given point is off-curve.
+-- | Same as 'off_curve_linear_combination_1' except it fails when the given point is off-curve.
 linear_combination_1 :: Assert term => Lib term -> term ((Scalar, GEJ), Scalar) GEJ
 linear_combination_1 m = take (drop (gej_is_on_curve m)) &&& (off_curve_linear_combination_1 m) >>> assertr cmrFail0 ih
 
--- | Same as 'off_curve_scale' execept it fails when the given point is off-curve.
+-- | Same as 'off_curve_scale' except it fails when the given point is off-curve.
 scale :: Assert term => Lib term -> term (Scalar, GEJ) GEJ
 scale m = drop (gej_is_on_curve m) &&& (off_curve_scale m) >>> assertr cmrFail0 ih
 

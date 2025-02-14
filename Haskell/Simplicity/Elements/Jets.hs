@@ -1,4 +1,4 @@
--- | This module provides a cannonical set of known jets for Simplicity for Elements. (At the moment this just consists of 'CoreJet's.)
+-- | This module provides a canonical set of known jets for Simplicity for Elements. (At the moment this just consists of 'CoreJet's.)
 {-# LANGUAGE GADTs, StandaloneDeriving, TypeFamilies #-}
 module Simplicity.Elements.Jets
   ( JetType(..), ElementsJet(..), SigHashJet(..), TimeLockJet(..), IssuanceJet(..), TransactionJet(..)
@@ -66,7 +66,7 @@ import Simplicity.Ty.Word
 import qualified Simplicity.Word as W
 import Simplicity.Weight
 
--- | A type of tokens for the cannonical set of known jets for Simplicity for Elements. (At the moment this just consists of 'CoreJet's.)
+-- | A type of tokens for the canonical set of known jets for Simplicity for Elements. (At the moment this just consists of 'CoreJet's.)
 --
 -- The tokens themselves are not exported.  You are expected to use 'Simplicity.Dag.jetDag' to substitute known jets found in Simplicity expressions.
 data JetType a b where
@@ -916,7 +916,7 @@ asJet :: (Jet term, TyC a, TyC b) => JetType a b -> term a b
 asJet = Simplicity.Elements.JetType.asJet
 
 -- This map is used in the 'matcher' method above.
--- We have floated it out here to make sure the map is shared between invokations of the 'matcher' function.
+-- We have floated it out here to make sure the map is shared between invocations of the 'matcher' function.
 jetMap :: Map.Map Hash256 (SomeArrow JetType)
 jetMap = Map.union (someArrowMap CoreJet <$> coreJetMap) (someArrowMap ElementsJet <$> elementsJetMap)
 

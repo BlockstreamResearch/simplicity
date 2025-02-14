@@ -1,4 +1,4 @@
--- | This module specifices the types to be used to interface with bindings to a real Schnorr signature module for Secp256k1.
+-- | This module specifies the types to be used to interface with bindings to a real Schnorr signature module for Secp256k1.
 -- It largely acts as a placeholder at this point in time.
 module Simplicity.LibSecp256k1.Schnorr
  ( PubKey(..), Sig(..)

@@ -1,6 +1,6 @@
 -- | This module provides the functional semantics of the full 'Simplicity' language.
--- The 'Semantics' arrow is an instance of the 'Simplicity' class and 'sem' evaluates terms of the full Simplicity langauge.
--- The 'fastEval' implements the evalutation using the jets from the specified 'JetType'.
+-- The 'Semantics' arrow is an instance of the 'Simplicity' class and 'sem' evaluates terms of the full Simplicity language.
+-- The 'fastEval' implements the evaluation using the jets from the specified 'JetType'.
 module Simplicity.Semantics
  ( Semantics, sem
  , FastEval, fastEval
@@ -27,8 +27,8 @@ import Simplicity.Term
 -- Currently logging is used to implement pruning.
 type SemanticsLog log a b = Delegator (Kleisli (WriterT log (ReaderT PrimEnv Maybe))) a b
 
--- | Execute the fuctional semantics of the full Simplicity language with delegation.
--- If successfull, return the log in addition to the output value.
+-- | Execute the functional semantics of the full Simplicity language with delegation.
+-- If successful, return the log in addition to the output value.
 semLog :: SemanticsLog log a b -> PrimEnv -> a -> Maybe (b, log)
 semLog = flip . ((runReaderT . runWriterT) .) . runKleisli . runDelegator
 
@@ -51,7 +51,7 @@ type Semantics a b = SemanticsLog () a b
 -- sem :: (forall term. Simplicity term => term a b) -> PrimEnv -> a -> Maybe b
 -- @
 --
--- Execute the fuctional semantics of the full Simplicity language with delegation.
+-- Execute the functional semantics of the full Simplicity language with delegation.
 sem :: SemanticsLog () a b -> PrimEnv -> a -> Maybe b
 sem = flip . ((runReaderT . fmap fst . runWriterT) .) . runKleisli . runDelegator
 

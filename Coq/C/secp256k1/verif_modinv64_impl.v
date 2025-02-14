@@ -1915,7 +1915,7 @@ assert (Hqrve : Z.abs (divstep.Trans.q mtx * (d mod 2 ^ 62) + divstep.Trans.r mt
  transitivity (Z.abs (divstep.Trans.q mtx) * (2 ^ 62 - 1)+ Z.abs (divstep.Trans.r mtx) * (2 ^ 62 - 1));[|lia].
  apply Z.add_le_mono; apply Z.mul_le_mono_nonneg_l; lia.
 }
-rewrite ?Z.abs_lt, ?Z.abs_le in *. (* This speeds up lia exponetially. *)
+rewrite ?Z.abs_lt, ?Z.abs_le in *. (* This speeds up lia exponentially. *)
 forward_call (v_cd, Tsh, divstep.Trans.u mtx, d mod 2 ^ 62).
 forward_call;[
  change Int128_min_signed with (-2^127);change Int128_max_signed with (2^127-1);solve_bounds
@@ -1933,7 +1933,7 @@ forward_call;forward;progressC.
 rewrite !Z.land_ones by lia.
 assert (Habsmodinvd := Habsmod62 (modInv m (2 ^ 62) * cd0 + md0)).
 assert (Habsmodinve := Habsmod62 (modInv m (2 ^ 62) * ce0 + me0)).
-rewrite ?Z.abs_lt, ?Z.abs_le in *. (* This speeds up lia exponetially. *)
+rewrite ?Z.abs_lt, ?Z.abs_le in *. (* This speeds up lia exponentially. *)
 assert (Habsmd0modinv : Z.abs (m mod 2 ^ 62 * (md0 - (modInv m (2 ^ 62) * cd0 + md0) mod 2 ^ 62)) <= 2^125).
 1:{
   rewrite Z.abs_mul.
@@ -1946,7 +1946,7 @@ assert (Habsme0modinv : Z.abs (m mod 2 ^ 62 * (me0 - (modInv m (2 ^ 62) * ce0 + 
   change (2^125) with (2^62 * 2^63).
   apply Zmult_le_compat; lia.
 }
-rewrite ?Z.abs_lt, ?Z.abs_le in *. (* This speeds up lia exponetially. *)
+rewrite ?Z.abs_lt, ?Z.abs_le in *. (* This speeds up lia exponentially. *)
 simpl (Signed62.reprn 5 m).
 assert (Hcd0'b : -2^126 <=
   cd0 + m mod 2 ^ 62 * (md0 - (modInv m (2 ^ 62) * cd0 + md0) mod 2 ^ 62) <=

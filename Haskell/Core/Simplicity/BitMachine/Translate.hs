@@ -16,7 +16,7 @@ newtype Translation a b = Translation MachineCodeK
 translate0 :: Translation a b -> MachineCode
 translate0 (Translation f) = f end
 
--- | 'translate' coverts a Simplicity term to the Bit Machine's 'MachineCode'.
+-- | 'translate' converts a Simplicity term to the Bit Machine's 'MachineCode'.
 --
 -- Simplicity terms are represented in tagless-final style, so any Simplicity term can be instantiated as @'Translation' a b@ and can be passed to the 'translate' function.
 translate :: Delegator Translation a b -> MachineCode

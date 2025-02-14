@@ -91,7 +91,7 @@ hash0 = review (over be256) 0
 -- function.
 newtype IV = IV (Decoder SHA256State)
 
--- | The SHA-256 inital value.
+-- | The SHA-256 initial value.
 noTagIv :: IV
 noTagIv = IV sha256Incremental
 
@@ -137,7 +137,7 @@ taggedHash tag str = ivHash . IV . pushChunks state $ BSL.fromStrict str <> BSL.
   IV state = tagIv tag
   len = BS.length str
 
--- Perpare a bit string for SHA-256 hashing by adding the padding and grouping bits into blocks.
+-- Prepare a bit string for SHA-256 hashing by adding the padding and grouping bits into blocks.
 padSha256 :: [Bool] -> [Block512]
 padSha256 l = go 0 (l ++ [True])
  where
@@ -158,14 +158,14 @@ bitStringHash :: [Bool] -> Hash256
 bitStringHash = ivHash . foldl' compress (IV sha256Incremental) . padSha256
 
 -- | A SHA-256 block is 512 bits.  For Simplicity's Merkle tree application, we
--- will be building blocks containting hashes.
+-- will be building blocks containing hashes.
 type Block512 = (Hash256, Hash256)
 
 -- | Given an initial value and a block of data consisting of a pair of hashes, apply the SHA-256 compression function.
 compress :: IV -> Block512 -> IV
 compress (IV state) (h1, h2) = IV $ state `pushChunk` BSS.fromShort (hash256 h1) `pushChunk` BSS.fromShort (hash256 h2)
 
--- | Given an initial value and a block of data consisting of a one hash preceeded by 256-bits of zeros, apply the SHA-256 compression function.
+-- | Given an initial value and a block of data consisting of a one hash preceded by 256-bits of zeros, apply the SHA-256 compression function.
 compressHalf :: IV -> Hash256 -> IV
 compressHalf iv h = compress iv (hash0, h)
 
@@ -201,7 +201,7 @@ ctxAdd ctx bs = ctxNormalize $ ctx { ctxBuffer = ctxBuffer ctx <> bs }
 --
 -- This may fail if the SHA-256 counter overflows.
 --
--- WARNING: Use of 'ctxBuild' may violate the secuirty assumptions about SHA-256.
+-- WARNING: Use of 'ctxBuild' may violate the security assumptions about SHA-256.
 ctxBuild :: [Word8] -- ^ Buffer
          -> Integer -- ^ Compression count
          -> Hash256 -- ^ Midstate

@@ -1,4 +1,4 @@
--- | This modules provides a GADT for a type of "core" Simplicity jets, i.e. those jets that don't use applicaiton specific primitives.
+-- | This modules provides a GADT for a type of "core" Simplicity jets, i.e. those jets that don't use application specific primitives.
 --
 -- While the 'CoreJet' data type could be made an instance of 'Simplicity.JetType.JetType', we instead generally expect it to be used as a substructure of all jets used in each specific Simplicity application.
 -- The other exports of this library aid in building an instance of 'Simplicity.JetType.JetType' for those that make use of 'CoreJet' as a substructure.
@@ -849,7 +849,7 @@ specificationBitcoin ParseLock = TimeLock.parseLock
 specificationBitcoin ParseSequence = TimeLock.parseSequence
 specificationBitcoin TapdataInit = Sha256.tapdataInit
 
--- | A jetted implementaiton for "core" jets.
+-- | A jetted implementation for "core" jets.
 --
 -- @
 -- 'implementation' x === 'runKleisli' ('specification' x)
