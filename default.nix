@@ -41,12 +41,6 @@ let hp = nixpkgs.haskell.packages.${ghc};
           hydraPlatforms = nixpkgs.lib.platforms.none;
           patches = [ ./unification.patch ];
         }) {};
-
-      # Temporary work around for compiling hlint and hasktags in ghc94.
-      microlens = self.microlens_0_4_13_1 or super.microlens;
-      microlens-ghc = self.microlens-ghc_0_4_14_1 or super.microlens-ghc;
-      microlens-platform = self.microlens-platform_0_4_3_3 or super.microlens-platform;
-      hlint = self.hlint_3_5 or super.hlint;
     };
   };
 
