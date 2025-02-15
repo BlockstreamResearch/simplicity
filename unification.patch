@@ -5,7 +5,7 @@
                     -- <https://github.com/Bodigrim/logict/issues/20#issuecomment-774528439>
                     -- <https://github.com/wrengr/unification-fd/issues/14>
 -    Build-Depends:   logict       >= 0.4 && < 0.8.1
-+    Build-Depends:   logict       >= 0.4 && < 0.8.2
++    Build-Depends:   logict       >= 0.4 && < 0.8.3
                     -- N.B., Tasty requires base>=4.5.0.0; which
                     -- means we aren't CI testing anything older than
                     -- that anymore, so we might as well just require
