@@ -3,6 +3,9 @@
 module Simplicity.Bitcoin.Programs.Transaction.Lib
   ( numInputs
   , numOutputs
+  , totalInputValue
+  , totalOutputValue
+  , fee
   , currentPrevOutpoint
   , currentValue
   , currentScriptHash
@@ -15,6 +18,9 @@ import qualified Simplicity.Bitcoin.Programs.Transaction as Transaction
 
 numInputs = Transaction.numInputs Transaction.lib
 numOutputs = Transaction.numOutputs Transaction.lib
+totalInputValue = Transaction.totalInputValue Transaction.lib
+totalOutputValue = Transaction.totalOutputValue Transaction.lib
+fee = Transaction.fee Transaction.lib
 currentPrevOutpoint = Transaction.currentPrevOutpoint Transaction.lib
 currentValue = Transaction.currentValue Transaction.lib
 currentScriptHash = Transaction.currentScriptHash Transaction.lib
