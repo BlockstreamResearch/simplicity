@@ -5,7 +5,7 @@ module Simplicity.Bitcoin.Programs.Transaction.Lib
   , numOutputs
   , currentPrevOutpoint
   , currentValue
---  , currentScriptHash
+  , currentScriptHash
   , currentSequence
   , currentAnnexHash
   , currentScriptSigHash
@@ -17,7 +17,7 @@ numInputs = Transaction.numInputs Transaction.lib
 numOutputs = Transaction.numOutputs Transaction.lib
 currentPrevOutpoint = Transaction.currentPrevOutpoint Transaction.lib
 currentValue = Transaction.currentValue Transaction.lib
--- currentScriptHash = Transaction.currentScriptHash Transaction.lib
+currentScriptHash = Transaction.currentScriptHash Transaction.lib
 currentSequence = Transaction.currentSequence Transaction.lib
 currentAnnexHash = Transaction.currentAnnexHash Transaction.lib
 currentScriptSigHash = Transaction.currentScriptSigHash Transaction.lib
