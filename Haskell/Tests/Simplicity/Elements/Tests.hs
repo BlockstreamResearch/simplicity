@@ -170,7 +170,6 @@ tests = testGroup "Elements"
         , testCase "sigHashAll" (assertBool "sigHashAll_matches" hunit_sigHashAll)
         ]
 
-
 -- We use continuations here because we need to ensure that 'fastSpec' is memoized outside of any lambda expressions.
 checkJet jet k = k (\env a -> fastSpec env a == implementation jet env a)
  where

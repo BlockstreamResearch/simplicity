@@ -21,7 +21,6 @@ import Prelude hiding (fail, drop, take)
 import Control.Applicative ((<|>))
 import Control.Arrow ((***), (+++))
 import Control.Monad (guard)
-import qualified Data.ByteString as BS
 import Data.Either (isRight)
 import Data.Foldable (toList)
 import qualified Data.Map as Map
@@ -54,7 +53,7 @@ import qualified Simplicity.Elements.Programs.Transaction.Lib as Prog
 import Simplicity.LibSecp256k1.Spec (fe)
 import qualified Simplicity.LibSecp256k1.Schnorr as Schnorr
 import Simplicity.MerkleRoot
-import Simplicity.Programs.Elements.Lib (Ctx8)
+import Simplicity.Programs.Sha256.Lib (Ctx8)
 import qualified Simplicity.Programs.Elements.Lib as Prog
 import Simplicity.Programs.Word
 import Simplicity.Serialization
@@ -62,6 +61,7 @@ import Simplicity.Tensor
 import Simplicity.Tree
 import Simplicity.Ty
 import Simplicity.Ty.Bit
+import Simplicity.Ty.Sha256
 import Simplicity.Ty.Word
 import qualified Simplicity.Word as W
 import Simplicity.Weight
@@ -359,14 +359,14 @@ implementationSigHash InputAmountsHash env _ = Just . toWord256 . integerHash256
 implementationSigHash InputScriptsHash env _ = Just . toWord256 . integerHash256 $ inputScriptsHash (envTx env)
 implementationSigHash TapleafHash env _ = Just . toWord256 . integerHash256 $ tapleafHash (envTap env)
 implementationSigHash TappathHash env _ = Just . toWord256 . integerHash256 $ tappathHash (envTap env)
-implementationSigHash OutpointHash _env (ctx, (mw256, op)) = toCtx <$> (flip ctxAdd (runPut (putMW256 mw256 >> putOutpointBE (cast op))) =<< fromCtx ctx)
+implementationSigHash OutpointHash _env (ctx, (mw256, op)) = toCtx8 <$> (flip ctxAdd (runPut (putMW256 mw256 >> putOutpointBE (cast op))) =<< fromCtx8 ctx)
  where
   putMW256 (Left _) = putWord8 0x00
   putMW256 (Right w256) = putWord8 0x01 >> put (fromIntegral (fromWord256 w256) :: W.Word256)
   cast (h, i) = Outpoint (review (over be256) (fromW256 h)) (fromW32 i)
   fromW256 = fromIntegral . fromWord256
   fromW32 = fromIntegral . fromWord32
-implementationSigHash AssetAmountHash _env (ctx, (cw256, cw64)) = toCtx <$> (flip ctxAdd (runPut (put256 cw256 >> put64 cw64)) =<< fromCtx ctx)
+implementationSigHash AssetAmountHash _env (ctx, (cw256, cw64)) = toCtx8 <$> (flip ctxAdd (runPut (put256 cw256 >> put64 cw64)) =<< fromCtx8 ctx)
  where
   put256 (Left (by, x)) = putWord8 (if fromBit by then 0xb else 0x0a) >> put (fromW256 x)
   put256 (Right w256) = putWord8 0x01 >> put (fromW256 w256)
@@ -376,10 +376,10 @@ implementationSigHash AssetAmountHash _env (ctx, (cw256, cw64)) = toCtx <$> (fli
   fromW256 = fromIntegral . fromWord256
   fromW64 :: Word64 -> W.Word64
   fromW64 = fromIntegral . fromWord64
-implementationSigHash NonceHash _env (ctx, mcw256) = toCtx <$> (flip ctxAdd (runPut . putNonce $ nonce) =<< fromCtx ctx)
+implementationSigHash NonceHash _env (ctx, mcw256) = toCtx8 <$> (flip ctxAdd (runPut . putNonce $ nonce) =<< fromCtx8 ctx)
  where
   nonce = either (const Nothing) (Just . Nonce . ((fromBit *** (fromIntegral . fromWord256)) +++ fromHash)) mcw256
-implementationSigHash AnnexHash _env (ctx, mw256) = toCtx <$> (flip ctxAdd (runPut . putMW256 $ mw256) =<< fromCtx ctx)
+implementationSigHash AnnexHash _env (ctx, mw256) = toCtx8 <$> (flip ctxAdd (runPut . putMW256 $ mw256) =<< fromCtx8 ctx)
  where
   putMW256 (Left _) = putWord8 0x00
   putMW256 (Right w256) = putWord8 0x01 >> put (fromIntegral (fromWord256 w256) :: W.Word256)
@@ -971,12 +971,3 @@ instance Primitive MatcherInfo where
   primitive p = MatcherInfo (primitive p)
 
 fromPoint (by, x) = Point (fromBit by) (fe (fromWord256 x))
-fromHash = review (over be256) . fromIntegral . fromWord256
-fromCtx (buffer, (count, midstate)) = ctxBuild (fromInteger . fromWord8 <$> buffer^..buffer_ buffer63)
-                                               (fromWord64 count)
-                                               (fromHash midstate)
-toCtx ctx = (buffer, (count, midstate))
- where
-  buffer = fst $ bufferFill buffer63 (toWord8 . fromIntegral <$> BS.unpack (ctxBuffer ctx))
-  count = toWord64 . fromIntegral $ ctxCounter ctx
-  midstate = toWord256 . integerHash256 . ivHash $ ctxIV ctx

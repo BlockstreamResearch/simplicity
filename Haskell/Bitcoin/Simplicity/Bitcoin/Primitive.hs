@@ -2,7 +2,7 @@
 -- | This module provides the Simplicity primitives specific for Bitcoin or Bitcoin-like applications.
 module Simplicity.Bitcoin.Primitive
   ( Prim(..), primPrefix, primName
-  , PrimEnv(..), primEnv
+  , PrimEnv(..), primEnv, primEnvHash
   , primSem
   -- * Re-exported Types
   , PubKey
@@ -11,7 +11,7 @@ module Simplicity.Bitcoin.Primitive
 import qualified Data.List as List
 import Data.Maybe (listToMaybe)
 import Data.Serialize (Get, getWord8,
-                       Putter, put, putWord8, putWord32le, putWord64le, runPutLazy)
+                       Putter, put, putWord8, putWord32be, putWord32le, putWord64le, runPutLazy)
 import qualified Data.Word
 import Data.Vector as Vector ((!?), length)
 
@@ -28,20 +28,20 @@ data Prim a b where
   LockTime :: Prim () Word32
   TotalInputValue :: Prim () Word64
   CurrentIndex :: Prim () Word32
-  InputPrevOutpoint :: Prim Word32 (Either () (Word256,Word32))
-  InputValue :: Prim Word32 (Either () Word64)
-  InputSequence :: Prim Word32 (Either () Word32)
-  InputAnnexHash :: Prim Word32 (Either () (Either () Word256))
-  InputScriptSigHash :: Prim Word32 (Either () Word256)
+  InputPrevOutpoint :: Prim Word32 (S (Word256,Word32))
+  InputValue :: Prim Word32 (S Word64)
+  InputScriptHash :: Prim Word32 (S Word256)
+  InputSequence :: Prim Word32 (S Word32)
+  InputAnnexHash :: Prim Word32 (S (S Word256))
+  InputScriptSigHash :: Prim Word32 (S Word256)
   TotalOutputValue :: Prim () Word64
-  OutputValue :: Prim Word32 (Either () Word64)
-  OutputScriptHash :: Prim Word32 (Either () Word256)
+  OutputValue :: Prim Word32 (S Word64)
+  OutputScriptHash :: Prim Word32 (S Word256)
   TapleafVersion :: Prim () Word8
-  Tappath :: Prim Word8 (Either () Word256)
+  Tappath :: Prim Word8 (S Word256)
   InternalKey :: Prim () PubKey
   ScriptCMR :: Prim () Word256
--- Other possible ideas:
-  -- TxId :: Prim () Word256
+  TransactionId :: Prim () Word256
 
 instance Eq (Prim a b) where
   Version == Version = True
@@ -50,6 +50,7 @@ instance Eq (Prim a b) where
   CurrentIndex == CurrentIndex = True
   InputPrevOutpoint == InputPrevOutpoint = True
   InputValue == InputValue = True
+  InputScriptHash == InputScriptHash = True
   InputSequence == InputSequence = True
   InputAnnexHash == InputAnnexHash = True
   InputScriptSigHash == InputScriptSigHash = True
@@ -60,6 +61,7 @@ instance Eq (Prim a b) where
   Tappath == Tappath = True
   InternalKey == InternalKey = True
   ScriptCMR == ScriptCMR = True
+  TransactionId == TransactionId = True
   _ == _ = False
 
 primPrefix :: String
@@ -73,6 +75,7 @@ primName TotalInputValue = "totalInputValue"
 primName CurrentIndex = "currentIndex"
 primName InputPrevOutpoint = "inputPrevOutpoint"
 primName InputValue = "inputValue"
+primName InputScriptHash = "inputScriptHash"
 primName InputSequence = "inputSequence"
 primName InputAnnexHash = "inputAnnexHash"
 primName InputScriptSigHash = "inputScriptSigHash"
@@ -83,6 +86,7 @@ primName TapleafVersion = "tapleafVersion"
 primName Tappath = "tappath"
 primName InternalKey = "internalKey"
 primName ScriptCMR = "scriptCMR"
+primName TransactionId = "transactionId"
 
 data PrimEnv = PrimEnv { envTx :: SigTx
                        , envIx :: Data.Word.Word32
@@ -106,6 +110,19 @@ primEnv tx ix tap | cond = Just $ PrimEnv { envTx = tx
                   | otherwise = Nothing
  where
   cond = fromIntegral ix < Vector.length (sigTxIn tx)
+
+-- | A hash of
+--
+-- * 'txHash'
+-- * 'tapEnvHash'
+-- * 'envIx'
+--
+-- Note: this is the hash used for the "sig-all" hash.
+primEnvHash :: PrimEnv -> Hash256
+primEnvHash env = bslHash . runPutLazy $ do
+                    put $ txHash (envTx env)
+                    put $ tapEnvHash (envTap env)
+                    putWord32be $ envIx env
 
 primSem :: Prim a b -> a -> PrimEnv -> Maybe b
 primSem p a env = interpret p a
@@ -135,6 +152,7 @@ primSem p a env = interpret p a
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutpoint)
   interpret InputValue = return . (atInput $ toWord64 . toInteger . sigTxiValue)
+  interpret InputScriptHash = return . (atInput $ encodeHash . bslHash . sigTxiScript)
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
   interpret InputAnnexHash = return . (atInput $ cast . fmap (encodeHash . bslHash) . sigTxiAnnex)
   interpret InputScriptSigHash = return . (atInput $ encodeHash . bslHash . sigTxiScriptSig)
@@ -145,3 +163,4 @@ primSem p a env = interpret p a
   interpret Tappath = return . cast . fmap encodeHash . listToMaybe . flip drop (tappath (envTap env)) . fromInteger . fromWord8
   interpret InternalKey = element . return . encodeKey . tapInternalKey $ envTap env
   interpret ScriptCMR = element . return . toWord256 . integerHash256 . tapScriptCMR $ envTap env
+  interpret TransactionId = element . return . encodeHash . txid $ tx

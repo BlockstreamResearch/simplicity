@@ -181,6 +181,7 @@ data Lib term =
     -- | A hash of
     --
     -- * 'GenesisBlockHash' twice (This is effectively a tag.)
+    -- * 'txHash'
     -- * 'tapEnvHash'
     -- * 'CurrentIndex'
   , sigAllHash :: term () Word256

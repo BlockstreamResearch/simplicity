@@ -6,7 +6,7 @@ module Simplicity.Bitcoin.Programs.Transaction
  , numOutputs
  , currentPrevOutpoint
  , currentValue
--- , currentScriptHash
+ , currentScriptHash
  , currentSequence
  , currentAnnexHash
  , currentScriptSigHash
@@ -33,8 +33,8 @@ data Lib term =
   , currentPrevOutpoint :: term () (Word256,Word32)
     -- | Returns the `InputValue` of the `CurrentIndex`.
   , currentValue :: term () Word64
---    -- | Returns the `InputScriptHash` of the `CurrentIndex`.
---  , currentScriptHash :: term () Word256
+    -- | Returns the `InputScriptHash` of the `CurrentIndex`.
+  , currentScriptHash :: term () Word256
     -- | Returns the `InputSequence` of the `CurrentIndex`.
   , currentSequence :: term () Word32
     -- | Returns the `InputAnnexHash` of the `CurrentIndex`.
@@ -51,7 +51,7 @@ instance SimplicityFunctor Lib where
     , numOutputs = m numOutputs
     , currentPrevOutpoint = m currentPrevOutpoint
     , currentValue = m currentValue
---    , currentScriptHash = m currentScriptHash
+    , currentScriptHash = m currentScriptHash
     , currentSequence = m currentSequence
     , currentAnnexHash = m currentAnnexHash
     , currentScriptSigHash = m currentScriptSigHash
@@ -70,7 +70,7 @@ lib = l
 
   , currentValue = primitive CurrentIndex >>> assert (primitive InputValue)
 
---  , currentScriptHash = primitive CurrentIndex >>> assert (primitive InputScriptHash)
+  , currentScriptHash = primitive CurrentIndex >>> assert (primitive InputScriptHash)
 
   , currentSequence = primitive CurrentIndex >>> assert (primitive InputSequence)
 
