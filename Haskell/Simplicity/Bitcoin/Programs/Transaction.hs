@@ -4,6 +4,9 @@ module Simplicity.Bitcoin.Programs.Transaction
  ( Lib(Lib), lib
  , numInputs
  , numOutputs
+ , totalInputValue
+ , totalOutputValue
+ , fee
  , currentPrevOutpoint
  , currentValue
  , currentScriptHash
@@ -12,12 +15,13 @@ module Simplicity.Bitcoin.Programs.Transaction
  , currentScriptSigHash
  ) where
 
-import Prelude hiding (take, drop)
+import Prelude hiding (take, drop, subtract)
 
 import Simplicity.Digest
 import Simplicity.Bitcoin.Primitive
 import Simplicity.Bitcoin.Term hiding (one)
 import Simplicity.Functor
+import Simplicity.Programs.Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Word
 import Simplicity.Ty.Word
@@ -29,6 +33,9 @@ data Lib term =
     numInputs :: term () Word32
     -- | Returns the number of outputs the transaction has.
   , numOutputs :: term () Word32
+  , totalInputValue :: term () Word64
+  , totalOutputValue :: term () Word64
+  , fee :: term () Word64
     -- | Returns the `InputPrevOutpoint` of the `CurrentIndex`.
   , currentPrevOutpoint :: term () (Word256,Word32)
     -- | Returns the `InputValue` of the `CurrentIndex`.
@@ -49,6 +56,9 @@ instance SimplicityFunctor Lib where
     {
       numInputs = m numInputs
     , numOutputs = m numOutputs
+    , totalInputValue = m totalInputValue
+    , totalOutputValue = m totalOutputValue
+    , fee = m fee
     , currentPrevOutpoint = m currentPrevOutpoint
     , currentValue = m currentValue
     , currentScriptHash = m currentScriptHash
@@ -65,6 +75,16 @@ lib = l
     numInputs = firstFail word32 (primitive InputValue)
 
   , numOutputs = firstFail word32 (primitive OutputValue)
+
+  , totalInputValue = let
+      body = take (drop (primitive InputValue)) &&& ih >>> match (injl ih) (injr (add word64 >>> ih))
+     in (iden &&& zero word64) >>> forWhile word32 body >>> copair iden iden
+
+  , totalOutputValue = let
+      body = take (drop (primitive OutputValue)) &&& ih >>> match (injl ih) (injr (add word64 >>> ih))
+     in (iden &&& zero word64) >>> forWhile word32 body >>> copair iden iden
+
+  , fee = totalInputValue &&& totalOutputValue >>> subtract word64 >>> ih
 
   , currentPrevOutpoint = primitive CurrentIndex >>> assert (primitive InputPrevOutpoint)
 
