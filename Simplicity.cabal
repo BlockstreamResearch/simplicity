@@ -18,7 +18,7 @@ library Simplicity-Core
                        Haskell/cbits/frame.c, Haskell/cbits/coreJets.c
   Include-dirs:        C
   Includes:            sha256.h, frame.h, jets.h
-  exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.LibSecp256k1,
+  exposed-modules:     Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.LibSecp256k1, Simplicity.Ty.Sha256,
                        Simplicity.Term.Core,
                        Simplicity.CoreJets,
                        Simplicity.Functor, Simplicity.Tensor,
@@ -32,6 +32,7 @@ library Simplicity-Core
                        Simplicity.Programs.Sha256, Simplicity.Programs.Sha256.Lib,
                        Simplicity.Programs.LibSecp256k1, Simplicity.Programs.LibSecp256k1.Lib,
                        Simplicity.Programs.CheckSig, Simplicity.Programs.CheckSig.Lib,
+                       Simplicity.Programs.Bitcoin, Simplicity.Programs.Bitcoin.Lib,
                        Simplicity.Programs.Elements, Simplicity.Programs.Elements.Lib,
                        Simplicity.Programs.TimeLock,
                        Simplicity.Digest, Simplicity.Digest.Pure.SHA,
@@ -128,14 +129,15 @@ library
                        Haskell/cbits/elements/jets.c Haskell/cbits/elements/env.c
   Include-dirs:        C C/include
   Includes:            elements/elementsJets.h elements/primitive.h simplicity/elements/env.h
-  exposed-modules:     Simplicity.Bitcoin.Programs.Transaction, Simplicity.Bitcoin.Programs.Transaction.Lib,
+  exposed-modules:     Simplicity.Bitcoin.Programs.SigHash, Simplicity.Bitcoin.Programs.SigHash.Lib,
+                       Simplicity.Bitcoin.Programs.Transaction, Simplicity.Bitcoin.Programs.Transaction.Lib,
                        Simplicity.Bitcoin.Programs.TimeLock, Simplicity.Elements.Programs.TimeLock,
                        Simplicity.Elements.Programs.Issuance, Simplicity.Elements.Programs.Issuance.Lib,
                        Simplicity.Elements.Programs.SigHash, Simplicity.Elements.Programs.SigHash.Lib,
                        Simplicity.Elements.Programs.Transaction, Simplicity.Elements.Programs.Transaction.Lib,
                        Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets,
                        Simplicity.Elements.FFI.Env, Simplicity.Elements.FFI.Jets
-  reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.LibSecp256k1,
+  reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.LibSecp256k1, Simplicity.Ty.Sha256,
                        Simplicity.Term.Core,
                        Simplicity.CoreJets,
                        Simplicity.Functor, Simplicity.Tensor,
@@ -149,6 +151,7 @@ library
                        Simplicity.Programs.Sha256, Simplicity.Programs.Sha256.Lib,
                        Simplicity.Programs.LibSecp256k1, Simplicity.Programs.LibSecp256k1.Lib,
                        Simplicity.Programs.CheckSig, Simplicity.Programs.CheckSig.Lib,
+                       Simplicity.Programs.Bitcoin, Simplicity.Programs.Bitcoin.Lib,
                        Simplicity.Programs.Elements, Simplicity.Programs.Elements.Lib,
                        Simplicity.Programs.TimeLock,
                        Simplicity.Digest,
@@ -224,8 +227,9 @@ Test-Suite testsuite
   ghc-options:         -threaded -O0 -with-rtsopts=-c
   other-modules:       Simplicity.Programs.Example,
                        Simplicity.Bip0340,
-                       Simplicity.Arbitrary, Simplicity.Ty.Arbitrary, Simplicity.Elements.Arbitrary,
+                       Simplicity.Arbitrary, Simplicity.Ty.Arbitrary, Simplicity.Bitcoin.Arbitrary, Simplicity.Elements.Arbitrary,
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests,
+                       Simplicity.Bitcoin.TestEval, Simplicity.Bitcoin.Tests,
                        Simplicity.Bitcoin.Serialization.Tests,
                        Simplicity.FFI.Bitstream, Simplicity.FFI.Dag,
                        Simplicity.Elements.FFI.Primitive,
