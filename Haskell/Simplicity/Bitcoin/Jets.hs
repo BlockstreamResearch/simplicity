@@ -514,7 +514,7 @@ instance Simplicity.Bitcoin.JetType.JetType JetType where
 
   jetCost (ConstWordJet cw) = CoreJets.costConstWord cw
   jetCost (CoreJet jt) = CoreJets.jetCost jt
-  jetCost (BitcoinJet jt) = error "Simplicity.Bitcoin.Jets.jetCost: :TODO: Implement jets for Bitcoin and benchmark them."
+  jetCost (BitcoinJet jt) = 1 -- error "Simplicity.Bitcoin.Jets.jetCost: :TODO: Implement jets for Bitcoin and benchmark them."
 
 -- | Generate a 'Jet' using the 'Simplicity.Bitcoin.JetType.jetCost' and 'Simplicity.Bitcoin.JetType.specification' of a 'JetType'.
 asJet :: (Jet term, TyC a, TyC b) => JetType a b -> term a b
