@@ -1,9 +1,9 @@
-#include <simplicity/cmr.h>
+#include <simplicity/elements/cmr.h>
 
-#include "deserialize.h"
-#include "limitations.h"
-#include "simplicity_alloc.h"
-#include "simplicity_assert.h"
+#include "../../deserialize.h"
+#include "../../limitations.h"
+#include "../../simplicity_alloc.h"
+#include "../../simplicity_assert.h"
 
 /* Deserialize a Simplicity 'program' and compute its CMR.
  *
@@ -18,8 +18,8 @@
  *               unsigned char cmr[32]
  *               unsigned char program[program_len]
  */
-bool simplicity_computeCmr( simplicity_err* error, unsigned char* cmr
-                          , const unsigned char* program, size_t program_len) {
+bool simplicity_elements_computeCmr( simplicity_err* error, unsigned char* cmr
+                                   , const unsigned char* program, size_t program_len) {
   simplicity_assert(NULL != error);
   simplicity_assert(NULL != cmr);
   simplicity_assert(NULL != program || 0 == program_len);
