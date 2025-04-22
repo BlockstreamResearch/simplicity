@@ -5,14 +5,13 @@
 ELEMENTS_SIMPLICITY_INCLUDE_DIR_INT = %reldir%/include
 
 ELEMENTS_SIMPLICITY_DIST_HEADERS_INT =
-ELEMENTS_SIMPLICITY_DIST_HEADERS_INT += %reldir%/include/simplicity/cmr.h
 ELEMENTS_SIMPLICITY_DIST_HEADERS_INT += %reldir%/include/simplicity/errorCodes.h
+ELEMENTS_SIMPLICITY_DIST_HEADERS_INT += %reldir%/include/simplicity/elements/cmr.h
 ELEMENTS_SIMPLICITY_DIST_HEADERS_INT += %reldir%/include/simplicity/elements/env.h
 ELEMENTS_SIMPLICITY_DIST_HEADERS_INT += %reldir%/include/simplicity/elements/exec.h
 
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT =
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/bitstream.c
-ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/cmr.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/dag.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/deserialize.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/eval.c
@@ -24,6 +23,7 @@ ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/sha256.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/type.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/typeInference.c
 
+ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/primitive/elements/cmr.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/primitive/elements/env.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/primitive/elements/exec.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/primitive/elements/elementsJets.c

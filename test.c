@@ -5,7 +5,7 @@
 #include <time.h>
 #include <getopt.h>
 #include <simplicity/elements/exec.h>
-#include <simplicity/cmr.h>
+#include <simplicity/elements/cmr.h>
 #include "ctx8Pruned.h"
 #include "ctx8Unpruned.h"
 #include "dag.h"
@@ -391,7 +391,7 @@ static void test_elements(void) {
       simplicity_err execResult;
       {
         unsigned char cmrResult[32];
-        if (simplicity_computeCmr(&execResult, cmrResult, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && IS_OK(execResult)) {
+        if (simplicity_elements_computeCmr(&execResult, cmrResult, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1) && IS_OK(execResult)) {
           if (0 == memcmp(cmrResult, cmr, sizeof(unsigned char[8]))) {
             successes++;
           } else {
@@ -400,7 +400,7 @@ static void test_elements(void) {
           }
         } else {
           failures++;
-          printf("simplicity_computeCmr of elementsCheckSigHashAllTx1 unexpectedly produced %d.\n", execResult);
+          printf("simplicity_elements_computeCmr of elementsCheckSigHashAllTx1 unexpectedly produced %d.\n", execResult);
         }
       }
       {
