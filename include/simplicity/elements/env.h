@@ -6,7 +6,7 @@
 
 /* This section builds the 'rawTransaction' structure which is the transaction data needed to build an Elements 'txEnv' environment
  * for evaluating Simplicity expressions within.
- * The 'rawTransaction' is copied into an opaque 'transaction' structure that can be reused within evaluating Simplicity on multiple
+ * The 'rawTransaction' is copied into an opaque 'elementsTransaction' structure that can be reused within evaluating Simplicity on multiple
  * inputs within the same transaction.
  */
 
@@ -85,18 +85,18 @@ typedef struct rawTransaction {
 } rawTransaction;
 
 /* A forward declaration for the structure containing a copy (and digest) of the rawTransaction data */
-typedef struct transaction transaction;
+typedef struct elementsTransaction elementsTransaction;
 
-/* Allocate and initialize a 'transaction' from a 'rawTransaction', copying or hashing the data as needed.
+/* Allocate and initialize a 'elementsTransaction' from a 'rawTransaction', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
  * Precondition: NULL != rawTx
  */
-extern transaction* simplicity_elements_mallocTransaction(const rawTransaction* rawTx);
+extern elementsTransaction* simplicity_elements_mallocTransaction(const rawTransaction* rawTx);
 
-/* Free a pointer to 'transaction'.
+/* Free a pointer to 'elementsTransaction'.
  */
-extern void simplicity_elements_freeTransaction(transaction* tx);
+extern void simplicity_elements_freeTransaction(elementsTransaction* tx);
 
 /* A structure representing taproot spending data for an Elements transaction.
  *
@@ -111,16 +111,16 @@ typedef struct rawTapEnv {
 } rawTapEnv;
 
 /* A forward declaration for the structure containing a copy (and digest) of the rawTapEnv data */
-typedef struct tapEnv tapEnv;
+typedef struct elementsTapEnv elementsTapEnv;
 
-/* Allocate and initialize a 'tapEnv' from a 'rawTapEnv', copying or hashing the data as needed.
+/* Allocate and initialize a 'elementsTapEnv' from a 'rawTapEnv', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
  * Precondition: *rawEnv is well-formed (i.e. rawEnv->pathLen <= 128.)
  */
-extern tapEnv* simplicity_elements_mallocTapEnv(const rawTapEnv* rawEnv);
+extern elementsTapEnv* simplicity_elements_mallocTapEnv(const rawTapEnv* rawEnv);
 
-/* Free a pointer to 'tapEnv'.
+/* Free a pointer to 'elementsTapEnv'.
  */
-extern void simplicity_elements_freeTapEnv(tapEnv* env);
+extern void simplicity_elements_freeTapEnv(elementsTapEnv* env);
 #endif

@@ -37,7 +37,7 @@
  *               unsigned char witness[witness_len]
  */
 extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned char* ihr
-                                              , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
+                                              , const elementsTransaction* tx, uint_fast32_t ix, const elementsTapEnv* taproot
                                               , const unsigned char* genesisBlockHash
                                               , int64_t budget
                                               , const unsigned char* amr
@@ -118,7 +118,7 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
       simplicity_free(analysis);
     }
     if (IS_OK(*error)) {
-      txEnv env = simplicity_build_txEnv(tx, taproot, &genesis_hash, ix);
+      txEnv env = simplicity_elements_build_txEnv(tx, taproot, &genesis_hash, ix);
       static_assert(BUDGET_MAX <= UBOUNDED_MAX, "BUDGET_MAX doesn't fit in ubounded.");
       *error = evalTCOProgram(dag, type_dag, (size_t)dag_len, &(ubounded){budget <= BUDGET_MAX ? (ubounded)budget : BUDGET_MAX}, &env);
     }
