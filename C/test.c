@@ -351,7 +351,7 @@ static void test_elements(void) {
     , .pathLen = 0
     , .scriptCMR = cmr
     };
-  tapEnv* taproot = simplicity_elements_mallocTapEnv(&rawTaproot);
+  elementsTapEnv* taproot = simplicity_elements_mallocTapEnv(&rawTaproot);
 
   printf("Test elements\n");
   {
@@ -386,7 +386,7 @@ static void test_elements(void) {
       , .version = 0x00000002
       , .lockTime = 0x00000000
       };
-    transaction* tx1 = simplicity_elements_mallocTransaction(&testTx1);
+    elementsTransaction* tx1 = simplicity_elements_mallocTransaction(&testTx1);
     if (tx1) {
       successes++;
       simplicity_err execResult;
@@ -479,7 +479,7 @@ static void test_elements(void) {
       , .version = 0x00000002
       , .lockTime = 0x00000000
       };
-    transaction* tx2 = simplicity_elements_mallocTransaction(&testTx2);
+    elementsTransaction* tx2 = simplicity_elements_mallocTransaction(&testTx2);
     if (tx2) {
       successes++;
       simplicity_err execResult;

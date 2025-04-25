@@ -306,15 +306,15 @@ static uint_fast32_t sumFees(sigOutput** feeOutputs, uint_fast32_t numFees) {
   return result + 1;
 }
 
-/* Allocate and initialize a 'transaction' from a 'rawTransaction', copying or hashing the data as needed.
+/* Allocate and initialize a 'elementsTransaction' from a 'rawTransaction', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
  * Precondition: NULL != rawTx
  */
-extern transaction* simplicity_elements_mallocTransaction(const rawTransaction* rawTx) {
+extern elementsTransaction* simplicity_elements_mallocTransaction(const rawTransaction* rawTx) {
   if (!rawTx) return NULL;
 
-  size_t allocationSize = sizeof(transaction);
+  size_t allocationSize = sizeof(elementsTransaction);
 
   const size_t pad1 = PADDING(sigInput, allocationSize);
   if (SIZE_MAX - allocationSize < pad1) return NULL;
@@ -360,8 +360,8 @@ extern transaction* simplicity_elements_mallocTransaction(const rawTransaction* 
   /* Casting through void* to avoid warning about pointer alignment.
    * Our padding is done carefully to ensure alignment.
    */
-  transaction* const tx = (transaction*)(void*)allocation;
-  allocation += sizeof(transaction) + pad1;
+  elementsTransaction* const tx = (elementsTransaction*)(void*)allocation;
+  allocation += sizeof(elementsTransaction) + pad1;
 
   sigInput* const input = (sigInput*)(void*)allocation;
   allocation += rawTx->numInputs * sizeof(sigInput) + pad2;
@@ -379,15 +379,15 @@ extern transaction* simplicity_elements_mallocTransaction(const rawTransaction* 
      but C forgoes the complicated specification of C++.  Therefore we must make an explicit cast of feeOutputs in C.
      See <https://c-faq.com/ansi/constmismatch.html> for details.
   */
-  *tx = (transaction){ .input = input
-                     , .output = output
-                     , .feeOutputs = (sigOutput const * const *)feeOutputs
-                     , .numInputs = rawTx->numInputs
-                     , .numOutputs = rawTx->numOutputs
-                     , .version = rawTx->version
-                     , .lockTime = rawTx->lockTime
-                     , .isFinal = true
-                     };
+  *tx = (elementsTransaction){ .input = input
+                             , .output = output
+                             , .feeOutputs = (sigOutput const * const *)feeOutputs
+                             , .numInputs = rawTx->numInputs
+                             , .numOutputs = rawTx->numOutputs
+                             , .version = rawTx->version
+                             , .lockTime = rawTx->lockTime
+                             , .isFinal = true
+                             };
 
   sha256_toMidstate(tx->txid.s, rawTx->txid);
   {
@@ -569,22 +569,22 @@ extern transaction* simplicity_elements_mallocTransaction(const rawTransaction* 
   return tx;
 }
 
-/* Free a pointer to 'transaction'.
+/* Free a pointer to 'elementsTransaction'.
  */
-extern void simplicity_elements_freeTransaction(transaction* tx) {
+extern void simplicity_elements_freeTransaction(elementsTransaction* tx) {
   simplicity_free(tx);
 }
 
-/* Allocate and initialize a 'tapEnv' from a 'rawTapEnv', copying or hashing the data as needed.
+/* Allocate and initialize a 'elementsTapEnv' from a 'rawTapEnv', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
  * Precondition: *rawEnv is well-formed (i.e. rawEnv->pathLen <= 128.)
  */
-extern tapEnv* simplicity_elements_mallocTapEnv(const rawTapEnv* rawEnv) {
+extern elementsTapEnv* simplicity_elements_mallocTapEnv(const rawTapEnv* rawEnv) {
   if (!rawEnv) return NULL;
   if (128 < rawEnv->pathLen) return NULL;
 
-  size_t allocationSize = sizeof(tapEnv);
+  size_t allocationSize = sizeof(elementsTapEnv);
 
   const size_t numMidstate = rawEnv->pathLen;
   const size_t pad1 = PADDING(sha256_midstate, allocationSize);
@@ -604,25 +604,25 @@ extern tapEnv* simplicity_elements_mallocTapEnv(const rawTapEnv* rawEnv) {
   /* Casting through void* to avoid warning about pointer alignment.
    * Our padding is done carefully to ensure alignment.
    */
-  tapEnv* const env = (tapEnv*)(void*)allocation;
+  elementsTapEnv* const env = (elementsTapEnv*)(void*)allocation;
   sha256_midstate* path = NULL;
   sha256_midstate internalKey;
 
   sha256_toMidstate(internalKey.s,  &rawEnv->controlBlock[1]);
 
   if (numMidstate)  {
-    allocation += sizeof(tapEnv) + pad1;
+    allocation += sizeof(elementsTapEnv) + pad1;
 
     if (rawEnv->pathLen) {
       path = (sha256_midstate*)(void*)allocation;
     }
   }
 
-  *env = (tapEnv){ .leafVersion = rawEnv->controlBlock[0] & 0xfe
-                 , .internalKey = internalKey
-                 , .path = path
-                 , .pathLen = rawEnv->pathLen
-                 };
+  *env = (elementsTapEnv){ .leafVersion = rawEnv->controlBlock[0] & 0xfe
+                         , .internalKey = internalKey
+                         , .path = path
+                         , .pathLen = rawEnv->pathLen
+                         };
   sha256_toMidstate(env->scriptCMR.s, rawEnv->scriptCMR);
 
   {
@@ -646,8 +646,8 @@ extern tapEnv* simplicity_elements_mallocTapEnv(const rawTapEnv* rawEnv) {
   return env;
 }
 
-/* Free a pointer to 'tapEnv'.
+/* Free a pointer to 'elementsTapEnv'.
  */
-extern void simplicity_elements_freeTapEnv(tapEnv* env) {
+extern void simplicity_elements_freeTapEnv(elementsTapEnv* env) {
   simplicity_free(env);
 }

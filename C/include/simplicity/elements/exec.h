@@ -33,7 +33,7 @@
  *               unsigned char witness[witness_len]
  */
 extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned char* ihr
-                                              , const transaction* tx, uint_fast32_t ix, const tapEnv* taproot
+                                              , const elementsTransaction* tx, uint_fast32_t ix, const elementsTapEnv* taproot
                                               , const unsigned char* genesisBlockHash
                                               , int64_t budget
                                               , const unsigned char* amr
