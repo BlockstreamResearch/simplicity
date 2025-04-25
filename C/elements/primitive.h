@@ -1,10 +1,10 @@
 /* Implements the required callbacks for the Elements Simplicity application.
  */
-#ifndef SIMPLICITY_PRIMITIVE_ELEMENTS_PRIMITIVE_H
-#define SIMPLICITY_PRIMITIVE_ELEMENTS_PRIMITIVE_H
+#ifndef SIMPLICITY_ELEMENTS_PRIMITIVE_H
+#define SIMPLICITY_ELEMENTS_PRIMITIVE_H
 
-#include "../../bitstream.h"
-#include "../../typeInference.h"
+#include "../bitstream.h"
+#include "../typeInference.h"
 
 /* Allocate a fresh set of unification variables bound to at least all the types necessary
  * for all the jets that can be created by 'decodeJet', and also the type 'TWO^256',

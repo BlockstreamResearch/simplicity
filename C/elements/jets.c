@@ -2,8 +2,8 @@
 
 #include "ops.h"
 #include "txEnv.h"
-#include "../../taptweak.h"
-#include "../../simplicity_assert.h"
+#include "../taptweak.h"
+#include "../simplicity_assert.h"
 
 /* Read a 256-bit hash value from the 'src' frame, advancing the cursor 256 cells.
  *

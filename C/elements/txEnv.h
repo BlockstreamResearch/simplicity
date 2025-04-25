@@ -2,11 +2,11 @@
  * It includes the transaction data and input index of the input whose Simplicity program is being executed.
  * It also includes the commitment Merkle root of the program being executed.
  */
-#ifndef SIMPLICITY_PRIMITIVE_ELEMENTS_TXENV_H
-#define SIMPLICITY_PRIMITIVE_ELEMENTS_TXENV_H
+#ifndef SIMPLICITY_ELEMENTS_TXENV_H
+#define SIMPLICITY_ELEMENTS_TXENV_H
 
 #include <stdbool.h>
-#include "../../sha256.h"
+#include "../sha256.h"
 
 /* An Elements 'outpoint' consists of a transaction id and output index within that transaction.
  * The transaction id can be a either a transaction within the chain, or the transaction id from another chain in case of a peg-in.

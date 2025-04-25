@@ -256,7 +256,7 @@ schnorr6 = Example
 checkSigHashAllTx1 :: ExampleProg
 checkSigHashAllTx1 = Example
   { _name = "checkSigHashAllTx1"
-  , _path = ["primitive", "elements"]
+  , _path = ["elements"]
   , _text = [ "Simplicity.Programs.CheckSig.Lib.checkSigVerify' Simplicity.Elements.Programs.SigHash.Lib.sigAllHash"
             , "(Simplicity.LibSecp256k1.Spec.PubKey 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63)"
             , "(Simplicity.LibSecp256k1.Spec.Sig 0x00000000000000000000003b78ce563f89a0ed9414f5aa28ad0d96d6795f9c63"

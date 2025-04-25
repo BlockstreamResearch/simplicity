@@ -1,6 +1,6 @@
 #include "simplicity_alloc.h"
 #include "simplicity/elements/env.h"
-#include "primitive/elements/txEnv.h"
+#include "elements/txEnv.h"
 
 const size_t c_sizeof_rawElementsBuffer = sizeof(rawElementsBuffer);
 const size_t c_sizeof_rawElementsOutput = sizeof(rawElementsOutput);

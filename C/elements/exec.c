@@ -4,12 +4,12 @@
 #include <string.h>
 #include "primitive.h"
 #include "txEnv.h"
-#include "../../deserialize.h"
-#include "../../eval.h"
-#include "../../limitations.h"
-#include "../../simplicity_alloc.h"
-#include "../../simplicity_assert.h"
-#include "../../typeInference.h"
+#include "../deserialize.h"
+#include "../eval.h"
+#include "../limitations.h"
+#include "../simplicity_alloc.h"
+#include "../simplicity_assert.h"
+#include "../typeInference.h"
 
 /* Deserialize a Simplicity 'program' with its 'witness' data and execute it in the environment of the 'ix'th input of 'tx' with `taproot`.
  *

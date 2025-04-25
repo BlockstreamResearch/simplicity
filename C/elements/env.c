@@ -5,10 +5,10 @@
 #include <string.h>
 #include "txEnv.h"
 #include "ops.h"
-#include "../../rsort.h"
-#include "../../sha256.h"
-#include "../../simplicity_assert.h"
-#include "../../simplicity_alloc.h"
+#include "../rsort.h"
+#include "../sha256.h"
+#include "../simplicity_assert.h"
+#include "../simplicity_alloc.h"
 
 #define PADDING(alignType, allocated) ((alignof(alignType) - (allocated) % alignof(alignType)) % alignof(alignType))
 

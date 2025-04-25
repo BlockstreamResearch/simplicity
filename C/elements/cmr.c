@@ -1,9 +1,9 @@
 #include <simplicity/elements/cmr.h>
 
-#include "../../deserialize.h"
-#include "../../limitations.h"
-#include "../../simplicity_alloc.h"
-#include "../../simplicity_assert.h"
+#include "../deserialize.h"
+#include "../limitations.h"
+#include "../simplicity_alloc.h"
+#include "../simplicity_assert.h"
 #include "primitive.h"
 
 /* Deserialize a Simplicity 'program' and compute its CMR.

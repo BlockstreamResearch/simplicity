@@ -20,8 +20,8 @@
 #include "typeSkipTest.h"
 #include "simplicity_alloc.h"
 #include "typeInference.h"
-#include "primitive/elements/checkSigHashAllTx1.h"
-#include "primitive/elements/primitive.h"
+#include "elements/checkSigHashAllTx1.h"
+#include "elements/primitive.h"
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
 
