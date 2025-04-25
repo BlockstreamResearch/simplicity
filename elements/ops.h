@@ -1,9 +1,9 @@
 /* This module defines operations used in the construction the environment ('txEnv') and some jets.
  */
-#ifndef SIMPLICITY_PRIMITIVE_ELEMENTS_OPS_H
-#define SIMPLICITY_PRIMITIVE_ELEMENTS_OPS_H
+#ifndef SIMPLICITY_ELEMENTS_OPS_H
+#define SIMPLICITY_ELEMENTS_OPS_H
 
-#include "../../sha256.h"
+#include "../sha256.h"
 #include "txEnv.h"
 
 /* Add an 'confidential' value to be consumed by an ongoing SHA-256 evaluation.

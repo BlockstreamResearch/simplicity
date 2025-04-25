@@ -1,9 +1,9 @@
 #include "primitive.h"
 
 #include "jets.h"
-#include "../../limitations.h"
-#include "../../simplicity_alloc.h"
-#include "../../simplicity_assert.h"
+#include "../limitations.h"
+#include "../simplicity_alloc.h"
+#include "../simplicity_assert.h"
 
 /* An enumeration of all the types we need to construct to specify the input and output types of all jets created by 'decodeJet'. */
 enum TypeNamesForJets {
@@ -68,7 +68,7 @@ static simplicity_err decodePrimitive(jetName* result, bitstream* stream) {
   if (bit < 0) return (simplicity_err)bit;
   if (!bit) {
     /* Core jets */
-#include "../../decodeCoreJets.inc"
+#include "../decodeCoreJets.inc"
     return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
   } else {
     /* Elements jets */
