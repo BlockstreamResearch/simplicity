@@ -346,7 +346,7 @@ static void test_elements(void) {
   sha256_fromMidstate(amr, elementsCheckSigHashAllTx1_amr);
 
   unsigned char genesisHash[32] = "\x0f\x91\x88\xf1\x3c\xb7\xb2\xc7\x1f\x2a\x33\x5e\x3a\x4f\xc3\x28\xbf\x5b\xeb\x43\x60\x12\xaf\xca\x59\x0b\x1a\x11\x46\x6e\x22\x06";
-  rawTapEnv rawTaproot = (rawTapEnv)
+  rawElementsTapEnv rawTaproot = (rawElementsTapEnv)
     { .controlBlock = (unsigned char [33]){"\xbe\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x3b\x78\xce\x56\x3f\x89\xa0\xed\x94\x14\xf5\xaa\x28\xad\x0d\x96\xd6\x79\x5f\x9c\x63"}
     , .pathLen = 0
     , .scriptCMR = cmr
@@ -355,9 +355,9 @@ static void test_elements(void) {
 
   printf("Test elements\n");
   {
-    rawTransaction testTx1 = (rawTransaction)
+    rawElementsTransaction testTx1 = (rawElementsTransaction)
       { .txid = (unsigned char[32]){"\xdb\x9a\x3d\xe0\xb6\xb8\xcc\x74\x1e\x4d\x6c\x8f\x19\xce\x75\xec\x0d\xfd\x01\x02\xdb\x9c\xb5\xcd\x27\xa4\x1a\x66\x91\x66\x3a\x07"}
-      , .input = (rawInput[])
+      , .input = (rawElementsInput[])
                  { { .annex = NULL
                    , .prevTxid = (unsigned char[32]){"\xeb\x04\xb6\x8e\x9a\x26\xd1\x16\x04\x6c\x76\xe8\xff\x47\x33\x2f\xb7\x1d\xda\x90\xff\x4b\xef\x53\x70\xf2\x52\x26\xd3\xbc\x09\xfc"}
                    , .prevIx = 0
@@ -368,7 +368,7 @@ static void test_elements(void) {
                             , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xe4\x00"}
                             , .scriptPubKey = {0}
                  } }        }
-      , .output = (rawOutput[])
+      , .output = (rawElementsOutput[])
                   { { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
                     , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xd7\x1c"}
                     , .nonce = NULL
@@ -450,9 +450,9 @@ static void test_elements(void) {
   }
   /* test a modified transaction with the same signature. */
   {
-    rawTransaction testTx2 = (rawTransaction)
+    rawElementsTransaction testTx2 = (rawElementsTransaction)
       { .txid = (unsigned char[32]){"\xdb\x9a\x3d\xe0\xb6\xb8\xcc\x74\x1e\x4d\x6c\x8f\x19\xce\x75\xec\x0d\xfd\x01\x02\xdb\x9c\xb5\xcd\x27\xa4\x1a\x66\x91\x66\x3a\x07"}
-      , .input = (rawInput[])
+      , .input = (rawElementsInput[])
                  { { .prevTxid = (unsigned char[32]){"\xeb\x04\xb6\x8e\x9a\x26\xd1\x16\x04\x6c\x76\xe8\xff\x47\x33\x2f\xb7\x1d\xda\x90\xff\x4b\xef\x53\x70\xf2\x52\x26\xd3\xbc\x09\xfc"}
                    , .prevIx = 0
                    , .sequence = 0xffffffff /* Here is the modification. */
@@ -461,7 +461,7 @@ static void test_elements(void) {
                             , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xe4\x00"}
                             , .scriptPubKey = {0}
                  } }        }
-      , .output = (rawOutput[])
+      , .output = (rawElementsOutput[])
                   { { .asset = (unsigned char[33]){"\x01\x23\x0f\x4f\x5d\x4b\x7c\x6f\xa8\x45\x80\x6e\xe4\xf6\x77\x13\x45\x9e\x1b\x69\xe8\xe6\x0f\xce\xe2\xe4\x94\x0c\x7a\x0d\x5d\xe1\xb2"}
                     , .value = (unsigned char[9]){"\x01\x00\x00\x00\x02\x54\x0b\xd7\x1c"}
                     , .nonce = NULL

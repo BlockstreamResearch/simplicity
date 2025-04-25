@@ -17,13 +17,13 @@
  * Precondition: NULL != result;
  *               NULL != scriptPubKey;
  */
-static void hashBuffer(sha256_midstate* result, const rawBuffer* buffer) {
+static void hashBuffer(sha256_midstate* result, const rawElementsBuffer* buffer) {
   sha256_context ctx = sha256_init(result->s);
   sha256_uchars(&ctx, buffer->buf, buffer->len);
   sha256_finalize(&ctx);
 }
 
-/* Initialize a 'confidential' asset or 'confidential' nonce from an unsigned char array from a 'rawTransaction'.
+/* Initialize a 'confidential' asset or 'confidential' nonce from an unsigned char array from a 'rawElementsTransaction'.
  *
  * Precondition: NULL != conf;
  *               unsigned char rawConf[33] or rawConf == NULL;
@@ -40,7 +40,7 @@ static void copyRawConfidential(confidential* conf, const unsigned char* rawConf
   }
 }
 
-/* Initialize a 'confAmount' from an unsigned char array from a 'rawTransaction'.
+/* Initialize a 'confAmount' from an unsigned char array from a 'rawElementsTransaction'.
  *
  * Precondition: NULL != amt;
  *               unsigned char rawAmt[rawAmt[0] == 0x01 ? 9 : 33] or rawAmt == NULL
@@ -60,12 +60,12 @@ static void copyRawAmt(confAmount* amt, const unsigned char* rawAmt) {
   }
 }
 
-/* Initialize a 'sigInput' from a 'rawInput', copying or hashing the data as needed.
+/* Initialize a 'sigInput' from a 'rawElementsInput', copying or hashing the data as needed.
  *
  * Precondition: NULL != result;
  *               NULL != input;
  */
-static void copyInput(sigInput* result, const rawInput* input) {
+static void copyInput(sigInput* result, const rawElementsInput* input) {
   *result = (sigInput){ .prevOutpoint = { .ix = input->prevIx }
                       , .sequence = input->sequence
                       , .isPegin = !!input->pegin
@@ -79,8 +79,8 @@ static void copyInput(sigInput* result, const rawInput* input) {
   copyRawConfidential(&result->txo.asset, input->txo.asset);
   copyRawAmt(&result->txo.amt, input->txo.value);
   hashBuffer(&result->scriptSigHash, &input->scriptSig);
-  hashBuffer(&result->issuance.assetRangeProofHash, &(rawBuffer){0});
-  hashBuffer(&result->issuance.tokenRangeProofHash, &(rawBuffer){0});
+  hashBuffer(&result->issuance.assetRangeProofHash, &(rawElementsBuffer){0});
+  hashBuffer(&result->issuance.tokenRangeProofHash, &(rawElementsBuffer){0});
   if (input->issuance.amount || input->issuance.inflationKeys) {
     sha256_toMidstate(result->issuance.blindingNonce.s, input->issuance.blindingNonce);
     copyRawAmt(&result->issuance.assetAmt, input->issuance.amount);
@@ -104,13 +104,13 @@ static void copyInput(sigInput* result, const rawInput* input) {
 }
 
 /* As specified in https://github.com/ElementsProject/elements/blob/de942511a67c3a3fcbdf002a8ee7e9ba49679b78/src/primitives/transaction.h#L304-L307. */
-static bool isFee(const rawOutput* output) {
+static bool isFee(const rawElementsOutput* output) {
   return 0 == output->scriptPubKey.len &&                 /* Empty scriptPubKey */
     NULL != output->asset && 0x01 == output->asset[0] &&  /* Explicit asset */
     NULL != output->value && 0x01 == output->value[0];    /* Explicit amount */
 }
 
-static uint_fast32_t countFeeOutputs(const rawTransaction* rawTx) {
+static uint_fast32_t countFeeOutputs(const rawElementsTransaction* rawTx) {
   uint_fast32_t result = 0;
   for (uint_fast32_t i = 0; i < rawTx->numOutputs; ++i) {
     result += isFee(&rawTx->output[i]);
@@ -126,7 +126,7 @@ static uint_fast32_t countFeeOutputs(const rawTransaction* rawTx) {
  *
  * Precondition: NULL != scriptPubKey
  */
-static uint_fast32_t countNullDataCodes(const rawBuffer* scriptPubKey) {
+static uint_fast32_t countNullDataCodes(const rawElementsBuffer* scriptPubKey) {
   if (0 == scriptPubKey->len || 0x6a != scriptPubKey->buf[0] ) return 0;
 
   uint_fast32_t result = 0;
@@ -161,7 +161,7 @@ static uint_fast32_t countNullDataCodes(const rawBuffer* scriptPubKey) {
  *
  * Precondition: NULL != rawTx
  */
-static uint_fast64_t countTotalNullDataCodes(const rawTransaction* rawTx) {
+static uint_fast64_t countTotalNullDataCodes(const rawElementsTransaction* rawTx) {
   uint_fast64_t result = 0;
   for (uint_fast32_t i = 0; i < rawTx->numOutputs; ++i) {
     result += countNullDataCodes(&rawTx->output[i].scriptPubKey);
@@ -186,7 +186,7 @@ static uint_fast64_t countTotalNullDataCodes(const rawTransaction* rawTx) {
  *               NULL != scriptPubKey;
  *               countNullDataCodes(scriptPubKey) <= *allocationLen
  */
-static void parseNullData(parsedNullData* result, opcode** allocation, size_t* allocationLen, const rawBuffer* scriptPubKey) {
+static void parseNullData(parsedNullData* result, opcode** allocation, size_t* allocationLen, const rawElementsBuffer* scriptPubKey) {
   *result = (parsedNullData){ .op = *allocation };
 
   if (0 == scriptPubKey->len || 0x6a != scriptPubKey->buf[0] ) { result->op = NULL; return; }
@@ -233,7 +233,7 @@ static void parseNullData(parsedNullData* result, opcode** allocation, size_t* a
   *allocationLen -= result->len;
 }
 
-/* Initialize a 'sigOutput' from a 'rawOutput', copying or hashing the data as needed.
+/* Initialize a 'sigOutput' from a 'rawElementsOutput', copying or hashing the data as needed.
  *
  * '*allocation' is incremented by 'countNullDataCodes(&output->scriptPubKey)'
  * '*allocationLen' is decremented by 'countNullDataCodes(&output->scriptPubKey)'.
@@ -245,7 +245,7 @@ static void parseNullData(parsedNullData* result, opcode** allocation, size_t* a
  *               NULL != output;
  *               countNullDataCodes(&output->scriptPubKey) <= *allocationLen
  */
-static void copyOutput(sigOutput* result, opcode** allocation, size_t* allocationLen, const rawOutput* output) {
+static void copyOutput(sigOutput* result, opcode** allocation, size_t* allocationLen, const rawElementsOutput* output) {
   hashBuffer(&result->scriptPubKey, &output->scriptPubKey);
   result->emptyScript = 0 == output->scriptPubKey.len;
   copyRawConfidential(&result->asset, output->asset);
@@ -253,8 +253,8 @@ static void copyOutput(sigOutput* result, opcode** allocation, size_t* allocatio
   copyRawConfidential(&result->nonce, output->nonce);
   parseNullData(&result->pnd, allocation, allocationLen, &output->scriptPubKey);
   result->isNullData = NULL != result->pnd.op;
-  hashBuffer(&result->surjectionProofHash, is_confidential(result->asset.prefix) ? &output->surjectionProof : &(rawBuffer){0});
-  hashBuffer(&result->rangeProofHash, is_confidential(result->amt.prefix) ? &output->rangeProof : &(rawBuffer){0});
+  hashBuffer(&result->surjectionProofHash, is_confidential(result->asset.prefix) ? &output->surjectionProof : &(rawElementsBuffer){0});
+  hashBuffer(&result->rangeProofHash, is_confidential(result->amt.prefix) ? &output->rangeProof : &(rawElementsBuffer){0});
   result->assetFee = 0;
 }
 
@@ -306,12 +306,12 @@ static uint_fast32_t sumFees(sigOutput** feeOutputs, uint_fast32_t numFees) {
   return result + 1;
 }
 
-/* Allocate and initialize a 'elementsTransaction' from a 'rawTransaction', copying or hashing the data as needed.
+/* Allocate and initialize a 'elementsTransaction' from a 'rawElementsTransaction', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
  * Precondition: NULL != rawTx
  */
-extern elementsTransaction* simplicity_elements_mallocTransaction(const rawTransaction* rawTx) {
+extern elementsTransaction* simplicity_elements_mallocTransaction(const rawElementsTransaction* rawTx) {
   if (!rawTx) return NULL;
 
   size_t allocationSize = sizeof(elementsTransaction);
@@ -575,12 +575,12 @@ extern void simplicity_elements_freeTransaction(elementsTransaction* tx) {
   simplicity_free(tx);
 }
 
-/* Allocate and initialize a 'elementsTapEnv' from a 'rawTapEnv', copying or hashing the data as needed.
+/* Allocate and initialize a 'elementsTapEnv' from a 'rawElementsTapEnv', copying or hashing the data as needed.
  * Returns NULL if malloc fails (or if malloc cannot be called because we require an allocation larger than SIZE_MAX).
  *
  * Precondition: *rawEnv is well-formed (i.e. rawEnv->pathLen <= 128.)
  */
-extern elementsTapEnv* simplicity_elements_mallocTapEnv(const rawTapEnv* rawEnv) {
+extern elementsTapEnv* simplicity_elements_mallocTapEnv(const rawElementsTapEnv* rawEnv) {
   if (!rawEnv) return NULL;
   if (128 < rawEnv->pathLen) return NULL;
 

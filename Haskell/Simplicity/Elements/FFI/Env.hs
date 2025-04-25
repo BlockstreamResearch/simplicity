@@ -35,26 +35,26 @@ newtype CTransaction = CTransaction CTransaction
 newtype CTapEnv = CTapEnv CTapEnv
 newtype CTxEnv = CTxEnv CTxEnv
 
-foreign import ccall unsafe "&" c_sizeof_rawBuffer :: Ptr CSize
-foreign import ccall unsafe "&" c_sizeof_rawOutput :: Ptr CSize
-foreign import ccall unsafe "&" c_sizeof_rawInput :: Ptr CSize
-foreign import ccall unsafe "&" c_sizeof_rawTransaction :: Ptr CSize
-foreign import ccall unsafe "&" c_sizeof_rawTapEnv :: Ptr CSize
+foreign import ccall unsafe "&" c_sizeof_rawElementsBuffer :: Ptr CSize
+foreign import ccall unsafe "&" c_sizeof_rawElementsOutput :: Ptr CSize
+foreign import ccall unsafe "&" c_sizeof_rawElementsInput :: Ptr CSize
+foreign import ccall unsafe "&" c_sizeof_rawElementsTransaction :: Ptr CSize
+foreign import ccall unsafe "&" c_sizeof_rawElementsTapEnv :: Ptr CSize
 foreign import ccall unsafe "&" c_sizeof_txEnv :: Ptr CSize
 
-foreign import ccall unsafe "" c_set_rawBuffer :: Ptr RawBuffer -> Ptr CChar -> CUInt -> IO ()
-foreign import ccall unsafe "" c_set_rawOutput :: Ptr RawOutput -> Ptr CChar -> Ptr CChar -> Ptr CChar -> Ptr RawBuffer -> Ptr RawBuffer -> Ptr RawBuffer -> IO ()
-foreign import ccall unsafe "" c_set_rawInput :: Ptr RawInput -> Ptr RawBuffer -> Ptr CChar -> Ptr RawBuffer
+foreign import ccall unsafe "" c_set_rawElementsBuffer :: Ptr RawBuffer -> Ptr CChar -> CUInt -> IO ()
+foreign import ccall unsafe "" c_set_rawElementsOutput :: Ptr RawOutput -> Ptr CChar -> Ptr CChar -> Ptr CChar -> Ptr RawBuffer -> Ptr RawBuffer -> Ptr RawBuffer -> IO ()
+foreign import ccall unsafe "" c_set_rawElementsInput :: Ptr RawInput -> Ptr RawBuffer -> Ptr CChar -> Ptr RawBuffer
                                                               -> Ptr CChar -> CUInt
                                                               -> Ptr CChar -> Ptr CChar -> Ptr RawBuffer
                                                               -> CUInt
                                                               -> Ptr CChar -> Ptr CChar -> Ptr CChar -> Ptr CChar
                                                               -> Ptr RawBuffer -> Ptr RawBuffer -> IO ()
-foreign import ccall unsafe "" c_set_rawTransaction :: Ptr RawTransaction -> Ptr CChar -> CUInt
+foreign import ccall unsafe "" c_set_rawElementsTransaction :: Ptr RawTransaction -> Ptr CChar -> CUInt
                                                                           -> Ptr RawInput -> CUInt
                                                                           -> Ptr RawOutput -> CUInt
                                                                           -> CUInt -> IO ()
-foreign import ccall unsafe "" c_set_rawTapEnv :: Ptr RawTapEnv -> Ptr CChar -> CUChar -> Ptr CChar -> IO ()
+foreign import ccall unsafe "" c_set_rawElementsTapEnv :: Ptr RawTapEnv -> Ptr CChar -> CUChar -> Ptr CChar -> IO ()
 foreign import ccall unsafe "" c_set_txEnv :: Ptr CTxEnv -> Ptr CTransaction -> Ptr CTapEnv -> Ptr CChar -> CUInt -> IO ()
 
 foreign import ccall unsafe "" simplicity_elements_mallocTransaction :: Ptr RawTransaction -> IO (Ptr CTransaction)
@@ -63,19 +63,19 @@ foreign import ccall unsafe "" simplicity_elements_mallocTapEnv :: Ptr RawTapEnv
 foreign import ccall unsafe "&" simplicity_elements_freeTapEnv :: FunPtr (Ptr CTapEnv -> IO ())
 
 sizeof_rawBuffer :: Int
-sizeof_rawBuffer = fromIntegral . unsafeLocalState $ peek c_sizeof_rawBuffer
+sizeof_rawBuffer = fromIntegral . unsafeLocalState $ peek c_sizeof_rawElementsBuffer
 
 sizeof_rawOutput :: Int
-sizeof_rawOutput = fromIntegral . unsafeLocalState $ peek c_sizeof_rawOutput
+sizeof_rawOutput = fromIntegral . unsafeLocalState $ peek c_sizeof_rawElementsOutput
 
 sizeof_rawInput :: Int
-sizeof_rawInput = fromIntegral . unsafeLocalState $ peek c_sizeof_rawInput
+sizeof_rawInput = fromIntegral . unsafeLocalState $ peek c_sizeof_rawElementsInput
 
 sizeof_rawTransaction :: Int
-sizeof_rawTransaction = fromIntegral . unsafeLocalState $ peek c_sizeof_rawTransaction
+sizeof_rawTransaction = fromIntegral . unsafeLocalState $ peek c_sizeof_rawElementsTransaction
 
 sizeof_rawTapEnv :: Int
-sizeof_rawTapEnv = fromIntegral . unsafeLocalState $ peek c_sizeof_rawTapEnv
+sizeof_rawTapEnv = fromIntegral . unsafeLocalState $ peek c_sizeof_rawElementsTapEnv
 
 sizeof_txEnv :: Int
 sizeof_txEnv = fromIntegral . unsafeLocalState $ peek c_sizeof_txEnv
@@ -84,7 +84,7 @@ withRawBuffer :: BSL.ByteString -> (Ptr RawBuffer -> IO b) -> IO b
 withRawBuffer str k =
   allocaBytes sizeof_rawBuffer $ \pRawBuffer ->
   BS.useAsCStringLen (BSL.toStrict str) $ \(pCharStr, len) -> do
-    c_set_rawBuffer pRawBuffer pCharStr (fromIntegral len)
+    c_set_rawElementsBuffer pRawBuffer pCharStr (fromIntegral len)
     k pRawBuffer
 
 withIssuance :: Maybe Issuance -> (Ptr CChar -> Ptr CChar -> Ptr CChar -> Ptr CChar -> Ptr RawBuffer -> Ptr RawBuffer -> IO b) -> IO b
@@ -130,7 +130,7 @@ withRawOutputs txos k =
     withRawBuffer (txoScript txo) $ \pScript ->
     withRawBuffer (txoAsset txo ^. (under asset.prf_)) $ \pSurjectionProof ->
     withRawBuffer (txoAmount txo ^. (under amount.prf_)) $ \pRangeProof -> do
-      c_set_rawOutput pRawOutput pAsset pAmount pNonce pScript pSurjectionProof pRangeProof
+      c_set_rawElementsOutput pRawOutput pAsset pAmount pNonce pScript pSurjectionProof pRangeProof
       k
   withMaybe Nothing = ($ nullPtr)
   withMaybe (Just x) = BS.useAsCString (encode x)
@@ -155,7 +155,7 @@ withRawInputs txis k =
     BS.useAsCString (runPut . putAmount . utxoAmount $ sigTxiTxo txi) $ \pValue ->
     withRawBuffer (utxoScript $ sigTxiTxo txi) $ \pScript ->
     withIssuance (sigTxiIssuance txi) $ \pBlindingNonce pAssetEntropy pAmount pInflationKeys pAmountRangeProof pInflationKeysRangeProof -> do
-      c_set_rawInput pRawInput pAnnex pPegin pScriptSig
+      c_set_rawElementsInput pRawInput pAnnex pPegin pScriptSig
                                pPrevTxid (fromIntegral . opIndex . sigTxiPreviousOutpoint $ txi)
                                pAsset pValue pScript
                                (fromIntegral . sigTxiSequence $ txi)
@@ -169,7 +169,7 @@ withRawTransaction tx k =
   withRawInputs (sigTxIn tx) $ \pInput ->
   withRawOutputs (sigTxOut tx) $ \pOutput -> do
   BS.useAsCString (encode $ txid tx) $ \pTxid -> do
-   c_set_rawTransaction pRawTransaction pTxid version pInput numInputs pOutput numOutputs lockTime
+   c_set_rawElementsTransaction pRawTransaction pTxid version pInput numInputs pOutput numOutputs lockTime
    k pRawTransaction
  where
   version = fromIntegral (sigTxVersion tx)
@@ -182,7 +182,7 @@ withRawTapEnv tapEnv k | length (tappath tapEnv) <= 128 =
   allocaBytes sizeof_rawTapEnv $ \pRawTapEnv ->
   BS.useAsCString encodePath $ \pControlBlock -> do
   BS.useAsCString (encode $ tapScriptCMR tapEnv) $ \pCmr -> do
-   c_set_rawTapEnv pRawTapEnv pControlBlock (fromIntegral . length $ tappath tapEnv) pCmr
+   c_set_rawElementsTapEnv pRawTapEnv pControlBlock (fromIntegral . length $ tappath tapEnv) pCmr
    k pRawTapEnv
  where
   encodePath = BS.cons (tapleafVersion tapEnv) (BS.concat (encode (tapInternalKey tapEnv) : map encode (tappath tapEnv)))
