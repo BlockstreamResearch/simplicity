@@ -1,7 +1,7 @@
 #include "jets.h"
 
 #include "ops.h"
-#include "primitive.h"
+#include "txEnv.h"
 #include "../../taptweak.h"
 #include "../../simplicity_assert.h"
 

@@ -236,7 +236,7 @@ Test-Suite testsuite
                        Simplicity.Serialization.Tests,
                        Simplicity.TestCoreEval,
                        Simplicity.Ty.Tests
-  C-sources:           C/rsort.c, C/dag.c, C/primitive/elements/primitive.c, C/bitstream.c
+  C-sources:           C/rsort.c, C/dag.c, C/primitive/elements/primitive.c, C/primitive/elements/txEnv.c, C/bitstream.c
                        Haskell/cbits/bitstream.c, Haskell/cbits/dag.c
   build-depends:       Simplicity,
                        base >=4.9 && <4.20,

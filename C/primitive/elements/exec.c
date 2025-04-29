@@ -3,6 +3,7 @@
 #include <stdalign.h>
 #include <string.h>
 #include "primitive.h"
+#include "txEnv.h"
 #include "../../deserialize.h"
 #include "../../eval.h"
 #include "../../limitations.h"
@@ -60,7 +61,7 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
 
   {
     bitstream stream = initializeBitstream(program, program_len);
-    dag_len = simplicity_decodeMallocDag(&dag, &census, &stream);
+    dag_len = simplicity_decodeMallocDag(&dag, simplicity_elements_decodeJet, &census, &stream);
     if (dag_len <= 0) {
       simplicity_assert(dag_len < 0);
       *error = (simplicity_err)dag_len;
@@ -79,7 +80,7 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
 
   if (IS_OK(*error)) {
     type* type_dag = NULL;
-    *error = simplicity_mallocTypeInference(&type_dag, dag, (uint_fast32_t)dag_len, &census);
+    *error = simplicity_mallocTypeInference(&type_dag, simplicity_elements_mallocBoundVars, dag, (uint_fast32_t)dag_len, &census);
     if (IS_OK(*error)) {
       simplicity_assert(NULL != type_dag);
       if (0 != dag[dag_len-1].sourceType || 0 != dag[dag_len-1].targetType) {

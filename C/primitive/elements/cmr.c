@@ -4,6 +4,7 @@
 #include "../../limitations.h"
 #include "../../simplicity_alloc.h"
 #include "../../simplicity_assert.h"
+#include "primitive.h"
 
 /* Deserialize a Simplicity 'program' and compute its CMR.
  *
@@ -26,7 +27,7 @@ bool simplicity_elements_computeCmr( simplicity_err* error, unsigned char* cmr
 
   bitstream stream = initializeBitstream(program, program_len);
   dag_node* dag = NULL;
-  int_fast32_t dag_len = simplicity_decodeMallocDag(&dag, NULL, &stream);
+  int_fast32_t dag_len = simplicity_decodeMallocDag(&dag, simplicity_elements_decodeJet, NULL, &stream);
   if (dag_len <= 0) {
     simplicity_assert(dag_len < 0);
     *error = (simplicity_err)dag_len;

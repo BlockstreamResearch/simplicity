@@ -4,7 +4,7 @@
 #define SIMPLICITY_PRIMITIVE_ELEMENTS_OPS_H
 
 #include "../../sha256.h"
-#include "primitive.h"
+#include "txEnv.h"
 
 /* Add an 'confidential' value to be consumed by an ongoing SHA-256 evaluation.
  * If the 'confidential' value is blinded, then the 'evenPrefix' used if the y coordinate is even,
