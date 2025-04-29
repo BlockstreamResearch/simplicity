@@ -126,6 +126,7 @@ library Simplicity-Indef
 
 library
   C-sources:           C/rsort.c C/elements/elementsJets.c C/elements/ops.c C/elements/env.c C/elements/txEnv.c
+                       Haskell/cbits/bitcoin/env.c
                        Haskell/cbits/elements/jets.c Haskell/cbits/elements/env.c
   Include-dirs:        C C/include
   Includes:            elements/elementsJets.h elements/primitive.h simplicity/elements/env.h
@@ -136,6 +137,7 @@ library
                        Simplicity.Elements.Programs.SigHash, Simplicity.Elements.Programs.SigHash.Lib,
                        Simplicity.Elements.Programs.Transaction, Simplicity.Elements.Programs.Transaction.Lib,
                        Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets,
+                       Simplicity.Bitcoin.FFI.Env,
                        Simplicity.Elements.FFI.Env, Simplicity.Elements.FFI.Jets
   reexported-modules:  Simplicity.Ty, Simplicity.Ty.Bit, Simplicity.Ty.Word, Simplicity.Ty.LibSecp256k1, Simplicity.Ty.Sha256,
                        Simplicity.Term.Core,
