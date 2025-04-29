@@ -10,9 +10,11 @@ import Data.List.Split (chunksOf)
 import Data.Maybe (isJust)
 import qualified Data.Map as Map
 import Numeric (showHex)
+import System.Environment (getArgs)
 
 import NameWrangler
 import Simplicity.Digest
+import qualified Simplicity.Bitcoin.Jets as Bitcoin
 import qualified Simplicity.Elements.Jets as Elements
 import Simplicity.MerkleRoot
 import Simplicity.Serialization
@@ -24,6 +26,7 @@ data JetInfo = JetInfo { name :: String
                        , mw :: Integer
                        , sourceType :: Ty
                        , targetType :: Ty
+                       , moduleName :: String
                        }
 
 data CompactTy = CTyOne
@@ -87,7 +90,7 @@ cJetNode :: JetInfo -> String
 cJetNode ji = unlines
   [ "[" ++ upperSnakeCase (name ji) ++ "] ="
   , "{ .tag = JET"
-  , ", .jet = simplicity_" ++ lowerSnakeCase (name ji)
+  , ", .jet = simplicity_" ++ moduleName ji ++ lowerSnakeCase (name ji)
   , ", .cmr = {{" ++ showCHash (cmr ji) ++ "}}"
   , ", .sourceIx = " ++ compactCName (compactTy (sourceType ji)) ""
   , ", .targetIx = " ++ compactCName (compactTy (targetType ji)) ""
@@ -145,8 +148,20 @@ writeFiles list = do
  where
   tyList = mkTyList list
 
+data Option = OptElements | OptBitcoin
+
+parseOptions :: [String] -> Maybe Option
+parseOptions [] = Just OptElements
+parseOptions ["--elements"] = Just OptElements
+parseOptions ["--bitcoin"] = Just OptBitcoin
+parseOptions _ = Nothing
+
 main = do
-  writeFiles elementsJetList
+  mopt <- parseOptions <$> getArgs
+  case mopt of
+    Nothing -> putStrLn "Invalid Arguments"
+    Just OptElements -> writeFiles elementsJetList
+    Just OptBitcoin -> writeFiles bitcoinJetList
  where
   elementsJetList = mkJetList fromElements $ Map.elems Elements.jetMap
   fromElements :: SomeArrow Elements.JetType -> JetInfo
@@ -155,6 +170,20 @@ main = do
                                         , mw = milliWeight (Elements.jetCost jt)
                                         , sourceType = unreflect tyx
                                         , targetType = unreflect tyy
+                                        , moduleName = ""
                                         }
    where
+    (tyx, tyy) = reifyArrow jt
+  bitcoinJetList = mkJetList fromBitcoin $ Map.elems Bitcoin.jetMap
+  fromBitcoin :: SomeArrow Bitcoin.JetType -> JetInfo
+  fromBitcoin (SomeArrow jt) = JetInfo { name = mkName jt
+                                        , cmr = commitmentRoot (Bitcoin.asJet jt)
+                                        , mw = milliWeight (Bitcoin.jetCost jt)
+                                        , sourceType = unreflect tyx
+                                        , targetType = unreflect tyy
+                                        , moduleName = jetModule
+                                       }
+   where
+    jetModule | Bitcoin.CoreJet _ <- jt = ""
+              | otherwise = "bitcoin_"
     (tyx, tyy) = reifyArrow jt
