@@ -21,6 +21,7 @@
 #include "simplicity_alloc.h"
 #include "typeInference.h"
 #include "primitive/elements/checkSigHashAllTx1.h"
+#include "primitive/elements/primitive.h"
 
 _Static_assert(CHAR_BIT == 8, "Buffers passed to fmemopen presume 8 bit chars");
 
@@ -78,7 +79,7 @@ static void test_hashBlock(void) {
   simplicity_err error;
   {
     bitstream stream = initializeBitstream(hashBlock, sizeof_hashBlock);
-    len = simplicity_decodeMallocDag(&dag, &census, &stream);
+    len = simplicity_decodeMallocDag(&dag, simplicity_elements_decodeJet, &census, &stream);
     if (!dag) {
       simplicity_assert(len < 0);
       error = (simplicity_err)len;
@@ -105,7 +106,7 @@ static void test_hashBlock(void) {
 
     type* type_dag;
     bitstream witness = initializeBitstream(hashBlock_witness, sizeof_hashBlock_witness);
-    if (!IS_OK(simplicity_mallocTypeInference(&type_dag, dag, (uint_fast32_t)len, &census)) || !type_dag ||
+    if (!IS_OK(simplicity_mallocTypeInference(&type_dag, simplicity_elements_mallocBoundVars, dag, (uint_fast32_t)len, &census)) || !type_dag ||
         type_dag[dag[len-1].sourceType].bitSize != 768 || type_dag[dag[len-1].targetType].bitSize != 256) {
       failures++;
       printf("Unexpected failure of type inference for hashblock\n");
@@ -195,7 +196,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
   simplicity_err error;
   {
     bitstream stream = initializeBitstream(program, program_len);
-    len = simplicity_decodeMallocDag(&dag, &census, &stream);
+    len = simplicity_decodeMallocDag(&dag, simplicity_elements_decodeJet, &census, &stream);
     if (!dag) {
       simplicity_assert(len < 0);
       error = (simplicity_err)len;
@@ -231,7 +232,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
     }
     type* type_dag;
     bitstream witness_stream = initializeBitstream(witness, witness_len);
-    if (!IS_OK(simplicity_mallocTypeInference(&type_dag, dag, (uint_fast32_t)len, &census)) || !type_dag ||
+    if (!IS_OK(simplicity_mallocTypeInference(&type_dag, simplicity_elements_mallocBoundVars, dag, (uint_fast32_t)len, &census)) || !type_dag ||
         dag[len-1].sourceType != 0 || dag[len-1].targetType != 0) {
       failures++;
       printf("Unexpected failure of type inference.\n");
@@ -319,7 +320,7 @@ static void test_occursCheck(void) {
   int_fast32_t len;
   {
     bitstream stream = initializeBitstream(buf, sizeof(buf));
-    len = simplicity_decodeMallocDag(&dag, &census, &stream);
+    len = simplicity_decodeMallocDag(&dag, simplicity_elements_decodeJet, &census, &stream);
   }
   if (!dag) {
     simplicity_assert(len < 0);
@@ -327,7 +328,7 @@ static void test_occursCheck(void) {
   } else {
     type* type_dag;
     simplicity_assert(0 < len);
-    if (SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK == simplicity_mallocTypeInference(&type_dag, dag, (uint_fast32_t)len, &census) &&
+    if (SIMPLICITY_ERR_TYPE_INFERENCE_OCCURS_CHECK == simplicity_mallocTypeInference(&type_dag, simplicity_elements_mallocBoundVars, dag, (uint_fast32_t)len, &census) &&
         !type_dag) {
       successes++;
     } else {
