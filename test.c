@@ -153,7 +153,7 @@ static void test_hashBlock(void) {
       }
       {
         ubounded cellsBound, UWORDBound, frameBound, costBound;
-        if (IS_OK(simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, UBOUNDED_MAX, dag, type_dag, (uint_fast32_t)len))
+        if (IS_OK(simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, 0, UBOUNDED_MAX, dag, type_dag, (uint_fast32_t)len))
             && hashBlock_cost == costBound) {
           successes++;
         } else {
@@ -161,7 +161,7 @@ static void test_hashBlock(void) {
           printf("Expected %d for cost, but got %d instead.\n", hashBlock_cost, costBound);
         }
       }
-      simplicity_err err = simplicity_evalTCOExpression(CHECK_NONE, output, input, dag, type_dag, (uint_fast32_t)len, NULL, NULL);
+      simplicity_err err = simplicity_evalTCOExpression(CHECK_NONE, output, input, dag, type_dag, (uint_fast32_t)len, 0, NULL, NULL);
       if (IS_OK(err)) {
         /* The expected result is the value 'SHA256("abc")'. */
         const uint32_t expectedHash[8] = { 0xba7816bful, 0x8f01cfeaul, 0x414140deul, 0x5dae2223ul
@@ -265,7 +265,8 @@ static void test_program(char* name, const unsigned char* program, size_t progra
       }
       if (expectedCost) {
         ubounded cellsBound, UWORDBound, frameBound, costBound;
-        if (IS_OK(simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, UBOUNDED_MAX, dag, type_dag, (uint_fast32_t)len))
+        if (IS_OK(simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, 0, UBOUNDED_MAX, dag, type_dag, (uint_fast32_t)len))
+           && 0 < costBound
            && *expectedCost == costBound) {
           successes++;
         } else {
@@ -273,7 +274,8 @@ static void test_program(char* name, const unsigned char* program, size_t progra
           printf("Expected %u for cost, but got %u instead.\n", *expectedCost, costBound);
         }
         /* Analysis should pass when computed bounds are used. */
-        if (IS_OK(simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, cellsBound, costBound, dag, type_dag, (uint_fast32_t)len))) {
+        if (IS_OK(simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, cellsBound, costBound-1, costBound, dag, type_dag, (uint_fast32_t)len))
+           && *expectedCost == costBound) {
           successes++;
         } else {
           failures++;
@@ -281,7 +283,7 @@ static void test_program(char* name, const unsigned char* program, size_t progra
         }
         /* if cellsBound is non-zero, analysis should fail when smaller cellsBound is used. */
         if (0 < cellsBound) {
-          if (SIMPLICITY_ERR_EXEC_MEMORY == simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, cellsBound-1, UBOUNDED_MAX, dag, type_dag, (uint_fast32_t)len)) {
+          if (SIMPLICITY_ERR_EXEC_MEMORY == simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, cellsBound-1, 0, UBOUNDED_MAX, dag, type_dag, (uint_fast32_t)len)) {
             successes++;
           } else {
             failures++;
@@ -290,15 +292,24 @@ static void test_program(char* name, const unsigned char* program, size_t progra
         }
         /* Analysis should fail when smaller costBound is used. */
         if (0 < *expectedCost &&
-            SIMPLICITY_ERR_EXEC_BUDGET == simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, *expectedCost-1, dag, type_dag, (uint_fast32_t)len)
+            SIMPLICITY_ERR_EXEC_BUDGET == simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, 0, *expectedCost-1, dag, type_dag, (uint_fast32_t)len)
            ) {
           successes++;
         } else {
           failures++;
           printf("Analysis with too small cost bounds failed.\n");
         }
+        /* Analysis should fail when overweight. */
+        if (0 < *expectedCost &&
+            SIMPLICITY_ERR_OVERWEIGHT == simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, *expectedCost, UBOUNDED_MAX, dag, type_dag, (uint_fast32_t)len)
+           ) {
+          successes++;
+        } else {
+          failures++;
+          printf("Analysis with too large minCost failed.\n");
+        }
       }
-      simplicity_err actualResult = evalTCOProgram(dag, type_dag, (uint_fast32_t)len, NULL, NULL);
+      simplicity_err actualResult = evalTCOProgram(dag, type_dag, (uint_fast32_t)len, 0, NULL, NULL);
       if (expectedResult == actualResult) {
         successes++;
       } else {
@@ -406,7 +417,7 @@ static void test_elements(void) {
       }
       {
         unsigned char ihrResult[32];
-        if (simplicity_elements_execSimplicity(&execResult, ihrResult, tx1, 0, taproot, genesisHash, (elementsCheckSigHashAllTx1_cost + 999)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && IS_OK(execResult)) {
+        if (simplicity_elements_execSimplicity(&execResult, ihrResult, tx1, 0, taproot, genesisHash, 0, (elementsCheckSigHashAllTx1_cost + 999)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && IS_OK(execResult)) {
           sha256_midstate ihr;
           sha256_toMidstate(ihr.s, ihrResult);
           if (0 == memcmp(ihr.s, elementsCheckSigHashAllTx1_ihr, sizeof(uint32_t[8]))) {
@@ -422,7 +433,7 @@ static void test_elements(void) {
         if (elementsCheckSigHashAllTx1_cost){
           /* test the same transaction without adequate budget. */
           simplicity_assert(elementsCheckSigHashAllTx1_cost);
-          if (simplicity_elements_execSimplicity(&execResult, ihrResult, tx1, 0, taproot, genesisHash, (elementsCheckSigHashAllTx1_cost - 1)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_BUDGET == execResult) {
+          if (simplicity_elements_execSimplicity(&execResult, ihrResult, tx1, 0, taproot, genesisHash, 0, (elementsCheckSigHashAllTx1_cost - 1)/1000, amr, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_BUDGET == execResult) {
             successes++;
           } else {
             failures++;
@@ -435,7 +446,7 @@ static void test_elements(void) {
         unsigned char brokenSig[sizeof_elementsCheckSigHashAllTx1_witness];
         memcpy(brokenSig, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness);
         brokenSig[sizeof_elementsCheckSigHashAllTx1_witness - 1] ^= 0x80;
-        if (simplicity_elements_execSimplicity(&execResult, NULL, tx1, 0, taproot, genesisHash, BUDGET_MAX, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, brokenSig, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_JET == execResult) {
+        if (simplicity_elements_execSimplicity(&execResult, NULL, tx1, 0, taproot, genesisHash, 0, BUDGET_MAX, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, brokenSig, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_JET == execResult) {
           successes++;
         } else {
           failures++;
@@ -484,7 +495,7 @@ static void test_elements(void) {
       successes++;
       simplicity_err execResult;
       {
-        if (simplicity_elements_execSimplicity(&execResult, NULL, tx2, 0, taproot, genesisHash, BUDGET_MAX, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_JET == execResult) {
+        if (simplicity_elements_execSimplicity(&execResult, NULL, tx2, 0, taproot, genesisHash, 0, BUDGET_MAX, NULL, elementsCheckSigHashAllTx1, sizeof_elementsCheckSigHashAllTx1, elementsCheckSigHashAllTx1_witness, sizeof_elementsCheckSigHashAllTx1_witness) && SIMPLICITY_ERR_EXEC_JET == execResult) {
           successes++;
         } else {
           failures++;
