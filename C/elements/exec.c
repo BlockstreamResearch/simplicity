@@ -31,7 +31,7 @@
  *               NULL != tx;
  *               NULL != taproot;
  *               unsigned char genesisBlockHash[32]
- *               0 <= budget;
+ *               0 <= minCost <= budget;
  *               NULL != amr implies unsigned char amr[32]
  *               unsigned char program[program_len]
  *               unsigned char witness[witness_len]
@@ -39,7 +39,7 @@
 extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned char* ihr
                                               , const elementsTransaction* tx, uint_fast32_t ix, const elementsTapEnv* taproot
                                               , const unsigned char* genesisBlockHash
-                                              , int64_t budget
+                                              , int64_t minCost, int64_t budget
                                               , const unsigned char* amr
                                               , const unsigned char* program, size_t program_len
                                               , const unsigned char* witness, size_t witness_len) {
@@ -47,7 +47,8 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
   simplicity_assert(NULL != tx);
   simplicity_assert(NULL != taproot);
   simplicity_assert(NULL != genesisBlockHash);
-  simplicity_assert(0 <= budget);
+  simplicity_assert(0 <= minCost);
+  simplicity_assert(minCost <= budget);
   simplicity_assert(NULL != program || 0 == program_len);
   simplicity_assert(NULL != witness || 0 == witness_len);
 
@@ -120,7 +121,10 @@ extern bool simplicity_elements_execSimplicity( simplicity_err* error, unsigned 
     if (IS_OK(*error)) {
       txEnv env = simplicity_elements_build_txEnv(tx, taproot, &genesis_hash, ix);
       static_assert(BUDGET_MAX <= UBOUNDED_MAX, "BUDGET_MAX doesn't fit in ubounded.");
-      *error = evalTCOProgram(dag, type_dag, (size_t)dag_len, &(ubounded){budget <= BUDGET_MAX ? (ubounded)budget : BUDGET_MAX}, &env);
+      *error = evalTCOProgram( dag, type_dag, (size_t)dag_len
+                             , minCost <= BUDGET_MAX ? (ubounded)minCost : BUDGET_MAX
+                             , &(ubounded){budget <= BUDGET_MAX ? (ubounded)budget : BUDGET_MAX}
+                             , &env);
     }
     simplicity_free(type_dag);
   }
