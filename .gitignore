@@ -9,7 +9,9 @@ cabal.project.local
 result
 result-doc
 # Coq
-/Coq/*CoqMakefile*
+/Coq/*Makefile*
+/Coq/.Makefile.d
+/Coq/.nia.cache
 .lia.cache
 *.vok
 *.vos
@@ -28,6 +30,8 @@ alectryon-doc
 *.gcno
 *.gcov
 *.info
-# GenRustJets
+# Gen
 /*.rs
 /*.c
+/*.h
+/*.inc
