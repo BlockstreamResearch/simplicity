@@ -637,6 +637,83 @@ static void iden8mebi_test(void) {
     }
   }
 }
+static void exactBudget_test(void) {
+  /* Core Simplicity program with a cost that is exactly 410000 milliWU */
+  const unsigned char program[] = {
+    0xe0, 0x09, 0x40, 0x81, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x81, 0x02,
+    0x05, 0xb4, 0x6d, 0xa0, 0x80
+  };
+  const ubounded expectedCost = 410; /* in WU */
+
+  printf("Test exactBudget\n");
+
+  dag_node* dag;
+  type* type_dag;
+  combinator_counters census;
+  int_fast32_t len;
+  simplicity_err error, expected;
+  sha256_midstate ihr;
+  {
+    bitstream stream = initializeBitstream(program, sizeof(program));
+    len = simplicity_decodeMallocDag(&dag, simplicity_elements_decodeJet, &census, &stream);
+    simplicity_assert(dag);
+    simplicity_assert(0 < len);
+    error = simplicity_closeBitstream(&stream);
+    simplicity_assert(IS_OK(error));
+  }
+  error = simplicity_mallocTypeInference(&type_dag, simplicity_elements_mallocBoundVars, dag, (uint_fast32_t)len, &census);
+  simplicity_assert(IS_OK(error));
+  simplicity_assert(type_dag);
+  simplicity_assert(!dag[len-1].sourceType);
+  simplicity_assert(!dag[len-1].targetType);
+  {
+    bitstream stream = initializeBitstream(NULL, 0);
+    error = simplicity_fillWitnessData(dag, type_dag, (uint_fast32_t)len, &stream);
+    simplicity_assert(IS_OK(error));
+  }
+  error = simplicity_verifyNoDuplicateIdentityHashes(&ihr, dag, type_dag, (uint_fast32_t)len);
+  simplicity_assert(IS_OK(error));
+  {
+    ubounded cellsBound, UWORDBound, frameBound, costBound;
+    error = simplicity_analyseBounds(&cellsBound, &UWORDBound, &frameBound, &costBound, UBOUNDED_MAX, 0, UBOUNDED_MAX, dag, type_dag, (uint_fast32_t)len);
+    simplicity_assert(IS_OK(error));
+    simplicity_assert(1000*expectedCost == costBound);
+  }
+  error = evalTCOProgram(dag, type_dag, (uint_fast32_t)len, expectedCost, &expectedCost, NULL);
+  expected = SIMPLICITY_ERR_OVERWEIGHT;
+  if (expected == error) {
+    successes++;
+  } else {
+    failures++;
+    printf("Expected %d from evaluation, but got %d instead.\n", expected, error);
+  }
+  error = evalTCOProgram(dag, type_dag, (uint_fast32_t)len, expectedCost-1, &(ubounded){expectedCost-1}, NULL);
+  expected = SIMPLICITY_ERR_EXEC_BUDGET;
+  if (expected == error) {
+    successes++;
+  } else {
+    failures++;
+    printf("Expected %d from evaluation, but got %d instead.\n", expected, error);
+  }
+  error = evalTCOProgram(dag, type_dag, (uint_fast32_t)len, expectedCost, &(ubounded){expectedCost+1}, NULL);
+  expected = SIMPLICITY_ERR_OVERWEIGHT;
+  if (expected == error) {
+    successes++;
+  } else {
+    failures++;
+    printf("Expected %d from evaluation, but got %d instead.\n", expected, error);
+  }
+  error = evalTCOProgram(dag, type_dag, (uint_fast32_t)len, expectedCost-1, &expectedCost, NULL);
+  expected = SIMPLICITY_NO_ERROR;
+  if (expected == error) {
+    successes++;
+  } else {
+    failures++;
+    printf("Expected %d from evaluation, but got %d instead.\n", expected, error);
+  }
+  simplicity_free(type_dag);
+  simplicity_free(dag);
+}
 
 int main(int argc, char **argv) {
   while (true) {
@@ -688,6 +765,7 @@ int main(int argc, char **argv) {
   test_program("schnorr6", schnorr6, sizeof_schnorr6, schnorr6_witness, sizeof_schnorr6_witness, SIMPLICITY_ERR_EXEC_JET, schnorr6_cmr, schnorr6_ihr, schnorr6_amr, &schnorr0_cost);
   test_program("typeSkipTest", typeSkipTest, sizeof_typeSkipTest, typeSkipTest_witness, sizeof_typeSkipTest_witness, SIMPLICITY_NO_ERROR, NULL, NULL, NULL, NULL);
   test_elements();
+  exactBudget_test();
   regression_tests();
   iden8mebi_test();
 
