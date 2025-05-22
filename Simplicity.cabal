@@ -124,7 +124,7 @@ library Simplicity-Indef
                        vector >=0.12 && <0.14
 
 library
-  C-sources:           C/rsort.c C/elements/jets.c C/elements/ops.c C/elements/env.c
+  C-sources:           C/rsort.c C/elements/jets.c C/elements/ops.c C/elements/env.c C/elements/txEnv.c
                        Haskell/cbits/elements/jets.c Haskell/cbits/elements/env.c
   Include-dirs:        C C/include
   Includes:            elements/jets.h elements/primitive.h simplicity/elements/env.h
@@ -236,7 +236,7 @@ Test-Suite testsuite
                        Simplicity.Serialization.Tests,
                        Simplicity.TestCoreEval,
                        Simplicity.Ty.Tests
-  C-sources:           C/rsort.c, C/dag.c, C/elements/primitive.c, C/elements/txEnv.c, C/bitstream.c
+  C-sources:           C/rsort.c, C/dag.c, C/elements/primitive.c, C/bitstream.c
                        Haskell/cbits/bitstream.c, Haskell/cbits/dag.c
   build-depends:       Simplicity,
                        base >=4.9 && <4.20,
