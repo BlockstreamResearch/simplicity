@@ -25,6 +25,11 @@ alectryon-doc
 *.o
 *.out
 *.a
+# cmake
+*.cmake
+CMakeCache.txt
+CMakeFiles
+/build/
 # Coverage
 *.gcda
 *.gcno
