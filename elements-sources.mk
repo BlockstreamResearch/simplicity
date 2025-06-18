@@ -26,7 +26,7 @@ ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/typeInference.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/elements/cmr.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/elements/env.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/elements/exec.c
-ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/elements/jets.c
+ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/elements/elementsJets.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/elements/ops.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/elements/primitive.c
 ELEMENTS_SIMPLICITY_LIB_SOURCES_INT += %reldir%/elements/txEnv.c
@@ -90,7 +90,7 @@ ELEMENTS_SIMPLICITY_LIB_HEADERS_INT += %reldir%/secp256k1/secp256k1_impl.h
 ELEMENTS_SIMPLICITY_LIB_HEADERS_INT += %reldir%/secp256k1/util.h
 
 ELEMENTS_SIMPLICITY_LIB_HEADERS_INT += %reldir%/elements/decodeElementsJets.inc
-ELEMENTS_SIMPLICITY_LIB_HEADERS_INT += %reldir%/elements/jets.h
+ELEMENTS_SIMPLICITY_LIB_HEADERS_INT += %reldir%/elements/elementsJets.h
 ELEMENTS_SIMPLICITY_LIB_HEADERS_INT += %reldir%/elements/ops.h
 ELEMENTS_SIMPLICITY_LIB_HEADERS_INT += %reldir%/elements/primitive.h
 ELEMENTS_SIMPLICITY_LIB_HEADERS_INT += %reldir%/elements/primitiveEnumJet.inc
