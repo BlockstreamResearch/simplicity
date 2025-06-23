@@ -3,6 +3,7 @@
 , withTiming ? true
 , withValgrind ? false, valgrind ? null
 , production ? false
+, enableShaNI ? stdenv.hostPlatform.isx86_64
 , gcov-executable ? if stdenv.cc.isGNU then "gcov -r" else
                     if stdenv.cc.isClang then "${stdenv.cc.cc.libllvm}/bin/llvm-cov gcov"
                     else null
@@ -25,7 +26,9 @@ stdenv.mkDerivation {
         ++ lib.optional production "-DPRODUCTION";
   LDFLAGS = lib.optional withCoverage "--coverage"
          ++ lib.optional withProfiler "-lprofiler";
-
+  preBuild = lib.optional (enableShaNI) ''
+     makeFlagsArray+=(X86_SHANI_CXXFLAGS="-msse4.1 -msha")
+  '';
   inherit doCheck;
   checkInputs = lib.optionals withProfiler [ gperftools ];
   nativeCheckInputs = lib.optionals withProfiler [ graphviz ]
