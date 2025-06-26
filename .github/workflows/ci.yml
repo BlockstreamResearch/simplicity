@@ -1,0 +1,27 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  codespell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: codespell-project/actions-codespell@v2
+        with:
+            ignore_words_file: spelling.ignore.txt
+            skip: alectryon
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ["c", "haskell"] # coq takes a very long time and times out at 6 hours...
+        os: ["ubuntu-latest", macos-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/determinate-nix-action@v3.5.2
+      - run: nix-build -A ${{matrix.project}}
