@@ -2,7 +2,9 @@
 
 Simplicity is a blockchain programming language designed as an alternative to Bitcoin script.
 
-The language and implementation is still under development.
+The language and implementation is still under development. 
+
+It's recommended to start with [SimplicityHL](https://github.com/BlockstreamResearch/SimplicityHL) which looks and feels like Rust and compiles down to Simplicity Bytecode. There is also [rust-simplicity](https://github.com/BlockstreamResearch/rust-simplicity), a general purpose library for processing Simplicity programs.
 
 ## Contents
 
@@ -191,5 +193,6 @@ A recent PDF version can be found in the [pdf](https://github.com/ElementsProjec
 
 ## Contact
 
-Interested parties are welcome to join the [Simplicity mailing list](https://lists.ozlabs.org/listinfo/simplicity).
-Issues and pull-requests can be made through GitHub's interface.
+Discussions are hosted on [Github discussions](https://github.com/BlockstreamResearch/simplicity/discussions), and there's a [Simplicity Telegram Community](https://t.me/simplicity_community).
+
+We welcome issues and pull-requests.
