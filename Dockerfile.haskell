@@ -1,0 +1,17 @@
+FROM haskell:9.8
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    valgrind \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /simplicity
+
+COPY Simplicity.cabal ./
+COPY Haskell/ Haskell/
+COPY Haskell-Examples/ Haskell-Examples/
+COPY Haskell-Generate/ Haskell-Generate/
+COPY C/ C/
+
+RUN cabal update && cabal build --jobs=$(nproc)
+
+CMD ["cabal", "repl", "Simplicity"]

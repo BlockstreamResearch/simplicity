@@ -33,5 +33,6 @@ alectryon-doc
 # Gen
 /*.rs
 /*.c
+!/Dockerfile.c
 /*.h
 /*.inc
