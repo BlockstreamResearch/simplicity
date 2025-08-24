@@ -12,6 +12,34 @@ COPY Haskell-Examples/ Haskell-Examples/
 COPY Haskell-Generate/ Haskell-Generate/
 COPY C/ C/
 
-RUN cabal update && cabal build --jobs=$(nproc)
+RUN cabal update
+RUN cabal configure --jobs=$(nproc)
+RUN cabal build --jobs=$(nproc)
 
-CMD ["cabal", "repl", "Simplicity"]
+RUN echo ":m + Simplicity.Bitcoin.Term" > /simplicity/.ghci && \
+    echo ":m + Simplicity.Bitcoin.Semantics" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Bitcoin.Primitive" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Bitcoin.DataTypes" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Elements.Term" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Elements.Semantics" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Elements.Primitive" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Elements.DataTypes" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Programs.Generic" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Programs.Word" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Programs.Bit" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Programs.Arith" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Programs.Sha256" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Programs.LibSecp256k1" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Ty.Word" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Ty.Bit" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Weight" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.MerkleRoot" >> /simplicity/.ghci && \
+    echo ":m + Simplicity.Tags" >> /simplicity/.ghci && \
+    echo ":set prompt \"Simplicity> \"" >> /simplicity/.ghci && \
+    echo ":set +t" >> /simplicity/.ghci && \
+    echo "import qualified Simplicity.Ty.Word as Ty" >> /simplicity/.ghci
+
+#CMD ["/bin/bash"]
+CMD ["cabal", "repl", "Simplicity", "--enable-multi-repl"]
+
+
