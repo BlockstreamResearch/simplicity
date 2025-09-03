@@ -5,7 +5,7 @@ import Data.Char (toLower)
 import Data.Foldable (toList)
 import Data.Function (on)
 import Data.Functor.Fixedpoint (Fix(..))
-import Data.List (sortBy)
+import Data.List (nubBy, sortBy)
 import Data.List.Split (chunksOf)
 import Data.Maybe (fromMaybe)
 import qualified Data.Map as Map
@@ -47,7 +47,14 @@ sortJetName = sortBy (compare `on` name)
  where
   name (SomeArrow j) = jetName j
 
-cJetName = lowerSnakeCase . jetName
+rustJetName :: JetData x y -> String
+rustJetName jd = lowerSnakeCase (jetName jd)
+
+cJetName :: JetData x y -> String
+cJetName jd = prefix (jetModule jd) ++ lowerSnakeCase (jetName jd)
+ where
+  prefix BitcoinModule = "bitcoin_"
+  prefix _ = ""
 
 coreJetData :: (TyC x, TyC y) => CoreJet x y -> JetData x y
 coreJetData jet = JetData { jetName = mkName jet
@@ -87,6 +94,7 @@ moduleJets = sortJetName . toList . moduleCodes
 
 rustModuleName = fromMaybe "Core" . moduleName
 lowerRustModuleName = map toLower . rustModuleName
+moduleEnvType mod = lowerRustModuleName mod ++ "::CTxEnv, "
 
 coreModule :: Module
 coreModule = Module Nothing (someArrowMap coreJetData <$> (treeEvalBitStream Core.getJetBit))
@@ -99,6 +107,11 @@ elementsModule = Module (Just "Elements") (someArrowMap elementsJetData <$> take
 
 bitcoinModule :: Module
 bitcoinModule = Module (Just "Bitcoin") (someArrowMap bitcoinJetData <$> takeRight (treeEvalBitStream Bitcoin.getJetBit))
+
+allJets :: [SomeArrow JetData]
+allJets = nubBy eqJet . sortJetName $ moduleJets =<< [bitcoinModule, elementsModule]
+ where
+  eqJet (SomeArrow jt1) (SomeArrow jt2) = jetName jt1 == jetName jt2 && jetModule jt1 == jetModule jt2
 
 data CompactTy = CTyOne
                | CTyWord Int
@@ -191,9 +204,7 @@ rustJetCJetPtr :: Module -> Doc a
 rustJetCJetPtr mod = vsep $
   [ nest 4 (vsep
     [ pretty ("pub(crate) fn c_jet_ptr(jet: &" ++ modname ++ ") -> fn(&mut CFrameItem, CFrameItem, &" ++ cJetEnvType ++ ") -> bool {")
-    , if modname == "Bitcoin"
-      then "    unimplemented!(\"Bitcoin jets have not yet been implemented.\")"
-      else vsep
+    , vsep
         [ nest 4 (vsep ("match jet {" :
             map (<>comma)
             [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
@@ -294,7 +305,7 @@ rustJetDisplay mod =
       nestBraces ("match self" <+>
         nestBraces (vsep (
           map (<>comma)
-            [ pretty modname <> "::" <> pretty (jetName jet) <+> "=> f.write_str" <> (parens . dquotes . pretty $ cJetName jet)
+            [ pretty modname <> "::" <> pretty (jetName jet) <+> "=> f.write_str" <> (parens . dquotes . pretty $ rustJetName jet)
             | SomeArrow jet <- moduleJets mod
             ]))
       )
@@ -312,7 +323,7 @@ rustJetFromStr mod =
         nestBraces ("match s" <+>
           nestBraces (vsep (
             map (<> comma)
-              ([ dquotes (pretty (cJetName jet)) <+> "=> Ok" <> parens (pretty modname <> "::" <> pretty (jetName jet))
+              ([ dquotes (pretty (rustJetName jet)) <+> "=> Ok" <> parens (pretty modname <> "::" <> pretty (jetName jet))
                | SomeArrow jet <- moduleJets mod
                ] ++ [ "x => Err(crate::Error::InvalidJetName(x.to_owned()))" ]
               )))
@@ -335,7 +346,7 @@ rustImports mod = vsep (map (<> semi)
   , "use hashes::sha256::Midstate"
   , "use simplicity_sys::CFrameItem"
   , "use std::io::Write"
-  , "use std::{fmt, str}"
+  , "use std::{borrow::Borrow, fmt, str}"
   ] ++ envImports))
  where
   envImports | Just "Elements" == moduleName mod = ["use simplicity_sys::CElementsTxEnv"]
@@ -355,14 +366,16 @@ rustJetDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
 rustFFIImports :: Doc a
 rustFFIImports = vsep (map (<> semi)
   [ "use crate::ffi::c_void"
-  , "use crate::{CElementsTxEnv, CFrameItem}"
+  , "use crate::bitcoin"
+  , "use crate::elements"
+  , "use crate::CFrameItem"
   ])
 
-rustFFISigs :: Module -> Doc a
-rustFFISigs mod = vsep
+rustFFISigs :: Doc a
+rustFFISigs = vsep
   [ nest 4 $ vsep $
     "extern \"C\" {" :
-    (declaration <$> moduleJets mod)
+    (declaration <$> allJets)
   , "}"
   ]
  where
@@ -374,28 +387,31 @@ rustFFISigs mod = vsep
     linkName = "#[link_name = \"c_"++cJetName jet++"\"]"
     signature = "pub fn "++cJetName jet++"(dst: *mut CFrameItem, src: *const CFrameItem, env: *const "++envType++") -> bool"
     envType | CoreModule <- jetModule jet = "c_void"
-            | ElementsModule <- jetModule jet = "CElementsTxEnv"
+            | ElementsModule <- jetModule jet = "elements::CTxEnv"
+            | BitcoinModule <- jetModule jet = "bitcoin::CTxEnv"
 
-rustFFIDoc :: Module -> SimpleDocStream a
-rustFFIDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
+rustFFIDoc :: SimpleDocStream a
+rustFFIDoc = layoutPretty layoutOptions $ vsep (map (<> line)
   [ rustHeader
   , rustFFIImports
-  , rustFFISigs mod
+  , rustFFISigs
   ])
 
 rustWrapperImports :: Doc a
 rustWrapperImports = vsep (map (<> semi)
-  [ "use crate::{CElementsTxEnv, CFrameItem}"
-  , "use super::elements_ffi"
+  [ "use crate::bitcoin"
+  , "use crate::elements"
+  , "use crate::CFrameItem"
+  , "use super::jets_ffi"
   ])
 
-rustWrappers :: Module -> Doc a
-rustWrappers mod = vsep ((<> line) . wrapper <$> moduleJets mod)
+rustWrappers :: Doc a
+rustWrappers = vsep ((<> line) . wrapper <$> allJets)
  where
   wrapper (SomeArrow jet) = vsep
    [ nest 4 $ vsep
      [ pretty $ "pub fn "++cJetName jet++templateParam++"(dst: &mut CFrameItem, src: CFrameItem, "++envParam++") -> bool {"
-     , pretty $ "unsafe { "++lowerRustModuleName mod++"_ffi::"++cJetName jet++"(dst, &src, "++envArg++") }"
+     , pretty $ "unsafe { jets_ffi::"++cJetName jet++"(dst, &src, "++envArg++") }"
      ]
    , "}"
    ]
@@ -403,34 +419,36 @@ rustWrappers mod = vsep ((<> line) . wrapper <$> moduleJets mod)
     templateParam | CoreModule <- jetModule jet = "<T>"
                   | otherwise = ""
     envParam | CoreModule <- jetModule jet = "_env: &T"
-             | ElementsModule <- jetModule jet = "env: &CElementsTxEnv"
+             | ElementsModule <- jetModule jet = "env: &elements::CTxEnv"
+             | BitcoinModule <- jetModule jet = "env: &bitcoin::CTxEnv"
     envArg | CoreModule <- jetModule jet = "std::ptr::null()"
-           | ElementsModule <- jetModule jet = "env"
+           | otherwise = "env"
 
-rustWrapperDoc :: Module -> SimpleDocStream a
-rustWrapperDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
+rustWrapperDoc :: SimpleDocStream a
+rustWrapperDoc = layoutPretty layoutOptions $ vsep (map (<> line)
   [ rustHeader
   , rustWrapperImports
-  , rustWrappers mod
+  , rustWrappers
   ])
 
 cWrapperImports :: Doc a
 cWrapperImports = vsep
-  [ "#include \"simplicity/elements/elementsJets.h\""
+  [ "#include \"simplicity/bitcoin/bitcoinJets.h\""
+  , "#include \"simplicity/elements/elementsJets.h\""
   , "#include \"simplicity/simplicity_assert.h\""
   , "#include \"wrapper.h\""
   ]
 
-cWrappers :: Module -> Doc a
-cWrappers mod = vsep (map wrapper $ moduleJets mod)
+cWrappers :: Doc a
+cWrappers = vsep (map wrapper $ allJets)
  where
   wrapper (SomeArrow jet) = pretty $ "WRAP_("++cJetName jet++")"
 
-cWrapperDoc :: Module -> SimpleDocStream a
-cWrapperDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
+cWrapperDoc :: SimpleDocStream a
+cWrapperDoc = layoutPretty layoutOptions $ vsep (map (<> line)
   [ rustHeader -- also works for C
   , cWrapperImports
-  , cWrappers mod
+  , cWrappers
   ])
 
 renderFile name doc = withFile name WriteMode (\h -> renderIO h doc)
@@ -439,8 +457,8 @@ main = do
   renderFile "core.rs" (rustJetDoc coreModule)
   renderFile "elements.rs" (rustJetDoc elementsModule)
   renderFile "bitcoin.rs" (rustJetDoc bitcoinModule)
-  renderFile "jets_ffi.rs" (rustFFIDoc elementsModule)
-  renderFile "jets_wrapper.rs" (rustWrapperDoc elementsModule)
-  renderFile "jets_wrapper.c" (cWrapperDoc elementsModule)
+  renderFile "jets_ffi.rs" rustFFIDoc
+  renderFile "jets_wrapper.rs" rustWrapperDoc
+  renderFile "jets_wrapper.c" cWrapperDoc
 
 layoutOptions = LayoutOptions { layoutPageWidth = AvailablePerLine 100 1 }
