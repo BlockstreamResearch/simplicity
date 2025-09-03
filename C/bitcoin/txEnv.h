@@ -87,12 +87,10 @@ typedef struct bitcoinTapEnv {
  * It includes
  * + the transaction data, which may be shared when Simplicity expressions are used for multiple inputs in the same transaction),
  * + the input index under consideration,
- * + the hash of the genesis block for the chain,
  */
 typedef struct txEnv {
   const bitcoinTransaction* tx;
   const bitcoinTapEnv* taproot;
-  sha256_midstate genesisHash;
   sha256_midstate sigAllHash;
   uint_fast32_t ix;
 } txEnv;
