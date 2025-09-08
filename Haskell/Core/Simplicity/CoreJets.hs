@@ -85,16 +85,22 @@ data WordJet a b where
   Complement32 :: WordJet Word32 Word32
   Complement64 :: WordJet Word64 Word64
   And1 :: WordJet (Word1, Word1) Word1
+  And2 :: WordJet (Word2, Word2) Word2
+  And4 :: WordJet (Word4, Word4) Word4
   And8 :: WordJet (Word8, Word8) Word8
   And16 :: WordJet (Word16, Word16) Word16
   And32 :: WordJet (Word32, Word32) Word32
   And64 :: WordJet (Word64, Word64) Word64
   Or1 :: WordJet (Word1, Word1) Word1
+  Or2 :: WordJet (Word2, Word2) Word2
+  Or4 :: WordJet (Word4, Word4) Word4
   Or8 :: WordJet (Word8, Word8) Word8
   Or16 :: WordJet (Word16, Word16) Word16
   Or32 :: WordJet (Word32, Word32) Word32
   Or64 :: WordJet (Word64, Word64) Word64
   Xor1 :: WordJet (Word1, Word1) Word1
+  Xor2 :: WordJet (Word2, Word2) Word2
+  Xor4 :: WordJet (Word4, Word4) Word4
   Xor8 :: WordJet (Word8, Word8) Word8
   Xor16 :: WordJet (Word16, Word16) Word16
   Xor32 :: WordJet (Word32, Word32) Word32
@@ -124,6 +130,8 @@ data WordJet a b where
   All32 :: WordJet Word32 Bit
   All64 :: WordJet Word64 Bit
   Eq1 :: WordJet (Word1, Word1) Bit
+  Eq2 :: WordJet (Word2, Word2) Bit
+  Eq4 :: WordJet (Word4, Word4) Bit
   Eq8 :: WordJet (Word8, Word8) Bit
   Eq16 :: WordJet (Word16, Word16) Bit
   Eq32 :: WordJet (Word32, Word32) Bit
@@ -487,16 +495,22 @@ specificationWord Complement16 = Prog.complement word16
 specificationWord Complement32 = Prog.complement word32
 specificationWord Complement64 = Prog.complement word64
 specificationWord And1 = Prog.bitwise_and word1
+specificationWord And2 = Prog.bitwise_and word2
+specificationWord And4 = Prog.bitwise_and word4
 specificationWord And8 = Prog.bitwise_and word8
 specificationWord And16 = Prog.bitwise_and word16
 specificationWord And32 = Prog.bitwise_and word32
 specificationWord And64 = Prog.bitwise_and word64
 specificationWord Or1 = Prog.bitwise_or word1
+specificationWord Or2 = Prog.bitwise_or word2
+specificationWord Or4 = Prog.bitwise_or word4
 specificationWord Or8 = Prog.bitwise_or word8
 specificationWord Or16 = Prog.bitwise_or word16
 specificationWord Or32 = Prog.bitwise_or word32
 specificationWord Or64 = Prog.bitwise_or word64
 specificationWord Xor1 = Prog.bitwise_xor word1
+specificationWord Xor2 = Prog.bitwise_xor word2
+specificationWord Xor4 = Prog.bitwise_xor word4
 specificationWord Xor8 = Prog.bitwise_xor word8
 specificationWord Xor16 = Prog.bitwise_xor word16
 specificationWord Xor32 = Prog.bitwise_xor word32
@@ -526,6 +540,8 @@ specificationWord All16 = Prog.all word16
 specificationWord All32 = Prog.all word32
 specificationWord All64 = Prog.all word64
 specificationWord Eq1 = eq
+specificationWord Eq2 = eq
+specificationWord Eq4 = eq
 specificationWord Eq8 = eq
 specificationWord Eq16 = eq
 specificationWord Eq32 = eq
@@ -880,16 +896,22 @@ implementationWord Complement16 = \x -> return (toWord16 (complement (fromWord16
 implementationWord Complement32 = \x -> return (toWord32 (complement (fromWord32 x)))
 implementationWord Complement64 = \x -> return (toWord64 (complement (fromWord64 x)))
 implementationWord And1 = \(x, y) -> return (toWord1 (fromWord1 x .&. fromWord1 y))
+implementationWord And2 = \(x, y) -> return (toWord2 (fromWord2 x .&. fromWord2 y))
+implementationWord And4 = \(x, y) -> return (toWord4 (fromWord4 x .&. fromWord4 y))
 implementationWord And8 = \(x, y) -> return (toWord8 (fromWord8 x .&. fromWord8 y))
 implementationWord And16 = \(x, y) -> return (toWord16 (fromWord16 x .&. fromWord16 y))
 implementationWord And32 = \(x, y) -> return (toWord32 (fromWord32 x .&. fromWord32 y))
 implementationWord And64 = \(x, y) -> return (toWord64 (fromWord64 x .&. fromWord64 y))
 implementationWord Or1 = \(x, y) -> return (toWord1 (fromWord1 x .|. fromWord1 y))
+implementationWord Or2 = \(x, y) -> return (toWord2 (fromWord2 x .|. fromWord2 y))
+implementationWord Or4 = \(x, y) -> return (toWord4 (fromWord4 x .|. fromWord4 y))
 implementationWord Or8 = \(x, y) -> return (toWord8 (fromWord8 x .|. fromWord8 y))
 implementationWord Or16 = \(x, y) -> return (toWord16 (fromWord16 x .|. fromWord16 y))
 implementationWord Or32 = \(x, y) -> return (toWord32 (fromWord32 x .|. fromWord32 y))
 implementationWord Or64 = \(x, y) -> return (toWord64 (fromWord64 x .|. fromWord64 y))
 implementationWord Xor1 = \(x, y) -> return (toWord1 (fromWord1 x `xor` fromWord1 y))
+implementationWord Xor2 = \(x, y) -> return (toWord2 (fromWord2 x `xor` fromWord2 y))
+implementationWord Xor4 = \(x, y) -> return (toWord4 (fromWord4 x `xor` fromWord4 y))
 implementationWord Xor8 = \(x, y) -> return (toWord8 (fromWord8 x `xor` fromWord8 y))
 implementationWord Xor16 = \(x, y) -> return (toWord16 (fromWord16 x `xor` fromWord16 y))
 implementationWord Xor32 = \(x, y) -> return (toWord32 (fromWord32 x `xor` fromWord32 y))
@@ -952,6 +974,8 @@ implementationWord All64 = \x -> do
   let z = fromWord64 x == 2^64 - 1
   return (toBit z)
 implementationWord Eq1 = \(x, y) -> return (toBit (x == y))
+implementationWord Eq2 = \(x, y) -> return (toBit (x == y))
+implementationWord Eq4 = \(x, y) -> return (toBit (x == y))
 implementationWord Eq8 = \(x, y) -> return (toBit (x == y))
 implementationWord Eq16 = \(x, y) -> return (toBit (x == y))
 implementationWord Eq32 = \(x, y) -> return (toBit (x == y))
@@ -1598,7 +1622,8 @@ complementBook = Shelf
   ]
 andBook = Shelf
   [ Item $ SomeArrow And1
-  , Missing
+  , Item $ SomeArrow And2
+  , Item $ SomeArrow And4
   , Item $ SomeArrow And8
   , Item $ SomeArrow And16
   , Item $ SomeArrow And32
@@ -1606,7 +1631,8 @@ andBook = Shelf
   ]
 orBook = Shelf
   [ Item $ SomeArrow Or1
-  , Missing
+  , Item $ SomeArrow Or2
+  , Item $ SomeArrow Or4
   , Item $ SomeArrow Or8
   , Item $ SomeArrow Or16
   , Item $ SomeArrow Or32
@@ -1614,7 +1640,8 @@ orBook = Shelf
   ]
 xorBook = Shelf
   [ Item $ SomeArrow Xor1
-  , Missing
+  , Item $ SomeArrow Xor2
+  , Item $ SomeArrow Xor4
   , Item $ SomeArrow Xor8
   , Item $ SomeArrow Xor16
   , Item $ SomeArrow Xor32
@@ -1662,7 +1689,8 @@ allBook = Shelf
   ]
 eqBook = Shelf
   [ Item $ SomeArrow Eq1
-  , Missing
+  , Item $ SomeArrow Eq2
+  , Item $ SomeArrow Eq4
   , Item $ SomeArrow Eq8
   , Item $ SomeArrow Eq16
   , Item $ SomeArrow Eq32
@@ -2718,16 +2746,22 @@ jetCostWord Complement16 = Benchmarks.cost "Complement16"
 jetCostWord Complement32 = Benchmarks.cost "Complement32"
 jetCostWord Complement64 = Benchmarks.cost "Complement64"
 jetCostWord And1 = Benchmarks.cost "And1"
+jetCostWord And2 = Benchmarks.cost "And2"
+jetCostWord And4 = Benchmarks.cost "And4"
 jetCostWord And8 = Benchmarks.cost "And8"
 jetCostWord And16 = Benchmarks.cost "And16"
 jetCostWord And32 = Benchmarks.cost "And32"
 jetCostWord And64 = Benchmarks.cost "And64"
 jetCostWord Or1 = Benchmarks.cost "Or1"
+jetCostWord Or2 = Benchmarks.cost "Or2"
+jetCostWord Or4 = Benchmarks.cost "Or4"
 jetCostWord Or8 = Benchmarks.cost "Or8"
 jetCostWord Or16 = Benchmarks.cost "Or16"
 jetCostWord Or32 = Benchmarks.cost "Or32"
 jetCostWord Or64 = Benchmarks.cost "Or64"
 jetCostWord Xor1 = Benchmarks.cost "Xor1"
+jetCostWord Xor2 = Benchmarks.cost "Xor2"
+jetCostWord Xor4 = Benchmarks.cost "Xor4"
 jetCostWord Xor8 = Benchmarks.cost "Xor8"
 jetCostWord Xor16 = Benchmarks.cost "Xor16"
 jetCostWord Xor32 = Benchmarks.cost "Xor32"
@@ -2757,6 +2791,8 @@ jetCostWord All16 = Benchmarks.cost "All16"
 jetCostWord All32 = Benchmarks.cost "All32"
 jetCostWord All64 = Benchmarks.cost "All64"
 jetCostWord Eq1 = Benchmarks.cost "Eq1"
+jetCostWord Eq2 = Benchmarks.cost "Eq2"
+jetCostWord Eq4 = Benchmarks.cost "Eq4"
 jetCostWord Eq8 = Benchmarks.cost "Eq8"
 jetCostWord Eq16 = Benchmarks.cost "Eq16"
 jetCostWord Eq32 = Benchmarks.cost "Eq32"
