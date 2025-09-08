@@ -47,7 +47,14 @@ sortJetName = sortBy (compare `on` name)
  where
   name (SomeArrow j) = jetName j
 
-cJetName = lowerSnakeCase . jetName
+rustJetName :: JetData x y -> String
+rustJetName jd = lowerSnakeCase (jetName jd)
+
+cJetName :: JetData x y -> String
+cJetName jd = prefix (jetModule jd) ++ lowerSnakeCase (jetName jd)
+ where
+  prefix BitcoinModule = "bitcion_"
+  prefix _ = ""
 
 coreJetData :: (TyC x, TyC y) => CoreJet x y -> JetData x y
 coreJetData jet = JetData { jetName = mkName jet
@@ -192,16 +199,14 @@ rustJetTargetTy = rustJetTy "target_ty" (\(SomeArrow jet) -> unreflect (snd (rei
 rustJetPtr :: Module -> Doc a
 rustJetPtr mod = vsep $
   [ nest 4 (vsep ("fn c_jet_ptr(&self) -> &dyn Fn(&mut CFrameItem, CFrameItem, &Self::CJetEnvironment) -> bool {" :
-    if modname == "Bitcoin"
-    then ["unimplemented!(\"Bitcoin jets have not yet been implemented.\")"]
-    else [ nest 4 (vsep ("match self {" :
-        map (<>comma)
-        [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
-          pretty ("&simplicity_sys::c_jets::jets_wrapper::"++cJetName jet)
-        | SomeArrow jet <- moduleJets mod
-        ]))
-    , "}"
-    ]))
+   [ nest 4 (vsep ("match self {" :
+     map (<>comma)
+     [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
+       pretty ("&simplicity_sys::c_jets::"++map toLower modname++"_jets_wrapper::"++cJetName jet)
+     | SomeArrow jet <- moduleJets mod
+     ]))
+   , "}"
+   ]))
   , "}"
   ]
  where
@@ -312,7 +317,7 @@ rustJetDisplay mod =
       nestBraces ("match self" <+>
         nestBraces (vsep (
           map (<>comma)
-            [ pretty modname <> "::" <> pretty (jetName jet) <+> "=> f.write_str" <> (parens . dquotes . pretty $ cJetName jet)
+            [ pretty modname <> "::" <> pretty (jetName jet) <+> "=> f.write_str" <> (parens . dquotes . pretty $ rustJetName jet)
             | SomeArrow jet <- moduleJets mod
             ]))
       )
@@ -330,7 +335,7 @@ rustJetFromStr mod =
         nestBraces ("match s" <+>
           nestBraces (vsep (
             map (<> comma)
-              ([ dquotes (pretty (cJetName jet)) <+> "=> Ok" <> parens (pretty modname <> "::" <> pretty (jetName jet))
+              ([ dquotes (pretty (rustJetName jet)) <+> "=> Ok" <> parens (pretty modname <> "::" <> pretty (jetName jet))
                | SomeArrow jet <- moduleJets mod
                ] ++ [ "x => Err(crate::Error::InvalidJetName(x.to_owned()))" ]
               )))
@@ -392,7 +397,9 @@ rustFFISigs mod = vsep
     , signature
     ]
    where
-    linkName = "#[link_name = \"c_"++cJetName jet++"\"]"
+    linkName = "#[link_name = \"c_"++prefix++cJetName jet++"\"]"
+    prefix | Just "Bitcoin" == moduleName mod = "bitcoin_"
+           | otherwise = ""
     signature = "pub fn "++cJetName jet++"(dst: *mut CFrameItem, src: *const CFrameItem, env: *const "++envType++") -> bool"
     envType | CoreModule <- jetModule jet = "c_void"
             | ElementsModule <- jetModule jet = "CTxEnv"
@@ -416,7 +423,7 @@ rustWrappers mod = vsep ((<> line) . wrapper <$> moduleJets mod)
  where
   wrapper (SomeArrow jet) = vsep
    [ nest 4 $ vsep
-     [ pretty $ "pub fn "++cJetName jet++templateParam++"(dst: &mut CFrameItem, src: CFrameItem, "++envParam++") -> bool {"
+     [ pretty $ "pub fn "++rustJetName jet++templateParam++"(dst: &mut CFrameItem, src: CFrameItem, "++envParam++") -> bool {"
      , pretty $ "unsafe { "++lowerRustModuleName mod++"_jets_ffi::"++cJetName jet++"(dst, &src, "++envArg++") }"
      ]
    , "}"
