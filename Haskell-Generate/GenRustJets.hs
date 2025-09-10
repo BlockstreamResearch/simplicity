@@ -430,7 +430,7 @@ rustWrappers = vsep ((<> line) . wrapper <$> allJets)
  where
   wrapper (SomeArrow jet) = vsep
    [ nest 4 $ vsep
-     [ pretty $ "pub fn "++rustJetName jet++templateParam++"(dst: &mut CFrameItem, src: CFrameItem, "++envParam++") -> bool {"
+     [ pretty $ "pub fn "++cJetName jet++templateParam++"(dst: &mut CFrameItem, src: CFrameItem, "++envParam++") -> bool {"
      , pretty $ "unsafe { jets_ffi::"++cJetName jet++"(dst, &src, "++envArg++") }"
      ]
    , "}"
@@ -439,8 +439,8 @@ rustWrappers = vsep ((<> line) . wrapper <$> allJets)
     templateParam | CoreModule <- jetModule jet = "<T>"
                   | otherwise = ""
     envParam | CoreModule <- jetModule jet = "_env: &T"
-             | ElementsModule <- jetModule jet = "env: &elements:CTxEnv"
-             | BitcoinModule <- jetModule jet = "env: &bitcoin:CTxEnv"
+             | ElementsModule <- jetModule jet = "env: &elements::CTxEnv"
+             | BitcoinModule <- jetModule jet = "env: &bitcoin::CTxEnv"
     envArg | CoreModule <- jetModule jet = "std::ptr::null()"
            | otherwise = "env"
 
