@@ -5,7 +5,7 @@ import Data.Char (toLower)
 import Data.Foldable (toList)
 import Data.Function (on)
 import Data.Functor.Fixedpoint (Fix(..))
-import Data.List (sortBy)
+import Data.List (nubBy, sortBy)
 import Data.List.Split (chunksOf)
 import Data.Maybe (fromMaybe)
 import qualified Data.Map as Map
@@ -53,7 +53,7 @@ rustJetName jd = lowerSnakeCase (jetName jd)
 cJetName :: JetData x y -> String
 cJetName jd = prefix (jetModule jd) ++ lowerSnakeCase (jetName jd)
  where
-  prefix BitcoinModule = "bitcion_"
+  prefix BitcoinModule = "bitcoin_"
   prefix _ = ""
 
 coreJetData :: (TyC x, TyC y) => CoreJet x y -> JetData x y
@@ -108,6 +108,11 @@ elementsModule = Module (Just "Elements") (someArrowMap elementsJetData <$> take
 
 bitcoinModule :: Module
 bitcoinModule = Module (Just "Bitcoin") (someArrowMap bitcoinJetData <$> takeRight (treeEvalBitStream Bitcoin.getJetBit))
+
+allJets :: [SomeArrow JetData]
+allJets = nubBy eqJet . sortJetName $ moduleJets =<< [bitcoinModule, elementsModule]
+ where
+  eqJet (SomeArrow jt1) (SomeArrow jt2) = jetName jt1 == jetName jt2 && jetModule jt1 == jetModule jt2
 
 data CompactTy = CTyOne
                | CTyWord Int
@@ -202,7 +207,7 @@ rustJetPtr mod = vsep $
    [ nest 4 (vsep ("match self {" :
      map (<>comma)
      [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
-       pretty ("&simplicity_sys::c_jets::"++map toLower modname++"_jets_wrapper::"++cJetName jet)
+       pretty ("&simplicity_sys::c_jets::jets_wrapper::"++cJetName jet)
      | SomeArrow jet <- moduleJets mod
      ]))
    , "}"
@@ -378,17 +383,19 @@ rustJetDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
   , rustJetFromStr mod
   ])
 
-rustFFIImports :: Module -> Doc a
-rustFFIImports mod = vsep (map (<> semi)
+rustFFIImports :: Doc a
+rustFFIImports = vsep (map (<> semi)
   [ "use crate::ffi::c_void"
-  , pretty $ "use crate::{" ++ moduleEnvType mod ++ "CFrameItem}"
+  , "use crate::bitcoin"
+  , "use crate::elements"
+  , "use crate::CFrameItem"
   ])
 
-rustFFISigs :: Module -> Doc a
-rustFFISigs mod = vsep
+rustFFISigs :: Doc a
+rustFFISigs = vsep
   [ nest 4 $ vsep $
     "extern \"C\" {" :
-    (declaration <$> moduleJets mod)
+    (declaration <$> allJets)
   , "}"
   ]
  where
@@ -397,34 +404,34 @@ rustFFISigs mod = vsep
     , signature
     ]
    where
-    linkName = "#[link_name = \"c_"++prefix++cJetName jet++"\"]"
-    prefix | Just "Bitcoin" == moduleName mod = "bitcoin_"
-           | otherwise = ""
+    linkName = "#[link_name = \"c_"++cJetName jet++"\"]"
     signature = "pub fn "++cJetName jet++"(dst: *mut CFrameItem, src: *const CFrameItem, env: *const "++envType++") -> bool"
     envType | CoreModule <- jetModule jet = "c_void"
-            | ElementsModule <- jetModule jet = "CTxEnv"
-            | BitcoinModule <- jetModule jet = "CTxEnv"
+            | ElementsModule <- jetModule jet = "elements::CTxEnv"
+            | BitcoinModule <- jetModule jet = "bitcoin::CTxEnv"
 
-rustFFIDoc :: Module -> SimpleDocStream a
-rustFFIDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
+rustFFIDoc :: SimpleDocStream a
+rustFFIDoc = layoutPretty layoutOptions $ vsep (map (<> line)
   [ rustHeader
-  , rustFFIImports mod
-  , rustFFISigs mod
+  , rustFFIImports
+  , rustFFISigs
   ])
 
-rustWrapperImports :: Module ->  Doc a
-rustWrapperImports mod = vsep (map (<> semi)
-  [ pretty $ "use crate::{" ++ moduleEnvType mod ++ "CFrameItem}"
-  , pretty $ "use super::"++lowerRustModuleName mod++"_jets_ffi"
+rustWrapperImports :: Doc a
+rustWrapperImports = vsep (map (<> semi)
+  [ "use crate::bitcoin"
+  , "use crate::elements"
+  , "use crate::CFrameItem"
+  , "use super::jets_ffi"
   ])
 
-rustWrappers :: Module -> Doc a
-rustWrappers mod = vsep ((<> line) . wrapper <$> moduleJets mod)
+rustWrappers :: Doc a
+rustWrappers = vsep ((<> line) . wrapper <$> allJets)
  where
   wrapper (SomeArrow jet) = vsep
    [ nest 4 $ vsep
      [ pretty $ "pub fn "++rustJetName jet++templateParam++"(dst: &mut CFrameItem, src: CFrameItem, "++envParam++") -> bool {"
-     , pretty $ "unsafe { "++lowerRustModuleName mod++"_jets_ffi::"++cJetName jet++"(dst, &src, "++envArg++") }"
+     , pretty $ "unsafe { jets_ffi::"++cJetName jet++"(dst, &src, "++envArg++") }"
      ]
    , "}"
    ]
@@ -432,35 +439,36 @@ rustWrappers mod = vsep ((<> line) . wrapper <$> moduleJets mod)
     templateParam | CoreModule <- jetModule jet = "<T>"
                   | otherwise = ""
     envParam | CoreModule <- jetModule jet = "_env: &T"
-             | otherwise = "env: &CTxEnv"
+             | ElementsModule <- jetModule jet = "env: &elements:CTxEnv"
+             | BitcoinModule <- jetModule jet = "env: &bitcoin:CTxEnv"
     envArg | CoreModule <- jetModule jet = "std::ptr::null()"
-           | ElementsModule <- jetModule jet = "env"
-           | BitcoinModule <- jetModule jet = "env"
+           | otherwise = "env"
 
-rustWrapperDoc :: Module -> SimpleDocStream a
-rustWrapperDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
+rustWrapperDoc :: SimpleDocStream a
+rustWrapperDoc = layoutPretty layoutOptions $ vsep (map (<> line)
   [ rustHeader
-  , rustWrapperImports mod
-  , rustWrappers mod
+  , rustWrapperImports
+  , rustWrappers
   ])
 
 cWrapperImports :: Doc a
 cWrapperImports = vsep
-  [ "#include \"simplicity/elements/elementsJets.h\""
+  [ "#include \"simplicity/bitcoin/bitcoinJets.h\""
+  , "#include \"simplicity/elements/elementsJets.h\""
   , "#include \"simplicity/simplicity_assert.h\""
   , "#include \"wrapper.h\""
   ]
 
-cWrappers :: Module -> Doc a
-cWrappers mod = vsep (map wrapper $ moduleJets mod)
+cWrappers :: Doc a
+cWrappers = vsep (map wrapper $ allJets)
  where
   wrapper (SomeArrow jet) = pretty $ "WRAP_("++cJetName jet++")"
 
-cWrapperDoc :: Module -> SimpleDocStream a
-cWrapperDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
+cWrapperDoc :: SimpleDocStream a
+cWrapperDoc = layoutPretty layoutOptions $ vsep (map (<> line)
   [ rustHeader -- also works for C
   , cWrapperImports
-  , cWrappers mod
+  , cWrappers
   ])
 
 renderFile name doc = withFile name WriteMode (\h -> renderIO h doc)
@@ -469,11 +477,8 @@ main = do
   renderFile "core.rs" (rustJetDoc coreModule)
   renderFile "elements.rs" (rustJetDoc elementsModule)
   renderFile "bitcoin.rs" (rustJetDoc bitcoinModule)
-  renderFile "elements_jets_ffi.rs" (rustFFIDoc elementsModule)
-  renderFile "elements_jets_wrapper.rs" (rustWrapperDoc elementsModule)
-  renderFile "elements_jets_wrapper.c" (cWrapperDoc elementsModule)
-  renderFile "bitcoin_jets_ffi.rs" (rustFFIDoc bitcoinModule)
-  renderFile "bitcoin_jets_wrapper.rs" (rustWrapperDoc bitcoinModule)
-  renderFile "bitcoin_jets_wrapper.c" (cWrapperDoc bitcoinModule)
+  renderFile "jets_ffi.rs" rustFFIDoc
+  renderFile "jets_wrapper.rs" rustWrapperDoc
+  renderFile "jets_wrapper.c" cWrapperDoc
 
 layoutOptions = LayoutOptions { layoutPageWidth = AvailablePerLine 100 1 }
