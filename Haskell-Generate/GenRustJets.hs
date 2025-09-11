@@ -276,23 +276,26 @@ rustJetImpl mod = vsep $
  where
   modname = rustModuleName mod
   env = vsep
-    [ pretty $ "type Environment = "++env++";"
+    [ pretty $ "type Transaction = "++transaction++";"
+    , pretty $ "type Environment<T> = "++env++"<T> where T: Borrow<Self::Transaction>;"
     , pretty $ "type CJetEnvironment = "++cEnv++";"
     , ""
-    , pretty $ "fn c_jet_env("++envArg++": &Self::Environment) -> &Self::CJetEnvironment {"
+    , pretty $ "fn c_jet_env<T>("++envArg++": &Self::Environment<T>) -> &Self::CJetEnvironment"
+    , "    where T: Borrow<Self::Transaction>"
+    , "{"
     , pretty $ "    "++envBody
     , "}"
     ]
    where
-    env | Nothing <- moduleName mod = "()"
-        | Just "Elements" == moduleName mod = "ElementsEnv<std::sync::Arc<elements::Transaction>>"
+    transaction | Nothing <- moduleName mod = "core::convert::Infallible"
+                | Just name <- moduleName mod = map toLower name ++"::Transaction"
+    env | Nothing <- moduleName mod = "CoreEnv"
         | Just name <- moduleName mod = name ++ "Env"
-    cEnv | Just "Elements" == moduleName mod = "CTxEnv"
-         | otherwise = "()"
-    envArg | Just "Bitcoin" == moduleName mod = "_env"
+    cEnv | Nothing <- moduleName mod = "CoreEnv<Self::Transaction>"
+         | otherwise = "CTxEnv"
+    envArg | Nothing <- moduleName mod = "_"
            | otherwise = "env"
-    envBody | Nothing == moduleName mod = "env"
-            | Just "Bitcoin" == moduleName mod = "unimplemented!(\"Unspecified CJetEnvironment for Bitcoin jets\")"
+    envBody | Nothing <- moduleName mod = "&CoreEnv::EMPTY"
             | otherwise = "env.c_tx_env()"
 
 rustJetEnum :: Module -> Doc a
@@ -363,14 +366,13 @@ rustImports mod = vsep (map (<> semi)
   , "use hashes::sha256::Midstate"
   , "use simplicity_sys::CFrameItem"
   , "use std::io::Write"
-  , "use std::{fmt, str}"
+  , "use std::{borrow::Borrow, fmt, str}"
   ] ++ envImports))
  where
-  envImports | Nothing == moduleName mod = []
-             | Just "Bitcoin" == moduleName mod = ["use crate::jet::bitcoin::BitcoinEnv"]
+  envImports | Nothing == moduleName mod = ["use crate::jet::core::CoreEnv"]
              | Just name <- moduleName mod =
              [ pretty $ "use crate::jet::"++map toLower name++"::"++name++"Env"
-             , "use simplicity_sys::elements::CTxEnv"
+             , pretty $ "use simplicity_sys::"++map toLower name++"::CTxEnv"
              ]
 
 rustJetDoc :: Module -> SimpleDocStream a
