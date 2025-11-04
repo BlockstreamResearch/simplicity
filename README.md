@@ -37,6 +37,12 @@ nix-shell --arg coq false --arg haskell false
 
 Use arguments to enable / disable the other projects.
 
+#### Docker
+```
+docker build -f Dockerfile.c -t simplicity-c  .
+docker run -it  simplicity-c
+```
+
 #### Manual
 
 Change into the C directory of this repository.
@@ -78,6 +84,13 @@ nix-shell --arg c false --arg coq false
 ```
 
 Use arguments to enable / disable the other projects.
+
+#### Docker
+
+```
+docker build -f Dockerfile.haskell -t simplicity-haskell  .
+docker run -it  simplicity-haskell
+```
 
 #### Manual
 
@@ -124,6 +137,13 @@ nix-shell --arg c false --arg haskell false
 ```
 
 Use arguments to enable / disable the other projects.
+
+#### Docker
+
+```
+docker build -f Dockerfile.coq -t simplicity-coq  .
+docker run -it  simplicity-coq
+```
 
 #### Manual
 

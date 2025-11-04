@@ -1,0 +1,7 @@
+.dockerignore
+.git
+docker-compose.yml
+Dockerfile
+Dockerfile.c
+Dockerfile.coq
+Dockerfile.haskell
