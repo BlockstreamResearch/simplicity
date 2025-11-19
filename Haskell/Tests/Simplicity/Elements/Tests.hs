@@ -20,6 +20,7 @@ import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Jets
 import Simplicity.Elements.Term
 import Simplicity.Elements.TestEval
+import qualified Simplicity.Elements.Regression as Regression
 import Simplicity.Elements.Primitive (primEnv, primEnvHash, envTx, envTap)
 import qualified Simplicity.Elements.Programs.TimeLock as Prog
 import Simplicity.Elements.Semantics
@@ -46,7 +47,8 @@ toW8 = toWord8 . fromIntegral
 
 tests :: TestTree
 tests = testGroup "Elements"
-        [ testGroup "TimeLock"
+        [ Regression.tests
+        , testGroup "TimeLock"
           [ testProperty "tx_is_final" prop_tx_is_final
           , testProperty "tx_lock_height" prop_tx_lock_height
           , testProperty "tx_lock_time" prop_tx_lock_time

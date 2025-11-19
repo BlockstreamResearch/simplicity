@@ -230,7 +230,7 @@ Test-Suite testsuite
                        Simplicity.FFI.Bitstream, Simplicity.FFI.Dag,
                        Simplicity.Elements.FFI.Primitive,
                        Simplicity.Elements.TestEval, Simplicity.Elements.Tests, Simplicity.Elements.FFI.Tests,
-                       Simplicity.Elements.Serialization.Tests,
+                       Simplicity.Elements.Regression, Simplicity.Elements.Serialization.Tests,
                        Simplicity.FFI.Tests,
                        Simplicity.Programs.Tests,
                        Simplicity.Serialization.Tests,
