@@ -7,6 +7,7 @@ module Simplicity.Bitcoin.DataTypes
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock
   , putNoWitnessTx, txid
   , TapEnv(..)
+  , txTotalInputValue, txTotalOutputValue, txFee
   , txIsFinal, txLockDistance, txLockDuration
   , outputValuesHash, outputScriptsHash
   , outputsHash, outputHash
@@ -21,7 +22,7 @@ module Simplicity.Bitcoin.DataTypes
 import Control.Monad (guard)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
-import Data.Semigroup (Max(Max,getMax))
+import Data.Semigroup (Max(Max,getMax), Sum(Sum,getSum))
 import Data.Word (Word64, Word32, Word16, Word8)
 import Data.Serialize ( Serialize
                       , Get, get, getWord8, getWord16le, getWord32le, getWord64le, getLazyByteString
@@ -155,6 +156,15 @@ data TapEnv = TapEnv { tapleafVersion :: Word8
                      , tappath :: [Hash256]
                      , tapScriptCMR :: Hash256
                      } deriving Show
+
+txTotalInputValue :: SigTx -> Value
+txTotalInputValue tx = getSum . foldMap (Sum . sigTxiValue) $ sigTxIn tx
+
+txTotalOutputValue :: SigTx -> Value
+txTotalOutputValue tx = getSum . foldMap (Sum . txoValue) $ sigTxOut tx
+
+txFee :: SigTx -> Value
+txFee tx = txTotalInputValue tx - txTotalOutputValue tx
 
 txIsFinal :: SigTx -> Bool
 txIsFinal tx = all finalSequence (sigTxIn tx)

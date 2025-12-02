@@ -26,7 +26,6 @@ import Simplicity.Ty.Word
 data Prim a b where
   Version :: Prim () Word32
   LockTime :: Prim () Word32
-  TotalInputValue :: Prim () Word64
   CurrentIndex :: Prim () Word32
   InputPrevOutpoint :: Prim Word32 (S (Word256,Word32))
   InputValue :: Prim Word32 (S Word64)
@@ -34,7 +33,6 @@ data Prim a b where
   InputSequence :: Prim Word32 (S Word32)
   InputAnnexHash :: Prim Word32 (S (S Word256))
   InputScriptSigHash :: Prim Word32 (S Word256)
-  TotalOutputValue :: Prim () Word64
   OutputValue :: Prim Word32 (S Word64)
   OutputScriptHash :: Prim Word32 (S Word256)
   TapleafVersion :: Prim () Word8
@@ -46,7 +44,6 @@ data Prim a b where
 instance Eq (Prim a b) where
   Version == Version = True
   LockTime == LockTime = True
-  TotalInputValue == TotalInputValue = True
   CurrentIndex == CurrentIndex = True
   InputPrevOutpoint == InputPrevOutpoint = True
   InputValue == InputValue = True
@@ -54,7 +51,6 @@ instance Eq (Prim a b) where
   InputSequence == InputSequence = True
   InputAnnexHash == InputAnnexHash = True
   InputScriptSigHash == InputScriptSigHash = True
-  TotalOutputValue == TotalOutputValue = True
   OutputValue == OutputValue = True
   OutputScriptHash == OutputScriptHash = True
   TapleafVersion == TapleafVersion = True
@@ -71,7 +67,6 @@ primPrefix = "Bitcoin"
 primName :: Prim a b -> String
 primName Version = "version"
 primName LockTime = "lockTime"
-primName TotalInputValue = "totalInputValue"
 primName CurrentIndex = "currentIndex"
 primName InputPrevOutpoint = "inputPrevOutpoint"
 primName InputValue = "inputValue"
@@ -79,7 +74,6 @@ primName InputScriptHash = "inputScriptHash"
 primName InputSequence = "inputSequence"
 primName InputAnnexHash = "inputAnnexHash"
 primName InputScriptSigHash = "inputScriptSigHash"
-primName TotalOutputValue = "totalOutputValue"
 primName OutputValue = "outputValue"
 primName OutputScriptHash = "outputScriptHash"
 primName TapleafVersion = "tapleafVersion"
@@ -148,7 +142,6 @@ primSem p a env = interpret p a
   encodeKey (Schnorr.PubKey x) = toWord256 . toInteger $ x
   interpret Version = element . return . toWord32 . toInteger $ sigTxVersion tx
   interpret LockTime = element . return . toWord32 . toInteger $ sigTxLock tx
-  interpret TotalInputValue = element . return . toWord64 . fromIntegral . List.sum $ sigTxiValue <$> sigTxIn tx
   interpret CurrentIndex = element . return . toWord32 . toInteger $ ix
   interpret InputPrevOutpoint = return . (atInput $ encodeOutpoint . sigTxiPreviousOutpoint)
   interpret InputValue = return . (atInput $ toWord64 . toInteger . sigTxiValue)
@@ -156,7 +149,6 @@ primSem p a env = interpret p a
   interpret InputSequence = return . (atInput $ toWord32 . toInteger . sigTxiSequence)
   interpret InputAnnexHash = return . (atInput $ cast . fmap (encodeHash . bslHash) . sigTxiAnnex)
   interpret InputScriptSigHash = return . (atInput $ encodeHash . bslHash . sigTxiScriptSig)
-  interpret TotalOutputValue = element . return . toWord64 . fromIntegral . List.sum $ txoValue <$> sigTxOut tx
   interpret OutputValue = return . (atOutput $ toWord64 . fromIntegral . txoValue)
   interpret OutputScriptHash = return . (atOutput $ encodeHash . bslHash . txoScript)
   interpret TapleafVersion = element . return . toWord8 . toInteger . tapleafVersion $ envTap env

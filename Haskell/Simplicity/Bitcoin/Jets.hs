@@ -124,6 +124,7 @@ data TransactionJet a b where
   NumInputs :: TransactionJet () Word32
   NumOutputs :: TransactionJet () Word32
   LockTime :: TransactionJet () Word32
+  Fee :: TransactionJet () Word64
   OutputValue :: TransactionJet Word32 (Either () Word64)
   OutputScriptHash :: TransactionJet Word32 (Either () Word256)
   TotalOutputValue :: TransactionJet () Word64
@@ -198,7 +199,7 @@ specificationTransaction NumOutputs = Prog.numOutputs
 specificationTransaction LockTime = primitive Prim.LockTime
 specificationTransaction OutputValue = primitive Prim.OutputValue
 specificationTransaction OutputScriptHash = primitive Prim.OutputScriptHash
-specificationTransaction TotalOutputValue = primitive Prim.TotalOutputValue
+specificationTransaction TotalOutputValue = Prog.totalOutputValue
 specificationTransaction CurrentPrevOutpoint = Prog.currentPrevOutpoint
 specificationTransaction CurrentValue = Prog.currentValue
 specificationTransaction CurrentScriptHash = Prog.currentScriptHash
@@ -211,7 +212,8 @@ specificationTransaction InputScriptHash = primitive Prim.InputScriptHash
 specificationTransaction InputSequence = primitive Prim.InputSequence
 specificationTransaction InputAnnexHash = primitive Prim.InputAnnexHash
 specificationTransaction InputScriptSigHash = primitive Prim.InputScriptSigHash
-specificationTransaction TotalInputValue = primitive Prim.TotalInputValue
+specificationTransaction TotalInputValue = Prog.totalInputValue
+specificationTransaction Fee = Prog.fee
 specificationTransaction TapleafVersion = primitive Prim.TapleafVersion
 specificationTransaction Tappath = primitive Prim.Tappath
 specificationTransaction Version = primitive Prim.Version
@@ -310,6 +312,9 @@ implementationTimeLock TxLockDuration env () = Just . toWord16 . fromIntegral $ 
 implementationTimeLock TxIsFinal env () = Just $ toBit (txIsFinal (envTx env))
 
 implementationTransaction :: TransactionJet a b -> PrimEnv -> a -> Maybe b
+implementationTransaction TotalOutputValue env _ = Just . toWord64 . fromIntegral $ txTotalOutputValue (envTx env)
+implementationTransaction TotalInputValue env _ = Just . toWord64 . fromIntegral $ txTotalInputValue (envTx env)
+implementationTransaction Fee env _ = Just . toWord64 . fromIntegral $ txFee (envTx env)
 implementationTransaction x env i = Semantics.sem (specificationTransaction x) env i
 
 getJetBitBitcoin :: (Monad m) => m Void -> m Bool -> m (SomeArrow BitcoinJet)
@@ -358,34 +363,34 @@ timeLockCatalogue = book
  , SomeArrow TxLockDuration
  , SomeArrow TxIsFinal
  ]
-transactionCatalogue = Shelf
- [ Item $ SomeArrow ScriptCMR
- , Item $ SomeArrow InternalKey
- , Item $ SomeArrow CurrentIndex
- , Item $ SomeArrow NumInputs
- , Item $ SomeArrow NumOutputs
- , Item $ SomeArrow LockTime
- , Missing
- , Item $ SomeArrow OutputValue
- , Item $ SomeArrow OutputScriptHash
- , Item $ SomeArrow TotalOutputValue
- , Item $ SomeArrow CurrentPrevOutpoint
- , Item $ SomeArrow CurrentValue
- , Item $ SomeArrow CurrentScriptHash
- , Item $ SomeArrow CurrentSequence
- , Item $ SomeArrow CurrentAnnexHash
- , Item $ SomeArrow CurrentScriptSigHash
- , Item $ SomeArrow InputPrevOutpoint
- , Item $ SomeArrow InputValue
- , Item $ SomeArrow InputScriptHash
- , Item $ SomeArrow InputSequence
- , Item $ SomeArrow InputAnnexHash
- , Item $ SomeArrow InputScriptSigHash
- , Item $ SomeArrow TotalInputValue
- , Item $ SomeArrow TapleafVersion
- , Item $ SomeArrow Tappath
- , Item $ SomeArrow Version
- , Item $ SomeArrow TransactionId
+transactionCatalogue = book
+ [ SomeArrow ScriptCMR
+ , SomeArrow InternalKey
+ , SomeArrow CurrentIndex
+ , SomeArrow NumInputs
+ , SomeArrow NumOutputs
+ , SomeArrow LockTime
+ , SomeArrow Fee
+ , SomeArrow OutputValue
+ , SomeArrow OutputScriptHash
+ , SomeArrow TotalOutputValue
+ , SomeArrow CurrentPrevOutpoint
+ , SomeArrow CurrentValue
+ , SomeArrow CurrentScriptHash
+ , SomeArrow CurrentSequence
+ , SomeArrow CurrentAnnexHash
+ , SomeArrow CurrentScriptSigHash
+ , SomeArrow InputPrevOutpoint
+ , SomeArrow InputValue
+ , SomeArrow InputScriptHash
+ , SomeArrow InputSequence
+ , SomeArrow InputAnnexHash
+ , SomeArrow InputScriptSigHash
+ , SomeArrow TotalInputValue
+ , SomeArrow TapleafVersion
+ , SomeArrow Tappath
+ , SomeArrow Version
+ , SomeArrow TransactionId
  ]
 
 putJetBitBitcoin :: BitcoinJet a b -> DList Bool
@@ -437,7 +442,7 @@ putJetBitTransaction CurrentIndex         = putPositive 3
 putJetBitTransaction NumInputs            = putPositive 4
 putJetBitTransaction NumOutputs           = putPositive 5
 putJetBitTransaction LockTime             = putPositive 6
-
+putJetBitTransaction Fee                  = putPositive 7
 putJetBitTransaction OutputValue          = putPositive 8
 putJetBitTransaction OutputScriptHash     = putPositive 9
 putJetBitTransaction TotalOutputValue     = putPositive 10

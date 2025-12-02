@@ -90,7 +90,7 @@ tests = testGroup "Bitcoin"
           , testProperty "lock_time" prop_lock_time
           , testProperty "output_value" prop_output_value
           , testProperty "output_script_hash" prop_output_script_hash
-          --, testProperty "total_fee" prop_total_fee
+          , testProperty "total_output_value" prop_total_output_value
           , testProperty "current_prev_outpoint" prop_current_prev_outpoint
           , testProperty "current_value" prop_current_value
           , testProperty "current_script_hash" prop_current_script_hash
@@ -103,6 +103,8 @@ tests = testGroup "Bitcoin"
           , testProperty "input_sequence" prop_input_sequence
           , testProperty "input_annex_hash" prop_input_annex_hash
           , testProperty "input_script_sig_hash" prop_input_script_sig_hash
+          , testProperty "total_input_value" prop_total_input_value
+          , testProperty "fee" prop_fee
           , testProperty "tapleaf_version" prop_tapleaf_version
           , testProperty "tappath" prop_tappath
           , testProperty "version" prop_version
@@ -303,19 +305,9 @@ prop_output_script_hash :: Property
 prop_output_script_hash = checkJet (BitcoinJet (TransactionJet OutputScriptHash))
                         $ \check -> forallOutPrimEnv $ \env i -> check env (toW32 i)
 
-{-
-prop_total_fee :: Property
-prop_total_fee = checkJet (BitcoinJet (TransactionJet TotalFee))
-               $ \check -> forallOutPrimEnv $ \env i -> forAll arbitraryHash256
-               $ \hash -> let input = fromMaybe hash (getAssetId (sigTxOut (envTx env)) (fromIntegral i))
-                              fee = Map.findWithDefault 0 input (totalFee (envTx env))
-                          in classify (0 /= fee) "non-zero fee" $ check env (fromHash input)
- where
-  getAssetId outputs ix = (outputs !? ix) >>= explicitId . view (under asset) . txoAsset
-  explicitId (Explicit a) = Just a
-  explicitId (Confidential _ _) = Nothing
-  fromHash = toWord256 . integerHash256
--}
+prop_total_output_value :: Property
+prop_total_output_value = checkJet (BitcoinJet (TransactionJet TotalOutputValue))
+                        $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_current_prev_outpoint :: Property
 prop_current_prev_outpoint = checkJet (BitcoinJet (TransactionJet CurrentPrevOutpoint))
@@ -364,6 +356,14 @@ prop_input_annex_hash = checkJet (BitcoinJet (TransactionJet InputAnnexHash))
 prop_input_script_sig_hash :: Property
 prop_input_script_sig_hash = checkJet (BitcoinJet (TransactionJet InputScriptSigHash))
                            $ \check -> forallInPrimEnv $ \env i -> check env (toW32 i)
+
+prop_total_input_value :: Property
+prop_total_input_value = checkJet (BitcoinJet (TransactionJet TotalInputValue))
+                       $ \check -> forallPrimEnv $ \env -> check env ()
+
+prop_fee :: Property
+prop_fee = checkJet (BitcoinJet (TransactionJet Fee))
+         $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_tapleaf_version :: Property
 prop_tapleaf_version = checkJet (BitcoinJet (TransactionJet TapleafVersion))
