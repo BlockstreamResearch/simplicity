@@ -9,6 +9,7 @@ import Prettyprinter.Render.Text (renderIO)
 import System.IO (IOMode(WriteMode), withFile)
 
 import NameWrangler
+import Simplicity.Bitcoin.Jets (bitcoinCatalogue)
 import Simplicity.CoreJets (coreCatalogue)
 import Simplicity.Elements.Jets (elementsCatalogue)
 import Simplicity.Ty
@@ -43,6 +44,7 @@ renderFile name doc = withFile name WriteMode (\h -> renderIO h (layoutPretty la
 main = do
   renderFile "decodeCoreJets.inc" (wrap (decodeCatalogue (mkName <$> coreCatalogue)))
   renderFile "decodeElementsJets.inc" (wrap (decodeCatalogue (mkName <$> elementsCatalogue)))
+  renderFile "decodeBitcoinJets.inc" (wrap (decodeCatalogue (mkName <$> bitcoinCatalogue)))
  where
   wrap doc = nestBraces ("int32_t code;" <-> doc)
 
