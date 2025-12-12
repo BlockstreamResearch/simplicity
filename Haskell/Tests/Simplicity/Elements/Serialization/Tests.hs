@@ -22,7 +22,7 @@ import Test.Tasty.QuickCheck (Property, arbitrary, forAll, chooseInt, testProper
 
 -- Run tests comparing Bit Machine execution with Simplicity's denotational semantics using both naive and TCO translation.
 tests :: TestTree
-tests = testGroup "Serialization"
+tests = testGroup "Elements Serialization"
       [ testGroup "Haskell"
         [ testDecodeElementsJet jt | SomeArrow jt@(ElementsJet _) <- toList Elements.jetMap ]
       , testGroup "C"
