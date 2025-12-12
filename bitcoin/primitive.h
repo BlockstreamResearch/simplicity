@@ -5,7 +5,6 @@
 
 #include "../bitstream.h"
 #include "../typeInference.h"
-#include "txEnv.h"
 
 /* Allocate a fresh set of unification variables bound to at least all the types necessary
  * for all the jets that can be created by 'decodeJet', and also the type 'TWO^256',
