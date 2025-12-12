@@ -45,7 +45,6 @@ library Simplicity-Core
                        Simplicity.LibSecp256k1.Schnorr,
                        Simplicity.LibSecp256k1.Spec,
                        Simplicity.Bitcoin,
-                       Simplicity.Benchmarks,
                        Simplicity.Weight
   other-extensions:    BangPatterns,
                        FlexibleContexts,
@@ -137,6 +136,7 @@ library
                        Simplicity.Elements.Programs.Issuance, Simplicity.Elements.Programs.Issuance.Lib,
                        Simplicity.Elements.Programs.SigHash, Simplicity.Elements.Programs.SigHash.Lib,
                        Simplicity.Elements.Programs.Transaction, Simplicity.Elements.Programs.Transaction.Lib,
+                       Simplicity.Elements.Benchmarks,
                        Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets,
                        Simplicity.Bitcoin.FFI.Env, Simplicity.Bitcoin.FFI.Jets,
                        Simplicity.Elements.FFI.Env, Simplicity.Elements.FFI.Jets
