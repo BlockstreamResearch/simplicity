@@ -56,9 +56,8 @@ coreJetData jet = JetData { jetName = mkName jet
                           , jetCost = cost
                           }
   where
-    -- :TODO: Switch to Bitcoin when the updated benchmarks become available.
-    cmr = Elements.asJet (Elements.CoreJet jet)
-    cost = Elements.jetCost (Elements.CoreJet jet)
+    cmr = Bitcoin.asJet (Bitcoin.CoreJet jet)
+    cost = Bitcoin.jetCost (Bitcoin.CoreJet jet)
 
 elementsJetData :: (TyC x, TyC y) => Elements.JetType x y -> JetData x y
 elementsJetData jet = JetData { jetName = mkName jet

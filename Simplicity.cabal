@@ -133,6 +133,7 @@ library
   exposed-modules:     Simplicity.Bitcoin.Programs.SigHash, Simplicity.Bitcoin.Programs.SigHash.Lib,
                        Simplicity.Bitcoin.Programs.Transaction, Simplicity.Bitcoin.Programs.Transaction.Lib,
                        Simplicity.Bitcoin.Programs.TimeLock, Simplicity.Elements.Programs.TimeLock,
+                       Simplicity.Bitcoin.Benchmarks,
                        Simplicity.Elements.Programs.Issuance, Simplicity.Elements.Programs.Issuance.Lib,
                        Simplicity.Elements.Programs.SigHash, Simplicity.Elements.Programs.SigHash.Lib,
                        Simplicity.Elements.Programs.Transaction, Simplicity.Elements.Programs.Transaction.Lib,
