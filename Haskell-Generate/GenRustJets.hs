@@ -53,12 +53,11 @@ coreJetData :: (TyC x, TyC y) => CoreJet x y -> JetData x y
 coreJetData jet = JetData { jetName = mkName jet
                           , jetCMR = cmr
                           , jetModule = CoreModule
-                          , jetCost = Core.jetCost jet
+                          , jetCost = cost
                           }
   where
-    cmr | result == Elements.asJet (Elements.CoreJet jet) = result
-      where
-       result = Bitcoin.asJet (Bitcoin.CoreJet jet)
+    cmr = Bitcoin.asJet (Bitcoin.CoreJet jet)
+    cost = Bitcoin.jetCost (Bitcoin.CoreJet jet)
 
 elementsJetData :: (TyC x, TyC y) => Elements.JetType x y -> JetData x y
 elementsJetData jet = JetData { jetName = mkName jet

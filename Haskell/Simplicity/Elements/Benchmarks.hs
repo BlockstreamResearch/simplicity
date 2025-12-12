@@ -1,6 +1,4 @@
-module Simplicity.Benchmarks
- ( cost
- ) where
+module Simplicity.Elements.Benchmarks (cost) where
 
 import Simplicity.BitMachine.StaticAnalysis.Cost
 

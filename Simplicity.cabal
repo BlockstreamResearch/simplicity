@@ -45,7 +45,6 @@ library Simplicity-Core
                        Simplicity.LibSecp256k1.Schnorr,
                        Simplicity.LibSecp256k1.Spec,
                        Simplicity.Bitcoin,
-                       Simplicity.Benchmarks,
                        Simplicity.Weight
   other-extensions:    BangPatterns,
                        FlexibleContexts,
@@ -134,9 +133,11 @@ library
   exposed-modules:     Simplicity.Bitcoin.Programs.SigHash, Simplicity.Bitcoin.Programs.SigHash.Lib,
                        Simplicity.Bitcoin.Programs.Transaction, Simplicity.Bitcoin.Programs.Transaction.Lib,
                        Simplicity.Bitcoin.Programs.TimeLock, Simplicity.Elements.Programs.TimeLock,
+                       Simplicity.Bitcoin.Benchmarks,
                        Simplicity.Elements.Programs.Issuance, Simplicity.Elements.Programs.Issuance.Lib,
                        Simplicity.Elements.Programs.SigHash, Simplicity.Elements.Programs.SigHash.Lib,
                        Simplicity.Elements.Programs.Transaction, Simplicity.Elements.Programs.Transaction.Lib,
+                       Simplicity.Elements.Benchmarks,
                        Simplicity.Bitcoin.Jets, Simplicity.Elements.Jets,
                        Simplicity.Bitcoin.FFI.Env, Simplicity.Bitcoin.FFI.Jets,
                        Simplicity.Elements.FFI.Env, Simplicity.Elements.FFI.Jets
@@ -232,6 +233,7 @@ Test-Suite testsuite
                        Simplicity.Bip0340,
                        Simplicity.Arbitrary, Simplicity.Ty.Arbitrary, Simplicity.Bitcoin.Arbitrary, Simplicity.Elements.Arbitrary,
                        Simplicity.BitMachine.StaticAnalysis.Tests, Simplicity.BitMachine.Tests,
+                       Simplicity.Bitcoin.FFI.Primitive,
                        Simplicity.Bitcoin.TestEval, Simplicity.Bitcoin.Tests, Simplicity.Bitcoin.FFI.Tests,
                        Simplicity.Bitcoin.Serialization.Tests,
                        Simplicity.FFI.Bitstream, Simplicity.FFI.Dag,
@@ -244,6 +246,7 @@ Test-Suite testsuite
                        Simplicity.TestCoreEval,
                        Simplicity.Ty.Tests
   C-sources:           C/rsort.c, C/dag.c, C/bitstream.c
+                       C/bitcoin/primitive.c
                        C/elements/primitive.c
                        Haskell/cbits/bitstream.c, Haskell/cbits/dag.c
   build-depends:       Simplicity,
