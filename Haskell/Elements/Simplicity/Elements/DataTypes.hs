@@ -23,7 +23,7 @@ module Simplicity.Elements.DataTypes
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock
   , putNoWitnessTx, txid
   , TapEnv(..)
-  , txIsFinal, txLockDistance, txLockDuration
+  , txIsFinal, txLockBrokenDistance, txLockBrokenDuration
   , calculateIssuanceEntropy, calculateAsset, calculateToken
   , outputAmountsHash, outputNoncesHash, outputScriptsHash
   , outputRangeProofsHash, outputSurjectionProofsHash, outputsHash, outputHash
@@ -322,17 +322,19 @@ txIsFinal tx = all finalSequence (sigTxIn tx)
  where
   finalSequence sigin = sigTxiSequence sigin == maxBound
 
-txLockDistance :: SigTx -> Word16
-txLockDistance tx | sigTxVersion tx < 2 = 0
+-- | This function is used in a specification of broken relative timelock jets and should not be used other than for previous consensus reasons.
+txLockBrokenDistance :: SigTx -> Word16
+txLockBrokenDistance tx | sigTxVersion tx < 2 = 0
                   | otherwise = getMax . foldMap distance $ sigTxIn tx
  where
   distance sigin = case parseSequence (sigTxiSequence sigin) of
                      Just (Left x) -> Max x
                      _ -> mempty
 
-txLockDuration :: SigTx -> Word16
-txLockDuration tx | sigTxVersion tx < 2 = 0
-                  | otherwise = getMax . foldMap duration $ sigTxIn tx
+-- | This function is used in a specification of broken relative timelock jets and should not be used other than for previous consensus reasons.
+txLockBrokenDuration :: SigTx -> Word16
+txLockBrokenDuration tx | sigTxVersion tx < 2 = 0
+                        | otherwise = getMax . foldMap duration $ sigTxIn tx
  where
   duration sigin = case parseSequence (sigTxiSequence sigin) of
                      Just (Right x) -> Max x

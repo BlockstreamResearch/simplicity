@@ -249,12 +249,12 @@ specificationSigHash BuildTaptweak = Prog.buildTaptweak
 specificationTimeLock :: (Assert term, Primitive term) => TimeLockJet a b -> term a b
 specificationTimeLock CheckLockHeight = TimeLock.checkLockHeight
 specificationTimeLock CheckLockTime = TimeLock.checkLockTime
-specificationTimeLock BrokenDoNotUseCheckLockDistance = TimeLock.checkLockDistance
-specificationTimeLock BrokenDoNotUseCheckLockDuration = TimeLock.checkLockDuration
+specificationTimeLock BrokenDoNotUseCheckLockDistance = TimeLock.brokenCheckLockDistance
+specificationTimeLock BrokenDoNotUseCheckLockDuration = TimeLock.brokenCheckLockDuration
 specificationTimeLock TxLockHeight = TimeLock.txLockHeight
 specificationTimeLock TxLockTime = TimeLock.txLockTime
-specificationTimeLock BrokenDoNotUseTxLockDistance = TimeLock.txLockDistance
-specificationTimeLock BrokenDoNotUseTxLockDuration = TimeLock.txLockDuration
+specificationTimeLock BrokenDoNotUseTxLockDistance = TimeLock.brokenTxLockDistance
+specificationTimeLock BrokenDoNotUseTxLockDuration = TimeLock.brokenTxLockDuration
 specificationTimeLock TxIsFinal = TimeLock.txIsFinal
 
 specificationIssuance :: (Assert term, Primitive term) => IssuanceJet a b -> term a b
@@ -420,9 +420,9 @@ implementationTimeLock CheckLockTime env x | txIsFinal (envTx env) = guard $ fro
                                            | otherwise = guard $ fromWord32 x <= 0
  where
   lock = fromIntegral . sigTxLock . envTx $ env
-implementationTimeLock BrokenDoNotUseCheckLockDistance env x | fromWord16 x <= fromIntegral (txLockDistance (envTx env)) = Just ()
+implementationTimeLock BrokenDoNotUseCheckLockDistance env x | fromWord16 x <= fromIntegral (txLockBrokenDistance (envTx env)) = Just ()
                                                              | otherwise = Nothing
-implementationTimeLock BrokenDoNotUseCheckLockDuration env x | fromWord16 x <= fromIntegral (txLockDuration (envTx env)) = Just ()
+implementationTimeLock BrokenDoNotUseCheckLockDuration env x | fromWord16 x <= fromIntegral (txLockBrokenDuration (envTx env)) = Just ()
                                                              | otherwise = Nothing
 implementationTimeLock TxLockHeight env () | txIsFinal (envTx env) = Just (toWord32 0)
                                            | Left l <- parseLock lock = Just . toWord32 $ fromIntegral l
@@ -434,8 +434,8 @@ implementationTimeLock TxLockTime env () | txIsFinal (envTx env) = Just (toWord3
                                          | otherwise = Just (toWord32 0)
  where
   lock = fromIntegral . sigTxLock . envTx $ env
-implementationTimeLock BrokenDoNotUseTxLockDistance env () = Just . toWord16 . fromIntegral $ txLockDistance (envTx env)
-implementationTimeLock BrokenDoNotUseTxLockDuration env () = Just . toWord16 . fromIntegral $ txLockDuration (envTx env)
+implementationTimeLock BrokenDoNotUseTxLockDistance env () = Just . toWord16 . fromIntegral $ txLockBrokenDistance (envTx env)
+implementationTimeLock BrokenDoNotUseTxLockDuration env () = Just . toWord16 . fromIntegral $ txLockBrokenDuration (envTx env)
 implementationTimeLock TxIsFinal env () = Just $ toBit (txIsFinal (envTx env))
 
 implementationIssuance :: IssuanceJet a b -> PrimEnv -> a -> Maybe b

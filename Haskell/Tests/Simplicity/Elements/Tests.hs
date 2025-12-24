@@ -207,12 +207,12 @@ prop_check_lock_time = checkJet (ElementsJet (TimeLockJet CheckLockTime))
 
 prop_check_lock_distance :: Property
 prop_check_lock_distance = checkJet (ElementsJet (TimeLockJet BrokenDoNotUseCheckLockDistance))
-                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDistance $ envTx env)
+                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockBrokenDistance $ envTx env)
                                                    $ \w -> check env (toW16 w)
 
 prop_check_lock_duration :: Property
 prop_check_lock_duration = checkJet (ElementsJet (TimeLockJet BrokenDoNotUseCheckLockDuration))
-                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDuration $ envTx env)
+                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockBrokenDuration $ envTx env)
                                                    $ \w -> check env (toW16 w)
 
 prop_calculate_issuance_entropy :: Outpoint -> HashElement -> Bool
