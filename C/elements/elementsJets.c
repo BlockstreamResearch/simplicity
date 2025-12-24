@@ -733,14 +733,14 @@ bool simplicity_tx_lock_time(frameItem* dst, frameItem src, const txEnv* env) {
 }
 
 /* tx_lock_distance : ONE |- TWO^16 */
-bool simplicity_tx_lock_distance(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_broken_do_not_use_tx_lock_distance(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   simplicity_write16(dst, lockDistance(env->tx));
   return true;
 }
 
 /* tx_lock_duration : ONE |- TWO^16 */
-bool simplicity_tx_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_broken_do_not_use_tx_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
   simplicity_write16(dst, lockDuration(env->tx));
   return true;
@@ -761,14 +761,14 @@ bool simplicity_check_lock_time(frameItem* dst, frameItem src, const txEnv* env)
 }
 
 /* check_lock_distance : TWO^16 |- ONE */
-bool simplicity_check_lock_distance(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_broken_do_not_use_check_lock_distance(frameItem* dst, frameItem src, const txEnv* env) {
   (void) dst; // dst is unused;
   uint_fast16_t x = simplicity_read16(&src);
   return x <= lockDistance(env->tx);
 }
 
 /* check_lock_duration : TWO^16 |- ONE */
-bool simplicity_check_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
+bool simplicity_broken_do_not_use_check_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
   (void) dst; // dst is unused;
   uint_fast16_t x = simplicity_read16(&src);
   return x <= lockDuration(env->tx);

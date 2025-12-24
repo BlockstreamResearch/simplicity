@@ -54,12 +54,12 @@ module Simplicity.Elements.FFI.Jets
  , tx_is_final
  , tx_lock_height
  , tx_lock_time
- , tx_lock_distance
- , tx_lock_duration
+ , broken_do_not_use_tx_lock_distance
+ , broken_do_not_use_tx_lock_duration
  , check_lock_height
  , check_lock_time
- , check_lock_distance
- , check_lock_duration
+ , broken_do_not_use_check_lock_distance
+ , broken_do_not_use_check_lock_duration
  , calculate_issuance_entropy
  , calculate_asset
  , calculate_explicit_token
@@ -174,12 +174,12 @@ foreign import ccall unsafe "" c_num_outputs :: Ptr FrameItem -> Ptr FrameItem -
 foreign import ccall unsafe "" c_tx_is_final :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tx_lock_height :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_tx_lock_time :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_tx_lock_distance :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_tx_lock_duration :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_broken_do_not_use_tx_lock_distance :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_broken_do_not_use_tx_lock_duration :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_check_lock_height :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_check_lock_time :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_check_lock_distance :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
-foreign import ccall unsafe "" c_check_lock_duration :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_broken_do_not_use_check_lock_distance :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_broken_do_not_use_check_lock_duration :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_calculate_issuance_entropy :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_calculate_asset :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
 foreign import ccall unsafe "" c_calculate_explicit_token :: Ptr FrameItem -> Ptr FrameItem -> IO CBool
@@ -384,11 +384,11 @@ tx_lock_height = unsafeLocalJet c_tx_lock_height
 tx_lock_time :: PrimEnv -> () -> Maybe Word32
 tx_lock_time = unsafeLocalJet c_tx_lock_time
 
-tx_lock_distance :: PrimEnv -> () -> Maybe Word16
-tx_lock_distance  = unsafeLocalJet c_tx_lock_distance
+broken_do_not_use_tx_lock_distance :: PrimEnv -> () -> Maybe Word16
+broken_do_not_use_tx_lock_distance  = unsafeLocalJet c_broken_do_not_use_tx_lock_distance
 
-tx_lock_duration :: PrimEnv -> () -> Maybe Word16
-tx_lock_duration  = unsafeLocalJet c_tx_lock_duration
+broken_do_not_use_tx_lock_duration :: PrimEnv -> () -> Maybe Word16
+broken_do_not_use_tx_lock_duration  = unsafeLocalJet c_broken_do_not_use_tx_lock_duration
 
 check_lock_height :: PrimEnv -> Word32 -> Maybe ()
 check_lock_height = unsafeLocalJet c_check_lock_height
@@ -396,11 +396,11 @@ check_lock_height = unsafeLocalJet c_check_lock_height
 check_lock_time :: PrimEnv -> Word32 -> Maybe ()
 check_lock_time = unsafeLocalJet c_check_lock_time
 
-check_lock_distance :: PrimEnv -> Word16 -> Maybe ()
-check_lock_distance  = unsafeLocalJet c_check_lock_distance
+broken_do_not_use_check_lock_distance :: PrimEnv -> Word16 -> Maybe ()
+broken_do_not_use_check_lock_distance  = unsafeLocalJet c_broken_do_not_use_check_lock_distance
 
-check_lock_duration :: PrimEnv -> Word16 -> Maybe ()
-check_lock_duration  = unsafeLocalJet c_check_lock_duration
+broken_do_not_use_check_lock_duration :: PrimEnv -> Word16 -> Maybe ()
+broken_do_not_use_check_lock_duration  = unsafeLocalJet c_broken_do_not_use_check_lock_duration
 
 calculate_issuance_entropy :: ((Word256, Word32), Word256) -> Maybe Word256
 calculate_issuance_entropy = unsafeLocalCoreJet c_calculate_issuance_entropy
