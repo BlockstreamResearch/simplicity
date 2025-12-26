@@ -4,7 +4,7 @@ import Control.Arrow ((***), (+++))
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Map as Map
-import Data.Maybe (fromMaybe, isJust)
+import Data.Maybe (fromMaybe, fromJust, isJust)
 import Data.Serialize (encode, put, putWord8, putWord32be, runPutLazy)
 import Data.Vector ((!), (!?), fromList)
 import Lens.Family2 (review, over, under, view)
@@ -150,13 +150,17 @@ prop_check_lock_time = checkJet (BitcoinJet (TimeLockJet CheckLockTime))
 
 prop_check_lock_distance :: Property
 prop_check_lock_distance = checkJet (BitcoinJet (TimeLockJet CheckLockDistance))
-                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDistance $ envTx env)
+                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDistance $ env)
                                                    $ \w -> check env (toW16 w)
+ where
+  txLockDistance env = fromIntegral . fromWord16 . fromJust $ implementation (BitcoinJet (TimeLockJet TxLockDistance)) env () :: Word.Word16
 
 prop_check_lock_duration :: Property
 prop_check_lock_duration = checkJet (BitcoinJet (TimeLockJet CheckLockDuration))
-                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDuration $ envTx env)
+                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDuration $ env)
                                                    $ \w -> check env (toW16 w)
+ where
+  txLockDuration env = fromIntegral . fromWord16 . fromJust $ implementation (BitcoinJet (TimeLockJet TxLockDuration)) env () :: Word.Word16
 
 prop_build_tapleaf_simplicity :: HashElement -> Bool
 prop_build_tapleaf_simplicity = \cmr ->

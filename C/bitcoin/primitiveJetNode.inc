@@ -186,7 +186,7 @@
 ,[CHECK_LOCK_DISTANCE] =
 { .tag = JET
 , .jet = simplicity_bitcoin_check_lock_distance
-, .cmr = {{0xdbaa6fedu, 0xb73b2e31u, 0xa80ccbd1u, 0x4daaa5b8u, 0xce212cdeu, 0x0cbfd96du, 0x5db9715fu, 0xd19f8899u}}
+, .cmr = {{0x38fdf7ddu, 0x28538670u, 0xfb34c1bfu, 0xe72f17e2u, 0xca5784f8u, 0x7fed88eau, 0xb584792bu, 0x3974bd18u}}
 , .sourceIx = ty_w16
 , .targetIx = ty_u
 , .cost = 84 /* milli weight units */
@@ -194,7 +194,7 @@
 ,[CHECK_LOCK_DURATION] =
 { .tag = JET
 , .jet = simplicity_bitcoin_check_lock_duration
-, .cmr = {{0xdde93f33u, 0xf9b9d1d3u, 0xa3f2b3e8u, 0xb90f6d8bu, 0xeffccb45u, 0x81210eeau, 0xf06bd32fu, 0x6319df6eu}}
+, .cmr = {{0x77503832u, 0x6eae25c7u, 0x209b2443u, 0x06eaa9f9u, 0x204c7eceu, 0x2dd63b45u, 0x2e10017fu, 0xa4ea53cfu}}
 , .sourceIx = ty_w16
 , .targetIx = ty_u
 , .cost = 78 /* milli weight units */
@@ -3298,7 +3298,7 @@
 ,[TX_LOCK_DISTANCE] =
 { .tag = JET
 , .jet = simplicity_bitcoin_tx_lock_distance
-, .cmr = {{0x8c0b0c44u, 0x2bc20978u, 0xfa4c2b3du, 0x52a7fe7cu, 0x3f86e3d2u, 0x1b42130eu, 0xbb8dba45u, 0xe0f5e64bu}}
+, .cmr = {{0xb6fbaac2u, 0x10a306beu, 0x8b58d0d7u, 0xb1563f62u, 0x2336d2aeu, 0xb56c393du, 0x276445a9u, 0xa22cc4a7u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w16
 , .cost = 72 /* milli weight units */
@@ -3306,7 +3306,7 @@
 ,[TX_LOCK_DURATION] =
 { .tag = JET
 , .jet = simplicity_bitcoin_tx_lock_duration
-, .cmr = {{0x09b18d5cu, 0x2f08402bu, 0xbcf8c31eu, 0xa43435efu, 0xffd9ea0eu, 0xf8758f76u, 0xbb27272bu, 0x4d60dc62u}}
+, .cmr = {{0x53572818u, 0xe7e5b98fu, 0x968c9da7u, 0xdf5090d9u, 0x826f9bcfu, 0x84b63639u, 0x5eea321bu, 0x6909ece9u}}
 , .sourceIx = ty_u
 , .targetIx = ty_w16
 , .cost = 66 /* milli weight units */

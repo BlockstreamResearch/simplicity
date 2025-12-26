@@ -13,6 +13,7 @@ import Prelude hiding (Word, all, drop, max, not, take)
 
 import Simplicity.Bitcoin.Primitive
 import Simplicity.Bitcoin.Term
+import Simplicity.Bitcoin.Programs.Transaction.Lib
 import Simplicity.Programs.Arith
 import Simplicity.Programs.Bit
 import Simplicity.Programs.Generic
@@ -42,21 +43,19 @@ txLockTime = txIsFinal &&& primitive LockTime
 bip68VersionCheck :: (Core term, Primitive term) => term () Bit
 bip68VersionCheck = scribe (toWord32 2) &&& primitive Version >>> le word32
 
--- | Implements 'Simplicity.Bitcoin.DataTypes.txLockDistance'.
-txLockDistance :: (Core term, Primitive term) => term () Distance
-txLockDistance = bip68VersionCheck &&& zero word16
-             >>> match ih (forWhile word32 body >>> copair iden iden)
+-- | Computes the relative height timelock or 0 if there is no such timelock.
+txLockDistance :: (Assert term, Primitive term) => term () Distance
+txLockDistance = bip68VersionCheck &&& (currentSequence >>> parseSequence)
+             >>> cond (copair (unit >>> z) (copair iden (unit >>> z))) (unit >>> z)
  where
-  body = take (drop (primitive InputSequence)) &&& ih
-     >>> match (injl ih) (injr (take parseSequence &&& ih >>> match ih (match (max word16) ih)))
+  z = zero word16
 
--- | Implements 'Simplicity.Bitcoin.DataTypes.txLockDuration'.
-txLockDuration :: (Core term, Primitive term) => term () Duration
-txLockDuration = bip68VersionCheck &&& zero word16
-             >>> match ih (forWhile word32 body >>> copair iden iden)
+-- | Computes the relative time timelock or 0 if there is no such timelock.
+txLockDuration :: (Assert term, Primitive term) => term () Distance
+txLockDuration = bip68VersionCheck &&& (currentSequence >>> parseSequence)
+             >>> cond (copair (unit >>> z) (copair (unit >>> z) iden)) (unit >>> z)
  where
-  body = take (drop (primitive InputSequence)) &&& ih
-     >>> match (injl ih) (injr (take parseSequence &&& ih >>> match ih (match ih (max word16))))
+  z = zero word16
 
 -- | Asserts that the input is less than or equal to the value returned by 'txLockHeight'.
 checkLockHeight :: (Assert term, Primitive term) => term Height ()
