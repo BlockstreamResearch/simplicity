@@ -60,11 +60,6 @@ typedef struct bitcoinTransaction {
   uint_fast32_t numOutputs;
   uint_fast32_t version;
   uint_fast32_t lockTime;
-  /* lockDuration and lockDistance values are set even when the version is 0 or 1.
-   * This is similar to lockTime whose value is also set, even when the transaction is final.
-   */
-  uint_fast16_t lockDistance;
-  uint_fast16_t lockDuration; /* Units of 512 seconds */
   bool isFinal;
 } bitcoinTransaction;
 

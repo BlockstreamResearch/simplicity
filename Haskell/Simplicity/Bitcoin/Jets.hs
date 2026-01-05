@@ -39,7 +39,7 @@ import qualified Simplicity.Bitcoin.Dag as Dag
 import Simplicity.Bitcoin.Term
 import Simplicity.Bitcoin.DataTypes
 import qualified Simplicity.Bitcoin.JetType
-import Simplicity.Bitcoin.Primitive (PrimEnv, PubKey, primEnvHash, envTx, envTap)
+import Simplicity.Bitcoin.Primitive (PrimEnv, PubKey, primEnvHash, envTx, envIx, envTap)
 import qualified Simplicity.Bitcoin.Primitive as Prim
 import qualified Simplicity.Bitcoin.Serialization.BitString as BitString
 import qualified Simplicity.Bitcoin.Semantics as Semantics
@@ -295,10 +295,16 @@ implementationTimeLock CheckLockTime env x | txIsFinal (envTx env) = guard $ fro
                                            | otherwise = guard $ fromWord32 x <= 0
  where
   lock = fromIntegral . sigTxLock . envTx $ env
-implementationTimeLock CheckLockDistance env x | fromWord16 x <= fromIntegral (txLockDistance (envTx env)) = Just ()
-                                               | otherwise = Nothing
-implementationTimeLock CheckLockDuration env x | fromWord16 x <= fromIntegral (txLockDuration (envTx env)) = Just ()
-                                               | otherwise = Nothing
+implementationTimeLock CheckLockDistance env x | sigTxVersion (envTx env) < 2 = guard $ fromWord16 x <= 0
+                                               | Just (Left l) <- parseSequence =<< sequence = guard $ fromWord16 x <= fromIntegral l
+                                               | otherwise = guard $ fromWord16 x <= 0
+ where
+  sequence = sigTxiSequence <$> (sigTxIn (envTx env) !? (fromIntegral $ envIx env))
+implementationTimeLock CheckLockDuration env x | sigTxVersion (envTx env) < 2 = guard $ fromWord16 x <= 0
+                                               | Just (Right l) <- parseSequence =<< sequence = guard $ fromWord16 x <= fromIntegral l
+                                               | otherwise = guard $ fromWord16 x <= 0
+ where
+  sequence = sigTxiSequence <$> (sigTxIn (envTx env) !? (fromIntegral $ envIx env))
 implementationTimeLock TxLockHeight env () | txIsFinal (envTx env) = Just (toWord32 0)
                                            | Left l <- parseLock lock = Just . toWord32 $ fromIntegral l
                                            | otherwise = Just (toWord32 0)
@@ -309,8 +315,16 @@ implementationTimeLock TxLockTime env () | txIsFinal (envTx env) = Just (toWord3
                                          | otherwise = Just (toWord32 0)
  where
   lock = fromIntegral . sigTxLock . envTx $ env
-implementationTimeLock TxLockDistance env () = Just . toWord16 . fromIntegral $ txLockDistance (envTx env)
-implementationTimeLock TxLockDuration env () = Just . toWord16 . fromIntegral $ txLockDuration (envTx env)
+implementationTimeLock TxLockDistance env () | sigTxVersion (envTx env) < 2 = Just (toWord16 0)
+                                             | Just (Left l) <- parseSequence =<< sequence = Just . toWord16 $ fromIntegral l
+                                             | otherwise = Just (toWord16 0)
+ where
+  sequence = sigTxiSequence <$> (sigTxIn (envTx env) !? (fromIntegral $ envIx env))
+implementationTimeLock TxLockDuration env () | sigTxVersion (envTx env) < 2 = Just (toWord16 0)
+                                             | Just (Right l) <- parseSequence =<< sequence = Just . toWord16 $ fromIntegral l
+                                             | otherwise = Just (toWord16 0)
+ where
+  sequence = sigTxiSequence <$> (sigTxIn (envTx env) !? (fromIntegral $ envIx env))
 implementationTimeLock TxIsFinal env () = Just $ toBit (txIsFinal (envTx env))
 
 implementationTransaction :: TransactionJet a b -> PrimEnv -> a -> Maybe b

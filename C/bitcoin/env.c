@@ -114,14 +114,6 @@ extern bitcoinTransaction* simplicity_bitcoin_mallocTransaction(const rawBitcoin
       copyInput(&input[i], &rawTx->input[i]);
       tx->totalInputValue += input[i].txo.value;
       if (input[i].sequence < 0xffffffff) { tx->isFinal = false; }
-      if (input[i].sequence < 0x80000000) {
-         const uint_fast16_t maskedSequence = input[i].sequence & 0xffff;
-         if (input[i].sequence & ((uint_fast32_t)1 << 22)) {
-            if (tx->lockDuration < maskedSequence) tx->lockDuration = maskedSequence;
-         } else {
-            if (tx->lockDistance < maskedSequence) tx->lockDistance = maskedSequence;
-         }
-      }
       sha256_hash(&ctx_inputOutpointsHash, &input[i].prevOutpoint.txid);
       sha256_u32be(&ctx_inputOutpointsHash, input[i].prevOutpoint.ix);
       sha256_u64be(&ctx_inputValuesHash, input[i].txo.value);

@@ -41,12 +41,26 @@ static uint_fast32_t lockTime(const bitcoinTransaction* tx) {
   return !tx->isFinal && 500000000U <= tx->lockTime ? tx->lockTime : 0;
 }
 
-static uint_fast16_t lockDistance(const bitcoinTransaction* tx) {
-  return 2 <= tx->version ? tx->lockDistance : 0;
+static uint_fast16_t lockDistance(const bitcoinTransaction* tx, uint_fast32_t ix) {
+  simplicity_assert(ix < tx->numInputs);
+  if (2 <= tx->version &&
+      tx->input[ix].sequence < 0x80000000 &&
+      !(tx->input[ix].sequence & ((uint_fast32_t)1 << 22))) {
+    return tx->input[ix].sequence & 0xffff;
+  } else {
+    return 0;
+  }
 }
 
-static uint_fast16_t lockDuration(const bitcoinTransaction* tx) {
-  return 2 <= tx->version ? tx->lockDuration : 0;
+static uint_fast16_t lockDuration(const bitcoinTransaction* tx, uint_fast32_t ix) {
+  simplicity_assert(ix < tx->numInputs);
+  if (2 <= tx->version &&
+      tx->input[ix].sequence < 0x80000000 &&
+      !!(tx->input[ix].sequence & ((uint_fast32_t)1 << 22))) {
+    return tx->input[ix].sequence & 0xffff;
+  } else {
+    return 0;
+  }
 }
 
 /* version : ONE |- TWO^32 */
@@ -312,14 +326,16 @@ bool simplicity_bitcoin_tx_lock_time(frameItem* dst, frameItem src, const txEnv*
 /* tx_lock_distance : ONE |- TWO^16 */
 bool simplicity_bitcoin_tx_lock_distance(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  simplicity_write16(dst, lockDistance(env->tx));
+  if (env->tx->numInputs <= env->ix) return false;
+  simplicity_write16(dst, lockDistance(env->tx, env->ix));
   return true;
 }
 
 /* tx_lock_duration : ONE |- TWO^16 */
 bool simplicity_bitcoin_tx_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
   (void) src; // src is unused;
-  simplicity_write16(dst, lockDuration(env->tx));
+  if (env->tx->numInputs <= env->ix) return false;
+  simplicity_write16(dst, lockDuration(env->tx, env->ix));
   return true;
 }
 
@@ -340,15 +356,17 @@ bool simplicity_bitcoin_check_lock_time(frameItem* dst, frameItem src, const txE
 /* check_lock_distance : TWO^16 |- ONE */
 bool simplicity_bitcoin_check_lock_distance(frameItem* dst, frameItem src, const txEnv* env) {
   (void) dst; // dst is unused;
+  if (env->tx->numInputs <= env->ix) return false;
   uint_fast16_t x = simplicity_read16(&src);
-  return x <= lockDistance(env->tx);
+  return x <= lockDistance(env->tx, env->ix);
 }
 
 /* check_lock_duration : TWO^16 |- ONE */
 bool simplicity_bitcoin_check_lock_duration(frameItem* dst, frameItem src, const txEnv* env) {
   (void) dst; // dst is unused;
+  if (env->tx->numInputs <= env->ix) return false;
   uint_fast16_t x = simplicity_read16(&src);
-  return x <= lockDuration(env->tx);
+  return x <= lockDuration(env->tx, env->ix);
 }
 
 /* build_tapleaf_simplicity : TWO^256 |- TWO^256 */

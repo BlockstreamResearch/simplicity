@@ -8,7 +8,7 @@ module Simplicity.Bitcoin.DataTypes
   , putNoWitnessTx, txid
   , TapEnv(..)
   , txTotalInputValue, txTotalOutputValue, txFee
-  , txIsFinal, txLockDistance, txLockDuration
+  , txIsFinal, txiLockDistance, txiLockDuration
   , outputValuesHash, outputScriptsHash
   , outputsHash, outputHash
   , inputOutpointsHash, inputValuesHash, inputScriptsHash, inputUtxosHash
@@ -171,21 +171,17 @@ txIsFinal tx = all finalSequence (sigTxIn tx)
  where
   finalSequence sigin = sigTxiSequence sigin == maxBound
 
-txLockDistance :: SigTx -> Word16
-txLockDistance tx | sigTxVersion tx < 2 = 0
-                  | otherwise = getMax . foldMap distance $ sigTxIn tx
- where
-  distance sigin = case parseSequence (sigTxiSequence sigin) of
-                     Just (Left x) -> Max x
-                     _ -> mempty
+txiLockDistance :: SigTxInput -> Word16
+txiLockDistance sigin =
+  case parseSequence (sigTxiSequence sigin) of
+    Just (Left x) -> x
+    _ -> 0
 
-txLockDuration :: SigTx -> Word16
-txLockDuration tx | sigTxVersion tx < 2 = 0
-                  | otherwise = getMax . foldMap duration $ sigTxIn tx
- where
-  duration sigin = case parseSequence (sigTxiSequence sigin) of
-                     Just (Right x) -> Max x
-                     _ -> mempty
+txiLockDuration :: SigTxInput -> Word16
+txiLockDuration sigin =
+  case parseSequence (sigTxiSequence sigin) of
+    Just (Right x) -> x
+    _ -> 0
 
 -- | A hash of all 'txoValues's.
 outputValuesHash :: SigTx -> Hash256

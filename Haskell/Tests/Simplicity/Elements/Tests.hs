@@ -188,11 +188,11 @@ prop_tx_lock_time = checkJet (ElementsJet (TimeLockJet TxLockTime))
                   $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_tx_lock_distance :: Property
-prop_tx_lock_distance = checkJet (ElementsJet (TimeLockJet TxLockDistance))
+prop_tx_lock_distance = checkJet (ElementsJet (TimeLockJet BrokenDoNotUseTxLockDistance))
                       $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_tx_lock_duration :: Property
-prop_tx_lock_duration = checkJet (ElementsJet (TimeLockJet TxLockDuration))
+prop_tx_lock_duration = checkJet (ElementsJet (TimeLockJet BrokenDoNotUseTxLockDuration))
                       $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_check_lock_height :: Property
@@ -206,13 +206,13 @@ prop_check_lock_time = checkJet (ElementsJet (TimeLockJet CheckLockTime))
                                                $ \w -> check env (toW32 w)
 
 prop_check_lock_distance :: Property
-prop_check_lock_distance = checkJet (ElementsJet (TimeLockJet CheckLockDistance))
-                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDistance $ envTx env)
+prop_check_lock_distance = checkJet (ElementsJet (TimeLockJet BrokenDoNotUseCheckLockDistance))
+                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockBrokenDistance $ envTx env)
                                                    $ \w -> check env (toW16 w)
 
 prop_check_lock_duration :: Property
-prop_check_lock_duration = checkJet (ElementsJet (TimeLockJet CheckLockDuration))
-                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDuration $ envTx env)
+prop_check_lock_duration = checkJet (ElementsJet (TimeLockJet BrokenDoNotUseCheckLockDuration))
+                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockBrokenDuration $ envTx env)
                                                    $ \w -> check env (toW16 w)
 
 prop_calculate_issuance_entropy :: Outpoint -> HashElement -> Bool

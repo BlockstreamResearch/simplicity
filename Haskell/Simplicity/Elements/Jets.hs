@@ -126,12 +126,12 @@ deriving instance Show (SigHashJet a b)
 data TimeLockJet a b where
   CheckLockHeight :: TimeLockJet TimeLock.Height ()
   CheckLockTime :: TimeLockJet TimeLock.Time ()
-  CheckLockDistance :: TimeLockJet TimeLock.Distance ()
-  CheckLockDuration :: TimeLockJet TimeLock.Duration ()
+  BrokenDoNotUseCheckLockDistance :: TimeLockJet TimeLock.Distance ()
+  BrokenDoNotUseCheckLockDuration :: TimeLockJet TimeLock.Duration ()
   TxLockHeight :: TimeLockJet () TimeLock.Height
   TxLockTime :: TimeLockJet () TimeLock.Time
-  TxLockDistance :: TimeLockJet () TimeLock.Distance
-  TxLockDuration :: TimeLockJet () TimeLock.Duration
+  BrokenDoNotUseTxLockDistance :: TimeLockJet () TimeLock.Distance
+  BrokenDoNotUseTxLockDuration :: TimeLockJet () TimeLock.Duration
   TxIsFinal :: TimeLockJet () TimeLock.Bit
 deriving instance Eq (TimeLockJet a b)
 deriving instance Show (TimeLockJet a b)
@@ -249,12 +249,12 @@ specificationSigHash BuildTaptweak = Prog.buildTaptweak
 specificationTimeLock :: (Assert term, Primitive term) => TimeLockJet a b -> term a b
 specificationTimeLock CheckLockHeight = TimeLock.checkLockHeight
 specificationTimeLock CheckLockTime = TimeLock.checkLockTime
-specificationTimeLock CheckLockDistance = TimeLock.checkLockDistance
-specificationTimeLock CheckLockDuration = TimeLock.checkLockDuration
+specificationTimeLock BrokenDoNotUseCheckLockDistance = TimeLock.brokenCheckLockDistance
+specificationTimeLock BrokenDoNotUseCheckLockDuration = TimeLock.brokenCheckLockDuration
 specificationTimeLock TxLockHeight = TimeLock.txLockHeight
 specificationTimeLock TxLockTime = TimeLock.txLockTime
-specificationTimeLock TxLockDistance = TimeLock.txLockDistance
-specificationTimeLock TxLockDuration = TimeLock.txLockDuration
+specificationTimeLock BrokenDoNotUseTxLockDistance = TimeLock.brokenTxLockDistance
+specificationTimeLock BrokenDoNotUseTxLockDuration = TimeLock.brokenTxLockDuration
 specificationTimeLock TxIsFinal = TimeLock.txIsFinal
 
 specificationIssuance :: (Assert term, Primitive term) => IssuanceJet a b -> term a b
@@ -420,10 +420,10 @@ implementationTimeLock CheckLockTime env x | txIsFinal (envTx env) = guard $ fro
                                            | otherwise = guard $ fromWord32 x <= 0
  where
   lock = fromIntegral . sigTxLock . envTx $ env
-implementationTimeLock CheckLockDistance env x | fromWord16 x <= fromIntegral (txLockDistance (envTx env)) = Just ()
-                                               | otherwise = Nothing
-implementationTimeLock CheckLockDuration env x | fromWord16 x <= fromIntegral (txLockDuration (envTx env)) = Just ()
-                                               | otherwise = Nothing
+implementationTimeLock BrokenDoNotUseCheckLockDistance env x | fromWord16 x <= fromIntegral (txLockBrokenDistance (envTx env)) = Just ()
+                                                             | otherwise = Nothing
+implementationTimeLock BrokenDoNotUseCheckLockDuration env x | fromWord16 x <= fromIntegral (txLockBrokenDuration (envTx env)) = Just ()
+                                                             | otherwise = Nothing
 implementationTimeLock TxLockHeight env () | txIsFinal (envTx env) = Just (toWord32 0)
                                            | Left l <- parseLock lock = Just . toWord32 $ fromIntegral l
                                            | otherwise = Just (toWord32 0)
@@ -434,8 +434,8 @@ implementationTimeLock TxLockTime env () | txIsFinal (envTx env) = Just (toWord3
                                          | otherwise = Just (toWord32 0)
  where
   lock = fromIntegral . sigTxLock . envTx $ env
-implementationTimeLock TxLockDistance env () = Just . toWord16 . fromIntegral $ txLockDistance (envTx env)
-implementationTimeLock TxLockDuration env () = Just . toWord16 . fromIntegral $ txLockDuration (envTx env)
+implementationTimeLock BrokenDoNotUseTxLockDistance env () = Just . toWord16 . fromIntegral $ txLockBrokenDistance (envTx env)
+implementationTimeLock BrokenDoNotUseTxLockDuration env () = Just . toWord16 . fromIntegral $ txLockBrokenDuration (envTx env)
 implementationTimeLock TxIsFinal env () = Just $ toBit (txIsFinal (envTx env))
 
 implementationIssuance :: IssuanceJet a b -> PrimEnv -> a -> Maybe b
@@ -553,12 +553,12 @@ sigHashCatalogue = book
 timeLockCatalogue = book
  [ SomeArrow CheckLockHeight
  , SomeArrow CheckLockTime
- , SomeArrow CheckLockDistance
- , SomeArrow CheckLockDuration
+ , SomeArrow BrokenDoNotUseCheckLockDistance
+ , SomeArrow BrokenDoNotUseCheckLockDuration
  , SomeArrow TxLockHeight
  , SomeArrow TxLockTime
- , SomeArrow TxLockDistance
- , SomeArrow TxLockDuration
+ , SomeArrow BrokenDoNotUseTxLockDistance
+ , SomeArrow BrokenDoNotUseTxLockDuration
  , SomeArrow TxIsFinal
  ]
 issuanceCatalogue = book
@@ -671,12 +671,12 @@ putJetBitSigHash BuildTaptweak               = putPositive 35
 putJetBitTimeLock :: TimeLockJet a b -> DList Bool
 putJetBitTimeLock CheckLockHeight   = putPositive 1
 putJetBitTimeLock CheckLockTime     = putPositive 2
-putJetBitTimeLock CheckLockDistance = putPositive 3
-putJetBitTimeLock CheckLockDuration = putPositive 4
+putJetBitTimeLock BrokenDoNotUseCheckLockDistance = putPositive 3
+putJetBitTimeLock BrokenDoNotUseCheckLockDuration = putPositive 4
 putJetBitTimeLock TxLockHeight      = putPositive 5
 putJetBitTimeLock TxLockTime        = putPositive 6
-putJetBitTimeLock TxLockDistance    = putPositive 7
-putJetBitTimeLock TxLockDuration    = putPositive 8
+putJetBitTimeLock BrokenDoNotUseTxLockDistance    = putPositive 7
+putJetBitTimeLock BrokenDoNotUseTxLockDuration    = putPositive 8
 putJetBitTimeLock TxIsFinal         = putPositive 9
 
 putJetBitIssuance :: IssuanceJet a b -> DList Bool
@@ -1294,12 +1294,12 @@ jetCostSigHash BuildTaptweak = cost "BuildTaptweak"
 jetCostTimeLock :: TimeLockJet a b -> Weight
 jetCostTimeLock CheckLockHeight = cost "CheckLockHeight"
 jetCostTimeLock CheckLockTime = cost "CheckLockTime"
-jetCostTimeLock CheckLockDistance = cost "CheckLockDistance"
-jetCostTimeLock CheckLockDuration = cost "CheckLockDuration"
+jetCostTimeLock BrokenDoNotUseCheckLockDistance = cost "CheckLockDistance"
+jetCostTimeLock BrokenDoNotUseCheckLockDuration = cost "CheckLockDuration"
 jetCostTimeLock TxLockHeight = cost "TxLockHeight"
 jetCostTimeLock TxLockTime = cost "TxLockTime"
-jetCostTimeLock TxLockDistance = cost "TxLockDistance"
-jetCostTimeLock TxLockDuration = cost "TxLockDuration"
+jetCostTimeLock BrokenDoNotUseTxLockDistance = cost "TxLockDistance"
+jetCostTimeLock BrokenDoNotUseTxLockDuration = cost "TxLockDuration"
 jetCostTimeLock TxIsFinal = cost "TxIsFinal"
 
 jetCostIssuance :: IssuanceJet a b -> Weight
