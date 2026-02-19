@@ -345,6 +345,7 @@ rustImports mod = vsep (map (<> semi)
   ([ "use crate::jet::type_name::TypeName"
   , "use crate::jet::Jet"
   , "use crate::merkle::cmr::Cmr"
+  , "#[allow(unused_imports)]"
   , "use crate::decode_bits"
   , "use crate::{decode, BitIter, BitWriter}"
   , "use crate::analysis::Cost"
