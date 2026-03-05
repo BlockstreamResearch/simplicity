@@ -1,0 +1,8 @@
+# Force LF line endings for all text files (prevents CRLF issues in Nix builds)
+* text=auto eol=lf
+
+# Explicitly binary files
+*.png binary
+*.jpg binary
+*.pdf binary
+*.eps binary

@@ -1,0 +1,19 @@
+{
+  "name": "Simplicity Nix",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "features": {
+    "ghcr.io/devcontainers/features/nix:1": {
+      "multiUser": false,
+      "extraNixConfig": "sandbox = false"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "jnoortheen.nix-ide",
+        "mkhl.direnv"
+      ]
+    }
+  },
+  "postCreateCommand": "nix-shell --run 'echo Nix shell environment ready'"
+}
