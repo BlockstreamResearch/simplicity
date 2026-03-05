@@ -246,6 +246,26 @@ rustJetCost mod = vsep $
  where
   modname = rustModuleName mod
 
+rustJetDeprecated :: Module -> Doc a
+rustJetDeprecated mod = vsep $
+  [ nest 4 (vsep ("fn is_deprecated(&self) -> bool {" :
+    [ nest 4 (vsep ("match self {" :
+        map (<>comma)
+        ([ pretty modname <> "::" <> pretty (jetName jet) <+> "=> true"
+        | SomeArrow jet <- moduleJets mod
+        , cJetName jet `elem` deprecatedJets
+        ] ++ [ "_ => false" ])
+        ))
+    , "}"
+    ]))
+  , "}"
+  ]
+ where
+  modname = rustModuleName mod
+  deprecatedJets = ["check_lock_distance", "check_lock_duration", "tx_lock_distance", "tx_lock_duration", "broken_do_not_use_check_lock_distance", "broken_do_not_use_check_lock_duration", "broken_do_not_use_tx_lock_distance", "broken_do_not_use_tx_lock_duration"]
+
+
+
 rustJetImpl :: Module -> Doc a
 rustJetImpl mod = vsep $
   [ nest 4 (vsep $ punctuate line
@@ -258,6 +278,7 @@ rustJetImpl mod = vsep $
     , rustJetDecode mod
     , rustJetPtr mod
     , rustJetCost mod
+    , rustJetDeprecated mod
     ])
   , "}"
   ]
@@ -345,6 +366,7 @@ rustImports mod = vsep (map (<> semi)
   ([ "use crate::jet::type_name::TypeName"
   , "use crate::jet::Jet"
   , "use crate::merkle::cmr::Cmr"
+  , "#[allow(unused_imports)]"
   , "use crate::decode_bits"
   , "use crate::{decode, BitIter, BitWriter}"
   , "use crate::analysis::Cost"
