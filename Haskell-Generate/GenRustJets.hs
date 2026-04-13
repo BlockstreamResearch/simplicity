@@ -212,7 +212,7 @@ rustJetCJetPtr mod = vsep $
 
 rustJetEncode :: Module -> Doc a
 rustJetEncode mod =
-  "fn encode<W: Write>(&self, w: &mut BitWriter<W>) -> std::io::Result<usize>" <+>
+  "fn encode(&self, w: &mut BitWriter<&mut dyn Write>) -> std::io::Result<usize>" <+>
   nestBraces ("let (n, len) = match self" <+>
     nestBraces (vsep (foldMapWithPath item (moduleCodes mod))) <> semi <-> line <> "w.write_bits_be(n, len)")
  where
@@ -223,7 +223,7 @@ rustJetEncode mod =
 
 rustJetDecode :: Module -> Doc a
 rustJetDecode mod =
-  "fn decode<I: Iterator<Item = u8>>(bits: &mut BitIter<I>) -> Result<Self, decode::Error>" <+>
+  "fn decode<I: Iterator<Item = u8>>(bits: &mut BitIter<I>) -> Result<Self, decode::Error> where Self: Sized" <+>
   nestBraces ("decode_bits!(bits," <+> braces (docTree (moduleCodes mod)) <> ")")
  where
   docTree Dead = mempty
@@ -251,6 +251,11 @@ rustJetCost mod = vsep $
  where
   modname = rustModuleName mod
 
+rustJetParse :: Doc a
+rustJetParse =
+  "fn parse(s: &str) -> Result<Self, crate::Error> where Self: Sized" <+>
+  nestBraces "str::FromStr::from_str(s)"
+
 rustJetImpl :: Module -> Doc a
 rustJetImpl mod = vsep $
   [ nest 4 (vsep $ punctuate line
@@ -261,6 +266,7 @@ rustJetImpl mod = vsep $
     , rustJetEncode mod
     , rustJetDecode mod
     , rustJetCost mod
+    , rustJetParse
     ])
   , "}"
   ]
