@@ -20,6 +20,7 @@ import Simplicity.Elements.DataTypes
 import Simplicity.Elements.Jets
 import Simplicity.Elements.Term
 import Simplicity.Elements.TestEval
+import qualified Simplicity.Elements.Regression as Regression
 import Simplicity.Elements.Primitive (primEnv, primEnvHash, envTx, envTap)
 import qualified Simplicity.Elements.Programs.TimeLock as Prog
 import Simplicity.Elements.Semantics
@@ -46,7 +47,8 @@ toW8 = toWord8 . fromIntegral
 
 tests :: TestTree
 tests = testGroup "Elements"
-        [ testGroup "TimeLock"
+        [ Regression.tests
+        , testGroup "TimeLock"
           [ testProperty "tx_is_final" prop_tx_is_final
           , testProperty "tx_lock_height" prop_tx_lock_height
           , testProperty "tx_lock_time" prop_tx_lock_time
@@ -168,7 +170,6 @@ tests = testGroup "Elements"
         , testCase "sigHashAll" (assertBool "sigHashAll_matches" hunit_sigHashAll)
         ]
 
-
 -- We use continuations here because we need to ensure that 'fastSpec' is memoized outside of any lambda expressions.
 checkJet jet k = k (\env a -> fastSpec env a == implementation jet env a)
  where
@@ -187,11 +188,11 @@ prop_tx_lock_time = checkJet (ElementsJet (TimeLockJet TxLockTime))
                   $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_tx_lock_distance :: Property
-prop_tx_lock_distance = checkJet (ElementsJet (TimeLockJet TxLockDistance))
+prop_tx_lock_distance = checkJet (ElementsJet (TimeLockJet BrokenDoNotUseTxLockDistance))
                       $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_tx_lock_duration :: Property
-prop_tx_lock_duration = checkJet (ElementsJet (TimeLockJet TxLockDuration))
+prop_tx_lock_duration = checkJet (ElementsJet (TimeLockJet BrokenDoNotUseTxLockDuration))
                       $ \check -> forallPrimEnv $ \env -> check env ()
 
 prop_check_lock_height :: Property
@@ -205,13 +206,13 @@ prop_check_lock_time = checkJet (ElementsJet (TimeLockJet CheckLockTime))
                                                $ \w -> check env (toW32 w)
 
 prop_check_lock_distance :: Property
-prop_check_lock_distance = checkJet (ElementsJet (TimeLockJet CheckLockDistance))
-                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDistance $ envTx env)
+prop_check_lock_distance = checkJet (ElementsJet (TimeLockJet BrokenDoNotUseCheckLockDistance))
+                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockBrokenDistance $ envTx env)
                                                    $ \w -> check env (toW16 w)
 
 prop_check_lock_duration :: Property
-prop_check_lock_duration = checkJet (ElementsJet (TimeLockJet CheckLockDuration))
-                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockDuration $ envTx env)
+prop_check_lock_duration = checkJet (ElementsJet (TimeLockJet BrokenDoNotUseCheckLockDuration))
+                         $ \check -> forallPrimEnv $ \env -> forAll (genBoundaryCases . txLockBrokenDuration $ envTx env)
                                                    $ \w -> check env (toW16 w)
 
 prop_calculate_issuance_entropy :: Outpoint -> HashElement -> Bool

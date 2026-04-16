@@ -158,14 +158,14 @@ prop_tx_lock_time = forallPrimEnv $ \env -> fast_tx_lock_time env () == tx_lock_
   fast_tx_lock_time = testEval (specification (ElementsJet (TimeLockJet TxLockTime)))
 
 prop_tx_lock_distance :: Property
-prop_tx_lock_distance = forallPrimEnv $ \env -> fast_tx_lock_distance env () == tx_lock_distance env ()
+prop_tx_lock_distance = forallPrimEnv $ \env -> fast_tx_lock_distance env () == broken_do_not_use_tx_lock_distance env ()
  where
-  fast_tx_lock_distance = testEval (specification (ElementsJet (TimeLockJet TxLockDistance)))
+  fast_tx_lock_distance = testEval (specification (ElementsJet (TimeLockJet BrokenDoNotUseTxLockDistance)))
 
 prop_tx_lock_duration :: Property
-prop_tx_lock_duration = forallPrimEnv $ \env -> fast_tx_lock_duration env () == tx_lock_duration env ()
+prop_tx_lock_duration = forallPrimEnv $ \env -> fast_tx_lock_duration env () == broken_do_not_use_tx_lock_duration env ()
  where
-  fast_tx_lock_duration = testEval (specification (ElementsJet (TimeLockJet TxLockDuration)))
+  fast_tx_lock_duration = testEval (specification (ElementsJet (TimeLockJet BrokenDoNotUseTxLockDuration)))
 
 prop_check_lock_height :: Word32 -> Property
 prop_check_lock_height = \w -> forallPrimEnv $ \env -> fast_check_lock_height env w == check_lock_height env w
@@ -178,14 +178,14 @@ prop_check_lock_time = \w -> forallPrimEnv $ \env -> fast_check_lock_time env w 
   fast_check_lock_time = testEval (specification (ElementsJet (TimeLockJet CheckLockTime)))
 
 prop_check_lock_distance :: Word16 -> Property
-prop_check_lock_distance = \w -> forallPrimEnv $ \env -> fast_check_lock_distance env w == check_lock_distance env w
+prop_check_lock_distance = \w -> forallPrimEnv $ \env -> fast_check_lock_distance env w == broken_do_not_use_check_lock_distance env w
  where
-  fast_check_lock_distance = testEval (specification (ElementsJet (TimeLockJet CheckLockDistance)))
+  fast_check_lock_distance = testEval (specification (ElementsJet (TimeLockJet BrokenDoNotUseCheckLockDistance)))
 
 prop_check_lock_duration :: Word16 -> Property
-prop_check_lock_duration = \w -> forallPrimEnv $ \env -> fast_check_lock_duration env w == check_lock_duration env w
+prop_check_lock_duration = \w -> forallPrimEnv $ \env -> fast_check_lock_duration env w == broken_do_not_use_check_lock_duration env w
  where
-  fast_check_lock_duration = testEval (specification (ElementsJet (TimeLockJet CheckLockDuration)))
+  fast_check_lock_duration = testEval (specification (ElementsJet (TimeLockJet BrokenDoNotUseCheckLockDuration)))
 
 prop_calculate_issuance_entropy :: ((Word256, Word32), Word256) -> Bool
 prop_calculate_issuance_entropy = \input ->

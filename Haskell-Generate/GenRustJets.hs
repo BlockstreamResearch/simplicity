@@ -53,12 +53,11 @@ coreJetData :: (TyC x, TyC y) => CoreJet x y -> JetData x y
 coreJetData jet = JetData { jetName = mkName jet
                           , jetCMR = cmr
                           , jetModule = CoreModule
-                          , jetCost = Core.jetCost jet
+                          , jetCost = cost
                           }
   where
-    cmr | result == Elements.asJet (Elements.CoreJet jet) = result
-      where
-       result = Bitcoin.asJet (Bitcoin.CoreJet jet)
+    cmr = Bitcoin.asJet (Bitcoin.CoreJet jet)
+    cost = Bitcoin.jetCost (Bitcoin.CoreJet jet)
 
 elementsJetData :: (TyC x, TyC y) => Elements.JetType x y -> JetData x y
 elementsJetData jet = JetData { jetName = mkName jet
@@ -188,27 +187,32 @@ rustJetSourceTy = rustJetTy "source_ty" (\(SomeArrow jet) -> unreflect (fst (rei
 rustJetTargetTy :: Module -> Doc a
 rustJetTargetTy = rustJetTy "target_ty" (\(SomeArrow jet) -> unreflect (snd (reifyArrow jet)))
 
-rustJetPtr :: Module -> Doc a
-rustJetPtr mod = vsep $
-  [ nest 4 (vsep ("fn c_jet_ptr(&self) -> &dyn Fn(&mut CFrameItem, CFrameItem, &Self::CJetEnvironment) -> bool {" :
-    if modname == "Bitcoin"
-    then ["unimplemented!(\"Bitcoin jets have not yet been implemented.\")"]
-    else [ nest 4 (vsep ("match self {" :
-        map (<>comma)
-        [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
-          pretty ("&simplicity_sys::c_jets::jets_wrapper::"++cJetName jet)
-        | SomeArrow jet <- moduleJets mod
-        ]))
-    , "}"
-    ]))
+rustJetCJetPtr :: Module -> Doc a
+rustJetCJetPtr mod = vsep $
+  [ nest 4 (vsep
+    [ pretty ("pub(crate) fn c_jet_ptr(jet: &" ++ modname ++ ") -> fn(&mut CFrameItem, CFrameItem, &" ++ cJetEnvType ++ ") -> bool {")
+    , if modname == "Bitcoin"
+      then "    unimplemented!(\"Bitcoin jets have not yet been implemented.\")"
+      else vsep
+        [ nest 4 (vsep ("match jet {" :
+            map (<>comma)
+            [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
+              pretty ("simplicity_sys::c_jets::jets_wrapper::"++cJetName jet)
+            | SomeArrow jet <- moduleJets mod
+            ]))
+        , "}"
+        ]
+    ])
   , "}"
   ]
  where
   modname = rustModuleName mod
+  cJetEnvType | Just "Elements" == moduleName mod = "CElementsTxEnv" :: String
+              | otherwise = "()"
 
 rustJetEncode :: Module -> Doc a
 rustJetEncode mod =
-  "fn encode<W: Write>(&self, w: &mut BitWriter<W>) -> std::io::Result<usize>" <+>
+  "fn encode(&self, w: &mut BitWriter<&mut dyn Write>) -> std::io::Result<usize>" <+>
   nestBraces ("let (n, len) = match self" <+>
     nestBraces (vsep (foldMapWithPath item (moduleCodes mod))) <> semi <-> line <> "w.write_bits_be(n, len)")
  where
@@ -219,7 +223,7 @@ rustJetEncode mod =
 
 rustJetDecode :: Module -> Doc a
 rustJetDecode mod =
-  "fn decode<I: Iterator<Item = u8>>(bits: &mut BitIter<I>) -> Result<Self, decode::Error>" <+>
+  "fn decode<I: Iterator<Item = u8>>(bits: &mut BitIter<I>) -> Result<Self, decode::Error> where Self: Sized" <+>
   nestBraces ("decode_bits!(bits," <+> braces (docTree (moduleCodes mod)) <> ")")
  where
   docTree Dead = mempty
@@ -247,42 +251,27 @@ rustJetCost mod = vsep $
  where
   modname = rustModuleName mod
 
+rustJetParse :: Doc a
+rustJetParse =
+  "fn parse(s: &str) -> Result<Self, crate::Error> where Self: Sized" <+>
+  nestBraces "str::FromStr::from_str(s)"
+
 rustJetImpl :: Module -> Doc a
 rustJetImpl mod = vsep $
   [ nest 4 (vsep $ punctuate line
     ["impl Jet for" <+> pretty modname <+> "{"
-    , env
     , rustJetCmr mod
     , rustJetSourceTy mod
     , rustJetTargetTy mod
     , rustJetEncode mod
     , rustJetDecode mod
-    , rustJetPtr mod
     , rustJetCost mod
+    , rustJetParse
     ])
   , "}"
   ]
  where
   modname = rustModuleName mod
-  env = vsep
-    [ pretty $ "type Environment = "++env++";"
-    , pretty $ "type CJetEnvironment = "++cEnv++";"
-    , ""
-    , pretty $ "fn c_jet_env("++envArg++": &Self::Environment) -> &Self::CJetEnvironment {"
-    , pretty $ "    "++envBody
-    , "}"
-    ]
-   where
-    env | Nothing <- moduleName mod = "()"
-        | Just "Elements" == moduleName mod = "ElementsEnv<std::sync::Arc<elements::Transaction>>"
-        | Just name <- moduleName mod = name ++ "Env"
-    cEnv | Just "Elements" == moduleName mod = "CElementsTxEnv"
-         | otherwise = "()"
-    envArg | Just "Bitcoin" == moduleName mod = "_env"
-           | otherwise = "env"
-    envBody | Nothing == moduleName mod = "env"
-            | Just "Bitcoin" == moduleName mod = "unimplemented!(\"Unspecified CJetEnvironment for Bitcoin jets\")"
-            | otherwise = "env.c_tx_env()"
 
 rustJetEnum :: Module -> Doc a
 rustJetEnum mod = vsep
@@ -355,12 +344,8 @@ rustImports mod = vsep (map (<> semi)
   , "use std::{fmt, str}"
   ] ++ envImports))
  where
-  envImports | Nothing == moduleName mod = []
-             | Just "Bitcoin" == moduleName mod = ["use crate::jet::bitcoin::BitcoinEnv"]
-             | Just name <- moduleName mod =
-             [ pretty $ "use crate::jet::"++map toLower name++"::"++name++"Env"
-             , pretty $ "use simplicity_sys::C"++name++"TxEnv"
-             ]
+  envImports | Just "Elements" == moduleName mod = ["use simplicity_sys::CElementsTxEnv"]
+             | otherwise = []
 
 rustJetDoc :: Module -> SimpleDocStream a
 rustJetDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
@@ -370,6 +355,7 @@ rustJetDoc mod = layoutPretty layoutOptions $ vsep (map (<> line)
   , rustJetImpl mod
   , rustJetDisplay mod
   , rustJetFromStr mod
+  , rustJetCJetPtr mod
   ])
 
 rustFFIImports :: Doc a

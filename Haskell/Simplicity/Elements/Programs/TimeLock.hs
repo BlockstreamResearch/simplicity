@@ -2,9 +2,9 @@
 module Simplicity.Elements.Programs.TimeLock
  ( txIsFinal
  , txLockHeight, txLockTime
- , txLockDistance, txLockDuration
+ , brokenTxLockDistance, brokenTxLockDuration
  , checkLockHeight, checkLockTime
- , checkLockDistance, checkLockDuration
+ , brokenCheckLockDistance, brokenCheckLockDuration
  , module Simplicity.Programs.TimeLock
  , Bit
  ) where
@@ -43,16 +43,16 @@ bip68VersionCheck :: (Core term, Primitive term) => term () Bit
 bip68VersionCheck = scribe (toWord32 2) &&& primitive Version >>> le word32
 
 -- | Implements 'Simplicity.Elements.DataTypes.txLockDistance'.
-txLockDistance :: (Core term, Primitive term) => term () Distance
-txLockDistance = bip68VersionCheck &&& zero word16
+brokenTxLockDistance :: (Core term, Primitive term) => term () Distance
+brokenTxLockDistance = bip68VersionCheck &&& zero word16
              >>> match ih (forWhile word32 body >>> copair iden iden)
  where
   body = take (drop (primitive InputSequence)) &&& ih
      >>> match (injl ih) (injr (take parseSequence &&& ih >>> match ih (match (max word16) ih)))
 
 -- | Implements 'Simplicity.Elements.DataTypes.txLockDuration'.
-txLockDuration :: (Core term, Primitive term) => term () Duration
-txLockDuration = bip68VersionCheck &&& zero word16
+brokenTxLockDuration :: (Core term, Primitive term) => term () Duration
+brokenTxLockDuration = bip68VersionCheck &&& zero word16
              >>> match ih (forWhile word32 body >>> copair iden iden)
  where
   body = take (drop (primitive InputSequence)) &&& ih
@@ -67,9 +67,9 @@ checkLockTime :: (Assert term, Primitive term) => term Time ()
 checkLockTime = assert (iden &&& (unit >>> txLockTime) >>> le word32)
 
 -- | Asserts that the input is less than or equal to the value returned by 'txLockDistance'.
-checkLockDistance :: (Assert term, Primitive term) => term Distance ()
-checkLockDistance = assert (iden &&& (unit >>> txLockDistance) >>> le word16)
+brokenCheckLockDistance :: (Assert term, Primitive term) => term Distance ()
+brokenCheckLockDistance = assert (iden &&& (unit >>> brokenTxLockDistance) >>> le word16)
 
 -- | Asserts that the input is less than or equal to the value returned by 'txLockDuration'.
-checkLockDuration :: (Assert term, Primitive term) => term Duration ()
-checkLockDuration = assert (iden &&& (unit >>> txLockDuration) >>> le word16)
+brokenCheckLockDuration :: (Assert term, Primitive term) => term Duration ()
+brokenCheckLockDuration = assert (iden &&& (unit >>> brokenTxLockDuration) >>> le word16)

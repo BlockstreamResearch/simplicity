@@ -1,28 +1,40 @@
 -- | This module defines the data structures that make up the signed data in a Bitcoin transaction.
 module Simplicity.Bitcoin.DataTypes
   ( Script, Lock, Value
-  , Outpoint(Outpoint), opHash, opIndex
-  , SigTxInput(SigTxInput), sigTxiPreviousOutpoint, sigTxiValue, sigTxiSequence, sigTxiAnnex, sigTxiScriptSig
+  , Outpoint(Outpoint), opHash, opIndex, putOutpointBE
+  , SigTxInput(SigTxInput), sigTxiPreviousOutpoint, sigTxiTxo, sigTxiSequence, sigTxiAnnex, sigTxiScriptSig, sigTxiValue, sigTxiScript
   , TxOutput(TxOutput), txoValue, txoScript
   , SigTx(SigTx), sigTxVersion, sigTxIn, sigTxOut, sigTxLock
+  , putNoWitnessTx, txid
   , TapEnv(..)
-  , txIsFinal, txLockDistance, txLockDuration
+  , txTotalInputValue, txTotalOutputValue, txFee
+  , txIsFinal, txiLockDistance, txiLockDuration
+  , outputValuesHash, outputScriptsHash
+  , outputsHash, outputHash
+  , inputOutpointsHash, inputValuesHash, inputScriptsHash, inputUtxosHash
+  , inputSequencesHash, inputAnnexesHash, inputScriptSigsHash, inputsHash, inputHash
+  , txHash
+  , tapleafHash, tappathHash, tapEnvHash
+  , taptweak
   , module Simplicity.Bitcoin
   ) where
 
 import Control.Monad (guard)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
-import Data.Semigroup (Max(Max,getMax))
+import Data.Semigroup (Max(Max,getMax), Sum(Sum,getSum))
 import Data.Word (Word64, Word32, Word16, Word8)
 import Data.Serialize ( Serialize
                       , Get, get, getWord8, getWord16le, getWord32le, getWord64le, getLazyByteString
-                      , Put, put, putWord8, putWord16le, putWord32le, putWord64le, putLazyByteString, runPutLazy
+                      , Putter, put, putWord8, putWord16le, putWord32be, putWord32le, putWord64be, putWord64le, putLazyByteString, runPutLazy
                       )
+import Data.String (fromString)
 import Data.Vector (Vector)
+import qualified Data.Vector as V
 
 import Simplicity.Bitcoin
 import Simplicity.Digest
+import Simplicity.LibSecp256k1.Spec
 import Simplicity.LibSecp256k1.Schnorr
 
 {-
@@ -84,14 +96,27 @@ instance Serialize Outpoint where
   get = Outpoint <$> get <*> getWord32le
   put (Outpoint h i) = put h >> putWord32le i
 
+-- | Big endian serialization of an 'Outpoint'
+putOutpointBE :: Putter Outpoint
+putOutpointBE op = put (opHash op)
+                >> putWord32be (opIndex op)
+
 -- | The data type for signed transaction inputs.
 -- Note that signed transaction inputs for BIP 143 include the value of the input, which doesn't appear in the serialized transaction input format.
 data SigTxInput = SigTxInput { sigTxiPreviousOutpoint :: Outpoint
-                             , sigTxiValue :: Value
+                             , sigTxiTxo :: TxOutput
                              , sigTxiSequence :: Word32
                              , sigTxiAnnex :: Maybe BSL.ByteString
                              , sigTxiScriptSig :: Script -- length must be strictly less than 2^32.
                              } deriving Show
+
+-- | The value of the input being spent.
+sigTxiValue :: SigTxInput -> Value
+sigTxiValue = txoValue . sigTxiTxo
+
+-- | The value of the input being spent.
+sigTxiScript :: SigTxInput -> Script
+sigTxiScript = txoScript . sigTxiTxo
 
 {-
 instance Serialize SigTxInput where
@@ -132,23 +157,213 @@ data TapEnv = TapEnv { tapleafVersion :: Word8
                      , tapScriptCMR :: Hash256
                      } deriving Show
 
+txTotalInputValue :: SigTx -> Value
+txTotalInputValue tx = getSum . foldMap (Sum . sigTxiValue) $ sigTxIn tx
+
+txTotalOutputValue :: SigTx -> Value
+txTotalOutputValue tx = getSum . foldMap (Sum . txoValue) $ sigTxOut tx
+
+txFee :: SigTx -> Value
+txFee tx = txTotalInputValue tx - txTotalOutputValue tx
+
 txIsFinal :: SigTx -> Bool
 txIsFinal tx = all finalSequence (sigTxIn tx)
  where
   finalSequence sigin = sigTxiSequence sigin == maxBound
 
-txLockDistance :: SigTx -> Word16
-txLockDistance tx | sigTxVersion tx < 2 = 0
-                  | otherwise = getMax . foldMap distance $ sigTxIn tx
- where
-  distance sigin = case parseSequence (sigTxiSequence sigin) of
-                     Just (Left x) -> Max x
-                     _ -> mempty
+txiLockDistance :: SigTxInput -> Word16
+txiLockDistance sigin =
+  case parseSequence (sigTxiSequence sigin) of
+    Just (Left x) -> x
+    _ -> 0
 
-txLockDuration :: SigTx -> Word16
-txLockDuration tx | sigTxVersion tx < 2 = 0
-                  | otherwise = getMax . foldMap duration $ sigTxIn tx
+txiLockDuration :: SigTxInput -> Word16
+txiLockDuration sigin =
+  case parseSequence (sigTxiSequence sigin) of
+    Just (Right x) -> x
+    _ -> 0
+
+-- | A hash of all 'txoValues's.
+outputValuesHash :: SigTx -> Hash256
+outputValuesHash tx = bslHash . runPutLazy $ mapM_ (putWord64be . txoValue) (sigTxOut tx)
+
+-- | A hash of all 'txoScript' hashes.
+outputScriptsHash :: SigTx -> Hash256
+outputScriptsHash tx = bslHash . runPutLazy $ mapM_ (put . bslHash . txoScript) (sigTxOut tx)
+
+-- | A hash of
+--
+-- * 'outputValuesHash'
+-- * 'outputScriptsHash'
+outputsHash :: SigTx -> Hash256
+outputsHash tx = bslHash . runPutLazy $ do
+                   put $ outputValuesHash tx
+                   put $ outputScriptsHash tx
+
+-- | A hash of one output's
+--
+-- * value
+-- * hash of its script
+outputHash :: TxOutput -> Hash256
+outputHash txo = bslHash . runPutLazy $ do
+                   putWord64be $ txoValue txo
+                   put . bslHash $ txoScript txo
+
+-- | Serialize an input's previous output including whether the previous input is from an pegin or not, and which parent chain if it is a pegin.
+putOutpoint :: Putter SigTxInput
+putOutpoint txi = putOutpointBE (sigTxiPreviousOutpoint txi)
+
+-- | A hash of all 'sigTxiPreviousOutpoint's.
+inputOutpointsHash :: SigTx -> Hash256
+inputOutpointsHash tx = bslHash . runPutLazy $ mapM_ putOutpoint (sigTxIn tx)
+
+-- | A hash of all 'utxoValue's.
+inputValuesHash :: SigTx -> Hash256
+inputValuesHash tx = bslHash . runPutLazy $ mapM_ (putWord64be . sigTxiValue) (sigTxIn tx)
+
+-- | A hash of all 'utxoScript' hashes.
+inputScriptsHash :: SigTx -> Hash256
+inputScriptsHash tx = bslHash . runPutLazy $ mapM_ (put . bslHash . sigTxiScript) (sigTxIn tx)
+
+-- | A hash of
+--
+-- * 'inputValuesHash'
+-- * 'inputScriptsHash'
+inputUtxosHash :: SigTx -> Hash256
+inputUtxosHash tx = bslHash . runPutLazy $ do
+                      put $ inputValuesHash tx
+                      put $ inputScriptsHash tx
+
+-- | A hash of all 'sigTxiSequence's.
+inputSequencesHash :: SigTx -> Hash256
+inputSequencesHash tx = bslHash . runPutLazy $ mapM_ (putWord32be . sigTxiSequence) (sigTxIn tx)
+
+putAnnex :: Putter (Maybe BSL.ByteString)
+putAnnex Nothing = putWord8 0x00
+putAnnex (Just annex) = putWord8 0x01 >> put (bslHash annex)
+
+-- | A hash of all 'sigTxiAnnex' hashes.
+inputAnnexesHash :: SigTx -> Hash256
+inputAnnexesHash tx = bslHash . runPutLazy $ mapM_ (putAnnex . sigTxiAnnex) (sigTxIn tx)
+
+-- | A hash of all 'sigTxiScriptSig' hashes.
+inputScriptSigsHash :: SigTx -> Hash256
+inputScriptSigsHash tx = bslHash . runPutLazy $ mapM_ (put . bslHash . sigTxiScriptSig) (sigTxIn tx)
+
+-- | A hash of
+--
+-- * 'inputOutpointsHash'
+-- * 'inputSequencesHash'
+-- * 'inputAnnexesHash'
+--
+-- Note that 'inputScriptSigsHash' is excluded.
+inputsHash :: SigTx -> Hash256
+inputsHash tx = bslHash . runPutLazy $ do
+                  put $ inputOutpointsHash tx
+                  put $ inputSequencesHash tx
+                  put $ inputAnnexesHash tx
+
+-- | A hash of
+--
+-- * The inputs's outpoint (including if and where the pegin came from)
+-- * The inputs's sequence number
+-- * Whether or not the input has an annex and the hash of that annex.
+inputHash :: SigTxInput -> Hash256
+inputHash txi = bslHash . runPutLazy $ do
+                  putOutpoint txi
+                  putWord32be $ sigTxiSequence txi
+                  putAnnex $ sigTxiAnnex txi
+
+-- | A hash of
+--
+-- * 'sigTxVersion'
+-- * 'sigTxLock'
+-- * 'inputsHash'
+-- * 'outputsHash'
+-- * 'inputUtxosHash'
+txHash :: SigTx -> Hash256
+txHash tx = bslHash . runPutLazy $ do
+              putWord32be $ sigTxVersion tx
+              putWord32be $ sigTxLock tx
+              put $ inputsHash tx
+              put $ outputsHash tx
+              put $ inputUtxosHash tx
+
+-- | Serialize transaction data without witness data.
+-- Mainly suitable for computing a 'txid'.
+putNoWitnessTx :: Putter SigTx
+putNoWitnessTx tx = do
+  putWord32le $ sigTxVersion tx
+  putVarInt (V.length (sigTxIn tx))
+  mapM_ putInput (sigTxIn tx)
+  putVarInt (V.length (sigTxOut tx))
+  mapM_ putOutput (sigTxOut tx)
+  putWord32le $ sigTxLock tx
  where
-  duration sigin = case parseSequence (sigTxiSequence sigin) of
-                     Just (Right x) -> Max x
-                     _ -> mempty
+  putVarInt x | x < 0 = error "putVarInt: negative value"
+              | x <= 0xFC = putWord8 (fromIntegral x)
+              | x <= 0xFFFF = putWord8 0xFD >> putWord16le (fromIntegral x)
+              | x <= 0xFFFFFFFF = putWord8 0xFE >> putWord32le (fromIntegral x)
+              | x <= 0xFFFFFFFFFFFFFFFF = putWord8 0xFF >> putWord64le (fromIntegral x)
+  putInput txi = do
+    put (opHash (sigTxiPreviousOutpoint txi))
+    putWord32le (opIndex (sigTxiPreviousOutpoint txi))
+    putVarInt (BSL.length (sigTxiScriptSig txi))
+    putLazyByteString (sigTxiScriptSig txi)
+    putWord32le (sigTxiSequence txi)
+
+  putOutput txo = do
+    putWord64le (txoValue txo)
+    putVarInt (BSL.length (txoScript txo))
+    putLazyByteString (txoScript txo)
+
+-- | Return the txid of the transaction.
+txid :: SigTx -> Hash256
+txid = bslDoubleHash . runPutLazy . putNoWitnessTx
+
+-- | A hash of
+--
+-- * 'tapleafVersion'
+-- * 'tapScriptCMR'
+tapleafHash :: TapEnv -> Hash256
+tapleafHash tapEnv = bslHash . runPutLazy $ do
+  put tag
+  put tag
+  putWord8 $ tapleafVersion tapEnv
+  putWord8 32
+  put $ tapScriptCMR tapEnv
+ where
+  tag = bsHash (fromString "TapLeaf")
+
+-- | A hash of 'tappath's.
+tappathHash :: TapEnv -> Hash256
+tappathHash tapEnv = bslHash . runPutLazy $ mapM_ put (tappath tapEnv)
+
+-- | A hash of
+--
+-- * 'tapleafHash'
+-- * 'tappathHash'
+-- * 'tapInternalKey'
+tapEnvHash :: TapEnv -> Hash256
+tapEnvHash tapEnv = bslHash . runPutLazy $ do
+              put $ tapleafHash tapEnv
+              put $ tappathHash tapEnv
+              put $ tapInternalKey tapEnv
+
+-- | Implementation of BIP-0341's taptweak function.
+taptweak :: PubKey -> Hash256 -> Maybe PubKey
+taptweak (PubKey internalKey) h = do
+  guard $ toInteger internalKey < fieldOrder
+  guard $ h0 < groupOrder
+  a <- scale (scalar h0) g
+  b <- decompress (Point False xkey)
+  GE x y <- gej_normalize . snd $ gej_ge_add_ex a b
+  return $ PubKey (fe_pack x)
+ where
+  xkey = fe (toInteger internalKey)
+  h0 = integerHash256 . bslHash . runPutLazy $ do
+    put tag
+    put tag
+    put (fe_pack xkey)
+    put h
+  tag = bsHash (fromString "TapTweak")

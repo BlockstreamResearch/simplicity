@@ -7,6 +7,8 @@ import qualified Simplicity.BitMachine.Tests as BitMachine
 import qualified Simplicity.BitMachine.StaticAnalysis.Tests as StaticAnalysis
 import qualified Simplicity.FFI.Tests as FFI
 import qualified Simplicity.Programs.Tests as Programs
+import qualified Simplicity.Bitcoin.Tests as Bitcoin
+import qualified Simplicity.Bitcoin.FFI.Tests as BitcoinFFI
 import qualified Simplicity.Bitcoin.Serialization.Tests as BitcoinSerialization
 import qualified Simplicity.Elements.Tests as Elements
 import qualified Simplicity.Elements.FFI.Tests as ElementsFFI
@@ -23,6 +25,8 @@ tests = testGroup "Tests"
       , FFI.tests
       , BitMachine.tests
       , StaticAnalysis.tests
+      , Bitcoin.tests
+      , BitcoinFFI.tests
       , BitcoinSerialization.tests
       , Ty.tests
       , Elements.tests
