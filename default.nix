@@ -55,6 +55,11 @@ let hp = nixpkgs.haskell.packages.${ghc};
     stdenv = nixpkgs.${env};
   };
 
+  # Check cmake build
+  cmake = nixpkgs.callPackage ./Simplicity.C.cmake.nix {
+    stdenv = nixpkgs.${env};
+  };
+
   compcert = nixpkgs.callPackage ./compcert-opensource.nix {
     inherit (cp) coq flocq;
     inherit (cp.coq.ocamlPackages) ocaml menhir menhirLib findlib;
