@@ -30,7 +30,7 @@
  * Otherwise '*error' is set to 'SIMPLICITY_NO_ERROR'.
  *
  * If 'ihr != NULL' and '*error' is set to 'SIMPLICITY_NO_ERROR', then the identity hash of the root of the decoded expression is written to 'ihr'.
- * Otherwise if 'ihr != NULL'  and '*error' is not set to 'SIMPLCITY_NO_ERROR', then 'ihr' may or may not be written to.
+ * Otherwise if 'ihr != NULL' and '*error' is not set to 'SIMPLICITY_NO_ERROR', then 'ihr' may or may not be written to.
  *
  * Precondition: NULL != error;
  *               NULL != ihr implies unsigned char ihr[32]
@@ -107,7 +107,7 @@ extern bool simplicity_bitcoin_execSimplicity( simplicity_err* error, unsigned c
     if (IS_OK(*error) && amr) {
       static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(analyses), "analysis array too large.");
       static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
-      static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "analysis array index does nto fit in uint32_t.");
+      static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "analysis array index does not fit in uint32_t.");
       analyses *analysis = simplicity_malloc((size_t)dag_len * sizeof(analyses));
       if (analysis) {
         simplicity_computeAnnotatedMerkleRoot(analysis, dag, type_dag, (uint_fast32_t)dag_len);

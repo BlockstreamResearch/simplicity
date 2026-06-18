@@ -2,8 +2,8 @@
 #define SIMPLICITY_BITCOIN_EXEC_H
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <simplicity/errorCodes.h>
 #include <simplicity/bitcoin/env.h>
 
@@ -20,13 +20,12 @@
  * Otherwise '*error' is set to 'SIMPLICITY_NO_ERROR'.
  *
  * If 'ihr != NULL' and '*error' is set to 'SIMPLICITY_NO_ERROR', then the identity hash of the root of the decoded expression is written to 'ihr'.
- * Otherwise if 'ihr != NULL'  and '*error' is not set to 'SIMPLCITY_NO_ERROR', then 'ihr' may or may not be written to.
+ * Otherwise if 'ihr != NULL' and '*error' is not set to 'SIMPLICITY_NO_ERROR', then 'ihr' may or may not be written to.
  *
  * Precondition: NULL != error;
  *               NULL != ihr implies unsigned char ihr[32]
  *               NULL != tx;
  *               NULL != taproot;
- *               0 <= budget;
  *               0 <= minCost <= budget;
  *               NULL != amr implies unsigned char amr[32]
  *               unsigned char program[program_len]

@@ -94,7 +94,6 @@ moduleJets = sortJetName . toList . moduleCodes
 
 rustModuleName = fromMaybe "Core" . moduleName
 lowerRustModuleName = map toLower . rustModuleName
-moduleEnvType mod = lowerRustModuleName mod ++ "::CTxEnv, "
 
 coreModule :: Module
 coreModule = Module Nothing (someArrowMap coreJetData <$> (treeEvalBitStream Core.getJetBit))
