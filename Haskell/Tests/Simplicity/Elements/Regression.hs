@@ -29,7 +29,7 @@ regularJets :: BinTree (SomeArrow JetType)
 (Branch wordJets regularJets) = treeEvalBitStream Elements.getJetBit
 
 assert_jet_count :: Assertion
-assert_jet_count = length regularJets @?= 471
+assert_jet_count = length regularJets @?= 478
 
 assert_jet_cmr :: (TyC a, TyC b) => JetType a b -> Assertion
 assert_jet_cmr jt = commitmentRoot (asJet jt) @?= review (over be256) (expected_cmr jt)
@@ -511,6 +511,13 @@ expected_cmr (ElementsJet (TransactionJet Tappath)) = 0x42c0c1f2ef0e28ae7defa15e
 expected_cmr (ElementsJet (TransactionJet Version)) = 0x087fc95c41003348759fd840372c6f912d9be4e61eee3c6a7a40dc13c9c1bc70
 expected_cmr (ElementsJet (TransactionJet GenesisBlockHash)) = 0x0060b60d02b1336072846acff44dd0f4346c74a35e7b56423f9519c442d15daf
 expected_cmr (ElementsJet (TransactionJet TransactionId)) = 0x08b8eb3c2d2d958458e163e94334950c0bb914a0b9d214fc5e9de8f70a17a0d4
+expected_cmr (ElementsJet (TransactionJet OutputNullGetBytes1)) = 0x8bf23336d47f9e5e06ddd129f85abde1bd3c73486f67492e4f9a75e0dc49dab3
+expected_cmr (ElementsJet (TransactionJet OutputNullGetBytes2)) = 0x407b4a04151832c001155e4bd5d1ba1fc281be567a6c485415a08c8844fa469c
+expected_cmr (ElementsJet (TransactionJet OutputNullGetBytes4)) = 0xf349067271087129e32317a48437cdfa73ea391f2bbddcf2c6481f57d3bf0761
+expected_cmr (ElementsJet (TransactionJet OutputNullGetBytes8)) = 0xeb1c3a7fc1a713509c597ebc67661bdb48e8110569009969e24fcf2c458d66a7
+expected_cmr (ElementsJet (TransactionJet OutputNullGetBytes16)) = 0x6e8728a55aea21527c65df6c723f183fdcf217554f1ec023351bd996d867f865
+expected_cmr (ElementsJet (TransactionJet OutputNullGetBytes32)) = 0x8f86b4e8741923180f76e15dc253ab5d1d4789f592bd89dede5fa48ebf36a7b0
+expected_cmr (ElementsJet (TransactionJet OutputNullGetBytes64)) = 0x2d472c26b6382dda0f0bbd8a7b3e2445d0ff1b810ceb23170a22c013d21f4838
 expected_cmr (ConstWordJet (ConstWordContent SingleV 0)) = 0xa51cfd799d0bc368f48208032fc3881953f35aa7fd2b985cb237cbad143e30d2
 expected_cmr (ConstWordJet (ConstWordContent SingleV 1)) = 0xfd49252606a2febe2ad17de13b0a738b1b023bad8f7307e6bb7b65a8b83153cb
 expected_cmr (ConstWordJet (ConstWordContent (DoubleV SingleV) 0)) = 0xe93b30864811cc800369118d7573ab400d872e2338e406b051de69fb76cd57d4

@@ -130,6 +130,13 @@
         case 48: *result = VERSION; return SIMPLICITY_NO_ERROR;
         case 49: *result = GENESIS_BLOCK_HASH; return SIMPLICITY_NO_ERROR;
         case 50: *result = TRANSACTION_ID; return SIMPLICITY_NO_ERROR;
+        case 51: *result = OUTPUT_NULL_GET_BYTES_1; return SIMPLICITY_NO_ERROR;
+        case 52: *result = OUTPUT_NULL_GET_BYTES_2; return SIMPLICITY_NO_ERROR;
+        case 53: *result = OUTPUT_NULL_GET_BYTES_4; return SIMPLICITY_NO_ERROR;
+        case 54: *result = OUTPUT_NULL_GET_BYTES_8; return SIMPLICITY_NO_ERROR;
+        case 55: *result = OUTPUT_NULL_GET_BYTES_16; return SIMPLICITY_NO_ERROR;
+        case 56: *result = OUTPUT_NULL_GET_BYTES_32; return SIMPLICITY_NO_ERROR;
+        case 57: *result = OUTPUT_NULL_GET_BYTES_64; return SIMPLICITY_NO_ERROR;
       }
       break;
   }

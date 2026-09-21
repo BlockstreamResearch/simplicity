@@ -100,6 +100,13 @@ tests = testGroup "Elements"
           , testProperty "output_nonce" prop_output_nonce
           , testProperty "output_script_hash" prop_output_script_hash
           , testProperty "output_null_datum" prop_output_null_datum
+          , testProperty "output_null_get_bytes_1" prop_output_null_get_bytes_1
+          , testProperty "output_null_get_bytes_2" prop_output_null_get_bytes_2
+          , testProperty "output_null_get_bytes_4" prop_output_null_get_bytes_4
+          , testProperty "output_null_get_bytes_8" prop_output_null_get_bytes_8
+          , testProperty "output_null_get_bytes_16" prop_output_null_get_bytes_16
+          , testProperty "output_null_get_bytes_32" prop_output_null_get_bytes_32
+          , testProperty "output_null_get_bytes_64" prop_output_null_get_bytes_64
           , testProperty "output_is_fee" prop_output_is_fee
           , testProperty "output_surjection_proof" prop_output_surjection_proof
           , testProperty "output_range_proof" prop_output_range_proof
@@ -485,6 +492,34 @@ prop_output_null_datum :: NonNegative Integer -> Property
 prop_output_null_datum = \(NonNegative j) -> forallOutPrimEnv $ \env i -> fast_output_null_datum env (toW32 i, toWord32 j) == output_null_datum env (toW32 i, toWord32 j)
  where
   fast_output_null_datum = testEval (specification (ElementsJet (TransactionJet OutputNullDatum)))
+
+prop_output_null_get_bytes_1 :: NonNegative Integer -> Property
+prop_output_null_get_bytes_1 = \(NonNegative j) -> forallOutPrimEnv $ \env i -> fast env (toW32 i, toWord32 j) == output_null_get_bytes_1 env (toW32 i, toWord32 j)
+ where fast = testEval (specification (ElementsJet (TransactionJet OutputNullGetBytes1)))
+
+prop_output_null_get_bytes_2 :: NonNegative Integer -> Property
+prop_output_null_get_bytes_2 = \(NonNegative j) -> forallOutPrimEnv $ \env i -> fast env (toW32 i, toWord32 j) == output_null_get_bytes_2 env (toW32 i, toWord32 j)
+ where fast = testEval (specification (ElementsJet (TransactionJet OutputNullGetBytes2)))
+
+prop_output_null_get_bytes_4 :: NonNegative Integer -> Property
+prop_output_null_get_bytes_4 = \(NonNegative j) -> forallOutPrimEnv $ \env i -> fast env (toW32 i, toWord32 j) == output_null_get_bytes_4 env (toW32 i, toWord32 j)
+ where fast = testEval (specification (ElementsJet (TransactionJet OutputNullGetBytes4)))
+
+prop_output_null_get_bytes_8 :: NonNegative Integer -> Property
+prop_output_null_get_bytes_8 = \(NonNegative j) -> forallOutPrimEnv $ \env i -> fast env (toW32 i, toWord32 j) == output_null_get_bytes_8 env (toW32 i, toWord32 j)
+ where fast = testEval (specification (ElementsJet (TransactionJet OutputNullGetBytes8)))
+
+prop_output_null_get_bytes_16 :: NonNegative Integer -> Property
+prop_output_null_get_bytes_16 = \(NonNegative j) -> forallOutPrimEnv $ \env i -> fast env (toW32 i, toWord32 j) == output_null_get_bytes_16 env (toW32 i, toWord32 j)
+ where fast = testEval (specification (ElementsJet (TransactionJet OutputNullGetBytes16)))
+
+prop_output_null_get_bytes_32 :: NonNegative Integer -> Property
+prop_output_null_get_bytes_32 = \(NonNegative j) -> forallOutPrimEnv $ \env i -> fast env (toW32 i, toWord32 j) == output_null_get_bytes_32 env (toW32 i, toWord32 j)
+ where fast = testEval (specification (ElementsJet (TransactionJet OutputNullGetBytes32)))
+
+prop_output_null_get_bytes_64 :: NonNegative Integer -> Property
+prop_output_null_get_bytes_64 = \(NonNegative j) -> forallOutPrimEnv $ \env i -> fast env (toW32 i, toWord32 j) == output_null_get_bytes_64 env (toW32 i, toWord32 j)
+ where fast = testEval (specification (ElementsJet (TransactionJet OutputNullGetBytes64)))
 
 prop_output_is_fee :: Property
 prop_output_is_fee = forallOutPrimEnv $ \env i ->

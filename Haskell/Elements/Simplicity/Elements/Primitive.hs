@@ -62,6 +62,13 @@ data Prim a b where
   OutputNonce :: Prim Word32 (S (S (Conf Word256)))
   OutputScriptHash :: Prim Word32 (S Word256)
   OutputNullDatum :: Prim (Word32, Word32) (S (S (Either (Word2, Word256) (Either Bit Word4))))
+  OutputNullGetBytes1 :: Prim (Word32, Word32) (S (S (Word8)))
+  OutputNullGetBytes2 :: Prim (Word32, Word32) (S (S (Word16)))
+  OutputNullGetBytes4 :: Prim (Word32, Word32) (S (S (Word32)))
+  OutputNullGetBytes8 :: Prim (Word32, Word32) (S (S Word64))
+  OutputNullGetBytes16 :: Prim (Word32, Word32) (S (S (Word128)))
+  OutputNullGetBytes32 :: Prim (Word32, Word32) (S (S Word256))
+  OutputNullGetBytes64 :: Prim (Word32, Word32) (S (S (Word256, Word256)))
   OutputSurjectionProof :: Prim Word32 (S Word256)
   OutputRangeProof :: Prim Word32 (S Word256)
   GenesisBlockHash :: Prim () Word256
@@ -95,6 +102,13 @@ instance Eq (Prim a b) where
   OutputNonce == OutputNonce = True
   OutputScriptHash == OutputScriptHash = True
   OutputNullDatum == OutputNullDatum = True
+  OutputNullGetBytes1 == OutputNullGetBytes1 = True
+  OutputNullGetBytes2 == OutputNullGetBytes2 = True
+  OutputNullGetBytes4 == OutputNullGetBytes4 = True
+  OutputNullGetBytes8 == OutputNullGetBytes8 = True
+  OutputNullGetBytes16 == OutputNullGetBytes16 = True
+  OutputNullGetBytes32 == OutputNullGetBytes32 = True
+  OutputNullGetBytes64 == OutputNullGetBytes64 = True
   OutputSurjectionProof == OutputSurjectionProof = True
   OutputRangeProof == OutputRangeProof = True
   GenesisBlockHash == GenesisBlockHash = True
@@ -133,6 +147,13 @@ primName OutputAmount = "outputAmount"
 primName OutputNonce = "outputNonce"
 primName OutputScriptHash = "outputScriptHash"
 primName OutputNullDatum = "outputNullDatum"
+primName OutputNullGetBytes1 = "outputNullGetBytes1"
+primName OutputNullGetBytes2 = "outputNullGetBytes2"
+primName OutputNullGetBytes4 = "outputNullGetBytes4"
+primName OutputNullGetBytes8 = "outputNullGetBytes8"
+primName OutputNullGetBytes16 = "outputNullGetBytes16"
+primName OutputNullGetBytes32 = "outputNullGetBytes32"
+primName OutputNullGetBytes64 = "outputNullGetBytes64"
 primName OutputSurjectionProof = "outputSurjectionProof"
 primName OutputRangeProof = "outputRangeProof"
 primName GenesisBlockHash = "genesisBlockHash"
@@ -204,6 +225,7 @@ primSem p a env = interpret p a
   encodeNonce = cast . fmap (((toBit *** (toWord256 . toInteger)) +++ encodeHash) . nonce)
   encodeOutpoint op = (encodeHash $ opHash op, toWord32 . fromIntegral $ opIndex op)
   encodeKey (Schnorr.PubKey x) = toWord256 . toInteger $ x
+  bslInteger = BSL.foldl' (\acc w -> acc * 256 + toInteger w) 0
   encodeNullDatum (Immediate h) = Left (toWord2 0, encodeHash h)
   encodeNullDatum (PushData h) = Left (toWord2 1, encodeHash h)
   encodeNullDatum (PushData2 h) = Left (toWord2 2, encodeHash h)
@@ -262,6 +284,45 @@ primSem p a env = interpret p a
     txo <- lookupOutput . fromInteger $ fromWord32 i
     nullData <- txNullData $ txoScript txo
     return . cast . fmap (encodeNullDatum . fmap bslHash) . listToMaybe $ List.drop (fromInteger (fromWord32 j)) nullData
+  interpret OutputNullGetBytes1 = \(i, j) -> return . cast $ do
+    txo <- lookupOutput . fromInteger $ fromWord32 i
+    nullData <- txNullData $ txoScript txo
+    return . cast $ listToMaybe (List.drop (fromInteger (fromWord32 j)) nullData) >>= \d ->
+      case d of { Immediate bs | BSL.length bs == 1 -> Just (toWord8 (bslInteger bs)); _ -> Nothing }
+  interpret OutputNullGetBytes2 = \(i, j) -> return . cast $ do
+    txo <- lookupOutput . fromInteger $ fromWord32 i
+    nullData <- txNullData $ txoScript txo
+    return . cast $ listToMaybe (List.drop (fromInteger (fromWord32 j)) nullData) >>= \d ->
+      case d of { Immediate bs | BSL.length bs == 2 -> Just (toWord16 (bslInteger bs)); _ -> Nothing }
+  interpret OutputNullGetBytes4 = \(i, j) -> return . cast $ do
+    txo <- lookupOutput . fromInteger $ fromWord32 i
+    nullData <- txNullData $ txoScript txo
+    return . cast $ listToMaybe (List.drop (fromInteger (fromWord32 j)) nullData) >>= \d ->
+      case d of { Immediate bs | BSL.length bs == 4 -> Just (toWord32 (bslInteger bs)); _ -> Nothing }
+  interpret OutputNullGetBytes8 = \(i, j) -> return . cast $ do
+    txo <- lookupOutput . fromInteger $ fromWord32 i
+    nullData <- txNullData $ txoScript txo
+    return . cast $ listToMaybe (List.drop (fromInteger (fromWord32 j)) nullData) >>= \d ->
+      case d of { Immediate bs | BSL.length bs == 8 -> Just (toWord64 (bslInteger bs)); _ -> Nothing }
+  interpret OutputNullGetBytes16 = \(i, j) -> return . cast $ do
+    txo <- lookupOutput . fromInteger $ fromWord32 i
+    nullData <- txNullData $ txoScript txo
+    return . cast $ listToMaybe (List.drop (fromInteger (fromWord32 j)) nullData) >>= \d ->
+      case d of { Immediate bs | BSL.length bs == 16 -> Just (toWord128 (bslInteger bs)); _ -> Nothing }
+  interpret OutputNullGetBytes32 = \(i, j) -> return . cast $ do
+    txo <- lookupOutput . fromInteger $ fromWord32 i
+    nullData <- txNullData $ txoScript txo
+    return . cast $ listToMaybe (List.drop (fromInteger (fromWord32 j)) nullData) >>= \d ->
+      case d of { Immediate bs | BSL.length bs == 32 -> Just (toWord256 (bslInteger bs)); _ -> Nothing }
+  interpret OutputNullGetBytes64 = \(i, j) -> return . cast $ do
+    txo <- lookupOutput . fromInteger $ fromWord32 i
+    nullData <- txNullData $ txoScript txo
+    return . cast $ listToMaybe (List.drop (fromInteger (fromWord32 j)) nullData) >>= \d ->
+      case d of
+        Immediate bs | BSL.length bs == 64 ->
+          let (lo, hi) = BSL.splitAt 32 bs
+          in Just (toWord256 (bslInteger lo), toWord256 (bslInteger hi))
+        _ -> Nothing
   interpret OutputSurjectionProof = return . (atOutput $ encodeHash . bslHash . view (to txoAsset.under asset.prf_))
   interpret OutputRangeProof = return . (atOutput $ encodeHash . bslHash . view (to txoAmount.under amount.prf_))
   interpret GenesisBlockHash = element . return . encodeHash $ envGenesisBlock env

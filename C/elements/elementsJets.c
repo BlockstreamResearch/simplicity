@@ -427,7 +427,7 @@ bool simplicity_output_null_datum(frameItem* dst, frameItem src, const txEnv* en
   if (writeBit(dst, i < env->tx->numOutputs && env->tx->output[i].isNullData)) {
     uint_fast32_t j = simplicity_read32(&src);
     if (writeBit(dst, j < env->tx->output[i].pnd.len)) {
-      if (writeBit(dst, OP_PUSHDATA4 < env->tx->output[i].pnd.op[j].code)) {
+      if (writeBit(dst, OP_PUSHBYTES_64 < env->tx->output[i].pnd.op[j].code)) {
         skipBits(dst, 2 + 256 - 5);
         if (writeBit(dst, OP_1 <= env->tx->output[i].pnd.op[j].code)) {
           switch (env->tx->output[i].pnd.op[j].code) {
@@ -457,10 +457,19 @@ bool simplicity_output_null_datum(frameItem* dst, frameItem src, const txEnv* en
         }
       } else {
         switch (env->tx->output[i].pnd.op[j].code) {
-          case OP_IMMEDIATE: writeBit(dst, 0); writeBit(dst, 0); break;
-          case OP_PUSHDATA: writeBit(dst, 0); writeBit(dst, 1); break;
-          case OP_PUSHDATA2: writeBit(dst, 1); writeBit(dst, 0); break;
-          case OP_PUSHDATA4: writeBit(dst, 1); writeBit(dst, 1); break;
+          case OP_IMMEDIATE:  writeBit(dst, 0); writeBit(dst, 0); break;
+          case OP_PUSHDATA:   writeBit(dst, 0); writeBit(dst, 1); break;
+          case OP_PUSHDATA2:  writeBit(dst, 1); writeBit(dst, 0); break;
+          case OP_PUSHDATA4:  writeBit(dst, 1); writeBit(dst, 1); break;
+          case OP_PUSHBYTES_1:
+          case OP_PUSHBYTES_2:
+          case OP_PUSHBYTES_4:
+          case OP_PUSHBYTES_8:
+          case OP_PUSHBYTES_16:
+          case OP_PUSHBYTES_32:
+          case OP_PUSHBYTES_64:
+            /* These were historically part of OP_IMMEDIATE*/
+            writeBit(dst, 0); writeBit(dst, 0); break;
           default: SIMPLICITY_UNREACHABLE;
         }
         writeHash(dst, &env->tx->output[i].pnd.op[j].dataHash);
@@ -470,6 +479,125 @@ bool simplicity_output_null_datum(frameItem* dst, frameItem src, const txEnv* en
     }
   } else {
     skipBits(dst, 1 + 1 + 2 + 256);
+  }
+  return true;
+}
+
+/* output_null_get_8 : TWO^32 * TWO^32 |- S (S TWO^64) */
+bool simplicity_output_null_get_bytes_8(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = simplicity_read32(&src);
+  if (writeBit(dst, i < env->tx->numOutputs && env->tx->output[i].isNullData)) {
+    uint_fast32_t j = simplicity_read32(&src);
+    if (writeBit(dst, j < env->tx->output[i].pnd.len &&
+                      OP_PUSHBYTES_8 == env->tx->output[i].pnd.op[j].code)) {
+      write8s(dst, env->tx->output[i].pnd.op[j].data, 8);
+    } else {
+      skipBits(dst, 64);
+    }
+  } else {
+    skipBits(dst, 1 + 64);
+  }
+  return true;
+}
+
+/* output_null_get_1 : TWO^32 * TWO^32 |- S (S TWO^8) */
+bool simplicity_output_null_get_bytes_1(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = simplicity_read32(&src);
+  if (writeBit(dst, i < env->tx->numOutputs && env->tx->output[i].isNullData)) {
+    uint_fast32_t j = simplicity_read32(&src);
+    if (writeBit(dst, j < env->tx->output[i].pnd.len &&
+                      OP_PUSHBYTES_1 == env->tx->output[i].pnd.op[j].code)) {
+      write8s(dst, env->tx->output[i].pnd.op[j].data, 1);
+    } else {
+      skipBits(dst, 8);
+    }
+  } else {
+    skipBits(dst, 1 + 8);
+  }
+  return true;
+}
+
+/* output_null_get_2 : TWO^32 * TWO^32 |- S (S TWO^16) */
+bool simplicity_output_null_get_bytes_2(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = simplicity_read32(&src);
+  if (writeBit(dst, i < env->tx->numOutputs && env->tx->output[i].isNullData)) {
+    uint_fast32_t j = simplicity_read32(&src);
+    if (writeBit(dst, j < env->tx->output[i].pnd.len &&
+                      OP_PUSHBYTES_2 == env->tx->output[i].pnd.op[j].code)) {
+      write8s(dst, env->tx->output[i].pnd.op[j].data, 2);
+    } else {
+      skipBits(dst, 16);
+    }
+  } else {
+    skipBits(dst, 1 + 16);
+  }
+  return true;
+}
+
+/* output_null_get_4 : TWO^32 * TWO^32 |- S (S TWO^32) */
+bool simplicity_output_null_get_bytes_4(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = simplicity_read32(&src);
+  if (writeBit(dst, i < env->tx->numOutputs && env->tx->output[i].isNullData)) {
+    uint_fast32_t j = simplicity_read32(&src);
+    if (writeBit(dst, j < env->tx->output[i].pnd.len &&
+                      OP_PUSHBYTES_4 == env->tx->output[i].pnd.op[j].code)) {
+      write8s(dst, env->tx->output[i].pnd.op[j].data, 4);
+    } else {
+      skipBits(dst, 32);
+    }
+  } else {
+    skipBits(dst, 1 + 32);
+  }
+  return true;
+}
+
+/* output_null_get_16 : TWO^32 * TWO^32 |- S (S TWO^128) */
+bool simplicity_output_null_get_bytes_16(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = simplicity_read32(&src);
+  if (writeBit(dst, i < env->tx->numOutputs && env->tx->output[i].isNullData)) {
+    uint_fast32_t j = simplicity_read32(&src);
+    if (writeBit(dst, j < env->tx->output[i].pnd.len &&
+                      OP_PUSHBYTES_16 == env->tx->output[i].pnd.op[j].code)) {
+      write8s(dst, env->tx->output[i].pnd.op[j].data, 16);
+    } else {
+      skipBits(dst, 128);
+    }
+  } else {
+    skipBits(dst, 1 + 128);
+  }
+  return true;
+}
+
+/* output_null_get_32 : TWO^32 * TWO^32 |- S (S TWO^256) */
+bool simplicity_output_null_get_bytes_32(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = simplicity_read32(&src);
+  if (writeBit(dst, i < env->tx->numOutputs && env->tx->output[i].isNullData)) {
+    uint_fast32_t j = simplicity_read32(&src);
+    if (writeBit(dst, j < env->tx->output[i].pnd.len &&
+                      OP_PUSHBYTES_32 == env->tx->output[i].pnd.op[j].code)) {
+      write8s(dst, env->tx->output[i].pnd.op[j].data, 32);
+    } else {
+      skipBits(dst, 256);
+    }
+  } else {
+    skipBits(dst, 1 + 256);
+  }
+  return true;
+}
+
+/* output_null_get_64 : TWO^32 * TWO^32 |- S (S TWO^512) */
+bool simplicity_output_null_get_bytes_64(frameItem* dst, frameItem src, const txEnv* env) {
+  uint_fast32_t i = simplicity_read32(&src);
+  if (writeBit(dst, i < env->tx->numOutputs && env->tx->output[i].isNullData)) {
+    uint_fast32_t j = simplicity_read32(&src);
+    if (writeBit(dst, j < env->tx->output[i].pnd.len &&
+                      OP_PUSHBYTES_64 == env->tx->output[i].pnd.op[j].code)) {
+      write8s(dst, env->tx->output[i].pnd.op[j].data, 64);
+    } else {
+      skipBits(dst, 512);
+    }
+  } else {
+    skipBits(dst, 1 + 512);
   }
   return true;
 }

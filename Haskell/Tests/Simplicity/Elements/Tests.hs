@@ -114,6 +114,13 @@ tests = testGroup "Elements"
           , testProperty "output_nonce" prop_output_nonce
           , testProperty "output_script_hash" prop_output_script_hash
           , testProperty "output_null_datum" prop_output_null_datum
+          , testProperty "output_null_get_bytes_1" prop_output_null_get_bytes_1
+          , testProperty "output_null_get_bytes_2" prop_output_null_get_bytes_2
+          , testProperty "output_null_get_bytes_4" prop_output_null_get_bytes_4
+          , testProperty "output_null_get_bytes_8" prop_output_null_get_bytes_8
+          , testProperty "output_null_get_bytes_16" prop_output_null_get_bytes_16
+          , testProperty "output_null_get_bytes_32" prop_output_null_get_bytes_32
+          , testProperty "output_null_get_bytes_64" prop_output_null_get_bytes_64
           , testProperty "output_is_fee" prop_output_is_fee
           , testProperty "output_surjection_proof" prop_output_surjection_proof
           , testProperty "output_range_proof" prop_output_range_proof
@@ -475,6 +482,34 @@ prop_output_script_hash = checkJet (ElementsJet (TransactionJet OutputScriptHash
 prop_output_null_datum :: Property
 prop_output_null_datum = checkJet (ElementsJet (TransactionJet OutputNullDatum))
                        $ \check -> forallOutPrimEnv $ \env i -> forAll arbitrary $ \(NonNegative j) -> check env (toW32 i, toWord32 j)
+
+prop_output_null_get_bytes_1 :: Property
+prop_output_null_get_bytes_1 = checkJet (ElementsJet (TransactionJet OutputNullGetBytes1))
+                             $ \check -> forallOutPrimEnv $ \env i -> forAll arbitrary $ \(NonNegative j) -> check env (toW32 i, toWord32 j)
+
+prop_output_null_get_bytes_2 :: Property
+prop_output_null_get_bytes_2 = checkJet (ElementsJet (TransactionJet OutputNullGetBytes2))
+                             $ \check -> forallOutPrimEnv $ \env i -> forAll arbitrary $ \(NonNegative j) -> check env (toW32 i, toWord32 j)
+
+prop_output_null_get_bytes_4 :: Property
+prop_output_null_get_bytes_4 = checkJet (ElementsJet (TransactionJet OutputNullGetBytes4))
+                             $ \check -> forallOutPrimEnv $ \env i -> forAll arbitrary $ \(NonNegative j) -> check env (toW32 i, toWord32 j)
+
+prop_output_null_get_bytes_8 :: Property
+prop_output_null_get_bytes_8 = checkJet (ElementsJet (TransactionJet OutputNullGetBytes8))
+                             $ \check -> forallOutPrimEnv $ \env i -> forAll arbitrary $ \(NonNegative j) -> check env (toW32 i, toWord32 j)
+
+prop_output_null_get_bytes_16 :: Property
+prop_output_null_get_bytes_16 = checkJet (ElementsJet (TransactionJet OutputNullGetBytes16))
+                              $ \check -> forallOutPrimEnv $ \env i -> forAll arbitrary $ \(NonNegative j) -> check env (toW32 i, toWord32 j)
+
+prop_output_null_get_bytes_32 :: Property
+prop_output_null_get_bytes_32 = checkJet (ElementsJet (TransactionJet OutputNullGetBytes32))
+                              $ \check -> forallOutPrimEnv $ \env i -> forAll arbitrary $ \(NonNegative j) -> check env (toW32 i, toWord32 j)
+
+prop_output_null_get_bytes_64 :: Property
+prop_output_null_get_bytes_64 = checkJet (ElementsJet (TransactionJet OutputNullGetBytes64))
+                              $ \check -> forallOutPrimEnv $ \env i -> forAll arbitrary $ \(NonNegative j) -> check env (toW32 i, toWord32 j)
 
 prop_output_is_fee :: Property
 prop_output_is_fee = checkJet (ElementsJet (TransactionJet OutputIsFee))

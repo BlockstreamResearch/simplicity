@@ -2743,6 +2743,62 @@
 , .targetIx = ty_mmspw2w256sbw4
 , .cost = 87 /* milli weight units */
 }
+,[OUTPUT_NULL_GET_BYTES_1] =
+{ .tag = JET
+, .jet = simplicity_output_null_get_bytes_1
+, .cmr = {{0x8bf23336u, 0xd47f9e5eu, 0x06ddd129u, 0xf85abde1u, 0xbd3c7348u, 0x6f67492eu, 0x4f9a75e0u, 0xdc49dab3u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_mmw8
+, .cost = 87 /* milli weight units */
+}
+,[OUTPUT_NULL_GET_BYTES_16] =
+{ .tag = JET
+, .jet = simplicity_output_null_get_bytes_16
+, .cmr = {{0x6e8728a5u, 0x5aea2152u, 0x7c65df6cu, 0x723f183fu, 0xdcf21755u, 0x4f1ec023u, 0x351bd996u, 0xd867f865u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_mmw128
+, .cost = 87 /* milli weight units */
+}
+,[OUTPUT_NULL_GET_BYTES_2] =
+{ .tag = JET
+, .jet = simplicity_output_null_get_bytes_2
+, .cmr = {{0x407b4a04u, 0x151832c0u, 0x01155e4bu, 0xd5d1ba1fu, 0xc281be56u, 0x7a6c4854u, 0x15a08c88u, 0x44fa469cu}}
+, .sourceIx = ty_w64
+, .targetIx = ty_mmw16
+, .cost = 87 /* milli weight units */
+}
+,[OUTPUT_NULL_GET_BYTES_32] =
+{ .tag = JET
+, .jet = simplicity_output_null_get_bytes_32
+, .cmr = {{0x8f86b4e8u, 0x74192318u, 0x0f76e15du, 0xc253ab5du, 0x1d4789f5u, 0x92bd89deu, 0xde5fa48eu, 0xbf36a7b0u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_mmw256
+, .cost = 87 /* milli weight units */
+}
+,[OUTPUT_NULL_GET_BYTES_4] =
+{ .tag = JET
+, .jet = simplicity_output_null_get_bytes_4
+, .cmr = {{0xf3490672u, 0x71087129u, 0xe32317a4u, 0x8437cdfau, 0x73ea391fu, 0x2bbddcf2u, 0xc6481f57u, 0xd3bf0761u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_mmw32
+, .cost = 87 /* milli weight units */
+}
+,[OUTPUT_NULL_GET_BYTES_64] =
+{ .tag = JET
+, .jet = simplicity_output_null_get_bytes_64
+, .cmr = {{0x2d472c26u, 0xb6382ddau, 0x0f0bbd8au, 0x7b3e2445u, 0xd0ff1b81u, 0x0ceb2317u, 0x0a22c013u, 0xd21f4838u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_mmw512
+, .cost = 87 /* milli weight units */
+}
+,[OUTPUT_NULL_GET_BYTES_8] =
+{ .tag = JET
+, .jet = simplicity_output_null_get_bytes_8
+, .cmr = {{0xeb1c3a7fu, 0xc1a71350u, 0x9c597ebcu, 0x67661bdbu, 0x48e81105u, 0x69009969u, 0xe24fcf2cu, 0x458d66a7u}}
+, .sourceIx = ty_w64
+, .targetIx = ty_mmw64
+, .cost = 87 /* milli weight units */
+}
 ,[OUTPUT_RANGE_PROOF] =
 { .tag = JET
 , .jet = simplicity_output_range_proof
