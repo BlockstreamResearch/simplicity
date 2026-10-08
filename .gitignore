@@ -40,3 +40,4 @@ CMakeFiles
 /*.c
 /*.h
 /*.inc
+.vscode
