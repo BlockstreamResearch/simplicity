@@ -191,6 +191,11 @@ int_fast32_t simplicity_decodeMallocDag(dag_node** dag, simplicity_callback_deco
   if (dagLen <= 0) return dagLen;
   static_assert(DAG_LEN_MAX <= (uint32_t)INT32_MAX, "DAG_LEN_MAX exceeds supported parsing range.");
   if (DAG_LEN_MAX < (uint32_t)dagLen) return SIMPLICITY_ERR_DATA_OUT_OF_RANGE;
+  /* Every node's encoding is at least 2 bits long ('decodeNode' reads at least 2 bits before any call to 'decodeJet'),
+   * so a 'stream' too short to hold 'dagLen' nodes is bound to fail with 'SIMPLICITY_ERR_BITSTREAM_EOF'.
+   * Fail before allocating, so that the size of the allocation is proportional to the length of the 'stream'.
+   */
+  if (stream->len < ((size_t)dagLen * 2 + stream->offset + CHAR_BIT - 1) / CHAR_BIT) return SIMPLICITY_ERR_BITSTREAM_EOF;
   static_assert(DAG_LEN_MAX <= SIZE_MAX / sizeof(dag_node), "dag array too large.");
   static_assert(1 <= DAG_LEN_MAX, "DAG_LEN_MAX is zero.");
   static_assert(DAG_LEN_MAX - 1 <= UINT32_MAX, "dag array index does not fit in uint32_t.");

@@ -71,6 +71,36 @@ static void test_decodeUptoMaxInt(void) {
   }
 }
 
+static void test_decodeMallocDag_length(void) {
+  printf("Test decodeMallocDag length prefix\n");
+  static const struct {
+    const char* name;
+    unsigned char buf[5];
+    size_t len;
+    int_fast32_t expected;
+  } cases[] =
+  /* A length prefix of 8,000,000 in a 5 byte stream must be rejected before allocating the dag. */
+  { { "8000000 nodes in 5 bytes", { 0xf0, 0x6e, 0x84, 0x80, 0x00 }, 5, SIMPLICITY_ERR_BITSTREAM_EOF }
+  /* A length prefix of 4 needs at least 6 + 2*4 bits, i.e. 2 bytes. */
+  , { "4 nodes in 1 byte", { 0xc0 }, 1, SIMPLICITY_ERR_BITSTREAM_EOF }
+  /* With 2 bytes the stream is long enough to start decoding, which then finds the first node referencing a non-existent child. */
+  , { "4 nodes in 2 bytes", { 0xc0, 0x00 }, 2, SIMPLICITY_ERR_DATA_OUT_OF_RANGE }
+  };
+
+  for (size_t i = 0; i < sizeof(cases)/sizeof(cases[0]); ++i) {
+    dag_node* dag;
+    bitstream stream = initializeBitstream(cases[i].buf, cases[i].len);
+    int_fast32_t result = simplicity_decodeMallocDag(&dag, simplicity_elements_decodeJet, NULL, &stream);
+    if (cases[i].expected == result && NULL == dag) {
+      successes++;
+    } else {
+      failures++;
+      printf("Unexpected result for %s.  Expected %d and received %d\n", cases[i].name, (int)cases[i].expected, (int)result);
+    }
+    simplicity_free(dag);
+  }
+}
+
 static void test_hashBlock(void) {
   printf("Test hashBlock\n");
   dag_node* dag;
@@ -745,6 +775,7 @@ int main(int argc, char **argv) {
     timing_flag = 0;
   }
   test_decodeUptoMaxInt();
+  test_decodeMallocDag_length();
   test_hashBlock();
   test_occursCheck();
 
