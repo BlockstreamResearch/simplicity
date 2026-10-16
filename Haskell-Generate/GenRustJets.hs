@@ -218,6 +218,7 @@ rustJetCJetPtr mod = vsep $
  where
   modname = rustModuleName mod
   cJetEnvType | Just "Elements" == moduleName mod = "CElementsTxEnv" :: String
+              | Just "Bitcoin" == moduleName mod = "CBitcoinTxEnv"
               | otherwise = "()"
 
 rustJetEncode :: Module -> Doc a
@@ -354,6 +355,7 @@ rustImports mod = vsep (map (<> semi)
   ] ++ envImports))
  where
   envImports | Just "Elements" == moduleName mod = ["use simplicity_sys::CElementsTxEnv"]
+             | Just "Bitcoin" == moduleName mod = ["use simplicity_sys::CBitcoinTxEnv"]
              | otherwise = []
 
 rustJetDoc :: Module -> SimpleDocStream a
