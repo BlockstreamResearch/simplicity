@@ -154,11 +154,6 @@ showRustHash h = fillSep $ ((<> comma) . format <$> chunksOf 2 str_h)
 rustJetCmr :: Module -> Doc a
 rustJetCmr mod = vsep $
   [ nest 4 (vsep ("fn cmr(&self) -> Cmr {" :
--- Temporary if statement until Bitcoin Jets have weight costs assigned to them
--- See Haskell/Simplicity/Bitcoin/Jets.hs:  jetCost (BitcoinJet jt) = error "Simplicity.Bitcoin.Jets.jetCost: :TODO: Implement jets for Bitcoin and benchmark them."
-   if Just "Bitcoin" == moduleName mod
-   then ["unimplemented!(\"Bitcoin jet CMRs weights have not yet been implemented.\")"]
-   else
     [ nest 4 (vsep ("let bytes = match self {" :
         map (<>comma)
         [ nest 4 (vsep
@@ -247,9 +242,7 @@ rustJetDecode mod =
 rustJetCost :: Module -> Doc a
 rustJetCost mod = vsep $
   [ nest 4 (vsep ("fn cost(&self) -> Cost {" :
-    if modname == "Bitcoin"
-    then ["unimplemented!(\"Unspecified cost of Bitcoin jets\")"]
-    else [ nest 4 (vsep ("match self {" :
+    [ nest 4 (vsep ("match self {" :
         map (<>comma)
         [ pretty modname <> "::" <> pretty (jetName jet) <+> "=>" <+>
           "Cost::from_milliweight(" <> (pretty . milliWeight $ jetCost jet) <> ")"
