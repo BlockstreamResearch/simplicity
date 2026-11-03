@@ -2,6 +2,7 @@
 module Simplicity.FFI.Dag
   ( DagNode
   , dagNodeGetCMR
+  , dagNodeGetCost
   , withDagNode
   , computeWordCMR
   ) where
@@ -9,6 +10,7 @@ module Simplicity.FFI.Dag
 import qualified Data.ByteString as BS
 import Data.Serialize (decode)
 import Data.Serialize.Put (runPut)
+import Data.Word (Word64)
 import Foreign.C.Types (CSize(..), CChar(..))
 import Foreign.Ptr (Ptr)
 import Foreign.Marshal.Alloc (allocaBytes)
@@ -25,6 +27,7 @@ newtype DagNode = DagNode DagNode
 foreign import ccall unsafe "&" c_sizeof_dag_node :: Ptr CSize
 
 foreign import ccall unsafe "" c_dag_node_get_cmr :: Ptr CChar -> Ptr DagNode -> IO ()
+foreign import ccall unsafe "" c_dag_node_get_cost :: Ptr DagNode -> IO Word64
 foreign import ccall unsafe "" c_compute_word_cmr :: Ptr CChar -> Ptr Bitstream -> CSize -> CSize -> IO ()
 
 sizeof_dag_node :: Int
@@ -39,6 +42,10 @@ dagNodeGetCMR pnode =
   c_dag_node_get_cmr buf pnode
   Right hash <- decode <$> BS.packCStringLen (buf, 32)
   return hash
+
+-- | The cost of a 'DagNode' in milli weight units.
+dagNodeGetCost :: Ptr DagNode -> IO Integer
+dagNodeGetCost pnode = toInteger <$> c_dag_node_get_cost pnode
 
 computeWordCMR :: Int -> [Bool] -> Hash256
 computeWordCMR offset stream = case log2Of (length stream - offset) of

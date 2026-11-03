@@ -15,6 +15,7 @@ import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Ty.Word
+import Simplicity.Weight (milliWeight)
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit ((@=?), testCase)
@@ -37,11 +38,14 @@ testDecodeBitcoinJet jt = testCase (show jt) (Just (SomeArrow jt) @=? decode)
   decode = evalExactVector (Bitcoin.getJetBit mzero) vector
 
 testDecodeBitcoinJetFFI :: (TyC a, TyC b) => Bitcoin.JetType a b -> TestTree
-testDecodeBitcoinJetFFI jt = testCase (show jt) (Right cmr @=? Bitcoin.decodeJetCMR bitstream)
+testDecodeBitcoinJetFFI jt = testCase (show jt) $ do
+  Right cmr @=? Bitcoin.decodeJetCMR bitstream
+  Right cost @=? Bitcoin.decodeJetCost bitstream
  where
   -- All jet encodings should begin with a 1 bit, which we consume.
   True:bitstream = Bitcoin.putJetBit jt []
   cmr = commitmentRoot (asJet jt)
+  cost = milliWeight (jetCost jt)
 
 prop_wordCMR :: SomeConstWordContent -> Property
 prop_wordCMR (SomeConstWordContent cwc) = forAll prefix prop

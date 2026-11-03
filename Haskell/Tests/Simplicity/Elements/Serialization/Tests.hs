@@ -15,6 +15,7 @@ import Simplicity.MerkleRoot
 import Simplicity.Serialization
 import Simplicity.Ty
 import Simplicity.Ty.Word
+import Simplicity.Weight (milliWeight)
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit ((@=?), testCase)
@@ -37,11 +38,14 @@ testDecodeElementsJet jt = testCase (show jt) (Just (SomeArrow jt) @=? decode)
   decode = evalExactVector (Elements.getJetBit mzero) vector
 
 testDecodeElementsJetFFI :: (TyC a, TyC b) => Elements.JetType a b -> TestTree
-testDecodeElementsJetFFI jt = testCase (show jt) (Right cmr @=? Elements.decodeJetCMR bitstream)
+testDecodeElementsJetFFI jt = testCase (show jt) $ do
+  Right cmr @=? Elements.decodeJetCMR bitstream
+  Right cost @=? Elements.decodeJetCost bitstream
  where
   -- All jet encodings should begin with a 1 bit, which we consume.
   True:bitstream = Elements.putJetBit jt []
   cmr = commitmentRoot (asJet jt)
+  cost = milliWeight (jetCost jt)
 
 prop_wordCMR :: SomeConstWordContent -> Property
 prop_wordCMR (SomeConstWordContent cwc) = forAll prefix prop

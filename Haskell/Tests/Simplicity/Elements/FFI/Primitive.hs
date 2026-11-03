@@ -1,6 +1,7 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Simplicity.Elements.FFI.Primitive
   ( decodeJetCMR
+  , decodeJetCost
   , ErrorCode(..)
   ) where
 
@@ -28,10 +29,17 @@ decodeJetNode pstream k =
   error <- simplicity_elements_decodeJet pnode pstream
   k (decodeError error >> return pnode)
 
-decodeJetCMR :: [Bool] -> Either ErrorCode Hash256
-decodeJetCMR codeWord = unsafeLocalState $
+decodeJetWith :: (Ptr DagNode -> IO a) -> [Bool] -> Either ErrorCode a
+decodeJetWith get codeWord = unsafeLocalState $
   initializeBitstream codeWord $ \pstream ->
   decodeJetNode pstream $ \result ->
   case result of
     Left err -> return $ Left err
-    Right pnode -> Right <$> dagNodeGetCMR pnode
+    Right pnode -> Right <$> get pnode
+
+decodeJetCMR :: [Bool] -> Either ErrorCode Hash256
+decodeJetCMR = decodeJetWith dagNodeGetCMR
+
+-- | The cost of the decoded jet in milli weight units.
+decodeJetCost :: [Bool] -> Either ErrorCode Integer
+decodeJetCost = decodeJetWith dagNodeGetCost

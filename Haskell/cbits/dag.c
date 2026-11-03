@@ -16,3 +16,7 @@ void c_compute_word_cmr(unsigned char *cmr, bitstream* stream, size_t offset, si
 void c_dag_node_get_cmr(unsigned char *cmr, const dag_node* node) {
   sha256_fromMidstate(cmr, node->cmr.s);
 }
+
+uint64_t c_dag_node_get_cost(const dag_node* node) {
+  return node->cost;
+}
