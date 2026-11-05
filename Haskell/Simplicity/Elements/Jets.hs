@@ -161,6 +161,13 @@ data TransactionJet a b where
   OutputNonce :: TransactionJet Word32 (S (S (Conf Word256)))
   OutputScriptHash :: TransactionJet Word32 (S Word256)
   OutputNullDatum :: TransactionJet (Word32, Word32) (S (S (Either (Word2, Word256) (Either Bit Word4))))
+  OutputNullGetBytes1 :: TransactionJet (Word32, Word32) (S (S Word8))
+  OutputNullGetBytes2 :: TransactionJet (Word32, Word32) (S (S Word16))
+  OutputNullGetBytes4 :: TransactionJet (Word32, Word32) (S (S Word32))
+  OutputNullGetBytes8 :: TransactionJet (Word32, Word32) (S (S Word64))
+  OutputNullGetBytes16 :: TransactionJet (Word32, Word32) (S (S Word128))
+  OutputNullGetBytes32 :: TransactionJet (Word32, Word32) (S (S Word256))
+  OutputNullGetBytes64 :: TransactionJet (Word32, Word32) (S (S (Word256, Word256)))
   OutputIsFee :: TransactionJet Word32 (S Bit)
   OutputSurjectionProof :: TransactionJet Word32 (S Word256)
   OutputRangeProof :: TransactionJet Word32 (S Word256)
@@ -280,6 +287,13 @@ specificationTransaction OutputAmount = Prog.outputAmount
 specificationTransaction OutputNonce = primitive Prim.OutputNonce
 specificationTransaction OutputScriptHash = primitive Prim.OutputScriptHash
 specificationTransaction OutputNullDatum = primitive Prim.OutputNullDatum
+specificationTransaction OutputNullGetBytes1 = primitive Prim.OutputNullGetBytes1
+specificationTransaction OutputNullGetBytes2 = primitive Prim.OutputNullGetBytes2
+specificationTransaction OutputNullGetBytes4 = primitive Prim.OutputNullGetBytes4
+specificationTransaction OutputNullGetBytes8 = primitive Prim.OutputNullGetBytes8
+specificationTransaction OutputNullGetBytes16 = primitive Prim.OutputNullGetBytes16
+specificationTransaction OutputNullGetBytes32 = primitive Prim.OutputNullGetBytes32
+specificationTransaction OutputNullGetBytes64 = primitive Prim.OutputNullGetBytes64
 specificationTransaction OutputIsFee = Prog.outputIsFee
 specificationTransaction OutputSurjectionProof = primitive Prim.OutputSurjectionProof
 specificationTransaction OutputRangeProof = primitive Prim.OutputRangeProof
@@ -623,6 +637,13 @@ transactionCatalogue = book
  , SomeArrow Version
  , SomeArrow GenesisBlockHash
  , SomeArrow TransactionId
+ , SomeArrow OutputNullGetBytes1
+ , SomeArrow OutputNullGetBytes2
+ , SomeArrow OutputNullGetBytes4
+ , SomeArrow OutputNullGetBytes8
+ , SomeArrow OutputNullGetBytes16
+ , SomeArrow OutputNullGetBytes32
+ , SomeArrow OutputNullGetBytes64
  ]
 
 putJetBitElements :: ElementsJet a b -> DList Bool
@@ -741,6 +762,13 @@ putJetBitTransaction Tappath                    = putPositive 47
 putJetBitTransaction Version                    = putPositive 48
 putJetBitTransaction GenesisBlockHash           = putPositive 49
 putJetBitTransaction TransactionId              = putPositive 50
+putJetBitTransaction OutputNullGetBytes1        = putPositive 51
+putJetBitTransaction OutputNullGetBytes2        = putPositive 52
+putJetBitTransaction OutputNullGetBytes4        = putPositive 53
+putJetBitTransaction OutputNullGetBytes8        = putPositive 54
+putJetBitTransaction OutputNullGetBytes16       = putPositive 55
+putJetBitTransaction OutputNullGetBytes32       = putPositive 56
+putJetBitTransaction OutputNullGetBytes64       = putPositive 57
 
 elementsJetMap :: Map.Map Hash256 (SomeArrow ElementsJet)
 elementsJetMap = Map.fromList . fmap mkAssoc $ toList elementsCatalogue
@@ -1325,6 +1353,13 @@ jetCostTransaction OutputAmount = cost "OutputAmount"
 jetCostTransaction OutputNonce = cost "OutputNonce"
 jetCostTransaction OutputScriptHash = cost "OutputScriptHash"
 jetCostTransaction OutputNullDatum = cost "OutputNullDatum"
+jetCostTransaction OutputNullGetBytes1 = cost "OutputNullGetBytes1"
+jetCostTransaction OutputNullGetBytes2 = cost "OutputNullGetBytes2"
+jetCostTransaction OutputNullGetBytes4 = cost "OutputNullGetBytes4"
+jetCostTransaction OutputNullGetBytes8 = cost "OutputNullGetBytes8"
+jetCostTransaction OutputNullGetBytes16 = cost "OutputNullGetBytes16"
+jetCostTransaction OutputNullGetBytes32 = cost "OutputNullGetBytes32"
+jetCostTransaction OutputNullGetBytes64 = cost "OutputNullGetBytes64"
 jetCostTransaction OutputIsFee = cost "OutputIsFee"
 jetCostTransaction OutputSurjectionProof = cost "OutputSurjectionProof"
 jetCostTransaction OutputRangeProof = cost "OutputRangeProof"

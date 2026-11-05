@@ -60,12 +60,21 @@ typedef struct confAmount {
 /* In Elements, a null-data scriptPubKey consists of an OP_RETURN followed by data only pushes (i.e. only opcodes less than OP_16).
  * This is an enumeration of all such data only push operation names.
  * OP_IMMEDIATE represents OP_0 and all the one-byte prefixes of data pushes up to 75 bytes.
+ * OP_PUSHBYTES_1/2/4/8/16/32/64 represent push operations whose data is exactly 1, 2, 4, 8, 16, 32, or 64 bytes;
+ * these store the raw bytes inline rather than a hash.
  */
 typedef enum opcodeType {
   OP_IMMEDIATE,
   OP_PUSHDATA,
   OP_PUSHDATA2,
   OP_PUSHDATA4,
+  OP_PUSHBYTES_1,
+  OP_PUSHBYTES_2,
+  OP_PUSHBYTES_4,
+  OP_PUSHBYTES_8,
+  OP_PUSHBYTES_16,
+  OP_PUSHBYTES_32,
+  OP_PUSHBYTES_64,
   OP_1NEGATE,
   OP_RESERVED,
   OP_1,
@@ -90,10 +99,14 @@ typedef enum opcodeType {
  * This is a structure represents a digest of all such operations.
  * 'code' represents the operation name.
  * If 'code' \in {OP_IMMEDIATE, OP_PUSHDATA, OP_PUSHDATA2, OP_PUSHDATA4} then 'dataHash' represents the SHA-256 hash of data pushed
- * by the push operation.
+ * by the push operation, and 'len' is 0.
+ * If 'code' \in {OP_PUSHBYTES_1, OP_PUSHBYTES_2, OP_PUSHBYTES_4, OP_PUSHBYTES_8, OP_PUSHBYTES_16, OP_PUSHBYTES_32, OP_PUSHBYTES_64}
+ * then 'dataHash' is the SHA-256 hash of the pushed bytes, 'data' holds the raw pushed bytes, and 'len' is their count.
  */
 typedef struct opcode {
   sha256_midstate dataHash;
+  uint8_t data[64];
+  uint_fast8_t len;
   opcodeType code;
 } opcode;
 

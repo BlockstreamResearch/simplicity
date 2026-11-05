@@ -23,6 +23,13 @@ module Simplicity.Elements.FFI.Jets
  , output_nonce
  , output_script_hash
  , output_null_datum
+ , output_null_get_bytes_1
+ , output_null_get_bytes_2
+ , output_null_get_bytes_4
+ , output_null_get_bytes_8
+ , output_null_get_bytes_16
+ , output_null_get_bytes_32
+ , output_null_get_bytes_64
  , output_is_fee
  , output_surjection_proof
  , output_range_proof
@@ -143,6 +150,13 @@ foreign import ccall unsafe "" c_output_amount :: Ptr FrameItem -> Ptr FrameItem
 foreign import ccall unsafe "" c_output_nonce :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_script_hash :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_null_datum :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_output_null_get_bytes_1 :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_output_null_get_bytes_2 :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_output_null_get_bytes_4 :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_output_null_get_bytes_8 :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_output_null_get_bytes_16 :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_output_null_get_bytes_32 :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
+foreign import ccall unsafe "" c_output_null_get_bytes_64 :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_is_fee :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_surjection_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
 foreign import ccall unsafe "" c_output_range_proof :: Ptr FrameItem -> Ptr FrameItem -> Ptr CTxEnv -> IO CBool
@@ -353,6 +367,27 @@ output_script_hash = unsafeLocalJet c_output_script_hash
 
 output_null_datum :: PrimEnv -> (Word32,Word32) -> Maybe (S (S (Either (Word2, Word256) (Either Bit Word4))))
 output_null_datum = unsafeLocalJet c_output_null_datum
+
+output_null_get_bytes_1 :: PrimEnv -> (Word32, Word32) -> Maybe (S (S Word8))
+output_null_get_bytes_1 = unsafeLocalJet c_output_null_get_bytes_1
+
+output_null_get_bytes_2 :: PrimEnv -> (Word32, Word32) -> Maybe (S (S Word16))
+output_null_get_bytes_2 = unsafeLocalJet c_output_null_get_bytes_2
+
+output_null_get_bytes_4 :: PrimEnv -> (Word32, Word32) -> Maybe (S (S Word32))
+output_null_get_bytes_4 = unsafeLocalJet c_output_null_get_bytes_4
+
+output_null_get_bytes_8 :: PrimEnv -> (Word32, Word32) -> Maybe (S (S Word64))
+output_null_get_bytes_8 = unsafeLocalJet c_output_null_get_bytes_8
+
+output_null_get_bytes_16 :: PrimEnv -> (Word32, Word32) -> Maybe (S (S Word128))
+output_null_get_bytes_16 = unsafeLocalJet c_output_null_get_bytes_16
+
+output_null_get_bytes_32 :: PrimEnv -> (Word32, Word32) -> Maybe (S (S Word256))
+output_null_get_bytes_32 = unsafeLocalJet c_output_null_get_bytes_32
+
+output_null_get_bytes_64 :: PrimEnv -> (Word32, Word32) -> Maybe (S (S (Word256, Word256)))
+output_null_get_bytes_64 = unsafeLocalJet c_output_null_get_bytes_64
 
 output_is_fee :: PrimEnv -> Word32 -> Maybe (S Bit)
 output_is_fee = unsafeLocalJet c_output_is_fee

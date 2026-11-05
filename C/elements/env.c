@@ -200,7 +200,16 @@ static void parseNullData(parsedNullData* result, opcode** allocation, size_t* a
       uint_fast32_t skip = 0;
       if (code < 0x4c) {
         skip = code;
-        (*allocation)[result->len].code = OP_IMMEDIATE;
+        switch (skip) {
+          case  1: (*allocation)[result->len].code = OP_PUSHBYTES_1;  break;
+          case  2: (*allocation)[result->len].code = OP_PUSHBYTES_2;  break;
+          case  4: (*allocation)[result->len].code = OP_PUSHBYTES_4;  break;
+          case  8: (*allocation)[result->len].code = OP_PUSHBYTES_8;  break;
+          case 16: (*allocation)[result->len].code = OP_PUSHBYTES_16; break;
+          case 32: (*allocation)[result->len].code = OP_PUSHBYTES_32; break;
+          case 64: (*allocation)[result->len].code = OP_PUSHBYTES_64; break;
+          default: (*allocation)[result->len].code = OP_IMMEDIATE;    break;
+        }
       } else {
         if (scriptPubKey->len == i) { result->op = NULL; return; }
         skip = scriptPubKey->buf[i++];
@@ -225,6 +234,14 @@ static void parseNullData(parsedNullData* result, opcode** allocation, size_t* a
         sha256_context ctx = sha256_init((*allocation)[result->len].dataHash.s);
         sha256_uchars(&ctx, &scriptPubKey->buf[i], skip);
         sha256_finalize(&ctx);
+        opcodeType oc = (*allocation)[result->len].code;
+        if (OP_PUSHBYTES_1 == oc || OP_PUSHBYTES_2 == oc || OP_PUSHBYTES_4 == oc ||
+            OP_PUSHBYTES_8 == oc || OP_PUSHBYTES_16 == oc || OP_PUSHBYTES_32 == oc || OP_PUSHBYTES_64 == oc) {
+          memcpy((*allocation)[result->len].data, &scriptPubKey->buf[i], skip);
+          (*allocation)[result->len].len = (uint_fast8_t)skip;
+        } else {
+          (*allocation)[result->len].len = 0;
+        }
       }
       i += skip;
     }
