@@ -55,7 +55,7 @@ Rows are grouped by area, and their order doesn't indicate priority.
 | | Translation to the Bit Machine | Naive translation done for core Simplicity; extensions and TCO translation not started |
 | | Static analysis | Memory bound done for the naive translation of core Simplicity; TCO memory bounds, cost, and frame count not started |
 | | Serialization, type inference, and anti-malleability rules | Not started |
-| | Environment model for each integration | An early Bitcoin model with a known error; Elements model on a branch, unreviewed |
+| | Environment model for each integration | An early Bitcoin model; Elements model on a branch, unreviewed |
 | | Jet specifications | Complete in Haskell; Coq transcriptions on a branch; Coq jet library not started |
 | | Jet characterizations usable in program proofs | Done for word adders and multipliers; otherwise not started |
 | | Agreement with external standards, for the jets that implement one | Done for SHA-256 block compression; otherwise not started |
@@ -84,10 +84,6 @@ Rows are grouped by area, and their order doesn't indicate priority.
   [`feat/jet-equivalence`](https://github.com/brenorb/simplicity/tree/feat/jet-equivalence)
   branch, which hasn't been reviewed or merged. They apply to the C code at
   commit `e3b6701`.
-- The Bitcoin introspection proofs cover only zero-fee transactions, because
-  of an error in the Coq Bitcoin environment model. The Haskell specification
-  and the C code are correct. Reportedly the proofs still go through with the
-  model corrected, but those changes aren't on `feat/jet-equivalence` yet.
 - `gej_ge_add_ex` doesn't match its specification. The specification will
   change to match the deployed C code, and the jet's CMR will keep its current
   value.

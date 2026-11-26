@@ -141,17 +141,15 @@ inputs, including random transaction environments for the introspection jets.
 ### Transaction introspection jets
 
 - The Bitcoin jet proofs that read the transaction quantify over the
-  transactions that `Coq/Simplicity/Primitive/Bitcoin.v` can represent. That
-  model defines the fee as total output minus total input and requires it to
-  be nonnegative, the reverse of the Haskell definition, so the only valid
-  Bitcoin transactions it can represent have a fee of zero. The error is
-  only in the model: the Haskell specification and the C code agree with each
-  other and with Bitcoin. The proofs reportedly go through with the model
-  corrected, but that version isn't on the branch yet. They could instead
-  be redone against a model of the current Bitcoin integration's
-  primitives. The model also spells the `LockTime` primitive's name
-  differently from the Haskell library (`"locktime"` instead of
-  `"lockTime"`), so its commitment tag differs.
+  transactions that the branch's version of
+  `Coq/Simplicity/Primitive/Bitcoin.v` can represent. The branch proves that
+  transactions with positive and zero fees can be represented. The model
+  excludes negative fees, transactions without outputs, and amounts or totals
+  outside the money range, all of which Bitcoin consensus rejects for any
+  transaction that spends an output. The model spells the `LockTime`
+  primitive's name differently from the Haskell library (`"locktime"` instead
+  of `"lockTime"`), so its commitment tag differs. A model of the current
+  Bitcoin integration's primitives would replace it.
 - The Elements jet proofs use the branch's own port of the Haskell
   environment definitions (`Coq/C/jet_elements_prim.v`). It admits every
   environment that the Haskell definitions do, but it hasn't been reviewed
@@ -362,9 +360,10 @@ unforgeable.
 A specification of the Elements and Bitcoin transaction environments suited to
 program proofs, with lemmas that characterize what each introspection jet
 returns. The model should match the primitives' semantics in the Haskell
-library (`primSem`). On master, `Coq/Simplicity/Primitive/Bitcoin.v` models an early set of Bitcoin
-primitives, with the fee error described in the jet status above, and there
-isn't a model of the Elements environment.
+library (`primSem`). On master, `Coq/Simplicity/Primitive/Bitcoin.v` models
+an early set of Bitcoin primitives, and there isn't a model of the Elements
+environment. The jet-proof branch corrects the fee definition in master's
+copy of `Bitcoin.v`.
 
 ### Properties of Simplicity programs
 
